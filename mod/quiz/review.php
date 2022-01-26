@@ -42,6 +42,7 @@ if ($page !== 0) {
     $url->param('showall', $showall);
 }
 $PAGE->set_url($url);
+$PAGE->set_secondary_active_tab("modulepage");
 
 $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
 $attemptobj->preload_all_attempt_step_users();
@@ -107,6 +108,7 @@ if ($attemptobj->is_own_preview()) {
 $headtags = $attemptobj->get_html_head_contributions($page, $showall);
 $PAGE->set_title($attemptobj->review_page_title($page, $showall));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
+$PAGE->activityheader->disable();
 
 // Summary table start. ============================================================================
 

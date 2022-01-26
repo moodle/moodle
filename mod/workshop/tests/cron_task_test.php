@@ -73,4 +73,48 @@ class mod_workshop_cron_task_testcase extends advanced_testcase {
         $this->assertStringContainsString('Processing automatic assessment phase switch', $output);
         $this->assertEquals(workshop::PHASE_ASSESSMENT, $DB->get_field('workshop', 'phase', ['id' => $workshop->id]));
     }
+
+    public function test_that_phase_automatically_switched_event_is_triggerd_when_phase_switchassesment_is_active(): void {
+
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Set up a test workshop with 'Switch to the next phase after the submissions deadline' enabled.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $workshop = $generator->create_module('workshop', [
+            'course' => $course,
+            'name' => 'Test Workshop',
+        ]);
+
+        $DB->update_record('workshop', [
+            'id' => $workshop->id,
+            'phase' => workshop::PHASE_SUBMISSION,
+            'phaseswitchassessment' => 1,
+            'submissionend' => time() - 1,
+        ]);
+
+        // Execute the cron.
+        $eventsink = $this->redirectEvents();
+        ob_start();
+        cron_setup_user();
+        $cron = new \mod_workshop\task\cron_task();
+        $cron->execute();
+        ob_end_clean();
+
+        $events = array_filter($eventsink->get_events(), function ($event) {
+            return $event instanceof \mod_workshop\event\phase_automatically_switched;
+        });
+
+        $this->assertCount(1, $events);
+
+        $phaseswitchedevent = array_pop($events);
+        $this->assertArrayHasKey('previousworkshopphase', $phaseswitchedevent->other);
+        $this->assertArrayHasKey('targetworkshopphase', $phaseswitchedevent->other);
+
+        $this->assertEquals($phaseswitchedevent->other['previousworkshopphase'], \workshop::PHASE_SUBMISSION);
+        $this->assertEquals($phaseswitchedevent->other['targetworkshopphase'], \workshop::PHASE_ASSESSMENT);
+    }
 }

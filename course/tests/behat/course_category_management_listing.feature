@@ -44,7 +44,7 @@ Feature: Course category management interface performs as expected
     And I start watching to see if a new page loads
     And I should see the "Course categories and courses" management page
     And I should see "Course categories" in the "#category-listing h3" "css_element"
-    And I should see "Miscellaneous" in the "#course-listing h3" "css_element"
+    And I should see "Category 1" in the "#course-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
     And I should see "No courses in this category" in the "#course-listing" "css_element"
     And I click on category "Cat 1" in the management interface

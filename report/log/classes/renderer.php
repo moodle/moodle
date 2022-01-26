@@ -100,13 +100,13 @@ class report_log_renderer extends plugin_renderer_base {
         $courses = $reportlog->get_course_list();
         if (!empty($courses) && $reportlog->showcourses) {
             echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
-            echo html_writer::select($courses, "id", $selectedcourseid, null);
+            echo html_writer::select($courses, "id", $selectedcourseid, null, ['class' => 'mr-2 mb-2']);
         } else {
             $courses = array();
             $courses[$selectedcourseid] = get_course_display_name_for_list($reportlog->course) . (($selectedcourseid == SITEID) ?
                 ' (' . get_string('site') . ') ' : '');
             echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
-            echo html_writer::select($courses, "id", $selectedcourseid, false);
+            echo html_writer::select($courses, "id", $selectedcourseid, false, ['class' => 'mr-2 mb-2']);
             // Check if user is admin and this came because of limitation on number of courses to show in dropdown.
             if (has_capability('report/log:view', $sitecontext)) {
                 $a = new stdClass();
@@ -123,7 +123,8 @@ class report_log_renderer extends plugin_renderer_base {
         $groups = $reportlog->get_group_list();
         if (!empty($groups)) {
             echo html_writer::label(get_string('selectagroup'), 'menugroup', false, array('class' => 'accesshide'));
-            echo html_writer::select($groups, "group", $reportlog->groupid, get_string("allgroups"));
+            echo html_writer::select($groups, "group", $reportlog->groupid, get_string("allgroups"),
+                ['class' => 'mr-2 mb-2']);
         }
 
         // Add user selector.
@@ -131,7 +132,8 @@ class report_log_renderer extends plugin_renderer_base {
 
         if ($reportlog->showusers) {
             echo html_writer::label(get_string('selctauser'), 'menuuser', false, array('class' => 'accesshide'));
-            echo html_writer::select($users, "user", $reportlog->userid, get_string("allparticipants"));
+            echo html_writer::select($users, "user", $reportlog->userid, get_string("allparticipants"),
+                ['class' => 'mr-2 mb-2']);
         } else {
             $users = array();
             if (!empty($reportlog->userid)) {
@@ -140,7 +142,7 @@ class report_log_renderer extends plugin_renderer_base {
                 $users[0] = get_string('allparticipants');
             }
             echo html_writer::label(get_string('selctauser'), 'menuuser', false, array('class' => 'accesshide'));
-            echo html_writer::select($users, "user", $reportlog->userid, false);
+            echo html_writer::select($users, "user", $reportlog->userid, false, ['class' => 'mr-2 mb-2']);
             $a = new stdClass();
             $a->url = new moodle_url('/report/log/index.php', array('chooselog' => 0,
                 'group' => $reportlog->get_selected_group(), 'user' => $reportlog->userid,
@@ -155,26 +157,30 @@ class report_log_renderer extends plugin_renderer_base {
         // Add date selector.
         $dates = $reportlog->get_date_options();
         echo html_writer::label(get_string('date'), 'menudate', false, array('class' => 'accesshide'));
-        echo html_writer::select($dates, "date", $reportlog->date, get_string("alldays"));
+        echo html_writer::select($dates, "date", $reportlog->date, get_string("alldays"),
+            ['class' => 'mr-2 mb-2']);
 
         // Add activity selector.
         $activities = $reportlog->get_activities_list();
         echo html_writer::label(get_string('activities'), 'menumodid', false, array('class' => 'accesshide'));
-        echo html_writer::select($activities, "modid", $reportlog->modid, get_string("allactivities"));
+        echo html_writer::select($activities, "modid", $reportlog->modid, get_string("allactivities"),
+            ['class' => 'mr-2 mb-2']);
 
         // Add actions selector.
         echo html_writer::label(get_string('actions'), 'menumodaction', false, array('class' => 'accesshide'));
-        echo html_writer::select($reportlog->get_actions(), 'modaction', $reportlog->action, get_string("allactions"));
+        echo html_writer::select($reportlog->get_actions(), 'modaction', $reportlog->action,
+            get_string("allactions"), ['class' => 'mr-2 mb-2']);
 
         // Add origin.
         $origin = $reportlog->get_origin_options();
         echo html_writer::label(get_string('origin', 'report_log'), 'menuorigin', false, array('class' => 'accesshide'));
-        echo html_writer::select($origin, 'origin', $reportlog->origin, false);
+        echo html_writer::select($origin, 'origin', $reportlog->origin, false, ['class' => 'mr-2 mb-2']);
 
         // Add edulevel.
         $edulevel = $reportlog->get_edulevel_options();
         echo html_writer::label(get_string('edulevel'), 'menuedulevel', false, array('class' => 'accesshide'));
-        echo html_writer::select($edulevel, 'edulevel', $reportlog->edulevel, false).$this->help_icon('edulevel');
+        echo html_writer::select($edulevel, 'edulevel', $reportlog->edulevel, false,
+            ['class' => 'mr-2 mb-2']) .$this->help_icon('edulevel');
 
         // Add reader option.
         // If there is some reader available then only show submit button.
@@ -186,10 +192,13 @@ class report_log_renderer extends plugin_renderer_base {
             } else {
                 echo html_writer::label(get_string('selectlogreader', 'report_log'), 'menureader', false,
                         array('class' => 'accesshide'));
-                echo html_writer::select($readers, 'logreader', $reportlog->selectedlogreader, false);
+                echo html_writer::select($readers, 'logreader', $reportlog->selectedlogreader, false,
+                    ['class' => 'mr-2 mb-2']);
             }
-            echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('gettheselogs'),
-                'class' => 'btn btn-secondary'));
+            echo html_writer::start_div('mt-1');
+            echo html_writer::empty_tag('input', array('type' => 'submit',
+                'value' => get_string('gettheselogs'), 'class' => 'btn btn-primary'));
+            echo html_writer::end_div();
         }
         echo html_writer::end_div();
         echo html_writer::end_tag('form');

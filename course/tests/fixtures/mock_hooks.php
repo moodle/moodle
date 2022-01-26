@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tests\core_course {
+namespace core_course\test {
 
     /**
      * Class mock_hooks
@@ -129,13 +129,15 @@ namespace tests\core_course {
 
 namespace {
 
+    use core_course\test\mock_hooks;
+
     /**
      * Test pre_course_category_delete callback.
      *
      * @param object $category
      */
     function tool_unittest_pre_course_category_delete(object $category) {
-        \tests\core_course\mock_hooks::set_calling_arguments(func_get_args());
+        mock_hooks::set_calling_arguments(func_get_args());
     }
 
     /**
@@ -145,7 +147,7 @@ namespace {
      * @param core_course_category $newcategory
      */
     function tool_unittest_pre_course_category_delete_move(core_course_category $category, core_course_category $newcategory) {
-        \tests\core_course\mock_hooks::set_calling_arguments(func_get_args());
+        mock_hooks::set_calling_arguments(func_get_args());
     }
 
     /**
@@ -155,8 +157,8 @@ namespace {
      * @return bool
      */
     function tool_unittest_can_course_category_delete(core_course_category $category) {
-        \tests\core_course\mock_hooks::set_calling_arguments(func_get_args());
-        return \tests\core_course\mock_hooks::get_can_course_category_delete_return();
+        mock_hooks::set_calling_arguments(func_get_args());
+        return mock_hooks::get_can_course_category_delete_return();
     }
 
     /**
@@ -167,8 +169,8 @@ namespace {
      * @return bool
      */
     function tool_unittest_can_course_category_delete_move(core_course_category $category, core_course_category $newcategory) {
-        \tests\core_course\mock_hooks::set_calling_arguments(func_get_args());
-        return \tests\core_course\mock_hooks::get_can_course_category_delete_move_return();
+        mock_hooks::set_calling_arguments(func_get_args());
+        return mock_hooks::get_can_course_category_delete_move_return();
     }
 
     /**
@@ -178,7 +180,7 @@ namespace {
      * @return string
      */
     function tool_unittest_get_course_category_contents(core_course_category $category) {
-        \tests\core_course\mock_hooks::set_calling_arguments(func_get_args());
-        return \tests\core_course\mock_hooks::get_get_course_category_contents_return();
+        mock_hooks::set_calling_arguments(func_get_args());
+        return mock_hooks::get_get_course_category_contents_return();
     }
 }

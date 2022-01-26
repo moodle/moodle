@@ -1,0 +1,83 @@
+{{!
+  This file is part of Moodle - http://moodle.org/
+
+  Moodle is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moodle is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_reportbuilder/local/settings/sorting
+
+    Template for custom report sortable columns settings area
+
+    Example context (json):
+    {
+        "sorting": [{
+            "hassortablecolumns": true,
+            "sortablecolumns": [{
+                "id": 1,
+                "title": "Email address",
+                "sortdirection": "4",
+                "sortenabled": true,
+                "sortorder": 1,
+                "sorticon": [{
+                    "key": "t/uplong",
+                    "component": "core",
+                    "title": "Sort column 'Email address' ascending"
+                }],
+                "heading": "Email address"
+            }]
+        }]
+    }
+}}
+
+<div class="p-2" data-region="settings-sorting">
+    {{#sorting}}
+        {{#hassortablecolumns}}
+            <ul class="list-group reportbuilder-sortable-list ml-0">
+                {{#sortablecolumns}}
+                    <li class="list-group-item list-group-item-action d-flex align-items-center text-dark"
+                        data-column-sort-id="{{id}}"
+                        data-column-sort-name="{{title}}"
+                        data-column-sort-direction="{{sortdirection}}"
+                        data-column-sort-enabled="{{sortenabled}}"
+                        data-column-sort-position="{{sortorder}}">
+                        {{>core/drag_handle}}
+                        {{#sorticon}}
+                            <span class="float-right">
+                                <button id="toggle-sort-direction-{{id}}"
+                                        class="btn btn-link p-0"
+                                        data-action="report-toggle-sort-direction"
+                                        title="{{{title}}}"
+                                        aria-label="{{{title}}}"
+                                        {{^sortenabled}}disabled{{/sortenabled}}>
+                                    {{#sorticon}}{{#pix}}{{key}}, {{component}}{{/pix}}{{/sorticon}}
+                                </button>
+                            </span>
+                        {{/sorticon}}
+                        <input id="toggle-sort-{{id}}" title="{{{sortenabledtitle}}}" data-action="report-toggle-column-sorting" type="checkbox" {{#sortenabled}}checked{{/sortenabled}}>
+                        <label for="toggle-sort-{{id}}" class="mb-0">
+                            <span class="ml-2 text-dark {{^sortenabled}}text-muted{{/sortenabled}}">{{{heading}}}</span>
+                            <span class="sr-only">{{{sortenabledtitle}}}</span>
+                        </label>
+                    </li>
+                {{/sortablecolumns}}
+            </ul>
+        {{/hassortablecolumns}}
+
+        {{^hassortablecolumns}}
+            {{< core_reportbuilder/local/settings/empty_message }}
+                {{$nothingtoshow}}{{#str}} nosortablecolumns, core_reportbuilder {{/str}} {{/nothingtoshow}}
+            {{/ core_reportbuilder/local/settings/empty_message }}
+        {{/hassortablecolumns}}
+    {{/sorting}}
+</div>

@@ -24,6 +24,8 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
@@ -47,7 +49,14 @@ class core_badges_renderer extends plugin_renderer_base {
                     $bname = s($badge->name);
                 }
                 if (!empty($badge->image)) {
-                    $imageurl = $badge->image;
+                    if (is_object($badge->image)) {
+                        if (!empty($badge->image->caption)) {
+                            $badge->imagecaption = $badge->image->caption;
+                        }
+                        $imageurl = $badge->image->id;
+                    } else {
+                        $imageurl = $badge->image;
+                    }
                 }
                 if (isset($badge->assertion->badge->name)) {
                     $bname = s($badge->assertion->badge->name);
@@ -59,7 +68,8 @@ class core_badges_renderer extends plugin_renderer_base {
 
             $name = html_writer::tag('span', $bname, array('class' => 'badge-name'));
 
-            $image = html_writer::empty_tag('img', array('src' => $imageurl, 'class' => 'badge-image'));
+            $imagecaption = $badge->imagecaption ?? '';
+            $image = html_writer::empty_tag('img', ['src' => $imageurl, 'class' => 'badge-image', 'alt' => $imagecaption]);
             if (!empty($badge->dateexpire) && $badge->dateexpire < time()) {
                 $image .= $this->output->pix_icon('i/expired',
                         get_string('expireddate', 'badges', userdate($badge->dateexpire)),
@@ -324,101 +334,8 @@ class core_badges_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function render_external_badge(\core_badges\output\external_badge $ibadge) {
-        $issued = $ibadge->issued;
-        $assertion = $issued->assertion;
-        $issuer = $assertion->badge->issuer;
-        $userinfo = $ibadge->recipient;
-        $table = new html_table();
-        $today = strtotime(date('Y-m-d'));
-
-        $output = '';
-        $output .= html_writer::start_tag('div', array('id' => 'badge'));
-        $output .= html_writer::start_tag('div', array('id' => 'badge-image'));
-        if (isset($issued->imageUrl)) {
-            $issued->image = $issued->imageUrl;
-        }
-        $output .= html_writer::empty_tag('img', array('src' => $issued->image, 'width' => '100'));
-        if (isset($assertion->expires)) {
-            $expiration = is_numeric($assertion->expires) ? $assertion->expires : strtotime($assertion->expires);
-            if ($expiration < $today) {
-                $output .= $this->output->pix_icon('i/expired',
-                        get_string('expireddate', 'badges', userdate($expiration)),
-                        'moodle',
-                        array('class' => 'expireimage'));
-            }
-        }
-        $output .= html_writer::end_tag('div');
-
-        $output .= html_writer::start_tag('div', array('id' => 'badge-details'));
-
-        // Recipient information.
-        $output .= $this->output->heading(get_string('recipientdetails', 'badges'), 3);
-        $dl = array();
-        // Technically, we should alway have a user at this point, but added an extra check just in case.
-        if ($userinfo) {
-            if (!$ibadge->valid) {
-                $notify = $this->output->notification(get_string('recipientvalidationproblem', 'badges'), 'notifynotice');
-                $dl[get_string('name')] = fullname($userinfo) . $notify;
-            } else {
-                $dl[get_string('name')] = fullname($userinfo);
-            }
-        } else {
-            $notify = $this->output->notification(get_string('recipientidentificationproblem', 'badges'), 'notifynotice');
-            $dl[get_string('name')] = $notify;
-        }
-        $output .= $this->definition_list($dl);
-
-        $output .= $this->output->heading(get_string('issuerdetails', 'badges'), 3);
-        $dl = array();
-        $dl[get_string('issuername', 'badges')] = s($issuer->name);
-        if (isset($issuer->origin)) {
-            $dl[get_string('issuerurl', 'badges')] = html_writer::tag('a', $issuer->origin, array('href' => $issuer->origin));
-        }
-
-        if (isset($issuer->contact)) {
-            $dl[get_string('contact', 'badges')] = obfuscate_mailto($issuer->contact);
-        }
-        $output .= $this->definition_list($dl);
-
-        $output .= $this->output->heading(get_string('badgedetails', 'badges'), 3);
-        $dl = array();
-        $dl[get_string('name')] = s($assertion->badge->name);
-        $dl[get_string('description', 'badges')] = s($assertion->badge->description);
-        if (isset($assertion->badge->criteria)) {
-            $dl[get_string('bcriteria', 'badges')] = html_writer::tag(
-                'a',
-                s($assertion->badge->criteria),
-                array('href' => $assertion->badge->criteria)
-            );
-        }
-        $output .= $this->definition_list($dl);
-
-        $dl = array();
-        if (isset($assertion->issued_on)) {
-            $issuedate = is_numeric($assertion->issued_on) ? $assertion->issued_on : strtotime($assertion->issued_on);
-            $dl[get_string('dateawarded', 'badges')] = userdate($issuedate);
-        }
-        if (isset($assertion->expires)) {
-            if ($expiration < $today) {
-                $dl[get_string('expirydate', 'badges')] = userdate($expiration) . get_string('warnexpired', 'badges');
-            } else {
-                $dl[get_string('expirydate', 'badges')] = userdate($expiration);
-            }
-        }
-        if (isset($assertion->evidence)) {
-            $dl[get_string('evidence', 'badges')] = html_writer::tag(
-                'a',
-                s($assertion->evidence),
-                array('href' => $assertion->evidence)
-            );
-        }
-        if (!empty($dl)) {
-            $output .= $this->output->heading(get_string('issuancedetails', 'badges'), 3);
-            $output .= $this->definition_list($dl);
-        }
-        $output .= html_writer::end_tag('div');
-
-        return $output;
+        $data = $ibadge->export_for_template($this);
+        return parent::render_from_template('core_badges/issued_badge', $data);
     }
 
     /**
@@ -463,7 +380,7 @@ class core_badges_renderer extends plugin_renderer_base {
             $localhtml .= $backpackconnect . $countmessage . $searchform;
             $localhtml .= $htmlpagingbar . $htmllist . $htmlpagingbar . $downloadall;
         } else {
-            $localhtml .= $searchform . $this->output->notification(get_string('nobadges', 'badges'));
+            $localhtml .= $searchform . $this->output->notification(get_string('nobadges', 'badges'), 'info');
         }
         $localhtml .= html_writer::end_tag('div');
 
@@ -559,13 +476,6 @@ class core_badges_renderer extends plugin_renderer_base {
 
         // New badge button.
         $htmlnew = '';
-        if (has_capability('moodle/badges:createbadge', $this->page->context)) {
-            $n['type'] = $this->page->url->get_param('type');
-            $n['id'] = $this->page->url->get_param('id');
-            $btn = $this->output->single_button(new moodle_url('newbadge.php', $n), get_string('newbadge', 'badges'));
-            $htmlnew = $this->output->box($btn);
-        }
-
         $htmlpagingbar = $this->render($paging);
         $table = new html_table();
         $table->attributes['class'] = 'table table-bordered table-striped';
@@ -610,6 +520,8 @@ class core_badges_renderer extends plugin_renderer_base {
     /**
      * Prints tabs for badge editing.
      *
+     * @deprecated since Moodle 4.0
+     * @todo MDL-73426 Final deprecation.
      * @param integer $badgeid The badgeid to edit.
      * @param context $context The current context.
      * @param string $current The currently selected tab.
@@ -617,6 +529,8 @@ class core_badges_renderer extends plugin_renderer_base {
      */
     public function print_badge_tabs($badgeid, $context, $current = 'overview') {
         global $DB;
+        debugging("print_badge_tabs() is deprecated. " .
+            "This is replaced with the manage_badge_action_bar tertiary navigation.", DEBUG_DEVELOPER);
 
         $badge = new badge($badgeid);
         $row = array();
@@ -1104,13 +1018,13 @@ class core_badges_renderer extends plugin_renderer_base {
             );
             if (!$currentbadge->is_active() && !$currentbadge->is_locked()) {
                 $action = $this->output->action_icon(
-                    new moodle_url('related_action.php',
-                        array(
-                            'badgeid' => $related->currentbadgeid,
-                            'relatedid' => $badge->id,
-                            'action' => 'remove'
-                        )
-                    ), new pix_icon('t/delete', get_string('delete')));
+                    new moodle_url('/badges/related_action.php', [
+                        'badgeid' => $related->currentbadgeid,
+                        'relatedid' => $badge->id,
+                        'sesskey' => sesskey(),
+                        'action' => 'remove'
+                    ]),
+                    new pix_icon('t/delete', get_string('delete')));
                 $actions = html_writer::tag('div', $action, array('class' => 'badge-actions'));
                 array_push($row, $actions);
             }
@@ -1148,13 +1062,14 @@ class core_badges_renderer extends plugin_renderer_base {
             );
             if (!$currentbadge->is_active() && !$currentbadge->is_locked()) {
                 $delete = $this->output->action_icon(
-                    new moodle_url('alignment_action.php',
-                        array(
-                            'id' => $currentbadge->id,
-                            'alignmentid' => $item->id,
-                            'action' => 'remove'
-                        )
-                    ), new pix_icon('t/delete', get_string('delete')));
+                    new moodle_url('/badges/alignment_action.php', [
+                        'id' => $currentbadge->id,
+                        'alignmentid' => $item->id,
+                        'sesskey' => sesskey(),
+                        'action' => 'remove'
+                    ]),
+                    new pix_icon('t/delete', get_string('delete'))
+                );
                 $edit = $this->output->action_icon(
                     new moodle_url('alignment.php',
                         array(
@@ -1213,5 +1128,15 @@ class core_badges_renderer extends plugin_renderer_base {
         }
 
         return $result;
+    }
+
+    /**
+     * Render the tertiary navigation for the page.
+     *
+     * @param \core_badges\output\base_action_bar $actionbar
+     * @return bool|string
+     */
+    public function render_tertiary_navigation(\core_badges\output\base_action_bar $actionbar) {
+        return $this->render_from_template($actionbar->get_template(), $actionbar->export_for_template($this));
     }
 }

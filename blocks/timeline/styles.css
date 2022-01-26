@@ -1,0 +1,37 @@
+#block-region-side-pre .block_timeline .nav-search {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+.block_timeline .input-group.searchbar {
+    width: 100%;
+}
+
+#block-region-side-pre .block_timeline h6.event-action {
+    flex-basis: 100%;
+}
+#block-region-side-pre .block_timeline .event-name-container {
+    flex-basis: 50%;
+}
+#block-region-side-pre .block_timeline h6.event-action a.btn {
+    width: auto;
+}
+/* Override the width/height of the .activityiconcontainer class in the timeline block. */
+.block_timeline .activityiconcontainer {
+    width: 40px;
+    height: 40px;
+}
+
+.block_timeline .timeline-action-button {
+    margin-left: auto;
+}
+
+@media (max-width: 480px) {
+    .block_timeline .timeline-name {
+        width: 100%;
+    }
+
+    .block_timeline .timeline-action-button {
+        margin-left: 0;
+    }
+}

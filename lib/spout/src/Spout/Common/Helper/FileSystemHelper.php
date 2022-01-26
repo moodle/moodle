@@ -17,7 +17,7 @@ class FileSystemHelper implements FileSystemHelperInterface
     /**
      * @param string $baseFolderPath The path of the base folder where all the I/O can occur
      */
-    public function __construct($baseFolderPath)
+    public function __construct(string $baseFolderPath)
     {
         $this->baseFolderRealPath = \realpath($baseFolderPath);
     }
@@ -117,12 +117,16 @@ class FileSystemHelper implements FileSystemHelperInterface
      * should occur is not inside the base folder.
      *
      * @param string $operationFolderPath The path of the folder where the I/O operation should occur
-     * @throws \Box\Spout\Common\Exception\IOException If the folder where the I/O operation should occur is not inside the base folder
+     * @throws \Box\Spout\Common\Exception\IOException If the folder where the I/O operation should occur
+     * is not inside the base folder or the base folder does not exist
      * @return void
      */
-    protected function throwIfOperationNotInBaseFolder($operationFolderPath)
+    protected function throwIfOperationNotInBaseFolder(string $operationFolderPath)
     {
         $operationFolderRealPath = \realpath($operationFolderPath);
+        if (!$this->baseFolderRealPath) {
+            throw new IOException("The base folder path is invalid: {$this->baseFolderRealPath}");
+        }
         $isInBaseFolder = (\strpos($operationFolderRealPath, $this->baseFolderRealPath) === 0);
         if (!$isInBaseFolder) {
             throw new IOException("Cannot perform I/O operation outside of the base folder: {$this->baseFolderRealPath}");

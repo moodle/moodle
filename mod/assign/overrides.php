@@ -66,6 +66,7 @@ $groupmode = ($mode == "group");
 $url = new moodle_url('/mod/assign/overrides.php', array('cmid' => $cm->id, 'mode' => $mode));
 
 $PAGE->set_url($url);
+navigation_node::override_active_url(new moodle_url('/mod/assign/overrides.php', ['cmid' => $cmid]));
 
 if ($action == 'movegroupoverride') {
     $id = required_param('id', PARAM_INT);
@@ -81,8 +82,16 @@ if ($action == 'movegroupoverride') {
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('overrides', 'assign'));
 $PAGE->set_heading($course->fullname);
+$activityheader = $PAGE->activityheader;
+$activityheader->set_attrs([
+    'description' => '',
+    'hidecompletion' => true,
+    'title' => $activityheader->is_title_allowed() ? format_string($assign->name, true, ['context' => $context]) : ""
+]);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($assign->name, true, array('context' => $context)));
+$overridemenu = new \mod_assign\output\override_actionmenu($url, $cm);
+$renderer = $PAGE->get_renderer('mod_assign');
+echo $renderer->render($overridemenu);
 
 // Delete orphaned group overrides.
 $sql = 'SELECT o.id
@@ -199,6 +208,12 @@ foreach ($overrides as $override) {
         $values[] = $override->cutoffdate > 0 ? userdate($override->cutoffdate) : get_string('noclose', 'assign');
     }
 
+    // Format timelimit.
+    if (isset($override->timelimit)) {
+        $fields[] = get_string('timelimit', 'assign');
+        $values[] = $override->timelimit > 0 ? format_time($override->timelimit) : get_string('none', 'assign');
+    }
+
     // Icons.
     $iconstr = '';
 
@@ -296,9 +311,6 @@ if ($groupmode) {
         echo $OUTPUT->notification(get_string('groupsnone', 'assign'), 'error');
         $options['disabled'] = true;
     }
-    echo $OUTPUT->single_button($overrideediturl->out(true,
-            array('action' => 'addgroup', 'cmid' => $cm->id)),
-            get_string('addnewgroupoverride', 'assign'), 'post', $options);
 } else {
     $users = array();
     // See if there are any users in the assign.
@@ -329,9 +341,6 @@ if ($groupmode) {
         echo $OUTPUT->notification($nousermessage, 'error');
         $options['disabled'] = true;
     }
-    echo $OUTPUT->single_button($overrideediturl->out(true,
-            array('action' => 'adduser', 'cmid' => $cm->id)),
-            get_string('addnewuseroverride', 'assign'), 'get', $options);
 }
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');

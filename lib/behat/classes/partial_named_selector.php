@@ -52,7 +52,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
             $this->registerReplacement($from, implode(' or ', $tos));
         }
 
-        $this->registerReplacement('%iconMatch%', "(contains(concat(' ', @class, ' '), ' icon ') or name() = 'img')");
+        $this->registerReplacement('%iconMatch%', "(contains(concat(' ', @class, ' '), ' icon ') or self::img)");
         $this->registerReplacement('%imgAltMatch%', './/*[%iconMatch% and (%altMatch% or %titleMatch%)]');
         parent::__construct();
     }
@@ -86,6 +86,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
      */
     protected static $allowedselectors = array(
         'activity' => 'activity',
+        'badge' => 'badge',
         'block' => 'block',
         'button' => 'button',
         'checkbox' => 'checkbox',
@@ -136,6 +137,9 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
     protected static $moodleselectors = array(
         'activity' => <<<XPATH
 .//li[contains(concat(' ', normalize-space(@class), ' '), ' activity ')][descendant::*[contains(normalize-space(.), %locator%)]]
+XPATH
+        , 'badge' => <<<XPATH
+.//span[(contains(@class, 'badge')) and text()[contains(., %locator%)]]
 XPATH
         , 'block' => <<<XPATH
 .//*[@data-block][contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' ')) or

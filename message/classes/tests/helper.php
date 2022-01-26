@@ -58,4 +58,70 @@ class helper {
         $record->timecreated = $time;
         return $DB->insert_record('messages', $record);
     }
+
+    /**
+     * Send a fake unread notification.
+     *
+     * message_send() does not support transaction, this function will simulate a message
+     * sent from a user to another. We should stop using it once message_send() will support
+     * transactions. This is not clean at all, this is just used to add rows to the table.
+     *
+     * @param stdClass $userfrom user object of the one sending the message.
+     * @param stdClass $userto user object of the one receiving the message.
+     * @param string $message message to send.
+     * @param int $timecreated time the message was created.
+     * @return int the id of the message
+     */
+    public static function send_fake_unread_notification(\stdClass $userfrom, \stdClass $userto, string $message = 'Hello world!',
+            int $timecreated = 0): int {
+        global $DB;
+
+        $record = new \stdClass();
+        $record->useridfrom = $userfrom->id;
+        $record->useridto = $userto->id;
+        $record->notification = 1;
+        $record->subject = 'No subject';
+        $record->fullmessage = $message;
+        $record->smallmessage = $message;
+        $record->timecreated = $timecreated ? $timecreated : time();
+        $record->customdata  = json_encode(['datakey' => 'data']);
+
+        return $DB->insert_record('notifications', $record);
+    }
+
+    /**
+     * Send a fake read notification.
+     *
+     * message_send() does not support transaction, this function will simulate a message
+     * sent from a user to another. We should stop using it once message_send() will support
+     * transactions. This is not clean at all, this is just used to add rows to the table.
+     *
+     * @param stdClass $userfrom user object of the one sending the message.
+     * @param stdClass $userto user object of the one receiving the message.
+     * @param string $message message to send.
+     * @param int $timecreated time the message was created.
+     * @param int $timeread the the message was read
+     * @return int the id of the message
+     */
+    public static function send_fake_read_notification(\stdClass $userfrom, \stdClass $userto, string $message = 'Hello world!',
+                                                       int $timecreated = 0, int $timeread = 0): int {
+        global $DB;
+
+        $record = new \stdClass();
+        $record->useridfrom = $userfrom->id;
+        $record->useridto = $userto->id;
+        $record->notification = 1;
+        $record->subject = 'No subject';
+        $record->fullmessage = $message;
+        $record->smallmessage = $message;
+        $record->timecreated = $timecreated ? $timecreated : time();
+        $record->timeread = $timeread ? $timeread : time();
+
+        $record->id = $DB->insert_record('notifications', $record);
+
+        // Mark it as read.
+        \core_message\api::mark_notification_as_read($record);
+
+        return $record->id;
+    }
 }

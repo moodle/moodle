@@ -226,9 +226,13 @@ trait moodle_read_slave_trait {
      * @return void
      */
     private function set_dbhwrite(): void {
-        // Late connect to read/write master if needed.
+        // Lazy connect to read/write master.
         if (!$this->dbhwrite) {
+            $temptables = $this->temptables;
             $this->raw_connect($this->pdbhost, $this->pdbuser, $this->pdbpass, $this->pdbname, $this->pprefix, $this->pdboptions);
+            if ($temptables) {
+                $this->temptables = $temptables; // Restore temptables, so we don't get separate sets for rw and ro.
+            }
             $this->dbhwrite = $this->get_db_handle();
         }
         $this->set_db_handle($this->dbhwrite);

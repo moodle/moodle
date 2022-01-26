@@ -46,7 +46,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param object $block
  */
 function xmldb_block_selfcompletion_upgrade($oldversion, $block) {
-    global $CFG;
+    global $CFG, $DB;
 
     // Automatically generated Moodle v3.6.0 release upgrade line.
     // Put any upgrade step following this.
@@ -59,6 +59,17 @@ function xmldb_block_selfcompletion_upgrade($oldversion, $block) {
 
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2021121600) {
+        // From Moodle 4.0, this block has been disabled by default in new installations.
+        // If the site has no instances of this block, it will disabled during the upgrading process too.
+        $totalcount = $DB->count_records('block_instances', ['blockname' => 'selfcompletion']);
+        if ($totalcount == 0) {
+            $DB->set_field('block', 'visible', 0, ['name' => 'selfcompletion']);
+        }
+
+        upgrade_block_savepoint(true, 2021121600, 'selfcompletion', false);
+    }
 
     return true;
 }

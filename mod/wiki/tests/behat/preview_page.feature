@@ -32,7 +32,7 @@ Feature: Edited wiki pages may be previewed before saving
     And I should see "Student page contents to be previewed"
     And I press "Save"
     And I should see "Student page contents to be previewed"
-    And I follow "Edit"
+    And I select "Edit" from the "jump" singleselect
 
   @javascript
   Scenario: Page contents preview before saving with Javascript enabled

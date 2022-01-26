@@ -25,7 +25,9 @@ Feature: Content bank link in the activity settings form
     And I add a "H5P" to section "1"
     Then I should see "Use the content bank (opens in new window) to manage your H5P files"
     And I click on "content bank (opens in new window)" "link" in the "General" "fieldset"
-    And I should see "C1" in the "page-navbar" "region"
+    And I switch to the browser tab opened by the app
+    And I should see "Content bank" in the "page-header" "region"
+    And I should see "filltheblanks.h5p" in the "page-content" "region"
     And I close all opened windows
 
   @javascript
@@ -56,7 +58,7 @@ Feature: Content bank link in the activity settings form
     And I switch to "h5p-iframe" class iframe
     And I should see "Of which countries are Berlin, Washington, Beijing, Canberra and Brasilia the capitals?"
     And I switch to the main frame
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     Then I should not see "Use the content Bank (opens in new window) to manage your H5P files"
     And I should see "Access the H5P file in the content bank (opens in a new window)."
     And I follow "Access the H5P file in the content bank"
@@ -79,7 +81,7 @@ Feature: Content bank link in the activity settings form
     And I switch to "h5p-iframe" class iframe
     And I should see "Of which countries are Berlin,"
     And I switch to the main frame
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     Then I should see "Use the content bank (opens in new window) to manage your H5P files"
 
   @javascript
@@ -103,5 +105,5 @@ Feature: Content bank link in the activity settings form
     And I switch to "h5p-iframe" class iframe
     And I should see "Which fruit is this?"
     And I switch to the main frame
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     Then I should see "Use the content bank (opens in new window) to manage your H5P files"

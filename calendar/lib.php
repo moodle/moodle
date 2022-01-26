@@ -70,12 +70,6 @@ define('CALENDAR_TF_24', '%H:%M');
 define('CALENDAR_TF_12', '%I:%M %p');
 
 /**
- * CALENDAR_EVENT_GLOBAL - Site calendar event types
- * @deprecated since 3.8
- */
-define('CALENDAR_EVENT_GLOBAL', 1);
-
-/**
  * CALENDAR_EVENT_SITE - Site calendar event types
  */
 define('CALENDAR_EVENT_SITE', 1);
@@ -1313,11 +1307,6 @@ class calendar_information {
             $filters->title = get_string('eventskey', 'calendar');
             $renderer->add_pretend_calendar_block($filters, BLOCK_POS_RIGHT);
         }
-        $block = new block_contents;
-        $block->content = $renderer->fake_block_threemonths($this);
-        $block->footer = '';
-        $block->title = get_string('monthlyview', 'calendar');
-        $renderer->add_pretend_calendar_block($block, BLOCK_POS_RIGHT);
     }
 
     /**
@@ -2193,6 +2182,24 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false, s
 }
 
 /**
+ * Can current user manage a non user event in system context.
+ *
+ * @param calendar_event|stdClass $event event object
+ * @return boolean
+ */
+function calendar_can_manage_non_user_event_in_system($event) {
+    $sitecontext = \context_system::instance();
+    $isuserevent = $event->eventtype == 'user';
+    $canmanageentries = has_capability('moodle/calendar:manageentries', $sitecontext);
+    // If user has manageentries at site level and it's not user event, return true.
+    if ($canmanageentries && !$isuserevent) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Return the capability for viewing a calendar event.
  *
  * @param calendar_event $event event object
@@ -2206,10 +2213,7 @@ function calendar_view_event_allowed(calendar_event $event) {
         return true;
     }
 
-    // If a user can manage events at the site level they can see any event.
-    $sitecontext = \context_system::instance();
-    // If user has manageentries at site level, return true.
-    if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
+    if (calendar_can_manage_non_user_event_in_system($event)) {
         return true;
     }
 
@@ -2265,11 +2269,7 @@ function calendar_view_event_allowed(calendar_event $event) {
 
         return can_access_course(get_course($event->courseid));
     } else if ($event->userid) {
-        if ($event->userid != $USER->id) {
-            // No-one can ever see another users events.
-            return false;
-        }
-        return true;
+        return calendar_can_manage_user_event($event);
     } else {
         throw new moodle_exception('unknown event type');
     }
@@ -2342,10 +2342,7 @@ function calendar_edit_event_allowed($event, $manualedit = false) {
         }
     }
 
-    $sitecontext = \context_system::instance();
-
-    // If user has manageentries at site level, return true.
-    if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
+    if (calendar_can_manage_non_user_event_in_system($event)) {
         return true;
     }
 
@@ -2369,7 +2366,38 @@ function calendar_edit_event_allowed($event, $manualedit = false) {
         // If course is not set, but userid id set, it's a user event.
         return (has_capability('moodle/calendar:manageownentries', $event->context));
     } else if (!empty($event->userid)) {
-        return (has_capability('moodle/calendar:manageentries', $event->context));
+        return calendar_can_manage_user_event($event);
+    }
+
+    return false;
+}
+
+/**
+ * Can current user edit/delete/add an user event?
+ *
+ * @param calendar_event|stdClass $event event object
+ * @return bool
+ */
+function calendar_can_manage_user_event($event): bool {
+    global $USER;
+
+    if (!($event instanceof \calendar_event)) {
+        $event = new \calendar_event(clone($event));
+    }
+
+    $canmanage = has_capability('moodle/calendar:manageentries', $event->context);
+    $canmanageown = has_capability('moodle/calendar:manageownentries', $event->context);
+    $ismyevent = $event->userid == $USER->id;
+    $isadminevent = is_siteadmin($event->userid);
+
+    if ($canmanageown && $ismyevent) {
+        return true;
+    }
+
+    // In site context, user must have login and calendar:manageentries permissions
+    // ... to manage other user's events except admin users.
+    if ($canmanage && !$isadminevent) {
+        return true;
     }
 
     return false;
@@ -2681,10 +2709,7 @@ function calendar_add_event_allowed($event) {
         return false;
     }
 
-    $sitecontext = \context_system::instance();
-
-    // If user has manageentries at site level, always return true.
-    if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
+    if (calendar_can_manage_non_user_event_in_system($event)) {
         return true;
     }
 
@@ -2703,10 +2728,7 @@ function calendar_add_event_allowed($event) {
                     (has_capability('moodle/calendar:managegroupentries', $event->context)
                         && groups_is_member($event->groupid)));
         case 'user':
-            if ($event->userid == $USER->id) {
-                return (has_capability('moodle/calendar:manageownentries', $event->context));
-            }
-        // There is intentionally no 'break'.
+            return calendar_can_manage_user_event($event);
         case 'site':
             return has_capability('moodle/calendar:manageentries', $event->context);
         default:
@@ -2721,12 +2743,12 @@ function calendar_add_event_allowed($event) {
  */
 function calendar_get_pollinterval_choices() {
     return array(
-        '0' => new \lang_string('never', 'calendar'),
-        HOURSECS => new \lang_string('hourly', 'calendar'),
-        DAYSECS => new \lang_string('daily', 'calendar'),
-        WEEKSECS => new \lang_string('weekly', 'calendar'),
-        '2628000' => new \lang_string('monthly', 'calendar'),
-        YEARSECS => new \lang_string('annually', 'calendar')
+        '0' => get_string('never', 'calendar'),
+        HOURSECS => get_string('hourly', 'calendar'),
+        DAYSECS => get_string('daily', 'calendar'),
+        WEEKSECS => get_string('weekly', 'calendar'),
+        '2628000' => get_string('monthly', 'calendar'),
+        YEARSECS => get_string('annually', 'calendar')
     );
 }
 
@@ -2965,42 +2987,6 @@ function calendar_add_icalendar_event($event, $unused, $subscriptionid, $timezon
 }
 
 /**
- * Update a subscription from the form data in one of the rows in the existing subscriptions table.
- *
- * @param int $subscriptionid The ID of the subscription we are acting upon.
- * @param int $pollinterval The poll interval to use.
- * @param int $action The action to be performed. One of update or remove.
- * @throws dml_exception if invalid subscriptionid is provided
- * @return string A log of the import progress, including errors
- */
-function calendar_process_subscription_row($subscriptionid, $pollinterval, $action) {
-    // Fetch the subscription from the database making sure it exists.
-    $sub = calendar_get_subscription($subscriptionid);
-
-    // Update or remove the subscription, based on action.
-    switch ($action) {
-        case CALENDAR_SUBSCRIPTION_UPDATE:
-            // Skip updating file subscriptions.
-            if (empty($sub->url)) {
-                break;
-            }
-            $sub->pollinterval = $pollinterval;
-            calendar_update_subscription($sub);
-
-            // Update the events.
-            return "<p>" . get_string('subscriptionupdated', 'calendar', $sub->name) . "</p>" .
-                calendar_update_subscription_events($subscriptionid);
-        case CALENDAR_SUBSCRIPTION_REMOVE:
-            calendar_delete_subscription($subscriptionid);
-            return get_string('subscriptionremoved', 'calendar', $sub->name);
-            break;
-        default:
-            break;
-    }
-    return '';
-}
-
-/**
  * Delete subscription and all related events.
  *
  * @param int|stdClass $subscription subscription or it's id, which needs to be deleted.
@@ -3052,6 +3038,7 @@ function calendar_get_icalendar($url) {
     global $CFG;
 
     require_once($CFG->libdir . '/filelib.php');
+    require_once($CFG->libdir . '/bennu/bennu.inc.php');
 
     $curl = new \curl();
     $curl->setopt(array('CURLOPT_FOLLOWLOCATION' => 1, 'CURLOPT_MAXREDIRS' => 5));
@@ -3072,17 +3059,17 @@ function calendar_get_icalendar($url) {
  * Import events from an iCalendar object into a course calendar.
  *
  * @param iCalendar $ical The iCalendar object.
- * @param int $unused Deprecated
- * @param int $subscriptionid The subscription ID.
- * @return string A log of the import progress, including errors.
+ * @param int|null $subscriptionid The subscription ID.
+ * @return array A log of the import progress, including errors.
  */
-function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid = null) {
+function calendar_import_events_from_ical(iCalendar $ical, int $subscriptionid = null): array {
     global $DB;
 
-    $return = '';
+    $errors = [];
     $eventcount = 0;
     $updatecount = 0;
     $skippedcount = 0;
+    $deletedcount = 0;
 
     // Large calendars take a while...
     if (!CLI_SCRIPT) {
@@ -3111,18 +3098,15 @@ function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid
                 $skippedcount++;
                 break;
             case 0:
-                $return .= '<p>' . get_string('erroraddingevent', 'calendar') . ': ';
                 if (empty($event->properties['SUMMARY'])) {
-                    $return .= '(' . get_string('notitle', 'calendar') . ')';
+                    $errors[] = '(' . get_string('notitle', 'calendar') . ')';
                 } else {
-                    $return .= $event->properties['SUMMARY'][0]->value;
+                    $errors[] = $event->properties['SUMMARY'][0]->value;
                 }
-                $return .= "</p>\n";
                 break;
         }
     }
 
-    $return .= html_writer::start_tag('ul');
     $existing = $DB->get_field('event_subscriptions', 'lastupdated', ['id' => $subscriptionid]);
     if (!empty($existing)) {
         $eventsuuids = $DB->get_records_menu('event', ['subscriptionid' => $subscriptionid], '', 'id, uuid');
@@ -3137,16 +3121,21 @@ function calendar_import_icalendar_events($ical, $unused = null, $subscriptionid
             }
             if (!empty($tobedeleted)) {
                 $DB->delete_records_list('event', 'id', $tobedeleted);
-                $return .= html_writer::tag('li', get_string('eventsdeleted', 'calendar', count($tobedeleted)));
+                $deletedcount = count($tobedeleted);
             }
         }
     }
 
-    $return .= html_writer::tag('li', get_string('eventsimported', 'calendar', $eventcount));
-    $return .= html_writer::tag('li', get_string('eventsskipped', 'calendar', $skippedcount));
-    $return .= html_writer::tag('li', get_string('eventsupdated', 'calendar', $updatecount));
-    $return .= html_writer::end_tag('ul');
-    return $return;
+    $result = [
+        'eventsimported' => $eventcount,
+        'eventsskipped' => $skippedcount,
+        'eventsupdated' => $updatecount,
+        'eventsdeleted' => $deletedcount,
+        'haserror' => !empty($errors),
+        'errors' => $errors,
+    ];
+
+    return $result;
 }
 
 /**
@@ -3164,7 +3153,7 @@ function calendar_update_subscription_events($subscriptionid) {
     }
 
     $ical = calendar_get_icalendar($sub->url);
-    $return = calendar_import_icalendar_events($ical, null, $subscriptionid);
+    $return = calendar_import_events_from_ical($ical, $subscriptionid);
     $sub->lastupdated = time();
 
     calendar_update_subscription($sub);
@@ -3706,7 +3695,6 @@ function calendar_get_timestamp($d, $m, $y, $time = 0) {
  * @param calendar_information $calendar The calendar information object.
  * @param array $options Display options for the footer. If an option is not set, a default value will be provided.
  *                      It consists of:
- *                      - showexportlink - bool - Whether to show the export link or not. Defaults to true.
  *                      - showfullcalendarlink - bool - Whether to show the full calendar link or not. Defaults to false.
  *
  * @return array The data for template and template name.
@@ -3979,4 +3967,37 @@ function calendar_get_export_import_link_params(): array {
     }
 
     return $params;
+}
+
+/**
+ * Implements the inplace editable feature.
+ *
+ * @param string $itemtype Type of the inplace editable element
+ * @param int $itemid Id of the item to edit
+ * @param int $newvalue New value of the item
+ * @return \core\output\inplace_editable
+ */
+function calendar_inplace_editable(string $itemtype, int $itemid, int $newvalue): \core\output\inplace_editable {
+    global $OUTPUT;
+
+    if ($itemtype === 'refreshinterval') {
+
+        $subscription = calendar_get_subscription($itemid);
+        $context = calendar_get_calendar_context($subscription);
+        \external_api::validate_context($context);
+
+        $updateresult = \core_calendar\output\refreshintervalcollection::update($itemid, $newvalue);
+
+        $refreshresults = calendar_update_subscription_events($itemid);
+        \core\notification::add($OUTPUT->render_from_template(
+            'core_calendar/subscription_update_result',
+            array_merge($refreshresults, [
+                'subscriptionname' => s($subscription->name),
+            ])
+        ), \core\notification::INFO);
+
+        return $updateresult;
+    }
+
+    \external_api::validate_context(context_system::instance());
 }

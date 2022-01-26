@@ -56,36 +56,32 @@ page_view($page, $course, $cm, $context);
 
 $PAGE->set_url('/mod/page/view.php', array('id' => $cm->id));
 
-$options = empty($page->displayoptions) ? array() : unserialize($page->displayoptions);
+$options = empty($page->displayoptions) ? [] : (array) unserialize_array($page->displayoptions);
+
+$activityheader = ['hidecompletion' => false];
+if (empty($options['printheading'])) {
+    $activityheader['title'] = '';
+}
+
+if (empty($options['printintro']) || !trim(strip_tags($page->intro))) {
+    $activityheader['description'] = '';
+}
 
 if ($inpopup and $page->display == RESOURCELIB_DISPLAY_POPUP) {
     $PAGE->set_pagelayout('popup');
     $PAGE->set_title($course->shortname.': '.$page->name);
     $PAGE->set_heading($course->fullname);
 } else {
+    $PAGE->add_body_class('limitedwidth');
     $PAGE->set_title($course->shortname.': '.$page->name);
     $PAGE->set_heading($course->fullname);
     $PAGE->set_activity_record($page);
-}
-echo $OUTPUT->header();
-if (!isset($options['printheading']) || !empty($options['printheading'])) {
-    echo $OUTPUT->heading(format_string($page->name), 2);
-}
-
-// Display any activity information (eg completion requirements / dates).
-$cminfo = cm_info::create($cm);
-$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
-
-if (!empty($options['printintro'])) {
-    if (trim(strip_tags($page->intro))) {
-        echo $OUTPUT->box_start('mod_introbox', 'pageintro');
-        echo format_module_intro('page', $page, $cm->id);
-        echo $OUTPUT->box_end();
+    if (!$PAGE->activityheader->is_title_allowed()) {
+        $activityheader['title'] = "";
     }
 }
-
+$PAGE->activityheader->set_attrs($activityheader);
+echo $OUTPUT->header();
 $content = file_rewrite_pluginfile_urls($page->content, 'pluginfile.php', $context->id, 'mod_page', 'content', $page->revision);
 $formatoptions = new stdClass;
 $formatoptions->noclean = true;

@@ -32,16 +32,14 @@ Feature: In an assignment, teachers can edit a students submission inline
       | Test assignment name  | student1  | I'm the student first submission  |
 
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
       | Feedback comments | I'm the teacher feedback |
     And I upload "lib/tests/fixtures/empty.txt" file to "Feedback files" filemanager
     And I press "Save changes"
-    And I click on "Edit settings" "link"
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     Then I should see "50.00" in the "Student 1" "table_row"
     And I should see "Submitted for grading" in the "Student 1" "table_row"
     And I should see "Graded" in the "Student 1" "table_row"

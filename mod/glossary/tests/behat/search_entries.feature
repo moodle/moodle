@@ -19,20 +19,14 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
     And the following "activities" exist:
       | activity | name               | intro                     | displayformat  | course | idnumber |
       | glossary | Test glossary name | Test glossary description | fullwithauthor | C1     | g1       |
-    And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
-    And I add a glossary entries category named "The ones I like"
-    And I add a glossary entries category named "All for you"
-    And I add a glossary entry with the following data:
-      | Concept | Eggplant |
-      | Definition | Sour eggplants |
-      | Categories | All for you |
-    And I log out
-    And I am on the "Test glossary name" "glossary activity" page logged in as student1
-    And I add a glossary entry with the following data:
-      | Concept | Cucumber |
-      | Definition | Sweet cucumber |
-      | Categories | The ones I like |
-    And I log out
+    And the following "mod_glossary > categories" exist:
+      | glossary | name            |
+      | g1       | The ones I like |
+      | g1       | All for you     |
+    And the following "mod_glossary > entries" exist:
+      | glossary | concept  | definition     | user     | categories      |
+      | g1       | Eggplant | Sour eggplants | teacher1 | All for you     |
+      | g1       | Cucumber | Sweet cucumber | student1 | The ones I like |
     And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
 
   @javascript
@@ -50,7 +44,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
 
   @javascript
   Scenario: Browse by category
-    When I follow "Browse by category"
+    When I select "Browse by category" from the "Browse the glossary using this index" singleselect
     And I set the field "Categories" to "The ones I like"
     Then I should see "Sweet cucumber"
     And I should not see "Sour eggplants"
@@ -60,7 +54,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
 
   @javascript
   Scenario: Browse by date
-    When I follow "Browse by date"
+    When I select "Browse by date" from the "Browse the glossary using this index" singleselect
     And I follow "By creation date"
     Then "Delete entry: Eggplant" "link" should appear before "Delete entry: Cucumber" "link"
     And I follow "By last update"
@@ -69,7 +63,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
 
   @javascript
   Scenario: Browse by author
-    When I follow "Browse by Author"
+    When I select "Browse by Author" from the "Browse the glossary using this index" singleselect
     And I click on "T" "link" in the ".entrybox" "css_element"
     Then I should see "Teacher 1"
     And I should see "Sour eggplants"

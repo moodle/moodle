@@ -20,7 +20,6 @@ namespace core_reportbuilder\local\entities;
 
 use context_course;
 use context_helper;
-use core_course_category;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\course_selector;
 use core_reportbuilder\local\filters\date;
@@ -107,7 +106,9 @@ class course extends base {
 
         $filters = array_merge($this->get_all_filters(), $customfields->get_filters());
         foreach ($filters as $filter) {
-            $this->add_filter($filter);
+            $this
+                ->add_condition($filter)
+                ->add_filter($filter);
         }
 
         return $this;
@@ -122,7 +123,6 @@ class course extends base {
         return [
             'fullname' => new lang_string('fullnamecourse'),
             'shortname' => new lang_string('shortnamecourse'),
-            'category' => new lang_string('coursecategory'),
             'idnumber' => new lang_string('idnumbercourse'),
             'summary' => new lang_string('coursesummary'),
             'format' => new lang_string('format'),
@@ -175,7 +175,6 @@ class course extends base {
             case 'summary':
                 $fieldtype = column::TYPE_LONGTEXT;
                 break;
-            case 'category':
             case 'groupmode':
                 $fieldtype = column::TYPE_INTEGER;
                 break;
@@ -214,7 +213,7 @@ class course extends base {
             'courseidnumberewithlink' => 'idnumber',
         ];
         foreach ($fields as $key => $field) {
-            $columns[] = (new column(
+            $column = (new column(
                 $key,
                 new lang_string($key, 'core_reportbuilder'),
                 $this->get_entity_name()
@@ -228,8 +227,23 @@ class course extends base {
                         return '';
                     }
 
-                    return html_writer::link(course_get_url($row->id), $value);
+                    context_helper::preload_from_record($row);
+
+                    return html_writer::link(course_get_url($row->id),
+                        format_string($value, true, ['context' => context_course::instance($row->id)]));
                 });
+
+            // Join on the context table so that we can use it for formatting these columns later.
+            if ($key === 'coursefullnamewithlink') {
+                $join = "LEFT JOIN {context} {$contexttablealias}
+                           ON {$contexttablealias}.contextlevel = " . CONTEXT_COURSE . "
+                          AND {$contexttablealias}.instanceid = {$tablealias}.id";
+
+                $column->add_join($join)
+                    ->add_fields(context_helper::get_preload_record_columns_sql($contexttablealias));
+            }
+
+            $columns[] = $column;
         }
 
         foreach ($coursefields as $coursefield => $coursefieldlang) {
@@ -313,7 +327,7 @@ class course extends base {
         $filters[] = (new filter(
             course_selector::class,
             'courseselector',
-            new lang_string('courses'),
+            new lang_string('courseselect', 'core_reportbuilder'),
             $this->get_entity_name(),
             "{$tablealias}.id"
         ))
@@ -352,15 +366,6 @@ class course extends base {
             SEPARATEGROUPS => get_string('groupsseparate', 'group'),
             VISIBLEGROUPS => get_string('groupsvisible', 'group'),
         ];
-    }
-
-    /**
-     * List of options for the field category.
-     *
-     * @return array
-     */
-    public static function get_options_for_category(): array {
-        return core_course_category::make_categories_list('moodle/category:viewcourselist');
     }
 
     /**

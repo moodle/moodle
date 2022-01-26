@@ -488,7 +488,7 @@ class repository_type implements cacheable_object {
  * This is the base class of the repository class.
  *
  * To create repository plugin, see: {@link http://docs.moodle.org/dev/Repository_plugins}
- * See an example: {@link repository_boxnet}
+ * See an example: repository_dropbox
  *
  * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
@@ -890,7 +890,7 @@ abstract class repository implements cacheable_object {
         // the file needs to copied to draft area
         $stored_file = self::get_moodle_file($source);
         if ($maxbytes != -1 && $stored_file->get_filesize() > $maxbytes) {
-            $maxbytesdisplay = display_size($maxbytes);
+            $maxbytesdisplay = display_size($maxbytes, 0);
             throw new file_exception('maxbytesfile', (object) array('file' => $filerecord['filename'],
                                                                     'size' => $maxbytesdisplay));
         }
@@ -1735,7 +1735,7 @@ abstract class repository implements cacheable_object {
             // files that are references to local files are already in moodle filepool
             // just validate the size
             if ($maxbytes > 0 && $file->get_filesize() > $maxbytes) {
-                $maxbytesdisplay = display_size($maxbytes);
+                $maxbytesdisplay = display_size($maxbytes, 0);
                 throw new file_exception('maxbytesfile', (object) array('file' => $file->get_filename(),
                                                                         'size' => $maxbytesdisplay));
             }
@@ -1743,7 +1743,7 @@ abstract class repository implements cacheable_object {
         } else {
             if ($maxbytes > 0 && $file->get_filesize() > $maxbytes) {
                 // note that stored_file::get_filesize() also calls synchronisation
-                $maxbytesdisplay = display_size($maxbytes);
+                $maxbytesdisplay = display_size($maxbytes, 0);
                 throw new file_exception('maxbytesfile', (object) array('file' => $file->get_filename(),
                                                                         'size' => $maxbytesdisplay));
             }

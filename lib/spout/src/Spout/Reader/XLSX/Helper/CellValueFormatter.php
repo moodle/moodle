@@ -31,14 +31,6 @@ class CellValueFormatter
 
     /** Constants used for date formatting */
     const NUM_SECONDS_IN_ONE_DAY = 86400;
-    const NUM_SECONDS_IN_ONE_HOUR = 3600;
-    const NUM_SECONDS_IN_ONE_MINUTE = 60;
-
-    /**
-     * February 29th, 1900 is NOT a leap year but Excel thinks it is...
-     * @see https://en.wikipedia.org/wiki/Year_1900_problem#Microsoft_Excel
-     */
-    const ERRONEOUS_EXCEL_LEAP_YEAR_DAY = 60;
 
     /** @var SharedStringsManager Manages shared strings */
     protected $sharedStringsManager;
@@ -130,10 +122,15 @@ class CellValueFormatter
      */
     protected function formatInlineStringCellValue($node)
     {
-        // inline strings are formatted this way:
-        // <c r="A1" t="inlineStr"><is><t>[INLINE_STRING]</t></is></c>
-        $tNode = $node->getElementsByTagName(self::XML_NODE_INLINE_STRING_VALUE)->item(0);
-        $cellValue = $this->escaper->unescape($tNode->nodeValue);
+        // inline strings are formatted this way (they can contain any number of <t> nodes):
+        // <c r="A1" t="inlineStr"><is><t>[INLINE_STRING]</t><t>[INLINE_STRING_2]</t></is></c>
+        $tNodes = $node->getElementsByTagName(self::XML_NODE_INLINE_STRING_VALUE);
+
+        $cellValue = '';
+        for ($i = 0; $i < $tNodes->count(); $i++) {
+            $tNode = $tNodes->item($i);
+            $cellValue .= $this->escaper->unescape($tNode->nodeValue);
+        }
 
         return $cellValue;
     }

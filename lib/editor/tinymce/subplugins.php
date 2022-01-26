@@ -42,25 +42,12 @@ if ($return === 'settings') {
     $returnurl = new moodle_url('/admin/plugins.php');
 }
 
-$disabled = array();
-$disabledsubplugins = get_config('editor_tinymce', 'disabledsubplugins');
-if ($disabledsubplugins) {
-    $disabledsubplugins = explode(',', $disabledsubplugins);
-    foreach ($disabledsubplugins as $sp) {
-        $sp = trim($sp);
-        if ($sp !== '') {
-            $disabled[$sp] = $sp;
-        }
-    }
-}
-
 if ($disable) {
-    $disabled[$disable] = $disable;
+    $class = \core_plugin_manager::resolve_plugininfo_class('tinymce');
+    $class::enable_plugin($disable, false);
 } else if ($enable) {
-    unset($disabled[$enable]);
+    $class = \core_plugin_manager::resolve_plugininfo_class('tinymce');
+    $class::enable_plugin($enable, true);
 }
-
-set_config('disabledsubplugins', implode(',', $disabled), 'editor_tinymce');
-core_plugin_manager::reset_caches();
 
 redirect($returnurl);

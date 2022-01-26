@@ -82,9 +82,8 @@ class sectionselector implements renderable, templatable {
         $numsections = $format->get_last_section_number();
         while ($section <= $numsections) {
             $thissection = $modinfo->get_section_info($section);
-            $showsection = $thissection->uservisible || !$course->hiddensections;
             $url = course_get_url($course, $section);
-            if ($showsection && $url && $section != $data->currentsection) {
+            if ($thissection->uservisible && $url && $section != $data->currentsection) {
                 $sectionmenu[$url->out(false)] = get_section_name($course, $section);
             }
             $section++;

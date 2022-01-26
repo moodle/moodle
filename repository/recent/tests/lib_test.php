@@ -23,6 +23,9 @@
  * @copyright  Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace repository_recent;
+
+use repository;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,7 +41,7 @@ require_once($CFG->dirroot . '/files/externallib.php');
  * @copyright  Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class repository_recent_lib_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     /** @var repository Recent repository */
     private $repo;
@@ -52,7 +55,7 @@ class repository_recent_lib_testcase extends advanced_testcase {
     protected function setUp(): void {
         global $USER;
         $this->setAdminUser();
-        $this->usercontext = context_user::instance($USER->id);
+        $this->usercontext = \context_user::instance($USER->id);
         $repoid = $this->getDataGenerator()->create_repository('recent')->id;
         $this->repo = repository::get_repository_by_id($repoid, $this->usercontext);
     }

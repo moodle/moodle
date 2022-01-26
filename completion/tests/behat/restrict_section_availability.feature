@@ -7,21 +7,30 @@ Feature: Restrict sections availability through completion or grade conditions
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | Course 1 | C1        | 0        |
     And the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | Frist | teacher1@example.com |
-      | student1 | Student | First | student1@example.com |
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | Frist    | teacher1@example.com |
+      | student1 | Student   | First    | student1@example.com |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+    And the following "activity" exists:
+      | activity                            | assign                                                               |
+      | course                              | C1                                                                   |
+      | section                             | 1                                                                    |
+      | name                                | Grade assignment                                                     |
+      | intro                               | Grade this assignment to revoke restriction on restricted assignment |
+      | assignsubmission_onlinetext_enabled | 1                                                                    |
+      | assignsubmission_file_enabled       | 0                                                                    |
+      | submissiondrafts                    | 0                                                                    |
 
   @javascript
   Scenario: Show section greyed-out to student when completion condition is not satisfied
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
@@ -53,11 +62,6 @@ Feature: Restrict sections availability through completion or grade conditions
   Scenario: Show section greyed-out to student when grade condition is not satisfied
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Grade assignment |
-      | Description | Grade this assignment to revoke restriction on restricted assignment |
-      | assignsubmission_onlinetext_enabled | 1 |
-      | assignsubmission_file_enabled | 0 |
     And I add a "Page" to section "2" and I fill the form with:
       | Name | Test page name |
       | Description | Restricted section page resource, till grades in Grade assignment is at least 20% |
@@ -84,7 +88,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I should see "Submitted for grading"
     And I log out
     And I am on the "Grade assignment" "assign activity" page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student First" "table_row"
     And I set the following fields to these values:
       | Grade | 21 |

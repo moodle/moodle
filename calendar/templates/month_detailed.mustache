@@ -66,21 +66,24 @@
                             }}{{#durationevents.0}} duration{{/durationevents.0}}{{!
                             }}{{#durationevents}} duration_{{.}}{{/durationevents}}{{!
                             }}{{#defaulteventcontext}} clickable{{/defaulteventcontext}}{{!
+                            }}{{#hasevents}} hasevent{{/hasevents}}{{!
                         }}"
+                        data-day="{{mday}}"
                         data-day-timestamp="{{timestamp}}"
                         data-drop-zone="month-view-day"
                         data-region="day"
-                        data-new-event-timestamp="{{neweventtimestamp}}">
+                        data-new-event-timestamp="{{neweventtimestamp}}"{{#istoday}} title="{{#str}} today, core_calendar {{/str}}"{{/istoday}}
+                        {{#hasevents}} data-title="{{viewdaylinktitle}}"{{/hasevents}}>
                         <div class="d-none d-md-block hidden-phone text-xs-center">
                             <span class="sr-only">{{daytitle}}</span>
                             {{#hasevents}}
                                 <a data-action="view-day-link" href="#" class="aalink day" aria-label="{{viewdaylinktitle}}"
                                     data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
                                     data-courseid="{{courseid}}" data-categoryid="{{categoryid}}"
-                                    data-timestamp="{{timestamp}}">{{mday}}</a>
+                                    data-timestamp="{{timestamp}}"><span class="day-number-circle"><span class="day-number">{{mday}}</span></span></a>
                             {{/hasevents}}
                             {{^hasevents}}
-                                <span aria-hidden="true">{{mday}}</span>
+                                <span aria-hidden="true"><span class="day-number-circle"><span class="day-number">{{mday}}</span></span></span>
                             {{/hasevents}}
                             {{#hasevents}}
                                 <div data-region="day-content">
@@ -91,8 +94,9 @@
                                         {{/underway}}
                                         {{^underway}}
                                             <li data-region="event-item"
-                                                dava-event-component="{{component}}"
+                                                data-event-component="{{component}}"
                                                 data-event-eventtype="{{eventtype}}"
+                                                data-event-folded="false"
                                                 data-eventtype-{{normalisedeventtype}}="1"
                                                 {{#draggable}}
                                                     draggable="true"
@@ -120,7 +124,25 @@
                                             </li>
                                         {{/underway}}
                                         {{/events}}
+                                        <li data-action="view-more-events" style="display: none">
+                                            <strong>
+                                                <a data-action="view-day-link" href="#" class="aalink day" aria-label="{{viewdaylinktitle}}"
+                                                   data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
+                                                   data-courseid="{{courseid}}" data-categoryid="{{categoryid}}"
+                                                   data-timestamp="{{timestamp}}">
+                                                   {{#str}} moreevents, calendar, {{hasmoreevents}} {{/str}}
+                                                </a>
+                                            </strong>
+                                        </li>
                                     </ul>
+                                    <div class="hidden">
+                                        {{#events}}
+                                            <div data-popover-eventtype-{{normalisedeventtype}}="1">
+                                                {{> core_calendar/event_icon}}
+                                                {{{name}}}
+                                            </div>
+                                        {{/events}}
+                                    </div>
                                 </div>
                             {{/hasevents}}
                         </div>
@@ -130,10 +152,10 @@
                                 <a data-action="view-day-link" href="#" class="day aalink" aria-label="{{viewdaylinktitle}}"
                                     data-year="{{date.year}}" data-month="{{date.mon}}" data-day="{{mday}}"
                                     data-courseid="{{courseid}}" data-categoryid="{{categoryid}}"
-                                    data-timestamp="{{timestamp}}">{{mday}}</a>
+                                    data-timestamp="{{timestamp}}"><span class="day-number-circle"><span class="day-number">{{mday}}</span></span></a>
                             {{/hasevents}}
                             {{^hasevents}}
-                                <span aria-hidden="true">{{mday}}</span>
+                                <span aria-hidden="true"><span class="day-number-circle"><span class="day-number">{{mday}}</span></span></span>
                             {{/hasevents}}
                         </div>
                     </td>
@@ -149,42 +171,12 @@
 {{#js}}
 require([
     'jquery',
-    'core_calendar/month_view_drag_drop',
-    'core_calendar/selectors',
-    'core_calendar/events',
+    'core_calendar/month_view_drag_drop'
 ], function(
     $,
-    DragDrop,
-    CalendarSelectors,
-    CalendarEvents
+    DragDrop
 ) {
     var root = $('#month-detailed-{{uniqid}}-{{calendarinstanceid}}');
     DragDrop.init(root);
-
-    $('body').on(CalendarEvents.filterChanged, function(e, data) {
-        M.util.js_pending("month-detailed-{{uniqid}}-filterChanged");
-        // A filter value has been changed.
-        // Find all matching cells in the popover data, and hide them.
-        var target = root.find(CalendarSelectors.eventType[data.type]);
-
-        var transitionPromise = $.Deferred();
-        if (data.hidden) {
-            transitionPromise.then(function() {
-                return target.slideUp('fast').promise();
-            });
-        } else {
-            transitionPromise.then(function() {
-                return target.slideDown('fast').promise();
-            });
-        }
-
-        transitionPromise.then(function() {
-            M.util.js_complete("month-detailed-{{uniqid}}-filterChanged");
-
-            return;
-        });
-
-        transitionPromise.resolve();
-    });
 });
 {{/js}}

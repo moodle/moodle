@@ -29,7 +29,7 @@ Feature: Scorm multi-sco completion
       | packagefilepath          | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip |
       | completionstatusrequired | 4                                                        |
     And I am on the "Basic Multi-sco SCORM package" "scorm activity" page logged in as student1
-    And I should see "Normal"
+    And I should see "Enter"
     And I press "Enter"
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"
@@ -53,7 +53,7 @@ Feature: Scorm multi-sco completion
       | packagefilepath         | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip |
       | completionstatusallscos | 1                                                        |
     And I am on the "ADV Multi-sco SCORM package" "scorm activity" page logged in as student1
-    And I should see "Normal"
+    And I should see "Enter"
     And I press "Enter"
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"
@@ -68,7 +68,7 @@ Feature: Scorm multi-sco completion
     Then "Student 1" user has not completed "ADV Multi-sco SCORM package" activity
     And I log out
     And I am on the "ADV Multi-sco SCORM package" "scorm activity" page logged in as student1
-    And I should see "Normal"
+    And I should see "Enter"
     And I press "Enter"
     And I switch to "scorm_object" iframe
     And I should see "Par"

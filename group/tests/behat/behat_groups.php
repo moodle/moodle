@@ -77,8 +77,8 @@ class behat_groups extends behat_base {
 
         foreach ($groups as $groupname) {
             // Find the table after the H3 containing the grouping name, then look for the group name in the first column.
-            $xpath = "//h3[normalize-space(.) = '{$grouping}']/following-sibling::table//tr//".
-                "td[contains(concat(' ', normalize-space(@class), ' '), ' c0 ')][normalize-space(.) = '{$groupname}' ]";
+            $xpath = "//h3[normalize-space(.) = '{$grouping}']/following-sibling::div[contains(@class, 'table-responsive')]" .
+                "/table//tr//td[contains(concat(' ', normalize-space(@class), ' '), ' c0 ')][normalize-space(.) = '{$groupname}' ]";
 
             $this->execute('behat_general::should_exist', array($xpath, 'xpath_element'));
         }

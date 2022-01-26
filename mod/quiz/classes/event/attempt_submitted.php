@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  *      - int submitterid: id of submitter (null when trigged by CLI script).
  *      - int quizid: (optional) the id of the quiz.
+ *      - bool studentisonline: is the student currently interacting with Moodle?
  * }
  *
  * @package    mod_quiz

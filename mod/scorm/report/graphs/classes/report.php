@@ -135,6 +135,10 @@ class report extends \mod_scorm\report {
 
         $contextmodule = context_module::instance($cm->id);
 
+        $actionbar = new \mod_scorm\output\actionbar($cm->id, false, 0);
+        $renderer = $PAGE->get_renderer('mod_scorm');
+        echo $renderer->report_actionbar($actionbar);
+
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used.
             groups_print_activity_menu($cm, new moodle_url($PAGE->url));
         }

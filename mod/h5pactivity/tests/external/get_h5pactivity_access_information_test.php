@@ -42,7 +42,7 @@ use externallib_advanced_testcase;
  * @copyright  2020 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_h5pactivity_access_information_testcase extends externallib_advanced_testcase {
+class get_h5pactivity_access_information_test extends externallib_advanced_testcase {
 
     /**
      * Test the behaviour of get_h5pactivity_access_information().

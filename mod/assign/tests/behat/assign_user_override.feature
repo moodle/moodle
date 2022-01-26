@@ -25,7 +25,7 @@ Feature: Assign user override
   @javascript
   Scenario: Add, modify then delete a user override
     Given I am on the "Test assignment name" Activity page logged in as teacher1
-    When I navigate to "User overrides" in current page administration
+    When I navigate to "Overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user | Student1                            |
@@ -44,7 +44,7 @@ Feature: Assign user override
   @javascript
   Scenario: Duplicate a user override
     Given I am on the "Test assignment name" Activity page logged in as teacher1
-    When I navigate to "User overrides" in current page administration
+    When I navigate to "Overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user | Student1             |
@@ -62,13 +62,13 @@ Feature: Assign user override
   @javascript
   Scenario: Allow a user to have a different due date
     Given I am on the "Test assignment name" Activity page logged in as teacher1
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Allow submissions from | disabled             |
       | Due date               | ##1 Jan 2000 08:00## |
       | Cut-off date           | disabled             |
     And I press "Save and display"
-    And I navigate to "User overrides" in current page administration
+    And I navigate to "Overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user | Student1             |
@@ -76,26 +76,22 @@ Feature: Assign user override
     And I press "Save"
     Then I should see "Wednesday, 1 January 2020, 8:00"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student2
     And the activity date in "Test assignment name" should contain "Due: Saturday, 1 January 2000, 8:00"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" Activity page logged in as student1
     And the activity date in "Test assignment name" should contain "Due: Wednesday, 1 January 2020, 8:00"
 
   @javascript
   Scenario: Allow a user to have a different cut off date
     Given I am on the "Test assignment name" Activity page logged in as teacher1
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Due date               | disabled             |
       | Allow submissions from | disabled             |
       | Cut-off date           | ##1 Jan 2000 08:00## |
     And I press "Save and display"
-    And I navigate to "User overrides" in current page administration
+    And I navigate to "Overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user       | Student1             |
@@ -103,26 +99,22 @@ Feature: Assign user override
     And I press "Save"
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    Then I should not see "You have not made a submission yet."
+    And I am on the "Test assignment name" Activity page logged in as student2
+    Then I should not see "Add submission"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I should see "You have not made a submission yet."
+    And I am on the "Test assignment name" Activity page logged in as student1
+    And I should see "Add submission"
 
   @javascript
   Scenario: Allow a user to have a different start date
     Given I am on the "Test assignment name" Activity page logged in as teacher1
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Due date               | disabled                 |
       | Allow submissions from | ##1 January 2030 08:00## |
       | Cut-off date           | disabled                 |
     And I press "Save and display"
-    And I navigate to "User overrides" in current page administration
+    And I navigate to "Overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user          | Student1             |
@@ -132,12 +124,12 @@ Feature: Assign user override
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I click on "Test assignment name" "link" in the "region-main" "region"
     Then the activity date in "Test assignment name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I click on "Test assignment name" "link" in the "region-main" "region"
     And I should not see "1 January 2030, 8:00"
 
   Scenario: Override a user when teacher is in no group, and does not have accessallgroups permission, and the activity's group mode is "separate groups"
@@ -148,7 +140,7 @@ Feature: Assign user override
       | activity | name         | intro                    | course | groupmode |
       | assign   | Assignment 2 | Assignment 2 description | C1     | 1         |
     And I am on the "Assignment 2" Activity page logged in as teacher1
-    When I navigate to "User overrides" in current page administration
+    When I navigate to "Overrides" in current page administration
     Then I should see "No groups you can access."
     And the "Add user override" "button" should be disabled
 
@@ -170,7 +162,8 @@ Feature: Assign user override
       | student1 | G1    |
       | student2 | G2    |
     And I am on the "Assignment 2" Activity page logged in as teacher1
-    When I navigate to "User overrides" in current page administration
+    When I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
     And I press "Add user override"
     Then the "Override user" select box should contain "Sam1 Student1, student1@example.com"
     And the "Override user" select box should not contain "Sam2 Student2, student2@example.com"
@@ -194,7 +187,8 @@ Feature: Assign user override
       | student1 | G1    |
       | student2 | G2    |
     And I am on the "Assignment 2" Activity page logged in as admin
-    And I navigate to "User overrides" in current page administration
+    And I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user          | Student1                            |
@@ -207,18 +201,19 @@ Feature: Assign user override
     And I log out
 
     And I am on the "Assignment 2" Activity page logged in as teacher1
-    When I navigate to "User overrides" in current page administration
+    When I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
     Then I should see "Student1" in the ".generaltable" "css_element"
     But I should not see "Student2" in the ".generaltable" "css_element"
 
   @javascript
   Scenario: Create a user override when the assignment is not available to the student
     Given I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Availability" to "Hide from students"
     And I click on "Save and display" "button"
-    When I navigate to "User overrides" in current page administration
+    When I navigate to "Overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user          | Student1             |

@@ -352,9 +352,14 @@ function core_login_get_return_url() {
     if ($urltogo == ($CFG->wwwroot . '/')) {
         $homepage = get_home_page();
         // Go to my-moodle page instead of site homepage if defaulthomepage set to homepage_my.
-        if ($homepage == HOMEPAGE_MY && !is_siteadmin() && !isguestuser()) {
+        if ($homepage === HOMEPAGE_MY && !isguestuser()) {
             if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
                 $urltogo = $CFG->wwwroot.'/my/';
+            }
+        }
+        if ($homepage === HOMEPAGE_MYCOURSES && !isguestuser()) {
+            if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
+                $urltogo = $CFG->wwwroot.'/my/courses.php';
             }
         }
     }

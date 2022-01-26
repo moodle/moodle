@@ -36,7 +36,7 @@ use moodle_url;
  * @copyright  2020 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class writer_testcase extends \advanced_testcase {
+class writer_test extends \advanced_testcase {
 
     /**
      * Test writing data whose content contains an image with pluginfile.php source

@@ -678,6 +678,12 @@ class theme_config {
     public $precompiledcsscallback = null;
 
     /**
+     * Whether the theme uses course index.
+     * @var bool
+     */
+    public $usescourseindex = false;
+
+    /**
      * Load the config.php file for a particular theme, and return an instance
      * of this class. (That is, this is a factory method.)
      *
@@ -754,7 +760,7 @@ class theme_config {
             'rendererfactory', 'csspostprocess', 'editor_sheets', 'editor_scss', 'rarrow', 'larrow', 'uarrow', 'darrow',
             'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations', 'blockrendermethod',
             'scss', 'extrascsscallback', 'prescsscallback', 'csstreepostprocessor', 'addblockposition',
-            'iconsystem', 'precompiledcsscallback');
+            'iconsystem', 'precompiledcsscallback', 'haseditswitch', 'usescourseindex', 'activityheaderconfig');
 
         foreach ($config as $key=>$value) {
             if (in_array($key, $configurable)) {

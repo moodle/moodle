@@ -17,33 +17,91 @@
  * Report builder report management
  *
  * @module      core_reportbuilder/report
- * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import Notification from 'core/notification';
 import * as reportEvents from 'core_reportbuilder/local/events';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {setPageNumber, refreshTableContent} from 'core_table/dynamic';
 import * as tableSelectors from 'core_table/local/dynamic/selectors';
 
+const CLASSES = {
+    COLLAPSED: 'collapsed',
+    EXPANDED: 'show',
+    ICONUP: 'fa-angle-up',
+    ICONDOWN: 'fa-angle-down'
+};
+
+let initialized = false;
+
 /**
- * Initialise module
+ * Initialise module for given report
  *
- * @param {Number} reportId
+ * @method
  */
-export const init = reportId => {
+export const init = () => {
+
+    if (initialized) {
+        // We already added the event listeners (can be called multiple times by mustache template).
+        return;
+    }
+
     // Listen for the table reload event.
     document.addEventListener(reportEvents.tableReload, async(event) => {
-        const triggerElement = event.target.closest(reportSelectors.forSystemReport(reportId));
-        if (triggerElement === null) {
+        const reportElement = event.target.closest(reportSelectors.regions.report);
+        if (reportElement === null) {
             return;
         }
 
-        const tableRoot = triggerElement.querySelector(tableSelectors.main.region);
+        const tableRoot = reportElement.querySelector(tableSelectors.main.region);
         const pageNumber = event.detail?.preservePagination ? null : 1;
 
         await setPageNumber(tableRoot, pageNumber, false)
-            .then(refreshTableContent);
+            .then(refreshTableContent)
+            .then(() => {
+                // TODO: Refactor this after MDL-73130 lands.
+                const preserveTriggerElement = event.detail?.preserveTriggerElement;
+                if (preserveTriggerElement) {
+                    reportElement.querySelector(preserveTriggerElement)?.focus();
+                }
+                return;
+            })
+            .catch(Notification.exception);
     });
+
+    // Listen for trigger popup events.
+    document.addEventListener('click', event => {
+        const reportActionPopup = event.target.closest(reportSelectors.actions.reportActionPopup);
+        if (reportActionPopup === null) {
+            return;
+        }
+        event.preventDefault();
+        const popupAction = JSON.parse(reportActionPopup.dataset.popupAction);
+        window.openpopup(event, popupAction.jsfunctionargs);
+    });
+
+    // Listen for card view toggle events.
+    document.addEventListener('click', (event) => {
+        const toggleCard = event.target.closest(reportSelectors.actions.toggleCardView);
+        if (toggleCard) {
+            const tableCard = toggleCard.closest('tr');
+            const toggleIcon = toggleCard.querySelector('i');
+            event.preventDefault();
+            if (toggleCard.classList.contains(CLASSES.COLLAPSED)) {
+                tableCard.classList.add(CLASSES.EXPANDED);
+                toggleIcon.classList.replace(CLASSES.ICONDOWN, CLASSES.ICONUP);
+                toggleCard.classList.remove(CLASSES.COLLAPSED);
+                toggleCard.setAttribute('aria-expanded', "true");
+            } else {
+                tableCard.classList.remove(CLASSES.EXPANDED);
+                toggleIcon.classList.replace(CLASSES.ICONUP, CLASSES.ICONDOWN);
+                toggleCard.classList.add(CLASSES.COLLAPSED);
+                toggleCard.removeAttribute('aria-expanded');
+            }
+        }
+    });
+
+    initialized = true;
 };

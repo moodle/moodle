@@ -369,19 +369,11 @@ class grade_report_grader extends grade_report {
 
         if ($this->sortitemid) {
             if (!isset($SESSION->gradeuserreport->sort)) {
-                if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname') {
-                    $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
-                } else {
-                    $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
-                }
+                $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
             } else {
                 // this is the first sort, i.e. by last name
                 if (!isset($SESSION->gradeuserreport->sortitemid)) {
-                    if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname') {
-                        $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
-                    } else {
-                        $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
-                    }
+                    $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
                 } else if ($SESSION->gradeuserreport->sortitemid == $this->sortitemid) {
                     // same as last sort
                     if ($SESSION->gradeuserreport->sort == 'ASC') {
@@ -390,11 +382,7 @@ class grade_report_grader extends grade_report {
                         $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
                     }
                 } else {
-                    if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname') {
-                        $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
-                    } else {
-                        $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
-                    }
+                    $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
                 }
             }
             $SESSION->gradeuserreport->sortitemid = $this->sortitemid;
@@ -895,7 +883,7 @@ class grade_report_grader extends grade_report {
                         $categorycell->scope = 'col';
 
                         // Print icons.
-                        if ($USER->gradeediting[$this->courseid]) {
+                        if (!empty($USER->editing)) {
                             $categorycell->text .= $this->get_icons($element);
                         }
 
@@ -1080,7 +1068,7 @@ class grade_report_grader extends grade_report {
                 }
 
                 // Do not show any icons if no grade (no record in DB to match)
-                if (!$item->needsupdate and $USER->gradeediting[$this->courseid]) {
+                if (!$item->needsupdate and !empty($USER->editing)) {
                     $itemcell->text .= $this->get_icons($element);
                 }
 
@@ -1090,10 +1078,13 @@ class grade_report_grader extends grade_report {
                 }
 
                 $gradepass = ' gradefail ';
+                $gradepassicon = $OUTPUT->pix_icon('i/invalid', get_string('fail', 'grades'));
                 if ($grade->is_passed($item)) {
                     $gradepass = ' gradepass ';
+                    $gradepassicon = $OUTPUT->pix_icon('i/valid', get_string('pass', 'grades'));
                 } else if (is_null($grade->is_passed($item))) {
                     $gradepass = '';
+                    $gradepassicon = '';
                 }
 
                 // if in editing mode, we need to print either a text box
@@ -1102,7 +1093,7 @@ class grade_report_grader extends grade_report {
                 if ($item->needsupdate) {
                     $itemcell->text .= "<span class='gradingerror{$hidden}'>" . $strerror . "</span>";
 
-                } else if ($USER->gradeediting[$this->courseid]) {
+                } else if (!empty($USER->editing)) {
 
                     if ($item->scaleid && !empty($scalesarray[$item->scaleid])) {
                         $itemcell->attributes['class'] .= ' grade_type_scale';
@@ -1145,10 +1136,12 @@ class grade_report_grader extends grade_report {
 
                             // invalid grade if gradeval < 1
                             if ($gradeval < 1) {
-                                $itemcell->text .= "<span class='gradevalue{$hidden}{$gradepass}'>-</span>";
+                                $itemcell->text .= $gradepassicon .
+                                    "<span class='gradevalue{$hidden}{$gradepass}'>-</span>";
                             } else {
                                 $gradeval = $grade->grade_item->bounded_grade($gradeval); //just in case somebody changes scale
-                                $itemcell->text .= "<span class='gradevalue{$hidden}{$gradepass}'>{$scales[$gradeval - 1]}</span>";
+                                $itemcell->text .= $gradepassicon .
+                                    "<span class='gradevalue{$hidden}{$gradepass}'>{$scales[$gradeval - 1]}</span>";
                             }
                         }
 
@@ -1162,7 +1155,7 @@ class grade_report_grader extends grade_report {
                                           . '" type="text" class="text" title="'. $strgrade .'" name="grade['
                                           .$userid.'][' .$item->id.']" id="grade_'.$userid.'_'.$item->id.'" value="'.$value.'" />';
                         } else {
-                            $itemcell->text .= "<span class='gradevalue{$hidden}{$gradepass}'>" .
+                            $itemcell->text .= $gradepassicon . "<span class='gradevalue{$hidden}{$gradepass}'>" .
                                     format_float($gradeval, $decimalpoints) . "</span>";
                         }
                     }
@@ -1196,7 +1189,7 @@ class grade_report_grader extends grade_report {
                     }
 
                     if ($item->needsupdate) {
-                        $itemcell->text .= "<span class='gradingerror{$hidden}{$gradepass}'>" . $error . "</span>";
+                        $itemcell->text .= $gradepassicon . "<span class='gradingerror{$hidden}{$gradepass}'>" . $error . "</span>";
                     } else {
                         // The max and min for an aggregation may be different to the grade_item.
                         if (!is_null($gradeval)) {
@@ -1204,7 +1197,7 @@ class grade_report_grader extends grade_report {
                             $item->grademin = $grade->get_grade_min();
                         }
 
-                        $itemcell->text .= "<span class='gradevalue{$hidden}{$gradepass}'>" .
+                        $itemcell->text .= $gradepassicon . "<span class='gradevalue{$hidden}{$gradepass}'>" .
                                 grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null) . "</span>";
                         if ($showanalysisicon) {
                             $itemcell->text .= $this->gtree->get_grade_analysis_icon($grade);
@@ -1240,7 +1233,7 @@ class grade_report_grader extends grade_report {
 
             // Student grades and feedback are already at $jsarguments['feedback'] and $jsarguments['grades']
         }
-        $jsarguments['cfg']['isediting'] = (bool)$USER->gradeediting[$this->courseid];
+        $jsarguments['cfg']['isediting'] = !empty($USER->editing);
         $jsarguments['cfg']['courseid'] = $this->courseid;
         $jsarguments['cfg']['studentsperpage'] = $this->get_students_per_page();
         $jsarguments['cfg']['showquickfeedback'] = (bool) $showquickfeedback;
@@ -1253,7 +1246,7 @@ class grade_report_grader extends grade_report {
         $PAGE->requires->js_init_call('M.gradereport_grader.init_report', $jsarguments, false, $module);
         $PAGE->requires->strings_for_js(array('addfeedback', 'feedback', 'grade'), 'grades');
         $PAGE->requires->strings_for_js(array('ajaxchoosescale', 'ajaxclicktoclose', 'ajaxerror', 'ajaxfailedupdate', 'ajaxfieldchanged'), 'gradereport_grader');
-        if (!$enableajax && $USER->gradeediting[$this->courseid]) {
+        if (!$enableajax && !empty($USER->editing)) {
             $PAGE->requires->js_call_amd('core_form/changechecker', 'watchFormById', ['gradereport_grader']);
         }
 
@@ -1285,6 +1278,8 @@ class grade_report_grader extends grade_report {
         $fulltable->id = 'user-grades';
         $fulltable->caption = get_string('summarygrader', 'gradereport_grader');
         $fulltable->captionhide = true;
+        // We don't want the table to be enclosed within in a .table-responsive div as it is heavily customised.
+        $fulltable->responsive = false;
 
         // Extract rows from each side (left and right) and collate them into one row each
         foreach ($leftrows as $key => $row) {
@@ -1305,7 +1300,7 @@ class grade_report_grader extends grade_report {
     public function get_left_icons_row($rows=array(), $colspan=1) {
         global $USER;
 
-        if ($USER->gradeediting[$this->courseid]) {
+        if (!empty($USER->editing)) {
             $controlsrow = new html_table_row();
             $controlsrow->attributes['class'] = 'controls';
             $controlscell = new html_table_cell();
@@ -1402,7 +1397,7 @@ class grade_report_grader extends grade_report {
      */
     public function get_right_icons_row($rows=array()) {
         global $USER;
-        if ($USER->gradeediting[$this->courseid]) {
+        if (!empty($USER->editing)) {
             $iconsrow = new html_table_row();
             $iconsrow->attributes['class'] = 'controls';
 
@@ -1582,7 +1577,7 @@ class grade_report_grader extends grade_report {
                 }
 
                 // Determine which display type to use for this average
-                if ($USER->gradeediting[$this->courseid]) {
+                if (!empty($USER->editing)) {
                     $displaytype = GRADE_DISPLAY_TYPE_REAL;
 
                 } else if ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // no ==0 here, please resave the report and user preferences
@@ -1666,9 +1661,10 @@ class grade_report_grader extends grade_report {
         }
 
         $name = $element['object']->get_name();
+        $nameunescaped = $element['object']->get_name(false);
         $describedbyid = uniqid();
         $courseheader = html_writer::tag('span', $name, [
-            'title' => $name,
+            'title' => $nameunescaped,
             'class' => 'gradeitemheader',
             'aria-describedby' => $describedbyid
         ]);
@@ -1691,7 +1687,7 @@ class grade_report_grader extends grade_report {
     protected function get_icons($element) {
         global $CFG, $USER, $OUTPUT;
 
-        if (!$USER->gradeediting[$this->courseid]) {
+        if (empty($USER->editing)) {
             return '<div class="grade_icons" />';
         }
 
@@ -1987,4 +1983,3 @@ class grade_report_grader extends grade_report {
         return $this->get_pref('studentsperpage');
     }
 }
-

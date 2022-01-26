@@ -25,12 +25,11 @@ Feature: Allow to mark course as completed without cron for activity completion 
       | description                         | Test assignment description |
     And I log in as "admin"
     And I am on "Completion course" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Enable completion tracking" to "Yes"
     And I click on "Save and display" "button"
-    And I follow "Test assignment name"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test assignment name" "assign activity editing" page
     And I follow "Expand all"
     And I set the field "Completion tracking" to "Show activity as complete when conditions are met"
     And I set the field "completionusegrade" to "1"
@@ -45,10 +44,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
 
   @javascript
   Scenario: Update course completion when student marks activity as complete
-    Given I log in as "teacher1"
-    And I am on "Completion course" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test assignment name" "assign activity editing" page logged in as teacher1
     And I follow "Expand all"
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and return to course"
@@ -64,10 +60,8 @@ Feature: Allow to mark course as completed without cron for activity completion 
 
   @javascript
   Scenario: Update course completion when teacher grades a single assignment
-    Given I log in as "teacher1"
-    And I am on "Completion course" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    Given I am on the "Test assignment name" "assign activity" page logged in as teacher1
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
@@ -79,16 +73,13 @@ Feature: Allow to mark course as completed without cron for activity completion 
 
   @javascript
   Scenario: Update course completion with multiple activity criteria
-    Given I log in as "admin"
-    And the following "activity" exists:
+    Given the following "activity" exists:
       | activity                            | assign                      |
       | course                              | CC1                         |
       | name                                | Test assignment name2       |
       | idnumber                            | assign2                     |
       | description                         | Test assignment description |
-    And I am on "Completion course" course homepage
-    And I follow "Test assignment name2"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test assignment name2" "assign activity editing" page logged in as admin
     And I follow "Expand all"
     And I set the field "Completion tracking" to "Show activity as complete when conditions are met"
     And I set the field "completionusegrade" to "1"
@@ -98,9 +89,8 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I set the field "Assignment - Test assignment name" to "1"
     And I set the field "Assignment - Test assignment name2" to "1"
     And I press "Save changes"
-    And I am on "Completion course" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I am on the "Test assignment name" "assign activity" page
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
@@ -110,10 +100,8 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I am on "Completion course" course homepage
     And I should see "Status: In progress"
     And I log out
-    When I log in as "teacher1"
-    And I am on "Completion course" course homepage
-    And I follow "Test assignment name2"
-    And I navigate to "View all submissions" in current page administration
+    And I am on the "Test assignment name2" "assign activity" page logged in as teacher1
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
@@ -128,7 +116,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     Given I log in as "teacher1"
     And I am on "Completion course" course homepage
     And I navigate to "View > Grader report" in the course gradebook
-    And I press "Turn editing on"
+    And I turn editing mode on
     And I give the grade "57" to the user "Student First" for the grade item "Test assignment name"
     And I press "Save changes"
     And I log out
@@ -153,7 +141,6 @@ Feature: Allow to mark course as completed without cron for activity completion 
       | Grade for Test assignment name | 10.00 |
       | Feedback for Test assignment name | test data |
     And I press "Save"
-    And I press "Continue"
     And I log out
     And I log in as "student1"
     And I am on "Completion course" course homepage
@@ -168,7 +155,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
   Scenario: Course completion should not be updated when teacher imports grades with csv file
     Given I log in as "teacher1"
     And I am on "Completion course" course homepage
-    And I navigate to "Import" in the course gradebook
+    And I navigate to "CSV file" import page in the course gradebook
     And I upload "lib/tests/fixtures/upload_grades.csv" file to "File" filemanager
     And I press "Upload grades"
     And I set the field "Map to" to "Email address"

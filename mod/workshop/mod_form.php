@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once(__DIR__ . '/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
 
+use core_grades\component_gradeitems;
 /**
  * Module settings form for Workshop instances
  */
@@ -459,6 +460,23 @@ class mod_workshop_mod_form extends moodleform_mod {
                 if ($gradepassfloat > $data['gradinggrade']) {
                     $errors['gradinggradepass'] = get_string('gradepassgreaterthangrade', 'grades', $data['gradinggrade']);
                 }
+            }
+        }
+
+        // We need to do a custom completion validation because workshop grade items identifiers divert from standard.
+        // Refer to validation defined in moodleform_mod.php.
+        if (isset($data['completionpassgrade']) && $data['completionpassgrade'] &&
+            isset($data['completiongradeitemnumber'])) {
+            $itemnames = component_gradeitems::get_itemname_mapping_for_component('mod_workshop');
+            $gradepassfield = $itemnames[(int) $data['completiongradeitemnumber']] . 'gradepass';
+            if (!isset($data[$gradepassfield]) || grade_floatval($data[$gradepassfield]) == 0) {
+                $errors['completionpassgrade'] = get_string(
+                    'activitygradetopassnotset',
+                    'completion'
+                );
+            } else {
+                // We have validated grade pass. Unset any errors.
+                unset($errors['completionpassgrade']);
             }
         }
 

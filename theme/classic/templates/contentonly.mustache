@@ -56,6 +56,9 @@
             <div id="region-main-box" class="col-12">
                 <section id="region-main" aria-label="{{#str}}content{{/str}}">
                     {{{ output.course_content_header }}}
+                    {{#headercontent}}
+                        {{> core/activity_header }}
+                    {{/headercontent}}
                     {{{ output.main_content }}}
                     {{{ output.activity_navigation }}}
                     {{{ output.course_content_footer }}}

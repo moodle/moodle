@@ -70,6 +70,8 @@ define([
         VIEW_DAY_LINK: "[data-action='view-day-link']",
         CALENDAR_MONTH_WRAPPER: ".calendarwrapper",
         TODAY: '.today',
+        DAY_NUMBER_CIRCLE: '.day-number-circle',
+        DAY_NUMBER: '.day-number'
     };
 
     /**
@@ -173,10 +175,10 @@ define([
      * @param {object} root The calendar root element
      */
     var registerEventListeners = function(root) {
+        const viewingFullCalendar = document.getElementById(CalendarSelectors.fullCalendarView);
         // Listen the click on the day link to render the day view.
         root.on('click', SELECTORS.VIEW_DAY_LINK, function(e) {
-            const viewingFullCalendar = document.getElementById(CalendarSelectors.fullCalendarView);
-            var dayLink = $(e.target);
+            var dayLink = $(e.target).closest(SELECTORS.VIEW_DAY_LINK);
             var year = dayLink.data('year'),
                 month = dayLink.data('month'),
                 day = dayLink.data('day'),
@@ -211,30 +213,36 @@ define([
 
         if (contextId) {
             // Bind click events to calendar days.
-            root.on('click', SELECTORS.DAY, function (e) {
-
+            root.on('click', SELECTORS.DAY, function(e) {
                 var target = $(e.target);
+                const displayingSmallBlockCalendar = root.parents('aside').data('blockregion') === 'side-pre';
 
-                if (!target.is(SELECTORS.VIEW_DAY_LINK)) {
-                    var startTime = $(this).attr('data-new-event-timestamp');
-                    eventFormPromise.then(function (modal) {
-                        var wrapper = target.closest(CalendarSelectors.wrapper);
-                        modal.setCourseId(wrapper.data('courseid'));
+                if (!viewingFullCalendar && displayingSmallBlockCalendar) {
+                    const dateContainer = target.closest(SELECTORS.DAY);
+                    const url = '?view=day&time=' + dateContainer.data('day-timestamp');
+                    window.location.assign(Config.wwwroot + '/calendar/view.php' + url);
+                } else {
+                    const hasViewDayLink = target.closest(SELECTORS.VIEW_DAY_LINK).length;
+                    const shouldShowNewEventModal = !hasViewDayLink;
+                    if (shouldShowNewEventModal) {
+                        var startTime = $(this).attr('data-new-event-timestamp');
+                        eventFormPromise.then(function(modal) {
+                            var wrapper = target.closest(CalendarSelectors.wrapper);
+                            modal.setCourseId(wrapper.data('courseid'));
 
-                        var categoryId = wrapper.data('categoryid');
-                        if (typeof categoryId !== 'undefined') {
-                            modal.setCategoryId(categoryId);
-                        }
+                            var categoryId = wrapper.data('categoryid');
+                            if (typeof categoryId !== 'undefined') {
+                                modal.setCategoryId(categoryId);
+                            }
 
-                        modal.setContextId(wrapper.data('contextId'));
-                        modal.setStartTime(startTime);
-                        modal.show();
-                        return;
-                    })
-                    .fail(Notification.exception);
-
-                    e.preventDefault();
+                            modal.setContextId(wrapper.data('contextId'));
+                            modal.setStartTime(startTime);
+                            modal.show();
+                            return;
+                        }).fail(Notification.exception);
+                    }
                 }
+                e.preventDefault();
             });
         }
     };

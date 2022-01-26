@@ -17,6 +17,8 @@
 namespace core_courseformat\output\local\state;
 
 use core_courseformat\base as course_format;
+use course_modinfo;
+use moodle_url;
 use renderable;
 use stdClass;
 
@@ -50,13 +52,19 @@ class course implements renderable {
     public function export_for_template(\renderer_base $output): stdClass {
         $format = $this->format;
         $course = $format->get_course();
-        $modinfo = $this->format->get_modinfo();
+        // State must represent always the most updated version of the course.
+        $modinfo = course_modinfo::instance($course);
+
+        $url = new moodle_url('/course/view.php', ['id' => $course->id]);
 
         $data = (object)[
             'id' => $course->id,
             'numsections' => $format->get_last_section_number(),
             'sectionlist' => [],
             'editmode' => $format->show_editor(),
+            'highlighted' => $format->get_section_highlighted_name(),
+            'maxsections' => $format->get_max_sections(),
+            'baseurl' => $url->out(),
         ];
 
         $sections = $modinfo->get_section_info_all();

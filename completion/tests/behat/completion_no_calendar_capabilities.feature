@@ -25,15 +25,14 @@ Feature: Completion with no calendar capabilites
     And I log in as "admin"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_completionexpected_enabled | 1    |
       | id_completionexpected_day     | 1    |
       | id_completionexpected_month   | 1    |
       | id_completionexpected_year    | 2017 |
     And I press "Save and return to course"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Permissions" in current page administration
+    And I am on the "Course 1" "permissions" page
     And I override the system permissions of "Teacher" role with:
       | capability | permission |
       | moodle/calendar:manageentries | Prohibit |
@@ -43,7 +42,7 @@ Feature: Completion with no calendar capabilites
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_completionexpected_year | 2018 |
     And I press "Save and return to course"

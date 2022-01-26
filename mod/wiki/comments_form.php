@@ -27,7 +27,7 @@ class mod_wiki_comments_form extends moodleform {
 
         //-------------------------------------------------------------------------------
         // buttons
-        $this->add_action_buttons(false);
+        $this->add_action_buttons(true);
 
         //-------------------------------------------------------------------------------
         $this->set_data($current);

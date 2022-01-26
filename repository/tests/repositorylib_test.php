@@ -41,7 +41,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         $syscontext = context_system::instance();
-        $repositorypluginname = 'boxnet';
+        $repositorypluginname = 'dropbox';
         // override repository permission
         $capability = 'repository/' . $repositorypluginname . ':view';
         $guestroleid = $DB->get_field('role', 'id', array('shortname' => 'guest'));

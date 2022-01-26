@@ -42,6 +42,12 @@ $PAGE->set_url('/mod/folder/edit.php', array('id' => $cm->id));
 $PAGE->set_title($course->shortname.': '.$folder->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($folder);
+$PAGE->set_secondary_active_tab('modulepage');
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
+$PAGE->add_body_class('limitedwidth');
 
 $data = new stdClass();
 $data->id = $cm->id;
@@ -78,7 +84,6 @@ if ($mform->is_cancelled()) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($folder->name));
 echo $OUTPUT->box_start('generalbox foldertree');
 $mform->display();
 echo $OUTPUT->box_end();

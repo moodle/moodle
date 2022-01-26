@@ -41,9 +41,9 @@ class qtype_ddwtos_edit_form extends qtype_gapselect_edit_form_base {
 
     protected function data_preprocessing_choice($question, $answer, $key) {
         $question = parent::data_preprocessing_choice($question, $answer, $key);
-        $options = unserialize($answer->feedback);
-        $question->choices[$key]['choicegroup'] = $options->draggroup;
-        $question->choices[$key]['infinite'] = $options->infinite;
+        $options = unserialize_object($answer->feedback);
+        $question->choices[$key]['choicegroup'] = $options->draggroup ?? 1;
+        $question->choices[$key]['infinite'] = !empty($options->infinite);
         return $question;
     }
 

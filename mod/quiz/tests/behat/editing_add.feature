@@ -18,7 +18,6 @@ Feature: Edit quiz page - adding things
       | activity   | name   | intro                           | course | idnumber |
       | quiz       | Quiz 1 | Quiz 1 for testing the Add menu | C1     | quiz1    |
     And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
-    And I should see "Editing quiz: Quiz 1"
 
   @javascript
   Scenario: Add some new question to the quiz using '+ a new question' options of the 'Add' menu.
@@ -30,7 +29,6 @@ Feature: Edit quiz page - adding things
     And I set the field "Question name" to "Essay 01 new"
     And I set the field "Question text" to "Please write 200 words about Essay 01"
     And I press "id_submitbutton"
-    Then I should see "Editing quiz: Quiz 1"
     And I should see "Essay 01 new" on quiz page "1"
 
     And I open the "Page 1" add to quiz menu
@@ -41,7 +39,6 @@ Feature: Edit quiz page - adding things
     And I set the field "Question name" to "Essay 02 new"
     And I set the field "Question text" to "Please write 200 words about Essay 02"
     And I press "id_submitbutton"
-    Then I should see "Editing quiz: Quiz 1"
     And I should see "Essay 01 new" on quiz page "1"
     And I should see "Essay 02 new" on quiz page "1"
 
@@ -53,7 +50,6 @@ Feature: Edit quiz page - adding things
     And I set the field "Question name" to "Essay 03 new"
     And I set the field "Question text" to "Please write 300 words about Essay 03"
     And I press "id_submitbutton"
-    Then I should see "Editing quiz: Quiz 1"
     And I should see "Essay 01 new" on quiz page "1"
     And I should see "Essay 02 new" on quiz page "1"
     And I should see "Essay 03 new" on quiz page "1"
@@ -66,7 +62,6 @@ Feature: Edit quiz page - adding things
     And I set the field "Question name" to "Essay 04 new"
     And I set the field "Question text" to "Please write 300 words about Essay 04"
     And I press "id_submitbutton"
-    Then I should see "Editing quiz: Quiz 1"
     And I should see "Essay 01 new" on quiz page "1"
     And I should see "Essay 02 new" on quiz page "1"
     And I should see "Essay 03 new" on quiz page "1"
@@ -77,7 +72,7 @@ Feature: Edit quiz page - adding things
     When I press "Repaginate"
     Then I should see "Repaginate with"
     And I set the field "menuquestionsperpage" to "2"
-    When I click on "Go" "button" in the "Repaginate" "dialogue"
+    And I click on "Go" "button" in the "Repaginate" "dialogue"
     And I should see "Essay 01 new" on quiz page "1"
     And I should see "Essay 02 new" on quiz page "1"
     And I should see "Essay 03 new" on quiz page "2"
@@ -89,10 +84,9 @@ Feature: Edit quiz page - adding things
     And I set the field "item_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
-    When I set the field "Question name" to "Essay for page 2"
+    And I set the field "Question name" to "Essay for page 2"
     And I set the field "Question text" to "Please write 200 words about Essay for page 2"
     And I press "id_submitbutton"
-    Then I should see "Editing quiz: Quiz 1"
     And I should see "Essay 01 new" on quiz page "1"
     And I should see "Essay 02 new" on quiz page "1"
     And I should see "Essay 03 new" on quiz page "2"
@@ -106,22 +100,23 @@ Feature: Edit quiz page - adding things
 
     # Create a couple of sub categories.
     When I am on "Course 1" course homepage
-    And I navigate to "Question bank > Categories" in current page administration
+    And I navigate to "Question bank" in current page administration
+    And I select "Categories" from the "questionbankactionselect" singleselect
     Then I should see "Add category"
     Then I set the field "Parent category" to "Default for C1"
     And I set the field "Name" to "Subcat 1"
     And I set the field "Category info" to "This is sub category 1"
-    Then I press "id_submitbutton"
+    And I press "id_submitbutton"
     And I should see "Subcat 1"
 
     Then I set the field "Parent category" to "Default for C1"
     And I set the field "Name" to "Subcat 2"
     And I set the field "Category info" to "This is sub category 2"
-    Then I press "id_submitbutton"
+    And I press "id_submitbutton"
     And I should see "Subcat 2"
 
-    And I follow "Question bank"
-    Then I should see "Question bank"
+    And I select "Questions" from the "questionbankactionselect" singleselect
+    And I should see "Question bank"
     And I should see "Select a category"
 
     # Create the Essay 01 question.
@@ -191,17 +186,15 @@ Feature: Edit quiz page - adding things
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then the "Add selected questions to the quiz" "button" should be disabled
-    And I click on "Essay 03" "checkbox"
+    And I click on "Select" "checkbox" in the "Essay 03" "table_row"
     Then the "Add selected questions to the quiz" "button" should be enabled
     And I click on "Add to quiz" "link" in the "Essay 03" "table_row"
-    Then I should see "Editing quiz: Quiz 1"
     And I should see "Essay 03" on quiz page "1"
 
     # Add Essay 01 from question bank.
     And I open the "Page 1" add to quiz menu
     And I follow "from question bank"
     And I click on "Add to quiz" "link" in the "Essay 01" "table_row"
-    Then I should see "Editing quiz: Quiz 1"
     And I should see "Essay 03" on quiz page "1"
     And I should see "Essay 01" on quiz page "1"
 
@@ -211,7 +204,6 @@ Feature: Edit quiz page - adding things
     And I should see "Select a category"
     And I set the field "Select a category" to "Subcat 1"
     And I click on "Add to quiz" "link" in the "Essay 02" "table_row"
-    Then I should see "Editing quiz: Quiz 1"
     And I should see "Essay 03" on quiz page "1"
     And I should see "Essay 01" on quiz page "1"
     And I should see "Essay 02" on quiz page "1"
@@ -220,7 +212,6 @@ Feature: Edit quiz page - adding things
     And I open the "Page 1" add to quiz menu
     And I follow "a random question"
     And I press "Add random question"
-    Then I should see "Editing quiz: Quiz 1"
     And I should see "Essay 03" on quiz page "1"
     And I should see "Essay 01" on quiz page "1"
     And I should see "Essay 02" on quiz page "1"
@@ -246,7 +237,6 @@ Feature: Edit quiz page - adding things
     And I set the field "Question name" to "Essay for page 4"
     And I set the field "Question text" to "Please write 200 words about Essay for page 4"
     And I press "id_submitbutton"
-    Then I should see "Editing quiz: Quiz 1"
     And I should see "Essay 03" on quiz page "1"
     And I should see "Essay 01" on quiz page "2"
     And I should see "Essay 02" on quiz page "3"

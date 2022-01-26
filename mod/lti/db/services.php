@@ -101,6 +101,24 @@ $functions = array(
         'ajax'          => true
     ),
 
+    'mod_lti_get_tool_types_and_proxies' => [
+        'classname'     => 'mod_lti\external\get_tool_types_and_proxies',
+        'methodname'    => 'execute',
+        'description'   => 'Get a list of the tool types and tool proxies',
+        'type'          => 'read',
+        'capabilities'  => 'moodle/site:config',
+        'ajax'          => true
+    ],
+
+    'mod_lti_get_tool_types_and_proxies_count' => [
+        'classname'     => 'mod_lti\external\get_tool_types_and_proxies_count',
+        'methodname'    => 'execute',
+        'description'   => 'Get total number of the tool types and tool proxies',
+        'type'          => 'read',
+        'capabilities'  => 'moodle/site:config',
+        'ajax'          => true
+    ],
+
     'mod_lti_create_tool_type' => array(
         'classname'     => 'mod_lti_external',
         'methodname'    => 'create_tool_type',

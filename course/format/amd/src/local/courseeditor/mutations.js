@@ -34,78 +34,348 @@ export default class {
      * @param {string} action
      * @param {number} courseId
      * @param {array} ids
+     * @param {number} targetSectionId optional target section id (for moving actions)
+     * @param {number} targetCmId optional target cm id (for moving actions)
      */
-    async _callEditWebservice(action, courseId, ids) {
+    async _callEditWebservice(action, courseId, ids, targetSectionId, targetCmId) {
+        const args = {
+            action,
+            courseid: courseId,
+            ids,
+        };
+        if (targetSectionId) {
+            args.targetsectionid = targetSectionId;
+        }
+        if (targetCmId) {
+            args.targetcmid = targetCmId;
+        }
         let ajaxresult = await ajax.call([{
             methodname: 'core_courseformat_update_course',
-            args: {
-                action,
-                courseid: courseId,
-                ids,
-            }
+            args,
         }])[0];
         return JSON.parse(ajaxresult);
+    }
+
+
+    /**
+     * Mutation module initialize.
+     *
+     * The reactive instance will execute this method when addMutations or setMutation is invoked.
+     *
+     * @param {StateManager} stateManager the state manager
+     */
+    init(stateManager) {
+        // Add a method to prepare the fields when some update is comming from the server.
+        stateManager.addUpdateTypes({
+            prepareFields: this._prepareFields,
+        });
+    }
+
+    /**
+     * Add default values to state elements.
+     *
+     * This method is called every time a webservice returns a update state message.
+     *
+     * @param {Object} stateManager the state manager
+     * @param {String} updateName the state element to update
+     * @param {Object} fields the new data
+     * @returns {Object} final fields data
+     */
+    _prepareFields(stateManager, updateName, fields) {
+        // Any update should unlock the element.
+        fields.locked = false;
+        return fields;
+    }
+
+    /**
+     * Move course modules to specific course location.
+     *
+     * Note that one of targetSectionId or targetCmId should be provided in order to identify the
+     * new location:
+     *  - targetCmId: the activities will be located avobe the target cm. The targetSectionId
+     *                value will be ignored in this case.
+     *  - targetSectionId: the activities will be appended to the section. In this case
+     *                     targetSectionId should not be present.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmids the list of cm ids to move
+     * @param {number} targetSectionId the target section id
+     * @param {number} targetCmId the target course module id
+     */
+    async cmMove(stateManager, cmids, targetSectionId, targetCmId) {
+        if (!targetSectionId && !targetCmId) {
+            throw new Error(`Mutation cmMove requires targetSectionId or targetCmId`);
+        }
+        const course = stateManager.get('course');
+        this.cmLock(stateManager, cmids, true);
+        const updates = await this._callEditWebservice('cm_move', course.id, cmids, targetSectionId, targetCmId);
+        stateManager.processUpdates(updates);
+        this.cmLock(stateManager, cmids, false);
+    }
+
+    /**
+     * Move course modules to specific course location.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of section ids to move
+     * @param {number} targetSectionId the target section id
+     */
+    async sectionMove(stateManager, sectionIds, targetSectionId) {
+        if (!targetSectionId) {
+            throw new Error(`Mutation sectionMove requires targetSectionId`);
+        }
+        const course = stateManager.get('course');
+        this.sectionLock(stateManager, sectionIds, true);
+        const updates = await this._callEditWebservice('section_move', course.id, sectionIds, targetSectionId);
+        stateManager.processUpdates(updates);
+        this.sectionLock(stateManager, sectionIds, false);
+    }
+
+    /**
+     * Add a new section to a specific course location.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {number} targetSectionId optional the target section id
+     */
+    async addSection(stateManager, targetSectionId) {
+        if (!targetSectionId) {
+            targetSectionId = 0;
+        }
+        const course = stateManager.get('course');
+        const updates = await this._callEditWebservice('section_add', course.id, [], targetSectionId);
+        stateManager.processUpdates(updates);
+    }
+
+    /**
+     * Delete sections.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of course modules ids
+     */
+    async sectionDelete(stateManager, sectionIds) {
+        const course = stateManager.get('course');
+        const updates = await this._callEditWebservice('section_delete', course.id, sectionIds);
+        stateManager.processUpdates(updates);
+    }
+
+    /**
+     * Mark or unmark course modules as dragging.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of course modules ids
+     * @param {bool} dragValue the new dragging value
+     */
+    cmDrag(stateManager, cmIds, dragValue) {
+        this.setPageItem(stateManager);
+        this._setElementsValue(stateManager, 'cm', cmIds, 'dragging', dragValue);
+    }
+
+    /**
+     * Mark or unmark course sections as dragging.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of section ids
+     * @param {bool} dragValue the new dragging value
+     */
+    sectionDrag(stateManager, sectionIds, dragValue) {
+        this.setPageItem(stateManager);
+        this._setElementsValue(stateManager, 'section', sectionIds, 'dragging', dragValue);
+    }
+
+    /**
+     * Mark or unmark course modules as complete.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of course modules ids
+     * @param {bool} complete the new completion value
+     */
+    cmCompletion(stateManager, cmIds, complete) {
+        const newValue = (complete) ? 1 : 0;
+        this._setElementsValue(stateManager, 'cm', cmIds, 'completionstate', newValue);
+    }
+
+    /**
+     * Lock or unlock course modules.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of course modules ids
+     * @param {bool} lockValue the new locked value
+     */
+    cmLock(stateManager, cmIds, lockValue) {
+        this._setElementsValue(stateManager, 'cm', cmIds, 'locked', lockValue);
+    }
+
+    /**
+     * Lock or unlock course sections.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of section ids
+     * @param {bool} lockValue the new locked value
+     */
+    sectionLock(stateManager, sectionIds, lockValue) {
+        this._setElementsValue(stateManager, 'section', sectionIds, 'locked', lockValue);
+    }
+
+    _setElementsValue(stateManager, name, ids, fieldName, newValue) {
+        stateManager.setReadOnly(false);
+        ids.forEach((id) => {
+            const element = stateManager.get(name, id);
+            if (element) {
+                element[fieldName] = newValue;
+            }
+        });
+        stateManager.setReadOnly(true);
+    }
+
+    /**
+     * Set the page current item.
+     *
+     * Only one element of the course state can be the page item at a time.
+     *
+     * There are several actions that can alter the page current item. For example, when the user is in an activity
+     * page, the page item is always the activity one. However, in a course page, when the user scrolls to an element,
+     * this element get the page item.
+     *
+     * If the page item is static means that it is not meant to change. This is important because
+     * static page items has some special logic. For example, if a cm is the static page item
+     * and it is inside a collapsed section, the course index will expand the section to make it visible.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {String|undefined} type the element type (section or cm). Undefined will remove the current page item.
+     * @param {Number|undefined} id the element id
+     * @param {boolean|undefined} isStatic if the page item is static
+     */
+    setPageItem(stateManager, type, id, isStatic) {
+        let newPageItem;
+        if (type !== undefined) {
+            newPageItem = stateManager.get(type, id);
+            if (!newPageItem) {
+                return;
+            }
+        }
+        stateManager.setReadOnly(false);
+        // Remove the current page item.
+        const course = stateManager.get('course');
+        course.pageItem = null;
+        // Save the new page item.
+        if (newPageItem) {
+            course.pageItem = {
+                id,
+                type,
+                sectionId: (type == 'section') ? newPageItem.id : newPageItem.sectionid,
+                isStatic,
+            };
+        }
+        stateManager.setReadOnly(true);
+    }
+
+    /**
+     * Unlock all course elements.
+     *
+     * @param {StateManager} stateManager the current state manager
+     */
+    unlockAll(stateManager) {
+        const state = stateManager.state;
+        stateManager.setReadOnly(false);
+        state.section.forEach((section) => {
+            section.locked = false;
+        });
+        state.cm.forEach((cm) => {
+            cm.locked = false;
+        });
+        stateManager.setReadOnly(true);
+    }
+
+    /*
+     * Get updated user preferences and state data related to some section ids.
+     *
+     * @param {StateManager} stateManager the current state
+     * @param {array} sectionIds the list of section ids to update
+     * @param {Object} preferences the new preferences values
+     */
+    async sectionPreferences(stateManager, sectionIds, preferences) {
+        stateManager.setReadOnly(false);
+        // Check if we need to update preferences.
+        let updatePreferences = false;
+        sectionIds.forEach(sectionId => {
+            const section = stateManager.get('section', sectionId);
+            if (section === undefined) {
+                return;
+            }
+            let newValue = preferences.contentcollapsed ?? section.contentcollapsed;
+            if (section.contentcollapsed != newValue) {
+                section.contentcollapsed = newValue;
+                updatePreferences = true;
+            }
+            newValue = preferences.indexcollapsed ?? section.indexcollapsed;
+            if (section.indexcollapsed != newValue) {
+                section.indexcollapsed = newValue;
+                updatePreferences = true;
+            }
+        });
+        stateManager.setReadOnly(true);
+
+        if (updatePreferences) {
+            // Build the preference structures.
+            const course = stateManager.get('course');
+            const state = stateManager.state;
+            const prefKey = `coursesectionspreferences_${course.id}`;
+            const preferences = {
+                contentcollapsed: [],
+                indexcollapsed: [],
+            };
+            state.section.forEach(section => {
+                if (section.contentcollapsed) {
+                    preferences.contentcollapsed.push(section.id);
+                }
+                if (section.indexcollapsed) {
+                    preferences.indexcollapsed.push(section.id);
+                }
+            });
+            const jsonString = JSON.stringify(preferences);
+            M.util.set_user_preference(prefKey, jsonString);
+        }
     }
 
     /**
      * Get updated state data related to some cm ids.
      *
      * @method cmState
-     * @param {StateManager} statemanager the current state
+     * @param {StateManager} stateManager the current state
      * @param {array} cmids the list of cm ids to update
      */
-    async cmState(statemanager, cmids) {
-        const state = statemanager.state;
-        const updates = await this._callEditWebservice('cm_state', state.course.id, cmids);
-        statemanager.setReadOnly(false);
-        this._processUpdates(statemanager, updates);
+    async cmState(stateManager, cmids) {
+        this.cmLock(stateManager, cmids, true);
+        const course = stateManager.get('course');
+        const updates = await this._callEditWebservice('cm_state', course.id, cmids);
+        stateManager.processUpdates(updates);
+        this.cmLock(stateManager, cmids, false);
     }
 
     /**
      * Get updated state data related to some section ids.
      *
      * @method sectionState
-     * @param {StateManager} statemanager the current state
+     * @param {StateManager} stateManager the current state
      * @param {array} sectionIds the list of section ids to update
      */
-    async sectionState(statemanager, sectionIds) {
-        const state = statemanager.state;
-        const updates = await this._callEditWebservice('section_state', state.course.id, sectionIds);
-        this._processUpdates(statemanager, updates);
+    async sectionState(stateManager, sectionIds) {
+        this.sectionLock(stateManager, sectionIds, true);
+        const course = stateManager.get('course');
+        const updates = await this._callEditWebservice('section_state', course.id, sectionIds);
+        stateManager.processUpdates(updates);
+        this.sectionLock(stateManager, sectionIds, false);
     }
 
     /**
-     * Helper to propcess both section_state and cm_state action results.
+     * Get the full updated state data of the course.
      *
-     * @param {StateManager} statemanager the current state
-     * @param {Array} updates of updates.
+     * @param {StateManager} stateManager the current state
      */
-    _processUpdates(statemanager, updates) {
-
-        const state = statemanager.state;
-
-        statemanager.setReadOnly(false);
-
-        // The cm_state and section_state state action returns only updated states. However, most of the time we need this
-        // mutation to fix discrepancies between the course content and the course state because core_course_edit_module
-        // does not provide enough information to rebuild some state objects. This is the reason why we cannot use
-        // the batch method processUpdates as the rest of mutations do.
-        updates.forEach((update) => {
-            if (update.name === undefined) {
-                throw Error('Missing state update name');
-            }
-            // Compare the action with the current state.
-            let current = state[update.name];
-            if (current instanceof Map) {
-                current = state[update.name].get(update.fields.id);
-            }
-            if (!current) {
-                update.action = 'create';
-            }
-
-            statemanager.processUpdate(update.name, update.action, update.fields);
-        });
-
-        statemanager.setReadOnly(true);
+    async courseState(stateManager) {
+        const course = stateManager.get('course');
+        const updates = await this._callEditWebservice('course_state', course.id);
+        stateManager.processUpdates(updates);
     }
+
 }

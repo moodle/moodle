@@ -30,42 +30,17 @@
 /// If data submitted, then process and store.
 
     if (!empty($hide) and confirm_sesskey()) {
-        if (!$module = $DB->get_record("modules", array("name"=>$hide))) {
-            print_error('moduledoesnotexist', 'error');
-        }
-        $DB->set_field("modules", "visible", "0", array("id"=>$module->id)); // Hide main module
-        // Remember the visibility status in visibleold
-        // and hide...
-        $sql = "UPDATE {course_modules}
-                   SET visibleold=visible, visible=0
-                 WHERE module=?";
-        $DB->execute($sql, array($module->id));
-        // Increment course.cacherev for courses where we just made something invisible.
-        // This will force cache rebuilding on the next request.
-        increment_revision_number('course', 'cacherev',
-                "id IN (SELECT DISTINCT course
-                                FROM {course_modules}
-                               WHERE visibleold=1 AND module=?)",
-                array($module->id));
-        core_plugin_manager::reset_caches();
+        $class = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $class::enable_plugin($hide, false);
+
         admin_get_root(true, false);  // settings not required - only pages
         redirect(new moodle_url('/admin/modules.php'));
     }
 
     if (!empty($show) and confirm_sesskey()) {
-        if (!$module = $DB->get_record("modules", array("name"=>$show))) {
-            print_error('moduledoesnotexist', 'error');
-        }
-        $DB->set_field("modules", "visible", "1", array("id"=>$module->id)); // Show main module
-        $DB->set_field('course_modules', 'visible', '1', array('visibleold'=>1, 'module'=>$module->id)); // Get the previous saved visible state for the course module.
-        // Increment course.cacherev for courses where we just made something visible.
-        // This will force cache rebuilding on the next request.
-        increment_revision_number('course', 'cacherev',
-                "id IN (SELECT DISTINCT course
-                                FROM {course_modules}
-                               WHERE visible=1 AND module=?)",
-                array($module->id));
-        core_plugin_manager::reset_caches();
+        $class = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $class::enable_plugin($show, true);
+
         admin_get_root(true, false);  // settings not required - only pages
         redirect(new moodle_url('/admin/modules.php'));
     }
@@ -163,5 +138,3 @@
     $table->print_html();
 
     echo $OUTPUT->footer();
-
-

@@ -22,18 +22,18 @@ Feature: Use core page resolvers for the I am on the page steps
     Then I should see "<shouldsee>"
 
     Examples:
-      | description              | identifier                  | type                         | shouldsee                  |
-      | Course Category idnumber | CAT1                        | category                     | Add a new course           |
-      | Course Category name     | "Cat 1"                     | Category                     | Add a new course           |
-      | Course Full name         | "Economics 101"             | course                       | Fundamentals of Economics  |
-      | Course Short name        | ECON101                     | COURSE                       | Fundamentals of Economics  |
-      | Course idnumber          | "2021-econ101"              | Course                       | Fundamentals of Economics  |
-      | Forum idnumber           | fundamentalsofeconomics     | Activity                     | Add a new discussion       |
-      | Generic activity editing | fundamentalsofeconomics     | "Activity editing"           | Updating: Forum            |
-      | Forum name               | "Fundamentals of Economics" | "Forum activity"             | Add a new discussion       |
-      | Forum name editing       | "Fundamentals of Economics" | "Forum activity editing"     | Updating: Forum            |
-      | Forum name permissions   | "Fundamentals of Economics" | "Forum activity permissions" | Permissions in Forum: Fun  |
-      | Forum name roles         | "Fundamentals of Economics" | "Forum activity roles"       | Assign roles in Forum: Fun |
+      | description              | identifier                  | type                         | shouldsee                   |
+      | Course Category idnumber | CAT1                        | category                     | Add a new course            |
+      | Course Category name     | "Cat 1"                     | Category                     | Add a new course            |
+      | Course Full name         | "Economics 101"             | course                       | Fundamentals of Economics   |
+      | Course Short name        | ECON101                     | COURSE                       | Fundamentals of Economics   |
+      | Course idnumber          | "2021-econ101"              | Course                       | Fundamentals of Economics   |
+      | Forum idnumber           | fundamentalsofeconomics     | Activity                     | Add discussion topic        |
+      | Generic activity editing | fundamentalsofeconomics     | "Activity editing"           | Updating: Forum             |
+      | Forum name               | "Fundamentals of Economics" | "Forum activity"             | Add discussion topic        |
+      | Forum name editing       | "Fundamentals of Economics" | "Forum activity editing"     | Updating: Forum             |
+      | Forum name permissions   | "Fundamentals of Economics" | "Forum activity permissions" | Permissions in Forum: Fun   |
+      | Forum name roles         | "Fundamentals of Economics" | "Forum activity roles"       | Assign roles in Forum: Fun  |
 
   Scenario Outline: When I am on an instance logged in as
     Given the following "categories" exist:
@@ -58,9 +58,9 @@ Feature: Use core page resolvers for the I am on the page steps
       | Course Full name         | "Economics 101"             | course                       | Fundamentals of Economics  |
       | Course Short name        | ECON101                     | COURSE                       | Fundamentals of Economics  |
       | Course idnumber          | "2021-econ101"              | Course                       | Fundamentals of Economics  |
-      | Forum idnumber           | fundamentalsofeconomics     | Activity                     | Add a new discussion       |
+      | Forum idnumber           | fundamentalsofeconomics     | Activity                     | Add discussion topic       |
       | Generic activity editing | fundamentalsofeconomics     | "Activity editing"           | Updating: Forum            |
-      | Forum name               | "Fundamentals of Economics" | "Forum activity"             | Add a new discussion       |
+      | Forum name               | "Fundamentals of Economics" | "Forum activity"             | Add discussion topic       |
       | Forum name editing       | "Fundamentals of Economics" | "Forum activity editing"     | Updating: Forum            |
       | Forum name permissions   | "Fundamentals of Economics" | "Forum activity permissions" | Permissions in Forum: Fun  |
       | Forum name roles         | "Fundamentals of Economics" | "Forum activity roles"       | Assign roles in Forum: Fun |
@@ -71,9 +71,9 @@ Feature: Use core page resolvers for the I am on the page steps
     Then I should see "<shouldsee>"
 
     Examples:
-      | description | identifier | shouldsee                   |
-      | Admin page  | "Admin notifications"      | Check for available updates |
-      | Home page   | Homepage   | Recently accessed courses   |
+      | description | identifier              | shouldsee                   |
+      | Admin page  | "Admin notifications"   | Check for available updates |
+      | Home page   | Homepage                | Calendar                    |
 
   Scenario Outline: When I am on a named page logged in as
     When I am on the <identifier> page logged in as admin
@@ -82,4 +82,4 @@ Feature: Use core page resolvers for the I am on the page steps
     Examples:
       | description | identifier            | shouldsee                   |
       | Admin page  | "Admin notifications" | Check for available updates |
-      | Home page   | Homepage              | Recently accessed courses   |
+      | Home page   | Homepage              | Calendar                    |

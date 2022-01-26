@@ -86,7 +86,7 @@ Feature: Managers can create and manage tag collections
     And I should see "Tag3"
     And I should not see "Tag1"
     And I should not see "Tag2"
-    And I follow "Manage tags"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     # Tag "Swimming" was not standard and was moved completely.
     And I should not see "Swimming"
@@ -103,7 +103,7 @@ Feature: Managers can create and manage tag collections
       | Searchable | 0 |
     And I press "Create"
     And "Yes" "text" should not exist in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Hiddencoll')]" "xpath_element"
-    And I press "Blocks editing on"
+    And I turn editing mode on
     # TODO MDL-57120 "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"

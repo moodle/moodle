@@ -20,6 +20,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_forum\local\entities\forum as forum_entity;
+
 defined('MOODLE_INTERNAL') || die();
 
 /** Include required files */
@@ -352,7 +354,7 @@ function forum_delete_instance($id) {
  * @uses FEATURE_GRADE_HAS_GRADE
  * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature
- * @return mixed True if yes (some features may use other values)
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function forum_supports($feature) {
     switch($feature) {
@@ -368,6 +370,7 @@ function forum_supports($feature) {
         case FEATURE_SHOW_DESCRIPTION:        return true;
         case FEATURE_PLAGIARISM:              return true;
         case FEATURE_ADVANCED_GRADING:        return true;
+        case FEATURE_MOD_PURPOSE:             return MOD_PURPOSE_COLLABORATION;
 
         default: return null;
     }
@@ -2599,6 +2602,22 @@ function forum_search_form($course, $search='') {
     return $output->render($forumsearch);
 }
 
+/**
+ * Retrieve HTML for the page action
+ *
+ * @param forum_entity|null $forum The forum entity.
+ * @param mixed $groupid false if groups not used, int if groups used, 0 means all groups
+ * @param stdClass $course The course object.
+ * @param string $search The search string.
+ * @return string rendered HTML string.
+ */
+function forum_activity_actionbar(?forum_entity $forum, $groupid, stdClass $course, string $search=''): string {
+    global $PAGE;
+
+    $actionbar = new mod_forum\output\forum_actionbar($forum, $course, $groupid, $search);
+    $output = $PAGE->get_renderer('mod_forum');
+    return $output->render($actionbar);
+}
 
 /**
  * @global object
@@ -4507,14 +4526,28 @@ function forum_tp_is_post_old($post, $time=null) {
 function forum_tp_get_course_unread_posts($userid, $courseid) {
     global $CFG, $DB;
 
-    $now = floor(time() / 60) * 60; // DB cache friendliness.
-    $cutoffdate = $now - ($CFG->forum_oldpostdays * 24 * 60 * 60);
-    $params = array($userid, $userid, $courseid, $cutoffdate, $userid);
+    $modinfo = get_fast_modinfo($courseid);
+    $forumcms = $modinfo->get_instances_of('forum');
+    if (empty($forumcms)) {
+        // Return early if the course doesn't have any forum. Will save us a DB query.
+        return [];
+    }
+
+    $now = floor(time() / MINSECS) * MINSECS; // DB cache friendliness.
+    $cutoffdate = $now - ($CFG->forum_oldpostdays * DAYSECS);
+    $params = [
+        'privatereplyto' => $userid,
+        'modified' => $cutoffdate,
+        'readuserid' => $userid,
+        'trackprefsuser' => $userid,
+        'courseid' => $courseid,
+        'trackforumuser' => $userid,
+    ];
 
     if (!empty($CFG->forum_enabletimedposts)) {
-        $timedsql = "AND d.timestart < ? AND (d.timeend = 0 OR d.timeend > ?)";
-        $params[] = $now;
-        $params[] = $now;
+        $timedsql = "AND d.timestart < :timestart AND (d.timeend = 0 OR d.timeend > :timeend)";
+        $params['timestart'] = $now;
+        $params['timeend'] = $now;
     } else {
         $timedsql = "";
     }
@@ -4522,31 +4555,65 @@ function forum_tp_get_course_unread_posts($userid, $courseid) {
     if ($CFG->forum_allowforcedreadtracking) {
         $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_FORCED."
                             OR (f.trackingtype = ".FORUM_TRACKING_OPTIONAL." AND tf.id IS NULL
-                                AND (SELECT trackforums FROM {user} WHERE id = ?) = 1))";
+                                AND (SELECT trackforums FROM {user} WHERE id = :trackforumuser) = 1))";
     } else {
         $trackingsql = "AND ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL." OR f.trackingtype = ".FORUM_TRACKING_FORCED.")
                             AND tf.id IS NULL
-                            AND (SELECT trackforums FROM {user} WHERE id = ?) = 1)";
+                            AND (SELECT trackforums FROM {user} WHERE id = :trackforumuser) = 1)";
     }
 
-    $sql = "SELECT f.id, COUNT(p.id) AS unread
-              FROM {forum_posts} p
+    $sql = "SELECT f.id, COUNT(p.id) AS unread,
+                   COUNT(p.privatereply) as privatereplies,
+                   COUNT(p.privatereplytouser) as privaterepliestouser
+              FROM (
+                        SELECT
+                            id,
+                            discussion,
+                            CASE WHEN privatereplyto <> 0 THEN 1 END privatereply,
+                            CASE WHEN privatereplyto = :privatereplyto THEN 1 END privatereplytouser
+                        FROM {forum_posts}
+                        WHERE modified >= :modified
+                   ) p
                    JOIN {forum_discussions} d       ON d.id = p.discussion
                    JOIN {forum} f                   ON f.id = d.forum
                    JOIN {course} c                  ON c.id = f.course
-                   LEFT JOIN {forum_read} r         ON (r.postid = p.id AND r.userid = ?)
-                   LEFT JOIN {forum_track_prefs} tf ON (tf.userid = ? AND tf.forumid = f.id)
-             WHERE f.course = ?
-                   AND p.modified >= ? AND r.id is NULL
+                   LEFT JOIN {forum_read} r         ON (r.postid = p.id AND r.userid = :readuserid)
+                   LEFT JOIN {forum_track_prefs} tf ON (tf.userid = :trackprefsuser AND tf.forumid = f.id)
+             WHERE f.course = :courseid
+                   AND r.id is NULL
                    $trackingsql
                    $timedsql
           GROUP BY f.id";
 
-    if ($return = $DB->get_records_sql($sql, $params)) {
-        return $return;
+    $results = [];
+    if ($records = $DB->get_records_sql($sql, $params)) {
+        // Loop through each forum instance to check for capability and count the number of unread posts.
+        foreach ($forumcms as $cm) {
+            // Check that the forum instance exists in the query results.
+            if (!isset($records[$cm->instance])) {
+                continue;
+            }
+
+            $record = $records[$cm->instance];
+            $unread = $record->unread;
+
+            // Check if the user has the capability to read private replies for this forum instance.
+            $forumcontext = context_module::instance($cm->id);
+            if (!has_capability('mod/forum:readprivatereplies', $forumcontext, $userid)) {
+                // The real unread count would be the total of unread count minus the number of unread private replies plus
+                // the total unread private replies to the user.
+                $unread = $record->unread - $record->privatereplies + $record->privaterepliestouser;
+            }
+
+            // Build and add the object to the array of results to be returned.
+            $results[$record->id] = (object)[
+                'id' => $record->id,
+                'unread' => $unread,
+            ];
+        }
     }
 
-    return array();
+    return $results;
 }
 
 /**
@@ -4591,7 +4658,8 @@ function forum_tp_count_forum_unread_posts($cm, $course, $resetreadcache = false
         return $readcache[$course->id][$forumid];
     }
 
-    if (has_capability('moodle/site:accessallgroups', context_module::instance($cm->id))) {
+    $forumcontext = context_module::instance($cm->id);
+    if (has_any_capability(['moodle/site:accessallgroups', 'mod/forum:readprivatereplies'], $forumcontext)) {
         return $readcache[$course->id][$forumid];
     }
 
@@ -4604,30 +4672,36 @@ function forum_tp_count_forum_unread_posts($cm, $course, $resetreadcache = false
     // add all groups posts
     $mygroups[-1] = -1;
 
-    list ($groups_sql, $groups_params) = $DB->get_in_or_equal($mygroups);
+    list ($groupssql, $groupsparams) = $DB->get_in_or_equal($mygroups, SQL_PARAMS_NAMED);
 
-    $now = floor(time() / 60) * 60; // DB Cache friendliness.
-    $cutoffdate = $now - ($CFG->forum_oldpostdays*24*60*60);
-    $params = array($USER->id, $forumid, $cutoffdate);
+    $now = floor(time() / MINSECS) * MINSECS; // DB Cache friendliness.
+    $cutoffdate = $now - ($CFG->forum_oldpostdays * DAYSECS);
+    $params = [
+        'readuser' => $USER->id,
+        'forum' => $forumid,
+        'cutoffdate' => $cutoffdate,
+        'privatereplyto' => $USER->id,
+    ];
 
     if (!empty($CFG->forum_enabletimedposts)) {
-        $timedsql = "AND d.timestart < ? AND (d.timeend = 0 OR d.timeend > ?)";
-        $params[] = $now;
-        $params[] = $now;
+        $timedsql = "AND d.timestart < :timestart AND (d.timeend = 0 OR d.timeend > :timeend)";
+        $params['timestart'] = $now;
+        $params['timeend'] = $now;
     } else {
         $timedsql = "";
     }
 
-    $params = array_merge($params, $groups_params);
+    $params = array_merge($params, $groupsparams);
 
     $sql = "SELECT COUNT(p.id)
               FROM {forum_posts} p
-                   JOIN {forum_discussions} d ON p.discussion = d.id
-                   LEFT JOIN {forum_read} r   ON (r.postid = p.id AND r.userid = ?)
-             WHERE d.forum = ?
-                   AND p.modified >= ? AND r.id is NULL
+              JOIN {forum_discussions} d ON p.discussion = d.id
+         LEFT JOIN {forum_read} r ON (r.postid = p.id AND r.userid = :readuser)
+             WHERE d.forum = :forum
+                   AND p.modified >= :cutoffdate AND r.id is NULL
                    $timedsql
-                   AND d.groupid $groups_sql";
+                   AND d.groupid $groupssql
+                   AND (p.privatereplyto = 0 OR p.privatereplyto = :privatereplyto)";
 
     return $DB->get_field_sql($sql, $params);
 }
@@ -5417,22 +5491,6 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         $discussionid = $params['d'];
     }
 
-    // Display all forum reports user has access to.
-    if (isloggedin() && !isguestuser()) {
-        $reportnames = array_keys(core_component::get_plugin_list('forumreport'));
-
-        foreach ($reportnames as $reportname) {
-            if (has_capability("forumreport/{$reportname}:view", $PAGE->cm->context)) {
-                $reportlinkparams = [
-                    'courseid' => $forumobject->course,
-                    'forumid' => $forumobject->id,
-                ];
-                $reportlink = new moodle_url("/mod/forum/report/{$reportname}/index.php", $reportlinkparams);
-                $forumnode->add(get_string('nodetitle', "forumreport_{$reportname}"), $reportlink, navigation_node::TYPE_CONTAINER);
-            }
-        }
-    }
-
     // For some actions you need to be enrolled, being admin is not enough sometimes here.
     $enrolled = is_enrolled($PAGE->cm->context, $USER, '', false);
     $activeenrolled = is_enrolled($PAGE->cm->context, $USER, '', true);
@@ -5445,11 +5503,59 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     if ($canmanage) {
         $mode = $forumnode->add(get_string('subscriptionmode', 'forum'), null, navigation_node::TYPE_CONTAINER);
         $mode->add_class('subscriptionmode');
+        $mode->set_show_in_secondary_navigation(false);
 
-        $allowchoice = $mode->add(get_string('subscriptionoptional', 'forum'), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>FORUM_CHOOSESUBSCRIBE, 'sesskey'=>sesskey())), navigation_node::TYPE_SETTING);
-        $forceforever = $mode->add(get_string("subscriptionforced", "forum"), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>FORUM_FORCESUBSCRIBE, 'sesskey'=>sesskey())), navigation_node::TYPE_SETTING);
-        $forceinitially = $mode->add(get_string("subscriptionauto", "forum"), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>FORUM_INITIALSUBSCRIBE, 'sesskey'=>sesskey())), navigation_node::TYPE_SETTING);
-        $disallowchoice = $mode->add(get_string('subscriptiondisabled', 'forum'), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>FORUM_DISALLOWSUBSCRIBE, 'sesskey'=>sesskey())), navigation_node::TYPE_SETTING);
+        // Optional subscription mode.
+        $allowchoicestring = get_string('subscriptionoptional', 'forum');
+        $allowchoiceaction = new action_link(
+            new moodle_url('/mod/forum/subscribe.php', [
+                'id' => $forumobject->id,
+                'mode' => FORUM_CHOOSESUBSCRIBE,
+                'sesskey' => sesskey(),
+            ]),
+            $allowchoicestring,
+            new confirm_action(get_string('subscriptionmodeconfirm', 'mod_forum', $allowchoicestring))
+        );
+        $allowchoice = $mode->add($allowchoicestring, $allowchoiceaction, navigation_node::TYPE_SETTING);
+
+        // Forced subscription mode.
+        $forceforeverstring = get_string('subscriptionforced', 'forum');
+        $forceforeveraction = new action_link(
+            new moodle_url('/mod/forum/subscribe.php', [
+                'id' => $forumobject->id,
+                'mode' => FORUM_FORCESUBSCRIBE,
+                'sesskey' => sesskey(),
+            ]),
+            $forceforeverstring,
+            new confirm_action(get_string('subscriptionmodeconfirm', 'mod_forum', $forceforeverstring))
+        );
+        $forceforever = $mode->add($forceforeverstring, $forceforeveraction, navigation_node::TYPE_SETTING);
+
+        // Initial subscription mode.
+        $forceinitiallystring = get_string('subscriptionauto', 'forum');
+        $forceinitiallyaction = new action_link(
+            new moodle_url('/mod/forum/subscribe.php', [
+                'id' => $forumobject->id,
+                'mode' => FORUM_INITIALSUBSCRIBE,
+                'sesskey' => sesskey(),
+            ]),
+            $forceinitiallystring,
+            new confirm_action(get_string('subscriptionmodeconfirm', 'mod_forum', $forceinitiallystring))
+        );
+        $forceinitially = $mode->add($forceinitiallystring, $forceinitiallyaction, navigation_node::TYPE_SETTING);
+
+        // Disabled subscription mode.
+        $disallowchoicestring = get_string('subscriptiondisabled', 'forum');
+        $disallowchoiceaction = new action_link(
+            new moodle_url('/mod/forum/subscribe.php', [
+                'id' => $forumobject->id,
+                'mode' => FORUM_DISALLOWSUBSCRIBE,
+                'sesskey' => sesskey(),
+            ]),
+            $disallowchoicestring,
+            new confirm_action(get_string('subscriptionmodeconfirm', 'mod_forum', $disallowchoicestring))
+        );
+        $disallowchoice = $mode->add($disallowchoicestring, $disallowchoiceaction, navigation_node::TYPE_SETTING);
 
         switch ($subscriptionmode) {
             case FORUM_CHOOSESUBSCRIBE : // 0
@@ -5492,34 +5598,25 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         }
     }
 
-    if ($cansubscribe) {
-        if (\mod_forum\subscriptions::is_subscribed($USER->id, $forumobject, null, $PAGE->cm)) {
-            $linktext = get_string('unsubscribe', 'forum');
-        } else {
-            $linktext = get_string('subscribe', 'forum');
-        }
-        $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'sesskey'=>sesskey()));
-        $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
-
-        if (isset($discussionid)) {
-            if (\mod_forum\subscriptions::is_subscribed($USER->id, $forumobject, $discussionid, $PAGE->cm)) {
-                $linktext = get_string('unsubscribediscussion', 'forum');
-            } else {
-                $linktext = get_string('subscribediscussion', 'forum');
-            }
-            $url = new moodle_url('/mod/forum/subscribe.php', array(
-                    'id' => $forumobject->id,
-                    'sesskey' => sesskey(),
-                    'd' => $discussionid,
-                    'returnurl' => $PAGE->url->out(),
-                ));
-            $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
-        }
+    if (has_capability('mod/forum:viewsubscribers', $PAGE->cm->context)) {
+        $url = new moodle_url('/mod/forum/subscribers.php', ['id' => $forumobject->id, 'edit' => 'off']);
+        $forumnode->add(get_string('subscriptions', 'forum'), $url, navigation_node::TYPE_SETTING, null, 'forumsubscriptions');
     }
 
-    if (has_capability('mod/forum:viewsubscribers', $PAGE->cm->context)){
-        $url = new moodle_url('/mod/forum/subscribers.php', array('id'=>$forumobject->id));
-        $forumnode->add(get_string('showsubscribers', 'forum'), $url, navigation_node::TYPE_SETTING);
+    // Display all forum reports user has access to.
+    if (isloggedin() && !isguestuser()) {
+        $reportnames = array_keys(core_component::get_plugin_list('forumreport'));
+
+        foreach ($reportnames as $reportname) {
+            if (has_capability("forumreport/{$reportname}:view", $PAGE->cm->context)) {
+                $reportlinkparams = [
+                    'courseid' => $forumobject->course,
+                    'forumid' => $forumobject->id,
+                ];
+                $reportlink = new moodle_url("/mod/forum/report/{$reportname}/index.php", $reportlinkparams);
+                $forumnode->add(get_string('reports'), $reportlink, navigation_node::TYPE_CONTAINER);
+            }
+        }
     }
 
     if ($enrolled && forum_tp_can_track_forums($forumobject)) { // keep tracking info for users with suspended enrolments
@@ -5580,13 +5677,13 @@ function forum_cm_info_view(cm_info $cm) {
 
     if (forum_tp_can_track_forums()) {
         if ($unread = forum_tp_count_forum_unread_posts($cm, $cm->get_course())) {
-            $out = '<span class="unread"> <a href="' . $cm->url . '#unread">';
+            $out = '<span class="badge badge-secondary">';
             if ($unread == 1) {
                 $out .= get_string('unreadpostsone', 'forum');
             } else {
                 $out .= get_string('unreadpostsnumber', 'forum', $unread);
             }
-            $out .= '</a></span>';
+            $out .= '</span>';
             $cm->set_after_link($out);
         }
     }
@@ -6913,4 +7010,23 @@ function forum_grading_areas_list() {
     return [
         'forum' => get_string('grade_forum_header', 'forum'),
     ];
+}
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_forum_core_calendar_get_event_action_string(string $eventtype): string {
+    global $CFG;
+    require_once($CFG->dirroot . '/mod/forum/locallib.php');
+
+    $modulename = get_string('modulename', 'forum');
+
+    if ($eventtype == FORUM_EVENT_TYPE_DUE) {
+        return get_string('calendardue', 'forum', $modulename);
+    } else {
+        return get_string('requiresaction', 'calendar', $modulename);
+    }
 }

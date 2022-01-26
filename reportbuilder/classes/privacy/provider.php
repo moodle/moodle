@@ -21,7 +21,11 @@ namespace core_reportbuilder\privacy;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\writer;
 use core_reportbuilder\local\helpers\user_filter_manager;
+use core_reportbuilder\local\models\audience;
+use core_reportbuilder\local\models\column;
+use core_reportbuilder\local\models\filter;
 use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\models\schedule;
 
 /**
  * Privacy Subsystem for core_reportbuilder
@@ -46,6 +50,31 @@ class provider implements
             'usercreated' => 'privacy:metadata:report:usercreated',
             'usermodified' => 'privacy:metadata:report:usermodified',
         ], 'privacy:metadata:report');
+
+        $collection->add_database_table(column::TABLE, [
+            'uniqueidentifier' => 'privacy:metadata:column:uniqueidentifier',
+            'usercreated' => 'privacy:metadata:column:usercreated',
+            'usermodified' => 'privacy:metadata:column:usermodified',
+        ], 'privacy:metadata:column');
+
+        $collection->add_database_table(filter::TABLE, [
+            'uniqueidentifier' => 'privacy:metadata:filter:uniqueidentifier',
+            'usercreated' => 'privacy:metadata:filter:usercreated',
+            'usermodified' => 'privacy:metadata:filter:usermodified',
+        ], 'privacy:metadata:filter');
+
+        $collection->add_database_table(audience::TABLE, [
+            'classname' => 'privacy:metadata:audience:classname',
+            'usercreated' => 'privacy:metadata:audience:usercreated',
+            'usermodified' => 'privacy:metadata:audience:usermodified',
+        ], 'privacy:metadata:audience');
+
+        $collection->add_database_table(schedule::TABLE, [
+            'name' => 'privacy:metadata:schedule:name',
+            'userviewas' => 'privacy:metadata:schedule:userviewas',
+            'usercreated' => 'privacy:metadata:schedule:usercreated',
+            'usermodified' => 'privacy:metadata:schedule:usermodified',
+        ], 'privacy:metadata:schedule');
 
         $collection->add_user_preference('core_reportbuilder', 'privacy:metadata:preference:reportfilter');
 

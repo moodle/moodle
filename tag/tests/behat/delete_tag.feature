@@ -61,6 +61,7 @@ Feature: Manager is able to delete tags
     And I press "Yes"
     And I should see "Tag(s) deleted"
     And I should not see "Dog"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     And I should not see "Dog"
     And I follow "Cat"
@@ -94,6 +95,7 @@ Feature: Manager is able to delete tags
     And I should see "Tag(s) deleted"
     And I should not see "Dog"
     And I should not see "Neverusedtag"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     And I should not see "Dog"
     And I should not see "Neverusedtag"

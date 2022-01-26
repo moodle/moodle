@@ -18,10 +18,14 @@
  * Unit tests for grading evaluation method "best"
  *
  * @package    workshopeval_best
- * @category   phpunit
+ * @category   test
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace workshopeval_best;
+
+use workshop;
+use workshop_best_evaluation;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,8 +35,10 @@ require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 require_once($CFG->dirroot . '/mod/workshop/eval/best/lib.php');
 require_once($CFG->libdir . '/gradelib.php');
 
-
-class workshopeval_best_evaluation_testcase extends advanced_testcase {
+/**
+ * Unit tests for grading evaluation lib.php
+ */
+class lib_test extends \advanced_testcase {
 
     /** workshop instance emulation */
     protected $workshop;
@@ -332,7 +338,7 @@ class testable_workshop_best_evaluation extends workshop_best_evaluation {
     public function weighted_variance(array $assessments) {
         return parent::weighted_variance($assessments);
     }
-    public function assessments_distance(stdclass $assessment, stdclass $referential, array $diminfo, stdclass $settings) {
+    public function assessments_distance(\stdClass $assessment, \stdClass $referential, array $diminfo, \stdClass $settings) {
         return parent::assessments_distance($assessment, $referential, $diminfo, $settings);
     }
 }

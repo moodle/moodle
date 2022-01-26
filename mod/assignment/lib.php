@@ -83,11 +83,12 @@ function assignment_delete_instance($id){
 
 /**
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function assignment_supports($feature) {
     switch($feature) {
         case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_MOD_PURPOSE:             return MOD_PURPOSE_ASSESSMENT;
 
         default: return null;
     }

@@ -32,40 +32,73 @@
             "user_menu": "<div class='dropdown'>John Doe</div>"
         },
         "config": {
-            "wwwroot": "#"
+            "wwwroot": "#",
+            "homeurl": "/my/"
         },
-        "sitename": "Moodle Site"
+        "sitename": "Moodle Site",
+        "mobileprimarynav": [
+            {
+                "text": "Dashboard",
+                "url": "/my",
+                "isactive": true
+            },
+            {
+                "text": "Site home",
+                "url": "/",
+                "isactive": false
+            },
+            {
+                "text": "My courses",
+                "url": "/course",
+                "isactive": false
+            }
+        ]
     }
 }}
 <nav class="navbar fixed-top navbar-light bg-white navbar-expand" aria-label="{{#str}}sitemenubar, admin{{/str}}">
 
-    <div class="d-flex" data-region="drawer-toggle">
-        <button class="navbar-toggler aabtn d-block my-1 mr-2" aria-expanded="{{#navdraweropen}}true{{/navdraweropen}}{{^navdraweropen}}false{{/navdraweropen}}" aria-controls="nav-drawer" type="button" data-action="toggle-drawer" data-side="left" data-preference="drawer-open-nav">
-            <span class="navbar-toggler-icon"></span>
-            <span class="sr-only">{{#str}}sidepanel, core{{/str}}</span>
-        </button>
-    </div>
+    <button class="navbar-toggler aabtn d-block d-md-none my-1 mr-2" data-toggle="drawers" data-action="toggle" data-target="theme_boost-drawers-primary">
+        <span class="navbar-toggler-icon"></span>
+        <span class="sr-only">{{#str}}sidepanel, core{{/str}}</span>
+    </button>
 
-    <a href="{{{ config.wwwroot }}}" class="navbar-brand d-flex align-items-center m-1 p-0 aabtn">
+    <a href="{{{ config.homeurl }}}" class="navbar-brand d-none d-md-flex align-items-center m-0 mr-4 p-0 aabtn">
+
         {{# output.should_display_navbar_logo }}
             <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
         {{/ output.should_display_navbar_logo }}
-        {{{ sitename }}}
+        {{^ output.should_display_navbar_logo }}
+            {{{ sitename }}}
+        {{/ output.should_display_navbar_logo }}
     </a>
+    {{#primarymoremenu}}
+        <div class="primary-navigation">
+            {{> core/moremenu}}
+        </div>
+    {{/primarymoremenu}}
 
     <ul class="navbar-nav d-none d-md-flex my-1 px-1">
-        <!-- custom_menu -->
-        {{{ output.custom_menu }}}
         <!-- page_heading_menu -->
         {{{ output.page_heading_menu }}}
     </ul>
 
-    <div id="usernavigation" class="navbar-nav my-1 ml-auto">
-        <div class="divider border-left h-50 align-self-center mx-1"></div>
-        {{{ output.search_box }}}
+    <div id="usernavigation" class="navbar-nav ml-auto">
+        {{# output.search_box }}
+            {{{ output.search_box }}}
+            <div class="divider border-left h-75 align-self-center mx-1"></div>
+        {{/output.search_box}}
+        {{#langmenu}}
+            {{> theme_boost/language_menu }}
+            <div class="divider border-left h-75 align-self-center mx-1"></div>
+        {{/langmenu}}
         {{{ output.navbar_plugin_output }}}
         <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
-            {{{ output.user_menu }}}
+            {{#usermenu}}
+                {{> core/user_menu }}
+            {{/usermenu}}
         </div>
+        {{{ output.edit_switch }}}
     </div>
 </nav>
+
+{{> theme_boost/primary-drawer-mobile }}

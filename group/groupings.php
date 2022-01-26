@@ -59,10 +59,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
-// Add tabs
-$currenttab = 'groupings';
-require('tabs.php');
-
+echo $OUTPUT->render_participants_tertiary_nav($course);
 echo $OUTPUT->heading($strgroupings);
 
 $data = array();

@@ -35,6 +35,8 @@ Feature: Replace H5P file from an existing content requires special capabilities
     And I click on "Content bank" "link"
     # Force the content deploy
     And I click on "admincontent" "link"
+    And I am on "Course 1" course homepage
+    And I expand "Site pages" node
     And I click on "Content bank" "link"
 
   Scenario: Teacher can replace its own H5P files

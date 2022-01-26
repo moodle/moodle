@@ -20,31 +20,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(
-[
-    'jquery',
-    'block_myoverview/view',
-    'block_myoverview/view_nav'
-],
-function(
-    $,
-    View,
-    ViewNav
-) {
-    /**
-     * Initialise all of the modules for the overview block.
-     *
-     * @param {object} root The root element for the overview block.
-     */
-    var init = function(root) {
-        root = $(root);
-        // Initialise the course navigation elements.
-        ViewNav.init(root);
-        // Initialise the courses view modules.
-        View.init(root);
-    };
+import * as View from 'block_myoverview/view';
+import * as ViewNav from 'block_myoverview/view_nav';
 
-    return {
-        init: init
-    };
-});
+/**
+ * Initialise all of the modules for the overview block.
+ *
+ * @param {object} root The root element for the overview block.
+ */
+export const init = (root) => {
+    // Initialise the course navigation elements.
+    ViewNav.init(root);
+    // Initialise the courses view modules.
+    View.init(root);
+};

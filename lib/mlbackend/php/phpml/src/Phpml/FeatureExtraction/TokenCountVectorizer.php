@@ -46,7 +46,7 @@ class TokenCountVectorizer implements Transformer
         $this->buildVocabulary($samples);
     }
 
-    public function transform(array &$samples): void
+    public function transform(array &$samples, ?array &$targets = null): void
     {
         array_walk($samples, function (string &$sample): void {
             $this->transformSample($sample);

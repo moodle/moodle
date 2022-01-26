@@ -40,6 +40,7 @@ if ($eid) {
 }
 
 $PAGE->set_pagelayout('incourse');
+$PAGE->activityheader->disable();
 
 if ($entries) {
     foreach ($entries as $key => $entry) {
@@ -76,6 +77,11 @@ if (!empty($courseid)) {
     echo $OUTPUT->header();
 } else {
     echo $OUTPUT->header();    // Needs to be something here to allow linking back to the whole glossary
+}
+
+if ($glossary) {
+    $url = new moodle_url('view.php', ['id' => $cm->id]);
+    echo html_writer::link($url, get_string('back'), ['class' => 'btn btn-secondary mb-2']);
 }
 
 if ($entries) {

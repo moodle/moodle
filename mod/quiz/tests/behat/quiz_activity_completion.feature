@@ -35,7 +35,7 @@ Feature: View activity completion in the quiz activity
       | completion                   | 2              |
       | completionview               | 1              |
       | completionusegrade           | 1              |
-      | completionpass               | 1              |
+      | completionpassgrade          | 1              |
       | completionattemptsexhausted  | 1              |
       | completionminattemptsenabled | 1              |
       | completionminattempts        | 1              |
@@ -43,28 +43,43 @@ Feature: View activity completion in the quiz activity
       | question       | page |
       | First question | 1    |
 
-  Scenario: View automatic completion items as a student
+  Scenario Outline: View automatic completion items as a student
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test quiz name"
     And the "View" completion condition of "Test quiz name" is displayed as "done"
     And the "Make attempts: 1" completion condition of "Test quiz name" is displayed as "todo"
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "todo"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "todo"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
     And user "student1" has attempted "Test quiz name" with responses:
       | slot | response |
       |   1  | False    |
+    And I am on "Course 1" course homepage
     And I follow "Test quiz name"
     And the "View" completion condition of "Test quiz name" is displayed as "done"
     And the "Make attempts: 1" completion condition of "Test quiz name" is displayed as "done"
-    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
-    And I press "Re-attempt quiz"
-    And I set the field "True" to "1"
+    And I follow "Attempt quiz"
+    And I set the field "<answer>" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I follow "Finish review"
     And the "View" completion condition of "Test quiz name" is displayed as "done"
     And the "Make attempts: 1" completion condition of "Test quiz name" is displayed as "done"
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "<passcompletionexpected>"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "done"
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to "Reports" in current page administration
+    And I select "Activity completion" from the "Report type" singleselect
+    And "<expectedactivitycompletion>" "icon" should exist in the "Student 1" "table_row"
+
+    Examples:
+      | answer | passcompletionexpected | expectedactivitycompletion             |
+      | False  | failed                 | Completed (did not achieve pass grade) |
+      | True   | done                   | Completed (achieved pass grade)        |

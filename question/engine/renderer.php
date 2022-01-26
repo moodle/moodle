@@ -48,24 +48,17 @@ class core_question_renderer extends plugin_renderer_base {
      *      Must be a course or category context.
      * @param bool $showlabel if true, show the word 'Preview' after the icon.
      *      If false, just show the icon.
+     * @deprecated since Moodle 4.0
+     * @see qbank_previewquestion\output\renderer
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public function question_preview_link($questionid, context $context, $showlabel) {
-        if ($showlabel) {
-            $alt = '';
-            $label = get_string('preview');
-            $attributes = array();
-        } else {
-            $alt = get_string('preview');
-            $label = '';
-            $attributes = array('title' => $alt);
-        }
+         debugging('Function question_preview_link() has been deprecated and moved to qbank_previewquestion plugin,
+         Please use qbank_previewquestion renderer.', DEBUG_DEVELOPER);
 
-        $image = $this->pix_icon('t/preview', $alt, '', array('class' => 'iconsmall'));
-        $link = question_preview_url($questionid, null, null, null, null, $context);
-        $action = new popup_action('click', $link, 'questionpreview',
-                question_preview_popup_params());
-
-        return $this->action_link($link, $image . $label, $action, $attributes);
+        return $this->page->get_renderer('qbank_previewquestion')->question_preview_link(
+                $questionid, $context, $showlabel
+        );
     }
 
     /**
@@ -356,7 +349,7 @@ class core_question_renderer extends plugin_renderer_base {
             $params['returnurl'] = $params['returnurl']->out_as_local_url(false);
         }
         $params['id'] = $qa->get_question_id();
-        $editurl = new moodle_url('/question/question.php', $params);
+        $editurl = new moodle_url('/question/bank/editquestion/question.php', $params);
 
         return html_writer::tag('div', html_writer::link(
                 $editurl, $this->pix_icon('t/edit', get_string('edit'), '', array('class' => 'iconsmall')) .

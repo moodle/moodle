@@ -55,6 +55,34 @@ class antivirus extends base {
         return $enabled;
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        global $CFG;
+
+        $haschanged = false;
+        $plugins = [];
+        if (!empty($CFG->antiviruses)) {
+            $plugins = array_flip(explode(',', $CFG->antiviruses));
+        }
+        // Only set visibility if it's different from the current value.
+        if ($enabled && !array_key_exists($pluginname, $plugins)) {
+            $plugins[$pluginname] = $pluginname;
+            $haschanged = true;
+        } else if (!$enabled && array_key_exists($pluginname, $plugins)) {
+            unset($plugins[$pluginname]);
+            $haschanged = true;
+        }
+
+        if ($haschanged) {
+            $new = implode(',', array_flip($plugins));
+            add_to_config_log('antiviruses', $CFG->antiviruses, $new, 'core');
+            set_config('antiviruses', $new);
+            // Reset caches.
+            \core_plugin_manager::reset_caches();
+        }
+
+        return $haschanged;
+    }
+
     /**
      * Return the node name to use in admin settings menu for this plugin.
      *

@@ -42,7 +42,7 @@ use moodle_exception;
  * @copyright 2019 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class store_test extends advanced_testcase {
+class grades_grader_gradingpanel_rubric_external_store_test extends advanced_testcase {
 
     public static function setupBeforeClass(): void {
         global $CFG;
@@ -167,7 +167,7 @@ class store_test extends advanced_testcase {
         $this->assertIsInt($result['grade']['timemodified']);
 
         $this->assertArrayHasKey('usergrade', $result['grade']);
-        $this->assertEquals(1, $result['grade']['usergrade']);
+        $this->assertEquals('1.00 / 2.00', $result['grade']['usergrade']);
 
         $this->assertArrayHasKey('maxgrade', $result['grade']);
         $this->assertIsInt($result['grade']['maxgrade']);

@@ -50,6 +50,10 @@ class media_html5video_plugin extends core_media_player_native {
         $sources = array();
         foreach ($urls as $url) {
             $mimetype = core_media_manager::instance()->get_mimetype($url);
+            if ($mimetype === 'video/quicktime' && (core_useragent::is_chrome() || core_useragent::is_edge())) {
+                // Set mimetype of quicktime videos to mp4 for Chrome/Edge browsers.
+                $mimetype = 'video/mp4';
+            }
             $source = html_writer::empty_tag('source', array('src' => $url, 'type' => $mimetype));
             if ($mimetype === 'video/mp4') {
                 if ($oldandroid) {

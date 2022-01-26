@@ -45,7 +45,8 @@ Feature: Filter an outline report
     And I log out
     And I log in as "admin"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Activity report" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Activity report" from the "Report type" singleselect
     And I should see "2 views by 2 users" in the "Book name" "table_row"
     And I should see "1 views by 1 users" in the "Forum name" "table_row"
     When I set the following fields to these values:
@@ -77,7 +78,8 @@ Feature: Filter an outline report
     And I log out
     And I log in as "admin"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Activity report" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Activity report" from the "Report type" singleselect
     And I should see "2 views by 2 users" in the "Book name" "table_row"
     And I should see "1 views by 1 users" in the "Forum name" "table_row"
     When I set the following fields to these values:

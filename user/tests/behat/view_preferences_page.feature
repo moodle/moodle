@@ -54,7 +54,7 @@ Feature: Access to preferences page
   Scenario: A user with the appropriate permissions can view another user's permissions page.
     Given I log in as "admin"
     And I am on site homepage
-    And I follow "Turn editing on"
+    And I turn editing mode on
     And I add the "Mentees" block
     And I navigate to "Users > Permissions > Define roles" in site administration
     And I click on "Add a new role" "button"

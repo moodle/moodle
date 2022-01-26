@@ -16,6 +16,8 @@
 /**
  * A javascript module to handle question tags editing.
  *
+ * @deprecated since Moodle 4.0
+ * @todo Final deprecation on Moodle 4.4 MDL-72438
  * @module     core_question/edit_tags
  * @copyright  2018 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -268,6 +270,8 @@ define([
 
     return {
         init: function(root) {
+            window.console.warn('warn: The core_question/repository has been deprecated.' +
+                'Please use qbank_tagquestion/repository instead.');
             root = $(root);
             registerEventListeners(root);
         }

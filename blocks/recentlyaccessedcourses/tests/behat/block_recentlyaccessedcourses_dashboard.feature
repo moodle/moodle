@@ -10,13 +10,13 @@ Feature: The recently accessed courses block allows users to easily access their
       | student1 | Student   | 1        | student1@example.com |
     And the following "categories" exist:
       | name        | category | idnumber |
-      | Category 1  | 0        | CAT1     |
+      | Category A  | 0        | CATA     |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
       | Course 2 | C2        | 0        |
       | Course 3 | C3        | 0        |
-      | Course 4 | C4        | CAT1     |
+      | Course 4 | C4        | CATA     |
       | Course 5 | C5        | 0        |
     And the following "course enrolments" exist:
       | user     | course | role    |
@@ -25,6 +25,9 @@ Feature: The recently accessed courses block allows users to easily access their
       | student1 | C3     | student |
       | student1 | C4     | student |
       | student1 | C5     | student |
+    And the following "blocks" exist:
+      | blockname               | contextlevel | reference | pagetypepattern | defaultregion |
+      | recentlyaccessedcourses | System       | 1         | my-index        | content       |
 
   Scenario: User has not accessed any course
     Given I log in as "student1"
@@ -36,7 +39,7 @@ Feature: The recently accessed courses block allows users to easily access their
     And I should not see "Course 2" in the "Recently accessed courses" "block"
     When I am on "Course 1" course homepage
     And I am on "Course 2" course homepage
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I change window size to "large"
     Then I should see "Course 1" in the "Recently accessed courses" "block"
     And I should see "Course 2" in the "Recently accessed courses" "block"
@@ -50,9 +53,9 @@ Feature: The recently accessed courses block allows users to easily access their
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I am on "Course 4" course homepage
-    And I follow "Dashboard" in the user menu
-    And I should see "Miscellaneous" in the "Recently accessed courses" "block"
+    And I follow "Dashboard"
     And I should see "Category 1" in the "Recently accessed courses" "block"
+    And I should see "Category A" in the "Recently accessed courses" "block"
 
   Scenario: Hide course category name
     Given the following config values are set as admin:
@@ -60,9 +63,9 @@ Feature: The recently accessed courses block allows users to easily access their
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I am on "Course 4" course homepage
-    And I follow "Dashboard" in the user menu
-    And I should not see "Miscellaneous" in the "Recently accessed courses" "block"
+    And I follow "Dashboard"
     And I should not see "Category 1" in the "Recently accessed courses" "block"
+    And I should not see "Category A" in the "Recently accessed courses" "block"
 
   Scenario: Show short course name
     Given the following config values are set as admin:
@@ -70,7 +73,7 @@ Feature: The recently accessed courses block allows users to easily access their
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I am on "Course 4" course homepage
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should see "C1" in the "Recently accessed courses" "block"
     And I should see "C4" in the "Recently accessed courses" "block"
 
@@ -80,6 +83,6 @@ Feature: The recently accessed courses block allows users to easily access their
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I am on "Course 4" course homepage
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I should not see "C1" in the "Recently accessed courses" "block"
     And I should not see "C4" in the "Recently accessed courses" "block"

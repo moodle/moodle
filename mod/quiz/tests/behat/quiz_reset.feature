@@ -38,8 +38,7 @@ Feature: Quiz reset
 
   Scenario: Use course reset to clear all attempt data
     When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all quiz attempts | 1 |
     And I press "Reset course"
@@ -52,8 +51,7 @@ Feature: Quiz reset
       | quiz           | user     | attempts |
       | Test quiz name | student1 | 2        |
     When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    And I am on the "Course 1" "reset" page
     And I set the field "Delete all user overrides" to "1"
     And I press "Reset course"
     And I press "Continue"
@@ -65,8 +63,7 @@ Feature: Quiz reset
       | quiz           | group | attempts |
       | Test quiz name | G1    | 2        |
     When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all group overrides | 1 |
     And I press "Reset course"

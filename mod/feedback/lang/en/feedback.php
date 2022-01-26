@@ -51,7 +51,7 @@ $string['completed'] = 'Completed';
 $string['completedon'] = 'Completed on {$a}';
 $string['completiondetail:submit'] = 'Submit feedback';
 $string['completionsubmit'] = 'View as completed if the feedback is submitted';
-$string['configallowfullanonymous'] = 'If set to \'yes\', users can complete a feedback activity on the front page without being required to log in.';
+$string['configallowfullanonymous'] = 'If set to \'yes\', users can complete a feedback activity on the site home without being required to log in.';
 $string['confirmdeleteentry'] = 'Are you sure you want to delete this entry?';
 $string['confirmdeleteitem'] = 'Are you sure you want to delete this element?';
 $string['confirmdeletetemplate'] = 'Are you sure you want to delete this template?';
@@ -126,6 +126,7 @@ $string['feedback:receivemail'] = 'Receive email notification';
 $string['feedback:view'] = 'View a feedback';
 $string['feedback:viewanalysepage'] = 'View the analysis page after submit';
 $string['feedback:viewreports'] = 'View reports';
+$string['feedbackupdated'] = 'Feedback updated.';
 $string['file'] = 'File';
 $string['filter_by_course'] = 'Filter by course';
 $string['handling_error'] = 'Error occurred in feedback module action handling';
@@ -174,9 +175,9 @@ $string['messageprovider:message'] = 'Feedback reminder';
 $string['messageprovider:submission'] = 'Feedback notifications';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'Feedback';
-$string['modulename_help'] = 'The feedback activity module enables a teacher to create a custom survey for collecting feedback from participants using a variety of question types including multiple choice, yes/no or text input.
+$string['modulename_help'] = 'The feedback activity enables a teacher to create a custom survey for collecting feedback from participants using a variety of question types including multiple choice, yes/no or text input.
 
-Feedback responses may be anonymous if desired, and results may be shown to all participants or restricted to teachers only. Any feedback activities on the site front page may also be completed by non-logged-in users.
+Feedback responses may be anonymous if desired, and results may be shown to all participants or restricted to teachers only. Any feedback activities on the site home may also be completed by non-logged-in users.
 
 Feedback activities may be used
 
@@ -227,6 +228,7 @@ $string['pluginadministration'] = 'Feedback administration';
 $string['pluginname'] = 'Feedback';
 $string['position'] = 'Position';
 $string['previous_page'] = 'Previous page';
+$string['previewquestions'] = 'Preview questions';
 $string['privacy:metadata:completed'] = 'A record of the submissions to the feedback';
 $string['privacy:metadata:completed:anonymousresponse'] = 'Whether the submission is to be used anonymously.';
 $string['privacy:metadata:completed:timemodified'] = 'The time when the submission was last modified.';
@@ -293,3 +295,4 @@ $string['use_one_line_for_each_value'] = 'Use one line for each answer!';
 $string['use_this_template'] = 'Use this template';
 $string['using_templates'] = 'Use a template';
 $string['vertical'] = 'Vertical';
+$string['whatfor'] = 'What do you want to do?';

@@ -104,7 +104,8 @@ switch ($action) {
                     if ($extrafields) {
                         $extrafieldsdisplay = [];
                         foreach ($extrafields as $field) {
-                            $extrafieldsdisplay[] = s($member->{$field});
+                            // No escaping here, handled client side in response to AJAX request.
+                            $extrafieldsdisplay[] = $member->{$field};
                         }
                         $shortmember->name .= ' (' . implode(', ', $extrafieldsdisplay) . ')';
                     }
@@ -169,10 +170,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
-// Add tabs
-$currenttab = 'groups';
-require('tabs.php');
-
+echo $OUTPUT->render_participants_tertiary_nav($course);
 echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $context)) .' '.$strgroups, 3);
 
 $groups = groups_get_all_groups($courseid);
@@ -200,7 +198,7 @@ if ($groups) {
         $groupoptions[] = (object) [
             'value' => $group->id,
             'selected' => $selected,
-            'text' => $groupname
+            'text' => s($groupname)
         ];
     }
 }

@@ -110,6 +110,7 @@ $string['privacy:metadata:reason'] = 'The reason for requesting this course.';
 $string['privacy:metadata:requester'] = 'The ID of the user who requested the course';
 $string['privacy:metadata:requestsummary'] = 'Stores information about requests for courses that users make.';
 $string['privacy:metadata:suspended'] = 'A flag to show if the user has been suspended on this system.';
+$string['privacy:metadata:user_preference:core_user_welcome'] = 'Timestamp logged for when the welcome message was shown to the user for the first time.';
 $string['privacy:metadata:user_preferences'] = 'Preferences associated with the given user';
 $string['privacy:metadata:user_preferences:name'] = 'Preference name';
 $string['privacy:metadata:user_preferences:userid'] = 'The user ID';

@@ -50,8 +50,8 @@ class behat_question_base extends behat_base {
      */
     protected function finish_adding_question($questiontypename, TableNode $questiondata) {
 
-        $this->execute('behat_forms::i_set_the_field_to', array($this->escape($questiontypename), 1));
-        $this->execute("behat_general::i_click_on", array('.submitbutton', "css_element"));
+        $this->execute('behat_forms::i_set_the_field_to', [$this->escape($questiontypename), 1]);
+        $this->execute("behat_general::i_click_on", ['.submitbutton', "css_element"]);
 
         $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $questiondata);
         $this->execute("behat_forms::press_button", 'id_submitbutton');

@@ -27,15 +27,13 @@ I need to choose the appropriate maxbytes for attachments
   @javascript @_switch_window
   Scenario: Preview an Essay question and see the allowed maximum file sizes and number of attachments.
     When I choose "Preview" action for "essay-1-512KB" in the question bank
-    And I switch to "questionpreview" window
     Then I should see "Please write a story about a frog."
-    And I should see "Maximum file size: 512KB, maximum number of files: 1"
-    And I switch to the main window
+    And I should see "Maximum file size: 512 KB, maximum number of files: 1"
+    And I press "Close preview"
 
   @javascript @_switch_window
   Scenario: Preview an Essay question with Course upload limit and see the allowed maximum file size.
     When I choose "Preview" action for "essay-1-max" in the question bank
-    And I switch to "questionpreview" window
     Then I should see "Please write a story about a frog."
-    And I should see "Maximum file size: 1MB, maximum number of files: 1"
-    And I switch to the main window
+    And I should see "Maximum file size: 1 MB, maximum number of files: 1"
+    And I press "Close preview"

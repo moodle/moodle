@@ -21,6 +21,9 @@ namespace core_reportbuilder\local\models;
 use context;
 use context_system;
 use core\persistent;
+use core_reportbuilder\event\report_created;
+use core_reportbuilder\event\report_deleted;
+use core_reportbuilder\event\report_updated;
 use core_reportbuilder\local\report\base;
 
 /**
@@ -42,6 +45,11 @@ class report extends persistent {
      */
     protected static function define_properties(): array {
         return [
+            'name' => [
+                'type' => PARAM_TEXT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ],
             'source' => [
                 'type' => PARAM_RAW,
             ],
@@ -51,6 +59,20 @@ class report extends persistent {
                     base::TYPE_CUSTOM_REPORT,
                     base::TYPE_SYSTEM_REPORT,
                 ],
+            ],
+            'uniquerows' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
+            'conditiondata' => [
+                'type' => PARAM_RAW,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+            ],
+            'settingsdata' => [
+                'type' => PARAM_RAW,
+                'null' => NULL_ALLOWED,
+                'default' => null,
             ],
             'contextid' => [
                 'type' => PARAM_INT,
@@ -82,12 +104,63 @@ class report extends persistent {
     }
 
     /**
-     * Return report ID
-     *
-     * @return int
+     * Trigger report created event when persistent is created
      */
-    protected function get_id(): int {
-        return (int) $this->raw_get('id');
+    protected function after_create(): void {
+        if ($this->get('type') === base::TYPE_CUSTOM_REPORT) {
+            report_created::create_from_object($this)->trigger();
+        }
+    }
+
+    /**
+     * Cascade report deletion, first deleting any linked persistents
+     */
+    protected function before_delete(): void {
+        $reportparams = ['reportid' => $this->get('id')];
+
+        // Columns.
+        foreach (column::get_records($reportparams) as $column) {
+            $column->delete();
+        }
+
+        // Filters.
+        foreach (filter::get_records($reportparams) as $filter) {
+            $filter->delete();
+        }
+
+        // Audiences.
+        foreach (audience::get_records($reportparams) as $audience) {
+            $audience->delete();
+        }
+
+        // Schedules.
+        foreach (schedule::get_records($reportparams) as $schedule) {
+            $schedule->delete();
+        }
+    }
+
+    /**
+     * Throw report deleted event when persistent is deleted
+     *
+     * @param bool $result
+     */
+    protected function after_delete($result): void {
+        if (!$result || $this->get('type') === base::TYPE_SYSTEM_REPORT) {
+            return;
+        }
+        report_deleted::create_from_object($this)->trigger();
+    }
+
+    /**
+     * Throw report updated event when persistent is updated
+     *
+     * @param bool $result
+     */
+    protected function after_update($result): void {
+        if (!$result || $this->get('type') === base::TYPE_SYSTEM_REPORT) {
+            return;
+        }
+        report_updated::create_from_object($this)->trigger();
     }
 
     /**
@@ -97,5 +170,14 @@ class report extends persistent {
      */
     public function get_context(): context {
         return context::instance_by_id($this->raw_get('contextid'));
+    }
+
+    /**
+     * Return formatted report name
+     *
+     * @return string
+     */
+    public function get_formatted_name(): string {
+        return format_string($this->raw_get('name'), true, ['context' => $this->get_context(), 'escape' => true]);
     }
 }

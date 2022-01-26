@@ -1,0 +1,137 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/movemodal/movecm
+
+    Displays the course index.
+
+    Example context (json):
+    {
+        "cmname": "Activity name",
+        "cmid": 42,
+        "sections": [
+            {
+                "title": "General",
+                "id": 42,
+                "number": 1,
+                "sectionurl": "#",
+                "hascms": true,
+                "cms": [
+                    {
+                        "name": "Glossary of characters",
+                        "id": "10",
+                        "url": "#"
+                    },
+                    {
+                        "name": "World Cinema forum",
+                        "id": "11",
+                        "url": "#"
+                    },
+                    {
+                        "name": "Announcements",
+                        "id": "12",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "City of God or Cidade de Deus",
+                "id": "43",
+                "number": "2",
+                "sectionurl": "#",
+                "hascms": true,
+                "cms": [
+                    {
+                        "name": "Resources",
+                        "id": "13",
+                        "url": "#"
+                    },
+                    {
+                        "name": "Studying City of God by Stephen Smith Bergman-Messerschmidt",
+                        "id": "14",
+                        "url": "#"
+                    },
+                    {
+                        "name": "Film education study guide",
+                        "id": "15",
+                        "url": "#"
+                    }
+                ]
+            }
+        ]
+    }
+
+}}
+<p data-for="sectionname">{{#str}} movefull, moodle, {{cmname}} {{/str}}:</p>
+<nav class="collapse-list" id="destination-selector" role="tree">
+    {{#sections}}
+    <div data-for="sectionnode"
+        role="treeitem"
+    >
+        <div class="collapse-list-item d-flex"
+            id="movemodalsection{{number}}"
+            data-for="section_item"
+        >
+            <a data-toggle="collapse"
+                href="#movemodalcollapse{{number}}"
+                aria-expanded="false"
+                aria-controls="movemodalcollapse{{number}}"
+                class="collapse-list-link icons-collapse-expand collapsed"
+            >
+                <span class="collapsed-icon icon-no-margin mr-1"
+                    data-toggle="tooltip" title="{{#str}} expand, core {{/str}}">
+                    {{#pix}} t/collapsed, core {{/pix}}
+                    <span class="sr-only">{{#str}} expand, core {{/str}}</span>
+                </span>
+                <span class="expanded-icon icon-no-margin mr-1"
+                    data-toggle="tooltip" title="{{#str}} collapse, core {{/str}}">
+                    {{#pix}} t/expanded, core {{/pix}}
+                    <span class="sr-only">{{#str}} collapse, core {{/str}}</span>
+                </span>
+            </a>
+            <a href="#"
+                class="collapse-list-link text-truncate"
+                data-for="section"
+                data-id="{{id}}"
+                data-number="{{number}}"
+            >
+                {{{title}}}
+            </a>
+            <span class="dragicon ml-auto">{{#pix}}i/dragdrop{{/pix}}</span>
+        </div>
+        <div id="movemodalcollapse{{number}}"
+            class="collapse-list-item-content collapse"
+            aria-labelledby="movemodalsection{{number}}"
+            role="group"
+        >
+            <ul class="unlist" data-for="cmlist" data-id="{{id}}">
+                {{#cms}}
+                <li class="collapse-list-item d-flex" role="treeitem">
+                    <a class="collapse-list-link text-truncate"
+                        href="#"
+                        data-for="cm"
+                        data-id="{{id}}"
+                    >
+                        {{{name}}}
+                    </a>
+                </li>
+                {{/cms}}
+            </ul>
+        </div>
+    </div>
+    {{/sections}}
+</nav>

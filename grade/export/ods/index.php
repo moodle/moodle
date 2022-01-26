@@ -33,7 +33,10 @@ $context = context_course::instance($id);
 require_capability('moodle/grade:export', $context);
 require_capability('gradeexport/ods:view', $context);
 
-print_grade_page_head($COURSE->id, 'export', 'ods', get_string('exportto', 'grades') . ' ' . get_string('pluginname', 'gradeexport_ods'));
+$actionbar = new \core_grades\output\export_action_bar($context, $PAGE->url, 'ods');
+print_grade_page_head($COURSE->id, 'export', 'ods',
+    get_string('exportto', 'grades') . ' ' . get_string('pluginname', 'gradeexport_ods'),
+    false, false, true, null, null, null, $actionbar);
 export_verify_grades($COURSE->id);
 
 if (!empty($CFG->gradepublishing)) {

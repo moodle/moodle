@@ -40,7 +40,7 @@ class testable_system_report_table extends system_report_table {
         $record = parent::format_row($row);
         $result = [];
 
-        $columns = $this->systemreport->get_columns();
+        $columns = $this->report->get_columns();
         foreach ($columns as $column) {
             $result[$column->get_name()] = $record[$column->get_column_alias()];
         }

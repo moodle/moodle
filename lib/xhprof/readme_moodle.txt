@@ -1,4 +1,4 @@
-Description of XHProf 2.2.3 library/viewer import into Moodle
+Description of XHProf 2.3.5 library/viewer import into Moodle
 
 Removed (commit #1):
  * examples - examples dir removed completely
@@ -40,4 +40,4 @@ TODO:
 20201012 - MDL-67081 - Brendan Heywood (brendanheywood): Support selective profiles from CLI
 20201210 - MDL-70297 - Ilya Tregubov (ilyatregubov): Upgrade to 2.2.3 release;
 20210209 - MDL-70525 - Tomo Tsuyuki (tomotsuyuki): Allow huge number of values
-
+20211209 - MDL-71705 - Ilya Tregubov (ilyatregubov): Upgrade to 2.3.5 release;

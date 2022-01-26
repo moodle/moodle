@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
+namespace mod_choice;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,7 +41,7 @@ require_once($CFG->dirroot . '/mod/choice/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class mod_choice_lib_testcase extends externallib_advanced_testcase {
+class lib_test extends \externallib_advanced_testcase {
 
     /**
      * Test choice_view
@@ -55,7 +56,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id));
-        $context = context_module::instance($choice->cmid);
+        $context = \context_module::instance($choice->cmid);
         $cm = get_coursemodule_from_instance('choice', $choice->id);
 
         // Trigger and capture the event.
@@ -89,7 +90,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id));
-        $context = context_module::instance($choice->cmid);
+        $context = \context_module::instance($choice->cmid);
         $cm = get_coursemodule_from_instance('choice', $choice->id);
 
         // Default values are false, user cannot view results.
@@ -156,7 +157,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $optionids2 = array_keys($choicewithoptions2->option);
 
         // Make sure we cannot submit options from a different choice instance.
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         choice_user_submit_response($optionids2[0], $choice1, $USER->id, $course, $cm);
     }
 
@@ -730,7 +731,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm);
 
         // Create an action factory.
@@ -764,7 +765,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed for the student.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm, $student->id);
 
         // Create an action factory.
@@ -787,7 +788,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
      * @return bool|calendar_event
      */
     private function create_action_event($courseid, $instanceid, $eventtype, $timestart = null) {
-        $event = new stdClass();
+        $event = new \stdClass();
         $event->name = 'Calendar event';
         $event->modulename = 'choice';
         $event->courseid = $courseid;
@@ -801,7 +802,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
             $event->timestart = time();
         }
 
-        return calendar_event::create($event);
+        return \calendar_event::create($event);
     }
 
     /**
@@ -825,13 +826,13 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
             'completion' => 2,
             'completionsubmit' => 0
         ]);
-        $cm1 = cm_info::create(get_coursemodule_from_instance('choice', $choice1->id));
-        $cm2 = cm_info::create(get_coursemodule_from_instance('choice', $choice2->id));
+        $cm1 = \cm_info::create(get_coursemodule_from_instance('choice', $choice1->id));
+        $cm2 = \cm_info::create(get_coursemodule_from_instance('choice', $choice2->id));
 
         // Data for the stdClass input type.
         // This type of input would occur when checking the default completion rules for an activity type, where we don't have
         // any access to cm_info, rather the input is a stdClass containing completion and customdata attributes, just like cm_info.
-        $moddefaults = new stdClass();
+        $moddefaults = new \stdClass();
         $moddefaults->customdata = ['customcompletionrules' => ['completionsubmit' => 1]];
         $moddefaults->completion = 2;
 
@@ -839,7 +840,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(mod_choice_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
         $this->assertEquals(mod_choice_get_completion_active_rule_descriptions($cm2), []);
         $this->assertEquals(mod_choice_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
-        $this->assertEquals(mod_choice_get_completion_active_rule_descriptions(new stdClass()), []);
+        $this->assertEquals(mod_choice_get_completion_active_rule_descriptions(new \stdClass()), []);
     }
 
     /**
@@ -1338,7 +1339,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
     public function test_creation_with_no_calendar_capabilities() {
         $this->resetAfterTest();
         $course = self::getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $user = self::getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $roleid = self::getDataGenerator()->create_role();
         self::getDataGenerator()->role_assign($roleid, $user->id, $context->id);

@@ -273,8 +273,9 @@ class backup_module_structure_step extends backup_structure_step {
             'modulename', 'sectionid', 'sectionnumber', 'idnumber',
             'added', 'score', 'indent', 'visible', 'visibleoncoursepage',
             'visibleold', 'groupmode', 'groupingid',
-            'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
-            'availability', 'showdescription'));
+            'completion', 'completiongradeitemnumber', 'completionpassgrade',
+            'completionview', 'completionexpected',
+            'availability', 'showdescription', 'downloadcontent'));
 
         $tags = new backup_nested_element('tags');
         $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
@@ -787,34 +788,28 @@ class backup_filters_structure_step extends backup_structure_step {
 }
 
 /**
- * structure step in charge of constructing the comments.xml file for all the comments found
- * in a given context
+ * Structure step in charge of constructing the comments.xml file for all the comments found in a given context.
  */
 class backup_comments_structure_step extends backup_structure_step {
 
     protected function define_structure() {
-
-        // Define each element separated
-
+        // Define each element separated.
         $comments = new backup_nested_element('comments');
 
         $comment = new backup_nested_element('comment', array('id'), array(
-            'commentarea', 'itemid', 'content', 'format',
+            'component', 'commentarea', 'itemid', 'content', 'format',
             'userid', 'timecreated'));
 
-        // Build the tree
-
+        // Build the tree.
         $comments->add_child($comment);
 
-        // Define sources
-
+        // Define sources.
         $comment->set_source_table('comments', array('contextid' => backup::VAR_CONTEXTID));
 
-        // Define id annotations
-
+        // Define id annotations.
         $comment->annotate_ids('user', 'userid');
 
-        // Return the root element (comments)
+        // Return the root element (comments).
         return $comments;
     }
 }
@@ -2356,6 +2351,9 @@ class backup_questions_structure_step extends backup_structure_step {
         // attach qtype plugin structure to $question element, only one allowed
         $this->add_plugin_structure('qtype', $question, false);
 
+        // Attach qbank plugin stucture to $question element, multiple allowed.
+        $this->add_plugin_structure('qbank', $question, true);
+
         // attach local plugin stucture to $question element, multiple allowed
         $this->add_plugin_structure('local', $question, true);
 
@@ -2806,12 +2804,13 @@ class backup_completion_defaults_structure_step extends backup_structure_step {
         $cc = new backup_nested_element('course_completion_defaults');
 
         $defaults = new backup_nested_element('course_completion_default', array('id'), array(
-            'modulename', 'completion', 'completionview', 'completionusegrade', 'completionexpected', 'customrules'
+            'modulename', 'completion', 'completionview', 'completionusegrade', 'completionpassgrade',
+            'completionexpected', 'customrules'
         ));
 
         // Use module name instead of module id so we can insert into another site later.
         $sourcesql = "SELECT d.id, m.name as modulename, d.completion, d.completionview, d.completionusegrade,
-                  d.completionexpected, d.customrules
+                  d.completionpassgrade, d.completionexpected, d.customrules
                 FROM {course_completion_defaults} d join {modules} m on d.module = m.id
                 WHERE d.course = ?";
         $defaults->set_source_sql($sourcesql, array(backup::VAR_COURSEID));

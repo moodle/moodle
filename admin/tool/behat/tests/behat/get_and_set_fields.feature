@@ -33,8 +33,7 @@ Feature: Verify that all form fields values can be get and set
       | activity | course | idnumber | name | intro | firstpagetitle | wikimode | visible |
       | wiki | C1 | wiki1 | Test this one | Test this one | Test this one | collaborative | 0 |
     And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    And I am on the "Course 1" "reset" page
     # Select (multi-select) - Checking "the select box should contain".
     And I expand all fieldsets
     And the "Unenrol users" select box should contain "No roles"
@@ -56,13 +55,13 @@ Feature: Verify that all form fields values can be get and set
     And I press "Save"
     Then I should see "Student page contents" in the "region-main" "region"
     # Select (multi-select) - Checking "I set the field".
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     # Checkbox - Checking "I set the field" and "The field matches value" ticked.
     And I set the field "Force format" to "1"
     And I press "Save and return to course"
     And I am on the "Test this one" "wiki activity" page
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And the field "Force format" matches value "1"
     And the field "Force format" does not match value ""
@@ -70,7 +69,7 @@ Feature: Verify that all form fields values can be get and set
     And I set the field "Force format" to ""
     And I press "Save and return to course"
     And I am on the "Test this one" "wiki activity" page
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And the field "Force format" matches value ""
     And the field "Force format" does not match value "1"
@@ -79,7 +78,7 @@ Feature: Verify that all form fields values can be get and set
       | Force format | 1 |
     And I press "Save and return to course"
     And I am on the "Test this one" "wiki activity" page
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And the following fields match these values:
       | Force format | 1 |
@@ -90,7 +89,7 @@ Feature: Verify that all form fields values can be get and set
       | Force format | |
     And I press "Save and return to course"
     And I am on the "Test this one" "wiki activity" page
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And the following fields match these values:
       | Force format | |
@@ -102,7 +101,7 @@ Feature: Verify that all form fields values can be get and set
     # Select (simple) - Checking "I set the field".
     And I set the field "Group mode" to "Separate groups"
     And I press "Save and display"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the following fields match these values:
       | Default format | NWiki |
       | Group mode | Separate groups |
@@ -135,20 +134,19 @@ Feature: Verify that all form fields values can be get and set
     And the field "two" matches value ""
     # Check if field xpath set/match works.
     And I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field with xpath "//input[@id='id_idnumber']" to "Course id number"
     And the field with xpath "//input[@name='idnumber']" matches value "Course id number"
     And the field with xpath "//input[@name='idnumber']" does not match value ""
     And I press "Save and display"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the field "Course ID number" matches value "Course id number"
 
   Scenario: with JS disabled all form fields getters and setters works as expected
 
   @javascript
   Scenario: with JS enabled all form fields getters and setters works as expected
-    Then I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    Then I am on the "Course 1" "groups" page
     # Select (multi-select & AJAX) - Checking "I set the field" and "select box should contain".
     And I set the field "groups" to "Group 2"
     And the "members" select box should contain "Student 2 (s2@example.com)"
@@ -171,7 +169,7 @@ Feature: Verify that all form fields values can be get and set
     And the "available[day]" "field" should be enabled
     And the field "deadline[enabled]" matches value "1"
     And I press "Save and display"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And the field "available[enabled]" matches value "1"
     And the "available[day]" "field" should be enabled
     And the field "deadline[enabled]" matches value "1"

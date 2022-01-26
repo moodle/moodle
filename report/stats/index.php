@@ -76,9 +76,6 @@ $event = \report_stats\event\report_viewed::create(array('context' => $context, 
 $event->trigger();
 stats_check_uptodate($course->id);
 
-$url = new moodle_url('/report/stats/index.php', ['course' => $course->id]);
-report_helper::save_selected_report($courseid, $url);
-
 if ($course->id == SITEID) {
     admin_externalpage_setup('reportstats', '', null, '', array('pagelayout'=>'report'));
     echo $OUTPUT->header();

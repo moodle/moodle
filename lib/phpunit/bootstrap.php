@@ -184,7 +184,7 @@ $allowed = array('wwwroot', 'dataroot', 'dirroot', 'admin', 'directorypermission
 $productioncfg = (array)$CFG;
 $CFG = new stdClass();
 foreach ($productioncfg as $key=>$value) {
-    if (!in_array($key, $allowed) and strpos($key, 'phpunit_') !== 0) {
+    if (!in_array($key, $allowed) and strpos($key, 'phpunit_') !== 0 and strpos($key, 'behat_') !== 0) {
         // ignore
         continue;
     }

@@ -10,6 +10,10 @@
 
 namespace Matrix;
 
+use Generator;
+use Matrix\Decomposition\LU;
+use Matrix\Decomposition\QR;
+
 /**
  * Matrix object.
  *
@@ -24,7 +28,6 @@ namespace Matrix;
  * @method Matrix diagonal()
  * @method Matrix identity()
  * @method Matrix inverse()
- * @method Matrix pseudoInverse()
  * @method Matrix minors()
  * @method float trace()
  * @method Matrix transpose()
@@ -33,6 +36,7 @@ namespace Matrix;
  * @method Matrix multiply(...$matrices)
  * @method Matrix divideby(...$matrices)
  * @method Matrix divideinto(...$matrices)
+ * @method Matrix directsum(...$matrices)
  */
 class Matrix
 {
@@ -270,11 +274,11 @@ class Matrix
 
     /**
      * Returns a Generator that will yield each row of the matrix in turn as a vector matrix
-     *     or the value of each cell if the matrix is a vector
+     *     or the value of each cell if the matrix is a column vector
      *
-     * @return \Generator|Matrix[]|mixed[]
+     * @return Generator|Matrix[]|mixed[]
      */
-    public function rows(): \Generator
+    public function rows(): Generator
     {
         foreach ($this->grid as $i => $row) {
             yield $i + 1 => ($this->columns == 1)
@@ -285,11 +289,11 @@ class Matrix
 
     /**
      * Returns a Generator that will yield each column of the matrix in turn as a vector matrix
-     *     or the value of each cell if the matrix is a vector
+     *     or the value of each cell if the matrix is a row vector
      *
-     * @return \Generator|Matrix[]|mixed[]
+     * @return Generator|Matrix[]|mixed[]
      */
-    public function columns(): \Generator
+    public function columns(): Generator
     {
         for ($i = 0; $i < $this->columns; ++$i) {
             yield $i + 1 => ($this->rows == 1)
@@ -306,7 +310,7 @@ class Matrix
      */
     public function isSquare(): bool
     {
-        return $this->rows == $this->columns;
+        return $this->rows === $this->columns;
     }
 
     /**
@@ -317,7 +321,7 @@ class Matrix
      */
     public function isVector(): bool
     {
-        return $this->rows == 1 || $this->columns == 1;
+        return $this->rows === 1 || $this->columns === 1;
     }
 
     /**
@@ -328,6 +332,24 @@ class Matrix
     public function toArray(): array
     {
         return $this->grid;
+    }
+
+    /**
+     * Solve A*X = B.
+     *
+     * @param Matrix $B Right hand side
+     *
+     * @throws Exception
+     *
+     * @return Matrix ... Solution if A is square, least squares solution otherwise
+     */
+    public function solve(Matrix $B): Matrix
+    {
+        if ($this->columns === $this->rows) {
+            return (new LU($this))->solve($B);
+        }
+
+        return (new QR($this))->solve($B);
     }
 
     protected static $getters = [
@@ -355,8 +377,8 @@ class Matrix
     }
 
     protected static $functions = [
-        'antidiagonal',
         'adjoint',
+        'antidiagonal',
         'cofactors',
         'determinant',
         'diagonal',
@@ -388,12 +410,13 @@ class Matrix
     {
         $functionName = strtolower(str_replace('_', '', $functionName));
 
-        if (in_array($functionName, self::$functions, true) || in_array($functionName, self::$operations, true)) {
-            $functionName = "\\" . __NAMESPACE__ . "\\{$functionName}";
-            if (is_callable($functionName)) {
-                $arguments = array_values(array_merge([$this], $arguments));
-                return call_user_func_array($functionName, $arguments);
-            }
+        // Test for function calls
+        if (in_array($functionName, self::$functions, true)) {
+            return Functions::$functionName($this, ...$arguments);
+        }
+        // Test for operation calls
+        if (in_array($functionName, self::$operations, true)) {
+            return Operations::$functionName($this, ...$arguments);
         }
         throw new Exception('Function or Operation does not exist');
     }

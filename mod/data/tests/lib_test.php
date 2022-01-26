@@ -22,6 +22,7 @@
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_data;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +36,7 @@ require_once($CFG->dirroot . '/mod/data/lib.php');
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_data_lib_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     /**
      * @var moodle_database
@@ -66,7 +67,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->setAdminUser();
         $CFG->enablecompletion = 1;
         $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $course->id;
         $record->name = "Mod data completion test";
         $record->intro = "Some intro of some sort";
@@ -77,13 +78,13 @@ class mod_data_lib_testcase extends advanced_testcase {
         $module = $this->getDataGenerator()->create_module('data', $record, array('completion' => 2, 'completionentries' => 1));
 
         $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completiondata = $completion->get_data($cm, true, 0);
         /* Confirm it is not complete as there are no entries */
         $this->assertNotEquals(1, $completiondata->completionstate);
 
         $field = data_get_field_new('text', $module);
-        $fielddetail = new stdClass();
+        $fielddetail = new \stdClass();
         $fielddetail->d = $module->id;
         $fielddetail->mode = 'add';
         $fielddetail->type = 'text';
@@ -102,7 +103,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $contentid = $DB->insert_record('data_content', $datacontent);
 
         $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completiondata = $completion->get_data($cm);
         /* Confirm it is complete because it has 1 entry */
         $this->assertEquals(1, $completiondata->completionstate);
@@ -116,7 +117,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         // Create a record for deleting.
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $course->id;
         $record->name = "Mod data delete test";
         $record->intro = "Some intro of some sort";
@@ -125,7 +126,7 @@ class mod_data_lib_testcase extends advanced_testcase {
 
         $field = data_get_field_new('text', $module);
 
-        $fielddetail = new stdClass();
+        $fielddetail = new \stdClass();
         $fielddetail->d = $module->id;
         $fielddetail->mode = 'add';
         $fielddetail->type = 'text';
@@ -188,7 +189,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         // Create a record for deleting.
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $course->id;
         $record->name = "Mod data delete test";
         $record->intro = "Some intro of some sort";
@@ -197,7 +198,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $module = $this->getDataGenerator()->create_module('data', $record);
         $field = data_get_field_new('text', $module);
 
-        $fielddetail = new stdClass();
+        $fielddetail = new \stdClass();
         $fielddetail->name = 'Name';
         $fielddetail->description = 'Some name';
 
@@ -213,8 +214,8 @@ class mod_data_lib_testcase extends advanced_testcase {
         $contentid = $DB->insert_record('data_content', $datacontent);
         $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
 
-        $context = context_module::instance($module->cmid);
-        $cmt = new stdClass();
+        $context = \context_module::instance($module->cmid);
+        $cmt = new \stdClass();
         $cmt->context = $context;
         $cmt->course = $course;
         $cmt->cm = $cm;
@@ -222,7 +223,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $cmt->itemid = $recordid;
         $cmt->showcount = true;
         $cmt->component = 'mod_data';
-        $comment = new comment($cmt);
+        $comment = new \comment($cmt);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -234,7 +235,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_data\event\comment_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = new moodle_url('/mod/data/view.php', array('id' => $cm->id));
+        $url = new \moodle_url('/mod/data/view.php', array('id' => $cm->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
     }
@@ -251,7 +252,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         // Create a record for deleting.
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $course->id;
         $record->name = "Mod data delete test";
         $record->intro = "Some intro of some sort";
@@ -260,7 +261,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $module = $this->getDataGenerator()->create_module('data', $record);
         $field = data_get_field_new('text', $module);
 
-        $fielddetail = new stdClass();
+        $fielddetail = new \stdClass();
         $fielddetail->name = 'Name';
         $fielddetail->description = 'Some name';
 
@@ -276,8 +277,8 @@ class mod_data_lib_testcase extends advanced_testcase {
         $contentid = $DB->insert_record('data_content', $datacontent);
         $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
 
-        $context = context_module::instance($module->cmid);
-        $cmt = new stdClass();
+        $context = \context_module::instance($module->cmid);
+        $cmt = new \stdClass();
         $cmt->context = $context;
         $cmt->course = $course;
         $cmt->cm = $cm;
@@ -285,7 +286,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $cmt->itemid = $recordid;
         $cmt->showcount = true;
         $cmt->component = 'mod_data';
-        $comment = new comment($cmt);
+        $comment = new \comment($cmt);
         $newcomment = $comment->add('New comment 1');
 
         // Triggering and capturing the event.
@@ -298,7 +299,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_data\event\comment_deleted', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = new moodle_url('/mod/data/view.php', array('id' => $module->cmid));
+        $url = new \moodle_url('/mod/data/view.php', array('id' => $module->cmid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
     }
@@ -317,7 +318,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $roleid = $testdata['roleid'];
         $context = $testdata['context'];
         $record = $testdata['record'];
-        $data = new stdClass();
+        $data = new \stdClass();
 
         $this->setUser($user);
 
@@ -349,7 +350,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         assign_capability('mod/data:manageentries', CAP_PROHIBIT, $roleid, $context);
 
         // Causes readonly mode to be enabled.
-        $data = new stdClass();
+        $data = new \stdClass();
         $now = time();
         // Add a small margin around the periods to prevent errors with slow tests.
         $data->timeviewfrom = $now - 1;
@@ -373,7 +374,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $roleid = $testdata['roleid'];
         $context = $testdata['context'];
         $record = $testdata['record'];
-        $data = new stdClass();
+        $data = new \stdClass();
         // Causes readonly mode to be disabled.
         $now = time();
         $data->timeviewfrom = $now + 100;
@@ -404,7 +405,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $roleid = $testdata['roleid'];
         $context = $testdata['context'];
         $record = $testdata['record'];
-        $data = new stdClass();
+        $data = new \stdClass();
         // Causes readonly mode to be disabled.
         $now = time();
         $data->timeviewfrom = $now + 100;
@@ -436,7 +437,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $roleid = $testdata['roleid'];
         $context = $testdata['context'];
         $record = $testdata['record'];
-        $data = new stdClass();
+        $data = new \stdClass();
         // Causes readonly mode to be disabled.
         $now = time();
         $data->timeviewfrom = $now + 100;
@@ -470,7 +471,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $roleid = $testdata['roleid'];
         $context = $testdata['context'];
         $record = $testdata['record'];
-        $data = new stdClass();
+        $data = new \stdClass();
         // Causes readonly mode to be disabled.
         $now = time();
         $data->timeviewfrom = $now + 100;
@@ -506,7 +507,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $roleid = $testdata['roleid'];
         $context = $testdata['context'];
         $record = $testdata['record'];
-        $data = new stdClass();
+        $data = new \stdClass();
         // Causes readonly mode to be disabled.
         $now = time();
         $data->timeviewfrom = $now + 100;
@@ -543,7 +544,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $roleid = $this->getDataGenerator()->create_role();
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->name = "test name";
         $record->intro = "test intro";
         $record->comments = 1;
@@ -552,7 +553,7 @@ class mod_data_lib_testcase extends advanced_testcase {
 
         $module = $this->getDataGenerator()->create_module('data', $record);
         $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
-        $context = context_module::instance($module->cmid);
+        $context = \context_module::instance($module->cmid);
 
         $this->getDataGenerator()->role_assign($roleid, $user->id, $context->id);
 
@@ -578,13 +579,13 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         // Setup test data.
-        $course = new stdClass();
+        $course = new \stdClass();
         $course->groupmode = SEPARATEGROUPS;
         $course->groupmodeforce = true;
         $course = $this->getDataGenerator()->create_course($course);
         $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id));
         $cm = get_coursemodule_from_instance('data', $data->id);
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
 
         // Create users.
         $user1 = $this->getDataGenerator()->create_user();
@@ -609,7 +610,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         // Add data.
         $field = data_get_field_new('text', $data);
 
-        $fielddetail = new stdClass();
+        $fielddetail = new \stdClass();
         $fielddetail->name = 'Name';
         $fielddetail->description = 'Some name';
 
@@ -949,7 +950,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
         $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id),
                                                             array('completion' => 2, 'completionview' => 1));
-        $context = context_module::instance($data->cmid);
+        $context = \context_module::instance($data->cmid);
         $cm = get_coursemodule_from_instance('data', $data->id);
 
         // Trigger and capture the event.
@@ -971,7 +972,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->assertNotEmpty($event->get_name());
 
         // Check completion status.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completiondata = $completion->get_data($cm);
         $this->assertEquals(1, $completiondata->completionstate);
     }
@@ -984,7 +985,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $datagenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
         $course1 = $this->getDataGenerator()->create_course();
 
-        $fieldrecord = new StdClass();
+        $fieldrecord = new \stdClass();
         $fieldrecord->name = 'field-1';
         $fieldrecord->type = 'text';
 
@@ -996,7 +997,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $datagenerator->create_entry($data1, [$field1->field->id => 'value13'], 0, ['Cats']);
         $datagenerator->create_entry($data1, [$field1->field->id => 'value14'], 0);
 
-        $tag = core_tag_tag::get_by_name(0, 'Cats');
+        $tag = \core_tag_tag::get_by_name(0, 'Cats');
 
         // Admin can see everything.
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
@@ -1017,7 +1018,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $course2 = $this->getDataGenerator()->create_course();
         $course1 = $this->getDataGenerator()->create_course();
 
-        $fieldrecord = new StdClass();
+        $fieldrecord = new \stdClass();
         $fieldrecord->name = 'field-1';
         $fieldrecord->type = 'text';
 
@@ -1028,7 +1029,7 @@ class mod_data_lib_testcase extends advanced_testcase {
 
         $record11 = $datagenerator->create_entry($data1, [$field1->field->id => 'value11'], 0, ['Cats', 'Dogs']);
         $record21 = $datagenerator->create_entry($data2, [$field2->field->id => 'value21'], 0, ['Cats'], ['approved' => false]);
-        $tag = core_tag_tag::get_by_name(0, 'Cats');
+        $tag = \core_tag_tag::get_by_name(0, 'Cats');
 
         // Admin can see everything.
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
@@ -1045,18 +1046,18 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->setUser($student);
 
         // User can search data records inside a course.
-        core_tag_index_builder::reset_caches();
+        \core_tag_index_builder::reset_caches();
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
 
         $this->assertStringContainsString('value11', $res->content);
         $this->assertStringNotContainsString('value21', $res->content);
 
-        $recordtoupdate = new stdClass();
+        $recordtoupdate = new \stdClass();
         $recordtoupdate->id = $record21;
         $recordtoupdate->approved = true;
         $DB->update_record('data_records', $recordtoupdate);
 
-        core_tag_index_builder::reset_caches();
+        \core_tag_index_builder::reset_caches();
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
 
         $this->assertStringContainsString('value11', $res->content);
@@ -1074,7 +1075,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $course2 = $this->getDataGenerator()->create_course();
         $course1 = $this->getDataGenerator()->create_course();
 
-        $fieldrecord = new StdClass();
+        $fieldrecord = new \stdClass();
         $fieldrecord->name = 'field-1';
         $fieldrecord->type = 'text';
 
@@ -1089,7 +1090,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $field2 = $datagenerator->create_field($fieldrecord, $data2);
         $record11 = $datagenerator->create_entry($data1, [$field1->field->id => 'value11'], 0, ['Cats', 'Dogs']);
         $record21 = $datagenerator->create_entry($data2, [$field2->field->id => 'value21'], 0, ['Cats']);
-        $tag = core_tag_tag::get_by_name(0, 'Cats');
+        $tag = \core_tag_tag::get_by_name(0, 'Cats');
 
         // Admin can see everything.
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
@@ -1106,7 +1107,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->setUser($student);
 
         // User can search data records inside a course.
-        core_tag_index_builder::reset_caches();
+        \core_tag_index_builder::reset_caches();
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
 
         $this->assertStringContainsString('value11', $res->content);
@@ -1115,7 +1116,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $data2->timeviewto = time() + YEARSECS;
         $DB->update_record('data', $data2);
 
-        core_tag_index_builder::reset_caches();
+        \core_tag_index_builder::reset_caches();
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
 
         $this->assertStringContainsString('value11', $res->content);
@@ -1133,7 +1134,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $course2 = $this->getDataGenerator()->create_course();
         $course1 = $this->getDataGenerator()->create_course();
 
-        $fieldrecord = new StdClass();
+        $fieldrecord = new \stdClass();
         $fieldrecord->name = 'field-1';
         $fieldrecord->type = 'text';
 
@@ -1144,7 +1145,7 @@ class mod_data_lib_testcase extends advanced_testcase {
 
         $record11 = $datagenerator->create_entry($data1, [$field1->field->id => 'value11'], 0, ['Cats', 'Dogs']);
         $record21 = $datagenerator->create_entry($data2, [$field2->field->id => 'value21'], 0, ['Cats']);
-        $tag = core_tag_tag::get_by_name(0, 'Cats');
+        $tag = \core_tag_tag::get_by_name(0, 'Cats');
 
         // Admin can see everything.
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
@@ -1158,10 +1159,10 @@ class mod_data_lib_testcase extends advanced_testcase {
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id, 'manual');
         $this->setUser($student);
-        core_tag_index_builder::reset_caches();
+        \core_tag_index_builder::reset_caches();
 
         // User can search data records inside a course.
-        $coursecontext = context_course::instance($course1->id);
+        $coursecontext = \context_course::instance($course1->id);
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
 
         $this->assertStringContainsString('value11', $res->content);
@@ -1169,7 +1170,7 @@ class mod_data_lib_testcase extends advanced_testcase {
 
         $this->getDataGenerator()->enrol_user($student->id, $course2->id, $studentrole->id, 'manual');
 
-        core_tag_index_builder::reset_caches();
+        \core_tag_index_builder::reset_caches();
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
 
         $this->assertStringContainsString('value11', $res->content);
@@ -1190,7 +1191,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $groupa = $this->getDataGenerator()->create_group(array('courseid' => $course2->id, 'name' => 'groupA'));
         $groupb = $this->getDataGenerator()->create_group(array('courseid' => $course2->id, 'name' => 'groupB'));
 
-        $fieldrecord = new StdClass();
+        $fieldrecord = new \stdClass();
         $fieldrecord->name = 'field-1';
         $fieldrecord->type = 'text';
 
@@ -1206,7 +1207,7 @@ class mod_data_lib_testcase extends advanced_testcase {
                 $groupa->id, ['Cats']);
         $record22 = $datagenerator->create_entry($data2, [$field2->field->id => 'value22'],
                 $groupb->id, ['Cats']);
-        $tag = core_tag_tag::get_by_name(0, 'Cats');
+        $tag = \core_tag_tag::get_by_name(0, 'Cats');
 
         // Admin can see everything.
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
@@ -1223,7 +1224,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student->id, $course2->id, $studentrole->id, 'manual');
         groups_add_member($groupa, $student);
         $this->setUser($student);
-        core_tag_index_builder::reset_caches();
+        \core_tag_index_builder::reset_caches();
 
         // User can search data records inside a course.
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
@@ -1233,7 +1234,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->assertStringNotContainsString('value22', $res->content);
 
         groups_add_member($groupb, $student);
-        core_tag_index_builder::reset_caches();
+        \core_tag_index_builder::reset_caches();
         $res = mod_data_get_tagged_records($tag, false, 0, 0, 1, 0);
 
         $this->assertStringContainsString('value11', $res->content);
@@ -1260,7 +1261,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         );
         $data = $this->getDataGenerator()->create_module('data', $record);
         $cm = get_coursemodule_from_instance('data', $data->id, $course->id);
-        $cm = cm_info::create($cm);
+        $cm = \cm_info::create($cm);
         $this->setUser($student);
 
         // Check that upon creation, the updates are only about the new configuration created.
@@ -1284,7 +1285,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         foreach ($fieldtypes as $fieldtype) {
             // Creating variables dynamically.
             $fieldname = 'field-' . $count;
-            $record = new StdClass();
+            $record = new \stdClass();
             $record->name = $fieldname;
             $record->type = $fieldtype;
             $record->required = 1;
@@ -1647,7 +1648,7 @@ class mod_data_lib_testcase extends advanced_testcase {
      * @return bool|calendar_event
      */
     private function create_action_event($courseid, $instanceid, $eventtype, $timestart = null) {
-        $event = new stdClass();
+        $event = new \stdClass();
         $event->name = 'Calendar event';
         $event->modulename  = 'data';
         $event->courseid = $courseid;
@@ -1660,7 +1661,7 @@ class mod_data_lib_testcase extends advanced_testcase {
             $event->timestart = time();
         }
 
-        return calendar_event::create($event);
+        return \calendar_event::create($event);
     }
 
     /**
@@ -1684,13 +1685,13 @@ class mod_data_lib_testcase extends advanced_testcase {
             'completion' => 2,
             'completionentries' => 0
         ]);
-        $cm1 = cm_info::create(get_coursemodule_from_instance('data', $data1->id));
-        $cm2 = cm_info::create(get_coursemodule_from_instance('data', $data2->id));
+        $cm1 = \cm_info::create(get_coursemodule_from_instance('data', $data1->id));
+        $cm2 = \cm_info::create(get_coursemodule_from_instance('data', $data2->id));
 
         // Data for the stdClass input type.
         // This type of input would occur when checking the default completion rules for an activity type, where we don't have
         // any access to cm_info, rather the input is a stdClass containing completion and customdata attributes, just like cm_info.
-        $moddefaults = new stdClass();
+        $moddefaults = new \stdClass();
         $moddefaults->customdata = ['customcompletionrules' => ['completionentries' => 3]];
         $moddefaults->completion = 2;
 
@@ -1698,7 +1699,7 @@ class mod_data_lib_testcase extends advanced_testcase {
         $this->assertEquals(mod_data_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
         $this->assertEquals(mod_data_get_completion_active_rule_descriptions($cm2), []);
         $this->assertEquals(mod_data_get_completion_active_rule_descriptions($moddefaults), $activeruledescriptions);
-        $this->assertEquals(mod_data_get_completion_active_rule_descriptions(new stdClass()), []);
+        $this->assertEquals(mod_data_get_completion_active_rule_descriptions(new \stdClass()), []);
     }
 
     /**
@@ -1991,7 +1992,7 @@ class mod_data_lib_testcase extends advanced_testcase {
     public function test_creation_with_no_calendar_capabilities() {
         $this->resetAfterTest();
         $course = self::getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $user = self::getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $roleid = self::getDataGenerator()->create_role();
         self::getDataGenerator()->role_assign($roleid, $user->id, $context->id);

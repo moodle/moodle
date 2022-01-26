@@ -22,11 +22,11 @@
     Example context (json):
     {}
 }}
-<div data-region="day-filter" class="dropdown">
+<div data-region="day-filter" class="dropdown mb-1">
     <button type="button" class="btn btn-outline-secondary dropdown-toggle icon-no-margin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-            aria-label="{{#str}} ariadayfilter, block_timeline {{/str}}" aria-controls="menudayfilter">
-        {{#pix}} i/duration {{/pix}}
-        <span class="sr-only" data-active-item-text>
+            aria-label="{{#str}} ariadayfilter, block_timeline {{/str}}" aria-controls="menudayfilter"
+            title="{{#str}} ariadayfilter, block_timeline{{/str}}" aria-describedby="timeline-day-filter-current-selection">
+        <span id="timeline-day-filter-current-selection" data-active-item-text>
             {{#all}} {{#str}} all, core {{/str}} {{/all}}
             {{#overdue}} {{#str}} overdue, block_timeline {{/str}} {{/overdue}}
             {{#next7days}} {{#str}}next7days, block_timeline {{/str}} {{/next7days}}
@@ -51,7 +51,7 @@
             class="dropdown-item"
             href="#"
             data-from="-14"
-            data-to="0"
+            data-to="1"
             data-filtername="overdue"
             {{#overdue}}aria-current="true"{{/overdue}}
             aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} overdue, block_timeline {{/str}}{{/str}}"
@@ -98,7 +98,7 @@
             {{#str}} next3months, block_timeline {{/str}}
         </a>
         <a
-            class="dropdown-item {{#next6months}} active {{/next6months}}"
+            class="dropdown-item"
             href="#"
             data-from="0"
             data-to="180"

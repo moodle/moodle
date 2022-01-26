@@ -73,6 +73,9 @@ class addsection implements renderable, templatable {
             return $data;
         }
 
+        // Component based formats handle add section button in the frontend.
+        $show = ($lastsection < $maxsections) || course_get_format($course)->supports_components();
+
         $supportsnumsections = array_key_exists('numsections', $options);
         if ($supportsnumsections) {
             // Current course format has 'numsections' option, which is very confusing and we suggest course format
@@ -96,7 +99,7 @@ class addsection implements renderable, templatable {
                 ];
             }
 
-        } else if (course_get_format($course)->uses_sections() && $lastsection < $maxsections) {
+        } else if (course_get_format($course)->uses_sections() && $show) {
             // Current course format does not have 'numsections' option but it has multiple sections suppport.
             // Display the "Add section" link that will insert a section in the end.
             // Note to course format developers: inserting sections in the other positions should check both

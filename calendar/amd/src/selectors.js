@@ -49,9 +49,13 @@ define([], function() {
             edit: '[data-action="edit"]',
             remove: '[data-action="delete"]',
             viewEvent: '[data-action="view-event"]',
+            deleteSubscription: '[data-action="delete-subscription"]',
         },
         elements: {
             courseSelector: 'select[name="course"]',
+            dateContainer: '.clickable.hasevent',
+            dateContent: '[data-region="day-content"]',
+            monthDetailed: '.calendarmonth.calendartable',
         },
         today: '.today',
         day: '[data-region="day"]',
@@ -66,6 +70,7 @@ define([], function() {
         containers: {
             loadingIcon: '[data-region="overlay-icon-container"]',
         },
+        mainCalendar: '.maincalendar .heightcontainer',
         fullCalendarView: 'page-calendar-view',
     };
 });

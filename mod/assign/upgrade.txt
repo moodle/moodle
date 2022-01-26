@@ -1,4 +1,11 @@
 This files describes API changes in the assign code.
+=== 4.0 ===
+* The method \assign::grading_disabled() now has optional $gradinginfo parameter to improve performance
+* Renderer (renderer.php) has been moved from mod root to classes/output/ to be more PSR compliant.
+* Class assign_header has been moved from renderable.php to classes/ouput/assign_header.php
+* Class assign_submion_status has been moved from renderable.php to classes/ouput/assign_submion_status.php
+* The external functions mod_assign_external::list_participants and mod_assign_external::get_participant now return a new field
+  "submissionstatus" indicating the submission status (new, draft, reopened or submitted). Empty when not submitted.
 
 === 3.9 ===
 

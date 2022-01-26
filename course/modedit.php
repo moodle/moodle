@@ -138,6 +138,8 @@ if (!empty($type)) { //TODO: hopefully will be removed in 2.0
 }
 $PAGE->set_pagetype($pagepath);
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
+
 
 $modmoodleform = "$CFG->dirroot/mod/$module->name/mod_form.php";
 if (file_exists($modmoodleform)) {
@@ -200,6 +202,7 @@ if ($mform->is_cancelled()) {
     if (isset($navbaraddition)) {
         $PAGE->navbar->add($navbaraddition);
     }
+    $PAGE->activityheader->disable();
 
     echo $OUTPUT->header();
 

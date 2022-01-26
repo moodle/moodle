@@ -1,0 +1,79 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_admin_presets/presets_list
+
+    Template for presets list.
+
+    Context variables required for this template:
+    * nopresets - Whether presets list is empty or not.
+    * showactions - Whether the actions should be displayed or not.
+    * presets - Presets to display in the list, with information such as name, description or author.
+
+    Example context (json):
+    {
+        "nopresets": 0,
+        "showactions": 1
+    }
+}}
+
+{{#nopresets}}
+    <div id="id_nopresets" class="box py-3 generalbox">
+        <p id="{{uniqid}}">{{#str}}nopresets, tool_admin_presets{{/str}}</p>
+    </div>
+{{/nopresets}}
+{{^nopresets}}
+    <table class="generaltable boxaligncenter mb-5">
+        <caption class="accesshide">{{#str}}presetslisttable, tool_admin_presets{{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}}name{{/str}}</th>
+                <th scope="col">{{#str}}description{{/str}}</th>
+                {{^showactions}}
+                    <th scope="col">{{#str}}presetmoodlerelease, tool_admin_presets{{/str}}</th>
+                    <th scope="col">{{#str}}author, tool_admin_presets{{/str}}</th>
+                    <th scope="col">{{#str}}site, tool_admin_presets{{/str}}</th>
+                    <th scope="col">{{#str}}created, tool_admin_presets{{/str}}</th>
+                    <th scope="col">{{#str}}imported, tool_admin_presets{{/str}}</th>
+                {{/showactions}}
+                {{#showactions}}
+                    <th scope="col" aria-label="{{#str}}actions{{/str}}"></th>
+                {{/showactions}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#presets}}
+                <tr>
+                    <td>{{{name}}}</td>
+                    <td>{{{description}}}</td>
+                    {{^showactions}}
+                        <td>{{{release}}}</td>
+                        <td>{{{author}}}</td>
+                        <td>{{{site}}}</td>
+                        <td>{{{timecreated}}}</td>
+                        <td>{{{timeimported}}}</td>
+                    {{/showactions}}
+                    {{#showactions}}
+                        <td>
+                            {{#actions}}{{> core/action_menu}}{{/actions}}
+                        </td>
+                    {{/showactions}}
+                </tr>
+            {{/presets}}
+        </tbody>
+    </table>
+{{/nopresets}}

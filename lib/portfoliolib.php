@@ -1009,7 +1009,7 @@ function portfolio_filesize_info() {
     $filesizes = array();
     $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152, 5242880, 10485760, 20971520, 52428800);
     foreach ($sizelist as $size) {
-        $filesizes[$size] = display_size($size);
+        $filesizes[$size] = display_size($size, 0);
     }
     return array(
         'options' => $filesizes,
@@ -1117,7 +1117,10 @@ function portfolio_export_pagesetup($PAGE, $caller) {
 
     // and now we know the course for sure and maybe the cm, call require_login with it
     require_login($PAGE->course, false, $cm);
-
+    $PAGE->activityheader->set_attrs([
+        'description' => '',
+        'hidecompletion' => true
+    ]);
     foreach ($extranav as $navitem) {
         $PAGE->navbar->add($navitem['name']);
     }

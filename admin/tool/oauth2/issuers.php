@@ -104,7 +104,11 @@ if ($mform && $mform->is_cancelled()) {
 } else if ($action == 'savetemplate') {
 
     $type = required_param('type', PARAM_ALPHANUM);
-    $mform = new \tool_oauth2\form\issuer(null, ['persistent' => $issuer, 'type' => $type]);
+    $mform = new \tool_oauth2\form\issuer(null, [
+        'persistent' => $issuer,
+        'type' => $type,
+        'showrequireconfirm' => true, // Ensure the "requireconfirmation" field is included in form data.
+    ]);
     if ($mform->is_cancelled()) {
         redirect(new moodle_url('/admin/tool/oauth2/issuers.php'));
     }

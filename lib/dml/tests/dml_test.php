@@ -17,15 +17,23 @@
 /**
  * DML layer tests.
  *
- * @package    core_dml
- * @category   phpunit
+ * @package    core
+ * @subpackage dml
  * @copyright  2008 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-class core_dml_testcase extends database_driver_testcase {
+/**
+ * DML layer tests.
+ *
+ * @package    core
+ * @subpackage dml
+ * @copyright  2008 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class dml_test extends database_driver_testcase {
 
     protected function setUp(): void {
         parent::setUp();
@@ -493,7 +501,7 @@ SELECT * FROM {users}
 -- line 74 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
 -- line 83 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two()
 -- line 92 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three()
--- line 489 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
+-- line 497 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
 EOD;
         $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
 

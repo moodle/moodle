@@ -31,7 +31,7 @@ Feature: Users can edit tags to add description or rename
       | moodle/user:viewdetails      | Allow      |
     And I log out
     When I log in as "editor1"
-    And I press "Customise this page"
+    And I turn editing mode on
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -56,7 +56,7 @@ Feature: Users can edit tags to add description or rename
   @javascript
   Scenario: Manager can change tag description, related tags and rename the tag from tag view page
     When I log in as "manager1"
-    And I press "Customise this page"
+    And I turn editing mode on
     # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
@@ -89,7 +89,7 @@ Feature: Users can edit tags to add description or rename
 
   Scenario: Renaming the tag from tag view page
     When I log in as "manager1"
-    And I press "Customise this page"
+    And I turn editing mode on
       # TODO MDL-57120 site "Tags" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I click on "Tags" "link" in the "Navigation" "block"
@@ -123,7 +123,6 @@ Feature: Users can edit tags to add description or rename
       | Related tags | Dog,  Turtle,Fish |
       | Standard | 0 |
     And I press "Update"
-    Then "Default collection" "link" should exist in the ".breadcrumb" "css_element"
     And I follow "Kitten"
     And "Description of tag 1" "text" should exist in the ".tag-description" "css_element"
     And I should see "Related tags:" in the ".tag_list" "css_element"
@@ -143,12 +142,10 @@ Feature: Users can edit tags to add description or rename
     And I set the following fields to these values:
       | Tag name | Kitten |
     And I press "Update"
-    Then "Default collection" "text" should exist in the ".breadcrumb" "css_element"
     And I click on "Edit this tag" "link" in the "Kitten" "table_row"
     And I set the following fields to these values:
       | Tag name | KITTEN |
     And I press "Update"
-    And "Default collection" "text" should exist in the ".breadcrumb" "css_element"
     And I should see "KITTEN"
     And I should not see "Kitten"
 
@@ -161,6 +158,7 @@ Feature: Users can edit tags to add description or rename
     And I set the field "Edit tag name" in the "Cat" "table_row" to "Kitten"
     Then I should not see "Cat"
     And "New name for tag" "field" should not exist
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     And I should see "Kitten"
     And I should not see "Cat"
@@ -172,6 +170,7 @@ Feature: Users can edit tags to add description or rename
     And I should see "Turtle"
     And I should see "Dog"
     And I should not see "DOG"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     And I should see "Turtle"
     And I should see "Dog"
@@ -183,6 +182,7 @@ Feature: Users can edit tags to add description or rename
     And "New name for tag" "field" should not exist
     And I should see "Turtle"
     And I should not see "Penguin"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     And I should see "Turtle"
     And I should not see "Penguin"

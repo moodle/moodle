@@ -12,6 +12,12 @@
 }
 
 .simplesearchform {
+    @if $enable-rounded {
+        .input-group input.form-control {
+            border-top-left-radius: $border-radius;
+            border-bottom-left-radius: $border-radius;
+        }
+    }
     .btn {
         padding-left: 0.5rem;
         padding-right: 0.5rem;

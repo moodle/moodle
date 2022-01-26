@@ -70,11 +70,16 @@
             }
 
             /// Go to my-moodle page instead of homepage if defaulthomepage enabled
-            if (!has_capability('moodle/site:config',context_system::instance()) and !empty($CFG->defaulthomepage) && $CFG->defaulthomepage == HOMEPAGE_MY and !isguestuser()) {
-                if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
+        if (!has_capability('moodle/site:config',
+                context_system::instance()) and !empty($CFG->defaulthomepage) and !isguestuser()) {
+            if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
+                if ($CFG->defaulthomepage == HOMEPAGE_MY) {
                     $urltogo = $CFG->wwwroot.'/my/';
+                } else if ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES) {
+                    $urltogo = $CFG->wwwroot.'/my/courses.php';
                 }
             }
+        }
 
             redirect($urltogo);
 

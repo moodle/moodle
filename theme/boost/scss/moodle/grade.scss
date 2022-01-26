@@ -52,6 +52,16 @@
     }
 }
 
+.path-grade-report-grader,
+.path-grade-report-user {
+    .gradepass {
+        color: $success;
+    }
+    .gradefail {
+        color: $danger;
+    }
+}
+
 // Rubrics
 #page-grade-grading-manage {
     #activemethodselector {
@@ -393,10 +403,6 @@
  */
 .path-grade-report-grader {
     .gradeparent {
-        table {
-            @include border-radius($border-radius);
-        }
-
         tr .cell,
         .floater .cell {
             background-color: $pagination-bg;

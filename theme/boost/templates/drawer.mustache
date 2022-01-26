@@ -21,22 +21,31 @@
     {
         "drawerclasses": "drawer drawer-right",
         "drawertrigger": "toggleblocks",
-        "drawerheading": "Blocks",
-        "drawerconent": "Content for the blocks region"
+        "tooltipplacement": "right",
+        "drawerconent": "Content for the blocks region",
+        "closebuttontext": "Close drawer"
     }
 }}
 <div {{!
-    }} class="{{$drawerclasses}}{{/drawerclasses}}"{{!
+    }} class="{{$drawerclasses}}{{/drawerclasses}} not-initialized"{{!
     }} data-region="fixed-drawer"{{!
     }} id="{{$id}}{{/id}}"{{!
     }} data-preference="{{$drawerpreferencename}}{{/drawerpreferencename}}"{{!
     }} data-state="{{$drawerstate}}{{/drawerstate}}"{{!
-    }} data-close-on-resize="{{$drawercloseonreize}}0{{/drawercloseonreize}}"{{!
+    }} data-forceopen="{{$forceopen}}0{{/forceopen}}"{{!
+    }} data-close-on-resize="{{$drawercloseonresize}}0{{/drawercloseonresize}}"{{!
     }}>
     <div class="drawerheader">
-        {{$drawerheading}}{{/drawerheading}}
-        <button class="btn drawertoggle icon-no-margin" data-toggle="drawers" data-action="closedrawer" data-target="{{$id}}{{/id}}">
-            {{#pix}}e/cancel, core, {{#str}}closedrawer, core{{/str}}{{/pix}}
+        <button
+            class="btn drawertoggle icon-no-margin hidden"
+            data-toggler="drawers"
+            data-action="closedrawer"
+            data-target="{{$id}}{{/id}}"
+            data-toggle="tooltip"
+            data-placement="{{$tooltipplacement}}right{{/tooltipplacement}}"
+            title="{{$closebuttontext}}{{#str}}closedrawer, core{{/str}}{{/closebuttontext}}"
+        >
+            {{#pix}} e/cancel, core {{/pix}}
         </button>
     </div>
     <div class="drawercontent" data-usertour="scroller">

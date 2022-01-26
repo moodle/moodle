@@ -255,6 +255,9 @@ class phpunit_util extends testing_util {
         if (class_exists('\core_course\customfield\course_handler')) {
             \core_course\customfield\course_handler::reset_caches();
         }
+        if (class_exists('\core_reportbuilder\manager')) {
+            \core_reportbuilder\manager::reset_caches();
+        }
 
         // Clear static cache within restore.
         if (class_exists('restore_section_structure_step')) {
@@ -970,7 +973,7 @@ class phpunit_util extends testing_util {
      * @param   string  $fulldir The directory to find the coverage info file in.
      * @return  phpunit_coverage_info
      */
-    protected static function get_coverage_info(string $fulldir): ?phpunit_coverage_info {
+    protected static function get_coverage_info(string $fulldir): phpunit_coverage_info {
         $coverageconfig = "{$fulldir}/tests/coverage.php";
         if (file_exists($coverageconfig)) {
             $coverageinfo = require($coverageconfig);
@@ -981,7 +984,7 @@ class phpunit_util extends testing_util {
             return $coverageinfo;
         }
 
-        return null;
+        return new phpunit_coverage_info();;
     }
 
     /**

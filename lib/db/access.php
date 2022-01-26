@@ -2627,4 +2627,39 @@ $capabilities = array(
             'coursecreator' => CAP_ALLOW,
         ]
     ],
+
+    // Allow users to view custom reports.
+    'moodle/reportbuilder:view' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+
+    // Allow users to create/edit their own custom reports.
+    'moodle/reportbuilder:edit' => [
+        'captype' => 'write',
+        'riskbitmap' => RISK_PERSONAL,
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+
+    // Allow users to create/edit all custom reports.
+    'moodle/reportbuilder:editall' => [
+        'captype' => 'write',
+        'riskbitmap' => RISK_PERSONAL,
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [],
+    ],
+
+    // Allow users to schedule reports as other users.
+    'moodle/reportbuilder:scheduleviewas' => [
+        'captype' => 'read',
+        'riskbitmap' => RISK_PERSONAL,
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [],
+    ],
 );

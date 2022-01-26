@@ -141,10 +141,23 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('emailchangeconfirmation', new lang_string('emailchangeconfirmation', 'admin'), new lang_string('configemailchangeconfirmation', 'admin'), 1));
     $temp->add(new admin_setting_configselect('rememberusername', new lang_string('rememberusername','admin'), new lang_string('rememberusername_desc','admin'), 2, array(1=>new lang_string('yes'), 0=>new lang_string('no'), 2=>new lang_string('optional'))));
     $temp->add(new admin_setting_configcheckbox('strictformsrequired', new lang_string('strictformsrequired', 'admin'), new lang_string('configstrictformsrequired', 'admin'), 0));
+
+    $temp->add(new admin_setting_heading('adminpresets', new lang_string('siteadminpresetspluginname', 'core_adminpresets'), ''));
+    $sensiblesettingsdefault = 'recaptchapublickey@@none, recaptchaprivatekey@@none, googlemapkey3@@none, ';
+    $sensiblesettingsdefault .= 'secretphrase@@url, cronremotepassword@@none, smtpuser@@none, ';
+    $sensiblesettingsdefault .= 'smtppass@none, proxypassword@@none, quizpassword@@quiz, allowedip@@none, blockedip@@none, ';
+    $sensiblesettingsdefault .= 'dbpass@@logstore_database, messageinbound_hostpass@@none, ';
+    $sensiblesettingsdefault .= 'bind_pw@@auth_cas, pass@@auth_db, bind_pw@@auth_ldap, ';
+    $sensiblesettingsdefault .= 'dbpass@@enrol_database, bind_pw@@enrol_ldap, ';
+    $sensiblesettingsdefault .= 'server_password@@search_solr, ssl_keypassword@@search_solr, ';
+    $sensiblesettingsdefault .= 'alternateserver_password@@search_solr, alternatessl_keypassword@@search_solr, ';
+    $sensiblesettingsdefault .= 'test_password@@cachestore_redis, password@@mlbackend_python';
+    $temp->add(new admin_setting_configtextarea('adminpresets/sensiblesettings',
+            get_string('sensiblesettings', 'core_adminpresets'),
+            get_string('sensiblesettingstext', 'core_adminpresets'),
+            $sensiblesettingsdefault, PARAM_TEXT));
+
     $ADMIN->add('security', $temp);
-
-
-
 
     // "httpsecurity" settingpage
     $temp = new admin_settingpage('httpsecurity', new lang_string('httpsecurity', 'admin'));

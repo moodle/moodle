@@ -23,12 +23,29 @@
 
     Example context (json):
     {
-        "info": "<span class=\"badge badge-info\">Hidden from students</span>",
+        "info": [
+            {
+                "text": "Not available unless: <ul><li>It is on or after <strong>8 June 2012</strong></li></ul>",
+                "isrestricted": 1,
+                "isfullinfo": 1
+            }
+        ],
         "hasavailability": true
     }
 }}
-<div class="section_availability">
+<div class="section_availability course-description-item">
 {{#hasavailability}}
-    {{{info}}}
+    {{#info}}
+        <div class="availabilityinfo {{classes}}">
+        {{^isrestricted}}
+            <span class="badge badge-pill badge-warning">{{{text}}}</span>
+        {{/isrestricted}}
+        {{#isrestricted}}
+            <div class="description-inner">
+                {{#pix}}t/unlock, core{{/pix}} {{{text}}}
+            </div>
+        {{/isrestricted}}
+        </div>
+    {{/info}}
 {{/hasavailability}}
 </div>

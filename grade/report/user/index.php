@@ -138,7 +138,7 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
             $report = new grade_report_user($courseid, $gpr, $context, $user->id, $viewasuser);
 
             $studentnamelink = html_writer::link(new moodle_url('/user/view.php', array('id' => $report->user->id, 'course' => $courseid)), fullname($report->user));
-            echo $OUTPUT->heading(get_string('pluginname', 'gradereport_user') . ' - ' . $studentnamelink);
+            echo $OUTPUT->heading($studentnamelink);
 
             if ($report->fill_table()) {
                 echo '<br />'.$report->print_table(true);

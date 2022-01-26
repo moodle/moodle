@@ -64,7 +64,7 @@ Feature: Perform basic calendar functionality
     And I follow "Full calendar"
     And I click on "Really awesome event!" "link"
     And "Course 1" "link" should exist in the "Really awesome event!" "dialogue"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "Really awesome event!" "dialogue"
     And I log out
     And I log in as "student2"
     And I follow "Full calendar"
@@ -73,8 +73,9 @@ Feature: Perform basic calendar functionality
   @javascript
   Scenario: Create a group event
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I create a calendar event with form data:
+    And I follow "Full calendar"
+    And I set the field "course" to "C1"
+    And I create a calendar event:
       | Type of event | group |
       | Group         | Group 1 |
       | Event title | Really awesome event! |
@@ -139,12 +140,13 @@ Feature: Perform basic calendar functionality
 
   @javascript
   Scenario: Module events editing
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
     And the following "activities" exist:
       | activity | course | idnumber | name        | intro                   | timeopen      | timeclose     |
       | choice   | C1     | choice1  | Test choice | Test choice description | ##today## | ##today##  |
     When I follow "Full calendar"
+    And I set the field "course" to "C1"
     Then I should see "Test choice opens"
     And I should see "Test choice closes"
     When I click on "Test choice opens" "link"
@@ -186,8 +188,8 @@ Feature: Perform basic calendar functionality
     When I am viewing site calendar
     And I click on "New event" "button"
     Then the field "Type of event" matches value "User"
-    And I am on "Course 1" course homepage
-    And I follow "Full calendar"
+    And I click on "Close" "button" in the "New event" "dialogue"
+    And I set the field "course" to "C1"
     When I click on "New event" "button"
     Then the field "Type of event" matches value "Course"
 
@@ -203,7 +205,7 @@ Feature: Perform basic calendar functionality
     Then "Course 1" "autocomplete_suggestions" should exist
     And "Course 2" "autocomplete_suggestions" should not exist
     And "Course 3" "autocomplete_suggestions" should not exist
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "New event" "dialogue"
     And I am on site homepage
     And I navigate to "Appearance > Calendar" in site administration
     And I set the field "Admins see all" to "1"
@@ -226,7 +228,7 @@ Feature: Perform basic calendar functionality
     And I follow "Full calendar"
     When I click on "New event" "button"
     Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "New event" "dialogue"
     And I log out
     Given I log in as "admin"
     And I navigate to "Appearance > Calendar" in site administration
@@ -247,3 +249,20 @@ Feature: Perform basic calendar functionality
     Then the page should meet accessibility standards
     And the page should meet "wcag131, wcag143, wcag412" accessibility standards
     And the page should meet accessibility standards with "wcag131, wcag143, wcag412" extra tests
+
+  @javascript
+  Scenario: The calendar page should be responsive
+    Given I log in as "admin"
+    And I am viewing site calendar
+    And I create a calendar event:
+      | Type of event  | site      |
+      | Event title    | Event 1:1 |
+      | timestart[day] | 1         |
+    When I change viewport size to "1200x1000"
+    Then I should see "Event 1:1"
+    And I change viewport size to "600x1000"
+    # We need to give the browser a couple seconds to re-render the page after the screen has been resized.
+    And I wait "1" seconds
+    And I should not see "Event 1:1"
+    And I hover over day "1" of this month in the full calendar page
+    And I should see "Event 1:1"

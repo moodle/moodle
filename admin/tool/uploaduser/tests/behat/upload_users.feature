@@ -33,8 +33,7 @@ Feature: Upload users
     And I should see "Tom Jones"
     And I should see "Trent Reznor"
     And I should see "reznor@example.com"
-    And I am on "Maths" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Maths" "groups" page
     And I set the field "groups" to "Section 1 (1)"
     And the "members" select box should contain "Tom Jones (jonest@example.com)"
 
@@ -129,16 +128,14 @@ Feature: Upload users
     And I press "Upload users"
     And I should see "Users created: 4"
     And I press "Continue"
-    And I log out
     # Boost check.
-    And I log in as "jonest"
-    And I am on "Maths" course homepage
-    And "Calendar" "link" should be visible
-    And I log out
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I click on ".icon[title=Edit]" "css_element" in the "jonest@example.com" "table_row"
+    And I should see "Boost"
     # Classic check.
-    And I log in as "reznor"
-    And I am on "Maths" course homepage
-    And "Calendar" "link" should not be visible
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I click on ".icon[title=Edit]" "css_element" in the "reznor@example.com" "table_row"
+    And I should see "Classic"
 
   @javascript
   Scenario: Upload users setting their user theme when allowuserthemes is false
@@ -183,9 +180,9 @@ Feature: Upload users
     And I click on "Manual enrolments" "link" in the "Student One" "table_row"
     Then I should see "1 January 2019" in the "Enrolment starts" "table_row"
     And I should not see "Enrolment ends"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "Enrolment details" "dialogue"
     And I click on "Manual enrolments" "link" in the "Student Two" "table_row"
     Then I should see "2 January 2020" in the "Enrolment starts" "table_row"
     And I should see "12 January 2020" in the "Enrolment ends" "table_row"
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "Enrolment details" "dialogue"
     And I log out

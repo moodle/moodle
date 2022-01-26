@@ -45,7 +45,7 @@ Feature: Attempt a quiz
     And I should see "Grade"
     And I should see "25.00 out of 100.00"
     And I follow "Finish review"
-    And I press "Re-attempt quiz"
+    And I follow "Attempt quiz"
 
   @javascript
   Scenario: Attempt a quiz with mulitple sections
@@ -73,13 +73,13 @@ Feature: Attempt a quiz
       | Section 3 | 5         | 1       |
 
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I press "Attempt quiz now"
+    And I follow "Attempt quiz"
 
     Then I should see "Section 1" in the "Quiz navigation" "block"
     And I should see question "1" in section "Section 1" in the quiz navigation
     And I should see question "2" in section "Section 1" in the quiz navigation
     And I should see question "3" in section "Section 2" in the quiz navigation
-    And I should see question "4" in section "Section 2" in the quiz navigation
+    And I should see question "4" in section "Untitled section" in the quiz navigation
     And I should see question "5" in section "Section 3" in the quiz navigation
     And I should see question "6" in section "Section 3" in the quiz navigation
 
@@ -87,11 +87,12 @@ Feature: Attempt a quiz
     And I should see question "1" in section "Section 1" in the quiz navigation
     And I should see question "2" in section "Section 1" in the quiz navigation
     And I should see question "3" in section "Section 2" in the quiz navigation
-    And I should see question "4" in section "Section 2" in the quiz navigation
+    And I should see question "4" in section "Untitled section" in the quiz navigation
     And I should see question "5" in section "Section 3" in the quiz navigation
     And I should see question "6" in section "Section 3" in the quiz navigation
     And I should see "Section 1" in the "quizsummaryofattempt" "table"
     And I should see "Section 2" in the "quizsummaryofattempt" "table"
+    And I should see "Untitled section" in the "quizsummaryofattempt" "table"
     And I should see "Section 3" in the "quizsummaryofattempt" "table"
 
     And I press "Submit all and finish"
@@ -99,7 +100,7 @@ Feature: Attempt a quiz
     And I should see question "1" in section "Section 1" in the quiz navigation
     And I should see question "2" in section "Section 1" in the quiz navigation
     And I should see question "3" in section "Section 2" in the quiz navigation
-    And I should see question "4" in section "Section 2" in the quiz navigation
+    And I should see question "4" in section "Untitled section" in the quiz navigation
     And I should see question "5" in section "Section 3" in the quiz navigation
     And I should see question "6" in section "Section 3" in the quiz navigation
 
@@ -124,7 +125,7 @@ Feature: Attempt a quiz
       | TF1      | 1    |
       | TF2      | 2    |
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I press "Attempt quiz now"
+    And I follow "Attempt quiz"
     Then I should see "Text of the first question"
     And I should not see "Text of the second question"
     And I press "Next page"

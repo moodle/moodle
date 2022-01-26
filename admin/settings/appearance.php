@@ -37,9 +37,10 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         'customusermenuitems',
         new lang_string('customusermenuitems', 'admin'),
         new lang_string('configcustomusermenuitems', 'admin'),
-        'grades,grades|/grade/report/mygrades.php|t/grades
-messages,message|/message/index.php|t/message
-preferences,moodle|/user/preferences.php|t/preferences',
+        'profile,moodle|/user/profile.php
+grades,grades|/grade/report/mygrades.php
+calendar,core_calendar|/calendar/view.php?view=month
+privatefiles,moodle|/user/files.php',
         PARAM_RAW,
         '50',
         '10'
@@ -187,6 +188,7 @@ preferences,moodle|/user/preferences.php|t/preferences',
     $choices = array(
         HOMEPAGE_SITE => new lang_string('site'),
         HOMEPAGE_MY => new lang_string('mymoodle', 'admin'),
+        HOMEPAGE_MYCOURSES => new lang_string('mycourses', 'admin'),
         HOMEPAGE_USER => new lang_string('userpreference', 'admin')
     );
     $temp->add(new admin_setting_configselect('defaulthomepage', new lang_string('defaulthomepage', 'admin'),

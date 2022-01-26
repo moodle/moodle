@@ -49,7 +49,7 @@ class managesubscriptions extends \moodleform {
 
         // Name.
         $mform->addElement('text', 'name', get_string('subscriptionname', 'calendar'), array('maxsize' => '255', 'size' => '40'));
-        $mform->addRule('name', get_string('required'), 'required');
+        $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
 
         // Import from (url | importfile).
@@ -124,12 +124,16 @@ class managesubscriptions extends \moodleform {
                 }
             }
         } else if (($data['importfrom'] == CALENDAR_IMPORT_FROM_URL)) {
-            // Clean input calendar url.
-            $url = clean_param($data['url'], PARAM_URL);
-            try {
-                calendar_get_icalendar($url);
-            } catch (\moodle_exception $e) {
-                $errors['url']  = get_string('errorinvalidicalurl', 'calendar');
+            if (empty($data['url'])) {
+                $errors['url'] = get_string('errorrequiredurlorfile', 'calendar');
+            } else {
+                // Clean input calendar url.
+                $url = clean_param($data['url'], PARAM_URL);
+                try {
+                    calendar_get_icalendar($url);
+                } catch (\moodle_exception $e) {
+                    $errors['url'] = get_string('errorinvalidicalurl', 'calendar');
+                }
             }
         } else {
             // Shouldn't happen.

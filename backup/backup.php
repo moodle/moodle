@@ -107,6 +107,7 @@ switch ($type) {
 
 $PAGE->set_title($heading);
 $PAGE->set_heading($heading);
+$PAGE->activityheader->disable();
 
 if (empty($cancel)) {
     // Do not print the header if user cancelled the process, as we are going to redirect the user.
@@ -202,6 +203,7 @@ if (!async_helper::is_async_pending($id, 'course', 'backup')) {
             $asynctask = new \core\task\asynchronous_backup_task();
             $asynctask->set_blocking(false);
             $asynctask->set_custom_data(array('backupid' => $backupid));
+            $asynctask->set_userid($USER->id);
             \core\task\manager::queue_adhoc_task($asynctask);
 
             // Add ajax progress bar and initiate ajax via a template.

@@ -30,6 +30,7 @@ global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/lti/lib.php');
+require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
 
 /**
  * External tool module external functions tests
@@ -40,7 +41,7 @@ require_once($CFG->dirroot . '/mod/lti/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class mod_lti_external_testcase extends externallib_advanced_testcase {
+class mod_lti_external_testcase extends mod_lti_testcase {
 
     /**
      * Set up for every test
@@ -86,39 +87,6 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
             'studentrole' => $studentrole,
             'teacherrole' => $teacherrole
         ];
-    }
-
-    /**
-     * Generate a tool type.
-     *
-     * @param string $uniqueid Each tool type needs a different base url. Provide a unique string for every tool type created.
-     * @param int|null $toolproxyid Optional proxy to associate with tool type.
-     * @return stdClass A tool type.
-     */
-    protected function generate_tool_type(string $uniqueid, int $toolproxyid = null) : stdClass {
-        // Create a tool type.
-        $type = new stdClass();
-        $type->state = LTI_TOOL_STATE_CONFIGURED;
-        $type->name = "Test tool $uniqueid";
-        $type->description = "Example description $uniqueid";
-        $type->toolproxyid = $toolproxyid;
-        $type->baseurl = $this->getExternalTestFileUrl("/test$uniqueid.html");
-        lti_add_type($type, new stdClass());
-        return $type;
-    }
-
-    /**
-     * Generate a tool proxy.
-     *
-     * @param string $uniqueid Each tool proxy needs a different reg url. Provide a unique string for every tool proxy created.
-     * @return stdClass A tool proxy.
-     */
-    protected function generate_tool_proxy(string $uniqueid) : stdClass {
-        // Create a tool proxy.
-        $proxy = mod_lti_external::create_tool_proxy("Test proxy $uniqueid",
-                $this->getExternalTestFileUrl("/proxy$uniqueid.html"), array(), array());
-        $proxy = (object)external_api::clean_returnvalue(mod_lti_external::create_tool_proxy_returns(), $proxy);
-        return $proxy;
     }
 
     /**
@@ -479,7 +447,6 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
      * Test get_tool_types.
      */
     public function test_mod_lti_get_tool_types() {
-        // Create a tool proxy.
         $this->setAdminUser();
         $proxy = mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), array(), array());
         $proxy = (object) external_api::clean_returnvalue(mod_lti_external::create_tool_proxy_returns(), $proxy);

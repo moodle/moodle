@@ -48,12 +48,13 @@ if (!$feedbackstructure->can_view_analysis()) {
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => ''
+]);
+$PAGE->add_body_class('limitedwidth');
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($feedback->name));
-
-/// print the tabs
-require('tabs.php');
-
+echo $OUTPUT->heading(get_string('analysis', 'mod_feedback'), 3);
 
 //get the groupid
 $mygroupid = groups_get_activity_group($cm, true);
@@ -98,4 +99,3 @@ if ($check_anonymously) {
 echo '</div>';
 
 echo $OUTPUT->footer();
-

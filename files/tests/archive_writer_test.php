@@ -33,7 +33,7 @@ use core_files\local\archive_writer\zip_writer;
  *
  * @coversDefaultClass \core_files\archive_writer
  */
-class archive_writer_testcase extends advanced_testcase {
+class archive_writer_test extends advanced_testcase {
 
     /**
      * Test get_file_writer().

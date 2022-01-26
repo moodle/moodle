@@ -28,67 +28,104 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/outputcomponents.php');
 
-
 /**
  * Unit tests for the html_writer class.
  *
  * @copyright 2010 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \html_writer
+ * @coversDefaultClass \html_writer
  */
-class core_html_writer_testcase extends basic_testcase {
+class html_writer_test extends basic_testcase {
 
+    /**
+     * @covers ::start_tag
+     */
     public function test_start_tag() {
         $this->assertSame('<div>', html_writer::start_tag('div'));
     }
 
+    /**
+     * @covers ::start_tag
+     */
     public function test_start_tag_with_attr() {
         $this->assertSame('<div class="frog">',
             html_writer::start_tag('div', array('class' => 'frog')));
     }
 
+    /**
+     * @covers ::start_tag
+     */
     public function test_start_tag_with_attrs() {
         $this->assertSame('<div class="frog" id="mydiv">',
             html_writer::start_tag('div', array('class' => 'frog', 'id' => 'mydiv')));
     }
 
+    /**
+     * @covers ::end_tag
+     */
     public function test_end_tag() {
         $this->assertSame('</div>', html_writer::end_tag('div'));
     }
 
+    /**
+     * @covers ::empty_Tag
+     */
     public function test_empty_tag() {
         $this->assertSame('<br />', html_writer::empty_tag('br'));
     }
 
+    /**
+     * @covers ::empty_Tag
+     */
     public function test_empty_tag_with_attrs() {
         $this->assertSame('<input type="submit" value="frog" />',
             html_writer::empty_tag('input', array('type' => 'submit', 'value' => 'frog')));
     }
 
+    /**
+     * @covers ::nonempty_tag
+     */
     public function test_nonempty_tag_with_content() {
         $this->assertSame('<div>Hello world!</div>',
             html_writer::nonempty_tag('div', 'Hello world!'));
     }
 
+    /**
+     * @covers ::nonempty_tag
+     */
     public function test_nonempty_tag_empty() {
         $this->assertSame('',
             html_writer::nonempty_tag('div', ''));
     }
 
+    /**
+     * @covers ::nonempty_tag
+     */
     public function test_nonempty_tag_null() {
         $this->assertSame('',
             html_writer::nonempty_tag('div', null));
     }
 
+    /**
+     * @covers ::nonempty_tag
+     */
     public function test_nonempty_tag_zero() {
         $this->assertSame('<div class="score">0</div>',
             html_writer::nonempty_tag('div', 0, array('class' => 'score')));
     }
 
+    /**
+     * @covers ::nonempty_tag
+     */
     public function test_nonempty_tag_zero_string() {
         $this->assertSame('<div class="score">0</div>',
             html_writer::nonempty_tag('div', '0', array('class' => 'score')));
     }
 
+    /**
+     * @covers ::div
+     */
     public function test_div() {
         // All options.
         $this->assertSame('<div class="frog" id="kermit">ribbit</div>',
@@ -107,6 +144,9 @@ class core_html_writer_testcase extends basic_testcase {
                 html_writer::div('ribbit'));
     }
 
+    /**
+     * @covers ::start_div
+     */
     public function test_start_div() {
         // All options.
         $this->assertSame('<div class="frog" id="kermit">',
@@ -125,10 +165,16 @@ class core_html_writer_testcase extends basic_testcase {
                 html_writer::start_div());
     }
 
+    /**
+     * @covers ::end_div
+     */
     public function test_end_div() {
         $this->assertSame('</div>', html_writer::end_div());
     }
 
+    /**
+     * @covers ::span
+     */
     public function test_span() {
         // All options.
         $this->assertSame('<span class="frog" id="kermit">ribbit</span>',
@@ -147,6 +193,9 @@ class core_html_writer_testcase extends basic_testcase {
                 html_writer::span('ribbit'));
     }
 
+    /**
+     * @covers ::start_span
+     */
     public function test_start_span() {
         // All options.
         $this->assertSame('<span class="frog" id="kermit">',
@@ -165,10 +214,19 @@ class core_html_writer_testcase extends basic_testcase {
                 html_writer::start_span());
     }
 
+    /**
+     * @covers ::end_span
+     */
     public function test_end_span() {
         $this->assertSame('</span>', html_writer::end_span());
     }
 
+    /**
+     * @covers ::table
+     * @covers \html_table_row
+     * @covers \html_table_cell
+     * @covers \html_table
+     */
     public function test_table() {
         $row = new html_table_row();
 
@@ -193,6 +251,7 @@ class core_html_writer_testcase extends basic_testcase {
         $row->cells[] = $cell;
 
         $table = new html_table();
+        $table->responsive = false;
         // The attribute will get overwritten by the ID.
         $table->id = 'Jeffrey';
         $table->attributes['id'] = 'will get overwritten';
@@ -219,6 +278,9 @@ EOF;
         $this->assertSame($expected, $output);
     }
 
+    /**
+     * @covers ::table
+     */
     public function test_table_hidden_caption() {
 
         $table = new html_table();
@@ -230,6 +292,7 @@ EOF;
         );
         $table->caption = "Who even knows?";
         $table->captionhide = true;
+        $table->responsive = false;
 
         $output = html_writer::table($table);
         $expected = <<<EOF

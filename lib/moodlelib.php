@@ -460,6 +460,23 @@ define('MOD_ARCHETYPE_ASSIGNMENT', 2);
 /** System (not user-addable) module archetype */
 define('MOD_ARCHETYPE_SYSTEM', 3);
 
+/** Type of module */
+define('FEATURE_MOD_PURPOSE', 'mod_purpose');
+/** Module purpose administration */
+define('MOD_PURPOSE_ADMINISTRATION', 'administration');
+/** Module purpose assessment */
+define('MOD_PURPOSE_ASSESSMENT', 'assessment');
+/** Module purpose communication */
+define('MOD_PURPOSE_COLLABORATION', 'collaboration');
+/** Module purpose communication */
+define('MOD_PURPOSE_COMMUNICATION', 'communication');
+/** Module purpose content */
+define('MOD_PURPOSE_CONTENT', 'content');
+/** Module purpose interface */
+define('MOD_PURPOSE_INTERFACE', 'interface');
+/** Module purpose other */
+define('MOD_PURPOSE_OTHER', 'other');
+
 /**
  * Security token used for allowing access
  * from external application such as web services.
@@ -489,6 +506,10 @@ define('HOMEPAGE_MY', 1);
  * The home page can be chosen by the user
  */
 define('HOMEPAGE_USER', 2);
+/**
+ * The home page should be the users my courses page
+ */
+define('HOMEPAGE_MYCOURSES', 3);
 
 /**
  * URL of the Moodle sites registration portal.
@@ -1457,8 +1478,6 @@ function set_config($name, $value, $plugin=null) {
  *
  * NOTE: this function is called from lib/db/upgrade.php
  *
- * @static string|false $siteidentifier The site identifier is not cached. We use this static cache so
- *     that we need only fetch it once per request.
  * @param string $plugin full component name
  * @param string $name default null
  * @return mixed hash-like object or single value, return false no config found
@@ -1466,8 +1485,6 @@ function set_config($name, $value, $plugin=null) {
  */
 function get_config($plugin, $name = null) {
     global $CFG, $DB;
-
-    static $siteidentifier = null;
 
     if ($plugin === 'moodle' || $plugin === 'core' || empty($plugin)) {
         $forced =& $CFG->config_php_settings;
@@ -1482,12 +1499,11 @@ function get_config($plugin, $name = null) {
         $iscore = false;
     }
 
-    if ($siteidentifier === null) {
+    if (!isset($CFG->siteidentifier)) {
         try {
-            // This may fail during installation.
-            // If you have a look at {@link initialise_cfg()} you will see that this is how we detect the need to
-            // install the database.
-            $siteidentifier = $DB->get_field('config', 'value', array('name' => 'siteidentifier'));
+            // This may throw an exception during installation, which is how we detect the
+            // need to install the database. For more details see {@see initialise_cfg()}.
+            $CFG->siteidentifier = $DB->get_field('config', 'value', array('name' => 'siteidentifier'));
         } catch (dml_exception $ex) {
             // Set siteidentifier to false. We don't want to trip this continually.
             $siteidentifier = false;
@@ -1499,7 +1515,7 @@ function get_config($plugin, $name = null) {
         if (array_key_exists($name, $forced)) {
             return (string)$forced[$name];
         } else if ($name === 'siteidentifier' && $plugin == 'core') {
-            return $siteidentifier;
+            return $CFG->siteidentifier;
         }
     }
 
@@ -1524,7 +1540,7 @@ function get_config($plugin, $name = null) {
     }
 
     if ($plugin === 'core') {
-        $result['siteidentifier'] = $siteidentifier;
+        $result['siteidentifier'] = $CFG->siteidentifier;
     }
 
     foreach ($forced as $key => $value) {
@@ -2726,11 +2742,6 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
                 $SESSION->wantsurl = qualified_me();
             }
 
-            $referer = get_local_referer(false);
-            if (!empty($referer)) {
-                $SESSION->fromurl = $referer;
-            }
-
             // Give auth plugins an opportunity to authenticate or redirect to an external login page
             $authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
             foreach($authsequence as $authname) {
@@ -3356,7 +3367,7 @@ function get_user_key($script, $userid, $instance=null, $iprestriction=null, $va
  * @return bool Always returns true
  */
 function update_user_login_times() {
-    global $USER, $DB;
+    global $USER, $DB, $SESSION;
 
     if (isguestuser()) {
         // Do not update guest access times/ips for performance.
@@ -3380,6 +3391,7 @@ function update_user_login_times() {
 
     // Function user_accesstime_log() may not update immediately, better do it here.
     $USER->lastaccess = $user->lastaccess = $now;
+    $SESSION->userpreviousip = $USER->lastip;
     $USER->lastip = $user->lastip = getremoteaddr();
 
     // Note: do not call user_update_user() here because this is part of the login process,
@@ -4550,6 +4562,27 @@ function complete_user_login($user) {
     );
     $event->trigger();
 
+    // Check if the user is using a new browser or session (a new MoodleSession cookie is set in that case).
+    // If the user is accessing from the same IP, ignore everything (most of the time will be a new session in the same browser).
+    // Skip Web Service requests, CLI scripts, AJAX scripts, and request from the mobile app itself.
+    $loginip = getremoteaddr();
+    $isnewip = isset($SESSION->userpreviousip) && $SESSION->userpreviousip != $loginip;
+    $isvalidenv = (!WS_SERVER && !CLI_SCRIPT && !NO_MOODLE_COOKIES) || PHPUNIT_TEST;
+
+    if (!empty($SESSION->isnewsessioncookie) && $isnewip && $isvalidenv && !\core_useragent::is_moodle_app()) {
+
+        $logintime = time();
+        $ismoodleapp = false;
+        $useragent = \core_useragent::get_user_agent_string();
+
+        // Schedule adhoc task to sent a login notification to the user.
+        $task = new \core\task\send_login_notifications();
+        $task->set_userid($USER->id);
+        $task->set_custom_data(compact('ismoodleapp', 'useragent', 'loginip', 'logintime'));
+        $task->set_component('core');
+        \core\task\manager::queue_adhoc_task($task);
+    }
+
     // Queue migrating the messaging data, if we need to.
     if (!get_user_preferences('core_message_migrate_data', false, $USER->id)) {
         // Check if there are any legacy messages to migrate.
@@ -5251,6 +5284,10 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
 
     // Delete course tags.
     core_tag_tag::remove_all_item_tags('core', 'course', $course->id);
+
+    // Give the course format the opportunity to remove its obscure data.
+    $format = course_get_format($course);
+    $format->delete_format_data();
 
     // Notify the competency subsystem.
     \core_competency\api::hook_course_deleted($course);
@@ -6807,7 +6844,7 @@ function get_max_upload_sizes($sitebytes = 0, $coursebytes = 0, $modulebytes = 0
 
     foreach ($sizelist as $sizebytes) {
         if ($sizebytes < $maxsize && $sizebytes > 0) {
-            $filesize[(string)intval($sizebytes)] = display_size($sizebytes);
+            $filesize[(string)intval($sizebytes)] = display_size($sizebytes, 0);
         }
     }
 
@@ -6817,17 +6854,17 @@ function get_max_upload_sizes($sitebytes = 0, $coursebytes = 0, $modulebytes = 0
         (($modulebytes < $coursebytes || $coursebytes == 0) &&
          ($modulebytes < $sitebytes || $sitebytes == 0))) {
         $limitlevel = get_string('activity', 'core');
-        $displaysize = display_size($modulebytes);
+        $displaysize = display_size($modulebytes, 0);
         $filesize[$modulebytes] = $displaysize; // Make sure the limit is also included in the list.
 
     } else if ($coursebytes && ($coursebytes < $sitebytes || $sitebytes == 0)) {
         $limitlevel = get_string('course', 'core');
-        $displaysize = display_size($coursebytes);
+        $displaysize = display_size($coursebytes, 0);
         $filesize[$coursebytes] = $displaysize; // Make sure the limit is also included in the list.
 
     } else if ($sitebytes) {
         $limitlevel = get_string('site', 'core');
-        $displaysize = display_size($sitebytes);
+        $displaysize = display_size($sitebytes, 0);
         $filesize[$sitebytes] = $displaysize; // Make sure the limit is also included in the list.
     }
 
@@ -6959,14 +6996,12 @@ function get_directory_size($rootdir, $excludefile='') {
 /**
  * Converts bytes into display form
  *
- * @static string $gb Localized string for size in gigabytes
- * @static string $mb Localized string for size in megabytes
- * @static string $kb Localized string for size in kilobytes
- * @static string $b Localized string for size in bytes
  * @param int $size  The size to convert to human readable form
- * @return string
+ * @param int $decimalplaces If specified, uses fixed number of decimal places
+ * @param string $fixedunits If specified, uses fixed units (e.g. 'KB')
+ * @return string Display version of size
  */
-function display_size($size) {
+function display_size($size, int $decimalplaces = 1, string $fixedunits = ''): string {
 
     static $units;
 
@@ -6983,20 +7018,44 @@ function display_size($size) {
         $units[] = get_string('sizepb');
     }
 
-    if ($size >= 1024 ** 5) {
-        $size = round($size / 1024 ** 5 * 10) / 10 . $units[5];
-    } else if ($size >= 1024 ** 4) {
-        $size = round($size / 1024 ** 4 * 10) / 10 . $units[4];
-    } else if ($size >= 1024 ** 3) {
-        $size = round($size / 1024 ** 3 * 10) / 10 . $units[3];
-    } else if ($size >= 1024 ** 2) {
-        $size = round($size / 1024 ** 2 * 10) / 10 . $units[2];
-    } else if ($size >= 1024 ** 1) {
-        $size = round($size / 1024 ** 1 * 10) / 10 . $units[1];
-    } else {
-        $size = intval($size) .' '. $units[0]; // File sizes over 2GB can not work in 32bit PHP anyway.
+    switch ($fixedunits) {
+        case 'PB' :
+            $magnitude = 5;
+            break;
+        case 'TB' :
+            $magnitude = 4;
+            break;
+        case 'GB' :
+            $magnitude = 3;
+            break;
+        case 'MB' :
+            $magnitude = 2;
+            break;
+        case 'KB' :
+            $magnitude = 1;
+            break;
+        case 'B' :
+            $magnitude = 0;
+            break;
+        case '':
+            $magnitude = floor(log($size, 1024));
+            $magnitude = max(0, min(5, $magnitude));
+            break;
+        default:
+            throw new coding_exception('Unknown fixed units value: ' . $fixedunits);
     }
-    return $size;
+
+    // Special case for magnitude 0 (bytes) - never use decimal places.
+    $nbsp = "\xc2\xa0";
+    if ($magnitude === 0) {
+        return round($size) . $nbsp . $units[$magnitude];
+    }
+
+    // Convert to specified units.
+    $sizeinunit = $size / 1024 ** $magnitude;
+
+    // Fixed decimal places.
+    return sprintf('%.' . $decimalplaces . 'f', $sizeinunit) . $nbsp . $units[$magnitude];
 }
 
 /**
@@ -9545,9 +9604,9 @@ function get_performance_info() {
 
         $table = new html_table();
         $table->attributes['class'] = 'cachesused table table-dark table-sm w-auto table-bordered';
-        $table->head = ['Mode', 'Cache item', 'Static', 'H', 'M', get_string('mappingprimary', 'cache'), 'H', 'M', 'S'];
+        $table->head = ['Mode', 'Cache item', 'Static', 'H', 'M', get_string('mappingprimary', 'cache'), 'H', 'M', 'S', 'I/O'];
         $table->data = [];
-        $table->align = ['left', 'left', 'left', 'right', 'right', 'left', 'right', 'right', 'right'];
+        $table->align = ['left', 'left', 'left', 'right', 'right', 'left', 'right', 'right', 'right', 'right'];
 
         $text = 'Caches used (hits/misses/sets): ';
         $hits = 0;
@@ -9578,9 +9637,11 @@ function get_performance_info() {
             $table->align[] = 'right';
             $table->align[] = 'right';
             $table->align[] = 'right';
+            $table->align[] = 'right';
             $table->head[] = 'H';
             $table->head[] = 'M';
             $table->head[] = 'S';
+            $table->head[] = 'I/O';
         }
 
         ksort($stats);
@@ -9640,10 +9701,27 @@ function get_performance_info() {
                     $cell = new html_table_cell($data['sets']);
                     $cell->attributes = ['class' => $cachestoreclass];
                     $row[] = $cell;
+
+                    if ($data['hits'] || $data['sets']) {
+                        if ($data['iobytes'] === cache_store::IO_BYTES_NOT_SUPPORTED) {
+                            $size = '-';
+                        } else {
+                            $size = display_size($data['iobytes'], 1, 'KB');
+                            if ($data['iobytes'] >= 10 * 1024) {
+                                $cachestoreclass = ' bg-warning text-dark';
+                            }
+                        }
+                    } else {
+                        $size = '';
+                    }
+                    $cell = new html_table_cell($size);
+                    $cell->attributes = ['class' => $cachestoreclass];
+                    $row[] = $cell;
                 }
                 $storec++;
             }
             while ($storec++ < $maxstores) {
+                $row[] = '';
                 $row[] = '';
                 $row[] = '';
                 $row[] = '';
@@ -9658,11 +9736,11 @@ function get_performance_info() {
 
         // Now lets also show sub totals for each cache store.
         $storetotals = [];
-        $storetotal = ['hits' => 0, 'misses' => 0, 'sets' => 0];
+        $storetotal = ['hits' => 0, 'misses' => 0, 'sets' => 0, 'iobytes' => 0];
         foreach ($stats as $definition => $details) {
             foreach ($details['stores'] as $store => $data) {
                 if (!array_key_exists($store, $storetotals)) {
-                    $storetotals[$store] = ['hits' => 0, 'misses' => 0, 'sets' => 0];
+                    $storetotals[$store] = ['hits' => 0, 'misses' => 0, 'sets' => 0, 'iobytes' => 0];
                 }
                 $storetotals[$store]['class']   = $data['class'];
                 $storetotals[$store]['hits']   += $data['hits'];
@@ -9671,14 +9749,18 @@ function get_performance_info() {
                 $storetotal['hits']   += $data['hits'];
                 $storetotal['misses'] += $data['misses'];
                 $storetotal['sets']   += $data['sets'];
+                if ($data['iobytes'] !== cache_store::IO_BYTES_NOT_SUPPORTED) {
+                    $storetotals[$store]['iobytes'] += $data['iobytes'];
+                    $storetotal['iobytes'] += $data['iobytes'];
+                }
             }
         }
 
         $table = new html_table();
         $table->attributes['class'] = 'cachesused table table-dark table-sm w-auto table-bordered';
-        $table->head = [get_string('storename', 'cache'), get_string('type_cachestore', 'plugin'), 'H', 'M', 'S'];
+        $table->head = [get_string('storename', 'cache'), get_string('type_cachestore', 'plugin'), 'H', 'M', 'S', 'I/O'];
         $table->data = [];
-        $table->align = ['left', 'left', 'right', 'right', 'right'];
+        $table->align = ['left', 'left', 'right', 'right', 'right', 'right'];
 
         ksort($storetotals);
 
@@ -9706,7 +9788,26 @@ function get_performance_info() {
             $cell = new html_table_cell($data['sets']);
             $cell->attributes = ['class' => $cachestoreclass];
             $row[] = $cell;
+            if ($data['hits'] || $data['sets']) {
+                if ($data['iobytes']) {
+                    $size = display_size($data['iobytes'], 1, 'KB');
+                } else {
+                    $size = '-';
+                }
+            } else {
+                $size = '';
+            }
+            $cell = new html_table_cell($size);
+            $cell->attributes = ['class' => $cachestoreclass];
+            $row[] = $cell;
             $table->data[] = $row;
+        }
+        if (!empty($storetotal['iobytes'])) {
+            $size = display_size($storetotal['iobytes'], 1, 'KB');
+        } else if (!empty($storetotal['hits']) || !empty($storetotal['sets'])) {
+            $size = '-';
+        } else {
+            $size = '';
         }
         $row = [
             get_string('total'),
@@ -9714,6 +9815,7 @@ function get_performance_info() {
             $storetotal['hits'],
             $storetotal['misses'],
             $storetotal['sets'],
+            $size,
         ];
         $table->data[] = $row;
 
@@ -10262,6 +10364,8 @@ function get_home_page() {
     if (isloggedin() && !isguestuser() && !empty($CFG->defaulthomepage)) {
         if ($CFG->defaulthomepage == HOMEPAGE_MY) {
             return HOMEPAGE_MY;
+        } else if ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES) {
+            return HOMEPAGE_MYCOURSES;
         } else {
             return (int)get_user_preferences('user_home_page_preference', HOMEPAGE_MY);
         }
@@ -10338,6 +10442,21 @@ function unserialize_array($expression) {
         $value[$parts[$i]] = $parts[$i+1];
     }
     return $value;
+}
+
+/**
+ * Safe method for unserializing given input that is expected to contain only a serialized instance of an stdClass object
+ *
+ * If any class type other than stdClass is included in the input string, it will not be instantiated and will be cast to an
+ * stdClass object. The initial cast to array, then back to object is to ensure we are always returning the correct type,
+ * otherwise we would return an instances of {@see __PHP_Incomplete_class} for malformed strings
+ *
+ * @param string $input
+ * @return stdClass
+ */
+function unserialize_object(string $input): stdClass {
+    $instance = (array) unserialize($input, ['allowed_classes' => [stdClass::class]]);
+    return (object) $instance;
 }
 
 /**

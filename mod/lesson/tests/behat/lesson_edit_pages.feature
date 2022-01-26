@@ -38,7 +38,7 @@ Feature: In a lesson activity, teacher can edit lesson's pages
       | id_answer_editor_1 | Next page |
       | id_jumpto_1 | Next page |
     And I press "Save page"
-    And I follow "Expanded"
+    And I select edit type "Expanded"
     And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][3]" "xpath_element"
     And I set the field "Select a question type" to "Numerical"
     And I press "Add a question page"

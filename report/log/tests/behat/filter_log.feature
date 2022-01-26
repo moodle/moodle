@@ -26,7 +26,7 @@ Feature: In a report, admin can filter log data
     And I click on "Enable" "link" in the "Legacy log" "table_row"
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
-    And I follow "Home"
+    And I am on homepage
     And I am on "Course 1" course homepage
     And I navigate to course participants
     And I follow "Ann, Jill, Grainne, Beauchamp"
@@ -65,9 +65,9 @@ Feature: In a report, admin can filter log data
     And I click on "Disable" "link" in the "Standard log" "table_row"
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
-    And I follow "Home"
+    And I am on homepage
     And I am on "Course 1" course homepage
-    And I follow "Home"
+    And I am on homepage
     And I am on "Course 1" course homepage
     And I navigate to course participants
     And I follow "Ann, Jill, Grainne, Beauchamp"

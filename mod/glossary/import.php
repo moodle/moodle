@@ -49,11 +49,16 @@ $strimportentries = get_string('importentriesfromxml', 'glossary');
 $PAGE->navbar->add($strimportentries);
 $PAGE->set_title($glossary->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_secondary_active_tab('modulepage');
+$PAGE->activityheader->disable();
+
+$form = new mod_glossary_import_form('');
+if ($form->is_cancelled()) {
+    redirect(new moodle_url('view.php', ['id' => $id]));
+}
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strimportentries);
-
-$form = new mod_glossary_import_form();
 
 if ( !$data = $form->get_data() ) {
     echo $OUTPUT->box_start('glossarydisplay generalbox');

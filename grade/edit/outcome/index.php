@@ -50,6 +50,7 @@ if ($courseid) {
     }
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');
+    $context = context_system::instance();
 }
 
 /// return tracking object
@@ -113,7 +114,6 @@ if ($courseid) {
     $caneditcoursescales = has_capability('moodle/course:managescales', $context);
 
 } else {
-    echo $OUTPUT->header();
     $caneditcoursescales = $caneditsystemscales;
 }
 
@@ -122,7 +122,7 @@ $outcomes_tables = array();
 $heading = get_string('outcomes', 'grades');
 
 if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
-    $return = $OUTPUT->heading($strcustomoutcomes, 3, 'main');
+    $return = $OUTPUT->heading($strcustomoutcomes, 3, 'main mt-3');
     $data = array();
     foreach($outcomes as $outcome) {
         $line = array();
@@ -172,7 +172,7 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
 
 
 if ($outcomes = grade_outcome::fetch_all_global()) {
-    $return = $OUTPUT->heading($strstandardoutcome, 3, 'main');
+    $return = $OUTPUT->heading($strstandardoutcome, 3, 'main mt-3');
     $data = array();
     foreach($outcomes as $outcome) {
         $line = array();
@@ -223,21 +223,18 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
     $outcomes_tables[] = $return;
 }
 
-if ($courseid) {
-    /// Print header
-    print_grade_page_head($courseid, 'outcome', 'edit', $heading);
-}
+$actionbar = new \core_grades\output\manage_outcomes_action_bar($context, !empty($outcomes_tables));
+print_grade_page_head($courseid ?: SITEID, 'outcome', 'edit', $heading, false, false,
+    true, null, null, null, $actionbar);
 
-foreach($outcomes_tables as $table) {
-    echo $table;
+// If there are existing outcomes, output the outcome tables.
+if (!empty($outcomes_tables)) {
+    foreach ($outcomes_tables as $table) {
+        echo $table;
+    }
+} else {
+    echo $OUTPUT->notification(get_string('noexistingoutcomes', 'grades'), 'info', false);
 }
-
-echo $OUTPUT->container_start('buttons');
-echo $OUTPUT->single_button(new moodle_url('edit.php', array('courseid'=>$courseid)), $strcreatenewoutcome);
-if ( !empty($outcomes_tables) ) {
-    echo $OUTPUT->single_button(new moodle_url('export.php', array('id'=>$courseid, 'sesskey'=>sesskey())),  get_string('exportalloutcomes', 'grades'));
-}
-echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();
 

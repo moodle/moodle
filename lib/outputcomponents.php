@@ -736,7 +736,7 @@ class pix_icon implements renderable, templatable {
         return [
             'key' => $this->pix,
             'component' => $this->component,
-            'title' => $title
+            'title' => (string) $title,
         ];
     }
 }
@@ -855,6 +855,7 @@ class single_button implements renderable {
      * @param moodle_url $url
      * @param string $label button text
      * @param string $method get or post submit method
+     * @param bool $primary whether this is a primary button, used for styling
      * @param array $attributes Attributes for the HTML button tag
      */
     public function __construct(moodle_url $url, $label, $method='post', $primary=false, $attributes = []) {
@@ -2320,6 +2321,10 @@ class html_writer {
         }
         $output .= html_writer::end_tag('table') . "\n";
 
+        if ($table->responsive) {
+            return self::div($output, 'table-responsive');
+        }
+
         return $output;
     }
 
@@ -2770,6 +2775,9 @@ class html_table {
      * $t->captionhide = true;
      */
     public $captionhide = false;
+
+    /** @var bool Whether to make the table to be scrolled horizontally with ease. Make table responsive across all viewports. */
+    public $responsive = true;
 
     /**
      * Constructor
@@ -3981,6 +3989,10 @@ class context_header implements renderable {
      *                       page => page object. Don't include if the image is an external image.
      */
     public $additionalbuttons;
+    /**
+     * @var string $prefix A string that is before the title.
+     */
+    public $prefix;
 
     /**
      * Constructor.
@@ -3989,8 +4001,9 @@ class context_header implements renderable {
      * @param int $headinglevel Main heading 'h' tag level.
      * @param string|null $imagedata HTML code for the picture in the page header.
      * @param string $additionalbuttons Buttons for the header e.g. Messaging button for the user header.
+     * @param string $prefix Text that precedes the heading.
      */
-    public function __construct($heading = null, $headinglevel = 1, $imagedata = null, $additionalbuttons = null) {
+    public function __construct($heading = null, $headinglevel = 1, $imagedata = null, $additionalbuttons = null, $prefix = null) {
 
         $this->heading = $heading;
         $this->headinglevel = $headinglevel;
@@ -4000,6 +4013,7 @@ class context_header implements renderable {
         if (isset($this->additionalbuttons)) {
             $this->format_button_images();
         }
+        $this->prefix = $prefix;
     }
 
     /**
@@ -4236,7 +4250,6 @@ class action_menu implements renderable, templatable {
         $this->attributesprimary = array(
             'id' => 'action-menu-'.$this->instance.'-menubar',
             'class' => 'menubar',
-            'role' => 'menubar'
         );
         $this->attributessecondary = array(
             'id' => 'action-menu-'.$this->instance.'-menu',

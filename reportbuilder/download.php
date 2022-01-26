@@ -24,6 +24,7 @@
 
 declare(strict_types=1);
 
+use core_reportbuilder\permission;
 use core_reportbuilder\system_report_factory;
 
 require_once(__DIR__ . '/../config.php');
@@ -40,16 +41,23 @@ $context = $reportpersistent->get_context();
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/reportbuilder/download.php'));
 
-$systemreport = system_report_factory::create($reportpersistent->get('source'), $context);
-if (!$systemreport->can_be_downloaded()) {
-    throw new \core_reportbuilder\report_access_exception();
-}
+if ($reportpersistent->get('type') === \core_reportbuilder\local\report\base::TYPE_SYSTEM_REPORT) {
+    $systemreport = system_report_factory::create($reportpersistent->get('source'), $context);
+    if (!$systemreport->can_be_downloaded()) {
+        throw new \core_reportbuilder\report_access_exception();
+    }
 
-// Combine original report parameters with 'download' parameter.
-$reportparameters = ['download' => $download];
-if ($parameters) {
-    $reportparameters = array_merge($reportparameters, (array) json_decode($parameters));
-}
+    // Combine original report parameters with 'download' parameter.
+    $reportparameters = ['download' => $download];
+    if ($parameters) {
+        $reportparameters = array_merge($reportparameters, (array) json_decode($parameters));
+    }
 
-$outputreport = new \core_reportbuilder\output\system_report($reportpersistent, $systemreport, $reportparameters);
-echo $PAGE->get_renderer('core_reportbuilder')->render($outputreport);
+    $outputreport = new \core_reportbuilder\output\system_report($reportpersistent, $systemreport, $reportparameters);
+    echo $PAGE->get_renderer('core_reportbuilder')->render($outputreport);
+} else {
+    permission::require_can_view_report($reportpersistent);
+
+    $customreport = new \core_reportbuilder\output\custom_report($reportpersistent, false, $download);
+    echo $PAGE->get_renderer('core_reportbuilder')->render($customreport);
+}

@@ -32,8 +32,13 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2015 Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Petr Skoda <petr.skoda@totaralms.com>
+ * @covers \core_date
+ * @coversDefaultClass \core_date
  */
-class core_date_testcase extends advanced_testcase {
+class date_test extends advanced_testcase {
+    /**
+     * @covers ::get_default_php_timezone
+     */
     public function test_get_default_php_timezone() {
         $this->resetAfterTest();
 
@@ -50,6 +55,9 @@ class core_date_testcase extends advanced_testcase {
         $this->assertSame('GMT', core_date::get_default_php_timezone());
     }
 
+    /**
+     * @covers ::normalise_timezone
+     */
     public function test_normalise_timezone() {
         $this->resetAfterTest();
 
@@ -114,6 +122,9 @@ class core_date_testcase extends advanced_testcase {
         $this->assertSame('Pacific/Auckland', core_date::normalise_timezone($tz));
     }
 
+    /**
+     * @covers ::normalise_timezone
+     */
     public function test_windows_conversion() {
         $file = __DIR__ . '/fixtures/timezonewindows.xml';
 
@@ -175,6 +186,9 @@ class core_date_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * @covers ::get_localised_timezone
+     */
     public function test_get_localised_timezone() {
         $this->resetAfterTest();
 
@@ -202,6 +216,9 @@ class core_date_testcase extends advanced_testcase {
         $this->assertSame('UTC', $result);
     }
 
+    /**
+     * @covers ::get_list_of_timezones
+     */
     public function test_get_list_of_timezones() {
         $this->resetAfterTest();
 
@@ -250,6 +267,9 @@ class core_date_testcase extends advanced_testcase {
 
     }
 
+    /**
+     * @covers ::get_server_timezone
+     */
     public function test_get_server_timezone() {
         global $CFG;
         $this->resetAfterTest();
@@ -275,6 +295,9 @@ class core_date_testcase extends advanced_testcase {
         $this->assertSame('Europe/Prague', core_date::get_server_timezone());
     }
 
+    /**
+     * @covers ::get_server_timezone_object
+     */
     public function test_get_server_timezone_object() {
         $this->resetAfterTest();
 
@@ -287,6 +310,9 @@ class core_date_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * @covers ::set_default_server_timezone
+     */
     public function test_set_default_server_timezone() {
         global $CFG;
         $this->resetAfterTest();
@@ -405,6 +431,7 @@ class core_date_testcase extends advanced_testcase {
 
     /**
      * @dataProvider legacyUserTimezoneProvider
+     * @covers ::get_user_timezone
      * @param string $tz The legacy timezone.
      * @param string $expected The expected converted timezone.
      */
@@ -413,6 +440,9 @@ class core_date_testcase extends advanced_testcase {
         $this->assertEquals($expected, core_date::get_user_timezone($tz));
     }
 
+    /**
+     * @covers ::get_user_timezone
+     */
     public function test_get_user_timezone() {
         global $CFG, $USER;
         $this->resetAfterTest();
@@ -549,6 +579,9 @@ class core_date_testcase extends advanced_testcase {
         $this->assertSame('Pacific/Auckland', core_date::get_user_timezone($tz));
     }
 
+    /**
+     * @covers ::get_user_timezone_object
+     */
     public function test_get_user_timezone_object() {
         global $CFG, $USER;
         $this->resetAfterTest();

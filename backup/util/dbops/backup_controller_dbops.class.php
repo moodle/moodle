@@ -548,6 +548,7 @@ abstract class backup_controller_dbops extends backup_dbops {
 
         switch ($mode) {
             case backup::MODE_GENERAL:
+            case backup::MODE_ASYNC:
                 // Load the general defaults
                 $settings = array(
                         'backup_general_users'              => 'users',

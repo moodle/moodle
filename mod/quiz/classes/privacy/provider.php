@@ -69,16 +69,17 @@ class provider implements
         // The table 'quiz_attempts' stores a record of each quiz attempt.
         // It contains a userid which links to the user making the attempt and contains information about that attempt.
         $items->add_database_table('quiz_attempts', [
-                'attempt'               => 'privacy:metadata:quiz_attempts:attempt',
-                'currentpage'           => 'privacy:metadata:quiz_attempts:currentpage',
-                'preview'               => 'privacy:metadata:quiz_attempts:preview',
-                'state'                 => 'privacy:metadata:quiz_attempts:state',
-                'timestart'             => 'privacy:metadata:quiz_attempts:timestart',
-                'timefinish'            => 'privacy:metadata:quiz_attempts:timefinish',
-                'timemodified'          => 'privacy:metadata:quiz_attempts:timemodified',
-                'timemodifiedoffline'   => 'privacy:metadata:quiz_attempts:timemodifiedoffline',
-                'timecheckstate'        => 'privacy:metadata:quiz_attempts:timecheckstate',
-                'sumgrades'             => 'privacy:metadata:quiz_attempts:sumgrades',
+                'attempt'                    => 'privacy:metadata:quiz_attempts:attempt',
+                'currentpage'                => 'privacy:metadata:quiz_attempts:currentpage',
+                'preview'                    => 'privacy:metadata:quiz_attempts:preview',
+                'state'                      => 'privacy:metadata:quiz_attempts:state',
+                'timestart'                  => 'privacy:metadata:quiz_attempts:timestart',
+                'timefinish'                 => 'privacy:metadata:quiz_attempts:timefinish',
+                'timemodified'               => 'privacy:metadata:quiz_attempts:timemodified',
+                'timemodifiedoffline'        => 'privacy:metadata:quiz_attempts:timemodifiedoffline',
+                'timecheckstate'             => 'privacy:metadata:quiz_attempts:timecheckstate',
+                'sumgrades'                  => 'privacy:metadata:quiz_attempts:sumgrades',
+                'gradednotificationsenttime' => 'privacy:metadata:quiz_attempts:gradednotificationsenttime',
             ], 'privacy:metadata:quiz_attempts');
 
         // The table 'quiz_feedback' contains the feedback responses which will be shown to users depending upon the
@@ -542,6 +543,9 @@ class provider implements
                 }
                 if (!empty($attempt->timecheckstate)) {
                     $data->timecheckstate = transform::datetime($attempt->timecheckstate);
+                }
+                if (!empty($attempt->gradednotificationsenttime)) {
+                    $data->gradednotificationsenttime = transform::datetime($attempt->gradednotificationsenttime);
                 }
 
                 if ($options->marks == \question_display_options::MARK_AND_MAX) {

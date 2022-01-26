@@ -35,7 +35,7 @@ Feature: Allow teachers to edit the visibility of completion conditions in a cou
   Scenario: Completion condition displaying setting can be disabled at course level
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     When I set the following fields to these values:
       | Show activity completion conditions | No |
     And I click on "Save and display" "button"
@@ -70,10 +70,10 @@ Feature: Allow teachers to edit the visibility of completion conditions in a cou
     And I set the field "Show activity completion conditions" to "<siteshowcompletion>"
     And I press "Save changes"
     And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "Enable completion tracking" to "No"
     And I press "Save and display"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     Then the field "Show activity completion conditions" matches value "<expected>"
 
     Examples:

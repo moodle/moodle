@@ -52,13 +52,14 @@ if (($plugin = optional_param('plugin', '', PARAM_PLUGIN))) {
     $action = required_param('action', PARAM_ALPHA);
     switch ($action) {
         case 'hide' :
-            set_config('disabled', 1, 'availability_' . $plugin);
+            $class = \core_plugin_manager::resolve_plugininfo_class('availability');
+            $class::enable_plugin($plugin, false);
             break;
         case 'show' :
-            unset_config('disabled', 'availability_' . $plugin);
+            $class = \core_plugin_manager::resolve_plugininfo_class('availability');
+            $class::enable_plugin($plugin, true);
             break;
     }
-    core_plugin_manager::reset_caches();
 
     // Always redirect back after an action.
     redirect($pageurl);

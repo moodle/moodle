@@ -1,2 +1,1 @@
-nocourses,block_myoverview
-complete,block_myoverview
+clearsearch,block_myoverview

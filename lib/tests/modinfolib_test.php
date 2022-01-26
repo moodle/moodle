@@ -183,6 +183,7 @@ class modinfolib_test extends advanced_testcase {
         $this->assertEquals($moduledb->indent, $cm->indent);
         $this->assertEquals($moduledb->completion, $cm->completion);
         $this->assertEquals($moduledb->completiongradeitemnumber, $cm->completiongradeitemnumber);
+        $this->assertEquals($moduledb->completionpassgrade, $cm->completionpassgrade);
         $this->assertEquals($moduledb->completionview, $cm->completionview);
         $this->assertEquals($moduledb->completionexpected, $cm->completionexpected);
         $this->assertEquals($moduledb->showdescription, $cm->showdescription);
@@ -924,7 +925,7 @@ class modinfolib_test extends advanced_testcase {
      * Test test_get_section_info_by_id method
      *
      * @dataProvider get_section_info_by_id_provider
-     * @covers ::get_section_info_by_id
+     * @covers \course_modinfo::get_section_info_by_id
      *
      * @param int $sectionnum the section number
      * @param int $strictness the search strict mode

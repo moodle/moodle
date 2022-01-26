@@ -137,7 +137,7 @@ class stateactions_test extends \advanced_testcase {
                 'cm' => [],
                 'count' => 0,
             ],
-            'update' => [
+            'put' => [
                 'course' => [],
                 'section' => [],
                 'cm' => [],
@@ -243,12 +243,12 @@ class stateactions_test extends \advanced_testcase {
 
         // Validate we have all the expected entries.
         $expectedtotal = count($expectedresults['course']) + count($expectedresults['section']) + count($expectedresults['cm']);
-        $this->assertEquals($expectedtotal, $results['update']['count']);
+        $this->assertEquals($expectedtotal, $results['put']['count']);
 
         // Validate course, section and cm.
         foreach ($expectedresults as $name => $referencekeys) {
             foreach ($referencekeys as $referencekey) {
-                $this->assertArrayHasKey($references[$referencekey], $results['update'][$name]);
+                $this->assertArrayHasKey($references[$referencekey], $results['put'][$name]);
             }
         }
     }

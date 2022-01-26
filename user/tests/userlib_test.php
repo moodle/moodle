@@ -583,15 +583,13 @@ class core_userliblib_testcase extends advanced_testcase {
 
         $PAGE->set_url('/');
         $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
         $opts = user_get_user_navigation_info($user, $PAGE, array('avatarsize' => $testsize));
         $avatarhtml = $opts->metadata['useravatar'];
 
         $matches = [];
-        preg_match('/(?:.*width=")(\d*)(?:" height=")(\d*)(?:".*\/>)/', $avatarhtml, $matches);
-        $this->assertCount(3, $matches);
-
-        $this->assertEquals(intval($matches[1]), $testsize);
-        $this->assertEquals(intval($matches[2]), $testsize);
+        preg_match('/size-100/', $avatarhtml, $matches);
+        $this->assertCount(1, $matches);
     }
 
     /**

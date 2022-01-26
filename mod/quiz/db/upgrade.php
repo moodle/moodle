@@ -60,5 +60,65 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2020061501, 'quiz');
     }
 
+    if ($oldversion < 2021052503) {
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('completionpass');
+
+        if ($dbman->field_exists($table, $field)) {
+            $sql = "SELECT q.id, m.id as quizid " .
+                     "FROM {quiz} q " .
+               "INNER JOIN {course_modules} cm ON cm.instance = q.id " .
+               "INNER JOIN {modules} m ON m.id = cm.module " .
+                    "WHERE m.name = :name AND q.completionpass = :completionpass";
+
+            /** @var moodle_recordset $records */
+            $records = $DB->get_recordset_sql($sql, ['name' => 'quiz', 'completionpass' => 1], 0, 1000);
+            while ($records->valid()) {
+                $quizmodule = null;
+                foreach ($records as $record) {
+                    $ids[] = $record->id;
+                    $quizmodule = $record->quizid;
+                }
+
+                if ($ids) {
+                    list($insql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+                    $DB->set_field_select('course_modules', 'completionpassgrade', 1,
+                        "module = :quiz AND instance $insql", $params + ['quiz' => $quizmodule]);
+
+                    // Reset the value so it doesn't get picked on the next run. The field will be dropped later.
+                    $DB->set_field_select('quiz', 'completionpass', 0, "id $insql", $params);
+
+                    // Get the next batch of records.
+                    $records = $DB->get_recordset_sql($sql, ['name' => 'quiz', 'completionpass' => 1], 0, 1000);
+                }
+            }
+            $records->close();
+
+            // We have completed our checks. Drop the field.
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+        }
+
+        upgrade_mod_savepoint(true, 2021052503, 'quiz');
+    }
+
+    if ($oldversion < 2021101900) {
+
+        // Define field gradednotificationsenttime to be added to quiz_attempts.
+        $table = new xmldb_table('quiz_attempts');
+        $field = new xmldb_field('gradednotificationsenttime', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'sumgrades');
+
+        // Conditionally launch add field gradednotificationsenttime.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            $DB->execute('UPDATE {quiz_attempts} SET gradednotificationsenttime = timefinish');
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2021101900, 'quiz');
+    }
+
     return true;
 }

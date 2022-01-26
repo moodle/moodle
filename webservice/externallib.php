@@ -214,6 +214,12 @@ class core_webservice_external extends external_api {
         // Current theme.
         $siteinfo['theme'] = clean_param($PAGE->theme->name, PARAM_THEME);  // We always clean to avoid problem with old sites.
 
+        $siteinfo['limitconcurrentlogins'] = (int) $CFG->limitconcurrentlogins;
+        if (!empty($CFG->limitconcurrentlogins)) {
+            // For performance, only when enabled.
+            $siteinfo['usersessionscount'] = $DB->count_records('sessions', ['userid' => $USER->id]);
+        }
+
         return $siteinfo;
     }
 
@@ -283,6 +289,9 @@ class core_webservice_external extends external_api {
                 'usercalendartype'  => new external_value(PARAM_PLUGIN, 'Calendar typed used by the user.', VALUE_OPTIONAL),
                 'userissiteadmin'  => new external_value(PARAM_BOOL, 'Whether the user is a site admin or not.', VALUE_OPTIONAL),
                 'theme'  => new external_value(PARAM_THEME, 'Current theme for the user.', VALUE_OPTIONAL),
+                'limitconcurrentlogins' => new external_value(PARAM_INT, 'Number of concurrent sessions allowed', VALUE_OPTIONAL),
+                'usersessionscount' => new external_value(PARAM_INT, 'Number of active sessions for current user.
+                    Only returned when limitconcurrentlogins is used.', VALUE_OPTIONAL),
             )
         );
     }

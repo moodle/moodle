@@ -4,6 +4,10 @@ information provided here is intended especially for developers.
 === 4.0 ===
 * New method mark_course_completions_activity_criteria() has been added to mark course completions instantly. It is
   based on cron for completion_criteria_activity.php which is refactored to use it as well.
+* Core now passes an additional parameter to '_get_completion_state'. This is an array representation of the completion results that have already been
+  tested. Currently contains - viewed, usegrade, passgrade. Any plugin that are dependent on these criteria can now check this array instead of retesting it.
+* The method \completion_criteria_completion::mark_complete() now has the optional $timecompleted parameter to specify when the
+  criteria was completed.
 
 === 3.11 ===
 * New Behat steps for activity completion in the behat_completion class:

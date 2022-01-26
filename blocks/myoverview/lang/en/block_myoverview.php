@@ -22,12 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['allincludinghidden'] = 'All';
-$string['all'] = 'All (except removed from view)';
+$string['allincludinghidden'] = 'All (including archived)';
+$string['all'] = 'All';
 $string['addtofavourites'] = 'Star this course';
 $string['aria:addtofavourites'] = 'Star for';
 $string['aria:allcoursesincludinghidden'] = 'Show all courses';
-$string['aria:allcourses'] = 'Show all courses except courses removed from view';
+$string['aria:allcourses'] = 'Show all courses except archived courses';
 $string['aria:card'] = 'Switch to card view';
 $string['aria:controls'] = 'Course overview controls';
 $string['aria:courseactions'] = 'Actions for current course';
@@ -74,18 +74,18 @@ $string['privacy:metadata:overviewviewpreference'] = 'The Course overview block 
 $string['privacy:metadata:overviewgroupingpreference'] = 'The Course overview block grouping preference.';
 $string['privacy:metadata:overviewpagingpreference'] = 'The Course overview block paging preference.';
 $string['removefromfavourites'] = 'Unstar this course';
+$string['searchcourses'] = "Search courses";
 $string['shortname'] = 'Short name';
 $string['summary'] = 'Summary';
 $string['title'] = 'Course name';
 $string['aria:hidecourse'] = 'Remove {$a} from view';
 $string['aria:showcourse'] = 'Restore {$a} to view';
-$string['aria:hiddencourses'] = 'Show courses removed from view';
-$string['hidden'] = 'Courses removed from view';
-$string['hidecourse'] = 'Remove from view';
-$string['hiddencourses'] = 'Removed from view';
-$string['show'] = 'Restore to view';
+$string['aria:hiddencourses'] = 'Show archived courses';
+$string['hidden'] = 'Archived courses';
+$string['hidecourse'] = 'Archive';
+$string['hiddencourses'] = 'Archived';
+$string['show'] = 'Unarchive';
 $string['privacy:request:preference:set'] = 'The value of the setting \'{$a->name}\' was \'{$a->value}\'';
 
-// Deprecated since Moodle 3.7.
-$string['complete'] = 'complete';
-$string['nocourses'] = 'No courses';
+// Deprecated since Moodle 4.0.
+$string['clearsearch'] = "Clear search";

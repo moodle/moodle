@@ -1128,14 +1128,17 @@ function quiz_process_options($quiz) {
     $quiz->reviewoverallfeedback &= ~mod_quiz_display_options::DURING;
 
     // Ensure that disabled checkboxes in completion settings are set to 0.
-    if (empty($quiz->completionusegrade)) {
-        $quiz->completionpass = 0;
-    }
-    if (empty($quiz->completionpass)) {
-        $quiz->completionattemptsexhausted = 0;
-    }
-    if (empty($quiz->completionminattemptsenabled)) {
-        $quiz->completionminattempts = 0;
+    // But only if the completion settinsg are unlocked.
+    if (!empty($quiz->completionunlocked)) {
+        if (empty($quiz->completionusegrade)) {
+            $quiz->completionpassgrade = 0;
+        }
+        if (empty($quiz->completionpassgrade)) {
+            $quiz->completionattemptsexhausted = 0;
+        }
+        if (empty($quiz->completionminattemptsenabled)) {
+            $quiz->completionminattempts = 0;
+        }
     }
 }
 
@@ -1669,7 +1672,7 @@ function quiz_attempt_summary_link_to_reports($quiz, $cm, $context, $returnzero 
 
 /**
  * @param string $feature FEATURE_xx constant for requested feature
- * @return bool True if quiz supports feature
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function quiz_supports($feature) {
     switch($feature) {
@@ -1685,6 +1688,7 @@ function quiz_supports($feature) {
         case FEATURE_CONTROLS_GRADE_VISIBILITY: return true;
         case FEATURE_USES_QUESTIONS:            return true;
         case FEATURE_PLAGIARISM:                return true;
+        case FEATURE_MOD_PURPOSE:               return MOD_PURPOSE_ASSESSMENT;
 
         default: return null;
     }
@@ -1728,15 +1732,9 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
     }
 
     if (has_any_capability(['mod/quiz:manageoverrides', 'mod/quiz:viewoverrides'], $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$PAGE->cm->id));
-        $node = navigation_node::create(get_string('groupoverrides', 'quiz'),
-                new moodle_url($url, array('mode'=>'group')),
-                navigation_node::TYPE_SETTING, null, 'mod_quiz_groupoverrides');
-        $quiznode->add_node($node, $beforekey);
-
-        $node = navigation_node::create(get_string('useroverrides', 'quiz'),
-                new moodle_url($url, array('mode'=>'user')),
-                navigation_node::TYPE_SETTING, null, 'mod_quiz_useroverrides');
+        $url = new moodle_url('/mod/quiz/overrides.php', array('cmid' => $PAGE->cm->id));
+        $node = navigation_node::create(get_string('overrides', 'quiz'),
+                    $url, navigation_node::TYPE_SETTING, null, 'mod_quiz_useroverrides');
         $quiznode->add_node($node, $beforekey);
     }
 
@@ -1745,7 +1743,8 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
                 new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id)),
                 navigation_node::TYPE_SETTING, null, 'mod_quiz_edit',
                 new pix_icon('t/edit', ''));
-        $quiznode->add_node($node, $beforekey);
+        $editquiznode = $quiznode->add_node($node, $beforekey);
+        $editquiznode->set_show_in_secondary_navigation(false);
     }
 
     if (has_capability('mod/quiz:preview', $PAGE->cm->context)) {
@@ -1754,8 +1753,11 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
         $node = navigation_node::create(get_string('preview', 'quiz'), $url,
                 navigation_node::TYPE_SETTING, null, 'mod_quiz_preview',
                 new pix_icon('i/preview', ''));
-        $quiznode->add_node($node, $beforekey);
+        $previewnode = $quiznode->add_node($node, $beforekey);
+        $previewnode->set_show_in_secondary_navigation(false);
     }
+
+    question_extend_settings_navigation($quiznode, $PAGE->cm->context)->trim_if_empty();
 
     if (has_any_capability(array('mod/quiz:viewreports', 'mod/quiz:grade'), $PAGE->cm->context)) {
         require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
@@ -1765,7 +1767,7 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
                 array('id' => $PAGE->cm->id, 'mode' => reset($reportlist)));
         $reportnode = $quiznode->add_node(navigation_node::create(get_string('results', 'quiz'), $url,
                 navigation_node::TYPE_SETTING,
-                null, null, new pix_icon('i/report', '')), $beforekey);
+                null, null, new pix_icon('i/report', '')));
 
         foreach ($reportlist as $report) {
             $url = new moodle_url('/mod/quiz/report.php',
@@ -1775,8 +1777,6 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
                     null, 'quiz_report_' . $report, new pix_icon('i/item', '')));
         }
     }
-
-    question_extend_settings_navigation($quiznode, $PAGE->cm->context)->trim_if_empty();
 }
 
 /**
@@ -2092,7 +2092,7 @@ function quiz_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionattemptsexhausted, completionpass, completionminattempts,
+    $fields = 'id, name, intro, introformat, completionattemptsexhausted, completionminattempts,
         timeopen, timeclose';
     if (!$quiz = $DB->get_record('quiz', $dbparams, $fields)) {
         return false;
@@ -2108,9 +2108,9 @@ function quiz_get_coursemodule_info($coursemodule) {
 
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
-        if ($quiz->completionpass || $quiz->completionattemptsexhausted) {
+        if ($quiz->completionattemptsexhausted) {
             $result->customdata['customcompletionrules']['completionpassorattemptsexhausted'] = [
-                'completionpass' => $quiz->completionpass,
+                'completionpassgrade' => $coursemodule->completionpassgrade,
                 'completionattemptsexhausted' => $quiz->completionattemptsexhausted,
             ];
         } else {
@@ -2206,16 +2206,11 @@ function mod_quiz_get_completion_active_rule_descriptions($cm) {
     if (!empty($rules['completionpassorattemptsexhausted'])) {
         if (!empty($rules['completionpassorattemptsexhausted']['completionattemptsexhausted'])) {
             $descriptions[] = get_string('completionpassorattemptsexhausteddesc', 'quiz');
-        } else if (!empty($rules['completionpassorattemptsexhausted']['completionpass'])) {
-            $descriptions[] = get_string('completionpassdesc', 'quiz',
-                format_time($rules['completionpassorattemptsexhausted']['completionpass']));
         }
     } else {
         // Fallback.
         if (!empty($rules['completionattemptsexhausted'])) {
             $descriptions[] = get_string('completionpassorattemptsexhausteddesc', 'quiz');
-        } else if (!empty($rules['completionpass'])) {
-            $descriptions[] = get_string('completionpassdesc', 'quiz', format_time($rules['completionpass']));
         }
     }
 
@@ -2450,4 +2445,27 @@ function mod_quiz_output_fragment_add_random_question_form($args) {
     $form->set_data($formdata);
 
     return $form->render();
+}
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_quiz_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'quiz');
+
+    switch ($eventtype) {
+        case QUIZ_EVENT_TYPE_OPEN:
+            $identifier = 'quizeventopens';
+            break;
+        case QUIZ_EVENT_TYPE_CLOSE:
+            $identifier = 'quizeventcloses';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'quiz', $modulename);
 }

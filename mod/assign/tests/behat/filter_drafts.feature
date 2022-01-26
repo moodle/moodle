@@ -42,7 +42,7 @@ Feature: In an assignment, teachers can filter displayed submissions and see dra
   @javascript
   Scenario: View assignments with draft status on the view all submissions page
     Given I am on the "Test assignment" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     When I set the field "Filter" to "Draft"
     Then I should see "Student 2"
     And I should not see "Student 1"
@@ -51,7 +51,7 @@ Feature: In an assignment, teachers can filter displayed submissions and see dra
   @javascript
   Scenario: View assignments with draft status in the grader
     Given I am on the "Test assignment" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     When I click on "[data-region=user-filters]" "css_element"
     And I set the field "filter" to "Draft"

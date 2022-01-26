@@ -85,4 +85,58 @@ class mod_data_renderer extends plugin_renderer_base {
         return $html;
     }
 
+    /**
+     * Renders the action bar for the field page.
+     *
+     * @param \mod_data\output\fields_action_bar $actionbar
+     * @return string The HTML output
+     */
+    public function render_fields_action_bar(\mod_data\output\fields_action_bar $actionbar): string {
+        $data = $actionbar->export_for_template($this);
+        return $this->render_from_template('mod_data/fields_action_bar', $data);
+    }
+
+    /**
+     * Renders the action bar for the view page.
+     *
+     * @param \mod_data\output\view_action_bar $actionbar
+     * @return string The HTML output
+     */
+    public function render_view_action_bar(\mod_data\output\view_action_bar $actionbar): string {
+        $data = $actionbar->export_for_template($this);
+        return $this->render_from_template('mod_data/view_action_bar', $data);
+    }
+
+    /**
+     * Renders the action bar for the template page.
+     *
+     * @param \mod_data\output\templates_action_bar $actionbar
+     * @return string The HTML output
+     */
+    public function render_templates_action_bar(\mod_data\output\templates_action_bar $actionbar): string {
+        $data = $actionbar->export_for_template($this);
+        return $this->render_from_template('mod_data/templates_action_bar', $data);
+    }
+
+    /**
+     * Renders the action bar for the preset page.
+     *
+     * @param \mod_data\output\presets_action_bar $actionbar
+     * @return string The HTML output
+     */
+    public function render_presets_action_bar(\mod_data\output\presets_action_bar $actionbar): string {
+        $data = $actionbar->export_for_template($this);
+        return $this->render_from_template('mod_data/presets_action_bar', $data);
+    }
+
+    /**
+     * Renders the presets table in the preset page.
+     *
+     * @param \mod_data\output\presets $presets
+     * @return string The HTML output
+     */
+    public function render_presets(\mod_data\output\presets $presets): string {
+        $data = $presets->export_for_template($this);
+        return $this->render_from_template('mod_data/presets', $data);
+    }
 }

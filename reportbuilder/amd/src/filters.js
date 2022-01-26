@@ -17,29 +17,55 @@
  * Report builder filter management
  *
  * @module      core_reportbuilder/filters
- * @package     core_reportbuilder
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import {dispatchEvent} from 'core/event_dispatcher';
+import {loadFragment} from 'core/fragment';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {get_string as getString} from 'core/str';
+import Templates from 'core/templates';
 import {add as addToast} from 'core/toast';
 import DynamicForm from 'core_form/dynamicform';
 import * as reportEvents from 'core_reportbuilder/local/events';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
-import {reset as resetFilters} from 'core_reportbuilder/local/repository/filters';
+import {resetFilters} from 'core_reportbuilder/local/repository/filters';
 
 /**
- * Initialise module
+ * Update filter button text to indicate applied filter count
  *
- * @param {Number} reportId
+ * @param {Element} reportElement
+ * @param {Number} filterCount
  */
-export const init = reportId => {
-    const reportElement = document.querySelector(reportSelectors.forSystemReport(reportId));
+const setFilterButtonCount = async(reportElement, filterCount) => {
+    const filterButtonLabel = reportElement.querySelector(reportSelectors.regions.filterButtonLabel);
+
+    if (filterCount > 0) {
+        filterButtonLabel.textContent = await getString('filtersappliedx', 'core_reportbuilder', filterCount);
+    } else {
+        filterButtonLabel.textContent = await getString('filters', 'moodle');
+    }
+};
+
+/**
+ * Initialise module for given report
+ *
+ * @method
+ * @param {Number} reportId
+ * @param {Number} contextId
+ */
+export const init = (reportId, contextId) => {
+    const reportElement = document.querySelector(reportSelectors.forReport(reportId));
     const filterFormContainer = reportElement.querySelector(reportSelectors.regions.filtersForm);
+
+    // Ensure we only add our listeners once (can be called multiple times by mustache template).
+    if (filterFormContainer.dataset.initialized) {
+        return;
+    }
+    filterFormContainer.dataset.initialized = true;
+
     const filterForm = new DynamicForm(filterFormContainer, '\\core_reportbuilder\\form\\filter');
 
     // Submit report filters.
@@ -48,6 +74,7 @@ export const init = reportId => {
 
         // After the form has been submitted, we should trigger report table reload.
         dispatchEvent(reportEvents.tableReload, {}, reportElement);
+        setFilterButtonCount(reportElement, event.detail);
 
         getString('filtersapplied', 'core_reportbuilder')
             .then(addToast)
@@ -63,10 +90,17 @@ export const init = reportId => {
         resetFilters(reportId)
             .then(() => getString('filtersreset', 'core_reportbuilder'))
             .then(addToast)
-            .then(() => {
-                pendingPromise.resolve();
-                window.location.reload();
-                return;
+            .then(() => loadFragment('core_reportbuilder', 'filters_form', contextId, {
+                reportid: reportId,
+                parameters: reportElement.dataset.parameter,
+            }))
+            .then((html, js) => {
+                Templates.replaceNodeContents(filterFormContainer, html, js);
+
+                dispatchEvent(reportEvents.tableReload, {}, reportElement);
+                setFilterButtonCount(reportElement, 0);
+
+                return pendingPromise.resolve();
             })
             .catch(Notification.exception);
     });

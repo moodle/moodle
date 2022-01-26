@@ -22,7 +22,7 @@ Feature: The recently accessed items block allows users to easily access their m
       | idnumber | Test forum name |
       | name     | Test forum name |
     And I log in as "student1"
-    And I press "Customise this page"
+    And I turn editing mode on
     And I add the "Recently accessed items" block
 
   Scenario: User has not accessed any item
@@ -31,5 +31,5 @@ Feature: The recently accessed items block allows users to easily access their m
   Scenario: User has accessed some items
     Given I change window size to "large"
     When I am on the "Test forum name" "forum activity" page
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     Then I should see "Test forum name" in the "Recently accessed items" "block"

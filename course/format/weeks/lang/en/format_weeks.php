@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addsections'] = 'Add weeks';
+$string['addsections'] = 'Add week';
 $string['currentsection'] = 'This week';
 $string['editsection'] = 'Edit week';
 $string['editsectionname'] = 'Edit week name';

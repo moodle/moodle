@@ -35,14 +35,14 @@ Feature: Edit capabilities
 
   Scenario: Course capabilities overrides
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Permissions" in current page administration
+    And I am on the "Course 1" "permissions" page
     And I override the system permissions of "Student" role with:
       | mod/forum:deleteanypost | Prohibit |
       | mod/forum:editanypost | Prevent |
       | mod/forum:addquestion | Allow |
     When I set the field "Advanced role override" to "Student (3)"
-    And I press "Go"
+    # There are two select elements and go buttons and we want to press the second one.
+    And I click on "//div[@class='advancedoverride']/div/form/noscript/input" "xpath_element"
     Then "mod/forum:deleteanypost" capability has "Prohibit" permission
     And "mod/forum:editanypost" capability has "Prevent" permission
     And "mod/forum:addquestion" capability has "Allow" permission
@@ -64,7 +64,7 @@ Feature: Edit capabilities
       | mod/forum:editanypost | Prevent |
       | mod/forum:addquestion | Allow |
     When I set the field "Advanced role override" to "Student (3)"
-    And I click on "Go" "button" in the "region-main" "region"
+    And I click on "//div[@class='advancedoverride']/div/form/noscript/input" "xpath_element"
     Then "mod/forum:deleteanypost" capability has "Prohibit" permission
     And "mod/forum:editanypost" capability has "Prevent" permission
     And "mod/forum:addquestion" capability has "Allow" permission
@@ -72,7 +72,7 @@ Feature: Edit capabilities
   @javascript
   Scenario: Edit permissions escapes role names correctly
     When I am on the "C1" "Course" page logged in as "admin"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Teacher'             | Teacher >= editing  |
       | Your word for 'Non-editing teacher' | Teacher < "editing" |
@@ -82,11 +82,11 @@ Feature: Edit capabilities
     Then I should see "Teacher >= editing (Teacher)" in the "Teacher 1" "table_row"
     And I should see "Teacher < \"editing\" (Non-editing teacher)" in the "Teaching Assistant" "table_row"
     And I should see "Studier & 'learner' (Student)" in the "Student One" "table_row"
-    And I navigate to "Users > Permissions" in current page administration
-    And I should see "Teacher >= editing" in the "mod/forum:replypost" "table_row"
-    And I should see "Teacher < \"editing\"" in the "mod/forum:replypost" "table_row"
-    And I should see "Studier & 'learner'" in the "mod/forum:replypost" "table_row"
+    And I am on the "C1" "permissions" page
+    And I should see "Teacher >= editing (Teacher)" in the "mod/forum:replypost" "table_row"
+    And I should see "Teacher < \"editing\" (Non-editing teacher)" in the "mod/forum:replypost" "table_row"
+    And I should see "Studier & 'learner' (Student)" in the "mod/forum:replypost" "table_row"
     And I follow "Prohibit"
-    And "Teacher >= editing" "button" in the "Prohibit role" "dialogue" should be visible
-    And "Teacher < \"editing\"" "button" in the "Prohibit role" "dialogue" should be visible
-    And "Studier & 'learner'" "button" in the "Prohibit role" "dialogue" should be visible
+    And "Teacher >= editing (Teacher)" "button" in the "Prohibit role" "dialogue" should be visible
+    And "Teacher < \"editing\" (Non-editing teacher)" "button" in the "Prohibit role" "dialogue" should be visible
+    And "Studier & 'learner' (Student)" "button" in the "Prohibit role" "dialogue" should be visible

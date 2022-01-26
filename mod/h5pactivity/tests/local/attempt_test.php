@@ -42,7 +42,7 @@ use stdClass;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class attempt_testcase extends \advanced_testcase {
+class attempt_test extends \advanced_testcase {
 
     /**
      * Generate a scenario to run all tests.

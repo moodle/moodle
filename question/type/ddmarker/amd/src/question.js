@@ -141,7 +141,10 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
                 for (var i = 0; i < coords.length; i++) {
                     var dragInDrop = drag.clone();
                     dragInDrop.data('pagex', coords[i].x).data('pagey', coords[i].y);
-                    thisQ.sendDragToDrop(dragInDrop, false);
+                    // We always save the coordinates in the 1:1 ratio.
+                    // So we need to set the scale ratio to 1 for the initial load.
+                    dragInDrop.data('scaleRatio', 1);
+                    thisQ.sendDragToDrop(dragInDrop, false, true);
                 }
                 thisQ.getDragClone(drag).addClass('active');
                 thisQ.cloneDragIfNeeded(drag);
@@ -553,9 +556,10 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
      * Animate a drag item into a given place.
      *
      * @param {jQuery} drag the item to place.
-     * @param {boolean} isScaling Scaling or not
+     * @param {boolean} isScaling Scaling or not.
+     * @param {boolean} initialLoad Whether it is the initial load or not.
      */
-    DragDropMarkersQuestion.prototype.sendDragToDrop = function(drag, isScaling) {
+    DragDropMarkersQuestion.prototype.sendDragToDrop = function(drag, isScaling, initialLoad = false) {
         var dropArea = this.dropArea(),
             bgRatio = this.bgRatio();
         drag.removeClass('beingdragged').removeClass('unneeded');
@@ -568,7 +572,10 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
             drag.css('left', dragXY.x * bgRatio).css('top', dragXY.y * bgRatio);
         }
         // We need to save the original scale ratio for each draggable item.
-        drag.data('scaleRatio', bgRatio);
+        if (!initialLoad) {
+            // Only set the scale ratio for a current being-dragged item, not for the initial loading.
+            drag.data('scaleRatio', bgRatio);
+        }
         dropArea.append(drag);
         this.handleElementScale(drag, 'left top');
     };
@@ -683,6 +690,12 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
         eventHandlersInitialised: false,
 
         /**
+         * {Object} ensures that the marker event handlers are only initialised once per question,
+         * indexed by containerId (id on the .que div).
+         */
+        markerEventHandlersInitialised: {},
+
+        /**
          * {boolean} is printing or not.
          */
         isPrinting: false,
@@ -711,15 +724,23 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
                 questionManager.setupEventHandlers();
                 questionManager.eventHandlersInitialised = true;
             }
+            if (!questionManager.markerEventHandlersInitialised.hasOwnProperty(containerId)) {
+                questionManager.markerEventHandlersInitialised[containerId] = true;
+                // We do not use the body event here to prevent the other event on Mobile device, such as scroll event.
+                var questionContainer = document.getElementById(containerId);
+                if (questionContainer.classList.contains('ddmarker') &&
+                    !questionContainer.classList.contains('qtype_ddmarker-readonly')) {
+                    // TODO: Convert all the jQuery selectors and events to native Javascript.
+                    questionManager.addEventHandlersToMarker($(questionContainer).find('div.draghomes .marker'));
+                    questionManager.addEventHandlersToMarker($(questionContainer).find('div.droparea .marker'));
+                }
+            }
         },
 
         /**
          * Set up the event handlers that make this question type work. (Done once per page.)
          */
         setupEventHandlers: function() {
-            // We do not use the body event here to prevent the other event on Mobile device, such as scroll event.
-            questionManager.addEventHandlersToMarker($('.que.ddmarker:not(.qtype_ddmarker-readonly) div.draghomes .marker'));
-            questionManager.addEventHandlersToMarker($('.que.ddmarker:not(.qtype_ddmarker-readonly) div.droparea .marker'));
             $(window).on('resize', function() {
                 questionManager.handleWindowResize(false);
             });

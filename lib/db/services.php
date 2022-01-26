@@ -293,6 +293,12 @@ $functions = array(
         'type'          => 'read',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ],
+    'core_calendar_delete_subscription' => [
+        'classname' => 'core_calendar\external\subscription\delete',
+        'description' => 'Delete the calendar subscription',
+        'type' => 'write',
+        'ajax' => true
+    ],
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
         'methodname' => 'add_cohort_members',
@@ -762,15 +768,6 @@ $functions = array(
         'capabilities' => 'moodle/course:viewparticipants',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-    'core_enrol_edit_user_enrolment' => array(
-        'classname' => 'core_enrol_external',
-        'methodname' => 'edit_user_enrolment',
-        'classpath' => 'enrol/externallib.php',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                          External function that updates a given user enrolment',
-        'type' => 'write',
-        'ajax' => true,
-    ),
     'core_enrol_submit_user_enrolment_form' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'submit_user_enrolment_form',
@@ -899,16 +896,6 @@ $functions = array(
         'description' => 'Return formatted timestamps',
         'type' => 'read',
         'ajax' => true,
-    ),
-    'core_grades_get_grades' => array(
-        'classname' => 'core_grades_external',
-        'methodname' => 'get_grades',
-        'description' => '** DEPRECATED ** Please do not call this function any more.
-                                     Returns student course total grade and grades for activities.
-                                     This function does not return category or manual items.
-                                     This function is suitable for managers or teachers not students.',
-        'type' => 'read',
-        'capabilities' => 'moodle/grade:view, moodle/grade:viewall, moodle/grade:viewhidden'
     ),
     'core_grades_update_grades' => array(
         'classname' => 'core_grades_external',
@@ -1492,6 +1479,12 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_get_unread_notification_count' => [
+        'classname'     => '\core_message\external\get_unread_notification_count',
+        'description'   => 'Get number of unread notifications.',
+        'type'          => 'read',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_notes_create_notes' => array(
         'classname' => 'core_notes_external',
         'methodname' => 'create_notes',
@@ -2776,6 +2769,133 @@ $functions = array(
     'core_reportbuilder_filters_reset' => [
         'classname'   => 'core_reportbuilder\external\filters\reset',
         'description' => 'Reset filters for given report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_dynamic_tabs_get_content' => [
+        'classname'   => 'core\external\dynamic_tabs_get_content',
+        'description' => 'Returns the content for a dynamic tab',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+    'core_change_editmode' => [
+        'classname'   => 'core\external\editmode',
+        'methodname'   => 'change_editmode',
+        'description' => 'Change the editing mode',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_reports_delete' => [
+        'classname'   => 'core_reportbuilder\external\reports\delete',
+        'description' => 'Delete report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_reports_get' => [
+        'classname'   => 'core_reportbuilder\external\reports\get',
+        'description' => 'Get custom report',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_columns_add' => [
+        'classname'   => 'core_reportbuilder\external\columns\add',
+        'description' => 'Add column to report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_columns_delete' => [
+        'classname'   => 'core_reportbuilder\external\columns\delete',
+        'description' => 'Delete column from report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_columns_reorder' => [
+        'classname'   => 'core_reportbuilder\external\columns\reorder',
+        'description' => 'Re-order column within report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_columns_sort_get' => [
+        'classname'   => 'core_reportbuilder\external\columns\sort\get',
+        'description' => 'Retrieve column sorting for report',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_columns_sort_reorder' => [
+        'classname'   => 'core_reportbuilder\external\columns\sort\reorder',
+        'description' => 'Re-order column sorting within report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_columns_sort_toggle' => [
+        'classname'   => 'core_reportbuilder\external\columns\sort\toggle',
+        'description' => 'Toggle sorting of column within report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_conditions_add' => [
+        'classname'   => 'core_reportbuilder\external\conditions\add',
+        'description' => 'Add condition to report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_conditions_delete' => [
+        'classname'   => 'core_reportbuilder\external\conditions\delete',
+        'description' => 'Delete condition from report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_conditions_reorder' => [
+        'classname'   => 'core_reportbuilder\external\conditions\reorder',
+        'description' => 'Re-order condition within report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_conditions_reset' => [
+        'classname'   => 'core_reportbuilder\external\conditions\reset',
+        'description' => 'Reset conditions for given report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_filters_add' => [
+        'classname'   => 'core_reportbuilder\external\filters\add',
+        'description' => 'Add filter to report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_filters_delete' => [
+        'classname'   => 'core_reportbuilder\external\filters\delete',
+        'description' => 'Delete filter from report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_filters_reorder' => [
+        'classname'   => 'core_reportbuilder\external\filters\reorder',
+        'description' => 'Re-order filter within report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_audiences_delete' => [
+        'classname'   => 'core_reportbuilder\external\audiences\delete',
+        'description' => 'Delete audience from report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_schedules_delete' => [
+        'classname'   => 'core_reportbuilder\external\schedules\delete',
+        'description' => 'Delete schedule from report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_schedules_send' => [
+        'classname'   => 'core_reportbuilder\external\schedules\send',
+        'description' => 'Send report schedule',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_reportbuilder_schedules_toggle' => [
+        'classname'   => 'core_reportbuilder\external\schedules\toggle',
+        'description' => 'Toggle state of report schedule',
         'type'        => 'write',
         'ajax'        => true,
     ],

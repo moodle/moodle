@@ -93,6 +93,7 @@ class cm_completion_details_test extends advanced_testcase {
                 ['modname', $modname],
                 ['completionview', $completionoptions['completionview'] ?? COMPLETION_VIEW_NOT_REQUIRED],
                 ['completiongradeitemnumber', $completionoptions['completionusegrade'] ?? null],
+                ['completionpassgrade', $completionoptions['completionpassgrade'] ?? null],
             ]));
 
         return new cm_completion_details($this->completioninfo, $mockcminfo, 2);
@@ -192,13 +193,13 @@ class cm_completion_details_test extends advanced_testcase {
     public function get_details_provider() {
         return [
             'No completion tracking' => [
-                COMPLETION_TRACKING_NONE, null, null, []
+                COMPLETION_TRACKING_NONE, null, null, null, []
             ],
             'Manual completion tracking' => [
-                COMPLETION_TRACKING_MANUAL, null, null, []
+                COMPLETION_TRACKING_MANUAL, null, null, null, []
             ],
             'Automatic, require view, not viewed' => [
-                COMPLETION_TRACKING_AUTOMATIC, COMPLETION_INCOMPLETE, null, [
+                COMPLETION_TRACKING_AUTOMATIC, COMPLETION_INCOMPLETE, null, null, [
                     'completionview' => (object)[
                         'status' => COMPLETION_INCOMPLETE,
                         'description' => get_string('detail_desc:view', 'completion'),
@@ -206,7 +207,7 @@ class cm_completion_details_test extends advanced_testcase {
                 ]
             ],
             'Automatic, require view, viewed' => [
-                COMPLETION_TRACKING_AUTOMATIC, COMPLETION_COMPLETE, null, [
+                COMPLETION_TRACKING_AUTOMATIC, COMPLETION_COMPLETE, null, null, [
                     'completionview' => (object)[
                         'status' => COMPLETION_COMPLETE,
                         'description' => get_string('detail_desc:view', 'completion'),
@@ -214,7 +215,7 @@ class cm_completion_details_test extends advanced_testcase {
                 ]
             ],
             'Automatic, require grade, incomplete' => [
-                COMPLETION_TRACKING_AUTOMATIC, null, COMPLETION_INCOMPLETE, [
+                COMPLETION_TRACKING_AUTOMATIC, null, COMPLETION_INCOMPLETE, null, [
                     'completionusegrade' => (object)[
                         'status' => COMPLETION_INCOMPLETE,
                         'description' => get_string('detail_desc:receivegrade', 'completion'),
@@ -222,7 +223,7 @@ class cm_completion_details_test extends advanced_testcase {
                 ]
             ],
             'Automatic, require grade, complete' => [
-                COMPLETION_TRACKING_AUTOMATIC, null, COMPLETION_COMPLETE, [
+                COMPLETION_TRACKING_AUTOMATIC, null, COMPLETION_COMPLETE, null, [
                     'completionusegrade' => (object)[
                         'status' => COMPLETION_COMPLETE,
                         'description' => get_string('detail_desc:receivegrade', 'completion'),
@@ -230,7 +231,7 @@ class cm_completion_details_test extends advanced_testcase {
                 ]
             ],
             'Automatic, require view (complete) and grade (incomplete)' => [
-                COMPLETION_TRACKING_AUTOMATIC, COMPLETION_COMPLETE, COMPLETION_INCOMPLETE, [
+                COMPLETION_TRACKING_AUTOMATIC, COMPLETION_COMPLETE, COMPLETION_INCOMPLETE, null, [
                     'completionview' => (object)[
                         'status' => COMPLETION_COMPLETE,
                         'description' => get_string('detail_desc:view', 'completion'),
@@ -242,7 +243,7 @@ class cm_completion_details_test extends advanced_testcase {
                 ]
             ],
             'Automatic, require view (incomplete) and grade (complete)' => [
-                COMPLETION_TRACKING_AUTOMATIC, COMPLETION_INCOMPLETE, COMPLETION_COMPLETE, [
+                COMPLETION_TRACKING_AUTOMATIC, COMPLETION_INCOMPLETE, COMPLETION_COMPLETE, null, [
                     'completionview' => (object)[
                         'status' => COMPLETION_INCOMPLETE,
                         'description' => get_string('detail_desc:view', 'completion'),
@@ -251,6 +252,62 @@ class cm_completion_details_test extends advanced_testcase {
                         'status' => COMPLETION_COMPLETE,
                         'description' => get_string('detail_desc:receivegrade', 'completion'),
                     ]
+                ]
+            ],
+            'Automatic, require grade, require pass grade, complete' => [
+                COMPLETION_TRACKING_AUTOMATIC, null, COMPLETION_COMPLETE, COMPLETION_COMPLETE, [
+                    'completionusegrade' => (object)[
+                        'status' => COMPLETION_COMPLETE,
+                        'description' => get_string('detail_desc:receivegrade', 'completion'),
+                    ],
+                    'completionpassgrade' => (object)[
+                        'status' => COMPLETION_COMPLETE,
+                        'description' => get_string('detail_desc:receivepassgrade', 'completion'),
+                    ],
+                ]
+            ],
+            'Automatic, require grade, require pass grade, incomplete' => [
+                COMPLETION_TRACKING_AUTOMATIC, null, COMPLETION_COMPLETE, COMPLETION_INCOMPLETE, [
+                    'completionusegrade' => (object)[
+                        'status' => COMPLETION_COMPLETE,
+                        'description' => get_string('detail_desc:receivegrade', 'completion'),
+                    ],
+                    'completionpassgrade' => (object)[
+                        'status' => COMPLETION_INCOMPLETE,
+                        'description' => get_string('detail_desc:receivepassgrade', 'completion'),
+                    ],
+                ]
+            ],
+            'Automatic, require view (complete), require grade(complete), require pass grade(complete)' => [
+                COMPLETION_TRACKING_AUTOMATIC, COMPLETION_COMPLETE, COMPLETION_COMPLETE, COMPLETION_COMPLETE, [
+                    'completionview' => (object)[
+                        'status' => COMPLETION_COMPLETE,
+                        'description' => get_string('detail_desc:view', 'completion'),
+                    ],
+                    'completionusegrade' => (object)[
+                        'status' => COMPLETION_COMPLETE,
+                        'description' => get_string('detail_desc:receivegrade', 'completion'),
+                    ],
+                    'completionpassgrade' => (object)[
+                        'status' => COMPLETION_COMPLETE,
+                        'description' => get_string('detail_desc:receivepassgrade', 'completion'),
+                    ],
+                ]
+            ],
+            'Automatic, require view (incomplete), require grade(complete), require pass grade(complete)' => [
+                COMPLETION_TRACKING_AUTOMATIC, COMPLETION_INCOMPLETE, COMPLETION_COMPLETE, COMPLETION_COMPLETE, [
+                    'completionview' => (object)[
+                        'status' => COMPLETION_INCOMPLETE,
+                        'description' => get_string('detail_desc:view', 'completion'),
+                    ],
+                    'completionusegrade' => (object)[
+                        'status' => COMPLETION_COMPLETE,
+                        'description' => get_string('detail_desc:receivegrade', 'completion'),
+                    ],
+                    'completionpassgrade' => (object)[
+                        'status' => COMPLETION_COMPLETE,
+                        'description' => get_string('detail_desc:receivepassgrade', 'completion'),
+                    ],
                 ]
             ],
         ];
@@ -263,13 +320,16 @@ class cm_completion_details_test extends advanced_testcase {
      * @param int $completion The completion tracking mode.
      * @param int|null $completionview Completion status of the "view" completion condition.
      * @param int|null $completiongrade Completion status of the "must receive grade" completion condition.
+     * @param int|null $completionpassgrade Completion status of the "must receive passing grade" completion condition.
      * @param array $expecteddetails Expected completion details returned by get_details().
      */
-    public function test_get_details(int $completion, ?int $completionview, ?int $completiongrade, array $expecteddetails) {
+    public function test_get_details(int $completion, ?int $completionview,
+             ?int $completiongrade, ?int $completionpassgrade, array $expecteddetails) {
         $options = [];
         $getdatareturn = (object)[
             'viewed' => $completionview,
             'completiongrade' => $completiongrade,
+            'passgrade' => $completionpassgrade,
         ];
 
         if (!is_null($completionview)) {
@@ -278,13 +338,16 @@ class cm_completion_details_test extends advanced_testcase {
         if (!is_null($completiongrade)) {
             $options['completionusegrade'] = true;
         }
+        if (!is_null($completionpassgrade)) {
+            $options['completionpassgrade'] = true;
+        }
 
         $cmcompletion = $this->setup_data($completion, $options, $getdatareturn);
         $this->assertEquals($expecteddetails, $cmcompletion->get_details());
     }
 
     /**
-     * Data provider for test_get_details().
+     * Data provider for test_get_details_custom_order().
      * @return array[]
      */
     public function get_details_custom_order_provider() {

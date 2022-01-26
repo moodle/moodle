@@ -1,0 +1,5 @@
+This files describes API changes in the quiz code.
+
+=== 4.0 ===
+
+* Functions url_print_heading and url_print_intro have been deprecated in favour for the activity header.

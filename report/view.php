@@ -36,11 +36,22 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 }
 require_login($course);
 
-// Get the last viewed Page.
-if (!isset($USER->course_last_report[$courseid])) {
-    $lasturl = new moodle_url('/report/log/index.php', ['id' => $courseid]);
-} else {
-    $lasturl = $USER->course_last_report[$courseid];
+// Get all course reports from the settings navigation.
+if ($reportsnode = $PAGE->settingsnav->find('coursereports', \navigation_node::TYPE_CONTAINER)) {
+    // If there are available course reports to the user.
+    if ($reportsnode->children->count() > 0) {
+        // Redirect to the first course report from the list.
+        $firstreportnode = $reportsnode->children->getIterator()[0];
+        redirect($firstreportnode->action()->out(false));
+    }
 }
+// Otherwise, output the page with a notification stating that there are no available course reports.
+$PAGE->set_title(get_string('reports'));
+$PAGE->set_pagelayout('incourse');
+$PAGE->set_heading($course->fullname);
+$PAGE->set_pagetype('course-view-' . $course->format);
 
-redirect($lasturl);
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('reports'));
+echo html_writer::div($OUTPUT->notification(get_string('noreports', 'debug'), 'error'), 'mt-3');
+echo $OUTPUT->footer();

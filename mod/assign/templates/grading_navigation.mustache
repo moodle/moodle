@@ -51,7 +51,9 @@
 <a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}" title="{{name}}">{{name}}</a>
 
 {{#caneditsettings}}
-<a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
+<a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1" aria-label="{{#str}}editsettings{{/str}}" title="{{#str}}editsettings{{/str}}">
+    {{#pix}}t/edit, core{{/pix}}
+</a>
 {{/caneditsettings}}
 
 <br/>
@@ -59,7 +61,7 @@
 {{!
     Row 3) Assignment grading & link, due date, with tool-tip thing.
 }}
-<a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}&action={{actiongrading}}" title="{{viewgrading}}">{{viewgrading}}</a>
+<a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}&action={{actiongrading}}">{{viewgrading}}</a>
 
 <div role="tooltip" id="tooltip-{{uniqid}}" class="accesshide">
 {{#duedate}}

@@ -44,7 +44,7 @@ class private_files extends \core_form\dynamic_form {
             if ($fileareainfo['filecount']) {
                 $a = (object) [
                     'used' => display_size($fileareainfo['filesize_without_references']),
-                    'total' => display_size($maxareabytes)
+                    'total' => display_size($maxareabytes, 0)
                 ];
                 $quotamsg = get_string('quotausage', 'moodle', $a);
                 $notification = new \core\output\notification($quotamsg, \core\output\notification::NOTIFY_INFO);

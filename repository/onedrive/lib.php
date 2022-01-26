@@ -1008,6 +1008,8 @@ class repository_onedrive extends repository {
      * Return true if any instances of the skydrive repo exist - and we can import them.
      *
      * @return bool
+     * @deprecated since Moodle 4.0
+     * @todo MDL-72620 This will be deleted in Moodle 4.4.
      */
     public static function can_import_skydrive_files() {
         global $DB;
@@ -1046,9 +1048,14 @@ class repository_onedrive extends repository {
      * Import all the files that were created with the skydrive repo to this repo.
      *
      * @return bool
+     * @deprecated since Moodle 4.0
+     * @todo MDL-72620 This will be deleted in Moodle 4.4.
      */
     public static function import_skydrive_files() {
         global $DB;
+
+        debugging('import_skydrive_files() is deprecated. Please migrate your files from repository_skydrive to ' .
+            'repository_onedrive before it will be completely removed.', DEBUG_DEVELOPER);
 
         if (!self::can_import_skydrive_files()) {
             return false;
@@ -1090,6 +1097,9 @@ class repository_onedrive extends repository {
         $mform->addElement('static', null, '', get_string('oauth2serviceslink', 'repository_onedrive', $url));
 
         if (self::can_import_skydrive_files()) {
+            debugging('can_import_skydrive_files() is deprecated. Please migrate your files from repository_skydrive to ' .
+            'repository_onedrive before it will be completely removed.', DEBUG_DEVELOPER);
+
             $notice = get_string('skydrivefilesexist', 'repository_onedrive');
             $url = new moodle_url('/repository/onedrive/importskydrive.php');
             $attrs = ['class' => 'btn btn-primary'];

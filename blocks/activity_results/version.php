@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the block_quiz_results plugin.
+ * Version information for the block_activity_results plugin.
  *
  * @package    block_activity_results
  * @copyright  2015 Stephen Bourget

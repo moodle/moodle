@@ -22,6 +22,7 @@
  * @copyright 2016 Jun Pataleta
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
+namespace core_grades;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +37,7 @@ require_once($CFG->dirroot . '/grade/lib.php');
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_grade_lib_test extends advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     /**
      * Test can_output_item.
@@ -50,18 +51,18 @@ class core_grade_lib_test extends advanced_testcase {
         $course = $generator->create_course();
         // Grade tree looks something like:
         // - Test course    (Rendered).
-        $gradetree = grade_category::fetch_course_tree($course->id);
-        $this->assertTrue(grade_tree::can_output_item($gradetree));
+        $gradetree = \grade_category::fetch_course_tree($course->id);
+        $this->assertTrue(\grade_tree::can_output_item($gradetree));
 
         // Add a grade category with default settings.
         $generator->create_grade_category(array('courseid' => $course->id));
         // Grade tree now looks something like:
         // - Test course n        (Rendered).
         // -- Grade category n    (Rendered).
-        $gradetree = grade_category::fetch_course_tree($course->id);
+        $gradetree = \grade_category::fetch_course_tree($course->id);
         $this->assertNotEmpty($gradetree['children']);
         foreach ($gradetree['children'] as $child) {
-            $this->assertTrue(grade_tree::can_output_item($child));
+            $this->assertTrue(\grade_tree::can_output_item($child));
         }
 
         // Add a grade category with grade type = None.
@@ -72,7 +73,7 @@ class core_grade_lib_test extends advanced_testcase {
             'aggregation' => GRADE_AGGREGATE_WEIGHTED_MEAN
         ];
         $nototal = $generator->create_grade_category($nototalparams);
-        $catnototal = grade_category::fetch(array('id' => $nototal->id));
+        $catnototal = \grade_category::fetch(array('id' => $nototal->id));
         // Set the grade type of the grade item associated to the grade category.
         $catitemnototal = $catnototal->load_grade_item();
         $catitemnototal->gradetype = GRADE_TYPE_NONE;
@@ -82,12 +83,12 @@ class core_grade_lib_test extends advanced_testcase {
         // - Test course n        (Rendered).
         // -- Grade category n    (Rendered).
         // -- No total category   (Not rendered).
-        $gradetree = grade_category::fetch_course_tree($course->id);
+        $gradetree = \grade_category::fetch_course_tree($course->id);
         foreach ($gradetree['children'] as $child) {
             if ($child['object']->fullname == $nototalcategory) {
-                $this->assertFalse(grade_tree::can_output_item($child));
+                $this->assertFalse(\grade_tree::can_output_item($child));
             } else {
-                $this->assertTrue(grade_tree::can_output_item($child));
+                $this->assertTrue(\grade_tree::can_output_item($child));
             }
         }
 
@@ -104,13 +105,13 @@ class core_grade_lib_test extends advanced_testcase {
         // -- Grade category n                       (Rendered).
         // -- No total category                      (Rendered).
         // --- Normal category in no total category  (Rendered).
-        $gradetree = grade_category::fetch_course_tree($course->id);
+        $gradetree = \grade_category::fetch_course_tree($course->id);
         foreach ($gradetree['children'] as $child) {
             // All children are now visible.
-            $this->assertTrue(grade_tree::can_output_item($child));
+            $this->assertTrue(\grade_tree::can_output_item($child));
             if (!empty($child['children'])) {
                 foreach ($child['children'] as $grandchild) {
-                    $this->assertTrue(grade_tree::can_output_item($grandchild));
+                    $this->assertTrue(\grade_tree::can_output_item($grandchild));
                 }
             }
         }
@@ -123,7 +124,7 @@ class core_grade_lib_test extends advanced_testcase {
             'aggregation' => GRADE_AGGREGATE_WEIGHTED_MEAN
         ];
         $nototal2 = $generator->create_grade_category($nototal2params);
-        $catnototal2 = grade_category::fetch(array('id' => $nototal2->id));
+        $catnototal2 = \grade_category::fetch(array('id' => $nototal2->id));
         // Set the grade type of the grade item associated to the grade category.
         $catitemnototal2 = $catnototal2->load_grade_item();
         $catitemnototal2->gradetype = GRADE_TYPE_NONE;
@@ -138,7 +139,7 @@ class core_grade_lib_test extends advanced_testcase {
             'parent' => $nototal2->id
         ];
         $nototalinnototal = $generator->create_grade_category($nototalinnototalparams);
-        $catnototalinnototal = grade_category::fetch(array('id' => $nototalinnototal->id));
+        $catnototalinnototal = \grade_category::fetch(array('id' => $nototalinnototal->id));
         // Set the grade type of the grade item associated to the grade category.
         $catitemnototalinnototal = $catnototalinnototal->load_grade_item();
         $catitemnototalinnototal->gradetype = GRADE_TYPE_NONE;
@@ -151,19 +152,19 @@ class core_grade_lib_test extends advanced_testcase {
         // --- Normal category in no total category           (Rendered).
         // -- No total category 2                             (Not rendered).
         // --- Category with no total in no total category    (Not rendered).
-        $gradetree = grade_category::fetch_course_tree($course->id);
+        $gradetree = \grade_category::fetch_course_tree($course->id);
         foreach ($gradetree['children'] as $child) {
             if ($child['object']->fullname == $nototalcategory2) {
-                $this->assertFalse(grade_tree::can_output_item($child));
+                $this->assertFalse(\grade_tree::can_output_item($child));
             } else {
-                $this->assertTrue(grade_tree::can_output_item($child));
+                $this->assertTrue(\grade_tree::can_output_item($child));
             }
             if (!empty($child['children'])) {
                 foreach ($child['children'] as $grandchild) {
                     if ($grandchild['object']->fullname == $nototalinnototalcategory) {
-                        $this->assertFalse(grade_tree::can_output_item($grandchild));
+                        $this->assertFalse(\grade_tree::can_output_item($grandchild));
                     } else {
-                        $this->assertTrue(grade_tree::can_output_item($grandchild));
+                        $this->assertTrue(\grade_tree::can_output_item($grandchild));
                     }
                 }
             }

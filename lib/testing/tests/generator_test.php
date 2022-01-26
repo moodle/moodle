@@ -47,6 +47,11 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertInstanceOf('mod_quiz_generator', $generator);
     }
 
+    public function test_get_default_generator() {
+        $generator = $this->getDataGenerator()->get_plugin_generator('block_somethingthatdoesnotexist');
+        $this->assertInstanceOf('default_block_generator', $generator);
+    }
+
     /**
      * Test plugin generator, with no component directory.
      */
@@ -258,6 +263,7 @@ class core_test_generator_testcase extends advanced_testcase {
             'completion' => COMPLETION_TRACKING_AUTOMATIC, // "Show activity as complete when conditions are met."
             'completionview' => 1, // "Student must view this activity to complete it"
             'completionusegrade' => 1, // "Student must receive a grade to complete this activity"
+            'completionpassgrade' => 1, // "Student must receive a passing grade to complete this activity"
         );
 
         // Module supports FEATURE_RATE:
@@ -327,6 +333,7 @@ class core_test_generator_testcase extends advanced_testcase {
         $cm3 = $modinfo->cms[$m3->cmid];
         $this->assertEquals($featurecompletionautomatic['completion'], $cm3->completion);
         $this->assertEquals($featurecompletionautomatic['completionview'], $cm3->completionview);
+        $this->assertEquals($featurecompletionautomatic['completionpassgrade'], $cm3->completionpassgrade);
         $this->assertEquals(0, $cm3->completiongradeitemnumber); // Zero instead of default null since 'completionusegrade' was set.
         $gradingitem = grade_item::fetch(array('courseid'=>$course->id, 'itemtype'=>'mod', 'itemmodule' => 'assign', 'iteminstance' => $m3->id));
         $this->assertEquals(0, $gradingitem->grademin);

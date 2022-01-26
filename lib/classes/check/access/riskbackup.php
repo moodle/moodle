@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Abstract class for common properties of scheduled_task and adhoc_task.
+ * Lists all roles that have the ability to backup user data, as well as users
  *
  * @package    core
  * @category   check

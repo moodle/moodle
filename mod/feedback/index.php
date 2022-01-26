@@ -39,6 +39,7 @@ $context = context_course::instance($course->id);
 
 require_login($course);
 $PAGE->set_pagelayout('incourse');
+$PAGE->add_body_class('limitedwidth');
 
 // Trigger instances list viewed event.
 $event = \mod_feedback\event\course_module_instance_list_viewed::create(array('context' => $context));
@@ -53,7 +54,9 @@ $PAGE->navbar->add($strfeedbacks);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title(get_string('modulename', 'feedback').' '.get_string('activities'));
 echo $OUTPUT->header();
-echo $OUTPUT->heading($strfeedbacks);
+if (!$PAGE->has_secondary_navigation()) {
+    echo $OUTPUT->heading($strfeedbacks);
+}
 
 /// Get all the appropriate data
 
@@ -124,4 +127,3 @@ echo html_writer::table($table);
 /// Finish the page
 
 echo $OUTPUT->footer();
-

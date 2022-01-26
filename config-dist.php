@@ -166,8 +166,11 @@ $CFG->directorypermissions = 02777;
 
 
 //=========================================================================
-// 5. DIRECTORY LOCATION  (most people can just ignore this setting)
+// 5. ADMIN DIRECTORY LOCATION  (deprecated)
 //=========================================================================
+// Please note: Support from this feature has been deprecated and it will be
+// removed after Moodle 4.2.
+//
 // A very few webhosts use /admin as a special URL for you to access a
 // control panel or something.  Unfortunately this conflicts with the
 // standard location for the Moodle admin pages.  You can work around this
@@ -692,23 +695,6 @@ $CFG->admin = 'admin';
 //      $CFG->uninstallclionly = true;
 //
 //
-// Customise question bank display
-//
-// The display of Moodle's question bank is made up of a number of columns.
-// You can customise this display by giving a comma-separated list of column class
-// names here. Each class must be a subclass of \core_question\bank\column_base.
-// For example you might define a class like
-//      class \local_qbank_extensions\my_column extends \core_question\bank\column_base
-// in a local plugin, then add it to the list here. At the time of writing,
-// the default question bank display is equivalent to the following, but you  might like
-// to check the latest default in question/classes/bank/view.php before setting this.
-//
-//      $CFG->questionbankcolumns = 'checkbox_column,question_type_column,'
-//              . 'question_name_idnumber_tags_column,edit_menu_column,'
-//              . 'tags_action_column,edit_action_column,copy_action_column,'
-//              . 'preview_action_column,delete_action_column,export_xml_action_column,'
-//              . 'creator_name_column,modifier_name_column';
-//
 // Forum summary report
 //
 // In order for the forum summary report to calculate word count and character count data, those details are now stored
@@ -747,6 +733,14 @@ $CFG->admin = 'admin';
 // automatically generating them. This is only needed if you want to ensure that keys are consistent
 // across a cluster when not using shared storage. If you stop the server generating keys, you will
 // need to manually generate them by running 'php admin/cli/generate_key.php'.
+//
+// H5P crossorigin
+//
+//      $CFG->h5pcrossorigin = 'anonymous';
+//
+// Settings this to anonymous will enable CORS requests for media elements to have the credentials
+// flag set to 'same-origin'. This may be needed when using tool_objectfs as an alternative file
+// system with CloudFront configured.
 
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
@@ -880,6 +874,10 @@ $CFG->admin = 'admin';
 // $CFG->behat_wwwroot = 'http://127.0.0.1/moodle';
 // $CFG->behat_prefix = 'bht_';
 // $CFG->behat_dataroot = '/home/example/bht_moodledata';
+// $CFG->behat_dbname = 'behat'; // optional
+// $CFG->behat_dbuser = 'username'; // optional
+// $CFG->behat_dbpass = 'password'; // optional
+// $CFG->behat_dbhost = 'localhost'; // optional
 //
 // You can override default Moodle configuration for Behat and add your own
 // params; here you can add more profiles, use different Mink drivers than Selenium...
@@ -953,6 +951,12 @@ $CFG->admin = 'admin';
 // seconds, for instance).
 // Example:
 //   $CFG->behat_increasetimeout = 3;
+//
+// Yon can specify a window size modifier for Behat, which is applied to any window szie changes.
+// For example, if a window size of 640x768 is specified, with a modifier of 2, then the final size is 1280x1536.
+// This is particularly useful for behat reruns to eliminate issues with window sizing.
+// Example:
+//   $CFG->behat_window_size_modifier = 1;
 //
 // Including feature files from directories outside the dirroot is possible if required. The setting
 // requires that the running user has executable permissions on all parent directories in the paths.
@@ -1125,7 +1129,7 @@ $CFG->admin = 'admin';
 //          ],
 //      ];
 //
-// The format for the schedule definition is: '{minute} {hour} {day} {dayofweek} {month}'.
+// The format for the schedule definition is: '{minute} {hour} {day} {month} {dayofweek}'.
 //
 // The classname of the task also supports wildcards:
 //
@@ -1146,6 +1150,31 @@ $CFG->admin = 'admin';
 // applied to all tasks, except for tasks within '\local_plugin\'.
 //
 // When the full classname is used, this rule always takes priority over any wildcard rules.
+//
+//=========================================================================
+// 18. SITE ADMIN PRESETS
+//=========================================================================
+//
+// The site admin presets plugin has been integrated in Moodle LMS. You can use a setting in case you
+// want to apply a preset during the installation:
+//
+//      $CFG->setsitepresetduringinstall = 'starter';
+//
+// This setting accepts the following values:
+// - One of the core preset names (i.e "starter" or "full").
+// - The path of a valid XML preset file, that will be imported and applied. Absolute paths are recommended, to
+//   guarantee the file is found: i.e."MOODLEPATH/adminpresets/tests/fixtures/import_settings_plugins.xml".
+//
+// This setting is only used during the installation process. So once the Moodle site is installed, it is ignored.
+//
+//=========================================================================
+// 19. SERVICES AND SUPPORT CONTENT
+//=========================================================================
+//
+// We have added services and support content to the notifications page, in case you want to hide that from your site
+// you just need to set showservicesandsupportcontent setting to false.
+//
+//      $CFG->showservicesandsupportcontent = false;
 //
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

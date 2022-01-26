@@ -43,7 +43,7 @@ Feature: Set a quiz to be marked complete when the student completes a minimum a
     And I am on "Course 1" course homepage
     And the "Make attempts: 2" completion condition of "Test quiz name" is displayed as "todo"
     And I follow "Test quiz name"
-    And I press "Re-attempt quiz"
+    And I follow "Attempt quiz"
     And I set the field "False" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
@@ -57,5 +57,6 @@ Feature: Set a quiz to be marked complete when the student completes a minimum a
     And I follow "Test quiz name"
     And "Test quiz name" should have the "Make attempts: 2" completion condition
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Activity completion" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Activity completion" from the "Report type" singleselect
     And "Completed" "icon" should exist in the "Student 1" "table_row"

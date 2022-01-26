@@ -85,6 +85,7 @@ define([
                 } else {
                     daysWithEvent.removeClass('hidden');
                 }
+                CalendarViewManager.foldDayEvents(root);
             });
 
             var eventFormPromise = CalendarCrud.registerEventFormModal(root);

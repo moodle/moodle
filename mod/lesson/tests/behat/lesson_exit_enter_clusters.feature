@@ -28,7 +28,7 @@ Feature: In a lesson activity, students can exit and re-enter the activity when 
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I follow "Expanded"
+    And I select edit type "Expanded"
     And I click on "Add a cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][2]" "xpath_element"
     And I follow "Update page: Cluster"
     And I set the following fields to these values:

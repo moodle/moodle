@@ -21,6 +21,8 @@
  * plugins include this file to extend the course format renderer. Now all
  * format renderers are located in core_courseformat\output and uses autoload.
  *
+ * @deprecated since Moodle 4.0 MDL-72656
+ *
  * @package core_courseformat
  * @copyright 2012 Dan Poltawski
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

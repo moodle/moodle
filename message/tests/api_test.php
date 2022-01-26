@@ -39,7 +39,7 @@ use \core_message\tests\helper as testhelper;
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_message_api_testcase extends core_message_messagelib_testcase {
+class core_message_api_test extends core_message_messagelib_testcase {
 
     public function test_mark_all_read_for_user_touser() {
         $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
@@ -3266,26 +3266,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Test that calling to can_post_message() now shows debugging. MDL-65093.
-     *
-     * @deprecated since 3.8
-     * @todo Final deprecation in MDL-66266
-     */
-    public function test_can_post_emits_debugging() {
-        // Create some users.
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-
-        // Set as the first user.
-        $this->setUser($user1);
-
-        // With the default privacy setting, users can't message them.
-        $this->assertFalse(\core_message\api::can_post_message($user2));
-        $this->assertDebuggingCalled('\core_message\api::can_post_message is deprecated, please use ' .
-            '\core_message\api::can_send_message instead.', DEBUG_DEVELOPER);
-    }
-
-    /**
      * Verify the expected behaviour of the can_send_message_to_conversation() method for authenticated users with default settings.
      */
     public function test_can_send_message_to_conversation_basic() {
@@ -5194,154 +5174,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(
                 $newname,
                 $DB->get_field('message_conversations', 'name', ['id' => $conversation->id])
-        );
-    }
-
-
-    /**
-     * Test an empty array returned when no args given.
-     */
-    public function test_get_individual_conversations_between_users_no_user_sets() {
-        $this->assertEmpty(\core_message\api::get_individual_conversations_between_users([]));
-        $this->assertDebuggingCalled();
-    }
-
-    /**
-     * Test a conversation is not returned if there is none.
-     */
-    public function test_get_individual_conversations_between_users_no_conversation() {
-        $generator = $this->getDataGenerator();
-        $user1 = $generator->create_user();
-        $user2 = $generator->create_user();
-
-        $this->assertEquals(
-            [null],
-            \core_message\api::get_individual_conversations_between_users([[$user1->id, $user2->id]])
-        );
-        $this->assertDebuggingCalled();
-    }
-
-    /**
-     * Test the result set includes null if there is no conversation between users.
-     */
-    public function test_get_individual_conversations_between_users_partial_conversations() {
-        $generator = $this->getDataGenerator();
-        $user1 = $generator->create_user();
-        $user2 = $generator->create_user();
-        $user3 = $generator->create_user();
-        $type = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
-
-        $conversation1 = \core_message\api::create_conversation($type, [$user1->id, $user2->id]);
-        $conversation2 = \core_message\api::create_conversation($type, [$user1->id, $user3->id]);
-
-        $results = \core_message\api::get_individual_conversations_between_users([
-            [$user1->id, $user2->id],
-            [$user2->id, $user3->id],
-            [$user1->id, $user3->id]
-        ]);
-        $this->assertDebuggingCalled();
-
-        $result = array_map(function($result) {
-            if ($result) {
-                return $result->id;
-            } else {
-                return $result;
-            }
-        }, $results);
-
-        $this->assertEquals(
-            [$conversation1->id, null, $conversation2->id],
-            $result
-        );
-    }
-
-    /**
-     * Test all conversations are returned if each set has a conversation.
-     */
-    public function test_get_individual_conversations_between_users_all_conversations() {
-        $generator = $this->getDataGenerator();
-        $user1 = $generator->create_user();
-        $user2 = $generator->create_user();
-        $user3 = $generator->create_user();
-        $type = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
-
-        $conversation1 = \core_message\api::create_conversation($type, [$user1->id, $user2->id]);
-        $conversation2 = \core_message\api::create_conversation($type, [$user2->id, $user3->id]);
-        $conversation3 = \core_message\api::create_conversation($type, [$user1->id, $user3->id]);
-
-        $results = \core_message\api::get_individual_conversations_between_users([
-            [$user1->id, $user2->id],
-            [$user2->id, $user3->id],
-            [$user1->id, $user3->id]
-        ]);
-        $this->assertDebuggingCalled();
-
-        $result = array_map(function($result) {
-            if ($result) {
-                return $result->id;
-            } else {
-                return $result;
-            }
-        }, $results);
-
-        $this->assertEquals(
-            [$conversation1->id, $conversation2->id, $conversation3->id],
-            $result
-        );
-    }
-
-    /**
-     * Test that the results are ordered to match the order of the parameters.
-     */
-    public function test_get_individual_conversations_between_users_ordering() {
-        $generator = $this->getDataGenerator();
-        $user1 = $generator->create_user();
-        $user2 = $generator->create_user();
-        $user3 = $generator->create_user();
-        $type = \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
-
-        $conversation1 = \core_message\api::create_conversation($type, [$user1->id, $user2->id]);
-        $conversation2 = \core_message\api::create_conversation($type, [$user2->id, $user3->id]);
-        $conversation3 = \core_message\api::create_conversation($type, [$user1->id, $user3->id]);
-
-        $results = \core_message\api::get_individual_conversations_between_users([
-            [$user1->id, $user2->id],
-            [$user2->id, $user3->id],
-            [$user1->id, $user3->id]
-        ]);
-        $this->assertDebuggingCalled();
-
-        $result = array_map(function($result) {
-            if ($result) {
-                return $result->id;
-            } else {
-                return $result;
-            }
-        }, $results);
-
-        $this->assertEquals(
-            [$conversation1->id, $conversation2->id, $conversation3->id],
-            $result
-        );
-
-        $results = \core_message\api::get_individual_conversations_between_users([
-            [$user2->id, $user3->id],
-            [$user1->id, $user2->id],
-            [$user1->id, $user3->id]
-        ]);
-        $this->assertDebuggingCalled();
-
-        $result = array_map(function($result) {
-            if ($result) {
-                return $result->id;
-            } else {
-                return $result;
-            }
-        }, $results);
-
-        $this->assertEquals(
-            [$conversation2->id, $conversation1->id, $conversation3->id],
-            $result
         );
     }
 

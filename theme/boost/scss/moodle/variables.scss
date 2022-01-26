@@ -22,8 +22,30 @@ $state-danger-border: theme-color-level("danger", -9) !default;
 $primary-nav-padding-y: ($spacer / 4) !default;
 $primary-nav-padding-x: ($spacer / 2) !default;
 
-$navbar-height: 50px !default;
-$course-content-maxwidth: 800px;
+$navbar-height: 60px !default;
+$course-content-maxwidth: 830px;
 
 $box-shadow-drawer-left: -0.25rem .25rem .8rem rgba($black, .025) !default;
 $box-shadow-drawer-right: 0 .25rem .8rem rgba($black, .025) !default;
+
+$moremenu-height: 60px !default;
+
+$primary-light-background: theme-color-level('primary', -12) !default;
+$primary-light-border: theme-color-level('primary', -2) !default;
+$primary-light-color: $body-color;
+$primary-light-hover: theme-color-level('primary', -10) !default;
+$activity-iconcontainer-height: 50px;
+$activity-iconcontainer-width: 50px;
+
+$activity-icon-colors: () !default;
+$activity-icon-colors: map-merge(
+    (
+        "administration": #5d63f6,
+        "assessment": #eb66a2,
+        "collaboration": #f7634d,
+        "communication": #11a676,
+        "content": #399be2,
+        "interface": #a378ff
+    ),
+    $activity-icon-colors
+);

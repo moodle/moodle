@@ -20,7 +20,7 @@ Feature: Content bank use editor feature
     Then the "[data-action=Add-content]" "css_element" should be disabled
 
   Scenario: Users can see the Add button if there is content type available for creation
-    Given I follow "Dashboard" in the user menu
+    Given I follow "Dashboard"
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
@@ -39,7 +39,7 @@ Feature: Content bank use editor feature
     And I should see "Fill in the Blanks"
 
   Scenario: Users can edit content if they have the required permission
-    Given I follow "Dashboard" in the user menu
+    Given I follow "Dashboard"
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
@@ -179,8 +179,7 @@ Feature: Content bank use editor feature
       | contextlevel | reference | contenttype     | user     | contentname       | filepath                              |
       | Course       | C1        | contenttype_h5p | admin    | filltheblanks.h5p | /h5p/tests/fixtures/filltheblanks.h5p |
       | Course       | C1        | contenttype_h5p | teacher1 | ipsums.h5p        | /h5p/tests/fixtures/ipsums.h5p        |
-    And I am on "Course 1" course homepage
-    And I navigate to "Copy course" in current page administration
+    And I am on the "Course 1" "course copy" page
     And I set the following fields to these values:
       | Course full name  | Copy |
       | Course short name | Copy |
@@ -195,6 +194,6 @@ Feature: Content bank use editor feature
     And I click on "Content bank" "link"
     And I follow "ipsums.h5p"
     Then "Edit" "link" should exist in the "region-main" "region"
-    And I click on "Content bank" "link"
+    And I navigate to "Content bank" in current page administration
     And I follow "filltheblanks.h5p"
     Then "Edit" "link" should not exist in the "region-main" "region"

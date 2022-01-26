@@ -58,11 +58,12 @@
 
 {{{ attachments }}}
 ---------------------------------------------------------------------
+{{# str }} postmailinfo, forum, {{{ coursename }}} {{/ str }}
+
 {{# canreply }}
-{{# str }} postmailinfolink, forum, {
-        "coursename": {{# quote }}{{{ coursename }}}{{/ quote }},
-        "replylink": {{# quote }}{{ replylink }}{{/ quote }}
-    } {{/ str }}
+    {{^ isprivatereply }}
+        {{# str }} postmailreply, forum, {{{ replylink }}} {{/ str }}
+    {{/ isprivatereply }}
 {{/ canreply }}
 {{# unsubscribeforumlink }}
 {{# str }} unsubscribelink, forum, {{{ unsubscribeforumlink }}} {{/ str }}

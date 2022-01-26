@@ -291,6 +291,9 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                     window.setTimeout(function() {
                         lightbox.hide();
                     }, 250);
+
+                    // Update course state.
+                    M.course.coursebase.invoke_function('updateMovedSectionState');
                 },
 
                 failure: function(tid, response) {
@@ -474,16 +477,21 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
             params[varname] = pageparams[varname];
         }
 
+        // Variables needed to update the course state.
+        var cmid = Number(Y.Moodle.core_course.util.cm.getId(dragnode));
+        var beforeid = null;
+
         // Prepare request parameters
         params.sesskey = M.cfg.sesskey;
         params.courseId = this.get('courseid');
         params['class'] = 'resource';
         params.field = 'move';
-        params.id = Number(Y.Moodle.core_course.util.cm.getId(dragnode));
+        params.id = cmid;
         params.sectionId = Y.Moodle.core_course.util.section.getId(dropnode.ancestor(M.course.format.get_section_wrapper(Y), true));
 
         if (dragnode.next()) {
-            params.beforeId = Number(Y.Moodle.core_course.util.cm.getId(dragnode.next()));
+            beforeid = Number(Y.Moodle.core_course.util.cm.getId(dragnode.next()));
+            params.beforeId = beforeid;
         }
 
         // Do AJAX request
@@ -499,6 +507,16 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
                 },
                 success: function(tid, response) {
                     var responsetext = Y.JSON.parse(response.responseText);
+                    // Update course state.
+                    M.course.coursebase.invoke_function(
+                        'updateMovedCmState',
+                        {
+                            cmid: cmid,
+                            beforeid: beforeid,
+                            visible: responsetext.visible,
+                        }
+                    );
+                    // Set visibility in course content.
                     var params = {element: dragnode, visible: responsetext.visible};
                     M.course.coursebase.invoke_function('set_visibility_resource_ui', params);
                     this.unlock_drag_handle(drag, CSS.EDITINGMOVE);

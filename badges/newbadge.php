@@ -41,6 +41,7 @@ if (empty($CFG->badges_allowcoursebadges) && ($type == BADGE_TYPE_COURSE)) {
 }
 
 $title = get_string('create', 'badges');
+$PAGE->add_body_class('limitedwidth');
 
 if (($type == BADGE_TYPE_COURSE) && ($course = $DB->get_record('course', array('id' => $courseid)))) {
     require_login($course);

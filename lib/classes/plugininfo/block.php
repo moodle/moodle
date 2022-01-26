@@ -41,6 +41,29 @@ class block extends base {
         return $DB->get_records_menu('block', array('visible'=>1), 'name ASC', 'name, name AS val');
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        global $DB;
+
+        if (!$block = $DB->get_record('block', ['name' => $pluginname])) {
+            throw new \moodle_exception('blockdoesnotexist', 'error');
+        }
+
+        $haschanged = false;
+
+        // Only set visibility if it's different from the current value.
+        if ($block->visible != $enabled) {
+            // Set block visibility.
+            $DB->set_field('block', 'visible', $enabled, ['id' => $block->id]);
+            $haschanged = true;
+
+            // Include this information into config changes table.
+            add_to_config_log('block_visibility', $block->visible, $enabled, $pluginname);
+            \core_plugin_manager::reset_caches();
+        }
+
+        return $haschanged;
+    }
+
     /**
      * Magic method getter, redirects to read only values.
      *

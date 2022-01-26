@@ -1,0 +1,50 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/content/cm/availability
+
+    Displays a activity availability.
+
+    Example context (json):
+    {
+        "info": [
+            {
+                "classes": "",
+                "text": "Not available unless: <ul><li>It is on or after <strong>8 June 2012</strong></li></ul>",
+                "ishidden": 0,
+                "isstealth": 0,
+                "isrestricted": 1,
+                "isfullinfo": 1
+            }
+        ],
+        "hasmodavailability": true
+    }
+}}
+{{#hasmodavailability}}
+    {{#info}}
+        <div class="availabilityinfo small course-description-item {{classes}}">
+        {{^isrestricted}}
+            <span class="badge badge-pill badge-warning">{{{text}}}</span>
+        {{/isrestricted}}
+        {{#isrestricted}}
+            <div class="description-inner">
+            {{#pix}}t/unlock, core{{/pix}} {{{text}}}
+            </div>
+        {{/isrestricted}}
+        </div>
+    {{/info}}
+{{/hasmodavailability}}

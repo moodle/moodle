@@ -1,5 +1,19 @@
 This files describes API changes in the quiz code.
 
+=== 4.0 ===
+
+* The following API methods have a new parameter, $studentisonline, to define whether the student is currently interacting:
+  - process_finish() in mod/quiz/attemptlib.php
+  - quiz_send_confirmation() in mod/quiz/locallib.php
+  - quiz_send_notification_messages() in mod/quiz/locallib.php
+* The completionpass criteria has been moved to core as 'completionpassgrade'. Refer to completion/upgrade.txt for
+  further information.
+* New argument quizhasquestions has been added to public methods: view_information, view_page_notenrolled and view_page_guest
+  in mod/quiz/renderer.php.
+* The function no_questions_message() in class mod_quiz_renderer is deprecated. Please use generate_no_questions_message()
+  in the same class.
+
+
 === 3.11 ===
 
 * External function mod_quiz_external::get_user_best_grade now returns and additional optional field:

@@ -43,7 +43,7 @@ use dml_missing_record_exception;
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_results_testcase extends externallib_advanced_testcase {
+class get_results_test extends externallib_advanced_testcase {
 
     /**
      * Test the behaviour of get_results.

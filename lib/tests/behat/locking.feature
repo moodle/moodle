@@ -39,39 +39,39 @@ Feature: Context freezing apply to child contexts
   Scenario: Freeze course module module should freeze just that module
     Given I am on the "courseaa1" "Course" page logged in as "admin"
     And I follow "faa1"
-    And "Add a new discussion topic" "link" should exist
+    And "Add discussion topic" "link" should exist
     When I follow "Freeze this context"
     And I click on "Continue" "button"
-    Then "Add a new discussion topic" "link" should not exist
+    Then "Add discussion topic" "link" should not exist
     When I am on "courseaa1" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "faa1b"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
     When I am on "courseaa2" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "faa2"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
     When I am on "courseb" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "fb"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
 
     And I log out
     When I am on the "courseaa1" "Course" page logged in as "teacher"
     And I follow "faa1"
     Then "Add a new discussion topic" "link" should not exist
     When I am on "courseaa1" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "faa1b"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
     When I am on "courseaa2" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "faa2"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
     When I am on "courseb" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "fb"
-    And "Add a new discussion topic" "link" should exist
+    And "Add discussion topic" "link" should exist
 
     And I log out
     When I am on the "courseaa1" "Course" page logged in as "student1"
@@ -79,52 +79,52 @@ Feature: Context freezing apply to child contexts
     Then "Add a new discussion topic" "link" should not exist
     When I am on "courseaa1" course homepage
     When I follow "faa1b"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
     When I am on "courseaa2" course homepage
     When I follow "faa2"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
     When I am on "courseb" course homepage
     When I follow "fb"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
 
   Scenario: Freeze course should freeze all children
     Given I am on the "courseaa1" "Course" page logged in as "admin"
-    And I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "Freeze this context"
     And I click on "Continue" "button"
-    Then I should not see "Turn editing on"
+    Then edit mode should not be available on the current page
     Then "Add a new discussion topic" "link" should not exist
     When I am on "courseaa1" course homepage
-    Then I should not see "Turn editing on"
+    Then edit mode should not be available on the current page
     And "Unfreeze this context" "link" should exist in current page administration
     When I follow "faa1b"
     Then "Add a new discussion topic" "link" should not exist
     And "Unfreeze this context" "link" should not exist in current page administration
     When I am on "courseaa2" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "faa2"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
     When I am on "courseb" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "fb"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
 
     And I log out
     When I am on the "courseaa1" "Course" page logged in as "teacher"
     And I follow "faa1"
     Then "Add a new discussion topic" "link" should not exist
     When I am on "courseaa1" course homepage
-    Then I should not see "Turn editing on"
+    Then edit mode should not be available on the current page
     When I follow "faa1b"
     Then "Add a new discussion topic" "link" should not exist
     When I am on "courseaa2" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "faa2"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
     When I am on "courseb" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "fb"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
 
     And I log out
     When I am on the "courseaa1" "Course" page logged in as "student1"
@@ -135,10 +135,10 @@ Feature: Context freezing apply to child contexts
     Then "Add a new discussion topic" "link" should not exist
     When I am on "courseaa2" course homepage
     When I follow "faa2"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
     When I am on "courseb" course homepage
     When I follow "fb"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
 
   Scenario: Freeze course category should freeze all children
     Given I log in as "admin"
@@ -146,41 +146,41 @@ Feature: Context freezing apply to child contexts
     And I click on "managecontextlock" action for "cata" in management category listing
     And I click on "Continue" "button"
     And I am on "courseaa1" course homepage
-    And I should not see "Turn editing on"
+    Then edit mode should not be available on the current page
     Then "Add a new discussion topic" "link" should not exist
     When I am on "courseaa1" course homepage
-    Then I should not see "Turn editing on"
+    Then edit mode should not be available on the current page
     And "Unfreeze this context" "link" should not exist in current page administration
     When I follow "faa1b"
     Then "Add a new discussion topic" "link" should not exist
     And "Unfreeze this context" "link" should not exist in current page administration
     When I am on "courseaa2" course homepage
-    Then I should not see "Turn editing on"
+    Then edit mode should not be available on the current page
     When I follow "faa2"
     Then "Add a new discussion topic" "link" should not exist
     And "Unfreeze this context" "link" should not exist in current page administration
     When I am on "courseb" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "fb"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
 
     And I log out
     When I am on the "courseaa1" "Course" page logged in as "teacher"
-    Then I should not see "Turn editing on"
+    Then edit mode should not be available on the current page
     And I follow "faa1"
     Then "Add a new discussion topic" "link" should not exist
     When I am on "courseaa1" course homepage
-    Then I should not see "Turn editing on"
+    Then edit mode should not be available on the current page
     When I follow "faa1b"
     Then "Add a new discussion topic" "link" should not exist
     When I am on "courseaa2" course homepage
-    Then I should not see "Turn editing on"
+    Then edit mode should not be available on the current page
     When I follow "faa2"
     Then "Add a new discussion topic" "link" should not exist
     When I am on "courseb" course homepage
-    Then I should see "Turn editing on"
+    Then edit mode should be available on the current page
     When I follow "fb"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist
 
     And I log out
     When I am on the "courseaa1" "Course" page logged in as "student1"
@@ -194,4 +194,4 @@ Feature: Context freezing apply to child contexts
     Then "Add a new discussion topic" "link" should not exist
     When I am on "courseb" course homepage
     When I follow "fb"
-    Then "Add a new discussion topic" "link" should exist
+    Then "Add discussion topic" "link" should exist

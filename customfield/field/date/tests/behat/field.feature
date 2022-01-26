@@ -68,7 +68,7 @@ Feature: Managers can manage course custom fields date
     Then I log in as "teacher1"
     When I am on site homepage
     When I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then "#id_customfield_testfield_hour" "css_element" should be visible
     Then "#id_customfield_testfield_minute" "css_element" should be visible
@@ -95,7 +95,7 @@ Feature: Managers can manage course custom fields date
     Then I log in as "teacher1"
     When I am on site homepage
     When I am on "Course 1" course homepage
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     Then "#id_customfield_testfield_hour" "css_element" should not be visible
     Then "#id_customfield_testfield_minute" "css_element" should not be visible

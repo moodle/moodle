@@ -1039,52 +1039,60 @@ class database_manager {
                                     $errors[$tablename][] = "column '$fieldname' should allow NULL ($dbfield->meta_type)";
                                 }
                             }
-                            if ($dbtype == XMLDB_TYPE_TEXT) {
-                                // No length check necessary - there is one size only now.
+                            switch ($dbtype) {
+                                case XMLDB_TYPE_TEXT:
+                                case XMLDB_TYPE_BINARY:
+                                    // No length check necessary - there is one size only now.
+                                    break;
 
-                            } else if ($dbtype == XMLDB_TYPE_NUMBER) {
-                                if ($field->getType() == XMLDB_TYPE_FLOAT) {
+                                case XMLDB_TYPE_NUMBER:
+                                    $lengthmismatch = $field->getLength() != $dbfield->max_length;
+                                    $decimalmismatch = $field->getDecimals() != $dbfield->scale;
                                     // Do not use floats in any new code, they are deprecated in XMLDB editor!
+                                    if ($field->getType() != XMLDB_TYPE_FLOAT && ($lengthmismatch || $decimalmismatch)) {
+                                        $size = "({$field->getLength()},{$field->getDecimals()})";
+                                        $dbsize = "($dbfield->max_length,$dbfield->scale)";
+                                        $errors[$tablename][] = "column '$fieldname' size is $dbsize,".
+                                            " expected $size ($dbfield->meta_type)";
+                                    }
+                                    break;
 
-                                } else if ($field->getLength() != $dbfield->max_length or $field->getDecimals() != $dbfield->scale) {
-                                    $size = "({$field->getLength()},{$field->getDecimals()})";
-                                    $dbsize = "($dbfield->max_length,$dbfield->scale)";
-                                    $errors[$tablename][] = "column '$fieldname' size is $dbsize, expected $size ($dbfield->meta_type)";
-                                }
+                                case XMLDB_TYPE_CHAR:
+                                    // This is not critical, but they should ideally match.
+                                    if ($field->getLength() != $dbfield->max_length) {
+                                        $errors[$tablename][] = "column '$fieldname' length is $dbfield->max_length,".
+                                            " expected {$field->getLength()} ($dbfield->meta_type)";
+                                    }
+                                    break;
 
-                            } else if ($dbtype == XMLDB_TYPE_CHAR) {
-                                // This is not critical, but they should ideally match.
-                                if ($field->getLength() != $dbfield->max_length) {
-                                    $errors[$tablename][] = "column '$fieldname' length is $dbfield->max_length, expected {$field->getLength()} ($dbfield->meta_type)";
-                                }
+                                case XMLDB_TYPE_INTEGER:
+                                    // Integers may be bigger in some DBs.
+                                    $length = $field->getLength();
+                                    if ($length > 18) {
+                                        // Integers are not supposed to be bigger than 18.
+                                        $length = 18;
+                                    }
+                                    if ($length > $dbfield->max_length) {
+                                        $errors[$tablename][] = "column '$fieldname' length is $dbfield->max_length,".
+                                            " expected at least {$field->getLength()} ($dbfield->meta_type)";
+                                    }
+                                    break;
 
-                            } else if ($dbtype == XMLDB_TYPE_INTEGER) {
-                                // Integers may be bigger in some DBs.
-                                $length = $field->getLength();
-                                if ($length > 18) {
-                                    // Integers are not supposed to be bigger than 18.
-                                    $length = 18;
-                                }
-                                if ($length > $dbfield->max_length) {
-                                    $errors[$tablename][] = "column '$fieldname' length is $dbfield->max_length, expected at least {$field->getLength()} ($dbfield->meta_type)";
-                                }
+                                case XMLDB_TYPE_TIMESTAMP:
+                                    $errors[$tablename][] = "column '$fieldname' is a timestamp,".
+                                        " this type is not supported ($dbfield->meta_type)";
+                                    continue 2;
 
-                            } else if ($dbtype == XMLDB_TYPE_BINARY) {
-                                // Ignore binary types.
-                                continue;
+                                case XMLDB_TYPE_DATETIME:
+                                    $errors[$tablename][] = "column '$fieldname' is a datetime,".
+                                        "this type is not supported ($dbfield->meta_type)";
+                                    continue 2;
 
-                            } else if ($dbtype == XMLDB_TYPE_TIMESTAMP) {
-                                $errors[$tablename][] = "column '$fieldname' is a timestamp, this type is not supported ($dbfield->meta_type)";
-                                continue;
+                                default:
+                                    // Report all other unsupported types as problems.
+                                    $errors[$tablename][] = "column '$fieldname' has unknown type ($dbfield->meta_type)";
+                                    continue 2;
 
-                            } else if ($dbtype == XMLDB_TYPE_DATETIME) {
-                                $errors[$tablename][] = "column '$fieldname' is a datetime, this type is not supported ($dbfield->meta_type)";
-                                continue;
-
-                            } else {
-                                // Report all other unsupported types as problems.
-                                $errors[$tablename][] = "column '$fieldname' has unknown type ($dbfield->meta_type)";
-                                continue;
                             }
 
                             // Note: The empty string defaults are a bit messy...

@@ -44,7 +44,7 @@ Feature: User can view activity log.
     And I follow "Ann, Jill, Grainne, Beauchamp"
     When I follow "Today's logs"
     And I should see "Assignment: Test assignment name"
-    And I follow "Ann, Jill, Grainne, Beauchamp"
+    And I click on "Back" "button"
     And I follow "All logs"
     Then I should see "Assignment: Test assignment name"
 
@@ -59,6 +59,8 @@ Feature: User can view activity log.
     And I follow "Ann, Jill, Grainne, Beauchamp"
     When I follow "Today's logs"
     And I should see "No log reader enabled"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
     And I follow "Ann, Jill, Grainne, Beauchamp"
     And I follow "All logs"
     Then I should see "No log reader enabled"
@@ -66,7 +68,8 @@ Feature: User can view activity log.
   Scenario: View Todays' log report for user through Course log report
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Logs" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Logs" from the "Report type" singleselect
     And I set the field with xpath "//select[@name='user']" to "Ann, Jill, Grainne, Beauchamp"
     When I click on "Get these logs" "button"
     Then I should see "Ann, Jill, Grainne, Beauchamp"

@@ -42,7 +42,7 @@ Feature: In a group assignment, teacher can annotate PDF files for all users
       | file    | mod/assign/feedback/editpdf/tests/fixtures/submission.pdf  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
     And I wait for the complete PDF to load
     And I click on ".navigate-next-button" "css_element"
@@ -62,7 +62,7 @@ Feature: In a group assignment, teacher can annotate PDF files for all users
     When I follow "View annotated PDF..."
     Then I should see "Annotate PDF"
     And I wait until the page is ready
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "Annotate PDF" "dialogue"
     And I log out
     And I am on the "Test assignment name" Activity page logged in as student2
     And I should not see "View annotated PDF..."
@@ -79,7 +79,7 @@ Feature: In a group assignment, teacher can annotate PDF files for all users
     Then I should see "Annotate PDF"
     And I change window size to "medium"
     And I wait until the page is ready
-    And I click on "Close" "button"
+    And I click on "Close" "button" in the "Annotate PDF" "dialogue"
     And I log out
 
     And I am on the "Test assignment name" Activity page logged in as student2

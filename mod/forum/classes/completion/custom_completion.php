@@ -112,6 +112,7 @@ class custom_completion extends activity_custom_completion {
             'completionreplies',
             'completionposts',
             'completionusegrade',
+            'completionpassgrade',
         ];
     }
 }

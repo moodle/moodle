@@ -147,7 +147,7 @@ class fetch extends external_api {
         global $USER;
         // Set up all the controllers etc that we'll be needing.
         $hasgrade = $gradeitem->user_has_grade($gradeduser);
-        $grade = $gradeitem->get_grade_for_user($gradeduser, $USER);
+        $grade = $gradeitem->get_formatted_grade_for_user($gradeduser, $USER);
         $instance = $gradeitem->get_advanced_grading_instance($USER, $grade);
         if (!$instance) {
             throw new moodle_exception('error:gradingunavailable', 'grading');
@@ -252,7 +252,7 @@ class fetch extends external_api {
                 'rubricmode' => 'evaluate editable',
                 'teacherdescription' => $teacherdescription,
                 'canedit' => false,
-                'usergrade' => $grade->grade,
+                'usergrade' => $grade->usergrade,
                 'maxgrade' => $maxgrade,
                 'gradedby' => $gradername,
                 'timecreated' => $grade->timecreated,

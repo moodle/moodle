@@ -29,7 +29,7 @@ Feature: I need to export grades as text
 
   @javascript
   Scenario: Export grades as text
-    When I navigate to "Export > Plain text file" in the course gradebook
+    When I navigate to "Plain text file" export page in the course gradebook
     And I expand all fieldsets
     And I click on "Course total" "checkbox"
     And I set the field "Grade export decimal places" to "1"
@@ -41,7 +41,7 @@ Feature: I need to export grades as text
 
   @javascript
   Scenario: Export grades as text using real
-    When I navigate to "Export > Plain text file" in the course gradebook
+    When I navigate to "Plain text file" export page in the course gradebook
     And I expand all fieldsets
     And  I set the following fields to these values:
       | Real        | 1                        |
@@ -52,7 +52,7 @@ Feature: I need to export grades as text
 
   @javascript
   Scenario: Export grades as text using percentages and letters
-    When I navigate to "Export > Plain text file" in the course gradebook
+    When I navigate to "Plain text file" export page in the course gradebook
     And  I set the following fields to these values:
       | Percentage   | 1                        |
       | Letter       | 1                        |
@@ -65,7 +65,7 @@ Feature: I need to export grades as text
 
   @javascript
   Scenario: Export grades as text using real, percentages and letters
-    When I navigate to "Export > Plain text file" in the course gradebook
+    When I navigate to "Plain text file" export page in the course gradebook
     And  I set the following fields to these values:
       | Real         | 1                        |
       | Percentage   | 1                        |

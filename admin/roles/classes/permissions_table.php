@@ -51,7 +51,7 @@ class core_role_permissions_table extends core_role_capability_table_base {
         $this->overridableroles = $overridableroles;
 
         $roles = get_all_roles($context);
-        $this->roles = role_fix_names(array_reverse($roles, true), $context, ROLENAME_ALIAS, true);
+        $this->roles = role_fix_names(array_reverse($roles, true), $context, ROLENAME_BOTH, true);
 
     }
 

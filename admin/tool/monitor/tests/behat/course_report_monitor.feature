@@ -22,7 +22,8 @@ Feature: In a course administration page, navigate through report page, test for
     And I navigate to "Reports > Event monitoring rules" in site administration
     And I click on "Enable" "link"
     And I am on "Course 1" course homepage
-    When I navigate to "Reports > Event monitoring rules" in current page administration
+    When I navigate to "Reports" in current page administration
+    And I select "Event monitoring rules" from the "Report type" singleselect
     Then "Report" "field" should exist
     And the "Report" select box should contain "Event monitoring rules"
     And the field "Report" matches value "Event monitoring rules"

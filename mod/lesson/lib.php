@@ -981,7 +981,7 @@ function lesson_reset_userdata($data) {
  * @uses FEATURE_GRADE_HAS_GRADE
  * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, false if not, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function lesson_supports($feature) {
     switch($feature) {
@@ -1003,6 +1003,8 @@ function lesson_supports($feature) {
             return true;
         case FEATURE_SHOW_DESCRIPTION:
             return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_CONTENT;
         default:
             return null;
     }
@@ -1033,40 +1035,17 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
 
     if (has_capability('mod/lesson:manageoverrides', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/lesson/overrides.php', array('cmid' => $PAGE->cm->id));
-        $node = navigation_node::create(get_string('groupoverrides', 'lesson'),
-                new moodle_url($url, array('mode' => 'group')),
-                navigation_node::TYPE_SETTING, null, 'mod_lesson_groupoverrides');
-        $lessonnode->add_node($node, $beforekey);
-
-        $node = navigation_node::create(get_string('useroverrides', 'lesson'),
-                new moodle_url($url, array('mode' => 'user')),
+        $node = navigation_node::create(get_string('overrides', 'lesson'), $url,
                 navigation_node::TYPE_SETTING, null, 'mod_lesson_useroverrides');
         $lessonnode->add_node($node, $beforekey);
     }
 
-    if (has_capability('mod/lesson:edit', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id));
-        $lessonnode->add(get_string('preview', 'lesson'), $url);
-        $editnode = $lessonnode->add(get_string('edit', 'lesson'));
-        $url = new moodle_url('/mod/lesson/edit.php', array('id' => $PAGE->cm->id, 'mode' => 'collapsed'));
-        $editnode->add(get_string('collapsed', 'lesson'), $url);
-        $url = new moodle_url('/mod/lesson/edit.php', array('id' => $PAGE->cm->id, 'mode' => 'full'));
-        $editnode->add(get_string('full', 'lesson'), $url);
-    }
-
     if (has_capability('mod/lesson:viewreports', $PAGE->cm->context)) {
-        $reportsnode = $lessonnode->add(get_string('reports', 'lesson'));
-        $url = new moodle_url('/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportoverview'));
-        $reportsnode->add(get_string('overview', 'lesson'), $url);
-        $url = new moodle_url('/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportdetail'));
-        $reportsnode->add(get_string('detailedstats', 'lesson'), $url);
+        $reportsnode = $lessonnode->add(
+            get_string('reports', 'lesson'),
+            new moodle_url('/mod/lesson/report.php', ['id' => $PAGE->cm->id, 'action' => 'reportoverview'])
+        );
     }
-
-    if (has_capability('mod/lesson:grade', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/lesson/essay.php', array('id'=>$PAGE->cm->id));
-        $lessonnode->add(get_string('manualgrading', 'lesson'), $url);
-    }
-
 }
 
 /**
@@ -1738,4 +1717,27 @@ function mod_lesson_core_calendar_event_timestart_updated(\calendar_event $event
         $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
         $event->trigger();
     }
+}
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_lesson_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'lesson');
+
+    switch ($eventtype) {
+        case LESSON_EVENT_TYPE_OPEN:
+            $identifier = 'lessoneventopens';
+            break;
+        case LESSON_EVENT_TYPE_CLOSE:
+            $identifier = 'lessoneventcloses';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'lesson', $modulename);
 }

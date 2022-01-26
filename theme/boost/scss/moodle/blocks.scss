@@ -67,7 +67,6 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
 }
 
 // Required for IE11 to prevent blocks being pushed under the content.
-#region-main-settings-menu.has-blocks,
 #region-main.has-blocks {
     display: inline-block;
     width: calc(100% - #{$blocks-plus-gutter});
@@ -103,6 +102,14 @@ $card-gutter : $card-deck-margin * 2;
 
 .block .empty-placeholder-image-lg {
     height: 5rem;
+}
+
+.block {
+    .searchbar {
+        .icon {
+            margin-right: 0;
+        }
+    }
 }
 
 .block .block-cards {
@@ -165,6 +172,8 @@ $card-gutter : $card-deck-margin * 2;
             height: 7rem;
             background-position: center;
             background-size: cover;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
         }
         .dashboard-card-footer {
             padding: 0.8rem;
@@ -189,76 +198,6 @@ $card-gutter : $card-deck-margin * 2;
     @media (min-width: 840px) {
         .dashboard-card {
             width: calc(33.33% - #{$card-gutter});
-        }
-    }
-    @media (min-width: 1100px) {
-        .dashboard-card {
-            width: calc(25% - #{$card-gutter});
-        }
-    }
-    @media (min-width: 1360px) {
-        .dashboard-card {
-            width: calc(20% - #{$card-gutter});
-        }
-    }
-}
-
-#region-main.has-blocks {
-    .dashboard-card-deck:not(.fixed-width-cards) {
-        @media (min-width: 1200px) {
-            .dashboard-card {
-                width: calc(33.33% - #{$card-gutter});
-            }
-        }
-        @media (min-width: 1470px) {
-            .dashboard-card {
-                width: calc(25% - #{$card-gutter});
-            }
-        }
-    }
-}
-
-body.drawer-open-left {
-    .dashboard-card-deck:not(.fixed-width-cards) {
-        @media (min-width: 768px) {
-            .dashboard-card {
-                width: calc(100% - #{$card-gutter});
-            }
-        }
-        @media (min-width: 861px) {
-            .dashboard-card {
-                width: calc(50% - #{$card-gutter});
-            }
-        }
-        @media (min-width: 1122px) {
-            .dashboard-card {
-                width: calc(33.33% - #{$card-gutter});
-            }
-        }
-        @media (min-width: 1381px) {
-            .dashboard-card {
-                width: calc(25% - #{$card-gutter});
-            }
-        }
-    }
-}
-
-body.drawer-open-left #region-main.has-blocks {
-    .dashboard-card-deck:not(.fixed-width-cards) {
-        @media (min-width: 1200px) {
-            .dashboard-card {
-                width: calc(100% - #{$card-gutter});
-            }
-        }
-        @media (min-width: 1236px) {
-            .dashboard-card {
-                width: calc(50% - #{$card-gutter});
-            }
-        }
-        @media (min-width: 1497px) {
-            .dashboard-card {
-                width: calc(33.33% - #{$card-gutter});
-            }
         }
     }
 }
@@ -310,6 +249,18 @@ body.drawer-open-left #region-main.has-blocks {
     }
     .paged-content-page-container {
         min-height: 13rem;
+    }
+}
+
+.block_timeline {
+    .paged-content-page-container {
+        background-color: $list-group-bg;
+    }
+}
+
+.block_timeline {
+    .event-action {
+        padding-left: 5.55em;
     }
 }
 

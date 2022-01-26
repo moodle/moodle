@@ -395,7 +395,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @return string HTML fragment.
      */
     protected function render_quiz_nav_section_heading(quiz_nav_section_heading $heading) {
-        return $this->heading($heading->heading, 3, 'mod_quiz-section-heading');
+        if (empty($heading->heading)) {
+            $headingtext = get_string('sectionnoname', 'quiz');
+            $class = ' dimmed_text';
+        } else {
+            $headingtext = $heading->heading;
+            $class = '';
+        }
+        return $this->heading($headingtext, 3, 'mod_quiz-section-heading' . $class);
     }
 
     /**
@@ -442,8 +449,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id,
             $nextpage) {
+        $context = $attemptobj->get_quizobj()->get_context();
+        $cmid = $attemptobj->get_quizobj()->get_cmid();
+        $canedit = has_capability('mod/quiz:manage', $context);
+        $overwritepreview = new \mod_quiz\output\overwritepreview($cmid, $canedit);
+
         $output = '';
         $output .= $this->header();
+
+        $renderer = $this->page->get_renderer('mod_quiz');
+        $output .= $renderer->overwrite_preview_action($overwritepreview);
+
         $output .= $this->quiz_notices($messages);
         $output .= $this->countdown_timer($attemptobj, time());
         $output .= $this->attempt_form($attemptobj, $page, $slots, $id, $nextpage);
@@ -533,7 +549,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     protected function attempt_navigation_buttons($page, $lastpage, $navmethod = 'free') {
         $output = '';
 
-        $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
+        $output .= html_writer::start_tag('div', array('class' => 'submitbtns mb-4'));
         if ($page > 0 && $navmethod == 'free') {
             $output .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'previous',
                     'value' => get_string('navigateprevious', 'quiz'), 'class' => 'mod_quiz-prev-nav btn btn-secondary',
@@ -618,7 +634,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function access_messages($messages) {
         $output = '';
         foreach ($messages as $message) {
-            $output .= html_writer::tag('p', $message) . "\n";
+            $output .= html_writer::tag('p', $message, ['class' => 'float-left']) . "\n";
         }
         return $output;
     }
@@ -670,12 +686,19 @@ class mod_quiz_renderer extends plugin_renderer_base {
         foreach ($slots as $slot) {
             // Add a section headings if we need one here.
             $heading = $attemptobj->get_heading_before_slot($slot);
+            if (!is_null($heading) && empty($heading)) {
+                $heading = get_string('sectionnoname', 'quiz');
+            }
             if ($heading) {
                 $cell = new html_table_cell(format_string($heading));
                 $cell->header = true;
                 $cell->colspan = $tablewidth;
                 $table->data[] = array($cell);
-                $table->rowclasses[] = 'quizsummaryheading';
+                $classes = 'quizsummaryheading';
+                if ($heading === get_string('sectionnoname', 'quiz')) {
+                    $classes .= ' dimmed_text';
+                }
+                $table->rowclasses[] = $classes;
             }
 
             // Don't display information items.
@@ -783,10 +806,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function view_page($course, $quiz, $cm, $context, $viewobj) {
         $output = '';
-        $output .= $this->view_information($quiz, $cm, $context, $viewobj->infomessages);
+        $output .= $this->view_information($quiz, $cm, $context, $viewobj->infomessages, $viewobj->quizhasquestions);
         $output .= $this->view_table($quiz, $context, $viewobj);
         $output .= $this->view_result_info($quiz, $context, $cm, $viewobj);
         $output .= $this->box($this->view_page_buttons($viewobj), 'quizattempt');
+        // Output any access messages.
+        if ($viewobj->infomessages) {
+            $output .= $this->box($this->access_messages($viewobj->infomessages), 'quizinfo');
+        }
         return $output;
     }
 
@@ -798,27 +825,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function view_page_buttons(mod_quiz_view_object $viewobj) {
-        global $CFG;
         $output = '';
 
         if (!$viewobj->quizhasquestions) {
-            $output .= $this->no_questions_message($viewobj->canedit, $viewobj->editurl);
+            $output .= $this->generate_no_questions_message();
         }
-
-        $output .= $this->access_messages($viewobj->preventmessages);
-
-        if ($viewobj->buttontext) {
-            $output .= $this->start_attempt_button($viewobj->buttontext,
-                    $viewobj->startattempturl, $viewobj->preflightcheckform,
-                    $viewobj->popuprequired, $viewobj->popupoptions);
-        }
-
-        if ($viewobj->showbacktocourse) {
-            $output .= $this->single_button($viewobj->backtocourseurl,
-                    get_string('backtocourse', 'quiz'), 'get',
-                    array('class' => 'continuebutton'));
-        }
-
         return $output;
     }
 
@@ -843,7 +854,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     'quiz_access_manager::get_preflight_check_form, not a warning message string.');
         }
 
-        $button = new single_button($url, $buttontext);
+        $button = new single_button($url, $buttontext, 'post', true);
         $button->class .= ' quizstartbuttondiv';
         if ($popuprequired) {
             $button->class .= ' quizsecuremoderequired';
@@ -874,9 +885,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param object $quiz the quiz settings.
      * @param object $cm the course_module object.
      * @param object $context the quiz context.
+     * @deprecated since Moodle 4.0 MDL-71915 - please do not use this function any more.
+     *
      * @return string HTML to output.
      */
     public function no_questions_message($canedit, $editurl) {
+        debugging('no_questions_message() is deprecated, please use generate_no_questions_message() instead.', DEBUG_DEVELOPER);
+
         $output = html_writer::start_tag('div', array('class' => 'card text-center mb-3'));
         $output .= html_writer::start_tag('div', array('class' => 'card-body'));
 
@@ -891,6 +906,21 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Generate a message saying that this quiz has no questions
+     *
+     * @return string HTML to output.
+     */
+    public function generate_no_questions_message() {
+        $output = html_writer::start_tag('div', array('class' => 'text-left   mb-3'));
+
+        $output .= $this->notification(get_string('noquestions', 'quiz'), 'warning', false);
+
+        $output .= html_writer::end_tag('div');
+
+        return $output;
+    }
+
+    /**
      * Outputs an error message for any guests accessing the quiz
      *
      * @param int $course The course ID
@@ -898,10 +928,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param int $cm Course Module ID
      * @param int $context The page contect ID
      * @param array $messages Array containing any messages
+     * @param bool $quizhasquestions If quiz has questions
      */
-    public function view_page_guest($course, $quiz, $cm, $context, $messages) {
+    public function view_page_guest($course, $quiz, $cm, $context, $messages, $quizhasquestions = false) {
         $output = '';
-        $output .= $this->view_information($quiz, $cm, $context, $messages);
+        $output .= $this->view_information($quiz, $cm, $context, $messages, $quizhasquestions);
         $guestno = html_writer::tag('p', get_string('guestsno', 'quiz'));
         $liketologin = html_writer::tag('p', get_string('liketologin'));
         $referer = get_local_referer(false);
@@ -917,11 +948,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param int $cm Course Module ID
      * @param int $context The page contect ID
      * @param array $messages Array containing any messages
+     * @param bool $quizhasquestions If quiz has questions
      */
-    public function view_page_notenrolled($course, $quiz, $cm, $context, $messages) {
+    public function view_page_notenrolled($course, $quiz, $cm, $context, $messages, $quizhasquestions = false) {
         global $CFG;
         $output = '';
-        $output .= $this->view_information($quiz, $cm, $context, $messages);
+        $output .= $this->view_information($quiz, $cm, $context, $messages, $quizhasquestions);
         $youneedtoenrol = html_writer::tag('p', get_string('youneedtoenrol', 'quiz'));
         $button = html_writer::tag('p',
                 $this->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id));
@@ -936,29 +968,20 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param object $cm the course_module object.
      * @param context $context the quiz context.
      * @param array $messages any access messages that should be described.
+     * @param bool $quizhasquestions does quiz has questions added.
      * @return string HTML to output.
      */
-    public function view_information($quiz, $cm, $context, $messages) {
-        global $USER;
-
+    public function view_information($quiz, $cm, $context, $messages, bool $quizhasquestions = false) {
         $output = '';
 
-        // Print quiz name.
-        $output .= $this->heading(format_string($quiz->name));
-
-        // Print any activity information (eg completion requirements / dates).
-        $cminfo = cm_info::create($cm);
-        $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-        $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-        $output .= $this->output->activity_information($cminfo, $completiondetails, $activitydates);
-
-        // Print quiz description.
-        $output .= $this->quiz_intro($quiz, $cm);
-
-        // Output any access messages.
-        if ($messages) {
-            $output .= $this->box($this->access_messages($messages), 'quizinfo');
-        }
+        // Print the preview, quiz buttons for tertiary nav.
+        $canedit = has_capability('mod/quiz:manage', $context);
+        $canpreview = has_capability('mod/quiz:preview', $context);
+        $canattempt = has_capability('mod/quiz:attempt', $context);
+        $previeweditaction = new \mod_quiz\output\previeweditaction($cm->id, $canedit, $canattempt, $canpreview, $quizhasquestions,
+            $quiz->attempts);
+        $renderer = $this->page->get_renderer('mod_quiz');
+        $output .= $renderer->preview_edit_action($previeweditaction);
 
         // Show number of attempts summary to those who can view reports.
         if (has_capability('mod/quiz:viewreports', $context)) {
@@ -1343,6 +1366,46 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return html_writer::tag('div', $warning,
                     array('id' => 'connection-error', 'style' => 'display: none;', 'role' => 'alert')) .
                     html_writer::tag('div', $ok, array('id' => 'connection-ok', 'style' => 'display: none;', 'role' => 'alert'));
+    }
+
+    /**
+     * Get the rendered HTML for the action area of view.php
+     *
+     * @param \mod_quiz\output\previeweditaction $previeweditaction previeweditaction object.
+     * @return string rendered HTML for the action area of view.php
+     */
+    public function preview_edit_action(\mod_quiz\output\previeweditaction $previeweditaction):string {
+        return $this->render_from_template('mod_quiz/quiz_preview_edit_action', $previeweditaction->export_for_template($this));
+    }
+
+    /**
+     * Get the rendered HTML for the action area of preview page
+     *
+     * @param \mod_quiz\output\overwritepreview $overwritepreview overwritepreview object.
+     * @return string rendered HTML for the preview page
+     */
+    public function overwrite_preview_action(\mod_quiz\output\overwritepreview $overwritepreview): string {
+        return $this->render_from_template('mod_quiz/quiz_preview_action', $overwritepreview->export_for_template($this));
+    }
+
+    /**
+     * Get the rendered HTML for the action area of the edit page.
+     *
+     * @param \mod_quiz\output\overwriteedit $overwriteedit overwriteedit object.
+     * @return string rendered HTML for the edit page
+     */
+    public function overwrite_edit_action(\mod_quiz\output\overwriteedit $overwriteedit): string {
+        return $this->render_from_template('mod_quiz/quiz_edit_action', $overwriteedit->export_for_template($this));
+    }
+
+    /**
+     * Get rendered HTML for the action area of the overrides page.
+     *
+     * @param \mod_quiz\output\overridesaction $overridesaction the overridesaction object.
+     * @return string rendered HTML string from the template.
+     */
+    public function overrides_action(\mod_quiz\output\overridesaction $overridesaction): string {
+        return $this->render_from_template('mod_quiz/quiz_overrides', $overridesaction->export_for_template($this));
     }
 }
 

@@ -1,0 +1,111 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/courseindex/courseindex
+
+    Displays the course index.
+
+    Example context (json):
+    {
+        "editmode": true,
+        "sections": [
+            {
+                "title": "General",
+                "id": 42,
+                "number": 1,
+                "sectionurl": "#",
+                "indexcollapsed": 0,
+                "cms": [
+                    {
+                        "name": "Glossary of characters",
+                        "id": "10",
+                        "url": "#",
+                        "visible": 1,
+                        "isactive": 0,
+                        "uniqid": "0",
+                        "accessvisible": 1
+                    },
+                    {
+                        "name": "World Cinema forum",
+                        "id": "11",
+                        "url": "#",
+                        "visible": 1,
+                        "isactive": 0,
+                        "uniqid": "0",
+                        "accessvisible": 1
+                    },
+                    {
+                        "name": "Announcements",
+                        "id": "12",
+                        "url": "#",
+                        "visible": 1,
+                        "isactive": 1,
+                        "uniqid": "0",
+                        "accessvisible": 1
+                    }
+                ]
+            },
+            {
+                "title": "City of God or Cidade de Deus",
+                "id": "43",
+                "number": "2",
+                "sectionurl": "#",
+                "indexcollapsed": 1,
+                "cms": [
+                    {
+                        "name": "Resources",
+                        "id": "13",
+                        "url": "#",
+                        "visible": 1,
+                        "isactive": 0,
+                        "uniqid": "0",
+                        "accessvisible": 1
+                    },
+                    {
+                        "name": "Studying City of God by Stephen Smith Bergman-Messerschmidt",
+                        "id": "14",
+                        "url": "#",
+                        "visible": 1,
+                        "isactive": 0,
+                        "uniqid": "0",
+                        "accessvisible": 1
+                    },
+                    {
+                        "name": "Film education study guide",
+                        "id": "15",
+                        "url": "#",
+                        "visible": 1,
+                        "isactive": 0,
+                        "uniqid": "0",
+                        "accessvisible": 1
+                    }
+                ]
+            }
+        ]
+    }
+
+}}
+<div id="{{uniqid}}-course-index" class="courseindex {{#editmode}} editing {{/editmode}}" role="tree">
+    {{#sections}}
+    {{> core_courseformat/local/courseindex/section }}
+    {{/sections}}
+</div>
+{{#js}}
+require(['core_courseformat/local/courseindex/courseindex'], function(component) {
+    component.init('{{uniqid}}-course-index');
+});
+{{/js}}

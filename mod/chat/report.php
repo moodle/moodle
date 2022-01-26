@@ -84,13 +84,17 @@ $navlinks = array();
 $canexportsess = has_capability('mod/chat:exportsession', $context);
 $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
+$PAGE->activityheader->set_attrs([
+    'title' => '',
+    'description' => '',
+    'hidecompletion' => true,
+    'hideoverflow' => true,
+]);
 // Print a session if one has been specified.
 
 if ($start and $end and !$confirmdelete) {   // Show a full transcript.
     $PAGE->navbar->add($strchatreport);
-    $PAGE->set_title(format_string($chat->name).": $strchatreport");
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($chat->name), 2);
 
     // Check to see if groups are being used here.
     $groupmode = groups_get_activity_groupmode($cm);
@@ -147,10 +151,10 @@ if ($start and $end and !$confirmdelete) {   // Show a full transcript.
 
 // Print the Sessions display.
 $PAGE->navbar->add($strchatreport);
-$PAGE->set_title(format_string($chat->name).": $strchatreport");
+$PAGE->set_title($strchatreport);
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading(format_string($chat->name).': '.get_string('sessions', 'chat'), 2);
+echo $OUTPUT->heading(get_string('sessions', 'chat'), 2);
 
 // Check to see if groups are being used here
 if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used.

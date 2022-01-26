@@ -126,6 +126,7 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
     $attempt->state = quiz_attempt::IN_PROGRESS;
     $attempt->currentpage = 0;
     $attempt->sumgrades = null;
+    $attempt->gradednotificationsenttime = null;
 
     // If this is a preview, mark it as such.
     if ($ispreview) {
@@ -199,7 +200,7 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
                 $usedquestionids[$question->id] = 1;
             }
         }
-        $randomloader = new \core_question\bank\random_question_loader($qubaids, $usedquestionids);
+        $randomloader = new \core_question\local\bank\random_question_loader($qubaids, $usedquestionids);
 
         foreach ($quizobj->get_questions() as $questiondata) {
             $slot += 1;
@@ -1401,7 +1402,7 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
             $returnurl = $returnurl->out_as_local_url(false);
         }
         $questionparams = array('returnurl' => $returnurl, 'cmid' => $cmid, 'id' => $question->id);
-        $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
+        $questionurl = new moodle_url("$CFG->wwwroot/question/bank/editquestion/question.php", $questionparams);
         return '<a title="' . $action . '" href="' . $questionurl->out() . '" class="questioneditbutton">' .
                 $OUTPUT->pix_icon($icon, $action) . $contentaftericon .
                 '</a>';
@@ -1429,7 +1430,7 @@ function quiz_question_preview_url($quiz, $question, $variant = null) {
     }
 
     // Work out the correcte preview URL.
-    return question_preview_url($question->id, $quiz->preferredbehaviour,
+    return \qbank_previewquestion\helper::question_preview_url($question->id, $quiz->preferredbehaviour,
             $maxmark, $displayoptions, $variant);
 }
 
@@ -1584,10 +1585,11 @@ function quiz_get_combined_reviewoptions($quiz, $attempts) {
  *
  * @param object $a lots of useful information that can be used in the message
  *      subject and body.
+ * @param bool $studentisonline is the student currently interacting with Moodle?
  *
  * @return int|false as for {@link message_send()}.
  */
-function quiz_send_confirmation($recipient, $a) {
+function quiz_send_confirmation($recipient, $a, $studentisonline) {
 
     // Add information about the recipient to $a.
     // Don't do idnumber. we want idnumber to be the submitter's idnumber.
@@ -1604,7 +1606,13 @@ function quiz_send_confirmation($recipient, $a) {
     $eventdata->userfrom          = core_user::get_noreply_user();
     $eventdata->userto            = $recipient;
     $eventdata->subject           = get_string('emailconfirmsubject', 'quiz', $a);
-    $eventdata->fullmessage       = get_string('emailconfirmbody', 'quiz', $a);
+
+    if ($studentisonline) {
+        $eventdata->fullmessage = get_string('emailconfirmbody', 'quiz', $a);
+    } else {
+        $eventdata->fullmessage = get_string('emailconfirmbodyautosubmit', 'quiz', $a);
+    }
+
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
 
@@ -1676,10 +1684,11 @@ function quiz_send_notification($recipient, $submitter, $a) {
  * @param object $attempt this attempt just finished
  * @param object $context the quiz context
  * @param object $cm the coursemodule for this quiz
+ * @param bool $studentisonline is the student currently interacting with Moodle?
  *
  * @return bool true if all necessary messages were sent successfully, else false.
  */
-function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm) {
+function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm, $studentisonline) {
     global $CFG, $DB;
 
     // Do nothing if required objects not present.
@@ -1760,7 +1769,7 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     // some but not all messages, and then try again later, then teachers may get
     // duplicate messages, but the student will always get exactly one.
     if ($sendconfirm) {
-        $allok = $allok && quiz_send_confirmation($submitter, $a);
+        $allok = $allok && quiz_send_confirmation($submitter, $a, $studentisonline);
     }
 
     return $allok;
@@ -1858,6 +1867,7 @@ function quiz_attempt_submitted_handler($event) {
     $attempt = $event->get_record_snapshot('quiz_attempts', $event->objectid);
     $quiz    = $event->get_record_snapshot('quiz', $attempt->quiz);
     $cm      = get_coursemodule_from_id('quiz', $event->get_context()->instanceid, $event->courseid);
+    $eventdata = $event->get_data();
 
     if (!($course && $quiz && $cm && $attempt)) {
         // Something has been deleted since the event was raised. Therefore, the
@@ -1868,11 +1878,56 @@ function quiz_attempt_submitted_handler($event) {
     // Update completion state.
     $completion = new completion_info($course);
     if ($completion->is_enabled($cm) &&
-        ($quiz->completionattemptsexhausted || $quiz->completionpass || $quiz->completionminattempts)) {
+        ($quiz->completionattemptsexhausted || $quiz->completionminattempts)) {
         $completion->update_state($cm, COMPLETION_COMPLETE, $event->userid);
     }
     return quiz_send_notification_messages($course, $quiz, $attempt,
-            context_module::instance($cm->id), $cm);
+            context_module::instance($cm->id), $cm, $eventdata['other']['studentisonline']);
+}
+
+/**
+ * Send the notification message when a quiz attempt has been manual graded.
+ *
+ * @param quiz_attempt $attemptobj Some data about the quiz attempt.
+ * @param object $userto
+ * @return int|false As for message_send.
+ */
+function quiz_send_notify_manual_graded_message(quiz_attempt $attemptobj, object $userto): ?int {
+    global $CFG;
+
+    $quizname = format_string($attemptobj->get_quiz_name());
+
+    $a = new stdClass();
+    // Course info.
+    $a->courseid           = $attemptobj->get_courseid();
+    $a->coursename         = format_string($attemptobj->get_course()->fullname);
+    // Quiz info.
+    $a->quizname           = $quizname;
+    $a->quizurl            = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $attemptobj->get_cmid();
+
+    // Attempt info.
+    $a->attempttimefinish  = userdate($attemptobj->get_attempt()->timefinish);
+    // Student's info.
+    $a->studentidnumber    = $userto->idnumber;
+    $a->studentname        = fullname($userto);
+
+    $eventdata = new \core\message\message();
+    $eventdata->component = 'mod_quiz';
+    $eventdata->name = 'attempt_grading_complete';
+    $eventdata->userfrom = core_user::get_noreply_user();
+    $eventdata->userto = $userto;
+
+    $eventdata->subject = get_string('emailmanualgradedsubject', 'quiz', $a);
+    $eventdata->fullmessage = get_string('emailmanualgradedbody', 'quiz', $a);
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessagehtml = '';
+
+    $eventdata->notification = 1;
+    $eventdata->contexturl = $a->quizurl;
+    $eventdata->contexturlname = $a->quizname;
+
+    // Send the message.
+    return message_send($eventdata);
 }
 
 /**

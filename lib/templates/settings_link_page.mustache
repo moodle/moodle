@@ -36,29 +36,29 @@
         }
     }
 }}
-
-<ul class="nav nav-tabs" role="tablist">
-<!-- First the top most node and immediate children -->
-    <li class="nav-item">
-        <a class="nav-link active" href="#link{{node.key}}" data-toggle="tab" role="tab" aria-selected="true">{{node.text}}</a>
-    </li>
-<!-- Now the first level children with sub nodes -->
-{{#node.children}}
-    {{#children.count}}
-        {{#display}}
-            {{^is_short_branch}}
-                <li class="nav-item">
-                    <a class="nav-link" href="#link{{key}}" data-toggle="tab" role="tab" aria-selected="false" tabindex="-1">{{text}}</a>
-                </li>
-            {{/is_short_branch}}
-        {{/display}}
-    {{/children.count}}
-{{/node.children}}
-</ul>
-
+{{^secondarynavigation}}
+    <ul class="nav nav-tabs" role="tablist">
+        <!-- First the top most node and immediate children -->
+        <li class="nav-item">
+            <a class="nav-link active" href="#link{{node.key}}" data-toggle="tab" role="tab" aria-selected="true">{{node.text}}</a>
+        </li>
+        <!-- Now the first level children with sub nodes -->
+        {{#node.children}}
+            {{#children.count}}
+                {{#display}}
+                    {{^is_short_branch}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#link{{key}}" data-toggle="tab" role="tab" aria-selected="false" tabindex="-1">{{text}}</a>
+                        </li>
+                    {{/is_short_branch}}
+                {{/display}}
+            {{/children.count}}
+        {{/node.children}}
+    </ul>
+{{/secondarynavigation}}
 <div class="tab-content mt-3">
-    <div class="tab-pane active" id="link{{node.key}}" role="tabpanel">
-        <div class="container">
+    <div class="tab-pane active" id="link{{node.key}}" {{^secondarynavigation}}role="tabpanel"{{/secondarynavigation}}>
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-3">
                 </div>
@@ -101,8 +101,8 @@
     </div>
     {{#node.children}}
         {{#children.count}}
-            <div class="tab-pane" id="link{{key}}" role="tabpanel">
-                <div class="container">
+            <div class="tab-pane" id="link{{key}}" {{^secondarynavigation}}role="tabpanel"{{/secondarynavigation}}>
+                <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-3">
                             {{#action}}<h4><a href="{{action}}">{{text}}</a></h4>{{/action}}

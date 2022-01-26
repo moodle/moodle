@@ -25,6 +25,7 @@
 $string['author'] = 'Author';
 $string['contentbank'] = 'Content bank';
 $string['close'] = 'Close';
+$string['choosecontext'] = 'Choose course or category...';
 $string['contentbankpreferences'] = 'Content bank preferences';
 $string['contentdeleted'] = 'The content has been deleted.';
 $string['contentname'] = 'Content name';

@@ -22,6 +22,9 @@
  * @copyright  2016 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_lesson;
+
+use lesson;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +40,7 @@ require_once($CFG->dirroot.'/mod/lesson/locallib.php');
  * @copyright  2016 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lesson_locallib_testcase extends advanced_testcase {
+class locallib_test extends \advanced_testcase {
 
     /**
      * Test duplicating a lesson page element.
@@ -134,16 +137,16 @@ class mod_lesson_locallib_testcase extends advanced_testcase {
         // Let's test lesson 1 closes in three hours for user student 1 since member of group 1.
         // lesson 2 closes in two hours.
         $this->setUser($student1id);
-        $params = new stdClass();
+        $params = new \stdClass();
 
         $comparearray = array();
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->id = $lesson1->id;
         $object->userdeadline = $basetimestamp + 10800; // The overriden deadline for lesson 1.
 
         $comparearray[$lesson1->id] = $object;
 
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->id = $lesson2->id;
         $object->userdeadline = $basetimestamp + 7200; // The unchanged deadline for lesson 2.
 
@@ -153,16 +156,16 @@ class mod_lesson_locallib_testcase extends advanced_testcase {
 
         // Let's test lesson 1 closes in two hours (the original value) for user student 3 since member of no group.
         $this->setUser($student3id);
-        $params = new stdClass();
+        $params = new \stdClass();
 
         $comparearray = array();
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->id = $lesson1->id;
         $object->userdeadline = $basetimestamp + 7200; // The original deadline for lesson 1.
 
         $comparearray[$lesson1->id] = $object;
 
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->id = $lesson2->id;
         $object->userdeadline = $basetimestamp + 7200; // The original deadline for lesson 2.
 
@@ -183,13 +186,13 @@ class mod_lesson_locallib_testcase extends advanced_testcase {
         $this->setUser($student2id);
 
         $comparearray = array();
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->id = $lesson1->id;
         $object->userdeadline = $basetimestamp + 14400; // The overriden deadline for lesson 1.
 
         $comparearray[$lesson1->id] = $object;
 
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->id = $lesson2->id;
         $object->userdeadline = $basetimestamp + 7200; // The unchanged deadline for lesson 2.
 
@@ -202,13 +205,13 @@ class mod_lesson_locallib_testcase extends advanced_testcase {
         $this->setUser($teacherid);
 
         $comparearray = array();
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->id = $lesson1->id;
         $object->userdeadline = $basetimestamp + 7200; // The unchanged deadline for lesson 1.
 
         $comparearray[$lesson1->id] = $object;
 
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->id = $lesson2->id;
         $object->userdeadline = $basetimestamp + 7200; // The unchanged deadline for lesson 2.
 

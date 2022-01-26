@@ -49,6 +49,7 @@ class core_webservice_generator extends component_generator_base {
         }
 
         $optionalfields = [
+            'enabled' => false,
             'requiredcapability' => '',
             'restrictedusers' => 0,
             'component' => '',

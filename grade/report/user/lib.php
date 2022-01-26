@@ -387,7 +387,7 @@ class grade_report_user extends grade_report {
      * @param $element - An array containing the table data for the current row.
      */
     private function fill_table_recursive(&$element) {
-        global $DB, $CFG;
+        global $DB, $CFG, $OUTPUT;
 
         $type = $element['type'];
         $depth = $element['depth'];
@@ -577,10 +577,23 @@ class grade_report_user extends grade_report {
                                                                                 true);
                         }
                     } else {
-                        $data['grade']['class'] = $class;
-                        $data['grade']['content'] = grade_format_gradevalue($gradeval,
-                                                                            $grade_grade->grade_item,
-                                                                            true);
+                        $gradestatusclass = '';
+                        $gradepassicon = '';
+                        $ispassinggrade = $grade_grade->is_passed($grade_grade->grade_item);
+                        if (!is_null($ispassinggrade)) {
+                            $gradestatusclass = $ispassinggrade ? 'gradepass' : 'gradefail';
+                            if ($ispassinggrade) {
+                                $gradepassicon = $OUTPUT->pix_icon('i/valid', get_string('pass', 'grades'), null,
+                                    array('class' => 'inline'));
+                            } else {
+                                $gradepassicon = $OUTPUT->pix_icon('i/invalid', get_string('fail', 'grades'), null,
+                                    array('class' => 'inline'));
+                            }
+                        }
+
+                        $data['grade']['class'] = "{$class} {$gradestatusclass}";
+                        $data['grade']['content'] = $gradepassicon . grade_format_gradevalue($gradeval,
+                            $grade_grade->grade_item, true);
                         $gradeitemdata['graderaw'] = $gradeval;
                     }
                     $data['grade']['headers'] = "$header_cat $header_row grade";
@@ -1053,7 +1066,7 @@ class grade_report_user extends grade_report {
                 }
 
                 // Determine which display type to use for this average
-                if (!empty($USER->gradeediting) && $USER->gradeediting[$this->courseid]) {
+                if (isset($USER->editing) && $USER->editing) {
                     $displaytype = GRADE_DISPLAY_TYPE_REAL;
 
                 } else if ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // no ==0 here, please resave the report and user preferences

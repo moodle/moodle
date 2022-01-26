@@ -33,6 +33,7 @@
  * Events for the component.
  *
  * @constant
+ * @property {object} eventTypes
  * @property {String} eventTypes.stepRender See {@link event:tool_usertours/stepRender}
  * @property {String} eventTypes.stepRendered See {@link event:tool_usertours/stepRendered}
  * @property {String} eventTypes.tourStart See {@link event:tool_usertours/tourStart}

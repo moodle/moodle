@@ -28,13 +28,12 @@ Feature: Restrict activities availability
     Then I should see "Test glossary name"
     And I should see "Test chat name"
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Activities can not be added when the admin restricts the permissions
     Given I log in as "admin"
     And I set the following system permissions of "Teacher" role:
       | mod/chat:addinstance | Prohibit |
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Permissions" in current page administration
+    And I am on the "Course 1" "permissions" page
     And I override the system permissions of "Teacher" role with:
       | mod/glossary:addinstance | Prohibit |
     And I log out

@@ -1008,6 +1008,15 @@ class quiz_attempt {
     }
 
     /**
+     * Do any questions in this attempt need to be graded manually?
+     *
+     * @return bool True if we have at least one question still needs manual grading.
+     */
+    public function requires_manual_grading(): bool {
+        return $this->quba->get_total_mark() === null;
+    }
+
+    /**
      * Get extra summary information about this attempt.
      *
      * Some behaviours may be able to provide interesting summary information
@@ -2011,7 +2020,7 @@ class quiz_attempt {
         // Transition to the appropriate state.
         switch ($this->quizobj->get_quiz()->overduehandling) {
             case 'autosubmit':
-                $this->process_finish($timestamp, false, $studentisonline ? $timestamp : $timeclose);
+                $this->process_finish($timestamp, false, $studentisonline ? $timestamp : $timeclose, $studentisonline);
                 return;
 
             case 'graceperiod':
@@ -2107,7 +2116,7 @@ class quiz_attempt {
         } else {
             $tagids = quiz_retrieve_slot_tag_ids($this->slots[$slot]->id);
 
-            $randomloader = new \core_question\bank\random_question_loader($qubaids, array());
+            $randomloader = new \core_question\local\bank\random_question_loader($qubaids, array());
             $newqusetionid = $randomloader->get_next_question_id($questiondata->category,
                     (bool) $questiondata->questiontext, $tagids);
             if ($newqusetionid === null) {
@@ -2183,8 +2192,9 @@ class quiz_attempt {
      *      POST request are stored to be graded, before the attempt is finished.
      * @param ?int $timefinish if set, use this as the finish time for the attempt.
      *      (otherwise use $timestamp as the finish time as well).
+     * @param bool $studentisonline is the student currently interacting with Moodle?
      */
-    public function process_finish($timestamp, $processsubmitted, $timefinish = null) {
+    public function process_finish($timestamp, $processsubmitted, $timefinish = null, $studentisonline = false) {
         global $DB;
 
         $transaction = $DB->start_delegated_transaction();
@@ -2201,13 +2211,21 @@ class quiz_attempt {
         $this->attempt->sumgrades = $this->quba->get_total_mark();
         $this->attempt->state = self::FINISHED;
         $this->attempt->timecheckstate = null;
+        $this->attempt->gradednotificationsenttime = null;
+
+        if (!$this->requires_manual_grading() ||
+                !has_capability('mod/quiz:emailnotifyattemptgraded', $this->get_quizobj()->get_context(),
+                        $this->get_userid())) {
+            $this->attempt->gradednotificationsenttime = $this->attempt->timefinish;
+        }
+
         $DB->update_record('quiz_attempts', $this->attempt);
 
         if (!$this->is_preview()) {
             quiz_save_best_grade($this->get_quiz(), $this->attempt->userid);
 
             // Trigger event.
-            $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp);
+            $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp, $studentisonline);
 
             // Tell any access rules that care that the attempt is over.
             $this->get_access_manager($timestamp)->current_attempt_finished();
@@ -2246,7 +2264,7 @@ class quiz_attempt {
         $this->attempt->timecheckstate = $timestamp;
         $DB->update_record('quiz_attempts', $this->attempt);
 
-        $this->fire_state_transition_event('\mod_quiz\event\attempt_becameoverdue', $timestamp);
+        $this->fire_state_transition_event('\mod_quiz\event\attempt_becameoverdue', $timestamp, $studentisonline);
 
         $transaction->allow_commit();
 
@@ -2268,7 +2286,7 @@ class quiz_attempt {
         $this->attempt->timecheckstate = null;
         $DB->update_record('quiz_attempts', $this->attempt);
 
-        $this->fire_state_transition_event('\mod_quiz\event\attempt_abandoned', $timestamp);
+        $this->fire_state_transition_event('\mod_quiz\event\attempt_abandoned', $timestamp, $studentisonline);
 
         $transaction->allow_commit();
     }
@@ -2278,8 +2296,9 @@ class quiz_attempt {
      *
      * @param string $eventclass the event class name.
      * @param int $timestamp the timestamp to include in the event.
+     * @param bool $studentisonline is the student currently interacting with Moodle?
      */
-    protected function fire_state_transition_event($eventclass, $timestamp) {
+    protected function fire_state_transition_event($eventclass, $timestamp, $studentisonline) {
         global $USER;
         $quizrecord = $this->get_quiz();
         $params = array(
@@ -2289,10 +2308,10 @@ class quiz_attempt {
             'relateduserid' => $this->attempt->userid,
             'other' => array(
                 'submitterid' => CLI_SCRIPT ? null : $USER->id,
-                'quizid' => $quizrecord->id
+                'quizid' => $quizrecord->id,
+                'studentisonline' => $studentisonline
             )
         );
-
         $event = $eventclass::create($params);
         $event->add_record_snapshot('quiz', $this->get_quiz());
         $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
@@ -2462,7 +2481,7 @@ class quiz_attempt {
             if ($becomingabandoned) {
                 $this->process_abandon($timenow, true);
             } else {
-                $this->process_finish($timenow, !$toolate, $toolate ? $timeclose : $timenow);
+                $this->process_finish($timenow, !$toolate, $toolate ? $timeclose : $timenow, true);
             }
 
         } catch (question_out_of_sequence_exception $e) {
@@ -2650,6 +2669,25 @@ class quiz_attempt {
     }
 
     /**
+     * Trigger the attempt manual grading completed event.
+     */
+    public function fire_attempt_manual_grading_completed_event() {
+        $params = [
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => [
+                'quizid' => $this->get_quizid()
+            ]
+        ];
+
+        $event = \mod_quiz\event\attempt_manual_grading_completed::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+    /**
      * Update the timemodifiedoffline attempt field.
      *
      * This function should be used only when web services are being used.
@@ -2666,7 +2704,6 @@ class quiz_attempt {
         }
         return false;
     }
-
 }
 
 
@@ -2754,8 +2791,12 @@ abstract class quiz_nav_panel_base {
     public function get_question_buttons() {
         $buttons = array();
         foreach ($this->attemptobj->get_slots() as $slot) {
-            if ($heading = $this->attemptobj->get_heading_before_slot($slot)) {
-                $buttons[] = new quiz_nav_section_heading(format_string($heading));
+            $heading = $this->attemptobj->get_heading_before_slot($slot);
+            if (!is_null($heading)) {
+                $sections = $this->attemptobj->get_quizobj()->get_sections();
+                if (!(empty($heading) && count($sections) == 1)) {
+                    $buttons[] = new quiz_nav_section_heading(format_string($heading));
+                }
             }
 
             $qa = $this->attemptobj->get_question_attempt($slot);

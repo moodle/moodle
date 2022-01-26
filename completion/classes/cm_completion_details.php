@@ -65,13 +65,19 @@ class cm_completion_details {
      */
     public function __construct(completion_info $completioninfo, cm_info $cminfo, int $userid, bool $returndetails = true) {
         $this->completioninfo = $completioninfo;
-        $this->completiondata = $completioninfo->get_data($cminfo, false, $userid);
+        // We need to pass wholecourse = true here for better performance. All the course's completion data for the current
+        // logged-in user will get in a single query instead of multiple queries and loaded to cache.
+        $this->completiondata = $completioninfo->get_data($cminfo, true, $userid);
         $this->cminfo = $cminfo;
         $this->userid = $userid;
         $this->returndetails = $returndetails;
         $cmcompletionclass = activity_custom_completion::get_cm_completion_class($this->cminfo->modname);
         if ($cmcompletionclass) {
-            $this->cmcompletion = new $cmcompletionclass($this->cminfo, $this->userid);
+            $this->cmcompletion = new $cmcompletionclass(
+                $this->cminfo,
+                $this->userid,
+                $completioninfo->get_core_completion_state($cminfo, $userid)
+            );
         }
     }
 
@@ -126,6 +132,13 @@ class cm_completion_details {
                 'status' => $status,
                 'description' => get_string('detail_desc:receivegrade', 'completion'),
             ];
+
+            if (!is_null($this->cminfo->completionpassgrade) && $this->cminfo->completionpassgrade) {
+                $details['completionpassgrade'] = (object)[
+                    'status' => $completiondata->passgrade ?? COMPLETION_INCOMPLETE,
+                    'description' => get_string('detail_desc:receivepassgrade', 'completion'),
+                ];
+            }
         }
 
         if ($this->cmcompletion) {

@@ -224,6 +224,37 @@ class contentbank {
         return $contents;
     }
 
+
+    /**
+     * Return all the context where a user has all the given capabilities.
+     *
+     * @param  string $capability The capability the user needs to have.
+     * @param  int|null $userid Optional userid. $USER by default.
+     * @return array Array of the courses and course categories where the user has the given capability.
+     */
+    public function get_contexts_with_capabilities_by_user($capability = 'moodle/contentbank:access', $userid = null): array {
+        global $USER;
+
+        if (!$userid) {
+            $userid = $USER->id;
+        }
+
+        $categoriescache = \cache::make('core', 'contentbank_allowed_categories');
+        $coursescache = \cache::make('core', 'contentbank_allowed_courses');
+
+        $categories = $categoriescache->get($userid);
+        $courses = $coursescache->get($userid);
+
+        if ($categories === false || $courses === false) {
+            list($categories, $courses) = get_user_capability_contexts($capability, true, $userid, true,
+                'shortname, ctxlevel, ctxinstance, ctxid', 'name, ctxlevel, ctxinstance, ctxid', 'shortname', 'name');
+            $categoriescache->set($userid, $categories);
+            $coursescache->set($userid, $courses);
+        }
+
+        return [$categories, $courses];
+    }
+
     /**
      * Create content from a file information.
      *

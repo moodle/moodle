@@ -58,7 +58,7 @@ abstract class question_category_base extends base {
             return new \moodle_url('/question/edit.php', ['courseid' => $this->courseid, 'cat' => $cat]);
         }
         // Lets try viewing from the frontpage for contexts above course.
-        return new \moodle_url('/question/category.php', ['courseid' => SITEID, 'edit' => $this->objectid]);
+        return new \moodle_url('/question/bank/managecategories/category.php', ['courseid' => SITEID, 'edit' => $this->objectid]);
     }
 
     /**

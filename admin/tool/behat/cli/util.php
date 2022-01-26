@@ -19,6 +19,9 @@
  *
  * All CLI utilities uses $CFG->behat_dataroot and $CFG->prefix_dataroot as
  * $CFG->dataroot and $CFG->prefix
+ * Same applies for $CFG->behat_dbname, $CFG->behat_dbuser, $CFG->behat_dbpass
+ * and $CFG->behat_dbhost. But if any of those is not defined $CFG->dbname,
+ * $CFG->dbuser, $CFG->dbpass and/or $CFG->dbhost will be used.
  *
  * @package    tool_behat
  * @copyright  2012 David Monllaó

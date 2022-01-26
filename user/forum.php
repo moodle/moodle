@@ -81,6 +81,7 @@ $userfullname     = fullname($user, true);
 
 $PAGE->navbar->includesettingsbase = true;
 
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_title("$course->shortname: $streditmyforum");
 $PAGE->set_heading($userfullname);
 
@@ -92,4 +93,3 @@ $forumform->display();
 
 // And proper footer.
 echo $OUTPUT->footer();
-

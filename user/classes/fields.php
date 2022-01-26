@@ -347,7 +347,8 @@ class fields {
      * showing lists of users (in addition to the user's name which is included as standard).
      *
      * The results include basic field names (columns from the 'user' database table) and, unless
-     * turned off, custom profile field names in the format 'profile_field_myfield'.
+     * turned off, custom profile field names in the format 'profile_field_myfield', note these
+     * fields will always be returned lower cased to match how they are returned by the DML library.
      *
      * This function does all the required capability checks to see if the current user is allowed
      * to see them in the specified context. You can pass context null to get all the fields
@@ -421,7 +422,7 @@ class fields {
 
         // Re-index the entries and return.
         $extra = array_values($extra);
-        return $extra;
+        return array_map([core_text::class, 'strtolower'], $extra);
     }
 
     /**
@@ -538,7 +539,8 @@ class fields {
                     $placeholder = '?';
                     $params[] = $shortname;
                 }
-                $joins .= " JOIN {user_info_field} $fieldalias ON $fieldalias.shortname = $placeholder
+                $joins .= " JOIN {user_info_field} $fieldalias ON " .
+                                 $DB->sql_equal($fieldalias . '.shortname', $placeholder, false) . "
                        LEFT JOIN {user_info_data} $dataalias ON $dataalias.fieldid = $fieldalias.id
                                  AND $dataalias.userid = {$usertable}id";
                 // For Oracle we need to convert the field into a usable format.
@@ -648,31 +650,13 @@ class fields {
         // Custom fields have special handling.
         if (preg_match(self::PROFILE_FIELD_REGEX, $field, $matches)) {
             require_once($CFG->dirroot . '/user/profile/lib.php');
-            $fieldinfo = profile_get_custom_field_data_by_shortname($matches[1]);
+            $fieldinfo = profile_get_custom_field_data_by_shortname($matches[1], false);
             // Use format_string so it can be translated with multilang filter if necessary.
             return $fieldinfo ? format_string($fieldinfo->name) : $field;
         }
 
         // Some fields have language strings which are not the same as field name.
         switch ($field) {
-            case 'url' : {
-                return get_string('webpage');
-            }
-            case 'icq' : {
-                return get_string('icqnumber');
-            }
-            case 'skype' : {
-                return get_string('skypeid');
-            }
-            case 'aim' : {
-                return get_string('aimid');
-            }
-            case 'yahoo' : {
-                return get_string('yahooid');
-            }
-            case 'msn' : {
-                return get_string('msnid');
-            }
             case 'picture' : {
                 return get_string('pictureofuser');
             }

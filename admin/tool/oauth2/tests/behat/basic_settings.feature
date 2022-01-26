@@ -6,6 +6,7 @@ Feature: Basic OAuth2 functionality
 
   Background:
     Given I log in as "admin"
+    And I change window size to "large"
     And I navigate to "Server > OAuth 2 services" in site administration
 
   Scenario: Create, edit and delete standard service for Google
@@ -24,11 +25,11 @@ Feature: Basic OAuth2 functionality
     And I click on "Configure endpoints" "link" in the "Testing service" "table_row"
     And I should see "https://accounts.google.com/.well-known/openid-configuration" in the "discovery_endpoint" "table_row"
     And I should see "authorization_endpoint"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Configure user field mappings" "link" in the "Testing service" "table_row"
     And I should see "firstname" in the "given_name" "table_row"
     And I should see "middlename" in the "middle_name" "table_row"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Edit" "link" in the "Testing service" "table_row"
     And I set the following fields to these values:
       | Name                       | Testing service modified                 |
@@ -57,10 +58,10 @@ Feature: Basic OAuth2 functionality
     And I click on "Configure endpoints" "link" in the "Testing service" "table_row"
     And I should see "authorization_endpoint"
     And I should not see "discovery_endpoint"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Configure user field mappings" "link" in the "Testing service" "table_row"
     And I should see "firstname" in the "givenName" "table_row"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Edit" "link" in the "Testing service" "table_row"
     And I set the following fields to these values:
       | Name                       | Testing service modified                 |
@@ -89,10 +90,10 @@ Feature: Basic OAuth2 functionality
     And I click on "Configure endpoints" "link" in the "Testing service" "table_row"
     And I should see "authorization_endpoint"
     And I should not see "discovery_endpoint"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Configure user field mappings" "link" in the "Testing service" "table_row"
     And I should see "firstname" in the "first_name" "table_row"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Edit" "link" in the "Testing service" "table_row"
     And I set the following fields to these values:
       | Name                       | Testing service modified                 |
@@ -126,10 +127,10 @@ Feature: Basic OAuth2 functionality
     And I click on "Configure endpoints" "link" in the "Testing service" "table_row"
     And I should see "authorization_endpoint"
     And I should not see "discovery_endpoint"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Configure user field mappings" "link" in the "Testing service" "table_row"
     And I should see "username" in the "ocs-data-id" "table_row"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Edit" "link" in the "Testing service" "table_row"
     And I set the following fields to these values:
       | Name                       | Testing service modified                 |
@@ -159,11 +160,11 @@ Feature: Basic OAuth2 functionality
     And I click on "Configure endpoints" "link" in the "Open Badges" "table_row"
     And I should see "https://dc.imsglobal.org/.well-known/badgeconnect.json" in the "discovery_endpoint" "table_row"
     And I should see "authorization_endpoint"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Configure user field mappings" "link" in the "Open Badges" "table_row"
     And I should not see "given_name"
     And I should not see "middle_name"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Edit" "link" in the "Open Badges" "table_row"
     And I set the following fields to these values:
       | Name                       | IMS Global                                |
@@ -194,11 +195,11 @@ Feature: Basic OAuth2 functionality
     And I click on "Configure endpoints" "link" in the "Google custom" "table_row"
     And I should see "https://accounts.google.com/.well-known/openid-configuration" in the "discovery_endpoint" "table_row"
     And I should see "authorization_endpoint"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Configure user field mappings" "link" in the "Google custom" "table_row"
     And I should see "firstname" in the "given_name" "table_row"
     And I should see "middlename" in the "middle_name" "table_row"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Edit" "link" in the "Google custom" "table_row"
     And I set the following fields to these values:
       | Name                       | Google custom modified                     |
@@ -227,11 +228,11 @@ Feature: Basic OAuth2 functionality
     And I should see "-" in the "Invalid custom service" "table_row"
     And I click on "Configure endpoints" "link" in the "Invalid custom service" "table_row"
     And I should not see "discovery_endpoint"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Configure user field mappings" "link" in the "Invalid custom service" "table_row"
     And I should not see "given_name"
     And I should not see "middle_name"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Edit" "link" in the "Invalid custom service" "table_row"
     And I set the following fields to these values:
       | Name                       | Valid custom service                        |
@@ -268,11 +269,11 @@ Feature: Basic OAuth2 functionality
     And I should see "-" in the "Empty custom service" "table_row"
     And I click on "Configure endpoints" "link" in the "Empty custom service" "table_row"
     And I should not see "discovery_endpoint"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Configure user field mappings" "link" in the "Empty custom service" "table_row"
     And I should not see "given_name"
     And I should not see "middle_name"
-    And I follow "OAuth 2 services"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Edit" "link" in the "Empty custom service" "table_row"
     # Check it works as expected too without slash at the end of the service base URL.
     And I set the following fields to these values:

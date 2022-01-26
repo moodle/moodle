@@ -2316,7 +2316,7 @@ class mod_assign_external extends external_api {
                 'assignid' => new external_value(PARAM_INT, 'assignment instance id'),
                 'userid' => new external_value(PARAM_INT, 'user id (empty for current user)', VALUE_DEFAULT, 0),
                 'groupid' => new external_value(PARAM_INT, 'filter by users in group (used for generating the grading summary).
-                    Empty or 0 for all groups information.', VALUE_DEFAULT, 0),
+                    0 for all groups information, any other empty value will calculate currrent group.', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -2368,8 +2368,9 @@ class mod_assign_external extends external_api {
                 throw new moodle_exception('notingroup');
             }
         } else {
-            // A null gorups means that following functions will calculate the current group.
-            $groupid = null;
+            // A null group means that following functions will calculate the current group.
+            // A groupid set to 0 means all groups.
+            $groupid = ($params['groupid'] == 0) ? 0 : null;
         }
         if ($assign->can_view_grades($groupid)) {
             $gradingsummary = $assign->get_assign_grading_summary_renderable($groupid);
@@ -2687,6 +2688,7 @@ class mod_assign_external extends external_api {
                 $userdetails['submitted'] = $record->submitted;
                 $userdetails['requiregrading'] = $record->requiregrading;
                 $userdetails['grantedextension'] = $record->grantedextension;
+                $userdetails['submissionstatus'] = $record->submissionstatus;
                 if (!empty($record->groupid)) {
                     $userdetails['groupid'] = $record->groupid;
                 }
@@ -2764,6 +2766,8 @@ class mod_assign_external extends external_api {
             'submitted' => new external_value(PARAM_BOOL, 'have they submitted their assignment'),
             'requiregrading' => new external_value(PARAM_BOOL, 'is their submission waiting for grading'),
             'grantedextension' => new external_value(PARAM_BOOL, 'have they been granted an extension'),
+            'submissionstatus' => new external_value(PARAM_ALPHA, 'The submission status (new, draft, reopened or submitted).
+                Empty when not submitted.', VALUE_OPTIONAL),
             'groupid' => new external_value(PARAM_INT, 'for group assignments this is the group id', VALUE_OPTIONAL),
             'groupname' => new external_value(PARAM_NOTAGS, 'for group assignments this is the group name', VALUE_OPTIONAL),
         ];
@@ -2830,6 +2834,7 @@ class mod_assign_external extends external_api {
             'submitted' => $participant->submitted,
             'requiregrading' => $participant->requiregrading,
             'grantedextension' => $participant->grantedextension,
+            'submissionstatus' => $participant->submissionstatus,
             'blindmarking' => $assign->is_blind_marking(),
             'allowsubmissionsfromdate' => $assign->get_instance($userid)->allowsubmissionsfromdate,
             'duedate' => $assign->get_instance($userid)->duedate,
@@ -2879,6 +2884,8 @@ class mod_assign_external extends external_api {
             'duedatestr' => new external_value(PARAM_TEXT, 'duedate for the user'),
             'groupid' => new external_value(PARAM_INT, 'for group assignments this is the group id', VALUE_OPTIONAL),
             'groupname' => new external_value(PARAM_NOTAGS, 'for group assignments this is the group name', VALUE_OPTIONAL),
+            'submissionstatus' => new external_value(PARAM_ALPHA, 'The submission status (new, draft, reopened or submitted).
+                Empty when not submitted.', VALUE_OPTIONAL),
             'user' => $userdescription,
         ));
     }

@@ -66,7 +66,7 @@ abstract class question_engine {
      * {@link save_questions_usage_by_activity()}.
      *
      * @param string $component the plugin creating this attempt. For example mod_quiz.
-     * @param object $context the context this usage belongs to.
+     * @param context $context the context this usage belongs to.
      * @return question_usage_by_activity the newly created object.
      */
     public static function make_questions_usage_by_activity($component, $context) {
@@ -630,7 +630,7 @@ class question_display_options {
     public $editquestionparams = array();
 
     /**
-     * @var int the context the attempt being output belongs to.
+     * @var context the context the attempt being output belongs to.
      */
     public $context;
 
@@ -1019,9 +1019,10 @@ abstract class question_utils {
     /**
      * Get the options required to configure the filepicker for one of the editor
      * toolbar buttons.
+     *
      * @param mixed $acceptedtypes array of types of '*'.
      * @param int $draftitemid the draft area item id.
-     * @param object $context the context.
+     * @param context $context the context.
      * @return object the required options.
      */
     protected static function specific_filepicker_options($acceptedtypes, $draftitemid, $context) {
@@ -1042,7 +1043,8 @@ abstract class question_utils {
 
     /**
      * Get filepicker options for question related text areas.
-     * @param object $context the context.
+     *
+     * @param context $context the context.
      * @param int $draftitemid the draft area item id.
      * @return array An array of options
      */
@@ -1056,7 +1058,8 @@ abstract class question_utils {
 
     /**
      * Get editor options for question related text areas.
-     * @param object $context the context.
+     *
+     * @param context $context the context.
      * @return array An array of options
      */
     public static function get_editor_options($context) {

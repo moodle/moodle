@@ -4305,7 +4305,7 @@ class restore_block_instance_structure_step extends restore_structure_step {
         // Let's look for anything within configdata neededing processing
         // (nulls and uses of legacy file.php)
         if ($attrstotransform = $this->task->get_configdata_encoded_attributes()) {
-            $configdata = (array)unserialize(base64_decode($data->configdata));
+            $configdata = (array) unserialize_object(base64_decode($data->configdata));
             foreach ($configdata as $attribute => $value) {
                 if (in_array($attribute, $attrstotransform)) {
                     $configdata[$attribute] = $this->contentprocessor->process_cdata($value);
@@ -4750,10 +4750,13 @@ class restore_create_categories_and_questions extends restore_structure_step {
         // Apply for 'qtype' plugins optional paths at question level
         $this->add_plugin_structure('qtype', $question);
 
+        // Apply for 'qbank' plugins optional paths at question level.
+        $this->add_plugin_structure('qbank', $question);
+
         // Apply for 'local' plugins optional paths at question level
         $this->add_plugin_structure('local', $question);
 
-        return array($category, $question, $hint, $tag);
+        return [$category, $question, $hint, $tag];
     }
 
     protected function process_question_category($data) {
@@ -5375,7 +5378,7 @@ class restore_process_file_aliases_queue extends restore_execution_step {
                 }
 
             } else {
-                // This is a reference to some external file such as in boxnet or dropbox.
+                // This is a reference to some external file such as dropbox.
                 // If we are restoring to the same site, keep the reference untouched and
                 // restore the alias as is.
                 if ($this->task->is_samesite()) {

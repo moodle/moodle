@@ -37,7 +37,8 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_course_externallib_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
+    //core_course_externallib_testcase
 
     /**
      * Tests set up
@@ -1366,6 +1367,28 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_course_contents returns downloadcontent value.
+     */
+    public function test_get_course_contents_downloadcontent() {
+        $this->resetAfterTest();
+
+        list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
+
+        // Test exclude modules.
+        $sections = core_course_external::get_course_contents($course->id, [
+            ['name' => 'modname', 'value' => 'page'],
+            ['name' => 'modid', 'value' => $pagecm->instance]
+        ]);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
+        $this->assertCount(1, $sections[0]['modules']);
+        $this->assertEquals('page', $sections[0]['modules'][0]['modname']);
+        $this->assertEquals($pagecm->downloadcontent, $sections[0]['modules'][0]['downloadcontent']);
+        $this->assertEquals(DOWNLOAD_COURSE_CONTENT_ENABLED, $sections[0]['modules'][0]['downloadcontent']);
+    }
+
+    /**
      * Test get course contents completion manual
      */
     public function test_get_course_contents_completion_manual() {
@@ -2305,14 +2328,17 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $this->setAdminUser();
-        $course = self::getDataGenerator()->create_course();
+        $course = self::getDataGenerator()->create_course(['enablecompletion' => 1]);
         $record = array(
             'course' => $course->id,
             'name' => 'First Assignment'
         );
         $options = array(
             'idnumber' => 'ABC',
-            'visible' => 0
+            'visible' => 0,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC,
+            'completiongradeitemnumber' => 0,
+            'completionpassgrade' => 1,
         );
         // Hidden activity.
         $assign = self::getDataGenerator()->create_module('assign', $record, $options);
@@ -2369,7 +2395,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve all the fields.
-        $this->assertCount(28, $result['cm']);
+        $this->assertCount(30, $result['cm']);
         $this->assertEquals($record['name'], $result['cm']['name']);
         $this->assertEquals($options['idnumber'], $result['cm']['idnumber']);
         $this->assertEquals(100, $result['cm']['grade']);
@@ -2377,6 +2403,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals('submissions', $result['cm']['advancedgrading'][0]['area']);
         $this->assertEmpty($result['cm']['advancedgrading'][0]['method']);
         $this->assertEquals($outcomescale, $result['cm']['outcomes'][0]['scale']);
+        $this->assertEquals(DOWNLOAD_COURSE_CONTENT_ENABLED, $result['cm']['downloadcontent']);
 
         $student = $this->getDataGenerator()->create_user();
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
@@ -2401,7 +2428,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve only the few files we can see.
-        $this->assertCount(11, $result['cm']);
+        $this->assertCount(12, $result['cm']);
         $this->assertEquals($assign->cmid, $result['cm']['id']);
         $this->assertEquals($course->id, $result['cm']['course']);
         $this->assertEquals('assign', $result['cm']['modname']);
@@ -2437,10 +2464,11 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve all the fields.
-        $this->assertCount(26, $result['cm']);
+        $this->assertCount(28, $result['cm']);
         $this->assertEquals($record['name'], $result['cm']['name']);
         $this->assertEquals($record['grade'], $result['cm']['grade']);
         $this->assertEquals($options['idnumber'], $result['cm']['idnumber']);
+        $this->assertEquals(DOWNLOAD_COURSE_CONTENT_ENABLED, $result['cm']['downloadcontent']);
 
         $student = $this->getDataGenerator()->create_user();
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
@@ -2465,7 +2493,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve only the few files we can see.
-        $this->assertCount(11, $result['cm']);
+        $this->assertCount(12, $result['cm']);
         $this->assertEquals($quiz->cmid, $result['cm']['id']);
         $this->assertEquals($course->id, $result['cm']['course']);
         $this->assertEquals('quiz', $result['cm']['modname']);
@@ -2510,7 +2538,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             foreach ($course['options'] as $option) {
                 $navoptions->{$option['name']} = $option['available'];
             }
-            $this->assertCount(9, $course['options']);
+            $this->assertCount(8, $course['options']);
             if ($course['id'] == SITEID) {
                 $this->assertTrue($navoptions->blogs);
                 $this->assertFalse($navoptions->notes);
@@ -2519,7 +2547,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertTrue($navoptions->tags);
                 $this->assertFalse($navoptions->grades);
                 $this->assertFalse($navoptions->search);
-                $this->assertTrue($navoptions->calendar);
                 $this->assertTrue($navoptions->competencies);
             } else {
                 $this->assertTrue($navoptions->blogs);
@@ -2529,7 +2556,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertFalse($navoptions->tags);
                 $this->assertTrue($navoptions->grades);
                 $this->assertFalse($navoptions->search);
-                $this->assertFalse($navoptions->calendar);
                 $this->assertTrue($navoptions->competencies);
             }
         }
@@ -2647,7 +2673,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(2, $result['courses'][0]['courseformatoptions']);
         foreach ($result['courses'][0]['courseformatoptions'] as $option) {
             if ($option['name'] == 'hiddensections') {
-                $this->assertEquals(0, $option['value']);
+                $this->assertEquals(1, $option['value']);
             } else {
                 $this->assertEquals('coursedisplay', $option['name']);
                 $this->assertEquals(0, $option['value']);
@@ -3068,7 +3094,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'offset' => 0,
                 'sort' => 'shortname ASC',
                 'expectedcourses' => [],
-                'expectednextoffset' => 0
+                'expectednextoffset' => 0,
             ],
             // COURSE_TIMELINE_FUTURE.
             'future not limit no offset' => [
@@ -3078,7 +3104,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'offset' => 0,
                 'sort' => 'shortname ASC',
                 'expectedcourses' => ['afuture', 'bfuture', 'cfuture', 'dfuture', 'efuture'],
-                'expectednextoffset' => 15
+                'expectednextoffset' => 15,
             ],
             'future no offset' => [
                 'coursedata' => $coursedata,
@@ -3087,7 +3113,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'offset' => 0,
                 'sort' => 'shortname ASC',
                 'expectedcourses' => ['afuture', 'bfuture'],
-                'expectednextoffset' => 4
+                'expectednextoffset' => 4,
             ],
             'future offset' => [
                 'coursedata' => $coursedata,
@@ -3096,7 +3122,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'offset' => 2,
                 'sort' => 'shortname ASC',
                 'expectedcourses' => ['bfuture', 'cfuture'],
-                'expectednextoffset' => 7
+                'expectednextoffset' => 7,
             ],
             'future exact limit' => [
                 'coursedata' => $coursedata,
@@ -3105,7 +3131,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'offset' => 0,
                 'sort' => 'shortname ASC',
                 'expectedcourses' => ['afuture', 'bfuture', 'cfuture', 'dfuture', 'efuture'],
-                'expectednextoffset' => 13
+                'expectednextoffset' => 13,
             ],
             'future limit less results' => [
                 'coursedata' => $coursedata,
@@ -3114,7 +3140,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'offset' => 0,
                 'sort' => 'shortname ASC',
                 'expectedcourses' => ['afuture', 'bfuture', 'cfuture', 'dfuture', 'efuture'],
-                'expectednextoffset' => 15
+                'expectednextoffset' => 15,
             ],
             'future limit less results with offset' => [
                 'coursedata' => $coursedata,
@@ -3123,7 +3149,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'offset' => 5,
                 'sort' => 'shortname ASC',
                 'expectedcourses' => ['cfuture', 'dfuture', 'efuture'],
-                'expectednextoffset' => 15
+                'expectednextoffset' => 15,
             ],
             'all no limit or offset' => [
                 'coursedata' => $coursedata,
@@ -3148,7 +3174,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                     'einprogress',
                     'epast'
                 ],
-                'expectednextoffset' => 15
+                'expectednextoffset' => 15,
             ],
             'all limit no offset' => [
                 'coursedata' => $coursedata,
@@ -3163,7 +3189,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                     'bfuture',
                     'binprogress'
                 ],
-                'expectednextoffset' => 5
+                'expectednextoffset' => 5,
             ],
             'all limit and offset' => [
                 'coursedata' => $coursedata,
@@ -3178,7 +3204,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                     'cpast',
                     'dfuture'
                 ],
-                'expectednextoffset' => 10
+                'expectednextoffset' => 10,
             ],
             'all offset past result set' => [
                 'coursedata' => $coursedata,
@@ -3187,7 +3213,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'offset' => 50,
                 'sort' => 'shortname ASC',
                 'expectedcourses' => [],
-                'expectednextoffset' => 50
+                'expectednextoffset' => 50,
             ],
             'all limit and offset with sort ul.timeaccess desc' => [
                 'coursedata' => $coursedata,
@@ -3202,7 +3228,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                     'dinprogress',
                     'einprogress'
                 ],
-                'expectednextoffset' => 15
+                'expectednextoffset' => 15,
             ],
             'all limit and offset with sort sql injection for sort or 1==1' => [
                 'coursedata' => $coursedata,
@@ -3212,7 +3238,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'sort' => 'ul.timeaccess desc or 1==1',
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()'
+                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()',
             ],
             'all limit and offset with sql injection of sort a custom one' => [
                 'coursedata' => $coursedata,
@@ -3222,7 +3248,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'sort' => "ul.timeaccess LIMIT 1--",
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()'
+                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()',
             ],
             'all limit and offset with wrong sort direction' => [
                 'coursedata' => $coursedata,
@@ -3232,7 +3258,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'sort' => "ul.timeaccess abcdasc",
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid sort direction in $sort parameter in enrol_get_my_courses()'
+                'expectedexception' => 'Invalid sort direction in $sort parameter in enrol_get_my_courses()',
             ],
             'all limit and offset with wrong sort direction' => [
                 'coursedata' => $coursedata,
@@ -3242,7 +3268,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'sort' => "ul.timeaccess.foo ascd",
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid sort direction in $sort parameter in enrol_get_my_courses()'
+                'expectedexception' => 'Invalid sort direction in $sort parameter in enrol_get_my_courses()',
             ],
             'all limit and offset with wrong sort param' => [
                 'coursedata' => $coursedata,
@@ -3252,7 +3278,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'sort' => "foobar",
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()'
+                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()',
             ],
             'all limit and offset with wrong field name' => [
                 'coursedata' => $coursedata,
@@ -3262,7 +3288,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'sort' => "ul.foobar",
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()'
+                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()',
             ],
             'all limit and offset with wrong field separator' => [
                 'coursedata' => $coursedata,
@@ -3272,7 +3298,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'sort' => "ul.timeaccess.foo",
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()'
+                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()',
             ],
             'all limit and offset with wrong field separator #' => [
                 'coursedata' => $coursedata,
@@ -3282,7 +3308,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'sort' => "ul#timeaccess",
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()'
+                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()',
             ],
             'all limit and offset with wrong field separator $' => [
                 'coursedata' => $coursedata,
@@ -3292,7 +3318,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'sort' => 'ul$timeaccess',
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()'
+                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()',
             ],
             'all limit and offset with wrong field name' => [
                 'coursedata' => $coursedata,
@@ -3302,7 +3328,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'sort' => 'timeaccess123',
                 'expectedcourses' => [],
                 'expectednextoffset' => 0,
-                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()'
+                'expectedexception' => 'Invalid $sort parameter in enrol_get_my_courses()',
             ],
             'all limit and offset with no sort direction for ul' => [
                 'coursedata' => $coursedata,
@@ -3340,6 +3366,50 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 'expectedcourses' => ['bpast', 'cpast', 'dfuture', 'dpast', 'efuture'],
                 'expectednextoffset' => 10,
             ],
+            'Search courses for courses containing bfut' => [
+                'coursedata' => $coursedata,
+                'classification' => 'search',
+                'limit' => 0,
+                'offset' => 0,
+                'sort' => null,
+                'expectedcourses' => ['bfuture'],
+                'expectednextoffset' => 1,
+                'expectedexception' => null,
+                'searchvalue' => 'bfut',
+            ],
+            'Search courses for courses containing inp' => [
+                'coursedata' => $coursedata,
+                'classification' => 'search',
+                'limit' => 0,
+                'offset' => 0,
+                'sort' => null,
+                'expectedcourses' => ['ainprogress', 'binprogress', 'cinprogress', 'dinprogress', 'einprogress'],
+                'expectednextoffset' => 5,
+                'expectedexception' => null,
+                'searchvalue' => 'inp',
+            ],
+            'Search courses for courses containing fail' => [
+                'coursedata' => $coursedata,
+                'classification' => 'search',
+                'limit' => 0,
+                'offset' => 0,
+                'sort' => null,
+                'expectedcourses' => [],
+                'expectednextoffset' => 0,
+                'expectedexception' => null,
+                'searchvalue' => 'fail',
+            ],
+            'Search courses for courses containing !`~[]C' => [
+                'coursedata' => $coursedata,
+                'classification' => 'search',
+                'limit' => 0,
+                'offset' => 0,
+                'sort' => null,
+                'expectedcourses' => [],
+                'expectednextoffset' => 0,
+                'expectedexception' => null,
+                'searchvalue' => '!`~[]C',
+            ],
         ];
     }
 
@@ -3355,6 +3425,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
      * @param array $expectedcourses Expected courses in result
      * @param int $expectednextoffset Expected next offset value in result
      * @param string|null $expectedexception Expected exception string
+     * @param string|null $searchvalue If we are searching, what do we need to look for?
      */
     public function test_get_enrolled_courses_by_timeline_classification(
         $coursedata,
@@ -3364,7 +3435,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $sort,
         $expectedcourses,
         $expectednextoffset,
-        $expectedexception = null
+        $expectedexception = null,
+        $searchvalue = null
     ) {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
@@ -3394,7 +3466,10 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             $classification,
             $limit,
             $offset,
-            $sort
+            $sort,
+            null,
+            null,
+            $searchvalue
         );
         $result = external_api::clean_returnvalue(
             core_course_external::get_enrolled_courses_by_timeline_classification_returns(),

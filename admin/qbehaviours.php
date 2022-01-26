@@ -88,10 +88,9 @@ if (($disable = optional_param('disable', '', PARAM_PLUGIN)) && confirm_sesskey(
     }
 
     if (array_search($disable, $disabledbehaviours) === false) {
-        $disabledbehaviours[] = $disable;
-        set_config('disabledbehaviours', implode(',', $disabledbehaviours), 'question');
+        $class = \core_plugin_manager::resolve_plugininfo_class('qbehaviour');
+        $class::enable_plugin($disable, false);
     }
-    core_plugin_manager::reset_caches();
     redirect($thispageurl);
 }
 
@@ -106,10 +105,9 @@ if (($enable = optional_param('enable', '', PARAM_PLUGIN)) && confirm_sesskey())
     }
 
     if (($key = array_search($enable, $disabledbehaviours)) !== false) {
-        unset($disabledbehaviours[$key]);
-        set_config('disabledbehaviours', implode(',', $disabledbehaviours), 'question');
+        $class = \core_plugin_manager::resolve_plugininfo_class('qbehaviour');
+        $class::enable_plugin($enable, true);
     }
-    core_plugin_manager::reset_caches();
     redirect($thispageurl);
 }
 
@@ -238,4 +236,3 @@ function question_behaviour_icon_html($action, $behaviour, $icon, $alt, $tip) {
             new pix_icon($icon, $alt, 'moodle', array('title' => '', 'class' => 'iconsmall')),
             null, array('title' => $tip));
 }
-

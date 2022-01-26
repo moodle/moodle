@@ -16,7 +16,7 @@ Feature: View a site event on the frontpage
       | id_eventtype | Site |
       | id_name | My Site Event |
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I add the "Upcoming events" block
     And I log out
     When I log in as "teacher1"

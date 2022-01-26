@@ -84,6 +84,8 @@ $PAGE->set_button($button . $PAGE->button);
 
 echo $OUTPUT->header();
 
+echo $OUTPUT->addblockbutton('content');
+
 echo $OUTPUT->custom_block_region('content');
 
 echo $OUTPUT->footer();

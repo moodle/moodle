@@ -21,7 +21,7 @@ Feature: The online users block allow you to see who is currently online on fron
   Scenario: View the online users block on the front page and see myself
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     When I add the "Online users" block
     Then I should see "Admin User" in the "Online users" "block"
     And I should see "1 online user" in the "Online users" "block"
@@ -29,7 +29,7 @@ Feature: The online users block allow you to see who is currently online on fron
   Scenario: View the online users block on the front page as a logged in user
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I add the "Online users" block
     And I log out
     And I log in as "student2"
@@ -45,7 +45,7 @@ Feature: The online users block allow you to see who is currently online on fron
   Scenario: View the online users block on the front page as a guest
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I add the "Online users" block
     And I log out
     And I log in as "student2"
@@ -65,7 +65,7 @@ Feature: The online users block allow you to see who is currently online on fron
       | block_online_users_onlinestatushiding | 1 |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I add the "Online users" block
     And I log out
     When I log in as "student1"
@@ -104,7 +104,7 @@ Feature: The online users block allow you to see who is currently online on fron
       | block_online_users_onlinestatushiding | 1 |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I add the "Online users" block
     And I log out
     And I log in as "student1"
@@ -114,6 +114,7 @@ Feature: The online users block allow you to see who is currently online on fron
     And the following config values are set as admin:
       | block_online_users_onlinestatushiding | 0 |
     When I log in as "student1"
+    And I am on site homepage
     Then I should see "Student 1" in the "Online users" "block"
     And "Hide" "icon" should not exist in the ".block.block_online_users" "css_element"
 
@@ -124,7 +125,7 @@ Feature: The online users block allow you to see who is currently online on fron
       | block_online_users_onlinestatushiding | 1 |
     And I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" in current page administration
+    And I turn editing mode on
     And I add the "Online users" block
     And I log out
     And I log in as "student1"

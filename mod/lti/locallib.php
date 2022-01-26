@@ -51,6 +51,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 // TODO: Switch to core oauthlib once implemented - MDL-30149.
+use mod_lti\helper;
 use moodle\mod\lti as lti;
 use Firebase\JWT\JWT;
 use Firebase\JWT\JWK;
@@ -435,7 +436,7 @@ function lti_get_jwt_claim_mapping() {
             'claim' => 'url',
             'isarray' => false
         ],
-        'custom_context_memberships_url' => [
+        'custom_context_memberships_v2_url' => [
             'suffix' => 'nrps',
             'group' => 'namesroleservice',
             'claim' => 'context_memberships_url',
@@ -593,11 +594,11 @@ function lti_get_launch_data($instance, $nonce = '') {
             $endpoint = trim($instance->securetoolurl);
         }
 
-        $endpoint = lti_ensure_url_is_https($endpoint);
-    } else {
-        if (!strstr($endpoint, '://')) {
-            $endpoint = 'http://' . $endpoint;
+        if ($endpoint !== '') {
+            $endpoint = lti_ensure_url_is_https($endpoint);
         }
+    } else if ($endpoint !== '' && !strstr($endpoint, '://')) {
+        $endpoint = 'http://' . $endpoint;
     }
 
     $orgid = lti_get_organizationid($typeconfig);
@@ -2165,7 +2166,7 @@ function lti_get_ims_role($user, $cmid, $courseid, $islti2) {
         }
     }
 
-    if (is_siteadmin($user) || has_capability('mod/lti:admin', $context)) {
+    if (!is_role_switched($courseid) && (is_siteadmin($user)) || has_capability('mod/lti:admin', $context)) {
         // Make sure admins do not have the Learner role, then set admin role.
         $roles = array_diff($roles, array('Learner'));
         if (!$islti2) {
@@ -3096,6 +3097,73 @@ function lti_delete_tool_proxy($id) {
 }
 
 /**
+ * Get both LTI tool proxies and tool types.
+ *
+ * If limit and offset are not zero, a subset of the tools will be returned. Tool proxies will be counted before tool
+ * types.
+ * For example: If 10 tool proxies and 10 tool types exist, and the limit is set to 15, then 10 proxies and 5 types
+ * will be returned.
+ *
+ * @param int $limit Maximum number of tools returned.
+ * @param int $offset Do not return tools before offset index.
+ * @param bool $orphanedonly If true, only return orphaned proxies.
+ * @param int $toolproxyid If not 0, only return tool types that have this tool proxy id.
+ * @return array list(proxies[], types[]) List containing array of tool proxies and array of tool types.
+ */
+function lti_get_lti_types_and_proxies(int $limit = 0, int $offset = 0, bool $orphanedonly = false, int $toolproxyid = 0): array {
+    global $DB;
+
+    if ($orphanedonly) {
+        $orphanedproxiessql = helper::get_tool_proxy_sql($orphanedonly, false);
+        $countsql = helper::get_tool_proxy_sql($orphanedonly, true);
+        $proxies  = $DB->get_records_sql($orphanedproxiessql, null, $offset, $limit);
+        $totalproxiescount = $DB->count_records_sql($countsql);
+    } else {
+        $proxies = $DB->get_records('lti_tool_proxies', null, 'name ASC, state DESC, timemodified DESC',
+            '*', $offset, $limit);
+        $totalproxiescount = $DB->count_records('lti_tool_proxies');
+    }
+
+    // Find new offset and limit for tool types after getting proxies and set up query.
+    $typesoffset = max($offset - $totalproxiescount, 0); // Set to 0 if negative.
+    $typeslimit = max($limit - count($proxies), 0); // Set to 0 if negative.
+    $typesparams = [];
+    if (!empty($toolproxyid)) {
+        $typesparams['toolproxyid'] = $toolproxyid;
+    }
+
+    $types = $DB->get_records('lti_types', $typesparams, 'name ASC, state DESC, timemodified DESC',
+            '*', $typesoffset, $typeslimit);
+
+    return [$proxies, array_map('serialise_tool_type', $types)];
+}
+
+/**
+ * Get the total number of LTI tool types and tool proxies.
+ *
+ * @param bool $orphanedonly If true, only count orphaned proxies.
+ * @param int $toolproxyid If not 0, only count tool types that have this tool proxy id.
+ * @return int Count of tools.
+ */
+function lti_get_lti_types_and_proxies_count(bool $orphanedonly = false, int $toolproxyid = 0): int {
+    global $DB;
+
+    $typessql = "SELECT count(*)
+                   FROM {lti_types}";
+    $typesparams = [];
+    if (!empty($toolproxyid)) {
+        $typessql .= " WHERE toolproxyid = :toolproxyid";
+        $typesparams['toolproxyid'] = $toolproxyid;
+    }
+
+    $proxiessql = helper::get_tool_proxy_sql($orphanedonly, true);
+
+    $countsql = "SELECT ($typessql) + ($proxiessql) as total" . $DB->sql_null_from_clause();
+
+    return $DB->count_records_sql($countsql, $typesparams);
+}
+
+/**
  * Add a tool configuration in the database
  *
  * @param object $config   Tool configuration
@@ -3455,7 +3523,8 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
     }
     $r .= "</form>\n";
 
-    if ( ! $debug ) {
+    // Auto-submit the form if endpoint is set.
+    if ($endpoint !== '' && !$debug) {
         $r .= " <script type=\"text/javascript\"> \n" .
             "  //<![CDATA[ \n" .
             "    document.ltiLaunchForm.submit(); \n" .

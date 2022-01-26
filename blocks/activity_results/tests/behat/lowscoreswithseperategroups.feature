@@ -47,7 +47,6 @@ Feature: The activity results block displays students in separate groups scores
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 3" for the grade item "Test assignment"

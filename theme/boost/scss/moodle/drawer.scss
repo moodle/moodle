@@ -2,9 +2,15 @@
 $fixed-header-y: $navbar-height;
 
 $drawer-width: 285px !default;
+$drawer-left-width: 285px !default;
+$drawer-right-width: 315px !default;
 $drawer-padding-x: 20px !default;
 $drawer-padding-y: 20px !default;
 $drawer-offscreen-gutter: 20px !default;
+$drawer-bg-color: $gray-100 !default;
+$drawer-scroll-bg-track: $gray-100 !default;
+$drawer-shadow-color: rgba(0, 0, 0, .25) !default;
+$drawer-transition: left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease !default;
 
 :target {
     scroll-margin-top: $fixed-header-y + 10px;
@@ -35,14 +41,15 @@ $drawer-bg: darken($body-bg, 5%) !default;
     -webkit-overflow-scrolling: touch;
     z-index: $zindex-dropdown - 1;
     background-color: $drawer-bg;
-    -webkit-transition: right 0.5s ease, left 0.5s ease;
-    -moz-transition: right 0.5s ease, left 0.5s ease;
-    transition: right 0.5s ease, left 0.5s ease;
+    @include transition(right 0.5s ease, left 0.5s ease);
 }
 
 @include media-breakpoint-up(sm) {
     [data-region="drawer"] {
         padding: $drawer-padding-x $drawer-padding-y;
+    }
+    .jsenabled .btn-footer-popover {
+        @include transition($drawer-transition);
     }
 }
 #nav-drawer {
@@ -83,27 +90,25 @@ $drawer-bg: darken($body-bg, 5%) !default;
     margin-top: 0;
 }
 body.drawer-ease {
-    -webkit-transition: margin-left 0.5s ease, margin-right 0.5s ease;
-    -moz-transition: margin-left 0.5s ease, margin-right 0.5s ease;
-    transition: margin-left 0.5s ease, margin-right 0.5s ease;
+    @include transition(margin-left 0.5s ease, margin-right 0.5s ease);
 }
 
 body:not(.uses-drawers).drawer-open-left {
     @include media-breakpoint-up(md) {
-        margin-left: $drawer-width;
+        margin-left: $drawer-left-width;
     }
 }
 
 body.drawer-open-left #page.drawers {
     @include media-breakpoint-up(md) {
-        margin-left: $drawer-width;
+        margin-left: $drawer-left-width;
         padding-left: 1rem;
     }
 }
 
 body.drawer-open-right {
     @include media-breakpoint-up(md) {
-        margin-right: $drawer-width;
+        margin-right: $drawer-right-width;
     }
 }
 
@@ -121,7 +126,7 @@ $right-drawer-width: 320px;
         right: 0;
         height: calc(100% - #{$navbar-height});
         width: $right-drawer-width;
-        box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+        box-shadow: -2px 2px 4px $drawer-shadow-color;
         padding: 0;
         visibility: visible;
         opacity: 1;
@@ -155,39 +160,52 @@ $right-drawer-width: 320px;
 
 .dir-rtl {
     [data-region=right-hand-drawer] {
-        box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);
+        box-shadow: 2px 2px 4px $drawer-shadow-color;
     }
 }
 
 @mixin drawer() {
-    transition: left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease;
-    background-color: $body-bg;
+    @include transition($drawer-transition);
+    background-color: $drawer-bg-color;
     z-index: $zindex-modal;
     position: fixed;
     height: 100vh;
     top: 0;
+
+    &.not-initialized {
+        display: none;
+    }
 }
 
 @mixin drawertypes() {
-    &.drawer-left,
     &.drawer-right {
-        width: $drawer-width;
-        max-width: $drawer-width;
-    }
-    &.drawer-right {
-        border-left: $border-width solid $border-color;
-        right: calc(-#{$drawer-width} + -10px);
+        width: $drawer-right-width;
+        max-width: $drawer-right-width;
+        right: calc(-#{$drawer-right-width} + -10px);
         @include box-shadow($box-shadow-drawer-right);
+
         &.show {
             right: 0;
         }
+
+        .drawertoggle {
+            margin-left: auto;
+            margin-right: 5px;
+        }
     }
     &.drawer-left {
-        border-right: $border-width solid $border-color;
-        left: calc(-#{$drawer-width} + -10px);
+        width: $drawer-left-width;
+        max-width: $drawer-left-width;
+        left: calc(-#{$drawer-left-width} + -10px);
         @include box-shadow($box-shadow-drawer-left);
+
         &.show {
             left: 0;
+        }
+
+        .drawertoggle {
+            margin-right: auto;
+            margin-left: 5px;
         }
     }
     &.drawer-bottom {
@@ -206,12 +224,26 @@ $right-drawer-width: 320px;
 @include media-breakpoint-up(lg) {
     .drawer {
         z-index: inherit;
+
+        &.not-initialized {
+            display: block;
+        }
     }
 }
 
 .drawer-md,
 .drawer-sm {
     display: none;
+}
+
+.drawerheader {
+    padding: 0;
+    height: $navbar-height;
+    display: flex;
+    align-items: center;
+}
+.drawer.scrolled .drawerheader {
+    box-shadow: 0 8px 11px -7px $drawer-shadow-color;
 }
 
 @include media-breakpoint-down(md) {
@@ -230,23 +262,20 @@ $right-drawer-width: 320px;
     }
 }
 
-.drawerheader {
-    padding: 0 0.75rem;
-    height: $navbar-height;
-    display: flex;
-    align-items: center;
-    border-bottom: $border-width solid $border-color;
-    .drawertoggle {
-        margin-left: auto;
-    }
-}
-
 .drawercontent {
     position: relative;
+    z-index: -1;
     height: calc(100% - #{$navbar-height});
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     overflow-y: auto;
-    padding: 0.5rem;
+    padding: 0.4rem;
+
+    .dropdown-menu .dropdown-item {
+        width: 220px;
+        white-space: normal;
+    }
+
+    @include thin-scrolls($drawer-scroll-bg-track);
 }

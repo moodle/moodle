@@ -235,6 +235,8 @@ if ($mform->is_cancelled()) {
 $pagetitle = get_string('editoverride', 'lesson');
 $PAGE->navbar->add($pagetitle);
 $PAGE->set_pagelayout('admin');
+$PAGE->set_secondary_active_tab('mod_lesson_useroverrides');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();

@@ -92,8 +92,8 @@ class tracks_viewed extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return array($this->courseid, 'scorm', 'userreporttracks', 'report/userreporttracks.php?id=' . $this->contextinstanceid
-            . '&user=' . $this->relateduserid . '&attempt=' . $this->other['attemptid'] . '&scoid=' . $this->other['scoid'],
-            $this->other['instanceid'], $this->contextinstanceid);
+            . '&user=' . $this->relateduserid . '&attempt=' . $this->other['attemptid'] . '&scoid=' . $this->other['scoid']
+            . '&mode=' . $this->other['mode'], $this->other['instanceid'], $this->contextinstanceid);
     }
 
     /**

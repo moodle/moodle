@@ -1195,18 +1195,9 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode='',
     global $DB;
 
     $return = '';
-    if ( $aliases = $DB->get_records('glossary_alias', array('entryid'=>$entry->id))) {
-        foreach ($aliases as $alias) {
-            if (trim($alias->alias)) {
-                if ($return == '') {
-                    $return = '<select id="keyword" class="custom-select">';
-                }
-                $return .= "<option>$alias->alias</option>";
-            }
-        }
-        if ($return != '') {
-            $return .= '</select>';
-        }
+    if ($aliases = $DB->get_fieldset_select('glossary_alias', 'alias', 'entryid = :entryid', ['entryid' => $entry->id])) {
+        $id = "keyword-{$entry->id}";
+        $return = html_writer::select($aliases, $id, '', false, ['id' => $id]);
     }
     if ($type == 'print') {
         echo $return;
@@ -1376,9 +1367,10 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
     if ($aliases || $icons || !empty($entry->rating)) {
         echo '<table>';
         if ( $aliases ) {
+            $id = "keyword-{$entry->id}";
             echo '<tr valign="top"><td class="aliases">' .
-                 '<label for="keyword">' . get_string('aliases','glossary').': </label>' .
-                 $aliases . '</td></tr>';
+                '<label for="' . $id . '">' . get_string('aliases', 'glossary') . ': </label>' .
+                $aliases . '</td></tr>';
         }
         if ($icons) {
             echo '<tr valign="top"><td class="icons">'.$icons.'</td></tr>';
@@ -3087,7 +3079,7 @@ function glossary_get_extra_capabilities() {
 
 /**
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function glossary_supports($feature) {
     switch($feature) {
@@ -3102,6 +3094,7 @@ function glossary_supports($feature) {
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
         case FEATURE_COMMENT:                 return true;
+        case FEATURE_MOD_PURPOSE:             return MOD_PURPOSE_COLLABORATION;
 
         default: return null;
     }
@@ -3150,22 +3143,32 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
     $hook = optional_param('hook', 'ALL', PARAM_CLEAN);
 
     if (has_capability('mod/glossary:import', $PAGE->cm->context)) {
-        $glossarynode->add(get_string('importentries', 'glossary'), new moodle_url('/mod/glossary/import.php', array('id'=>$PAGE->cm->id)));
+        $node = $glossarynode->add(get_string('importentries', 'glossary'),
+            new moodle_url('/mod/glossary/import.php', ['id' => $PAGE->cm->id]));
+        $node->set_show_in_secondary_navigation(false);
     }
 
     if (has_capability('mod/glossary:export', $PAGE->cm->context)) {
-        $glossarynode->add(get_string('exportentries', 'glossary'), new moodle_url('/mod/glossary/export.php', array('id'=>$PAGE->cm->id, 'mode'=>$mode, 'hook'=>$hook)));
-    }
-
-    if (has_capability('mod/glossary:approve', $PAGE->cm->context) && ($hiddenentries = $DB->count_records('glossary_entries', array('glossaryid'=>$PAGE->cm->instance, 'approved'=>0)))) {
-        $glossarynode->add(get_string('waitingapproval', 'glossary'), new moodle_url('/mod/glossary/view.php', array('id'=>$PAGE->cm->id, 'mode'=>'approval')));
-    }
-
-    if (has_capability('mod/glossary:write', $PAGE->cm->context)) {
-        $glossarynode->add(get_string('addentry', 'glossary'), new moodle_url('/mod/glossary/edit.php', array('cmid'=>$PAGE->cm->id)));
+        $node = $glossarynode->add(get_string('exportentries', 'glossary'),
+            new moodle_url('/mod/glossary/export.php', ['id' => $PAGE->cm->id, 'mode' => $mode, 'hook' => $hook]));
+        $node->set_show_in_secondary_navigation(false);
     }
 
     $glossary = $DB->get_record('glossary', array("id" => $PAGE->cm->instance));
+    $hiddenentries = $DB->count_records('glossary_entries', ['glossaryid' => $PAGE->cm->instance, 'approved' => 0]);
+
+    // Safe guard check - Ideally, there shouldn't be any hidden entries if the glossary has 'defaultapproval'.
+    if (has_capability('mod/glossary:approve', $PAGE->cm->context) && (!$glossary->defaultapproval || $hiddenentries)) {
+        $glossarynode->add(get_string('pendingapproval', 'glossary'),
+            new moodle_url('/mod/glossary/view.php', ['id' => $PAGE->cm->id, 'mode' => 'approval']),
+            navigation_node::TYPE_CUSTOM, null, 'pendingapproval');
+    }
+
+    if (has_capability('mod/glossary:write', $PAGE->cm->context)) {
+        $node = $glossarynode->add(get_string('addentry', 'glossary'),
+            new moodle_url('/mod/glossary/edit.php', ['cmid' => $PAGE->cm->id]));
+        $node->set_show_in_secondary_navigation(false);
+    }
 
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds) && $glossary->rsstype && $glossary->rssarticles && has_capability('mod/glossary:view', $PAGE->cm->context)) {
         require_once("$CFG->libdir/rsslib.php");
@@ -3173,7 +3176,8 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
         $string = get_string('rsstype', 'glossary');
 
         $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $USER->id, 'mod_glossary', $glossary->id));
-        $glossarynode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
+        $node = $glossarynode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
+        $node->set_show_in_secondary_navigation(false);
     }
 }
 

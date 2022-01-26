@@ -42,7 +42,7 @@ use externallib_advanced_testcase;
  * @copyright  2020 Ilya Tregubov <ilya@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_user_attempts_testcase extends externallib_advanced_testcase {
+class get_user_attempts_test extends externallib_advanced_testcase {
 
     /**
      * Test the behaviour of get_user_attempts getting more than one user at once.
@@ -181,5 +181,69 @@ class get_user_attempts_testcase extends externallib_advanced_testcase {
                 ['student1'],
             ],
         ];
+    }
+
+    /**
+     * Data provider for {@see test_execute_with_sortorder}
+     *
+     * @return array[]
+     */
+    public function execute_with_sortorder(): array {
+        return [
+            'Sort by id' => ['id', ['user01', 'user02']],
+            'Sort by id desc' => ['id desc', ['user02', 'user01']],
+            'Sort by id asc' => ['id asc', ['user01', 'user02']],
+            'Sort by firstname' => ['firstname', ['user01', 'user02']],
+            'Sort by firstname desc' => ['firstname desc', ['user02', 'user01']],
+            'Sort by firstname asc' => ['firstname asc', ['user01', 'user02']],
+            'Sort by lastname' => ['lastname', ['user02', 'user01']],
+            'Sort by lastname desc' => ['lastname desc', ['user01', 'user02']],
+            'Sort by lastname asc' => ['lastname asc', ['user02', 'user01']],
+            // Edge cases (should fall back to default).
+            'Sort by empty string' => ['', ['user01', 'user02']],
+            'Sort by invalid field' => ['invalid', ['user01', 'user02']],
+        ];
+    }
+
+    /**
+     * Test external execute method with sortorder
+     *
+     * @param string $sortorder
+     * @param string[] $expectedorder
+     *
+     * @dataProvider execute_with_sortorder
+     */
+    public function test_execute_with_sortorder(string $sortorder, array $expectedorder): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create course, module.
+        $course = $this->getDataGenerator()->create_course();
+        $module = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
+
+        // Couple of enrolled users in the course.
+        $users['user01'] = $this->getDataGenerator()->create_and_enrol($course, 'student', [
+            'username' => 'user01',
+            'firstname' => 'Adam',
+            'lastname' => 'Zebra',
+        ]);
+        $users['user02'] = $this->getDataGenerator()->create_and_enrol($course, 'student', [
+            'username' => 'user02',
+            'firstname' => 'Zoe',
+            'lastname' => 'Apples',
+        ]);
+
+        $result = external_api::clean_returnvalue(
+            get_user_attempts::execute_returns(),
+            get_user_attempts::execute($module->id, $sortorder)
+        );
+
+        // Map expected order of usernames to user IDs.
+        $expectedorderbyuserid = array_map(static function(string $username) use ($users): int {
+            return $users[$username]->id;
+        }, $expectedorder);
+
+        // The order should match the ordering of user attempt user IDs.
+        $this->assertEquals($expectedorderbyuserid, array_column($result['usersattempts'], 'userid'));
     }
 }

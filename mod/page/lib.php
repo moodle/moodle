@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * List of features supported in Page module
  * @param string $feature FEATURE_xx constant for requested feature
- * @return mixed True if module supports feature, false if not, null if doesn't know
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function page_supports($feature) {
     switch($feature) {
@@ -39,6 +39,7 @@ function page_supports($feature) {
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_MOD_PURPOSE:             return MOD_PURPOSE_CONTENT;
 
         default: return null;
     }
@@ -229,7 +230,7 @@ function page_get_coursemodule_info($coursemodule) {
     }
 
     $fullurl = "$CFG->wwwroot/mod/page/view.php?id=$coursemodule->id&amp;inpopup=1";
-    $options = empty($page->displayoptions) ? array() : unserialize($page->displayoptions);
+    $options = empty($page->displayoptions) ? [] : (array) unserialize_array($page->displayoptions);
     $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
     $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
     $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";

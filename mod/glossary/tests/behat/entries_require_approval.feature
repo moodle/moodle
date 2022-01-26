@@ -40,10 +40,10 @@ Feature: A teacher can choose whether glossary entries require approval
     And I log out
     # Approve the entry.
     And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
-    And I follow "Waiting approval"
+    And I follow "Pending approval"
     Then I should see "(this entry is currently hidden)"
     And I follow "Approve"
-    And I click on "Test glossary name" "link" in the "page-header" "region"
+    And I am on the "Test glossary name" "glossary activity" page
     Then I should see "Concept definition"
     And I log out
     # Check that the entry can now be viewed by students.
@@ -68,7 +68,7 @@ Feature: A teacher can choose whether glossary entries require approval
       | Tags       | Test  |
     And I log out
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     And I add the "Navigation" block if not present
     And I expand "Site pages" node
     And I click on "Tags" "link" in the "Navigation" "block"

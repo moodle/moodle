@@ -89,9 +89,6 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'singleview';
 
-// First make sure we have proper final grades.
-grade_regrade_final_grades_if_required($course);
-
 $report = new gradereport_singleview($courseid, $gpr, $context, $itemtype, $itemid);
 
 $reportname = $report->screen->heading();
@@ -108,33 +105,42 @@ $pageparams = array(
     'perpage' => $perpage
 );
 
-$currentpage = new moodle_url('/grade/report/singleview/index.php', $pageparams);
+$PAGE->set_pagelayout('report');
+
+$actionbar = new \core_grades\output\general_action_bar($context,
+    new moodle_url('/grade/report/singleview/index.php', ['id' => $courseid]), 'report', 'singleview');
+
+if ($itemtype == 'user') {
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false,
+        true, null, null, $report->screen->item, $actionbar);
+} else {
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false,
+        true, null, null, null, $actionbar);
+}
 
 if ($data = data_submitted()) {
-    $PAGE->set_pagelayout('redirect');
-    $PAGE->set_title(get_string('savegrades', 'gradereport_singleview'));
-    echo $OUTPUT->header();
-
-    require_sesskey(); // Must have a sesskey for all actions.
+    // Must have a sesskey for all actions.
+    require_sesskey();
     $result = $report->process_data($data);
 
-    if (!empty($result->warnings)) {
-        foreach ($result->warnings as $warning) {
-            echo $OUTPUT->notification($warning);
+    // If result is not null (because somedata was processed), warnings and success message should be displayed.
+    if (!is_null($result)) {
+        if (!empty($result->warnings)) {
+            foreach ($result->warnings as $warning) {
+                \core\notification::add($warning);
+            }
         }
+
+        // And notify the user of the success result.
+        \core\notification::add(
+            get_string('savegradessuccess', 'gradereport_singleview', count ((array)$result->changecount)),
+            \core\notification::SUCCESS
+        );
     }
-    echo $OUTPUT->notification(get_string('savegradessuccess', 'gradereport_singleview', count ((array)$result->changecount)));
-    echo $OUTPUT->continue_button($currentpage);
-    echo $OUTPUT->footer();
-    die();
 }
 
-$PAGE->set_pagelayout('report');
-if ($itemtype == 'user') {
-    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false, true, null, null, $report->screen->item);
-} else {
-    print_grade_page_head($course->id, 'report', 'singleview', $reportname);
-}
+// Make sure we have proper final grades.
+grade_regrade_final_grades_if_required($course);
 
 $graderrightnav = $graderleftnav = null;
 

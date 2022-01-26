@@ -22,360 +22,342 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-    require_once(__DIR__ . '/../../config.php');
-    require_once($CFG->dirroot . '/mod/data/locallib.php');
-    require_once($CFG->libdir . '/rsslib.php');
+require_once(__DIR__ . '/../../config.php');
+require_once($CFG->dirroot . '/mod/data/locallib.php');
+require_once($CFG->libdir . '/rsslib.php');
 
 /// One of these is necessary!
-    $id = optional_param('id', 0, PARAM_INT);  // course module id
-    $d = optional_param('d', 0, PARAM_INT);   // database id
-    $rid = optional_param('rid', 0, PARAM_INT);    //record id
-    $mode = optional_param('mode', '', PARAM_ALPHA);    // Force the browse mode  ('single')
-    $filter = optional_param('filter', 0, PARAM_BOOL);
-    // search filter will only be applied when $filter is true
+$id = optional_param('id', 0, PARAM_INT);  // course module id
+$d = optional_param('d', 0, PARAM_INT);   // database id
+$rid = optional_param('rid', 0, PARAM_INT);    //record id
+$mode = optional_param('mode', '', PARAM_ALPHA);    // Force the browse mode  ('single')
+$filter = optional_param('filter', 0, PARAM_BOOL);
+// search filter will only be applied when $filter is true
 
-    $edit = optional_param('edit', -1, PARAM_BOOL);
-    $page = optional_param('page', 0, PARAM_INT);
+$edit = optional_param('edit', -1, PARAM_BOOL);
+$page = optional_param('page', 0, PARAM_INT);
 /// These can be added to perform an action on a record
-    $approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
-    $disapprove = optional_param('disapprove', 0, PARAM_INT);    // disapproval recordid
-    $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
-    $multidelete = optional_param_array('delcheck', null, PARAM_INT);
-    $serialdelete = optional_param('serialdelete', null, PARAM_RAW);
+$approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
+$disapprove = optional_param('disapprove', 0, PARAM_INT);    // disapproval recordid
+$delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
+$multidelete = optional_param_array('delcheck', null, PARAM_INT);
+$serialdelete = optional_param('serialdelete', null, PARAM_RAW);
 
-    if ($id) {
-        if (! $cm = get_coursemodule_from_id('data', $id)) {
-            print_error('invalidcoursemodule');
-        }
-        if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-            print_error('coursemisconf');
-        }
-        if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-            print_error('invalidcoursemodule');
-        }
-        $record = NULL;
-
-    } else if ($rid) {
-        if (! $record = $DB->get_record('data_records', array('id'=>$rid))) {
-            print_error('invalidrecord', 'data');
-        }
-        if (! $data = $DB->get_record('data', array('id'=>$record->dataid))) {
-            print_error('invalidid', 'data');
-        }
-        if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-            print_error('coursemisconf');
-        }
-        if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-            print_error('invalidcoursemodule');
-        }
-    } else {   // We must have $d
-        if (! $data = $DB->get_record('data', array('id'=>$d))) {
-            print_error('invalidid', 'data');
-        }
-        if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-            print_error('coursemisconf');
-        }
-        if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-            print_error('invalidcoursemodule');
-        }
-        $record = NULL;
+if ($id) {
+    if (! $cm = get_coursemodule_from_id('data', $id)) {
+        print_error('invalidcoursemodule');
     }
-    $cm = cm_info::create($cm);
-    require_course_login($course, true, $cm);
+    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
+        print_error('coursemisconf');
+    }
+    if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
+        print_error('invalidcoursemodule');
+    }
+    $record = NULL;
 
-    require_once($CFG->dirroot . '/comment/lib.php');
-    comment::init();
+} else if ($rid) {
+    if (! $record = $DB->get_record('data_records', array('id'=>$rid))) {
+        print_error('invalidrecord', 'data');
+    }
+    if (! $data = $DB->get_record('data', array('id'=>$record->dataid))) {
+        print_error('invalidid', 'data');
+    }
+    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
+        print_error('coursemisconf');
+    }
+    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
+        print_error('invalidcoursemodule');
+    }
+} else {   // We must have $d
+    if (! $data = $DB->get_record('data', array('id'=>$d))) {
+        print_error('invalidid', 'data');
+    }
+    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
+        print_error('coursemisconf');
+    }
+    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
+        print_error('invalidcoursemodule');
+    }
+    $record = NULL;
+}
+$cm = cm_info::create($cm);
+require_course_login($course, true, $cm);
 
-    $context = context_module::instance($cm->id);
-    require_capability('mod/data:viewentry', $context);
+require_once($CFG->dirroot . '/comment/lib.php');
+comment::init();
+
+$context = context_module::instance($cm->id);
+require_capability('mod/data:viewentry', $context);
 
 /// If we have an empty Database then redirect because this page is useless without data
-    if (has_capability('mod/data:managetemplates', $context)) {
-        if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {      // Brand new database!
-            redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
-        }
+if (has_capability('mod/data:managetemplates', $context)) {
+    if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {      // Brand new database!
+        redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
     }
+}
 
 
 /// Check further parameters that set browsing preferences
-    if (!isset($SESSION->dataprefs)) {
-        $SESSION->dataprefs = array();
-    }
-    if (!isset($SESSION->dataprefs[$data->id])) {
-        $SESSION->dataprefs[$data->id] = array();
-        $SESSION->dataprefs[$data->id]['search'] = '';
+if (!isset($SESSION->dataprefs)) {
+    $SESSION->dataprefs = array();
+}
+if (!isset($SESSION->dataprefs[$data->id])) {
+    $SESSION->dataprefs[$data->id] = array();
+    $SESSION->dataprefs[$data->id]['search'] = '';
+    $SESSION->dataprefs[$data->id]['search_array'] = array();
+    $SESSION->dataprefs[$data->id]['sort'] = $data->defaultsort;
+    $SESSION->dataprefs[$data->id]['advanced'] = 0;
+    $SESSION->dataprefs[$data->id]['order'] = ($data->defaultsortdir == 0) ? 'ASC' : 'DESC';
+}
+
+// reset advanced form
+if (!is_null(optional_param('resetadv', null, PARAM_RAW))) {
+    $SESSION->dataprefs[$data->id]['search_array'] = array();
+    // we need the redirect to cleanup the form state properly
+    redirect("view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=1");
+}
+
+$advanced = optional_param('advanced', -1, PARAM_INT);
+if ($advanced == -1) {
+    $advanced = $SESSION->dataprefs[$data->id]['advanced'];
+} else {
+    if (!$advanced) {
+        // explicitly switched to normal mode - discard all advanced search settings
         $SESSION->dataprefs[$data->id]['search_array'] = array();
-        $SESSION->dataprefs[$data->id]['sort'] = $data->defaultsort;
-        $SESSION->dataprefs[$data->id]['advanced'] = 0;
-        $SESSION->dataprefs[$data->id]['order'] = ($data->defaultsortdir == 0) ? 'ASC' : 'DESC';
+    }
+    $SESSION->dataprefs[$data->id]['advanced'] = $advanced;
+}
+
+$search_array = $SESSION->dataprefs[$data->id]['search_array'];
+
+if (!empty($advanced)) {
+    $search = '';
+
+    //Added to ammend paging error. This error would occur when attempting to go from one page of advanced
+    //search results to another.  All fields were reset in the page transfer, and there was no way of determining
+    //whether or not the user reset them.  This would cause a blank search to execute whenever the user attempted
+    //to see any page of results past the first.
+    //This fix works as follows:
+    //$paging flag is set to false when page 0 of the advanced search results is viewed for the first time.
+    //Viewing any page of results after page 0 passes the false $paging flag though the URL (see line 523) and the
+    //execution falls through to the second condition below, allowing paging to be set to true.
+    //Paging remains true and keeps getting passed though the URL until a new search is performed
+    //(even if page 0 is revisited).
+    //A false $paging flag generates advanced search results based on the fields input by the user.
+    //A true $paging flag generates davanced search results from the $SESSION global.
+
+    $paging = optional_param('paging', NULL, PARAM_BOOL);
+    if($page == 0 && !isset($paging)) {
+        $paging = false;
+    }
+    else {
+        $paging = true;
     }
 
-    // reset advanced form
-    if (!is_null(optional_param('resetadv', null, PARAM_RAW))) {
-        $SESSION->dataprefs[$data->id]['search_array'] = array();
-        // we need the redirect to cleanup the form state properly
-        redirect("view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=1");
-    }
+    // Now build the advanced search array.
+    list($search_array, $search) = data_build_search_array($data, $paging, $search_array);
+    $SESSION->dataprefs[$data->id]['search_array'] = $search_array;     // Make it sticky.
 
-    $advanced = optional_param('advanced', -1, PARAM_INT);
-    if ($advanced == -1) {
-        $advanced = $SESSION->dataprefs[$data->id]['advanced'];
-    } else {
-        if (!$advanced) {
-            // explicitly switched to normal mode - discard all advanced search settings
-            $SESSION->dataprefs[$data->id]['search_array'] = array();
-        }
-        $SESSION->dataprefs[$data->id]['advanced'] = $advanced;
-    }
+} else {
+    $search = optional_param('search', $SESSION->dataprefs[$data->id]['search'], PARAM_NOTAGS);
+    //Paging variable not used for standard search. Set it to null.
+    $paging = NULL;
+}
 
-    $search_array = $SESSION->dataprefs[$data->id]['search_array'];
+// Disable search filters if $filter is not true:
+if (! $filter) {
+    $search = '';
+}
 
-    if (!empty($advanced)) {
-        $search = '';
+$SESSION->dataprefs[$data->id]['search'] = $search;   // Make it sticky
 
-        //Added to ammend paging error. This error would occur when attempting to go from one page of advanced
-        //search results to another.  All fields were reset in the page transfer, and there was no way of determining
-        //whether or not the user reset them.  This would cause a blank search to execute whenever the user attempted
-        //to see any page of results past the first.
-        //This fix works as follows:
-        //$paging flag is set to false when page 0 of the advanced search results is viewed for the first time.
-        //Viewing any page of results after page 0 passes the false $paging flag though the URL (see line 523) and the
-        //execution falls through to the second condition below, allowing paging to be set to true.
-        //Paging remains true and keeps getting passed though the URL until a new search is performed
-        //(even if page 0 is revisited).
-        //A false $paging flag generates advanced search results based on the fields input by the user.
-        //A true $paging flag generates davanced search results from the $SESSION global.
+$sort = optional_param('sort', $SESSION->dataprefs[$data->id]['sort'], PARAM_INT);
+$SESSION->dataprefs[$data->id]['sort'] = $sort;       // Make it sticky
 
-        $paging = optional_param('paging', NULL, PARAM_BOOL);
-        if($page == 0 && !isset($paging)) {
-            $paging = false;
-        }
-        else {
-            $paging = true;
-        }
-
-        // Now build the advanced search array.
-        list($search_array, $search) = data_build_search_array($data, $paging, $search_array);
-        $SESSION->dataprefs[$data->id]['search_array'] = $search_array;     // Make it sticky.
-
-    } else {
-        $search = optional_param('search', $SESSION->dataprefs[$data->id]['search'], PARAM_NOTAGS);
-        //Paging variable not used for standard search. Set it to null.
-        $paging = NULL;
-    }
-
-    // Disable search filters if $filter is not true:
-    if (! $filter) {
-        $search = '';
-    }
-
-    $SESSION->dataprefs[$data->id]['search'] = $search;   // Make it sticky
-
-    $sort = optional_param('sort', $SESSION->dataprefs[$data->id]['sort'], PARAM_INT);
-    $SESSION->dataprefs[$data->id]['sort'] = $sort;       // Make it sticky
-
-    $order = (optional_param('order', $SESSION->dataprefs[$data->id]['order'], PARAM_ALPHA) == 'ASC') ? 'ASC': 'DESC';
-    $SESSION->dataprefs[$data->id]['order'] = $order;     // Make it sticky
+$order = (optional_param('order', $SESSION->dataprefs[$data->id]['order'], PARAM_ALPHA) == 'ASC') ? 'ASC': 'DESC';
+$SESSION->dataprefs[$data->id]['order'] = $order;     // Make it sticky
 
 
-    $oldperpage = get_user_preferences('data_perpage_'.$data->id, 10);
-    $perpage = optional_param('perpage', $oldperpage, PARAM_INT);
+$oldperpage = get_user_preferences('data_perpage_'.$data->id, 10);
+$perpage = optional_param('perpage', $oldperpage, PARAM_INT);
 
-    if ($perpage < 2) {
-        $perpage = 2;
-    }
-    if ($perpage != $oldperpage) {
-        set_user_preference('data_perpage_'.$data->id, $perpage);
-    }
+if ($perpage < 2) {
+    $perpage = 2;
+}
+if ($perpage != $oldperpage) {
+    set_user_preference('data_perpage_'.$data->id, $perpage);
+}
 
-    // Completion and trigger events.
-    data_view($data, $course, $cm, $context);
+// Completion and trigger events.
+data_view($data, $course, $cm, $context);
 
-    $urlparams = array('d' => $data->id);
-    if ($record) {
-        $urlparams['rid'] = $record->id;
-    }
-    if ($page) {
-        $urlparams['page'] = $page;
-    }
-    if ($mode) {
-        $urlparams['mode'] = $mode;
-    }
-    if ($filter) {
-        $urlparams['filter'] = $filter;
-    }
-// Initialize $PAGE, compute blocks
-    $PAGE->set_url('/mod/data/view.php', $urlparams);
+$urlparams = array('d' => $data->id);
+if ($record) {
+    $urlparams['rid'] = $record->id;
+}
+if ($mode) {
+    $urlparams['mode'] = $mode;
+}
+if ($page) {
+    $urlparams['page'] = $page;
+}
+if ($filter) {
+    $urlparams['filter'] = $filter;
+}
+$pageurl = new moodle_url('/mod/data/view.php', $urlparams);
 
-    if (($edit != -1) and $PAGE->user_allowed_editing()) {
-        $USER->editing = $edit;
-    }
+// Initialize $PAGE, compute blocks.
+$PAGE->set_url($pageurl);
 
-    $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
+if (($edit != -1) and $PAGE->user_allowed_editing()) {
+    $USER->editing = $edit;
+}
+
+$courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 
 /// RSS and CSS and JS meta
-    $meta = '';
-    if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
-        $rsstitle = $courseshortname . ': ' . format_string($data->name);
-        rss_add_http_header($context, 'mod_data', $data, $rsstitle);
-    }
-    if ($data->csstemplate) {
-        $PAGE->requires->css('/mod/data/css.php?d='.$data->id);
-    }
-    if ($data->jstemplate) {
-        $PAGE->requires->js('/mod/data/js.php?d='.$data->id, true);
-    }
+$meta = '';
+if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
+    $rsstitle = $courseshortname . ': ' . format_string($data->name);
+    rss_add_http_header($context, 'mod_data', $data, $rsstitle);
+}
+if ($data->csstemplate) {
+    $PAGE->requires->css('/mod/data/css.php?d='.$data->id);
+}
+if ($data->jstemplate) {
+    $PAGE->requires->js('/mod/data/js.php?d='.$data->id, true);
+}
 
 /// Print the page header
-    // Note: MDL-19010 there will be further changes to printing header and blocks.
-    // The code will be much nicer than this eventually.
-    $title = $courseshortname.': ' . format_string($data->name);
+// Note: MDL-19010 there will be further changes to printing header and blocks.
+// The code will be much nicer than this eventually.
+$title = $courseshortname.': ' . format_string($data->name);
 
-    if ($PAGE->user_allowed_editing()) {
-        // Change URL parameter and block display string value depending on whether editing is enabled or not
-        if ($PAGE->user_is_editing()) {
-            $urlediting = 'off';
-            $strediting = get_string('blockseditoff');
-        } else {
-            $urlediting = 'on';
-            $strediting = get_string('blocksediton');
-        }
-        $url = new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('id' => $cm->id, 'edit' => $urlediting));
-        $PAGE->set_button($OUTPUT->single_button($url, $strediting));
+if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
+    // Change URL parameter and block display string value depending on whether editing is enabled or not
+    if ($PAGE->user_is_editing()) {
+        $urlediting = 'off';
+        $strediting = get_string('blockseditoff');
+    } else {
+        $urlediting = 'on';
+        $strediting = get_string('blocksediton');
     }
+    $url = new moodle_url($CFG->wwwroot.'/mod/data/view.php', array('id' => $cm->id, 'edit' => $urlediting));
+    $PAGE->set_button($OUTPUT->single_button($url, $strediting));
+}
 
-    if ($mode == 'asearch') {
-        $PAGE->navbar->add(get_string('search'));
-    }
+if ($mode == 'asearch') {
+    $PAGE->navbar->add(get_string('search'));
+}
 
-    $PAGE->force_settings_menu();
-    $PAGE->set_title($title);
-    $PAGE->set_heading($course->fullname);
+$PAGE->set_title($title);
+$PAGE->set_heading($course->fullname);
+$PAGE->force_settings_menu(true);
 
-    echo $OUTPUT->header();
+// Check to see if groups are being used here.
+// We need the most up to date current group value. Make sure it is updated at this point.
+$currentgroup = groups_get_activity_group($cm, true);
+$groupmode = groups_get_activity_groupmode($cm);
+$canmanageentries = has_capability('mod/data:manageentries', $context);
+echo $OUTPUT->header();
 
-    // Check to see if groups are being used here.
-    // We need the most up to date current group value. Make sure it is updated at this point.
-    $currentgroup = groups_get_activity_group($cm, true);
-    $groupmode = groups_get_activity_groupmode($cm);
-    $canmanageentries = has_capability('mod/data:manageentries', $context);
+// Detect entries not approved yet and show hint instead of not found error.
+if ($record and !data_can_view_record($data, $record, $currentgroup, $canmanageentries)) {
+    print_error('notapproved', 'data');
+}
 
+// Do we need to show a link to the RSS feed for the records?
+//this links has been Settings (database activity administration) block
+/*if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
+    echo '<div style="float:right;">';
+    rss_print_link($context->id, $USER->id, 'mod_data', $data->id, get_string('rsstype'));
+    echo '</div>';
+    echo '<div style="clear:both;"></div>';
+}*/
 
-    // Detect entries not approved yet and show hint instead of not found error.
-    if ($record and !data_can_view_record($data, $record, $currentgroup, $canmanageentries)) {
-        print_error('notapproved', 'data');
-    }
+if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
+    $options = new stdClass();
+    $options->noclean = true;
+}
 
-    echo $OUTPUT->heading(format_string($data->name), 2);
-
-    // Render the activity information.
-    $completiondetails = \core_completion\cm_completion_details::get_instance($cm, $USER->id);
-    $activitydates = \core\activity_dates::get_dates_for_module($cm, $USER->id);
-    echo $OUTPUT->activity_information($cm, $completiondetails, $activitydates);
-
-    // Do we need to show a link to the RSS feed for the records?
-    //this links has been Settings (database activity administration) block
-    /*if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
-        echo '<div style="float:right;">';
-        rss_print_link($context->id, $USER->id, 'mod_data', $data->id, get_string('rsstype'));
-        echo '</div>';
-        echo '<div style="clear:both;"></div>';
-    }*/
-
-    if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
-        $options = new stdClass();
-        $options->noclean = true;
-    }
-    echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
-
-    $returnurl = $CFG->wwwroot . '/mod/data/view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
-    groups_print_activity_menu($cm, $returnurl);
+$returnurl = $CFG->wwwroot . '/mod/data/view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
+groups_print_activity_menu($cm, $returnurl);
 
 /// Delete any requested records
 
-    if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, $context))) {
-        if ($confirm = optional_param('confirm',0,PARAM_INT)) {
-            if (data_delete_record($delete, $data, $course->id, $cm->id)) {
-                echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
+if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, $context))) {
+    if ($confirm = optional_param('confirm',0,PARAM_INT)) {
+        if (data_delete_record($delete, $data, $course->id, $cm->id)) {
+            echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
+        }
+    } else {   // Print a confirmation page
+        $userfieldsapi = \core_user\fields::for_userpic()->excluding('id');
+        $allnamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+        $dbparams = array($delete);
+        if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
+                                                   FROM {data_records} dr
+                                                        JOIN {user} u ON dr.userid = u.id
+                                                  WHERE dr.id = ?", $dbparams, MUST_EXIST)) { // Need to check this is valid.
+            if ($deleterecord->dataid == $data->id) {                       // Must be from this database
+                $deletebutton = new single_button(new moodle_url('/mod/data/view.php?d='.$data->id.'&delete='.$delete.'&confirm=1'), get_string('delete'), 'post');
+                echo $OUTPUT->confirm(get_string('confirmdeleterecord','data'),
+                        $deletebutton, 'view.php?d='.$data->id);
+
+                $records[] = $deleterecord;
+                echo data_print_template('singletemplate', $records, $data, '', 0, true);
+
+                echo $OUTPUT->footer();
+                exit;
             }
-        } else {   // Print a confirmation page
+        }
+    }
+}
+
+
+// Multi-delete.
+if ($serialdelete) {
+    $multidelete = json_decode($serialdelete);
+}
+
+if ($multidelete && confirm_sesskey() && $canmanageentries) {
+    if ($confirm = optional_param('confirm', 0, PARAM_INT)) {
+        foreach ($multidelete as $value) {
+            data_delete_record($value, $data, $course->id, $cm->id);
+        }
+    } else {
+        $validrecords = array();
+        $recordids = array();
+        foreach ($multidelete as $value) {
             $userfieldsapi = \core_user\fields::for_userpic()->excluding('id');
             $allnamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-            $dbparams = array($delete);
+            $dbparams = array('id' => $value);
             if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
                                                        FROM {data_records} dr
-                                                            JOIN {user} u ON dr.userid = u.id
-                                                      WHERE dr.id = ?", $dbparams, MUST_EXIST)) { // Need to check this is valid.
-                if ($deleterecord->dataid == $data->id) {                       // Must be from this database
-                    $deletebutton = new single_button(new moodle_url('/mod/data/view.php?d='.$data->id.'&delete='.$delete.'&confirm=1'), get_string('delete'), 'post');
-                    echo $OUTPUT->confirm(get_string('confirmdeleterecord','data'),
-                            $deletebutton, 'view.php?d='.$data->id);
-
-                    $records[] = $deleterecord;
-                    echo data_print_template('singletemplate', $records, $data, '', 0, true);
-
-                    echo $OUTPUT->footer();
-                    exit;
+                                                       JOIN {user} u ON dr.userid = u.id
+                                                      WHERE dr.id = ?", $dbparams)) { // Need to check this is valid.
+                if ($deleterecord->dataid == $data->id) {  // Must be from this database.
+                    $validrecords[] = $deleterecord;
+                    $recordids[] = $deleterecord->id;
                 }
             }
         }
+        $serialiseddata = json_encode($recordids);
+        $submitactions = array('d' => $data->id, 'sesskey' => sesskey(), 'confirm' => '1', 'serialdelete' => $serialiseddata);
+        $action = new moodle_url('/mod/data/view.php', $submitactions);
+        $cancelurl = new moodle_url('/mod/data/view.php', array('d' => $data->id));
+        $deletebutton = new single_button($action, get_string('delete'));
+        echo $OUTPUT->confirm(get_string('confirmdeleterecords', 'data'), $deletebutton, $cancelurl);
+        echo data_print_template('listtemplate', $validrecords, $data, '', 0, false);
+        echo $OUTPUT->footer();
+        exit;
     }
+}
 
-
-    // Multi-delete.
-    if ($serialdelete) {
-        $multidelete = json_decode($serialdelete);
-    }
-
-    if ($multidelete && confirm_sesskey() && $canmanageentries) {
-        if ($confirm = optional_param('confirm', 0, PARAM_INT)) {
-            foreach ($multidelete as $value) {
-                data_delete_record($value, $data, $course->id, $cm->id);
-            }
-        } else {
-            $validrecords = array();
-            $recordids = array();
-            foreach ($multidelete as $value) {
-                $userfieldsapi = \core_user\fields::for_userpic()->excluding('id');
-                $allnamefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-                $dbparams = array('id' => $value);
-                if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
-                                                           FROM {data_records} dr
-                                                           JOIN {user} u ON dr.userid = u.id
-                                                          WHERE dr.id = ?", $dbparams)) { // Need to check this is valid.
-                    if ($deleterecord->dataid == $data->id) {  // Must be from this database.
-                        $validrecords[] = $deleterecord;
-                        $recordids[] = $deleterecord->id;
-                    }
-                }
-            }
-            $serialiseddata = json_encode($recordids);
-            $submitactions = array('d' => $data->id, 'sesskey' => sesskey(), 'confirm' => '1', 'serialdelete' => $serialiseddata);
-            $action = new moodle_url('/mod/data/view.php', $submitactions);
-            $cancelurl = new moodle_url('/mod/data/view.php', array('d' => $data->id));
-            $deletebutton = new single_button($action, get_string('delete'));
-            echo $OUTPUT->confirm(get_string('confirmdeleterecords', 'data'), $deletebutton, $cancelurl);
-            echo data_print_template('listtemplate', $validrecords, $data, '', 0, false);
-            echo $OUTPUT->footer();
-            exit;
-        }
-    }
-
-    // If data activity closed dont let students in.
-    // No need to display warnings because activity dates are displayed at the top of the page.
-    list($showactivity, $warnings) = data_get_time_availability_status($data, $canmanageentries);
+// If data activity closed dont let students in.
+// No need to display warnings because activity dates are displayed at the top of the page.
+list($showactivity, $warnings) = data_get_time_availability_status($data, $canmanageentries);
 
 if ($showactivity) {
-    // Print the tabs
-    if ($record or $mode == 'single') {
-        $currenttab = 'single';
-    } elseif($mode == 'asearch') {
-        $currenttab = 'asearch';
-    }
-    else {
-        $currenttab = 'list';
-    }
-    include('tabs.php');
 
     if ($mode == 'asearch') {
         $maxcount = 0;
@@ -415,6 +397,10 @@ if ($showactivity) {
         // Search for entries.
         list($records, $maxcount, $totalcount, $page, $nowperpage, $sort, $mode) =
             data_search_entries($data, $cm, $context, $mode, $currentgroup, $search, $sort, $order, $page, $perpage, $advanced, $search_array, $record);
+        $hasrecords = !empty($records);
+
+        $actionbar = new \mod_data\output\action_bar($data->id, $pageurl);
+        echo $actionbar->get_view_action_bar($hasrecords);
 
         // Advanced search form doesn't make sense for single (redirects list view).
         if ($maxcount && $mode != 'single') {

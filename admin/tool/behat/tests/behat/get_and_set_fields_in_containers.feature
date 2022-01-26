@@ -12,7 +12,7 @@ Feature: Behat steps for interacting with form work
     When I log in as "admin"
     And I am on "Course 1" course homepage
     # Just get to any form.
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "Course full name" in the "General" "fieldset" to "Frog"
     And I set the following fields in the "Appearance" "fieldset" to these values:
       | Show activity reports   | Yes |

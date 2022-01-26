@@ -370,6 +370,8 @@ class manager {
             $tour->set_description($data->description);
             $tour->set_pathmatch($data->pathmatch);
             $tour->set_enabled(!empty($data->enabled));
+            $tour->set_endtourlabel($data->endtourlabel);
+            $tour->set_display_step_numbers(!empty($data->displaystepnumbers));
 
             foreach (configuration::get_defaultable_keys() as $key) {
                 $tour->set_config($key, $data->$key);
@@ -624,6 +626,12 @@ class manager {
     public static function get_matching_tours(\moodle_url $pageurl): array {
         global $PAGE;
 
+        if (\core_user::awaiting_action()) {
+            // User not fully ready to use the site. Don't show any tours, we need the user to get properly set up so
+            // that all require_login() and other bits work as expected.
+            return [];
+        }
+
         $tours = cache::get_matching_tourdata($pageurl);
 
         $matches = [];
@@ -854,10 +862,6 @@ class manager {
         // the format filename => version. The version value needs to
         // be increased if the tour has been updated.
         $shippedtours = [
-            '311_activity_information_activity_page_student.json' => 2,
-            '311_activity_information_activity_page_teacher.json' => 2,
-            '311_activity_information_course_page_student.json' => 2,
-            '311_activity_information_course_page_teacher.json' => 2
         ];
 
         // These are tours that we used to ship but don't ship any longer.
@@ -870,6 +874,12 @@ class manager {
             // Formerly included in Moodle 3.6.0.
             '36_dashboard.json' => 3,
             '36_messaging.json' => 3,
+
+            // Formerly included in Moodle 3.11.0.
+            '311_activity_information_activity_page_student.json' => 2,
+            '311_activity_information_activity_page_teacher.json' => 2,
+            '311_activity_information_course_page_student.json' => 2,
+            '311_activity_information_course_page_teacher.json' => 2,
         ];
 
         $existingtourrecords = $DB->get_recordset('tool_usertours_tours');

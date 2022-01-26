@@ -1174,8 +1174,9 @@ class manager {
                     $overriddenrecord->minute,
                     $overriddenrecord->hour,
                     $overriddenrecord->day,
-                    $overriddenrecord->dayofweek,
-                    $overriddenrecord->month) = explode(' ', $taskconfig['schedule']);
+                    $overriddenrecord->month,
+                    $overriddenrecord->dayofweek
+                ) = explode(' ', $taskconfig['schedule']);
             }
         }
 

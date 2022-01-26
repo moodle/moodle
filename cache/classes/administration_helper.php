@@ -400,8 +400,32 @@ abstract class administration_helper extends cache_helper {
     /**
      * This function must be implemented to display the cache admin page.
      *
-     * @param core_cache_renderer $renderer the renderer used to generate the page.
+     * @param \core_cache\output\renderer $renderer the renderer used to generate the page.
      * @return string the HTML for the page.
      */
-    public abstract function generate_admin_page(\core_cache_renderer $renderer): string;
+    abstract public function generate_admin_page(\core_cache\output\renderer $renderer): string;
+
+    /**
+     * Gets usage information about the whole cache system.
+     *
+     * This is a slow function and should only be used on an admin information page.
+     *
+     * The returned array lists all cache definitions with fields 'cacheid' and 'stores'. For
+     * each store, the following fields are available:
+     *
+     * - name (store name)
+     * - class (e.g. cachestore_redis)
+     * - supported (true if we have any information)
+     * - items (number of items stored)
+     * - mean (mean size of item)
+     * - sd (standard deviation for item sizes)
+     * - margin (margin of error for mean at 95% confidence)
+     * - storetotal (total usage for store if known, otherwise null)
+     *
+     * The storetotal field will be the same for every cache that uses the same store.
+     *
+     * @param int $samplekeys Number of keys to sample when checking size of large caches
+     * @return array Details of cache usage
+     */
+    abstract public function get_usage(int $samplekeys): array;
 }

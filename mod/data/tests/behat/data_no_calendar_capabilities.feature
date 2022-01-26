@@ -15,8 +15,7 @@ Feature: Database with no calendar capabilites
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Permissions" in current page administration
+    And I am on the "Course 1" "permissions" page
     And I override the system permissions of "Teacher" role with:
       | capability | permission |
       | moodle/calendar:manageentries | Prohibit |
@@ -29,7 +28,7 @@ Feature: Database with no calendar capabilites
       | data       | Test database name   | Test database description   | C1     | 1       | data1    |
     And I am on "Course 1" course homepage
     And I follow "Test database name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_timeavailablefrom_enabled | 1 |
       | id_timeavailablefrom_day | 1 |
@@ -52,7 +51,7 @@ Feature: Database with no calendar capabilites
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test database name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_timeavailablefrom_year | 2018 |
       | id_timeavailableto_year | 2018 |

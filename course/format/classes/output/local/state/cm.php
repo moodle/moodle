@@ -17,10 +17,16 @@
 namespace core_courseformat\output\local\state;
 
 use core_courseformat\base as course_format;
+use completion_info;
 use section_info;
 use cm_info;
 use renderable;
 use stdClass;
+use core_availability\info_module;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/completionlib.php');
 
 /**
  * Contains the ajax update course module structure.
@@ -65,19 +71,52 @@ class cm implements renderable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
+        global $USER, $CFG;
 
         $format = $this->format;
         $section = $this->section;
         $cm = $this->cm;
+        $course = $format->get_course();
 
         $data = (object)[
             'id' => $cm->id,
-            'name' => $cm->name,
+            'anchor' => "module-{$cm->id}",
+            'name' => external_format_string($cm->name, $cm->context, true),
             'visible' => !empty($cm->visible),
+            'sectionid' => $section->id,
+            'sectionnumber' => $section->section,
+            'uservisible' => $cm->uservisible,
         ];
+
+        // Check the user access type to this cm.
+        $info = new info_module($cm);
+        $data->accessvisible = ($data->visible && $info->is_available_for_all());
+
+        // Check if restriction access are visible to the user.
+        $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $cm->context);
+        if (!empty($CFG->enableavailability) && $canviewhidden) {
+            // Some users can see restrictions even if it does not apply to them.
+            $data->hascmrectrictions = !empty($cm->availableinfo);
+        } else {
+            $data->hascmrectrictions = !$data->accessvisible || !$cm->uservisible;
+        }
+
+        // Add url if the activity is compatible.
+        $url = $cm->url;
+        if ($url) {
+            $data->url = $url->out();
+        }
 
         if ($this->exportcontent) {
             $data->content = $output->course_section_updated_cm_item($format, $section, $cm);
+        }
+
+        // Completion status.
+        $completioninfo = new completion_info($course);
+        $data->istrackeduser = $completioninfo->is_tracked_user($USER->id);
+        if ($data->istrackeduser && $completioninfo->is_enabled($cm)) {
+            $completiondata = $completioninfo->get_data($cm);
+            $data->completionstate = $completiondata->completionstate;
         }
 
         return $data;

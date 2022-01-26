@@ -179,13 +179,13 @@ class KernelPCA extends PCA
                 // k(x,y)=exp(-γ.|x-y|) where |..| is Euclidean distance
                 $dist = new Euclidean();
 
-                return function ($x, $y) use ($dist) {
+                return function ($x, $y) use ($dist): float {
                     return exp(-$this->gamma * $dist->sqDistance($x, $y));
                 };
 
             case self::KERNEL_SIGMOID:
                 // k(x,y)=tanh(γ.xT.y+c0) where c0=1
-                return function ($x, $y) {
+                return function ($x, $y): float {
                     $res = Matrix::dot($x, $y)[0] + 1.0;
 
                     return tanh((float) $this->gamma * $res);
@@ -195,7 +195,7 @@ class KernelPCA extends PCA
                 // k(x,y)=exp(-γ.|x-y|) where |..| is Manhattan distance
                 $dist = new Manhattan();
 
-                return function ($x, $y) use ($dist) {
+                return function ($x, $y) use ($dist): float {
                     return exp(-$this->gamma * $dist->distance($x, $y));
                 };
 

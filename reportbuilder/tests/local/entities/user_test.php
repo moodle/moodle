@@ -40,7 +40,7 @@ use core_reportbuilder\local\helpers\user_filter_manager;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_testcase extends advanced_testcase {
+class user_test extends advanced_testcase {
 
     /**
      * Load required classes
@@ -252,23 +252,38 @@ class user_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests the helper method for selecting all of a users' name fields
+     * Data provider for {@see test_get_name_fields_select}
+     *
+     * @return array
      */
-    public function test_get_name_fields_select(): void {
+    public function get_name_fields_select_provider(): array {
+        return [
+            ['firstname lastname', ['firstname', 'lastname']],
+            ['firstname middlename lastname', ['firstname', 'middlename', 'lastname']],
+            ['alternatename lastname firstname', ['alternatename', 'lastname', 'firstname']],
+        ];
+    }
+
+    /**
+     * Tests the helper method for selecting all of a users' name fields
+     *
+     * @param string $fullnamedisplay
+     * @param string[] $expecteduserfields
+     *
+     * @dataProvider get_name_fields_select_provider
+     */
+    public function test_get_name_fields_select(string $fullnamedisplay, array $expecteduserfields): void {
         global $DB;
+
+        $this->resetAfterTest(true);
+
+        set_config('alternativefullnameformat', $fullnamedisplay);
 
         $fields = user::get_name_fields_select('u');
         $user = $DB->get_record_sql("SELECT {$fields} FROM {user} u WHERE username = :username", ['username' => 'admin']);
 
         // Ensure we received back all name fields.
-        $this->assertEqualsCanonicalizing([
-            'firstname',
-            'lastname',
-            'firstnamephonetic',
-            'lastnamephonetic',
-            'middlename',
-            'alternatename',
-        ], array_keys((array) $user));
+        $this->assertEquals($expecteduserfields, array_keys((array) $user));
     }
 
     /**

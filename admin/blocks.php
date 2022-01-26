@@ -30,26 +30,28 @@
     $strprotect = get_string('blockprotect', 'admin');
     $strunprotect = get_string('blockunprotect', 'admin');
 
-/// If data submitted, then process and store.
 
+    // If data submitted, then process and store.
     if (!empty($hide) && confirm_sesskey()) {
-        if (!$block = $DB->get_record('block', array('id'=>$hide))) {
-            print_error('blockdoesnotexist', 'error');
+        if (!$block = $DB->get_record('block', ['id' => $hide])) {
+            throw new \moodle_exception('blockdoesnotexist', 'error');
         }
-        $DB->set_field('block', 'visible', '0', array('id'=>$block->id));      // Hide block
-        add_to_config_log('block_visibility', $block->visible, '0', $block->name);
-        core_plugin_manager::reset_caches();
-        admin_get_root(true, false);  // settings not required - only pages
+
+        $class = \core_plugin_manager::resolve_plugininfo_class('block');
+        $class::enable_plugin($block->name, false);
+        // Settings not required - only pages.
+        admin_get_root(true, false);
     }
 
     if (!empty($show) && confirm_sesskey() ) {
-        if (!$block = $DB->get_record('block', array('id'=>$show))) {
-            print_error('blockdoesnotexist', 'error');
+        if (!$block = $DB->get_record('block', ['id' => $show])) {
+            throw new \moodle_exception('blockdoesnotexist', 'error');
         }
-        $DB->set_field('block', 'visible', '1', array('id'=>$block->id));      // Show block
-        add_to_config_log('block_visibility', $block->visible, '1', $block->name);
-        core_plugin_manager::reset_caches();
-        admin_get_root(true, false);  // settings not required - only pages
+
+        $class = \core_plugin_manager::resolve_plugininfo_class('block');
+        $class::enable_plugin($block->name, true);
+        // Settings not required - only pages.
+        admin_get_root(true, false);
     }
 
     if (!empty($protect) && confirm_sesskey()) {
@@ -234,5 +236,3 @@
     }
 
     echo $OUTPUT->footer();
-
-

@@ -36,24 +36,28 @@ if (($lastchanged = optional_param('lastchanged', 0, PARAM_INT)) !== 0) {
 }
 $PAGE->set_url($url);
 
-$questionbank = new core_question\bank\view($contexts, $thispageurl, $COURSE, $cm);
-$questionbank->process_actions();
+if ($PAGE->course->id == $SITE->id) {
+    $PAGE->set_primary_active_tab('home');
+}
+
+$questionbank = new core_question\local\bank\view($contexts, $thispageurl, $COURSE, $cm);
 
 $context = $contexts->lowest();
 $streditingquestions = get_string('editquestions', 'question');
 $PAGE->set_title($streditingquestions);
 $PAGE->set_heading($COURSE->fullname);
-echo $OUTPUT->header();
+$PAGE->activityheader->disable();
 
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
-echo $renderer->extra_horizontal_navigation();
 
-echo '<div class="questionbankwindow boxwidthwide boxaligncenter">';
-$questionbank->display('questions', $pagevars['qpage'], $pagevars['qperpage'],
-        $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'],
-        $pagevars['qbshowtext'], $pagevars['qtagids']);
-echo "</div>\n";
+echo $OUTPUT->header();
+// Render the selection action.
+$qbankaction = new \core_question\output\qbank_actionbar($url);
+echo $renderer->qbank_action_menu($qbankaction);
+
+// Print the question area.
+$questionbank->display($pagevars, 'questions');
 
 // Log the view of this category.
 list($categoryid, $contextid) = explode(',', $pagevars['cat']);

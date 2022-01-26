@@ -35,7 +35,7 @@ use ZipArchive;
  *
  * @coversDefaultClass \core_files\local\archive_writer\zip_writer
  */
-class zip_writer_testcase extends advanced_testcase {
+class zip_writer_test extends advanced_testcase {
 
     /**
      * Test add_file_from_filepath().

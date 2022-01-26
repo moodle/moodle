@@ -27,7 +27,7 @@ $string['activitydate:due'] = 'Due:';
 $string['activityoverview'] = 'There are new forum posts';
 $string['actionsforgraderinterface'] = 'Actions for the grader interface';
 $string['actionsforpost'] = 'Actions for post';
-$string['addanewdiscussion'] = 'Add a new discussion topic';
+$string['addanewdiscussion'] = 'Add discussion topic';
 $string['addanewquestion'] = 'Add a new question';
 $string['addanewtopic'] = 'Add a new topic';
 $string['addtofavourites'] = 'Star this discussion';
@@ -125,7 +125,7 @@ $string['configdigestmailtime'] = 'People who choose to have emails sent to them
 $string['configdisplaymode'] = 'The default display mode for discussions if one isn\'t set.';
 $string['configenablerssfeeds'] = 'This switch will enable the possibility of RSS feeds for all forums.  You will still need to turn feeds on manually in the settings for each forum.';
 $string['configenabletimedposts'] = 'Set to \'yes\' if you want to allow setting of display periods when posting a new forum discussion.';
-$string['configlongpost'] = 'Any post over this length (in characters not including HTML) is considered long. Posts displayed on the site front page, social format course pages, or user profiles are shortened to a natural break somewhere between the forum_shortpost and forum_longpost values.';
+$string['configlongpost'] = 'Any post over this length (in characters not including HTML) is considered long. Posts displayed on the site home, social format course pages, or user profiles are shortened to a natural break somewhere between the forum_shortpost and forum_longpost values.';
 $string['configmanydiscussions'] = 'Maximum number of discussions shown in a forum per page';
 $string['configmaxattachments'] = 'Default maximum number of attachments allowed per post.';
 $string['configmaxbytes'] = 'Default maximum size for all forum attachments on the site (subject to course limits and other local settings)';
@@ -204,6 +204,7 @@ $string['discussionsstartedby'] = 'Discussions started by {$a}';
 $string['discussionstartedby'] = 'Discussion started by {$a}';
 $string['discussionsstartedbyrecent'] = 'Discussions recently started by {$a}';
 $string['discussionsstartedbyuserincourse'] = 'Discussions started by {$a->fullname} in {$a->coursename}';
+$string['discussionsstartedincourse'] = 'Discussions started in {$a}';
 $string['discussionunpin'] = 'Unpin';
 $string['discussionunsubscribed'] = 'You are now unsubscribed from this discussion.';
 $string['discussthistopic'] = 'Discuss this topic';
@@ -499,7 +500,7 @@ $string['parentofthispost'] = 'Parent of this post';
 $string['permalink'] = 'Permalink';
 $string['permanentlinktopost'] = 'Permanent link to this post';
 $string['permanentlinktoparentpost'] = 'Permanent link to the parent of this post';
-$string['postisprivatereply'] = 'This is a private reply. It is not visible to other participants.';
+$string['postisprivatereply'] = 'This is a private reply. It is only visible to you and anyone with the capability to view private replies, such as teachers or managers.';
 $string['pindiscussion'] = 'Pin this discussion';
 $string['pinupdated'] = 'The pin option has been updated.';
 $string['posttomygroups'] = 'Post a copy to all groups';
@@ -514,10 +515,9 @@ $string['postbymailsuccess'] = 'Your reply "{$a->subject}" was successfully post
 $string['postbymailsuccess_html'] = 'Your reply <a href="{$a->discussionurl}">{$a->subject}</a> was successfully posted.';
 $string['postbyuser'] = '{$a->post} by {$a->user}';
 $string['postincontext'] = 'See this post in context';
-$string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
-
-To reply click on this link: {$a->replylink}';
+$string['postmailinfo'] = 'This is a copy of a message posted in {$a}.';
 $string['postmailnow'] = '<p>This post will be mailed out immediately to all forum subscribers.</p>';
+$string['postmailreply'] = 'To reply click on this link: {$a}';
 $string['postmailsubject'] = '{$a->courseshortname}: {$a->subject}';
 $string['postrating1'] = 'Mostly separate knowing';
 $string['postrating2'] = 'Separate and connected';
@@ -526,6 +526,7 @@ $string['posts'] = 'Posts';
 $string['postsfrom'] = 'Posts from';
 $string['postsmadebyuser'] = 'Posts made by {$a}';
 $string['postsmadebyuserincourse'] = 'Posts made by {$a->fullname} in {$a->coursename}';
+$string['postsmadeincourse'] = 'Posts made in {$a}';
 $string['poststo'] = 'Posts to';
 $string['posttoforum'] = 'Post to forum';
 $string['postupdated'] = 'Your post was updated';
@@ -665,7 +666,7 @@ $string['smallmessage'] = '{$a->user} posted in {$a->forumname}';
 $string['smallmessagedigest'] = 'Forum digest containing {$a} messages';
 $string['startedby'] = 'Started by';
 $string['subject'] = 'Subject';
-$string['subscribe'] = 'Subscribe to this forum';
+$string['subscribe'] = 'Subscribe to forum';
 $string['subscribediscussion'] = 'Subscribe to this discussion';
 $string['subscribeall'] = 'Subscribe everyone to this forum';
 $string['subscribeenrolledonly'] = 'Sorry, only enrolled users are allowed to subscribe to forum post notifications.';
@@ -679,6 +680,7 @@ $string['subscription'] = 'Subscription';
 $string['subscription_help'] = 'If you are subscribed to a forum it means you will receive notification of new forum posts. Usually you can choose whether you wish to be subscribed, though sometimes subscription is forced so that everyone receives notifications.';
 $string['subscriptionandtracking'] = 'Subscription and tracking';
 $string['subscriptionmode'] = 'Subscription mode';
+$string['subscriptionmodeconfirm'] = 'Are you sure you want to change the subscription mode to {$a}?';
 $string['subscriptionmode_help'] = 'When a participant is subscribed to a forum it means they will receive forum post notifications. There are 4 subscription mode options:
 
 * Optional subscription - Participants can choose whether to be subscribed
@@ -722,7 +724,7 @@ $string['unreadpost'] = 'Unread post';
 $string['unreadposts'] = 'Unread posts';
 $string['unreadpostsnumber'] = '{$a} unread posts';
 $string['unreadpostsone'] = '1 unread post';
-$string['unsubscribe'] = 'Unsubscribe from this forum';
+$string['unsubscribe'] = 'Unsubscribe from forum';
 $string['unsubscribelink'] = 'Unsubscribe from this forum: {$a}';
 $string['unsubscribediscussion'] = 'Unsubscribe from this discussion';
 $string['unsubscribediscussionlink'] = 'Unsubscribe from this discussion: {$a}';
@@ -776,8 +778,7 @@ $string['showmoreusers'] = 'Show more users';
 $string['viewconversation'] = 'View discussion';
 $string['viewgrades'] = 'View grades';
 
-// Deprecated since Moodle 3.8.
-$string['cannotdeletediscussioninsinglediscussion'] = 'You cannot delete the first post in a single discussion';
-$string['inpagereplysubject'] = 'Re: {$a}';
-$string['overviewnumpostssince'] = '{$a} posts since last login';
-$string['overviewnumunread'] = '{$a} total unread';
+// Deprecated since Moodle 4.0.
+$string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
+
+To reply click on this link: {$a->replylink}';

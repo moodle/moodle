@@ -44,7 +44,8 @@ Feature: View an outline report
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    When I navigate to "Reports > Activity report" in current page administration
+    When I navigate to "Reports" in current page administration
+    And I select "Activity report" from the "Report type" singleselect
     Then I should see "2 views by 2 users" in the "Book name" "table_row"
     And I should see "1 views by 1 users" in the "Forum name" "table_row"
 
@@ -65,7 +66,8 @@ Feature: View an outline report
     And I log out
     And I log in as "admin"
     And I am on "Course 1" course homepage
-    When I navigate to "Reports > Activity report" in current page administration
+    When I navigate to "Reports" in current page administration
+    And I select "Activity report" from the "Report type" singleselect
     Then I should see "2 views by 2 users" in the "Book name" "table_row"
     And I should see "1 views by 1 users" in the "Forum name" "table_row"
 
@@ -88,7 +90,8 @@ Feature: View an outline report
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    When I navigate to "Reports > Activity report" in current page administration
+    When I navigate to "Reports" in current page administration
+    And I select "Activity report" from the "Report type" singleselect
     Then I should see "2 views by 2 users" in the "Book name" "table_row"
     And I should see "1 views by 1 users" in the "Forum name" "table_row"
 
@@ -97,7 +100,8 @@ Feature: View an outline report
     And "Enable" "link" should exist in the "Legacy log" "table_row"
     And I click on "Disable" "link" in the "Standard log" "table_row"
     And I am on "Course 1" course homepage
-    When I navigate to "Reports > Activity report" in current page administration
+    When I navigate to "Reports" in current page administration
+    And I select "Activity report" from the "Report type" singleselect
     Then I should see "No log reader enabled"
 
   Scenario: Multiple views from a single user are identified as not distinct
@@ -113,7 +117,8 @@ Feature: View an outline report
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Activity report" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Activity report" from the "Report type" singleselect
     Then I should see "3 views by 1 users" in the "Forum name" "table_row"
     And I should see "-" in the "Book name" "table_row"
 
@@ -139,7 +144,8 @@ Feature: View an outline report
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Activity report" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Activity report" from the "Report type" singleselect
     Then I should see "6 views by 2 users" in the "Forum name" "table_row"
     And I should see "-" in the "Book name" "table_row"
 
@@ -147,6 +153,7 @@ Feature: View an outline report
     Given I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Reports > Activity report" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Activity report" from the "Report type" singleselect
     Then I should see "-" in the "Forum name" "table_row"
     And I should see "-" in the "Book name" "table_row"

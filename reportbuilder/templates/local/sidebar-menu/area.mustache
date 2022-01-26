@@ -1,0 +1,65 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_reportbuilder/local/sidebar-menu/area
+
+    Template for showing report sidebar menu.
+
+    Example context (json):
+    {
+        "sidebarmenucards": [{
+            "menucards": [{
+                "name": "General",
+                "items": [{
+                    "name": "Manually added users",
+                    "identifier": "core_reportbuilder:users"
+                }]
+            }]
+        }]
+    }
+}}
+<div id="region-sidebar-menu-{{uniqid}}" class="reportbuilder-sidebar-menu d-flex flex-column mr-lg-3 mb-3 mb-lg-0" data-region="sidebar-menu">
+    <div class="input-group mb-3">
+        <label for="reportbuilder-sidebar-search">
+            <span class="sr-only">{{#str}} search, core_search {{/str}}</span>
+        </label>
+        <input id="reportbuilder-sidebar-search"
+               type="text"
+               class="form-control rounded-left border-right-0"
+               placeholder="{{#str}} search, core_search {{/str}}"
+               aria-label="{{#str}} search, core_search {{/str}}"
+               data-action="sidebar-search">
+        <div class="input-group-append">
+            <span class="input-group-text pl-2 pr-0 bg-white">
+                {{#pix}} a/search, core {{/pix}}
+            </span>
+        </div>
+    </div>
+    <div class="reportbuilder-sidebar-menu-cards">
+        {{#sidebarmenucards}}
+            {{#menucards}}
+                {{> core_reportbuilder/local/sidebar-menu/card}}
+            {{/menucards}}
+        {{/sidebarmenucards}}
+    </div>
+</div>
+
+{{#js}}
+    require(['core_reportbuilder/sidebar'], function(sidebar) {
+        sidebar.init('#region-sidebar-menu-{{uniqid}}');
+    });
+{{/js}}

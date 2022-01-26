@@ -40,7 +40,7 @@ Feature: In an assignment, students can comment in their submissions
     And I follow "Save comment"
     And I should see "Second student comment"
     And I should not see "First student comment"
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page
     And I click on ".comment-link" "css_element"
     And I should see "Second student comment"
     And I should not see "First student comment"
@@ -57,7 +57,7 @@ Feature: In an assignment, students can comment in their submissions
     And I log out
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I click on ".comment-link" "css_element"
     When I set the field "content" to "Teacher feedback first comment"
@@ -75,7 +75,7 @@ Feature: In an assignment, students can comment in their submissions
       | Test assignment name  | student1  | I'm the student submission  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I click on ".comment-link" "css_element"
     When I set the field "content" to "Teacher feedback first comment"
@@ -92,15 +92,13 @@ Feature: In an assignment, students can comment in their submissions
       | activity  | course  | name                  | assignsubmission_onlinetext_enabled  | assignmentsubmission_file_enabled  | assignfeedback_comments_enabled  |
       | assign    | C1      | Test assignment name  | 0                                    | 0                                  | 1                                |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     When I set the following fields to these values:
       | Grade out of 100   | 50                        |
       | Feedback comments  | I'm the teacher feedback  |
     And I press "Save changes"
-    And I click on "Edit settings" "link"
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     Then I should see "50.00" in the "Student 1" "table_row"
     And I should see "I'm the teacher feedback" in the "Student 1" "table_row"
 
@@ -109,7 +107,7 @@ Feature: In an assignment, students can comment in their submissions
       | activity  | course  | name                  | assignsubmission_onlinetext_enabled  | assignmentsubmission_file_enabled  | assignfeedback_comments_enabled  |
       | assign    | C1      | Test assignment name  | 0                                    | 0                                  | 1                                |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 0 |

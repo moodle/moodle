@@ -44,23 +44,23 @@ Feature: Select content bank files using the content bank files repository
     And I click on "Add..." "button"
     And I should see "Content bank" in the ".fp-repo-area" "css_element"
     When I select "Content bank" repository in file picker
-    Then I should see "System > Miscellaneous > MiscellaneousCourse1" breadcrumb navigation in repository
+    Then I should see "System > Category 1 > MiscellaneousCourse1" breadcrumb navigation in repository
     And I should see "1" elements in repository content area
     And I should see "filltheblanks.h5p" "file" in repository content area
-    And I click on "Miscellaneous" "link" in the ".file-picker .fp-pathbar" "css_element"
-    And I should see "System > Miscellaneous" breadcrumb navigation in repository
+    And I click on "Category 1" "link" in the ".file-picker .fp-pathbar" "css_element"
+    And I should see "System > Category 1" breadcrumb navigation in repository
     And I should see "2" elements in repository content area
     And I should see "MiscellaneousCourse1" "folder" in repository content area
     And I should see "MiscellaneousCourse2" "folder" in repository content area
     And I click on "MiscellaneousCourse2" "folder" in repository content area
-    And I should see "System > Miscellaneous > MiscellaneousCourse2" breadcrumb navigation in repository
+    And I should see "System > Category 1 > MiscellaneousCourse2" breadcrumb navigation in repository
     And I should see "1" elements in repository content area
     And I should see "find-the-words.h5p" "file" in repository content area
     And I click on "System" "link" in the ".file-picker .fp-pathbar" "css_element"
     And I should see "System" breadcrumb navigation in repository
     And I should see "3" elements in repository content area
     And I should see "filltheblanks.h5p" "file" in repository content area
-    And I should see "Miscellaneous" "folder" in repository content area
+    And I should see "Category 1" "folder" in repository content area
     And I should see "Category1" "folder" in repository content area
     And I click on "Category1" "folder" in repository content area
     And I should see "System > Category1" breadcrumb navigation in repository
@@ -84,7 +84,7 @@ Feature: Select content bank files using the content bank files repository
     And I click on "Add..." "button"
     And I should see "Content bank" in the ".fp-repo-area" "css_element"
     And I select "Content bank" repository in file picker
-    And I should see "System > Miscellaneous > MiscellaneousCourse1" breadcrumb navigation in repository
+    And I should see "System > Category 1 > MiscellaneousCourse1" breadcrumb navigation in repository
     And I click on "System" "link" in the ".file-picker .fp-pathbar" "css_element"
     And I click on "Category1" "folder" in repository content area
     And I should see "ipsums.h5p" "file" in repository content area
@@ -100,18 +100,18 @@ Feature: Select content bank files using the content bank files repository
     And I click on "Add..." "button"
     And I should see "Content bank" in the ".fp-repo-area" "css_element"
     When I select "Content bank" repository in file picker
-    Then I should see "System > Miscellaneous > MiscellaneousCourse1" breadcrumb navigation in repository
+    Then I should see "System > Category 1 > MiscellaneousCourse1" breadcrumb navigation in repository
     And I should see "1" elements in repository content area
     And I should see "filltheblanks.h5p" "file" in repository content area
-    And I click on "Miscellaneous" "link" in the ".file-picker .fp-pathbar" "css_element"
-    And I should see "System > Miscellaneous" breadcrumb navigation in repository
+    And I click on "Category 1" "link" in the ".file-picker .fp-pathbar" "css_element"
+    And I should see "System > Category 1" breadcrumb navigation in repository
     And I should see "1" elements in repository content area
     And I should see "MiscellaneousCourse1" "folder" in repository content area
     And I click on "System" "link" in the ".file-picker .fp-pathbar" "css_element"
     And I should see "System" breadcrumb navigation in repository
     And I should see "2" elements in repository content area
     And I should see "filltheblanks.h5p" "file" in repository content area
-    And I should see "Miscellaneous" "folder" in repository content area
+    And I should see "Category 1" "folder" in repository content area
 
   Scenario: Editing teacher can select and re-use content bank files available to him using the content bank repository
     Given I am on the Folder "Folder activity" page logged in as teacher1
@@ -119,7 +119,7 @@ Feature: Select content bank files using the content bank files repository
     And I click on "Add..." "button"
     And I should see "Content bank" in the ".fp-repo-area" "css_element"
     And I select "Content bank" repository in file picker
-    And I should see "System > Miscellaneous > MiscellaneousCourse1" breadcrumb navigation in repository
+    And I should see "System > Category 1 > MiscellaneousCourse1" breadcrumb navigation in repository
     And I click on "System" "link" in the ".file-picker .fp-pathbar" "css_element"
     And I should see "filltheblanks.h5p" "file" in repository content area
     And I click on "filltheblanks.h5p" "file" in repository content area
@@ -130,14 +130,14 @@ Feature: Select content bank files using the content bank files repository
 
   Scenario: Non-editing teacher can not see the content bank repository
     Given I am on the Forum "Forum activity" page logged in as teacher2
-    And I click on "Add a new discussion topic" "link"
+    And I click on "Add discussion topic" "link"
     And I click on "Link" "button"
     When I click on "Browse repositories..." "button"
     Then I should not see "Content bank" in the ".fp-repo-area" "css_element"
 
   Scenario: Student can not see the content bank repository
     Given I am on the Forum "Forum activity" page logged in as student
-    And I click on "Add a new discussion topic" "link"
+    And I click on "Add discussion topic" "link"
     And I click on "Link" "button"
     When I click on "Browse repositories..." "button"
     Then I should not see "Content bank" in the ".fp-repo-area" "css_element"

@@ -2454,6 +2454,7 @@ class core_ddl_testcase extends database_driver_testcase {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('extracolumn', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('binaryfield', XMLDB_TYPE_BINARY, null, null, XMLDB_NOTNULL, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('extraindex', XMLDB_KEY_UNIQUE, array('extracolumn'));
         $table->setComment("This is a test table, you can drop it safely.");

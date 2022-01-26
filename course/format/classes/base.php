@@ -39,6 +39,7 @@ use lang_string;
 use completion_info;
 use external_api;
 use stdClass;
+use cache;
 use core_courseformat\output\legacy_renderer;
 
 /**
@@ -372,6 +373,35 @@ abstract class base {
     }
 
     /**
+     * Returns true if this course format uses course index
+     *
+     * This function may be called without specifying the course id
+     * i.e. in course_index_drawer()
+     *
+     * @return bool
+     */
+    public function uses_course_index() {
+        return false;
+    }
+
+    /**
+     * Returns true if this course format uses activity indentation.
+     *
+     * Indentation is not supported by core formats anymore and may be deprecated in the future.
+     * This method will keep a default return "true" for legacy reasons but new formats should override
+     * it with a return false to prevent future deprecations.
+     *
+     * A message in a bottle: if indentation is finally deprecated, both behat steps i_indent_right_activity
+     * and i_indent_left_activity should be removed as well. Right now no core behat uses them but indentation
+     * is not officially deprecated so they are still available for the contrib formats.
+     *
+     * @return bool if the course format uses indentation.
+     */
+    public function uses_indentation(): bool {
+        return true;
+    }
+
+    /**
      * Returns a list of sections used in the course
      *
      * This is a shortcut to get_fast_modinfo()->get_section_info_all()
@@ -443,6 +473,15 @@ abstract class base {
     }
 
     /**
+     * Returns the name for the highlighted section.
+     *
+     * @return string The name for the highlighted section based on the given course format.
+     */
+    public function get_section_highlighted_name(): string {
+        return get_string('highlighted');
+    }
+
+    /**
      * Set if the current format instance will show multiple sections or an individual one.
      *
      * Some formats has the hability to swith from one section to multiple sections per page,
@@ -468,6 +507,50 @@ abstract class base {
     }
 
     /**
+     * Return the format section preferences.
+     */
+    public function get_sections_preferences(): array {
+        global $USER;
+
+        $result = [];
+
+        $course = $this->get_course();
+        $coursesectionscache = cache::make('core', 'coursesectionspreferences');
+
+        $coursesections = $coursesectionscache->get($course->id);
+        if ($coursesections) {
+            return $coursesections;
+        }
+
+        // Calculate collapsed preferences.
+        try {
+            $sectionpreferences = (array) json_decode(
+                get_user_preferences('coursesectionspreferences_' . $course->id, null, $USER->id)
+            );
+            if (empty($sectionpreferences)) {
+                $sectionpreferences = [];
+            }
+        } catch (\Throwable $e) {
+            $sectionpreferences = [];
+        }
+
+        foreach ($sectionpreferences as $preference => $sectionids) {
+            if (!empty($sectionids) && is_array($sectionids)) {
+                foreach ($sectionids as $sectionid) {
+                    if (!isset($result[$sectionid])) {
+                        $result[$sectionid] = new stdClass();
+                    }
+                    $result[$sectionid]->$preference = true;
+                }
+            }
+        }
+
+        $coursesectionscache->set($course->id, $result);
+
+        return $result;
+    }
+
+    /**
      * Returns the information about the ajax support in the given source format
      *
      * The returned object's property (boolean)capable indicates that
@@ -481,6 +564,21 @@ abstract class base {
         $ajaxsupport->capable = false;
         return $ajaxsupport;
     }
+
+    /**
+     * Returns true if this course format is compatible with content components.
+     *
+     * Using components means the content elements can watch the frontend course state and
+     * react to the changes. Formats with component compatibility can have more interactions
+     * without refreshing the page, like having drag and drop from the course index to reorder
+     * sections and activities.
+     *
+     * @return bool if the format is compatible with components.
+     */
+    public function supports_components() {
+        return false;
+    }
+
 
     /**
      * Custom action after section has been moved in AJAX mode
@@ -1073,7 +1171,7 @@ abstract class base {
     }
 
     /**
-     * Returns instance of output compornent used by this plugin
+     * Returns instance of output component used by this plugin
      *
      * @throws coding_exception if the format class does not extends the original core one.
      * @param string $outputname the element to render (section, activity...)
@@ -1396,20 +1494,8 @@ abstract class base {
 
         $course = $this->get_course();
         $coursecontext = context_course::instance($course->id);
-        switch($action) {
-            case 'hide':
-            case 'show':
-                require_capability('moodle/course:sectionvisibility', $coursecontext);
-                $visible = ($action === 'hide') ? 0 : 1;
-                course_update_section($course, $section, array('visible' => $visible));
-                break;
-            default:
-                throw new moodle_exception('sectionactionnotsupported', 'core', null, s($action));
-        }
-
-        $modules = [];
-
         $modinfo = $this->get_modinfo();
+        $renderer = $this->get_renderer($PAGE);
 
         if (!($section instanceof section_info)) {
             $section = $modinfo->get_section_info($section->section);
@@ -1419,9 +1505,24 @@ abstract class base {
             $this->set_section_number($sr);
         }
 
-        // Load the cmlist output.
-        $renderer = $this->get_renderer($PAGE);
+        switch($action) {
+            case 'hide':
+            case 'show':
+                require_capability('moodle/course:sectionvisibility', $coursecontext);
+                $visible = ($action === 'hide') ? 0 : 1;
+                course_update_section($course, $section, array('visible' => $visible));
+                break;
+            case 'refresh':
+                return [
+                    'content' => $renderer->course_section_updated($this, $section),
+                ];
+            default:
+                throw new moodle_exception('sectionactionnotsupported', 'core', null, s($action));
+        }
 
+        $modules = [];
+
+        // Load the cmlist output.
         $coursesections = $modinfo->sections;
         if (array_key_exists($section->section, $coursesections)) {
             foreach ($coursesections[$section->section] as $cmid) {
@@ -1442,5 +1543,18 @@ abstract class base {
      */
     public function get_config_for_external() {
         return array();
+    }
+
+    /**
+     * Course deletion hook.
+     *
+     * Format plugins can override this method to clean any format specific data and dependencies.
+     *
+     */
+    public function delete_format_data() {
+        global $DB;
+        $course = $this->get_course();
+        // By default, formats store some most display specifics in a user preference.
+        $DB->delete_records('user_preferences', ['name' => 'coursesectionspreferences_' . $course->id]);
     }
 }

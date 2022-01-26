@@ -81,4 +81,110 @@ class behat_deprecated extends behat_base {
         throw new Exception($message);
     }
 
+    /**
+     * Clicks link with specified id|title|alt|text in the flat navigation drawer.
+     *
+     * @When /^I select "(?P<link_string>(?:[^"]|\\")*)" from flat navigation drawer$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $link
+     * @deprecated Since Moodle 4.0
+     */
+    public function i_select_from_flat_navigation_drawer(string $link) {
+        self::deprecated_message(['i_select_from_primary_navigation', 'i_select_from_secondary_navigation'], true);
+
+        $this->i_open_flat_navigation_drawer();
+        $this->execute('behat_general::i_click_on_in_the', [$link, 'link', '#nav-drawer', 'css_element']);
+    }
+
+    /**
+     * Hover over a specific day in the calendar.
+     *
+     * @Given /^I hover over day "(?P<dayofmonth>\d+)" of this month in the calendar$/
+     * @param int $day The day of the current month
+     *
+     * @deprecated since 4.0 MDL-72810. This tested the three-month calendar pseudo block, which has been removed.
+     * @todo MDL-73117 This will be deleted in Moodle 4.4.
+     */
+    public function i_hover_over_day_of_this_month_in_calendar($day) {
+        $this->deprecated_message('Check information in the course or timeline calendar blocks or full calendar, as appropriate.');
+
+        $summarytitle = userdate(time(), get_string('strftimemonthyear'));
+        // The current month table.
+        $currentmonth = "table[descendant::*[self::caption[contains(concat(' ', normalize-space(.), ' '), ' {$summarytitle} ')]]]";
+
+        // Strings for the class cell match.
+        $cellclasses  = "contains(concat(' ', normalize-space(@class), ' '), ' day ')";
+        $daycontains  = "text()[contains(concat(' ', normalize-space(.), ' '), ' {$day} ')]";
+        $daycell      = "td[{$cellclasses}]";
+        $dayofmonth   = "a[{$daycontains}]";
+
+        $xpath = '//' . $currentmonth . '/descendant::' . $daycell . '/' . $dayofmonth;
+        $this->execute("behat_general::i_hover", [$xpath, "xpath_element"]);
+    }
+
+    /**
+     * Click a specific day in the calendar.
+     *
+     * @Given /^I click day "(?P<dayofmonth>\d+)" of this month in the calendar$/
+     * @param int $day The day of the current month
+     *
+     * @deprecated since 4.0 MDL-72810. This tested the three-month calendar pseudo block, which has been removed.
+     * @todo MDL-73117 This will be deleted in Moodle 4.4.
+     */
+    public function i_click_day_of_this_month_in_calendar($day) {
+        $this->deprecated_message('Check information in the course or timeline calendar blocks or full calendar, as appropriate.');
+
+        // The current month table.
+        $currentmonth = "table[descendant::*[self::caption[contains(concat(' ', normalize-space(.), ' '), ' {$summarytitle} ')]]]";
+
+        // Strings for the class cell match.
+        $cellclasses  = "contains(concat(' ', normalize-space(@class), ' '), ' day ')";
+        $daycontains  = "text()[contains(concat(' ', normalize-space(.), ' '), ' {$day} ')]";
+        $daycell      = "td[{$cellclasses}]";
+        $dayofmonth   = "a[{$daycontains}]";
+
+        $xpath = '//' . $currentmonth . '/descendant::' . $daycell . '/' . $dayofmonth;
+        $this->execute("behat_general::wait_until_the_page_is_ready");
+        $this->execute("behat_general::i_click_on", array($xpath, "xpath_element"));
+        $this->execute("behat_general::wait_until_the_page_is_ready");
+    }
+
+    /**
+     * Adds the specified enrolment method to the current course filling the form with the provided data.
+     *
+     * @Given /^I add "(?P<enrolment_method_name_string>(?:[^"]|\\")*)" enrolment method with:$/
+     * @param string $enrolmethod
+     * @param TableNode $table
+     *
+     * @deprecated since 4.0 MDL-72090. We now need the course to enrol in. Please use i_add_enrolment_method_for_with()
+     * @todo MDL-71733 This will be deleted in Moodle 4.4.
+     */
+    public function i_add_enrolment_method_with($enrolmethod, TableNode $table) {
+        $this->deprecated_message(['i_add_enrolment_method_for_with']);
+
+        // Navigate to enrolment method page.
+        $parentnodes = get_string('users', 'admin');
+        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration",
+            array($parentnodes .' > '. get_string('type_enrol_plural', 'plugin'))
+        );
+
+        // Select enrolment method.
+        $this->execute('behat_forms::i_select_from_the_singleselect',
+            array($this->escape($enrolmethod), get_string('addinstance', 'enrol'))
+        );
+
+        // Wait again, for page to reloaded.
+        $this->execute('behat_general::i_wait_to_be_redirected');
+
+        // Set form fields.
+        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $table);
+
+        // Ensure we get button in focus, before pressing button.
+        if ($this->running_javascript()) {
+            $this->execute('behat_general::i_press_named_key', ['', 'tab']);
+        }
+
+        // Save changes.
+        $this->execute("behat_forms::press_button", get_string('addinstance', 'enrol'));
+    }
 }

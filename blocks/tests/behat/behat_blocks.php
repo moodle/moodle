@@ -47,7 +47,7 @@ class behat_blocks extends behat_base {
      */
     public function i_add_the_block($blockname) {
         $addblock = get_string('addblock');
-        $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', $addblock);
+        $this->execute('behat_general::i_click_on_in_the', [$addblock, 'link_exact', '.add_block_button', 'css_element']);
 
         if (!$this->running_javascript()) {
             $this->execute('behat_general::i_click_on_in_the', [$blockname, 'link_exact', '#region-main', 'css_element']);
@@ -121,7 +121,8 @@ class behat_blocks extends behat_base {
      */
     public function the_add_block_selector_should_contain_block($blockname) {
         $addblock = get_string('addblock');
-        $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', $addblock);
+        $this->execute('behat_general::i_click_on', [$addblock, 'link_exact']);
+
 
         $cancelstr = get_string('cancel');
         if (!$this->running_javascript()) {
@@ -141,7 +142,8 @@ class behat_blocks extends behat_base {
      */
     public function the_add_block_selector_should_not_contain_block($blockname) {
         $addblock = get_string('addblock');
-        $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', $addblock);
+        $this->execute('behat_general::i_click_on', [$addblock, 'link_exact']);
+
 
         $cancelstr = get_string('cancel');
         if (!$this->running_javascript()) {

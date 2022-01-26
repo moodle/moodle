@@ -56,12 +56,10 @@
 }
 
 /** Styles for field.php **/
-.path-mod-data-field .fieldadd,
 .path-mod-data-field .sortdefault {
     margin: 1em 0;
 }
 
-.path-mod-data-field .fieldadd select,
 .path-mod-data-field .sortdefault select {
     margin-left: 1em;
 }

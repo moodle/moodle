@@ -131,9 +131,12 @@ class mod_quiz_external extends external_api {
                                                     'reviewspecificfeedback', 'reviewgeneralfeedback', 'reviewrightanswer',
                                                     'reviewoverallfeedback', 'questionsperpage', 'navmethod',
                                                     'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
-                                                    'completionattemptsexhausted', 'completionpass', 'overduehandling',
+                                                    'completionattemptsexhausted', 'overduehandling',
                                                     'graceperiod', 'canredoquestions', 'allowofflineattempts');
                         $viewablefields = array_merge($viewablefields, $additionalfields);
+
+                        // Any course module fields that previously existed in quiz.
+                        $quizdetails['completionpass'] = $quizobj->get_cm()->completionpassgrade;
                     }
 
                     // Fields only for managers.
@@ -413,10 +416,21 @@ class mod_quiz_external extends external_api {
             require_capability('mod/quiz:viewreports', $context);
         }
 
+        // Update quiz with override information.
+        $quiz = quiz_update_effective_access($quiz, $params['userid']);
         $attempts = quiz_get_user_attempts($quiz->id, $user->id, $params['status'], $params['includepreviews']);
-
+        $attemptresponse = [];
+        foreach ($attempts as $attempt) {
+            $reviewoptions = quiz_get_review_options($quiz, $attempt, $context);
+            if (!has_capability('mod/quiz:viewreports', $context) &&
+                    ($reviewoptions->marks < question_display_options::MARK_AND_MAX || $attempt->state != quiz_attempt::FINISHED)) {
+                // Blank the mark if the teacher does not allow it.
+                $attempt->sumgrades = null;
+            }
+            $attemptresponse[] = $attempt;
+        }
         $result = array();
-        $result['attempts'] = $attempts;
+        $result['attempts'] = $attemptresponse;
         $result['warnings'] = $warnings;
         return $result;
     }
@@ -452,6 +466,8 @@ class mod_quiz_external extends external_api {
                 'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
                                                         state changes.  NULL means never check.', VALUE_OPTIONAL),
                 'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
+                'gradednotificationsenttime' => new external_value(PARAM_INT,
+                    'Time when the student was notified that manual grading of their attempt was complete.', VALUE_OPTIONAL),
             )
         );
     }

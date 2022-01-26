@@ -40,10 +40,10 @@ Feature: Import course's contents into another course
     And I log in as "teacher1"
     When I import "Course 1" course into "Course 2" course using this options:
       | Initial | Include permission overrides | 1 |
-    And I navigate to "Users > Permissions" in current page administration
+    And I am on the "Course 1" "permissions" page
     Then I should see "Non-editing teacher (1)"
     And I set the field "Advanced role override" to "Non-editing teacher (1)"
-    And I press "Go"
+    And I click on "//div[@class='advancedoverride']/div/form/noscript/input" "xpath_element"
     And "enrol/manual:enrol" capability has "Allow" permission
 
   Scenario: Import process without permission option
@@ -53,5 +53,5 @@ Feature: Import course's contents into another course
     And I log in as "teacher1"
     When I import "Course 1" course into "Course 2" course using this options:
       | Initial | Include permission overrides | 0 |
-    And I navigate to "Users > Permissions" in current page administration
+    And I am on the "Course 2" "permissions" page
     Then I should see "Non-editing teacher (0)"

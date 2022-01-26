@@ -46,6 +46,14 @@ class format_topics extends core_courseformat\base {
         return true;
     }
 
+    public function uses_course_index() {
+        return true;
+    }
+
+    public function uses_indentation(): bool {
+        return false;
+    }
+
     /**
      * Returns the display name of the given section that the course prefers.
      *
@@ -153,6 +161,10 @@ class format_topics extends core_courseformat\base {
         $ajaxsupport = new stdClass();
         $ajaxsupport->capable = true;
         return $ajaxsupport;
+    }
+
+    public function supports_components() {
+        return true;
     }
 
     /**
@@ -423,7 +435,7 @@ class format_topics extends core_courseformat\base {
         $renderer = $PAGE->get_renderer('format_topics');
 
         if (!($section instanceof section_info)) {
-            $modinfo = $this->get_modinfo();
+            $modinfo = course_modinfo::instance($this->courseid);
             $section = $modinfo->get_section_info($section->section);
         }
         $elementclass = $this->get_output_classname('content\\section\\availability');

@@ -25,24 +25,26 @@
 
 namespace mod_quiz\question\bank;
 
-use coding_exception;
-
 /**
  * Subclass to customise the view of the question bank for the quiz editing screen.
  *
  * @copyright  2009 Tim Hunt
+ * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_view extends \core_question\bank\view {
-    /** @var bool whether the quiz this is used by has been attemptd. */
+class custom_view extends \core_question\local\bank\view {
+
+    /** @var bool $quizhasattempts whether the quiz this is used by has been attemptd. */
     protected $quizhasattempts = false;
-    /** @var \stdClass the quiz settings. */
+
+    /** @var \stdClass $quiz the quiz settings. */
     protected $quiz = false;
+
     /** @var int The maximum displayed length of the category info. */
     const MAX_TEXT_LENGTH = 200;
 
     /**
-     * Constructor
+     * Constructor for custom_view.
      * @param \question_edit_contexts $contexts
      * @param \moodle_url $pageurl
      * @param \stdClass $course course settings
@@ -54,76 +56,112 @@ class custom_view extends \core_question\bank\view {
         $this->quiz = $quiz;
     }
 
-    protected function wanted_columns() {
-        global $CFG;
+    protected function get_question_bank_plugins(): array {
+        $questionbankclasscolumns = [];
+        $corequestionbankcolumns = [
+            'add_action_column',
+            'checkbox_column',
+            'question_type_column',
+            'question_name_text_column',
+            'preview_action_column'
+        ];
 
-        if (empty($CFG->quizquestionbankcolumns)) {
-            $quizquestionbankcolumns = array(
-                'add_action_column',
-                'checkbox_column',
-                'question_type_column',
-                'question_name_text_column',
-                'preview_action_column',
-            );
-        } else {
-            $quizquestionbankcolumns = explode(',', $CFG->quizquestionbankcolumns);
+        if (question_get_display_preference('qbshowtext', 0, PARAM_BOOL, new \moodle_url(''))) {
+            $corequestionbankcolumns[] = 'question_text_row';
         }
 
-        foreach ($quizquestionbankcolumns as $fullname) {
-            if (!class_exists($fullname)) {
-                if (class_exists('mod_quiz\\question\\bank\\' . $fullname)) {
-                    $fullname = 'mod_quiz\\question\\bank\\' . $fullname;
-                } else if (class_exists('core_question\\bank\\' . $fullname)) {
-                    $fullname = 'core_question\\bank\\' . $fullname;
-                } else if (class_exists('question_bank_' . $fullname)) {
-                    debugging('Legacy question bank column class question_bank_' .
-                            $fullname . ' should be renamed to mod_quiz\\question\\bank\\' .
-                            $fullname, DEBUG_DEVELOPER);
-                    $fullname = 'question_bank_' . $fullname;
-                } else {
-                    throw new coding_exception('Invalid quiz question bank column', $fullname);
+        foreach ($corequestionbankcolumns as $fullname) {
+            $shortname = $fullname;
+            if (class_exists('mod_quiz\\question\\bank\\' . $fullname)) {
+                $fullname = 'mod_quiz\\question\\bank\\' . $fullname;
+                $questionbankclasscolumns[$shortname] = new $fullname($this);
+            } else if (class_exists('core_question\\local\\bank\\' . $fullname)) {
+                $fullname = 'core_question\\local\\bank\\' . $fullname;
+                $questionbankclasscolumns[$shortname] = new $fullname($this);
+            } else {
+                $questionbankclasscolumns[$shortname] = '';
+            }
+        }
+        $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
+        foreach ($plugins as $componentname => $plugin) {
+            $pluginentrypointobject = new $plugin();
+            $plugincolumnobjects = $pluginentrypointobject->get_question_columns($this);
+            // Don't need the plugins without column objects.
+            if (empty($plugincolumnobjects)) {
+                unset($plugins[$componentname]);
+                continue;
+            }
+            foreach ($plugincolumnobjects as $columnobject) {
+                $columnname = $columnobject->get_column_name();
+                foreach ($corequestionbankcolumns as $key => $corequestionbankcolumn) {
+                    if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
+                        unset($questionbankclasscolumns[$columnname]);
+                        continue;
+                    }
+                    // Check if it has custom preference selector to view/hide.
+                    if ($columnobject->has_preference() && !$columnobject->get_preference()) {
+                        continue;
+                    }
+                    if ($corequestionbankcolumn === $columnname) {
+                        $questionbankclasscolumns[$columnname] = $columnobject;
+                    }
                 }
             }
-            $this->requiredcolumns[$fullname] = new $fullname($this);
         }
-        return $this->requiredcolumns;
+
+        // Mitigate the error in case of any regression.
+        foreach ($questionbankclasscolumns as $shortname => $questionbankclasscolumn) {
+            if (empty($questionbankclasscolumn)) {
+                unset($questionbankclasscolumns[$shortname]);
+            }
+        }
+
+        return $questionbankclasscolumns;
     }
 
-    /**
-     * Specify the column heading
-     *
-     * @return string Column name for the heading
-     */
-    protected function heading_column() {
+    protected function heading_column(): string {
         return 'mod_quiz\\question\\bank\\question_name_text_column';
     }
 
-    protected function default_sort() {
-        return array(
-            'core_question\\bank\\question_type_column' => 1,
+    protected function default_sort(): array {
+        // Using the extended class for quiz specific sort.
+        return [
+            'qbank_viewquestiontype\\question_type_column' => 1,
             'mod_quiz\\question\\bank\\question_name_text_column' => 1,
-        );
+        ];
     }
 
     /**
      * Let the question bank display know whether the quiz has been attempted,
      * hence whether some bits of UI, like the add this question to the quiz icon,
      * should be displayed.
+     *
      * @param bool $quizhasattempts whether the quiz has attempts.
      */
-    public function set_quiz_has_attempts($quizhasattempts) {
+    public function set_quiz_has_attempts($quizhasattempts): void {
         $this->quizhasattempts = $quizhasattempts;
         if ($quizhasattempts && isset($this->visiblecolumns['addtoquizaction'])) {
             unset($this->visiblecolumns['addtoquizaction']);
         }
     }
 
+    /**
+     * Question preview url.
+     *
+     * @param \stdClass $question
+     * @return \moodle_url
+     */
     public function preview_question_url($question) {
         return quiz_question_preview_url($this->quiz, $question);
     }
 
+    /**
+     * URL of add to quiz.
+     *
+     * @param $questionid
+     * @return \moodle_url
+     */
     public function add_to_quiz_url($questionid) {
-        global $CFG;
         $params = $this->baseurl->params();
         $params['addquestion'] = $questionid;
         $params['sesskey'] = sesskey();
@@ -136,34 +174,26 @@ class custom_view extends \core_question\bank\view {
      * Note that you can only output this rendered result once per page, as
      * it contains IDs which must be unique.
      *
+     * @param array $pagevars
+     * @param string $tabname
      * @return string HTML code for the form
      */
-    public function render($tabname, $page, $perpage, $cat, $recurse, $showhidden,
-            $showquestiontext, $tagids = []) {
+    public function render($pagevars, $tabname): string {
         ob_start();
-        $this->display($tabname, $page, $perpage, $cat, $recurse, $showhidden, $showquestiontext, $tagids);
+        $this->display($pagevars, $tabname);
         $out = ob_get_contents();
         ob_end_clean();
         return $out;
     }
 
-    /**
-     * Display the controls at the bottom of the list of questions.
-     * @param int       $totalnumber Total number of questions that might be shown (if it was not for paging).
-     * @param bool      $recurse     Whether to include subcategories.
-     * @param \stdClass $category    The question_category row from the database.
-     * @param \context  $catcontext  The context of the category being displayed.
-     * @param array     $addcontexts contexts where the user is allowed to add new questions.
-     */
-    protected function display_bottom_controls($totalnumber, $recurse, $category, \context $catcontext, array $addcontexts) {
+    protected function display_bottom_controls(\context $catcontext): void {
         $cmoptions = new \stdClass();
         $cmoptions->hasattempts = !empty($this->quizhasattempts);
 
         $canuseall = has_capability('moodle/question:useall', $catcontext);
 
-        echo '<div class="modulespecificbuttonscontainer">';
+        echo \html_writer::start_tag('div', ['class' => 'pt-2']);
         if ($canuseall) {
-
             // Add selected questions to the quiz.
             $params = array(
                 'type' => 'submit',
@@ -177,75 +207,19 @@ class custom_view extends \core_question\bank\view {
             );
             echo \html_writer::empty_tag('input', $params);
         }
-        echo "</div>\n";
+        echo \html_writer::end_tag('div');
     }
 
-    /**
-     * Prints a form to choose categories.
-     * @param string $categoryandcontext 'categoryID,contextID'.
-     * @deprecated since Moodle 2.6 MDL-40313.
-     * @see \core_question\bank\search\category_condition
-     * @todo MDL-41978 This will be deleted in Moodle 2.8
-     */
-    protected function print_choose_category_message($categoryandcontext) {
-        global $OUTPUT;
-        debugging('print_choose_category_message() is deprecated, ' .
-                'please use \core_question\bank\search\category_condition instead.', DEBUG_DEVELOPER);
-        echo $OUTPUT->box_start('generalbox questionbank');
-        $this->display_category_form($this->contexts->having_one_edit_tab_cap('edit'),
-                $this->baseurl, $categoryandcontext);
-        echo "<p style=\"text-align:center;\"><b>";
-        print_string('selectcategoryabove', 'question');
-        echo "</b></p>";
-        echo $OUTPUT->box_end();
-    }
-
-    protected function display_options_form($showquestiontext, $scriptpath = '/mod/quiz/edit.php',
-            $showtextoption = false) {
-        // Overridden just to change the default values of the arguments.
-        parent::display_options_form($showquestiontext, $scriptpath, $showtextoption);
-    }
-
-    protected function print_category_info($category) {
-        $formatoptions = new \stdClass();
-        $formatoptions->noclean = true;
-        $strcategory = get_string('category', 'quiz');
-        echo '<div class="categoryinfo"><div class="categorynamefieldcontainer">' .
-                $strcategory;
-        echo ': <span class="categorynamefield">';
-        echo shorten_text(strip_tags(format_string($category->name)), 60);
-        echo '</span></div><div class="categoryinfofieldcontainer">' .
-                '<span class="categoryinfofield">';
-        echo shorten_text(strip_tags(format_text($category->info, $category->infoformat,
-                $formatoptions, $this->course->id)), 200);
-        echo '</span></div></div>';
-    }
-
-    protected function display_options($recurse, $showhidden, $showquestiontext) {
-        debugging('display_options() is deprecated, see display_options_form() instead.', DEBUG_DEVELOPER);
-        echo '<form method="get" action="edit.php" id="displayoptions">';
-        echo "<fieldset class='invisiblefieldset'>";
-        echo \html_writer::input_hidden_params($this->baseurl,
-                array('recurse', 'showhidden', 'qbshowtext'));
-        $this->display_category_form_checkbox('recurse', $recurse,
-                get_string('includesubcategories', 'question'));
-        $this->display_category_form_checkbox('showhidden', $showhidden,
-                get_string('showhidden', 'question'));
-        echo '<noscript><div class="centerpara"><input type="submit" value="' .
-                get_string('go') . '" />';
-        echo '</div></noscript></fieldset></form>';
-    }
-
-    protected function create_new_question_form($category, $canadd) {
+    protected function create_new_question_form($category, $canadd): void {
         // Don't display this.
     }
 
     /**
-     * Override the base implementation in \core_question\bank\view
+     * Override the base implementation in \core_question\local\bank\view
      * because we don't want to print the headers in the fragment
      * for the modal.
      */
-    protected function display_question_bank_header() {
+    protected function display_question_bank_header(): void {
     }
 
     /**
@@ -256,7 +230,7 @@ class custom_view extends \core_question\bank\view {
      * Unfortunately the best we can do is to look at the URL for
      * those parameters (only marginally better really).
      */
-    protected function init_sort_from_params() {
+    protected function init_sort_from_params(): void {
         $this->sort = [];
         for ($i = 1; $i <= self::MAX_SORTS; $i++) {
             if (!$sort = $this->baseurl->param('qbs' . $i)) {
@@ -272,8 +246,8 @@ class custom_view extends \core_question\bank\view {
                 }
             }
             // Deal with subsorts.
-            list($colname, $subsort) = $this->parse_subsort($sort);
-            $this->requiredcolumns[$colname] = $this->get_column_type($colname);
+            list($colname) = $this->parse_subsort($sort);
+            $this->get_column_type($colname);
             $this->sort[$sort] = $order;
         }
     }

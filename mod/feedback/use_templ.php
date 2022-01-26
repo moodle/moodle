@@ -24,10 +24,10 @@
 
 require_once("../../config.php");
 require_once("lib.php");
-require_once('use_templ_form.php');
 
 $id = required_param('id', PARAM_INT);
 $templateid = optional_param('templateid', false, PARAM_INT);
+$mode = optional_param('mode', '', PARAM_ALPHA);
 
 if (!$templateid) {
     redirect('edit.php?id='.$id);
@@ -46,35 +46,33 @@ $feedbackstructure = new mod_feedback_structure($feedback, $cm, 0, $templateid);
 
 require_capability('mod/feedback:edititems', $context);
 
-$mform = new mod_feedback_use_templ_form();
-$mform->set_data(array('id' => $id, 'templateid' => $templateid));
-
-if ($mform->is_cancelled()) {
-    redirect('edit.php?id='.$id.'&do_show=templates');
-} else if ($formdata = $mform->get_data()) {
-    feedback_items_from_template($feedback, $templateid, $formdata->deleteolditems);
-    redirect('edit.php?id=' . $id);
-}
-
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
-navigation_node::override_active_url(new moodle_url('/mod/feedback/edit.php',
-        array('id' => $id, 'do_show' => 'templates')));
+$params = ['id' => $id];
+$params += ($mode ? ['mode' => $mode] : []);
+$activeurl = new moodle_url('/mod/feedback/manage_templates.php', $params);
+$PAGE->set_url($activeurl);
+
+if ($mode == 'manage') {
+    navigation_node::override_active_url($activeurl);
+} else {
+    navigation_node::override_active_url(new moodle_url('/mod/feedback/view.php', $params));
+}
+
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
+$PAGE->activityheader->set_attrs([
+    "hidecompletion" => true,
+    "description" => ''
+]);
+$actionbar = new \mod_feedback\output\edit_template_action_bar($cm->id, $templateid, $mode);
+/** @var \mod_feedback\output\renderer $renderer */
+$renderer = $PAGE->get_renderer('mod_feedback');
+
 echo $OUTPUT->header();
-
-/// Print the main part of the page
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-echo $OUTPUT->heading(format_string($feedback->name));
-
-echo $OUTPUT->heading(get_string('confirmusetemplate', 'feedback'), 4);
-
-$mform->display();
+echo $renderer->main_action_bar($actionbar);
 
 $form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_VIEW_TEMPLATE,
         $feedbackstructure, 'feedback_preview_form', ['templateid' => $templateid]);

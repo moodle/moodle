@@ -36,7 +36,7 @@
     {{> core_calendar/month_detailed}}
 </div>
 {{#js}}
-require(['jquery', 'core_calendar/calendar'], function($, Calendar) {
+require(['jquery', 'core_calendar/calendar', 'core_calendar/popover'], function($, Calendar, calendarPopover) {
     Calendar.init($("#calendar-month-{{uniqid}}-{{calendarinstanceid}}"));
 });
 {{/js}}

@@ -72,8 +72,6 @@ Feature: View activity completion in the SCORM activity
     And I switch to "scorm_object" iframe
     And I click on "[id='question_com.scorm.golfsamples.interactions.fun_1_False']" "css_element"
     And I press "Submit Answers"
-    And I switch to the main frame
-    And I follow "Exit activity"
     When I am on the "Music history" "scorm activity" page
     Then the "View" completion condition of "Music history" is displayed as "done"
     # Conditions that are not possible to achieve (eg score below requirement but all attempts used) are marked as failed.
@@ -85,7 +83,7 @@ Feature: View activity completion in the SCORM activity
   @javascript
   Scenario: Use manual completion
     Given I am on the "Music history" "scorm activity" page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and display"

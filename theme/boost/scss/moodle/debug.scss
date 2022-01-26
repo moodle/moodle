@@ -33,6 +33,7 @@ body.behat-site {
         position: static;
         z-index: 0;
         opacity: 1;
+        width: auto;
     }
     .custom-control-label {
         &::before,
@@ -46,6 +47,9 @@ body.behat-site {
     // edge of the screen.
     [data-region="message-drawer"] {
         padding-right: 10px;
+    }
+    &.jsenabled #page-footer .footer-content-popover {
+        display: block;
     }
 }
 
@@ -74,4 +78,3 @@ body.behat-site {
     background-color: #99c;
     font-weight: bold;
 }
-

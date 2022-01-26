@@ -30,25 +30,25 @@ Feature: Users can add entries to database activities
       | Field name | Test field 2 name |
       | Field description | Test field 2 description |
     # To generate the default templates.
-    And I follow "Templates"
+    And I navigate to "Templates" in current page administration
     And I wait until the page is ready
     And I log out
     When I am on the "Course 1" course page logged in as student1
     And I add an entry to "Test database name" database with:
       | Test field name | Student original entry |
       | Test field 2 name | Student original entry 2 |
-    And I press "Save and view"
+    And I press "Save"
     Then I should see "Student original entry"
     And I follow "Edit"
     And I set the following fields to these values:
       | Test field name | Student original entry |
       | Test field 2 name |  |
-    And I press "Save and view"
+    And I press "Save"
     Then I should not see "Student original entry 2"
     And I follow "Edit"
     And I set the following fields to these values:
       | Test field name | Student edited entry |
-    And I press "Save and view"
+    And I press "Save"
     And I should see "Student edited entry"
     And I add an entry to "Test database name" database with:
       | Test field name | Student second entry |
@@ -56,8 +56,8 @@ Feature: Users can add entries to database activities
     And the field "Test field name" does not match value "Student second entry"
     And I add an entry to "Test database name" database with:
       | Test field name | Student third entry |
-    And I press "Save and view"
-    And I follow "View list"
+    And I press "Save"
+    And I select "List view" from the "jump" singleselect
     And I should see "Student edited entry"
     And I should see "Student second entry"
     And I should see "Student third entry"
@@ -80,6 +80,7 @@ Feature: Users can add entries to database activities
     Given I am on the "Course 1" course page logged in as teacher1
     And I add a "Text area" field to "Test database name" database and I fill the form with:
       | Field name | Textarea field name |
+    And I am on "Course 1" course homepage
     When I add an entry to "Test database name" database with:
       | Textarea field name | This is the content |
     And I click on "Insert H5P" "button"

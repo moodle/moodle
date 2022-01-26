@@ -31,7 +31,7 @@ Feature: I need to export grades as xml
 
   @javascript
   Scenario: Export grades as XML
-    When I navigate to "Export > XML file" in the course gradebook
+    When I navigate to "XML file" export page in the course gradebook
     And I expand all fieldsets
     And I set the field "Grade export decimal places" to "1"
     And I press "Download"

@@ -14,14 +14,12 @@
 
 #page-mod-quiz-attempt .submitbtns,
 #page-mod-quiz-review .submitbtns {
-    clear: left;
-    text-align: left;
-    padding-top: 1.5em;
+    display: flex;
 }
 
 #page-mod-quiz-attempt .submitbtns .mod_quiz-next-nav,
 #page-mod-quiz-review .submitbtns .mod_quiz-next-nav {
-    float: right;
+    margin-left: auto;
 }
 
 .path-mod-quiz .mod_quiz-redo_question_button {
@@ -194,6 +192,12 @@
 .path-mod-quiz .othernav input {
     display: block;
     margin: 0.5em 0;
+}
+
+#mod_quiz_navblock.nav-disabled > * {
+    opacity: .65;
+    pointer-events: none;
+    cursor: not-allowed;
 }
 
 /** mod quiz mod **/
@@ -967,16 +971,6 @@ table#categoryquestions {
 
 .mod_quiz_qbank_dialogue #advancedsearch label {
     font-size: 100%;
-}
-
-.modulespecificbuttonscontainer {
-    padding-left: 0.3em;
-    padding-right: 0.3em;
-}
-
-.questionbankformforpopup .modulespecificbuttonscontainer {
-    padding-top: 10px;
-    padding-left: 0;
 }
 
 .quizquestionlistcontrols {

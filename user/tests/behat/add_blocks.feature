@@ -20,6 +20,6 @@ Feature: Add blocks to my profile page
     And I follow "View profile"
 
   Scenario: Add blocks to page
-    When I press "Customise this page"
+    When I turn editing mode on
     And I add the "Latest announcements" block
     Then I should see "Latest announcements"

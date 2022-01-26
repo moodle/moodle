@@ -376,6 +376,101 @@ class core_completionlib_testcase extends advanced_testcase {
     }
 
     /**
+     * Provider for the test_internal_get_state_with_grade_criteria.
+     *
+     * @return array
+     */
+    public function test_internal_get_state_with_grade_criteria_provider() {
+        return [
+            "Passing grade enabled and achieve. State should be COMPLETION_COMPLETE_PASS" => [
+                [
+                    'completionusegrade' => 1,
+                    'completionpassgrade' => 1,
+                    'gradepass' => 50,
+                ],
+                50,
+                COMPLETION_COMPLETE_PASS
+            ],
+            "Passing grade enabled and not achieve. State should be COMPLETION_COMPLETE_FAIL" => [
+                [
+                    'completionusegrade' => 1,
+                    'completionpassgrade' => 1,
+                    'gradepass' => 50,
+                ],
+                40,
+                COMPLETION_COMPLETE_FAIL
+            ],
+            "Passing grade not enabled with passing grade set." => [
+                [
+                    'completionusegrade' => 1,
+                    'gradepass' => 50,
+                ],
+                50,
+                COMPLETION_COMPLETE_PASS
+            ],
+            "Passing grade not enabled with passing grade not set." => [
+                [
+                    'completionusegrade' => 1,
+                ],
+                90,
+                COMPLETION_COMPLETE
+            ],
+            "Passing grade not enabled with passing grade not set. No submission made." => [
+                [
+                    'completionusegrade' => 1,
+                ],
+                null,
+                COMPLETION_INCOMPLETE
+            ],
+        ];
+    }
+
+    /**
+     * Tests that the right completion state is being set based on the grade criteria.
+     *
+     * @dataProvider test_internal_get_state_with_grade_criteria_provider
+     * @param array $completioncriteria The completion criteria to use
+     * @param int|null $studentgrade Grade to assign to student
+     * @param int $expectedstate Expected completion state
+     */
+    public function test_internal_get_state_with_grade_criteria(array $completioncriteria, ?int $studentgrade, int $expectedstate) {
+        $this->setup_data();
+
+        /** @var \mod_assign_generator $assigngenerator */
+        $assigngenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assign = $assigngenerator->create_instance([
+            'course' => $this->course->id,
+            'completion' => COMPLETION_ENABLED,
+        ] + $completioncriteria);
+
+        $userid = $this->user->id;
+
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
+        $usercm = cm_info::create($cm, $userid);
+
+        // Create a teacher account.
+        $teacher = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($teacher->id, $this->course->id, 'editingteacher');
+        // Log in as the teacher.
+        $this->setUser($teacher);
+
+        // Grade the student for this assignment.
+        $assign = new assign($usercm->context, $cm, $cm->course);
+        if ($studentgrade) {
+            $data = (object)[
+                'sendstudentnotifications' => false,
+                'attemptnumber' => 1,
+                'grade' => $studentgrade,
+            ];
+            $assign->save_grade($userid, $data);
+        }
+
+        // The target user already received a grade, so internal_get_state should be already complete.
+        $completioninfo = new completion_info($this->course);
+        $this->assertEquals($expectedstate, $completioninfo->internal_get_state($cm, $userid, null));
+    }
+
+    /**
      * Covers the case where internal_get_state() is being called for a user different from the logged in user.
      */
     public function test_internal_get_state_with_different_user() {
@@ -725,6 +820,7 @@ class core_completionlib_testcase extends advanced_testcase {
             'completion' => COMPLETION_TRACKING_AUTOMATIC,
             // Submission grade required.
             'completiongradeitemnumber' => 0,
+            'completionpassgrade' => 1,
         ]);
 
         $cmworkshop = cm_info::create(get_coursemodule_from_instance('workshop', $workshop->id));
@@ -756,8 +852,10 @@ class core_completionlib_testcase extends advanced_testcase {
         $workshopcompletiondata = $method->invoke($completioninfo, $cmworkshop, $user->id);
 
         $this->assertArrayHasKey('completiongrade', $workshopcompletiondata);
+        $this->assertArrayHasKey('passgrade', $workshopcompletiondata);
         $this->assertArrayNotHasKey('customcompletion', $workshopcompletiondata);
         $this->assertEquals(COMPLETION_INCOMPLETE, $workshopcompletiondata['completiongrade']);
+        $this->assertEquals(COMPLETION_INCOMPLETE, $workshopcompletiondata['passgrade']);
 
         // Check that fetching data for a module with no completion conditions does not provide any data.
         $choice2completiondata = $method->invoke($completioninfo, $cmchoice2, $user->id);

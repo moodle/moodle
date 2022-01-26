@@ -1,0 +1,79 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_reportbuilder/local/audience/form
+
+    Template for an audience form
+
+    Example context (json):
+    {
+        "instanceid": 1,
+        "classname": "some\\class\\name",
+        "heading": "Title",
+        "headingeditable": "Title (edit me)",
+        "showormessage": 1,
+        "canedit": 1,
+        "candelete": 1,
+        "description": "description",
+        "form": "form"
+    }
+}}
+<div class="instance-card" data-classname="{{identifier}}" data-instanceid="{{instanceid}}" data-title="{{heading}}" data-region="audience-card">
+    {{#showormessage}}
+        <span class="audience-separator d-flex mb-3 justify-content-center align-items-center small text-muted font-weight-bold">
+            {{#str}} or, core_reportbuilder {{/str}}
+        </span>
+    {{/showormessage}}
+    <div class="mb-3 card">
+        <div class="card-header p-0">
+            <div class="mb-0 d-flex">
+                <h3 class="h6 text-left m-0 align-self-center pl-3">
+                    {{{headingeditable}}}
+                </h3>
+                <span class="ml-auto">
+                    {{#canedit}}
+                        <button class="btn btn-link px-0"
+                                data-action="edit-audience"
+                                title="{{#str}} editaudience, core_reportbuilder, {{heading}} {{/str}}"
+                                aria-label="{{#str}} editaudience, core_reportbuilder, {{heading}} {{/str}}"
+                                {{^description}}disabled{{/description}}>
+                            {{#pix}} i/settings, core {{/pix}}
+                        </button>
+                    {{/canedit}}
+                    {{#candelete}}
+                        <button class="btn btn-link px-0 mr-2"
+                                data-action="delete-audience"
+                                title="{{#str}} deleteaudience, core_reportbuilder, {{heading}} {{/str}}"
+                                aria-label="{{#str}} deleteaudience, core_reportbuilder, {{heading}} {{/str}}"
+                                {{^description}}disabled{{/description}}>
+                            {{#pix}} i/trash, core {{/pix}}
+                        </button>
+                    {{/candelete}}
+                </span>
+            </div>
+        </div>
+        <div class="card-body p-3" data-region="audience-form">
+            <div data-region="audience-description" {{^description}}class="hidden"{{/description}}>
+                {{{description}}}
+            </div>
+            <div data-region="audience-form-container" {{^form}}class="hidden"{{/form}}>
+                <div class="alert alert-warning p-2" data-region="audience-not-saved">{{#str}} audiencenotsaved, core_reportbuilder {{/str}}</div>
+                {{{form}}}
+            </div>
+        </div>
+    </div>
+</div>

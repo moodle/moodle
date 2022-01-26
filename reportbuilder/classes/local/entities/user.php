@@ -28,6 +28,7 @@ use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
+use core_reportbuilder\local\filters\user as user_filter;
 use core_reportbuilder\local\helpers\user_profile_fields;
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\column;
@@ -80,6 +81,11 @@ class user extends base {
             $this->add_filter($filter);
         }
 
+        $conditions = array_merge($this->get_all_filters(), $userprofilefields->get_filters());
+        foreach ($conditions as $condition) {
+            $this->add_condition($condition);
+        }
+
         return $this;
     }
 
@@ -123,6 +129,12 @@ class user extends base {
                     return '';
                 }
 
+                // Ensure we populate all required name properties.
+                $namefields = fields::get_name_fields();
+                foreach ($namefields as $namefield) {
+                    $row->{$namefield} = $row->{$namefield} ?? '';
+                }
+
                 return fullname($row, $viewfullnames);
             });
 
@@ -148,6 +160,12 @@ class user extends base {
 
                     if ($value === null) {
                         return '';
+                    }
+
+                    // Ensure we populate all required name properties.
+                    $namefields = fields::get_name_fields();
+                    foreach ($namefields as $namefield) {
+                        $row->{$namefield} = $row->{$namefield} ?? '';
                     }
 
                     if ($fullnamefield === 'fullnamewithlink') {
@@ -185,7 +203,9 @@ class user extends base {
             ->add_fields($userpictureselect)
             ->set_type(column::TYPE_INTEGER)
             ->set_is_sortable($this->is_sortable('picture'))
-            ->add_callback(static function (int $value, stdClass $row): string {
+            // It doesn't make sense to offer integer aggregation methods for this column.
+            ->set_disabled_aggregation(['avg', 'max', 'min', 'sum'])
+            ->add_callback(static function ($value, stdClass $row): string {
                 global $OUTPUT;
 
                 return !empty($row->id) ? $OUTPUT->user_picture($row, ['link' => false, 'alttext' => false]) : '';
@@ -259,17 +279,29 @@ class user extends base {
     /**
      * Returns a SQL statement to select all user fields necessary for fullname() function
      *
+     * Note the implementation here is similar to {@see fields::get_sql_fullname} but without concatenation
+     *
      * @param string $usertablealias
      * @return string
      */
     public static function get_name_fields_select(string $usertablealias = 'u'): string {
+
+        $namefields = fields::get_name_fields(true);
+
+        // Create a dummy user object containing all name fields.
+        $dummyuser = (object) array_combine($namefields, $namefields);
+        $dummyfullname = fullname($dummyuser, true);
+
+        // Extract any name fields from the fullname format in the order that they appear.
+        $matchednames = array_values(order_in_string($namefields, $dummyfullname));
+
         $userfields = array_map(static function(string $userfield) use ($usertablealias): string {
             if (!empty($usertablealias)) {
                 $userfield = "{$usertablealias}.{$userfield}";
             }
 
             return $userfield;
-        }, fields::get_name_fields(true));
+        }, $matchednames);
 
         return implode(', ', $userfields);
     }
@@ -333,8 +365,6 @@ class user extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
-        global $DB;
-
         $filters = [];
         $tablealias = $this->get_table_alias('user');
 
@@ -381,6 +411,16 @@ class user extends base {
 
             $filters[] = $filter;
         }
+
+        // User select filter.
+        $filters[] = (new filter(
+            user_filter::class,
+            'userselect',
+            new lang_string('userselect', 'core_reportbuilder'),
+            $this->get_entity_name(),
+            "{$tablealias}.id"
+        ))
+            ->add_joins($this->get_joins());
 
         return $filters;
     }

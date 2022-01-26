@@ -29,27 +29,24 @@ Feature: Preview Essay questions
   @javascript @_switch_window
   Scenario: Preview an Essay question that uses the HTML editor.
     When I choose "Preview" action for "essay-001" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I should see "Please write a story about a frog."
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript @_switch_window
   Scenario: Preview an Essay question that uses the HTML editor with embedded files.
     When I choose "Preview" action for "essay-002" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I should see "Please write a story about a frog."
     And I should see "You can drag and drop files here to add them."
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript @_switch_window
   Scenario: Preview an Essay question that uses a plain text area.
     When I choose "Preview" action for "essay-003" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I should see "Please write a story about a frog."
-    And I switch to the main window
+    And I press "Close preview"

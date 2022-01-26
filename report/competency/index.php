@@ -73,8 +73,6 @@ $PAGE->set_title($title);
 $PAGE->set_heading($coursename);
 $PAGE->set_pagelayout('incourse');
 
-report_helper::save_selected_report($id, $navurl);
-
 $output = $PAGE->get_renderer('report_competency');
 
 echo $output->header();
@@ -98,7 +96,6 @@ if ($currentuser > 0) {
     $top .= $output->context_header($userheading, 3);
 }
 echo $output->container($top, 'clearfix');
-echo $output->heading($title, 3);
 
 if ($currentuser > 0) {
     $page = new \report_competency\output\report($course->id, $currentuser, $currentmodule);

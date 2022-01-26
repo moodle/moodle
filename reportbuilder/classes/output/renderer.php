@@ -18,8 +18,13 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\output;
 
+use html_writer;
+use moodle_url;
 use plugin_renderer_base;
+use core_reportbuilder\table\custom_report_table;
+use core_reportbuilder\table\custom_report_table_view;
 use core_reportbuilder\table\system_report_table;
+use core_reportbuilder\local\models\report;
 
 /**
  * Report renderer class
@@ -39,7 +44,7 @@ class renderer extends plugin_renderer_base {
     protected function render_system_report(system_report $report): string {
         $context = $report->export_for_template($this);
 
-        return $this->render_from_template('core_reportbuilder/system_report', $context);
+        return $this->render_from_template('core_reportbuilder/report', $context);
     }
 
     /**
@@ -55,5 +60,85 @@ class renderer extends plugin_renderer_base {
         ob_end_clean();
 
         return $output;
+    }
+
+    /**
+     * Render a custom report
+     *
+     * @param custom_report $report
+     * @return string
+     */
+    protected function render_custom_report(custom_report $report): string {
+        $context = $report->export_for_template($this);
+
+        return $this->render_from_template('core_reportbuilder/local/dynamictabs/editor', $context);
+    }
+
+    /**
+     * Render a custom report table
+     *
+     * @param custom_report_table $table
+     * @return string
+     */
+    protected function render_custom_report_table(custom_report_table $table): string {
+        ob_start();
+        $table->out($table->get_default_per_page(), false);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        return $output;
+    }
+
+    /**
+     * Render a custom report table (view only mode)
+     *
+     * @param custom_report_table_view $table
+     * @return string
+     */
+    protected function render_custom_report_table_view(custom_report_table_view $table): string {
+        ob_start();
+        $table->out($table->get_default_per_page(), false);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        return $output;
+    }
+
+    /**
+     * Renders the New report button
+     *
+     * @return string
+     */
+    public function render_new_report_button(): string {
+        return html_writer::tag('button', get_string('newreport', 'core_reportbuilder'), [
+            'class' => 'btn btn-primary my-auto',
+            'data-action' => 'report-create',
+        ]);
+    }
+
+    /**
+     * Renders full page editor header
+     *
+     * @param report $report
+     * @return string
+     */
+    public function render_fullpage_editor_header(report $report): string {
+        $reportname = $report->get_formatted_name();
+        $editdetailsbutton = html_writer::tag('button', get_string('editdetails', 'core_reportbuilder'), [
+            'class' => 'btn btn-outline-secondary mr-2',
+            'data-action' => 'report-edit',
+            'data-report-id' => $report->get('id')
+        ]);
+        $closebutton = html_writer::link(new moodle_url('/reportbuilder/index.php'), get_string('close', 'core_reportbuilder'), [
+            'class' => 'btn btn-secondary',
+            'title' => get_string('closeeditor', 'core_reportbuilder', $reportname),
+            'role' => 'button'
+        ]);
+        $context = [
+            'title' => $reportname,
+            'buttons' => $editdetailsbutton . $closebutton,
+        ];
+
+        return $this->render_from_template('core_reportbuilder/editor_navbar', $context);
     }
 }

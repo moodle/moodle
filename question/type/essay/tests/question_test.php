@@ -72,6 +72,9 @@ class qtype_essay_question_test extends advanced_testcase {
         $essay->responserequired = $responserequired;
         $essay->attachmentsrequired = $attachmentsrequired;
 
+        // The space before the number of bytes from display_size is actually a non-breaking space.
+        $expected = str_replace(' bytes', "\xc2\xa0bytes", $expected);
+
         $this->assertEquals($expected, $essay->summarise_response(
             ['answer' => $answertext, 'answerformat' => FORMAT_HTML,  'attachments' => $attachments[$attachmentuploaded]]));
     }

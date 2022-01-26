@@ -1,6 +1,15 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+The following functions have been finally deprecated and can not be used anymore:
+  * can_post_message()
+  * get_individual_conversations_between_users()
+* The message_jabber notification has been completely removed from core. It has been moved to the plugins database repository, so
+it can still be installed as a third-party plugin.
+* The type of the parameter $read in the function message_get_messages has changed from boolean to integer. It now accepts either MESSAGE_GET_UNREAD, MESSAGE_GET_READ or MESSAGE_GET_READ_AND_UNREAD.
+
 === 3.11.2 ===
 
 * The `message_page_type_list` method was previouly deprecated, however it was still

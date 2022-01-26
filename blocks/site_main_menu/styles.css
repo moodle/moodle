@@ -6,14 +6,7 @@
     /* Made specific to win over .block.list_block .unlist > li > .column. */
     width: 100%;
     display: table;
-}
-
-.block_site_main_menu li .buttons {
-    float: right;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background-color: inherit;
+    margin-bottom: 0.5rem;
 }
 
 .block_site_main_menu li .buttons a img {
@@ -28,7 +21,6 @@
     display: inline;
 }
 
-.block_site_main_menu .mod-indent,
-.block_site_main_menu .main-menu-content {
-    display: table-cell;
+.block_site_main_menu .instancename {
+    word-break: break-all;
 }

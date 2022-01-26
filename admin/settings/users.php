@@ -42,6 +42,7 @@ if ($hassiteconfig
         $choices['firstaccess'] = new lang_string('firstaccess', 'filters');
         $choices['lastaccess'] = new lang_string('lastaccess');
         $choices['neveraccessed'] = new lang_string('neveraccessed', 'filters');
+        $choices['timecreated'] = new lang_string('timecreated');
         $choices['timemodified'] = new lang_string('lastmodified');
         $choices['nevermodified'] = new lang_string('nevermodified', 'filters');
         $choices['auth'] = new lang_string('authentication');
@@ -185,6 +186,9 @@ if ($hassiteconfig
             unset($creatornewroles);
             unset($restorersnewrole);
         }
+
+        $temp->add(new admin_setting_configcheckbox('enroladminnewcourse', new lang_string('enroladminnewcourse', 'admin'),
+            new lang_string('enroladminnewcourse_help', 'admin'), 1));
 
         $temp->add(new admin_setting_configcheckbox('autologinguests', new lang_string('autologinguests', 'admin'), new lang_string('configautologinguests', 'admin'), 0));
 

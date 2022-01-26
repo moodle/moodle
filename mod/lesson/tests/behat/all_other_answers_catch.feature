@@ -27,7 +27,7 @@ Feature: Numeric and short answer questions have a section to catch all other st
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    When I navigate to "Edit settings" in current page administration
+    When I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | Provide option to try a question again | Yes |

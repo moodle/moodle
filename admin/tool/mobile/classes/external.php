@@ -187,6 +187,7 @@ class external extends external_api {
                 'tool_mobile_androidappid' => new external_value(PARAM_NOTAGS, 'Android app\'s unique identifier.',
                     VALUE_OPTIONAL),
                 'tool_mobile_setuplink' => new external_value(PARAM_URL, 'App download page.', VALUE_OPTIONAL),
+                'tool_mobile_qrcodetype' => new external_value(PARAM_INT, 'QR login configuration.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             )
         );
@@ -310,9 +311,12 @@ class external extends external_api {
         // Between each request 6 minutes are required.
         $last = get_user_preferences('tool_mobile_autologin_request_last', 0, $USER);
         // Check if we must reset the count.
+        $mintimereq = get_config('tool_mobile', 'autologinmintimebetweenreq');
+        $mintimereq = empty($mintimereq) ? 6 * MINSECS : $mintimereq;
         $timenow = time();
-        if ($timenow - $last < 6 * MINSECS) {
-            throw new moodle_exception('autologinkeygenerationlockout', 'tool_mobile');
+        if ($timenow - $last < $mintimereq) {
+            $minutes = $mintimereq / MINSECS;
+            throw new moodle_exception('autologinkeygenerationlockout', 'tool_mobile', $minutes);
         }
         set_user_preference('tool_mobile_autologin_request_last', $timenow, $USER);
 

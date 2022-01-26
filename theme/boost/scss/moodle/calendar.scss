@@ -19,6 +19,9 @@ $calendarEventOtherBorder: 2px solid #687889 !default; // Gray.
 // This will be the colour of mini-calendar links, hide/show filter icons, edit/delete icon buttons.
 $calendarEventColor: #0d5ca1 !default;
 
+$calendarCurrentDateColor: $white;
+$calendarCurrentDateBackground: $primary;
+
 // Calendar event background colours defined.
 .calendar_event_category {
     background-color: $calendarEventCategoryColor;
@@ -126,13 +129,28 @@ $calendarEventColor: #0d5ca1 !default;
     }
 }
 
+#region-main {
+    .maincalendar {
+        .calendarwrapper {
+            td {
+                & > div {
+                    height: 11.5em;
+                    overflow: hidden;
+                }
+            }
+        }
+    }
+
+}
+
 .maincalendar {
     vertical-align: top;
     padding: 0;
 
     .bottom {
         text-align: left;
-        padding: 20px 0 0 20px;
+        width: 98%;
+        margin: 10px auto;
 
         @include footer-links;
     }
@@ -150,8 +168,13 @@ $calendarEventColor: #0d5ca1 !default;
             margin: 0;
             padding: 0;
 
+            li[data-event-folded="true"] {
+                display: none;
+            }
+
             li {
                 list-style-type: none;
+                line-height: 1.2em;
 
                 > a {
                     @include text-truncate;
@@ -165,6 +188,10 @@ $calendarEventColor: #0d5ca1 !default;
                             text-decoration: $link-hover-decoration;
                         }
                     }
+                }
+
+                a[data-action="view-day-link"] {
+                    @include text-truncate;
                 }
 
                 .icon {
@@ -212,12 +239,44 @@ $calendarEventColor: #0d5ca1 !default;
             }
         }
 
+        th {
+            text-align: left;
+            padding-left: 16px;
+        }
+
         td {
-            height: 5em;
+
+            a.day:focus {
+                display: inline-block;
+                border-radius: 50%;
+                box-shadow: $input-btn-focus-box-shadow;
+            }
+
+            .day-number-circle {
+                display: inline-block;
+                line-height: 0;
+                width: 30px;
+                height: 30px;
+
+                .day-number {
+                    display: inline-block;
+                    padding: 50% 4px;
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+
+            &.today {
+                .day-number-circle {
+                    border-radius: 50%;
+                    color: $calendarCurrentDateColor;
+                    background-color: $calendarCurrentDateBackground;
+                }
+            }
         }
 
         .clickable:hover {
-            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+            background-color: #ededed;
         }
     }
 
@@ -266,7 +325,7 @@ $calendarEventColor: #0d5ca1 !default;
     .calendartable {
         td,
         li {
-            padding: 0 4px 4px 4px;
+            padding: 4px;
         }
 
         li {
@@ -314,12 +373,8 @@ $calendarEventColor: #0d5ca1 !default;
 // Block minicalendar.
 .block {
     .bottom {
-        // This adds a border on the top side of the footer container.
-        // So we won't have to add a <hr> element in the footer_options template.
-        border-top: $border-width solid $card-border-color;
-        margin-top: map-get($spacers, 3);
-        padding-top: map-get($spacers, 2);
-
+        width: 98%;
+        margin: 10px auto;
         @include footer-links;
     }
 
@@ -482,15 +537,178 @@ $calendarEventColor: #0d5ca1 !default;
     }
 }
 
+// Side block in Course view page is different with other side blocks.
+// We should hide the navigation text and re-arrange the Calendar links.
+.path-course-view {
+    .block {
+        &.block_calendar_month {
+            .maincalendar {
+                div.header {
+                    visibility: hidden;
+                    height: 0;
+                }
+                .calendarwrapper {
+                    .arrow_text {
+                        display: none;
+                    }
+                }
+            }
+
+            .footer {
+                .bottom {
+                    .footer-link {
+                        display: block;
+                    }
+                    .footer-link:after {
+                        content: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
 /* Display month name above the calendar */
 table.calendartable caption {
     caption-side: top;
+}
+
+@mixin day-number-has-event {
+    .day-number {
+        display: inline-block;
+        position: relative;
+
+        &:before {
+            content: '.';
+            display: inline-block;
+            position: absolute;
+            bottom: 0.4em;
+            left: 0;
+            text-align: center;
+            width: 100%;
+            font-size: 3em;
+            color: inherit;
+        }
+    }
 }
 
 @media (min-width: 768px) {
     #page-calender-view {
         .container-fluid {
             min-width: 1024px;
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    section:not(#region-main) {
+        .block {
+            &.block_calendar_month {
+                .maincalendar {
+                    div.header {
+                        visibility: hidden;
+                        height: 0;
+                    }
+
+                    .calendarwrapper {
+                        .current {
+                            width: 40%;
+                            font-size: inherit;
+                            line-height: inherit;
+                        }
+
+                        .previous,
+                        .next {
+                            width: 30%;
+                            font-size: 0.8em;
+                        }
+                    }
+
+                    .calendartable {
+                        &.calendarmonth {
+                            th,
+                            td {
+                                border: none;
+                                text-align: center !important; // stylelint-disable-line declaration-no-important
+                                padding: 0;
+                            }
+
+                            td {
+                                height: auto;
+                                font-size: 0.8em;
+
+                                &.hasevent {
+                                    [data-region="day-content"] {
+                                        display: none;
+                                    }
+
+                                    @include day-number-has-event;
+                                }
+                                &:after {
+                                    content: '';
+                                    display: block;
+                                    margin-top: calc(100% - 26px);
+                                }
+
+                                &.clickable:hover {
+                                    background-color: inherit;
+                                }
+
+                                &.clickable:not(.today):hover {
+                                    .day-number-circle {
+                                        border-radius: 50%;
+                                        background-color: #ededed;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .bottom {
+                    // This adds a border on the top side of the footer container.
+                    // So we won't have to add a <hr> element in the footer_options template.
+                    border-top: $border-width solid $card-border-color;
+                    padding-top: map-get($spacers, 2);
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .maincalendar {
+        .calendartable {
+            &.calendarmonth {
+                th,
+                td {
+                    border: none;
+                    text-align: center !important; // stylelint-disable-line declaration-no-important
+                    padding: 0;
+                }
+                td {
+                    height: auto;
+                    font-size: inherit;
+                    padding: 0;
+
+                    &.hasevent {
+                        [data-region="day-content"] {
+                            display: none;
+                        }
+
+                        @include day-number-has-event;
+                    }
+                    &:after {
+                        content: '';
+                        display: block;
+                        margin-top: calc(100% - 26px);
+                    }
+
+                    & > div {
+                        height: auto !important; // stylelint-disable-line declaration-no-important
+                    }
+                }
+            }
         }
     }
 }

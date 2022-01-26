@@ -99,15 +99,15 @@ if ($item->id) {
 }
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
+$PAGE->activityheader->set_attrs([
+    "hidecompletion" => true,
+    "description" => ''
+]);
 echo $OUTPUT->header();
-
-// Print the main part of the page.
-echo $OUTPUT->heading(format_string($feedback->name));
 
 /// print the tabs
 $current_tab = 'edit';
 $id = $cm->id;
-require('tabs.php');
 
 //print errormsg
 if (isset($error)) {

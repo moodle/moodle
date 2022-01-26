@@ -52,6 +52,18 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $optionalsubsystems->add(new admin_setting_configcheckbox('enableanalytics', new lang_string('enableanalytics', 'admin'),
         new lang_string('configenableanalytics', 'admin'), 1, 1, 0));
 
+    $optionalsubsystems->add(new admin_setting_configcheckbox('core_competency/enabled',
+        new lang_string('enablecompetencies', 'core_competency'),
+        new lang_string('enablecompetencies_desc', 'core_competency'),
+        1)
+    );
+
+    $optionalsubsystems->add(new admin_setting_configcheckbox('messaging',
+        new lang_string('messaging', 'admin'),
+        new lang_string('configmessaging', 'admin'),
+        1)
+    );
+
     $fullunicodesupport = true;
     if ($DB->get_dbfamily() == 'mysql') {
         $collation = $DB->get_dbcollation();

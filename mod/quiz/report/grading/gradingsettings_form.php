@@ -39,15 +39,30 @@ class quiz_grading_settings_form extends moodleform {
     protected $hidden = array();
     protected $counts;
     protected $shownames;
-    protected $showidnumbers;
 
-    public function __construct($hidden, $counts, $shownames, $showidnumbers) {
+    /** @var bool $showcustomfields whether custom field values should be shown. */
+    protected $showcustomfields;
+
+    /** @var stdClass $context the quiz context. */
+    protected $context;
+
+    /**
+     * quiz_grading_settings_form constructor.
+     *
+     * @param array $hidden Array of options form.
+     * @param stdClass $counts object that stores the number of each type of attempt.
+     * @param bool $shownames whether student names should be shown.
+     * @param bool $showcustomfields whether custom field values should be shown.
+     * @param stdClass $context context object.
+     */
+    public function __construct(array $hidden, stdClass $counts, bool $shownames, bool $showcustomfields, stdClass $context) {
         global $CFG;
         $this->includeauto = !empty($hidden['includeauto']);
         $this->hidden = $hidden;
         $this->counts = $counts;
         $this->shownames = $shownames;
-        $this->showidnumbers = $showidnumbers;
+        $this->showcustomfields = $showcustomfields;
+        $this->context = $context;
         parent::__construct($CFG->wwwroot . '/mod/quiz/report.php');
     }
 
@@ -75,18 +90,22 @@ class quiz_grading_settings_form extends moodleform {
         $mform->addRule('pagesize', null, 'positiveint', null, 'client');
         $mform->setType('pagesize', PARAM_INT);
 
-        $orderoptions = array(
-            'random' => get_string('randomly', 'quiz_grading'),
-            'date' => get_string('bydate', 'quiz_grading'),
-        );
+        $orderoptions = [
+            'random' => get_string('random', 'quiz_grading'),
+            'date' => get_string('date')
+        ];
         if ($this->shownames) {
-            $orderoptions['studentfirstname'] = get_string('bystudentfirstname', 'quiz_grading');
-            $orderoptions['studentlastname']  = get_string('bystudentlastname', 'quiz_grading');
+            $orderoptions['studentfirstname'] = get_string('firstname');
+            $orderoptions['studentlastname']  = get_string('lastname');
         }
-        if ($this->showidnumbers) {
-            $orderoptions['idnumber'] = get_string('bystudentidnumber', 'quiz_grading');
+        // If the current user can see custom user fields, add the custom user fields to the select menu.
+        if ($this->showcustomfields) {
+            $userfieldsapi = \core_user\fields::for_identity($this->context);
+            foreach ($userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]) as $field) {
+                $orderoptions[s($field)] = \core_user\fields::get_display_name(s($field));
+            }
         }
-        $mform->addElement('select', 'order', get_string('orderattempts', 'quiz_grading'),
+        $mform->addElement('select', 'order', get_string('orderattemptsby', 'quiz_grading'),
                 $orderoptions);
 
         foreach ($this->hidden as $name => $value) {

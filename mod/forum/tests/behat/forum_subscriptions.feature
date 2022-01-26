@@ -27,7 +27,7 @@ Feature: A user can control their own subscription preferences for a forum
       | section          | 1                      |
     And I am on "Course 1" course homepage
     Given I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Subscription disabled |
     And I press "Save and return to course"
@@ -54,7 +54,7 @@ Feature: A user can control their own subscription preferences for a forum
       | section        | 1                      |
     And I am on "Course 1" course homepage
     Given I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Forced subscription |
     And I press "Save and return to course"
@@ -81,7 +81,7 @@ Feature: A user can control their own subscription preferences for a forum
       | section        | 1                      |
     And I am on "Course 1" course homepage
     Given I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Optional subscription |
     And I press "Save and return to course"
@@ -92,12 +92,12 @@ Feature: A user can control their own subscription preferences for a forum
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    Then I should see "Subscribe to this forum"
-    And I should not see "Unsubscribe from this forum"
-    And I follow "Subscribe to this forum"
+    Then I should see "Subscribe to forum"
+    And I should not see "Unsubscribe from forum"
+    And I follow "Subscribe to forum"
     And I should see "Student One will be notified of new posts in 'Test forum name'"
-    And I should see "Unsubscribe from this forum"
-    And I should not see "Subscribe to this forum"
+    And I should see "Unsubscribe from forum"
+    And I should not see "Subscribe to forum"
 
   Scenario: An Automatic forum can be unsubscribed from
     Given the following "activity" exists:
@@ -110,7 +110,7 @@ Feature: A user can control their own subscription preferences for a forum
       | section        | 1                      |
     And I am on "Course 1" course homepage
     Given I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Auto subscription |
     And I press "Save and return to course"
@@ -121,9 +121,9 @@ Feature: A user can control their own subscription preferences for a forum
     When I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test forum name"
-    Then I should see "Unsubscribe from this forum"
-    And I should not see "Subscribe to this forum"
-    And I follow "Unsubscribe from this forum"
+    Then I should see "Unsubscribe from forum"
+    And I should not see "Subscribe to forum"
+    And I follow "Unsubscribe from forum"
     And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
-    And I should see "Subscribe to this forum"
-    And I should not see "Unsubscribe from this forum"
+    And I should see "Subscribe to forum"
+    And I should not see "Unsubscribe from forum"

@@ -33,7 +33,7 @@ Feature: Edited wiki pages handle tags correctly
     Then I should see "Example" in the ".wiki-tags" "css_element"
     And I should see "Page" in the ".wiki-tags" "css_element"
     And I should see "Cool" in the ".wiki-tags" "css_element"
-    And I follow "Edit"
+    And I select "Edit" from the "jump" singleselect
     Then I should see "Example" in the ".form-autocomplete-selection" "css_element"
     Then I should see "Page" in the ".form-autocomplete-selection" "css_element"
     Then I should see "Cool" in the ".form-autocomplete-selection" "css_element"
@@ -42,6 +42,7 @@ Feature: Edited wiki pages handle tags correctly
   @javascript
   Scenario: Wiki page edition of standard tags works as expected
     Given I log in as "admin"
+    And I change window size to "large"
     And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     And I follow "Add standard tags"
@@ -61,7 +62,7 @@ Feature: Edited wiki pages handle tags correctly
     Then I should see "OT1" in the ".wiki-tags" "css_element"
     And I should see "OT3" in the ".wiki-tags" "css_element"
     And I should not see "OT2" in the ".wiki-tags" "css_element"
-    And I follow "Edit"
+    And I select "Edit" from the "jump" singleselect
     And I should see "OT1" in the ".form-autocomplete-selection" "css_element"
     And I should see "OT3" in the ".form-autocomplete-selection" "css_element"
     And I should not see "OT2" in the ".form-autocomplete-selection" "css_element"

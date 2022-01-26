@@ -50,14 +50,9 @@ class behat_mod_data extends behat_base {
     public function i_add_a_field_to_database_and_i_fill_the_form_with($fieldtype, $activityname, TableNode $fielddata) {
         $this->execute('behat_navigation::i_am_on_page_instance', [$this->escape($activityname), 'data activity']);
 
-        // Open "Fields" tab if it is not already open.
         $fieldsstr = get_string('fields', 'mod_data');
-        $xpath = '//ul[contains(@class,\'nav-tabs\')]//*[contains(@class,\'active\') and contains(normalize-space(.), \'' .
-            $fieldsstr . '\')]';
-        if (!$this->getSession()->getPage()->findAll('xpath', $xpath)) {
-            $this->execute("behat_general::i_click_on_in_the", array($fieldsstr, 'link', '.nav-tabs', 'css_element'));
-        }
 
+        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", $fieldsstr);
         $this->execute('behat_forms::i_set_the_field_to', array('newtype', $this->escape($fieldtype)));
 
         if (!$this->running_javascript()) {

@@ -28,7 +28,7 @@ use advanced_testcase;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_filter_manager_testcase extends advanced_testcase {
+class user_filter_manager_test extends advanced_testcase {
 
     /**
      * Helper method to return all user preferences for filters - based on the current storage backend using the same

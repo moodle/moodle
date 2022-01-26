@@ -37,7 +37,7 @@ use core\activity_dates;
  * @copyright Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dates_testcase extends advanced_testcase {
+class dates_test extends advanced_testcase {
 
     /**
      * Data provider for get_dates_for_module().

@@ -24,7 +24,7 @@ Feature: A student can see how the results of the choice activity will be publis
       | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
     And I am on "Course 1" course homepage
     And I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Publish results | Do not publish results to students |
     And I press "Save and return to course"
@@ -40,7 +40,7 @@ Feature: A student can see how the results of the choice activity will be publis
       | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
     And I am on "Course 1" course homepage
     When I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Publish results    | Show results to students after they answer            |
       | Privacy of results | Publish full results, showing names and their choices |
@@ -57,7 +57,7 @@ Feature: A student can see how the results of the choice activity will be publis
       | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
     And I am on "Course 1" course homepage
     When I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "Publish results" to "Show results to students after they answer"
     And I press "Save and return to course"
     And I log out
@@ -72,7 +72,7 @@ Feature: A student can see how the results of the choice activity will be publis
       | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
     And I am on "Course 1" course homepage
     When I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "Publish results" to "Show results to students only after the choice is closed"
     And I set the field "Privacy of results" to "Publish full results, showing names and their choices"
     And I press "Save and return to course"
@@ -88,7 +88,7 @@ Feature: A student can see how the results of the choice activity will be publis
       | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
     And I am on "Course 1" course homepage
     When I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "Publish results" to "Show results to students only after the choice is closed"
     And I press "Save and return to course"
     And I log out
@@ -103,7 +103,7 @@ Feature: A student can see how the results of the choice activity will be publis
       | choice   | Choice 1 | Choice description | C1     | choice1  | Option 1, Option 2 |
     And I am on "Course 1" course homepage
     When I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the field "Publish results" to "Always show results to students"
     And I press "Save and return to course"
     And I log out

@@ -1022,19 +1022,6 @@ class grade_grade extends grade_object {
     }
 
     /**
-     * Insert the grade_grade instance into the database.
-     *
-     * @param string $source From where was the object inserted (mod/forum, manual, etc.)
-     * @param bool $isbulkupdate If bulk grade update is happening.
-     * @return int The new grade_grade ID if successful, false otherwise
-     */
-    public function insert($source = null, $isbulkupdate = false) {
-        // TODO: dategraded hack - do not update times, they are used for submission and grading (MDL-31379)
-        //$this->timecreated = $this->timemodified = time();
-        return parent::insert($source, $isbulkupdate);
-    }
-
-    /**
      * In addition to update() as defined in grade_object rounds the float numbers using php function,
      * the reason is we need to compare the db value with computed number to skip updates if possible.
      *

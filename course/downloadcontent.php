@@ -87,7 +87,7 @@ if ($isdownload) {
     echo $OUTPUT->heading(get_string('downloadcoursecontent', 'course'));
 
     // Prepare download confirmation information and display it.
-    $maxfilesize = display_size($CFG->maxsizeperdownloadcoursefile);
+    $maxfilesize = display_size($CFG->maxsizeperdownloadcoursefile, 0);
     $downloadlink = new moodle_url('/course/downloadcontent.php', ['contextid' => $contextid, 'download' => 1]);
 
     echo $OUTPUT->confirm(get_string('downloadcourseconfirmation', 'course', $maxfilesize), $downloadlink, $courselink);

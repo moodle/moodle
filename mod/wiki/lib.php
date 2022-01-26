@@ -258,7 +258,7 @@ function wiki_reset_course_form_definition(&$mform) {
  * @uses FEATURE_GRADE_HAS_GRADE
  * @uses FEATURE_GRADE_OUTCOMES
  * @param string $feature
- * @return mixed True if yes (some features may use other values)
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function wiki_supports($feature) {
     switch ($feature) {
@@ -282,6 +282,8 @@ function wiki_supports($feature) {
         return true;
     case FEATURE_COMMENT:
         return true;
+    case FEATURE_MOD_PURPOSE:
+        return MOD_PURPOSE_COLLABORATION;
 
     default:
         return null;

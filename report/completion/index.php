@@ -115,8 +115,6 @@ foreach ($completion->get_criteria() as $criterion) {
     }
 }
 
-report_helper::save_selected_report($courseid, $url);
-
 // Can logged in user mark users as complete?
 // (if the logged in user has a role defined in the role criteria)
 $allow_marking = false;
@@ -149,7 +147,7 @@ if ($csv) {
     $shortname = format_string($course->shortname, true, array('context' => $context));
     $shortname = preg_replace('/[^a-z0-9-]/', '_',core_text::strtolower(strip_tags($shortname)));
 
-    $export = new csv_export_writer();
+    $export = new csv_export_writer('comma', '"', 'application/download', $excel);
     $export->set_filename('completion-'.$shortname);
 
 } else {

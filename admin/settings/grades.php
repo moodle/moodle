@@ -56,11 +56,6 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                                                          '3' => '3',
                                                          '4' => '4',
                                                          '5' => '5')));
-        $temp->add(new admin_setting_configselect('grade_navmethod', new lang_string('navmethod', 'grades'), null,
-                                                  GRADE_NAVMETHOD_TABS,
-                                                  array(GRADE_NAVMETHOD_DROPDOWN => new lang_string('dropdown', 'grades'),
-                                                        GRADE_NAVMETHOD_TABS => new lang_string('tabs', 'grades'),
-                                                        GRADE_NAVMETHOD_COMBO => new lang_string('combo', 'grades'))));
 
         $setting = new admin_setting_configtext('grade_export_userprofilefields',
             new lang_string('gradeexportuserprofilefields', 'grades'),

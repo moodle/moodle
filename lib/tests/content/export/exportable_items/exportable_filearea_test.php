@@ -38,7 +38,7 @@ use stdClass;
 /**
  * Unit tests for the `exportable_filearea` export item class.
  *
- * @coversDefaultClass core\content\exportable_items\exportable_filearea
+ * @coversDefaultClass \core\content\exportable_items\exportable_filearea
  */
 class exportable_filearea_test extends advanced_testcase {
 

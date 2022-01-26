@@ -300,7 +300,7 @@ switch ($action) {
 
                 // Check if exceed maxbytes.
                 if ($maxbytes != -1 && filesize($downloadedfile['path']) > $maxbytes) {
-                    $maxbytesdisplay = display_size($maxbytes);
+                    $maxbytesdisplay = display_size($maxbytes, 0);
                     throw new file_exception('maxbytesfile', (object) array('file' => $record->filename,
                                                                             'size' => $maxbytesdisplay));
                 }

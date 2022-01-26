@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Class tool_moodlenet_import_info_testcase, providing test cases for the import_info class.
  */
-class tool_moodlenet_import_info_testcase extends \advanced_testcase {
+class import_info_test extends \advanced_testcase {
 
     /**
      * Create some test objects.

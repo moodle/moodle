@@ -45,7 +45,8 @@
         "navdraweropen": false,
         "blockdraweropen": true,
         "regionmainsettingsmenu": "",
-        "hasregionmainsettingsmenu": false
+        "hasregionmainsettingsmenu": false,
+        "addblockbutton": ""
     }
 }}
 {{> theme_boost/head }}
@@ -57,64 +58,84 @@
     {{{ output.standard_top_of_body_html }}}
 
     {{> theme_boost/navbar }}
-    {{> theme_boost/nav-drawer }}
     {{#courseindex}}
         {{< theme_boost/drawer }}
             {{$id}}theme_boost-drawers-courseindex{{/id}}
             {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
-            {{$drawerheading}}
-                {{#str}} courseindex {{/str}}
-            {{/drawerheading}}
             {{$drawercontent}}
                 {{{courseindex}}}
             {{/drawercontent}}
             {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
             {{$drawerstate}}show-drawer-left{{/drawerstate}}
+            {{$tooltipplacement}}right{{/tooltipplacement}}
+            {{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}}
         {{/ theme_boost/drawer}}
     {{/courseindex}}
     {{#hasblocks}}
         {{< theme_boost/drawer }}
             {{$id}}theme_boost-drawers-blocks{{/id}}
-            {{$drawerclasses}}drawer drawer-right {{#blockdraweropen}}show{{/blockdraweropen}}{{/drawerclasses}}
-            {{$drawerheading}}
-                {{#str}} blocks {{/str}}
-            {{/drawerheading}}
+            {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
             {{$drawercontent}}
                 <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                    {{{ addblockbutton }}}
                     {{{ sidepreblocks }}}
                 </section>
             {{/drawercontent}}
             {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
+            {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
             {{$drawerstate}}show-drawer-right{{/drawerstate}}
+            {{$tooltipplacement}}left{{/tooltipplacement}}
             {{$drawercloseonresize}}1{{/drawercloseonresize}}
+            {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
         {{/ theme_boost/drawer}}
     {{/hasblocks}}
     <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}}">
         <div id="topofscroll" class="main-inner">
             <div class="drawer-toggles d-flex">
                 {{#courseindex}}
-                    <div class="drawer-left-toggle open-nav">
-                        <button class="btn icon-no-margin" data-toggle="drawers" data-action="toggle" data-target="theme_boost-drawers-courseindex">
+                    <div class="drawer-toggler drawer-left-toggle open-nav">
+                        <button
+                            class="btn icon-no-margin"
+                            data-toggler="drawers"
+                            data-action="toggle"
+                            data-target="theme_boost-drawers-courseindex"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="{{#str}}opendrawerindex, core{{/str}}"
+                        >
                             <span class="sr-only">{{#str}}opendrawerindex, core{{/str}}</span>
-                            {{#pix}}e/align_left, moodle, {{#str}}opendrawerindex, core{{/str}}{{/pix}}
+                            {{#pix}} t/index_drawer, moodle {{/pix}}
                         </button>
                     </div>
                 {{/courseindex}}
                 {{#hasblocks}}
-                    <div class="drawer-right-toggle ml-auto">
-                        <button class="btn icon-no-margin" data-toggle="drawers" data-action="toggle" data-target="theme_boost-drawers-blocks">
+                    <div class="drawer-toggler drawer-right-toggle ml-auto">
+                        <button
+                            class="btn icon-no-margin"
+                            data-toggler="drawers"
+                            data-action="toggle"
+                            data-target="theme_boost-drawers-blocks"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="{{#str}}opendrawerblocks, core{{/str}}"
+                        >
                             <span class="sr-only">{{#str}}opendrawerblocks, core{{/str}}</span>
-                            {{#pix}}i/categoryevent, moodle, {{#str}}opendrawerblocks, core{{/str}}{{/pix}}
+                            {{#pix}}t/blocks_drawer, core, {{#str}}opendrawerblocks, core{{/str}}{{/pix}}
                         </button>
                     </div>
                 {{/hasblocks}}
             </div>
             {{{ output.full_header }}}
+            {{#secondarymoremenu}}
+                <div class="secondary-navigation">
+                    {{> core/moremenu}}
+                </div>
+            {{/secondarymoremenu}}
             <div id="page-content" class="pb-3 d-print-block">
                 <div id="region-main-box">
                     {{#hasregionmainsettingsmenu}}
-                    <div id="region-main-settings-menu" class="d-print-none {{#hasblocks}}has-blocks{{/hasblocks}}">
-                        <div> {{{ output.region_main_settings_menu }}} </div>
+                    <div id="region-main-settings-menu" class="d-print-none">
+                        <div> {{{ regionmainsettingsmenu }}} </div>
                     </div>
                     {{/hasregionmainsettingsmenu}}
                     <section id="region-main" aria-label="{{#str}}content{{/str}}">
@@ -123,6 +144,12 @@
                             <div class="region_main_settings_menu_proxy"></div>
                         {{/hasregionmainsettingsmenu}}
                         {{{ output.course_content_header }}}
+                        {{#headercontent}}
+                            {{> core/activity_header }}
+                        {{/headercontent}}
+                        {{#overflow}}
+                            {{> core/url_select}}
+                        {{/overflow}}
                         {{{ output.main_content }}}
                         {{{ output.activity_navigation }}}
                         {{{ output.course_content_footer }}}
@@ -130,13 +157,8 @@
                     </section>
                 </div>
             </div>
-            <div id="goto-top-link">
-                <a class="btn btn-light" role="button" href="#topofscroll" aria-label="{{#str}} totop, theme_boost {{/str}}">
-                    {{#pix}} i/up, core{{/pix}}
-                </a>
-            </div>
-            {{> theme_boost/footer }}
         </div>
+        {{> theme_boost/footer }}
     </div>
     {{{ output.standard_after_main_region_html }}}
 </div>

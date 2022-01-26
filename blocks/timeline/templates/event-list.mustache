@@ -37,12 +37,12 @@
             {{> block_timeline/placeholder-event-list-item }}
             {{> block_timeline/placeholder-event-list-item }}
         </ul>
-        <div class="pt-3 d-flex justify-content-between">
-            <div class="w-25 bg-pulse-grey" style="height: 35px"></div>
+        <div class="pt-3 pb-2 d-flex justify-content-between">
             <div class="w-25 bg-pulse-grey" style="height: 35px"></div>
         </div>
     </div>
     <div data-region="event-list-content"></div>
+    {{#urls.noevents}}
     <div class="hidden text-xs-center text-center mt-3" data-region="empty-message">
         <img
             src="{{urls.noevents}}"
@@ -51,4 +51,10 @@
         >
         <p class="text-muted mt-1">{{#str}} noevents, block_timeline {{/str}}</p>
     </div>
+    {{/urls.noevents}}
+    {{^urls.noevents}}
+    <div class="hidden text-xs-left text-left mt-3" data-region="empty-message">
+        <p class="text-muted mt-1">{{#str}} noevents, block_timeline {{/str}}</p>
+    </div>
+    {{/urls.noevents}}
 </div>

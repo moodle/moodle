@@ -1,0 +1,43 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_bulkmove/bulk_move
+
+    The move form to move selested questions.
+
+    Context variables required for this template:
+    * categorydropdown - dropdown html from the managecategories plugin for the list of categories
+    * moveurl - the url to post the selected category
+    * returnurl - the base page to return to
+
+    Example context (json):
+    {
+        "categorydropdown": "<select class='select custom-select custom-select'><optgroup label='Course: tes'><option value='2,13'>Default for test (5)</option></optgroup></select>",
+        "moveurl": "/question/bank/bulkmove/move.php?courseid=2",
+        "returnurl": "/question/edit.php?courseid=2"
+    }
+}}
+
+<div class="bulkmovequestion-header">
+    <h3>{{#str}} bulkmoveheader, qbank_bulkmove {{/str}}</h3>
+</div>
+<form action="{{{moveurl}}}" method="post" id="bulkmovequestion">
+    {{{categorydropdown}}}
+    <input type="submit" value="{{#str}} moveto, question {{/str}}" class="btn btn-primary" name="move" data-action="toggle" data-togglegroup="qbank"
+           data-toggle="action" form="bulkmovequestion">
+    <a href="{{{returnurl}}}" class="btn btn-secondary">{{#str}} close, qbank_bulkmove {{/str}}</a>
+</form>

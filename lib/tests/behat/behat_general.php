@@ -27,12 +27,12 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode;
-use Behat\Mink\Exception\DriverException as DriverException;
-use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
-use Behat\Mink\Exception\ExpectationException as ExpectationException;
-use WebDriver\Exception\NoSuchElement as NoSuchElement;
-use WebDriver\Exception\StaleElementReference as StaleElementReference;
+use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Exception\DriverException;
+use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Exception\ExpectationException;
+use Facebook\WebDriver\Exception\NoSuchElementException;
+use Facebook\WebDriver\Exception\StaleElementReferenceException;
 
 /**
  * Cross component steps definitions.
@@ -121,9 +121,9 @@ class behat_general extends behat_base {
         // Wrapped in try & catch in case the redirection has already been executed.
         try {
             $content = $metarefresh->getAttribute('content');
-        } catch (NoSuchElement $e) {
+        } catch (NoSuchElementException $e) {
             return true;
-        } catch (StaleElementReference $e) {
+        } catch (StaleElementReferenceException $e) {
             return true;
         }
 
@@ -348,6 +348,22 @@ class behat_general extends behat_base {
     public function i_hover($element, $selectortype) {
         // Gets the node based on the requested selector type and locator.
         $node = $this->get_selected_node($selectortype, $element);
+        $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
+        $node->mouseOver();
+    }
+
+    /**
+     * Generic mouse over action. Mouse over a element of the specified type.
+     *
+     * @When /^I hover over the "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*) in the "(?P<container_element_string>(?:[^"]|\\")*)" "(?P<container_selector_string>[^"]*)"$/
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     * @param string $containerelement Element we look for
+     * @param string $containerselectortype The type of what we look for
+     */
+    public function i_hover_in_the(string $element, $selectortype, string $containerelement, $containerselectortype): void {
+        // Gets the node based on the requested selector type and locator.
+        $node = $this->get_node_in_container($selectortype, $element, $containerselectortype, $containerselectortype);
         $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
         $node->mouseOver();
     }
@@ -661,7 +677,7 @@ class behat_general extends behat_base {
                             throw new ExpectationException('"' . $args['text'] . '" text was found in the page',
                                 $context->getSession());
                         }
-                    } catch (WebDriver\Exception\NoSuchElement $e) {
+                    } catch (NoSuchElementException $e) {
                         // Do nothing just return, as element is no more on page.
                         return true;
                     } catch (ElementNotFoundException $e) {
@@ -1011,6 +1027,45 @@ EOF;
     }
 
     /**
+     * Ensure that edit mode is (not) available on the current page.
+     *
+     * @Then edit mode should be available on the current page
+     * @Then edit mode should :not be available on the current page
+     * @param bool $not
+     */
+    public function edit_mode_should_be_available(bool $not = false): void {
+        $isavailable = $this->is_edit_mode_available();
+        $shouldbeavailable = empty($not);
+
+        if ($isavailable && !$shouldbeavailable) {
+            throw new ExpectationException("Edit mode is available and should not be", $this->getSession());
+        } else if ($shouldbeavailable && !$isavailable) {
+            throw new ExpectationException("Edit mode is not available and should be", $this->getSession());
+        }
+    }
+
+    /**
+     * Check whether edit mode is available on the current page.
+     *
+     * @return bool
+     */
+    public function is_edit_mode_available(): bool {
+        // If the course is already in editing mode then it will have the class 'editing' on the body.
+        // This is a 'cheap' way of telling if the course is in editing mode and therefore if edit mode is available.
+        $body = $this->find('css', 'body');
+        if ($body->hasClass('editing')) {
+            return true;
+        }
+
+        try {
+            $this->find('field', get_string('editmode'), false, false, 0);
+            return true;
+        } catch (ElementNotFoundException $e) {
+            return false;
+        }
+    }
+
+    /**
      * This step triggers cron like a user would do going to admin/cron.php.
      *
      * @Given /^I trigger cron$/
@@ -1195,16 +1250,24 @@ EOF;
     }
 
     /**
-     * Change browser window size small: 640x480, medium: 1024x768, large: 2560x1600, custom: widthxheight
+     * Change browser window size
+     *
+     * Allowed sizes:
+     * - mobile: 425x750
+     * - tablet: 768x1024
+     * - small: 1024x768
+     * - medium: 1366x768
+     * - large: 2560x1600
+     * - custom: widthxheight
      *
      * Example: I change window size to "small" or I change window size to "1024x768"
      * or I change viewport size to "800x600". The viewport option is useful to guarantee that the
      * browser window has same viewport size even when you run Behat on multiple operating systems.
      *
      * @throws ExpectationException
-     * @Then /^I change (window|viewport) size to "(small|medium|large|\d+x\d+)"$/
-     * @Then /^I change the (window|viewport) size to "(small|medium|large|\d+x\d+)"$/
-     * @param string $windowsize size of the window (small|medium|large|wxh).
+     * @Then /^I change (window|viewport) size to "(mobile|tablet|small|medium|large|\d+x\d+)"$/
+     * @Then /^I change the (window|viewport) size to "(mobile|tablet|small|medium|large|\d+x\d+)"$/
+     * @param string $windowsize size of the window (mobile|tablet|small|medium|large|wxh).
      */
     public function i_change_window_size_to($windowviewport, $windowsize) {
         $this->resize_window($windowsize, $windowviewport === 'viewport');
@@ -1717,7 +1780,7 @@ EOF;
     }
 
     /**
-     * Press a named key with an optional set of modifiers.
+     * Press a named or character key with an optional set of modifiers.
      *
      * Supported named keys are:
      * - up
@@ -1734,6 +1797,8 @@ EOF;
      * - escape
      * - enter
      * - tab
+     *
+     * You can also use a single character for the key name e.g. 'Ctrl C'.
      *
      * Supported moderators are:
      * - shift
@@ -1829,8 +1894,16 @@ EOF;
             case 'SPACE':
                 $keys[] = behat_keys::SPACE;
                 break;
+            case 'MULTIPLY':
+                $keys[] = behat_keys::MULTIPLY;
+                break;
             default:
-                throw new \coding_exception("Unknown key '$key'}");
+                // You can enter a single ASCII character (e.g. a letter) to directly type that key.
+                if (strlen($key) === 1) {
+                    $keys[] = strtolower($key);
+                } else {
+                    throw new \coding_exception("Unknown key '$key'}");
+                }
         }
 
         behat_base::type_keys($this->getSession(), $keys);
@@ -2076,5 +2149,30 @@ EOF;
      */
     public function i_mark_this_test_as_long_running(int $factor = 2): void {
         $this->set_test_timeout_factor($factor);
+    }
+
+    /**
+     * Click on a dynamic tab to load its content
+     *
+     * @Given /^I click on the "(?P<tab_string>(?:[^"]|\\")*)" dynamic tab$/
+     *
+     * @param string $tabname
+     */
+    public function i_click_on_the_dynamic_tab(string $tabname): void {
+        $xpath = "//*[@id='dynamictabs-tabs'][descendant::a[contains(text(), '" . $this->escape($tabname) . "')]]";
+        $this->execute('behat_general::i_click_on_in_the',
+            [$tabname, 'link', $xpath, 'xpath_element']);
+    }
+
+    /**
+     * Enable an specific plugin.
+     *
+     * @When /^I enable "(?P<plugin_string>(?:[^"]|\\")*)" "(?P<plugintype_string>[^"]*)" plugin$/
+     * @param string $plugin Plugin we look for
+     * @param string $plugintype The type of the plugin
+     */
+    public function i_enable_plugin($plugin, $plugintype) {
+        $class = core_plugin_manager::resolve_plugininfo_class($plugintype);
+        $class::enable_plugin($plugin, true);
     }
 }

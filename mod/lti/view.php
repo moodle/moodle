@@ -106,23 +106,17 @@ $pagetitle = strip_tags($course->shortname.': '.format_string($lti->name));
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 
+$activityheader = $PAGE->activityheader;
+if (!$lti->showtitlelaunch) {
+    $header['title'] = '';
+}
+if (!$lti->showdescriptionlaunch) {
+    $header['description'] = '';
+}
+$activityheader->set_attrs($header ?? []);
+
 // Print the page header.
 echo $OUTPUT->header();
-
-if ($lti->showtitlelaunch) {
-    // Print the main part of the page.
-    echo $OUTPUT->heading(format_string($lti->name, true, array('context' => $context)));
-}
-
-// Display any activity information (eg completion requirements / dates).
-$cminfo = cm_info::create($cm);
-$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
-
-if ($lti->showdescriptionlaunch && $lti->intro) {
-    echo $OUTPUT->box(format_module_intro('lti', $lti, $cm->id), 'generalbox description', 'intro');
-}
 
 if ($typeid) {
     $config = lti_get_type_type_config($typeid);

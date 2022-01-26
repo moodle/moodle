@@ -30,7 +30,7 @@ use stdClass;
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class system_report_factory_testcase extends advanced_testcase {
+class system_report_factory_test extends advanced_testcase {
 
     /**
      * Test creating a valid/available system report

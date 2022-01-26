@@ -22,4 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['privacy:metadata'] = 'The course format subsystem does not store any personal data.';
+$string['courseindex'] = 'Course index';
+$string['preference:coursesectionspreferences'] = 'Section user preferences for course {$a}';
+$string['privacy:metadata:preference:coursesectionspreferences'] = 'Section user preferences like collapsed and expanded.';

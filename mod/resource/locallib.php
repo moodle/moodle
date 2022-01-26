@@ -61,7 +61,7 @@ function resource_redirect_if_migrated($oldid, $cmid) {
  * @return does not return
  */
 function resource_display_embed($resource, $cm, $course, $file) {
-    global $PAGE, $OUTPUT, $USER;
+    global $PAGE, $OUTPUT;
 
     $clicktoopen = resource_get_clicktoopen($file, $resource->revision);
 
@@ -99,18 +99,12 @@ function resource_display_embed($resource, $cm, $course, $file) {
         $code = resourcelib_embed_general($moodleurl, $title, $clicktoopen, $mimetype);
     }
 
+    // Let the module handle the display.
+    $PAGE->activityheader->set_description(resource_get_intro($resource, $cm));
+
     resource_print_header($resource, $cm, $course);
-    resource_print_heading($resource, $cm, $course);
 
-    // Display any activity information (eg completion requirements / dates).
-    $cminfo = cm_info::create($cm);
-    $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-    $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-    echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
-
-    echo $code;
-
-    resource_print_intro($resource, $cm, $course);
+    echo format_text($code, FORMAT_HTML, ['noclean' => true]);
 
     echo $OUTPUT->footer();
     die;
@@ -131,9 +125,8 @@ function resource_display_frame($resource, $cm, $course, $file) {
 
     if ($frame === 'top') {
         $PAGE->set_pagelayout('frametop');
+        $PAGE->activityheader->set_description(resource_get_intro($resource, $cm, true));
         resource_print_header($resource, $cm, $course);
-        resource_print_heading($resource, $cm, $course);
-        resource_print_intro($resource, $cm, $course);
         echo $OUTPUT->footer();
         die;
 
@@ -208,17 +201,12 @@ function resource_get_clicktodownload($file, $revision) {
  * @return does not return
  */
 function resource_print_workaround($resource, $cm, $course, $file) {
-    global $CFG, $OUTPUT, $USER;
+    global $CFG, $OUTPUT, $PAGE;
+
+    // Let the module handle the display.
+    $PAGE->activityheader->set_description(resource_get_intro($resource, $cm, true));
+
     resource_print_header($resource, $cm, $course);
-    resource_print_heading($resource, $cm, $course, true);
-
-    // Display any activity information (eg completion requirements / dates).
-    $cminfo = cm_info::create($cm);
-    $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-    $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-    echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
-
-    resource_print_intro($resource, $cm, $course, true);
 
     $resource->mainfile = $file->get_filename();
     echo '<div class="resourceworkaround">';
@@ -226,7 +214,7 @@ function resource_print_workaround($resource, $cm, $course, $file) {
         case RESOURCELIB_DISPLAY_POPUP:
             $path = '/'.$file->get_contextid().'/mod_resource/content/'.$resource->revision.$file->get_filepath().$file->get_filename();
             $fullurl = file_encode_url($CFG->wwwroot.'/pluginfile.php', $path, false);
-            $options = empty($resource->displayoptions) ? array() : unserialize($resource->displayoptions);
+            $options = empty($resource->displayoptions) ? [] : (array) unserialize_array($resource->displayoptions);
             $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
             $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
             $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
@@ -271,20 +259,6 @@ function resource_print_header($resource, $cm, $course) {
 }
 
 /**
- * Print resource heading.
- * @param object $resource
- * @param object $cm
- * @param object $course
- * @param bool $notused This variable is no longer used
- * @return void
- */
-function resource_print_heading($resource, $cm, $course, $notused = false) {
-    global $OUTPUT;
-    echo $OUTPUT->heading(format_string($resource->name), 2);
-}
-
-
-/**
  * Gets details of the file to cache in course cache to be displayed using {@link resource_get_optional_details()}
  *
  * @param object $resource Resource table row (only property 'displayoptions' is used here)
@@ -292,7 +266,7 @@ function resource_print_heading($resource, $cm, $course, $notused = false) {
  * @return string Size and type or empty string if show options are not enabled
  */
 function resource_get_file_details($resource, $cm) {
-    $options = empty($resource->displayoptions) ? array() : @unserialize($resource->displayoptions);
+    $options = empty($resource->displayoptions) ? [] : (array) unserialize_array($resource->displayoptions);
     $filedetails = array();
     if (!empty($options['showsize']) || !empty($options['showtype']) || !empty($options['showdate'])) {
         $context = context_module::instance($cm->id);
@@ -361,7 +335,7 @@ function resource_get_optional_details($resource, $cm) {
 
     $details = '';
 
-    $options = empty($resource->displayoptions) ? array() : @unserialize($resource->displayoptions);
+    $options = empty($resource->displayoptions) ? [] : (array) unserialize_array($resource->displayoptions);
     if (!empty($options['showsize']) || !empty($options['showtype']) || !empty($options['showdate'])) {
         if (!array_key_exists('filedetails', $options)) {
             $filedetails = resource_get_file_details($resource, $cm);
@@ -412,17 +386,15 @@ function resource_get_optional_details($resource, $cm) {
 }
 
 /**
- * Print resource introduction.
+ * Get resource introduction.
+ *
  * @param object $resource
  * @param object $cm
- * @param object $course
  * @param bool $ignoresettings print even if not specified in modedit
- * @return void
+ * @return string
  */
-function resource_print_intro($resource, $cm, $course, $ignoresettings=false) {
-    global $OUTPUT;
-
-    $options = empty($resource->displayoptions) ? array() : unserialize($resource->displayoptions);
+function resource_get_intro(object $resource, object $cm, bool $ignoresettings = false): string {
+    $options = empty($resource->displayoptions) ? [] : (array) unserialize_array($resource->displayoptions);
 
     $extraintro = resource_get_optional_details($resource, $cm);
     if ($extraintro) {
@@ -430,17 +402,18 @@ function resource_print_intro($resource, $cm, $course, $ignoresettings=false) {
         $extraintro = html_writer::tag('p', $extraintro, array('class' => 'resourcedetails'));
     }
 
+    $content = "";
     if ($ignoresettings || !empty($options['printintro']) || $extraintro) {
         $gotintro = trim(strip_tags($resource->intro));
         if ($gotintro || $extraintro) {
-            echo $OUTPUT->box_start('mod_introbox', 'resourceintro');
             if ($gotintro) {
-                echo format_module_intro('resource', $resource, $cm->id);
+                $content = format_module_intro('resource', $resource, $cm->id);
             }
-            echo $extraintro;
-            echo $OUTPUT->box_end();
+            $content .= $extraintro;
         }
     }
+
+    return $content;
 }
 
 /**
@@ -451,12 +424,10 @@ function resource_print_intro($resource, $cm, $course, $ignoresettings=false) {
  * @return void, does not return
  */
 function resource_print_tobemigrated($resource, $cm, $course) {
-    global $DB, $OUTPUT;
-
+    global $DB, $OUTPUT, $PAGE;
+    $PAGE->activityheader->set_description(resource_get_intro($resource, $cm));
     $resource_old = $DB->get_record('resource_old', array('oldid'=>$resource->id));
     resource_print_header($resource, $cm, $course);
-    resource_print_heading($resource, $cm, $course);
-    resource_print_intro($resource, $cm, $course);
     echo $OUTPUT->notification(get_string('notmigrated', 'resource', $resource_old->type));
     echo $OUTPUT->footer();
     die;
@@ -470,12 +441,11 @@ function resource_print_tobemigrated($resource, $cm, $course) {
  * @return void, does not return
  */
 function resource_print_filenotfound($resource, $cm, $course) {
-    global $DB, $OUTPUT;
+    global $DB, $OUTPUT, $PAGE;
 
     $resource_old = $DB->get_record('resource_old', array('oldid'=>$resource->id));
+    $PAGE->activityheader->set_description(resource_get_intro($resource, $cm));
     resource_print_header($resource, $cm, $course);
-    resource_print_heading($resource, $cm, $course);
-    resource_print_intro($resource, $cm, $course);
     if ($resource_old) {
         echo $OUTPUT->notification(get_string('notmigrated', 'resource', $resource_old->type));
     } else {

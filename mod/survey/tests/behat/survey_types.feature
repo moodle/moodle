@@ -20,18 +20,18 @@ Feature: A teacher can set three types of survey activity
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test survey name"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Survey type | ATTLS (20 item version) |
     And I press "Save and return to course"
     And I follow "Test survey name"
     Then I should see "Attitudes Towards Thinking and Learning"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Survey type | Critical incidents |
     And I press "Save and display"
     And I should see "At what moment in class were you most engaged as a learner?"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Survey type | COLLES (Preferred and Actual) |
     And I press "Save and display"

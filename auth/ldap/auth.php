@@ -930,6 +930,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         if (!empty($add_users)) {
             print_string('userentriestoadd', 'auth_ldap', count($add_users));
+            $errors = 0;
 
             $transaction = $DB->start_delegated_transaction();
             foreach ($add_users as $user) {
@@ -954,7 +955,14 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $user->calendartype = $CFG->calendartype;
                 }
 
-                $id = user_create_user($user, false);
+                // $id = user_create_user($user, false);
+                try {
+                    $id = user_create_user($user, false);
+                } catch (Exception $e) {
+                    print_string('invaliduserexception', 'auth_ldap', print_r($user, true) .  $e->getMessage());
+                    $errors++;
+                    continue;
+                }
                 echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
                 $euser = $DB->get_record('user', array('id' => $id));
 
@@ -969,6 +977,12 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $this->sync_roles($euser);
 
             }
+
+            // Display number of user creation errors, if any.
+            if ($errors) {
+                print_string('invalidusererrors', 'auth_ldap', $errors);
+            }
+
             $transaction->allow_commit();
             unset($add_users); // free mem
         } else {
@@ -1228,18 +1242,18 @@ class auth_plugin_ldap extends auth_plugin_base {
                     empty($nuvalue) ? $nuvalue = array() : $nuvalue;
                     $ouvalue = core_text::convert($oldvalue, 'utf-8', $this->config->ldapencoding);
                     foreach ($ldapkeys as $ldapkey) {
-                        // Skip update if $ldapkey does not exist in LDAP.
-                        if (!isset($user_entry[$ldapkey][0])) {
-                            $success = false;
-                            error_log($this->errorlogtag.get_string('updateremfailfield', 'auth_ldap',
-                                                                     array('ldapkey' => $ldapkey,
-                                                                            'key' => $key,
-                                                                            'ouvalue' => $ouvalue,
-                                                                            'nuvalue' => $nuvalue)));
-                            continue;
+                        // If the field is empty in LDAP there are two options:
+                        // 1. We get the LDAP field using ldap_first_attribute.
+                        // 2. LDAP don't send the field using  ldap_first_attribute.
+                        // So, for option 1 we check the if the field is retrieve it.
+                        // And get the original value of field in LDAP if the field.
+                        // Otherwise, let value in blank and delegate the check in ldap_modify.
+                        if (isset($user_entry[$ldapkey][0])) {
+                            $ldapvalue = $user_entry[$ldapkey][0];
+                        } else {
+                            $ldapvalue = '';
                         }
 
-                        $ldapvalue = $user_entry[$ldapkey][0];
                         if (!$ambiguous) {
                             // Skip update if the values already match
                             if ($nuvalue !== $ldapvalue) {

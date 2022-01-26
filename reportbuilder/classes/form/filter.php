@@ -19,11 +19,13 @@ declare(strict_types=1);
 namespace core_reportbuilder\form;
 
 use context;
+use core_reportbuilder\local\report\base;
+use core_reportbuilder\permission;
 use moodle_url;
 use core_form\dynamic_form;
 use core_reportbuilder\manager;
-use core_reportbuilder\system_report;
 use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\models\filter as filter_model;
 
 /**
  * Dynamic filter form
@@ -37,16 +39,13 @@ class filter extends dynamic_form {
     /**
      * Return instance of the system report using the filter form
      *
-     * @return system_report
+     * @return base
      */
-    private function get_system_report(): system_report {
-        $report = new report($this->optional_param('reportid', 0, PARAM_INT));
+    private function get_report(): base {
+        $reportpersistent = new report($this->optional_param('reportid', 0, PARAM_INT));
         $parameters = (array) json_decode($this->optional_param('parameters', '', PARAM_RAW));
 
-        /** @var system_report $systemreport */
-        $systemreport = manager::get_report_from_persistent($report, $parameters);
-
-        return $systemreport;
+        return manager::get_report_from_persistent($reportpersistent, $parameters);
     }
 
     /**
@@ -55,7 +54,7 @@ class filter extends dynamic_form {
      * @return context
      */
     protected function get_context_for_dynamic_submission(): context {
-        return ($this->get_system_report())->get_context();
+        return ($this->get_report())->get_context();
     }
 
     /**
@@ -64,21 +63,27 @@ class filter extends dynamic_form {
      * A {@see \core_reportbuilder\report_access_exception} will be thrown if they can't
      */
     protected function check_access_for_dynamic_submission(): void {
-        $this->get_system_report()->require_can_view();
+        $reportpersistent = $this->get_report()->get_report_persistent();
+        if ($reportpersistent->get('type') === base::TYPE_CUSTOM_REPORT) {
+            permission::require_can_view_report($reportpersistent);
+        } else {
+            $this->get_report()->require_can_view();
+        }
     }
 
     /**
      * Process the form submission
      *
-     * @return bool
+     * @return int Number of applied filter instances
      */
     public function process_dynamic_submission() {
         $values = $this->get_data();
 
-        // Remove some unneeded fields.
+        // Remove some unneeded fields, apply filters.
         unset($values->reportid, $values->parameters);
+        $this->get_report()->set_filter_values((array) $values);
 
-        return $this->get_system_report()->set_filter_values((array) $values);
+        return $this->get_report()->get_applied_filter_count();
     }
 
     /**
@@ -90,7 +95,7 @@ class filter extends dynamic_form {
             'parameters' => $this->optional_param('parameters', 0, PARAM_RAW),
         ];
 
-        $this->set_data(array_merge($defaults, $this->get_system_report()->get_filter_values()));
+        $this->set_data(array_merge($defaults, $this->get_report()->get_filter_values()));
     }
 
     /**
@@ -117,9 +122,19 @@ class filter extends dynamic_form {
         $mform->setType('parameters', PARAM_RAW);
 
         // Allow each filter instance to add itself to this form, wrapping each inside custom header/footer template.
-        foreach ($this->get_system_report()->get_filter_instances() as $filterinstance) {
+        $filterinstances = $this->get_report()->get_filter_instances();
+        foreach ($filterinstances as $filterinstance) {
+            $header = $filterinstance->get_header();
+
+            // Check if filter has a custom header set.
+            if ($persistent = $filterinstance->get_filter_persistent()) {
+                if ('' !== (string) $persistent->get('heading')) {
+                    $header = $persistent->get_formatted_heading($this->get_report()->get_context());
+                }
+            }
+
             $mform->addElement('html', $OUTPUT->render_from_template('core_reportbuilder/local/filters/header', [
-                'name' => $filterinstance->get_header(),
+                'name' => $header,
             ]));
 
             $filterinstance->setup_form($mform);

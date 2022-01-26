@@ -1,6 +1,13 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
+=== 4.0 ===
+* Cache stores may implement new optional function cache_store::get_last_io_bytes() to provide
+  information about the size of data transferred (shown in footer if performance info enabled).
+* The cache_store class now has functions cache_size_details(), store_total_size(), and
+  estimate_stored_size(), related to size used by the cache. These can be overridden by a cache
+  store to provide better information for the new cache usage admin page.
+
 === 3.10 ===
 * The function supports_recursion() from the lock_factory interface has been deprecated including the related implementations.
 * The function extend_lock() from the lock_factory interface has been deprecated without replacement including the related

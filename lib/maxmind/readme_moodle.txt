@@ -4,7 +4,7 @@ GeoIP2 PHP API
 No changes from the upstream version have been made, it is recommended by upstream
 to install these depdencies via composer - but the composer installation is bundled
 with a load of test files, shell scripts etc (and we don't use composer to manage
-'production depdendencies') so we have to do it manually.
+'production dependencies') so we have to do it manually.
 
 Information
 -----------
@@ -36,4 +36,4 @@ mv MaxMind-DB-Reader-php-X.Y.Z/autoload.php /path/to/moodle/lib/maxmind/MaxMind/
 
 5) Run unit tests on iplookup/tests/geoip_test.php.
 
-6) Update maxmind/GeoIp2 and maxmind/MaxMin versions in lib/thirdpartylibs.xml
+6) Update maxmind/GeoIp2 and maxmind/MaxMind versions in lib/thirdpartylibs.xml

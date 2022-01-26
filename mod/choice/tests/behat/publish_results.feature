@@ -30,7 +30,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
       | option   | Option 1, Option 2   |
     And I am on "Course 1" course homepage
     And I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Publish results | Do not publish results to students |
     And I press "Save and return to course"
@@ -53,7 +53,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
       | option   | Option 1, Option 2   |
     And I am on "Course 1" course homepage
     And I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Publish results | Show results to students after they answer |
     And I press "Save and return to course"
@@ -78,7 +78,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
       | option   | Option 1, Option 2   |
     And I am on "Course 1" course homepage
     And I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Publish results | Show results to students only after the choice is closed |
     And I press "Save and return to course"
@@ -92,7 +92,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Choice 1"
-    And I follow "Edit settings"
+    And I follow "Settings"
     And I expand all fieldsets
     And I set the following fields to these values:
       | timeopen[enabled] | 1 |
@@ -121,7 +121,7 @@ Feature: A teacher can choose one of 4 options for publishing choice results
       | option   | Option 1, Option 2   |
     And I am on "Course 1" course homepage
     And I follow "Choice 1"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Publish results | Always show results to students |
     And I press "Save and return to course"

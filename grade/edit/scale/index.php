@@ -43,6 +43,7 @@ if ($courseid) {
 } else {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('scales');
+    $context = context_system::instance();
 }
 
 /// return tracking object
@@ -54,7 +55,6 @@ $strcustomscales   = get_string('scalescustom');
 $strname           = get_string('name');
 $strdelete         = get_string('delete');
 $stredit           = get_string('edit');
-$srtcreatenewscale = get_string('scalescustomcreate');
 $strused           = get_string('used');
 $stredit           = get_string('edit');
 
@@ -164,16 +164,32 @@ if ($scales = grade_scale::fetch_all_global()) {
     $table2->data  = $data;
 }
 
+$actionbar = new \core_grades\output\scales_action_bar($context);
 
 if ($courseid) {
-    print_grade_page_head($courseid, 'scale', 'scale', get_string('coursescales', 'grades'));
+    print_grade_page_head($courseid, 'scale', 'scale', get_string('coursescales', 'grades'),
+        false, false, true, null, null, null, $actionbar);
+} else {
+    $renderer = $PAGE->get_renderer('core_grades');
+    echo $renderer->render_action_bar($actionbar);
+    echo $OUTPUT->heading(get_string('scales', 'core'));
 }
 
-echo $OUTPUT->heading($strcustomscales, 3, 'main');
-echo html_writer::table($table);
-echo $OUTPUT->heading($strstandardscale, 3, 'main');
-echo html_writer::table($table2);
-echo $OUTPUT->container_start('buttons');
-echo $OUTPUT->single_button(new moodle_url('edit.php', array('courseid'=>$courseid)), $srtcreatenewscale);
-echo $OUTPUT->container_end();
+$hascustomscales = !empty($table->data);
+$hasstandardscales = !empty($table2->data);
+
+// If there are custom scales available in this context, output the custom scales table and a heading.
+if ($hascustomscales) {
+    echo $OUTPUT->heading($strcustomscales, 3, 'main mt-3');
+    echo html_writer::table($table);
+}
+// If there are standard scales available in this context, output the standard scales table and a heading.
+if ($hasstandardscales) {
+    echo $OUTPUT->heading($strstandardscale, 3, 'main  mt-3');
+    echo html_writer::table($table2);
+}
+// If the are no available scales, display a notification.
+if (!$hascustomscales && !$hasstandardscales) {
+    echo $OUTPUT->notification(get_string('noexistingscales', 'grades'), 'info', false);
+}
 echo $OUTPUT->footer();

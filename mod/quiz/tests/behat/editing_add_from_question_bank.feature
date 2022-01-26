@@ -28,7 +28,7 @@ Feature: Adding questions to a quiz from the question bank
   Scenario: The questions can be filtered by tag
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    When I navigate to "Question bank > Questions" in current page administration
+    When I navigate to "Question bank" in current page administration
     And I choose "Edit question" action for "question 01 name" in the question bank
     And I set the following fields to these values:
       | Tags | foo |
@@ -79,7 +79,7 @@ Feature: Adding questions to a quiz from the question bank
     Then I should see "question 21 name" in the "categoryquestions" "table"
     And I should see "question 22 name" in the "categoryquestions" "table"
     And I should not see "question 01 name" in the "categoryquestions" "table"
-    And I click on "Show all 22" "link" in the ".pagingbottom" "css_element"
+    And I click on "Show all 22" "link" in the ".question-showall-text" "css_element"
     And I should see "question 01 name" in the "categoryquestions" "table"
     And I should see "question 22 name" in the "categoryquestions" "table"
 
@@ -121,7 +121,11 @@ Feature: Adding questions to a quiz from the question bank
     And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     When I open the "last" add to quiz menu
     And I follow "from question bank"
+    And I click on "Sort by Question ascending" "link"
+    Then "question 01 name" "text" should appear before "question 02 name" "text"
+    And I click on "Sort by Question descending" "link"
+    And "question 03 name" "text" should appear before "question 01 name" "text"
+    And I follow "Sort by Question type ascending"
+    Then "question 01 name" "text" should appear before "question 03 name" "text"
     And I follow "Sort by Question type descending"
-    Then "question 03 name" "checkbox" should appear before "question 01 name" "checkbox"
-    And I follow "Sort by Question ascending"
-    And "question 01 name" "checkbox" should appear before "question 02 name" "checkbox"
+    Then "question 03 name" "text" should appear before "question 01 name" "text"

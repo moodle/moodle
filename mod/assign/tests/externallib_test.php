@@ -2082,6 +2082,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
      * Test get_submission_status using the teacher role.
      */
     public function test_get_submission_status_in_submission_status_for_teacher() {
+        global $DB;
         $this->resetAfterTest(true);
 
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status(true);
@@ -2115,11 +2116,22 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, $result['gradingsummary']['submissionssubmittedcount']); // G2 students didn't submit yet.
         $this->assertEquals(0, $result['gradingsummary']['submissionsneedgradingcount']);   // G2 students didn't submit yet.
 
-        // Should return also 1 participant if we allow the function to auto-select the group.
+        // Should not return information for all users (missing access to all groups capability for non-editing teacher).
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
         $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-        $this->assertEquals(1, $result['gradingsummary']['participantcount']);
+        $this->assertFalse(isset($result['gradingsummary']));
+
+        // Should return all participants if we grant accessallgroups capability to the normal teacher role.
+        $context = context_course::instance($assign->get_instance()->course);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $teacherrole->id, $context->id, true);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
+        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals(2, $result['gradingsummary']['participantcount']);
         $this->assertEquals(0, $result['gradingsummary']['submissiondraftscount']);
         $this->assertEquals(1, $result['gradingsummary']['submissionssubmittedcount']); // One student from G1 submitted.
         $this->assertEquals(1, $result['gradingsummary']['submissionsneedgradingcount']); // One student from G1 submitted.
@@ -2463,6 +2475,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse($result['submitted']);
         $this->assertFalse($result['requiregrading']);
         $this->assertFalse($result['grantedextension']);
+        $this->assertEquals('', $result['submissionstatus']);
         $this->assertTrue($result['blindmarking']);
         // Make sure we don't get any additional info.
         $this->assertArrayNotHasKey('user', $result);
@@ -2517,6 +2530,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue($result['submitted']);
         $this->assertTrue($result['requiregrading']);
         $this->assertFalse($result['grantedextension']);
+        $this->assertEquals(ASSIGN_SUBMISSION_STATUS_SUBMITTED, $result['submissionstatus']);
         $this->assertFalse($result['blindmarking']);
         // Make sure we don't get any additional info.
         $this->assertArrayNotHasKey('user', $result);
@@ -2702,6 +2716,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($student->phone2, $participant['phone2']);
         $this->assertEquals($student->department, $participant['department']);
         $this->assertEquals($student->institution, $participant['institution']);
+        $this->assertEquals('', $participant['submissionstatus']);
         $this->assertArrayHasKey('enrolledcourses', $participant);
 
         $participants = mod_assign_external::list_participants($assignment->id, 0, '', 0, 0, false, false, true);

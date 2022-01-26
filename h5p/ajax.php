@@ -25,6 +25,8 @@
 use core_h5p\factory;
 use core_h5p\framework;
 use core_h5p\local\library\autoloader;
+use Moodle\H5PCore;
+use Moodle\H5PEditorEndpoints;
 
 define('AJAX_SCRIPT', true);
 
@@ -85,7 +87,7 @@ switch ($action) {
         foreach ($_FILES as $uploadedfile) {
             $filename = clean_param($uploadedfile['name'], PARAM_FILE);
             if ($uploadedfile['size'] > $maxsize) {
-                H5PCore::ajaxError(get_string('maxbytesfile', 'error', ['file' => $filename, 'size' => display_size($maxsize)]));
+                H5PCore::ajaxError(get_string('maxbytesfile', 'error', ['file' => $filename, 'size' => display_size($maxsize, 0)]));
                 return;
             }
             \core\antivirus\manager::scan_file($uploadedfile['tmp_name'], $filename, true);

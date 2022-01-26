@@ -70,6 +70,8 @@ class login implements renderable, templatable {
     public $signupurl;
     /** @var string The user name to pre-fill the form with. */
     public $username;
+    /** @var string The language selector menu. */
+    public $languagemenu;
     /** @var string The csrf token to limit login to requests that come from the login form. */
     public $logintoken;
     /** @var string Maintenance message, if Maintenance is enabled. */
@@ -82,10 +84,13 @@ class login implements renderable, templatable {
      * @param string $username The username to display.
      */
     public function __construct(array $authsequence, $username = '') {
-        global $CFG;
+        global $CFG, $OUTPUT, $PAGE;
 
         $this->username = $username;
 
+        $languagedata = new \core\output\language_menu($PAGE);
+
+        $this->languagemenu = $languagedata->export_for_action_menu($OUTPUT);
         $this->canloginasguest = $CFG->guestloginbutton and !isguestuser();
         $this->canloginbyemail = !empty($CFG->authloginviaemail);
         $this->cansignup = $CFG->registerauth == 'email' || !empty($CFG->registerauth);
@@ -111,8 +116,12 @@ class login implements renderable, templatable {
             $this->instructions = get_string('loginsteps', 'core', 'signup.php');
         }
 
-        if ($CFG->maintenance_enabled == true && !empty($CFG->maintenance_message)) {
-            $this->maintenance = $CFG->maintenance_message;
+        if ($CFG->maintenance_enabled == true) {
+            if (!empty($CFG->maintenance_message)) {
+                $this->maintenance = $CFG->maintenance_message;
+            } else {
+                $this->maintenance = get_string('sitemaintenance', 'admin');
+            }
         }
 
         // Identity providers.
@@ -152,6 +161,7 @@ class login implements renderable, templatable {
         $data->username = $this->username;
         $data->logintoken = $this->logintoken;
         $data->maintenance = format_text($this->maintenance, FORMAT_MOODLE);
+        $data->languagemenu = $this->languagemenu;
 
         return $data;
     }

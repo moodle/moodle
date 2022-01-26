@@ -331,7 +331,11 @@ class helper {
         $core = $factory->get_core();
 
         // When there is a logged in user, her information will be passed to the player. It will be used for tracking.
-        $usersettings = isloggedin() ? ['name' => $USER->username, 'mail' => $USER->email] : [];
+        $usersettings = [];
+        if (isloggedin()) {
+            $usersettings['name'] = $USER->username;
+            $usersettings['id'] = $USER->id;
+        }
         $settings = array(
             'baseUrl' => $basepath,
             'url' => "{$basepath}pluginfile.php/{$systemcontext->instanceid}/core_h5p",
@@ -344,7 +348,7 @@ class helper {
             'user' => $usersettings,
             'hubIsEnabled' => true,
             'reportingIsEnabled' => false,
-            'crossorigin' => null,
+            'crossorigin' => !empty($CFG->h5pcrossorigin) ? $CFG->h5pcrossorigin : null,
             'libraryConfig' => $core->h5pF->getLibraryConfig(),
             'pluginCacheBuster' => self::get_cache_buster(),
             'libraryUrl' => autoloader::get_h5p_core_library_url('js')->out(),

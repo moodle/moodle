@@ -2,6 +2,11 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 4.0 ===
+* The $OUTPUT->should_display_main_logo() function has been deprecated and should no longer be used.
+* New method flexible_table::set_columnsattributes() has been introduced to add column attributes applied in every cell.
+* New method flexible_table::get_row_cells_html() has been introduced, extracted from flexible_table::get_row_html
+  so it can be overriden individually.
+* Since Boxnet has been remove from core then boxnet_client() class has been removed from core too.
 * New navigation classes to mimic the new navigation project. The existing navigation callbacks are still available and
   will be called. The following behaviour will be the new standard for nodes added via callbacks:
    - Module nodes added will be appended to the end and will appear within the hamburger option.
@@ -60,6 +65,110 @@ information provided here is intended especially for developers.
   - generate_uuid
 * The YUI moodle-core-formchangechecker module has been deprecated and replaced with a new AMD module
   core_form/changechecker.
+* New method \core_user::awaiting_action() has been introduced to check if the user is fully ready to use the site or
+  whether there is an action (such as filling the missing profile field, changing password or agreeing to the site
+  policy) needed.
+* The signature of the get_name() function for grade_category and grade_item has been extended. The new parameter allows
+  callers to get the name without escaped characters.
+* The inplace_editable element constructor now accepts an optional pix_icon parameter to use as it's editing icon when
+  rendered. The default icon for "select" types has also changed to a dropdown caret ("t/expanded").
+* The inplace_editable Javascript module now emits native events, removing the jQuery dependency from calling code
+  that wants to listen for the events. Backwards compatibility with existing code using jQuery is preserved.
+* The function message_send() in messagelib.php now returns false if there is an error sending the message to the
+  message processor (MDL-70046).
+* Following methods are now deprecated in questionlib and moved to the new qbank_previewquestion plugin:
+  - question_preview_url() is moved to qbank_previewquestion\helper::question_preview_url()
+  - question_preview_popup_params() is moved to \qbank_previewquestion\helper::question_preview_popup_params()
+  Calling these functions in the question will point to the plugin.
+  The deprecated codes are removed from the questionlib for those two methods.
+* The following functions are deprecated in questionlib.php and moved to the new location.
+  These are marked for final deprecation on 4.4:
+  - question_remove_stale_questions_from_category() =>
+    qbank_managecategories\helper::question_remove_stale_questions_from_category()
+  - flatten_category_tree() => qbank_managecategories\helper::flatten_category_tree()
+  - add_indented_names() => qbank_managecategories\helper::add_indented_names()
+  - question_category_select_menu() => qbank_managecategories\helper::question_category_select_menu()
+  - get_categories_for_contexts() => qbank_managecategories\helper::get_categories_for_contexts()
+  - question_category_options() => qbank_managecategories\helper::question_category_options()
+  - question_add_context_in_key() => qbank_managecategories\helper::question_add_context_in_key()
+  - question_fix_top_names() => qbank_managecategories\helper::question_fix_top_names()
+* Following methods are now deprecated in questionlib and moved to the new qbank_previewquestion plugin:
+  - question_preview_url() is moved to qbank_previewquestion\helper::question_preview_url()
+  - question_preview_popup_params() is moved to \qbank_previewquestion\helper::question_preview_popup_params()
+  Calling these functions in the question will point to the plugin, but the deprecation message will be activated in MDL-72004.
+  The deprecated codes are removed from the questionlib for those two methods.
+* The postgres driver now wraps calls to pg_field_type() and caches them in databasemeta to save an invisible internal
+  DB call on every request.
+* The default type of 'core/toast' messages has been changed to 'information' (callers can still explicitely set the type)
+* As the message_jabber notification plugin has been moved to the plugins database, the XMPPHP library (aka Jabber) has been
+completely removed from Moodle core too.
+* The SWF media player has been completely removed (The Flash Player was deprecated in 2017 and officially discontinued
+  on 31 December 2020).
+* The display_size function has been improved to add new optional parameters (decimal places,
+  fixed units), to always include a non-breaking space between the number and unit, and to use
+  consistent rounding (always 1 decimal place by default).
+* The persistent method get() now returns the correct type for each property defined in the persistent class.
+* The persistent method from_record() now only attempts to load record properties defined in the persistent class.
+* New persistent set_many() helper for setting multiple properties in single method call.
+* Require pass grade criteria is now part of core.
+  Refer to upgrade.php to see transitioning from similar plugin criteria to core
+  Refer to completion/upgrade.txt for additional information.
+* The method enable_plugin() has been added to the core_plugininfo\base class and it has been implemented by all the plugininfo
+  classes extending it. When possible, the enable_plugin() method will store these changes into the config_log table, to let admins
+  check when and who has enabled/disabled plugins.
+* Final deprecation: The following functions along with associated tests have been removed:
+  - core_grades_external::get_grades
+  - core_grades_external::get_grade_item
+  - report_insights_context_insights
+* \core\session\manager::init_empty_session() has a new optional parameter $newsid to indicate whether this is a new user session
+* New html_table attribute "$responsive" which defaults to true. When set to true, tables created via html_writer::table() will be enclosed
+  in a .table-responsive div container which will allow the table to be scrolled horizontally with ease, especially when the table is rendered in smaller viewports.
+  Set to false to prevent the table from being enclosed in the responsive container.
+* Two new helper functions have been added to lib/datalib.php, for safely preparing SQL ORDER BY statements where user
+  interactions define sort parameters (see the respective docblocks for full details and examples):
+  -get_safe_orderby() - where a single sort parameter is required.
+  -get_safe_orderby_multiple() - where multiple sort parameters are required.
+* Added the cleanstr mustache template helper to clean strings after loading them from language packs.
+* The following behat functions have been modified to work with the new navigation
+  - i_add_the_block
+  - the_add_block_selector_should_contain_block
+  - the_add_block_selector_should_contain_block
+  - go_to_the_current_course_activity_completion_report
+  - i_navigate_to_course_participants
+  - i_go_to_advanced_grading_page
+  - i_navigate_to_in_the_course_gradebook
+  - should_exist_in_current_page_administration
+  - should_not_exist_in_current_page_administration
+  - go_to_main_course_page
+  - select_on_administration_page
+  - find_header_administration_menu
+  - select_from_administration_menu
+  - i_edit_the_lesson
+  - i_add_a_question_filling_the_form_with
+* The following behat step has been deprecated
+  - i_select_from_flat_navigation_drawer
+* The type for the "message" field in the external_warnings() structure has been changed from PARAM_TEXT to PARAM_RAW
+* A new parameter $displayoptions has been added to the core_renderer::confirm() to allow better customization for confirming page
+such as the title and strings for continue and cancel buttons.
+* The method get_enabled_plugin($pluginname) has been added to the core_plugininfo\base class. It has a default implementation for
+all the plugininfo classes and it can be overwritten when required (like it has been done with filter). This method returns the
+current value for a pluginname depending on its status (enabled, disabled, other...).
+* Unit Test coverage defaults have been updated to include some sensible defaults.
+  The default values now include:
+  * /classes/
+  * /tests/generator/
+  * /externallib.php
+  * /lib.php
+  * /locallib.php
+  * /renderer.php
+  * /rsslib.php
+  This default applies both when there is no supplied coverage.php file, and is used to supplement any existing coverage configuration file if one is found.
+
+=== 3.11.4 ===
+* A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
+  Note: This option overrides the forced download of directly accessed SVGs, so should only be used where the calling method is
+  rendering SVGs directly for content created using XSS risk flagged capabilities (such as creating a SCORM activity).
+  This is also not necessary where SVGs are already being safely loaded into <img> tags by Moodle (eg within forum posts).
 
 === 3.11.2 ===
 * For security reasons, filelib has been updated so all requests now use emulated redirects.
@@ -281,7 +390,7 @@ information provided here is intended especially for developers.
   `strip_disallowed_helpers()`.
 * A new admin externalpage type `\core_admin\local\externalpage\accesscallback` for use in plugin settings is available that allows
   a callback to be provided to determine whether page can be accessed.
-* New setting $CFG->localtempdir overrides which defaults to sys_get_temp_dir()
+* New setting $CFG->localrequestdir overrides which defaults to sys_get_temp_dir()
 * Function redirect() now emits a line of backtrace into the X-Redirect-By header when debugging is on
 * New DML function $DB->delete_records_subquery() to delete records based on a subquery in a way
   that will work across databases.

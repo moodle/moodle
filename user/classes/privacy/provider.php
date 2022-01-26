@@ -44,7 +44,8 @@ use \core_privacy\local\request\approved_userlist;
 class provider implements
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\core_userlist_provider,
-        \core_privacy\local\request\subsystem\provider {
+        \core_privacy\local\request\subsystem\provider,
+        \core_privacy\local\request\user_preference_provider {
 
     /**
      * Returns information about the user data stored in this component.
@@ -176,6 +177,11 @@ class provider implements
         $collection->add_database_table('my_pages', $mypages, 'privacy:metadata:my_pages');
         $collection->add_database_table('user_preferences', $userpreferences, 'privacy:metadata:user_preferences');
         $collection->add_subsystem_link('core_files', [], 'privacy:metadata:filelink');
+
+        $collection->add_user_preference(
+            'core_user_welcome',
+            'privacy:metadata:user_preference:core_user_welcome'
+        );
 
         return $collection;
     }
@@ -376,7 +382,14 @@ class provider implements
             'lastip' => $user->lastip,
             'secret' => $user->secret,
             'picture' => $user->picture,
-            'description' => format_text($user->description, $user->descriptionformat, ['context' => $context]),
+            'description' => format_text(
+                writer::with_context($context)->rewrite_pluginfile_urls(
+                    [],
+                    'user',
+                    'profile',
+                    '',
+                    $user->description
+                ), $user->descriptionformat, ['context' => $context]),
             'maildigest' => transform::yesno($user->maildigest),
             'maildisplay' => $user->maildisplay,
             'autosubscribe' => transform::yesno($user->autosubscribe),
@@ -389,10 +402,7 @@ class provider implements
             'middlename' => format_string($user->middlename, true, ['context' => $context]),
             'alternatename'  => format_string($user->alternatename, true, ['context' => $context])
         ];
-        if (isset($data->description)) {
-            $data->description = writer::with_context($context)->rewrite_pluginfile_urls(
-                    [get_string('privacy:descriptionpath', 'user')], 'user', 'profile', '', $data->description);
-        }
+
         writer::with_context($context)->export_area_files([], 'user', 'profile', 0)
                 ->export_data([], $data);
         // Export profile images.
@@ -533,4 +543,23 @@ class provider implements
             writer::with_context($context)->export_data([get_string('privacy:sessionpath', 'user')], $sessiondata);
         }
     }
+
+    /**
+     * Export all user preferences for the plugin.
+     *
+     * @param   int $userid The userid of the user whose data is to be exported.
+     */
+    public static function export_user_preferences(int $userid) {
+        $userwelcomepreference = get_user_preferences('core_user_welcome', null, $userid);
+
+        if ($userwelcomepreference !== null) {
+            writer::export_user_preference(
+                'core_user',
+                'core_user_welcome',
+                $userwelcomepreference,
+                get_string('privacy:metadata:user_preference:core_user_welcome', 'core_user')
+            );
+        }
+    }
+
 }

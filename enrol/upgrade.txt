@@ -1,6 +1,13 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+* Final deprecation of the following webservice:
+  * core_enrol_edit_user_enrolment
+* External function core_enrol_external::get_users_courses now returns the last time a course was modified (timemodified field)
+* The behat step i_add_enrolment_method_with() has been deprecated. Please use the new method i_add_enrolment_method_for_with()
+
 === 3.11 ===
 
 * Added onlysuspended option to core_enrol_get_enrolled_users webservice to retrieve only suspended users.

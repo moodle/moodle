@@ -164,7 +164,15 @@ if ($editform->is_cancelled()) {
         // Get the context of the newly created course.
         $context = context_course::instance($course->id, MUST_EXIST);
 
-        if (!empty($CFG->creatornewroleid) and !is_viewing($context, NULL, 'moodle/role:assign') and !is_enrolled($context, NULL, 'moodle/role:assign')) {
+        // Admins have all capabilities, so is_viewing is returning true for admins.
+        // We are checking 'enroladminnewcourse' setting to decide to enrol them or not.
+        if (is_siteadmin($USER->id)) {
+            $enroluser = $CFG->enroladminnewcourse;
+        } else {
+            $enroluser = !is_viewing($context, null, 'moodle/role:assign');
+        }
+
+        if (!empty($CFG->creatornewroleid) and $enroluser and !is_enrolled($context, null, 'moodle/role:assign')) {
             // Deal with course creators - enrol them internally with default role.
             // Note: This does not respect capabilities, the creator will be assigned the default role.
             // This is an expected behaviour. See MDL-66683 for further details.
@@ -173,21 +181,6 @@ if ($editform->is_cancelled()) {
 
         // The URL to take them to if they chose save and display.
         $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
-
-        // If they choose to save and display, and they are not enrolled take them to the enrolments page instead.
-        if (!is_enrolled($context) && isset($data->saveanddisplay)) {
-            // Redirect to manual enrolment page if possible.
-            $instances = enrol_get_instances($course->id, true);
-            foreach($instances as $instance) {
-                if ($plugin = enrol_get_plugin($instance->enrol)) {
-                    if ($plugin->get_manual_enrol_link($instance)) {
-                        // We know that the ajax enrol UI will have an option to enrol.
-                        $courseurl = new moodle_url('/user/index.php', array('id' => $course->id, 'newcourse' => 1));
-                        break;
-                    }
-                }
-            }
-        }
     } else {
         // Save any changes to the files used in the editor.
         update_course($data, $editoroptions);
@@ -241,6 +234,7 @@ if (!empty($course->id)) {
 }
 
 $PAGE->set_title($title);
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_heading($fullname);
 
 echo $OUTPUT->header();

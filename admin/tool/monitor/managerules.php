@@ -113,13 +113,10 @@ if (!empty($action) && $ruleid) {
     echo $OUTPUT->header();
 }
 
-report_helper::save_selected_report($courseid, $manageurl);
-
 // Print the selected dropdown.
 $managerules = get_string('managerules', 'tool_monitor');
 report_helper::print_report_selector($managerules);
 
-echo $OUTPUT->heading(get_string('managerules', 'tool_monitor'));
 $status = get_config('tool_monitor', 'enablemonitor');
 $help = new help_icon('enablehelp', 'tool_monitor');
 

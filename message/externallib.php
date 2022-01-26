@@ -1963,7 +1963,8 @@ class core_message_external extends external_api {
                 'type' => new external_value(
                     PARAM_ALPHA, 'type of message to return, expected values are: notifications, conversations and both',
                     VALUE_DEFAULT, 'both'),
-                'read' => new external_value(PARAM_BOOL, 'true for getting read messages, false for unread', VALUE_DEFAULT, true),
+                'read' => new external_value(PARAM_INT, '1 for getting read messages, 0 for unread, 2 for both',
+                    VALUE_DEFAULT, 1),
                 'newestfirst' => new external_value(
                     PARAM_BOOL, 'true for ordering by newest first, false for oldest first',
                     VALUE_DEFAULT, true),
@@ -1982,15 +1983,15 @@ class core_message_external extends external_api {
      * @param  int      $useridto       the user id who received the message
      * @param  int      $useridfrom     the user id who send the message. -10 or -20 for no-reply or support user
      * @param  string   $type           type of message to return, expected values: notifications, conversations and both
-     * @param  bool     $read           true for retreiving read messages, false for unread
+     * @param  int      $read           1 for getting read messages, 0 for unread, 2 for both
      * @param  bool     $newestfirst    true for ordering by newest first, false for oldest first
      * @param  int      $limitfrom      limit from
      * @param  int      $limitnum       limit num
      * @return external_description
      */
-    public static function get_messages($useridto, $useridfrom = 0, $type = 'both', $read = true,
+    public static function get_messages($useridto, $useridfrom = 0, $type = 'both', $read = MESSAGE_GET_READ,
                                         $newestfirst = true, $limitfrom = 0, $limitnum = 0) {
-        global $CFG, $USER;
+        global $CFG, $USER, $PAGE;
 
         $warnings = array();
 
@@ -2088,13 +2089,26 @@ class core_message_external extends external_api {
             }
             foreach ($messages as $mid => $message) {
 
-                // Do not return deleted messages.
                 if (!$message->notification) {
+                    // Do not return deleted messages.
                     if (($useridto == $USER->id and $message->timeusertodeleted) or
                         ($useridfrom == $USER->id and $message->timeuserfromdeleted)) {
                         unset($messages[$mid]);
                         continue;
                     }
+                } else {
+                    // Return iconurl for notifications.
+                    if (!isset($output)) {
+                        $output = $PAGE->get_renderer('core');
+                    }
+
+                    if (!empty($message->component) && substr($message->component, 0, 4) == 'mod_') {
+                        $iconurl = $output->image_url('icon', $message->component);
+                    } else {
+                        $iconurl = $output->image_url('i/marker', 'core');
+                    }
+
+                    $message->iconurl = clean_param($iconurl->out(), PARAM_URL);
                 }
 
                 // We need to get the user from the query.
@@ -2167,6 +2181,7 @@ class core_message_external extends external_api {
                             'eventtype' => new external_value(PARAM_TEXT, 'The type of notification', VALUE_OPTIONAL),
                             'customdata' => new external_value(PARAM_RAW, 'Custom data to be passed to the message processor.
                                 The data here is serialised using json_encode().', VALUE_OPTIONAL),
+                            'iconurl' => new external_value(PARAM_URL, 'URL for icon, only for notifications.', VALUE_OPTIONAL),
                         ), 'message'
                     )
                 ),

@@ -27,6 +27,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Default maximum recording length allowed for the audio/video clips.
+ */
+define('DEFAULT_TIME_LIMIT', 120);
+
+/**
  * Set params for this plugin.
  *
  * @param string $elementid
@@ -43,7 +48,8 @@ function atto_recordrtc_params_for_js($elementid, $options, $fpoptions) {
     $allowedtypes = get_config('atto_recordrtc', 'allowedtypes');
     $audiobitrate = get_config('atto_recordrtc', 'audiobitrate');
     $videobitrate = get_config('atto_recordrtc', 'videobitrate');
-    $timelimit = get_config('atto_recordrtc', 'timelimit');
+    $audiotimelimit = get_config('atto_recordrtc', 'audiotimelimit');
+    $videotimelimit = get_config('atto_recordrtc', 'videotimelimit');
 
     // Update $allowedtypes to account for capabilities.
     $audioallowed = $allowedtypes === 'audio' || $allowedtypes === 'both';
@@ -71,7 +77,9 @@ function atto_recordrtc_params_for_js($elementid, $options, $fpoptions) {
                     'allowedtypes' => $allowedtypes,
                     'audiobitrate' => $audiobitrate,
                     'videobitrate' => $videobitrate,
-                    'timelimit' => $timelimit,
+                    'audiotimelimit' => $audiotimelimit,
+                    'videotimelimit' => $videotimelimit,
+                    'defaulttimelimit' => DEFAULT_TIME_LIMIT,
                     'audiortcicon' => $audiortcicon,
                     'videortcicon' => $videortcicon,
                     'maxrecsize' => $maxrecsize

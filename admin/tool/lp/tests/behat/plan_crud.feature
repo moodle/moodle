@@ -25,7 +25,7 @@ Feature: Manage plearning plan
     Given the following lp "templates" exist:
       | shortname | description |
       | Science template | science template description |
-    And I follow "Home"
+    And I am on homepage
     And I navigate to "Competencies > Learning plan templates" in site administration
     And I click on ".template-userplans" "css_element" in the "Science template" "table_row"
     And I open the autocomplete suggestions list
@@ -50,13 +50,13 @@ Feature: Manage plearning plan
       | user     | cohort |
       | student-plan1 | COHORTPLAN |
       | student-plan2 | COHORTPLAN |
-    And I follow "Home"
+    And I am on homepage
     And I navigate to "Competencies > Learning plan templates" in site administration
     And I click on ".template-cohorts" "css_element" in the "Science template cohort" "table_row"
     And I set the field "Select cohorts to sync" to "cohort plan"
     When I click on "Add cohorts" "button"
     Then I should see "2 learning plans were created."
-    And I follow "Learning plan templates"
+    And I navigate to "Competencies > Learning plan templates" in site administration
     And I click on ".template-userplans" "css_element" in the "Science template cohort" "table_row"
     And I should see "Student 1"
     And I should see "Student 2"
@@ -152,8 +152,7 @@ Feature: Manage plearning plan
     And I create a course with:
       | Course full name | New course fullname |
       | Course short name | New course shortname |
-    And I follow "New course fullname"
-    And I follow "Competencies"
+    And I navigate to "Competencies" in current page administration
     And I press "Add competencies to course"
     And "Competency picker" "dialogue" should be visible
     And I select "comp1" of the competency tree

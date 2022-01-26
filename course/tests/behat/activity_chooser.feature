@@ -25,13 +25,13 @@ Feature: Display and choose from the available activities in course
     And I should see "Assignment" in the ".modal-body" "css_element"
 
   Scenario: The teacher can choose to add an activity from the activity items in the activity chooser
-    Given I click on "Add an activity or resource" "button" in the "Topic 3" "section"
+    Given I click on "Add an activity or resource" "button" in the "Topic 4" "section"
     When I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
     Then I should see "Adding a new Assignment"
     And I set the following fields to these values:
-      | Assignment name | Test Assignment Topic 3 |
+      | Assignment name | Test Assignment Topic 4 |
     And I press "Save and return to course"
-    Then I should see "Test Assignment Topic 3" in the "Topic 3" "section"
+    Then I should see "Test Assignment Topic 4" in the "Topic 4" "section"
 
   Scenario: The teacher can choose to add an activity from the activity summary in the activity chooser
     Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"

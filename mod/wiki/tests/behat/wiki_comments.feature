@@ -32,7 +32,7 @@ Feature: Users can comment on wiki pages
     And I press "Save"
     And I log out
     And I am on the "Test wiki name" "wiki activity" page logged in as student1
-    And I follow "Comments"
+    And I select "Comments" from the "jump" singleselect
     And I follow "Add comment"
     And I set the following fields to these values:
       | Comment | student 1 original comment |
@@ -49,14 +49,14 @@ Feature: Users can comment on wiki pages
     And "Edit" "link" should exist in the "wiki-comments" "table"
     And "Delete" "link" should exist in the "wiki-comments" "table"
     And I click on "Delete" "link" in the "wiki-comments" "table"
-    And I press "Yes"
+    And I press "Continue"
     And I should not see "student 1 updated comment"
 
   @javascript
   Scenario: Student cannot edit another student's comment
     When I log out
     And I am on the "Test wiki name" "wiki activity" page logged in as student2
-    And I follow "Comments"
+    And I select "Comments" from the "jump" singleselect
     Then "Edit" "link" should not exist in the "wiki-comments" "table"
     And "Delete" "link" should not exist in the "wiki-comments" "table"
 
@@ -64,6 +64,6 @@ Feature: Users can comment on wiki pages
   Scenario: Teacher can delete a student comment
     When I log out
     And I am on the "Test wiki name" "wiki activity" page logged in as teacher1
-    And I follow "Comments"
+    And I select "Comments" from the "jump" singleselect
     Then "Edit" "link" should not exist in the "wiki-comments" "table"
     And "Delete" "link" should exist in the "wiki-comments" "table"

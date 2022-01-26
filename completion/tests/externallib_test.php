@@ -122,6 +122,15 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
             ['course' => $course->id],
             ['availability' => $availability],
         );
+        $assignautocompletion = $this->getDataGenerator()->create_module('assign',
+            ['course' => $course->id], [
+                'showdescription' => true,
+                'completionview' => 1,
+                'completion' => COMPLETION_TRACKING_AUTOMATIC,
+                'completiongradeitemnumber' => 1,
+                'completionpassgrade' => 1,
+            ],
+        );
         $page = $this->getDataGenerator()->create_module('page',  array('course' => $course->id),
                                                             array('completion' => 1, 'visible' => 0));
 
@@ -151,11 +160,11 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
         $result = external_api::clean_returnvalue(
             core_completion_external::get_activities_completion_status_returns(), $result);
 
-        // We added 5 activities, but only 4 with completion enabled and one of those is hidden.
-        $numberofactivities = 5;
+        // We added 6 activities, but only 4 with completion enabled and one of those is hidden.
+        $numberofactivities = 6;
         $numberofhidden = 1;
         $numberofcompletions = $numberofactivities - $numberofhidden;
-        $numberofstatusstudent = 3;
+        $numberofstatusstudent = 4;
 
         $this->assertCount($numberofstatusstudent, $result['statuses']);
 
@@ -186,6 +195,26 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
                 $this->assertEquals('completionview', $details[0]['rulename']);
                 $this->assertEquals(0, $details[0]['rulevalue']['status']);
 
+            } else if ($status['cmid'] == $assignautocompletion->cmid) {
+                $activitiesfound++;
+                $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
+                $this->assertEquals(COMPLETION_TRACKING_AUTOMATIC, $status['tracking']);
+                $this->assertFalse($status['valueused']);
+                $this->assertTrue($status['hascompletion']);
+                $this->assertTrue($status['isautomatic']);
+                $this->assertTrue($status['istrackeduser']);
+                $this->assertTrue($status['uservisible']);
+                $details = $status['details'];
+                $this->assertCount(3, $details);
+                $expecteddetails = [
+                    'completionview',
+                    'completionusegrade',
+                    'completionpassgrade',
+                ];
+                foreach ($expecteddetails as $index => $name) {
+                    $this->assertEquals($name, $details[$index]['rulename']);
+                    $this->assertEquals(0, $details[$index]['rulevalue']['status']);
+                }
             } else if ($status['cmid'] == $data->cmid and $status['modname'] == 'data' and $status['instance'] == $data->id) {
                 $activitiesfound++;
                 $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
@@ -200,7 +229,7 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
                 $this->assertCount(0, $details);
             }
         }
-        $this->assertEquals(3, $activitiesfound);
+        $this->assertEquals(4, $activitiesfound);
 
         // Teacher should see students status, they are in different groups but the teacher can access all groups.
         $this->setUser($teacher);
@@ -248,7 +277,7 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
                 $activitiesfound++;
                 $this->assertEquals(COMPLETION_COMPLETE, $status['state']);
                 $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
-            } else if ($status['cmid'] == $forumautocompletion->cmid) {
+            } else if (in_array($status['cmid'], [$forumautocompletion->cmid, $assignautocompletion->cmid])) {
                 $activitiesfound++;
                 $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
                 $this->assertEquals(COMPLETION_TRACKING_AUTOMATIC, $status['tracking']);
@@ -258,7 +287,7 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
                 $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
             }
         }
-        $this->assertEquals(4, $activitiesfound);
+        $this->assertEquals(5, $activitiesfound);
 
         // Change teacher role capabilities (disable access all groups).
         $context = context_course::instance($course->id);

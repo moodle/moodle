@@ -25,8 +25,8 @@ Feature: Award badges based on activity completion
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |
     And the following "activities" exist:
-      | activity   | name           | course | idnumber | attempts | gradepass | completion | completionattemptsexhausted | completionpass | completionusegrade |
-      | quiz       | Test quiz name | C1     | quiz1    | 2        | 5.00      | 2          | 1                           | 1              | 1                  |
+      | activity   | name           | course | idnumber | attempts | gradepass | completion | completionattemptsexhausted | completionpassgrade | completionusegrade |
+      | quiz       | Test quiz name | C1     | quiz1    | 2        | 5.00      | 2          | 1                           | 1                   | 1                  |
     And quiz "Test quiz name" contains the following questions:
       | question       | page |
       | First question | 1    |
@@ -35,8 +35,8 @@ Feature: Award badges based on activity completion
       |   1  | False    |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
+    And I change window size to "large"
     And I navigate to "Badges > Add a new badge" in current page administration
-    And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
       | Description | Course badge description |
@@ -53,10 +53,11 @@ Feature: Award badges based on activity completion
   Scenario: Student earns a badge using activity completion, but does not get passing grade
     Given I log in as "student1"
     And I am on "Course 1" course homepage
-    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
     When I am on the "Test quiz name" "quiz activity" page
-    And I press "Re-attempt quiz"
+    And I follow "Attempt quiz"
     And I set the field "False" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"

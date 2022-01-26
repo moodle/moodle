@@ -94,6 +94,7 @@
 
     // Must set layout before gettting section info. See MDL-47555.
     $PAGE->set_pagelayout('course');
+    $PAGE->add_body_class('limitedwidth');
 
     if ($section and $section > 0) {
 
@@ -119,7 +120,8 @@
     }
 
     // Fix course format if it is no longer installed
-    $course->format = course_get_format($course)->get_format();
+    $format = course_get_format($course);
+    $course->format = $format->get_format();
 
     $PAGE->set_pagetype('course-view-' . $course->format);
     $PAGE->set_other_editing_capability('moodle/course:update');
@@ -133,14 +135,7 @@
     // Preload course format renderer before output starts.
     // This is a little hacky but necessary since
     // format.php is not included until after output starts
-    if (file_exists($CFG->dirroot.'/course/format/'.$course->format.'/renderer.php')) {
-        require_once($CFG->dirroot.'/course/format/'.$course->format.'/renderer.php');
-        if (class_exists('format_'.$course->format.'_renderer')) {
-            // call get_renderer only if renderer is defined in format plugin
-            // otherwise an exception would be thrown
-            $PAGE->get_renderer('format_'. $course->format);
-        }
-    }
+    $format->get_renderer($PAGE);
 
     if ($reset_user_allowed_editing) {
         // ugly hack
@@ -212,7 +207,7 @@
 
     if ($course->id == SITEID) {
         // This course is not a real course.
-        redirect($CFG->wwwroot .'/');
+        redirect($CFG->wwwroot .'/?redirect=0');
     }
 
     // Determine whether the user has permission to download course content.
@@ -274,6 +269,9 @@
     // inclusion we pass parameters around this way..
     $displaysection = $section;
 
+    // Include course AJAX
+    include_course_ajax($course, $modnamesused);
+
     // Include the actual course format.
     require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
     // Content wrapper end.
@@ -284,9 +282,6 @@
     // We don't trust $context here. Course format inclusion above executes in the global space. We can't assume
     // anything after that point.
     course_view(context_course::instance($course->id), $section);
-
-    // Include course AJAX
-    include_course_ajax($course, $modnamesused);
 
     // If available, include the JS to prepare the download course content modal.
     if ($candownloadcourse) {

@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+
+    @template theme_boost/editswitch
+
+    This template renders the top navbar.
+
+    Example context (json):
+    {
+        "url": "http://localhost/",
+        "sesskey": "sesskey",
+        "edit": 1,
+        "adminedit": true,
+        "checked": "",
+        "string": "Edit on"
+    }
+}}
+<div class="divider border-left h-75 align-self-center ml-1 mr-3"></div>
+<form action="{{{legacyseturl}}}" method="post" class="d-flex align-items-center editmode-switch-form">
+    <div class="input-group">
+        <label class="mr-2 mb-0 {{#checked}}text-primary{{/checked}}" for="{{uniqid}}-editingswitch">
+            {{#str}} editmode {{/str}}
+        </label>
+        <div class="custom-control custom-switch">
+            <input type="checkbox"{{!
+                }} name="setmode"{{!
+                }}{{#checked}}{{!
+                    }} aria-checked="true" checked{{!
+                }}{{/checked}}{{!
+                }}{{^checked}}{{!
+                    }} aria-checked="false"{{!
+                }}{{/checked}}{{!
+                }} class="custom-control-input"{{!
+                }} id="{{uniqid}}-editingswitch"{{!
+                }} data-context="{{{pagecontextid}}}"{{!
+                }} data-pageurl="{{{pageurl}}}"{{!
+            }}>
+            <span class="custom-control-label">&nbsp;</span>
+        </div>
+    </div>
+    <input type="hidden" name="sesskey" value="{{{sesskey}}}">
+    <input type="hidden" name="pageurl" value="{{{pageurl}}}">
+    <input type="hidden" name="context" value="{{{pagecontextid}}}">
+    <noscript>
+        <input type="submit" value="{{#str}}setmode, core{{/str}}">
+    </noscript>
+</form>
+{{#js}}
+require(['core/edit_switch'], function(editSwitch) {
+    editSwitch.init('{{uniqid}}-editingswitch');
+});
+{{/js}}

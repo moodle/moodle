@@ -59,7 +59,7 @@ Feature: The activity results block displays students in groups low scores as sc
     And I press "Save changes"
     And I am on "Course 1" course homepage
     And I follow "Test assignment"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_grade_modgrade_type | Scale |
       | id_grade_modgrade_scale | My Scale |
@@ -74,7 +74,7 @@ Feature: The activity results block displays students in groups low scores as sc
     And I give the grade "Good" to the user "Student 5" for the grade item "Test assignment"
     And I give the grade "Average" to the user "Student 6" for the grade item "Test assignment"
     And I press "Save changes"
-    And I am on "Course 1" course homepage with editing mode on
+    And I am on "Course 1" course homepage
 
   Scenario: Try to configure the block on the course page to show 1 low score
     Given I add the "Activity results" block

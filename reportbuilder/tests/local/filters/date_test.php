@@ -31,7 +31,7 @@ use core_reportbuilder\local\report\filter;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class date_testcase extends advanced_testcase {
+class date_test extends advanced_testcase {
 
     /**
      * Data provider for {@see test_get_sql_filter_simple}
@@ -113,5 +113,65 @@ class date_testcase extends advanced_testcase {
         // The only matching user should be our first test user.
         $usernames = $DB->get_fieldset_select('user', 'username', $select, $params);
         $this->assertEquals([$usertwo->username], $usernames);
+    }
+
+    /**
+     * Data provider for {@see test_get_sql_filter_relative}
+     *
+     * @return array
+     */
+    public function get_sql_filter_relative_provider(): array {
+        return [
+            'Previous day' => [date::DATE_PREVIOUS, 1, date::DATE_UNIT_DAY, '-1 day'],
+            'Previous week' => [date::DATE_PREVIOUS, 1, date::DATE_UNIT_WEEK, '-1 week'],
+            'Previous month' => [date::DATE_PREVIOUS, 1, date::DATE_UNIT_MONTH, 'last day of last month'],
+            'Previous year' => [date::DATE_PREVIOUS, 1, date::DATE_UNIT_YEAR, 'last day of december last year'],
+
+            'Current day' => [date::DATE_CURRENT, null, date::DATE_UNIT_DAY],
+            'Current week' => [date::DATE_CURRENT, null, date::DATE_UNIT_WEEK],
+            'Current month' => [date::DATE_CURRENT, null, date::DATE_UNIT_MONTH],
+            'Current year' => [date::DATE_CURRENT, null, date::DATE_UNIT_YEAR],
+
+            'Next day' => [date::DATE_NEXT, 1, date::DATE_UNIT_DAY, '+1 day'],
+            'Next week' => [date::DATE_NEXT, 1, date::DATE_UNIT_WEEK, '+1 week'],
+            'Next month' => [date::DATE_NEXT, 1, date::DATE_UNIT_MONTH, 'first day of next month'],
+            'Next year' => [date::DATE_NEXT, 1, date::DATE_UNIT_YEAR, 'first day of january next year'],
+        ];
+    }
+
+    /**
+     * Unit tests for filtering relative dates
+     *
+     * @param int $operator
+     * @param int|null $unitvalue
+     * @param int $unit
+     * @param string|null $timecreated Relative time suitable for passing to {@see strtotime} (or null for current time)
+     *
+     * @dataProvider get_sql_filter_relative_provider
+     */
+    public function test_get_sql_filter_relative(int $operator, ?int $unitvalue, int $unit, ?string $timecreated = null): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $usertimecreated = ($timecreated !== null ? strtotime($timecreated) : time());
+        $user = $this->getDataGenerator()->create_user(['timecreated' => $usertimecreated]);
+
+        $filter = new filter(
+            date::class,
+            'test',
+            new lang_string('yes'),
+            'testentity',
+            'timecreated'
+        );
+
+        [$select, $params] = date::create($filter)->get_sql_filter([
+            $filter->get_unique_identifier() . '_operator' => $operator,
+            $filter->get_unique_identifier() . '_value' => $unitvalue,
+            $filter->get_unique_identifier() . '_unit' => $unit,
+        ]);
+
+        $matchingusers = $DB->get_fieldset_select('user', 'username', $select, $params);
+        $this->assertContains($user->username, $matchingusers);
     }
 }

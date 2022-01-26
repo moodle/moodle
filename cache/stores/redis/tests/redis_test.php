@@ -71,12 +71,15 @@ class cachestore_redis_test extends cachestore_tests {
     /**
      * Creates the required cachestore for the tests to run against Redis.
      *
+     * @param array $extraconfig Extra configuration options for Redis instance, if any
      * @return cachestore_redis
      */
-    protected function create_cachestore_redis() {
+    protected function create_cachestore_redis(array $extraconfig = []): cachestore_redis {
         /** @var cache_definition $definition */
         $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_redis', 'phpunit_test');
-        $store = new cachestore_redis('Test', cachestore_redis::unit_test_configuration());
+        $configuration = array_merge(cachestore_redis::unit_test_configuration(), $extraconfig);
+
+        $store = new cachestore_redis('Test', $configuration);
         $store->initialise($definition);
 
         $this->store = $store;
@@ -122,5 +125,46 @@ class cachestore_redis_test extends cachestore_tests {
         $this->assertNull($store->check_lock_state('notalock', '123'));
         $this->assertFalse($store->release_lock('lock', '321'));
         $this->assertTrue($store->release_lock('lock', '123'));
+    }
+
+    /**
+     * Tests the get_last_io_bytes function when not using compression (just returns unknown).
+     */
+    public function test_get_last_io_bytes(): void {
+        $store = $this->create_cachestore_redis();
+
+        $store->set('foo', [1, 2, 3, 4]);
+        $this->assertEquals(\cache_store::IO_BYTES_NOT_SUPPORTED, $store->get_last_io_bytes());
+        $store->get('foo');
+        $this->assertEquals(\cache_store::IO_BYTES_NOT_SUPPORTED, $store->get_last_io_bytes());
+    }
+
+    /**
+     * Tests the get_last_io_bytes byte count when using compression.
+     */
+    public function test_get_last_io_bytes_compressed(): void {
+        $store = $this->create_cachestore_redis(['compressor' => cachestore_redis::COMPRESSOR_PHP_GZIP]);
+
+        $alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+        $store->set('small', $alphabet);
+        $store->set('large', str_repeat($alphabet, 10));
+
+        $store->get('small');
+        // Interesting 'compression'.
+        $this->assertEquals(54, $store->get_last_io_bytes());
+        $store->get('large');
+        // This one is actually smaller than uncompressed value!
+        $this->assertEquals(57, $store->get_last_io_bytes());
+        $store->get_many(['small', 'large']);
+        $this->assertEquals(111, $store->get_last_io_bytes());
+
+        $store->set('small', str_repeat($alphabet, 2));
+        $this->assertEquals(56, $store->get_last_io_bytes());
+        $store->set_many([
+                ['key' => 'small', 'value' => $alphabet],
+                ['key' => 'large', 'value' => str_repeat($alphabet, 10)]
+        ]);
+        $this->assertEquals(111, $store->get_last_io_bytes());
     }
 }

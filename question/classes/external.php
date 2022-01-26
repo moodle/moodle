@@ -121,6 +121,9 @@ class core_question_external extends external_api {
      * Returns description of method parameters.
      *
      * @return external_function_parameters.
+     * @deprecated since Moodle 4.0
+     * @see \qbank_tagquestion\external\qbank_tagquestion_external
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public static function submit_tags_form_parameters() {
         return new external_function_parameters([
@@ -137,6 +140,9 @@ class core_question_external extends external_api {
      * @param int $contextid The editing context id.
      * @param string $formdata The question tag form data in a URI encoded param string
      * @return array The created or modified question tag
+     * @deprecated since Moodle 4.0
+     * @see \qbank_tagquestion\external\qbank_tagquestion_external
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public static function submit_tags_form($questionid, $contextid, $formdata) {
         global $DB, $CFG;
@@ -164,7 +170,6 @@ class core_question_external extends external_api {
         }
 
         require_once($CFG->libdir . '/questionlib.php');
-        require_once($CFG->dirroot . '/question/type/tags_form.php');
 
         $cantag = question_has_capability_on($question, 'tag');
         $questioncontext = \context::instance_by_id($question->contextid);
@@ -176,7 +181,7 @@ class core_question_external extends external_api {
             'contexts' => $contexts->all()
         ];
 
-        $mform = new \core_question\form\tags(null, $formoptions, 'post', '', null, $cantag, $data);
+        $mform = new \qbank_tagquestion\form\tags_form(null, $formoptions, 'post', '', null, $cantag, $data);
 
         if ($validateddata = $mform->get_data()) {
             if ($cantag) {
@@ -206,11 +211,25 @@ class core_question_external extends external_api {
 
     /**
      * Returns description of method result value.
+     *
+     * @deprecated since Moodle 4.0
+     * @see \qbank_tagquestion\external\qbank_tagquestion_external
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public static function  submit_tags_form_returns() {
         return new external_single_structure([
                 'status' => new external_value(PARAM_BOOL, 'status: true if success')
         ]);
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     * @todo Final deprecation on Moodle 4.4 MDL-72438
+     */
+    public static function submit_tags_form_is_deprecated() {
+        return true;
     }
 
     /**
@@ -285,7 +304,7 @@ class core_question_external extends external_api {
         // The user must be able to view all questions in the category that they are requesting.
         $editcontexts->require_cap('moodle/question:viewall');
 
-        $loader = new \core_question\bank\random_question_loader(new qubaid_list([]));
+        $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
         // Only load the properties we require from the DB.
         $properties = \core_question\external\question_summary_exporter::get_mandatory_properties();
         $questions = $loader->get_questions($categoryid, $includesubcategories, $tagids, $limit, $offset, $properties);

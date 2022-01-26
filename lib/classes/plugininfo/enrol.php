@@ -46,6 +46,37 @@ class enrol extends base {
         return $enabled;
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        global $CFG;
+
+        $haschanged = false;
+        $plugins = [];
+        if (!empty($CFG->enrol_plugins_enabled)) {
+            $plugins = array_flip(explode(',', $CFG->enrol_plugins_enabled));
+        }
+        // Only set visibility if it's different from the current value.
+        if ($enabled && !array_key_exists($pluginname, $plugins)) {
+            $plugins[$pluginname] = $pluginname;
+            $haschanged = true;
+        } else if (!$enabled && array_key_exists($pluginname, $plugins)) {
+            unset($plugins[$pluginname]);
+            $haschanged = true;
+        }
+
+        if ($haschanged) {
+            $new = implode(',', array_flip($plugins));
+            add_to_config_log('enrol_plugins_enabled', !$enabled, $enabled, $pluginname);
+            set_config('enrol_plugins_enabled', $new);
+            // Reset caches.
+            \core_plugin_manager::reset_caches();
+            // Resets all enrol caches.
+            $syscontext = \context_system::instance();
+            $syscontext->mark_dirty();
+        }
+
+        return $haschanged;
+    }
+
     public function get_settings_section_name() {
         if (file_exists($this->full_path('settings.php'))) {
             return 'enrolsettings' . $this->name;

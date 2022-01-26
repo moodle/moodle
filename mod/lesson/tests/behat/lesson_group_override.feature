@@ -50,8 +50,9 @@ Feature: Lesson group override
 
   Scenario: Add, modify then delete a group override
     Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I navigate to "Group overrides" in current page administration
-    And I press "Add group override"
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
     And I set the following fields to these values:
       | Override group      | Group 1 |
       | id_deadline_enabled | 1 |
@@ -73,8 +74,9 @@ Feature: Lesson group override
 
   Scenario: Duplicate a user override
     Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I navigate to "Group overrides" in current page administration
-    And I press "Add group override"
+    When I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
     And I set the following fields to these values:
       | Override group      | Group 1 |
       | id_deadline_enabled | 1 |
@@ -98,8 +100,9 @@ Feature: Lesson group override
     And I set the following fields to these values:
       | Re-takes allowed | 0 |
     And I press "Save and display"
-    And I navigate to "Group overrides" in current page administration
-    And I press "Add group override"
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
     And I set the following fields to these values:
       | Override group   | Group 1 |
       | Re-takes allowed | 1 |
@@ -133,8 +136,9 @@ Feature: Lesson group override
       | Password protected lesson | Yes |
       | id_password               | moodle_rules |
     And I press "Save and display"
-    And I navigate to "Group overrides" in current page administration
-    And I press "Add group override"
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
     And I set the following fields to these values:
       | Override group            | Group 1 |
       | Password protected lesson | 12345 |
@@ -177,8 +181,9 @@ Feature: Lesson group override
       | deadline[hour]      | 08 |
       | deadline[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "Group overrides" in current page administration
-    And I press "Add group override"
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
     And I set the following fields to these values:
       | Override group      | Group 1 |
       | id_deadline_enabled | 1 |
@@ -207,8 +212,9 @@ Feature: Lesson group override
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "Group overrides" in current page administration
-    And I press "Add group override"
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
     And I set the following fields to these values:
       | Override group       | Group 1 |
       | id_available_enabled | 1 |
@@ -232,8 +238,9 @@ Feature: Lesson group override
     And I set the following fields to these values:
       | Re-takes allowed | 1 |
     And I press "Save and display"
-    And I navigate to "Group overrides" in current page administration
-    And I press "Add group override"
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
     And I set the following fields to these values:
       | Override group             | Group 1 |
       | Maximum number of attempts per question | 2 |
@@ -273,8 +280,9 @@ Feature: Lesson group override
       | available[minute]    | 00 |
     And I press "Save and display"
     And I am on the "Test lesson name" "lesson activity" page
-    And I navigate to "Group overrides" in current page administration
-    And I press "Add group override"
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
     And I set the following fields to these values:
       | Override group       | Group 1 |
       | id_available_enabled | 1 |
@@ -286,8 +294,9 @@ Feature: Lesson group override
     And I press "Save"
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I am on the "Test lesson name" "lesson activity" page
-    And I navigate to "User overrides" in current page administration
-    And I press "Add user override"
+    And I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
+    And I follow "Add user override"
     And I set the following fields to these values:
       | Override user        | Student1 |
       | id_available_enabled | 1 |
@@ -316,9 +325,10 @@ Feature: Lesson group override
       | activity | name     | intro                | course | idnumber | groupmode |
       | lesson   | Lesson 2 | Lesson 2 description | C1     | lesson2  | 1         |
     When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
-    And I navigate to "Group overrides" in current page administration
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
     Then I should see "No groups you can access."
-    And the "Add group override" "button" should be disabled
+    And I should not see "Add group override"
 
   Scenario: A teacher without accessallgroups permission should only be able to add group override for their groups, when the activity's group mode is 'separate groups'
     Given the following "permission overrides" exist:
@@ -330,9 +340,10 @@ Feature: Lesson group override
     And the following "group members" exist:
       | user     | group |
       | teacher1 | G1    |
-    And I am on the "Lesson 2" "lesson activity" page logged in as teacher1
-    And I navigate to "Group overrides" in current page administration
-    And I press "Add group override"
+    When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
     Then the "Override group" select box should contain "Group 1"
     And the "Override group" select box should not contain "Group 2"
 
@@ -347,8 +358,9 @@ Feature: Lesson group override
       | user     | group |
       | teacher1 | G1    |
     And I am on the "Lesson 2" "lesson activity" page logged in as admin
-    And I navigate to "Group overrides" in current page administration
-    And I press "Add group override"
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
     And I set the following fields to these values:
       | Override group       | Group 1 |
       | id_available_enabled | 1       |
@@ -368,7 +380,8 @@ Feature: Lesson group override
       | available[minute]    | 00      |
     And I press "Save"
     And I log out
-    And I am on the "Lesson 2" "lesson activity" page logged in as teacher1
-    And I navigate to "Group overrides" in current page administration
+    When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
     Then I should see "Group 1" in the ".generaltable" "css_element"
     And I should not see "Group 2" in the ".generaltable" "css_element"

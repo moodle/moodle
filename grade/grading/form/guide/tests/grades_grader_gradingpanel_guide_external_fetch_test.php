@@ -42,7 +42,7 @@ use moodle_exception;
  * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class fetch_test extends advanced_testcase {
+class grades_grader_gradingpanel_guide_external_fetch_test extends advanced_testcase {
 
     public static function setupBeforeClass(): void {
         global $CFG;
@@ -136,7 +136,7 @@ class fetch_test extends advanced_testcase {
         $this->assertIsInt($result['grade']['timemodified']);
 
         $this->assertArrayHasKey('usergrade', $result['grade']);
-        $this->assertEquals(0, $result['grade']['usergrade']);
+        $this->assertEquals('- / 100.00', $result['grade']['usergrade']);
 
         $this->assertArrayHasKey('maxgrade', $result['grade']);
         $this->assertIsInt($result['grade']['maxgrade']);
@@ -275,7 +275,7 @@ class fetch_test extends advanced_testcase {
         $this->assertIsInt($result['grade']['timemodified']);
 
         $this->assertArrayHasKey('usergrade', $result['grade']);
-        $this->assertEquals(25, $result['grade']['usergrade']);
+        $this->assertEquals('25.00 / 100.00', $result['grade']['usergrade']);
 
         $this->assertArrayHasKey('maxgrade', $result['grade']);
         $this->assertIsInt($result['grade']['maxgrade']);

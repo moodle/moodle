@@ -72,8 +72,7 @@ class user_profile_set extends \core_analytics\local\indicator\linear {
         // Nothing set results in -1.
         $calculatedvalue = self::MIN_VALUE;
 
-        $sitepolicymanager = new \core_privacy\local\sitepolicy\manager();
-        if ($sitepolicymanager->is_defined() && !$user->policyagreed) {
+        if (\core_user::awaiting_action($user)) {
             return self::MIN_VALUE;
         }
 

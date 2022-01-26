@@ -51,7 +51,8 @@ Feature: In a book, chapters and subchapters can be rearranged
 
   Scenario: Moving chapters down rearranges them properly
     Given I click on "Move chapter down \"1. Originally first chapter\"" "link"
-    When I follow "Test book"
+    When I am on "Course 1" course homepage
+    And I follow "Test book"
     Then I should see "1. A great second chapter"
     And I should see "#2 chapter content"
     And I should see "1.1. Second chapter, subchapter 1"
@@ -61,7 +62,8 @@ Feature: In a book, chapters and subchapters can be rearranged
 
   Scenario: Moving chapters up rearranges them properly
     Given I click on "Move chapter up \"3. There aren't 2 without 3\"" "link"
-    When I follow "Test book"
+    When I am on "Course 1" course homepage
+    And I follow "Test book"
     Then I should see "1. Originally first chapter"
     And I should see "#1 chapter content"
     And I should see "2. There aren't 2 without 3"
@@ -71,30 +73,26 @@ Feature: In a book, chapters and subchapters can be rearranged
 
   Scenario: Moving subchapters down within chapter rearranges them properly
     Given I click on "Move chapter down \"2.1. Second chapter, subchapter 1\"" "link"
-    When I follow "Test book"
-    Then I should see "2.1. Second chapter, subchapter 2"
-    And I should see "2.2. Second chapter, subchapter 1"
+    When I should see "2.1. Second chapter, subchapter 2"
+    Then I should see "2.2. Second chapter, subchapter 1"
 
   Scenario: Moving subchapters down out of chapter rearranges them properly
     Given I click on "Move chapter down \"2.2. Second chapter, subchapter 2\"" "link"
-    When I follow "Test book"
-    Then I should see "3.1. Second chapter, subchapter 2"
-    And I click on "Move chapter down \"3. There aren't 2 without 3\"" "link"
+    When I should see "3.1. Second chapter, subchapter 2"
+    Then I click on "Move chapter down \"3. There aren't 2 without 3\"" "link"
     And I should not see "4. There aren't 2 without 3"
     And I should see "3. There aren't 2 without 3"
     And I should see "3.1. Second chapter, subchapter 2"
 
   Scenario: Moving subchapters up within chapter rearranges them properly
     Given I click on "Move chapter up \"2.2. Second chapter, subchapter 2\"" "link"
-    When I follow "Test book"
-    Then I should see "2.1. Second chapter, subchapter 2"
-    And I should see "2.2. Second chapter, subchapter 1"
+    When I should see "2.1. Second chapter, subchapter 2"
+    Then I should see "2.2. Second chapter, subchapter 1"
 
   Scenario: Moving subchapters up out of chapter rearranges them properly
     Given I click on "Move chapter up \"2.1. Second chapter, subchapter 1\"" "link"
-    When I follow "Test book"
-    Then I should see "1.1. Second chapter, subchapter 1"
-    And I click on "Move chapter up \"1.1. Second chapter, subchapter 1\"" "link"
+    When I should see "1.1. Second chapter, subchapter 1"
+    Then I click on "Move chapter up \"1.1. Second chapter, subchapter 1\"" "link"
     And I should not see "1.1. Second chapter, subchapter 1"
     And I should see "1. Second chapter, subchapter 1"
     And I should see "2. Originally first chapter"

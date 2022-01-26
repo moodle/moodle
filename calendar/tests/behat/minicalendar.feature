@@ -30,26 +30,10 @@ Feature: Open calendar popup
     When I reload the page
     Then I should see "Event 1:1"
     And I should see "Event 1:2"
-    And I follow "Home"
+    And I am on homepage
+    When I hover over day "1" of this month in the mini-calendar block
     And I should see "Event 1:1"
     And I should see "Event 1:2"
-
-  @javascript
-  Scenario: I view a day event then another day event
-    Given I follow "Full calendar"
-    And I create a calendar event:
-      | Type of event     | site |
-      | Event title       | Event 3:1 |
-      | timestart[day]    | 3  |
-    And I create a calendar event:
-      | Type of event     | site |
-      | Event title       | Event 4:1 |
-      | timestart[day]    | 4  |
-    And I reload the page
-    When I click day "3" of this month in the calendar
-    Then I should see "Event 3:1" in the ".eventlist" "css_element"
-    And I click day "4" of this month in the calendar
-    And I should see "Event 4:1" in the ".eventlist" "css_element"
 
   @javascript
   Scenario: I view calendar details for today
@@ -58,5 +42,6 @@ Feature: Open calendar popup
       | Type of event     | site |
       | Event title       | Today's event |
     Then I should see "Today's event"
-    And I follow "Home"
+    And I am on homepage
+    And I hover over today in the mini-calendar block
     And I should see "Today's event"

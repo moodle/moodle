@@ -24,7 +24,7 @@ class SvmDataset extends ArrayDataset
         $targets = [];
         $maxIndex = 0;
         while (false !== $line = fgets($handle)) {
-            [$sample, $target, $maxIndex] = self::processLine((string) $line, $maxIndex);
+            [$sample, $target, $maxIndex] = self::processLine($line, $maxIndex);
             $samples[] = $sample;
             $targets[] = $target;
         }

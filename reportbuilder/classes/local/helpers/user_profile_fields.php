@@ -133,7 +133,7 @@ class user_profile_fields {
                 ->add_join("LEFT JOIN {user_info_data} {$userinfotablealias} " .
                     "ON {$userinfotablealias}.userid = {$this->usertablefieldalias} " .
                     "AND {$userinfotablealias}.fieldid = {$profilefield->fieldid}")
-                ->add_field("{$userinfotablealias}.data", 'profilefield_' . $profilefield->field->shortname)
+                ->add_field("{$userinfotablealias}.data")
                 ->set_type($this->get_user_field_type($profilefield->field->datatype))
                 ->add_callback([$this, 'format_profile_field'], $profilefield);
 
@@ -236,7 +236,12 @@ class user_profile_fields {
      * @return string
      */
     public static function format_profile_field($value, stdClass $row, profile_field_base $field): string {
+        // Special handling of checkboxes, we want to display their boolean state rather than the input element itself.
+        if (is_a($field, 'profile_field_checkbox')) {
+            return format::boolean_as_text($value);
+        }
+
         $field->data = $value;
-        return $field->display_data();
+        return (string) $field->display_data();
     }
 }

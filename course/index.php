@@ -60,10 +60,13 @@ if ($categoryid) {
 }
 
 $PAGE->set_pagelayout('coursecategory');
+$PAGE->add_body_class('limitedwidth');
 $courserenderer = $PAGE->get_renderer('core', 'course');
 
 $PAGE->set_heading($heading);
 $content = $courserenderer->course_category($categoryid);
+
+$PAGE->set_secondary_active_tab('categorymain');
 
 echo $OUTPUT->header();
 echo $OUTPUT->skip_link_target();

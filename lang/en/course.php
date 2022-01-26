@@ -46,6 +46,8 @@ $string['aria:favourite'] = 'Course is starred';
 $string['aria:favouritestab'] = 'Starred activities';
 $string['aria:recommendedtab'] = 'Recommended activities';
 $string['aria:modulefavourite'] = 'Star {$a} activity';
+$string['browsecourseadminindex'] = 'Browse the course administration with this index.';
+$string['browsesettingindex'] = 'Browse settings with this index.';
 $string['completion_automatic:done'] = 'Done:';
 $string['completion_automatic:failed'] = 'Failed:';
 $string['completion_automatic:todo'] = 'To do:';
@@ -59,6 +61,12 @@ $string['completion_setby:manual:done'] = '{$a->activityname} is marked by {$a->
 $string['completion_setby:manual:markdone'] = '{$a->activityname} is marked by {$a->setby} as not done. Press to mark as done.';
 $string['completionrequirements'] = 'Completion requirements for {$a}';
 $string['coursealreadyfinished'] = 'Course already finished';
+$string['coursecontentnotification'] = 'Send content change notification';
+$string['coursecontentnotifnew'] = '{$a->coursename} new content';
+$string['coursecontentnotifnewbody'] = '<p>{$a->moduletypename} <a href="{$a->link}">{$a->modulename}</a> is new in the course <a href="{$a->courselink}">{$a->coursename}</a>.</p><p><a href="{$a->notificationpreferenceslink}">Change your notification preferences</a></p>';
+$string['coursecontentnotifupdate'] = '{$a->coursename} content change';
+$string['coursecontentnotifupdatebody'] = '<p>{$a->moduletypename} <a href="{$a->link}">{$a->modulename}</a> has been changed in the course <a href="{$a->courselink}">{$a->coursename}</a>.</p><p><a href="{$a->notificationpreferenceslink}">Change your notification preferences</a></p>';
+$string['coursecontentnotification_help'] = 'Tick the box to notify course participants about this new or changed activity or resource. Only users who can access the activity or resource will receive the notification.';
 $string['coursenotyetstarted'] = 'The course has not yet started';
 $string['coursenotyetfinished'] = 'The course has not yet finished';
 $string['coursetoolong'] = 'The course is too long';
@@ -73,6 +81,10 @@ $string['customfieldsettings'] = 'Common course custom fields settings';
 $string['downloadcourseconfirmation'] = 'You are about to download a zip file of course content (excluding items which cannot be downloaded and any files larger than {$a}).';
 $string['downloadcoursecontent'] = 'Download course content';
 $string['downloadcoursecontent_help'] = 'This setting determines whether course content may be downloaded by users with the download course content capability (by default users with the role of student or teacher).';
+$string['downloadcontent'] = 'Include in course content download';
+$string['downloadcontent_help'] = 'Should this activity or resource be included in the zip file of course content available for download? File, Folder, Page and Label can be fully downloaded. For all other activities and resources, only the name and description are downloaded. This option requires download course content to be enabled in the course settings.
+
+The setting has no effect on mobile app content download for offline usage.';
 $string['enabledownloadcoursecontent'] = 'Enable download course content';
 $string['errorendbeforestart'] = 'The end date ({$a}) is before the course start date.';
 $string['favourite'] = 'Starred course';
@@ -89,6 +101,7 @@ $string['norecentaccessesinfomessage'] = 'Hi {$a->userfirstname},
 <p>A number of students in {$a->coursename} have not accessed the course recently.</p>';
 $string['noteachinginfomessage'] = 'Hi {$a->userfirstname},
 <p>Courses with start dates in the next week have been identified as having no teacher or student enrolments.</p>';
+$string['participantsnavigation'] = 'Participants tertiary navigation.';
 $string['privacy:perpage'] = 'The number of courses to show per page.';
 $string['privacy:completionpath'] = 'Course completion';
 $string['privacy:favouritespath'] = 'Course starred information';

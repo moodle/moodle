@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use core_courseformat\base as course_format;
+
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/datalib.php');
@@ -61,6 +63,7 @@ define('COURSE_TIMELINE_ALL', 'all');
 define('COURSE_TIMELINE_PAST', 'past');
 define('COURSE_TIMELINE_INPROGRESS', 'inprogress');
 define('COURSE_TIMELINE_FUTURE', 'future');
+define('COURSE_TIMELINE_SEARCH', 'search');
 define('COURSE_FAVOURITES', 'favourites');
 define('COURSE_TIMELINE_HIDDEN', 'hidden');
 define('COURSE_CUSTOMFIELD', 'customfield');
@@ -458,12 +461,13 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->extra            = "";
                    $mod[$seq]->completiongradeitemnumber =
                            $rawmods[$seq]->completiongradeitemnumber;
+                   $mod[$seq]->completionpassgrade = $rawmods[$seq]->completionpassgrade;
                    $mod[$seq]->completionview   = $rawmods[$seq]->completionview;
                    $mod[$seq]->completionexpected = $rawmods[$seq]->completionexpected;
                    $mod[$seq]->showdescription  = $rawmods[$seq]->showdescription;
                    $mod[$seq]->availability = $rawmods[$seq]->availability;
                    $mod[$seq]->deletioninprogress = $rawmods[$seq]->deletioninprogress;
-
+                   $mod[$seq]->downloadcontent = $rawmods[$seq]->downloadcontent;
                    $modname = $mod[$seq]->mod;
                    $functionname = $modname."_get_coursemodule_info";
 
@@ -846,6 +850,23 @@ function set_coursemodule_idnumber($id, $idnumber) {
         rebuild_course_cache($cm->course, true);
     }
     return ($cm->idnumber != $idnumber);
+}
+
+/**
+ * Set downloadcontent value to course module.
+ *
+ * @param int $id The id of the module.
+ * @param bool $downloadcontent Whether the module can be downloaded when download course content is enabled.
+ * @return bool True if downloadcontent has been updated, false otherwise.
+ */
+function set_downloadcontent(int $id, bool $downloadcontent): bool {
+    global $DB;
+    $cm = $DB->get_record('course_modules', ['id' => $id], 'id, course, downloadcontent', MUST_EXIST);
+    if ($cm->downloadcontent != $downloadcontent) {
+        $DB->set_field('course_modules', 'downloadcontent', $downloadcontent, ['id' => $cm->id]);
+        rebuild_course_cache($cm->course, true);
+    }
+    return ($cm->downloadcontent != $downloadcontent);
 }
 
 /**
@@ -1742,6 +1763,9 @@ function moveto_module($mod, $section, $beforemod=NULL) {
         echo $OUTPUT->notification("Could not delete module from existing section");
     }
 
+    // Add the module into the new section.
+    course_add_cm_to_section($section->course, $mod->id, $section->section, $beforemod);
+
     // If moving to a hidden section then hide module.
     if ($mod->section != $section->id) {
         if (!$section->visible && $mod->visible) {
@@ -1758,8 +1782,6 @@ function moveto_module($mod, $section, $beforemod=NULL) {
         }
     }
 
-    // Add the module into the new section.
-    course_add_cm_to_section($section->course, $mod->id, $section->section, $beforemod);
     return $modvisible;
 }
 
@@ -1813,6 +1835,23 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new pix_icon('t/edit', '', 'moodle', array('class' => 'iconsmall')),
             $str->editsettings,
             array('class' => 'editing_update', 'data-action' => 'update')
+        );
+    }
+
+    // Move (only for component compatible formats).
+    if ($courseformat->supports_components()) {
+        $actions['move'] = new action_menu_link_secondary(
+            new moodle_url($baseurl, [
+                'sesskey' => sesskey(),
+                'copy' => $mod->id,
+            ]),
+            new pix_icon('i/dragdrop', '', 'moodle', ['class' => 'iconsmall']),
+            $str->move,
+            [
+                'class' => 'editing_movecm',
+                'data-action' => 'moveCm',
+                'data-id' => $mod->id,
+            ]
         );
     }
 
@@ -1918,41 +1957,6 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             $str->duplicate,
             array('class' => 'editing_duplicate', 'data-action' => 'duplicate', 'data-sectionreturn' => $sr)
         );
-    }
-
-    // Groupmode.
-    if ($hasmanageactivities && !$mod->coursegroupmodeforce) {
-        if (plugin_supports('mod', $mod->modname, FEATURE_GROUPS, false)) {
-            if ($mod->effectivegroupmode == SEPARATEGROUPS) {
-                $nextgroupmode = VISIBLEGROUPS;
-                $grouptitle = $str->groupsseparate;
-                $actionname = 'groupsseparate';
-                $nextactionname = 'groupsvisible';
-                $groupimage = 'i/groups';
-            } else if ($mod->effectivegroupmode == VISIBLEGROUPS) {
-                $nextgroupmode = NOGROUPS;
-                $grouptitle = $str->groupsvisible;
-                $actionname = 'groupsvisible';
-                $nextactionname = 'groupsnone';
-                $groupimage = 'i/groupv';
-            } else {
-                $nextgroupmode = SEPARATEGROUPS;
-                $grouptitle = $str->groupsnone;
-                $actionname = 'groupsnone';
-                $nextactionname = 'groupsseparate';
-                $groupimage = 'i/groupn';
-            }
-
-            $actions[$actionname] = new action_menu_link_primary(
-                new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $nextgroupmode)),
-                new pix_icon($groupimage, '', 'moodle', array('class' => 'iconsmall')),
-                $grouptitle,
-                array('class' => 'editing_'. $actionname, 'data-action' => $nextactionname,
-                    'aria-live' => 'assertive', 'data-sectionreturn' => $sr)
-            );
-        } else {
-            $actions['nogroupsupport'] = new action_menu_filler();
-        }
     }
 
     // Assign.
@@ -3197,39 +3201,37 @@ function course_ajax_enabled($course) {
 function include_course_ajax($course, $usedmodules = array(), $enabledmodules = null, $config = null) {
     global $CFG, $PAGE, $SITE;
 
-    // All the new editor elements will be loaded after the course is presented and
-    // the initial course state will be generated using core_courseformat_get_state webservice.
-    if ($SITE->id !== $course->id) {
-        $PAGE->requires->js_call_amd('core_courseformat/courseeditor', 'getCourseEditor', [$course->id]);
-    }
-    // TODO: as part of MDL-70907, add a way to indicate the plugin needs the legacy libraries (and get a deprecation message).
+    // Init the course editor module to support UI components.
+    $format = course_get_format($course);
+    include_course_editor($format);
 
     // Ensure that ajax should be included
     if (!course_ajax_enabled($course)) {
         return false;
     }
 
-    if (!$config) {
-        $config = new stdClass();
-    }
+    // Component based formats don't use YUI drag and drop anymore.
+    if (!$format->supports_components() && course_format_uses_sections($course->format)) {
 
-    // The URL to use for resource changes
-    if (!isset($config->resourceurl)) {
-        $config->resourceurl = '/course/rest.php';
-    }
+        if (!$config) {
+            $config = new stdClass();
+        }
 
-    // The URL to use for section changes
-    if (!isset($config->sectionurl)) {
-        $config->sectionurl = '/course/rest.php';
-    }
+        // The URL to use for resource changes.
+        if (!isset($config->resourceurl)) {
+            $config->resourceurl = '/course/rest.php';
+        }
 
-    // Any additional parameters which need to be included on page submission
-    if (!isset($config->pageparams)) {
-        $config->pageparams = array();
-    }
+        // The URL to use for section changes.
+        if (!isset($config->sectionurl)) {
+            $config->sectionurl = '/course/rest.php';
+        }
 
-    // Include course dragdrop
-    if (course_format_uses_sections($course->format)) {
+        // Any additional parameters which need to be included on page submission.
+        if (!isset($config->pageparams)) {
+            $config->pageparams = array();
+        }
+
         $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.course.init_section_dragdrop',
             array(array(
                 'courseid' => $course->id,
@@ -3293,6 +3295,30 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
     $PAGE->requires->js_call_amd('core_course/actions', 'initCoursePage', array($course->format));
 
     return true;
+}
+
+/**
+ * Include and configure the course editor modules.
+ *
+ * @param course_format $format the course format instance.
+ */
+function include_course_editor(course_format $format) {
+    global $PAGE, $SITE;
+
+    $course = $format->get_course();
+
+    if ($SITE->id === $course->id) {
+        return;
+    }
+
+    // Edition mode and some format specs must be passed to the init method.
+    $setup = (object)[
+        'editing' => $format->show_editor(),
+        'supportscomponents' => $format->supports_components(),
+    ];
+    // All the new editor elements will be loaded after the course is presented and
+    // the initial course state will be generated using core_course_get_state webservice.
+    $PAGE->requires->js_call_amd('core_courseformat/courseeditor', 'setViewFormat', [$course->id, $setup]);
 }
 
 /**
@@ -3796,7 +3822,7 @@ function course_get_tagged_courses($tag, $exclusivemode = false, $fromctx = 0, $
  */
 function core_course_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'activityname') {
-        return \core_course\output\course_module_name::update($itemid, $newvalue);
+        return \core_courseformat\output\local\content\cm\cmname::update($itemid, $newvalue);
     }
 }
 
@@ -3833,6 +3859,27 @@ function core_course_core_calendar_get_valid_event_timestart_range(\calendar_eve
     }
 
     return [$mindate, $maxdate];
+}
+
+/**
+ * Render the message drawer to be included in the top of the body of each page.
+ *
+ * @return string HTML
+ */
+function core_course_drawer(): string {
+    global $PAGE;
+    $format = course_get_format($PAGE->course);
+
+    // Only course and modules are able to render course index.
+    $ismod = strpos($PAGE->pagetype, 'mod-') === 0;
+    if ($ismod || $PAGE->pagetype == 'course-view-' . $format->get_format()) {
+        $renderer = $format->get_renderer($PAGE);
+        if (method_exists($renderer, 'course_index_drawer')) {
+            return $renderer->course_index_drawer($format);
+        }
+    }
+
+    return '';
 }
 
 /**
@@ -3968,7 +4015,6 @@ function course_get_user_navigation_options($context, $course = null) {
     $options = (object) [
         'badges' => false,
         'blogs' => false,
-        'calendar' => false,
         'competencies' => false,
         'grades' => false,
         'notes' => false,
@@ -3991,7 +4037,6 @@ function course_get_user_navigation_options($context, $course = null) {
         $options->badges = !empty($CFG->enablebadges) && has_capability('moodle/badges:viewbadges', $sitecontext);
         $options->tags = !empty($CFG->usetags) && $isloggedin;
         $options->search = !empty($CFG->enableglobalsearch) && has_capability('moodle/search:query', $sitecontext);
-        $options->calendar = $isloggedin;
     } else {
         // We are in a course, so make sure we use the proper capability (course:viewparticipants).
         $options->participants = course_can_view_participants($context);
@@ -4312,6 +4357,58 @@ function course_get_enrolled_courses_for_logged_in_user(
 }
 
 /**
+ * Get the list of enrolled courses the current user searched for.
+ *
+ * This function returns a Generator. The courses will be loaded from the database
+ * in chunks rather than a single query.
+ *
+ * @param int $limit Restrict result set to this amount
+ * @param int $offset Skip this number of records from the start of the result set
+ * @param string|null $sort SQL string for sorting
+ * @param string|null $fields SQL string for fields to be returned
+ * @param int $dbquerylimit The number of records to load per DB request
+ * @param array $searchcriteria contains search criteria
+ * @param array $options display options, same as in get_courses() except 'recursive' is ignored -
+ *                       search is always category-independent
+ * @return Generator
+ */
+function course_get_enrolled_courses_for_logged_in_user_from_search(
+    int $limit = 0,
+    int $offset = 0,
+    string $sort = null,
+    string $fields = null,
+    int $dbquerylimit = COURSE_DB_QUERY_LIMIT,
+    array $searchcriteria = [],
+    array $options = []
+) : Generator {
+
+    $haslimit = !empty($limit);
+    $recordsloaded = 0;
+    $querylimit = (!$haslimit || $limit > $dbquerylimit) ? $dbquerylimit : $limit;
+    $ids = core_course_category::search_courses($searchcriteria, $options);
+
+    // If no courses were found matching the criteria return back.
+    if (empty($ids)) {
+        return;
+    }
+
+    while ($courses = enrol_get_my_courses($fields, $sort, $querylimit, $ids, false, $offset)) {
+        yield from $courses;
+
+        $recordsloaded += $querylimit;
+
+        if (count($courses) < $querylimit) {
+            break;
+        }
+        if ($haslimit && $recordsloaded >= $limit) {
+            break;
+        }
+
+        $offset += $querylimit;
+    }
+}
+
+/**
  * Search the given $courses for any that match the given $classification up to the specified
  * $limit.
  *
@@ -4334,9 +4431,9 @@ function course_filter_courses_by_timeline_classification(
 
     if (!in_array($classification,
             [COURSE_TIMELINE_ALLINCLUDINGHIDDEN, COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, COURSE_TIMELINE_INPROGRESS,
-                COURSE_TIMELINE_FUTURE, COURSE_TIMELINE_HIDDEN])) {
+                COURSE_TIMELINE_FUTURE, COURSE_TIMELINE_HIDDEN, COURSE_TIMELINE_SEARCH])) {
         $message = 'Classification must be one of COURSE_TIMELINE_ALLINCLUDINGHIDDEN, COURSE_TIMELINE_ALL, COURSE_TIMELINE_PAST, '
-            . 'COURSE_TIMELINE_INPROGRESS or COURSE_TIMELINE_FUTURE';
+            . 'COURSE_TIMELINE_INPROGRESS, COURSE_TIMELINE_SEARCH or COURSE_TIMELINE_FUTURE';
         throw new moodle_exception($message);
     }
 
@@ -4350,6 +4447,7 @@ function course_filter_courses_by_timeline_classification(
 
         // Added as of MDL-63457 toggle viewability for each user.
         if ($classification == COURSE_TIMELINE_ALLINCLUDINGHIDDEN || ($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
+            $classification == COURSE_TIMELINE_SEARCH||
             (($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) && !$pref)) {
             $filteredcourses[] = $course;
             $filtermatches++;

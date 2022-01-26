@@ -13,6 +13,7 @@ Feature: Atto equation editor
     And I select the text in the "Description" Atto editor
     And I click on "Show more buttons" "button"
     And I click on "Equation editor" "button"
+    And the "class" attribute of "Edit equation using" "field" should contain "text-ltr"
     And I set the field "Edit equation using" to " = 1 \div 0"
     And I click on "\infty" "button"
     And I click on "Save equation" "button"
@@ -31,6 +32,7 @@ Feature: Atto equation editor
     And I select the text in the "Description" Atto editor
     And I click on "Show more buttons" "button"
     And I click on "Equation editor" "button"
+    And the "class" attribute of "Edit equation using" "field" should contain "text-ltr"
     Then the field "Edit equation using" matches value " \pi "
     And I click on "Save equation" "button"
     And the field "Description" matches value "<p>\( \pi \)</p>"

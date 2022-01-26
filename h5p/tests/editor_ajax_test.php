@@ -26,7 +26,7 @@
 namespace core_h5p;
 
 use core_h5p\local\library\autoloader;
-use ReflectionMethod;
+use Moodle\H5PCore;
 
 /**
  *
@@ -38,7 +38,7 @@ use ReflectionMethod;
  *
  * @runTestsInSeparateProcesses
  */
-class editor_ajax_testcase extends \advanced_testcase {
+class editor_ajax_test extends \advanced_testcase {
 
     /** @var editor_ajax H5P editor ajax instance */
     protected $editorajax;
@@ -141,7 +141,7 @@ class editor_ajax_testcase extends \advanced_testcase {
                 [$library, $files] = $h5pgenerator->create_library($h5ptempath, $tmplib->id, $datalib['machinename'],
                     $datalib['majorversion'], $datalib['minorversion'], $datalib['translation']);
                 $h5pfilestorage->saveLibrary($library);
-                $stringlibs[] = \H5PCore::libraryToString($library);
+                $stringlibs[] = H5PCore::libraryToString($library);
             }
         }
 

@@ -149,10 +149,13 @@
             span {
                 display: none;
             }
+            .title {
+                display: inline;
+            }
             &.dir-none .default,
             &.dir-asc .asc,
             &.dir-desc .desc {
-                display: block;
+                display: inline;
             }
         }
     }
@@ -161,4 +164,7 @@
 .cb-toolbar-container .dropdown-scrollable {
     max-height: 190px;
     overflow-y: auto;
+}
+.cb-navigation-container .singleselect .custom-select {
+    width: 100%;
 }

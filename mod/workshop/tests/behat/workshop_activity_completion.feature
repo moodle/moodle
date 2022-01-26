@@ -62,7 +62,7 @@ Feature: View activity completion information in the Workshop activity
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I change phase in workshop "Music history" to "Grading evaluation phase"
-    And I follow "Music history"
+    And I am on the "Music history" "workshop activity" page
     And I click on "Re-calculate grades" "button"
     And I change phase in workshop "Music history" to "Closed"
     And I log out

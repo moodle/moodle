@@ -74,7 +74,7 @@ class pgsql_native_moodle_recordset extends moodle_recordset {
         // Find out if there are any blobs.
         $numfields = pg_num_fields($this->result);
         for ($i = 0; $i < $numfields; $i++) {
-            $type = pg_field_type($this->result, $i);
+            $type = $this->db->pg_field_type($this->result, $i);
             if ($type == 'bytea') {
                 $this->blobs[] = pg_field_name($this->result, $i);
             }

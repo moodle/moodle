@@ -275,6 +275,7 @@ class core_course_external extends external_api {
                         $module['afterlink'] = $cm->afterlink;
                         $module['customdata'] = json_encode($cm->customdata);
                         $module['completion'] = $cm->completion;
+                        $module['downloadcontent'] = $cm->downloadcontent;
                         $module['noviewlink'] = plugin_supports('mod', $cm->modname, FEATURE_NO_VIEW_LINK, false);
                         $module['dates'] = $activitydates;
 
@@ -477,6 +478,7 @@ class core_course_external extends external_api {
                                     'completion' => new external_value(PARAM_INT, 'Type of completion tracking:
                                         0 means none, 1 manual, 2 automatic.', VALUE_OPTIONAL),
                                     'completiondata' => $completiondefinition,
+                                    'downloadcontent' => new external_value(PARAM_INT, 'The download content value', VALUE_OPTIONAL),
                                     'dates' => new external_multiple_structure(
                                         new external_single_structure(
                                             array(
@@ -2828,6 +2830,7 @@ class core_course_external extends external_api {
             $info->groupmode = $cm->groupmode;
             $info->groupingid = $cm->groupingid;
             $info->completion = $cm->completion;
+            $info->downloadcontent = $cm->downloadcontent;
         }
         // Format name.
         $info->name = external_format_string($cm->name, $context->id);
@@ -2867,9 +2870,11 @@ class core_course_external extends external_api {
                         'visibleoncoursepage' => new external_value(PARAM_INT, 'If visible on course page', VALUE_OPTIONAL),
                         'visibleold' => new external_value(PARAM_INT, 'Visible old', VALUE_OPTIONAL),
                         'completiongradeitemnumber' => new external_value(PARAM_INT, 'Completion grade item', VALUE_OPTIONAL),
+                        'completionpassgrade' => new external_value(PARAM_INT, 'Completion pass grade setting', VALUE_OPTIONAL),
                         'completionview' => new external_value(PARAM_INT, 'Completion view setting', VALUE_OPTIONAL),
                         'completionexpected' => new external_value(PARAM_INT, 'Completion time expected', VALUE_OPTIONAL),
                         'showdescription' => new external_value(PARAM_INT, 'If the description is showed', VALUE_OPTIONAL),
+                        'downloadcontent' => new external_value(PARAM_INT, 'The download content value', VALUE_OPTIONAL),
                         'availability' => new external_value(PARAM_RAW, 'Availability settings', VALUE_OPTIONAL),
                         'grade' => new external_value(PARAM_FLOAT, 'Grade (max value or scale id)', VALUE_OPTIONAL),
                         'scale' => new external_value(PARAM_TEXT, 'Scale items (if used)', VALUE_OPTIONAL),
@@ -3755,6 +3760,8 @@ class core_course_external extends external_api {
                     VALUE_DEFAULT, null),
                 'customfieldvalue' => new external_value(PARAM_RAW, 'Used when classification = customfield',
                     VALUE_DEFAULT, null),
+                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against',
+                    VALUE_DEFAULT, null),
             )
         );
     }
@@ -3779,6 +3786,7 @@ class core_course_external extends external_api {
      * @param  string $sort SQL sort string for results
      * @param  string $customfieldname
      * @param  string $customfieldvalue
+     * @param  string $searchvalue
      * @return array list of courses and warnings
      * @throws  invalid_parameter_exception
      */
@@ -3788,7 +3796,8 @@ class core_course_external extends external_api {
         int $offset = 0,
         string $sort = null,
         string $customfieldname = null,
-        string $customfieldvalue = null
+        string $customfieldvalue = null,
+        string $searchvalue = null
     ) {
         global $CFG, $PAGE, $USER;
         require_once($CFG->dirroot . '/course/lib.php');
@@ -3800,6 +3809,7 @@ class core_course_external extends external_api {
                 'offset' => $offset,
                 'sort' => $sort,
                 'customfieldvalue' => $customfieldvalue,
+                'searchvalue' => $searchvalue,
             )
         );
 
@@ -3808,6 +3818,7 @@ class core_course_external extends external_api {
         $offset = $params['offset'];
         $sort = $params['sort'];
         $customfieldvalue = $params['customfieldvalue'];
+        $searchvalue = $params['searchvalue'];
 
         switch($classification) {
             case COURSE_TIMELINE_ALLINCLUDINGHIDDEN:
@@ -3823,6 +3834,8 @@ class core_course_external extends external_api {
             case COURSE_FAVOURITES:
                 break;
             case COURSE_TIMELINE_HIDDEN:
+                break;
+            case COURSE_TIMELINE_SEARCH:
                 break;
             case COURSE_CUSTOMFIELD:
                 break;
@@ -3847,6 +3860,19 @@ class core_course_external extends external_api {
                 COURSE_DB_QUERY_LIMIT, $hiddencourses);
 
             // Otherwise get the requested courses and exclude the hidden courses.
+        } else if ($classification == COURSE_TIMELINE_SEARCH) {
+            // Prepare the search API options.
+            $searchcriteria['search'] = $searchvalue;
+            $options = ['idonly' => true];
+            $courses = course_get_enrolled_courses_for_logged_in_user_from_search(
+                0,
+                $offset,
+                $sort,
+                $fields,
+                COURSE_DB_QUERY_LIMIT,
+                $searchcriteria,
+                $options
+            );
         } else {
             $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields,
                 COURSE_DB_QUERY_LIMIT, [], $hiddencourses);
@@ -3886,6 +3912,9 @@ class core_course_external extends external_api {
 
         $renderer = $PAGE->get_renderer('core');
         $formattedcourses = array_map(function($course) use ($renderer, $favouritecourseids) {
+            if ($course == null) {
+                return;
+            }
             context_helper::preload_from_record($course);
             $context = context_course::instance($course->id);
             $isfavourite = false;
@@ -3895,6 +3924,12 @@ class core_course_external extends external_api {
             $exporter = new course_summary_exporter($course, ['context' => $context, 'isfavourite' => $isfavourite]);
             return $exporter->export($renderer);
         }, $filteredcourses);
+
+        $formattedcourses = array_filter($formattedcourses, function($course) {
+            if ($course != null) {
+                return $course;
+            }
+        });
 
         return [
             'courses' => $formattedcourses,

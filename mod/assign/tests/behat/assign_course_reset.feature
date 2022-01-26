@@ -44,22 +44,22 @@ Feature: Assign reset
     And I log out
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I should see "Submitted for grading"
-    And I am on "Course 1" course homepage
-    When I navigate to "Reset" in current page administration
+    When I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all submissions | 1  |
     And I press "Reset course"
     And I press "Continue"
     And I am on the "Test assignment name" Activity page
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     Then I should not see "Submitted for grading"
 
   @javascript
   Scenario: Use course reset to remove user overrides.
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "User overrides" in current page administration
+    And I navigate to "Overrides" in current page administration
+    And I select "User overrides" from the "jump" singleselect
     And I press "Add user override"
     And I set the following fields to these values:
         | Override user    | Student1  |
@@ -71,20 +71,20 @@ Feature: Assign reset
         | duedate[minute]    | 00 |
     And I press "Save"
     And I should see "Sam1 Student1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    When I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all user overrides | 1  |
     And I press "Reset course"
     And I press "Continue"
     And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "User overrides" in current page administration
+    And I click on "Test assignment name" "link" in the "region-main" "region"
+    And I navigate to "Overrides" in current page administration
     Then I should not see "Sam1 Student1"
 
   Scenario: Use course reset to remove group overrides.
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Group overrides" in current page administration
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
     And I press "Add group override"
     And I set the following fields to these values:
         | Override group   | Group 1  |
@@ -96,35 +96,32 @@ Feature: Assign reset
         | duedate[minute]    | 00 |
     And I press "Save"
     And I should see "Group 1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Reset" in current page administration
+    And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all group overrides | 1  |
     And I press "Reset course"
     And I press "Continue"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "Group overrides" in current page administration
+    And I am on the "Test assignment name" Activity page
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
     Then I should not see "Group 1"
 
   Scenario: Use course reset to reset blind marking assignment.
     When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
         | blindmarking | 1 |
     And I press "Save"
-    When I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    When I am on the "Test assignment name" Activity page
+    And I follow "View all submissions"
     And I select "Reveal student identities" from the "Grading action" singleselect
     And I press "Continue"
     And I should see "Sam1 Student1"
-    And I am on "Course 1" course homepage
-    When I navigate to "Reset" in current page administration
+    When I am on the "Course 1" "reset" page
     And I set the following fields to these values:
         | Delete all submissions | 1 |
     And I press "Reset course"
     And I press "Continue"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I am on the "Test assignment name" Activity page
+    And I follow "View all submissions"
     Then I should not see "Sam1 Student1"

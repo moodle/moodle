@@ -268,6 +268,11 @@ class assign_override_form extends moodleform {
                 userdate($assigninstance->extensionduedate));
         }
 
+        // Time limit.
+        $mform->addElement('duration', 'timelimit',
+            get_string('timelimit', 'assign'), array('optional' => true));
+        $mform->setDefault('timelimit', $assigninstance->timelimit);
+
         // Submit buttons.
         $mform->addElement('submit', 'resetbutton',
                 get_string('reverttodefaults', 'assign'));
@@ -343,7 +348,7 @@ class assign_override_form extends moodleform {
 
         // Ensure that at least one assign setting was changed.
         $changed = false;
-        $keys = array('duedate', 'cutoffdate', 'allowsubmissionsfromdate');
+        $keys = array('duedate', 'cutoffdate', 'allowsubmissionsfromdate', 'timelimit');
         foreach ($keys as $key) {
             if ($data[$key] != $assigninstance->{$key}) {
                 $changed = true;

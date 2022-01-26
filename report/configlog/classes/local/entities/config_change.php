@@ -154,8 +154,6 @@ class config_change extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
-        global $DB;
-
         $tablealias = $this->get_table_alias('config_log');
 
         // Time modified filter.
@@ -170,6 +168,8 @@ class config_change extends base {
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_RANGE,
+                date::DATE_PREVIOUS,
+                date::DATE_CURRENT,
             ]);
 
         // Setting filter.

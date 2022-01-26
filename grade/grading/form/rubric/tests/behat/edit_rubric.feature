@@ -17,12 +17,17 @@ Feature: Rubrics can be created and edited
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity                          | assign                      |
+      | course                            | C1                          |
+      | section                           | 1                           |
+      | name                              | Test assignment 1 name      |
+      | intro                             | Test assignment description |
+      | assignfeedback_comments_enabled   | 1                           |
+      | assignfeedback_editpdf_enabled    | 1                           |
+      | advancedgradingmethod_submissions | rubric                      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment 1 name |
-      | Description | Test assignment description |
-      | Grading method | Rubric |
     When I go to "Test assignment 1 name" advanced grading definition page
     # Defining a rubric.
     And I set the following fields to these values:
@@ -44,6 +49,7 @@ Feature: Rubrics can be created and edited
     And I press "Save rubric and make it ready"
     Then I should see "Ready for use"
     # Grading two students.
+    And I navigate to "Assignment" in current page administration
     And I go to "Student 1" "Test assignment 1 name" activity advanced grading page
     And I grade by filling the rubric with:
       | Criterion 1 | 50 | Very good |
@@ -59,6 +65,7 @@ Feature: Rubrics can be created and edited
     # Checking that the user grade is correct.
     And I should see "65" in the "Student 1" "table_row"
     # Updating the user grade.
+    And I am on the "Test assignment 1 name" "assign activity" page
     And I go to "Student 1" "Test assignment 1 name" activity advanced grading page
     And I grade by filling the rubric with:
       | Criterion 1 | 20 | Bad, I changed my mind |

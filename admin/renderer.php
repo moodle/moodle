@@ -220,7 +220,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $output .= $this->container_end();
         }
 
-        $button = new single_button($continueurl, get_string('upgradestart', 'admin'), 'get');
+        $button = new single_button($continueurl, get_string('upgradestart', 'admin'), 'get', true);
         $button->class = 'continuebutton';
         $output .= $this->render($button);
         $output .= $this->footer();
@@ -284,6 +284,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param bool $croninfrequent If true, warn that cron hasn't run in the past few minutes
      * @param bool $showcampaigncontent Whether the campaign content should be visible or not.
      * @param bool $showfeedbackencouragement Whether the feedback encouragement content should be displayed or not.
+     * @param bool $showservicesandsupport Whether the services and support content should be displayed or not.
      *
      * @return string HTML to output.
      */
@@ -292,7 +293,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0,
             $themedesignermode = false, $devlibdir = false, $mobileconfigured = false,
             $overridetossl = false, $invalidforgottenpasswordurl = false, $croninfrequent = false,
-            $showcampaigncontent = false, bool $showfeedbackencouragement = false) {
+            $showcampaigncontent = false, bool $showfeedbackencouragement = false, bool $showservicesandsupport = false) {
 
         global $CFG;
         $output = '';
@@ -317,6 +318,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->mobile_configuration_warning($mobileconfigured);
         $output .= $this->forgotten_password_url_warning($invalidforgottenpasswordurl);
         $output .= $this->userfeedback_encouragement($showfeedbackencouragement);
+        $output .= $this->services_and_support_content($showservicesandsupport);
         $output .= $this->campaign_content($showcampaigncontent);
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -895,7 +897,35 @@ class core_admin_renderer extends plugin_renderer_base {
             return '';
         }
 
-        return $this->render_from_template('core/campaign_content', ['lang' => current_language()]);
+        $lang = current_language();
+        $url = "https://campaign.moodle.org/current/lms/{$lang}/install/";
+        $params = [
+            'url' => $url,
+            'iframeid' => 'campaign-content'
+        ];
+
+        return $this->render_from_template('core/external_content_banner', $params);
+    }
+
+    /**
+     * Display services and support content.
+     *
+     * @param bool $showservicesandsupport Whether the services and support content should be visible or not.
+     * @return string the campaign content raw html.
+     */
+    protected function services_and_support_content(bool $showservicesandsupport): string {
+        if (!$showservicesandsupport) {
+            return '';
+        }
+
+        $lang = current_language();
+        $url = "https://campaign.moodle.org/current/lms/{$lang}/servicesandsupport/";
+        $params = [
+            'url' => $url,
+            'iframeid' => 'services-support-content'
+        ];
+
+        return $this->render_from_template('core/external_content_banner', $params);
     }
 
     /**
@@ -1616,12 +1646,18 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $plugininfo = $pluginman->get_plugins();
 
-        $numtotal = $numextension = $numupdatable = 0;
+        $numtotal = $numextension = $numupdatable = $numinstallable = 0;
 
         foreach ($plugininfo as $type => $plugins) {
             foreach ($plugins as $name => $plugin) {
-                if ($plugin->available_updates()) {
+                if ($res = $plugin->available_updates()) {
                     $numupdatable++;
+                    foreach ($res as $updateinfo) {
+                        if ($pluginman->is_remote_plugin_installable($updateinfo->component, $updateinfo->version, $reason, false)) {
+                            $numinstallable++;
+                            break;
+                        }
+                    }
                 }
                 if ($plugin->get_status() === core_plugin_manager::PLUGIN_STATUS_MISSING) {
                     continue;
@@ -1664,16 +1700,13 @@ class core_admin_renderer extends plugin_renderer_base {
             $out .= $this->output->heading(get_string('overviewext', 'core_plugin'), 3);
         }
 
-        if ($numupdatable) {
-            $installableupdates = $pluginman->filter_installable($pluginman->available_updates());
-            if ($installableupdates) {
-                $out .= $this->output->single_button(
-                    new moodle_url($this->page->url, array('installupdatex' => 1)),
-                    get_string('updateavailableinstallall', 'core_admin', count($installableupdates)),
-                    'post',
-                    array('class' => 'singlebutton updateavailableinstallall')
-                );
-            }
+        if ($numinstallable) {
+            $out .= $this->output->single_button(
+                new moodle_url($this->page->url, array('installupdatex' => 1)),
+                get_string('updateavailableinstallall', 'core_admin', $numinstallable),
+                'post',
+                array('class' => 'singlebutton updateavailableinstallall')
+            );
         }
 
         $out .= html_writer::div($infoall, 'info info-all').
@@ -1907,7 +1940,7 @@ class core_admin_renderer extends plugin_renderer_base {
             'infos'
         );
 
-        if ($pluginman->is_remote_plugin_installable($updateinfo->component, $updateinfo->version, $reason)) {
+        if ($pluginman->is_remote_plugin_installable($updateinfo->component, $updateinfo->version, $reason, false)) {
             $box .= $this->output->single_button(
                 new moodle_url($this->page->url, array('installupdate' => $updateinfo->component,
                     'installupdateversion' => $updateinfo->version)),
@@ -2127,8 +2160,16 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->container_start('upgradekeyreq');
         $output .= $this->heading(get_string('upgradekeyreq', 'core_admin'));
         $output .= html_writer::start_tag('form', array('method' => 'POST', 'action' => $url));
-        $output .= html_writer::empty_tag('input', array('name' => 'upgradekey', 'type' => 'password'));
-        $output .= html_writer::empty_tag('input', array('value' => get_string('submit'), 'type' => 'submit'));
+        $output .= html_writer::empty_tag('input', [
+            'name' => 'upgradekey',
+            'type' => 'password',
+            'class' => 'form-control w-auto',
+        ]);
+        $output .= html_writer::empty_tag('input', [
+            'type' => 'submit',
+            'value' => get_string('submit'),
+            'class' => 'btn btn-primary mt-3',
+        ]);
         $output .= html_writer::end_tag('form');
         $output .= $this->container_end();
         $output .= $this->footer();

@@ -29,7 +29,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>database မတည်ဆောက်နိုင်ပါ၊၊</p>
+<p> သတ်မှတ်ထားသော database မရှိပါ။ ပေးထားသော သုံးစွဲသူမှ database တည်ဆောက်ရန် ခွင့်မပြုထားပါ၊၊</p>
+<p>database ဖွဲ့စည်းပုံကို ဆိုက်အက်တမင် မှ အတည်ပြုသင့်သည်၊၊</p>';
+$string['cannotcreatelangdir'] = 'lang directory ကို မတည်ဆောက်နိုင်ပါ';
 $string['cannotcreatetempdir'] = 'temp directory ကို မတည်ဆောက်နိုင်ပါ၊၊';
 $string['cannotdownloadcomponents'] = 'အစိတ်အပိုင်းများကို ဒေါင်းလုတ်ဆွဲမရပါ။';
 $string['cannotdownloadzipfile'] = 'ZIP ဖိုင်ကိုဒေါင်းလုတ်ဆွဲမရပါ။';
 $string['cannotfindcomponent'] = 'အစိတ်အပိုင်းကို ရှာဖွေမတွေ့ရှိပါ။';
+$string['cannotsavemd5file'] = 'md5 ဖိုင်ကို မသိမ်းဆည်းနိုင်ပါ';
+$string['cannotsavezipfile'] = 'ZIP ဖိုင်ကို မသိမ်းဆည်းနိုင်ပါ';

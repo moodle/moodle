@@ -6,6 +6,19 @@ div[data-flexitour="backdrop"] {
     left: 0;
 }
 
+span[data-flexitour="container"] .modal-dialog {
+    max-width: 400px;
+}
+
+span[data-flexitour="container"] .modal-dialog .modal-content .modal-header {
+    border-bottom: 0;
+}
+
+span[data-flexitour="container"] .modal-dialog .modal-content .modal-footer {
+    justify-content: flex-start;
+    border-top: 0;
+}
+
 span[data-flexitour="container"].orphan {
     position: absolute;
 }

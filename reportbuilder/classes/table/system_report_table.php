@@ -18,25 +18,16 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\table;
 
-use context;
+use core_table\local\filter\filterset;
 use html_writer;
 use moodle_exception;
-use moodle_url;
-use renderable;
-use table_sql;
 use stdClass;
-use core_table\dynamic;
 use core_reportbuilder\manager;
-use core_reportbuilder\system_report;
-use core_reportbuilder\local\filters\base;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\action;
 use core_reportbuilder\local\report\column;
-use core_table\local\filter\filterset;
 
 defined('MOODLE_INTERNAL') || die;
-
-require_once("{$CFG->libdir}/tablelib.php");
 
 /**
  * System report dynamic table class
@@ -45,16 +36,10 @@ require_once("{$CFG->libdir}/tablelib.php");
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class system_report_table extends table_sql implements dynamic, renderable {
+class system_report_table extends base_report_table {
 
     /** @var string Unique ID prefix for the table */
     private const UNIQUEID_PREFIX = 'system-report-table-';
-
-    /** @var report $report */
-    protected $report;
-
-    /** @var system_report $systemreport */
-    protected $systemreport;
 
     /**
      * Table constructor. Note that the passed unique ID value must match the pattern "system-report-table-(\d+)" so that
@@ -71,28 +56,42 @@ class system_report_table extends table_sql implements dynamic, renderable {
 
         parent::__construct($uniqueid);
 
-        // Load the report persistent, and accompanying system report instance.
-        $this->report = new report($matches['id']);
-        $this->systemreport = manager::get_report_from_persistent($this->report, $parameters);
+        // If we are loading via a dynamic table AJAX request, defer the report loading until the filterset is added to
+        // the table, as it is used to populate the report $parameters during construction.
+        $serviceinfo = optional_param('info', null, PARAM_RAW);
+        if ($serviceinfo !== 'core_table_get_dynamic_table_content') {
+            $this->load_report_instance((int) $matches['id'], $parameters);
+        }
+    }
 
-        $fields = $this->systemreport->get_base_fields();
-        $maintable = $this->systemreport->get_main_table();
-        $maintablealias = $this->systemreport->get_main_table_alias();
-        $joins = $this->systemreport->get_joins();
-        [$where, $params] = $this->systemreport->get_base_condition();
+    /**
+     * Load the report persistent, and accompanying system report instance.
+     *
+     * @param int $reportid
+     * @param array $parameters
+     */
+    private function load_report_instance(int $reportid, array $parameters): void {
+        $this->persistent = new report($reportid);
+        $this->report = manager::get_report_from_persistent($this->persistent, $parameters);
+
+        $fields = $this->report->get_base_fields();
+        $maintable = $this->report->get_main_table();
+        $maintablealias = $this->report->get_main_table_alias();
+        $joins = $this->report->get_joins();
+        [$where, $params] = $this->report->get_base_condition();
 
         $this->set_attribute('data-region', 'reportbuilder-table');
         $this->set_attribute('class', $this->attributes['class'] . ' reportbuilder-table');
 
         // Download options.
         $this->showdownloadbuttonsat = [TABLE_P_BOTTOM];
-        $this->is_downloading($parameters['download'] ?? null, $this->systemreport->get_downloadfilename());
+        $this->is_downloading($parameters['download'] ?? null, $this->report->get_downloadfilename());
 
         // Retrieve all report columns. If we are downloading the report, remove as required.
-        $columns = $this->systemreport->get_columns();
+        $columns = $this->report->get_columns();
         if ($this->is_downloading()) {
             $columns = array_diff_key($columns,
-                array_flip($this->systemreport->get_exclude_columns_for_download()));
+                array_flip($this->report->get_exclude_columns_for_download()));
         }
 
         $columnheaders = [];
@@ -102,8 +101,8 @@ class system_report_table extends table_sql implements dynamic, renderable {
 
             $columnheaders[$column->get_column_alias()] = $column->get_title();
 
-            // Specify whether column should behave as a user fullname column.
-            if (preg_match('/^user:fullname.*$/', $column->get_unique_identifier())) {
+            // Specify whether column should behave as a user fullname column unless the column has a custom title set.
+            if (preg_match('/^user:fullname.*$/', $column->get_unique_identifier()) && !$column->has_custom_title()) {
                 $this->userfullnamecolumns[] = $column->get_column_alias();
             }
 
@@ -119,7 +118,7 @@ class system_report_table extends table_sql implements dynamic, renderable {
         }
 
         // If the report has any actions then append appropriate column, note that actions are excluded during download.
-        if ($this->systemreport->has_actions() && !$this->is_downloading()) {
+        if ($this->report->has_actions() && !$this->is_downloading()) {
             $columnheaders['actions'] = html_writer::tag('span', get_string('actions', 'core_reportbuilder'), [
                 'class' => 'sr-only',
             ]);
@@ -130,15 +129,15 @@ class system_report_table extends table_sql implements dynamic, renderable {
         $this->define_headers(array_values($columnheaders));
 
         // Initial table sort column.
-        if ($sortcolumn = $this->systemreport->get_initial_sort_column()) {
-            $this->sortable(true, $sortcolumn->get_column_alias(), $this->systemreport->get_initial_sort_direction());
+        if ($sortcolumn = $this->report->get_initial_sort_column()) {
+            $this->sortable(true, $sortcolumn->get_column_alias(), $this->report->get_initial_sort_direction());
         }
 
         // Table configuration.
         $this->initialbars(false);
         $this->collapsible(false);
         $this->pageable(true);
-        $this->set_default_per_page($this->systemreport->get_default_per_page());
+        $this->set_default_per_page($this->report->get_default_per_page());
 
         // Initialise table SQL properties.
         $fieldsql = implode(', ', $fields);
@@ -163,77 +162,12 @@ class system_report_table extends table_sql implements dynamic, renderable {
      * @param filterset $filterset
      */
     public function set_filterset(filterset $filterset): void {
+        $reportid = $filterset->get_filter('reportid')->current();
         $parameters = $filterset->get_filter('parameters')->current();
-        $this->systemreport->set_parameters((array) json_decode($parameters, true));
+
+        $this->load_report_instance($reportid, json_decode($parameters, true));
 
         parent::set_filterset($filterset);
-    }
-
-    /**
-     * Initialises table SQL properties
-     *
-     * @param string $fields
-     * @param string $from
-     * @param array $joins
-     * @param string $where
-     * @param array $params
-     */
-    protected function init_sql(string $fields, string $from, array $joins, string $where, array $params): void {
-        $wheres = [];
-        if ($where !== '') {
-            $wheres[] = $where;
-        }
-
-        $filtervalues = $this->systemreport->get_filter_values();
-        foreach ($this->systemreport->get_filters() as $filter) {
-            /** @var base $filterclass */
-            $filterclass = $filter->get_filter_class();
-            $filterinstance = $filterclass::create($filter);
-
-            [$filtersql, $filterparams] = $filterinstance->get_sql_filter($filtervalues);
-            if ($filtersql !== '') {
-                $wheres[] = "({$filtersql})";
-                $params = array_merge($params, $filterparams);
-
-                $joins = array_merge($joins, $filter->get_joins());
-            }
-        }
-
-        $wheresql = '1=1';
-        if (!empty($wheres)) {
-            $wheresql = implode(' AND ', $wheres);
-        }
-
-        // Add unique table joins.
-        $from .= ' ' . implode(' ', array_unique($joins));
-
-        $this->set_sql($fields, $from, $wheresql, $params);
-        $this->set_count_sql("SELECT COUNT(1) FROM {$from} WHERE {$wheresql}", $params);
-    }
-
-    /**
-     * Override parent method of the same, to make use of a recordset and avoid issues with duplicate values in the first column
-     *
-     * @param int $pagesize
-     * @param bool $useinitialsbar
-     */
-    public function query_db($pagesize, $useinitialsbar = true) {
-        global $DB;
-
-        $sql = "SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}";
-
-        $sort = $this->get_sql_sort();
-        if ($sort) {
-            $sql .= " ORDER BY {$sort}";
-        }
-
-        if (!$this->is_downloading()) {
-            $this->pagesize($pagesize, $DB->count_records_sql($this->countsql, $this->countparams));
-
-            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
-        } else {
-            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params);
-        }
     }
 
     /**
@@ -243,7 +177,7 @@ class system_report_table extends table_sql implements dynamic, renderable {
      * @return string
      */
     public function get_row_class($row) {
-        return $this->systemreport->get_row_class((object) $row);
+        return $this->report->get_row_class((object) $row);
     }
 
     /**
@@ -253,13 +187,13 @@ class system_report_table extends table_sql implements dynamic, renderable {
      * @return array
      */
     public function format_row($row) {
-        $this->systemreport->row_callback((object) $row);
+        $this->report->row_callback((object) $row);
 
         /** @var column[] $columnsbyalias */
         $columnsbyalias = [];
 
         // Create a lookup for convenience, indexed by column alias.
-        $columns = $this->systemreport->get_columns();
+        $columns = $this->report->get_columns();
         foreach ($columns as $column) {
             $columnsbyalias[$column->get_column_alias()] = $column;
         }
@@ -272,7 +206,7 @@ class system_report_table extends table_sql implements dynamic, renderable {
             }
         });
 
-        if ($this->systemreport->has_actions()) {
+        if ($this->report->has_actions()) {
             $row['actions'] = $this->format_row_actions((object) $row);
         }
 
@@ -288,25 +222,9 @@ class system_report_table extends table_sql implements dynamic, renderable {
     private function format_row_actions(stdClass $row): string {
         $actions = array_map(static function(action $action) use ($row): string {
             return (string) $action->get_action_link($row);
-        }, $this->systemreport->get_actions());
+        }, $this->report->get_actions());
 
         return implode('', $actions);
-    }
-
-    /**
-     * Get the context for the table (that of the report persistent)
-     *
-     * @return context
-     */
-    public function get_context(): context {
-        return $this->report->get_context();
-    }
-
-    /**
-     * Set the base URL of the table to the current page URL
-     */
-    public function guess_base_url(): void {
-        $this->baseurl = new moodle_url('/');
     }
 
     /**
@@ -317,14 +235,14 @@ class system_report_table extends table_sql implements dynamic, renderable {
     public function download_buttons(): string {
         global $OUTPUT;
 
-        if ($this->systemreport->can_be_downloaded() && !$this->is_downloading()) {
+        if ($this->report->can_be_downloaded() && !$this->is_downloading()) {
             return $OUTPUT->download_dataformat_selector(
                 get_string('downloadas', 'table'),
                 new \moodle_url('/reportbuilder/download.php'),
                 'download',
                 [
-                    'id' => $this->report->get('id'),
-                    'parameters' => json_encode($this->systemreport->get_parameters()),
+                    'id' => $this->persistent->get('id'),
+                    'parameters' => json_encode($this->report->get_parameters()),
                 ]
             );
         }

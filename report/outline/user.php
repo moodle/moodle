@@ -91,12 +91,19 @@ $event->trigger();
 
 echo $OUTPUT->header();
 if ($courseid != SITEID) {
+    $backurl = new moodle_url('/user/view.php', ['id' => $userid, 'course' => $courseid]);
+    echo $OUTPUT->single_button($backurl, get_string('back'), 'get', ['class' => 'mb-3']);
     echo $OUTPUT->context_header(
             array(
             'heading' => fullname($user),
             'user' => $user,
             'usercontext' => $personalcontext
         ), 2);
+    if ($mode === 'outline') {
+        echo $OUTPUT->heading(get_string('outlinereport', 'moodle'), 2, 'main mt-4 mb-4');
+    } else {
+        echo $OUTPUT->heading(get_string('completereport', 'moodle'), 2, 'main mt-4 mb-4');
+    }
 }
 
 $modinfo = get_fast_modinfo($course, $user->id);

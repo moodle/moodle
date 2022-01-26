@@ -249,7 +249,7 @@ class block_base {
             $this->arialabel = $bc->arialabel;
         }
 
-        if ($this->page->user_is_editing()) {
+        if ($this->page->user_is_editing() && $this->instance_can_be_edited()) {
             $bc->controls = $this->page->blocks->edit_controls($this);
         } else {
             // we must not use is_empty on hidden blocks
@@ -470,7 +470,7 @@ class block_base {
      */
     function _load_instance($instance, $page) {
         if (!empty($instance->configdata)) {
-            $this->config = unserialize(base64_decode($instance->configdata));
+            $this->config = unserialize_object(base64_decode($instance->configdata));
         }
         $this->instance = $instance;
         $this->context = context_block::instance($instance->id);
@@ -692,6 +692,15 @@ class block_base {
         return true;
     }
 
+    /**
+     * If overridden and set to false by the block it will not be editable.
+     *
+     * @return bool
+     */
+    public function instance_can_be_edited() {
+        return true;
+    }
+
     /** @callback callback functions for comments api */
     public static function comment_template($options) {
         $ret = <<<EOD
@@ -737,6 +746,18 @@ EOD;
      */
     public function get_aria_role() {
         return 'complementary';
+    }
+
+    /**
+     * This method can be overriden to add some extra checks to decide whether the block can be added or not to a page.
+     * It doesn't need to do the standard capability checks as they will be performed by has_add_block_capability().
+     * This method is user agnostic. If you want to check if a user can add a block or not, you should use user_can_addto().
+     *
+     * @param moodle_page $page The page where this block will be added.
+     * @return bool Whether the block can be added or not to the given page.
+     */
+    public function can_block_be_added(moodle_page $page): bool {
+        return true;
     }
 }
 

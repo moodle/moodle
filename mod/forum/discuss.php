@@ -75,6 +75,8 @@ $forumrecord = $forumdatamapper->to_legacy_object($forum);
 $discussiondatamapper = $datamapperfactory->get_discussion_data_mapper();
 $discussionrecord = $discussiondatamapper->to_legacy_object($discussion);
 $discussionviewurl = $urlfactory->get_discussion_view_url_from_discussion($discussion);
+// Set the activity record, to avoid additional calls to the db if the page getter is called.
+$PAGE->set_activity_record($forumrecord);
 
 // move this down fix for MDL-6926
 require_once($CFG->dirroot . '/mod/forum/lib.php');
@@ -310,17 +312,20 @@ if ($node && $post->get_id() != $discussion->get_first_post_id()) {
 $isnestedv2displaymode = $displaymode == FORUM_MODE_NESTED_V2;
 $PAGE->set_title("$course->shortname: " . format_string($discussion->get_name()));
 $PAGE->set_heading($course->fullname);
+$PAGE->activityheader->disable();
 if ($isnestedv2displaymode) {
     $PAGE->add_body_class('nested-v2-display-mode reset-style');
     $settingstrigger = $OUTPUT->render_from_template('mod_forum/settings_drawer_trigger', null);
     $PAGE->add_header_action($settingstrigger);
 } else {
-    $PAGE->set_button(forum_search_form($course));
+    $PAGE->add_header_action(forum_search_form($course));
 }
 
 echo $OUTPUT->header();
 if (!$isnestedv2displaymode) {
-    echo $OUTPUT->heading(format_string($forum->get_name()), 2);
+    if (!$PAGE->has_secondary_navigation()) {
+        echo $OUTPUT->heading(format_string($forum->get_name()), 2);
+    }
     echo $OUTPUT->heading(format_string($discussion->get_name()), 3, 'discussionname');
 }
 

@@ -120,7 +120,6 @@ $string['categorytotal'] = 'Category total';
 $string['categorytotalname'] = 'Category total name';
 $string['categorytotalfull'] = '{$a->category} total';
 $string['collapsecriterion'] = 'Collapse criterion';
-$string['combo'] = 'Tabs and drop-down menu';
 $string['compact'] = 'Compact';
 $string['componentcontrolsvisibility'] = 'Whether this grade item is hidden is controlled by the activity settings.';
 $string['contract'] = 'Contract category';
@@ -155,7 +154,6 @@ $string['displaylettergrade'] = 'Display letter grades';
 $string['displaypercent'] = 'Display percents';
 $string['displaypoints'] = 'Display points';
 $string['displayweighted'] = 'Display weighted grades';
-$string['dropdown'] = 'Drop-down menu';
 $string['droplow'] = 'Drop the lowest';
 $string['droplow_help'] = 'This setting enables a specified number of the lowest grades to be excluded from the aggregation.';
 $string['droplowestvalue'] = 'Set drop lowest grade value';
@@ -226,6 +224,7 @@ $string['externalurl'] = 'External URL';
 $string['externalurl_desc'] = 'If an external gradebook is used, the URL should be specified here.';
 $string['extracreditvalue'] = 'Extra credit value for {$a}';
 $string['extracreditwarning'] = 'Note: Setting all items for a category to extra credit will effectively remove them from the grade calculation. Since there will be no point total';
+$string['fail'] = 'Fail';
 $string['feedback'] = 'Feedback';
 $string['feedback_help'] = 'This box enables any comments about the grade to be added.';
 $string['feedbackadd'] = 'Add feedback';
@@ -411,6 +410,15 @@ $string['importcsv_help'] = 'Grades can be imported via a CSV file with format a
 A file of the correct format can be obtained by first exporting some grades. The file can then be edited and saved as a CSV file.';
 $string['importcsv_link'] = 'grade/import/csv/index';
 $string['importcustom'] = 'Import as custom outcomes (only this course)';
+$string['importdata'] = 'Data';
+$string['importdata_help'] = 'Grades may be pasted directly from an OpenDocument or Excel spreadsheet with format as follows:
+
+* At least one column should contain user identity data - username, email address or ID number.
+* Other columns should have headings as for existing activities or grade items.
+
+A correctly formatted spreadsheet can be obtained by first exporting some grades. The spreadsheet can then be edited to add more grades and saved.
+
+Select and copy the columns you want to import from the spreadsheet and then paste them into this field.';
 $string['importerror'] = 'An error occurred, this script wasn\'t called with the right parameters.';
 $string['importfailed'] = 'Import failed. No data was imported.';
 $string['importfeedback'] = 'Import feedback';
@@ -467,6 +475,7 @@ $string['locktimedate'] = 'Locked after: {$a}';
 $string['lockverbose'] = 'Lock {$a->category} {$a->itemmodule} {$a->itemname}';
 $string['lowest'] = 'Lowest';
 $string['lowgradeletter'] = 'Low';
+$string['manageoutcomes'] = 'Manage outcomes';
 $string['manualitem'] = 'Manual item';
 $string['mapfrom'] = 'Map from';
 $string['mapfrom_help'] = 'Select the column in the spreadsheet containing data for identifying the user, such as username, user ID or email address.';
@@ -534,7 +543,6 @@ $string['mygrades_desc'] = 'This setting allows for the option of linking to an 
 $string['mypreferences'] = 'My preferences';
 $string['myreportpreferences'] = 'My report preferences';
 $string['mustchooserescaleyesorno'] = 'You must choose whether to rescale existing grades or not.';
-$string['navmethod'] = 'Navigation method';
 $string['neverdeletehistory'] = 'Never delete history';
 $string['newcategory'] = 'New category';
 $string['newitem'] = 'New grade item';
@@ -544,6 +552,8 @@ $string['nocategories'] = 'Grade categories could not be added or found for this
 $string['nocategoryname'] = 'No category name was given.';
 $string['nocategoryview'] = 'No category to view by';
 $string['nocourses'] = 'There are no courses yet';
+$string['noexistingscales'] = 'There are no existing scales.';
+$string['noexistingoutcomes'] = 'There are no existing outcomes.';
 $string['noforce'] = 'Do not force';
 $string['nogradeletters'] = 'No grade letters set';
 $string['nogradesreturned'] = 'No grades returned';
@@ -607,6 +617,7 @@ $string['overridesitedefaultgradedisplaytype_help'] = 'If ticked, grade letters 
 $string['overrideweightofa'] = 'Override weight of {$a}';
 $string['parentcategory'] = 'Parent category';
 $string['pctoftotalgrade'] = '% of total grade';
+$string['pass'] = 'Pass';
 $string['percent'] = 'Percent';
 $string['percentage'] = 'Percentage';
 $string['percentageletter'] = 'Percentage (letter)';
@@ -692,7 +703,7 @@ $string['recovergradesdefault_help'] = 'By default recover old grades when re-en
 $string['refreshpreview'] = 'Refresh preview';
 $string['regradeanyway'] = 'Regrade anyway';
 $string['removeallcoursegrades'] = 'Delete all grades';
-$string['removeallcoursegrades_help'] = 'If ticked, all grade items which were manually added to the gradebook will be deleted, together with grades and data on overridden, excluded, hidden and locked grades. Only grade items associated with activities will remain.';
+$string['removeallcoursegrades_help'] = 'If ticked, all grade items and grades that were manually added to the gradebook will be deleted, as well as data on overridden, excluded, hidden and locked grades. Only grade items and grades associated with activities will remain.';
 $string['removeallcourseitems'] = 'Delete all items and categories';
 $string['removeallcourseitems_help'] = 'If ticked, all categories and grade items which were manually added to the gradebook will be deleted, together with grades and data on overridden, excluded, hidden and locked grades. Only grade items associated with activities will remain.';
 $string['report'] = 'Report';
@@ -726,6 +737,7 @@ $string['setgradeletters'] = 'Set grade letters';
 $string['setpreferences'] = 'Set preferences';
 $string['setting'] = 'Setting';
 $string['settings'] = 'Settings';
+$string['setup'] = 'Setup';
 $string['setweights'] = 'Set weights';
 $string['showanalysisicon'] = 'Show grade analysis icon';
 $string['showanalysisicon_desc'] = 'Whether to show grade analysis icon by default. If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';
@@ -810,7 +822,6 @@ $string['aggregatesubcatsupgradedgrades'] = 'Note: The aggregation setting "Aggr
 $string['upgradedgradeshidemessage'] = 'Dismiss notice';
 $string['switchtofullview'] = 'Switch to full view';
 $string['switchtosimpleview'] = 'Switch to simple view';
-$string['tabs'] = 'Tabs';
 $string['topcategory'] = 'Super category';
 $string['total'] = 'Total';
 $string['totalweightnot100'] = 'The total weight is not equal to 100';
@@ -877,3 +888,8 @@ $string['xml'] = 'XML';
 $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
 
+// Deprecated since Moodle 4.0.
+$string['navmethod'] = 'Navigation method';
+$string['dropdown'] = 'Drop-down menu';
+$string['tabs'] = 'Tabs';
+$string['combo'] = 'Tabs and drop-down menu';

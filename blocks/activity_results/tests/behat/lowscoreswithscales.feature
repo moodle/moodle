@@ -42,14 +42,13 @@ Feature: The activity results block displays student low scores as scales
     And I press "Save changes"
     And I am on "Course 1" course homepage with editing mode on
     And I follow "Test assignment"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_grade_modgrade_type | Scale |
       | id_grade_modgrade_scale | My Scale |
     And I press "Save and return to course"
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I give the grade "Excellent!" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "Very good" to the user "Student 2" for the grade item "Test assignment"
     And I give the grade "Good" to the user "Student 3" for the grade item "Test assignment"

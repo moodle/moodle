@@ -2154,11 +2154,7 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         // Change our event's date to the 20th Monday of the current year.
         $twentiethmonday = new DateTime(date('Y-01-01'));
         $twentiethmonday->modify('+20 Monday');
-        $startdatetime = $this->change_event_startdate($twentiethmonday->format('Ymd\T090000'), 'US/Eastern');
-
-        $startdate = new DateTime($startdatetime->format('Y-m-d'));
-
-        $offset = $startdatetime->diff($startdate, true);
+        $startdatetime = $this->change_event_startdate($twentiethmonday->format('Ymd\T000000'), 'US/Eastern');
 
         $interval = new DateInterval('P1Y');
 
@@ -2183,7 +2179,6 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
             $expecteddate->modify('January 1');
             $expecteddate->add($interval);
             $expecteddate->modify("+20 Monday");
-            $expecteddate->add($offset);
         }
     }
 

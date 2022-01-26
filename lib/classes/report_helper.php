@@ -45,39 +45,58 @@ class report_helper {
         global $OUTPUT, $PAGE;
 
         if ($reportnode = $PAGE->settingsnav->find('coursereports', \navigation_node::TYPE_CONTAINER)) {
-            if ($children = $reportnode->children) {
-                // Menu to select report pages to navigate.
-                $activeurl = '';
-                foreach ($children as $key => $node) {
-                    $name = $node->text;
 
-                    $url = $node->action()->out(false);
-                    $menu[$url] = $name;
-                    if ($name === $pluginname) {
-                        $activeurl = $url;
+            $menuarray = \core\navigation\views\secondary::create_menu_element([$reportnode]);
+            if (empty($menuarray)) {
+                return;
+            }
+
+            $coursereports = get_string('reports');
+            $activeurl = '';
+            if (isset($menuarray[0])) {
+                // Remove the reports entry.
+                $result = array_search($coursereports, $menuarray[0][$coursereports]);
+                unset($menuarray[0][$coursereports][$result]);
+
+                // Find the active node.
+                foreach ($menuarray[0] as $key => $value) {
+                    $check = array_search($pluginname, $value);
+                    if ($check !== false) {
+                        $activeurl = $check;
                     }
                 }
+            } else {
+                $result = array_search($coursereports, $menuarray);
+                unset($menuarray[$result]);
+
+                $check = array_search($pluginname, $menuarray);
+                if ($check !== false) {
+                    $activeurl = $check;
+                }
+
             }
 
-            if (!empty($menu)) {
-                $select = new url_select($menu, $activeurl, null, 'choosecoursereport');
-                $select->set_label(get_string('report'), ['class' => 'accesshide']);
-                $select->attributes['style'] = "margin-bottom: 1.5rem";
-                $select->class .= " mb-4";
-                echo $OUTPUT->render($select);
-            }
+            $select = new url_select($menuarray, $activeurl, null, 'choosecoursereport');
+            $select->set_label(get_string('reporttype'), ['class' => 'accesshide']);
+            $select->class .= " mb-1";
+            echo $OUTPUT->render($select);
         }
+        echo $OUTPUT->heading($pluginname, 2, 'mb-3');
     }
 
     /**
      * Save the last selected report in the session
      *
+     * @deprecated since Moodle 4.0
      * @param int $id The course id
      * @param moodle_url $url The moodle url
      * @return void
      */
     public static function save_selected_report(int $id, moodle_url $url):void {
         global $USER;
+
+        debugging('save_selected_report() has been deprecated because it is no longer used and will be '.
+            'removed in future versions of Moodle', DEBUG_DEVELOPER);
 
         // Last selected report.
         if (!isset($USER->course_last_report)) {

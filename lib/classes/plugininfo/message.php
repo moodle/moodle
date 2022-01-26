@@ -40,6 +40,30 @@ class message extends base {
         return $DB->get_records_menu('message_processors', array('enabled'=>1), 'name ASC', 'name, name AS val');
     }
 
+    public static function enable_plugin(string $pluginname, int $enabled): bool {
+        global $DB;
+
+        if (!$plugin = $DB->get_record('message_processors', ['name' => $pluginname])) {
+            throw new \moodle_exception('invalidplugin', 'message', '', $pluginname);
+        }
+
+        $haschanged = false;
+
+        // Only set visibility if it's different from the current value.
+        if ($plugin->enabled != $enabled) {
+            $haschanged = true;
+            $processor = \core_message\api::get_processed_processor_object($plugin);
+
+            // Include this information into config changes table.
+            add_to_config_log($processor->name, $processor->enabled, $enabled, 'core');
+
+            // Save processor enabled/disabled status.
+            \core_message\api::update_processor_status($processor, $enabled);
+        }
+
+        return $haschanged;
+    }
+
     public function get_settings_section_name() {
         return 'messagesetting' . $this->name;
     }

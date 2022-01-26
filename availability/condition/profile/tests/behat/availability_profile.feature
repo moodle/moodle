@@ -106,3 +106,35 @@ Feature: availability_profile
     And I log in as "student1"
     And I am on "Course 1" course homepage
     Then I should see "P1" in the "region-main" "region"
+
+  @javascript
+  Scenario: Condition display with filters
+    # Teacher sets up a restriction on group G1, using multilang filter.
+    Given the following "custom profile fields" exist:
+      | datatype | shortname | name                                                                                        | param2 |
+      | text     | frog      | <span lang="en" class="multilang">F-One</span><span lang="fr" class="multilang">F-Un</span> | 100    |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    # The activity names filter is enabled because it triggered a bug in older versions.
+    And the "activitynames" filter is "on"
+    And the "activitynames" filter applies to "content and headings"
+    And I am on the "C1" "Course" page logged in as "teacher1"
+    And I turn editing mode on
+    And I add a "Page" to section "1"
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Name         | P1 |
+      | Description  | x  |
+      | Page content | x  |
+    And I click on "Add restriction..." "button"
+    And I click on "User profile" "button" in the "Add restriction..." "dialogue"
+    And I set the following fields to these values:
+      | User profile field       | F-One |
+      | Value to compare against | 111   |
+    And I click on "Save and return to course" "button"
+    And I log out
+
+    # Student sees information about no access to group, with group name in correct language.
+    When I am on the "C1" "Course" page logged in as "student1"
+    Then I should see "Not available unless: Your F-One is 111"
+    And I should not see "F-Un"

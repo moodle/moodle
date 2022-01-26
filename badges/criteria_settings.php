@@ -57,18 +57,21 @@ if ($badge->is_active() || $badge->is_locked()) {
 
 if ($badge->type == BADGE_TYPE_COURSE) {
     require_login($badge->courseid);
+    $course = get_course($badge->courseid);
+    $heading = format_string($course->fullname, true, ['context' => $context]);
     $navurl = new moodle_url('/badges/index.php', array('type' => $badge->type, 'id' => $badge->courseid));
     $PAGE->set_pagelayout('standard');
     navigation_node::override_active_url($navurl);
 } else {
     $PAGE->set_pagelayout('admin');
+    $heading = get_string('administrationsite');
     navigation_node::override_active_url($navurl, true);
 }
 
 $urlparams = array('badgeid' => $badgeid, 'edit' => $edit, 'type' => $type, 'crit' => $crit);
 $PAGE->set_context($context);
 $PAGE->set_url('/badges/criteria_settings.php', $urlparams);
-$PAGE->set_heading($badge->name);
+$PAGE->set_heading($heading);
 $PAGE->set_title($badge->name);
 $PAGE->navbar->add($badge->name, new moodle_url('overview.php', array('id' => $badge->id)))->add(get_string('criteria_' . $type, 'badges'));
 

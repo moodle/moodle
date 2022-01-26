@@ -51,8 +51,11 @@ class import_outcomes_form extends moodleform {
         $mform->addRule('userfile', get_string('required'), 'required', null, 'server');
         $mform->addHelpButton('userfile', 'importoutcomes', 'grades');
 
-        $mform->addElement('submit', 'save', get_string('uploadthisfile'));
-
+        $buttonarray = [
+            $mform->createElement('submit', 'save', get_string('uploadthisfile')),
+            $mform->createElement('cancel')
+        ];
+        $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
 }
 

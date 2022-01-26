@@ -429,4 +429,39 @@ class get_user_capability_course_helper {
         return self::create_sql($root);
 
     }
+
+    /**
+     * Map fieldnames to get ready for the SQL query.
+     *
+     * @param string $fieldsexceptid A comma-separated list of the fields you require, not including id.
+     *   Add ctxid, ctxpath, ctxdepth etc to return course context information for preloading.
+     * @return string Mapped field list for the SQL query.
+     */
+    public static function map_fieldnames(string $fieldsexceptid = ''): string {
+        // Convert fields list and ordering.
+        $fieldlist = '';
+        if ($fieldsexceptid) {
+            $fields = array_map('trim', explode(',', $fieldsexceptid));
+            foreach ($fields as $field) {
+                // Context fields have a different alias.
+                if (strpos($field, 'ctx') === 0) {
+                    switch($field) {
+                        case 'ctxlevel' :
+                            $realfield = 'contextlevel';
+                            break;
+                        case 'ctxinstance' :
+                            $realfield = 'instanceid';
+                            break;
+                        default:
+                            $realfield = substr($field, 3);
+                            break;
+                    }
+                    $fieldlist .= ',x.' . $realfield . ' AS ' . $field;
+                } else {
+                    $fieldlist .= ',c.'.$field;
+                }
+            }
+        }
+        return $fieldlist;
+    }
 }

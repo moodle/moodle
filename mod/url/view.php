@@ -57,9 +57,8 @@ $PAGE->set_url('/mod/url/view.php', array('id' => $cm->id));
 // Do not use PARAM_URL here, it is too strict and does not support general URIs!
 $exturl = trim($url->externalurl);
 if (empty($exturl) or $exturl === 'http://') {
+    $PAGE->activityheader->set_description(url_get_intro($url, $cm));
     url_print_header($url, $cm, $course);
-    url_print_heading($url, $cm, $course);
-    url_print_intro($url, $cm, $course);
     notice(get_string('invalidstoredurl', 'url'), new moodle_url('/course/view.php', array('id'=>$cm->course)));
     die;
 }

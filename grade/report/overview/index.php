@@ -90,6 +90,9 @@ $USER->grade_last_report[$course->id] = 'overview';
 // First make sure we have proper final grades.
 grade_regrade_final_grades_if_required($course);
 
+$actionbar = new \core_grades\output\general_action_bar($context,
+    new moodle_url('/grade/report/overview/index.php', ['id' => $courseid]), 'report', 'overview');
+
 if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     // Please note this would be extremely slow if we wanted to implement this properly for all teachers.
     $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
@@ -110,8 +113,8 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     }
 
     if (empty($userid)) {
-        // Add tabs
-        print_grade_page_head($courseid, 'report', 'overview');
+        print_grade_page_head($courseid, 'report', 'overview', false, false, false,
+            true, null, null, null, $actionbar);
 
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
 
@@ -124,7 +127,8 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     } else { // Only show one user's report
         $report = new grade_report_overview($userid, $gpr, $context);
         print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview') .
-                ' - ' . fullname($report->user), false, false, true, null, null, $report->user);
+            ' - ' . fullname($report->user), false, false, true, null, null,
+            $report->user, $actionbar);
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
 
         if ($user_selector) {
@@ -170,7 +174,8 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
             }
         } else { // We have a course context. We must be navigating from the gradebook.
             print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview')
-                    . ' - ' . fullname($report->user));
+                . ' - ' . fullname($report->user), false, false, true, null, null,
+                $report->user, $actionbar);
             if ($report->fill_table()) {
                 echo '<br />' . $report->print_table(true);
             }

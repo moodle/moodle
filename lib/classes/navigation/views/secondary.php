@@ -17,6 +17,7 @@
 namespace core\navigation\views;
 
 use navigation_node;
+use url_select;
 
 /**
  * Class secondary_navigation_view.
@@ -32,6 +33,13 @@ use navigation_node;
 class secondary extends view {
     /** @var string $headertitle The header for this particular menu*/
     public $headertitle;
+
+    /** @var int The maximum limit of navigation nodes displayed in the secondary navigation */
+    const MAX_DISPLAYED_NAV_NODES = 5;
+
+    /** @var navigation_node The course overflow node. */
+    protected $courseoverflownode = null;
+
     /**
      * Defines the default structure for the secondary nav in a course context.
      *
@@ -50,9 +58,23 @@ class secondary extends view {
             ],
             self::TYPE_SETTING => [
                 'editsettings' => 0,
+                'review' => 1.1,
+                'manageinstances' => 1.2,
+                'groups' => 1.3,
+                'override' => 1.4,
+                'roles' => 1.5,
+                'permissions' => 1.6,
+                'otherusers' => 1.7,
                 'gradebooksetup' => 2.1,
                 'outcomes' => 2.2,
                 'coursecompletion' => 6,
+                'coursebadges' => 7.1,
+                'newbadge' => 7.2,
+                'filtermanagement' => 9,
+                'unenrolself' => 10,
+                'coursetags' => 11,
+                'download' => 12,
+                'contextlocking' => 13,
             ],
         ];
         $nodes['navigation'] = [
@@ -85,21 +107,63 @@ class secondary extends view {
         return [
             self::TYPE_SETTING => [
                 'modedit' => 1,
-                'roleoverride' => 3,
-                'rolecheck' => 3.1,
-                'logreport' => 4,
-                "mod_{$this->page->activityname}_useroverrides" => 5, // Overrides are module specific.
-                "mod_{$this->page->activityname}_groupoverrides" => 6,
-                'roleassign' => 7,
-                'filtermanage' => 8,
+                "mod_{$this->page->activityname}_useroverrides" => 3, // Overrides are module specific.
+                "mod_{$this->page->activityname}_groupoverrides" => 4,
+                'roleassign' => 5,
+                'filtermanage' => 6,
+                'roleoverride' => 7,
+                'rolecheck' => 7.1,
+                'logreport' => 8,
                 'backup' => 9,
                 'restore' => 10,
                 'competencybreakdown' => 11,
             ],
             self::TYPE_CUSTOM => [
                 'advgrading' => 2,
+                'contentbank' => 12,
             ],
         ];
+    }
+
+    /**
+     * Defines the default structure for the secondary nav in a category context.
+     *
+     * In a category context, we are curating nodes from the settingsnav object.
+     * The following mapping construct specifies the type of the node, the key
+     * and in what order we want the node - defined as per the mockups.
+     *
+     * @return array
+     */
+    protected function get_default_category_mapping(): array {
+        return [];
+    }
+
+    /**
+     * Define the keys of the course secondary nav nodes that should be forced into the "more" menu by default.
+     *
+     * @return array
+     */
+    protected function get_default_course_more_menu_nodes(): array {
+        return [];
+    }
+
+    /**
+     * Define the keys of the module secondary nav nodes that should be forced into the "more" menu by default.
+     *
+     * @return array
+     */
+    protected function get_default_module_more_menu_nodes(): array {
+        return ['roleoverride', 'rolecheck', 'logreport', 'roleassign', 'filtermanage', 'backup', 'restore',
+            'competencybreakdown'];
+    }
+
+    /**
+     * Define the keys of the admin secondary nav nodes that should be forced into the "more" menu by default.
+     *
+     * @return array
+     */
+    protected function get_default_admin_more_menu_nodes(): array {
+        return [];
     }
 
     /**
@@ -119,26 +183,132 @@ class secondary extends view {
         $this->id = 'secondary_navigation';
         $context = $this->context;
         $this->headertitle = get_string('menu');
+        $defaultmoremenunodes = [];
+        $maxdisplayednodes = self::MAX_DISPLAYED_NAV_NODES;
 
         switch ($context->contextlevel) {
             case CONTEXT_COURSE:
-                if ($this->page->course->id != $SITE->id) {
-                    $this->headertitle = get_string('courseheader');
-                    $this->load_course_navigation();
-                }
+                $this->headertitle = get_string('courseheader');
+                $this->load_course_navigation();
+                $defaultmoremenunodes = $this->get_default_course_more_menu_nodes();
                 break;
             case CONTEXT_MODULE:
                 $this->headertitle = get_string('activityheader');
                 $this->load_module_navigation();
+                $defaultmoremenunodes = $this->get_default_module_more_menu_nodes();
+                break;
+            case CONTEXT_COURSECAT:
+                $this->headertitle = get_string('categoryheader');
+                $this->load_category_navigation();
                 break;
             case CONTEXT_SYSTEM:
+                $this->headertitle = get_string('homeheader');
                 $this->load_admin_navigation();
+                // If the site administration navigation was generated after load_admin_navigation().
+                if ($this->has_children()) {
+                    // Do not explicitly limit the number of navigation nodes displayed in the site administration
+                    // navigation menu.
+                    $maxdisplayednodes = null;
+                }
+                $defaultmoremenunodes = $this->get_default_admin_more_menu_nodes();
                 break;
         }
 
+        $this->remove_unwanted_nodes();
+
+        // Don't need to show anything if only the view node is available. Remove it.
+        if ($this->children->count() == 1) {
+            $this->children->remove('modulepage');
+        }
+        // Force certain navigation nodes to be displayed in the "more" menu.
+        $this->force_nodes_into_more_menu($defaultmoremenunodes, $maxdisplayednodes);
         // Search and set the active node.
         $this->scan_for_active_node($this);
         $this->initialised = true;
+    }
+
+    /**
+     * Returns a node with the action being from the first found child node that has an action (Recursive).
+     *
+     * @param navigation_node $node The part of the node tree we are checking.
+     * @param navigation_node $basenode  The very first node to be used for the return.
+     * @return navigation_node|null
+     */
+    protected function get_node_with_first_action(navigation_node $node, navigation_node $basenode): ?navigation_node {
+        $newnode = null;
+        if (!$node->has_children()) {
+            return null;
+        }
+
+        // Find the first child with an action and update the main node.
+        foreach ($node->children as $child) {
+            if ($child->has_action()) {
+                $newnode = $basenode;
+                $newnode->action = $child->action;
+                return $newnode;
+            }
+        }
+        if (is_null($newnode)) {
+            // Check for children and go again.
+            foreach ($node->children as $child) {
+                if ($child->has_children()) {
+                    $newnode = $this->get_node_with_first_action($child, $basenode);
+
+                    if (!is_null($newnode)) {
+                        return $newnode;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Some nodes are containers only with no action. If this container has an action then nothing is done. If it does not have
+     * an action then a search is done through the children looking for the first node that has an action. This action is then given
+     * to the parent node that is initially provided as a parameter.
+     *
+     * @param navigation_node $node The navigation node that we want to ensure has an action tied to it.
+     * @return navigation_node The node intact with an action to use.
+     */
+    protected function get_first_action_for_node(navigation_node $node): ?navigation_node {
+        // If the node does not have children OR has an action no further processing needed.
+        $newnode = null;
+        if ($node->has_children()) {
+            if (!$node->has_action()) {
+                // We want to find the first child with an action.
+                // We want to check all children on this level before going further down.
+                // Note that new node gets changed here.
+                $newnode = $this->get_node_with_first_action($node, $node);
+            } else {
+                $newnode = $node;
+            }
+        }
+        return $newnode;
+    }
+
+    /**
+     * Returns a list of all expected nodes in the course administration.
+     *
+     * @return array An array of keys for navigation nodes in the course administration.
+     */
+    protected function get_expected_course_admin_nodes(): array {
+        $expectednodes = [];
+        foreach ($this->get_default_course_mapping()['settings'] as $value) {
+            foreach ($value as $nodekey => $notused) {
+                $expectednodes[] = $nodekey;
+            }
+        }
+        foreach ($this->get_default_course_mapping()['navigation'] as $value) {
+            foreach ($value as $nodekey => $notused) {
+                $expectednodes[] = $nodekey;
+            }
+        }
+        $othernodes = ['users', 'gradeadmin', 'coursereports', 'coursebadges'];
+        $leftovercourseadminnodes = ['backup', 'restore', 'import', 'copy', 'reset'];
+        $expectednodes = array_merge($expectednodes, $othernodes);
+        $expectednodes = array_merge($expectednodes, $leftovercourseadminnodes);
+        return $expectednodes;
     }
 
     /**
@@ -147,24 +317,229 @@ class secondary extends view {
      */
     protected function load_course_navigation(): void {
         $course = $this->page->course;
-
         // Initialise the main navigation and settings nav.
         // It is important that this is done before we try anything.
         $settingsnav = $this->page->settingsnav;
         $navigation = $this->page->navigation;
 
-        $url = new \moodle_url('/course/view.php', ['id' => $course->id, 'sesskey' => sesskey()]);
-        $this->add(get_string('coursepage', 'admin'), $url, self::TYPE_COURSE, null, 'coursehome');
+        $url = new \moodle_url('/course/view.php', ['id' => $course->id]);
+        $this->add(get_string('course'), $url, self::TYPE_COURSE, null, 'coursehome');
 
         $nodes = $this->get_default_course_mapping();
-        $nodesordered = $this->get_leaf_nodes($settingsnav, $nodes['settings']);
-        $nodesordered += $this->get_leaf_nodes($navigation, $nodes['navigation']);
+        $nodesordered = $this->get_leaf_nodes($settingsnav, $nodes['settings'] ?? []);
+        $nodesordered += $this->get_leaf_nodes($navigation, $nodes['navigation'] ?? []);
         $this->add_ordered_nodes($nodesordered);
 
-        // All additional nodes will be available under the 'Course admin' page.
-        $text = get_string('courseadministration');
-        $url = new \moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
-        $this->add($text, $url, null, null, 'courseadmin', new \pix_icon('t/edit', $text));
+        // Try to get any custom nodes defined by a user which may include containers.
+        $expectedcourseadmin = $this->get_expected_course_admin_nodes();
+
+        foreach ($settingsnav->children as $value) {
+            if ($value->key == 'courseadmin') {
+                foreach ($value->children as $other) {
+                    if (array_search($other->key, $expectedcourseadmin) === false) {
+                        $othernode = $this->get_first_action_for_node($other);
+                        // Get the first node and check whether it's been added already.
+                        if ($othernode && !$this->get($othernode->key)) {
+                            $this->add_node($othernode);
+                        } else {
+                            $this->add_node($other);
+                        }
+                    }
+                }
+            }
+        }
+
+        $coursecontext = \context_course::instance($course->id);
+        if (has_capability('moodle/course:update', $coursecontext)) {
+            $overflownode = $this->get_course_overflow_nodes();
+            if (is_null($overflownode)) {
+                return;
+            }
+            $actionnode = $this->get_first_action_for_node($overflownode);
+            // All additional nodes will be available under the 'Course admin' page.
+            $text = get_string('courseadministration');
+            $this->add($text, $actionnode->action, null, null, 'courseadmin', new \pix_icon('t/edit', $text));
+        }
+    }
+
+    /**
+     * Gets the overflow navigation nodes for the course administration category.
+     *
+     * @return navigation_node  The course overflow nodes.
+     */
+    protected function get_course_overflow_nodes(): ?navigation_node {
+        global $SITE;
+
+        // This gets called twice on some pages, and so trying to create this navigation node twice results in no children being
+        // present the second time this is called.
+        if (isset($this->courseoverflownode)) {
+            return $this->courseoverflownode;
+        }
+
+        // Start with getting the base node for the front page or the course.
+        $node = null;
+        if ($this->page->course == $SITE->id) {
+            $node = $this->page->settingsnav->find('frontpage', navigation_node::TYPE_SETTING);
+        } else {
+            $node = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
+        }
+        $coursesettings = $node ? $node->get_children_key_list() : [];
+        $thissettings = $this->get_children_key_list();
+        $diff = array_diff($coursesettings, $thissettings);
+
+        // Remove our specific created elements (user - participants, badges - coursebadges, grades - gradebooksetup,
+        // grades - outcomes).
+        $shortdiff = array_filter($diff, function($value) {
+            return !($value == 'users' || $value == 'coursebadges' || $value == 'gradebooksetup' ||
+                $value == 'outcomes');
+        });
+
+        // Permissions may be in play here that ultimately will show no overflow.
+        if (empty($shortdiff)) {
+            return null;
+        }
+
+        $firstitem = array_shift($shortdiff);
+        $navnode = $node->get($firstitem);
+        foreach ($shortdiff as $key) {
+            $courseadminnodes = $node->get($key);
+            if ($courseadminnodes) {
+                if ($courseadminnodes->parent->key == $node->key) {
+                    $navnode->add_node($courseadminnodes);
+                }
+            }
+        }
+        $this->courseoverflownode = $navnode;
+        return $navnode;
+
+    }
+
+    /**
+     * Recursively looks for a match to the current page url.
+     *
+     * @param navigation_node $node The node to look through.
+     * @return navigation_node|null The node that matches this page's url.
+     */
+    protected function nodes_match_current_url(navigation_node $node): ?navigation_node {
+        $pagenode = $this->page->url;
+        if ($node->has_action()) {
+            // Check this node first.
+            if ($node->action->compare($pagenode)) {
+                return $node;
+            }
+        }
+        if ($node->has_children()) {
+            foreach ($node->children as $child) {
+                $result = $this->nodes_match_current_url($child);
+                if ($result) {
+                    return $result;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a url_select object with overflow navigation nodes.
+     * This looks to see if the current page is within the course administration, or some other page that requires an overflow
+     * select object.
+     *
+     * @return url_select|null The overflow menu data.
+     */
+    public function get_overflow_menu_data(): ?url_select {
+
+        if (!$this->page->get_navigation_overflow_state()) {
+            return null;
+        }
+
+        $activenode = $this->find_active_node();
+        $incourseadmin = false;
+
+        if (!$activenode) {
+            // Could be in the course admin section.
+            $courseadmin = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
+            if (!$courseadmin) {
+                return null;
+            }
+
+            $activenode = $courseadmin->find_active_node();
+            if (!$activenode) {
+                return null;
+            }
+            $incourseadmin = true;
+        }
+
+        if ($activenode->key == 'courseadmin' || $incourseadmin) {
+            $courseoverflownode = $this->get_course_overflow_nodes();
+            if (is_null($courseoverflownode)) {
+                return null;
+            }
+            $menuarray = static::create_menu_element([$courseoverflownode]);
+            if ($activenode->key != 'courseadmin') {
+                $inmenu = false;
+                foreach ($menuarray as $key => $value) {
+                    if ($this->page->url->out(false) == $key) {
+                        $inmenu = true;
+                    }
+                }
+                if (!$inmenu) {
+                    return null;
+                }
+            }
+            $menuselect = new url_select($menuarray, $this->page->url, null);
+            $menuselect->set_label(get_string('browsecourseadminindex', 'course'), ['class' => 'sr-only']);
+            return $menuselect;
+        } else {
+            return $this->get_other_overflow_menu_data($activenode);
+        }
+    }
+
+    /**
+     * Gets overflow menu data for third party plugin settings.
+     *
+     * @param navigation_node $activenode The node to gather the children for to put into the overflow menu.
+     * @return url_select|null The overflow menu in a url_select object.
+     */
+    protected function get_other_overflow_menu_data(navigation_node $activenode): ?url_select {
+        if (!$activenode->has_action()) {
+            return null;
+        }
+
+        if (!$activenode->has_children()) {
+            return null;
+        }
+
+        // If the setting is extending the course navigation then the page being redirected to should be in the course context.
+        // It was decided on the issue that put this code here that plugins that extend the course navigation should have the pages
+        // that are redirected to, be in the course context or module context depending on which callback was used.
+        // Third part plugins were checked to see if any existing plugins had settings in a system context and none were found.
+        // The request of third party developers is to keep their settings within the specified context.
+        if ($this->page->context->contextlevel != CONTEXT_COURSE && $this->page->context->contextlevel != CONTEXT_MODULE) {
+            return null;
+        }
+
+        // These areas have their own code to retrieve added plugin navigation nodes.
+        if ($activenode->key == 'coursehome' || $activenode->key == 'questionbank' || $activenode->key == 'coursereports') {
+            return null;
+        }
+
+        $menunode = $this->page->settingsnav->find($activenode->key, null);
+
+        if (!$menunode instanceof navigation_node) {
+            return null;
+        }
+        // Loop through all children and try and find a match to the current url.
+        $matchednode = $this->nodes_match_current_url($menunode);
+        if (is_null($matchednode)) {
+            return null;
+        }
+        if (!isset($menunode) || !$menunode->has_children()) {
+            return null;
+        }
+        $selectdata = static::create_menu_element([$menunode], false);
+        $urlselect = new url_select($selectdata, $matchednode->action->out(false), null);
+        $urlselect->set_label(get_string('browsesettingindex', 'course'), ['class' => 'sr-only']);
+        return $urlselect;
     }
 
     /**
@@ -180,7 +555,34 @@ class secondary extends view {
         $nodes = $this->get_default_module_mapping();
 
         if ($mainnode) {
-            $this->add(get_string('module', 'course'), $this->page->url, null, null, 'modulepage');
+            $url = new \moodle_url('/mod/' . $this->page->activityname . '/view.php', ['id' => $this->page->cm->id]);
+            $setactive = $url->compare($this->page->url, URL_MATCH_BASE);
+            $node = $this->add(get_string('modulename', $this->page->activityname), $url, null, null, 'modulepage');
+            if ($setactive) {
+                $node->make_active();
+            }
+            // Add the initial nodes.
+            $nodesordered = $this->get_leaf_nodes($mainnode, $nodes);
+            $this->add_ordered_nodes($nodesordered);
+
+            // We have finished inserting the initial structure.
+            // Populate the menu with the rest of the nodes available.
+            $this->load_remaining_nodes($mainnode, $nodes);
+        }
+    }
+
+    /**
+     * Load the course category navigation.
+     */
+    protected function load_category_navigation(): void {
+        $settingsnav = $this->page->settingsnav;
+        $mainnode = $settingsnav->find('categorysettings', self::TYPE_CONTAINER);
+        $nodes = $this->get_default_category_mapping();
+
+        if ($mainnode) {
+            $url = new \moodle_url('/course/index.php', ['categoryid' => $this->context->instanceid]);
+            $this->add($this->context->get_context_name(), $url, self::TYPE_CONTAINER, null, 'categorymain');
+
             // Add the initial nodes.
             $nodesordered = $this->get_leaf_nodes($mainnode, $nodes);
             $this->add_ordered_nodes($nodesordered);
@@ -195,15 +597,17 @@ class secondary extends view {
      * Load the site admin navigation
      */
     protected function load_admin_navigation(): void {
+        global $PAGE, $SITE;
+
         $settingsnav = $this->page->settingsnav;
         $node = $settingsnav->find('root', self::TYPE_SITE_ADMIN);
         // We need to know if we are on the main site admin search page. Here the navigation between tabs are done via
         // anchors and page reload doesn't happen. On every nested admin settings page, the secondary nav needs to
         // exist as links with anchors appended in order to redirect back to the admin search page and the corresponding
-        // tab.
-        $isadminsearchpage = $this->page->pagetype === 'admin-search';
+        // tab. Note this value refers to being present on the page itself, before a search has been performed.
+        $isadminsearchpage = $PAGE->url->compare(new \moodle_url('/admin/search.php', ['query' => '']), URL_MATCH_PARAMS);
         if ($node) {
-            $siteadminnode = $this->add($node->text, "#link$node->key", null, null, 'siteadminnode');
+            $siteadminnode = $this->add(get_string('general'), "#link$node->key", null, null, 'siteadminnode');
             if ($isadminsearchpage) {
                 $siteadminnode->action = false;
                 $siteadminnode->tab = "#link$node->key";
@@ -219,11 +623,13 @@ class secondary extends view {
                     } else {
                         $child->action = new \moodle_url("/admin/search.php", [], "link$child->key");
                     }
-                    $this->add_node($child);
+                    $this->add_node(clone $child);
                 } else {
-                    $siteadminnode->add_node($child);
+                    $siteadminnode->add_node(clone $child);
                 }
             }
+        } else if ($this->page->course->id == $SITE->id) {
+            $this->load_course_navigation();
         }
     }
 
@@ -240,10 +646,10 @@ class secondary extends view {
             if (is_string($key)) {
                 $parentnode = $nodes[floor($key)] ?? null;
                 if ($parentnode) {
-                    $parentnode->add_node($node);
+                    $parentnode->add_node(clone $node);
                 }
             } else {
-                $this->add_node($node);
+                $this->add_node(clone $node);
             }
         }
     }
@@ -265,8 +671,236 @@ class secondary extends view {
         $leftover = array_diff($existingkeys, $populatedkeys);
         foreach ($leftover as $key) {
             if (!in_array($key, $flattenednodes) && $leftovernode = $completenode->get($key)) {
-                $this->add_node($leftovernode);
+                // Check for nodes with children and potentially no action to direct to.
+                if ($leftovernode->has_children()) {
+                    $leftovernode = $this->get_first_action_for_node($leftovernode);
+                }
+
+                // Confirm we have a valid object to add.
+                if ($leftovernode) {
+                    $this->add_node(clone $leftovernode);
+                }
             }
         }
+    }
+
+    /**
+     * Force certain secondary navigation nodes to be displayed in the "more" menu.
+     *
+     * @param array $defaultmoremenunodes Array with navigation node keys of the pre-defined nodes that
+     *                                    should be added into the "more" menu by default
+     * @param int|null $maxdisplayednodes The maximum limit of navigation nodes displayed in the secondary navigation
+     */
+    protected function force_nodes_into_more_menu(array $defaultmoremenunodes = [], ?int $maxdisplayednodes = null) {
+        // Counter of the navigation nodes that are initially displayed in the secondary nav
+        // (excludes the nodes from the "more" menu).
+        $displayednodescount = 0;
+        foreach ($this->children as $child) {
+            // Skip if the navigation node has been already forced into the "more" menu.
+            if ($child->forceintomoremenu) {
+                continue;
+            }
+            // If the navigation node is in the pre-defined list of nodes that should be added by default in the
+            // "more" menu or the maximum limit of displayed navigation nodes has been reached (if defined).
+            if (in_array($child->key, $defaultmoremenunodes) ||
+                    (!is_null($maxdisplayednodes) && $displayednodescount >= $maxdisplayednodes)) {
+                // Force the node and its children into the "more" menu.
+                $child->set_force_into_more_menu(true);
+                continue;
+            }
+            $displayednodescount++;
+        }
+    }
+
+    /**
+     * Remove navigation nodes that should not be displayed in the secondary navigation.
+     */
+    protected function remove_unwanted_nodes() {
+        foreach ($this->children as $child) {
+            if (!$child->showinsecondarynavigation) {
+                $child->remove();
+            }
+        }
+    }
+
+    /**
+     * Takes the given navigation nodes and searches for children and formats it all into an array in a format to be used by a
+     * url_select element.
+     *
+     * @param navigation_node[] $navigationnodes Navigation nodes to format into a menu.
+     * @param bool $forceheadings Whether the returned array should be forced to use headings.
+     * @return array|null A url select element for navigating through the navigation nodes.
+     */
+    public static function create_menu_element(array $navigationnodes, bool $forceheadings = false): ?array {
+        if (empty($navigationnodes)) {
+            return null;
+        }
+
+        // If one item, do we put this into a url_select?
+        if (count($navigationnodes) < 2) {
+            // Check if there are children.
+            $navnode = array_shift($navigationnodes);
+            $menudata = [];
+            if (!$navnode->has_children()) {
+                // Just one item.
+                if (!$navnode->has_action()) {
+                    return null;
+                }
+                $menudata[$navnode->action->out(false)] = static::format_node_text($navnode);
+            } else {
+                if (static::does_menu_need_headings($navnode) || $forceheadings) {
+                    // Let's do headings.
+                    $menudata = static::get_headings_nav_array($navnode);
+                } else {
+                    // Simple flat nav.
+                    $menudata = static::get_flat_nav_array($navnode);
+                }
+            }
+            return $menudata;
+        } else {
+            // We have more than one navigation node to handle. Put each node in it's own heading.
+            $menudata = [];
+            $titledata = [];
+            foreach ($navigationnodes as $navigationnode) {
+                if ($navigationnode->has_children()) {
+                    $menuarray = [];
+                    // Add a heading and flatten out everything else.
+                    if ($navigationnode->has_action()) {
+                        $menuarray[static::format_node_text($navigationnode)][$navigationnode->action->out(false)] =
+                            static::format_node_text($navigationnode);
+                        $menuarray[static::format_node_text($navigationnode)] += static::get_whole_tree_flat($navigationnode);
+                    } else {
+                        $menuarray[static::format_node_text($navigationnode)] = static::get_whole_tree_flat($navigationnode);
+                    }
+
+                    $titledata += $menuarray;
+                } else {
+                    // Add with no heading.
+                    if (!$navigationnode->has_action()) {
+                        return null;
+                    }
+                    $menudata[$navigationnode->action->out(false)] = static::format_node_text($navigationnode);
+                }
+            }
+            $menudata += [$titledata];
+            return $menudata;
+        }
+    }
+
+    /**
+     * Recursively goes through the provided navigation node and returns a flat version.
+     *
+     * @param navigation_node $navigationnode The navigationnode.
+     * @return array The whole tree flat.
+     */
+    protected static function get_whole_tree_flat(navigation_node $navigationnode): array {
+        $nodes = [];
+        foreach ($navigationnode->children as $child) {
+            if ($child->has_action()) {
+                $nodes[$child->action->out()] = $child->text;
+            }
+            if ($child->has_children()) {
+                $childnodes = static::get_whole_tree_flat($child);
+                $nodes = array_merge($nodes, $childnodes);
+            }
+        }
+        return $nodes;
+    }
+
+    /**
+     * Checks to see if the provided navigation node has children and determines if we want headings for a url select element.
+     *
+     * @param navigation_node  $navigationnode  The navigation node we are checking.
+     * @return bool Whether we want headings or not.
+     */
+    protected static function does_menu_need_headings(navigation_node $navigationnode): bool {
+        if (!$navigationnode->has_children()) {
+            return false;
+        }
+        foreach ($navigationnode->children as $child) {
+            if ($child->has_children()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Takes the navigation node and returns it in a flat fashion. This is not recursive.
+     *
+     * @param navigation_node $navigationnode The navigation node that we want to format into an array in a flat structure.
+     * @return array The flat navigation array.
+     */
+    protected static function get_flat_nav_array(navigation_node $navigationnode): array {
+        $menuarray = [];
+        if ($navigationnode->has_action()) {
+            $menuarray[$navigationnode->action->out(false)] = static::format_node_text($navigationnode);
+        }
+
+        foreach ($navigationnode->children as $child) {
+            if ($child->has_action()) {
+                $menuarray[$child->action->out(false)] = static::format_node_text($child);
+            }
+        }
+        return $menuarray;
+    }
+
+    /**
+     * For any navigation node that we have determined needs headings we return a more tree like array structure.
+     *
+     * @param navigation_node $navigationnode The navigation node to use for the formatted array structure.
+     * @return array The headings navigation array structure.
+     */
+    protected static function get_headings_nav_array(navigation_node $navigationnode): array {
+        $menublock = [];
+        // We know that this single node has headings, so grab this for the first heading.
+        $firstheading = [];
+        if ($navigationnode->has_action()) {
+            $firstheading[static::format_node_text($navigationnode)][$navigationnode->action->out(false)] =
+                static::format_node_text($navigationnode);
+            $firstheading[static::format_node_text($navigationnode)] += static::get_more_child_nodes($navigationnode, $menublock);
+        } else {
+            $firstheading[static::format_node_text($navigationnode)] = static::get_more_child_nodes($navigationnode, $menublock);
+        }
+         return [$firstheading + $menublock];
+    }
+
+    /**
+     * Recursively goes and gets all children nodes.
+     *
+     * @param navigation_node $node The node to get the children of.
+     * @param array $menublock Used to put all child nodes in its own container.
+     * @return array The additional child nodes.
+     */
+    protected static function get_more_child_nodes(navigation_node $node, array &$menublock): array {
+        $nodes = [];
+        foreach ($node->children as $child) {
+            if (!$child->has_children()) {
+                if (!$child->has_action()) {
+                    continue;
+                }
+                $nodes[$child->action->out(false)] = static::format_node_text($child);
+            } else {
+                $newarray = [];
+                if ($child->has_action()) {
+                    $newarray[static::format_node_text($child)][$child->action->out(false)] = static::format_node_text($child);
+                    $newarray[static::format_node_text($child)] += static::get_more_child_nodes($child, $menublock);
+                } else {
+                    $newarray[static::format_node_text($child)] = static::get_more_child_nodes($child, $menublock);
+                }
+                $menublock += $newarray;
+            }
+        }
+        return $nodes;
+    }
+
+    /**
+     * Returns the navigation node text in a string.
+     *
+     * @param navigation_node $navigationnode The navigationnode to return the text string of.
+     * @return string The navigation node text string.
+     */
+    protected static function format_node_text(navigation_node $navigationnode): string {
+        return (is_a($navigationnode->text, 'lang_string')) ? $navigationnode->text->out() : $navigationnode->text;
     }
 }

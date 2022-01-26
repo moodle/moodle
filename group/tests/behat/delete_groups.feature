@@ -15,8 +15,7 @@ Feature: Automatic deletion of groups and groupings
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group (without ID) |
@@ -26,7 +25,7 @@ Feature: Automatic deletion of groups and groupings
       | Group name | Group (with ID) |
       | Group ID number | An ID |
     And I press "Save changes"
-    And I follow "Groupings"
+    And I select "Groupings" from the "jump" singleselect
     And I press "Create grouping"
     And I set the following fields to these values:
       | Grouping name | Grouping (without ID) |
@@ -36,7 +35,7 @@ Feature: Automatic deletion of groups and groupings
       | Grouping name | Grouping (with ID) |
       | Grouping ID number | An ID |
     And I press "Save changes"
-    And I follow "Groups"
+    And I select "Groups" from the "jump" singleselect
 
   @javascript
   Scenario: Delete groups and groupings with and without ID numbers
@@ -48,7 +47,7 @@ Feature: Automatic deletion of groups and groupings
     And I press "Delete selected group"
     And I press "Yes"
     And the "groups" select box should not contain "Group (with ID) (0)"
-    And I follow "Groupings"
+    And I select "Groupings" from the "jump" singleselect
     And I click on "Delete" "link" in the "Grouping (without ID)" "table_row"
     And I press "Yes"
     And I should not see "Grouping (without ID)"
@@ -56,7 +55,7 @@ Feature: Automatic deletion of groups and groupings
     And I press "Yes"
     And I should not see "Grouping (with ID)"
 
-  @javascript
+  @javascript @skip_chrome_zerosize
   Scenario: Delete groups and groupings with and without ID numbers without the 'moodle/course:changeidnumber' capability
     Given I log out
     And I log in as "admin"
@@ -64,15 +63,14 @@ Feature: Automatic deletion of groups and groupings
      | moodle/course:changeidnumber | Prevent |
     And I log out
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     When I set the field "groups" to "Group (with ID) (0)"
     Then the "Delete selected group" "button" should be disabled
     And I set the field "groups" to "Group (without ID) (0)"
     And I press "Delete selected group"
     And I press "Yes"
     And I should not see "Group (without ID)"
-    And I follow "Groupings"
+    And I select "Groupings" from the "jump" singleselect
     And "Delete" "link" should not exist in the "Grouping (with ID)" "table_row"
     And I click on "Delete" "link" in the "Grouping (without ID)" "table_row"
     And I press "Yes"

@@ -55,7 +55,7 @@ $string['pathserrcreatedataroot'] = 'O programa de instalação não conseguiu c
 $string['pathshead'] = 'Confirmar caminhos';
 $string['pathsrodataroot'] = 'A pasta de dados não tem permissões de escrita.';
 $string['pathsroparentdataroot'] = 'A pasta ascendente <b>{$a->parent}</b> não tem permissões de escrita. O programa de instalação não conseguiu criar a pasta <b>{$a->dataroot}</b>.';
-$string['pathssubadmindir'] = 'Alguns servidores Web utilizam a pasta <strong>admin</strong> em URLs especiais de acesso a funcionalidades especiais, como é o caso de painéis de controlo. Algumas situações podem criar conflitos com a localização normal das páginas de administração do Moodle. Estes problemas podem ser resolvidos renomeando a pasta <strong>admin</strong> na instalação do Moodle e indicando aqui o novo nome a utilizar. Por exemplo:<br /><br /><b>moodleadmin</b><br /><br />Esta ação resolverá os problemas de acesso das hiperligações para as funcionalidades de administração do Moodle.';
+$string['pathssubadmindir'] = 'Alguns servidores Web utilizam a pasta <strong>admin</strong> em URLs especiais de acesso a funcionalidades especiais, como é o caso de painéis de controlo. Algumas situações podem criar conflitos com a localização normal das páginas de administração do Moodle. Estes problemas podem ser resolvidos renomeando a pasta <strong>admin</strong> na instalação do Moodle e indicando aqui o novo nome a utilizar. Exemplo:<br /><br /><b>moodleadmin</b><br /><br />Esta ação resolverá os problemas de acesso das hiperligações para as funcionalidades de administração do Moodle.';
 $string['pathssubdataroot'] = '<p>Pasta onde o Moodle irá armazenar todo o conteúdo de ficheiros enviados pelos utilizadores.</p>
 <p>Esta pasta deve ser legível e gravável pelo utilizador do servidor web (geralmente \'www-data\', \'nobody\', ou \'apache\').</p>
 <p>Não deve ser acessível diretamente através da web.</p>
@@ -75,5 +75,5 @@ $string['welcomep30'] = 'Esta versão do pacote <strong>{$a->installername}</str
 $string['welcomep40'] = 'Este pacote inclui o lançamento <strong>{$a->moodlerelease} ({$a->moodleversion})</strong> do Moodle .';
 $string['welcomep50'] = 'A utilização de todas as aplicações incluídas neste pacote é limitada pelas respetivas licenças. O pacote completo <strong>{$a->installername}</strong> é <ahref="https://www.opensource.org/docs/definition_plain.html">código aberto</a> e é distribuído nos termos da licença <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'As páginas seguintes irão acompanhá-lo através de algumas etapas simples para configurar e definir o <strong>Moodle</strong> no seu computador. Pode aceitar as configurações predefinidas ou, opcionalmente, alterá-las para adaptar às suas próprias necessidades.';
-$string['welcomep70'] = 'Clique no botão "Seguinte" para continuar a configuração do <strong>Moodle</strong>.';
+$string['welcomep70'] = 'Clique no botão \'Seguinte\' para continuar a configuração do <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Endereço web';

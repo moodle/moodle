@@ -19,7 +19,7 @@ Feature: Select file feature
       | Description | Test folder description |
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I click on "Save and display" "button"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I follow "Manage private files"
     And I click on "Add..." "button" in the "Files" "form_row"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
@@ -40,7 +40,7 @@ Feature: Select file feature
       | Description | Test folder description |
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I click on "Save and display" "button"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I follow "Manage private files"
     And I click on "Add..." "button" in the "Files" "form_row"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
@@ -61,7 +61,7 @@ Feature: Select file feature
       | Description | Test folder description |
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I click on "Save and display" "button"
-    And I follow "Dashboard" in the user menu
+    And I follow "Dashboard"
     And I follow "Manage private files"
     And I click on "Add..." "button" in the "Files" "form_row"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"

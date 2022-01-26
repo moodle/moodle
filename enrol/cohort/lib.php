@@ -105,21 +105,30 @@ class enrol_cohort_plugin extends enrol_plugin {
     public function add_instance($course, array $fields = null) {
         global $CFG;
 
-        if (!empty($fields['customint2']) && $fields['customint2'] == COHORT_CREATE_GROUP) {
-            // Create a new group for the cohort if requested.
-            $context = context_course::instance($course->id);
-            require_capability('moodle/course:managegroups', $context);
-            $groupid = enrol_cohort_create_new_group($course->id, $fields['customint1']);
-            $fields['customint2'] = $groupid;
+        // Allows multiple cohorts to be set on creation.
+        if (!empty($fields['customint1'])) {
+            $fields2 = $fields;
+            if (!is_array($fields['customint1'])) {
+                $fields['customint1'] = array($fields['customint1']);
+            }
+            foreach ($fields['customint1'] as $cid) {
+                $fields2['customint1'] = $cid;
+                if (!empty($fields['customint2']) && $fields['customint2'] == COHORT_CREATE_GROUP) {
+                    // Create a new group for the cohort if requested.
+                    $context = context_course::instance($course->id);
+                    require_capability('moodle/course:managegroups', $context);
+                    $groupid = enrol_cohort_create_new_group($course->id, $cid);
+                    $fields2['customint2'] = $groupid;
+                }
+                $result = parent::add_instance($course, $fields2);
+            }
+        } else {
+            $result = parent::add_instance($course, $fields);
         }
-
-        $result = parent::add_instance($course, $fields);
-
         require_once("$CFG->dirroot/enrol/cohort/locallib.php");
         $trace = new null_progress_trace();
         enrol_cohort_sync($trace, $course->id);
         $trace->finished();
-
         return $result;
     }
 
@@ -417,15 +426,11 @@ class enrol_cohort_plugin extends enrol_plugin {
      * @return bool
      */
     public function edit_instance_form($instance, MoodleQuickForm $mform, $coursecontext) {
-        global $DB;
-
-        $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'));
-        $mform->setType('name', PARAM_TEXT);
 
         $options = $this->get_status_options();
         $mform->addElement('select', 'status', get_string('status', 'enrol_cohort'), $options);
 
-        $options = ['contextid' => $coursecontext->id, 'multiple' => false];
+        $options = ['contextid' => $coursecontext->id, 'multiple' => true];
         $mform->addElement('cohort', 'customint1', get_string('cohort', 'cohort'), $options);
 
         if ($instance->id) {
@@ -456,31 +461,33 @@ class enrol_cohort_plugin extends enrol_plugin {
     public function edit_instance_validation($data, $files, $instance, $context) {
         global $DB;
         $errors = array();
-
+        // Allows multiple cohorts to be selected.
+        list($sql1, $params1) = $DB->get_in_or_equal($data['customint1'], SQL_PARAMS_NAMED);
         $params = array(
             'roleid' => $data['roleid'],
-            'customint1' => $data['customint1'],
             'courseid' => $data['courseid'],
             'id' => $data['id']
         );
-        $sql = "roleid = :roleid AND customint1 = :customint1 AND courseid = :courseid AND enrol = 'cohort' AND id <> :id";
+        $params = array_merge($params, $params1);
+        $sql = "roleid = :roleid AND customint1 $sql1 AND courseid = :courseid AND enrol = 'cohort' AND id <> :id";
         if ($DB->record_exists_select('enrol', $sql, $params)) {
-            $errors['roleid'] = get_string('instanceexists', 'enrol_cohort');
+            $errors['customint1'] = get_string('instanceexists', 'enrol_cohort');
         }
         $validstatus = array_keys($this->get_status_options());
         $validcohorts = array_keys($this->get_cohort_options($instance, $context));
         $validroles = array_keys($this->get_role_options($instance, $context));
         $validgroups = array_keys($this->get_group_options($context));
         $tovalidate = array(
-            'name' => PARAM_TEXT,
             'status' => $validstatus,
-            'customint1' => $validcohorts,
             'roleid' => $validroles,
             'customint2' => $validgroups
         );
         $typeerrors = $this->validate_param_types($data, $tovalidate);
         $errors = array_merge($errors, $typeerrors);
-
+        // Check that the cohorts passed are valid.
+        if (!empty(array_diff($data['customint1'], $validcohorts))) {
+            $errors['customint1'] = get_string('invaliddata', 'error');
+        }
         return $errors;
     }
 }

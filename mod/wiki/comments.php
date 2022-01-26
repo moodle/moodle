@@ -75,7 +75,7 @@ $event->add_record_snapshot('wiki_subwikis', $subwiki);
 $event->trigger();
 
 /// Print the page header
-$wikipage = new page_wiki_comments($wiki, $subwiki, $cm);
+$wikipage = new page_wiki_comments($wiki, $subwiki, $cm, 'modulepage');
 
 $wikipage->set_page($page);
 

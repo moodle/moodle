@@ -24,6 +24,14 @@
                 flex: 0 0 $mainwidth-oneblock;
                 max-width: $mainwidth-oneblock;
                 padding: 0 1rem 0 0;
+                #region-main {
+                    border: $card-border-width solid $card-border-color;
+                    padding: $card-spacer-x;
+
+                    @if $enable-rounded {
+                        @include border-radius($card-border-radius);
+                    }
+                }
             }
         }
         &.blocks-post {
@@ -141,13 +149,13 @@
 }
 
 @include media-breakpoint-up(sm) {
-    .dashboard-card-deck .dashboard-card {
+    .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
         width: calc(50% - #{$card-gutter});
     }
 }
 
 @include media-breakpoint-up(md) {
-    .dashboard-card-deck .dashboard-card {
+    .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
         width: calc(50% - #{$card-gutter});
     }
     .blocks-post,
@@ -159,7 +167,7 @@
 }
 
 @include media-breakpoint-up(lg) {
-    .dashboard-card-deck .dashboard-card {
+    .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
         width: calc(33.33% - #{$card-gutter});
     }
     .blocks-post,
@@ -171,13 +179,25 @@
 }
 
 @include media-breakpoint-up(xl) {
-    .dashboard-card-deck .dashboard-card {
+    .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
         width: calc(25% - #{$card-gutter});
     }
     .blocks-post,
     .blocks-pre {
         .dashboard-card-deck .dashboard-card {
             width: calc(33.33% - #{$card-gutter});
+        }
+    }
+}
+
+@media (min-width: 1360px) {
+    .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
+        width: calc(20% - #{$card-gutter});
+    }
+    .blocks-post,
+    .blocks-pre {
+        .dashboard-card-deck .dashboard-card {
+            width: calc(25% - #{$card-gutter});
         }
     }
 }

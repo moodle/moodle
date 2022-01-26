@@ -1,6 +1,9 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+* A new API function introduced to handle custom completion logic. Refer to completion/upgrade.txt for additional information.
+
 === 3.9 ===
 
 * The callback get_shortcuts() is now deprecated. Please use get_course_content_items and get_all_content_items instead.

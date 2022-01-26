@@ -75,7 +75,7 @@ if ($PAGE->user_allowed_editing() && $adminediting != -1) {
     $USER->editing = $adminediting;
 }
 $buttons = null;
-if ($PAGE->user_allowed_editing()) {
+if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
     $url = clone($PAGE->url);
     if ($PAGE->user_is_editing()) {
         $caption = get_string('blockseditoff');
@@ -140,13 +140,7 @@ if ($errormsg !== '') {
     echo $OUTPUT->notification($statusmsg, 'notifysuccess');
 }
 
-$path = array_reverse($settingspage->visiblepath);
-if (is_array($path)) {
-    $visiblename = join(' / ', $path);
-} else {
-    $visiblename = $path;
-}
-echo $OUTPUT->heading(get_string('admincategory', 'admin', $visiblename), 2);
+echo $OUTPUT->heading(get_string('admincategory', 'admin', $settingspage->visiblename), 2);
 
 echo html_writer::start_tag('form', array('action' => '', 'method' => 'post', 'id' => 'adminsettings'));
 echo html_writer::start_tag('div');

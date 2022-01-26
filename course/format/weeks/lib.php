@@ -45,6 +45,14 @@ class format_weeks extends core_courseformat\base {
         return true;
     }
 
+    public function uses_course_index() {
+        return true;
+    }
+
+    public function uses_indentation(): bool {
+        return false;
+    }
+
     /**
      * Generate the title for this section page
      * @return string the page title
@@ -93,6 +101,15 @@ class format_weeks extends core_courseformat\base {
             $endweekday = userdate($dates->end, $dateformat);
             return $weekday.' - '.$endweekday;
         }
+    }
+
+    /**
+     * Returns the name for the highlighted section.
+     *
+     * @return string The name for the highlighted section based on the given course format.
+     */
+    public function get_section_highlighted_name(): string {
+        return get_string('currentsection', 'format_weeks');
     }
 
     /**
@@ -154,6 +171,10 @@ class format_weeks extends core_courseformat\base {
         $ajaxsupport = new stdClass();
         $ajaxsupport->capable = true;
         return $ajaxsupport;
+    }
+
+    public function supports_components() {
+        return true;
     }
 
     /**
@@ -515,7 +536,7 @@ class format_weeks extends core_courseformat\base {
         $renderer = $PAGE->get_renderer('format_weeks');
 
         if (!($section instanceof section_info)) {
-            $modinfo = $this->get_modinfo();
+            $modinfo = course_modinfo::instance($this->courseid);
             $section = $modinfo->get_section_info($section->section);
         }
         $elementclass = $this->get_output_classname('content\\section\\availability');

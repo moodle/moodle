@@ -33,7 +33,7 @@ class Neuron implements Node
 
     public function __construct(?ActivationFunction $activationFunction = null)
     {
-        $this->activationFunction = $activationFunction ?: new Sigmoid();
+        $this->activationFunction = $activationFunction ?? new Sigmoid();
     }
 
     public function addSynapse(Synapse $synapse): void

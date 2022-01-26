@@ -68,14 +68,12 @@ Feature: We can use Single view
     And I set the field "Exclude for Test assignment four" to "1"
     And I press "Save"
     Then I should see "Grades were set for 2 items"
-    And I press "Continue"
     And the field "Exclude for Test assignment four" matches value "1"
     And the field "Grade for Test assignment one" matches value "10.00"
     And I set the following fields to these values:
         | Test grade item | 45 |
     And I press "Save"
     Then I should see "Grades were set for 1 items"
-    And I press "Continue"
     And the field "Grade for Test grade item" matches value "45.00"
     And the field "Grade for Course total" matches value "55.00"
     And I click on "Show grades for Test assignment three" "link"
@@ -86,14 +84,12 @@ Feature: We can use Single view
     And I set the field "Exclude for Jane, Nina, Niamh, Cholmondely" to "1"
     And I press "Save"
     Then I should see "Grades were set for 2 items"
-    And I press "Continue"
     And the field "Grade for Ann, Jill, Grainne, Beauchamp" matches value "12.05"
     And the field "Exclude for Jane, Nina, Niamh, Cholmondely" matches value "1"
     And I select "new grade item 1" from the "Select grade item..." singleselect
     And I set the field "Grade for Ann, Jill, Grainne, Beauchamp" to "Very good"
     And I press "Save"
     Then I should see "Grades were set for 1 items"
-    And I press "Continue"
     And the following should exist in the "generaltable" table:
         | First name (Alternate name) Surname | Grade |
         | Ann, Jill, Grainne, Beauchamp | Very good |

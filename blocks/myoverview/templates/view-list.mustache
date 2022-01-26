@@ -29,7 +29,7 @@
                 "fullname": "course 3",
                 "hasprogress": true,
                 "progress": 10,
-                "coursecategory": "Miscellaneous",
+                "coursecategory": "Category 1",
                 "visible": true
             }
         ]
@@ -37,55 +37,55 @@
 }}
 
 <ul class="list-group">
-{{#courses}}
-    <li class="list-group-item course-listitem"
-        data-region="course-content"
-        data-course-id="{{{id}}}">
-        <div class="row">
-            <div class="{{#hasprogress}}col-md-6{{/hasprogress}}{{^hasprogress}}col-md-11 col-md-11{{/hasprogress}} d-flex align-items-center">
-                <div>
-                    <div class="text-muted muted d-flex flex-wrap">
-                        {{#showcoursecategory}}
-                            <span class="sr-only">
-                                {{#str}}aria:coursecategory, core_course{{/str}}
-                            </span>
-                            <span class="categoryname">
-                                {{{coursecategory}}}
-                            </span>
-                        {{/showcoursecategory}}
-                        {{#showshortname}}
+    {{#courses}}
+        <li class="list-group-item course-listitem"
+            data-region="course-content"
+            data-course-id="{{{id}}}">
+            <div class="row">
+                <div class="{{#hasprogress}}col-md-6{{/hasprogress}}{{^hasprogress}}col-md-11 col-md-11{{/hasprogress}} d-flex align-items-center">
+                    <div>
+                        <div class="text-muted muted d-flex flex-wrap">
                             {{#showcoursecategory}}
-                                <div class="pl-1 pr-1">|</div>
+                                <span class="sr-only">
+                                    {{#str}}aria:coursecategory, core_course{{/str}}
+                                </span>
+                                <span class="categoryname">
+                                    {{{coursecategory}}}
+                                </span>
                             {{/showcoursecategory}}
-                        <span class="sr-only">
-                            {{#str}}aria:courseshortname, core_course{{/str}}
-                        </span>
-                        <div>{{{shortname}}}</div>
-                        {{/showshortname}}
-                    </div>
-                    <a href="{{viewurl}}" class="aalink coursename">
-                        {{> core_course/favouriteicon }}
-                        <span class="sr-only">
-                            {{#str}}aria:coursename, core_course{{/str}}
-                        </span>
-                        {{{fullname}}}
-                    </a>
-                    {{^visible}}
-                        <div class="d-flex flex-wrap">
-                            <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                            {{#showshortname}}
+                                {{#showcoursecategory}}
+                                    <div class="pl-1 pr-1">|</div>
+                                {{/showcoursecategory}}
+                                <span class="sr-only">
+                                    {{#str}}aria:courseshortname, core_course{{/str}}
+                                </span>
+                                <div>{{{shortname}}}</div>
+                            {{/showshortname}}
                         </div>
-                    {{/visible}}
+                        <a href="{{viewurl}}" class="aalink coursename">
+                            {{> core_course/favouriteicon }}
+                            <span class="sr-only">
+                                {{#str}}aria:coursename, core_course{{/str}}
+                            </span>
+                            {{{fullname}}}
+                        </a>
+                        {{^visible}}
+                            <div class="d-flex flex-wrap">
+                                <span class="badge badge-info">{{#str}} hiddenfromstudents {{/str}}</span>
+                            </div>
+                        {{/visible}}
+                    </div>
+                </div>
+                {{#hasprogress}}
+                    <div class="col-md-5 pt-1">
+                        {{> block_myoverview/progress-bar}}
+                    </div>
+                {{/hasprogress}}
+                <div class="col-md-1 p-0 d-flex">
+                    {{> block_myoverview/course-action-menu }}
                 </div>
             </div>
-            {{#hasprogress}}
-            <div class="col-md-5 pt-1">
-                {{> block_myoverview/progress-bar}}
-            </div>
-            {{/hasprogress}}
-            <div class="col-md-1 p-0 d-flex">
-                {{> block_myoverview/course-action-menu }}
-            </div>
-        </div>
-    </li>
-{{/courses}}
+        </li>
+    {{/courses}}
 </ul>

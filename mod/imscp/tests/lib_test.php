@@ -22,7 +22,7 @@
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace mod_imscp;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/imscp/lib.php');
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_imscp_lib_testcase extends advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     public function test_export_contents() {
         global $DB, $USER;
@@ -80,7 +80,7 @@ class mod_imscp_lib_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
         $imscp = $this->getDataGenerator()->create_module('imscp', array('course' => $course->id),
                                                             array('completion' => 2, 'completionview' => 1));
-        $context = context_module::instance($imscp->cmid);
+        $context = \context_module::instance($imscp->cmid);
         $cm = get_coursemodule_from_instance('imscp', $imscp->id);
 
         // Trigger and capture the event.
@@ -102,7 +102,7 @@ class mod_imscp_lib_testcase extends advanced_testcase {
         $this->assertNotEmpty($event->get_name());
 
         // Check completion status.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completiondata = $completion->get_data($cm);
         $this->assertEquals(1, $completiondata->completionstate);
     }
@@ -255,7 +255,7 @@ class mod_imscp_lib_testcase extends advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm);
 
         // Create an action factory.
@@ -294,7 +294,7 @@ class mod_imscp_lib_testcase extends advanced_testcase {
             \core_completion\api::COMPLETION_EVENT_TYPE_DATE_COMPLETION_EXPECTED);
 
         // Mark the activity as completed.
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->set_module_viewed($cm, $student->id);
 
         // Create an action factory.
@@ -316,7 +316,7 @@ class mod_imscp_lib_testcase extends advanced_testcase {
      * @return bool|calendar_event
      */
     private function create_action_event($courseid, $instanceid, $eventtype) {
-        $event = new stdClass();
+        $event = new \stdClass();
         $event->name = 'Calendar event';
         $event->modulename  = 'imscp';
         $event->courseid = $courseid;
@@ -325,6 +325,6 @@ class mod_imscp_lib_testcase extends advanced_testcase {
         $event->eventtype = $eventtype;
         $event->timestart = time();
 
-        return calendar_event::create($event);
+        return \calendar_event::create($event);
     }
 }

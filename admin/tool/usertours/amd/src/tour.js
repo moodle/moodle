@@ -21,11 +21,21 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * A list of steps.
+ *
+ * @typedef {Object[]} StepList
+ * @property {Number} stepId The id of the step in the database
+ * @property {Number} position The position of the step within the tour (zero-indexed)
+ */
+
 import $ from 'jquery';
 import * as Aria from 'core/aria';
 import Popper from 'core/popper';
 import {dispatchEvent} from 'core/event_dispatcher';
 import {eventTypes} from './events';
+import {get_string as getString} from 'core/str';
+import {prefetchStrings} from 'core/prefetch';
 
 /**
  * A user tour.
@@ -71,6 +81,11 @@ const Tour = class {
             this.storage = false;
             this.storageKey = '';
         }
+
+        prefetchStrings('tool_usertours', [
+            'nextstep_sequence',
+            'skip_tour'
+        ]);
 
         return this;
     }
@@ -308,19 +323,6 @@ const Tour = class {
     }
 
     /**
-     * Is the step the first step number?
-     *
-     * @method  isFirstStep
-     * @param   {Number}   stepNumber  Step number to test
-     * @return  {Boolean}               Whether the step is the first step
-     */
-    isFirstStep(stepNumber) {
-        let previousStepNumber = this.getPreviousStepNumber(stepNumber);
-
-        return previousStepNumber === null;
-    }
-
-    /**
      * Is this step potentially visible?
      *
      * @method  isStepPotentiallyVisible
@@ -350,6 +352,26 @@ const Tour = class {
 
         // Not theoretically, or actually visible.
         return false;
+    }
+
+    /**
+     * Get potentially visible steps in a tour.
+     *
+     * @returns {StepList} A list of ordered steps
+     */
+    getPotentiallyVisibleSteps() {
+        let position = 1;
+        let result = [];
+        // Checking the total steps.
+        for (let stepNumber = 0; stepNumber < this.steps.length; stepNumber++) {
+            const stepConfig = this.getStepConfig(stepNumber);
+            if (this.isStepPotentiallyVisible(stepConfig)) {
+                result[stepNumber] = {stepId: stepConfig.stepid, position: position};
+                position++;
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -569,13 +591,10 @@ const Tour = class {
      */
     processStepListeners(stepConfig) {
         this.listeners.push(
-        // Next/Previous buttons.
+        // Next button.
         {
             node: this.currentStepNode,
             args: ['click', '[data-role="next"]', $.proxy(this.next, this)]
-        }, {
-            node: this.currentStepNode,
-            args: ['click', '[data-role="previous"]', $.proxy(this.previous, this)]
         },
 
         // Close and end tour buttons.
@@ -659,24 +678,39 @@ const Tour = class {
         template.find('[data-placeholder="body"]')
             .html(stepConfig.body);
 
-        // Is this the first step?
-        if (this.isFirstStep(stepConfig.stepNumber)) {
-            template.find('[data-role="previous"]').hide();
-        } else {
-            template.find('[data-role="previous"]').prop('disabled', false);
-        }
+        // Buttons.
+        const nextBtn = template.find('[data-role="next"]');
+        const endBtn = template.find('[data-role="end"]');
 
         // Is this the final step?
         if (this.isLastStep(stepConfig.stepNumber)) {
-            template.find('[data-role="next"]').hide();
-            template.find('[data-role="end"]').removeClass("btn-secondary").addClass("btn-primary");
+            nextBtn.hide();
+            endBtn.removeClass("btn-secondary").addClass("btn-primary");
         } else {
-            template.find('[data-role="next"]').prop('disabled', false);
+            nextBtn.prop('disabled', false);
+            // Use Skip tour label for the End tour button.
+            getString('skip_tour', 'tool_usertours').then(value => {
+                endBtn.html(value);
+                return;
+            }).catch();
         }
 
-        template.find('[data-role="previous"]').attr('role', 'button');
-        template.find('[data-role="next"]').attr('role', 'button');
-        template.find('[data-role="end"]').attr('role', 'button');
+        nextBtn.attr('role', 'button');
+        endBtn.attr('role', 'button');
+
+        if (this.originalConfiguration.displaystepnumbers) {
+            const stepsPotentiallyVisible = this.getPotentiallyVisibleSteps();
+            const totalStepsPotentiallyVisible = stepsPotentiallyVisible.length;
+            const position = stepsPotentiallyVisible[stepConfig.stepNumber].position;
+            if (totalStepsPotentiallyVisible > 1) {
+                // Change the label of the Next button to include the sequence.
+                getString('nextstep_sequence', 'tool_usertours',
+                    {position: position, total: totalStepsPotentiallyVisible}).then(value => {
+                    nextBtn.html(value);
+                    return;
+                }).catch();
+            }
+        }
 
         // Replace the template with the updated version.
         stepConfig.template = template;
@@ -1173,11 +1207,11 @@ const Tour = class {
         let viewportHeight = $(window).height();
         let targetNode = this.getStepTarget(stepConfig);
 
-        parent = $(window);
+        let scrollParent = $(window);
         if (targetNode.parents('[data-usertour="scroller"]').length) {
-            parent = targetNode.parents('[data-usertour="scroller"]');
+            scrollParent = targetNode.parents('[data-usertour="scroller"]');
         }
-        let scrollTop = parent.scrollTop();
+        let scrollTop = scrollParent.scrollTop();
 
         if (stepConfig.placement === 'top') {
             // If the placement is top, center scroll at the top of the target.
@@ -1401,7 +1435,8 @@ const Tour = class {
 
                 let drawertop = 0;
                 if (targetNode.parents('[data-usertour="scroller"]').length) {
-                    drawertop = targetNode.parents('[data-usertour="scroller"]').scrollTop();                background.css({
+                    drawertop = targetNode.parents('[data-usertour="scroller"]').scrollTop();
+                    background.css({
                        position: 'fixed'
                     });
                 }
@@ -1421,7 +1456,7 @@ const Tour = class {
                     });
                 }
 
-                if ((targetNode.offset().top  + drawertop) < buffer) {
+                if ((targetNode.offset().top + drawertop) < buffer) {
                     background.css({
                         height: targetNode.outerHeight() + targetNode.offset().top + buffer,
                         top: targetNode.offset().top,

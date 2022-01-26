@@ -16,6 +16,7 @@ Feature: Course summary block used in a course
       | user        | course | role    |
       | student1    | C101   | student |
       | teacher1    | C101   | editingteacher |
+    And I enable "course_summary" "block" plugin
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Course/site summary" block

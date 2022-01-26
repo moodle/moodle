@@ -31,7 +31,7 @@ Feature: We can bulk insert grades for students in a course
 
   Scenario: I can bulk insert grades and check their override flags for grade view.
     Given I am on the "Test assignment one" "assign activity" page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
@@ -44,7 +44,6 @@ Feature: We can bulk insert grades for students in a course
     And I set the field "Perform bulk insert" to "1"
     And I set the field "Insert value" to "1.0"
     And I press "Save"
-    And I press "Continue"
     And the field "Grade for Student 1" matches value "50.00"
     And the field "Override for Student 1" matches value "0"
     And the field "Grade for Student 2" matches value "1.00"
@@ -57,7 +56,6 @@ Feature: We can bulk insert grades for students in a course
     And I set the field "Perform bulk insert" to "1"
     And I set the field "Insert value" to "2.0"
     And I press "Save"
-    And I press "Continue"
     And the field "Grade for Student 1" matches value "2.00"
     And the field "Override for Student 1" matches value "1"
     And the field "Grade for Student 2" matches value "2.00"
@@ -69,7 +67,7 @@ Feature: We can bulk insert grades for students in a course
 
   Scenario: I can bulk insert grades and check their override flags for user view.
     Given I am on the "Test assignment two" "assign activity" page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
@@ -86,7 +84,6 @@ Feature: We can bulk insert grades for students in a course
     And I set the field "Perform bulk insert" to "1"
     And I set the field "Insert value" to "1.0"
     And I press "Save"
-    And I press "Continue"
     And the field "Grade for Test assignment two" matches value "50.00"
     And the field "Override for Test assignment two" matches value "0"
     And the field "Grade for Test assignment one" matches value "1.00"

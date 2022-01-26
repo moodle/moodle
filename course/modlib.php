@@ -67,11 +67,15 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     if (isset($moduleinfo->cmidnumber)) {
         $newcm->idnumber         = $moduleinfo->cmidnumber;
     }
+    if (isset($moduleinfo->downloadcontent)) {
+        $newcm->downloadcontent = $moduleinfo->downloadcontent;
+    }
     $newcm->groupmode        = $moduleinfo->groupmode;
     $newcm->groupingid       = $moduleinfo->groupingid;
     $completion = new completion_info($course);
     if ($completion->is_enabled()) {
         $newcm->completion                = $moduleinfo->completion;
+        $newcm->completionpassgrade       = $moduleinfo->completionpassgrade ?? 0;
         if ($moduleinfo->completiongradeitemnumber === '') {
             $newcm->completiongradeitemnumber = null;
         } else {
@@ -212,7 +216,7 @@ function plugin_extend_coursemodule_edit_post_actions($moduleinfo, $course) {
  * @return object moduleinfo update with grading management info
  */
 function edit_module_post_actions($moduleinfo, $course) {
-    global $CFG;
+    global $CFG, $USER;
     require_once($CFG->libdir.'/gradelib.php');
 
     $modcontext = context_module::instance($moduleinfo->coursemodule);
@@ -385,6 +389,18 @@ function edit_module_post_actions($moduleinfo, $course) {
     // Allow plugins to extend the course module form.
     $moduleinfo = plugin_extend_coursemodule_edit_post_actions($moduleinfo, $course);
 
+    if (!empty($moduleinfo->coursecontentnotification)) {
+        // Schedule adhoc-task for delivering the course content updated notification.
+        if ($course->visible && $moduleinfo->visible) {
+            $adhocktask = new \core_course\task\content_notification_task();
+            $adhocktask->set_custom_data(
+                ['update' => $moduleinfo->update, 'cmid' => $moduleinfo->coursemodule,
+                'courseid' => $course->id, 'userfrom' => $USER->id]);
+            $adhocktask->set_component('course');
+            \core\task\manager::queue_adhoc_task($adhocktask, true);
+        }
+    }
+
     return $moduleinfo;
 }
 
@@ -432,6 +448,8 @@ function set_moduleinfo_defaults($moduleinfo) {
     if (isset($moduleinfo->completionusegrade) && $moduleinfo->completionusegrade) {
         $moduleinfo->completiongradeitemnumber = 0;
     } else if (!isset($moduleinfo->completiongradeitemnumber)) {
+        // If there is no gradeitemnumber set, make sure to disable completionpassgrade.
+        $moduleinfo->completionpassgrade = 0;
         $moduleinfo->completiongradeitemnumber = null;
     }
 
@@ -443,6 +461,10 @@ function set_moduleinfo_defaults($moduleinfo) {
     }
     if (!isset($moduleinfo->visibleoncoursepage)) {
         $moduleinfo->visibleoncoursepage = 1;
+    }
+
+    if (!isset($moduleinfo->downloadcontent)) {
+        $moduleinfo->downloadcontent = DOWNLOAD_COURSE_CONTENT_ENABLED;
     }
 
     return $moduleinfo;
@@ -544,6 +566,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         // the activity may be locked; if so, these should not be updated.
         if (!empty($moduleinfo->completionunlocked)) {
             $cm->completion = $moduleinfo->completion;
+            $cm->completionpassgrade = $moduleinfo->completionpassgrade ?? 0;
             if ($moduleinfo->completiongradeitemnumber === '') {
                 $cm->completiongradeitemnumber = null;
             } else {
@@ -646,6 +669,10 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
     }
 
+    if (isset($moduleinfo->downloadcontent)) {
+        set_downloadcontent($moduleinfo->coursemodule, $moduleinfo->downloadcontent);
+    }
+
     // Update module tags.
     if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
         core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
@@ -712,8 +739,10 @@ function get_moduleinfo_data($cm, $course) {
     $data->completionview     = $cm->completionview;
     $data->completionexpected = $cm->completionexpected;
     $data->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
+    $data->completionpassgrade = $cm->completionpassgrade;
     $data->completiongradeitemnumber = $cm->completiongradeitemnumber;
     $data->showdescription    = $cm->showdescription;
+    $data->downloadcontent    = $cm->downloadcontent;
     $data->tags               = core_tag_tag::get_item_tags_array('core', 'course_modules', $cm->id);
     if (!empty($CFG->enableavailability)) {
         $data->availabilityconditionsjson = $cm->availability;
@@ -813,6 +842,7 @@ function prepare_new_moduleinfo_data($course, $modulename, $section) {
     $data->id               = '';
     $data->instance         = '';
     $data->coursemodule     = '';
+    $data->downloadcontent  = DOWNLOAD_COURSE_CONTENT_ENABLED;
 
     // Apply completion defaults.
     $defaults = \core_completion\manager::get_default_completion($course, $module);

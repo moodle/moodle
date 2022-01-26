@@ -19,9 +19,10 @@ Feature: Add blocks to dashboard page
     And I log in as "student1"
 
   Scenario: Add blocks to page
-    When I press "Customise this page"
+    When I turn editing mode on
     And I add the "Latest announcements" block
+    And I turn editing mode off
     Then I should see "Latest announcements" in the "Latest announcements" "block"
     And I should see "Latest badges" in the "Latest badges" "block"
     And I should see "Calendar" in the "Calendar" "block"
-    And I should see "Upcoming events" in the "Upcoming events" "block"
+    And I should not see "Upcoming events"

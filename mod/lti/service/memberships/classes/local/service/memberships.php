@@ -544,6 +544,7 @@ class memberships extends \mod_lti\local\ltiservice\service_base {
         if (isset($tool->{$this->get_component_id()})) {
             if ($tool->{$this->get_component_id()} == parent::SERVICE_ENABLED && $this->is_used_in_context($typeid, $courseid)) {
                 $launchparameters['context_memberships_url'] = '$ToolProxyBinding.memberships.url';
+                $launchparameters['context_memberships_v2_url'] = '$ToolProxyBinding.memberships.url';
                 $launchparameters['context_memberships_versions'] = '1.0,2.0';
             }
         }

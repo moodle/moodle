@@ -23,7 +23,6 @@
  */
 
 namespace core_question\bank\search;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Question bank search class to allow searching/filtering by tags on a question.
@@ -32,17 +31,23 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tag_condition extends condition {
+
     /** @var string SQL fragment to add to the where clause. */
     protected $where;
+
     /** @var string SQL fragment to add to the where clause. */
     protected $contexts;
+
     /** @var array List of IDs for tags that have been selected in the form. */
     protected $selectedtagids;
 
     /**
      * Constructor.
-     * @param context[] $contexts List of contexts to show tags from
+     *
+     * @param array $contexts List of contexts to show tags from
      * @param int[] $selectedtagids List of IDs for tags to filter by.
+     * @throws \coding_exception
+     * @throws \dml_exception
      */
     public function __construct(array $contexts, array $selectedtagids = []) {
         global $DB;
@@ -118,6 +123,6 @@ class tag_condition extends condition {
             'tagoptions' => $tagoptions
         ];
 
-        echo $OUTPUT->render_from_template('core_question/tag_condition', $context);
+        return $OUTPUT->render_from_template('core_question/tag_condition', $context);
     }
 }

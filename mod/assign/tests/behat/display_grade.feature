@@ -28,14 +28,12 @@ Feature: Check that the assignment grade can be updated correctly
       | markingworkflow  | 1                           |
       | submissiondrafts | 0                           |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    Then I navigate to "View all submissions" in current page administration
+    Then I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
-    And I set the field "Notify students" to "0"
+    And I set the field "Notify student" to "0"
     And I press "Save changes"
-    And I click on "Edit settings" "link"
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     And "Student 1" row "Grade" column of "generaltable" table should contain "50.00"
 
   @javascript
@@ -64,12 +62,10 @@ Feature: Check that the assignment grade can be updated correctly
       | teamsubmission   | 1                           |
       | groupmode        | 0                           |
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    When I navigate to "View all submissions" in current page administration
+    When I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
-    And I set the field "Notify students" to "0"
+    And I set the field "Notify student" to "0"
     And I press "Save changes"
-    And I click on "Edit settings" "link"
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     Then "Student 1" row "Grade" column of "generaltable" table should contain "50.00"

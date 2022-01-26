@@ -21,13 +21,13 @@ Feature: Managers can create courses
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Latest announcements" block
     And I am on the Announcements "forum activity" page
-    And "Add a new topic" "link" should exist
+    And "Add discussion topic" "link" should exist
     And "Subscription mode > Forced subscription" "link" should not exist in current page administration
     And "Subscription mode > Forced subscription" "text" should exist in current page administration
     And I log out
     And I am on the Announcements "forum activity" page logged in as student1
     And "Add a new topic" "link" should not exist
-    And "Forced subscription" "text" should exist in current page administration
+    And "Forced subscription" "text" should exist
 
   Scenario: Create a course from the management interface and return to it
     Given the following "courses" exist:
@@ -36,7 +36,7 @@ Feature: Managers can create courses
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Categories" management page
-    And I click on category "Miscellaneous" in the management interface
+    And I click on category "Category 1" in the management interface
     And I should see the "Course categories and courses" management page
     And I click on "Create new course" "link" in the "#course-listing" "css_element"
     When I set the following fields to these values:
@@ -91,5 +91,50 @@ Feature: Managers can create courses
       | Course short name | myfirstcourse |
     And I press "Save and display"
     And I follow "Participants"
-    Then I should see "Kevin the"
+    Then I should see "My first course"
+    And I should see "Participants"
+
+  Scenario: Creators' role in new courses setting behavior
+    Given the following "users" exist:
+      | username  | firstname | lastname | email          |
+      | kevin  | Kevin   | the        | kevin@example.com |
+    And the following "system role assigns" exist:
+      | user   | role    | contextlevel |
+      | kevin  | coursecreator | System       |
+    And I log in as "admin"
+    And I set the following administration settings values:
+      | Creators' role in new courses | Non-editing teacher |
+    And I log out
+    And I log in as "kevin"
+    And I am on site homepage
+    When I press "Add a new course"
+    And I set the following fields to these values:
+      | Course full name  | My first course |
+      | Course short name | myfirstcourse |
+    And I press "Save and display"
+    And I click on "Participants" "link"
+    Then I should see "Non-editing teacher" in the "Kevin the" "table_row"
+
+  @javascript
+  Scenario: Create a course as admin
+    Given I log in as "admin"
+    And the following config values are set as admin:
+      | enroladminnewcourse | 0 |
+    And I navigate to "Courses > Add a new course" in site administration
+    And I set the following fields to these values:
+      | Course full name  | My first course |
+      | Course short name | myfirstcourse |
+    And I press "Save and display"
+    And I navigate to course participants
+    Then I should not see "Teacher"
+    And I should see "Nothing to display"
+    And the following config values are set as admin:
+      | enroladminnewcourse | 1 |
+    And I navigate to "Courses > Add a new course" in site administration
+    And I set the following fields to these values:
+      | Course full name  | My second course |
+      | Course short name | mysecondcourse |
+    And I press "Save and display"
+    And I navigate to course participants
     And I should see "Teacher"
+    And I should not see "Nothing to display"

@@ -102,12 +102,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_admin\local\settings\linkable_settings_page;
+
 defined('MOODLE_INTERNAL') || die();
 
 /// Add libraries
 require_once($CFG->libdir.'/ddllib.php');
 require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/messagelib.php');
+
+// Add classes, traits, and interfaces which should be autoloaded.
+// The autoloader is configured late in setup.php, after ABORT_AFTER_CONFIG.
+// This is also required where the setup system is not included at all.
+require_once($CFG->dirroot.'/'.$CFG->admin.'/classes/local/settings/linkable_settings_page.php');
 
 define('INSECURE_DATAROOT_WARNING', 1);
 define('INSECURE_DATAROOT_ERROR', 2);
@@ -770,7 +777,7 @@ interface parentable_part_of_admin_tree extends part_of_admin_tree {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_category implements parentable_part_of_admin_tree {
+class admin_category implements parentable_part_of_admin_tree, linkable_settings_page {
 
     /** @var part_of_admin_tree[] An array of part_of_admin_tree objects that are this object's children */
     protected $children;
@@ -809,6 +816,20 @@ class admin_category implements parentable_part_of_admin_tree {
         $this->name        = $name;
         $this->visiblename = $visiblename;
         $this->hidden      = $hidden;
+    }
+
+    /**
+     * Get the URL to view this settings page.
+     *
+     * @return moodle_url
+     */
+    public function get_settings_page_url(): moodle_url {
+        return new moodle_url(
+            '/admin/category.php',
+            [
+                'category' => $this->name,
+            ]
+        );
     }
 
     /**
@@ -1192,7 +1213,7 @@ class admin_root extends admin_category {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_externalpage implements part_of_admin_tree {
+class admin_externalpage implements part_of_admin_tree, linkable_settings_page {
 
     /** @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;
@@ -1240,6 +1261,15 @@ class admin_externalpage implements part_of_admin_tree {
         }
         $this->hidden = $hidden;
         $this->context = $context;
+    }
+
+    /**
+     * Get the URL to view this settings page.
+     *
+     * @return moodle_url
+     */
+    public function get_settings_page_url(): moodle_url {
+        return new moodle_url($this->url);
     }
 
     /**
@@ -1413,7 +1443,7 @@ class admin_settingdependency {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_settingpage implements part_of_admin_tree {
+class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
 
     /** @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;
@@ -1463,6 +1493,20 @@ class admin_settingpage implements part_of_admin_tree {
         }
         $this->hidden      = $hidden;
         $this->context     = $context;
+    }
+
+    /**
+     * Get the URL to view this page.
+     *
+     * @return moodle_url
+     */
+    public function get_settings_page_url(): moodle_url {
+        return new moodle_url(
+            '/admin/settings.php',
+            [
+                'section' => $this->name,
+            ]
+        );
     }
 
     /**
@@ -3879,6 +3923,9 @@ class admin_setting_configduration extends admin_setting {
         if ($this->validatefunction) {
             return call_user_func($this->validatefunction, $data);
         } else {
+            if ($data < 0) {
+                return get_string('errorsetting', 'admin');
+            }
             return '';
         }
     }
@@ -3964,9 +4011,6 @@ class admin_setting_configduration extends admin_setting {
         }
 
         $seconds = (int)($data['v']*$data['u']);
-        if ($seconds < 0) {
-            return get_string('errorsetting', 'admin');
-        }
 
         // Validate the new setting.
         $error = $this->validate_setting($seconds);
@@ -4793,6 +4837,29 @@ class admin_setting_sitesettext extends admin_setting_configtext {
     }
 }
 
+
+/**
+ * This type of field should be used for mandatory config settings.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_requiredtext extends admin_setting_configtext {
+
+    /**
+     * Validate data before storage.
+     *
+     * @param string $data The string to be validated.
+     * @return bool|string true for success or error string if invalid.
+     */
+    public function validate($data) {
+        $cleaned = clean_param($data, PARAM_TEXT);
+        if ($cleaned === '') {
+            return get_string('required');
+        }
+
+        return parent::validate($data);
+    }
+}
 
 /**
  * Special text editor for site description.
@@ -8792,7 +8859,7 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
 
     $visiblepathtosection = array_reverse($extpage->visiblepath);
 
-    if ($PAGE->user_allowed_editing()) {
+    if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
         if ($PAGE->user_is_editing()) {
             $caption = get_string('blockseditoff');
             $url = new moodle_url($PAGE->url, array('adminedit'=>'0', 'sesskey'=>sesskey()));
@@ -9764,33 +9831,8 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
 
              // Allow rest:use capability for authenticated user.
              $this->set_protocol_cap(true);
-
          } else {
-             //disable web service system if no other services are enabled
-             $otherenabledservices = $DB->get_records_select('external_services',
-                     'enabled = :enabled AND (shortname != :shortname OR shortname IS NULL)', array('enabled' => 1,
-                         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
-             if (empty($otherenabledservices)) {
-                 set_config('enablewebservices', false);
-
-                 // Also disable REST server.
-                 $activeprotocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
-
-                 $protocolkey = array_search('rest', $activeprotocols);
-                 if ($protocolkey !== false) {
-                    unset($activeprotocols[$protocolkey]);
-                    $updateprotocol = true;
-                 }
-
-                 if ($updateprotocol) {
-                    set_config('webserviceprotocols', implode(',', $activeprotocols));
-                 }
-
-                 // Disallow rest:use capability for authenticated user.
-                 $this->set_protocol_cap(false);
-             }
-
-             //disable the mobile service
+             // Disable the mobile service.
              $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
              $mobileservice->enabled = 0;
              $webservicemanager->update_external_service($mobileservice);
@@ -10131,7 +10173,7 @@ class admin_setting_webservicesoverview extends admin_setting {
 
         /// 8. Create token for the specific user
         $row = array();
-        $url = new moodle_url("/admin/webservice/tokens.php?sesskey=" . sesskey() . "&action=create");
+        $url = new moodle_url('/admin/webservice/tokens.php', ['action' => 'create']);
         $row[0] = "8. " . html_writer::tag('a', get_string('createtokenforuser', 'webservice'),
                         array('href' => $url));
         $row[1] = "";
@@ -11267,6 +11309,18 @@ class admin_setting_searchsetupinfo extends admin_setting {
                         array('href' => $url));
         $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
         if (\core_search\manager::is_global_search_enabled()) {
+            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge badge-success'));
+        }
+        $row[1] = $status;
+        $table->data[] = $row;
+
+        // Replace front page search.
+        $row = array();
+        $url = new moodle_url("/admin/search.php?query=searchincludeallcourses");
+        $row[0] = '6. ' . html_writer::tag('a', get_string('replacefrontsearch', 'admin'),
+                                           array('href' => $url));
+        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge badge-danger'));
+        if (\core_search\manager::can_replace_course_search()) {
             $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge badge-success'));
         }
         $row[1] = $status;

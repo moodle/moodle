@@ -96,10 +96,18 @@ $course = get_course($courseid);
 
 if ($iscoursecalendar && !empty($courseid)) {
     navigation_node::override_active_url(new moodle_url('/course/view.php', array('id' => $course->id)));
+    $PAGE->navbar->add(
+        get_string('calendar', 'calendar'),
+        new moodle_url('/calendar/view.php', ['view' => 'month', 'course' => $course->id])
+    );
 } else if (!empty($categoryid)) {
     core_course_category::get($categoryid); // Check that category exists and can be accessed.
     $PAGE->set_category_by_id($categoryid);
     navigation_node::override_active_url(new moodle_url('/course/index.php', array('categoryid' => $categoryid)));
+    $PAGE->navbar->add(
+        get_string('calendar', 'calendar'),
+        new moodle_url('/calendar/view.php', ['view' => 'month', 'category' => $categoryid])
+    );
 } else {
     $PAGE->set_context(context_system::instance());
 }
@@ -130,8 +138,8 @@ switch($view) {
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title("$course->shortname: $strcalendar: $pagetitle");
 
-$headingstr = ($iscoursecalendar) ? get_string('coursecalendar', 'core_calendar', $COURSE->shortname) :
-        get_string('calendar', 'core_calendar');
+$headingstr = get_string('calendar', 'core_calendar');
+$headingstr = ($iscoursecalendar) ? "{$headingstr}: {$COURSE->shortname}" : $headingstr;
 $PAGE->set_heading($headingstr);
 
 $renderer = $PAGE->get_renderer('core_calendar');
@@ -139,7 +147,7 @@ $calendar->add_sidecalendar_blocks($renderer, true, $view);
 
 echo $OUTPUT->header();
 echo $renderer->start_layout();
-echo html_writer::start_tag('div', array('class'=>'heightcontainer'));
+echo html_writer::start_tag('div', ['class' => 'heightcontainer', 'data-calendar-type' => 'main-block']);
 
 
 

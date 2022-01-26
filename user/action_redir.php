@@ -108,10 +108,26 @@ if ($formaction == 'bulkchange.php') {
                         $columnnames[$field] = \core_user\fields::get_display_name($field);
                     }
 
+                    // Ensure users are enrolled in this course context, further limiting them by selected userids.
+                    [$enrolledsql, $enrolledparams] = get_enrolled_sql($context);
                     [$useridsql, $useridparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid');
                     [$userordersql, $userorderparams] = users_order_by_sql('u', null, $context);
 
-                    $params = array_merge($userfields->params, $useridparams, $userorderparams);
+                    $params = array_merge($userfields->params, $enrolledparams, $useridparams, $userorderparams);
+
+                    // If user can only view their own groups then they can only export users from those groups too.
+                    $groupmode = groups_get_course_groupmode($course);
+                    if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
+                        $groups = groups_get_all_groups($course->id, $USER->id, 0, 'g.id');
+                        $groupids = array_column($groups, 'id');
+
+                        [$groupmembersql, $groupmemberparams] = groups_get_members_ids_sql($groupids, $context);
+                        $params = array_merge($params, $groupmemberparams);
+
+                        $groupmemberjoin = "JOIN ({$groupmembersql}) jg ON jg.id = u.id";
+                    } else {
+                        $groupmemberjoin = '';
+                    }
 
                     // Add column for groups if the user can view them.
                     if (!isset($hiddenfields['groups'])) {
@@ -128,6 +144,8 @@ if ($formaction == 'bulkchange.php') {
                     $sql = "SELECT u.firstname, u.lastname, {$userfields->selects}
                               FROM {user} u
                                    {$userfields->joins}
+                              JOIN ({$enrolledsql}) je ON je.id = u.id
+                                   {$groupmemberjoin}
                                    {$groupconcatjoin}
                              WHERE u.id {$useridsql}
                           ORDER BY {$userordersql}";

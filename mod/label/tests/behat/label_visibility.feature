@@ -23,9 +23,9 @@ Feature: Check label visibility works
     When I add a "label" to section "1" and I fill the form with:
       | Label text | Swanky label |
       | Availability | Hide from students |
-    Then "Swanky label" activity should be hidden
+    Then "Swanky label" label should be hidden
     And I turn editing mode off
-    And "Swanky label" activity should be hidden
+    And "Swanky label" label should be hidden
     And I log out
     And I log in as "student"
     And I am on "Test" course homepage
@@ -76,7 +76,7 @@ Feature: Check label visibility works
       | Label text | Swanky label |
       | Availability | Show on course page |
     And I hide section "1"
-    Then "Swanky label" activity should be dimmed
+    Then "Swanky label" label should be hidden
     And I open "Swanky label" actions menu
     And "Swanky label" actions menu should not have "Show" item
     And "Swanky label" actions menu should not have "Hide" item

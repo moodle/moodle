@@ -29,7 +29,7 @@ use stdClass;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_testcase extends advanced_testcase {
+class format_test extends advanced_testcase {
 
     /**
      * Test userdate method

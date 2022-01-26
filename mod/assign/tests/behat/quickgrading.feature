@@ -29,13 +29,13 @@ Feature: In an assignment, teachers grade multiple students on one page
       | Test assignment name  | student1  | I'm the student1 submission  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     When I click on "Grade" "link" in the "Student 1" "table_row"
     And I press "Save changes"
-    And I click on "Edit settings" "link"
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page
     Then I should see "1" in the "Needs grading" "table_row"
 
+  @skip_chrome_zerosize
   Scenario: Grade multiple students on one page
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
@@ -54,8 +54,8 @@ Feature: In an assignment, teachers grade multiple students on one page
       | enableoutcomes | 1 |
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Outcomes" in current page administration
-    And I follow "Edit outcomes"
+    And I navigate to "More > Outcomes" in the course gradebook
+    And I press "Manage outcomes"
     And I press "Add a new outcome"
     And I follow "Add a new scale"
     And I set the following fields to these values:
@@ -63,8 +63,8 @@ Feature: In an assignment, teachers grade multiple students on one page
       | Scale | Noob, Nub, 1337, HaXor |
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I navigate to "Outcomes" in current page administration
-    And I follow "Edit outcomes"
+    And I navigate to "More > Outcomes" in the course gradebook
+    And I press "Manage outcomes"
     And I press "Add a new outcome"
     And I set the following fields to these values:
       | Full name | M8d skillZ! |
@@ -79,63 +79,49 @@ Feature: In an assignment, teachers grade multiple students on one page
       | assignsubmission_file_enabled | 0 |
       | M8d skillZ! | 1 |
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I press "Add submission"
     And I set the following fields to these values:
       | Online text | I'm the student1 submission |
     And I press "Save changes"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student2
     When I press "Add submission"
     And I set the following fields to these values:
       | Online text | I'm the student2 submission |
     And I press "Save changes"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I am on the "Test assignment name" "assign activity" page logged in as teacher1
+    And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50.0 |
       | M8d skillZ! | 1337 |
       | Feedback comments | I'm the teacher first feedback |
     And I press "Save changes"
-    And I click on "Edit settings" "link"
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I follow "View all submissions"
     Then I click on "Quick grading" "checkbox"
     And I set the field "User grade" to "60.0"
     And I press "Save all quick grading changes"
     And I should see "The grade changes were saved"
     And I press "Continue"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I should see "I'm the teacher first feedback"
     And I should see "60.0"
     And I follow "Grades" in the user menu
     And I click on "Course 1" "link" in the "region-main" "region"
     And I should see "1337"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student2
     And I should not see "I'm the teacher first feedback"
     And I should not see "60.0"
     And I follow "Grades" in the user menu
     And I click on "Course 1" "link" in the "region-main" "region"
     And I should not see "1337"
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
-    And I navigate to "View all submissions" in current page administration
+    And I am on the "Test assignment name" "assign activity" page logged in as teacher1
+    And I follow "View all submissions"
     And I click on "Hide User picture" "link"
     And I click on "Hide Full name" "link"
     And I click on "Hide Email address" "link"
@@ -153,18 +139,14 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I should see "The grade changes were saved"
     And I press "Continue"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I should see "I'm the teacher first feedback"
     And I should see "60.0"
     And I follow "Grades" in the user menu
     And I click on "Course 1" "link" in the "region-main" "region"
     And I should see "1337"
     And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment name"
+    And I am on the "Test assignment name" "assign activity" page logged in as student2
     And I should not see "I'm the teacher first feedback"
     And I should not see "60.0"
     And I follow "Grades" in the user menu

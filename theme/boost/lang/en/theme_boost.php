@@ -35,6 +35,8 @@ $string['choosereadme'] = 'Boost is a modern highly-customisable theme. This the
 $string['currentinparentheses'] = '(current)';
 $string['configtitle'] = 'Boost';
 $string['generalsettings'] = 'General settings';
+$string['loginbackgroundimage'] = 'Background image for the login page';
+$string['loginbackgroundimage_desc'] = 'The image to display as a background for the login page.';
 $string['nobootswatch'] = 'None';
 $string['pluginname'] = 'Boost';
 $string['presetfiles'] = 'Additional theme preset files';
@@ -47,7 +49,16 @@ $string['rawscss_desc'] = 'Use this field to provide SCSS or CSS code which will
 $string['rawscsspre'] = 'Raw initial SCSS';
 $string['rawscsspre_desc'] = 'In this field you can provide initialising SCSS code, it will be injected before everything else. Most of the time you will use this setting to define variables.';
 $string['region-side-pre'] = 'Right';
+$string['showfooter'] = 'Show footer';
+$string['privacy:metadata:preference:draweropenblock'] = 'The user\'s preference for hiding or showing the drawer with blocks.';
+$string['privacy:metadata:preference:draweropenindex'] = 'The user\'s preference for hiding or showing the drawer with course index.';
 $string['privacy:metadata:preference:draweropennav'] = 'The user\'s preference for hiding or showing the drawer menu navigation.';
+$string['privacy:drawerindexclosed'] = 'The current preference for the index drawer is closed.';
+$string['privacy:drawerindexopen'] = 'The current preference for the index drawer is open.';
+$string['privacy:drawerblockclosed'] = 'The current preference for the blocks drawer is closed.';
+$string['privacy:drawerblockopen'] = 'The current preference for the blocks drawer is open.';
 $string['privacy:drawernavclosed'] = 'The current preference for the navigation drawer is closed.';
 $string['privacy:drawernavopen'] = 'The current preference for the navigation drawer is open.';
+
+// Deprecated since Moodle 4.0.
 $string['totop'] = 'Go to top';

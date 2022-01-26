@@ -68,8 +68,6 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('report/participation:view', $context);
 
-report_helper::save_selected_report($id, $url);
-
 $strparticipation = get_string('participationreport');
 $strviews         = get_string('views');
 $strposts         = get_string('posts');

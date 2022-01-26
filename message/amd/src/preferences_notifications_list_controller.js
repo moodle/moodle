@@ -92,12 +92,12 @@ define(['jquery',
     };
 
     /**
-      * Update the disable all notifications user property in the DOM and
-      * send a request to update on the server.
-      *
-      * @method toggleDisableAllStatus
-      * @return {Promise}
-      */
+     * Update the disable all notifications user property in the DOM and
+     * send a request to update on the server.
+     *
+     * @method toggleDisableAllStatus
+     * @return {Promise}
+     */
     PreferencesController.prototype.toggleDisableAllStatus = function() {
         var checkbox = $(SELECTORS.DISABLE_NOTIFICATIONS);
         var container = $(SELECTORS.DISABLE_NOTIFICATIONS_CONTAINER);
@@ -132,10 +132,10 @@ define(['jquery',
     };
 
     /**
-      * Set up all of the event listeners for the PreferencesController.
-      *
-      * @method registerEventListeners
-      */
+     * Set up all of the event listeners for the PreferencesController.
+     *
+     * @method registerEventListeners
+     */
     PreferencesController.prototype.registerEventListeners = function() {
         var disabledNotificationsElement = $(SELECTORS.DISABLE_NOTIFICATIONS);
 
@@ -160,10 +160,11 @@ define(['jquery',
             type: NotificationProcessorSettings.TYPE,
         });
 
-        this.root.on(CustomEvents.events.activate, SELECTORS.PROCESSOR_SETTING, function(e) {
+        this.root.on(CustomEvents.events.activate, SELECTORS.PROCESSOR_SETTING, function(e, data) {
             var element = $(e.target).closest(SELECTORS.PROCESSOR_SETTING);
 
-            e.preventDefault();
+            data.originalEvent.preventDefault();
+
             eventFormPromise.then(function(modal) {
                 // Configure modal with element settings.
                 modal.setUserId($(element).attr('data-user-id'));

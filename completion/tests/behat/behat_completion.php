@@ -87,7 +87,8 @@ class behat_completion extends behat_base {
         $reportsnode = get_string('reports');
 
         $this->execute("behat_navigation::i_navigate_to_in_current_page_administration",
-                $reportsnode . ' > ' . $completionnode);
+                $reportsnode);
+        $this->execute("behat_forms::i_select_from_the_singleselect", [$completionnode, "Report type"]);
     }
 
     /**
@@ -101,7 +102,7 @@ class behat_completion extends behat_base {
         $toggle = strtolower($completionstatus) == 'enabled' ? get_string('yes') : get_string('no');
 
         // Go to course editing.
-        $this->execute("behat_general::click_link", get_string('editsettings'));
+        $this->execute("behat_general::click_link", get_string('settings'));
 
         // Expand all the form fields.
         $this->execute("behat_forms::i_expand_all_fieldsets");

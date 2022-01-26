@@ -47,7 +47,7 @@ branch table contents
       | id_jumpto_1 | First page name |
       | id_score_1 | 0 |
     And I press "Save page"
-    And I follow "Expanded"
+    And I select edit type "Expanded"
 
   Scenario: Edit lesson content page
     Given I click on "//th[normalize-space(.)='First page name']/descendant::a[3]" "xpath_element"

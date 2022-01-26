@@ -31,7 +31,6 @@ Feature: Preview a Matching question
       | Shuffle    | 0   |
     And I press "id_submitbutton"
     When I choose "Preview" action for "matching-001" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I set the field with xpath "//table[@class='answer']//td[@class='control']//select[contains(@id, '1_sub0')]" to "amphibian"
@@ -40,7 +39,7 @@ Feature: Preview a Matching question
     And I press "Check"
     Then I should see "Well done!"
     And I should see "General feedback."
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript @_switch_window
   Scenario: Preview a Matching question and submit a partially correct response.
@@ -49,7 +48,6 @@ Feature: Preview a Matching question
       | Shuffle    | 0   |
     And I press "id_submitbutton"
     When I choose "Preview" action for "matching-001" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I set the field with xpath "//table[@class='answer']//td[@class='control']//select[contains(@id, '1_sub0')]" to "amphibian"
@@ -58,7 +56,7 @@ Feature: Preview a Matching question
     And I press "Check"
     Then I should see "Parts, but only parts, of your response are correct."
     And I should see "General feedback."
-    And I switch to the main window
+    And I press "Close preview"
 
   @javascript @_switch_window
   Scenario: Preview a Matching question and submit an incorrect response.
@@ -67,7 +65,6 @@ Feature: Preview a Matching question
       | Shuffle    | 0   |
     And I press "id_submitbutton"
     When I choose "Preview" action for "matching-001" in the question bank
-    And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I set the field with xpath "//table[@class='answer']//td[@class='control']//select[contains(@id, '1_sub0')]" to "mammal"
@@ -76,4 +73,4 @@ Feature: Preview a Matching question
     And I press "Check"
     Then I should see "That is not right at all."
     And I should see "General feedback."
-    And I switch to the main window
+    And I press "Close preview"

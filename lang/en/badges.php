@@ -140,9 +140,7 @@ $string['backpackprovider'] = 'Backpack provider';
 $string['badges'] = 'Badges';
 $string['badgedetails'] = 'Badge details';
 $string['badgeimage'] = 'Image';
-$string['badgeimage_help'] = 'This is an image that will be used when this badge is issued.
-
-To add a new image, browse and select an image (in JPG or PNG format) then click "Save changes". The image will be cropped to a square and resized to match badge image requirements. ';
+$string['badgeimage_help'] = 'The image should be at least 300 x 300 pixels in size. It will be displayed as 300 x 300 pixels on the badge page and 100 x 100 pixels on the user\'s profile page.';
 
 $string['badgeprivacysetting'] = 'Badge privacy settings';
 $string['badgeprivacysetting_help'] = 'Badges you earn can be displayed on your account profile page. This setting allows you to automatically set the visibility of the newly earned badges.
@@ -340,7 +338,6 @@ $string['eventbadgelistingviewed'] = 'Badge listing viewed';
 $string['eventbadgerevoked'] = 'Badge revoked';
 $string['eventbadgeupdated'] = 'Badge updated';
 $string['eventbadgeviewed'] = 'Badge viewed';
-$string['evidence'] = 'Evidence';
 $string['existingrecipients'] = 'Existing badge recipients';
 $string['expired'] = 'Expired';
 $string['expiredate'] = 'This badge expires on {$a}.';
@@ -361,6 +358,8 @@ $string['externalbadges_help'] = 'This area displays badges from your external b
 $string['fixed'] = 'Fixed date';
 $string['hidden'] = 'Hidden';
 $string['hiddenbadge'] = 'Unfortunately, the badge owner has not made this information available.';
+$string['hostedurl'] = 'External URL';
+$string['hostedurldescription'] = 'External URL where the badge is hosted';
 $string['imageauthoremail'] = 'Image author\'s email';
 $string['imageauthoremail_help'] = 'If specified, the email address of the badge image author is displayed on the badge page.';
 $string['imageauthorname'] = 'Image author\'s name';
@@ -457,6 +456,7 @@ $string['oauth2issuer'] = 'OAuth 2 services';
 $string['openbadgesv1'] = 'Open Badges v1.0';
 $string['openbadgesv2'] = 'Open Badges v2.0';
 $string['openbadgesv2p1'] = 'Open Badges v2.1';
+$string['othernavigation'] = 'Other navigation ...';
 $string['potentialrecipients'] = 'Potential badge recipients';
 $string['preferences'] = 'Badge preferences';
 $string['privacy:metadata:backpack'] = 'A record of user\'s backpacks';
@@ -494,9 +494,7 @@ $string['privacy:metadata:manualaward:issuerid'] = 'The ID of the user awarding 
 $string['privacy:metadata:manualaward:issuerrole'] = 'The role of the user awarding the badge';
 $string['privacy:metadata:manualaward:recipientid'] = 'The ID of the user who is manually awarded a badge';
 $string['recipients'] = 'Badge recipients';
-$string['recipientdetails'] = 'Recipient details';
-$string['recipientidentificationproblem'] = 'Cannot find a recipient of this badge among the existing users.';
-$string['recipientvalidationproblem'] = 'Current user cannot be verified as a recipient of this badge.';
+$string['recipientvalidationproblem'] = 'This user cannot be verified as a recipient of this badge.';
 $string['relative'] = 'Relative date';
 $string['relatedbages'] = 'Related badges';
 $string['revoke'] = 'Revoke badge';
@@ -590,3 +588,8 @@ $string['error:backpacknotavailable'] = 'Your site is not accessible from the In
 $string['error:backpackproblem'] = 'There was a problem connecting to your backpack service provider. Please try again later.';
 $string['sitebackpack'] = 'Active external backpack';
 $string['sitebackpack_help'] = 'The external backpack that users can connect to from this site. Note that changing this setting after users have connected their backpacks will require each user to go to their backpack settings page and disconnect then reconnect.';
+
+// Deprecated since Moodle 4.0.
+$string['evidence'] = 'Evidence';
+$string['recipientdetails'] = 'Recipient details';
+$string['recipientidentificationproblem'] = 'Cannot find a recipient of this badge among the existing users.';

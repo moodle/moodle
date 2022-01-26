@@ -53,7 +53,7 @@ class api {
     const LOGIN_KEY_TTL = 60;
     /** @var string URL of the Moodle Apps Portal */
     const MOODLE_APPS_PORTAL_URL = 'https://apps.moodle.com';
-    /** @var int seconds a QR login key will expire. */
+    /** @var int default value in seconds a QR login key will expire. */
     const LOGIN_QR_KEY_TTL = 600;
     /** @var int QR code disabled value */
     const QR_CODE_DISABLED = 0;
@@ -197,6 +197,7 @@ class api {
             'tool_mobile_iosappid' => get_config('tool_mobile', 'iosappid'),
             'tool_mobile_androidappid' => get_config('tool_mobile', 'androidappid'),
             'tool_mobile_setuplink' => clean_param(get_config('tool_mobile', 'setuplink'), PARAM_URL),
+            'tool_mobile_qrcodetype' => clean_param(get_config('tool_mobile', 'qrcodetype'), PARAM_INT),
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');
@@ -305,6 +306,10 @@ class api {
             $settings->tool_mobile_filetypeexclusionlist = get_config('tool_mobile', 'filetypeexclusionlist');
             $settings->tool_mobile_custommenuitems = get_config('tool_mobile', 'custommenuitems');
             $settings->tool_mobile_apppolicy = get_config('tool_mobile', 'apppolicy');
+            // This setting could be not set in some edge cases such as bad upgrade.
+            $mintimereq = get_config('tool_mobile', 'autologinmintimebetweenreq');
+            $mintimereq = empty($mintimereq) ? 6 * MINSECS : $mintimereq;
+            $settings->tool_mobile_autologinmintimebetweenreq = $mintimereq;
         }
 
         if (empty($section) or $section == 'calendar') {
@@ -325,8 +330,13 @@ class api {
 
         if (empty($section) or $section == 'supportcontact') {
             $settings->supportname = $CFG->supportname;
-            $settings->supportemail = $CFG->supportemail;
+            $settings->supportemail = $CFG->supportemail ?? null;
             $settings->supportpage = $CFG->supportpage;
+        }
+
+        if (empty($section) || $section === 'graceperiodsettings') {
+            $settings->coursegraceperiodafter = $CFG->coursegraceperiodafter;
+            $settings->coursegraceperiodbefore = $CFG->coursegraceperiodbefore;
         }
 
         return $settings;
@@ -377,17 +387,19 @@ class api {
      * Creates a QR login key for the current user, this key is restricted by time and ip address.
      * This key is used for automatically login the user in the site when the user scans a QR code in the Moodle app.
      *
+     * @param  stdClass $mobilesettings  mobile app plugin settings
      * @return string the key
      * @since Moodle 3.9
      */
-    public static function get_qrlogin_key() {
+    public static function get_qrlogin_key(stdClass $mobilesettings) {
         global $USER;
         // Delete previous keys.
         delete_user_key('tool_mobile', $USER->id);
 
         // Create a new key.
         $iprestriction = getremoteaddr(null);
-        $validuntil = time() + self::LOGIN_QR_KEY_TTL;
+        $qrkeyttl = !empty($mobilesettings->qrkeyttl) ? $mobilesettings->qrkeyttl : self::LOGIN_QR_KEY_TTL;
+        $validuntil = time() + $qrkeyttl;
         return create_user_key('tool_mobile', $USER->id, null, $iprestriction, $validuntil);
     }
 
@@ -583,66 +595,64 @@ class api {
 
         $warnings = array();
 
-        $curl = new curl();
-        // Return certificate information and verify the certificate.
-        $curl->setopt(array('CURLOPT_CERTINFO' => 1, 'CURLOPT_SSL_VERIFYPEER' => true));
-        $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot); // Force https url.
-        // Check https using a page not redirecting or returning exceptions.
-        $curl->head($httpswwwroot . "/$CFG->admin/tool/mobile/mobile.webmanifest.php");
-        $info = $curl->get_info();
+        if (is_https()) {
+            $curl = new curl();
+            // Return certificate information and verify the certificate.
+            $curl->setopt(array('CURLOPT_CERTINFO' => 1, 'CURLOPT_SSL_VERIFYPEER' => true));
+            // Check https using a page not redirecting or returning exceptions.
+            $curl->head("$CFG->wwwroot/$CFG->admin/tool/mobile/mobile.webmanifest.php");
+            $info = $curl->get_info();
 
-        // First of all, check the server certificate (if any).
-        if (empty($info['http_code']) or ($info['http_code'] >= 400)) {
-            $warnings[] = ['nohttpsformobilewarning', 'admin'];
-        } else {
             // Check the certificate is not self-signed or has an untrusted-root.
             // This may be weak in some scenarios (when the curl SSL verifier is outdated).
-            if (empty($info['certinfo'])) {
+            if (empty($info['http_code']) || empty($info['certinfo'])) {
                 $warnings[] = ['selfsignedoruntrustedcertificatewarning', 'tool_mobile'];
             } else {
                 $timenow = time();
-                $expectedissuer = null;
-                foreach ($info['certinfo'] as $cert) {
+                $infokeys = array_keys($info['certinfo']);
+                $lastkey = end($infokeys);
+
+                if (count($info['certinfo']) == 1) {
+                    // This will work in a normal browser because it will complete the chain, but not in a mobile app.
+                    $warnings[] = ['invalidcertificatechainwarning', 'tool_mobile'];
+                }
+
+                foreach ($info['certinfo'] as $key => $cert) {
+                    // Convert to lower case the keys, some OS/curl implementations differ.
+                    $cert = array_change_key_case($cert, CASE_LOWER);
 
                     // Due to a bug in certain curl/openssl versions the signature algorithm isn't always correctly parsed.
                     // See https://github.com/curl/curl/issues/3706 for reference.
-                    if (!array_key_exists('Signature Algorithm', $cert)) {
+                    if (!array_key_exists('signature algorithm', $cert)) {
                         // The malformed field that does contain the algorithm we're looking for looks like the following:
                         // <WHITESPACE>Signature Algorithm: <ALGORITHM><CRLF><ALGORITHM>.
-                        preg_match('/\s+Signature Algorithm: (?<algorithm>[^\s]+)/', $cert['Public Key Algorithm'], $matches);
+                        preg_match('/\s+Signature Algorithm: (?<algorithm>[^\s]+)/', $cert['public key algorithm'], $matches);
 
                         $signaturealgorithm = $matches['algorithm'] ?? '';
                     } else {
-                        $signaturealgorithm = $cert['Signature Algorithm'];
+                        $signaturealgorithm = $cert['signature algorithm'];
                     }
 
                     // Check if the signature algorithm is weak (Android won't work with SHA-1).
-                    if ($signaturealgorithm == 'sha1WithRSAEncryption' || $signaturealgorithm == 'sha1WithRSA') {
-                        $warnings[] = ['insecurealgorithmwarning', 'tool_mobile'];
+                    if ($key != $lastkey &&
+                            ($signaturealgorithm == 'sha1WithRSAEncryption' || $signaturealgorithm == 'sha1WithRSA')) {
+                        $warnings['insecurealgorithmwarning'] = ['insecurealgorithmwarning', 'tool_mobile'];
                     }
                     // Check certificate start date.
-                    if (strtotime($cert['Start date']) > $timenow) {
-                        $warnings[] = ['invalidcertificatestartdatewarning', 'tool_mobile'];
+                    if (strtotime($cert['start date']) > $timenow) {
+                        $warnings['invalidcertificatestartdatewarning'] = ['invalidcertificatestartdatewarning', 'tool_mobile'];
                     }
                     // Check certificate end date.
-                    if (strtotime($cert['Expire date']) < $timenow) {
-                        $warnings[] = ['invalidcertificateexpiredatewarning', 'tool_mobile'];
+                    if (strtotime($cert['expire date']) < $timenow) {
+                        $warnings['invalidcertificateexpiredatewarning'] = ['invalidcertificateexpiredatewarning', 'tool_mobile'];
                     }
-                    // Check the chain.
-                    if ($expectedissuer !== null) {
-                        if ($expectedissuer !== $cert['Subject'] || $cert['Subject'] === $cert['Issuer']) {
-                            $warnings[] = ['invalidcertificatechainwarning', 'tool_mobile'];
-                        }
-                    }
-                    $expectedissuer = $cert['Issuer'];
                 }
             }
+        } else {
+            // Warning for non https sites.
+            $warnings[] = ['nohttpsformobilewarning', 'admin'];
         }
-        // Now check typical configuration problems.
-        if ((int) $CFG->userquota === PHP_INT_MAX) {
-            // In old Moodle version was a text so was possible to have numeric values > PHP_INT_MAX.
-            $warnings[] = ['invaliduserquotawarning', 'tool_mobile'];
-        }
+
         // Check ADOdb debug enabled.
         if (get_config('auth_db', 'debugauthdb') || get_config('enrol_database', 'debugdb')) {
             $warnings[] = ['adodbdebugwarning', 'tool_mobile'];
@@ -683,7 +693,7 @@ class api {
         $data = $urlscheme . '://' . $CFG->wwwroot;
 
         if ($mobilesettings->qrcodetype == static::QR_CODE_LOGIN) {
-            $qrloginkey = static::get_qrlogin_key();
+            $qrloginkey = static::get_qrlogin_key($mobilesettings);
             $data .= '?qrlogin=' . $qrloginkey . '&userid=' . $USER->id;
         }
 

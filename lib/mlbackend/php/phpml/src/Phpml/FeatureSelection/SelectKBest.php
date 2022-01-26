@@ -56,7 +56,7 @@ final class SelectKBest implements Transformer
         $this->keepColumns = array_slice($sorted, 0, $this->k, true);
     }
 
-    public function transform(array &$samples): void
+    public function transform(array &$samples, ?array &$targets = null): void
     {
         if ($this->keepColumns === null) {
             return;

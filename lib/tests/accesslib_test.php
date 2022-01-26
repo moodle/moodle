@@ -25,13 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * Functional test for accesslib.php
  *
  * Note: execution may take many minutes especially on slower servers.
  */
-class core_accesslib_testcase extends advanced_testcase {
+class accesslib_test extends advanced_testcase {
     /**
      * Verify comparison of context instances in phpunit asserts.
      */
@@ -48,6 +47,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test resetting works.
+     *
+     * @covers ::accesslib_clear_all_caches_for_unit_testing
      */
     public function test_accesslib_clear_all_caches() {
         global $ACCESSLIB_PRIVATE;
@@ -79,6 +80,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test getting of role access
+     *
+     * @covers ::get_role_access
      */
     public function test_get_role_access() {
         global $DB;
@@ -101,6 +104,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test getting of guest role.
+     *
+     * @covers ::get_guest_role
      */
     public function test_get_guest_role() {
         global $CFG;
@@ -114,6 +119,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test if user is admin.
+     *
+     * @covers ::is_siteadmin
      */
     public function test_is_siteadmin() {
         global $DB, $CFG;
@@ -156,6 +163,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test if user is enrolled in a course
+     *
+     * @covers ::is_enrolled
      */
     public function test_is_enrolled() {
         global $DB;
@@ -206,6 +215,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test logged in test.
+     *
+     * @covers ::isloggedin
      */
     public function test_isloggedin() {
         global $USER;
@@ -220,6 +231,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test guest user test.
+     *
+     * @covers ::isguestuser
      */
     public function test_isguestuser() {
         global $DB;
@@ -247,6 +260,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test capability riskiness.
+     *
+     * @covers ::is_safe_capability
      */
     public function test_is_safe_capability() {
         global $DB;
@@ -257,6 +272,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test context fetching.
+     *
+     * @covers ::get_context_info_array
      */
     public function test_get_context_info_array() {
         $this->resetAfterTest();
@@ -324,6 +341,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test looking for course contacts.
+     *
+     * @covers ::has_coursecontact_role
      */
     public function test_has_coursecontact_role() {
         global $DB, $CFG;
@@ -348,6 +367,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test creation of roles.
+     *
+     * @covers ::create_role
      */
     public function test_create_role() {
         global $DB;
@@ -366,6 +387,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test adding of capabilities to roles.
+     *
+     * @covers ::assign_capability
      */
     public function test_assign_capability() {
         global $DB, $USER;
@@ -439,6 +462,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test removing of capabilities from roles.
+     *
+     * @covers ::unassign_capability
      */
     public function test_unassign_capability() {
         global $DB, $USER;
@@ -489,6 +514,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test role assigning.
+     *
+     * @covers ::role_assign
      */
     public function test_role_assign() {
         global $DB, $USER;
@@ -550,6 +577,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test role unassigning.
+     *
+     * @covers ::role_unassign
      */
     public function test_role_unassign() {
         global $DB, $USER;
@@ -599,6 +628,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test role unassigning.
+     *
+     * @covers ::role_unassign_all
      */
     public function test_role_unassign_all() {
         global $DB;
@@ -654,6 +685,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test role queries.
+     *
+     * @covers ::get_roles_with_capability
      */
     public function test_get_roles_with_capability() {
         global $DB;
@@ -687,6 +720,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test deleting of roles.
+     *
+     * @covers ::delete_role
      */
     public function test_delete_role() {
         global $DB;
@@ -744,6 +779,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test fetching of all roles.
+     *
+     * @covers ::get_all_roles
      */
     public function test_get_all_roles() {
         global $DB;
@@ -799,6 +836,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test getting of all archetypes.
+     *
+     * @covers ::get_role_archetypes
      */
     public function test_get_role_archetypes() {
         $archetypes = get_role_archetypes();
@@ -810,6 +849,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test getting of roles with given archetype.
+     *
+     * @covers ::get_archetype_roles
      */
     public function test_get_archetype_roles() {
         $this->resetAfterTest();
@@ -830,6 +871,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test aliased role names.
+     *
+     * @covers ::role_get_name
      */
     public function test_role_get_name() {
         global $DB;
@@ -881,6 +924,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test tweaking of role name arrays.
+     *
+     * @covers ::role_fix_names
      */
     public function test_role_fix_names() {
         global $DB;
@@ -937,6 +982,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test role default allows.
+     *
+     * @covers ::get_default_role_archetype_allows
      */
     public function test_get_default_role_archetype_allows() {
         $archetypes = get_role_archetypes();
@@ -986,6 +1033,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test allowing of role assignments.
+     *
+     * @covers ::core_role_set_assign_allowed
      */
     public function test_core_role_set_assign_allowed() {
         global $DB, $CFG;
@@ -1019,6 +1068,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test allowing of role overrides.
+     *
+     * @covers ::core_role_set_override_allowed
      */
     public function test_core_role_set_override_allowed() {
         global $DB, $CFG;
@@ -1052,6 +1103,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test allowing of role switching.
+     *
+     * @covers ::core_role_set_switch_allowed
      */
     public function test_core_role_set_switch_allowed() {
         global $DB, $CFG;
@@ -1085,6 +1138,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test allowing of role switching.
+     *
+     * @covers ::core_role_set_view_allowed
      */
     public function test_core_role_set_view_allowed() {
         global $DB, $CFG;
@@ -1118,6 +1173,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test returning of assignable roles in context.
+     *
+     * @covers ::get_assignable_roles
      */
     public function test_get_assignable_roles() {
         global $DB;
@@ -1225,6 +1282,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test user count of assignable roles in context where users are assigned the role via different components.
+     *
+     * @covers ::get_assignable_roles
      */
     public function test_get_assignable_roles_distinct_usercount() {
         global $DB;
@@ -1258,6 +1317,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test getting of all switchable roles.
+     *
+     * @covers ::get_switchable_roles
      */
     public function test_get_switchable_roles() {
         global $DB;
@@ -1316,6 +1377,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test getting of all overridable roles.
+     *
+     * @covers ::get_overridable_roles
      */
     public function test_get_overridable_roles() {
         global $DB;
@@ -1409,6 +1472,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test getting of all overridable roles.
+     *
+     * @covers ::get_viewable_roles
      */
     public function test_get_viewable_roles_course() {
         global $DB;
@@ -1444,6 +1509,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test getting of all overridable roles.
+     *
+     * @covers ::get_viewable_roles
      */
     public function test_get_viewable_roles_system() {
         global $DB;
@@ -1477,6 +1544,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test we have context level defaults.
+     *
+     * @covers ::get_default_contextlevels
      */
     public function test_get_default_contextlevels() {
         $archetypes = get_role_archetypes();
@@ -1492,6 +1561,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test role context level setup.
+     *
+     * @covers ::set_role_contextlevels
      */
     public function test_set_role_contextlevels() {
         global $DB;
@@ -1516,6 +1587,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test getting of role context levels
+     *
+     * @covers ::get_roles_for_contextlevels
      */
     public function test_get_roles_for_contextlevels() {
         global $DB;
@@ -1536,6 +1609,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test default enrol roles.
+     *
+     * @covers ::get_default_enrol_roles
      */
     public function test_get_default_enrol_roles() {
         $this->resetAfterTest();
@@ -1564,6 +1639,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test getting of role users.
+     *
+     * @covers ::get_role_users
      */
     public function test_get_role_users() {
         global $DB;
@@ -1667,6 +1744,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test used role query.
+     *
+     * @covers ::get_roles_used_in_context
      */
     public function test_get_roles_used_in_context() {
         global $DB;
@@ -1707,6 +1786,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test roles used in course.
+     *
+     * @covers ::get_user_roles_in_course
      */
     public function test_get_user_roles_in_course() {
         global $DB, $CFG;
@@ -1773,6 +1854,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test get_user_roles and get_users_roles
+     *
+     * @covers ::get_user_roles
      */
     public function test_get_user_roles() {
         global $DB, $CFG;
@@ -1809,6 +1892,10 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test has_capability(), has_any_capability() and has_all_capabilities().
+     *
+     * @covers ::has_capability
+     * @covers ::has_any_capability
+     * @covers ::has_all_capabilities
      */
     public function test_has_capability_and_friends() {
         global $DB;
@@ -1885,6 +1972,11 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test that assigning a fake cap does not return.
+     *
+     * @covers ::get_users_by_capability
+     * @covers ::get_with_capability_join
+     * @covers ::get_with_capability_sql
+     * @covers ::has_capability
      */
     public function test_fake_capability() {
         global $DB;
@@ -1934,6 +2026,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test that assigning a fake cap does not return.
+     *
+     * @covers ::assign_capability
      */
     public function test_fake_capability_assign() {
         global $DB;
@@ -1957,6 +2051,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test that assigning a fake cap does not return.
+     *
+     * @covers ::unassign_capability
      */
     public function test_fake_capability_unassign() {
         global $DB;
@@ -1981,6 +2077,9 @@ class core_accesslib_testcase extends advanced_testcase {
     /**
      * Test that the caching in get_role_definitions() and get_role_definitions_uncached()
      * works as intended.
+     *
+     * @covers ::get_role_definitions
+     * @covers ::role_change_permission
      */
     public function test_role_definition_caching() {
         global $DB;
@@ -2048,6 +2147,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Tests get_user_capability_course() which checks a capability across all courses.
+     *
+     * @covers ::get_user_capability_course
      */
     public function test_get_user_capability_course() {
         global $CFG, $USER;
@@ -2231,6 +2332,89 @@ class core_accesslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests get_user_capability_contexts() which checks a capability across all courses and categories.
+     * Testing for categories only because courses results are covered by test_get_user_capability_course.
+     */
+    public function test_get_user_capability_contexts() {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $cap = 'moodle/contentbank:access';
+        $defaultcategoryid = 1;
+
+//         The structure being created here is this:
+//
+//         All tests work with the single capability 'moodle/contentbank:access'.
+//         ROLE DEF/OVERRIDE                                                    .
+//         Role:                Allow       Prohibit        Empty               .
+//                  System      ALLOW       PROHIBIT                            .
+//                  cat1        PREVENT     ALLOW           ALLOW               .
+//                      cat3    ALLOW       PROHIBIT                            .
+//                 cat2        PROHIBIT    PROHIBIT        PROHIBIT             .
+
+        // Create a role which allows contentbank:access and one that prohibits it, and one neither.
+        $allowroleid = $generator->create_role();
+        $prohibitroleid = $generator->create_role();
+        $emptyroleid = $generator->create_role();
+        $systemcontext = context_system::instance();
+        assign_capability($cap, CAP_ALLOW, $allowroleid, $systemcontext->id);
+        assign_capability($cap, CAP_PROHIBIT, $prohibitroleid, $systemcontext->id);
+
+        // Create three categories (two of them nested).
+        $cat1 = $generator->create_category();
+        $cat2 = $generator->create_category();
+        $cat3 = $generator->create_category(['parent' => $cat1->id]);
+
+        // Category overrides: in cat 1, empty role is allowed; in cat 2, empty role is prevented.
+        assign_capability($cap, CAP_ALLOW, $emptyroleid,
+            context_coursecat::instance($cat1->id)->id);
+        assign_capability($cap, CAP_PREVENT, $emptyroleid,
+            context_coursecat::instance($cat2->id)->id);
+
+        // Course category overrides: in cat1, allow role is prevented and prohibit role is allowed;
+        // in Cat2, allow role is prohibited.
+        assign_capability($cap, CAP_PREVENT, $allowroleid,
+            context_coursecat::instance($cat1->id)->id);
+        assign_capability($cap, CAP_ALLOW, $prohibitroleid,
+            context_coursecat::instance($cat1->id)->id);
+        assign_capability($cap, CAP_PROHIBIT, $allowroleid,
+            context_coursecat::instance($cat2->id)->id);
+
+        // User 1 has no roles except default user role.
+        $u1 = $generator->create_user();
+
+        // It returns false (annoyingly) if there are no course categories.
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u1->id, true, '', '', '', 'id');
+        $this->assertFalse($categories);
+
+        // User 2 has allow role (system wide).
+        $u2 = $generator->create_user();
+        role_assign($allowroleid, $u2->id, $systemcontext->id);
+
+        // Should get $defaultcategory only. cat2 is prohibited; cat1 is prevented, so cat3 is not allowed.
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u2->id, true, '', '', '', 'id');
+        // Using same assert_course_ids helper even when we are checking course category ids.
+        $this->assert_course_ids([$defaultcategoryid], $categories);
+
+        // User 3 has empty role (system wide).
+        $u3 = $generator->create_user();
+        role_assign($emptyroleid, $u3->id, $systemcontext->id);
+
+        // Should get cat1 and cat3. cat2 is prohibited; no access to system level.
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u3->id, true, '', '', '', 'id');
+        $this->assert_course_ids([$cat1->id, $cat3->id], $categories);
+
+        // User 4 has prohibit role (system wide).
+        $u4 = $generator->create_user();
+        role_assign($prohibitroleid, $u4->id, $systemcontext->id);
+
+        // Should not get any, because all of them are prohibited at system level.
+        // Even if we try to allow an specific category.
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u4->id, true, '', '', '', 'id');
+        $this->assertFalse($categories);
+    }
+
+    /**
      * Extracts an array of course ids to make the above test script shorter.
      *
      * @param int[] $expected Array of expected course ids
@@ -2245,6 +2429,9 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test if course creator future capability lookup works.
+     *
+     * @covers ::guess_if_creator_will_have_course_capability
+     * @covers ::has_capability
      */
     public function test_guess_if_creator_will_have_course_capability() {
         global $DB, $CFG, $USER;
@@ -2370,6 +2557,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test require_capability() exceptions.
+     *
+     * @covers ::require_capability
      */
     public function test_require_capability() {
         $this->resetAfterTest();
@@ -2404,6 +2593,9 @@ class core_accesslib_testcase extends advanced_testcase {
     /**
      * Test that enrolled users SQL does not return any values for users in
      * other courses.
+     *
+     * @covers ::get_enrolled_users
+     * @covers ::get_suspended_userids
      */
     public function test_get_enrolled_sql_different_course() {
         global $DB;
@@ -2434,6 +2626,9 @@ class core_accesslib_testcase extends advanced_testcase {
     /**
      * Test that enrolled users SQL does not return any values for role
      * assignments without an enrolment.
+     *
+     * @covers ::get_enrolled_users
+     * @covers ::get_suspended_userids
      */
     public function test_get_enrolled_sql_role_only() {
         global $DB;
@@ -2462,6 +2657,9 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test that multiple enrolments for the same user are counted correctly.
+     *
+     * @covers ::get_enrolled_users
+     * @covers ::get_suspended_userids
      */
     public function test_get_enrolled_sql_multiple_enrolments() {
         global $DB;
@@ -2511,6 +2709,8 @@ class core_accesslib_testcase extends advanced_testcase {
     /**
      * Test that enrolled users SQL does not return any values for users
      * without a group when $context is not a valid course context.
+     *
+     * @covers ::get_enrolled_users
      */
     public function test_get_enrolled_sql_userswithoutgroup() {
         global $DB;
@@ -2655,6 +2855,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * @dataProvider get_enrolled_sql_provider
+     * @covers ::get_enrolled_users
+     * @covers ::get_suspended_userids
      */
     public function test_get_enrolled_sql_course($users, $counts) {
         global $DB;
@@ -3581,6 +3783,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test that context_system::get_capabilities returns capabilities relevant to all modules.
+     *
+     * @covers \context_system::get_capabilities
      */
     public function test_context_module_caps_returned_by_get_capabilities_in_sys_context() {
         $actual = context_system::instance()->get_capabilities();
@@ -3594,6 +3798,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test that context_coursecat::get_capabilities returns capabilities relevant to all modules.
+     *
+     * @covers \context_coursecat::get_capabilities
      */
     public function test_context_module_caps_returned_by_get_capabilities_in_course_cat_context() {
         $this->resetAfterTest(true);
@@ -3611,6 +3817,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test that context_course::get_capabilities returns capabilities relevant to all modules.
+     *
+     * @covers \context_course::get_capabilities
      */
     public function test_context_module_caps_returned_by_get_capabilities_in_course_context() {
         $this->resetAfterTest(true);
@@ -3629,6 +3837,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test that context_module::get_capabilities returns capabilities relevant to all modules.
+     *
+     * @covers \context_module::get_capabilities
      */
     public function test_context_module_caps_returned_by_get_capabilities_mod_context() {
         $this->resetAfterTest(true);
@@ -3648,6 +3858,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test that {@see context_block::get_capabilities} returns capabilities relevant to blocks
+     *
+     * @covers \context_block::get_capabilities
      */
     public function test_context_block_caps_returned_by_get_capabilities_block_context(): void {
         $this->resetAfterTest();
@@ -3676,6 +3888,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test that {@see context_user::get_capabilities} returns capabilities relevant to users
+     *
+     * @covers \context_user::get_capabilities
      */
     public function test_context_user_caps_returned_by_get_capabilities_user_context(): void {
         $this->resetAfterTest();
@@ -3700,6 +3914,9 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test updating of role capabilities during upgrade
+     *
+     * @covers ::update_capabilities
+     * @covers ::update_capabilities
      */
     public function test_update_capabilities() {
         global $DB, $SITE;
@@ -3785,6 +4002,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Tests reset_role_capabilities function.
+     *
+     * @covers ::reset_role_capabilities
      */
     public function test_reset_role_capabilities() {
         global $DB;
@@ -3820,6 +4039,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Tests count_role_users function.
+     *
+     * @covers ::count_role_users
      */
     public function test_count_role_users() {
         global $DB;
@@ -3858,6 +4079,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test fetching users by capability.
+     *
+     * @covers ::get_users_by_capability
      */
     public function test_get_users_by_capability() {
         global $DB;
@@ -3907,6 +4130,10 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse(array_key_exists($guest->id, $users));
     }
 
+
+    /**
+     * @covers ::get_with_capability_sql
+     */
     public function test_get_with_capability_sql() {
         global $DB;
 
@@ -3980,6 +4207,7 @@ class core_accesslib_testcase extends advanced_testcase {
      * Test get_with_capability_join.
      *
      * @dataProvider get_get_with_capability_join_override_cases
+     * @covers ::get_with_capability_join
      *
      * @param bool $studentshouldbereturned whether, with this combination of capabilities, the student should be in the results.
      * @param array $capabilitiestoprevent capabilities to override to prevent in the course context.
@@ -4027,6 +4255,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test the get_profile_roles() function.
+     *
+     * @covers ::get_profile_roles
      */
     public function test_get_profile_roles() {
         global $DB;
@@ -4225,6 +4455,13 @@ class core_accesslib_testcase extends advanced_testcase {
      * Ensure that the is_parent_of() function works as anticipated.
      *
      * @dataProvider is_parent_of_provider
+     * @covers \context::is_parent_of
+     * @covers \context_block::is_parent_of
+     * @covers \context_course::is_parent_of
+     * @covers \context_coursecat::is_parent_of
+     * @covers \context_module::is_parent_of
+     * @covers \context_system::is_parent_of
+     * @covers \context_user::is_parent_of
      * @param   string $contextpath The path of the context being compared with
      * @param   string $testpath The path of the context being compared
      * @param   bool $testself Whether to check the current context
@@ -4327,6 +4564,13 @@ class core_accesslib_testcase extends advanced_testcase {
      * Ensure that the is_child_of() function works as anticipated.
      *
      * @dataProvider is_child_of_provider
+     * @covers \context::is_child_of
+     * @covers \context_block::is_child_of
+     * @covers \context_course::is_child_of
+     * @covers \context_coursecat::is_child_of
+     * @covers \context_module::is_child_of
+     * @covers \context_system::is_child_of
+     * @covers \context_user::is_child_of
      * @param   string $contextpath The path of the context being compared with
      * @param   string $testpath The path of the context being compared
      * @param   bool $testself Whether to check the current context
@@ -4362,6 +4606,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Ensure that the get_parent_contexts() function limits the number of queries it performs.
+     *
+     * @covers ::get_parent_contexts
      */
     public function test_get_parent_contexts_preload() {
         global $DB;
@@ -4403,6 +4649,9 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Ensure that get_with_capability_sql and get_with_capability_join respect context locking.
+     *
+     * @covers ::get_with_capability_join
+     * @covers ::get_with_capability_sql
      */
     public function test_get_with_capability_sql_locked() {
         global $DB;
@@ -4490,6 +4739,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Ensure that get_users_by_capability respects context freezing.
+     *
+     * @covers ::get_users_by_capability
      */
     public function test_get_users_by_capability_locked() {
         $this->resetAfterTest();
@@ -4567,6 +4818,8 @@ class core_accesslib_testcase extends advanced_testcase {
 
     /**
      * Test require_all_capabilities.
+     *
+     * @covers ::require_all_capabilities
      */
     public function test_require_all_capabilities() {
         global $DB;

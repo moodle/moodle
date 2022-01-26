@@ -25,7 +25,7 @@
 namespace core_courseformat\output\local\content;
 
 use core_courseformat\base as course_format;
-use completion_info;
+use context_course;
 use renderable;
 use templatable;
 use section_info;
@@ -119,11 +119,13 @@ class section implements renderable, templatable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
+        global $USER;
 
         $format = $this->format;
         $course = $format->get_course();
         $thissection = $this->thissection;
         $singlesection = $format->get_section_number();
+        $context = context_course::instance($course->id);
 
         $summary = new $this->summaryclass($format, $thissection);
         $availability = new $this->availabilityclass($format, $thissection);
@@ -132,8 +134,10 @@ class section implements renderable, templatable {
             'num' => $thissection->section ?? '0',
             'id' => $thissection->id,
             'sectionreturnid' => $singlesection,
+            'insertafter' => false,
             'summary' => $summary->export_for_template($output),
             'availability' => $availability->export_for_template($output),
+            'restrictionlock' => !empty($thissection->availableinfo),
         ];
 
         // Check if it is a stealth sections (orphaned).
@@ -152,6 +156,26 @@ class section implements renderable, templatable {
             }
         }
 
+        $coursedisplay = $course->coursedisplay ?? COURSE_DISPLAY_SINGLEPAGE;
+        $data->iscoursedisplaymultipage = ($coursedisplay == COURSE_DISPLAY_MULTIPAGE);
+
+        if ($data->num === 0 && !$data->iscoursedisplaymultipage) {
+            $data->collapsemenu = true;
+        }
+
+        if ($course->id == SITEID) {
+            $data->sitehome = true;
+        }
+
+        $data->contentcollapsed = false;
+        $preferences = $format->get_sections_preferences();
+        if (isset($preferences[$thissection->id])) {
+            $sectionpreferences = $preferences[$thissection->id];
+            if (!empty($sectionpreferences->contentcollapsed)) {
+                $data->contentcollapsed = true;
+            }
+        }
+
         if ($thissection->section == 0) {
             // Section zero is always visible only as a cmlist.
             $cmlist = new $this->cmlistclass($format, $thissection);
@@ -166,6 +190,15 @@ class section implements renderable, templatable {
 
         // When a section is displayed alone the title goes over the section, not inside it.
         $header = new $this->headerclass($format, $thissection);
+
+        if (!$thissection->visible) {
+            $data->ishidden = true;
+            $data->notavailable = true;
+            if (has_capability('moodle/course:viewhiddensections', $context, $USER)) {
+                $data->hiddenfromstudents = true;
+                $data->notavailable = false;
+            }
+        }
 
         if ($thissection->section == $singlesection) {
             if (empty($this->hidetitle)) {
@@ -195,11 +228,13 @@ class section implements renderable, templatable {
             $data->cmlist = $cmlist->export_for_template($output);
         }
 
-        if (!$thissection->visible) {
-            $data->ishidden = true;
+        $data->hasavailability = false;
+        if (isset($data->availability->hasavailability)) {
+            $data->hasavailability = $data->availability->hasavailability;
         }
+
         if ($format->is_section_current($thissection)) {
-            $data->iscurrent = true;
+            $data->highlighted = true;
             $data->currentlink = get_accesshide(
                 get_string('currentsection', 'format_'.$format->get_format())
             );
@@ -208,4 +243,3 @@ class section implements renderable, templatable {
         return $data;
     }
 }
-

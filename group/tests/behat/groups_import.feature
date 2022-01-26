@@ -20,8 +20,7 @@ Feature: Importing of groups and groupings
   @javascript
   Scenario: Import groups and groupings as teacher
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     And I press "Import groups"
     When I upload "group/tests/fixtures/groups_import.csv" file to "Import" filemanager
     And I press "Import groups"
@@ -42,7 +41,7 @@ Feature: Importing of groups and groupings
     And I should see "No" in the "Group messaging" "select"
     And I press "Cancel"
     # Check groupings
-    And I follow "Groupings"
+    And I select "Groupings" from the "jump" singleselect
     And I should see "Grouping-1"
     And I should see "Grouping-2"
     And I should see "Grouping-3"
@@ -55,8 +54,7 @@ Feature: Importing of groups and groupings
   @javascript
   Scenario: Import groups with idnumber when the user has proper permissions for the idnumber field
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     And I press "Import groups"
     When I upload "group/tests/fixtures/groups_import.csv" file to "Import" filemanager
     And I press "Import groups"
@@ -91,14 +89,12 @@ Feature: Importing of groups and groupings
   @javascript
   Scenario: Import groups with idnumber when the user does not have proper permissions for the idnumber field
     Given I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Permissions" in current page administration
+    And I am on the "Course 1" "permissions" page
     And I override the system permissions of "Teacher" role with:
       | moodle/course:changeidnumber | Prevent |
     And I log out
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     And I press "Import groups"
     When I upload "group/tests/fixtures/groups_import.csv" file to "Import" filemanager
     And I press "Import groups"
@@ -127,8 +123,7 @@ Feature: Importing of groups and groupings
   @javascript
   Scenario: Import groups into multiple courses as a teacher
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 1" "groups" page
     And I press "Import groups"
     When I upload "group/tests/fixtures/groups_import_multicourse.csv" file to "Import" filemanager
     And I press "Import groups"
@@ -144,8 +139,7 @@ Feature: Importing of groups and groupings
     And I should see "group8"
     And I should not see "group9"
     And I should not see "group-will-not-be-created"
-    And I am on "Course 2" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    And I am on the "Course 2" "groups" page
     And I should see "group9"
     And I should not see "group-will-not-be-created"
     And I should not see "group7"

@@ -32,7 +32,7 @@ use core_reportbuilder\local\helpers\database;
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class column_testcase extends advanced_testcase {
+class column_test extends advanced_testcase {
 
     /**
      * Test column name getter/setter
@@ -53,11 +53,13 @@ class column_testcase extends advanced_testcase {
     public function test_title(): void {
         $column = $this->create_column('test', new lang_string('show'));
         $this->assertEquals('Show', $column->get_title());
+        $this->assertFalse($column->has_custom_title());
 
         $this->assertEquals('Hide', $column
             ->set_title(new lang_string('hide'))
             ->get_title()
         );
+        $this->assertTrue($column->has_custom_title());
 
         // Column titles can also be empty.
         $this->assertEmpty($column
@@ -86,9 +88,17 @@ class column_testcase extends advanced_testcase {
      */
     public function test_type(): void {
         $column = $this->create_column('test');
-        $this->assertEquals(column::TYPE_TEXT, $column
-            ->set_type(column::TYPE_TEXT)
+        $this->assertEquals(column::TYPE_INTEGER, $column
+            ->set_type(column::TYPE_INTEGER)
             ->get_type());
+    }
+
+    /**
+     * Test column default type
+     */
+    public function test_type_default(): void {
+        $column = $this->create_column('test');
+        $this->assertEquals(column::TYPE_TEXT, $column->get_type());
     }
 
     /**
@@ -254,6 +264,39 @@ class column_testcase extends advanced_testcase {
         $this->expectException(coding_exception::class);
         $this->expectExceptionMessage('Column ' . $column->get_unique_identifier() . ' contains no fields');
         $column->add_field($column->get_column_alias());
+    }
+
+    /**
+     * Test setting column group by SQL
+     */
+    public function test_set_groupby_sql(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_field('COALESCE(t.foo, t.bar)', 'lionel')
+            ->set_groupby_sql('t.id');
+
+        $this->assertEquals(['t.id'], $column->get_groupby_sql());
+    }
+
+    /**
+     * Test getting default column group by SQL
+     */
+    public function test_get_groupby_sql(): void {
+        global $DB;
+
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_fields('t.foo, t.bar');
+
+        // The behaviour of this method differs due to DB limitations.
+        $usealias = in_array($DB->get_dbfamily(), ['mysql', 'postgres']);
+        if ($usealias) {
+            $expected = ['c1_foo', 'c1_bar'];
+        } else {
+            $expected = ['t.foo', 't.bar'];
+        }
+
+        $this->assertEquals($expected, $column->get_groupby_sql());
     }
 
     /**

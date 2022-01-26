@@ -25,22 +25,29 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
+    // Add an enable subsystem setting to the "Advanced features" settings page.
+    $optionalsubsystems = $ADMIN->locate('optionalsubsystems');
+    $optionalsubsystems->add(new admin_setting_configcheckbox('tool_moodlenet/enablemoodlenet',
+        new lang_string('enablemoodlenet', 'tool_moodlenet'),
+        new lang_string('enablemoodlenet_desc', 'tool_moodlenet'),
+        0, 1, 0)
+    );
+
     // Create a MoodleNet category.
-    $ADMIN->add('root', new admin_category('moodlenet', get_string('pluginname', 'tool_moodlenet')));
-    // Our settings page.
-    $settings = new admin_settingpage('tool_moodlenet', get_string('moodlenetsettings', 'tool_moodlenet'));
-    $ADMIN->add('moodlenet', $settings);
+    if (get_config('tool_moodlenet', 'enablemoodlenet')) {
+        $ADMIN->add('root', new admin_category('moodlenet', get_string('pluginname', 'tool_moodlenet')));
+        // Our settings page.
+        $settings = new admin_settingpage('tool_moodlenet', get_string('moodlenetsettings', 'tool_moodlenet'));
+        $ADMIN->add('moodlenet', $settings);
 
-    $temp = new admin_setting_configcheckbox('tool_moodlenet/enablemoodlenet', get_string('enablemoodlenet', 'tool_moodlenet'),
-        new lang_string('enablemoodlenet_desc', 'tool_moodlenet'), 0, 1, 0);
-    $settings->add($temp);
+        $temp = new admin_setting_configtext('tool_moodlenet/defaultmoodlenetname',
+            get_string('defaultmoodlenetname', 'tool_moodlenet'), new lang_string('defaultmoodlenetname_desc', 'tool_moodlenet'),
+            new lang_string('defaultmoodlenetnamevalue', 'tool_moodlenet'));
+        $settings->add($temp);
 
-    $temp = new admin_setting_configtext('tool_moodlenet/defaultmoodlenetname',
-        get_string('defaultmoodlenetname', 'tool_moodlenet'), new lang_string('defaultmoodlenetname_desc', 'tool_moodlenet'),
-        new lang_string('defaultmoodlenetnamevalue', 'tool_moodlenet'));
-    $settings->add($temp);
+        $temp = new admin_setting_configtext('tool_moodlenet/defaultmoodlenet', get_string('defaultmoodlenet', 'tool_moodlenet'),
+            new lang_string('defaultmoodlenet_desc', 'tool_moodlenet'), 'https://moodle.net');
+        $settings->add($temp);
 
-    $temp = new admin_setting_configtext('tool_moodlenet/defaultmoodlenet', get_string('defaultmoodlenet', 'tool_moodlenet'),
-        new lang_string('defaultmoodlenet_desc', 'tool_moodlenet'), 'https://moodle.net');
-    $settings->add($temp);
+    }
 }

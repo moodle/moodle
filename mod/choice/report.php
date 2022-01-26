@@ -63,21 +63,26 @@
         }
     }
 
+    $groupmode = groups_get_activity_groupmode($cm);
+
     if (!$download) {
-        $PAGE->navbar->add($strresponses);
         $PAGE->set_title(format_string($choice->name).": $strresponses");
         $PAGE->set_heading($course->fullname);
+        $PAGE->activityheader->set_attrs([
+            'hidecompletion' => true,
+            'description' => ''
+        ]);
         echo $OUTPUT->header();
-        echo $OUTPUT->heading(format_string($choice->name), 2, null);
+        echo $OUTPUT->heading($strresponses);
+
         /// Check to see if groups are being used in this choice
-        $groupmode = groups_get_activity_groupmode($cm);
         if ($groupmode) {
             groups_get_activity_group($cm, true);
-            groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/choice/report.php?id='.$id);
+            $groupsactivitymenu = groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/choice/report.php?id=' . $id,
+                true);
+            echo html_writer::div($groupsactivitymenu, 'mb-2');
         }
     } else {
-        $groupmode = groups_get_activity_groupmode($cm);
-
         // Trigger the report downloaded event.
         $eventdata = array();
         $eventdata['context'] = $context;

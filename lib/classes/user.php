@@ -967,7 +967,7 @@ class core_user {
                 return $USER->id == $user->id && has_capability('moodle/blog:view', context_system::instance());
             });
         $preferences['user_home_page_preference'] = array('type' => PARAM_INT, 'null' => NULL_ALLOWED, 'default' => HOMEPAGE_MY,
-            'choices' => array(HOMEPAGE_SITE, HOMEPAGE_MY),
+            'choices' => array(HOMEPAGE_SITE, HOMEPAGE_MY, HOMEPAGE_MYCOURSES),
             'permissioncallback' => function ($user, $preferencename) {
                 global $CFG;
                 return (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER));
@@ -1134,4 +1134,73 @@ class core_user {
         }
     }
 
+    /**
+     * Is the user expected to perform an action to start using Moodle properly?
+     *
+     * This covers cases such as filling the profile, changing password or agreeing to the site policy.
+     *
+     * @param stdClass $user User object, defaults to the current user.
+     * @return bool
+     */
+    public static function awaiting_action(stdClass $user = null): bool {
+        global $USER;
+
+        if ($user === null) {
+            $user = $USER;
+        }
+
+        if (user_not_fully_set_up($user)) {
+            // Awaiting the user to fill all fields in the profile.
+            return true;
+        }
+
+        if (get_user_preferences('auth_forcepasswordchange', false, $user)) {
+            // Awaiting the user to change their password.
+            return true;
+        }
+
+        if (empty($user->policyagreed) && !is_siteadmin($user)) {
+            $manager = new \core_privacy\local\sitepolicy\manager();
+
+            if ($manager->is_defined(isguestuser($user))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get welcome message.
+     *
+     * @return lang_string welcome message
+     */
+    public static function welcome_message(): ?lang_string {
+        global $USER;
+
+        $isloggedinas = \core\session\manager::is_loggedinas();
+        if (!isloggedin() || isguestuser() || $isloggedinas) {
+            return null;
+        }
+        if (empty($USER->core_welcome_message)) {
+            $USER->core_welcome_message = true;
+            $messagekey = 'welcomeback';
+            if (empty(get_user_preferences('core_user_welcome', null))) {
+                $messagekey = 'welcometosite';
+                set_user_preference('core_user_welcome', time());
+            }
+
+            $namefields = [
+                'fullname' => fullname($USER),
+                'alternativefullname' => fullname($USER, true),
+            ];
+
+            foreach (\core_user\fields::get_name_fields() as $namefield) {
+                $namefields[$namefield] = $USER->{$namefield};
+            }
+
+            return new lang_string($messagekey, 'core', $namefields);
+        };
+        return null;
+    }
 }

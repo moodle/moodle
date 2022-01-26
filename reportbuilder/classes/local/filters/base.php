@@ -20,6 +20,7 @@ namespace core_reportbuilder\local\filters;
 
 use MoodleQuickForm;
 use core_reportbuilder\local\report\filter;
+use core_reportbuilder\local\models\filter as filter_model;
 
 /**
  * Base class for all report filters
@@ -72,6 +73,26 @@ abstract class base {
     }
 
     /**
+     * Returns the filter's entity name
+     *
+     * @return string
+     */
+    final public function get_entity_name(): string {
+        return $this->filter->get_entity_name();
+    }
+
+    /**
+     * Returns the filter persistent
+     *
+     * Note that filters for system reports don't store a persistent and will return null.
+     *
+     * @return filter_model|null
+     */
+    final public function get_filter_persistent(): ?filter_model {
+        return $this->filter->get_persistent();
+    }
+
+    /**
      * Adds filter-specific form elements
      *
      * @param MoodleQuickForm $mform
@@ -85,4 +106,18 @@ abstract class base {
      * @return array [$sql, [...$params]]
      */
     abstract public function get_sql_filter(array $values): array;
+
+    /**
+     * Given an array of current filter values for the report, determine whether the filter would apply to the report (i.e. user
+     * has configured it from it's initial "Any value" state). A filter would typically be considered applied if it returns SQL
+     * filter clauses, but child classes may override this method if they use different logic
+     *
+     * @param array $values
+     * @return bool
+     */
+    public function applies_to_values(array $values): bool {
+        [$filtersql] = $this->get_sql_filter($values);
+
+        return $filtersql !== '';
+    }
 }

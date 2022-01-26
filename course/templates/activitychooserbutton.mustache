@@ -1,0 +1,38 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/activitychooserbutton
+
+    Displays a add activity or resource button.
+
+    Context variables required for this template:
+    * sectionid - Relative section number (field course_sections.section).
+    * sectionreturn - The section to link back to.
+
+    Example context (json):
+    {
+        "sectionid": 1,
+        "sectionreturn": 0
+    }
+}}
+<button class="btn btn-link text-decoration-none section-modchooser section-modchooser-link activity-add d-flex align-items-center p-3 mb-3"
+     data-action="open-chooser" data-sectionid="{{sectionid}}" data-sectionreturnid="{{sectionreturn}}">
+    <span class="pluscontainer icon-no-margin icon-size-3 d-flex p-2 mr-3">
+        {{#pix}} t/add, core {{/pix}}
+    </span>
+    <span class="activity-add-text">{{#str}}addresourceoractivity, core{{/str}}</span>
+</button>

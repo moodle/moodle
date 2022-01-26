@@ -28,6 +28,7 @@
         "repository": "repository",
         "portfolio": "portfolio",
         "search": "search\/engine",
+        "qbank": "question\/bank",
         "qbehaviour": "question\/behaviour",
         "qformat": "question\/format",
         "plagiarism": "plagiarism",
@@ -44,6 +45,7 @@
     "subsystems": {
         "access": null,
         "admin": "admin",
+        "adminpresets": "adminpresets",
         "analytics": "analytics",
         "antivirus": "lib\/antivirus",
         "auth": "auth",

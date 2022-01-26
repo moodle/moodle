@@ -39,6 +39,7 @@ $string['imageproperties'] = 'Image properties';
 $string['presentation'] = 'This image is decorative only';
 $string['pluginname'] = 'Insert or edit image';
 $string['presentationoraltrequired'] = 'An image must have a description, unless it is marked as decorative only.';
+$string['imageurlrequired'] = 'An image must have a URL.';
 $string['preview'] = 'Preview';
 $string['saveimage'] = 'Save image';
 $string['size'] = 'Size';

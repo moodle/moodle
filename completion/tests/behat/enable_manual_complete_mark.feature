@@ -19,7 +19,7 @@ Feature: Allow students to manually mark an activity as complete
       | student1 | C1 | student |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
