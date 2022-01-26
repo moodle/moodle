@@ -104,7 +104,7 @@ class editstep extends \moodleform {
         $mform->setDefault('contenttype', static::CONTENTTYPE_MANUAL);
 
         // Language identifier.
-        $mform->addElement('textarea', 'contentlangstring', get_string('moodle_language_identifider', 'tool_usertours'));
+        $mform->addElement('textarea', 'contentlangstring', get_string('moodle_language_identifier', 'tool_usertours'));
         $mform->setType('contentlangstring', PARAM_TEXT);
         $mform->hideIf('contentlangstring', 'contenttype', 'eq', static::CONTENTTYPE_MANUAL);
 
