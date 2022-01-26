@@ -135,7 +135,6 @@ foreach ($categories as $category) {
 
     // Add new field menu.
     $menu = new \action_menu();
-    $menu->set_alignment(\action_menu::BL, \action_menu::BL);
     $menu->set_menu_trigger($strcreatefield);
     foreach ($options as $type => $fieldname) {
         $action = new \action_menu_link_secondary(new \moodle_url('#'), null, $fieldname,

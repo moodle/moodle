@@ -33,6 +33,7 @@
         ],
         "secondary": {
             "classes": "menu  align-tr-br",
+            "dropdownalignment": "dropdown-menu-right",
             "attributes": [
                 {"name": "id", "value": "action-menu-0-menu"},
                 {"name": "data-rel", "value": "menu-content"},
@@ -92,7 +93,7 @@
         {{/menutrigger}}
     </a>
     {{#secondary}}
-        <div class="dropdown-menu dropdown-menu-right {{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
+        <div class="dropdown-menu {{classes}} {{dropdownalignment}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
             {{#items}}
                 {{#actionmenulink}}
                     {{< core/action_menu_link}}

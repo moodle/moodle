@@ -57,7 +57,6 @@ foreach ($accounts as $account) {
     }
 
     $menu = new action_menu();
-    $menu->set_alignment(action_menu::TL, action_menu::BL);
     $menu->set_menu_trigger(get_string('edit'));
     if ($canmanage) {
         $menu->add(new action_menu_link_secondary($account->get_edit_url(), null, get_string('edit')));

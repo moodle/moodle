@@ -87,7 +87,6 @@ class data_registry_page implements renderable, templatable {
         $actionmenu = new \action_menu();
         $actionmenu->set_menu_trigger(get_string('edit'), 'btn btn-primary');
         $actionmenu->set_owner_selector('dataregistry-actions');
-        $actionmenu->set_alignment(\action_menu::TL, \action_menu::BL);
 
         $url = new \moodle_url('/admin/tool/dataprivacy/categories.php');
         $categories = new \action_menu_link_secondary($url, null, get_string('categories', 'tool_dataprivacy'));

@@ -77,7 +77,6 @@ class edit_menu_column extends column_base {
 
         $menu = new \action_menu();
         $menu->set_menu_trigger(get_string('edit'));
-        $menu->set_alignment(\action_menu::TL, \action_menu::BL);
         foreach ($this->actions as $actioncolumn) {
             $action = $actioncolumn->get_action_menu_link($question);
             if ($action) {

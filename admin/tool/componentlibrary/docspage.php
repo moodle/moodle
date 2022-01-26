@@ -89,7 +89,6 @@ if (get_config('core', 'allowthemechangeonurl')) {
     $thememenu = new action_menu($menuthemes);
     $thememenu->set_menu_trigger($PAGE->theme->name, 'nav-link');
     $thememenu->set_owner_selector('change-moodle-theme');
-    $thememenu->set_alignment(\action_menu::TL, \action_menu::BL);
     $PAGE->set_headingmenu($OUTPUT->render($thememenu));
 }
 

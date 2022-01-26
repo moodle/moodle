@@ -182,7 +182,6 @@ class page_managedocs_list implements renderable, templatable {
 
         $actionmenu = new action_menu();
         $actionmenu->set_menu_trigger(get_string('actions', 'tool_policy'));
-        $actionmenu->set_alignment(action_menu::TL, action_menu::BL);
         $actionmenu->prioritise = true;
         if ($moveup) {
             $actionmenu->add(new action_menu_link(
