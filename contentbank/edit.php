@@ -89,6 +89,7 @@ $PAGE->set_url(new \moodle_url('/contentbank/edit.php', $values));
 $PAGE->set_context($context);
 $PAGE->navbar->add(get_string('edit'));
 $PAGE->set_title($title);
+$PAGE->set_pagelayout('incourse');
 
 $PAGE->set_heading($heading);
 

@@ -11897,6 +11897,12 @@ body.h5p-embed .h5pmessages {
 #h5pcontenttypes td {
   vertical-align: middle; }
 
+#page.drawers form#h5peditor,
+#page.drawers form#coolh5peditor,
+#page.drawers .core_contentbank_viewcontent {
+  max-width: 960px;
+  margin: 0 auto; }
+
 .text-decoration-none {
   text-decoration: none !important;
   /* stylelint-disable-line declaration-no-important */ }
@@ -13732,6 +13738,7 @@ table.calendartable caption {
   max-height: 190px;
   overflow-y: auto; }
 
+.cb-navigation-container .singleselect,
 .cb-navigation-container .singleselect .custom-select {
   width: 100%; }
 
