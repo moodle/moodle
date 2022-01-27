@@ -20322,7 +20322,19 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
 #page.drawers {
   margin-top: calc(60px + 2rem);
   padding-left: 15px;
-  padding-right: 15px; }
+  padding-right: 15px;
+  scrollbar-width: thin;
+  scrollbar-color: #6a737b #f8f9fa; }
+  #page.drawers::-webkit-scrollbar {
+    width: 12px; }
+  #page.drawers::-webkit-scrollbar-track {
+    background: #f8f9fa; }
+  #page.drawers::-webkit-scrollbar-thumb {
+    background-color: #6a737b;
+    border-radius: 20px;
+    border: 3px solid #f8f9fa; }
+  #page.drawers::-webkit-scrollbar-thumb:hover {
+    background-color: #495057; }
   #page.drawers .main-inner {
     max-width: 100%;
     width: 100%;
