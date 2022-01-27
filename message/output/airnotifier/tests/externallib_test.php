@@ -82,10 +82,8 @@ class externallib_test extends externallib_advanced_testcase {
 
         self::setUser($user1);
 
-        set_user_preference('message_provider_moodle_instantmessage_loggedin', 'airnotifier', $user1);
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'airnotifier', $user1);
-        set_user_preference('message_provider_moodle_instantmessage_loggedin', 'airnotifier', $user2);
-        set_user_preference('message_provider_moodle_instantmessage_loggedin', 'airnotifier', $user3);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'airnotifier', $user1);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'airnotifier', $user2);
 
         $params = array($user1->id, $user2->id, $user3->id);
 
@@ -112,22 +110,10 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($expected, $preferences['users']);
         $this->assertEquals(2, count($preferences['warnings']));
 
-        // Now, remove one user1 preference (the user still has one prefernce for airnotifier).
-        unset_user_preference('message_provider_moodle_instantmessage_loggedin', $user1);
+        // Now, remove one user1 preference (the user still has one preference for airnotifier).
+        unset_user_preference('message_provider_moodle_instantmessage_enabled', $user1);
         $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
         $preferences = \external_api::clean_returnvalue($returnsdescription, $preferences);
-        $this->assertEquals($expected, $preferences['users']);
-
-        // Delete the last user1 preference.
-        unset_user_preference('message_provider_moodle_instantmessage_loggedoff', $user1);
-        $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
-        $preferences = \external_api::clean_returnvalue($returnsdescription, $preferences);
-        $expected = array(
-            array(
-                'userid' => $user1->id,
-                'configured' => 1
-            )
-        );
         $this->assertEquals($expected, $preferences['users']);
     }
 

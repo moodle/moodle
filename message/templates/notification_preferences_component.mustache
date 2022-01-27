@@ -33,12 +33,7 @@
     Example context (json):
     {
         "displayname": "System",
-        "processors": [
-            {
-                "onlinehelphtml": "<p>help button HTML</p>",
-                "offlinehelphtml": "<p>help button HTML</p>"
-            }
-        ],
+        "colspan": 2,
         "notifications": [
             {
                 "displayname": "Notices about minor problems",
@@ -49,18 +44,8 @@
                         "name": "popup",
                         "locked": 0,
                         "userconfigured": 1,
-                        "loggedin": {
-                            "name": "loggedin",
-                            "displayname": "When I'm logged in",
-                            "checked": 0,
-                            "disableall": 0
-                        },
-                        "loggedoff": {
-                            "name": "loggedoff",
-                            "displayname": "When I'm offline",
-                            "checked": 0,
-                            "disableall": 0
-                        }
+                        "enabled": 0,
+                        "enabledlabel": "Sending Assignment enabled status"
                     }
                 ]
             }
@@ -68,23 +53,7 @@
     }
 }}
 <tr>
-    <th><h4>{{displayname}}</h4></th>
-    {{#processors}}
-        <td class="align-bottom">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-6">
-                        {{#str}} loggedin, message {{/str}}
-                        {{#onlinehelphtml}}{{{.}}}{{/onlinehelphtml}}
-                    </div>
-                    <div class="col-6">
-                        {{#str}} loggedoff, message {{/str}}
-                        {{#offlinehelphtml}}{{{.}}}{{/offlinehelphtml}}
-                    </div>
-                </div>
-            </div>
-        </td>
-    {{/processors}}
+    <th colspan="{{{colspan}}}">{{{displayname}}}</th>
 </tr>
 {{#notifications}}
     {{> message/notification_preferences_component_notification }}

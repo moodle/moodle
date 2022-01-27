@@ -34,24 +34,37 @@ define('MESSAGE_TYPE_MESSAGE', 'message');
 /**
  * Define contants for messaging default settings population. For unambiguity of
  * plugin developer intentions we use 4-bit value (LSB numbering):
- * bit 0 - whether to send message when user is loggedin (MESSAGE_DEFAULT_LOGGEDIN)
- * bit 1 - whether to send message when user is loggedoff (MESSAGE_DEFAULT_LOGGEDOFF)
+ * bit 0 - whether to send message (MESSAGE_DEFAULT_ENABLED)
+ * bit 1 - Deprecated: whether to send message (MESSAGE_DEFAULT_LOGGEDOFF). Used to mean only when the user is logged off.
  * bit 2..3 - messaging permission (MESSAGE_DISALLOWED|MESSAGE_PERMITTED|MESSAGE_FORCED)
  *
- * MESSAGE_PERMITTED_MASK contains the mask we use to distinguish permission setting
+ * MESSAGE_PERMITTED_MASK contains the mask we use to distinguish permission setting.
  */
 
+ /**
+  * @deprecated since Moodle 4.0. Use MESSAGE_DEFAULT_ENABLED instead.
+  * @todo Remove on MDL-73284.
+  */
 define('MESSAGE_DEFAULT_LOGGEDIN', 0x01); // 0001
+
+ /**
+  * @deprecated since Moodle 4.0 MDL-73284. Use MESSAGE_DEFAULT_ENABLED instead.
+  * @todo Remove on MDL-73284.
+  */
 define('MESSAGE_DEFAULT_LOGGEDOFF', 0x02); // 0010
 
-define('MESSAGE_DISALLOWED', 0x04); // 0100
-define('MESSAGE_PERMITTED', 0x08); // 1000
-define('MESSAGE_FORCED', 0x0c); // 1100
+define('MESSAGE_DEFAULT_ENABLED', 0x01); // 0001.
 
-define('MESSAGE_PERMITTED_MASK', 0x0c); // 1100
+define('MESSAGE_DISALLOWED', 0x04); // 0100.
+define('MESSAGE_PERMITTED', 0x08); // 1000.
+define('MESSAGE_FORCED', 0x0c); // 1100.
+
+define('MESSAGE_PERMITTED_MASK', 0x0c); // 1100.
 
 /**
  * Set default value for default outputs permitted setting
+ * @deprecated since Moodle 4.0 MDL-73284.
+ * @todo Remove on MDL-73284.
  */
 define('MESSAGE_DEFAULT_PERMITTED', 'permitted');
 
@@ -493,26 +506,15 @@ function get_message_output_default_preferences() {
  * Translate message default settings from binary value to the array of string
  * representing the settings to be stored. Also validate the provided value and
  * use default if it is malformed.
+ * @todo Remove usage of MESSAGE_DEFAULT_LOGGEDOFF on MDL-73284.
  *
  * @param  int    $plugindefault Default setting suggested by plugin
  * @param  string $processorname The name of processor
- * @return array  $settings array of strings in the order: $permitted, $loggedin, $loggedoff.
+ * @return array  $settings array of strings in the order: $locked, $enabled.
  */
 function translate_message_default_setting($plugindefault, $processorname) {
-    // Preset translation arrays
-    $permittedvalues = array(
-        MESSAGE_DISALLOWED => 'disallowed',
-        MESSAGE_PERMITTED  => 'permitted',
-        MESSAGE_FORCED     => 'forced',
-    );
 
-    $loggedinstatusvalues = array(
-        0x00 => null, // use null if loggedin/loggedoff is not defined
-        MESSAGE_DEFAULT_LOGGEDIN  => 'loggedin',
-        MESSAGE_DEFAULT_LOGGEDOFF => 'loggedoff',
-    );
-
-    // define the default setting
+    // Define the default setting.
     $processor = get_message_processor($processorname);
     $default = $processor->get_default_messaging_settings();
 
@@ -526,15 +528,31 @@ function translate_message_default_setting($plugindefault, $processorname) {
         $plugindefault = $default;
     }
 
-    $permitted = $permittedvalues[$plugindefault & MESSAGE_PERMITTED_MASK];
-    $loggedin = $loggedoff = null;
+    $locked = false;
+    $enabled = false;
 
-    if (($plugindefault & MESSAGE_PERMITTED_MASK) == MESSAGE_PERMITTED) {
-        $loggedin = $loggedinstatusvalues[$plugindefault & MESSAGE_DEFAULT_LOGGEDIN];
-        $loggedoff = $loggedinstatusvalues[$plugindefault & MESSAGE_DEFAULT_LOGGEDOFF];
+    $permitted = $plugindefault & MESSAGE_PERMITTED_MASK;
+    switch ($permitted) {
+        case MESSAGE_FORCED:
+            $locked = true;
+            $enabled = true;
+            break;
+        case MESSAGE_DISALLOWED:
+            $locked = true;
+            $enabled = false;
+            break;
+        default:
+            $locked = false;
+            // It's equivalent to logged in.
+            $enabled = $plugindefault & MESSAGE_DEFAULT_ENABLED == MESSAGE_DEFAULT_ENABLED;
+
+            // MESSAGE_DEFAULT_LOGGEDOFF is deprecated but we're checking it just in case.
+            $loggedoff = $plugindefault & MESSAGE_DEFAULT_LOGGEDOFF == MESSAGE_DEFAULT_LOGGEDOFF;
+            $enabled = $enabled || $loggedoff;
+            break;
     }
 
-    return array($permitted, $loggedin, $loggedoff);
+    return array($locked, $enabled);
 }
 
 /**
@@ -791,13 +809,13 @@ function core_message_user_preferences() {
         'null' => NULL_NOT_ALLOWED,
         'default' => false
     );
-    $preferences['/^message_provider_([\w\d_]*)_logged(in|off)$/'] = array('isregex' => true, 'type' => PARAM_NOTAGS,
+    $preferences['/^message_provider_([\w\d_]*)_enabled$/'] = array('isregex' => true, 'type' => PARAM_NOTAGS,
         'null' => NULL_NOT_ALLOWED, 'default' => 'none',
         'permissioncallback' => function ($user, $preferencename) {
             global $CFG;
             require_once($CFG->libdir.'/messagelib.php');
             if (core_message_can_edit_message_profile($user) &&
-                    preg_match('/^message_provider_([\w\d_]*)_logged(in|off)$/', $preferencename, $matches)) {
+                    preg_match('/^message_provider_([\w\d_]*)_enabled$/', $preferencename, $matches)) {
                 $providers = message_get_providers_for_user($user->id);
                 foreach ($providers as $provider) {
                     if ($matches[1] === $provider->component . '_' . $provider->name) {

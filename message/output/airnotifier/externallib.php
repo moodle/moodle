@@ -115,8 +115,8 @@ class message_airnotifier_external extends external_api {
         $users = $DB->get_recordset_sql($usersql, $params);
 
         $result = array(
-            'users' => array(),
-            'warnings' => array()
+            'users' => [],
+            'warnings' => []
         );
         $hasuserupdatecap = has_capability('moodle/user:update', context_system::instance());
         foreach ($users as $user) {
@@ -126,7 +126,7 @@ class message_airnotifier_external extends external_api {
             if ($currentuser or $hasuserupdatecap) {
 
                 if (!empty($user->deleted)) {
-                    $warning = array();
+                    $warning = [];
                     $warning['item'] = 'user';
                     $warning['itemid'] = $user->id;
                     $warning['warningcode'] = '1';
@@ -135,7 +135,7 @@ class message_airnotifier_external extends external_api {
                     continue;
                 }
 
-                $preferences = array();
+                $preferences = [];
                 $preferences['userid'] = $user->id;
                 $preferences['configured'] = 0;
 
@@ -149,33 +149,29 @@ class message_airnotifier_external extends external_api {
                         break;
                     }
 
-                    foreach (array('loggedin', 'loggedoff') as $state) {
+                    $prefstocheck = [];
+                    $prefname = 'message_provider_'.$provider->component.'_'.$provider->name.'_enabled';
 
-                        $prefstocheck = array();
-                        $prefname = 'message_provider_'.$provider->component.'_'.$provider->name.'_'.$state;
+                    // First get forced settings.
+                    if ($forcedpref = get_config('message', $prefname)) {
+                        $prefstocheck = array_merge($prefstocheck, explode(',', $forcedpref));
+                    }
 
-                        // First get forced settings.
-                        if ($forcedpref = get_config('message', $prefname)) {
-                            $prefstocheck = array_merge($prefstocheck, explode(',', $forcedpref));
-                        }
+                    // Then get user settings.
+                    if ($userpref = get_user_preferences($prefname, '', $user->id)) {
+                        $prefstocheck = array_merge($prefstocheck, explode(',', $userpref));
+                    }
 
-                        // Then get user settings.
-                        if ($userpref = get_user_preferences($prefname, '', $user->id)) {
-                            $prefstocheck = array_merge($prefstocheck, explode(',', $userpref));
-                        }
-
-                        if (in_array('airnotifier', $prefstocheck)) {
-                            $preferences['configured'] = 1;
-                            $configured = true;
-                            break;
-                        }
-
+                    if (in_array('airnotifier', $prefstocheck)) {
+                        $preferences['configured'] = 1;
+                        $configured = true;
+                        break;
                     }
                 }
 
                 $result['users'][] = $preferences;
             } else if (!$hasuserupdatecap) {
-                $warning = array();
+                $warning = [];
                 $warning['item'] = 'user';
                 $warning['itemid'] = $user->id;
                 $warning['warningcode'] = '2';

@@ -107,7 +107,7 @@ class tool_mobile_api_testcase extends externallib_advanced_testcase {
         set_config('allowedemaildomains', 'example.com');
 
         $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user2);
 
         // Extra content for all types of messages.
         $message = new \core\message\message();

@@ -82,3 +82,10 @@ navmethod,core_grades
 dropdown,core_grades
 tabs,core_grades
 combo,core_grades
+defaults,core_message
+loggedin_help,core_message
+loggedindescription,core_message
+loggedoff_help,core_message
+loggedoffdescription,core_message
+sendingvia,core_message
+sendingviawhen,core_message
