@@ -10416,8 +10416,8 @@ table.mod_index {
   border: 1px solid #ccc; }
 
 .comment-message .picture {
-  width: 20px;
-  float: left; }
+  float: left;
+  margin-right: 0.25rem; }
 
 .comment-message .text {
   margin: 0;
@@ -18471,6 +18471,7 @@ div#dock {
   color: #343a40;
   font-weight: normal; }
   .userinitials.size-16, .userinitials.size-30 {
+    font-size: 0.7rem;
     width: 30px;
     height: 30px; }
   .userinitials.size-35 {
