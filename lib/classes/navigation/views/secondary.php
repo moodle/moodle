@@ -289,6 +289,39 @@ class secondary extends view {
     }
 
     /**
+     * Recursive call to add all custom navigation nodes to secondary
+     *
+     * @param navigation_node $node The node which should be added to secondary
+     * @param navigation_node $basenode The original parent node
+     * @param bool $forceadd Whether or not to bypass the external action check and force add all nodes
+     */
+    protected function add_external_nodes_to_secondary(navigation_node $node, navigation_node $basenode, bool $forceadd = false) {
+        // Add the first node.
+        if ($node->has_action() && !$this->get($node->key)) {
+            $this->add_node(clone $node);
+        }
+
+        // If the node has an external action add all children to the secondary navigation.
+        if (!$node->has_internal_action() || $forceadd) {
+            if ($node->has_children()) {
+                foreach ($node->children as $child) {
+                    if ($child->has_children()) {
+                        $this->add_external_nodes_to_secondary($child, $basenode, true);
+                    } else if ($child->has_action() && !$this->get($child->key)) {
+                        // Check whether the basenode matches a child's url.
+                        // This would have happened in get_first_action_for_node.
+                        // In these cases, we prefer the specific child content.
+                        if ($basenode->has_action() && $basenode->action()->compare($child->action())) {
+                            $this->children->remove($basenode->key, $basenode->type);
+                        }
+                        $this->add_node(clone $child);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Returns a list of all expected nodes in the course administration.
      *
      * @return array An array of keys for navigation nodes in the course administration.
@@ -339,12 +372,10 @@ class secondary extends view {
                 foreach ($value->children as $other) {
                     if (array_search($other->key, $expectedcourseadmin) === false) {
                         $othernode = $this->get_first_action_for_node($other);
+                        $recursivenode = $othernode && !$this->get($othernode->key) ? $othernode : $other;
                         // Get the first node and check whether it's been added already.
-                        if ($othernode && !$this->get($othernode->key)) {
-                            $this->add_node($othernode);
-                        } else {
-                            $this->add_node($other);
-                        }
+                        // Also check if the first node is an external link. If it is, add all children.
+                        $this->add_external_nodes_to_secondary($recursivenode, $recursivenode);
                     }
                 }
             }
@@ -677,9 +708,9 @@ class secondary extends view {
                     $leftovernode = $this->get_first_action_for_node($leftovernode);
                 }
 
-                // Confirm we have a valid object to add.
+                // We have found the first node with an action.
                 if ($leftovernode) {
-                    $this->add_node(clone $leftovernode);
+                    $this->add_external_nodes_to_secondary($leftovernode, $leftovernode);
                 }
             }
         }

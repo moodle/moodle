@@ -652,6 +652,81 @@ class secondary_test extends \advanced_testcase {
     }
 
     /**
+     * Test the add_external_nodes_to_secondary function.
+     *
+     * @param array $structure The structure of the navigation node tree to setup with.
+     * @param array $expectednodes The expected nodes added to the secondary navigation
+     * @dataProvider add_external_nodes_to_secondary_provider
+     */
+    public function test_add_external_nodes_to_secondary(array $structure, array $expectednodes) {
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = \context_course::instance($course->id);
+        $PAGE->set_context($context);
+        $PAGE->set_url('/');
+
+        $node = $this->generate_node_tree_construct($structure, 'parentnode');
+        $secondary = new secondary($PAGE);
+        $secondary->add_node($node);
+        $firstnode = $node->get('parentnode1');
+
+        $method = new ReflectionMethod('core\navigation\views\secondary', 'add_external_nodes_to_secondary');
+        $method->setAccessible(true);
+        $method->invoke($secondary, $firstnode, $firstnode);
+
+        $test = $secondary->get_children_key_list();
+        $this->assertEquals($expectednodes, $test);
+    }
+
+    /**
+     * Provider for the add_external_nodes_to_secondary function.
+     *
+     * @return array
+     */
+    public function add_external_nodes_to_secondary_provider() {
+        return [
+            "Container node with internal action and external children" => [
+                [
+                    'parentnode1' => [
+                        'action' => '/test.php',
+                        'children' => [
+                            'child2.1' => 'https://example.org',
+                            'child2.2' => 'https://example.net',
+                        ]
+                    ]
+                ],
+                ['parentnode', 'parentnode1']
+            ],
+            "Container node with external action and external children" => [
+                [
+                    'parentnode1' => [
+                        'action' => '/test.php',
+                        'children' => [
+                            'child2.1' => 'https://example.org',
+                            'child2.2' => 'https://example.net',
+                        ]
+                    ]
+                ],
+                ['parentnode', 'parentnode1']
+            ],
+            "Container node with external action and internal children" => [
+                [
+                    'parentnode1' => [
+                        'action' => 'https://example.org',
+                        'children' => [
+                            'child2.1' => '/view/course.php',
+                            'child2.2' => '/view/admin.php',
+                        ]
+                    ]
+                ],
+                ['parentnode', 'parentnode1', 'child2.1', 'child2.2']
+            ],
+        ];
+    }
+
+    /**
      * Test the get_overflow_menu_data function
      *
      * @param string $selectedurl
