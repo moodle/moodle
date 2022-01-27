@@ -114,8 +114,6 @@ $string['details'] = 'Track details';
 $string['directories'] = 'Show the directory links';
 $string['disabled'] = 'Disabled';
 $string['display'] = 'Display package';
-$string['displayactivityname'] = 'Display activity name';
-$string['displayactivityname_help'] = 'Whether or not to display the activity name above the SCORM player.';
 $string['displayattemptstatus'] = 'Display attempt status';
 $string['displayattemptstatus_help'] = 'This preference allows a summary of the users attempts to show in the course overview block in Dashboard and/or the SCORM entry page.';
 $string['displayattemptstatusdesc'] = 'Whether a summary of the user\'s attempts is shown in the course overview block in Dashboard and/or the SCORM entry page.';
@@ -458,3 +456,5 @@ $string['youmustselectastatus'] = 'You must select a status to require';
 
 // Deprecated since Moodle 4.0.
 $string['info'] = 'Info';
+$string['displayactivityname'] = 'Display activity name';
+$string['displayactivityname_help'] = 'Whether or not to display the activity name above the SCORM player.';

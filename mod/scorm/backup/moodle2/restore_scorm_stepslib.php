@@ -66,9 +66,6 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
 
-        if (!isset($data->displayactivityname)) {
-            $data->displayactivityname = true;
-        }
         if (!isset($data->completionstatusallscos)) {
             $data->completionstatusallscos = false;
         }

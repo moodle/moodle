@@ -1,1 +1,3 @@
 info,mod_scorm
+displayactivityname,mod_scorm
+displayactivityname_help,mod_scorm

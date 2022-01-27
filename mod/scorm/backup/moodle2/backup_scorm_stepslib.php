@@ -46,7 +46,7 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
             'auto', 'popup', 'options', 'width',
             'height', 'timeopen', 'timeclose', 'timemodified',
             'completionstatusrequired', 'completionscorerequired',
-            'completionstatusallscos', 'displayactivityname',
+            'completionstatusallscos',
             'autocommit'));
 
         $scoes = new backup_nested_element('scoes');

@@ -677,7 +677,7 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
                                 'grademethod', 'whatgrade', 'maxattempt', 'forcecompleted', 'forcenewattempt', 'lastattemptlock',
                                 'displayattemptstatus', 'displaycoursestructure', 'sha1hash', 'md5hash', 'revision', 'launch',
                                 'skipview', 'hidebrowse', 'hidetoc', 'nav', 'navpositionleft', 'navpositiontop', 'auto',
-                                'popup', 'width', 'height', 'timeopen', 'timeclose', 'displayactivityname', 'packagesize',
+                                'popup', 'width', 'height', 'timeopen', 'timeclose', 'packagesize',
                                 'packageurl', 'scormtype', 'reference');
 
         // Add expected coursemodule and data.

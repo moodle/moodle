@@ -195,9 +195,7 @@ $headerconfig = [
     'description' => '',
     'hidecompletion' => true
 ];
-if ($activityheader->is_title_allowed() && empty($scorm->displayactivityname)) {
-    $headerconfig['title'] = '';
-}
+
 $activityheader->set_attrs($headerconfig);
 echo $OUTPUT->header();
 
