@@ -51,10 +51,12 @@ class report_helper {
                 foreach ($children as $key => $node) {
                     $name = $node->text;
 
-                    $url = $node->action()->out(false);
-                    $menu[$url] = $name;
-                    if ($name === $pluginname) {
-                        $activeurl = $url;
+                    if ($node->has_action()) {
+                        $url = $node->action()->out(false);
+                        $menu[$url] = $name;
+                        if ($name === $pluginname) {
+                            $activeurl = $url;
+                        }
                     }
                 }
             }
