@@ -27,6 +27,7 @@ namespace mod_quiz\event;
 
 use quiz;
 use quiz_attempt;
+use context_module;
 
 defined('MOODLE_INTERNAL') || die();
 
