@@ -46,7 +46,9 @@ export const init = reportId => {
     prefetchStrings('core_reportbuilder', [
         'deleteschedule',
         'deletescheduleconfirm',
+        'disableschedule',
         'editscheduledetails',
+        'enableschedule',
         'newschedule',
         'schedulecreated',
         'scheduledeleted',
@@ -101,6 +103,12 @@ export const init = reportId => {
 
                     scheduleToggle.dataset.state = scheduleStateToggle;
 
+                    const stringKey = scheduleStateToggle ? 'disableschedule' : 'enableschedule';
+                    return getString(stringKey, 'core_reportbuilder');
+                })
+                .then(toggleLabel => {
+                    const labelContainer = scheduleToggle.parentElement.querySelector(`label[for="${scheduleToggle.id}"] > span`);
+                    labelContainer.innerHTML = toggleLabel;
                     return pendingPromise.resolve();
                 })
                 .catch(Notification.exception);

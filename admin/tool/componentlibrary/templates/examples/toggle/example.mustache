@@ -15,25 +15,27 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_reportbuilder/local/toggle
+    @template tool_componentlibrary/examples/toggle/example
 
-    Template for toggle element
+    Template for toggle element used as a block example
 
     Example context (json):
     {
-        "action": "report-toggle",
-        "id": 3,
-        "enabled": true
     }
 }}
-
-<div class="custom-control custom-switch">
-    <input type="checkbox" class="custom-control-input" id="toggle-{{id}}" data-action="{{action}}" data-id="{{id}}" data-state="{{enabled}}"
-       {{#enabled}}checked{{/enabled}}>
-    <label class="custom-control-label" for="toggle-{{id}}">
-        <span class="sr-only">
-            {{#enabled}} {{#str}} disable, moodle {{/str}} {{/enabled}}
-            {{^enabled}} {{#str}} enable, moodle {{/str}} {{/enabled}}
-        </span>
-    </label>
+<div id="toggle-example">
+    <h1>Toggle block</h1>
+    <span>This is a simple example using toggle template as a block.</span>
+    {{< core/toggle }}
+        {{$id}}example-toggle-3{{/id}}
+        {{$extraclasses}}mt-3{{/extraclasses}}
+        {{$attributes}}
+            data-action="toggle-status"
+            data-action-id="3"
+            checked
+            disabled
+        {{/attributes}}
+        {{$label}}Enable/disable status{{/label}}
+        {{$labelclasses}}sr-only{{/labelclasses}}
+    {{/ core/toggle }}
 </div>
