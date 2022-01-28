@@ -11,7 +11,7 @@ tags:
 
 ## How to use
 
-Toggle input is rendered using a template found in lib/templates/toggle.mustache. 
+Toggle input is rendered using a template found in lib/templates/toggle.mustache.
 
 The parameters for the template context are:
 * id: Unique id for the toggle input.
@@ -78,4 +78,3 @@ Example of template using toggle as a block.
     {
     }
 {{< /mustache >}}
-
