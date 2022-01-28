@@ -42,18 +42,19 @@ class question_status_column extends column_base {
         $attributes = [];
         if (question_has_capability_on($question, 'edit')
             && $question->status !== question_version_status::QUESTION_STATUS_HIDDEN) {
-            $target = 'questionstatus_' . $question->id;
-            $datatarget = '[data-target="' . $target . '"]';
-            $PAGE->requires->js_call_amd('qbank_editquestion/question_status', 'init', [$datatarget, $question->contextid]);
-            $attributes = [
-                'data-target' => $target,
-                'data-questionid' => $question->id,
-                'data-courseid' => $this->qbank->course->id,
-                'class' => 'link-primary comment-pointer',
-                'href' => '#'
-            ];
+            $options = [];
+            $options['questionid'] = $question->id;
+            $statuslist = editquestion_helper::get_question_status_list();
+            foreach ($statuslist as $value => $displaystatus) {
+                $options['options'][] = [
+                    'name' => $displaystatus,
+                    'value' => $value,
+                    'selected' => ($question->status) === $value ? true : false
+                ];
+            }
+            echo $PAGE->get_renderer('qbank_editquestion')->render_status_dropdown($options);
+            $PAGE->requires->js_call_amd('qbank_editquestion/question_status', 'init', [$question->id]);
         }
-        echo \html_writer::tag('a', editquestion_helper::get_question_status_string($question->status), $attributes);
     }
 
 }
