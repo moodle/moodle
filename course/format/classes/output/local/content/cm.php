@@ -26,15 +26,16 @@ namespace core_courseformat\output\local\content;
 
 use cm_info;
 use core\activity_dates;
+use core\output\named_templatable;
 use core_availability\info_module;
 use core_completion\cm_completion_details;
-use core_courseformat\base as course_format;
 use core_course\output\activity_information;
+use core_courseformat\base as course_format;
+use core_courseformat\output\local\courseformat_named_templatable;
 use renderable;
 use renderer_base;
 use section_info;
 use stdClass;
-use templatable;
 
 /**
  * Base class to render a course module inside a course format.
@@ -43,7 +44,8 @@ use templatable;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cm implements renderable, templatable {
+class cm implements named_templatable, renderable {
+    use courseformat_named_templatable;
 
     /** @var course_format the course format */
     protected $format;

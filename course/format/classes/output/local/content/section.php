@@ -24,13 +24,14 @@
 
 namespace core_courseformat\output\local\content;
 
-use core_courseformat\base as course_format;
 use context_course;
+use core\output\named_templatable;
+use core_courseformat\base as course_format;
+use core_courseformat\output\local\courseformat_named_templatable;
 use renderable;
 use renderer_base;
 use section_info;
 use stdClass;
-use templatable;
 
 /**
  * Base class to render a course section.
@@ -39,7 +40,8 @@ use templatable;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class section implements renderable, templatable {
+class section implements named_templatable, renderable {
+    use courseformat_named_templatable;
 
     /** @var course_format the course format */
     protected $format;
@@ -221,7 +223,6 @@ class section implements renderable, templatable {
             $cmlist = new $this->cmlistclass($format, $section);
             $data->cmlist = $cmlist->export_for_template($output);
             $result = true;
-
         }
         return $result;
     }
