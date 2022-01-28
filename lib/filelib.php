@@ -4364,7 +4364,7 @@ class curl_cache {
  * @todo MDL-31088 file serving improments
  */
 function file_pluginfile($relativepath, $forcedownload, $preview = null, $offline = false, $embed = false) {
-    global $DB, $CFG, $USER;
+    global $DB, $CFG, $USER, $OUTPUT;
     // relative path must start with '/'
     if (!$relativepath) {
         throw new \moodle_exception('invalidargorconf');
@@ -4916,6 +4916,18 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
 
             \core\session\manager::write_close(); // Unlock session during file serving.
             send_stored_file($file, 60*60, 0, $forcedownload, $sendfileoptions);
+
+        } else if ($filearea === 'generated') {
+            if ($CFG->forcelogin) {
+                require_login($course);
+            } else if ($course->id != SITEID) {
+                require_login($course);
+            }
+
+            $svg = $OUTPUT->get_generated_svg_for_id($course->id);
+
+            \core\session\manager::write_close(); // Unlock session during file serving.
+            send_file($svg, 'course.svg', 60 * 60, 0, true, $forcedownload);
 
         } else {
             send_file_not_found();

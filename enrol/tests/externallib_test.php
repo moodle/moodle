@@ -562,6 +562,8 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertTrue($courseenrol['isfavourite']);
                 $this->assertEquals(2, $courseenrol['enrolledusercount']);
                 $this->assertEquals($course1->timemodified, $courseenrol['timemodified']);
+                $url = "https://www.example.com/moodle/pluginfile.php/{$contexts[$course1->id]->id}/course/generated/course.svg";
+                $this->assertEquals($url, $courseenrol['courseimage']);
             } else {
                 // Check language pack. Should be empty since an incorrect one was used when creating the course.
                 $this->assertEmpty($courseenrol['lang']);
@@ -576,6 +578,8 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertFalse($courseenrol['isfavourite']);
                 $this->assertEquals(1, $courseenrol['enrolledusercount']);
                 $this->assertEquals($course2->timemodified, $courseenrol['timemodified']);
+                $url = "https://www.example.com/moodle/pluginfile.php/{$contexts[$course2->id]->id}/course/generated/course.svg";
+                $this->assertEquals($url, $courseenrol['courseimage']);
             }
         }
 
