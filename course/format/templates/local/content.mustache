@@ -163,24 +163,42 @@
     {{{completionhelp}}}
     <ul class="{{format}}" data-for="course_sectionlist">
         {{#initialsection}}
-            {{> core_courseformat/local/content/section }}
+            {{$ core_courseformat/local/content/section }}
+                {{> core_courseformat/local/content/section }}
+            {{/ core_courseformat/local/content/section }}
         {{/initialsection}}
         {{#sections}}
-            {{> core_courseformat/local/content/section }}
+            {{$ core_courseformat/local/content/section }}
+                {{> core_courseformat/local/content/section }}
+            {{/ core_courseformat/local/content/section }}
         {{/sections}}
     </ul>
     {{#hasnavigation}}
     <div class="single-section">
-        {{#sectionnavigation}} {{> core_courseformat/local/content/sectionnavigation }} {{/sectionnavigation}}
+        {{#sectionnavigation}}
+            {{$ core_courseformat/local/content/sectionnavigation }}
+                {{> core_courseformat/local/content/sectionnavigation }}
+            {{/ core_courseformat/local/content/sectionnavigation }}
+        {{/sectionnavigation}}
         <ul class="{{format}}">
         {{#singlesection}}
-            {{> core_courseformat/local/content/section }}
+            {{$ core_courseformat/local/content/section }}
+                {{> core_courseformat/local/content/section }}
+            {{/ core_courseformat/local/content/section }}
         {{/singlesection}}
         </ul>
-        {{#sectionselector}} {{> core_courseformat/local/content/sectionselector }} {{/sectionselector}}
+        {{#sectionselector}}
+            {{$ core_courseformat/local/content/sectionselector }}
+                {{> core_courseformat/local/content/sectionselector }}
+            {{/ core_courseformat/local/content/sectionselector }}
+        {{/sectionselector}}
     </div>
     {{/hasnavigation}}
-    {{#numsections}} {{> core_courseformat/local/content/addsection}} {{/numsections}}
+    {{#numsections}}
+        {{$ core_courseformat/local/content/addsection}}
+            {{> core_courseformat/local/content/addsection}}
+        {{/ core_courseformat/local/content/addsection}}
+    {{/numsections}}
 </div>
 {{#js}}
 require(['core_courseformat/local/content'], function(component) {
