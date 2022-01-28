@@ -159,9 +159,19 @@ class editstep extends \moodleform {
             }
         }
 
+        // Validate manually entered text content. Validation logic derived from \MoodleQuickForm_Rule_Required::validate()
+        // without the checking of the "strictformsrequired" admin setting.
         if ($data['contenttype'] == static::CONTENTTYPE_MANUAL) {
-            if (strip_tags($data['content']['text']) == '') {
-                $errors['content'] = get_string('required');
+            $value = $data['content']['text'] ?? '';
+
+            // All tags except img, canvas and hr, plus all forms of whitespaces.
+            $stripvalues = [
+                '#</?(?!img|canvas|hr).*?>#im',
+                '#(\xc2\xa0|\s|&nbsp;)#',
+            ];
+            $value = preg_replace($stripvalues, '', (string)$value);
+            if (empty($value)) {
+                $errors['contenthtmlgrp'] = get_string('required');
             }
         }
 
@@ -203,7 +213,7 @@ class editstep extends \moodleform {
             if ($data->contenttype == static::CONTENTTYPE_LANGSTRING) {
                 $data->content = [
                     'text' => $data->contentlangstring,
-                    'format' => 1,
+                    'format' => FORMAT_HTML,
                 ];
             }
         }
