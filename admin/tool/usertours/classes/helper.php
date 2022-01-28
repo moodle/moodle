@@ -412,7 +412,7 @@ class helper {
      * Get the specified tour.
      *
      * @param   int         $tourid     The tour that the step belongs to.
-     * @return  stdClass
+     * @return  tour
      */
     public static function get_tour($tourid) {
         return tour::instance($tourid);
@@ -468,7 +468,7 @@ class helper {
      * Get all of the steps in the tour.
      *
      * @param   int         $tourid     The tour that the step belongs to.
-     * @return  stdClass[]
+     * @return  step[]
      */
     public static function get_steps($tourid) {
         $steps = cache::get_stepdata($tourid);
