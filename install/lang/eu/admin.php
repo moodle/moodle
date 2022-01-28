@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['clianswerno'] = 'e';
 $string['cliansweryes'] = 'b';
 $string['cliincorrectvalueerror'] = 'Errorea, "{$a->value}" balioa ez da egokia "{$a->option}"-rako';
-$string['cliincorrectvalueretry'] = 'Balio ezegokia, mesedez saiatu berriz';
+$string['cliincorrectvalueretry'] = 'Balio ezegokia, mesedez saiatu berriro';
 $string['clitypevalue'] = 'Sartu balioa';
 $string['clitypevaluedefault'] = 'sartu balioa, sakatu Enter-i lehenetsitako balioa erabiltzeko ({$a})';
 $string['cliunknowoption'] = 'Aukera ezezagunak:
