@@ -711,9 +711,7 @@ class manager {
                     }
                     // This will emit an error if debugging is on, even if $CFG->enable_read_only_sessions
                     // is not true as we need to surface this class of errors.
-                    // @codingStandardsIgnoreStart
-                    error_log($error);
-                    // @codingStandardsIgnoreEnd
+                    error_log($error); // phpcs:ignore
                 }
             }
         }

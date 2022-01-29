@@ -1,5 +1,5 @@
 <?php
-// @codingStandardsIgnoreFile
+// phpcs:ignoreFile
 // @codeCoverageIgnoreStart
 
 // This file is part of Moodle - http://moodle.org/
