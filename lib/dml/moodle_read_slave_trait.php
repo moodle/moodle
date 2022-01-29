@@ -195,15 +195,13 @@ trait moodle_read_slave_trait {
                     }
                     $dboptions['dbport'] = isset($slave['dbport']) ? $slave['dbport'] : $dbport;
 
-                    // @codingStandardsIgnoreStart
                     try {
                         $this->raw_connect($rodb['dbhost'], $rodb['dbuser'], $rodb['dbpass'], $dbname, $prefix, $dboptions);
                         $this->dbhreadonly = $this->get_db_handle();
                         break;
-                    } catch (dml_connection_exception $e) {
+                    } catch (dml_connection_exception $e) { // phpcs:ignore
                         // If readonly slave is not connectable we'll have to do without it.
                     }
-                    // @codingStandardsIgnoreEnd
                 }
                 // ... lock_db queries always go to master.
                 // Since it is a lock and as such marshalls concurrent connections,

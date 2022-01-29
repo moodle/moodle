@@ -30,7 +30,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// @codingStandardsIgnoreStart
+// phpcs:ignoreFile
 ?>
 <!DOCTYPE html>
 <html <?php echo $htmllang ?>>
