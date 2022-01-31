@@ -94,6 +94,13 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
     if (!isset($user->lang)) {
         $user->lang = core_user::get_property_default('lang');
     }
+    if (!isset($user->city)) {
+        $user->city = core_user::get_property_default('city');
+    }
+    if (!isset($user->country)) {
+        // The default value of $CFG->country is 0, but that isn't a valid property for the user field, so switch to ''.
+        $user->country = core_user::get_property_default('country') ?: '';
+    }
 
     $user->timecreated = time();
     $user->timemodified = $user->timecreated;
