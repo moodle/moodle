@@ -51,6 +51,18 @@ body.behat-site {
     &.jsenabled #page-footer .footer-content-popover {
         display: block;
     }
+
+    &.path-grade-report-grader .gradeparent {
+        tr.heading,
+        tr.lastrow,
+        th.header {
+            position: relative;
+            left: auto;
+        }
+        tr.heading {
+            top: auto;
+        }
+    }
 }
 
 .phpinfo table,
