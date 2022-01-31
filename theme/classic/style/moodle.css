@@ -12244,7 +12244,8 @@ body.dragging .dragging {
   margin: 0;
   padding: 0;
   box-sizing: content-box;
-  margin-right: 0.5rem; }
+  margin-right: 0.5rem;
+  margin-left: 0.5rem; }
   .icon.spacer {
     margin-right: 0; }
   .icon.iconsize-big {
