@@ -34,7 +34,7 @@
 }
 
 #page.drawers {
-    margin-top: calc(#{$navbar-height} + 2rem);
+    margin-top: $navbar-height;
     padding-left: 15px;
     padding-right: 15px;
     @include thin-scrolls($gray-100);
@@ -45,7 +45,7 @@
         @include border-radius();
         background-color: $white;
         padding: 1.5rem 0.5rem;
-        margin-top: 3rem;
+        margin-top: 0.5rem;
         margin-bottom: 3rem;
         flex: 1 0 auto;
     }
@@ -170,11 +170,16 @@
     }
 }
 
+@include media-breakpoint-up(sm) {
+    #page.drawers .main-inner {
+        margin-top: 1.5rem;
+    }
+}
+
 @include media-breakpoint-up(md) {
 
     // Add some padding for the drawer toggle buttons
     #page.drawers {
-        margin-top: $navbar-height;
         padding-left: 3rem;
         padding-right: 3rem;
     }
@@ -192,7 +197,6 @@
         overflow-y: auto;
         @include transition(0.2s);
         height: calc(100vh - #{$navbar-height});
-        margin-top: $navbar-height;
         left: 0;
         right: 0;
         &.show-drawer-left {

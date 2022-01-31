@@ -165,3 +165,6 @@
 #page {
     margin-top: $navbar-height;
 }
+.pagelayout-embedded #page {
+    margin-top: 0;
+}
