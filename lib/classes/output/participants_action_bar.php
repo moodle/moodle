@@ -92,8 +92,9 @@ class participants_action_bar implements \renderable {
             $items = [];
             foreach ($content as $key) {
                 if ($node = $this->node->find($key, null)) {
-                    $urldescription = $node->text;
-                    $items[$node->action()->out()] = $urldescription;
+                    if ($node->has_action()) {
+                        $items[$node->action()->out()] = $node->text;
+                    }
 
                     // Additional items to be added.
                     if ($key === 'groups') {
