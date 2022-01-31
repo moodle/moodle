@@ -1206,13 +1206,15 @@ $cache = '.var_export($cache, true).';
      * @param string $fulldir
      */
     protected static function load_renamed_classes($fulldir) {
-        $file = $fulldir . '/db/renamedclasses.php';
-        if (is_readable($file)) {
-            $renamedclasses = null;
-            require($file);
-            if (is_array($renamedclasses)) {
-                foreach ($renamedclasses as $oldclass => $newclass) {
-                    self::$classmaprenames[(string)$oldclass] = (string)$newclass;
+        if (isset($fulldir)) {
+            $file = $fulldir . '/db/renamedclasses.php';
+            if (is_readable($file)) {
+                $renamedclasses = null;
+                require($file);
+                if (is_array($renamedclasses)) {
+                    foreach ($renamedclasses as $oldclass => $newclass) {
+                        self::$classmaprenames[(string)$oldclass] = (string)$newclass;
+                    }
                 }
             }
         }
