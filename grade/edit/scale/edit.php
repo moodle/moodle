@@ -144,6 +144,7 @@ if ($mform->is_cancelled()) {
 }
 
 $heading = $id ? get_string('editscale', 'grades') : get_string('addscale', 'grades');
+$PAGE->navbar->add($heading);
 print_grade_page_head($COURSE->id, 'scale', null, $heading, false, false, false);
 
 $mform->display();

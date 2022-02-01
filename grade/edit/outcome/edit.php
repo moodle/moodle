@@ -79,7 +79,6 @@ if ($id) {
     require_login($course);
     $context = context_course::instance($course->id);
     require_capability('moodle/grade:manage', $context);
-    navigation_node::override_active_url(new moodle_url('/grade/edit/outcome/course.php', array('id'=>$courseid)));
 
     $outcome_rec = new stdClass();
     $outcome_rec->standard = 0;
@@ -98,6 +97,10 @@ if ($id) {
 if (!$courseid) {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');
+} else {
+    navigation_node::override_active_url(new moodle_url('/grade/edit/outcome/course.php', ['id' => $courseid]));
+    $PAGE->navbar->add(get_string('manageoutcomes', 'grades'),
+        new moodle_url('/grade/edit/outcome/index.php', ['id' => $courseid]));
 }
 
 // default return url
@@ -157,6 +160,8 @@ if ($mform->is_cancelled()) {
 
     redirect($returnurl);
 }
+
+$PAGE->navbar->add($heading, $url);
 
 print_grade_page_head($courseid ?: SITEID, 'outcome', 'edit', $heading, false, false, false);
 
