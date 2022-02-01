@@ -29,7 +29,6 @@ use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\helpers\format;
-use core_reportbuilder\local\helpers\schedule as helper;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\models\schedule;
 use core_reportbuilder\local\report\action;
@@ -198,8 +197,11 @@ class report_schedules extends system_report {
             ->add_fields("{$tablealias}.format")
             ->set_is_sortable(true)
             ->add_callback(static function(string $format): string {
-                $formats = helper::get_format_options();
-                return $formats[$format] ?? '';
+                if (get_string_manager()->string_exists('dataformat', 'dataformat_' . $format)) {
+                    return get_string('dataformat', 'dataformat_' . $format);
+                } else {
+                    return $format;
+                }
             })
         );
 

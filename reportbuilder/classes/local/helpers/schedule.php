@@ -339,10 +339,10 @@ class schedule {
      * @return string[]
      */
     public static function get_format_options(): array {
-        $dataformats = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
+        $dataformats = dataformat::get_enabled_plugins();
 
-        return array_map(static function(dataformat $dataformat): string {
-            return $dataformat->displayname;
+        return array_map(static function(string $pluginname): string {
+            return get_string('dataformat', 'dataformat_' . $pluginname);
         }, $dataformats);
     }
 
