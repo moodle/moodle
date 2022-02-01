@@ -160,7 +160,6 @@ Feature: Assign group override
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I am on the "Test assignment name" Activity page
     And I navigate to "Overrides" in current page administration
-    And I select "User overrides" from the "jump" singleselect
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user          | Student1                 |
