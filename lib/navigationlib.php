@@ -645,14 +645,15 @@ class navigation_node implements renderable {
 
     /**
      * Searches all children for the best matching active node
+     * @param int $strength The url match to be made.
      * @return navigation_node|false
      */
-    public function search_for_active_node() {
-        if ($this->check_if_active(URL_MATCH_BASE)) {
+    public function search_for_active_node($strength = URL_MATCH_BASE) {
+        if ($this->check_if_active($strength)) {
             return $this;
         } else {
             foreach ($this->children as &$child) {
-                $outcome = $child->search_for_active_node();
+                $outcome = $child->search_for_active_node($strength);
                 if ($outcome !== false) {
                     return $outcome;
                 }
