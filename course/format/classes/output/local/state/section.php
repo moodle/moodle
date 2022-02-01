@@ -16,6 +16,7 @@
 
 namespace core_courseformat\output\local\state;
 
+use core_availability\info_section;
 use core_courseformat\base as course_format;
 use section_info;
 use renderable;
@@ -55,8 +56,6 @@ class section implements renderable {
      * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
-        global $CFG;
-
         $format = $this->format;
         $course = $format->get_course();
         $section = $this->section;
@@ -87,19 +86,9 @@ class section implements renderable {
             'sectionurl' => course_get_url($course, $section->section)->out(),
             'current' => $format->is_section_current($section),
             'indexcollapsed' => $indexcollapsed,
-            'contentcollapsed' => $contentcollapsed
+            'contentcollapsed' => $contentcollapsed,
+            'hasrestrictions' => $this->get_has_restrictions(),
         ];
-
-        // If the section availability restrictions must be displayed.
-        $canviewhidden = has_capability(
-            'moodle/course:viewhiddenactivities',
-            context_course::instance($course->id)
-        );
-        if (!empty($CFG->enableavailability) && $canviewhidden) {
-            $data->hasrestrictions = !empty($section->availableinfo);
-        } else {
-            $data->hasrestrictions = false;
-        }
 
         if (empty($modinfo->sections[$section->section])) {
             return $data;
@@ -113,5 +102,36 @@ class section implements renderable {
         }
 
         return $data;
+    }
+
+    /**
+     * Return if the section has a restrictions icon displayed or not.
+     *
+     * @return bool if the section has visible restrictions for the user.
+     */
+    protected function get_has_restrictions(): bool {
+        global $CFG;
+
+        $section = $this->section;
+        $course = $this->format->get_course();
+        $context = context_course::instance($course->id);
+
+        // Hidden sections have no restriction indicator displayed.
+        if (!$section->visible || empty($CFG->enableavailability)) {
+            return false;
+        }
+        if (!has_capability('moodle/course:viewhiddenactivities', $context)) {
+            // If the section is visible but not user visible means it has some locking rule.
+            return empty($section->uservisible);
+        }
+
+        if (has_capability('moodle/course:manageactivities', $context)) {
+            // Course editors can see all restrictions if the section is visible.
+            $ci = new info_section($section);
+            return !empty($ci->get_full_information());
+        } else {
+            // Some users can see restrictions even if it does not apply to them.
+            return !empty($section->availableinfo);
+        }
     }
 }

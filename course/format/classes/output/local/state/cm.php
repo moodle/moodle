@@ -95,8 +95,13 @@ class cm implements renderable {
         // Check if restriction access are visible to the user.
         $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $cm->context);
         if (!empty($CFG->enableavailability) && $canviewhidden) {
-            // Some users can see restrictions even if it does not apply to them.
-            $data->hascmrectrictions = !empty($cm->availableinfo);
+            if (has_capability('moodle/course:manageactivities', $cm->context)) {
+                // Course editors can see all restrictions.
+                $data->hascmrectrictions = !empty($cm->availability);
+            } else {
+                // Some users can see restrictions even if it does not apply to them.
+                $data->hascmrectrictions = !empty($cm->availableinfo);
+            }
         } else {
             $data->hascmrectrictions = !$data->accessvisible || !$cm->uservisible;
         }
