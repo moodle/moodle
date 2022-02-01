@@ -32,7 +32,6 @@ if ($ADMIN->fulltree) {
     $default = 'navigation,settings,course_list,section_links';
     $setting = new admin_setting_configtext('theme_boost/unaddableblocks',
         get_string('unaddableblocks', 'theme_boost'), get_string('unaddableblocks_desc', 'theme_boost'), $default, PARAM_TEXT);
-    $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
     // Preset.
