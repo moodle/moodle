@@ -18,6 +18,7 @@ namespace mod_bigbluebuttonbn;
 
 use Exception;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use mod_bigbluebuttonbn\local\config;
 
 /**
@@ -88,8 +89,7 @@ class broker {
         try {
             $decodedparameters = JWT::decode(
                 $params['signed_parameters'],
-                config::get('shared_secret'),
-                ['HS256']
+                new Key(config::get('shared_secret'), 'HS256')
             );
         } catch (Exception $e) {
             $error = 'Caught exception: ' . $e->getMessage();

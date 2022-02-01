@@ -21,6 +21,7 @@ use cache_store;
 use context_course;
 use core_tag_tag;
 use Exception;
+use Firebase\JWT\Key;
 use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\local\exceptions\bigbluebutton_exception;
 use mod_bigbluebuttonbn\local\exceptions\meeting_join_exception;
@@ -432,8 +433,7 @@ class meeting {
             // Verify the authenticity of the request.
             $token = \Firebase\JWT\JWT::decode(
                 $authorization[1],
-                config::get('shared_secret'),
-                ['HS512']
+                new Key(config::get('shared_secret'), 'HS512')
             );
 
             // Get JSON string from the body.
