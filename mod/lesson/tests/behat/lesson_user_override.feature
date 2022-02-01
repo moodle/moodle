@@ -289,7 +289,6 @@ Feature: Lesson user override
       | student2 | G2    |
     When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "User overrides" from the "jump" singleselect
     And I follow "Add user override"
     Then the "Override user" select box should contain "Sam1 Student1, student1@example.com"
     And the "Override user" select box should not contain "Sam2 Student2, student2@example.com"
@@ -313,7 +312,6 @@ Feature: Lesson user override
       | student2 | G2    |
     And I am on the "Lesson 2" "lesson activity" page logged in as admin
     And I navigate to "Overrides" in current page administration
-    And I select "User overrides" from the "jump" singleselect
     And I follow "Add user override"
     And I set the following fields to these values:
       | Override user       | Student1 |
@@ -336,7 +334,6 @@ Feature: Lesson user override
     And I log out
     When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "User overrides" from the "jump" singleselect
     Then I should see "Student1" in the ".generaltable" "css_element"
     And I should not see "Student2" in the ".generaltable" "css_element"
 
