@@ -682,16 +682,17 @@ class grade_report_grader extends grade_report {
         $studentheader->scope = 'col';
         $studentheader->header = true;
         $studentheader->id = 'studentheader';
-        if ($hasuserreportcell) {
-            $studentheader->colspan = 2;
-        }
         $studentheader->text = $arrows['studentname'];
-
         $headerrow->cells[] = $studentheader;
+
+        if ($hasuserreportcell) {
+            $emptyheader = new html_table_cell();
+            $headerrow->cells[] = $emptyheader;
+        }
 
         foreach ($extrafields as $field) {
             $fieldheader = new html_table_cell();
-            $fieldheader->attributes['class'] = 'header userfield user' . $field;
+            $fieldheader->attributes['class'] = 'userfield user' . $field;
             $fieldheader->scope = 'col';
             $fieldheader->header = true;
             $fieldheader->text = $arrows[$field];
@@ -1305,10 +1306,11 @@ class grade_report_grader extends grade_report {
             $controlsrow->attributes['class'] = 'controls';
             $controlscell = new html_table_cell();
             $controlscell->attributes['class'] = 'header controls';
+            $controlscell->header = true;
             $controlscell->colspan = $colspan;
             $controlscell->text = $this->get_lang_string('controls', 'grades');
-
             $controlsrow->cells[] = $controlscell;
+
             $rows[] = $controlsrow;
         }
         return $rows;

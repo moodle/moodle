@@ -19522,6 +19522,26 @@ p.arrow_button {
 .path-grade-report-grader .gradeparent table .clickable {
   cursor: pointer; }
 
+.path-grade-report-grader .gradeparent tr.heading {
+  position: sticky;
+  top: 0;
+  z-index: 1; }
+
+.path-grade-report-grader .gradeparent tr.lastrow {
+  position: sticky;
+  bottom: 0;
+  z-index: 1; }
+  .path-grade-report-grader .gradeparent tr.lastrow td,
+  .path-grade-report-grader .gradeparent tr.lastrow th {
+    border-top: 1px solid #dee2e6; }
+
+.path-grade-report-grader .gradeparent th.header {
+  position: sticky;
+  left: -3rem; }
+
+.path-grade-report-grader .gradeparent td.noborder {
+  border-right: transparent; }
+
 /**
  * User report.
  */
@@ -19802,6 +19822,15 @@ body.behat-site [data-region="message-drawer"] {
 
 body.behat-site.jsenabled #page-footer .footer-content-popover {
   display: block; }
+
+body.behat-site.path-grade-report-grader .gradeparent tr.heading,
+body.behat-site.path-grade-report-grader .gradeparent tr.lastrow,
+body.behat-site.path-grade-report-grader .gradeparent th.header {
+  position: relative;
+  left: auto; }
+
+body.behat-site.path-grade-report-grader .gradeparent tr.heading {
+  top: auto; }
 
 .phpinfo table,
 .phpinfo th,
