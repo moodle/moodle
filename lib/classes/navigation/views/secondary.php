@@ -356,8 +356,8 @@ class secondary extends view {
                 return;
             }
             $actionnode = $this->get_first_action_for_node($overflownode);
-            // All additional nodes will be available under the 'Course admin' page.
-            $text = get_string('courseadministration');
+            // All additional nodes will be available under the 'Course reuse' page.
+            $text = get_string('coursereuse');
             $this->add($text, $actionnode->action, null, null, 'courseadmin', new \pix_icon('t/edit', $text));
         }
     }
