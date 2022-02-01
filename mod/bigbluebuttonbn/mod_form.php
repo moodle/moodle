@@ -307,12 +307,6 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $this->standard_intro_elements(get_string('mod_form_field_intro', 'bigbluebuttonbn'));
         $mform->setAdvanced('introeditor');
         $mform->setAdvanced('showdescription');
-        if ($cfg['sendnotifications_enabled']) {
-            $field = ['type' => 'checkbox', 'name' => 'notification', 'data_type' => PARAM_INT,
-                'description_key' => 'mod_form_field_notification'];
-            $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-                $field['description_key'], 0);
-        }
     }
 
     /**

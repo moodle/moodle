@@ -219,11 +219,6 @@ $string['config_scheduled_description'] = 'These settings define some of the beh
 $string['config_scheduled_pre_opening'] = 'Accessible before opening time (minutes)';
 $string['config_scheduled_pre_opening_description'] = 'The time in minutes for the session to be acceessible before the schedules opening time is due.';
 
-$string['config_sendnotifications'] = 'Configuration for "Send notifications" feature';
-$string['config_sendnotifications_description'] = 'These settings enable or disable options in the UI and also define default values for these options.';
-$string['config_sendnotifications_enabled'] = 'Send notifications enabled';
-$string['config_sendnotifications_enabled_description'] = 'If enabled the UI for editing the activity includes an option for sending a notification to enrolled user when the activity is added or updated.';
-
 $string['config_extended_capabilities'] = 'Configuration for extended capabilities';
 $string['config_extended_capabilities_description'] = 'Configuration for extended capabilities when the BigBlueButton server offers them.';
 $string['config_uidelegation_enabled'] = 'UI delegation is enabled';
@@ -364,11 +359,6 @@ $string['mod_form_field_participant_bbb_role_viewer'] = 'Viewer';
 $string['mod_form_field_instanceprofiles'] = 'Instance type';
 $string['mod_form_field_instanceprofiles_help'] = 'Select the type for this BigBlueButton instance.';
 $string['mod_form_field_muteonstart'] = 'Mute on start';
-$string['mod_form_field_notification'] = 'Notify this change to users enrolled';
-$string['mod_form_field_notification_help'] = 'Send a notification to all users enrolled to let them know that this activity has been added or updated';
-$string['mod_form_field_notification_created_help'] = 'Send a notification to all users enrolled to let them know that this activity has been created';
-$string['mod_form_field_notification_modified_help'] = 'Send a notification to all users enrolled to let them know that this activity has been updated';
-$string['mod_form_field_notification_msg_at'] = 'at';
 $string['mod_form_field_recordings_html'] = 'Show the table in plain html';
 $string['mod_form_field_recordings_deleted'] = 'Include recordings from deleted activities';
 $string['mod_form_field_recordings_imported'] = 'Show only imported links';
