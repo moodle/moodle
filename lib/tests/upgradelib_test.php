@@ -1526,4 +1526,97 @@ class upgradelib_test extends advanced_testcase {
         $this->assertEquals('admin_dir_usage', $result->getInfo());
         $this->assertFalse($result->getStatus());
     }
+
+    /**
+     * Test the check_xmlrpc_usage check when the XML-RPC web service method is not set.
+     *
+     * @return void
+     */
+    public function test_check_xmlrpc_webservice_is_not_set(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $result = new environment_results('custom_checks');
+        $this->assertNull(check_xmlrpc_usage($result));
+
+        $CFG->webserviceprotocols = 'rest';
+        $result = new environment_results('custom_checks');
+        $this->assertNull(check_xmlrpc_usage($result));
+    }
+
+    /**
+     * Test the check_xmlrpc_usage check when the XML-RPC web service method is set.
+     *
+     * @return void
+     */
+    public function test_check_xmlrpc_webservice_is_set(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->webserviceprotocols = 'xmlrpc,rest';
+
+        $result = new environment_results('custom_checks');
+        $this->assertInstanceOf(environment_results::class, check_xmlrpc_usage($result));
+        $this->assertEquals('xmlrpc_webservice_usage', $result->getInfo());
+        $this->assertFalse($result->getStatus());
+    }
+
+    /**
+     * Test the check_xmlrpc_usage check when the MNet is turned on but no host was set up.
+     *
+     * @return void
+     */
+    public function test_check_xmlrpc_mnet_host_is_not_set(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->mnet_dispatcher_mode = 'strict';
+
+        $result = new environment_results('custom_checks');
+        $this->assertNull(check_xmlrpc_usage($result));
+    }
+
+    /**
+     * Test the check_xmlrpc_usage check when the MNet is turned on and the host was set up.
+     *
+     * @return void
+     */
+    public function test_check_xmlrpc_mnet_host_is_set(): void {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $CFG->mnet_dispatcher_mode = 'strict';
+
+        // Add a mnet host.
+        $mnethost = new stdClass();
+        $mnethost->name = 'A mnet host';
+        $mnethost->public_key = 'A random public key!';
+        $mnethost->id = $DB->insert_record('mnet_host', $mnethost);
+
+        $result = new environment_results('custom_checks');
+        $this->assertInstanceOf(environment_results::class, check_xmlrpc_usage($result));
+        $this->assertEquals('xmlrpc_mnet_usage', $result->getInfo());
+        $this->assertFalse($result->getStatus());
+    }
+
+    /**
+     * Test the check_xmlrpc_usage check when the MNet is turned on and the Mahara portfolios was set up.
+     *
+     * @return void
+     */
+    public function test_check_xmlrpc_mahara_portfolios_is_set(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->mnet_dispatcher_mode = 'strict';
+
+        // Enable the Mahara portfolios.
+        \core\plugininfo\portfolio::enable_plugin('mahara', 1);
+
+        $result = new environment_results('custom_checks');
+        $this->assertInstanceOf(environment_results::class, check_xmlrpc_usage($result));
+        $this->assertEquals('xmlrpc_mahara_usage', $result->getInfo());
+        $this->assertFalse($result->getStatus());
+    }
 }

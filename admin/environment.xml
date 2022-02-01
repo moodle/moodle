@@ -3729,6 +3729,8 @@
           <ON_CHECK message="iscustomadminwarnings" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_xmlrpc_usage" level="optional">
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>

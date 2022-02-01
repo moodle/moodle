@@ -117,6 +117,7 @@ if ($form = data_submitted() and confirm_sesskey()) {
 }
 
 echo $OUTPUT->header();
+echo $OUTPUT->render(mnet_get_deprecation_notice());
 
 // Explain
 echo $OUTPUT->box(get_string('ssoacldescr','mnet'));

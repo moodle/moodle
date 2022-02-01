@@ -145,7 +145,10 @@ class mnet_environment {
         set_config('openssl', implode('@@@@@@@@', $this->keypair), 'mnet');
 
         $DB->update_record('mnet_host', $this);
-        error_log('New public key has been generated. It expires ' . date('Y/m/d h:i:s', $this->public_key_expires));
+        if (!PHPUNIT_TEST) {
+            // We don't want to output this log for PHPUnit since it will make the test to fail as risky.
+            error_log('New public key has been generated. It expires ' . date('Y/m/d h:i:s', $this->public_key_expires));
+        }
     }
 
     function get_private_key() {
