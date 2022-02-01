@@ -35,34 +35,35 @@ Feature: In a book, verify log entries
     And I navigate to "Print book" in current page administration
     And I am on the "Test book" "book activity" page
     And I navigate to "Download IMS CP" in current page administration
-    And I am on the "Test book" "book activity" page
-    And I navigate to "Logs" in current page administration
+    And I navigate to "Reports > Logs" in site administration
+    And I set the field "menuid" to "Course 1"
+    And I press "Get these logs"
     Then I should see "Book exported"
     And I should see "Book printed"
+    And I should see "Chapter viewed" in the "#report_log_r4_c5" "css_element"
+    And I should see "Chapter viewed" in the "#report_log_r5_c5" "css_element"
     And I should see "Chapter viewed" in the "#report_log_r6_c5" "css_element"
-    And I should see "Chapter viewed" in the "#report_log_r7_c5" "css_element"
+    And I should see "Chapter updated" in the "#report_log_r7_c5" "css_element"
     And I should see "Chapter viewed" in the "#report_log_r8_c5" "css_element"
-    And I should see "Chapter updated" in the "#report_log_r9_c5" "css_element"
-    And I should see "Chapter viewed" in the "#report_log_r10_c5" "css_element"
-    And I should see "Chapter created" in the "#report_log_r11_c5" "css_element"
-    And I click on "Chapter viewed" "link" in the "#report_log_r6_c5" "css_element"
+    And I should see "Chapter created" in the "#report_log_r9_c5" "css_element"
+    And I click on "Chapter viewed" "link" in the "#report_log_r4_c5" "css_element"
     And I switch to "action" window
     And I change window size to "large"
     And I should see "1. First chapter edited" in the ".book_content" "css_element"
     And I switch to the main window
-    And I click on "Chapter viewed" "link" in the "#report_log_r7_c5" "css_element"
+    And I click on "Chapter viewed" "link" in the "#report_log_r5_c5" "css_element"
     And I switch to "action" window
     And I should see "2. Second chapter" in the ".book_content" "css_element"
     And I switch to the main window
-    And I click on "Chapter updated" "link" in the "#report_log_r9_c5" "css_element"
+    And I click on "Chapter updated" "link" in the "#report_log_r7_c5" "css_element"
     And I switch to "action" window
     And I should see "1. First chapter edited" in the ".book_content" "css_element"
     And I switch to the main window
-    And I click on "Chapter created" "link" in the "#report_log_r11_c5" "css_element"
+    And I click on "Chapter created" "link" in the "#report_log_r9_c5" "css_element"
     And I switch to "action" window
     And I should see "2. Second chapter" in the ".book_content" "css_element"
     And I switch to the main window
-    And I click on "Chapter created" "link" in the "#report_log_r13_c5" "css_element"
+    And I click on "Chapter created" "link" in the "#report_log_r11_c5" "css_element"
     And I switch to "action" window
     And I should see "1. First chapter edited" in the ".book_content" "css_element"
     And I switch to the main window
