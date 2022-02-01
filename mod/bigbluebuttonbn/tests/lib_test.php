@@ -198,7 +198,6 @@ class lib_test extends \advanced_testcase {
      * @param int $user
      * @param int $group
      * @return array|void
-     * @throws \moodle_exception
      */
     protected function prepare_for_recent_activity_array($date, $user, $group) {
         // Same algorithm as in cource/recent.php, but stops at the first bbb activity.

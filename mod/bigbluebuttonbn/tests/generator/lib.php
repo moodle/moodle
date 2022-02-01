@@ -229,7 +229,6 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
      * @param stdClass $recordingdata
      * @param array $data
      * @return string
-     * @throws moodle_exception
      */
     protected function create_mockserver_recording(instance $instance, stdClass $recordingdata, array $data): string {
         $mockdata = array_merge((array) $recordingdata, [
@@ -341,7 +340,6 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
      * @param array $params
      * @param array $mockdata
      * @return SimpleXMLElement
-     * @throws coding_exception
      */
     protected function send_mock_request(string $endpoint, array $params = [], array $mockdata = []): SimpleXMLElement {
         $url = $this->get_mocked_server_url($endpoint, $params);

@@ -49,7 +49,6 @@ class update_recording extends external_api {
      * @param string $action
      * @param string|null $additionaloptions
      * @return array (empty array for now)
-     * @throws coding_exception
      */
     public static function execute(
         int $bigbluebuttonbnid,

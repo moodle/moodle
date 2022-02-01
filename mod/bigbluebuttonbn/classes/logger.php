@@ -79,8 +79,6 @@ class logger {
      * @param array|null $filters
      * @param int|null $timestart
      * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     public static function get_user_completion_logs(
         instance $instance,
@@ -102,8 +100,6 @@ class logger {
      * @param array|null $filters
      * @param int|null $timestart
      * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     public static function get_user_completion_logs_with_userfields(
         instance $instance,
@@ -138,8 +134,6 @@ EOF;
      * @param array|null $filters
      * @param int|null $timestart
      * @return int
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     public static function get_user_completion_logs_max_timestamp(
         instance $instance,
@@ -164,8 +158,6 @@ EOF;
      * @param int|null $timestart
      * @param string|null $logtablealias
      * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     protected static function get_user_completion_sql_params(instance $instance, ?int $userid, ?array $filters, ?int $timestart,
         ?string $logtablealias = null) {
@@ -371,7 +363,6 @@ EOF;
      * @param array $overrides
      * @param string|null $meta
      * @return bool
-     * @throws \dml_exception
      */
     protected static function raw_log(
         string $event,
