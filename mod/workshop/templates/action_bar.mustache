@@ -53,13 +53,13 @@
         "heading": "Print"
     }
 }}
-<div class="container-fluid mb-4">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="d-flex">
-            {{#urlselect}}
+        {{#urlselect}}
+            <div class="navitem">
                 {{>core/url_select}}
-            {{/urlselect}}
-        </div>
+            </div>
+        {{/urlselect}}
     </div>
 </div>
 {{#heading}}<h3>{{heading}}</h3>{{/heading}}

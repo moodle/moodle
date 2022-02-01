@@ -10,7 +10,7 @@ select {
 }
 
 .path-mod {
-    .activity-header {
+    .activity-header:not(:empty) {
         background-color: $gray-100;
         margin-bottom: map-get($spacers, 3);
         padding-left: map-get($spacers, 3);

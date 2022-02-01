@@ -104,8 +104,6 @@ if ($currentgroup) {
 echo $OUTPUT->header();
 
 if (has_capability('mod/chat:chat', $context)) {
-    // Print the main part of the page.
-    echo $OUTPUT->box_start('generalbox', 'enterlink');
 
     $now = time();
     $chattime = $chat->chattime ?? 0;
@@ -117,15 +115,15 @@ if (has_capability('mod/chat:chat', $context)) {
 
     $params['id'] = $chat->id;
     $chattarget = new moodle_url("/mod/chat/gui_$CFG->chat_method/index.php", $params);
-    echo html_writer::start_div('container-fluid mb-2');
+    echo html_writer::start_div('container-fluid tertiary-navigation');
     echo html_writer::start_div('row');
-    echo html_writer::start_div('col-xs-6 mr-3');
+    echo html_writer::start_div('navitem');
     echo $OUTPUT->action_link($chattarget,
                               $strenterchat,
                               new popup_action('click', $chattarget, "chat{$course->id}_{$chat->id}{$groupparam}",
                                                array('height' => 500, 'width' => 700)), ['class' => 'btn btn-primary']);
     echo html_writer::end_div();
-    echo html_writer::start_div('col-xs-6');
+    echo html_writer::start_div('navitem');
 
     $params['id'] = $chat->id;
     $link = new moodle_url('/mod/chat/gui_basic/index.php', $params);
@@ -136,6 +134,9 @@ if (has_capability('mod/chat:chat', $context)) {
     echo html_writer::end_div();
     echo html_writer::end_div();
     echo html_writer::end_div();
+
+    // Print the main part of the page.
+    echo $OUTPUT->box_start('generalbox', 'enterlink');
 
     if (($chat->studentlogs or has_capability('mod/chat:readlog', $context)) && !$PAGE->has_secondary_navigation()) {
         if ($msg = chat_get_session_messages($chat->id, $currentgroup)) {

@@ -38,17 +38,17 @@
     }
 
 }}
-<div class="container-fluid">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="col-xs-6">
-            {{#previous}}
-                <a class="btn btn-secondary mr-1" href="{{url}}">{{title}}</a>
-            {{/previous}}
-        </div>
-        <div class="col-xs-6">
-            {{#next}}
+        {{#previous}}
+            <div class="navitem">
                 <a class="btn btn-secondary" href="{{url}}">{{title}}</a>
-            {{/next}}
-        </div>
+            </div>
+        {{/previous}}
+        {{#next}}
+            <div class="navitem ml-auto">
+                <a class="btn btn-secondary" href="{{url}}">{{title}}</a>
+            </div>
+        {{/next}}
     </div>
 </div>

@@ -70,8 +70,8 @@
 {{#title}}
     <h2>{{{title}}}</h2>
 {{/title}}
-<div class="activity-header" data-for="page-activity-header">
-    {{#completion}}
+<div class="activity-header" data-for="page-activity-header">{{!
+    }}{{#completion}}
         <span class="sr-only">{{#str}} overallaggregation, completion {{/str}}</span>
         {{{completion}}}
     {{/completion}}
@@ -79,8 +79,8 @@
         <div class="activity-description" id="intro">
             {{{description}}}
         </div>
-    {{/description}}
-</div>
+    {{/description}}{{!
+}}</div>
 {{#additional_items}}
     <nav aria-label="{{#str}} additionalcustomnav, core {{/str}}">
         {{> core/url_select}}

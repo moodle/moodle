@@ -17660,13 +17660,13 @@ textarea[data-auto-rows] {
 select {
   width: auto; }
 
-.path-mod .activity-header {
+.path-mod .activity-header:not(:empty) {
   background-color: #f8f9fa;
   margin-bottom: 1rem;
   padding-left: 1rem;
   padding-right: 1rem;
   border-radius: 0.25rem; }
-  .path-mod .activity-header > div:last-child > div:last-child {
+  .path-mod .activity-header:not(:empty) > div:last-child > div:last-child {
     border-bottom: 0; }
 
 .path-mod .activity-information .activity-dates {
@@ -19274,7 +19274,7 @@ p.arrow_button {
   overflow-x: visible;
   min-width: 100%;
   width: auto;
-  display: inline-flex;
+  display: flex;
   flex-direction: column; }
   .path-grade-report-grader #region-main > .card {
     width: auto;
@@ -21521,6 +21521,17 @@ div.editor_atto_toolbar button .icon {
       border: none; }
       .secondary-navigation .navigation .nav-tabs .nav-link {
         border-radius: initial; }
+
+.tertiary-navigation {
+  padding-top: 10px; }
+  .tertiary-navigation .navitem {
+    display: flex;
+    margin-bottom: 25px; }
+  .tertiary-navigation > a.btn,
+  .tertiary-navigation > div.urlselect {
+    margin-bottom: 25px; }
+  .tertiary-navigation .navitem:not(:last-child) {
+    margin-right: 20px; }
 
 body {
   -webkit-font-smoothing: antialiased;

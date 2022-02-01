@@ -44,14 +44,14 @@
         "printbutton": "<a class='btn btn-secondary' href='#'>Print</a>"
     }
 }}
-<div class="container-fluid mb-4">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="d-flex">
-            {{#urlselect}}
+        {{#urlselect}}
+            <div class="navitem">
                 {{>core/url_select}}
-            {{/urlselect}}
-        </div>
-        <div class="ml-auto d-flex">
+            </div>
+        {{/urlselect}}
+        <div class="navitem ml-sm-auto">
             {{{printbutton}}}
         </div>
     </div>
