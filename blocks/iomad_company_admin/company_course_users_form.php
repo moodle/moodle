@@ -33,6 +33,10 @@ $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $selectedcourses = optional_param_array('selectedcourses', array('-1'), PARAM_INTEGER);
 $groupid = optional_param('groupid', 0, PARAM_INTEGER);
 
+if (empty($courses) && !empty($selectedcourses)) {
+    $courses = $selectedcourses;
+}
+
 $context = context_system::instance();
 require_login();
 
@@ -81,32 +85,13 @@ $PAGE->navbar->add($linktext, $linkurl);
 
 require_login(null, false); // Adds to $PAGE, creates $output.
 iomad::require_capability('block/iomad_company_admin:company_course_users', $context);
+
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 $parentlevel = company::get_company_parentnode($companyid);
 $companydepartment = $parentlevel->id;
 $syscontext = context_system::instance();
 $company = new company($companyid);
-
-if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
-    $userhierarchylevel = $parentlevel->id;
-} else {
-    $userlevel = $company->get_userlevel($USER);
-    $userhierarchylevel = $userlevel->id;
-}
-
-$subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-if (empty($departmentid)) {
-    $departmentid = $userhierarchylevel;
-}
-
-$userdepartment = $company->get_userlevel($USER);
-$departmenttree = company::get_all_subdepartments_raw($userdepartment->id);
-$treehtml = $output->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
-
-$departmentselect = new single_select(new moodle_url($linkurl, $urlparams), 'deptid', $subhierarchieslist, $departmentid);
-$departmentselect->label = get_string('department', 'block_iomad_company_admin') .
-                           $output->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
 
 $coursesform = new \block_iomad_company_admin\forms\company_ccu_courses_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses, $parentlevel);
 $coursesform->set_data(array('selectedcourses' => $selectedcourses, 'courses' => $courses));
@@ -126,13 +111,10 @@ if ($coursesform->is_cancelled() || $usersform->is_cancelled() ||
         redirect(new moodle_url('/my'));
     }
 } else {
+    // Display the department selector.
     echo html_writer::tag('h3', get_string('company_courses_for', 'block_iomad_company_admin', $company->get_name()));
-    echo html_writer::start_tag('div', array('class' => 'fitem'));
-    echo $treehtml;
-    echo html_writer::start_tag('div', array('style' => 'display:none'));
-    echo $output->render($departmentselect);
-    echo html_writer::end_tag('div');
-    echo html_writer::end_tag('div');
+    echo $output->display_tree_selector($company, $parentlevel, $linkurl, $urlparams, $departmentid);
+
     echo html_writer::start_tag('div', array('class' => 'iomadclear'));
     if ($companyid > 0) {
         $coursesform->set_data($params);
