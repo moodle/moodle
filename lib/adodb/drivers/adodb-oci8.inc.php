@@ -1,20 +1,25 @@
 <?php
-/*
-
-  @version   v5.21.0  2021-02-27
-  @copyright (c) 2000-2013 John Lim. All rights reserved.
-  @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-
-  Latest version is available at https://adodb.org/
-
-  Code contributed by George Fourlanos <fou@infomap.gr>
-
-  13 Nov 2000 jlim - removed all ora_* references.
-*/
+/**
+ * FileDescription
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ * @author John Lim
+ * @author George Fourlanos <fou@infomap.gr>
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -106,12 +111,12 @@ END;
 	 * Legacy compatibility for sequence names for emulated auto-increments
 	 */
 	public $useCompactAutoIncrements = false;
-	
+
 	/*
 	 * Defines the schema name for emulated auto-increment columns
 	 */
 	public $schema = false;
-	
+
 	/*
 	 * Defines the prefix for emulated auto-increment columns
 	 */
@@ -313,33 +318,32 @@ END;
 	{
 		return " NVL($field, $ifNull) "; // if Oracle
 	}
-	
-	function _insertid($tabname,$column='')
+
+	protected function _insertID($table = '', $column = '')
 	{
-		
-		if (!$this->seqField) 
+
+		if (!$this->seqField)
 			return false;
 
-		
-		if ($this->schema) 
+		if ($this->schema)
 		{
-			$t = strpos($tabname,'.');
-			if ($t !== false) 
-				$tab = substr($tabname,$t+1);
-			else 
-				$tab = $tabname;
-			
+			$t = strpos($table,'.');
+			if ($t !== false)
+				$tab = substr($table,$t+1);
+			else
+				$tab = $table;
+
 			if ($this->useCompactAutoIncrements)
 				$tab = sprintf('%u',crc32(strtolower($tab)));
-				
+
 			$seqname = $this->schema.'.'.$this->seqPrefix.$tab;
-		} 
-		else 
+		}
+		else
 		{
 			if ($this->useCompactAutoIncrements)
-				$tabname = sprintf('%u',crc32(strtolower($tabname)));
-			
-			$seqname = $this->seqPrefix.$tabname;
+				$table = sprintf('%u',crc32(strtolower($table)));
+
+			$seqname = $this->seqPrefix.$table;
 		}
 
 		if (strlen($seqname) > 30)
@@ -347,7 +351,7 @@ END;
 			* We cannot successfully identify the sequence
 			*/
 			return false;
-		
+
 		return $this->getOne("SELECT $seqname.currval FROM dual");
 	}
 
@@ -1598,7 +1602,7 @@ class ADORecordset_oci8 extends ADORecordSet {
 		$this->adodbFetchMode = $mode;
 		$this->_queryID = $queryID;
 	}
-	
+
 	/**
 	* Overrides the core destructor method as that causes problems here
 	*

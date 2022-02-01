@@ -1,4 +1,23 @@
 <?php
+/**
+ * Memory caching.
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -8,37 +27,6 @@ $ADODB_INCLUDED_MEMCACHE = 1;
 
 global $ADODB_INCLUDED_CSV;
 if (empty($ADODB_INCLUDED_CSV)) include_once(ADODB_DIR.'/adodb-csvlib.inc.php');
-
-/*
-
-  @version   v5.21.0  2021-02-27
-  @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-  @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence. See License.txt.
-  Set tabs to 4 for best viewing.
-
-  Latest version is available at https://adodb.org/
-
-Usage:
-
-$db = NewADOConnection($driver);
-$db->memCache = true; /// should we use memCache instead of caching in files
-$db->memCacheHost = array($ip1, $ip2, $ip3);
-$db->memCachePort = 11211; /// this is default memCache port
-$db->memCacheCompress = false; /// Use 'true' to store the item compressed (uses zlib)
-                               /// Note; compression is not supported w/the memcached library
-
-$db->Connect(...);
-$db->CacheExecute($sql);
-
-  Notes; The memcache class is shared by all connections, is created during the first call to Connect/PConnect.
-         We'll look for both the memcache library (https://pecl.php.net/package/memcache) and the  memcached
-         library (https://pecl.php.net/package/memcached). If both exist, the memcache library will be used.
-
-  Class instance is stored in $ADODB_CACHE
-*/
 
 	class ADODB_Cache_MemCache {
 		var $createdir = false; // create caching directory structure?
