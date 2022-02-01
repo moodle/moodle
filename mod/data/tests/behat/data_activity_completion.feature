@@ -40,35 +40,12 @@ Feature: View activity completion in the database activity
     And I press "Save template"
     And I log out
 
-  Scenario: View automatic completion items as a teacher and confirm all tabs display conditions
+  Scenario: View automatic completion items as a teacher
     Given I am on the "Music history" "data activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
     And I select "Single view" from the "jump" singleselect
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Make entries: 2" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    And I press "Add entry"
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Make entries: 2" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    And I set the following fields to these values:
-      | Instrument types | Hurdygurdy |
-    And I press "Save"
-    And I press "Export entries"
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Make entries: 2" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    And I navigate to "Templates" in current page administration
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Make entries: 2" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    And I navigate to "Fields" in current page administration
-    And "Music history" should have the "View" completion condition
-    And "Music history" should have the "Make entries: 2" completion condition
-    And "Music history" should have the "Receive a grade" completion condition
-    And I navigate to "Presets" in current page administration
     And "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition

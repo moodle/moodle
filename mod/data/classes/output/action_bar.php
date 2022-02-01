@@ -76,6 +76,7 @@ class action_bar {
         }
 
         $urlselect = new \url_select($menu, $selected, null, 'fieldactionselect');
+        $urlselect->set_label(get_string('fieldsnavigation', 'mod_data'), ['class' => 'sr-only']);
 
         $fieldselect = null;
         if ($hasfieldselect) {
@@ -91,6 +92,7 @@ class action_bar {
             $fieldselecturl = new moodle_url('/mod/data/field.php', ['d' => $this->id, 'mode' => 'new']);
             $fieldselect = new \single_select($fieldselecturl, 'newtype', $menufield, null, get_string('newfield', 'data'),
                 'fieldform');
+            $fieldselect->set_label(get_string('newfield', 'mod_data'), ['class' => 'sr-only']);
         }
 
         $saveaspresetbutton = null;
@@ -143,6 +145,7 @@ class action_bar {
         }
 
         $urlselect = new \url_select($menu, $activeurl->out(false), null, 'viewactionselect');
+        $urlselect->set_label(get_string('viewnavigation', 'mod_data'), ['class' => 'sr-only']);
         $renderer = $PAGE->get_renderer('mod_data');
         $viewactionbar = new view_action_bar($this->id, $urlselect, $hasentries);
 
@@ -179,6 +182,7 @@ class action_bar {
         ];
 
         $urlselect = new \url_select($menu, $this->currenturl->out(false), null, 'templatesactionselect');
+        $urlselect->set_label(get_string('templatesnavigation', 'mod_data'), ['class' => 'sr-only']);
 
         $hasfields = $DB->record_exists('data_fields', ['dataid' => $this->id]);
 

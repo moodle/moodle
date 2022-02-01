@@ -62,6 +62,7 @@ $PAGE->set_url($url);
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
+$PAGE->activityheader->disable();
 
 // fill in missing properties needed for updating of instance
 $data->course     = $cm->course;
@@ -104,6 +105,7 @@ if ($formimportzip->is_cancelled()) {
 echo $OUTPUT->header();
 
 if ($formdata = $formimportzip->get_data()) {
+    echo $OUTPUT->heading(get_string('importpreset', 'data'), 2, 'mb-4');
     $file = new stdClass;
     $file->name = $formimportzip->get_new_filename('importfile');
     $file->path = $formimportzip->save_temp_file('importfile');
@@ -182,10 +184,12 @@ if (in_array($action, ['confirmdelete', 'delete', 'finishimport'])) {
 }
 
 if ($action === 'import') {
+    echo $OUTPUT->heading(get_string('importpreset', 'data'), 2, 'mb-4');
     echo $formimportzip->display();
 } else {
     $actionbar = new \mod_data\output\action_bar($data->id, $url);
     echo $actionbar->get_presets_action_bar();
+    echo $OUTPUT->heading(get_string('presets', 'data'), 2, 'mb-4');
     $presets = new \mod_data\output\presets($data->id, $presets, new \moodle_url('/mod/data/field.php'), true);
     echo $renderer->render_presets($presets);
 }

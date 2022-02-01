@@ -1801,7 +1801,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = context_module::instance($cm->id);
-    echo '<br /><div class="datapreferences">';
+    echo '<div class="datapreferences mb-3">';
     echo '<form id="options" action="view.php" method="get">';
     echo '<div>';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
