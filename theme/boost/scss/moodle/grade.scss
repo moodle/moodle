@@ -451,6 +451,10 @@
             border-right: transparent;
         }
     }
+
+    .show-drawer-left .gradeparent th.header {
+        left: -1rem;
+    }
 }
 
 /**

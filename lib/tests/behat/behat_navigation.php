@@ -773,11 +773,19 @@ class behat_navigation extends behat_base {
                 }
                 return new moodle_url('/course/index.php', ['categoryid' => $categoryid]);
 
-            case 'course':
+            case 'course editing':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
                     throw new Exception('The specified course with shortname, fullname, or idnumber "' .
                             $identifier . '" does not exist');
+                }
+                return new moodle_url('/course/edit.php', ['id' => $courseid]);
+
+            case 'course':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                        $identifier . '" does not exist');
                 }
                 return new moodle_url('/course/view.php', ['id' => $courseid]);
 
