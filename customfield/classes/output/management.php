@@ -100,7 +100,6 @@ class management implements renderable, templatable {
             }
 
             $menu = new \action_menu();
-            $menu->set_alignment(\action_menu::BL, \action_menu::BL);
             $menu->set_menu_trigger(get_string('createnewcustomfield', 'core_customfield'));
 
             foreach ($fieldtypes as $type => $fieldname) {

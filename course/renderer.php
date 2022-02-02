@@ -253,7 +253,6 @@ class core_course_renderer extends plugin_renderer_base {
         $menu = new action_menu();
         $menu->set_owner_selector($ownerselector);
         $menu->set_constraint($constraint);
-        $menu->set_alignment(action_menu::TR, action_menu::BR);
         $menu->set_menu_trigger(get_string('edit'));
 
         foreach ($actions as $action) {
