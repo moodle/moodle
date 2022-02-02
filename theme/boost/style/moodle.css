@@ -11751,9 +11751,7 @@ ul {
     display: none; }
   .jsenabled .btn-footer-popover {
     display: block;
-    z-index: 1000; }
-  .jsenabled .drawers.show-drawer-right .btn-footer-popover {
-    display: none; } }
+    z-index: 1000; } }
 
 .bg-inverse a {
   color: #fff;
