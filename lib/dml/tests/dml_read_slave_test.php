@@ -44,6 +44,8 @@ class dml_read_slave_test extends \base_testcase {
 
     /** @var float */
     static private $dbreadonlylatency = 0.8;
+    /** @var float */
+    static private $defaultlatency = 1;
 
     /**
      * Instantiates a test database interface object.
@@ -227,18 +229,27 @@ class dml_read_slave_test extends \base_testcase {
         $this->assertEquals('test_rw::test:test', $handle);
         $this->assertEquals(0, $DB->perf_get_reads_slave());
 
-        sleep(1);
         $handle = $DB->get_records('table');
         $this->assertEquals('test_rw::test:test', $handle);
         $this->assertEquals(0, $DB->perf_get_reads_slave());
 
-        $handle = $DB->get_records('table2');
+        $handle = $DB->get_records_sql("SELECT * FROM {table2} JOIN {table}");
+        $this->assertEquals('test_rw::test:test', $handle);
+        $this->assertEquals(0, $DB->perf_get_reads_slave());
+
+        sleep(1);
+
+        $handle = $DB->get_records('table');
         $this->assert_readonly_handle($handle);
         $this->assertEquals(1, $DB->perf_get_reads_slave());
 
+        $handle = $DB->get_records('table2');
+        $this->assert_readonly_handle($handle);
+        $this->assertEquals(2, $DB->perf_get_reads_slave());
+
         $handle = $DB->get_records_sql("SELECT * FROM {table2} JOIN {table}");
-        $this->assertEquals('test_rw::test:test', $handle);
-        $this->assertEquals(1, $DB->perf_get_reads_slave());
+        $this->assert_readonly_handle($handle);
+        $this->assertEquals(3, $DB->perf_get_reads_slave());
     }
 
     /**
