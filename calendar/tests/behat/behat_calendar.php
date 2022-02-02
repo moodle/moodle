@@ -47,7 +47,7 @@ class behat_calendar extends behat_base {
         return [
             new behat_component_named_selector('mini calendar block', [".//*[@data-block='calendar_month']"]),
             new behat_component_named_selector('full calendar page', [".//*[@id='page-calendar-view']"]),
-            new behat_component_named_selector('calendar day', [".//*[@data-day=%locator%]"]),
+            new behat_component_named_selector('calendar day', [".//*[@data-region='day'][@data-day=%locator%]"]),
         ];
     }
 
