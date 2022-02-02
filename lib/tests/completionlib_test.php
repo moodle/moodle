@@ -89,6 +89,10 @@ class completionlib_test extends advanced_testcase {
     public static function assertEquals($expected, $actual, string $message = '', float $delta = 0, int $maxDepth = 10,
                                         bool $canonicalize = false, bool $ignoreCase = false): void {
         // Nasty cheating hack: prevent random failures on timemodified field.
+        if (is_array($actual) && (is_object($expected) || is_array($expected))) {
+            $actual = (object) $actual;
+            $expected = (object) $expected;
+        }
         if (is_object($expected) and is_object($actual)) {
             if (property_exists($expected, 'timemodified') and property_exists($actual, 'timemodified')) {
                 if ($expected->timemodified + 1 == $actual->timemodified) {
@@ -708,6 +712,70 @@ class completionlib_test extends advanced_testcase {
     }
 
     /**
+     * @covers ::get_data
+     */
+    public function test_get_data_successive_calls(): void {
+        global $DB;
+
+        $this->setup_data();
+        $this->setUser($this->user);
+
+        $choicegenerator = $this->getDataGenerator()->get_plugin_generator('mod_choice');
+        $choice = $choicegenerator->create_instance([
+            'course' => $this->course->id,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC,
+            'completionview' => true,
+            'completionsubmit' => true,
+        ]);
+
+        $cm = get_coursemodule_from_instance('choice', $choice->id);
+
+        // Let's manually create a course completion record instead of going through the hoops to complete an activity.
+        $cmcompletionrecord = (object) [
+            'coursemoduleid' => $cm->id,
+            'userid' => $this->user->id,
+            'completionstate' => COMPLETION_NOT_VIEWED,
+            'viewed' => 0,
+            'overrideby' => null,
+            'timemodified' => 0,
+        ];
+        $DB->insert_record('course_modules_completion', $cmcompletionrecord);
+
+        // Mock other completion data.
+        $completioninfo = new completion_info($this->course);
+
+        $modinfo = get_fast_modinfo($this->course);
+        $results = [];
+        foreach ($modinfo->cms as $testcm) {
+            $result = $completioninfo->get_data($testcm, true);
+            $this->assertTrue(property_exists($result, 'id'));
+            $this->assertTrue(property_exists($result, 'coursemoduleid'));
+            $this->assertTrue(property_exists($result, 'userid'));
+            $this->assertTrue(property_exists($result, 'completionstate'));
+            $this->assertTrue(property_exists($result, 'viewed'));
+            $this->assertTrue(property_exists($result, 'overrideby'));
+            $this->assertTrue(property_exists($result, 'timemodified'));
+            $this->assertFalse(property_exists($result, 'other_cm_completion_data_fetched'));
+
+            $this->assertEquals($testcm->id, $result->coursemoduleid);
+            $this->assertEquals($this->user->id, $result->userid);
+            $this->assertEquals(0, $result->viewed);
+
+            $results[$testcm->id] = $result;
+        }
+
+        $result = $completioninfo->get_data($cm);
+        $this->assertTrue(property_exists($result, 'customcompletion'));
+
+        // The data should match when fetching modules individually.
+        (cache::make('core', 'completion'))->purge();
+        foreach ($modinfo->cms as $testcm) {
+            $result = $completioninfo->get_data($testcm, false);
+            $this->assertEquals($result, $results[$testcm->id]);
+        }
+    }
+
+    /**
      * Tests for completion_info::get_other_cm_completion_data().
      *
      * @covers ::get_other_cm_completion_data
@@ -809,8 +877,15 @@ class completionlib_test extends advanced_testcase {
         $this->assertEquals($d1, $data->id);
         $cache = cache::make('core', 'completion');
         // Cache was not set for another user.
-        $this->assertEquals(array('cacherev' => $this->course->cacherev, $cm->id => $data),
-            $cache->get($data->userid . '_' . $cm->course));
+        $cachevalue = $cache->get("{$data->userid}_{$cm->course}");
+        $this->assertEquals([
+            'cacherev' => $this->course->cacherev,
+            $cm->id => array_merge(
+                (array) $data,
+                ['other_cm_completion_data_fetched' => true]
+            ),
+        ],
+        $cachevalue);
 
         // 2) Test with existing data and for different user.
         $forum2 = $this->getDataGenerator()->create_module('forum', array('course' => $this->course->id), $completionauto);
@@ -828,7 +903,11 @@ class completionlib_test extends advanced_testcase {
         $c->internal_set_data($cm2, $d2);
         // Cache for current user returns the data.
         $cachevalue = $cache->get($data->userid . '_' . $cm->course);
-        $this->assertEquals($data, $cachevalue[$cm->id]);
+        $this->assertEquals(array_merge(
+            (array) $data,
+            ['other_cm_completion_data_fetched' => true]
+        ), $cachevalue[$cm->id]);
+
         // Cache for another user is not filled.
         $this->assertEquals(false, $cache->get($d2->userid . '_' . $cm2->course));
 
