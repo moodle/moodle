@@ -2778,6 +2778,17 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
     }
 
     /**
+     * Checks whether the category has access to content bank
+     *
+     * @return bool
+     */
+    public function has_contentbank() {
+        $cb = new \core_contentbank\contentbank();
+        return ($cb->is_context_allowed($this->get_context()) &&
+            has_capability('moodle/contentbank:access', $this->get_context()));
+    }
+
+    /**
      * Returns true if the user has the manage capability on the parent category.
      * @return bool
      */

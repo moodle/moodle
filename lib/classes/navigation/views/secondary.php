@@ -586,7 +586,9 @@ class secondary extends view {
         // that are redirected to, be in the course context or module context depending on which callback was used.
         // Third part plugins were checked to see if any existing plugins had settings in a system context and none were found.
         // The request of third party developers is to keep their settings within the specified context.
-        if ($this->page->context->contextlevel != CONTEXT_COURSE && $this->page->context->contextlevel != CONTEXT_MODULE) {
+        if ($this->page->context->contextlevel != CONTEXT_COURSE
+                && $this->page->context->contextlevel != CONTEXT_MODULE
+                && $this->page->context->contextlevel != CONTEXT_COURSECAT) {
             return null;
         }
 
@@ -657,8 +659,12 @@ class secondary extends view {
         $settingsnav = $this->page->settingsnav;
         $mainnode = $settingsnav->find('categorysettings', self::TYPE_CONTAINER);
         $nodes = $this->get_default_category_mapping();
+        $siteadmin = $settingsnav->find('root', self::TYPE_SITE_ADMIN);
 
-        if ($mainnode) {
+        // If an admin is viewing a category context then load the site admin menu.
+        if ($siteadmin) {
+            $this->load_admin_navigation();
+        } else if ($mainnode) {
             $url = new \moodle_url('/course/index.php', ['categoryid' => $this->context->instanceid]);
             $this->add($this->context->get_context_name(), $url, self::TYPE_CONTAINER, null, 'categorymain');
 

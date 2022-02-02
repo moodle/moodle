@@ -204,7 +204,11 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
     }
 }
 
-$PAGE->set_navigation_overflow_state(false);
+// When we are within a category context we leave it to the overflow state to display additional nav nodes.
+if ($context->contextlevel != CONTEXT_COURSECAT) {
+    $PAGE->set_navigation_overflow_state(false);
+}
+
 echo $OUTPUT->header();
 if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_MODULE) {
     echo $OUTPUT->render_participants_tertiary_nav($course);

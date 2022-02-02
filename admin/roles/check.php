@@ -126,7 +126,11 @@ if (!is_null($reportuser)) {
     $rolenames = role_get_names($context);
 }
 
-$PAGE->set_navigation_overflow_state(false);
+// In a course category context we leverage overflow for the tertiary navigation
+if ($context->contextlevel != CONTEXT_COURSECAT) {
+    $PAGE->set_navigation_overflow_state(false);
+}
+
 echo $OUTPUT->header();
 if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_MODULE) {
     echo $OUTPUT->render_participants_tertiary_nav($course);

@@ -183,7 +183,10 @@ switch ($context->contextlevel) {
         break;
 }
 
-$PAGE->set_navigation_overflow_state(false);
+// In a course category context we leverage overflow for the tertiary navigation
+if ($context->contextlevel != CONTEXT_COURSECAT) {
+    $PAGE->set_navigation_overflow_state(false);
+}
 
 // Within a course context we need to explicitly set active tab as there isn't a reference in the nav tree.
 if ($context->contextlevel == CONTEXT_COURSE) {

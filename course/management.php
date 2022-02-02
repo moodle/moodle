@@ -108,7 +108,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($strmanagement);
 $PAGE->set_heading($pageheading);
 $PAGE->requires->js_call_amd('core_course/copy_modal', 'init', array($context->id));
-$PAGE->set_secondary_active_tab('managecategory');
+$PAGE->set_secondary_active_tab('categorymain');
 
 // This is a system level page that operates on other contexts.
 require_login();
@@ -473,12 +473,8 @@ $displaycourselisting = ($viewmode === 'default' || $viewmode === 'combined' || 
 $displaycoursedetail = (isset($courseid));
 
 echo $renderer->header();
-
-if (!$issearching) {
-    echo $renderer->management_heading($strmanagement, $viewmode, $categoryid);
-} else {
-    echo $renderer->management_heading(new lang_string('searchresults'));
-}
+$actionbar = new \core_course\output\manage_categories_action_bar($PAGE, $viewmode, $course, $search);
+echo $renderer->render_action_bar($actionbar);
 
 if (count($notificationspass) > 0) {
     echo $renderer->notification(join('<br />', $notificationspass), 'notifysuccess');
@@ -488,8 +484,6 @@ if (count($notificationsfail) > 0) {
 }
 
 // Start the management form.
-
-echo $renderer->course_search_form($search);
 
 echo $renderer->management_form_start();
 
