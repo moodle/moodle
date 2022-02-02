@@ -326,7 +326,7 @@ $string['configproxyport'] = 'If this server needs to use a proxy computer, then
 $string['configproxytype'] = 'Type of web proxy (PHP5 and cURL extension required for SOCKS5 support).';
 $string['configproxyuser'] = 'Username needed to access internet through proxy if required, empty if none (PHP cURL extension required).';
 $string['configrecaptchaprivatekey'] = 'String of characters (secret key) used to communicate between your Moodle server and the recaptcha server. ReCAPTCHA keys can be obtained from <a target="_blank" href="https://www.google.com/recaptcha">Google reCAPTCHA</a>.';
-$string['configrecaptchapublickey'] = 'String of characters (site key) used to display the reCAPTCHA element in the signup form. ReCAPTCHA keys can be obtained from <a target="_blank" href="https://www.google.com/recaptcha">Google reCAPTCHA</a>.';
+$string['configrecaptchapublickey'] = 'String of characters (site key) used to display the reCAPTCHA element in the signup form and site support form. ReCAPTCHA keys can be obtained from <a target="_blank" href="https://www.google.com/recaptcha">Google reCAPTCHA</a>.';
 $string['configrequestedstudentname'] = 'Word for student used in requested courses';
 $string['configrequestedstudentsname'] = 'Word for students used in requested courses';
 $string['configrequestedteachername'] = 'Word for teacher used in requested courses';
@@ -374,9 +374,9 @@ $string['configstatsruntimestart'] = 'What time should the cronjob that does the
 $string['configstatsuserthreshold'] = 'This setting specifies the minimum number of enrolled users for a course to be included in statistics calculations.';
 $string['configstrictformsrequired'] = 'If enabled, users are prevented from entering a space or line break only in required fields in forms.';
 $string['configstripalltitletags'] = 'Uncheck this setting to allow HTML tags in activity and resource names.';
-$string['configsupportemail'] = 'This email address will be published to users of this site as the one to email when they need general help (for example, when new users create their own accounts).';
+$string['configsupportemail'] = 'If SMTP is configured on this site and a support page is not configured, this email address will be sent general help requests submitted through the support form (for example, when new users create their own accounts). If SMTP is not configured, this email address will be displayed to logged in users on the support form page.';
 $string['configsupportname'] = 'This is the name of a person or other entity offering general help via the support email or web address.';
-$string['configsupportpage'] = 'This web address will be published to users of this site as the one to go to when they need general help (for example, when new users create their own accounts).  If this address is left blank then no link will be supplied.';
+$string['configsupportpage'] = 'This web address will be published to users of this site as the one to go to when they need general help (for example, when new users create their own accounts). If this address is left blank then a link to the support email form will be supplied.';
 $string['configtempdatafoldercleanup'] = 'Remove temporary data files from the data folder that are older than the selected time.';
 $string['configthemedesignermode'] = 'Normally all theme images and style sheets are cached in browsers and on the server for a very long time, for performance. If you are designing themes or developing code then you probably want to turn this mode on so that you are not served cached versions.  Warning: this will make your site slower for all users!  Alternatively, you can also reset the theme caches manually from the Theme selection page.';
 $string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).
@@ -1279,6 +1279,7 @@ $string['strictformsrequired'] = 'Strict validation of required fields';
 $string['stripalltitletags'] = 'Remove HTML tags from all activity names';
 $string['supportcontact'] = 'Support contact';
 $string['supportemail'] = 'Support email';
+$string['supportemailsubject'] = 'Site support request - {$a}';
 $string['supportname'] = 'Support name';
 $string['supportpage'] = 'Support page';
 $string['suspenduser'] = 'Suspend user account';
