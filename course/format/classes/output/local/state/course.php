@@ -69,7 +69,7 @@ class course implements renderable {
 
         $sections = $modinfo->get_section_info_all();
         foreach ($sections as $section) {
-            if (!empty($section->uservisible)) {
+            if ($format->is_section_visible($section)) {
                 $data->sectionlist[] = $section->id;
             }
         }

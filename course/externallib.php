@@ -388,14 +388,8 @@ class core_course_external extends external_api {
             // We didn't this before to be able to retrieve stealth activities.
             foreach ($coursecontents as $sectionnumber => $sectioncontents) {
                 $section = $sections[$sectionnumber];
-                // Show the section if the user is permitted to access it OR
-                // if it's not available but there is some available info text which explains the reason & should display OR
-                // the course is configured to show hidden sections name.
-                $showsection = $section->uservisible ||
-                    ($section->visible && !$section->available && !empty($section->availableinfo)) ||
-                    (!$section->visible && empty($courseformat->get_course()->hiddensections));
 
-                if (!$showsection) {
+                if (!$courseformat->is_section_visible($section)) {
                     unset($coursecontents[$sectionnumber]);
                     continue;
                 }
