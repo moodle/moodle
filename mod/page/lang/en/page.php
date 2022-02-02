@@ -66,11 +66,13 @@ $string['popupheight'] = 'Pop-up height (in pixels)';
 $string['popupheightexplain'] = 'Specifies default height of popup windows.';
 $string['popupwidth'] = 'Pop-up width (in pixels)';
 $string['popupwidthexplain'] = 'Specifies default width of popup windows.';
-$string['printheading'] = 'Display page name';
-$string['printheadingexplain'] = 'Display page name above content?';
 $string['printintro'] = 'Display page description';
 $string['printintroexplain'] = 'Display page description above content?';
 $string['printlastmodified'] = 'Display last modified date';
 $string['printlastmodifiedexplain'] = 'Display last modified date below content?';
 $string['privacy:metadata'] = 'The Page resource plugin does not store any personal data.';
 $string['search:activity'] = 'Page';
+
+// Deprecated since 4.0.
+$string['printheading'] = 'Display page name';
+$string['printheadingexplain'] = 'Display page name above content?';
