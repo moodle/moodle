@@ -92,7 +92,7 @@ class category_condition extends condition {
             $categoryids = [$this->category->id];
         }
         list($catidtest, $this->params) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'cat');
-        $this->where = 'q.category ' . $catidtest;
+        $this->where = 'qbe.questioncategoryid ' . $catidtest;
     }
 
     /**

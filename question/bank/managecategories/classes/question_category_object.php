@@ -328,8 +328,15 @@ class question_category_object {
      */
     public function move_questions(int $oldcat, int $newcat): void {
         global $DB;
-        $questionids = $DB->get_records_select_menu('question',
-                'category = ? AND (parent = 0 OR parent = id)', [$oldcat], '', 'id,1');
+
+        $sql = "SELECT q.id, 1
+                  FROM {question} q
+                  JOIN {question_versions} qv ON qv.questionid = q.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                 WHERE qbe.questioncategoryid = ?
+                   AND (q.parent = 0 OR q.parent = q.id)";
+
+        $questionids = $DB->get_records_sql_menu($sql, [$oldcat]);
         question_move_questions_to_category(array_keys($questionids), $newcat);
     }
 
@@ -479,14 +486,25 @@ class question_category_object {
 
         // If the category name has changed, rename any random questions in that category.
         if ($oldcat->name != $cat->name) {
-            $where = "qtype = 'random' AND category = ? AND " . $DB->sql_compare_text('questiontext') . " = ?";
+            // Get the question ids for each question category.
+            $sql = "SELECT q.id
+                      FROM {question} q
+                      JOIN {question_versions} qv ON qv.questionid = q.id
+                      JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                     WHERE qbe.questioncategoryid = ?";
 
-            $randomqtype = question_bank::get_qtype('random');
-            $randomqname = $randomqtype->question_name($cat, false);
-            $DB->set_field_select('question', 'name', $randomqname, $where, [$cat->id, '0']);
+            $questionids = $DB->get_records_sql($sql, [$cat->id]);
 
-            $randomqname = $randomqtype->question_name($cat, true);
-            $DB->set_field_select('question', 'name', $randomqname, $where, [$cat->id, '1']);
+            foreach ($questionids as $question) {
+                $where = "qtype = 'random' AND id = ? AND " . $DB->sql_compare_text('questiontext') . " = ?";
+
+                $randomqtype = question_bank::get_qtype('random');
+                $randomqname = $randomqtype->question_name($cat, false);
+                $DB->set_field_select('question', 'name', $randomqname, $where, [$question->id, '0']);
+
+                $randomqname = $randomqtype->question_name($cat, true);
+                $DB->set_field_select('question', 'name', $randomqname, $where, [$question->id, '1']);
+            }
         }
 
         if ($oldcat->contextid != $tocontextid) {

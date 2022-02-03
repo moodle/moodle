@@ -92,6 +92,8 @@ if ($param->moveupcontext || $param->movedowncontext) {
     $category->contextid = $param->tocontext;
     $event = \core\event\question_category_moved::create_from_question_category_instance($category);
     $event->trigger();
+    // Update the set_reference records when moving a category to a different context.
+    move_question_set_references($catid, $catid, $oldcat->contextid, $category->contextid);
     $qcobject->update_category($catid, "{$newtopcat->id},{$param->tocontext}", $oldcat->name, $oldcat->info);
     // The previous line does a redirect().
 }
@@ -102,7 +104,8 @@ if ($param->delete) {
     }
 
     helper::question_remove_stale_questions_from_category($param->delete);
-    $questionstomove = $DB->count_records("question", ["category" => $param->delete]);
+
+    $questionstomove = $DB->count_records('question_bank_entries', ['questioncategoryid' => $param->delete]);
 
     // Second pass, if we still have questions to move, setup the form.
     if ($questionstomove) {

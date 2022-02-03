@@ -28,7 +28,6 @@ use qbank_managecategories\question_category_object;
 use qtype_description;
 use qtype_description_edit_form;
 use qtype_description_test_helper;
-use question_edit_contexts;
 use test_question_maker;
 
 defined('MOODLE_INTERNAL') || die();
@@ -57,7 +56,7 @@ class events_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $contexts = new question_edit_contexts(\context_module::instance($quiz->cmid));
+        $contexts = new \core_question\local\bank\question_edit_contexts(\context_module::instance($quiz->cmid));
 
         $defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
         $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
@@ -108,7 +107,7 @@ class events_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
 
-        $contexts = new question_edit_contexts(\context_module::instance($quiz->cmid));
+        $contexts = new \core_question\local\bank\question_edit_contexts(\context_module::instance($quiz->cmid));
 
         $defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
         $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
@@ -229,12 +228,13 @@ class events_test extends \advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $qtype->save_question($questiondata, $fromform);
+        $question = $qtype->save_question($questiondata, $fromform);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
-        $this->assertInstanceOf('\core\event\question_updated', $event);
+        // Every save is a new question after Moodle 4.0.
+        $this->assertInstanceOf('\core\event\question_created', $event);
         $this->assertEquals($question->id, $event->objectid);
         $this->assertEquals($cat->id, $event->other['categoryid']);
         $this->assertDebuggingNotCalled();

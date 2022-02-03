@@ -35,6 +35,8 @@ I need to limit the submittable file types
     And I set the field "Require attachments" to "1"
     And I set the field "filetypeslist[filetypes]" to ".txt"
     And I press "Save changes"
+    And I am on the "Quiz 1" "mod_quiz > edit" page logged in as teacher1
+    And I set the field "version" to "Always latest"
     Then I log out
 
   @javascript @_file_upload

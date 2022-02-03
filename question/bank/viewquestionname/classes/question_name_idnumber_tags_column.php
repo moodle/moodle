@@ -64,14 +64,14 @@ class question_name_idnumber_tags_column extends viewquestionname_column_helper 
 
     public function get_required_fields(): array {
         $fields = parent::get_required_fields();
-        $fields[] = 'q.idnumber';
+        $fields[] = 'qbe.idnumber';
         return $fields;
     }
 
     public function is_sortable(): array {
         return [
                 'name' => ['field' => 'q.name', 'title' => get_string('questionname', 'question')],
-                'idnumber' => ['field' => 'q.idnumber', 'title' => get_string('idnumber', 'question')],
+                'idnumber' => ['field' => 'qbe.idnumber', 'title' => get_string('idnumber', 'question')],
         ];
     }
 

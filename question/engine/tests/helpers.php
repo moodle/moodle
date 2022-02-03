@@ -117,12 +117,13 @@ abstract class question_test_helper {
      */
     public static function get_question_editing_form($cat, $questiondata) {
         $catcontext = context::instance_by_id($cat->contextid, MUST_EXIST);
-        $contexts = new question_edit_contexts($catcontext);
+        $contexts = new core_question\local\bank\question_edit_contexts($catcontext);
         $dataforformconstructor = new stdClass();
         $dataforformconstructor->createdby = $questiondata->createdby;
         $dataforformconstructor->qtype = $questiondata->qtype;
         $dataforformconstructor->contextid = $questiondata->contextid = $catcontext->id;
         $dataforformconstructor->category = $questiondata->category = $cat->id;
+        $dataforformconstructor->status = $questiondata->status;
         $dataforformconstructor->formoptions = new stdClass();
         $dataforformconstructor->formoptions->canmove = true;
         $dataforformconstructor->formoptions->cansaveasnew = true;
@@ -178,8 +179,8 @@ class test_question_maker {
         $q->penalty = 0.3333333;
         $q->length = 1;
         $q->stamp = make_unique_id_code();
-        $q->version = make_unique_id_code();
-        $q->hidden = 0;
+        $q->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        $q->version = 1;
         $q->timecreated = time();
         $q->timemodified = time();
         $q->createdby = $USER->id;
@@ -200,8 +201,8 @@ class test_question_maker {
         $qdata->penalty = 0.3333333;
         $qdata->length = 1;
         $qdata->stamp = make_unique_id_code();
-        $qdata->version = make_unique_id_code();
-        $qdata->hidden = 0;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        $qdata->version = 1;
         $qdata->timecreated = time();
         $qdata->timemodified = time();
         $qdata->createdby = $USER->id;

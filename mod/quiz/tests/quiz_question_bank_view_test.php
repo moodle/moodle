@@ -51,7 +51,7 @@ class quiz_question_bank_view_testcase extends advanced_testcase {
         $cm = get_coursemodule_from_instance('quiz', $quiz->id);
 
         // Create a question in the default category.
-        $contexts = new question_edit_contexts($context);
+        $contexts = new core_question\local\bank\question_edit_contexts($context);
         $cat = question_make_default_categories($contexts->all());
         $questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);

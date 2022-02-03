@@ -15,24 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of question/type/random scheduled tasks.
+ * External services definition for qbank_editquestion.
  *
- * @package   qtype_random
- * @category  task
- * @copyright 2018 Bo Pierce <email.bO.pierce@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbank_editquestion
+ * @copyright  2021 Catalyst IT Australia Pty Ltd
+ * @author     Safat Shahin <safatshahin@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$tasks = array(
-    array(
-        'classname' => 'qtype_random\task\remove_unused_questions',
-        'blocking' => 0,
-        'minute' => 'R',
-        'hour' => '*',
-        'day' => '*',
-        'month' => '*',
-        'dayofweek' => '*'
-    )
-);
+$functions = [
+    'qbank_editquestion_set_status' => [
+        'classname' => 'qbank_editquestion\external\update_question_version_status',
+        'description' => 'Update the question status.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+];

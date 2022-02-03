@@ -57,30 +57,37 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         $form->includesubcategories = true;
         $form->fromtags = [];
         $form->defaultmark = 1;
-        $form->hidden = 1;
+        $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN;
         $form->stamp = make_unique_id_code();
-        $question = new stdClass();
-        $question->qtype = 'random';
-        $question = question_bank::get_qtype('random')->save_question($question, $form);
 
+        // Set the filter conditions.
+        $filtercondition = new stdClass();
+        $filtercondition->questioncategoryid = $category->id;
+        $filtercondition->includingsubcategories = 1;
+
+        // Slot data.
         $randomslotdata = new stdClass();
         $randomslotdata->quizid = $quiz->id;
-        $randomslotdata->questionid = $question->id;
-        $randomslotdata->questioncategoryid = $category->id;
-        $randomslotdata->includingsubcategories = 1;
         $randomslotdata->maxmark = 1;
+        $randomslotdata->usingcontextid = context_module::instance($quiz->cmid)->id;
+        $randomslotdata->questionscontextid = $category->contextid;
 
+        // Insert the random question to the quiz.
         $randomslot = new \mod_quiz\local\structure\slot_random($randomslotdata);
+        $randomslot->set_filter_condition($filtercondition);
 
         $rc = new ReflectionClass('\mod_quiz\local\structure\slot_random');
+        $rcp = $rc->getProperty('filtercondition');
+        $rcp->setAccessible(true);
+        $record = json_decode($rcp->getValue($randomslot));
+
+        $this->assertEquals($quiz->id, $randomslot->get_quiz()->id);
+        $this->assertEquals($category->id, $record->questioncategoryid);
+        $this->assertEquals(1, $record->includingsubcategories);
+
         $rcp = $rc->getProperty('record');
         $rcp->setAccessible(true);
         $record = $rcp->getValue($randomslot);
-
-        $this->assertEquals($quiz->id, $record->quizid);
-        $this->assertEquals($question->id, $record->questionid);
-        $this->assertEquals($category->id, $record->questioncategoryid);
-        $this->assertEquals(1, $record->includingsubcategories);
         $this->assertEquals(1, $record->maxmark);
     }
 
@@ -100,17 +107,20 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
 
         quiz_add_random_questions($quiz, 0, $category->id, 1, false);
 
-        // Get the random question's id. It is at the first slot.
-        $questionid = $DB->get_field('quiz_slots', 'questionid', array('quizid' => $quiz->id, 'slot' => 1));
+        // Set the filter conditions.
+        $filtercondition = new stdClass();
+        $filtercondition->questioncategoryid = $category->id;
+        $filtercondition->includingsubcategories = 1;
 
+        // Slot data.
         $randomslotdata = new stdClass();
         $randomslotdata->quizid = $quiz->id;
-        $randomslotdata->questionid = $questionid;
-        $randomslotdata->questioncategoryid = $category->id;
-        $randomslotdata->includingsubcategories = 1;
         $randomslotdata->maxmark = 1;
+        $randomslotdata->usingcontextid = context_module::instance($quiz->cmid)->id;
+        $randomslotdata->questionscontextid = $category->contextid;
 
         $randomslot = new \mod_quiz\local\structure\slot_random($randomslotdata);
+        $randomslot->set_filter_condition($filtercondition);
 
         // The create_instance had injected an additional cmid propery to the quiz. Let's remove that.
         unset($quiz->cmid);
@@ -134,17 +144,20 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
 
         quiz_add_random_questions($quiz, 0, $category->id, 1, false);
 
-        // Get the random question's id. It is at the first slot.
-        $questionid = $DB->get_field('quiz_slots', 'questionid', array('quizid' => $quiz->id, 'slot' => 1));
+        // Set the filter conditions.
+        $filtercondition = new stdClass();
+        $filtercondition->questioncategoryid = $category->id;
+        $filtercondition->includingsubcategories = 1;
 
+        // Slot data.
         $randomslotdata = new stdClass();
         $randomslotdata->quizid = $quiz->id;
-        $randomslotdata->questionid = $questionid;
-        $randomslotdata->questioncategoryid = $category->id;
-        $randomslotdata->includingsubcategories = 1;
         $randomslotdata->maxmark = 1;
+        $randomslotdata->usingcontextid = context_module::instance($quiz->cmid)->id;
+        $randomslotdata->questionscontextid = $category->contextid;
 
         $randomslot = new \mod_quiz\local\structure\slot_random($randomslotdata);
+        $randomslot->set_filter_condition($filtercondition);
 
         // The create_instance had injected an additional cmid propery to the quiz. Let's remove that.
         unset($quiz->cmid);
@@ -172,15 +185,12 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
 
         quiz_add_random_questions($quiz, 0, $category->id, 1, false);
 
-        // Get the random question's id. It is at the first slot.
-        $questionid = $DB->get_field('quiz_slots', 'questionid', array('quizid' => $quiz->id, 'slot' => 1));
-
+        // Slot data.
         $randomslotdata = new stdClass();
         $randomslotdata->quizid = $quiz->id;
-        $randomslotdata->questionid = $questionid;
-        $randomslotdata->questioncategoryid = $category->id;
-        $randomslotdata->includingsubcategories = 1;
         $randomslotdata->maxmark = 1;
+        $randomslotdata->usingcontextid = context_module::instance($quiz->cmid)->id;
+        $randomslotdata->questionscontextid = $category->contextid;
 
         $randomslot = new \mod_quiz\local\structure\slot_random($randomslotdata);
 
@@ -203,17 +213,19 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         $this->setAdminUser();
 
         list($randomslot, $tags) = $this->setup_for_test_tags(['foo', 'bar']);
+        $filtercondition = new stdClass();
         $randomslot->set_tags([$tags['foo'], $tags['bar']]);
+        $randomslot->set_filter_condition($filtercondition);
 
         $rc = new ReflectionClass('\mod_quiz\local\structure\slot_random');
-        $rcp = $rc->getProperty('tags');
+        $rcp = $rc->getProperty('filtercondition');
         $rcp->setAccessible(true);
         $tagspropery = $rcp->getValue($randomslot);
 
         $this->assertEquals([
             $tags['foo']->id => $tags['foo'],
             $tags['bar']->id => $tags['bar'],
-        ], $tagspropery);
+        ], (array)json_decode($tagspropery)->tags);
     }
 
     public function test_set_tags_twice() {
@@ -223,18 +235,20 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         list($randomslot, $tags) = $this->setup_for_test_tags(['foo', 'bar', 'baz']);
 
         // Set tags for the first time.
+        $filtercondition = new stdClass();
         $randomslot->set_tags([$tags['foo'], $tags['bar']]);
         // Now set the tags again.
         $randomslot->set_tags([$tags['baz']]);
+        $randomslot->set_filter_condition($filtercondition);
 
         $rc = new ReflectionClass('\mod_quiz\local\structure\slot_random');
-        $rcp = $rc->getProperty('tags');
+        $rcp = $rc->getProperty('filtercondition');
         $rcp->setAccessible(true);
         $tagspropery = $rcp->getValue($randomslot);
 
         $this->assertEquals([
             $tags['baz']->id => $tags['baz'],
-        ], $tagspropery);
+        ], (array)json_decode($tagspropery)->tags);
     }
 
     public function test_set_tags_duplicates() {
@@ -242,18 +256,19 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         $this->setAdminUser();
 
         list($randomslot, $tags) = $this->setup_for_test_tags(['foo', 'bar', 'baz']);
-
+        $filtercondition = new stdClass();
         $randomslot->set_tags([$tags['foo'], $tags['bar'], $tags['foo']]);
+        $randomslot->set_filter_condition($filtercondition);
 
         $rc = new ReflectionClass('\mod_quiz\local\structure\slot_random');
-        $rcp = $rc->getProperty('tags');
+        $rcp = $rc->getProperty('filtercondition');
         $rcp->setAccessible(true);
         $tagspropery = $rcp->getValue($randomslot);
 
         $this->assertEquals([
             $tags['foo']->id => $tags['foo'],
             $tags['bar']->id => $tags['bar'],
-        ], $tagspropery);
+        ], (array)json_decode($tagspropery)->tags);
     }
 
     public function test_set_tags_by_id() {
@@ -261,8 +276,9 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         $this->setAdminUser();
 
         list($randomslot, $tags) = $this->setup_for_test_tags(['foo', 'bar', 'baz']);
-
+        $filtercondition = new stdClass();
         $randomslot->set_tags_by_id([$tags['foo']->id, $tags['bar']->id]);
+        $randomslot->set_filter_condition($filtercondition);
 
         $rc = new ReflectionClass('\mod_quiz\local\structure\slot_random');
         $rcp = $rc->getProperty('tags');
@@ -355,11 +371,8 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         $form->includesubcategories = true;
         $form->fromtags = [];
         $form->defaultmark = 1;
-        $form->hidden = 1;
+        $form->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN;
         $form->stamp = make_unique_id_code();
-        $question = new stdClass();
-        $question->qtype = 'random';
-        $question = question_bank::get_qtype('random')->save_question($question, $form);
 
         // Prepare 2 tags.
         $tagrecord = array(
@@ -377,36 +390,43 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         );
         $bartag = $this->getDataGenerator()->create_tag($tagrecord);
 
+
+        // Set the filter conditions.
+        $filtercondition = new stdClass();
+        $filtercondition->questioncategoryid = $category->id;
+        $filtercondition->includingsubcategories = 1;
+
+        // Slot data.
         $randomslotdata = new stdClass();
         $randomslotdata->quizid = $quiz->id;
-        $randomslotdata->questionid = $question->id;
-        $randomslotdata->questioncategoryid = $category->id;
-        $randomslotdata->includingsubcategories = 1;
         $randomslotdata->maxmark = 1;
+        $randomslotdata->usingcontextid = context_module::instance($quiz->cmid)->id;
+        $randomslotdata->questionscontextid = $category->contextid;
 
         // Insert the random question to the quiz.
         $randomslot = new \mod_quiz\local\structure\slot_random($randomslotdata);
         $randomslot->set_tags([$footag, $bartag]);
+        $randomslot->set_filter_condition($filtercondition);
         $randomslot->insert(1); // Put the question on the first page of the quiz.
 
         // Get the random question's quiz_slot. It is at the first slot.
         $quizslot = $DB->get_record('quiz_slots', array('quizid' => $quiz->id, 'slot' => 1));
         // Get the random question's tags from quiz_slot_tags. It is at the first slot.
-        $quizslottags = $DB->get_records('quiz_slot_tags', array('slotid' => $quizslot->id));
+        $setreference = \mod_quiz\question\bank\qbank_helper::get_random_question_data_from_slot($quizslot->id);
 
-        $this->assertEquals($question->id, $quizslot->questionid);
-        $this->assertEquals($category->id, $quizslot->questioncategoryid);
-        $this->assertEquals(1, $quizslot->includingsubcategories);
+        $this->assertEquals($category->id, json_decode($setreference->filtercondition)->questioncategoryid);
+        $this->assertEquals(1, json_decode($setreference->filtercondition)->includingsubcategories);
         $this->assertEquals(1, $quizslot->maxmark);
+        $tagspropery = (array)json_decode($setreference->filtercondition)->tags;
 
-        $this->assertCount(2, $quizslottags);
+        $this->assertCount(2, $tagspropery);
         $this->assertEqualsCanonicalizing(
                 [
                     ['tagid' => $footag->id, 'tagname' => $footag->name],
                     ['tagid' => $bartag->id, 'tagname' => $bartag->name]
                 ],
                 array_map(function($slottag) {
-                    return ['tagid' => $slottag->tagid, 'tagname' => $slottag->tagname];
-                }, $quizslottags));
+                    return ['tagid' => $slottag->id, 'tagname' => $slottag->name];
+                }, $tagspropery));
     }
 }

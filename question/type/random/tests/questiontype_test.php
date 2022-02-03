@@ -81,8 +81,8 @@ class qtype_random_test extends advanced_testcase {
 
         $this->assertEquals(['id', 'category', 'parent', 'name', 'questiontext', 'questiontextformat',
                 'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty', 'qtype',
-                'length', 'stamp', 'version', 'hidden', 'timecreated', 'timemodified',
-                'createdby', 'modifiedby', 'idnumber', 'contextid', 'options', 'hints', 'categoryobject'],
+                'length', 'stamp', 'timecreated', 'timemodified', 'createdby', 'modifiedby', 'idnumber', 'contextid',
+                'status', 'versionid', 'version', 'questionbankentryid', 'categoryobject', 'options', 'hints'],
                 array_keys(get_object_vars($questiondata)));
         $this->assertEquals($category->id, $questiondata->category);
 
@@ -93,7 +93,7 @@ class qtype_random_test extends advanced_testcase {
         $this->assertEquals(0, $questiondata->questiontext); // Used to store 'Select from subcategories'.
         $this->assertEquals('random', $questiondata->qtype);
         $this->assertEquals(1, $questiondata->length);
-        $this->assertEquals(0, $questiondata->hidden);
+        $this->assertEquals(\core_question\local\bank\question_version_status::QUESTION_STATUS_READY, $questiondata->status);
         $this->assertEquals($category->contextid, $questiondata->contextid);
 
         // Options - not used.

@@ -50,7 +50,7 @@ if ($cmid) {
 require_sesskey();
 
 // Load the necessary data.
-$contexts = new question_edit_contexts($thiscontext);
+$contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
 $questiondata = question_bank::load_question_data($questionid);
 
 // Check permissions.

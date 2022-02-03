@@ -287,7 +287,12 @@ class qbank_customfields_customfield_testcase extends advanced_testcase {
         $this->restore_course($backupid, $coursefullname, $courseshortname . '_2', $newcategory->id);
 
         // The questions and their associated custom fields should have been restored.
-        $newquestion1 = $DB->get_record('question', ['idnumber' => 'q1']);
+        $sql = 'SELECT q.*
+                 FROM {question} q
+                 JOIN {question_versions} qv ON qv.questionid = q.id
+                 JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                WHERE qbe.idnumber = ?';
+        $newquestion1 = $DB->get_record_sql($sql, ['q1']);
         $newquestion1cfdata = $customfieldhandler->export_instance_data_object($newquestion1->id);
         $this->assertEquals('some text', $newquestion1cfdata->f1);
         $this->assertEquals('Yes', $newquestion1cfdata->f2);
@@ -295,7 +300,7 @@ class qbank_customfields_customfield_testcase extends advanced_testcase {
         $this->assertEquals('b', $newquestion1cfdata->f4);
         $this->assertEquals('test', $newquestion1cfdata->f5);
 
-        $newquestion2 = $DB->get_record('question', ['idnumber' => 'q2']);
+        $newquestion2 = $DB->get_record_sql($sql, ['q2']);
         $newquestion2cfdata = $customfieldhandler->export_instance_data_object($newquestion2->id);
         $this->assertEquals('some more text', $newquestion2cfdata->f1);
         $this->assertEquals('No', $newquestion2cfdata->f2);

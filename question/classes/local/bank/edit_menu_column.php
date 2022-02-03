@@ -97,4 +97,12 @@ class edit_menu_column extends column_base {
         return ['q.qtype'];
     }
 
+    /**
+     * Get menuable actions.
+     *
+     * @return menuable_action Menuable actions.
+     */
+    public function get_actions(): array {
+        return $this->actions;
+    }
 }

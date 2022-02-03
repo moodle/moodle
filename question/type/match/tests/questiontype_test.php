@@ -66,8 +66,10 @@ class qtype_match_test extends advanced_testcase {
         $q->penalty = 0.3333333;
         $q->length = 1;
         $q->stamp = make_unique_id_code();
-        $q->version = make_unique_id_code();
-        $q->hidden = 0;
+        $q->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        $q->version = 1;
+        $q->versionid = 0;
+        $q->questionbankentryid = 0;
         $q->idnumber = null;
         $q->timecreated = time();
         $q->timemodified = time();
@@ -179,13 +181,18 @@ class qtype_match_test extends advanced_testcase {
 
         $fromform = $form->get_data();
 
+        // Create a new question version with the form submission.
+        unset($questiondata->id);
         $returnedfromsave = $this->qtype->save_question($questiondata, $fromform);
-        $actualquestionsdata = question_load_questions(array($returnedfromsave->id));
+        $actualquestionsdata = question_load_questions([$returnedfromsave->id], 'qbe.idnumber');
         $actualquestiondata = end($actualquestionsdata);
 
         foreach ($questiondata as $property => $value) {
-            if (!in_array($property, array('id', 'version', 'timemodified', 'timecreated', 'options', 'stamp'))) {
-                $this->assertEquals($value, $actualquestiondata->$property);
+            if (!in_array($property, ['id', 'timemodified', 'timecreated', 'options', 'stamp',
+                'versionid', 'questionbankentryid'])) {
+                if (!empty($actualquestiondata)) {
+                    $this->assertEquals($value, $actualquestiondata->$property);
+                }
             }
         }
 

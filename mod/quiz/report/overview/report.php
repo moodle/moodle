@@ -63,7 +63,6 @@ class quiz_overview_report extends quiz_attempts_report {
 
         // Load the required questions.
         $questions = quiz_report_get_significant_questions($quiz);
-
         // Prepare for downloading, if applicable.
         $courseshortname = format_string($course->shortname, true,
                 array('context' => context_course::instance($course->id)));

@@ -32,8 +32,7 @@ Feature: A teacher can edit questions in the question bank
     And I press "id_submitbutton"
     Then I should see "Edited question name"
     And I should not see "Test question to be edited"
-    And "Edited question name" row "Created by" column of "categoryquestions" table should contain "Admin User"
-    And "Edited question name" row "Last modified by" column of "categoryquestions" table should contain "Teacher 1"
+    And "Edited question name" row "Created by" column of "categoryquestions" table should contain "Teacher 1"
 
   Scenario: Editing a question can be cancelled
     When I choose "Edit question" action for "Test question to be edited" in the question bank
@@ -41,7 +40,6 @@ Feature: A teacher can edit questions in the question bank
     And I press "Cancel"
     Then I should see "Test question to be edited"
     And "Test question to be edited" row "Created by" column of "categoryquestions" table should contain "Admin User"
-    And "Test question to be edited" row "Last modified by" column of "categoryquestions" table should contain "Admin User"
 
   Scenario: A question can have its idnumber removed
     Given the following "questions" exist:

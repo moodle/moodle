@@ -1182,6 +1182,7 @@ class qformat_xml extends qformat_default {
         $invalidquestion = false;
         $fs = get_file_storage();
         $contextid = $question->contextid;
+        $question->status = 0;
         // Get files used by the questiontext.
         $question->questiontextfiles = $fs->get_area_files(
                 $contextid, 'question', 'questiontext', $question->id);
@@ -1205,7 +1206,10 @@ class qformat_xml extends qformat_default {
         // Check question type.
         $questiontype = $this->get_qtype($question->qtype);
 
-        $idnumber = htmlspecialchars($question->idnumber);
+        $idnumber = '';
+        if (isset($question->idnumber)) {
+            $idnumber = htmlspecialchars($question->idnumber);
+        }
 
         // Categories are a special case.
         if ($question->qtype == 'category') {
@@ -1242,7 +1246,7 @@ class qformat_xml extends qformat_default {
             $expout .= "    <defaultgrade>{$question->defaultmark}</defaultgrade>\n";
         }
         $expout .= "    <penalty>{$question->penalty}</penalty>\n";
-        $expout .= "    <hidden>{$question->hidden}</hidden>\n";
+        $expout .= "    <hidden>{$question->status}</hidden>\n";
         $expout .= "    <idnumber>{$idnumber}</idnumber>\n";
 
         // The rest of the output depends on question type.

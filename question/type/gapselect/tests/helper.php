@@ -57,8 +57,10 @@ class qtype_gapselect_test_helper extends question_test_helper {
         $gapselect->penalty = 0.3333333;
         $gapselect->length = 1;
         $gapselect->stamp = make_unique_id_code();
-        $gapselect->version = make_unique_id_code();
-        $gapselect->hidden = 0;
+        $gapselect->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        $gapselect->versionid = 0;
+        $gapselect->version = 1;
+        $gapselect->questionbankentryid = 0;
         $gapselect->idnumber = null;
         $gapselect->timecreated = time();
         $gapselect->timemodified = time();
@@ -108,6 +110,7 @@ class qtype_gapselect_test_helper extends question_test_helper {
         test_question_maker::set_standard_combined_feedback_form_data($fromform);
         $fromform->shownumcorrect = 0;
         $fromform->penalty = 0.3333333;
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;
     }
@@ -126,6 +129,7 @@ class qtype_gapselect_test_helper extends question_test_helper {
         $gapselect->questiontext = 'The [[1]] brown [[2]] jumped over the [[3]] dog.';
         $gapselect->generalfeedback = 'This sentence uses each letter of the alphabet.';
         $gapselect->qtype = question_bank::get_qtype('gapselect');
+        $gapselect->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $gapselect->shufflechoices = true;
 
@@ -165,6 +169,7 @@ class qtype_gapselect_test_helper extends question_test_helper {
                 '7 [[1]] 11 [[2]] 13 [[1]] 17 [[2]] 19 = 3';
         $gapselect->generalfeedback = 'This sentence uses each letter of the alphabet.';
         $gapselect->qtype = question_bank::get_qtype('gapselect');
+        $gapselect->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $gapselect->shufflechoices = true;
 
@@ -200,6 +205,7 @@ class qtype_gapselect_test_helper extends question_test_helper {
             '<span lang="en" class="multilang">sat on the</span><span lang="ru" class="multilang">сидела на</span> [[2]].';
         $gapselect->generalfeedback = 'This sentence uses each letter of the alphabet.';
         $gapselect->qtype = question_bank::get_qtype('gapselect');
+        $gapselect->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $gapselect->shufflechoices = true;
 
@@ -240,6 +246,7 @@ class qtype_gapselect_test_helper extends question_test_helper {
         $gapselect->questiontext = 'The price of the ball is [[1]] approx.';
         $gapselect->generalfeedback = 'The choice is yours';
         $gapselect->qtype = question_bank::get_qtype('gapselect');
+        $gapselect->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $gapselect->shufflechoices = true;
 

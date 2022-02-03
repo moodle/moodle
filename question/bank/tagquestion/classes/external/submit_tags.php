@@ -79,15 +79,17 @@ class submit_tags extends external_api {
 
         if (!$question = $DB->get_record_sql('
                 SELECT q.*, qc.contextid
-                FROM {question} q
-                JOIN {question_categories} qc ON qc.id = q.category
-                WHERE q.id = ?', [$params['questionid']])) {
+                  FROM {question} q
+                  JOIN {question_versions} qv ON qv.questionid = q.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                 WHERE q.id = ?', [$questionid])) {
             throw new \moodle_exception('questiondoesnotexist', 'question');
         }
 
         $cantag = question_has_capability_on($question, 'tag');
         $questioncontext = \context::instance_by_id($question->contextid);
-        $contexts = new \question_edit_contexts($editingcontext);
+        $contexts = new \core_question\local\bank\question_edit_contexts($editingcontext);
 
         $formoptions = [
                 'editingcontext' => $editingcontext,

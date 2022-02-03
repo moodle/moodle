@@ -358,6 +358,11 @@ body.path-mod-quiz table tbody tr.gradedattempt > td {
     margin-top: 1.5em;
 }
 
+#page-mod-quiz-edit .section .activity .actions .version-selection {
+    width: 8em;
+    padding: 0;
+}
+
 @media print {
     .quiz-secure-window * {
         display: none;
@@ -789,6 +794,7 @@ table.quizreviewsummary td.cell {
     display: flex;
     flex: 1 1 auto;
     min-height: 1.7em;
+    padding-right: 2px;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .mod-indent-outer {

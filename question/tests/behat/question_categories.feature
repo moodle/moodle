@@ -39,16 +39,3 @@ Feature: A teacher can move questions between categories in the question bank
     And the field "Select a category" matches value "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subcategory (1)"
     And the "Select a category" select box should contain "Used category"
     And the "Select a category" select box should not contain "Used category (1)"
-
-  @javascript
-  Scenario: Move a question between categories via the question settings page
-    When I navigate to "Question bank" in current page administration
-    And I set the field "Select a category" to "Used category"
-    And I choose "Edit question" action for "Test question to be moved" in the question bank
-    And I click on "Use this category" "checkbox"
-    And I set the field "Save in category" to "Subcategory"
-    And I press "id_submitbutton"
-    Then I should see "Test question to be moved"
-    And the field "Select a category" matches value "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subcategory (1)"
-    And the "Select a category" select box should contain "Used category"
-    And the "Select a category" select box should not contain "Used category (1)"

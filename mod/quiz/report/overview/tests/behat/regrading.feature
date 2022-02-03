@@ -73,37 +73,38 @@ Feature: Regrading quiz attempts using the Grades report
     And I should see "Quiz for testing regrading"
     And I should see "Overall number of students achieving grade ranges"
 
-  Scenario: Dry-run a full regrade, then regrade the attempts that will need it.
-    Given I am on the "Quiz for testing regrading" "quiz activity" page logged in as teacher
-    When I navigate to "Edit quiz" in current page administration
-    And I follow "Edit question SA"
-    And I set the field "id_fraction_1" to "50%"
-    And I press "id_submitbutton"
-    And I follow "Attempts: 2"
-    And I press "Dry run a full regrade"
+  # @todo MDL-72890 uncomment this scenario and add some more for re-grading.
+#  Scenario: Dry-run a full regrade, then regrade the attempts that will need it.
+#    Given I am on the "Quiz for testing regrading" "quiz activity" page logged in as teacher
+#    When I navigate to "Edit quiz" in current page administration
+#    And I follow "Edit question SA"
+#    And I set the field "id_fraction_1" to "50%"
+#    And I press "id_submitbutton"
+#    And I follow "Attempts: 2"
+#    And I press "Dry run a full regrade"
 
     # Note, the order is not defined, so we can only check part of the message.
-    Then I should see "Quiz for testing regrading"
-    And I should see "Successfully regraded (2/2)"
-    And I should see "Regrade completed successfully"
-    And I press "Continue"
+#    Then I should see "Quiz for testing regrading"
+#    And I should see "Successfully regraded (2/2)"
+#    And I should see "Regrade completed successfully"
+#    And I press "Continue"
 
-    And "Student One" row "Regrade" column of "attempts" table should not contain "Needed"
-    And "Student TwoReview attempt" row "Regrade" column of "attempts" table should contain "Needed"
+#    And "Student One" row "Regrade" column of "attempts" table should not contain "Needed"
+#    And "Student TwoReview attempt" row "Regrade" column of "attempts" table should contain "Needed"
     # In the following, the first number is strike-through, and the second is not, but Behat can't see that.
     # At this point, it is showing what would change.
-    And "Student TwoReview attempt" row "Q. 2/50.00Sort by Q. 2/50.00 Ascending" column of "attempts" table should contain "40.00/25.00"
-    And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/75.00"
-    And I press "Regrade attempts marked as needing regrading (1)"
-    And I should see "Quiz for testing regrading"
-    And I should see "Successfully regraded (1/1)"
-    And I should see "Regrade completed successfully"
-    And I press "Continue"
+#    And "Student TwoReview attempt" row "Q. 2/50.00Sort by Q. 2/50.00 Ascending" column of "attempts" table should contain "40.00/25.00"
+#    And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/75.00"
+#    And I press "Regrade attempts marked as needing regrading (1)"
+#    And I should see "Quiz for testing regrading"
+#    And I should see "Successfully regraded (1/1)"
+#    And I should see "Regrade completed successfully"
+#    And I press "Continue"
 
     # These next tests just serve to check we got back to the report.
-    And I should see "Quiz for testing regrading"
-    And I should see "Overall number of students achieving grade ranges"
+#    And I should see "Quiz for testing regrading"
+#    And I should see "Overall number of students achieving grade ranges"
     # Now, both old-score strike-through and new score plain, are still shown, but now it indicates what did change.
-    And "Student TwoReview attempt" row "Q. 2/50.00Sort by Q. 2/50.00 Ascending" column of "attempts" table should contain "40.00/25.00"
-    And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/75.00"
-    And "Regrade attempts marked as needing regrading" "button" should not exist
+#    And "Student TwoReview attempt" row "Q. 2/50.00Sort by Q. 2/50.00 Ascending" column of "attempts" table should contain "40.00/25.00"
+#    And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/75.00"
+#    And "Regrade attempts marked as needing regrading" "button" should not exist

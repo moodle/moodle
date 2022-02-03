@@ -145,12 +145,16 @@ class quiz {
      * Load just basic information about all the questions in this quiz.
      */
     public function preload_questions() {
-        $this->questions = question_preload_questions(null,
-                'slot.maxmark, slot.id AS slotid, slot.slot, slot.page,
-                 slot.questioncategoryid AS randomfromcategory,
-                 slot.includingsubcategories AS randomincludingsubcategories',
-                '{quiz_slots} slot ON slot.quizid = :quizid AND q.id = slot.questionid',
-                array('quizid' => $this->quiz->id), 'slot.slot');
+        $specificquestionids = \mod_quiz\question\bank\qbank_helper::get_specific_version_question_ids($this->quiz->id);
+        $latestquestionids = \mod_quiz\question\bank\qbank_helper::get_always_latest_version_question_ids($this->quiz->id);
+        $questionids = array_merge($specificquestionids, $latestquestionids);
+        $questiondata = [];
+        if (!empty($questionids)) {
+            $questiondata = \mod_quiz\question\bank\qbank_helper::get_question_structure_data($this->quiz->id, $questionids, true);
+        }
+        $allquestiondata = \mod_quiz\question\bank\qbank_helper::question_array_sort(
+            \mod_quiz\question\bank\qbank_helper::question_load_random_questions($this->quiz->id, $questiondata), 'slot');
+        $this->questions = $allquestiondata;
     }
 
     /**
@@ -535,21 +539,9 @@ class quiz {
         // To control if we need to look in categories for questions.
         $qcategories = array();
 
-        // We must be careful with random questions, if we find a random question we must assume that the quiz may content
-        // any of the questions in the referenced category (or subcategories).
         foreach ($this->get_questions() as $questiondata) {
-            if ($questiondata->qtype == 'random' and $includepotential) {
-                $includesubcategories = (bool) $questiondata->questiontext;
-                if (!isset($qcategories[$questiondata->category])) {
-                    $qcategories[$questiondata->category] = false;
-                }
-                if ($includesubcategories) {
-                    $qcategories[$questiondata->category] = true;
-                }
-            } else {
-                if (!in_array($questiondata->qtype, $questiontypes)) {
-                    $questiontypes[] = $questiondata->qtype;
-                }
+            if (!in_array($questiondata->qtype, $questiontypes)) {
+                $questiontypes[] = $questiondata->qtype;
             }
         }
 
@@ -709,8 +701,7 @@ class quiz_attempt {
 
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
         $this->slots = $DB->get_records('quiz_slots',
-                array('quizid' => $this->get_quizid()), 'slot',
-                'slot, id, requireprevious, questionid, includingsubcategories');
+                array('quizid' => $this->get_quizid()), 'slot', 'slot, id, requireprevious');
         $this->sections = array_values($DB->get_records('quiz_sections',
                 array('quizid' => $this->get_quizid()), 'firstslot'));
 
@@ -1314,11 +1305,11 @@ class quiz_attempt {
      */
     public function is_blocked_by_previous_question($slot) {
         return $slot > 1 && isset($this->slots[$slot]) && $this->slots[$slot]->requireprevious &&
-                !$this->slots[$slot]->section->shufflequestions &&
-                !$this->slots[$slot - 1]->section->shufflequestions &&
-                $this->get_navigation_method() != QUIZ_NAVMETHOD_SEQ &&
-                !$this->get_question_state($slot - 1)->is_finished() &&
-                $this->quba->can_question_finish_during_attempt($slot - 1);
+            !$this->slots[$slot]->section->shufflequestions &&
+            !$this->slots[$slot - 1]->section->shufflequestions &&
+            $this->get_navigation_method() != QUIZ_NAVMETHOD_SEQ &&
+            !$this->get_question_state($slot - 1)->is_finished() &&
+            $this->quba->can_question_finish_during_attempt($slot - 1);
     }
 
     /**
@@ -1807,8 +1798,7 @@ class quiz_attempt {
         $question->length = $replacedquestion->length;
         $question->penalty = 0;
         $question->stamp = '';
-        $question->version = 0;
-        $question->hidden = 0;
+        $question->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $question->timecreated = null;
         $question->timemodified = null;
         $question->createdby = null;
@@ -2108,25 +2098,9 @@ class quiz_attempt {
 
         $transaction = $DB->start_delegated_transaction();
 
-        // Choose the replacement question.
-        $questiondata = $DB->get_record('question',
-                array('id' => $this->slots[$slot]->questionid));
-        if ($questiondata->qtype != 'random') {
-            $newqusetionid = $questiondata->id;
-        } else {
-            $tagids = quiz_retrieve_slot_tag_ids($this->slots[$slot]->id);
-
-            $randomloader = new \core_question\local\bank\random_question_loader($qubaids, array());
-            $newqusetionid = $randomloader->get_next_question_id($questiondata->category,
-                    (bool) $questiondata->questiontext, $tagids);
-            if ($newqusetionid === null) {
-                throw new moodle_exception('notenoughrandomquestions', 'quiz',
-                        $this->quizobj->view_url(), $questiondata);
-            }
-        }
-
         // Add the question to the usage. It is important we do this before we choose a variant.
-        $newquestion = question_bank::load_question($newqusetionid);
+        $newquestion = question_bank::load_question(
+            \mod_quiz\question\bank\qbank_helper::choose_question_for_redo($this->slots[$slot]->id, $qubaids));
         $newslot = $this->quba->add_question_in_place_of_other($slot, $newquestion);
 
         // Choose the variant.

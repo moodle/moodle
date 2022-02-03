@@ -27,6 +27,7 @@ Feature: Preview a Description question
   @javascript @_switch_window
   Scenario: Preview a Description question and submit a correct response.
     When I choose "Preview" action for "description-001" in the question bank
+    And I press "Preview options"
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I should see "Here is some information about the questions you are about to attempt."

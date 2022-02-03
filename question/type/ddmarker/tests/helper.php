@@ -193,6 +193,8 @@ class qtype_ddmarker_test_helper extends question_test_helper {
         $fromform->hintclearwrong = array(0, 1);
         $fromform->hintoptions = array(0, 1);
 
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+
         return $fromform;
     }
 
@@ -257,6 +259,8 @@ class qtype_ddmarker_test_helper extends question_test_helper {
         $fromform->hintshownumcorrect = array(1, 1);
         $fromform->hintclearwrong = array(0, 1);
         $fromform->hintoptions = array(0, 1);
+
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         return $fromform;
     }

@@ -144,7 +144,14 @@ class core_question_backup_testcase extends advanced_testcase {
 
         // The questions should remain in the question category they were which is
         // a question category belonging to a course category context.
-        $questions = $DB->get_records('question', ['category' => $qcat->id], 'idnumber');
+        $sql = 'SELECT q.*,
+                       qbe.idnumber
+                  FROM {question} q
+                  JOIN {question_versions} qv ON qv.questionid = q.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                 WHERE qbe.questioncategoryid = ?
+                 ORDER BY qbe.idnumber';
+        $questions = $DB->get_records_sql($sql, [$qcat->id]);
         $this->assertCount(2, $questions);
 
         // Retrieve tags for each question and check if they are assigned at the right context.
@@ -190,9 +197,11 @@ class core_question_backup_testcase extends advanced_testcase {
 
         // The questions should have been moved to a question category that belongs to a course context.
         $questions = $DB->get_records_sql("SELECT q.*
-                                             FROM {question} q
-                                             JOIN {question_categories} qc ON q.category = qc.id
-                                            WHERE qc.contextid = ?", [$coursecontext3->id]);
+                                                FROM {question} q
+                                                JOIN {question_versions} qv ON qv.questionid = q.id
+                                                JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                                                JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                                               WHERE qc.contextid = ?", [$coursecontext3->id]);
         $this->assertCount(2, $questions);
 
         // Now, retrieve tags for each question and check if they are assigned at the right context.

@@ -1064,13 +1064,13 @@ function course_delete_module($cmid, $async = false) {
         }
     }
 
-    question_delete_activity($cm);
-
     // Call the delete_instance function, if it returns false throw an exception.
     if (!$deleteinstancefunction($cm->instance)) {
         throw new moodle_exception('cannotdeletemoduleinstance', '', '', null,
             "Cannot delete the module $modulename (instance).");
     }
+
+    question_delete_activity($cm);
 
     // Remove all module files in case modules forget to do that.
     $fs = get_file_storage();

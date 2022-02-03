@@ -73,6 +73,7 @@ class qtype_multianswer extends question_type {
             // For wrapped questions the maxgrade is always equal to the defaultmark,
             // there is no entry in the question_instances table for them.
             $wrapped->maxmark = $wrapped->defaultmark;
+            $wrapped->category = $question->categoryobject->id;
             $question->options->questions[$sequence[$wrapped->id]] = $wrapped;
         }
         $question->hints = $DB->get_records('question_hints',
@@ -94,15 +95,17 @@ class qtype_multianswer extends question_type {
 
         // First we get all the existing wrapped questions.
         $oldwrappedquestions = [];
-        if ($oldwrappedids = $DB->get_field('question_multianswer', 'sequence',
-                array('question' => $question->id))) {
-            $oldwrappedidsarray = explode(',', $oldwrappedids);
-            $unorderedquestions = $DB->get_records_list('question', 'id', $oldwrappedidsarray);
+        if (isset($question->oldparent)) {
+            if ($oldwrappedids = $DB->get_field('question_multianswer', 'sequence',
+                ['question' => $question->oldparent])) {
+                $oldwrappedidsarray = explode(',', $oldwrappedids);
+                $unorderedquestions = $DB->get_records_list('question', 'id', $oldwrappedidsarray);
 
-            // Keep the order as given in the sequence field.
-            foreach ($oldwrappedidsarray as $questionid) {
-                if (isset($unorderedquestions[$questionid])) {
-                    $oldwrappedquestions[] = $unorderedquestions[$questionid];
+                // Keep the order as given in the sequence field.
+                foreach ($oldwrappedidsarray as $questionid) {
+                    if (isset($unorderedquestions[$questionid])) {
+                        $oldwrappedquestions[] = $unorderedquestions[$questionid];
+                    }
                 }
             }
         }
@@ -111,10 +114,10 @@ class qtype_multianswer extends question_type {
         foreach ($question->options->questions as $wrapped) {
             if (!empty($wrapped)) {
                 // If we still have some old wrapped question ids, reuse the next of them.
-
+                $wrapped->id = 0;
                 if (is_array($oldwrappedquestions) &&
                         $oldwrappedquestion = array_shift($oldwrappedquestions)) {
-                    $wrapped->id = $oldwrappedquestion->id;
+                    $wrapped->oldid = $oldwrappedquestion->id;
                     if ($oldwrappedquestion->qtype != $wrapped->qtype) {
                         switch ($oldwrappedquestion->qtype) {
                             case 'multichoice':
@@ -132,11 +135,8 @@ class qtype_multianswer extends question_type {
                             default:
                                 throw new moodle_exception('qtypenotrecognized',
                                         'qtype_multianswer', '', $oldwrappedquestion->qtype);
-                                $wrapped->id = 0;
                         }
                     }
-                } else {
-                    $wrapped->id = 0;
                 }
             }
             $wrapped->name = $question->name;
@@ -183,7 +183,7 @@ class qtype_multianswer extends question_type {
             $question->id = $authorizedquestion->id;
         }
 
-        $question->category = $authorizedquestion->category;
+        $question->category = $form->category;
         $form->defaultmark = $question->defaultmark;
         $form->questiontext = $question->questiontext;
         $form->questiontextformat = 0;

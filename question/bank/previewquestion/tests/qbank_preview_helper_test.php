@@ -16,7 +16,12 @@
 
 namespace qbank_previewquestion;
 
+use context_course;
+use moodle_url;
 use core\plugininfo\qbank;
+use question_bank;
+use question_engine;
+use stdClass;
 
 /**
  * Helper tests for question preview.
@@ -67,17 +72,18 @@ class helper_test extends \advanced_testcase {
         $questiongenerator = $generator->get_plugin_generator('core_question');
         // Create a course.
         $course = $generator->create_course();
-        $this->context = \context_course::instance($course->id);
+        $this->context = context_course::instance($course->id);
         // Create a question in the default category.
-        $contexts = new \question_edit_contexts($this->context);
+        $contexts = new \core_question\local\bank\question_edit_contexts($this->context);
         $cat = question_make_default_categories($contexts->all());
         $this->questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);
-        $this->quba = \question_engine::make_questions_usage_by_activity('core_question_preview', \context_user::instance($USER->id));
+        $this->quba = question_engine::make_questions_usage_by_activity('core_question_preview',
+            \context_user::instance($USER->id));
         $this->options = new question_preview_options($this->questiondata);
         $this->options->load_user_defaults();
         $this->options->set_from_request();
-        $this->returnurl = new \moodle_url('/question/edit.php');
+        $this->returnurl = new moodle_url('/question/edit.php');
     }
 
     /**
@@ -95,7 +101,7 @@ class helper_test extends \advanced_testcase {
            'courseid' => $this->context->instanceid
         ];
         $params = array_merge($params, $this->options->get_url_params());
-        $expectedurl = new \moodle_url('/question/bank/previewquestion/preview.php', $params);
+        $expectedurl = new moodle_url('/question/bank/previewquestion/preview.php', $params);
         $this->assertEquals($expectedurl, $actionurl);
     }
 
@@ -112,7 +118,7 @@ class helper_test extends \advanced_testcase {
             'returnurl' => $this->returnurl,
             'courseid' => $this->context->instanceid
         ];
-        $expectedurl = new \moodle_url('/question/bank/previewquestion/preview.php', $params);
+        $expectedurl = new moodle_url('/question/bank/previewquestion/preview.php', $params);
         $this->assertEquals($expectedurl, $formurl);
     }
 
@@ -138,7 +144,7 @@ class helper_test extends \advanced_testcase {
         $params['generalfeedback'] = (bool) $this->options->generalfeedback;
         $params['rightanswer']     = (bool) $this->options->rightanswer;
         $params['history']         = (bool) $this->options->history;
-        $expectedurl = new \moodle_url('/question/bank/previewquestion/preview.php', $params);
+        $expectedurl = new moodle_url('/question/bank/previewquestion/preview.php', $params);
         $this->assertEquals($expectedurl, $previewurl);
     }
 
@@ -158,5 +164,28 @@ class helper_test extends \advanced_testcase {
         } else {
             $this->assertEquals('', $comment);
         }
+    }
+
+    /**
+     * Test method load_versions().
+     *
+     * @covers ::load_versions
+     */
+    public function test_load_versions() {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qcat1 = $generator->create_question_category(['name' => 'My category', 'sortorder' => 1, 'idnumber' => 'myqcat']);
+        $questiongenerated = $generator->create_question('description', null, ['name' => 'q1', 'category' => $qcat1->id]);
+        $qtypeobj = question_bank::get_qtype($questiongenerated->qtype);
+        $question = question_bank::load_question($questiongenerated->id);
+        $versionids = helper::load_versions($question->questionbankentryid);
+        $this->assertCount(1, $versionids);
+        $fromform = new stdClass();
+        $fromform->name = 'Name edited';
+        $fromform->category = $qcat1->id;
+        $qtypeobj->save_question($questiongenerated, $fromform);
+        $versionids = helper::load_versions($question->questionbankentryid);
+        $this->assertCount(2, $versionids);
     }
 }

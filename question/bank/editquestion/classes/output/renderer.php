@@ -57,4 +57,14 @@ class renderer extends \plugin_renderer_base {
         return $this->render_from_template('qbank_editquestion/add_new_question', $addquestiondata);
     }
 
+    /**
+     * Render question information for edit form.
+     *
+     * @param array $questiondata
+     * @return bool|string
+     */
+    public function render_question_info($questiondata) {
+        return $this->render_from_template('qbank_editquestion/question_info', $questiondata);
+    }
+
 }

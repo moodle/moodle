@@ -69,7 +69,7 @@ class qtype_essay_edit_form_test extends advanced_testcase {
             new moodle_url('/'),
             $fakequestion,
             $category,
-            new question_edit_contexts($syscontext)
+            new core_question\local\bank\question_edit_contexts($syscontext)
         );
 
         return [$form, $category];

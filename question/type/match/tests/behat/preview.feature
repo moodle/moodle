@@ -31,6 +31,7 @@ Feature: Preview a Matching question
       | Shuffle    | 0   |
     And I press "id_submitbutton"
     When I choose "Preview" action for "matching-001" in the question bank
+    And I press "Preview options"
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I set the field with xpath "//table[@class='answer']//td[@class='control']//select[contains(@id, '1_sub0')]" to "amphibian"
@@ -48,6 +49,7 @@ Feature: Preview a Matching question
       | Shuffle    | 0   |
     And I press "id_submitbutton"
     When I choose "Preview" action for "matching-001" in the question bank
+    And I press "Preview options"
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I set the field with xpath "//table[@class='answer']//td[@class='control']//select[contains(@id, '1_sub0')]" to "amphibian"
@@ -65,6 +67,7 @@ Feature: Preview a Matching question
       | Shuffle    | 0   |
     And I press "id_submitbutton"
     When I choose "Preview" action for "matching-001" in the question bank
+    And I press "Preview options"
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I set the field with xpath "//table[@class='answer']//td[@class='control']//select[contains(@id, '1_sub0')]" to "mammal"
