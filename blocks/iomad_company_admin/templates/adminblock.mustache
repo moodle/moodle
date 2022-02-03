@@ -32,9 +32,9 @@
 
 <div class="m-t-2">
     {{> block_iomad_company_admin/tabs }}
-    <div class="tab-content" id="iomadDashboardTabContent">
+    <div class="tab-content mt-3" id="iomadDashboardTabContent">
         {{# panes }}
-            <div class="tab-pane fade {{# selected }}show active{{/ selected }} pt-3 iomadlink_container" id="{{ category }}" role="tabpanel" aria-labelledby="{{ category }}-tab">
+            <div class="tab-pane {{# selected }}active{{/ selected }} iomadlink_container" id="{{ category }}" role="tabpanel">
                 {{> block_iomad_company_admin/menuitem }}
                 <div class="clearfix"></div>
             </div>

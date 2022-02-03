@@ -9,12 +9,10 @@
     {{# tabs }}
         <li class="nav-item">
             <a 
-                id="{{ category }}-tab"
+                class="nav-link {{# selected }}active{{/ selected }}"
+                href="#{{ category }}"
                 data-toggle="tab"
                 role="tab"
-                class="nav-link {{# selected }}show active{{/ selected }}"
-                href="#{{ category }}"
-                aria-controls="{{ category }}"
                 aria-selected="{{# selected }}true{{/ selected }}{{^ selected }}false{{/selected}}"
                 ><i class="fa {{ icon }}"></i> {{ label }}</a>
         </li>
