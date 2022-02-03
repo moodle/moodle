@@ -1248,12 +1248,9 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 
 .activity-add,
 .block-add {
-    @if $enable-rounded {
-        @include border-radius($card-border-radius);
-    }
+    @include border-radius();
     @include alert-variant($primary-light-background, $primary-light-border, $primary-light-border);
     border-width: $border-width;
-    border-style: dashed;
     .pluscontainer {
         border: $border-width solid $primary-light-border;
     }
@@ -1265,7 +1262,6 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         }
     }
     width: 100%;
-    border-radius: 4px;
 }
 
 #changenumsections {
