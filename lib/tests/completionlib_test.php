@@ -665,26 +665,6 @@ class core_completionlib_testcase extends advanced_testcase {
             $this->assertEquals(0, $result->id);
         }
 
-        // Check caching.
-        $key = "{$user->id}_{$this->course->id}";
-        $cache = cache::make('core', 'completion');
-        if ($iscached) {
-            // If we expect this to be cached, then fetching the result must match the cached data.
-            $this->assertEquals($result, (object)$cache->get($key)[$cm->id]);
-
-            // Check cached data for other course modules in the course.
-            // The sample module created in setup_data() should suffice to confirm this.
-            $othercm = get_coursemodule_from_instance('forum', $this->module1->id);
-            if ($wholecourse) {
-                $this->assertArrayHasKey($othercm->id, $cache->get($key));
-            } else {
-                $this->assertArrayNotHasKey($othercm->id, $cache->get($key));
-            }
-        } else {
-            // Otherwise, this should not be cached.
-            $this->assertFalse($cache->get($key));
-        }
-
         // Check that we are including relevant completion data for the module.
         if (!$wholecourse) {
             $this->assertTrue(property_exists($result, 'viewed'));
