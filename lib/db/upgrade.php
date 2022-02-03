@@ -3844,7 +3844,7 @@ privatefiles,moodle|/user/files.php';
 
         // Adding fields to table question_versions.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('questionbankentryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('questionbankentryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
         $table->add_field('version', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 1);
         $table->add_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
         $table->add_field('status', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'ready');
@@ -3867,8 +3867,8 @@ privatefiles,moodle|/user/files.php';
         $table->add_field('usingcontextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
         $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null);
         $table->add_field('questionarea', XMLDB_TYPE_CHAR, '50', null, null, null, null);
-        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('questionbankentryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('questionbankentryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
         $table->add_field('version', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
         // Adding keys to table question_references.
@@ -3889,14 +3889,13 @@ privatefiles,moodle|/user/files.php';
         $table->add_field('usingcontextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
         $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null);
         $table->add_field('questionarea', XMLDB_TYPE_CHAR, '50', null, null, null, null);
-        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('questionscontextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
         $table->add_field('filtercondition', XMLDB_TYPE_TEXT, null, null, null, null, null);
 
         // Adding keys to table question_set_references.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $table->add_key('usingcontextid', XMLDB_KEY_FOREIGN, ['usingcontextid'], 'context', ['id']);
-        $table->add_key('itemid', XMLDB_KEY_FOREIGN, ['itemid'], 'quiz_slots', ['id']);
         $table->add_key('questionscontextid', XMLDB_KEY_FOREIGN, ['questionscontextid'], 'context', ['id']);
 
         // Conditionally launch create table for question_set_references.

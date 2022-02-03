@@ -1453,7 +1453,7 @@
         <FIELD NAME="questionbankentryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the question bank entry this question version is part of."/>
         <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Version number for the question where the first version is always 1."/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The question ID."/>
-        <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="false" DEFAULT="ready" SEQUENCE="false" COMMENT="If the question is ready, hidden or draft"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="ready" SEQUENCE="false" COMMENT="If the question is ready, hidden or draft"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
