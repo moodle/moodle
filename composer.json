@@ -17,7 +17,7 @@
         "friends-of-behat/mink-extension": "dev-master",
         "behat/mink-goutte-driver": "~1.2",
         "symfony/process": "^4.0 || ^5.0",
-        "behat/behat": "3.8.*",
+        "behat/behat": "3.10.*",
         "oleg-andreyev/mink-phpwebdriver": "^1.0"
     },
     "autoload-dev": {
