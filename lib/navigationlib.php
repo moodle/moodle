@@ -2961,7 +2961,8 @@ class global_navigation extends navigation_node {
 
         // Participants.
         if ($navoptions->participants) {
-            $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CUSTOM, get_string('participants'), 'participants');
+            $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id),
+                self::TYPE_CUSTOM, get_string('participants'), 'participants');
         }
 
         // Blogs.
@@ -5517,7 +5518,8 @@ class settings_navigation extends navigation_node {
         if ($adminoptions->update) {
             // Add the course settings link
             $url = new moodle_url('/admin/settings.php', array('section'=>'frontpagesettings'));
-            $frontpage->add(get_string('editsettings'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
+            $frontpage->add(get_string('settings'), $url, self::TYPE_SETTING, null,
+                'editsettings', new pix_icon('i/settings', ''));
         }
 
         // add enrol nodes
@@ -5526,12 +5528,15 @@ class settings_navigation extends navigation_node {
         // Manage filters
         if ($adminoptions->filters) {
             $url = new moodle_url('/filter/manage.php', array('contextid'=>$coursecontext->id));
-            $frontpage->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/filter', ''));
+            $frontpage->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING,
+                null, 'filtermanagement', new pix_icon('i/filter', ''));
         }
 
         // View course reports.
         if ($adminoptions->reports) {
-            $frontpagenav = $frontpage->add(get_string('reports'), null, self::TYPE_CONTAINER, null, 'frontpagereports',
+            $frontpagenav = $frontpage->add(get_string('reports'), new moodle_url('/report/view.php',
+                ['courseid' => $coursecontext->instanceid]),
+                self::TYPE_CONTAINER, null, 'coursereports',
                     new pix_icon('i/stats', ''));
             $coursereports = core_component::get_plugin_list('coursereport');
             foreach ($coursereports as $report=>$dir) {
@@ -5554,13 +5559,13 @@ class settings_navigation extends navigation_node {
         // Backup this course
         if ($adminoptions->backup) {
             $url = new moodle_url('/backup/backup.php', array('id'=>$course->id));
-            $frontpage->add(get_string('backup'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/backup', ''));
+            $frontpage->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup', new pix_icon('i/backup', ''));
         }
 
         // Restore to this course
         if ($adminoptions->restore) {
             $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$coursecontext->id));
-            $frontpage->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
+            $frontpage->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore', new pix_icon('i/restore', ''));
         }
 
         // Questions

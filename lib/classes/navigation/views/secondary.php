@@ -364,6 +364,8 @@ class secondary extends view {
      *                                       node by default.
      */
     protected function load_course_navigation(?navigation_node $rootnode = null): void {
+        global $SITE;
+
         $rootnode = $rootnode ?? $this;
         $course = $this->page->course;
         // Initialise the main navigation and settings nav.
@@ -372,7 +374,15 @@ class secondary extends view {
         $navigation = $this->page->navigation;
 
         $url = new \moodle_url('/course/view.php', ['id' => $course->id]);
-        $rootnode->add(get_string('course'), $url, self::TYPE_COURSE, null, 'coursehome');
+        $firstnodeidentifier = get_string('course');
+        $issitecourse = $course->id == $SITE->id;
+        if ($issitecourse) {
+            $firstnodeidentifier = get_string('home');
+            if ($frontpage = $settingsnav->get('frontpage')) {
+                $settingsnav = $frontpage;
+            }
+        }
+        $rootnode->add($firstnodeidentifier, $url, self::TYPE_COURSE, null, 'coursehome');
 
         $nodes = $this->get_default_course_mapping();
         $nodesordered = $this->get_leaf_nodes($settingsnav, $nodes['settings'] ?? []);
@@ -381,17 +391,19 @@ class secondary extends view {
 
         // Try to get any custom nodes defined by a user which may include containers.
         $expectedcourseadmin = $this->get_expected_course_admin_nodes();
+        $courseadminnode = $settingsnav;
+        if (!$issitecourse) {
+            $courseadminnode = $settingsnav->get('courseadmin');
+        }
 
-        foreach ($settingsnav->children as $value) {
-            if ($value->key == 'courseadmin') {
-                foreach ($value->children as $other) {
-                    if (array_search($other->key, $expectedcourseadmin) === false) {
-                        $othernode = $this->get_first_action_for_node($other);
-                        $recursivenode = $othernode && !$this->get($othernode->key) ? $othernode : $other;
-                        // Get the first node and check whether it's been added already.
-                        // Also check if the first node is an external link. If it is, add all children.
-                        $this->add_external_nodes_to_secondary($recursivenode, $recursivenode);
-                    }
+        if ($courseadminnode) {
+            foreach ($courseadminnode->children as $other) {
+                if (array_search($other->key, $expectedcourseadmin) === false) {
+                    $othernode = $this->get_first_action_for_node($other);
+                    $recursivenode = $othernode && !$this->get($othernode->key) ? $othernode : $other;
+                    // Get the first node and check whether it's been added already.
+                    // Also check if the first node is an external link. If it is, add all children.
+                    $this->add_external_nodes_to_secondary($recursivenode, $recursivenode);
                 }
             }
         }
@@ -429,7 +441,7 @@ class secondary extends view {
 
         // Start with getting the base node for the front page or the course.
         $node = null;
-        if ($this->page->course == $SITE->id) {
+        if ($this->page->course->id == $SITE->id) {
             $node = $this->page->settingsnav->find('frontpage', navigation_node::TYPE_SETTING);
         } else {
             $node = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
