@@ -28,32 +28,44 @@
     {}
 }}
 
-<div id="block-mycourses-{{uniqid}}" class="block-mycourses" data-region="mycourses">
-    <ul id="block-mycourses-view-choices-{{uniqid}}" class="nav nav-tabs" role="tablist">
+<div class="block-mycourses" data-region="mycourses">
+    <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
-            <a class="nav-link {{#viewingavailable}}active{{/viewingavailable}}" href="#mycourses_available_view" role="tab" data-toggle="tab" data-tabname="available">
+            <a class="nav-link {{#viewingavailable}}active{{/viewingavailable}}"
+                      href="#mycourses_available_view"
+                      role="tab"
+                      data-toggle="tab"
+                      aria-selected="{{#viewingavailable}}true{{/viewingavailable}}{{^viewingavailable}}flase{{/viewingavailable}}">
                 {{#str}} availableheader, block_mycourses {{/str}}
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{#viewinginprogress}}active{{/viewinginprogress}}" href="#mycourses_inprogress_view" role="tab" data-toggle="tab" data-tabname="inprogress">
+            <a class="nav-link {{#viewinginprogress}}active{{/viewinginprogress}}"
+                      href="#mycourses_inprogress_view"
+                      role="tab"
+                      data-toggle="tab"
+                      aria-selected="{{#viewinginprogress}}true{{/viewinginprogress}}{{^viewinginprogress}}false{{/viewinginprogress}}">
                 {{#str}} inprogressheader, block_mycourses {{/str}}
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{#viewingcompleted}}active{{/viewingcompleted}}" href="#mycourses_completed_view" role="tab" data-toggle="tab" data-tabname="completed">
+            <a class="nav-link {{#viewingcompleted}}active{{/viewingcompleted}}"
+                      href="#mycourses_completed_view"
+                      role="tab"
+                      data-toggle="tab"
+                      aria-selected="{{#viewingcompleted}}true{{/viewingcompleted}}{{^viewingcompleted}}false{{/viewingcompleted}}">
                 {{#str}} completedheader, block_mycourses {{/str}}
             </a>
         </li>
     </ul>
     <div class="tab-content content-centred">
-        <div role="tabpanel" class="tab-pane {{#viewingavailable}}in active{{/viewingavailable}}" id="mycourses_available_view">
+        <div role="tabpanel" class="tab-pane {{#viewingavailable}}active{{/viewingavailable}}" id="mycourses_available_view">
             {{> block_mycourses/available-view }}
         </div>
-        <div role="tabpanel" class="tab-pane {{#viewinginprogress}}in active{{/viewinginprogress}}" id="mycourses_inprogress_view">
+        <div role="tabpanel" class="tab-pane {{#viewinginprogress}}active{{/viewinginprogress}}" id="mycourses_inprogress_view">
             {{> block_mycourses/inprogress-view }}
         </div>
-        <div role="tabpanel" class="tab-pane {{#viewingcompleted}}in active{{/viewingcompleted}}" id="mycourses_completed_view">
+        <div role="tabpanel" class="tab-pane {{#viewingcompleted}}active{{/viewingcompleted}}" id="mycourses_completed_view">
             {{> block_mycourses/completed-view }}
         </div>
     </div>
