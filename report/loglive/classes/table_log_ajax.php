@@ -58,4 +58,25 @@ class report_loglive_table_log_ajax extends report_loglive_table_log {
         $result = array('logs' => $html, 'until' => $until);
         return json_encode($result);
     }
+
+    /**
+     * Popup actions do not function when they are rendered in response to an AJAX request, encode within the link itself
+     *
+     * @param moodle_url $url
+     * @param string $text
+     * @param string $name
+     * @return string
+     */
+    protected function action_link(moodle_url $url, $text, $name = 'popup') {
+        global $OUTPUT;
+
+        $link = new action_link($url, $text, null, [
+            'data-action' => 'action-popup',
+            'data-popup-action' => json_encode(
+                new popup_action('click', $url, $name, ['height' => 440, 'width' => 700])
+            ),
+        ]);
+
+        return $OUTPUT->render($link);
+    }
 }
