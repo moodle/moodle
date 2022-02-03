@@ -41,24 +41,17 @@ class login_signup_form extends moodleform implements renderable, templatable {
         $mform = $this->_form;
 
         // Iomad
-        if (!empty($this->company)) {
-            if ($CFG->local_iomad_signup_useemail) {
-                $mform->addElement('header', 'choosepassword', get_string('choosepassword', 'local_iomad_signup'), '');
-                $mform->addElement('html', get_string('emailasusernamehelp', 'local_iomad_signup'));
+        if ($CFG->iomad_use_email_as_username) {
+            $mform->addElement('header', 'choosepassword', get_string('choosepassword', 'local_iomad_signup'), '');
+            $mform->addElement('html', get_string('emailasusernamehelp', 'local_iomad_signup'));
 
-                $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25"');
-                $mform->setType('email', PARAM_RAW_TRIMMED);
-                $mform->addRule('email', get_string('missingemail'), 'required', null, 'server');
+            $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25"');
+            $mform->setType('email', PARAM_RAW_TRIMMED);
+            $mform->addRule('email', get_string('missingemail'), 'required', null, 'server');
 
-                $mform->addElement('text', 'email2', get_string('emailagain'), 'maxlength="100" size="25"');
-                $mform->setType('email2', PARAM_RAW_TRIMMED);
-                $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
-            } else {
-                $mform->addElement('header', 'createuserandpass', get_string('createuserandpass'), '');
-                $mform->addElement('text', 'username', get_string('username'), 'maxlength="100" size="12"');
-                $mform->setType('username', PARAM_NOTAGS);
-                $mform->addRule('username', get_string('missingusername'), 'required', null, 'server');
-            }
+            $mform->addElement('text', 'email2', get_string('emailagain'), 'maxlength="100" size="25"');
+            $mform->setType('email2', PARAM_RAW_TRIMMED);
+            $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
         } else {
             $mform->addElement('header', 'createuserandpass', get_string('createuserandpass'), '');
             $mform->addElement('text', 'username', get_string('username'), 'maxlength="100" size="12" autocapitalize="none"');
@@ -188,10 +181,9 @@ class login_signup_form extends moodleform implements renderable, templatable {
             }
         }
 
-        if (!empty($this->company)) {
-            if ($CFG->local_iomad_signup_useemail) {
-                $data['username'] = $data['email'];
-            }
+        // IOMAD
+        if ($CFG->local_iomad_signup_useemail) {
+                $data['username'] = strtolower($data['email']);
         }
 
         $errors += signup_validate_data($data, $files);

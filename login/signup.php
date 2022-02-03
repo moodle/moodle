@@ -41,6 +41,7 @@ if (empty($SESSION->company)) {
     } else {
         $wantedcompanyshort = '';
     }
+    $SESSION->company = $wantedcompany;
 } else {
     $wantedcompanyid = $SESSION->company->id;
     $wantedcompanyshort = $SESSION->company->shortname;
@@ -129,8 +130,8 @@ if ($mform_signup->is_cancelled()) {
 
 } else if ($user = $mform_signup->get_data()) {
     // Do we use the email as username?
-    if ((!empty($CFG->local_iomad_signup_company) || !empty($SESSION->company)) && $CFG->local_iomad_signup_useemail) {
-        $user->username = $user->email;
+    if ($CFG->local_iomad_signup_useemail) {
+        $user->username = strtolower($user->email);
     }
 
     // If we don't have a company, do we have a default one set?
