@@ -78,6 +78,13 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     protected $autocreate = false;
 
     /**
+     * Set to true if new cache revision directory needs to be created. Old directory will be purged asynchronously
+     * via Schedule task.
+     * @var bool
+     */
+    protected $asyncpurge = false;
+
+    /**
      * Set to true if a custom path is being used.
      * @var bool
      */
@@ -180,6 +187,12 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
             // Default: No, we will use multiple directories.
             $this->singledirectory = false;
         }
+        // Check if directory needs to be purged asynchronously.
+        if (array_key_exists('asyncpurge', $configuration)) {
+            $this->asyncpurge = (bool)$configuration['asyncpurge'];
+        } else {
+            $this->asyncpurge = false;
+        }
     }
 
     /**
@@ -271,10 +284,25 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @param cache_definition $definition
      */
     public function initialise(cache_definition $definition) {
+        global $CFG;
+
         $this->definition = $definition;
         $hash = preg_replace('#[^a-zA-Z0-9]+#', '_', $this->definition->get_id());
         $this->path = $this->filestorepath.'/'.$hash;
         make_writable_directory($this->path, false);
+
+        if ($this->asyncpurge) {
+            $timestampfile = $this->path . '/.lastpurged';
+            if (!file_exists($timestampfile)) {
+                touch($timestampfile);
+                @chmod($timestampfile, $CFG->filepermissions);
+            }
+            $cacherev = gmdate("YmdHis", filemtime($timestampfile));
+            // Update file path with new cache revision.
+            $this->path .= '/' . $cacherev;
+            make_writable_directory($this->path, false);
+        }
+
         if ($this->prescan && $definition->get_mode() !== self::MODE_REQUEST) {
             $this->prescan = false;
         }
@@ -569,14 +597,38 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @return boolean True on success. False otherwise.
      */
     public function purge() {
+        global $CFG;
         if ($this->isready) {
-            $files = glob($this->glob_keys_pattern(), GLOB_MARK | GLOB_NOSORT);
-            if (is_array($files)) {
-                foreach ($files as $filename) {
-                    @unlink($filename);
+            // If asyncpurge = true, create a new cache revision directory and adhoc task to delete old directory.
+            if ($this->asyncpurge && isset($this->definition)) {
+                $hash = preg_replace('#[^a-zA-Z0-9]+#', '_', $this->definition->get_id());
+                $filepath = $this->filestorepath . '/' . $hash;
+                $timestampfile = $filepath . '/.lastpurged';
+                if (file_exists($timestampfile)) {
+                    $oldcacherev = gmdate("YmdHis", filemtime($timestampfile));
+                    $oldcacherevpath = $filepath . '/' . $oldcacherev;
+                    // Delete old cache revision file.
+                    @unlink($timestampfile);
+
+                    // Create adhoc task to delete old cache revision folder.
+                    $purgeoldcacherev = new \cachestore_file\task\asyncpurge();
+                    $purgeoldcacherev->set_custom_data(['path' => $oldcacherevpath]);
+                    \core\task\manager::queue_adhoc_task($purgeoldcacherev);
                 }
+                touch($timestampfile, time());
+                @chmod($timestampfile, $CFG->filepermissions);
+                $newcacherev = gmdate("YmdHis", filemtime($timestampfile));
+                $filepath .= '/' . $newcacherev;
+                make_writable_directory($filepath, false);
+            } else {
+                $files = glob($this->glob_keys_pattern(), GLOB_MARK | GLOB_NOSORT);
+                if (is_array($files)) {
+                    foreach ($files as $filename) {
+                        @unlink($filename);
+                    }
+                }
+                $this->keys = [];
             }
-            $this->keys = array();
         }
         return true;
     }
@@ -618,6 +670,9 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         if (isset($data->prescan)) {
             $config['prescan'] = $data->prescan;
         }
+        if (isset($data->asyncpurge)) {
+            $config['asyncpurge'] = $data->asyncpurge;
+        }
 
         return $config;
     }
@@ -641,6 +696,9 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         }
         if (isset($config['prescan'])) {
             $data['prescan'] = (bool)$config['prescan'];
+        }
+        if (isset($config['asyncpurge'])) {
+            $data['asyncpurge'] = (bool)$config['asyncpurge'];
         }
         $editform->set_data($data);
     }

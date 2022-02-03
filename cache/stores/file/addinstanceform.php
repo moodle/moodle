@@ -58,5 +58,9 @@ class cachestore_file_addinstance_form extends cachestore_addinstance_form {
         $form->addElement('checkbox', 'prescan', get_string('prescan', 'cachestore_file'));
         $form->setType('prescan', PARAM_BOOL);
         $form->addHelpButton('prescan', 'prescan', 'cachestore_file');
+
+        $form->addElement('checkbox', 'asyncpurge', get_string('asyncpurge', 'cachestore_file'));
+        $form->setType('asyncpurge', PARAM_BOOL);
+        $form->addHelpButton('asyncpurge', 'asyncpurge', 'cachestore_file');
     }
 }
