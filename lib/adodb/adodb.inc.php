@@ -1,34 +1,22 @@
 <?php
-/*
- * Set tabs to 4 for best viewing.
- *
- * Latest version is available at https://adodb.org/
- *
- * This is the main include file for ADOdb.
- * Database specific drivers are stored in the adodb/drivers/adodb-*.inc.php
- *
- * The ADOdb files are formatted so that doxygen can be used to generate documentation.
- * Doxygen is a documentation generation tool and can be downloaded from http://doxygen.org/
- */
-
 /**
-	\mainpage
-
-	@version   v5.21.0  2021-02-27
-	@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-	@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-
-	Released under both BSD license and Lesser GPL library license. You can choose which license
-	you prefer.
-
-	PHP's database access functions are not standardised. This creates a need for a database
-	class library to hide the differences between the different database API's (encapsulate
-	the differences) so we can easily switch databases.
-
-	We currently support MySQL, Oracle, Microsoft SQL Server, Sybase, Sybase SQL Anywhere, DB2,
-	Informix, PostgreSQL, FrontBase, Interbase (Firebird and Borland variants), Foxpro, Access,
-	ADO, SAP DB, SQLite and ODBC. We have had successful reports of connecting to Progress and
-	other databases via ODBC.
+ * ADOdb Library main include file.
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
  */
 
 if (!defined('_ADODB_LAYER')) {
@@ -178,7 +166,7 @@ if (!defined('_ADODB_LAYER')) {
 	define('DB_AUTOQUERY_UPDATE', 2);
 
 
-	
+
 	function ADODB_Setup() {
 	GLOBAL
 		$ADODB_vers,		// database version
@@ -210,7 +198,7 @@ if (!defined('_ADODB_LAYER')) {
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'v5.21.0  2021-02-27';
+		$ADODB_vers = 'v5.21.4  2022-01-22';
 
 		/**
 		 * Determines whether recordset->RecordCount() is used.
@@ -496,7 +484,8 @@ if (!defined('_ADODB_LAYER')) {
 	//
 	var $_oldRaiseFn =  false;
 	var $_transOK = null;
-	var $_connectionID	= false;	/// The returned link identifier whenever a successful database connection is made.
+	/** @var resource Identifier for the native database connection */
+	var $_connectionID = false;
 	var $_errorMsg = false;		/// A variable which was used to keep the returned last error message.  The value will
 								/// then returned by the errorMsg() function
 	var $_errorCode = false;	/// Last error code, not guaranteed to be used - only by oci8
@@ -509,6 +498,19 @@ if (!defined('_ADODB_LAYER')) {
 	var $_logsql = false;
 	var $_transmode = ''; // transaction mode
 
+	/**
+	 * Additional parameters that may be passed to drivers in the connect string.
+	 *
+	 * Data is stored as an array of arrays and not a simple associative array,
+	 * because some drivers (e.g. mysql) allow multiple parameters with the same
+	 * key to be set.
+	 * @link https://github.com/ADOdb/ADOdb/issues/187
+	 *
+	 * @see setConnectionParameter()
+	 *
+	 * @var array $connectionParameters Set of ParameterName => Value pairs
+	 */
+	protected $connectionParameters = array();
 
 	/**
 	 * Default Constructor.
@@ -520,29 +522,29 @@ if (!defined('_ADODB_LAYER')) {
 	{
 	}
 
-	/*
-	 * Additional parameters that may be passed to drivers in the connect string
-	 * Driver must be coded to accept the parameters
-	 */
-	protected $connectionParameters = array();
-
 	/**
-	* Adds a parameter to the connection string.
-	*
-	* These parameters are added to the connection string when connecting,
-	* if the driver is coded to use it.
-	*
-	* @param	string	$parameter	The name of the parameter to set
-	* @param	string	$value		The value of the parameter
-	*
-	* @return null
-	*
-	* @example, for mssqlnative driver ('CharacterSet','UTF-8')
-	*/
-	final public function setConnectionParameter($parameter,$value) {
-
+	 * Adds a parameter to the connection string.
+	 *
+	 * Parameters must be added before the connection is established;
+	 * they are then passed on to the connect statement, which will.
+	 * process them if the driver supports this feature.
+	 *
+	 * Example usage:
+	 * - mssqlnative: setConnectionParameter('CharacterSet','UTF-8');
+	 * - mysqli: setConnectionParameter(MYSQLI_SET_CHARSET_NAME,'utf8mb4');
+	 *
+	 * If used in a portable environment, parameters set in this manner should
+	 * be predicated on the database provider, as unexpected results may occur
+	 * if applied to the wrong database.
+	 *
+	 * @param string $parameter The name of the parameter to set
+	 * @param string $value     The value of the parameter
+	 *
+	 * @return bool True if success, false otherwise (e.g. parameter is not valid)
+	 */
+	public function setConnectionParameter($parameter, $value) {
 		$this->connectionParameters[] = array($parameter=>$value);
-
+		return true;
 	}
 
 	/**
@@ -1302,6 +1304,7 @@ if (!defined('_ADODB_LAYER')) {
 		if( is_string($sql) ) {
 			// Strips keyword used to help generate SELECT COUNT(*) queries
 			// from SQL if it exists.
+			// TODO: obsoleted by #715 - kept for backwards-compatibility
 			$sql = str_replace( '_ADODB_COUNT', '', $sql );
 		}
 
@@ -1443,7 +1446,7 @@ if (!defined('_ADODB_LAYER')) {
 			return $this->lastInsID;
 		}
 		if ($this->hasInsertID) {
-			return $this->_insertid($table,$column);
+			return $this->_insertID($table,$column);
 		}
 		if ($this->debug) {
 			ADOConnection::outp( '<p>Insert_ID error</p>');
@@ -1452,14 +1455,35 @@ if (!defined('_ADODB_LAYER')) {
 		return false;
 	}
 
+	/**
+	 * Enable or disable the Last Insert Id functionality.
+	 *
+	 * If the Driver supports it, this function allows setting {@see $hasInsertID}.
+	 *
+	 * @param bool $enable False to disable
+	 */
+	public function enableLastInsertID($enable = true) {}
+
+	/**
+	 * Return the id of the last row that has been inserted in a table.
+	 *
+	 * @param string $table
+	 * @param string $column
+	 *
+	 * @return int|false
+	 */
+	protected function _insertID($table = '', $column = '')
+	{
+		return false;
+	}
 
 	/**
 	 * Portable Insert ID. Pablo Roca <pabloroca#mvps.org>
 	 *
 	 * @param string $table
 	 * @param string $id
-	 
-	 * @return mixed The last inserted ID. All databases support this, but be 
+
+	 * @return mixed The last inserted ID. All databases support this, but be
 	 *               aware of possible problems in multiuser environments.
 	 *               Heavily test this before deploying.
 	 */
@@ -1648,17 +1672,19 @@ if (!defined('_ADODB_LAYER')) {
 		// 0 to offset-1 which will be discarded anyway. So we disable $ADODB_COUNTRECS.
 		global $ADODB_COUNTRECS;
 
-		$savec = $ADODB_COUNTRECS;
-		$ADODB_COUNTRECS = false;
+		try {
+			$savec = $ADODB_COUNTRECS;
+			$ADODB_COUNTRECS = false;
 
-
-		if ($secs2cache != 0) {
-			$rs = $this->CacheExecute($secs2cache,$sql,$inputarr);
-		} else {
-			$rs = $this->Execute($sql,$inputarr);
+			if ($secs2cache != 0) {
+				$rs = $this->CacheExecute($secs2cache, $sql, $inputarr);
+			} else {
+				$rs = $this->Execute($sql, $inputarr);
+			}
+		} finally {
+			$ADODB_COUNTRECS = $savec;
 		}
 
-		$ADODB_COUNTRECS = $savec;
 		if ($rs && !$rs->EOF) {
 			$rs = $this->_rs2rs($rs,$nrows,$offset);
 		}
@@ -1805,11 +1831,15 @@ if (!defined('_ADODB_LAYER')) {
 	public function GetOne($sql, $inputarr=false) {
 		global $ADODB_COUNTRECS,$ADODB_GETONE_EOF;
 
-		$crecs = $ADODB_COUNTRECS;
-		$ADODB_COUNTRECS = false;
+		try {
+			$crecs = $ADODB_COUNTRECS;
+			$ADODB_COUNTRECS = false;
+			$rs = $this->Execute($sql, $inputarr);
+		} finally {
+			$ADODB_COUNTRECS = $crecs;
+		}
 
 		$ret = false;
-		$rs = $this->Execute($sql,$inputarr);
 		if ($rs) {
 			if ($rs->EOF) {
 				$ret = $ADODB_GETONE_EOF;
@@ -1819,7 +1849,6 @@ if (!defined('_ADODB_LAYER')) {
 
 			$rs->Close();
 		}
-		$ADODB_COUNTRECS = $crecs;
 		return $ret;
 	}
 
@@ -1948,10 +1977,14 @@ if (!defined('_ADODB_LAYER')) {
 	function GetArray($sql,$inputarr=false) {
 		global $ADODB_COUNTRECS;
 
-		$savec = $ADODB_COUNTRECS;
-		$ADODB_COUNTRECS = false;
-		$rs = $this->Execute($sql,$inputarr);
-		$ADODB_COUNTRECS = $savec;
+		try {
+			$savec = $ADODB_COUNTRECS;
+			$ADODB_COUNTRECS = false;
+			$rs = $this->Execute($sql, $inputarr);
+		} finally {
+			$ADODB_COUNTRECS = $savec;
+		}
+
 		if (!$rs)
 			if (defined('ADODB_PEAR')) {
 				return ADODB_PEAR_Error();
@@ -1970,10 +2003,13 @@ if (!defined('_ADODB_LAYER')) {
 	function CacheGetArray($secs2cache,$sql=false,$inputarr=false) {
 		global $ADODB_COUNTRECS;
 
-		$savec = $ADODB_COUNTRECS;
-		$ADODB_COUNTRECS = false;
-		$rs = $this->CacheExecute($secs2cache,$sql,$inputarr);
-		$ADODB_COUNTRECS = $savec;
+		try {
+			$savec = $ADODB_COUNTRECS;
+			$ADODB_COUNTRECS = false;
+			$rs = $this->CacheExecute($secs2cache, $sql, $inputarr);
+		} finally {
+			$ADODB_COUNTRECS = $savec;
+		}
 
 		if (!$rs)
 			if (defined('ADODB_PEAR')) {
@@ -2004,12 +2040,14 @@ if (!defined('_ADODB_LAYER')) {
 	function GetRow($sql,$inputarr=false) {
 		global $ADODB_COUNTRECS;
 
-		$crecs = $ADODB_COUNTRECS;
-		$ADODB_COUNTRECS = false;
+		try {
+			$crecs = $ADODB_COUNTRECS;
+			$ADODB_COUNTRECS = false;
+			$rs = $this->Execute($sql, $inputarr);
+		} finally {
+			$ADODB_COUNTRECS = $crecs;
+		}
 
-		$rs = $this->Execute($sql,$inputarr);
-
-		$ADODB_COUNTRECS = $crecs;
 		if ($rs) {
 			if (!$rs->EOF) {
 				$arr = $rs->fields;
@@ -2467,11 +2505,26 @@ if (!defined('_ADODB_LAYER')) {
 		return $blob;
 	}
 
-	function GetCharSet() {
+	/**
+	 * Retrieve the client connection's current character set.
+	 *
+	 * @return string|false The character set, or false if it can't be determined.
+	 */
+	function getCharSet() {
 		return $this->charSet;
 	}
 
-	function SetCharSet($charset) {
+	/**
+	 * Sets the client-side character set.
+	 *
+	 * This is only supported for some databases.
+	 * @see https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:setcharset
+	 *
+	 * @param string $charset The character set to switch to.
+	 *
+	 * @return bool True if the character set was changed successfully, false otherwise.
+	 */
+	function setCharSet($charset) {
 		$this->charSet = $charset;
 		return true;
 	}
@@ -3390,26 +3443,32 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 			$this->rs = $rs;
 		}
 
+		#[\ReturnTypeWillChange]
 		function rewind() {}
 
+		#[\ReturnTypeWillChange]
 		function valid() {
 			return !$this->rs->EOF;
 		}
 
+		#[\ReturnTypeWillChange]
 		function key() {
 			return false;
 		}
 
+		#[\ReturnTypeWillChange]
 		function current() {
 			return false;
 		}
 
+		#[\ReturnTypeWillChange]
 		function next() {}
 
 		function __call($func, $params) {
 			return call_user_func_array(array($this->rs, $func), $params);
 		}
 
+		#[\ReturnTypeWillChange]
 		function hasMore() {
 			return false;
 		}
@@ -3456,6 +3515,7 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 
 		function Init() {}
 
+		#[\ReturnTypeWillChange]
 		function getIterator() {
 			return new ADODB_Iterator_empty($this);
 		}
@@ -3516,22 +3576,27 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 			$this->rs = $rs;
 		}
 
+		#[\ReturnTypeWillChange]
 		function rewind() {
 			$this->rs->MoveFirst();
 		}
 
+		#[\ReturnTypeWillChange]
 		function valid() {
 			return !$this->rs->EOF;
 		}
 
+		#[\ReturnTypeWillChange]
 		function key() {
 			return $this->rs->_currentRow;
 		}
 
+		#[\ReturnTypeWillChange]
 		function current() {
 			return $this->rs->fields;
 		}
 
+		#[\ReturnTypeWillChange]
 		function next() {
 			$this->rs->MoveNext();
 		}
@@ -3581,7 +3646,8 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 	 */
 	var $_numOfRows = -1;	/** number of rows, or -1 */
 	var $_numOfFields = -1;	/** number of fields in recordset */
-	var $_queryID = -1;		/** This variable keeps the result link identifier.	*/
+	/** @var resource result link identifier */
+	var $_queryID = -1;
 	var $_currentRow = -1;	/** This variable keeps the current row in the Recordset.	*/
 	var $_closed = false;	/** has recordset been closed */
 	var $_inited = false;	/** Init() should only be called once */
@@ -3594,6 +3660,12 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 	var $_lastPageNo = -1;
 	var $_maxRecordCount = 0;
 	var $datetime = false;
+
+	/**
+	 * @var ADOFieldObject[] Field metadata cache
+	 * @see fieldTypesArray()
+	 */
+	protected $fieldObjectsCache;
 
 	/**
 	 * Constructor
@@ -3609,6 +3681,7 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 		$this->Close();
 	}
 
+	#[\ReturnTypeWillChange]
 	function getIterator() {
 		return new ADODB_Iterator($this);
 	}
@@ -4399,30 +4472,31 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 	}
 
 	/**
-	 * Get the ADOFieldObject of a specific column.
+	 * Get a Field's metadata from database.
 	 *
-	 * @param fieldoffset	is the column position to access(0-based).
+	 * Must be defined by child class.
 	 *
-	 * @return the ADOFieldObject for that column, or false.
+	 * @param int $fieldOffset
+	 *
+	 * @return ADOFieldObject|false
 	 */
-	function FetchField($fieldoffset = -1) {
-		// must be defined by child class
-
+	function fetchField($fieldOffset)
+	{
 		return false;
 	}
 
 	/**
-	 * Get the ADOFieldObjects of all columns in an array.
+	 * Get Field metadata for all the recordset's columns in an array.
 	 *
+	 * @return ADOFieldObject[]
 	 */
-	function FieldTypesArray() {
-		static $arr = array();
-		if (empty($arr)) {
-			for ($i=0, $max=$this->_numOfFields; $i < $max; $i++) {
-				$arr[] = $this->FetchField($i);
+	function fieldTypesArray() {
+		if (empty($this->fieldObjectsCache)) {
+			for ($i = 0; $i < $this->_numOfFields; $i++) {
+				$this->fieldObjectsCache[] = $this->fetchField($i);
 			}
 		}
-		return $arr;
+		return $this->fieldObjectsCache;
 	}
 
 	/**
@@ -5101,13 +5175,13 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 		if (!defined('ADODB_ASSOC_CASE')) {
 			define('ADODB_ASSOC_CASE', ADODB_ASSOC_CASE_NATIVE);
 		}
-		
+
 		/*
 		* Are there special characters in the dsn password
 		* that disrupt parse_url
 		*/
 		$needsSpecialCharacterHandling = false;
-		
+
 		$errorfn = (defined('ADODB_ERROR_HANDLER')) ? ADODB_ERROR_HANDLER : false;
 		if (($at = strpos($db,'://')) !== FALSE) {
 			$origdsn = $db;
@@ -5134,23 +5208,23 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 				* Stop # character breaking parse_url
 				*/
 				$cFakedsn = str_replace('#','\035',$fakedsn);
-				if (strcmp($fakedsn,$cFakedsn) != 0) 
+				if (strcmp($fakedsn,$cFakedsn) != 0)
 				{
 					/*
 					* There is a # in the string
 					*/
 					$needsSpecialCharacterHandling = true;
-					
+
 					/*
 					* This allows us to successfully parse the url
 					*/
 					$fakedsn = $cFakedsn;
-					
+
 				}
-				
+
 				$dsna = parse_url($fakedsn);
 			}
-			
+
 			if (!$dsna) {
 				return false;
 			}
@@ -5176,13 +5250,13 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 			if (!$db) {
 				return false;
 			}
-			
+
 			$dsna['host'] = isset($dsna['host']) ? rawurldecode($dsna['host']) : '';
 			$dsna['user'] = isset($dsna['user']) ? rawurldecode($dsna['user']) : '';
 			$dsna['pass'] = isset($dsna['pass']) ? rawurldecode($dsna['pass']) : '';
 			$dsna['path'] = isset($dsna['path']) ? rawurldecode(substr($dsna['path'],1)) : ''; # strip off initial /
 
-			if ($needsSpecialCharacterHandling) 
+			if ($needsSpecialCharacterHandling)
 			{
 				/*
 				* Revert back to the original string
@@ -5388,7 +5462,15 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 		return new $class($conn);
 	}
 
-	function NewDataDictionary(&$conn,$drivername=false) {
+	/**
+	 * Get a new Data Dictionary object for the connection.
+	 *
+	 * @param ADOConnection $conn
+	 * @param string        $drivername
+	 *
+	 * @return ADODB_DataDict|false
+	 */
+	function newDataDictionary(&$conn, $drivername='') {
 		if (!$drivername) {
 			$drivername = _adodb_getdriver($conn->dataProvider,$conn->databaseType);
 		}
@@ -5414,8 +5496,6 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 
 		return $dict;
 	}
-
-
 
 	/*
 		Perform a print_r, with pre tags for better formatting.

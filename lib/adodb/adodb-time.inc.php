@@ -1,72 +1,67 @@
 <?php
+/**
+ * ADOdb Date Library.
+ *
+ * PHP native date functions use integer timestamps for computations.
+ * Because of this, dates are restricted to the years 1901-2038 on Unix
+ * and 1970-2038 on Windows due to integer overflow for dates beyond
+ * those years. This library overcomes these limitations by replacing the
+ * native function's signed integers (normally 32-bits) with PHP floating
+ * point numbers (normally 64-bits).
+ *
+ * Dates from 100 A.D. to 3000 A.D. and later have been tested.
+ * The minimum is 100 A.D. as <100 will invoke the 2 => 4 digit year
+ * conversion. The maximum is billions of years in the future, but this
+ * is a theoretical limit as the computation of that year would take too
+ * long with the current implementation of adodb_mktime().
+ *
+ * Replaces native functions as follows:
+ * - getdate()  with  adodb_getdate()
+ * - date()     with  adodb_date()
+ * - gmdate()   with  adodb_gmdate()
+ * - mktime()   with  adodb_mktime()
+ * - gmmktime() with  adodb_gmmktime()
+ * - strftime() with  adodb_strftime()
+ * - strftime() with  adodb_gmstrftime()
+ *
+ * The parameters are identical, except that adodb_date() accepts a subset
+ * of date()'s field formats. Mktime() will convert from local time to GMT,
+ * and date() will convert from GMT to local time, but daylight savings is
+ * not handled currently.
+ *
+ * To improve performance, the native date functions are used whenever
+ * possible, the library only switches to PHP code when the dates fall outside
+ * of the 32-bit signed integer range.
+ *
+ * This library is independent of the rest of ADOdb, and can be used
+ * as standalone code.
+ *
+ * GREGORIAN CORRECTION
+ *
+ * Pope Gregory shortened October of A.D. 1582 by ten days. Thursday,
+ * October 4, 1582 (Julian) was followed immediately by Friday, October 15,
+ * 1582 (Gregorian). We handle this correctly, so:
+ * adodb_mktime(0, 0, 0, 10, 15, 1582) - adodb_mktime(0, 0, 0, 10, 4, 1582)
+ * == 24 * 3600 (1 day)
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2003-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
+
 /*
-ADOdb Date Library, part of the ADOdb abstraction library
-
-Latest version is available at https://adodb.org/
-
-@version   v5.21.0  2021-02-27
-@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-
-PHP native date functions use integer timestamps for computations.
-Because of this, dates are restricted to the years 1901-2038 on Unix
-and 1970-2038 on Windows due to integer overflow for dates beyond
-those years. This library overcomes these limitations by replacing the
-native function's signed integers (normally 32-bits) with PHP floating
-point numbers (normally 64-bits).
-
-Dates from 100 A.D. to 3000 A.D. and later
-have been tested. The minimum is 100 A.D. as <100 will invoke the
-2 => 4 digit year conversion. The maximum is billions of years in the
-future, but this is a theoretical limit as the computation of that year
-would take too long with the current implementation of adodb_mktime().
-
-This library replaces native functions as follows:
-
-<pre>
-	getdate()  with  adodb_getdate()
-	date()     with  adodb_date()
-	gmdate()   with  adodb_gmdate()
-	mktime()   with  adodb_mktime()
-	gmmktime() with  adodb_gmmktime()
-	strftime() with  adodb_strftime()
-	strftime() with  adodb_gmstrftime()
-</pre>
-
-The parameters are identical, except that adodb_date() accepts a subset
-of date()'s field formats. Mktime() will convert from local time to GMT,
-and date() will convert from GMT to local time, but daylight savings is
-not handled currently.
-
-This library is independent of the rest of ADOdb, and can be used
-as standalone code.
-
-PERFORMANCE
-
-For high speed, this library uses the native date functions where
-possible, and only switches to PHP code when the dates fall outside
-the 32-bit signed integer range.
-
-GREGORIAN CORRECTION
-
-Pope Gregory shortened October of A.D. 1582 by ten days. Thursday,
-October 4, 1582 (Julian) was followed immediately by Friday, October 15,
-1582 (Gregorian).
-
-Since 0.06, we handle this correctly, so:
-
-adodb_mktime(0,0,0,10,15,1582) - adodb_mktime(0,0,0,10,4,1582)
-	== 24 * 3600 (1 day)
-
-=============================================================================
-
-COPYRIGHT
-
-(c) 2003-2014 John Lim and released under BSD-style license except for code by
-jackbbs, which includes adodb_mktime, adodb_get_gmt_diff, adodb_is_leap_year
-and originally found at http://www.php.net/manual/en/function.mktime.php
-
-
 =============================================================================
 
 FUNCTION DESCRIPTIONS

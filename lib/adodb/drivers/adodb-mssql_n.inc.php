@@ -1,47 +1,27 @@
 <?php
-
-/// $Id $
-
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// ADOdb  - Database Abstraction Library for PHP                         //
-//                                                                       //
-// Latest version is available at https://adodb.org                       //
-//                                                                       //
-// Copyright (c) 2000-2014 John Lim (jlim\@natsoft.com.my)               //
-//          All rights reserved.                                         //
-//          Released under both BSD license and LGPL library license.    //
-//          Whenever there is any discrepancy between the two licenses,  //
-//          the BSD license will take precedence                         //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.com                                            //
-//                                                                       //
-// Copyright (C) 2001-3001 Martin Dougiamas        http://dougiamas.com  //
-//           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
-
 /**
-*  MSSQL Driver with auto-prepended "N" for correct unicode storage
-*  of SQL literal strings. Intended to be used with MSSQL drivers that
-*  are sending UCS-2 data to MSSQL (FreeTDS and ODBTP) in order to get
-*  true cross-db compatibility from the application point of view.
-*/
+ * MSSQL Driver with auto-prepended "N" for correct unicode storage of SQL literal strings.
+ *
+ * Intended to be used with MSSQL drivers that are sending UCS-2 data to MSSQL
+ * (FreeTDS and ODBTP) in order to get true cross-db compatibility from the
+ * application point of view.
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -60,7 +40,7 @@ class ADODB_mssql_n extends ADODB_mssql {
 		return ADODB_mssql::_query($sql,$inputarr);
 	}
 
-         /**
+	/**
      * This function will intercept all the literals used in the SQL, prepending the "N" char to them
      * in order to allow mssql to store properly data sent in the correct UCS-2 encoding (by freeTDS
      * and ODBTP) keeping SQL compatibility at ADOdb level (instead of hacking every project to add

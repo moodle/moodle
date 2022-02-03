@@ -1,21 +1,25 @@
 <?php
-/*
-@version   v5.21.0  2021-02-27
-@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-
-  Latest version is available at https://adodb.org/
-
-  SQLite info: http://www.hwaci.com/sw/sqlite/
-
-  Install Instructions:
-  ====================
-  1. Place this in adodb/drivers
-  2. Rename the file, remove the .txt prefix.
-*/
+/**
+ * SQLite3 driver
+ *
+ * @link https://www.sqlite.org/
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -253,7 +257,7 @@ class ADODB_sqlite3 extends ADOConnection {
 		$parentDriver->hasInsertID = true;
 	}
 
-	function _insertid()
+	protected function _insertID($table = '', $column = '')
 	{
 		return $this->_connectionID->lastInsertRowID();
 	}
@@ -417,7 +421,7 @@ class ADODB_sqlite3 extends ADOConnection {
 	{
 		return $this->_connectionID->close();
 	}
-	
+
 	function metaIndexes($table, $primary = FALSE, $owner = false)
 	{
 		$false = false;
@@ -428,9 +432,9 @@ class ADODB_sqlite3 extends ADOConnection {
 		if ($this->fetchMode !== FALSE) {
 			$savem = $this->SetFetchMode(FALSE);
 		}
-		
+
 		$pragmaData = array();
-		
+
 		/*
 		* If we want the primary key, we must extract
 		* it from the table statement, and the pragma
@@ -442,22 +446,22 @@ class ADODB_sqlite3 extends ADOConnection {
 						   );
 			$pragmaData = $this->getAll($sql);
 		}
-		
+
 		/*
 		* Exclude the empty entry for the primary index
 		*/
 		$sqlite = "SELECT name,sql
-					 FROM sqlite_master 
-					WHERE type='index' 
+					 FROM sqlite_master
+					WHERE type='index'
 					  AND sql IS NOT NULL
 					  AND LOWER(tbl_name)='%s'";
-		
+
 		$SQL = sprintf($sqlite,
 				     strtolower($table)
 					 );
-		
+
 		$rs = $this->execute($SQL);
-		
+
 		if (!is_object($rs)) {
 			if (isset($savem)) {
 				$this->SetFetchMode($savem);
@@ -467,10 +471,10 @@ class ADODB_sqlite3 extends ADOConnection {
 		}
 
 		$indexes = array ();
-		
-		while ($row = $rs->FetchRow()) 
+
+		while ($row = $rs->FetchRow())
 		{
-			
+
 			if (!isset($indexes[$row[0]])) {
 				$indexes[$row[0]] = array(
 					'unique' => preg_match("/unique/i",$row[1]),
@@ -485,26 +489,26 @@ class ADODB_sqlite3 extends ADOConnection {
 			preg_match_all('/\((.*)\)/',$row[1],$indexExpression);
 			$indexes[$row[0]]['columns'] = array_map('trim',explode(',',$indexExpression[1][0]));
 		}
-		
+
 		if (isset($savem)) {
 			$this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 		}
-		
+
 		/*
 		* If we want primary, add it here
 		*/
 		if ($primary){
-			
+
 			/*
 			* Check the previously retrieved pragma to search
 			* with a closure
 			*/
 
 			$pkIndexData = array('unique'=>1,'columns'=>array());
-			
+
 			$pkCallBack = function ($value, $key) use (&$pkIndexData) {
-				
+
 				/*
 				* As we iterate the elements check for pk index and sort
 				*/
@@ -514,7 +518,7 @@ class ADODB_sqlite3 extends ADOConnection {
 					ksort($pkIndexData['columns']);
 				}
 			};
-			
+
 			array_walk($pragmaData,$pkCallBack);
 
 			/*
@@ -524,7 +528,7 @@ class ADODB_sqlite3 extends ADOConnection {
 			if (count($pkIndexData['columns']) > 0)
 				$indexes['PRIMARY'] = $pkIndexData;
 		}
-		
+
 		return $indexes;
 	}
 
