@@ -84,13 +84,22 @@ EOF;
         // Attempt to determine whether this is the front page.
         // This is a special case because the frontpage uses a shortened page path making it difficult to detect exactly.
         $isfrontpage = $targetmatch->compare(new \moodle_url('/'), URL_MATCH_BASE);
+        $isdashboard = $targetmatch->compare(new \moodle_url('/my/'), URL_MATCH_BASE);
         $target = $targetmatch->out_as_local_url();
-        return array_filter($tours, function($tour) use ($isfrontpage, $target) {
-            if ($isfrontpage && $tour->pathmatch === 'FRONTPAGE') {
+        return array_filter($tours, function($tour) use ($isfrontpage, $isdashboard, $target) {
+            if (($isfrontpage || $isdashboard) && $tour->pathmatch === 'FRONTPAGE') {
                 return true;
             }
             $pattern = preg_quote($tour->pathmatch, '@');
-            $pattern = str_replace('%', '.*', $pattern);
+            if (strpos($pattern, '%') !== false) {
+                // The URL match format is something like: /my/%.
+                // We need to find all the URLs which match the first part of the pattern.
+                $pattern = str_replace('%', '.*', $pattern);
+            } else {
+                // The URL match format is something like: /my/courses.php.
+                // We need to find all the URLs which match with whole pattern.
+                $pattern .= '$';
+            }
             return !!preg_match("@{$pattern}@", $target);
         });
     }

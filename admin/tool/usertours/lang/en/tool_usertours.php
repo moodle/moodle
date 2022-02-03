@@ -31,6 +31,9 @@ $string['block_named'] = 'Block named \'{$a}\'';
 $string['cachedef_stepdata'] = 'List of user tour steps';
 $string['cachedef_tourdata'] = 'List of enabled user tours information which is fetched on every page';
 $string['description'] = 'Description';
+$string['description_help'] = 'The description of a tour may be added as plain text, enclosed in multilang tags (for use with the multi-language content filter) if required.
+
+Alternatively, a language string ID may be entered in the format identifier,component (with no brackets or space after the comma).';
 $string['displaystepnumbers'] = 'Display step numbers';
 $string['displaystepnumbers_help'] = 'Whether to display a step number count e.g. 1/4, 2/4 etc. to indicate the length of the user tour.';
 $string['confirmstepremovalquestion'] = 'Are you sure that you wish to remove this step?';
@@ -93,6 +96,9 @@ $string['movestepup'] = 'Move step up';
 $string['movetourdown'] = 'Move tour down';
 $string['movetourup'] = 'Move tour up';
 $string['name'] = 'Name';
+$string['name_help'] = 'The name of a tour may be added as plain text, enclosed in multilang tags (for use with the multi-language content filter) if required.
+
+Alternatively, a language string ID may be entered in the format identifier,component (with no brackets or space after the comma).';
 $string['newstep'] = 'Create step';
 $string['newstep'] = 'New step';
 $string['newtour'] = 'Create a new tour';
@@ -259,6 +265,28 @@ $string['tour_activityinfo_course_student_title'] = 'New: Activity information';
 $string['tour_activityinfo_course_student_content'] = 'Activity dates and/or what to do to complete the activity are displayed on the course page.';
 $string['tour_activityinfo_course_teacher_title'] = 'New: Activity information';
 $string['tour_activityinfo_course_teacher_content'] = 'New course settings \'Show completion conditions\' and \'Show activity dates\' enable you to choose whether activity completion conditions (if set) and/or dates are displayed for students on the course page.';
+
+// 4.0 New navigation tour.
+$string['tour_navigation_course_announcements_teacher_content'] = '@@PIXICON::tour/tour_course_admin_3::tool_usertours@@<br>Post important news here.';
+$string['tour_navigation_course_announcements_teacher_title'] = 'Something to tell everyone?';
+$string['tour_navigation_course_edit_teacher_content'] = '@@PIXICON::tour/tour_course_admin_1::tool_usertours@@<br>Add new content or edit existing content.';
+$string['tour_navigation_course_edit_teacher_title'] = 'Activate edit mode';
+$string['tour_navigation_course_index_student_content'] = '@@PIXICON::tour/tour_course_student::tool_usertours@@<br>Browse through activities and track your progress.';
+$string['tour_navigation_course_index_student_title'] = 'Find your way around';
+$string['tour_navigation_course_index_teacher_content'] = '@@PIXICON::tour/tour_course_admin_2::tool_usertours@@<br>Drag and drop activities to re-order course content.';
+$string['tour_navigation_course_index_teacher_title'] = 'Course index';
+$string['tour_navigation_course_student_tour_des'] = 'Where to browse through activities in a course';
+$string['tour_navigation_course_student_tour_name'] = 'Course index';
+$string['tour_navigation_course_teacher_tour_des'] = 'Edit mode, drag and drop of activities and posting announcements in a course';
+$string['tour_navigation_course_teacher_tour_name'] = 'Course editing';
+$string['tour_navigation_dashboard_content'] = '@@PIXICON::tour/tour_dashboard::tool_usertours@@<br>This side panel can contain more features.';
+$string['tour_navigation_dashboard_title'] = 'Expand to explore!';
+$string['tour_navigation_dashboard_tour_des'] = 'Where blocks can be found on the Dashboard';
+$string['tour_navigation_dashboard_tour_name'] = 'Block drawer';
+$string['tour_navigation_mycourses_content'] = '@@PIXICON::tour/tour_mycourses::tool_usertours@@<br>Add, copy, delete and hide courses from this menu.';
+$string['tour_navigation_mycourses_title'] = 'Courses and categories';
+$string['tour_navigation_mycourses_tour_des'] = 'Course management options on the My courses page';
+$string['tour_navigation_mycourses_tour_name'] = 'Course management';
 
 $string['tour_final_step_title'] = 'End of tour';
 $string['tour_final_step_content'] = 'This is the end of your user tour. It won\'t show again unless you reset it using the link in the footer.';
