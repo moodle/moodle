@@ -47,13 +47,13 @@
         </li>
     </ul>
     <div class="tab-content content-centred">
-        <div role="tabpanel" class="tab-pane fade {{#viewingavailable}}in active{{/viewingavailable}}" id="mycourses_available_view">
+        <div role="tabpanel" class="tab-pane {{#viewingavailable}}in active{{/viewingavailable}}" id="mycourses_available_view">
             {{> block_mycourses/available-view }}
         </div>
-        <div role="tabpanel" class="tab-pane fade {{#viewinginprogress}}in active{{/viewinginprogress}}" id="mycourses_inprogress_view">
+        <div role="tabpanel" class="tab-pane {{#viewinginprogress}}in active{{/viewinginprogress}}" id="mycourses_inprogress_view">
             {{> block_mycourses/inprogress-view }}
         </div>
-        <div role="tabpanel" class="tab-pane fade {{#viewingcompleted}}in active{{/viewingcompleted}}" id="mycourses_completed_view">
+        <div role="tabpanel" class="tab-pane {{#viewingcompleted}}in active{{/viewingcompleted}}" id="mycourses_completed_view">
             {{> block_mycourses/completed-view }}
         </div>
     </div>
