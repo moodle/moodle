@@ -111,6 +111,8 @@ class user extends base {
         $usertablealias = $this->get_table_alias('user');
 
         $fullnameselect = self::get_name_fields_select($usertablealias);
+        $fullnamesort = explode(', ', $fullnameselect);
+
         $userpictureselect = fields::for_userpic()->get_sql($usertablealias, false, '', '', false)->selects;
         $viewfullnames = has_capability('moodle/site:viewfullnames', context_system::instance());
 
@@ -123,7 +125,7 @@ class user extends base {
             ->add_joins($this->get_joins())
             ->add_fields($fullnameselect)
             ->set_type(column::TYPE_TEXT)
-            ->set_is_sortable($this->is_sortable('fullname'))
+            ->set_is_sortable($this->is_sortable('fullname'), $fullnamesort)
             ->add_callback(static function(?string $value, stdClass $row) use ($viewfullnames): string {
                 if ($value === null) {
                     return '';
@@ -154,7 +156,7 @@ class user extends base {
                 ->add_fields($fullnameselect)
                 ->add_field("{$usertablealias}.id")
                 ->set_type(column::TYPE_TEXT)
-                ->set_is_sortable($this->is_sortable($fullnamefield))
+                ->set_is_sortable($this->is_sortable($fullnamefield), $fullnamesort)
                 ->add_callback(static function(?string $value, stdClass $row) use ($fullnamefield, $viewfullnames): string {
                     global $OUTPUT;
 

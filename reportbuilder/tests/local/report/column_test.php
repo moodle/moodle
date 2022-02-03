@@ -256,6 +256,17 @@ class column_test extends advanced_testcase {
     }
 
     /**
+     * Test column alias with a field containing an alias
+     */
+    public function test_column_alias_with_field_alias(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_field('COALESCE(t.foo, t.bar)', 'lionel');
+
+        $this->assertEquals('c1_lionel', $column->get_column_alias());
+    }
+
+    /**
      * Test alias of column without any fields throws exception
      */
     public function test_column_alias_no_fields(): void {
@@ -439,6 +450,43 @@ class column_test extends advanced_testcase {
 
         $column->set_is_sortable(true);
         $this->assertTrue($column->get_is_sortable());
+    }
+
+    /**
+     * Test retrieving sort fields
+     */
+    public function test_get_sortfields(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_fields('t.foo, t.bar, t.baz')
+            ->set_is_sortable(true, ['t.baz', 't.bar']);
+
+        $this->assertEquals(['c1_baz', 'c1_bar'], $column->get_sort_fields());
+    }
+
+    /**
+     * Test retrieving sort fields when an aliased field is set as sortable
+     */
+    public function test_get_sortfields_with_field_alias(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_field('t.foo')
+            ->add_field('COALESCE(t.foo, t.bar)', 'lionel')
+            ->set_is_sortable(true, ['lionel']);
+
+        $this->assertEquals(['c1_lionel'], $column->get_sort_fields());
+    }
+
+    /**
+     * Test retrieving sort fields when an unknown field is set as sortable
+     */
+    public function test_get_sortfields_unknown_field(): void {
+        $column = $this->create_column('test')
+            ->set_index(1)
+            ->add_fields('t.foo')
+            ->set_is_sortable(true, ['t.baz']);
+
+        $this->assertEquals(['t.baz'], $column->get_sort_fields());
     }
 
     /**

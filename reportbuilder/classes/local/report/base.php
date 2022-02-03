@@ -375,6 +375,30 @@ abstract class base {
     }
 
     /**
+     * Return all active report columns (by default, all available columns)
+     *
+     * @return column[]
+     */
+    public function get_active_columns(): array {
+        return $this->get_columns();
+    }
+
+    /**
+     * Return all active report columns, keyed by their alias (only active columns in a report would have a valid alias/index)
+     *
+     * @return column[]
+     */
+    final public function get_active_columns_by_alias(): array {
+        $columns = [];
+
+        foreach ($this->get_active_columns() as $column) {
+            $columns[$column->get_column_alias()] = $column;
+        }
+
+        return $columns;
+    }
+
+    /**
      * Adds a condition to the report
      *
      * @param filter $condition

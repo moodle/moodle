@@ -20,6 +20,7 @@ namespace core_reportbuilder;
 
 use coding_exception;
 use core_reportbuilder\local\helpers\report;
+use core_reportbuilder\local\models\column as column_model;
 use core_reportbuilder\local\models\filter as filter_model;
 use core_reportbuilder\local\report\base;
 use core_reportbuilder\local\report\column;
@@ -94,6 +95,30 @@ abstract class datasource extends base {
      * @return string[]
      */
     abstract public function get_default_columns(): array;
+
+    /**
+     * Return all configured report columns
+     *
+     * @return column[]
+     */
+    public function get_active_columns(): array {
+        $columns = [];
+
+        $activecolumns = column_model::get_records(['reportid' => $this->get_report_persistent()->get('id')], 'columnorder');
+        foreach ($activecolumns as $index => $column) {
+            $instance = $this->get_column($column->get('uniqueidentifier'));
+            if ($instance !== null && $instance->get_is_available()) {
+                $instance->set_persistent($column);
+
+                // We should clone the report column to ensure if it's added twice to a report, each operates independently.
+                $columns[] = clone $instance
+                    ->set_index($index)
+                    ->set_aggregation($column->get('aggregation'));
+            }
+        }
+
+        return $columns;
+    }
 
     /**
      * Add filters from the given entity name to be available to use in a custom report
