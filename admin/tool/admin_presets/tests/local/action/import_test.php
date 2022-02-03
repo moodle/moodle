@@ -189,7 +189,7 @@ class import_test extends \advanced_testcase {
      * @return array
      */
     public function import_execute_provider(): array {
-        $fixturesfolder = __DIR__ . '/../../../../../../adminpresets/tests/fixtures/';
+        $fixturesfolder = __DIR__ . '/../../../../../presets/tests/fixtures/';
 
         return [
             'Import settings from an empty file' => [
