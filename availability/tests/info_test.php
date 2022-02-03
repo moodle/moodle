@@ -540,4 +540,34 @@ class info_testcase extends advanced_testcase {
         $this->assertDebuggingCalled('Error processing availability data for ' .
                 '&lsquo;Page1&rsquo;: Invalid availability text');
     }
+
+    /**
+     * Test for the is_available_for_all() method of the info base class.
+     * @covers \core_availability\info_module::is_available_for_all
+     */
+    public function test_is_available_for_all() {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+        $CFG->enableavailability = 0;
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $page = $generator->get_plugin_generator('mod_page')->create_instance(['course' => $course]);
+
+        // Set an availability restriction and reset the modinfo cache.
+        // The enableavailability setting is disabled so this does not take effect yet.
+        $notavailable = '{"op":"|","show":true,"c":[{"type":"mock","a":false}]}';
+        $DB->set_field('course_modules', 'availability', $notavailable, ['id' => $page->cmid]);
+        get_fast_modinfo($course, 0, true);
+
+        // Availability is disabled, so we expect this module to be available for everyone.
+        $modinfo = get_fast_modinfo($course);
+        $info = new info_module($modinfo->get_cm($page->cmid));
+        $this->assertTrue($info->is_available_for_all());
+
+        // Now, enable availability restrictions, and check again.
+        // This time, we expect it to return false, because of the access restriction.
+        $CFG->enableavailability = 1;
+        $this->assertFalse($info->is_available_for_all());
+    }
 }
