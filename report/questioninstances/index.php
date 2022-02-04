@@ -90,7 +90,7 @@ if ($requestedqtype) {
     $ctxgroupby = implode(',', array_keys(context_helper::get_preload_record_columns('con')));
     $counts = $DB->get_records_sql("
             SELECT result.contextid, SUM(numquestions) AS numquestions, SUM(numhidden) AS numhidden, $ctxpreload
-              FROM (SELECT data.contextid, COUNT(data.numquestions) AS numquestions,
+              FROM (SELECT data.contextid, data.versionid, COUNT(data.numquestions) AS numquestions,
                            (SELECT COUNT(qv.id)
                               FROM {question_versions} qv
                              WHERE qv.id = data.versionid
