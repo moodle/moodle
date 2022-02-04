@@ -18,8 +18,7 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_deprecated_base.php');
 
-use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
-    Behat\Gherkin\Node\TableNode as TableNode;
+use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
  * Steps definitions that are now deprecated and will be removed in the next releases.
@@ -48,44 +47,5 @@ class behat_deprecated extends behat_deprecated_base {
 
         $this->i_open_flat_navigation_drawer();
         $this->execute('behat_general::i_click_on_in_the', [$link, 'link', '#nav-drawer', 'css_element']);
-    }
-
-    /**
-     * Adds the specified enrolment method to the current course filling the form with the provided data.
-     *
-     * @Given /^I add "(?P<enrolment_method_name_string>(?:[^"]|\\")*)" enrolment method with:$/
-     * @param string $enrolmethod
-     * @param TableNode $table
-     *
-     * @deprecated since 4.0 MDL-72090. We now need the course to enrol in. Please use i_add_enrolment_method_for_with()
-     * @todo MDL-71733 This will be deleted in Moodle 4.4.
-     */
-    public function i_add_enrolment_method_with($enrolmethod, TableNode $table) {
-        $this->deprecated_message(['i_add_enrolment_method_for_with']);
-
-        // Navigate to enrolment method page.
-        $parentnodes = get_string('users', 'admin');
-        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration",
-            array($parentnodes .' > '. get_string('type_enrol_plural', 'plugin'))
-        );
-
-        // Select enrolment method.
-        $this->execute('behat_forms::i_select_from_the_singleselect',
-            array($this->escape($enrolmethod), get_string('addinstance', 'enrol'))
-        );
-
-        // Wait again, for page to reloaded.
-        $this->execute('behat_general::i_wait_to_be_redirected');
-
-        // Set form fields.
-        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $table);
-
-        // Ensure we get button in focus, before pressing button.
-        if ($this->running_javascript()) {
-            $this->execute('behat_general::i_press_named_key', ['', 'tab']);
-        }
-
-        // Save changes.
-        $this->execute("behat_forms::press_button", get_string('addinstance', 'enrol'));
     }
 }
