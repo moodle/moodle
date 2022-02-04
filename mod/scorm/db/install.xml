@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="mod/scorm/db" VERSION="20180315" COMMENT="XMLDB file for Moodle mod/scorm"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="scorm" COMMENT="each table is one SCORM module and its configuration">
