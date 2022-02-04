@@ -247,6 +247,13 @@
     margin: 0;
 }
 
+.path-admin {
+    .header-maxwidth,
+    .secondary-navigation {
+        max-width: none;
+    }
+}
+
 .plugincheckwrapper {
     width: 100%;
 }

@@ -12602,6 +12602,10 @@ body.dragging .dragging {
   padding: 0.5em;
   margin: 0; }
 
+.path-admin .header-maxwidth,
+.path-admin .secondary-navigation {
+  max-width: none; }
+
 .plugincheckwrapper {
   width: 100%; }
 
