@@ -50,6 +50,7 @@ $sql = "SELECT result.qtype,
                SUM(result.numhidden) AS numhidden,
                SUM(result.numdraft) AS numdraft
           FROM (SELECT data.qtype,
+                       data.versionid,
                        COUNT(data.numquestions) AS numquestions,
                        (SELECT COUNT(qv.id)
                           FROM {question_versions} qv
