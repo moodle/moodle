@@ -68,9 +68,7 @@ abstract class quiz_default_report {
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
         $context = context_module::instance($cm->id);
-        if (!$PAGE->has_secondary_navigation()) {
-            echo $OUTPUT->heading(format_string($quiz->name, true, array('context' => $context)));
-        }
+        echo $OUTPUT->heading(format_string($quiz->name, true, array('context' => $context)));
         if (!empty($CFG->enableplagiarism)) {
             require_once($CFG->libdir . '/plagiarismlib.php');
             echo plagiarism_update_status($course, $cm);
