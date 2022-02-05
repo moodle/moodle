@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for customfields in courses
- *
- * @package    core_course
- * @copyright  2018 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_course;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +29,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2018 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_course_customfield_testcase extends advanced_testcase {
+class customfield_test extends \advanced_testcase {
 
     /**
      * Set up
@@ -96,8 +90,8 @@ class core_course_customfield_testcase extends advanced_testcase {
         $backuptempdir = make_backup_temp_directory('');
         $packer = get_file_packer('application/vnd.moodle.backup');
 
-        $bc = new backup_controller(backup::TYPE_1COURSE, $courseid, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO,
-            backup::MODE_GENERAL, $userid);
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $courseid, \backup::FORMAT_MOODLE, \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL, $userid);
         $bc->execute_plan();
 
         $results = $bc->get_results();
@@ -119,15 +113,15 @@ class core_course_customfield_testcase extends advanced_testcase {
     protected function restore_course($backupid, $courseid, $userid) {
         global $DB;
 
-        $target = backup::TARGET_CURRENT_ADDING;
+        $target = \backup::TARGET_CURRENT_ADDING;
         if (!$courseid) {
-            $target = backup::TARGET_NEW_COURSE;
+            $target = \backup::TARGET_NEW_COURSE;
             $categoryid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
-            $courseid = restore_dbops::create_new_course('Tmp', 'tmp', $categoryid);
+            $courseid = \restore_dbops::create_new_course('Tmp', 'tmp', $categoryid);
         }
 
-        $rc = new restore_controller($backupid, $courseid, backup::INTERACTIVE_NO, backup::MODE_GENERAL, $userid, $target);
-        $target == backup::TARGET_NEW_COURSE ?: $rc->get_plan()->get_setting('overwrite_conf')->set_value(true);
+        $rc = new \restore_controller($backupid, $courseid, \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $userid, $target);
+        $target == \backup::TARGET_NEW_COURSE ?: $rc->get_plan()->get_setting('overwrite_conf')->set_value(true);
         $this->assertTrue($rc->execute_precheck());
         $rc->execute_plan();
 
