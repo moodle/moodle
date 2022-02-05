@@ -14,17 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * PHPunit tests for the cache API
- *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are requried in order to use caching.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_cache;
+
+use cache;
+use cache_application;
+use cache_config;
+use cache_config_disabled;
+use cache_config_testing;
+use cache_definition;
+use cache_disabled;
+use cache_factory;
+use cache_factory_disabled;
+use cache_helper;
+use cache_loader;
+use cache_phpunit_application;
+use cache_phpunit_cache;
+use cache_phpunit_dummy_object;
+use cache_phpunit_dummy_overrideclass;
+use cache_phpunit_factory;
+use cache_phpunit_request;
+use cache_phpunit_session;
+use cache_request;
+use cache_session;
+use cache_store;
+use cacheable_object_array;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,10 +49,15 @@ require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
 /**
  * PHPunit tests for the cache API
  *
+ * This file is part of Moodle's cache API, affectionately called MUC.
+ * It contains the components that are requried in order to use caching.
+ *
+ * @package    core
+ * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_cache_testcase extends advanced_testcase {
+class cache_test extends \advanced_testcase {
 
     /**
      * Set things back to the default before each test.
@@ -114,7 +132,7 @@ class core_cache_testcase extends advanced_testcase {
         }
 
         $instance = cache_config::instance();
-        $this->assertInstanceOf('cache_config_testing', $instance);
+        $this->assertInstanceOf(cache_config_testing::class, $instance);
 
         $this->assertTrue(cache_config_testing::config_file_exists());
 
@@ -215,7 +233,7 @@ class core_cache_testcase extends advanced_testcase {
      */
     public function test_default_application_cache() {
         $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'phpunit', 'applicationtest');
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
         $this->run_on_cache($cache);
 
         $instance = cache_config_testing::instance(true);
@@ -227,7 +245,7 @@ class core_cache_testcase extends advanced_testcase {
             'staticaccelerationsize' => 1
         ));
         $cache = cache::make('phpunit', 'test_default_application_cache');
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
         $this->run_on_cache($cache);
     }
 
@@ -236,7 +254,7 @@ class core_cache_testcase extends advanced_testcase {
      */
     public function test_default_session_cache() {
         $cache = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'applicationtest');
-        $this->assertInstanceOf('cache_session', $cache);
+        $this->assertInstanceOf(cache_session::class, $cache);
         $this->run_on_cache($cache);
     }
 
@@ -245,7 +263,7 @@ class core_cache_testcase extends advanced_testcase {
      */
     public function test_default_request_cache() {
         $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'phpunit', 'applicationtest');
-        $this->assertInstanceOf('cache_request', $cache);
+        $this->assertInstanceOf(cache_request::class, $cache);
         $this->run_on_cache($cache);
     }
 
@@ -333,7 +351,7 @@ class core_cache_testcase extends advanced_testcase {
         $specobject = new cache_phpunit_dummy_object('red', 'blue', $starttime);
         $this->assertTrue($cache->set($key, $specobject));
         $result = $cache->get($key);
-        $this->assertInstanceOf('cache_phpunit_dummy_object', $result);
+        $this->assertInstanceOf(cache_phpunit_dummy_object::class, $result);
         $this->assertEquals('red_ptc_wfc', $result->property1);
         $this->assertEquals('blue_ptc_wfc', $result->property2);
         $this->assertGreaterThan($starttime, $result->propertytime);
@@ -347,10 +365,10 @@ class core_cache_testcase extends advanced_testcase {
         );
         $this->assertTrue($cache->set($key, $data));
         $result = $cache->get($key);
-        $this->assertInstanceOf('cacheable_object_array', $result);
+        $this->assertInstanceOf(cacheable_object_array::class, $result);
         $this->assertCount(3, $data);
         foreach ($result as $item) {
-            $this->assertInstanceOf('cache_phpunit_dummy_object', $item);
+            $this->assertInstanceOf(cache_phpunit_dummy_object::class, $item);
             $this->assertEquals('red_ptc_wfc', $item->property1);
             $this->assertEquals('blue_ptc_wfc', $item->property2);
             // Ensure that wake from cache is called in all cases.
@@ -394,29 +412,29 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertFalse($cache->get('key3'));
 
         // Quick reference test.
-        $obj = new stdClass;
+        $obj = new \stdClass;
         $obj->key = 'value';
         $ref =& $obj;
         $this->assertTrue($cache->set('obj', $obj));
 
         $obj->key = 'eulav';
         $var = $cache->get('obj');
-        $this->assertInstanceOf('stdClass', $var);
+        $this->assertInstanceOf(\stdClass::class, $var);
         $this->assertEquals('value', $var->key);
 
         $ref->key = 'eulav';
         $var = $cache->get('obj');
-        $this->assertInstanceOf('stdClass', $var);
+        $this->assertInstanceOf(\stdClass::class, $var);
         $this->assertEquals('value', $var->key);
 
         $this->assertTrue($cache->delete('obj'));
 
         // Deep reference test.
-        $obj1 = new stdClass;
+        $obj1 = new \stdClass;
         $obj1->key = 'value';
-        $obj2 = new stdClass;
+        $obj2 = new \stdClass;
         $obj2->key = 'test';
-        $obj3 = new stdClass;
+        $obj3 = new \stdClass;
         $obj3->key = 'pork';
         $obj1->subobj =& $obj2;
         $obj2->subobj =& $obj3;
@@ -426,62 +444,62 @@ class core_cache_testcase extends advanced_testcase {
         $obj2->key = 'tset';
         $obj3->key = 'krop';
         $var = $cache->get('obj');
-        $this->assertInstanceOf('stdClass', $var);
+        $this->assertInstanceOf(\stdClass::class, $var);
         $this->assertEquals('value', $var->key);
-        $this->assertInstanceOf('stdClass', $var->subobj);
+        $this->assertInstanceOf(\stdClass::class, $var->subobj);
         $this->assertEquals('test', $var->subobj->key);
-        $this->assertInstanceOf('stdClass', $var->subobj->subobj);
+        $this->assertInstanceOf(\stdClass::class, $var->subobj->subobj);
         $this->assertEquals('pork', $var->subobj->subobj->key);
         $this->assertTrue($cache->delete('obj'));
 
         // Death reference test... basically we don't want this to die.
-        $obj = new stdClass;
+        $obj = new \stdClass;
         $obj->key = 'value';
         $obj->self =& $obj;
         $this->assertTrue($cache->set('obj', $obj));
         $var = $cache->get('obj');
-        $this->assertInstanceOf('stdClass', $var);
+        $this->assertInstanceOf(\stdClass::class, $var);
         $this->assertEquals('value', $var->key);
 
         // Reference test after retrieve.
-        $obj = new stdClass;
+        $obj = new \stdClass;
         $obj->key = 'value';
         $this->assertTrue($cache->set('obj', $obj));
 
         $var1 = $cache->get('obj');
-        $this->assertInstanceOf('stdClass', $var1);
+        $this->assertInstanceOf(\stdClass::class, $var1);
         $this->assertEquals('value', $var1->key);
         $var1->key = 'eulav';
         $this->assertEquals('eulav', $var1->key);
 
         $var2 = $cache->get('obj');
-        $this->assertInstanceOf('stdClass', $var2);
+        $this->assertInstanceOf(\stdClass::class, $var2);
         $this->assertEquals('value', $var2->key);
 
         $this->assertTrue($cache->delete('obj'));
 
         // Death reference test on get_many... basically we don't want this to die.
-        $obj = new stdClass;
+        $obj = new \stdClass;
         $obj->key = 'value';
         $obj->self =& $obj;
         $this->assertEquals(1, $cache->set_many(array('obj' => $obj)));
         $var = $cache->get_many(array('obj'));
-        $this->assertInstanceOf('stdClass', $var['obj']);
+        $this->assertInstanceOf(\stdClass::class, $var['obj']);
         $this->assertEquals('value', $var['obj']->key);
 
         // Reference test after retrieve.
-        $obj = new stdClass;
+        $obj = new \stdClass;
         $obj->key = 'value';
         $this->assertEquals(1, $cache->set_many(array('obj' => $obj)));
 
         $var1 = $cache->get_many(array('obj'));
-        $this->assertInstanceOf('stdClass', $var1['obj']);
+        $this->assertInstanceOf(\stdClass::class, $var1['obj']);
         $this->assertEquals('value', $var1['obj']->key);
         $var1['obj']->key = 'eulav';
         $this->assertEquals('eulav', $var1['obj']->key);
 
         $var2 = $cache->get_many(array('obj'));
-        $this->assertInstanceOf('stdClass', $var2['obj']);
+        $this->assertInstanceOf(\stdClass::class, $var2['obj']);
         $this->assertEquals('value', $var2['obj']->key);
 
         $this->assertTrue($cache->delete('obj'));
@@ -490,20 +508,20 @@ class core_cache_testcase extends advanced_testcase {
         try {
             $cache->get('exception', MUST_EXIST);
             $this->fail('Exception expected from cache::get using MUST_EXIST');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue(true);
         }
         try {
             $cache->get_many(array('exception1', 'exception2'), MUST_EXIST);
             $this->fail('Exception expected from cache::get_many using MUST_EXIST');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue(true);
         }
         $cache->set('test', 'test');
         try {
             $cache->get_many(array('test', 'exception'), MUST_EXIST);
             $this->fail('Exception expected from cache::get_many using MUST_EXIST');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue(true);
         }
     }
@@ -522,7 +540,7 @@ class core_cache_testcase extends advanced_testcase {
         ));
 
         $cache = cache::make('phpunit', 'datasourcetest');
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
 
         // Purge it to be sure.
         $this->assertTrue($cache->purge());
@@ -562,8 +580,8 @@ class core_cache_testcase extends advanced_testcase {
             'overrideclassfile' => 'cache/tests/fixtures/lib.php'
         ));
         $cache = cache::make('phpunit', 'overridetest');
-        $this->assertInstanceOf('cache_phpunit_dummy_overrideclass', $cache);
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_phpunit_dummy_overrideclass::class, $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
         // Purge it to be sure.
         $this->assertTrue($cache->purge());
         // It won't be there yet.
@@ -594,12 +612,12 @@ class core_cache_testcase extends advanced_testcase {
         ), false);
 
         $cacheonly = cache::make('phpunit', 'mappingsonly');
-        $this->assertInstanceOf('cache_application', $cacheonly);
+        $this->assertInstanceOf(cache_application::class, $cacheonly);
         $this->assertEquals('cachestore_dummy', $cacheonly->phpunit_get_store_class());
 
         $expected = $this->get_expected_application_cache_store();
         $cachenon = cache::make('phpunit', 'nonmappingsonly');
-        $this->assertInstanceOf('cache_application', $cachenon);
+        $this->assertInstanceOf(cache_application::class, $cachenon);
         $this->assertEquals($expected, $cachenon->phpunit_get_store_class());
     }
 
@@ -659,7 +677,7 @@ class core_cache_testcase extends advanced_testcase {
             'ttl' => -86400 // Set to a day in the past to be extra sure.
         ));
         $cache = cache::make('phpunit', 'ttltest');
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
 
         // Purge it to be sure.
         $this->assertTrue($cache->purge());
@@ -708,7 +726,7 @@ class core_cache_testcase extends advanced_testcase {
             'ttl' => 86400 // Set to a day in the future to be extra sure.
         ));
         $cache = cache::make('phpunit', 'ttltest');
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
 
         // Purge it to be sure.
         $this->assertTrue($cache->purge());
@@ -757,7 +775,7 @@ class core_cache_testcase extends advanced_testcase {
             'ttl' => 86400 // Set to a day in the future to be extra sure.
         ));
         $cache = cache::make('phpunit', 'ttltest');
-        $this->assertInstanceOf('cache_session', $cache);
+        $this->assertInstanceOf(cache_session::class, $cache);
 
         // Purge it to be sure.
         $this->assertTrue($cache->purge());
@@ -872,7 +890,7 @@ class core_cache_testcase extends advanced_testcase {
             )
         ));
         $cache = cache::make('phpunit', 'test_session_event_invalidation');
-        $this->assertInstanceOf('cache_session', $cache);
+        $this->assertInstanceOf(cache_session::class, $cache);
 
         $this->assertTrue($cache->set('testkey1', 'test data 1'));
         $this->assertEquals('test data 1', $cache->get('testkey1'));
@@ -941,7 +959,7 @@ class core_cache_testcase extends advanced_testcase {
             'area' => 'test_session_definition_invalidation'
         ));
         $cache = cache::make('phpunit', 'test_session_definition_invalidation');
-        $this->assertInstanceOf('cache_session', $cache);
+        $this->assertInstanceOf(cache_session::class, $cache);
         $this->assertTrue($cache->set('testkey1', 'test data 1'));
         $this->assertEquals('test data 1', $cache->get('testkey1'));
         $this->assertTrue($cache->set('testkey2', 'test data 2'));
@@ -1237,7 +1255,7 @@ class core_cache_testcase extends advanced_testcase {
         $this->resetAfterTest();
         $CFG->altcacheconfigpath = $CFG->dataroot.'/cache/altcacheconfigpath';
         $instance = cache_config_testing::instance();
-        $this->assertInstanceOf('cache_config', $instance);
+        $this->assertInstanceOf(cache_config::class, $instance);
     }
 
     /**
@@ -1267,9 +1285,9 @@ class core_cache_testcase extends advanced_testcase {
             'disabletest3' => cache::make('phpunit', 'disabletest3')
         );
 
-        $this->assertInstanceOf('cache_phpunit_application', $caches['disabletest1']);
-        $this->assertInstanceOf('cache_phpunit_session', $caches['disabletest2']);
-        $this->assertInstanceOf('cache_phpunit_request', $caches['disabletest3']);
+        $this->assertInstanceOf(cache_phpunit_application::class, $caches['disabletest1']);
+        $this->assertInstanceOf(cache_phpunit_session::class, $caches['disabletest2']);
+        $this->assertInstanceOf(cache_phpunit_request::class, $caches['disabletest3']);
 
         $this->assertEquals('cachestore_file', $caches['disabletest1']->phpunit_get_store_class());
         $this->assertEquals('cachestore_session', $caches['disabletest2']->phpunit_get_store_class());
@@ -1289,9 +1307,9 @@ class core_cache_testcase extends advanced_testcase {
             'disabletest3' => cache::make('phpunit', 'disabletest3')
         );
 
-        $this->assertInstanceOf('cache_phpunit_application', $caches['disabletest1']);
-        $this->assertInstanceOf('cache_phpunit_session', $caches['disabletest2']);
-        $this->assertInstanceOf('cache_phpunit_request', $caches['disabletest3']);
+        $this->assertInstanceOf(cache_phpunit_application::class, $caches['disabletest1']);
+        $this->assertInstanceOf(cache_phpunit_session::class, $caches['disabletest2']);
+        $this->assertInstanceOf(cache_phpunit_request::class, $caches['disabletest3']);
 
         $this->assertEquals('cachestore_dummy', $caches['disabletest1']->phpunit_get_store_class());
         $this->assertEquals('cachestore_dummy', $caches['disabletest2']->phpunit_get_store_class());
@@ -1328,19 +1346,19 @@ class core_cache_testcase extends advanced_testcase {
 
         // Check we get the expected disabled factory.
         $factory = cache_factory::instance();
-        $this->assertInstanceOf('cache_factory_disabled', $factory);
+        $this->assertInstanceOf(cache_factory_disabled::class, $factory);
 
         // Check we get the expected disabled config.
         $config = $factory->create_config_instance();
-        $this->assertInstanceOf('cache_config_disabled', $config);
+        $this->assertInstanceOf(cache_config_disabled::class, $config);
 
         // Check we get the expected disabled caches.
         $cache = cache::make('core', 'string');
-        $this->assertInstanceOf('cache_disabled', $cache);
+        $this->assertInstanceOf(cache_disabled::class, $cache);
 
         // Test an application cache.
         $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'phpunit', 'disable');
-        $this->assertInstanceOf('cache_disabled', $cache);
+        $this->assertInstanceOf(cache_disabled::class, $cache);
 
         $this->assertFalse($cache->get('test'));
         $this->assertFalse($cache->set('test', 'test'));
@@ -1349,7 +1367,7 @@ class core_cache_testcase extends advanced_testcase {
 
         // Test a session cache.
         $cache = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'disable');
-        $this->assertInstanceOf('cache_disabled', $cache);
+        $this->assertInstanceOf(cache_disabled::class, $cache);
 
         $this->assertFalse($cache->get('test'));
         $this->assertFalse($cache->set('test', 'test'));
@@ -1358,7 +1376,7 @@ class core_cache_testcase extends advanced_testcase {
 
         // Finally test a request cache.
         $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'phpunit', 'disable');
-        $this->assertInstanceOf('cache_disabled', $cache);
+        $this->assertInstanceOf(cache_disabled::class, $cache);
 
         $this->assertFalse($cache->get('test'));
         $this->assertFalse($cache->set('test', 'test'));
@@ -1388,7 +1406,7 @@ class core_cache_testcase extends advanced_testcase {
         $instance->phpunit_add_definition_mapping('phpunit/multi_loader', 'phpunittest2', 2);
 
         $cache = cache::make('phpunit', 'multi_loader');
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
         $this->assertFalse($cache->get('test'));
         $this->assertTrue($cache->set('test', 'test'));
         $this->assertEquals('test', $cache->get('test'));
@@ -1457,7 +1475,7 @@ class core_cache_testcase extends advanced_testcase {
         $instance->phpunit_add_definition_mapping('phpunit/multi_loader', 'phpunittest2', 2);
 
         $cache = cache::make('phpunit', 'multi_loader');
-        $this->assertInstanceOf('cache_session', $cache);
+        $this->assertInstanceOf(cache_session::class, $cache);
         $this->assertFalse($cache->get('test'));
         $this->assertTrue($cache->set('test', 'test'));
         $this->assertEquals('test', $cache->get('test'));
@@ -1653,7 +1671,7 @@ class core_cache_testcase extends advanced_testcase {
             'requirelockingwrite' => true
         ));
         $cache = cache::make('phpunit', 'test_application_locking');
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
 
         $this->assertTrue($cache->set('a', 'A'));
         $this->assertTrue($cache->set('b', 'B'));
@@ -1675,14 +1693,14 @@ class core_cache_testcase extends advanced_testcase {
             'area' => 'test_purge_stores_used_by_definition'
         ));
         $cache = cache::make('phpunit', 'test_purge_stores_used_by_definition');
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
         $this->assertTrue($cache->set('test', 'test'));
         unset($cache);
 
         cache_helper::purge_stores_used_by_definition('phpunit', 'test_purge_stores_used_by_definition');
 
         $cache = cache::make('phpunit', 'test_purge_stores_used_by_definition');
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
         $this->assertFalse($cache->get('test'));
     }
 
@@ -1709,7 +1727,7 @@ class core_cache_testcase extends advanced_testcase {
         $definition = $factory->create_definition('phpunit', 'purge1');
         $this->assertFalse($definition->has_required_identifiers());
         $cache = $factory->create_cache($definition);
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
         $this->assertTrue($cache->set('test', 'test'));
         $this->assertTrue($cache->has('test'));
         cache_helper::purge_by_definition('phpunit', 'purge1');
@@ -1719,7 +1737,7 @@ class core_cache_testcase extends advanced_testcase {
         $definition = $factory->create_definition('phpunit', 'purge2');
         $this->assertTrue($definition->has_required_identifiers());
         $cache = $factory->create_cache($definition);
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
         $this->assertTrue($cache->set('test', 'test'));
         $this->assertTrue($cache->has('test'));
         cache_helper::purge_stores_used_by_definition('phpunit', 'purge2');
@@ -1728,7 +1746,7 @@ class core_cache_testcase extends advanced_testcase {
         try {
             cache_helper::purge_by_definition('phpunit', 'purge2');
             $this->fail('Should not be able to purge a definition required identifiers without providing them.');
-        } catch (coding_exception $ex) {
+        } catch (\coding_exception $ex) {
             $this->assertStringContainsString('Identifier required for cache has not been provided', $ex->getMessage());
         }
     }
@@ -1737,7 +1755,7 @@ class core_cache_testcase extends advanced_testcase {
      * Tests that ad-hoc caches are correctly purged with a purge_all call.
      */
     public function test_purge_all_with_adhoc_caches() {
-        $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'core_cache', 'test');
+        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core_cache', 'test');
         $cache->set('test', 123);
         cache_helper::purge_all();
         $this->assertFalse($cache->get('test'));
@@ -1770,26 +1788,26 @@ class core_cache_testcase extends advanced_testcase {
 
         // Test application cache is searchable.
         $definition = $factory->create_definition('phpunit', 'search1');
-        $this->assertInstanceOf('cache_definition', $definition);
+        $this->assertInstanceOf(cache_definition::class, $definition);
         $this->assertEquals(cache_store::IS_SEARCHABLE, $definition->get_requirements_bin() & cache_store::IS_SEARCHABLE);
         $cache = $factory->create_cache($definition);
-        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertInstanceOf(cache_application::class, $cache);
         $this->assertArrayHasKey('cache_is_searchable', $cache->phpunit_get_store_implements());
 
         // Test session cache is searchable.
         $definition = $factory->create_definition('phpunit', 'search2');
-        $this->assertInstanceOf('cache_definition', $definition);
+        $this->assertInstanceOf(cache_definition::class, $definition);
         $this->assertEquals(cache_store::IS_SEARCHABLE, $definition->get_requirements_bin() & cache_store::IS_SEARCHABLE);
         $cache = $factory->create_cache($definition);
-        $this->assertInstanceOf('cache_session', $cache);
+        $this->assertInstanceOf(cache_session::class, $cache);
         $this->assertArrayHasKey('cache_is_searchable', $cache->phpunit_get_store_implements());
 
         // Test request cache is searchable.
         $definition = $factory->create_definition('phpunit', 'search3');
-        $this->assertInstanceOf('cache_definition', $definition);
+        $this->assertInstanceOf(cache_definition::class, $definition);
         $this->assertEquals(cache_store::IS_SEARCHABLE, $definition->get_requirements_bin() & cache_store::IS_SEARCHABLE);
         $cache = $factory->create_cache($definition);
-        $this->assertInstanceOf('cache_request', $cache);
+        $this->assertInstanceOf(cache_request::class, $cache);
         $this->assertArrayHasKey('cache_is_searchable', $cache->phpunit_get_store_implements());
     }
 
@@ -1845,7 +1863,7 @@ class core_cache_testcase extends advanced_testcase {
         ));
 
         $cache = cache::make('phpunit', 'accelerated');
-        $this->assertInstanceOf('cache_phpunit_application', $cache);
+        $this->assertInstanceOf(cache_phpunit_application::class, $cache);
 
         // Set and get three elements.
         $this->assertTrue($cache->set('a', 'A'));
@@ -1912,12 +1930,12 @@ class core_cache_testcase extends advanced_testcase {
 
         // Get the value from the backend store, populating the static cache.
         $cachevalue = $cache->get('a');
-        $this->assertInstanceOf('cache_phpunit_dummy_object', $cachevalue);
+        $this->assertInstanceOf(cache_phpunit_dummy_object::class, $cachevalue);
         $this->assertGreaterThanOrEqual($staticaccelerationreturntime, $cachevalue->propertytime);
         $backingstorereturntime = $cachevalue->propertytime;
 
         $results = $cache->get_many(array('b'));
-        $this->assertInstanceOf('cache_phpunit_dummy_object', $results['b']);
+        $this->assertInstanceOf(cache_phpunit_dummy_object::class, $results['b']);
         $this->assertGreaterThanOrEqual($staticaccelerationreturntimeb, $results['b']->propertytime);
         $backingstorereturntimeb = $results['b']->propertytime;
 
@@ -1925,16 +1943,16 @@ class core_cache_testcase extends advanced_testcase {
         // Upon failure, the times are not adjusted as wake_from_cache is skipped as the
         // value is stored serialized in the static acceleration cache.
         $cachevalue = $cache->phpunit_static_acceleration_get('a');
-        $this->assertInstanceOf('cache_phpunit_dummy_object', $cachevalue);
+        $this->assertInstanceOf(cache_phpunit_dummy_object::class, $cachevalue);
         $this->assertGreaterThanOrEqual($backingstorereturntime, $cachevalue->propertytime);
 
         $results = $cache->get_many(array('b'));
-        $this->assertInstanceOf('cache_phpunit_dummy_object', $results['b']);
+        $this->assertInstanceOf(cache_phpunit_dummy_object::class, $results['b']);
         $this->assertGreaterThanOrEqual($backingstorereturntimeb, $results['b']->propertytime);
 
         /** @var cache_phpunit_application $cache */
         $cache = cache::make('phpunit', 'accelerated2');
-        $this->assertInstanceOf('cache_phpunit_application', $cache);
+        $this->assertInstanceOf(cache_phpunit_application::class, $cache);
 
         // Check that the array holds the last accessed items by get/set.
         $this->assertTrue($cache->set('a', 'A'));
@@ -1968,7 +1986,7 @@ class core_cache_testcase extends advanced_testcase {
 
 
         $cache = cache::make('phpunit', 'accelerated3');
-        $this->assertInstanceOf('cache_phpunit_application', $cache);
+        $this->assertInstanceOf(cache_phpunit_application::class, $cache);
 
         // Check that the array holds the last accessed items by get/set.
         $this->assertTrue($cache->set('a', 'A'));
@@ -1997,7 +2015,7 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertEquals('E', $cache->phpunit_static_acceleration_get('e'));
 
         $cache = cache::make('phpunit', 'accelerated4');
-        $this->assertInstanceOf('cache_phpunit_application', $cache);
+        $this->assertInstanceOf(cache_phpunit_application::class, $cache);
         $this->assertTrue($cache->set('a', 'A'));
         $this->assertTrue($cache->set('a', 'A'));
         $this->assertTrue($cache->set('a', 'A'));
@@ -2010,7 +2028,7 @@ class core_cache_testcase extends advanced_testcase {
 
         // Setting simpledata to false objects are cloned when retrieving data.
         $cache = cache::make('phpunit', 'simpledataarea1');
-        $notreallysimple = new stdClass();
+        $notreallysimple = new \stdClass();
         $notreallysimple->name = 'a';
         $cache->set('a', $notreallysimple);
         $returnedinstance1 = $cache->get('a');
@@ -2020,7 +2038,7 @@ class core_cache_testcase extends advanced_testcase {
 
         // Setting simpledata to true we assume that data does not contain references.
         $cache = cache::make('phpunit', 'simpledataarea2');
-        $notreallysimple = new stdClass();
+        $notreallysimple = new \stdClass();
         $notreallysimple->name = 'a';
         $cache->set('a', $notreallysimple);
         $returnedinstance1 = $cache->get('a');
@@ -2331,7 +2349,7 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertFalse($cache->get('testkey1'));
 
         // Set up the cache again in the same request and add a new value back in.
-        $factory = \cache_factory::instance();
+        $factory = cache_factory::instance();
         $factory->reset_cache_instances();
         $cache = cache::make('phpunit', 'eventpurgetest');
         $cache->set('testkey1', 'test data 2');
@@ -2339,7 +2357,7 @@ class core_cache_testcase extends advanced_testcase {
 
         // Trick the cache into thinking that this is a new request.
         cache_phpunit_cache::simulate_new_request();
-        $factory = \cache_factory::instance();
+        $factory = cache_factory::instance();
         $factory->reset_cache_instances();
 
         // Set up the cache again.

@@ -14,18 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the activity label's lib.
- *
- * @package    mod_label
- * @category   test
- * @copyright  2017 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace mod_label;
-
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Unit tests for the activity label's lib.

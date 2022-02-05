@@ -14,17 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the date condition.
- *
- * @package availability_date
- * @copyright 2014 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace availability_date;
 
-defined('MOODLE_INTERNAL') || die();
-
-use availability_date\condition;
 use core_availability\tree;
 
 /**
@@ -34,7 +25,7 @@ use core_availability\tree;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class availability_date_condition_testcase extends advanced_testcase {
+class condition_test extends \advanced_testcase {
     /**
      * Load required classes.
      */
@@ -95,7 +86,7 @@ class availability_date_condition_testcase extends advanced_testcase {
         try {
             $date = new condition($structure);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertStringContainsString('Missing or invalid ->d', $e->getMessage());
         }
 
@@ -104,7 +95,7 @@ class availability_date_condition_testcase extends advanced_testcase {
         try {
             $date = new condition($structure);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertStringContainsString('Missing or invalid ->d', $e->getMessage());
         }
 
@@ -113,7 +104,7 @@ class availability_date_condition_testcase extends advanced_testcase {
         try {
             $date = new condition($structure);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertStringContainsString('Missing or invalid ->t', $e->getMessage());
         }
 
@@ -122,7 +113,7 @@ class availability_date_condition_testcase extends advanced_testcase {
         try {
             $date = new condition($structure);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertStringContainsString('Missing or invalid ->t', $e->getMessage());
         }
 

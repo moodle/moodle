@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for the forum implementation of the RSS component.
- *
- * @package    mod_forum
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_forum;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,13 +25,14 @@ require_once("{$CFG->dirroot}/mod/forum/rsslib.php");
 /**
  * Tests for the forum implementation of the RSS component.
  *
+ * @package    mod_forum
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_forum_rsslib_testcase extends advanced_testcase {
+class rsslib_test extends \advanced_testcase {
     // Include the mod_forum test helpers.
     // This includes functions to create forums, users, discussions, and posts.
-    use mod_forum_tests_generator_trait;
+    use \mod_forum_tests_generator_trait;
 
     /**
      * Ensure that deleted posts are not included.
