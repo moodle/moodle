@@ -47,6 +47,8 @@ $PAGE->set_url($attemptobj->attempt_url(null, $page));
 // During quiz attempts, the browser back/forwards buttons should force a reload.
 $PAGE->set_cacheable(false);
 
+$PAGE->set_secondary_active_tab("modulepage");
+
 // Check login.
 require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 

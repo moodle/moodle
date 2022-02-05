@@ -58,9 +58,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output = '';
 
         // Page title.
-        $output .= $this->heading_with_help(get_string('editingquizx', 'quiz',
-                format_string($quizobj->get_quiz_name())), 'editingquiz', 'quiz', '',
-                get_string('basicideasofquiz', 'quiz'), 2);
+        $output .= $this->heading(get_string('questions', 'quiz'));
 
         // Information at the top.
         $output .= $this->quiz_state_warnings($structure);

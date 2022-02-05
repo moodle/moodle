@@ -33,7 +33,7 @@ Feature: Quiz user override
       | quiz       | Test quiz | C1     | quiz1    |
     And I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher"
     And I change window size to "large"
-    And I navigate to "User overrides" in current page administration
+    And I navigate to "Overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user        | Student One (student1@example.com) |
@@ -147,7 +147,7 @@ Feature: Quiz user override
       | Test quiz | student1 | 2        |
       | Test quiz | student2 | 2        |
     And I am on the "Test quiz" "mod_quiz > View" page logged in as "helper"
-    When I navigate to "User overrides" in current page administration
+    When I navigate to "Overrides" in current page administration
     Then "Student One" "table_row" should exist
     And "Student Two" "table_row" should exist
     And "Add user override" "button" should not exist
@@ -186,3 +186,13 @@ Feature: Quiz user override
 
     And I click on "Delete" "link" in the "Student One" "table_row"
     And I should see "Student One (student1@example.com, yellow frog)"
+
+  Scenario: Add button disabled if no users
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 2 | C2        | 0        |
+    And the following "activities" exist:
+      | activity   | name       | course | idnumber |
+      | quiz       | Other quiz | C2     | quiz2    |
+    When I am on the "Other quiz" "mod_quiz > User overrides" page logged in as "admin"
+    Then the "Add user override" "button" should be disabled

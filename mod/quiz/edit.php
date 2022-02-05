@@ -59,6 +59,7 @@ $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contexti
 $quizhasattempts = quiz_has_attempts($quiz->id);
 
 $PAGE->set_url($thispageurl);
+$PAGE->set_secondary_active_tab("mod_quiz_edit");
 
 // Get the course object and related bits.
 $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);

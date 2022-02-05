@@ -66,6 +66,9 @@ if ($overrideid) {
 
 $PAGE->set_url($url);
 
+// Activate the secondary nav tab.
+$PAGE->set_secondary_active_tab("mod_quiz_useroverrides");
+
 require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);

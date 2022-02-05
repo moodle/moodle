@@ -32,6 +32,7 @@ $cmid = optional_param('cmid', null, PARAM_INT);
 $PAGE->set_url('/mod/quiz/summary.php', array('attempt' => $attemptid));
 // During quiz attempts, the browser back/forwards buttons should force a reload.
 $PAGE->set_cacheable(false);
+$PAGE->set_secondary_active_tab("modulepage");
 
 $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
 

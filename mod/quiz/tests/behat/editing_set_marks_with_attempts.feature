@@ -31,7 +31,7 @@ Feature: Edit quiz marks with attempts
       | Default mark  | 3.0             |
     And I log out
     And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
-    And I press "Attempt quiz now"
+    And I press "Attempt quiz"
     And I log out
     And I log in as "teacher1"
     And I am on the "Quiz 1" "mod_quiz > Edit" page

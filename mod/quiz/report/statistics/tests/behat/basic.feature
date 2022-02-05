@@ -40,7 +40,8 @@ Feature: Basic use of the Statistics report
   @javascript
   Scenario: Report works when there are no attempts
     Given I am on the "Quiz 1" "quiz activity" page logged in as teacher1
-    And I navigate to "Results > Statistics" in current page administration
+    And I navigate to "Results" in current page administration
+    And I select "Statistics" from the "jump" singleselect
     Then I should see "No attempts have been made at this quiz, or all attempts have questions that need manual grading."
     And I should not see "Statistics for question positions"
     And "Show chart data" "link" should not exist
@@ -60,7 +61,8 @@ Feature: Basic use of the Statistics report
       |   2  | False    |
       |   3  | False    |
     And I am on the "Quiz 1" "quiz activity" page logged in as teacher1
-    And I navigate to "Results > Statistics" in current page administration
+    And I navigate to "Results" in current page administration
+    And I select "Statistics" from the "jump" singleselect
     And I press "Show report"
     Then I should not see "No questions have been attempted yet"
     And "Show chart data" "link" should exist

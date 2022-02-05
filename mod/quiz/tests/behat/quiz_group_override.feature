@@ -56,7 +56,7 @@ Feature: Quiz group override
     Then the "Override group" select box should contain "Group 1"
     And the "Override group" select box should not contain "Group 2"
 
-  Scenario: Override Group 1 as teacher in no group
+  Scenario: Add button disabled if there are no groups
     Given the following "permission overrides" exist:
       | capability                  | permission | role           | contextlevel | reference |
       | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |

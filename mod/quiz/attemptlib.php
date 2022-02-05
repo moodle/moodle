@@ -275,7 +275,7 @@ class quiz {
     }
 
     /**
-     * @return bool wether the current user is someone who previews the quiz,
+     * @return bool whether the current user is someone who previews the quiz,
      * rather than attempting it.
      */
     public function is_preview_user() {

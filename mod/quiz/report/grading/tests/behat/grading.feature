@@ -42,7 +42,8 @@ Feature: Basic use of the Manual grading report
 
     # Check report shows nothing when there are no attempts.
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher1"
-    And I navigate to "Results > Manual grading" in current page administration
+    And I navigate to "Results" in current page administration
+    And I select "Manual grading" from the "jump" singleselect
     Then I should see "Quiz 1" in the "//nav[contains(concat(' ', normalize-space(@aria-label), ' '), ' Navigation bar ')]" "xpath_element"
     And I should see "Quiz 1"
     And I should see "Nothing to display"
@@ -126,7 +127,8 @@ Feature: Basic use of the Manual grading report
       | slot | response |
       | 1    | Paris    |
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher1"
-    And I navigate to "Results > Manual grading" in current page administration
+    And I navigate to "Results" in current page administration
+    And I select "Manual grading" from the "jump" singleselect
     And I follow "Also show questions that have been graded automatically"
     And I click on "update grades" "link" in the "Short answer 001" "table_row"
     Then I should see "Attempt number 1 for S1 Student1 (student1, S1000, student1@example.com, little yellow frog)"
