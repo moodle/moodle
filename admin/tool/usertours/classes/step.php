@@ -803,19 +803,7 @@ class step {
     public static function get_string_from_input($string) {
         debugging('Use of ' . __FUNCTION__ .
             '() have been deprecated, please update your code to use helper::get_string_from_input()', DEBUG_DEVELOPER);
-        $string = trim($string);
-
-        if (preg_match('|^([a-zA-Z][a-zA-Z0-9\.:/_-]*),([a-zA-Z][a-zA-Z0-9\.:/_-]*)$|', $string, $matches)) {
-            if ($matches[2] === 'moodle') {
-                $matches[2] = 'core';
-            }
-
-            if (get_string_manager()->string_exists($matches[1], $matches[2])) {
-                $string = get_string($matches[1], $matches[2]);
-            }
-        }
-
-        return $string;
+        return helper::get_string_from_input($string);
     }
 
     /**
