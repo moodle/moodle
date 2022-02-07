@@ -60,7 +60,9 @@ $string['editstep'] = 'Editing "{$a}"';
 $string['tourisenabled'] = 'Tour is enabled';
 $string['enabled'] = 'Enabled';
 $string['endtourlabel'] = 'End tour button\'s label';
-$string['endtourlabel_help'] = 'You can optionally specify a custom label for the end tour button. The default label is "Got it" for single-step, and "End tour" for multiple-step tours.';
+$string['endtourlabel_help'] = 'You can optionally specify a custom label for the end tour button. The default label is "Got it" for single-step, and "End tour" for multiple-step tours..
+
+Alternatively, a language string ID may be entered in the format identifier,component (with no brackets or space after the comma).';
 $string['event_tour_started'] = 'Tour started';
 $string['event_tour_reset'] = 'Tour reset';
 $string['event_tour_ended'] = 'Tour ended';
