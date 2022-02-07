@@ -383,7 +383,7 @@ class backup_cron_helper_testcase extends advanced_testcase {
         $backupcourse3 = new stdClass;
         $backupcourse3->courseid = $course3->id;
         $backupcourse3->laststatus = testable_backup_cron_automated_helper::BACKUP_STATUS_OK;
-        $backupcourse3->nextstarttime = 1554858160;
+        $backupcourse3->nextstarttime = 1554822160;
         $DB->insert_record('backup_courses', $backupcourse3);
 
         $backupcourse4 = new stdClass;
