@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests of the upgrade to the new Moodle question engine for attempts at
- * truefalse questions.
- *
- * @package    qtype
- * @subpackage shortanswer
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+namespace qtype_shortanswer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,10 +25,11 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
 /**
  * Testing the upgrade of shortanswer question attempts.
  *
+ * @package    qtype_shortanswer
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_shortanswer_attempt_upgrader_test extends question_attempt_upgrader_test_base {
+class upgradelibnewqe_test extends \question_attempt_upgrader_test_base {
 
     public function test_shortanswer_deferredfeedback_history620() {
         $quiz = (object) array(

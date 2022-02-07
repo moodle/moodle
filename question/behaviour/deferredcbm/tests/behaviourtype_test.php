@@ -14,16 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a question through the deferred feedback
- * with certainty base marking behaviour.
- *
- * @package    qbehaviour
- * @subpackage deferredcbm
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qbehaviour_deferredcbm;
 
+use question_display_options;
+use question_engine;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,10 +29,11 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 /**
  * Unit tests for the deferred feedback with certainty base marking behaviour.
  *
+ * @package    qbehaviour_deferredcbm
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_deferredcbm_type_test extends qbehaviour_walkthrough_test_base {
+class behaviourtype_test extends \qbehaviour_walkthrough_test_base {
 
     /** @var qbehaviour_deferredcbm_type */
     protected $behaviourtype;
@@ -70,9 +65,9 @@ class qbehaviour_deferredcbm_type_test extends qbehaviour_walkthrough_test_base 
 
         // Create a usage comprising 3 true-false questions.
         $this->quba->set_preferred_behaviour('deferredcbm');
-        $this->quba->add_question(test_question_maker::make_question('truefalse', 'true'), 3);
-        $this->quba->add_question(test_question_maker::make_question('truefalse', 'true'), 3);
-        $this->quba->add_question(test_question_maker::make_question('truefalse', 'true'), 3);
+        $this->quba->add_question(\test_question_maker::make_question('truefalse', 'true'), 3);
+        $this->quba->add_question(\test_question_maker::make_question('truefalse', 'true'), 3);
+        $this->quba->add_question(\test_question_maker::make_question('truefalse', 'true'), 3);
         $this->quba->start_all_questions();
 
         // Process responses right, high certainty; right, med certainty; wrong, med certainty.
@@ -106,9 +101,9 @@ class qbehaviour_deferredcbm_type_test extends qbehaviour_walkthrough_test_base 
 
         // Create a usage comprising 3 true-false questions.
         $this->quba->set_preferred_behaviour('deferredcbm');
-        $this->quba->add_question(test_question_maker::make_question('truefalse', 'true'), 1);
-        $this->quba->add_question(test_question_maker::make_question('truefalse', 'true'), 1);
-        $this->quba->add_question(test_question_maker::make_question('truefalse', 'true'), 1);
+        $this->quba->add_question(\test_question_maker::make_question('truefalse', 'true'), 1);
+        $this->quba->add_question(\test_question_maker::make_question('truefalse', 'true'), 1);
+        $this->quba->add_question(\test_question_maker::make_question('truefalse', 'true'), 1);
         $this->quba->start_all_questions();
 
         // Process responses right, high certainty; right, med certainty; wrong, med certainty.

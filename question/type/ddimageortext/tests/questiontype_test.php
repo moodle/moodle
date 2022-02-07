@@ -14,14 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the drag-and-drop onto image question definition class.
- *
- * @package   qtype_ddimageortext
- * @copyright 2010 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_ddimageortext;
 
+use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,10 +28,11 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
 /**
  * Unit tests for the drag-and-drop onto image question definition class.
  *
+ * @package   qtype_ddimageortext
  * @copyright 2010 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimageortext_test extends basic_testcase {
+class questiontype_test extends \basic_testcase {
     /** @var qtype_ddimageortext instance of the question type class to test. */
     protected $qtype;
 

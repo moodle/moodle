@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qtype_multianswer;
 
-/**
- * Unit tests for the multianswer question definition class.
- *
- * @package    qtype
- * @subpackage multianswer
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+use question_attempt_step;
+use question_display_options;
+use question_state;
+
+defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
@@ -31,18 +29,19 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * Unit tests for qtype_multianswer_question.
  *
+ * @package    qtype_multianswer
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_multianswer_question_test extends advanced_testcase {
+class question_test extends \advanced_testcase {
     public function test_get_expected_data() {
-        $question = test_question_maker::make_question('multianswer');
+        $question = \test_question_maker::make_question('multianswer');
         $this->assertEquals(array('sub1_answer' => PARAM_RAW_TRIMMED,
                 'sub2_answer' => PARAM_RAW), $question->get_expected_data());
     }
 
     public function test_is_complete_response() {
-        $question = test_question_maker::make_question('multianswer');
+        $question = \test_question_maker::make_question('multianswer');
 
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertTrue($question->is_complete_response(array('sub1_answer' => 'Owl',
@@ -53,7 +52,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
     }
 
     public function test_is_gradable_response() {
-        $question = test_question_maker::make_question('multianswer');
+        $question = \test_question_maker::make_question('multianswer');
 
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertTrue($question->is_gradable_response(array('sub1_answer' => 'Owl',
@@ -64,7 +63,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
     }
 
     public function test_grading() {
-        $question = test_question_maker::make_question('multianswer');
+        $question = \test_question_maker::make_question('multianswer');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $rightchoice = $question->subquestions[2]->get_correct_response();
@@ -80,7 +79,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
     }
 
     public function test_get_correct_response() {
-        $question = test_question_maker::make_question('multianswer');
+        $question = \test_question_maker::make_question('multianswer');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $rightchoice = $question->subquestions[2]->get_correct_response();
@@ -90,7 +89,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
     }
 
     public function test_get_question_summary() {
-        $question = test_question_maker::make_question('multianswer');
+        $question = \test_question_maker::make_question('multianswer');
 
         // Bit of a hack to make testing easier.
         $question->subquestions[2]->shuffleanswers = false;
@@ -103,7 +102,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
     }
 
     public function test_summarise_response() {
-        $question = test_question_maker::make_question('multianswer');
+        $question = \test_question_maker::make_question('multianswer');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $rightchoice = $question->subquestions[2]->get_correct_response();
@@ -116,7 +115,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
     }
 
     public function test_get_num_parts_right() {
-        $question = test_question_maker::make_question('multianswer');
+        $question = \test_question_maker::make_question('multianswer');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $rightchoice = $question->subquestions[2]->get_correct_response();
@@ -145,7 +144,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
 
     public function test_get_num_parts_right_fourmc() {
         // Create a multianswer question with four mcq.
-        $question = test_question_maker::make_question('multianswer', 'fourmc');
+        $question = \test_question_maker::make_question('multianswer', 'fourmc');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $response = array('sub1_answer' => '1', 'sub2_answer' => '1',
@@ -155,7 +154,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
     }
 
     public function test_clear_wrong_from_response() {
-        $question = test_question_maker::make_question('multianswer');
+        $question = \test_question_maker::make_question('multianswer');
         $question->start_attempt(new question_attempt_step(), 1);
 
         $rightchoice = $question->subquestions[2]->get_correct_response();
@@ -179,7 +178,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
     }
 
     public function test_compute_final_grade() {
-        $question = test_question_maker::make_question('multianswer');
+        $question = \test_question_maker::make_question('multianswer');
         // Set penalty to 0.2 to ease calculations.
         $question->penalty = 0.2;
         // Set subquestion 2 defaultmark to 2, to make it a better test,
@@ -245,9 +244,9 @@ class qtype_multianswer_question_test extends advanced_testcase {
     public function test_get_question_definition_for_external_rendering() {
         $this->resetAfterTest();
 
-        $question = test_question_maker::make_question('multianswer');
+        $question = \test_question_maker::make_question('multianswer');
         $question->start_attempt(new question_attempt_step(), 1);
-        $qa = test_question_maker::get_a_qa($question);
+        $qa = \test_question_maker::get_a_qa($question);
         $displayoptions = new question_display_options();
 
         $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);

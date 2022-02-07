@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the essay edit form.
- *
- * @package   qtype_essay
- * @copyright 2021 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_essay\form;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -32,10 +26,11 @@ require_once($CFG->dirroot . '/question/type/essay/edit_essay_form.php');
 /**
  * Unit tests for the essay edit form.
  *
+ * @package   qtype_essay
  * @copyright  2021 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_essay_edit_form_test extends advanced_testcase {
+class edit_form_test extends \advanced_testcase {
     /**
      * Helper method.
      *
@@ -50,9 +45,9 @@ class qtype_essay_edit_form_test extends advanced_testcase {
         $this->setAdminUser();
         $this->resetAfterTest();
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $category = question_make_default_categories(array($syscontext));
-        $fakequestion = new stdClass();
+        $fakequestion = new \stdClass();
         $fakequestion->qtype = 'essay';
         $fakequestion->contextid = $syscontext->id;
         $fakequestion->createdby = $USER->id;
@@ -66,10 +61,10 @@ class qtype_essay_edit_form_test extends advanced_testcase {
         $fakequestion->filetypeslist = '';
 
         $form = new $classname(
-            new moodle_url('/'),
+            new \moodle_url('/'),
             $fakequestion,
             $category,
-            new core_question\local\bank\question_edit_contexts($syscontext)
+            new \core_question\local\bank\question_edit_contexts($syscontext)
         );
 
         return [$form, $category];

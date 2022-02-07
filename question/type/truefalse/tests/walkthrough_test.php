@@ -14,16 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a truefalse question through various
- * behaviours.
- *
- * @package    qtype
- * @subpackage truefalse
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_truefalse;
 
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,14 +27,15 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * Walkthrough tests for the truefalse question type.
  *
+ * @package    qtype_truefalse
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_truefalse_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_false_right_does_not_show_feedback_when_not_answered() {
 
         // Create a true-false question with correct answer false.
-        $tf = test_question_maker::make_question('truefalse', 'false');
+        $tf = \test_question_maker::make_question('truefalse', 'false');
         $this->start_attempt_at_question($tf, 'deferredfeedback', 1);
 
         // Check the initial state.
@@ -50,7 +44,7 @@ class qtype_truefalse_walkthrough_test extends qbehaviour_walkthrough_test_base 
         $this->check_current_output(
                 $this->get_contains_question_text_expectation($tf),
                 $this->get_does_not_contain_feedback_expectation(),
-                new question_contains_tag_with_contents('h4',
+                new \question_contains_tag_with_contents('h4',
                         get_string('questiontext', 'question')));
         $this->assertEquals(get_string('false', 'qtype_truefalse'),
                 $this->quba->get_right_answer_summary($this->slot));
@@ -69,7 +63,7 @@ class qtype_truefalse_walkthrough_test extends qbehaviour_walkthrough_test_base 
                 $this->get_contains_tf_false_radio_expectation(false, false),
 
                 // In particular, check that the false feedback is not displayed.
-                new question_no_pattern_expectation('/' . preg_quote($tf->falsefeedback, '/') . '/'));
+                new \question_no_pattern_expectation('/' . preg_quote($tf->falsefeedback, '/') . '/'));
 
     }
 }

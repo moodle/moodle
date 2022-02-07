@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the description question type class.
- *
- * @package    qtype_description
- * @copyright  2013 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_description;
 
+use qtype_description;
+use qtype_description_edit_form;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,10 +31,11 @@ require_once($CFG->dirroot . '/question/type/description/edit_description_form.p
 /**
  * Unit tests for the description question type class.
  *
+ * @package    qtype_description
  * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_description_test extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     protected $qtype;
 
     protected function setUp(): void {
@@ -74,8 +71,8 @@ class qtype_description_test extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $questiondata = test_question_maker::get_question_data('description');
-        $formdata = test_question_maker::get_question_form_data('description');
+        $questiondata = \test_question_maker::get_question_data('description');
+        $formdata = \test_question_maker::get_question_form_data('description');
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category(array());
@@ -83,7 +80,7 @@ class qtype_description_test extends advanced_testcase {
         $formdata->category = "{$cat->id},{$cat->contextid}";
         qtype_description_edit_form::mock_submit((array)$formdata);
 
-        $form = qtype_description_test_helper::get_question_editing_form($cat, $questiondata);
+        $form = \qtype_description_test_helper::get_question_editing_form($cat, $questiondata);
 
         $this->assertTrue($form->is_validated());
 

@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the random question type class.
- *
- * @package    qtype
- * @subpackage random
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_random;
 
+use qtype_random;
+use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,10 +29,11 @@ require_once($CFG->dirroot . '/question/type/random/questiontype.php');
 /**
  * Unit tests for the random question type class.
  *
+ * @package    qtype_random
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_random_test extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     protected $qtype;
 
     protected function setUp(): void {
@@ -63,15 +59,15 @@ class qtype_random_test extends advanced_testcase {
     public function test_load_question() {
         $this->resetAfterTest();
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         /** @var core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $category = $generator->create_question_category(['contextid' => $syscontext->id]);
 
-        $fromform = test_question_maker::get_question_form_data('random');
+        $fromform = \test_question_maker::get_question_form_data('random');
         $fromform->category = $category->id . ',' . $syscontext->id;
 
-        $question = new stdClass();
+        $question = new \stdClass();
         $question->category = $category->id;
         $question->qtype = 'random';
         $question->createdby = 0;

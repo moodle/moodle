@@ -14,15 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for (some of) question/type/numerical/questiontype.php.
- *
- * @package    qtype
- * @subpackage numerical
- * @copyright  2006 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_numerical;
 
+use qtype_numerical;
+use qtype_numerical_edit_form;
+use question_possible_response;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,13 +31,14 @@ require_once($CFG->dirroot . '/question/type/numerical/edit_numerical_form.php')
 /**
  * Unit tests for question/type/numerical/questiontype.php.
  *
+ * @package    qtype_numerical
  * @copyright  2006 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  * @covers \question_type
  * @covers \qtype_numerical
  */
-class qtype_numerical_test extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     protected $tolerance = 0.00000001;
     protected $qtype;
 
@@ -54,9 +51,9 @@ class qtype_numerical_test extends advanced_testcase {
     }
 
     protected function get_test_question_data() {
-        $q = new stdClass;
+        $q = new \stdClass;
         $q->id = 1;
-        $q->options = new stdClass();
+        $q->options = new \stdClass();
         $q->options->unitpenalty = 0;
         $q->options->answers[13] = (object) array(
             'id' => 13,
@@ -126,8 +123,8 @@ class qtype_numerical_test extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $questiondata = test_question_maker::get_question_data('numerical');
-        $formdata = test_question_maker::get_question_form_data('numerical');
+        $questiondata = \test_question_maker::get_question_data('numerical');
+        $formdata = \test_question_maker::get_question_form_data('numerical');
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category(array());
@@ -135,7 +132,7 @@ class qtype_numerical_test extends advanced_testcase {
         $formdata->category = "{$cat->id},{$cat->contextid}";
         qtype_numerical_edit_form::mock_submit((array)$formdata);
 
-        $form = qtype_numerical_test_helper::get_question_editing_form($cat, $questiondata);
+        $form = \qtype_numerical_test_helper::get_question_editing_form($cat, $questiondata);
 
         $this->assertTrue($form->is_validated());
 

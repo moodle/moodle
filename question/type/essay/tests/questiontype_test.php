@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the essay question type class.
- *
- * @package    qtype
- * @subpackage essay
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_essay;
 
+use qtype_essay;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,10 +27,11 @@ require_once($CFG->dirroot . '/question/type/essay/questiontype.php');
 /**
  * Unit tests for the essay question type class.
  *
+ * @package    qtype_essay
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_essay_test extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     protected $qtype;
 
     protected function setUp(): void {
@@ -48,7 +43,7 @@ class qtype_essay_test extends advanced_testcase {
     }
 
     protected function get_test_question_data() {
-        $q = new stdClass();
+        $q = new \stdClass();
         $q->id = 1;
 
         return $q;

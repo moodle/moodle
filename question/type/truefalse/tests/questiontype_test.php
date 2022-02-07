@@ -14,15 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the true-false question definition class.
- *
- * @package    qtype
- * @subpackage truefalse
- * @copyright  2007 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_truefalse;
 
+use qtype_truefalse;
+use qtype_truefalse_edit_form;
+use question_bank;
+use question_possible_response;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,10 +32,11 @@ require_once($CFG->dirroot . '/question/type/truefalse/edit_truefalse_form.php')
 /**
  * Unit tests for the true-false question definition class.
  *
+ * @package    qtype_truefalse
  * @copyright  2007 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_truefalse_test extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     protected $qtype;
 
     protected function setUp(): void {
@@ -64,15 +62,15 @@ class qtype_truefalse_test extends advanced_testcase {
     public function test_load_question() {
         $this->resetAfterTest();
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         /** @var core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $category = $generator->create_question_category(['contextid' => $syscontext->id]);
 
-        $fromform = test_question_maker::get_question_form_data('truefalse');
+        $fromform = \test_question_maker::get_question_form_data('truefalse');
         $fromform->category = $category->id . ',' . $syscontext->id;
 
-        $question = new stdClass();
+        $question = new \stdClass();
         $question->category = $category->id;
         $question->qtype = 'truefalse';
         $question->createdby = 0;
@@ -120,9 +118,9 @@ class qtype_truefalse_test extends advanced_testcase {
     }
 
     public function test_get_possible_responses() {
-        $q = new stdClass();
+        $q = new \stdClass();
         $q->id = 1;
-        $q->options = new stdClass();
+        $q->options = new \stdClass();
         $q->options->trueanswer = 1;
         $q->options->falseanswer = 2;
         $q->options->answers[1] = (object) array('fraction' => 1);
@@ -140,8 +138,8 @@ class qtype_truefalse_test extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $questiondata = test_question_maker::get_question_data('truefalse');
-        $formdata = test_question_maker::get_question_form_data('truefalse');
+        $questiondata = \test_question_maker::get_question_data('truefalse');
+        $formdata = \test_question_maker::get_question_form_data('truefalse');
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category(array());
@@ -149,7 +147,7 @@ class qtype_truefalse_test extends advanced_testcase {
         $formdata->category = "{$cat->id},{$cat->contextid}";
         qtype_truefalse_edit_form::mock_submit((array)$formdata);
 
-        $form = qtype_truefalse_test_helper::get_question_editing_form($cat, $questiondata);
+        $form = \qtype_truefalse_test_helper::get_question_editing_form($cat, $questiondata);
 
         $this->assertTrue($form->is_validated());
 

@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the drag-and-drop words into sentences edit form.
- *
- * @package   qtype_ddwtos
- * @copyright 2018 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_ddwtos\form;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -32,10 +26,11 @@ require_once($CFG->dirroot . '/question/type/ddwtos/edit_ddwtos_form.php');
 /**
  * Unit tests for the drag-and-drop words into sentences edit form.
  *
+ * @package    qtype_ddwtos
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos_edit_form_test extends advanced_testcase {
+class edit_form_test extends \advanced_testcase {
     /**
      * Helper method.
      *
@@ -49,23 +44,23 @@ class qtype_ddwtos_edit_form_test extends advanced_testcase {
         $this->setAdminUser();
         $this->resetAfterTest();
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $category = question_make_default_categories(array($syscontext));
-        $fakequestion = new stdClass();
+        $fakequestion = new \stdClass();
         $fakequestion->qtype = 'ddwtos'; // Does not actually matter if this is wrong.
         $fakequestion->contextid = $syscontext->id;
         $fakequestion->createdby = 2;
         $fakequestion->category = $category->id;
         $fakequestion->questiontext = 'Test [[1]] question [[2]]';
-        $fakequestion->options = new stdClass();
+        $fakequestion->options = new \stdClass();
         $fakequestion->options->answers = array();
-        $fakequestion->formoptions = new stdClass();
+        $fakequestion->formoptions = new \stdClass();
         $fakequestion->formoptions->movecontext = null;
         $fakequestion->formoptions->repeatelements = true;
         $fakequestion->inputs = null;
 
-        $form = new $classname(new moodle_url('/'), $fakequestion, $category,
-                new core_question\local\bank\question_edit_contexts($syscontext));
+        $form = new $classname(new \moodle_url('/'), $fakequestion, $category,
+                new \core_question\local\bank\question_edit_contexts($syscontext));
 
         return [$form, $category];
     }
@@ -76,7 +71,7 @@ class qtype_ddwtos_edit_form_test extends advanced_testcase {
     public function test_number_of_choice_groups() {
         list($form) = $this->get_form('qtype_ddwtos_edit_form');
         // Use reflection to get the protected property we need.
-        $property = new ReflectionProperty('qtype_ddwtos_edit_form', '_form');
+        $property = new \ReflectionProperty('qtype_ddwtos_edit_form', '_form');
         $property->setAccessible(true);
         $mform = $property->getValue($form);
         $choices = $mform->getElement('choices[0]');

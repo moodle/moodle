@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the question type base class.
- *
- * @package    moodlecore
- * @subpackage questiontypes
- * @copyright  2008 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
 
+use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,12 +27,13 @@ require_once($CFG->dirroot . '/question/type/questiontypebase.php');
 /**
  * Tests for some of ../questionbase.php
  *
+ * @package    core_question
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  * @covers \question_type
  */
-class question_type_testcase extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     public function test_save_question_name() {
         $this->resetAfterTest();
 

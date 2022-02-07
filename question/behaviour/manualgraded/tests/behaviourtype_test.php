@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests for the manually graded behaviour type class.
- *
- * @package   qbehaviour_manualgraded
- * @category  test
- * @copyright 2015 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qbehaviour_manualgraded;
 
+use question_engine;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,10 +28,12 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 /**
  * Unit tests for the manually graded behaviour type class.
  *
+ * @package    qbehaviour_manualgraded
+ * @category   test
  * @copyright  2015 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_manualgraded_type_test extends basic_testcase {
+class behaviourtype_test extends \basic_testcase {
 
     /** @var qbehaviour_manualgraded_type */
     protected $behaviourtype;
