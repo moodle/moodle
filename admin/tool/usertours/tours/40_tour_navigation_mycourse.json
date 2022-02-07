@@ -4,7 +4,7 @@
   "pathmatch": "\/my\/courses.php",
   "enabled": "1",
   "sortorder": "1",
-  "endtourlabel": "I understand",
+  "endtourlabel": "tour_navigation_mycourses_endtourlabel,tool_usertours",
   "configdata": "{\"placement\":\"bottom\",\"orphan\":\"0\",\"backdrop\":\"1\",\"reflex\":\"0\",\"filtervalues\":{\"accessdate\":{\"filter_accessdate\":\"tool_usertours_accountcreation\",\"filter_accessdate_range\":0,\"filter_accessdate_enabled\":\"0\"},\"category\":[],\"course\":[],\"courseformat\":[],\"role\":[],\"theme\":[\"boost\"],\"cssselector\":[]},\"majorupdatetime\":1641972468,\"shipped_tour\":true,\"shipped_filename\":\"40_tour_navigation_mycourse.json\",\"shipped_version\":1}",
   "displaystepnumbers": true,
   "version": "2021101301",

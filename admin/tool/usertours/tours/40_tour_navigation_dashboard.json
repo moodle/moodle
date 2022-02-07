@@ -1,7 +1,7 @@
 {
   "name": "tour_navigation_dashboard_tour_name,tool_usertours",
   "description": "tour_navigation_dashboard_tour_des,tool_usertours",
-  "pathmatch": "FRONTPAGE",
+  "pathmatch": "FRONTPAGE_MY",
   "enabled": "1",
   "sortorder": "0",
   "endtourlabel": "",

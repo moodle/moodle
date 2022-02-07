@@ -286,6 +286,7 @@ $string['tour_navigation_dashboard_title'] = 'Expand to explore!';
 $string['tour_navigation_dashboard_tour_des'] = 'Where blocks can be found on the Dashboard';
 $string['tour_navigation_dashboard_tour_name'] = 'Block drawer';
 $string['tour_navigation_mycourses_content'] = '@@PIXICON::tour/tour_mycourses::tool_usertours@@<br>Add, copy, delete and hide courses from this menu.';
+$string['tour_navigation_mycourses_endtourlabel'] = 'I understand';
 $string['tour_navigation_mycourses_title'] = 'Courses and categories';
 $string['tour_navigation_mycourses_tour_des'] = 'Course management options on the My courses page';
 $string['tour_navigation_mycourses_tour_name'] = 'Course management';
