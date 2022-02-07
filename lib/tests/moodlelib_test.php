@@ -28,8 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 
 class core_moodlelib_testcase extends advanced_testcase {
 
-    public static $includecoverage = array('lib/moodlelib.php');
-
     /**
      * Define a local decimal separator.
      *

@@ -36,13 +36,11 @@ require_once($CFG->dirroot . '/question/type/shortanswer/edit_shortanswer_form.p
  *
  * @copyright  2007 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \question_type
+ * @covers \qtype_shortanswer
  */
 class qtype_shortanswer_test extends advanced_testcase {
-    public static $includecoverage = array(
-        'question/type/questiontypebase.php',
-        'question/type/shortanswer/questiontype.php',
-    );
-
     protected $qtype;
 
     protected function setUp(): void {

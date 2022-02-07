@@ -35,10 +35,10 @@ require_once($CFG->dirroot . '/question/type/questiontypebase.php');
  *
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \question_type
  */
 class question_type_testcase extends advanced_testcase {
-    public static $includecoverage = array('question/type/questiontypebase.php');
-
     public function test_save_question_name() {
         $this->resetAfterTest();
 

@@ -37,15 +37,16 @@ require_once($CFG->dirroot . '/question/type/calculatedsimple/edit_calculatedsim
  *
  * @copyright  2007 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \question_type
+ * @covers \qtype_calculatedsimple
+ * @covers \question_wizard_form
+ * @covers \question_edit_form
+ * @covers \qtype_calculated_edit_form
+ * @covers \qtype_calculatedsimple_edit_form
+ *
  */
 class qtype_calculatedsimple_test extends advanced_testcase {
-    public static $includecoverage = array(
-        'question/type/questiontypebase.php',
-        'question/type/calculatedsimple/questiontype.php',
-        'question/type/edit_question_form.php',
-        'question/type/calculatedsimple/edit_calculatedsimple_form.php'
-    );
-
     protected $qtype;
 
     protected function setUp(): void {
