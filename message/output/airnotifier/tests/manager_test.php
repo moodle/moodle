@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace message_airnotifier;
+
+use message_airnotifier_manager;
+
 /**
  * Unit tests for message_airnotifier_manager.
  *
@@ -22,7 +26,7 @@
  * @copyright   2020 Juan Leyva <juan@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class message_airnotifier_manager_testcase extends advanced_testcase {
+class manager_test extends \advanced_testcase {
 
     /** Test check_configuration by default **/
     public function test_check_configuration_default() {
@@ -33,16 +37,16 @@ class message_airnotifier_manager_testcase extends advanced_testcase {
 
         // Mock server responses.
         $CFG->airnotifierurl = 'localhost';
-        curl::mock_response(json_encode(['error' => 'Invalid access key']));  // Mock request to check access key.
+        \curl::mock_response(json_encode(['error' => 'Invalid access key']));  // Mock request to check access key.
         $checks = $manager->check_configuration();
 
-        $this->assertEquals(core\check\result::OK, $checks[0]->get_status());   // Mobile service enabled.
-        $this->assertEquals(core\check\result::OK, $checks[1]->get_status());   // Mobile notifications enabled.
-        $this->assertEquals(core\check\result::ERROR, $checks[2]->get_status());    // Airnotifier NOT configured, missing key.
-        $this->assertEquals(core\check\result::OK, $checks[3]->get_status());   // Airnotifier URL available.
-        $this->assertEquals(core\check\result::ERROR, $checks[4]->get_status());    // Missing access key.
-        $this->assertEquals(core\check\result::WARNING, $checks[5]->get_status());  // Only a few of default mobile notifications.
-        $this->assertEquals(core\check\result::ERROR, $checks[6]->get_status());  // No registered devices yet.
+        $this->assertEquals(\core\check\result::OK, $checks[0]->get_status());   // Mobile service enabled.
+        $this->assertEquals(\core\check\result::OK, $checks[1]->get_status());   // Mobile notifications enabled.
+        $this->assertEquals(\core\check\result::ERROR, $checks[2]->get_status());    // Airnotifier NOT configured, missing key.
+        $this->assertEquals(\core\check\result::OK, $checks[3]->get_status());   // Airnotifier URL available.
+        $this->assertEquals(\core\check\result::ERROR, $checks[4]->get_status());    // Missing access key.
+        $this->assertEquals(\core\check\result::WARNING, $checks[5]->get_status());  // Only a few of default mobile notifications.
+        $this->assertEquals(\core\check\result::ERROR, $checks[6]->get_status());  // No registered devices yet.
     }
 
     /** Test check_configuration with token **/
@@ -54,18 +58,18 @@ class message_airnotifier_manager_testcase extends advanced_testcase {
 
         // Mock server responses.
         $CFG->airnotifierurl = 'localhost';
-        curl::mock_response(json_encode(['status' => 'ok']));   // Mock first request to check URL.
-        curl::mock_response(json_encode(['error' => 'Invalid access key']));  // Mock second request to check acces key.
+        \curl::mock_response(json_encode(['status' => 'ok']));   // Mock first request to check URL.
+        \curl::mock_response(json_encode(['error' => 'Invalid access key']));  // Mock second request to check acces key.
         $CFG->airnotifieraccesskey = 'test';    // For enabling Airnotifier.
         $checks = $manager->check_configuration();
 
-        $this->assertEquals(core\check\result::OK, $checks[0]->get_status());   // Mobile service enabled.
-        $this->assertEquals(core\check\result::OK, $checks[1]->get_status());   // Mobile notifications enabled.
-        $this->assertEquals(core\check\result::OK, $checks[2]->get_status());    // Airnotifier configured.
-        $this->assertEquals(core\check\result::OK, $checks[3]->get_status());   // Airnotifier URL available.
+        $this->assertEquals(\core\check\result::OK, $checks[0]->get_status());   // Mobile service enabled.
+        $this->assertEquals(\core\check\result::OK, $checks[1]->get_status());   // Mobile notifications enabled.
+        $this->assertEquals(\core\check\result::OK, $checks[2]->get_status());    // Airnotifier configured.
+        $this->assertEquals(\core\check\result::OK, $checks[3]->get_status());   // Airnotifier URL available.
         // The original function fourth check (access key valid in the remote Airnotifier server) is not mockable.
-        $this->assertEquals(core\check\result::WARNING, $checks[4]->get_status());  // Only a few of default mobile notifications.
-        $this->assertEquals(core\check\result::ERROR, $checks[5]->get_status());  // No registered devices yet.
+        $this->assertEquals(\core\check\result::WARNING, $checks[4]->get_status());  // Only a few of default mobile notifications.
+        $this->assertEquals(\core\check\result::ERROR, $checks[5]->get_status());  // No registered devices yet.
     }
 
     /** Test check_configuration bad settings **/
@@ -77,20 +81,20 @@ class message_airnotifier_manager_testcase extends advanced_testcase {
 
         // Mock server responses.
         $CFG->airnotifierurl = 'localhost';
-        curl::mock_response(json_encode(['status' => 'ok']));   // Mock first request to check URL.
-        curl::mock_response(json_encode(['error' => 'Invalid access key']));  // Mock second request to check acces key.
+        \curl::mock_response(json_encode(['status' => 'ok']));   // Mock first request to check URL.
+        \curl::mock_response(json_encode(['error' => 'Invalid access key']));  // Mock second request to check acces key.
         $CFG->airnotifieraccesskey = 'test';    // For enabling Airnotifier.
         $CFG->airnotifierappname .= ' ';
         $checks = $manager->check_configuration();
 
-        $this->assertEquals(core\check\result::OK, $checks[0]->get_status());   // Mobile service enabled.
-        $this->assertEquals(core\check\result::OK, $checks[1]->get_status());   // Mobile notifications enabled.
-        $this->assertEquals(core\check\result::OK, $checks[2]->get_status());    // Airnotifier configured.
-        $this->assertEquals(core\check\result::ERROR, $checks[3]->get_status());   // Airnotifier URL available.
-        $this->assertEquals(core\check\result::OK, $checks[4]->get_status());   // Invalid setting (empty space).
+        $this->assertEquals(\core\check\result::OK, $checks[0]->get_status());   // Mobile service enabled.
+        $this->assertEquals(\core\check\result::OK, $checks[1]->get_status());   // Mobile notifications enabled.
+        $this->assertEquals(\core\check\result::OK, $checks[2]->get_status());    // Airnotifier configured.
+        $this->assertEquals(\core\check\result::ERROR, $checks[3]->get_status());   // Airnotifier URL available.
+        $this->assertEquals(\core\check\result::OK, $checks[4]->get_status());   // Invalid setting (empty space).
         // The original function fifth check (access key valid in the remote Airnotifier server) is not mockable.
-        $this->assertEquals(core\check\result::WARNING, $checks[5]->get_status());  // Only a few of default mobile notifications.
-        $this->assertEquals(core\check\result::ERROR, $checks[6]->get_status());  // No registered devices yet.
+        $this->assertEquals(\core\check\result::WARNING, $checks[5]->get_status());  // Only a few of default mobile notifications.
+        $this->assertEquals(\core\check\result::ERROR, $checks[6]->get_status());  // No registered devices yet.
     }
 
     /** Test has_enabled_devices **/
@@ -105,7 +109,7 @@ class message_airnotifier_manager_testcase extends advanced_testcase {
         $this->assertFalse($manager->has_enabled_devices($CFG->airnotifiermobileappname));
 
         // Add devices.
-        curl::mock_response(json_encode(['status' => 'ok']));
+        \curl::mock_response(json_encode(['status' => 'ok']));
         $DB->insert_record('user_devices',
             ['userid' => $USER->id, 'appid' => $CFG->airnotifiermobileappname, 'platform' => 'ios',
             'timecreated' => time(), 'timemodified' => time()]);

@@ -14,18 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for class customfield_checkbox
- *
- * @package    customfield_checkbox
- * @copyright  2019 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace customfield_checkbox;
 
-defined('MOODLE_INTERNAL') || die();
-
-use customfield_checkbox\field_controller;
-use customfield_checkbox\data_controller;
+use core_customfield_generator;
+use core_customfield_test_instance_form;
 
 /**
  * Functional test for customfield_checkbox
@@ -34,9 +26,9 @@ use customfield_checkbox\data_controller;
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class customfield_checkbox_plugin_testcase extends advanced_testcase {
+class plugin_test extends \advanced_testcase {
 
-    /** @var stdClass[]  */
+    /** @var \stdClass[]  */
     private $courses = [];
     /** @var \core_customfield\category_controller */
     private $cfcat;
@@ -161,12 +153,12 @@ class customfield_checkbox_plugin_testcase extends advanced_testcase {
         $this->assertEquals('Yes', $this->cfdata[1]->export_value());
 
         // Field without data.
-        $d = core_customfield\data_controller::create(0, null, $this->cfields[2]);
+        $d = \core_customfield\data_controller::create(0, null, $this->cfields[2]);
         $this->assertEquals(0, $d->get_value());
         $this->assertEquals('No', $d->export_value());
 
         // Field without data that is checked by default.
-        $d = core_customfield\data_controller::create(0, null, $this->cfields[3]);
+        $d = \core_customfield\data_controller::create(0, null, $this->cfields[3]);
         $this->assertEquals(1, $d->get_value());
         $this->assertEquals('Yes', $d->export_value());
     }

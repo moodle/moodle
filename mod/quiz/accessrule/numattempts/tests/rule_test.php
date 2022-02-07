@@ -14,16 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the quizaccess_numattempts plugin.
- *
- * @package    quizaccess
- * @subpackage numattempts
- * @category   phpunit
- * @copyright  2008 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace quizaccess_numattempts;
 
+use quiz;
+use quizaccess_numattempts;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,18 +28,20 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/numattempts/rule.php');
 /**
  * Unit tests for the quizaccess_numattempts plugin.
  *
+ * @package    quizaccess_numattempts
+ * @category   test
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_numattempts_testcase extends basic_testcase {
+class rule_test extends \basic_testcase {
     public function test_num_attempts_access_rule() {
-        $quiz = new stdClass();
+        $quiz = new \stdClass();
         $quiz->attempts = 3;
-        $cm = new stdClass();
+        $cm = new \stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
         $rule = new quizaccess_numattempts($quizobj, 0);
-        $attempt = new stdClass();
+        $attempt = new \stdClass();
 
         $this->assertEquals($rule->description(),
             get_string('attemptsallowedn', 'quizaccess_numattempts', 3));

@@ -14,23 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Moodle Mobile admin tool api tests.
- *
- * @package    tool_mobile
- * @category   external
- * @copyright  2016 Juan Leyva
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.1
- */
+namespace tool_mobile;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-
-use tool_mobile\api;
 
 /**
  * Moodle Mobile admin tool api tests.
@@ -40,7 +30,7 @@ use tool_mobile\api;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since       Moodle 3.1
  */
-class tool_mobile_api_testcase extends externallib_advanced_testcase {
+class api_test extends \externallib_advanced_testcase {
 
     /**
      * Test get_autologin_key.
