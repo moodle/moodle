@@ -8,12 +8,14 @@ Feature: Display the book description in the book and optionally in the course
     Given the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | student1 | Student   | 1        | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1        | topics |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
     And the following "activities" exist:
       | activity | name      | intro                | course | idnumber | section |
       | book     | Test book | A book about dreams! | C1     | book1    | 1       |
@@ -52,3 +54,13 @@ Feature: Display the book description in the book and optionally in the course
     And I press "Save and return to course"
     When I am on "Course 1" course homepage
     Then I should not see "A book about dreams!"
+
+  @javascript
+  Scenario: Description is displayed in the book for students when there are no chapters added yet
+    Given I am on "Course 1" course homepage with editing mode on
+    And I am on the "Test book" "book activity" page
+    And I click on "Delete chapter \"1. Dummy first chapter\"" "link" in the "Table of contents" "block"
+    And I click on "Yes" "button" in the "Confirmation" "dialogue"
+    And I log out
+    And I am on the "Test book" "book activity" page logged in as student1
+    Then I should see "A book about dreams!"
