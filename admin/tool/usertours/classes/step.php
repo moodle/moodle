@@ -813,20 +813,22 @@ class step {
      * @return string Processed tour content
      */
     public static function get_step_image_from_input(string $content): string {
-        global $OUTPUT;
-
-        if (preg_match('/(?<=@@PIXICON::).*?(?=@@)/', $content, $matches)) {
-            $bits = explode('::', $matches[0]);
-            $identifier = $bits[0];
-            $component = $bits[1];
-            if ($component == 'moodle') {
-                $component = 'core';
-            }
-            $image = \html_writer::img($OUTPUT->image_url($identifier, $component)->out(false),
-                '', ['class' => 'img-fluid']);
-            $contenttoreplace = '@@PIXICON::' . $matches[0] . '@@';
-            $content = str_replace($contenttoreplace, $image, $content);
+        if (strpos($content, '@@PIXICON') === false) {
+            return $content;
         }
+
+        $content = preg_replace_callback('%@@PIXICON::(?P<identifier>([^::]*))::(?P<component>([^@@]*))@@%',
+            function(array $matches) {
+                global $OUTPUT;
+                $component = $matches['component'];
+                if ($component == 'moodle') {
+                    $component = 'core';
+                }
+                return \html_writer::img($OUTPUT->image_url($matches['identifier'], $component)->out(false), '',
+                    ['class' => 'img-fluid']);
+            },
+            $content
+        );
 
         return $content;
     }
