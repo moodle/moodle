@@ -16,7 +16,7 @@ to the element that will trigger the confirmation modal.
 
 ## Source files
 
-* `lib/amd/src/confirm.js`
+* `lib/amd/src/confirm.js` ({{< jsdoc module="core/confirm" >}})
 * `lib/templates/modal.mustache`
 
 ## Usage
