@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the drag-and-drop words into sentences question definition class.
- *
- * @package   qtype_ddwtos
- * @copyright 2012 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_ddwtos;
 
+use question_answer;
+use question_bank;
+use question_hint_with_parts;
+use question_possible_response;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -33,10 +31,11 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
 /**
  * Unit tests for the drag-and-drop words into sentences question definition class.
  *
+ * @package   qtype_ddwtos
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos_test extends question_testcase {
+class questiontype_test extends \question_testcase {
     /** @var qtype_ddwtos instance of the question type class to test. */
     protected $qtype;
 
@@ -62,7 +61,7 @@ class qtype_ddwtos_test extends question_testcase {
     protected function get_test_question_data() {
         global $USER;
 
-        $dd = new stdClass();
+        $dd = new \stdClass();
         $dd->id = 0;
         $dd->category = 0;
         $dd->contextid = 0;
@@ -86,10 +85,10 @@ class qtype_ddwtos_test extends question_testcase {
         $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
         $dd->qtype = 'ddwtos';
 
-        $dd->options = new stdClass();
+        $dd->options = new \stdClass();
         $dd->options->shuffleanswers = true;
 
-        test_question_maker::set_standard_combined_feedback_fields($dd->options);
+        \test_question_maker::set_standard_combined_feedback_fields($dd->options);
 
         $dd->options->answers = array(
             (object) array('answer' => 'quick', 'feedback' =>
@@ -120,15 +119,15 @@ class qtype_ddwtos_test extends question_testcase {
     public function test_save_question() {
         $this->resetAfterTest();
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         /** @var core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $category = $generator->create_question_category(['contextid' => $syscontext->id]);
 
-        $fromform = test_question_maker::get_question_form_data('ddwtos', 'missingchoiceno');
+        $fromform = \test_question_maker::get_question_form_data('ddwtos', 'missingchoiceno');
         $fromform->category = $category->id . ',' . $syscontext->id;
 
-        $question = new stdClass();
+        $question = new \stdClass();
         $question->category = $category->id;
         $question->qtype = 'ddwtos';
         $question->createdby = 0;
@@ -145,7 +144,7 @@ class qtype_ddwtos_test extends question_testcase {
     public function test_initialise_question_instance() {
         $qdata = $this->get_test_question_data();
 
-        $expected = test_question_maker::make_question('ddwtos');
+        $expected = \test_question_maker::make_question('ddwtos');
         $expected->stamp = $qdata->stamp;
         $expected->version = $qdata->version;
         $expected->idnumber = null;
@@ -229,11 +228,11 @@ class qtype_ddwtos_test extends question_testcase {
   </question>';
         $xmldata = xmlize($xml);
 
-        $importer = new qformat_xml();
+        $importer = new \qformat_xml();
         $q = $importer->try_importing_using_qtypes(
                 $xmldata['question'], null, null, 'ddwtos');
 
-        $expectedq = new stdClass();
+        $expectedq = new \stdClass();
         $expectedq->qtype = 'ddwtos';
         $expectedq->name = 'A drag-and-drop question';
         $expectedq->questiontext = 'Put these in order: [[1]], [[2]], [[3]].';
@@ -266,12 +265,12 @@ class qtype_ddwtos_test extends question_testcase {
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
 
-        $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
+        $this->assert(new \question_check_specified_fields_expectation($expectedq), $q);
         $this->assertEquals($expectedq->hint, $q->hint);
     }
 
     public function test_xml_export() {
-        $qdata = new stdClass();
+        $qdata = new \stdClass();
         $qdata->id = 123;
         $qdata->contextid = \context_system::instance()->id;
         $qdata->idnumber = null;
@@ -286,7 +285,7 @@ class qtype_ddwtos_test extends question_testcase {
         $qdata->penalty = 0.3333333;
         $qdata->hidden = 0;
 
-        $qdata->options = new stdClass();
+        $qdata->options = new \stdClass();
         $qdata->options->shuffleanswers = 1;
         $qdata->options->correctfeedback = '<p>Your answer is correct.</p>';
         $qdata->options->correctfeedbackformat = FORMAT_MOODLE;
@@ -315,7 +314,7 @@ class qtype_ddwtos_test extends question_testcase {
                     FORMAT_MOODLE, true, true),
         );
 
-        $exporter = new qformat_xml();
+        $exporter = new \qformat_xml();
         $xml = $exporter->writequestion($qdata);
 
         $expectedxml = '<!-- question: 123  -->

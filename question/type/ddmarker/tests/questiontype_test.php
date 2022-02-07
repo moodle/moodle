@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the drag-and-drop markers question definition class.
- *
- * @package    qtype_ddmarker
- * @copyright  2012 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_ddmarker;
 
+use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -34,10 +28,11 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
 /**
  * Unit tests for the drag-and-drop markers question definition class.
  *
+ * @package    qtype_ddmarker
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddmarker_test extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     /** @var qtype_ddmarker instance of the question type class to test. */
     protected $qtype;
 

@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests of the upgrade to the new Moodle question engine for attempts at
- * randomsamatch questions.
- *
- * @package    qtype_randomsamatch
- * @copyright  2013 Jean-Michel Vedrine
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+namespace qtype_randomsamatch;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,10 +25,11 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
 /**
  * Testing the upgrade of randomsamatch question attempts.
  *
+ * @package    qtype_randomsamatch
  * @copyright  2013 Jean-Michel Vedrine
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_randomsamatch_attempt_upgrader_test extends question_attempt_upgrader_test_base {
+class upgradelibnewqe_test extends \question_attempt_upgrader_test_base {
     public function test_randomsamatch_deferredfeedback_qsession1() {
         $quiz = (object) array(
             'id' => '1',

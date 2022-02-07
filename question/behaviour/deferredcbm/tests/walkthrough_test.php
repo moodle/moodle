@@ -14,16 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a question through the deferred feedback
- * with certainty base marking behaviour.
- *
- * @package    qbehaviour
- * @subpackage deferredcbm
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qbehaviour_deferredcbm;
 
+use question_cbm;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,14 +29,15 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 /**
  * Unit tests for the deferred feedback with certainty base marking behaviour.
  *
+ * @package    qbehaviour_deferredcbm
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_deferred_cbm_truefalse_high_certainty() {
 
         // Create a true-false question with correct answer true.
-        $tf = test_question_maker::make_question('truefalse', 'true');
+        $tf = \test_question_maker::make_question('truefalse', 'true');
         $this->start_attempt_at_question($tf, 'deferredcbm', 2);
 
         // Verify.
@@ -102,7 +97,7 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         // Verify.
         $this->check_current_state(question_state::$mangrright);
         $this->check_current_mark(5);
-        $this->check_current_output(new question_pattern_expectation('/' .
+        $this->check_current_output(new \question_pattern_expectation('/' .
                 preg_quote('Not good enough!', '/') . '/'));
 
         // Now change the correct answer to the question, and regrade.
@@ -119,7 +114,7 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
     public function test_deferred_cbm_truefalse_low_certainty() {
 
         // Create a true-false question with correct answer true.
-        $tf = test_question_maker::make_question('truefalse', 'true');
+        $tf = \test_question_maker::make_question('truefalse', 'true');
         $this->start_attempt_at_question($tf, 'deferredcbm', 2);
 
         // Verify.
@@ -158,7 +153,7 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
     public function test_deferred_cbm_truefalse_default_certainty() {
 
         // Create a true-false question with correct answer true.
-        $tf = test_question_maker::make_question('truefalse', 'true');
+        $tf = \test_question_maker::make_question('truefalse', 'true');
         $this->start_attempt_at_question($tf, 'deferredcbm', 2);
 
         // Verify.
@@ -180,7 +175,7 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->check_current_mark(2);
         $this->check_current_output($this->get_contains_correct_expectation(),
                 $this->get_contains_cbm_radio_expectation(1, false, false),
-                new question_pattern_expectation('/' . preg_quote(
+                new \question_pattern_expectation('/' . preg_quote(
                         get_string('assumingcertainty', 'qbehaviour_deferredcbm',
                         question_cbm::get_string(
                             $qa->get_last_behaviour_var('_assumedcertainty'))), '/') . '/'));
@@ -191,7 +186,7 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
     public function test_deferredcbm_resume_multichoice_single() {
 
         // Create a multiple-choice question.
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
 
         // Attempt it getting it wrong.
         $this->start_attempt_at_question($mc, 'deferredcbm', 1);
@@ -258,7 +253,7 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
     public function test_deferred_cbm_truefalse_no_certainty_feedback_when_not_answered() {
 
         // Create a true-false question with correct answer true.
-        $tf = test_question_maker::make_question('truefalse', 'true');
+        $tf = \test_question_maker::make_question('truefalse', 'true');
         $this->start_attempt_at_question($tf, 'deferredcbm', 2);
 
         // Verify.
@@ -277,6 +272,6 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->check_current_state(question_state::$gaveup);
         $this->check_current_mark(null);
         $this->check_current_output(
-                new question_no_pattern_expectation('/class=\"im-feedback/'));
+                new \question_no_pattern_expectation('/class=\"im-feedback/'));
     }
 }

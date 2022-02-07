@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests of the upgrade to the new Moodle question engine for attempts at
- * simple calculated questions.
- *
- * @package    qtype
- * @subpackage calculatedsimple
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+namespace qtype_calculatedsimple;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,10 +25,11 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
 /**
  * Testing the upgrade of simple calculated question attempts.
  *
+ * @package    qtype_calculatedsimple
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculatedsimple_attempt_upgrader_test extends question_attempt_upgrader_test_base {
+class upgradelibnewqe_test extends \question_attempt_upgrader_test_base {
     public function test_calculatedsimple_adaptive_qsession95() {
         $quiz = (object) array(
             'id' => '4',

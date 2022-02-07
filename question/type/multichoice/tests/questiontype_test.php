@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the mulitple choice question definition class.
- *
- * @package    qtype_multichoice
- * @copyright  2013 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_multichoice;
 
+use qtype_multichoice;
+use qtype_multichoice_edit_form;
+use question_possible_response;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,10 +31,11 @@ require_once($CFG->dirroot . '/question/type/multichoice/edit_multichoice_form.p
 /**
  * Unit tests for the multiple choice question definition class.
  *
+ * @package    qtype_multichoice
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_multichoice_test extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     protected $qtype;
 
     protected function setUp(): void {
@@ -53,9 +51,9 @@ class qtype_multichoice_test extends advanced_testcase {
     }
 
     protected function get_test_question_data() {
-        $q = new stdClass();
+        $q = new \stdClass();
         $q->id = 1;
-        $q->options = new stdClass();
+        $q->options = new \stdClass();
         $q->options->single = true;
         $q->options->answers[1] = (object) array('answer' => 'frog',
                 'answerformat' => FORMAT_HTML, 'fraction' => 1);
@@ -113,8 +111,8 @@ class qtype_multichoice_test extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $questiondata = test_question_maker::get_question_data('multichoice', $which);
-        $formdata = test_question_maker::get_question_form_data('multichoice', $which);
+        $questiondata = \test_question_maker::get_question_data('multichoice', $which);
+        $formdata = \test_question_maker::get_question_form_data('multichoice', $which);
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category(array());
@@ -122,7 +120,7 @@ class qtype_multichoice_test extends advanced_testcase {
         $formdata->category = "{$cat->id},{$cat->contextid}";
         qtype_multichoice_edit_form::mock_submit((array)$formdata);
 
-        $form = qtype_multichoice_test_helper::get_question_editing_form($cat, $questiondata);
+        $form = \qtype_multichoice_test_helper::get_question_editing_form($cat, $questiondata);
 
         $this->assertTrue($form->is_validated());
 
@@ -174,8 +172,8 @@ class qtype_multichoice_test extends advanced_testcase {
         $this->setAdminUser();
 
         // Create a complete, in DB question to use.
-        $questiondata = test_question_maker::get_question_data('multichoice', 'two_of_four');
-        $formdata = test_question_maker::get_question_form_data('multichoice', 'two_of_four');
+        $questiondata = \test_question_maker::get_question_data('multichoice', 'two_of_four');
+        $formdata = \test_question_maker::get_question_form_data('multichoice', 'two_of_four');
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category(array());
@@ -183,7 +181,7 @@ class qtype_multichoice_test extends advanced_testcase {
         $formdata->category = "{$cat->id},{$cat->contextid}";
         qtype_multichoice_edit_form::mock_submit((array)$formdata);
 
-        $form = qtype_multichoice_test_helper::get_question_editing_form($cat, $questiondata);
+        $form = \qtype_multichoice_test_helper::get_question_editing_form($cat, $questiondata);
 
         $this->assertTrue($form->is_validated());
 
@@ -197,7 +195,7 @@ class qtype_multichoice_test extends advanced_testcase {
         // Load it.
         $this->qtype->get_question_options($question);
         $this->assertDebuggingNotCalled();
-        $this->assertInstanceOf(stdClass::class, $question->options);
+        $this->assertInstanceOf(\stdClass::class, $question->options);
 
         $options = $question->options;
         $this->assertEquals($question->id, $options->questionid);
@@ -213,7 +211,7 @@ class qtype_multichoice_test extends advanced_testcase {
         $this->qtype->get_question_options($question);
 
         $this->assertDebuggingCalled('Question ID '.$question->id.' was missing an options record. Using default.');
-        $this->assertInstanceOf(stdClass::class, $question->options);
+        $this->assertInstanceOf(\stdClass::class, $question->options);
         $options = $question->options;
         $this->assertEquals($question->id, $options->questionid);
         $this->assertCount(4, $options->answers);
@@ -231,7 +229,7 @@ class qtype_multichoice_test extends advanced_testcase {
         $this->qtype->get_question_options($question);
 
         $this->assertDebuggingCalled('Question ID '.$question->id.' was missing an options record. Using default.');
-        $this->assertInstanceOf(stdClass::class, $question->options);
+        $this->assertInstanceOf(\stdClass::class, $question->options);
         $options = $question->options;
         $this->assertEquals($question->id, $options->questionid);
         $this->assertCount(0, $options->answers);

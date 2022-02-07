@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for (some of) question/type/calculated/questiontype.php.
- *
- * @package    qtype_calculated
- * @copyright  2012 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_calculated;
 
+use qtype_calculated;
+use qtype_numerical;
+use question_bank;
+use question_possible_response;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,13 +31,14 @@ require_once($CFG->dirroot . '/question/type/calculated/tests/helper.php');
 /**
  * Unit tests for question/type/calculated/questiontype.php.
  *
+ * @package    qtype_calculated
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  * @covers \question_type
  * @covers \qtype_calculated
  */
-class qtype_calculated_test extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     protected $tolerance = 0.00000001;
     protected $qtype;
 
@@ -60,7 +59,7 @@ class qtype_calculated_test extends advanced_testcase {
     }
 
     public function test_get_random_guess_score() {
-        $q = test_question_maker::get_question_data('calculated');
+        $q = \test_question_maker::get_question_data('calculated');
         $q->options->answers[17]->fraction = 0.1;
         $this->assertEquals(0.1, $this->qtype->get_random_guess_score($q));
     }
@@ -68,15 +67,15 @@ class qtype_calculated_test extends advanced_testcase {
     public function test_load_question() {
         $this->resetAfterTest();
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         /** @var core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $category = $generator->create_question_category(['contextid' => $syscontext->id]);
 
-        $fromform = test_question_maker::get_question_form_data('calculated');
+        $fromform = \test_question_maker::get_question_form_data('calculated');
         $fromform->category = $category->id . ',' . $syscontext->id;
 
-        $question = new stdClass();
+        $question = new \stdClass();
         $question->category = $category->id;
         $question->qtype = 'calculated';
         $question->createdby = 0;
@@ -144,7 +143,7 @@ class qtype_calculated_test extends advanced_testcase {
     }
 
     protected function get_possible_response($ans, $tolerance, $type) {
-        $a = new stdClass();
+        $a = new \stdClass();
         $a->answer = $ans;
         $a->tolerance = $tolerance;
         $a->tolerancetype = get_string($type, 'qtype_numerical');
@@ -152,7 +151,7 @@ class qtype_calculated_test extends advanced_testcase {
     }
 
     public function test_get_possible_responses() {
-        $q = test_question_maker::get_question_data('calculated');
+        $q = \test_question_maker::get_question_data('calculated');
 
         $this->assertEquals(array(
             $q->id => array(
@@ -167,7 +166,7 @@ class qtype_calculated_test extends advanced_testcase {
     }
 
     public function test_get_possible_responses_no_star() {
-        $q = test_question_maker::get_question_data('calculated');
+        $q = \test_question_maker::get_question_data('calculated');
         unset($q->options->answers[17]);
 
         $this->assertEquals(array(
@@ -189,10 +188,10 @@ class qtype_calculated_test extends advanced_testcase {
         // Enable multilang filter to on content and heading.
         filter_set_global_state('multilang', TEXTFILTER_ON);
         filter_set_applies_to_strings('multilang', 1);
-        $filtermanager = filter_manager::instance();
+        $filtermanager = \filter_manager::instance();
         $filtermanager->reset_caches();
 
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         $longmultilangquestionname = "<span lang=\"en\" class=\"multilang\">Lorem ipsum dolor sit amet, consetetur sadipscing elitr</span><span lang=\"fr\" class=\"multilang\">Lorem ipsum dolor sit amet, consetetur sadipscing elitr</span>";
         $shortmultilangquestionname = "<span lang=\"en\" class=\"multilang\">Lorem ipsum</span><span lang=\"fr\" class=\"multilang\">Lorem ipsum</span>";

@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the drag-and-drop onto image question type.
- *
- * @package   qtype_ddimageortext
- * @copyright 2010 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_ddimageortext;
 
+use question_display_options;
+use question_hint_with_parts;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,17 +30,18 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
 /**
  * Unit tests for the drag-and-drop onto image question type.
  *
+ * @package   qtype_ddimageortext
  * @copyright 2010 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     /**
      * Get an expectation that the output contains an item ready to drag.
      * @param int $dragitemno the item number.
      * @param int $choice which choice this is.
      * @param int $group which drag group it belongs to.
-     * @return question_contains_tag_with_attributes the required expectation.
+     * @return \question_contains_tag_with_attributes the required expectation.
      */
     protected function get_contains_drag_image_home_expectation($dragitemno, $choice, $group) {
         $class = 'group' . $group . ' draghome choice' . $choice;
@@ -51,13 +49,13 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $expectedattrs = array();
         $expectedattrs['class'] = $class;
 
-        return new question_contains_tag_with_attributes('div', $expectedattrs);
+        return new \question_contains_tag_with_attributes('div', $expectedattrs);
     }
 
     public function test_interactive_behaviour() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddimageortext');
+        $dd = \test_question_maker::make_question('ddimageortext');
         $dd->hints = array(
             new question_hint_with_parts(13, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(14, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -194,7 +192,7 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_deferred_feedback() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddimageortext');
+        $dd = \test_question_maker::make_question('ddimageortext');
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'deferredfeedback', 12);
 
@@ -297,7 +295,7 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_deferred_feedback_unanswered() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddimageortext');
+        $dd = \test_question_maker::make_question('ddimageortext');
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'deferredfeedback', 12);
 
@@ -360,7 +358,7 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_deferred_feedback_partial_answer() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddimageortext');
+        $dd = \test_question_maker::make_question('ddimageortext');
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'deferredfeedback', 3);
 
@@ -422,7 +420,7 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_interactive_grading() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddimageortext');
+        $dd = \test_question_maker::make_question('ddimageortext');
         $dd->hints = array(
             new question_hint_with_parts(1, 'This is the first hint.',
                 FORMAT_MOODLE, true, true),
@@ -602,7 +600,7 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_interactive_correct_no_submit() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddimageortext');
+        $dd = \test_question_maker::make_question('ddimageortext');
         $dd->hints = array(
             new question_hint_with_parts(23, 'This is the first hint.',
                 FORMAT_MOODLE, false, false),
@@ -662,7 +660,7 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_interactive_partial_no_submit() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddimageortext');
+        $dd = \test_question_maker::make_question('ddimageortext');
         $dd->hints = array(
             new question_hint_with_parts(23, 'This is the first hint.',
                 FORMAT_MOODLE, false, false),
@@ -724,7 +722,7 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_interactive_no_right_clears() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddimageortext');
+        $dd = \test_question_maker::make_question('ddimageortext');
         $dd->hints = array(
             new question_hint_with_parts(23, 'This is the first hint.', FORMAT_MOODLE, false, true),
             new question_hint_with_parts(24, 'This is the second hint.', FORMAT_MOODLE, true, true),
@@ -801,7 +799,7 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_display_of_right_answer_when_shuffled() {
 
         // Create a drag-and-drop question.
-        $dd = test_question_maker::make_question('ddimageortext');
+        $dd = \test_question_maker::make_question('ddimageortext');
         $this->start_attempt_at_question($dd, 'deferredfeedback', 3);
 
         // Check the initial state.
@@ -858,7 +856,7 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_mixed_lang_rendering() {
 
         // Create a mixe drag-and-drop question.
-        $dd = test_question_maker::make_question('ddimageortext', 'mixedlang');
+        $dd = \test_question_maker::make_question('ddimageortext', 'mixedlang');
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'interactive', 1);
 
@@ -866,8 +864,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output(
-                new question_pattern_expectation('~<div class="group1 draghome choice1"><span lang="fr">la</span></div>~'),
-                new question_pattern_expectation('~<div class="group1 draghome choice2"><span lang="fr">ma</span></div>~')
+                new \question_pattern_expectation('~<div class="group1 draghome choice1"><span lang="fr">la</span></div>~'),
+                new \question_pattern_expectation('~<div class="group1 draghome choice2"><span lang="fr">ma</span></div>~')
         );
     }
 }

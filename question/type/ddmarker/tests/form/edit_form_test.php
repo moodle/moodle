@@ -14,13 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the drag-and-drop markers edit form.
- *
- * @package   qtype_ddmarker
- * @copyright 2019 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_ddmarker\form;
+
+use qtype_ddmarker_edit_form;
+use question_edit_contexts;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -32,10 +29,11 @@ require_once($CFG->dirroot . '/question/type/ddmarker/edit_ddmarker_form.php');
 /**
  * Unit tests for the drag-and-drop markers edit form.
  *
+ * @package    qtype_ddmarker
  * @copyright  2019 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddmarker_edit_form_test extends advanced_testcase {
+class edit_form_test extends \advanced_testcase {
     /**
      * Helper method.
      *
@@ -47,22 +45,22 @@ class qtype_ddmarker_edit_form_test extends advanced_testcase {
         $this->setAdminUser();
         $this->resetAfterTest();
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $category = question_make_default_categories(array($syscontext));
-        $fakequestion = new stdClass();
+        $fakequestion = new \stdClass();
         $fakequestion->qtype = 'ddmarker';
         $fakequestion->contextid = $syscontext->id;
         $fakequestion->createdby = 2;
         $fakequestion->category = $category->id;
         $fakequestion->questiontext = 'Test question';
-        $fakequestion->options = new stdClass();
+        $fakequestion->options = new \stdClass();
         $fakequestion->options->answers = array();
-        $fakequestion->formoptions = new stdClass();
+        $fakequestion->formoptions = new \stdClass();
         $fakequestion->formoptions->movecontext = null;
         $fakequestion->formoptions->repeatelements = true;
         $fakequestion->inputs = null;
 
-        $form = new qtype_ddmarker_edit_form(new moodle_url('/'), $fakequestion, $category,
+        $form = new qtype_ddmarker_edit_form(new \moodle_url('/'), $fakequestion, $category,
                 new question_edit_contexts($syscontext));
 
         return [$form, $category];

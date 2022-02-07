@@ -14,15 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the multianswer question definition class.
- *
- * @package    qtype
- * @subpackage multianswer
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_multianswer;
 
+use qtype_multianswer;
+use qtype_multianswer_edit_form;
+use qtype_multichoice_base;
+use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,10 +33,11 @@ require_once($CFG->dirroot . '/question/type/multianswer/edit_multianswer_form.p
 /**
  * Unit tests for the multianswer question definition class.
  *
+ * @package    qtype_multianswer
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_multianswer_test extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     /** @var qtype_multianswer instance of the question type class to test. */
     protected $qtype;
 
@@ -53,7 +51,7 @@ class qtype_multianswer_test extends advanced_testcase {
 
     protected function get_test_question_data() {
         global $USER;
-        $q = new stdClass();
+        $q = new \stdClass();
         $q->id = 0;
         $q->name = 'Simple multianswer';
         $q->category = 0;
@@ -76,7 +74,7 @@ class qtype_multianswer_test extends advanced_testcase {
         $q->createdby = $USER->id;
         $q->modifiedby = $USER->id;
 
-        $sadata = new stdClass();
+        $sadata = new \stdClass();
         $sadata->id = 1;
         $sadata->qtype = 'shortanswer';
         $sadata->defaultmark = 1;
@@ -85,7 +83,7 @@ class qtype_multianswer_test extends advanced_testcase {
         $sadata->options->answers[2] = (object) array('answer' => 'Wiggly worm', 'fraction' => 0);
         $sadata->options->answers[3] = (object) array('answer' => 'Pussy-cat', 'fraction' => 1);
 
-        $mcdata = new stdClass();
+        $mcdata = new \stdClass();
         $mcdata->id = 1;
         $mcdata->qtype = 'multichoice';
         $mcdata->defaultmark = 1;
@@ -111,22 +109,22 @@ class qtype_multianswer_test extends advanced_testcase {
     }
 
     public function test_get_random_guess_score() {
-        $q = test_question_maker::get_question_data('multianswer', 'twosubq');
+        $q = \test_question_maker::get_question_data('multianswer', 'twosubq');
         $this->assertEqualsWithDelta(0.1666667, $this->qtype->get_random_guess_score($q), 0.0000001);
     }
 
     public function test_load_question() {
         $this->resetAfterTest();
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         /** @var core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $category = $generator->create_question_category(['contextid' => $syscontext->id]);
 
-        $fromform = test_question_maker::get_question_form_data('multianswer');
+        $fromform = \test_question_maker::get_question_form_data('multianswer');
         $fromform->category = $category->id . ',' . $syscontext->id;
 
-        $question = new stdClass();
+        $question = new \stdClass();
         $question->category = $category->id;
         $question->qtype = 'multianswer';
         $question->createdby = 0;
@@ -230,8 +228,8 @@ class qtype_multianswer_test extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $questiondata = test_question_maker::get_question_data('multianswer');
-        $formdata = test_question_maker::get_question_form_data('multianswer');
+        $questiondata = \test_question_maker::get_question_data('multianswer');
+        $formdata = \test_question_maker::get_question_form_data('multianswer');
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category(array());
@@ -239,7 +237,7 @@ class qtype_multianswer_test extends advanced_testcase {
         $formdata->category = "{$cat->id},{$cat->contextid}";
         qtype_multianswer_edit_form::mock_submit((array)$formdata);
 
-        $form = qtype_multianswer_test_helper::get_question_editing_form($cat, $questiondata);
+        $form = \qtype_multianswer_test_helper::get_question_editing_form($cat, $questiondata);
 
         $this->assertTrue($form->is_validated());
 

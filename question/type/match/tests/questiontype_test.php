@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the matching question definition class.
- *
- * @package   qtype_match
- * @copyright 2009 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_match;
 
+use qtype_match;
+use qtype_match_edit_form;
+use question_bank;
+use question_possible_response;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,10 +33,11 @@ require_once($CFG->dirroot . '/question/type/match/edit_match_form.php');
 /**
  * Unit tests for the matching question definition class.
  *
+ * @package   qtype_match
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_match_test extends advanced_testcase {
+class questiontype_test extends \advanced_testcase {
     /** @var qtype_match instance of the question type class to test. */
     protected $qtype;
 
@@ -52,7 +51,7 @@ class qtype_match_test extends advanced_testcase {
 
     protected function get_test_question_data() {
         global $USER;
-        $q = new stdClass();
+        $q = new \stdClass();
         $q->id = 0;
         $q->name = 'Matching question';
         $q->category = 0;
@@ -74,9 +73,9 @@ class qtype_match_test extends advanced_testcase {
         $q->createdby = $USER->id;
         $q->modifiedby = $USER->id;
 
-        $q->options = new stdClass();
+        $q->options = new \stdClass();
         $q->options->shuffleanswers = false;
-        test_question_maker::set_standard_combined_feedback_fields($q->options);
+        \test_question_maker::set_standard_combined_feedback_fields($q->options);
 
         $q->options->subquestions = array(
             14 => (object) array(
@@ -113,7 +112,7 @@ class qtype_match_test extends advanced_testcase {
     }
 
     public function test_make_question_instance() {
-        $questiondata = test_question_maker::get_question_data('match', 'trickynums');
+        $questiondata = \test_question_maker::get_question_data('match', 'trickynums');
         $question = question_bank::make_question($questiondata);
         $this->assertEquals($questiondata->name, $question->name);
         $this->assertEquals($questiondata->questiontext, $question->questiontext);
@@ -164,8 +163,8 @@ class qtype_match_test extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $questiondata = test_question_maker::get_question_data('match');
-        $formdata = test_question_maker::get_question_form_data('match');
+        $questiondata = \test_question_maker::get_question_data('match');
+        $formdata = \test_question_maker::get_question_form_data('match');
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category(array());
@@ -174,7 +173,7 @@ class qtype_match_test extends advanced_testcase {
 
         qtype_match_edit_form::mock_submit((array)$formdata);
 
-        $form = qtype_match_test_helper::get_question_editing_form($cat, $questiondata);
+        $form = \qtype_match_test_helper::get_question_editing_form($cat, $questiondata);
         $this->assertTrue($form->is_validated());
 
         $fromform = $form->get_data();
