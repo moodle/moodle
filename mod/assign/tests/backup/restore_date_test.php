@@ -14,18 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Restore date tests.
- *
- * @package    mod_assign
- * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_assign\backup;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
+require_once($CFG->libdir . '/phpunit/classes/restore_date_testcase.php');
+require_once($CFG->dirroot . '/mod/assign/tests/fixtures/testable_assign.php');
 
 /**
  * Restore date tests.
@@ -34,7 +29,7 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assign_restore_date_testcase extends restore_date_testcase {
+class restore_date_test extends \restore_date_testcase {
 
     /**
      * Test restore dates.
@@ -45,7 +40,7 @@ class mod_assign_restore_date_testcase extends restore_date_testcase {
         $record = ['cutoffdate' => 100, 'allowsubmissionsfromdate' => 100, 'duedate' => 100, 'timemodified' => 100];
         list($course, $assign) = $this->create_course_and_module('assign', $record);
         $cm = $DB->get_record('course_modules', ['course' => $course->id, 'instance' => $assign->id]);
-        $assignobj = new mod_assign_testable_assign(context_module::instance($cm->id), $cm, $course);
+        $assignobj = new \mod_assign_testable_assign(\context_module::instance($cm->id), $cm, $course);
         $submission = $assignobj->get_user_submission($USER->id, true);
         $grade = $assignobj->get_user_grade($USER->id, true);
 

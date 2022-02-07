@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Restore date tests.
- *
- * @package    mod_lesson
- * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_lesson\backup;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,15 +28,15 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @copyright  2017 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lesson_restore_date_testcase extends restore_date_testcase {
+class restore_date_test extends \restore_date_testcase {
 
     /**
      * Creates an attempt for the given userwith a correct or incorrect answer and optionally finishes it.
      *
      * TODO This api can be better extracted to a generator.
      *
-     * @param  stdClass $lesson  Lesson object.
-     * @param  stdClass $page    page object.
+     * @param  \stdClass $lesson  Lesson object.
+     * @param  \stdClass $page    page object.
      * @param  boolean $correct  If the answer should be correct.
      * @param  boolean $finished If we should finish the attempt.
      *
@@ -52,7 +46,7 @@ class mod_lesson_restore_date_testcase extends restore_date_testcase {
         global $DB, $USER;
 
         // First we need to launch the lesson so the timer is on.
-        mod_lesson_external::launch_attempt($lesson->id);
+        \mod_lesson_external::launch_attempt($lesson->id);
 
         $DB->set_field('lesson', 'feedback', 1, array('id' => $lesson->id));
         $DB->set_field('lesson', 'progressbar', 1, array('id' => $lesson->id));
@@ -80,8 +74,8 @@ class mod_lesson_restore_date_testcase extends restore_date_testcase {
                 'value' => 1,
             )
         );
-        $result = mod_lesson_external::process_page($lesson->id, $page->id, $data);
-        $result = external_api::clean_returnvalue(mod_lesson_external::process_page_returns(), $result);
+        $result = \mod_lesson_external::process_page($lesson->id, $page->id, $data);
+        $result = \external_api::clean_returnvalue(\mod_lesson_external::process_page_returns(), $result);
 
         // Create attempt.
         $newpageattempt = [
@@ -97,8 +91,8 @@ class mod_lesson_restore_date_testcase extends restore_date_testcase {
         $DB->insert_record('lesson_attempts', (object) $newpageattempt);
 
         if ($finished) {
-            $result = mod_lesson_external::finish_attempt($lesson->id);
-            $result = external_api::clean_returnvalue(mod_lesson_external::finish_attempt_returns(), $result);
+            $result = \mod_lesson_external::finish_attempt($lesson->id);
+            $result = \external_api::clean_returnvalue(\mod_lesson_external::finish_attempt_returns(), $result);
         }
         return $result;
     }
@@ -120,7 +114,7 @@ class mod_lesson_restore_date_testcase extends restore_date_testcase {
         $timer = $DB->get_record('lesson_timer', ['lessonid' => $lesson->id]);
         // Lesson grade.
         $timestamp = 100;
-        $grade = new stdClass();
+        $grade = new \stdClass();
         $grade->lessonid = $lesson->id;
         $grade->userid = $USER->id;
         $grade->grade = 8.9;

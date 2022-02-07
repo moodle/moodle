@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * PHPUnit tests for helper class.
- *
- * @package    quizaccess_seb
- * @author     Dmitrii Metelkin <dmitriim@catalyst-au.net>
- * @copyright  2020 Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+namespace quizaccess_seb;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,11 +23,13 @@ require_once(__DIR__ . '/test_helper_trait.php');
 /**
  * PHPUnit tests for helper class.
  *
+ * @package    quizaccess_seb
+ * @author     Dmitrii Metelkin <dmitriim@catalyst-au.net>
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_helper_testhelpertrait extends advanced_testcase {
-    use quizaccess_seb_test_helper_trait;
+class helper_test extends \advanced_testcase {
+    use \quizaccess_seb_test_helper_trait;
 
     /**
      * Test that we can check valid seb string.
@@ -87,7 +81,7 @@ class quizaccess_seb_helper_testhelpertrait extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
         $this->setUser($user); // Log user in.
 
-        $this->expectException(dml_exception::class);
+        $this->expectException(\dml_exception::class);
         $this->expectExceptionMessage("Can't find data record in database. (SELECT cm.*, m.name, md.name AS modname \n"
             . "              FROM {course_modules} cm\n"
             . "                   JOIN {modules} md ON md.id = cm.module\n"
@@ -115,7 +109,7 @@ class quizaccess_seb_helper_testhelpertrait extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user); // Log user in.
 
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage('Unsupported redirect detected, script execution terminated');
         \quizaccess_seb\helper::get_seb_config_content($quiz->cmid);
     }
@@ -134,7 +128,7 @@ class quizaccess_seb_helper_testhelpertrait extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
         $this->setUser($user); // Log user in.
 
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage("No SEB config could be found for quiz with cmid: $quiz->cmid");
         \quizaccess_seb\helper::get_seb_config_content($quiz->cmid);
     }
@@ -154,7 +148,7 @@ class quizaccess_seb_helper_testhelpertrait extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
         $this->setUser($user); // Log user in.
 
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage("No SEB config could be found for quiz with cmid: $quiz->cmid");
         \quizaccess_seb\helper::get_seb_config_content($quiz->cmid);
     }
@@ -176,7 +170,7 @@ class quizaccess_seb_helper_testhelpertrait extends advanced_testcase {
 
         $config = \quizaccess_seb\helper::get_seb_config_content($quiz->cmid);
 
-        $url = new moodle_url("/mod/quiz/view.php", ['id' => $quiz->cmid]);
+        $url = new \moodle_url("/mod/quiz/view.php", ['id' => $quiz->cmid]);
 
         $this->assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
             . "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
