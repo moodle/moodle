@@ -35,10 +35,11 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/securewindow/rule.php');
  *
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \quiz_access_rule_base
+ * @covers \quizaccess_securewindow
  */
 class quizaccess_securewindow_testcase extends basic_testcase {
-    public static $includecoverage = array('mod/quiz/accessrule/securewindow/rule.php');
-
     // Nothing very testable in this class, just test that it obeys the general access rule contact.
     public function test_securewindow_access_rule() {
         $quiz = new stdClass();
