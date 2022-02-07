@@ -140,16 +140,6 @@ class setting_validator {
     }
 
     /**
-     * Validate if send notification section will be shown.
-     *
-     * @return bool
-     */
-    public static function section_send_notifications_shown() {
-        global $CFG;
-        return (!isset($CFG->bigbluebuttonbn['sendnotifications_enabled']));
-    }
-
-    /**
      * Validate if settings extended section will be shown.
      *
      * @return bool
