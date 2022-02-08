@@ -1015,6 +1015,20 @@ class completion_info {
             $userid = $USER->id;
         }
 
+        // Some call completion_info::get_data and pass $cm as an object with ID only. Make sure course is set as well.
+        if ($cm instanceof stdClass && !isset($cm->course)) {
+            $cm->course = $this->course_id;
+        }
+        // Make sure we're working on a cm_info object.
+        $cminfo = cm_info::create($cm, $userid);
+
+        // Create an anonymous function to remove the 'other_cm_completion_data_fetched' key.
+        $returnfilteredvalue = function(array $value): stdClass {
+            return (object) array_filter($value, function(string $key): bool {
+                return $key !== 'other_cm_completion_data_fetched';
+            }, ARRAY_FILTER_USE_KEY);
+        };
+
         // See if requested data is present in cache (use cache for current user only).
         $usecache = $userid == $USER->id;
         $cacheddata = array();
@@ -1027,18 +1041,21 @@ class completion_info {
                 if ($cacheddata['cacherev'] != $this->course->cacherev) {
                     // Course structure has been changed since the last caching, forget the cache.
                     $cacheddata = array();
-                } else if (isset($cacheddata[$cm->id])) {
-                    return (object)$cacheddata[$cm->id];
+                } else if (isset($cacheddata[$cminfo->id])) {
+                    $data = (array) $cacheddata[$cminfo->id];
+                    if (empty($data['other_cm_completion_data_fetched'])) {
+                        $data += $this->get_other_cm_completion_data($cminfo, $userid);
+                        $data['other_cm_completion_data_fetched'] = true;
+
+                        // Put in cache.
+                        $cacheddata[$cminfo->id] = $data;
+                        $completioncache->set($key, $cacheddata);
+                    }
+
+                    return $returnfilteredvalue($cacheddata[$cminfo->id]);
                 }
             }
         }
-
-        // Some call completion_info::get_data and pass $cm as an object with ID only. Make sure course is set as well.
-        if ($cm instanceof stdClass && !isset($cm->course)) {
-            $cm->course = $this->course_id;
-        }
-        // Make sure we're working on a cm_info object.
-        $cminfo = cm_info::create($cm, $userid);
 
         // Default data to return when no completion data is found.
         $defaultdata = [
@@ -1077,12 +1094,9 @@ class completion_info {
                     $cacheddata[$data->cmid] = $defaultdata;
                     $cacheddata[$data->cmid]['coursemoduleid'] = $data->cmid;
                 } else {
-                    $cacheddata[$data->cmid] = (array) $data;
+                    unset($data->cmid);
+                    $cacheddata[$data->coursemoduleid] = (array) $data;
                 }
-
-                // Add the other completion data for this user in this module instance.
-                $othercminfo = $cminfos[$data->cmid];
-                $cacheddata[$othercminfo->id] += $this->get_other_cm_completion_data($othercminfo, $userid);
             }
 
             if (!isset($cacheddata[$cminfo->id])) {
@@ -1090,6 +1104,7 @@ class completion_info {
                 $this->internal_systemerror($errormessage);
             }
 
+            $data = $cacheddata[$cminfo->id];
         } else {
             // Get single record
             $data = $DB->get_record('course_modules_completion', array('coursemoduleid' => $cminfo->id, 'userid' => $userid));
@@ -1099,18 +1114,24 @@ class completion_info {
                 // Row not present counts as 'not complete'.
                 $data = $defaultdata;
             }
-            // Fill the other completion data for this user in this module instance.
-            $data += $this->get_other_cm_completion_data($cminfo, $userid);
 
-            // Put in cache
+            // Put in cache.
             $cacheddata[$cminfo->id] = $data;
         }
+
+        // Fill the other completion data for this user in this module instance.
+        $data += $this->get_other_cm_completion_data($cminfo, $userid);
+        $data['other_cm_completion_data_fetched'] = true;
+
+        // Put in cache
+        $cacheddata[$cminfo->id] = $data;
 
         if ($usecache) {
             $cacheddata['cacherev'] = $this->course->cacherev;
             $completioncache->set($key, $cacheddata);
         }
-        return (object)$cacheddata[$cminfo->id];
+
+        return $returnfilteredvalue($cacheddata[$cminfo->id]);
     }
 
     /**
@@ -1189,6 +1210,7 @@ class completion_info {
         $cmcontext = context_module::instance($data->coursemoduleid);
 
         $completioncache = cache::make('core', 'completion');
+        $cachekey = "{$data->userid}_{$cm->course}";
         if ($data->userid == $USER->id) {
             // Fetch other completion data to cache (e.g. require grade completion status, custom completion rule statues).
             $cminfo = cm_info::create($cm, $data->userid); // Make sure we're working on a cm_info object.
@@ -1198,18 +1220,19 @@ class completion_info {
             }
 
             // Update module completion in user's cache.
-            if (!($cachedata = $completioncache->get($data->userid . '_' . $cm->course))
+            if (!($cachedata = $completioncache->get($cachekey))
                     || $cachedata['cacherev'] != $this->course->cacherev) {
                 $cachedata = array('cacherev' => $this->course->cacherev);
             }
-            $cachedata[$cm->id] = $data;
-            $completioncache->set($data->userid . '_' . $cm->course, $cachedata);
+            $cachedata[$cm->id] = (array) $data;
+            $cachedata[$cm->id]['other_cm_completion_data_fetched'] = true;
+            $completioncache->set($cachekey, $cachedata);
 
             // reset modinfo for user (no need to call rebuild_course_cache())
             get_fast_modinfo($cm->course, 0, true);
         } else {
             // Remove another user's completion cache for this course.
-            $completioncache->delete($data->userid . '_' . $cm->course);
+            $completioncache->delete($cachekey);
         }
 
         // Trigger an event for course module completion changed.
