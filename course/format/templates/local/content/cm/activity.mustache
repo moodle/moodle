@@ -1,0 +1,127 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/content/cm/activity
+
+    Display the activity content of a cm.
+
+    Example context (json):
+    {
+        "cmname": {
+            "displayvalue" : "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Activity example</span></a>"
+        },
+        "hasname": "true",
+        "afterlink": "<span class=\"badge badge-primary\">30 unread messages</span>",
+        "hasextras": true,
+        "extras": ["<span class=\"badge badge-secondary\">[extras]</span>"],
+        "activityinfo": {
+            "hasmodavailability": true,
+            "activityname": "Activity example",
+            "hascompletion": true,
+            "uservisible": true,
+            "hasdates": true,
+            "isautomatic": true,
+            "istrackeduser": true,
+            "activitydates": [
+                {
+                    "label": "Opens:",
+                    "datestring": "6 April 2021, 6:46 PM"
+                }
+            ],
+            "completiondetails": [
+                {
+                    "statuscomplete": 1,
+                    "description": "Viewed"
+                },
+                {
+                    "statusincomplete": 1,
+                    "description": "Receive a grade"
+                }
+            ]
+        },
+        "modstealth": true
+    }
+}}
+{{#moveicon}} {{{moveicon}}} {{/moveicon}}
+<div class="activity-basis d-flex align-items-center">
+    <div class="d-flex flex-column flex-md-row w-100 align-self-start">
+        {{^hasname}}
+            {{$ core_courseformat/local/content/cm/badges }}
+                {{> core_courseformat/local/content/cm/badges }}
+            {{/ core_courseformat/local/content/cm/badges }}
+        {{/hasname}}
+        {{#cmname}}
+        {{$ core/inplace_editable }}
+            {{> core/inplace_editable }}
+        {{/ core/inplace_editable }}
+        {{/cmname}}
+        {{#afterlink}}
+            <div class="afterlink">
+                {{{afterlink}}}
+            </div>
+        {{/afterlink}}
+
+        {{#activityinfo}}
+            <div class="activity-info mt-1 mt-md-0">
+                {{$ core_courseformat/local/content/cm/activity_info}}
+                    {{> core_courseformat/local/content/cm/activity_info}}
+                {{/ core_courseformat/local/content/cm/activity_info}}
+            </div>
+        {{/activityinfo}}
+    </div>
+
+    {{#controlmenu}}
+        <div class="activity-actions align-self-start">
+            {{$ core_courseformat/local/content/cm/controlmenu }}
+                {{> core_courseformat/local/content/cm/controlmenu }}
+            {{/ core_courseformat/local/content/cm/controlmenu }}
+        </div>
+    {{/controlmenu}}
+</div>
+{{#hasname}}
+    {{$ core_courseformat/local/content/cm/badges }}
+        {{> core_courseformat/local/content/cm/badges }}
+    {{/ core_courseformat/local/content/cm/badges }}
+{{/hasname}}
+
+<div class="description">
+    {{#activityinfo}}
+        {{#hasdates}}
+        <div data-region="activity-dates" class="activity-dates small course-description-item">
+            <div class="description-inner">
+                {{#activitydates}}
+                    {{$core_course/activity_date}}
+                        {{>core_course/activity_date}}
+                    {{/core_course/activity_date}}
+                {{/activitydates}}
+            </div>
+        </div>
+        {{/hasdates}}
+    {{/activityinfo}}
+    {{#altcontent}}
+        <div class="activity-altcontent {{#hasname}}course-description-item small{{/hasname}}{{^hasname}}contentwithoutlink{{/hasname}} d-flex">
+            <div class="flex-fill description-inner">
+                {{{altcontent}}}
+            </div>
+        </div>
+    {{/altcontent}}
+    {{#modavailability}}
+        {{$ core_courseformat/local/content/cm/availability }}
+            {{> core_courseformat/local/content/cm/availability }}
+        {{/ core_courseformat/local/content/cm/availability }}
+    {{/modavailability}}
+</div>
