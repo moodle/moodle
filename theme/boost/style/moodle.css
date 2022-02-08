@@ -18459,7 +18459,8 @@ div#dock {
   justify-content: center;
   border-radius: 50%;
   color: #343a40;
-  font-weight: normal; }
+  font-weight: normal;
+  margin-right: 0.25rem; }
   .userinitials.size-16, .userinitials.size-30 {
     font-size: 0.7rem;
     width: 30px;
@@ -18471,6 +18472,9 @@ div#dock {
     width: 100px;
     height: 100px;
     font-size: 1.875rem; }
+
+img.userpicture {
+  margin-right: 0.25rem; }
 
 @media (max-width: 767.98px) {
   .usertext {
