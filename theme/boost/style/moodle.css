@@ -12235,8 +12235,7 @@ body.dragging .dragging {
   margin: 0;
   padding: 0;
   box-sizing: content-box;
-  margin-right: 0.5rem;
-  margin-left: 0.5rem; }
+  margin-right: 0.5rem; }
   .icon.spacer {
     margin-right: 0; }
   .icon.iconsize-big {
@@ -13075,6 +13074,7 @@ body.dragging .dragging {
 
 .block_recentlyaccessedcourses .paging-bar-container {
   margin-top: -2.4rem;
+  padding-right: 0.5rem;
   justify-content: flex-end; }
 
 @media (max-width: 575.98px) {
