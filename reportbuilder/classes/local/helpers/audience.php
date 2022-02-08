@@ -214,9 +214,11 @@ class audience {
         $notavailablestr = get_string('notavailable', 'moodle');
 
         $audiencetypes = self::get_audience_types();
+        $audiencetypeindex = 0;
         foreach ($audiencetypes as $categoryname => $audience) {
             $menucards = [
                 'name' => $categoryname,
+                'key' => 'index' . ++$audiencetypeindex,
             ];
 
             foreach ($audience as $classname => $name) {
