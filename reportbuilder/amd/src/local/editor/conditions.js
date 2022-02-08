@@ -91,7 +91,8 @@ const initConditionsForm = () => {
         Notification.saveCancelPromise(
             getString('resetconditions', 'core_reportbuilder'),
             getString('resetconditionsconfirm', 'core_reportbuilder'),
-            getString('resetall', 'core_reportbuilder')
+            getString('resetall', 'core_reportbuilder'),
+            {triggerElement: event.detail}
         ).then(() => {
             const pendingPromise = new Pending('core_reportbuilder/conditions:reset');
 
@@ -177,7 +178,8 @@ export const init = initialized => {
             Notification.saveCancelPromise(
                 getString('deletecondition', 'core_reportbuilder', conditionName),
                 getString('deleteconditionconfirm', 'core_reportbuilder', conditionName),
-                getString('delete', 'core')
+                getString('delete', 'core'),
+                {triggerElement: reportRemoveCondition}
             ).then(() => {
                 const pendingPromise = new Pending('core_reportbuilder/conditions:remove');
 

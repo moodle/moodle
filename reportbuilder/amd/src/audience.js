@@ -144,15 +144,17 @@ const initAudienceCardForm = audienceCard => {
 /**
  * Delete audience card
  *
- * @param {Element} audienceCard
+ * @param {Element} audienceDelete
  */
-const deleteAudienceCard = audienceCard => {
+const deleteAudienceCard = audienceDelete => {
+    const audienceCard = audienceDelete.closest(reportSelectors.regions.audienceCard);
     const audienceTitle = audienceCard.dataset.title;
 
     Notification.saveCancelPromise(
         getString('deleteaudience', 'core_reportbuilder', audienceTitle),
         getString('deleteaudienceconfirm', 'core_reportbuilder', audienceTitle),
-        getString('delete', 'core')
+        getString('delete', 'core'),
+        {triggerElement: audienceDelete}
     ).then(() => {
         const pendingPromise = new Pending('core_reportbuilder/audience:delete');
 
@@ -255,10 +257,8 @@ export const init = (id, contextid) => {
         // Delete instance.
         const audienceDelete = event.target.closest(reportSelectors.actions.audienceDelete);
         if (audienceDelete) {
-            const audienceDeleteCard = audienceDelete.closest(reportSelectors.regions.audienceCard);
-
             event.preventDefault();
-            deleteAudienceCard(audienceDeleteCard);
+            deleteAudienceCard(audienceDelete);
         }
     });
 

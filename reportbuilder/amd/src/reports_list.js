@@ -70,7 +70,7 @@ export const init = () => {
             event.preventDefault();
 
             // Reload current report page after submission.
-            const reportModal = createReportModal(event.target, getString('editreportdetails', 'core_reportbuilder'),
+            const reportModal = createReportModal(reportEdit, getString('editreportdetails', 'core_reportbuilder'),
                 reportEdit.dataset.reportId);
             reportModal.addEventListener(reportModal.events.FORM_SUBMITTED, () => {
                 const reportElement = event.target.closest(reportSelectors.regions.report);
@@ -94,7 +94,8 @@ export const init = () => {
             Notification.saveCancelPromise(
                 getString('deletereport', 'core_reportbuilder'),
                 getString('deletereportconfirm', 'core_reportbuilder', reportDelete.dataset.reportName),
-                getString('delete', 'core')
+                getString('delete', 'core'),
+                {triggerElement: reportDelete}
             ).then(() => {
                 const pendingPromise = new Pending('core_reportbuilder/reports:delete');
                 const reportElement = event.target.closest(reportSelectors.regions.report);
