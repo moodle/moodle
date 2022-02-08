@@ -254,15 +254,27 @@ function(
     /**
      * Return the end time for fetching events. This is calculated
      * based on the user's midnight value so that timezones are
-     * preserved.
+     * preserved, unless filtering by overdue, where the current UNIX timestamp is used.
      *
      * @param {object} root The rool element.
      * @return {Number}
      */
     var getEndTime = function(root) {
-        var midnight = getMidnight(root);
-        var daysLimit = getDaysLimit(root);
-        return daysLimit != undefined ? midnight + (daysLimit * SECONDS_IN_DAY) : null;
+        let endTime = null;
+
+        if (root.attr('data-filter-overdue')) {
+            // If filtering by overdue, end time will be the current timestamp in seconds.
+            endTime = Math.floor(Date.now() / 1000);
+        } else {
+            const midnight = getMidnight(root);
+            const daysLimit = getDaysLimit(root);
+
+            if (daysLimit != undefined) {
+                endTime = midnight + (daysLimit * SECONDS_IN_DAY);
+            }
+        }
+
+        return endTime;
     };
 
     /**

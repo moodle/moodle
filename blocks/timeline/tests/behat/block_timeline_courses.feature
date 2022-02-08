@@ -15,6 +15,7 @@ Feature: The timeline block allows users to see upcoming courses
       | Course 2 | C2        | 0        | ##yesterday##               | ##tomorrow## |
       | Course 3 | C3        | 0        | ##yesterday##               | ##tomorrow## |
       | Course 4 | C4        | 0        | ##first day of next month## | ##last day of next month## |
+      | Course 5 | C5        | 0        | ##yesterday##               | ##tomorrow## |
     And the following "activities" exist:
       | activity | course | idnumber  | name            | intro                   | timeopen      | timeclose     |
       | choice   | C2     | choice1   | Test choice 1   | Test choice description | ##yesterday## | ##tomorrow##  |
@@ -192,7 +193,13 @@ Feature: The timeline block allows users to see upcoming courses
     And I should not see "Test choice 1"
 
   Scenario: Only courses with matching events are displayed and are refreshed when filtering changes
-    Given I log in as "student1"
+    Given the following "activities" exist:
+      | activity | course | idnumber  | name            | intro                   | timeopen        | duedate           |
+      | assign   | C5     | assign3   | Test assign 3   | Test assign description | ##yesterday##   | ##now +1 minute## |
+    And the following "course enrolments" exist:
+      | user     | course | role    |
+      | student1 | C5     | student |
+    When I log in as "student1"
     And I click on "Sort timeline items" "button" in the "Timeline" "block"
     And I click on "Sort by courses" "link" in the "Timeline" "block"
     And I click on "Filter timeline by date" "button" in the "Timeline" "block"
@@ -201,30 +208,38 @@ Feature: The timeline block allows users to see upcoming courses
     And I should see "Course 1" in the ".block-timeline [data-region='view-courses']" "css_element"
     And I should see "Course 2" in the ".block-timeline [data-region='view-courses']" "css_element"
     And I should see "Course 3" in the ".block-timeline [data-region='view-courses']" "css_element"
+    And I should see "Course 5" in the ".block-timeline [data-region='view-courses']" "css_element"
+    And I should not see "Course 4" in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test assign 1" "link" should exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test assign 2" "link" should exist in the ".block-timeline [data-region='view-courses']" "css_element"
+    And "Test assign 3" "link" should exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test choice 1" "link" should exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test choice 3" "link" should exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test feedback 5" "link" should exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And I click on "Filter timeline by date" "button" in the "Timeline" "block"
-    When I click on "Overdue" "link" in the "Timeline" "block"
+    And I click on "Overdue" "link" in the "Timeline" "block"
     Then I should see "Course 1" in the ".block-timeline [data-region='view-courses']" "css_element"
     And I should see "Course 2" in the ".block-timeline [data-region='view-courses']" "css_element"
     And I should not see "Course 3" in the "Timeline" "block"
+    And I should not see "Course 5" in the "Timeline" "block"
     And I should not see "Show more courses" in the "Timeline" "block"
     And "Test assign 1" "link" should exist in the "Timeline" "block"
     And "Test assign 2" "link" should exist in the "Timeline" "block"
+    And "Test assign 3" "link" should not exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test choice 1" "link" should not exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test choice 2" "link" should not exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test choice 3" "link" should not exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test feedback 5" "link" should not exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And I click on "Filter timeline by date" "button" in the "Timeline" "block"
     And I click on "Next 7 days" "link" in the "Timeline" "block"
+    And I click on "Show more courses" "button" in the "Timeline" "block"
     And I should see "Course 1" in the ".block-timeline [data-region='view-courses']" "css_element"
     And I should see "Course 2" in the ".block-timeline [data-region='view-courses']" "css_element"
+    And I should see "Course 5" in the ".block-timeline [data-region='view-courses']" "css_element"
     And I should not see "Course 3" in the "Timeline" "block"
     And I should not see "Show more courses" in the "Timeline" "block"
     And "Test assign 2" "link" should exist in the ".block-timeline [data-region='view-courses']" "css_element"
+    And "Test assign 3" "link" should exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test choice 1" "link" should exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test feedback 5" "link" should exist in the ".block-timeline [data-region='view-courses']" "css_element"
     And "Test assign 1" "link" should not exist in the ".block-timeline [data-region='view-courses']" "css_element"
