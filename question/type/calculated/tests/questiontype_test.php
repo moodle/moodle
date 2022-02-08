@@ -35,13 +35,11 @@ require_once($CFG->dirroot . '/question/type/calculated/tests/helper.php');
  *
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \question_type
+ * @covers \qtype_calculated
  */
 class qtype_calculated_test extends advanced_testcase {
-    public static $includecoverage = array(
-        'question/type/questiontypebase.php',
-        'question/type/calculated/questiontype.php'
-    );
-
     protected $tolerance = 0.00000001;
     protected $qtype;
 
