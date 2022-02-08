@@ -105,11 +105,11 @@
     {{#logourl}}
         <div id="loginlogo" class="login-logo">
             <img id="logoimage" src="{{logourl}}" class="img-fluid" alt="{{sitename}}"/>
-            <h1 class="login-heading sr-only">{{sitename}} {{#str}} login {{/str}}</h1>
+            <h1 class="login-heading sr-only">{{#str}} loginto, core, {{sitename}} {{/str}}</h1>
         </div>
     {{/logourl}}
     {{^logourl}}
-        <h1 class="login-heading mb-4">{{sitename}} {{#str}} login {{/str}}</h1>
+        <h1 class="login-heading mb-4">{{#str}} loginto, core, {{sitename}} {{/str}}</h1>
     {{/logourl}}
     {{#maintenance}}
         <div class="alert alert-danger login-maintenance">
