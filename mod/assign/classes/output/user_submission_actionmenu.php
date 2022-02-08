@@ -61,10 +61,10 @@ class user_submission_actionmenu implements templatable, renderable {
      * @param bool $showedit Whether to show the edit button.
      * @param stdClass|null $submission A submission for this activity.
      * @param stdClass|null $teamsubmission A team submission for this activity.
-     * @param int|null $timelimit The time limit for completing this activity.
+     * @param int $timelimit The time limit for completing this activity.
      */
     public function __construct(int $cmid, bool $showsubmit, bool $showedit, stdClass $submission = null,
-            stdClass $teamsubmission = null, $timelimit = 0) {
+            stdClass $teamsubmission = null, int $timelimit = 0) {
 
         $this->cmid = $cmid;
         $this->showsubmit = $showsubmit;
@@ -119,7 +119,7 @@ class user_submission_actionmenu implements templatable, renderable {
                     'help' => $help->export_for_template($output)
                 ];
                 $url = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'editsubmission']);
-                $newattemptbutton = new single_button($url, get_string('addnewattempt', 'mod_assign'), 'get');
+                $newattemptbutton = new single_button($url, get_string('addnewattempt', 'mod_assign'), 'get', true);
                 $newattempthelp = new help_icon('addnewattempt', 'mod_assign');
                 $data['edit']['button'] = $newattemptbutton->export_for_template($output);
                 $data['edit']['help'] = $newattempthelp->export_for_template($output);

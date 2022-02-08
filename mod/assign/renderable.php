@@ -570,7 +570,7 @@ class assign_grading_summary implements renderable {
      * @param int $coursestartdate unix timestamp representation of the course start date.
      * @param bool $cangrade
      * @param bool $isvisible
-     * @param cm_info $cm The course module object.
+     * @param cm_info|null $cm The course module object.
      */
     public function __construct($participantcount,
                                 $submissiondraftsenabled,

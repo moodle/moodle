@@ -4536,10 +4536,6 @@ class assign {
             $gradebookurl = '/grade/report/grader/index.php?id=' . $this->get_course()->id;
             $links[$gradebookurl] = get_string('viewgradebook', 'assign');
         }
-        if ($this->is_any_submission_plugin_enabled() && $this->count_submissions()) {
-            $downloadurl = '/mod/assign/view.php?id=' . $cmid . '&action=downloadall';
-            $links[$downloadurl] = get_string('downloadall', 'assign');
-        }
         if ($this->is_blind_marking() &&
                 has_capability('mod/assign:revealidentities', $this->get_context())) {
             $revealidentitiesurl = '/mod/assign/view.php?id=' . $cmid . '&action=revealidentities';
@@ -4641,9 +4637,9 @@ class assign {
         $gradingoptionsdata->workflowfilter = $workflowfilter;
         $gradingoptionsform->set_data($gradingoptionsdata);
 
-        $buttons = new \mod_assign\output\grading_actionmenu($this->get_course_module()->id);
+        $buttons = new \mod_assign\output\grading_actionmenu($this->get_course_module()->id,
+             $this->is_any_submission_plugin_enabled(), $this->count_submissions());
         $actionformtext = $this->get_renderer()->render($buttons);
-        $actionformtext .= $this->get_renderer()->render($gradingactions);
         $PAGE->activityheader->set_attrs(['hidecompletion' => true]);
 
         $currenturl = new moodle_url('/mod/assign/view.php', ['id' => $this->get_course_module()->id, 'action' => 'grading']);
@@ -4661,6 +4657,7 @@ class assign {
         $o .= $actionformtext;
 
         $o .= $this->get_renderer()->heading(get_string('gradeitem:submissions', 'mod_assign'), 2);
+        $o .= $this->get_renderer()->render($gradingactions);
 
         $o .= groups_print_activity_menu($this->get_course_module(), $currenturl, true);
 
@@ -4930,7 +4927,7 @@ class assign {
             $PAGE->blocks->add_fake_block($bc, reset($regions));
         }
 
-        $PAGE->activityheader->set_hidecompletion(true);
+        $PAGE->activityheader->disable();
 
         $o .= $this->get_renderer()->render(
             new assign_header($this->get_instance(),
