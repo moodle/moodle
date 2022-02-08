@@ -1,7 +1,7 @@
 .secondary-navigation {
     max-width: $course-content-maxwidth;
     margin: 0 auto;
-    padding: 0 15px 15px;
+    padding-bottom: 15px;
     .navigation {
         border-top: 1px solid $nav-tabs-border-color;
         border-bottom: 1px solid $nav-tabs-border-color;
@@ -13,5 +13,11 @@
                 border-radius: initial;
             }
         }
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .secondary-navigation {
+        padding: 0 15px 15px;
     }
 }

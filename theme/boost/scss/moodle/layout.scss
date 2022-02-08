@@ -35,8 +35,6 @@
 
 #page.drawers {
     margin-top: $navbar-height;
-    padding-left: 15px;
-    padding-right: 15px;
     @include thin-scrolls($gray-100);
     .main-inner {
         max-width: 100%;
@@ -48,10 +46,6 @@
         margin-top: 0.5rem;
         margin-bottom: 3rem;
         flex: 1 0 auto;
-    }
-    div[role="main"] {
-        padding-left: 15px;
-        padding-right: 15px;
     }
     .activity-header {
         margin-left: 15px;
@@ -182,6 +176,13 @@
     #page.drawers {
         padding-left: 3rem;
         padding-right: 3rem;
+        .main-inner {
+            padding: 1.5rem 0.5rem;
+        }
+        div[role="main"] {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
     }
 }
 
