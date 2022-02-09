@@ -21534,9 +21534,16 @@ div.editor_atto_toolbar button .icon {
 @media (max-width: 767.98px) {
   .primary-navigation {
     display: none; }
-  .editmode-switch-form .custom-control-label {
-    font-size: 0;
-    color: transparent; } }
+  .editmode-switch-form label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0; } }
 
 .editmode-switch-form .custom-control-input {
   width: 100%;
