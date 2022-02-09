@@ -138,6 +138,7 @@ class section implements renderable, templatable {
             'summary' => $summary->export_for_template($output),
             'availability' => $availability->export_for_template($output),
             'restrictionlock' => !empty($thissection->availableinfo),
+            'highlightedlabel' => $format->get_section_highlighted_name(),
         ];
 
         // Check if it is a stealth sections (orphaned).

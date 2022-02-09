@@ -17,7 +17,7 @@ Feature: A Teacher can comment in a question
       | activity   | name      | course | idnumber |
       | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
+      | contextlevel | reference | name          |
       | Course         | C1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name           | questiontext              |
@@ -63,6 +63,7 @@ Feature: A Teacher can comment in a question
     And I navigate to "Question bank" in current page administration
     And I set the field "Select a category" to "Test questions"
     And I choose "Preview" action for "First question" in the question bank
+    And I click on "Comments" "link"
     Then I should see "Save comment"
     And I add "Super test comment 01" comment to question preview
     And I click on "Save comment" "link"
@@ -71,7 +72,8 @@ Feature: A Teacher can comment in a question
     And I click on "Close preview" "button"
     Then I should see "1" on the comments column
     And I choose "Preview" action for "First question" in the question bank
-    And I delete "Super test comment 01" comment from question
+    And I click on "Comments" "link"
+    And I delete "Super test comment 01" comment from question preview
     And I should not see "Super test comment 01"
     And I click on "Close preview" "button"
     Then I should see "0" on the comments column
@@ -100,6 +102,7 @@ Feature: A Teacher can comment in a question
     And I press "id_submitbutton"
     Then I should see "Essay 01 new"
     And I choose "Preview" action for "Essay 01 new" in the question bank
+    And I click on "Comments" "link"
     Then I should see "Save comment"
     And I log out
     Then I log in as "teacher2"
@@ -112,3 +115,34 @@ Feature: A Teacher can comment in a question
     And I choose "Preview" action for "Essay 01 new" in the question bank
     Then I should not see "Save comment"
     And I click on "Close preview" "button"
+
+  @javascript
+  Scenario: Comments added from the quiz page are visible
+    Given I log in as "teacher1"
+    And I am on the "Test quiz" "quiz activity" page
+    When I navigate to "Edit quiz" in current page administration
+    And I press "Add"
+    And I follow "from question bank"
+    And I click on "Select" "checkbox" in the "First question" "table_row"
+    And I click on "Add selected questions to the quiz" "button"
+    And I click on "Preview question" "link"
+    And I switch to "questionpreview" window
+    And I press "Comments"
+    And I set the field "content" to "Some new comment"
+    And I click on "Save comment" "link"
+    And I should see "Some new comment"
+    And I switch to the main window
+    And I am on the "Test quiz" "quiz activity" page
+    And I navigate to "Question bank > Questions" in current page administration
+    And I choose "Preview" action for "First question" in the question bank
+    And I click on "Comments" "link"
+    And I should see "Some new comment"
+    And I should see "T1 Teacher1"
+    And I delete "Some new comment" comment from question preview
+    And I should not see "Some new comment"
+    And I am on the "Test quiz" "quiz activity" page
+    And I navigate to "Edit quiz" in current page administration
+    And I click on "Preview question" "link"
+    And I switch to "questionpreview" window
+    And I press "Comments"
+    Then I should not see "Some new comment"

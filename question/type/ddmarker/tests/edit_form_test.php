@@ -63,7 +63,7 @@ class qtype_ddmarker_edit_form_test extends advanced_testcase {
         $fakequestion->inputs = null;
 
         $form = new qtype_ddmarker_edit_form(new moodle_url('/'), $fakequestion, $category,
-                new question_edit_contexts($syscontext));
+                new core_question\local\bank\question_edit_contexts($syscontext));
 
         return [$form, $category];
     }

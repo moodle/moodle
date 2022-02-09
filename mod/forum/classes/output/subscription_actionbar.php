@@ -95,7 +95,8 @@ class subscription_actionbar implements renderable, templatable {
             }
         });
         $urlselect = new url_select($menu, $this->currenturl, ['' => $set], 'selectsubscriptionoptions');
-        $urlselect->set_label(get_string('subscriptions', 'mod_forum'), ['class' => 'accesshide']);
+        $urlselect->set_label(get_string('subscriptionmode', 'mod_forum'), ['class' => 'mr-1']);
+        $urlselect->set_help_icon('subscriptionmode', 'mod_forum');
         $urlselect->class .= ' float-right';
         return $urlselect;
     }

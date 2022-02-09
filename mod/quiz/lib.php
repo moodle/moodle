@@ -176,23 +176,11 @@ function quiz_delete_instance($id) {
 
     quiz_delete_all_attempts($quiz);
     quiz_delete_all_overrides($quiz);
-
-    // Look for random questions that may no longer be used when this quiz is gone.
-    $sql = "SELECT q.id
-              FROM {quiz_slots} slot
-              JOIN {question} q ON q.id = slot.questionid
-             WHERE slot.quizid = ? AND q.qtype = ?";
-    $questionids = $DB->get_fieldset_sql($sql, array($quiz->id, 'random'));
+    quiz_delete_references($quiz->id);
 
     // We need to do the following deletes before we try and delete randoms, otherwise they would still be 'in use'.
-    $quizslots = $DB->get_fieldset_select('quiz_slots', 'id', 'quizid = ?', array($quiz->id));
-    $DB->delete_records_list('quiz_slot_tags', 'slotid', $quizslots);
     $DB->delete_records('quiz_slots', array('quizid' => $quiz->id));
     $DB->delete_records('quiz_sections', array('quizid' => $quiz->id));
-
-    foreach ($questionids as $questionid) {
-        question_delete_question($questionid);
-    }
 
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
@@ -1445,11 +1433,15 @@ function quiz_get_post_actions() {
  * @return bool whether any of these questions are used by any instance of this module.
  */
 function quiz_questions_in_use($questionids) {
-    global $DB, $CFG;
-    require_once($CFG->libdir . '/questionlib.php');
+    global $DB;
     list($test, $params) = $DB->get_in_or_equal($questionids);
-    return $DB->record_exists_select('quiz_slots',
-            'questionid ' . $test, $params) || question_engine::questions_in_use(
+    $sql = "SELECT qs.id
+              FROM {quiz_slots} qs
+              JOIN {question_references} qr ON qr.itemid = qs.id
+              JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
+              JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
+              WHERE qv.questionid $test";
+    return $DB->record_exists_sql($sql, $params) || question_engine::questions_in_use(
             $questionids, new qubaid_join('{quiz_attempts} quiza',
             'quiza.uniqueid', 'quiza.preview = 0'));
 }
@@ -2421,7 +2413,7 @@ function mod_quiz_output_fragment_add_random_question_form($args) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/quiz/addrandomform.php');
 
-    $contexts = new \question_edit_contexts($args['context']);
+    $contexts = new \core_question\local\bank\question_edit_contexts($args['context']);
     $formoptions = [
         'contexts' => $contexts,
         'cat' => $args['cat']
@@ -2468,4 +2460,25 @@ function mod_quiz_core_calendar_get_event_action_string(string $eventtype): stri
     }
 
     return get_string($identifier, 'quiz', $modulename);
+}
+
+/**
+ * Delete question reference data.
+ *
+ * @param int $quizid The id of quiz.
+ */
+function quiz_delete_references($quizid): void {
+    global $DB;
+    $slots = $DB->get_records('quiz_slots', ['quizid' => $quizid]);
+    foreach ($slots as $slot) {
+        $params = [
+            'itemid' => $slot->id,
+            'component' => 'mod_quiz',
+            'questionarea' => 'slot'
+        ];
+        // Delete any set references.
+        $DB->delete_records('question_set_references', $params);
+        // Delete any references.
+        $DB->delete_records('question_references', $params);
+    }
 }

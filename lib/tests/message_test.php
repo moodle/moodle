@@ -144,7 +144,7 @@ class core_message_testcase extends advanced_testcase {
         $this->assertFileExists("$CFG->dirroot/message/output/popup/version.php");
 
         $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user2);
 
         // Extra content for all types of messages.
         $message = new \core\message\message();
@@ -241,7 +241,7 @@ class core_message_testcase extends advanced_testcase {
         $this->assertFileExists("$CFG->dirroot/message/output/popup/version.php");
 
         $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user2);
 
         // Check that prefix is ammended to the subject of the email.
         $message = new \core\message\message();

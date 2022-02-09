@@ -68,7 +68,7 @@ class provider implements
                 'smallmessage' => 'privacy:metadata:smallmessage',
                 'fullmessage' => 'privacy:metadata:fullmessage'
         ], 'privacy:metadata:externalpurpose');
-        // This system is unaware of user preferences such as message_provider_moodle_instantmessage_loggedin.
+        // This system is unaware of user preferences such as message_provider_moodle_instantmessage_enabled.
         return $collection;
     }
 

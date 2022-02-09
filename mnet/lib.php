@@ -269,7 +269,7 @@ function mnet_encrypt_message($message, $remote_certificate) {
     $symmetric_keys = array();
 
     //        passed by ref ->     &$encryptedstring &$symmetric_keys
-    $bool = openssl_seal($message, $encryptedstring, $symmetric_keys, array($publickey));
+    $bool = openssl_seal($message, $encryptedstring, $symmetric_keys, array($publickey), 'RC4');
     $message = $encryptedstring;
     $symmetrickey = array_pop($symmetric_keys);
 
@@ -923,4 +923,16 @@ function mnet_strip_user($user, $fields) {
         $user = (object)$user;
     }
     return $user;
+}
+
+/**
+ * Return the deprecation notice of the Mnet.
+ *
+ * @return \core\output\notification
+ */
+function mnet_get_deprecation_notice(): \core\output\notification {
+    $notice = new \core\output\notification(get_string('xmlrpcmnetenabled', 'admin'),
+        \core\output\notification::NOTIFY_WARNING);
+
+    return $notice;
 }

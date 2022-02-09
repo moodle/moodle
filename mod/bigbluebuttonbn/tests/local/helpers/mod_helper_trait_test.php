@@ -114,14 +114,18 @@ class mod_helper_trait_test extends \advanced_testcase {
         $generator->enrol_user($teacher->id, $this->get_course()->id);
 
         // Mark the form to trigger notification.
-        $bbformdata->notification = true;
+        $bbformdata->coursecontentnotification = true;
+        $bbformdata->update = false;
         $messagesink = $this->redirectMessages();
         mod_helper::process_post_save($bbformdata);
+        edit_module_post_actions($bbformdata, $this->course);
         // Now run cron.
         ob_start();
         $this->runAdhocTasks();
         ob_get_clean(); // Suppress output as it can fail the test.
         $this->assertEquals(1, $messagesink->count());
+        $firstmessage = $messagesink->get_messages()[0];
+        $this->assertStringContainsString('is new in', $firstmessage->smallmessage);
     }
 
     /**
@@ -135,19 +139,21 @@ class mod_helper_trait_test extends \advanced_testcase {
             $this->create_instance(null, ['type' => instance::TYPE_RECORDING_ONLY]);
         $bbformdata = $this->get_form_data_from_instance($bbactivity);
 
-        $bbformdata->add = "1";
-
+        $bbformdata->update = false;
         $messagesink = $this->redirectMessages();
         // Enrol users in a course so he will receive the message.
         $teacher = $generator->create_user(['role' => 'editingteacher']);
         $generator->enrol_user($teacher->id, $this->get_course()->id);
-        $bbformdata->notification = true;
+        $bbformdata->coursecontentnotification = true;
         mod_helper::process_post_save($bbformdata);
+        edit_module_post_actions($bbformdata, $this->course);
         // Now run cron.
         ob_start();
         $this->runAdhocTasks();
         ob_get_clean(); // Suppress output as it can fail the test.
         $this->assertEquals(1, $messagesink->count());
+        $firstmessage = $messagesink->get_messages()[0];
+        $this->assertStringContainsString('is new in', $firstmessage->smallmessage);
     }
 
     /**
@@ -170,20 +176,34 @@ class mod_helper_trait_test extends \advanced_testcase {
         $bbformdata->openingtime = time() - 1000;
         $bbformdata->closing = time() + 1000;
         // Enrol users in a course so he will receive the message.
-        $teacher = $generator->create_user(['role' => 'editingteacher']);
-        $generator->enrol_user($teacher->id, $this->get_course()->id);
-
+        $teacher = $generator->create_user();
+        $generator->enrol_user($teacher->id, $this->get_course()->id, 'editingteacher');
+        $this->setUser($teacher);
         // Mark the form to trigger notification.
-        $bbformdata->notification = true;
+        $bbformdata->coursecontentnotification = true;
+        $bbformdata->update = false;
         $messagesink = $this->redirectMessages();
         mod_helper::process_post_save($bbformdata);
+        edit_module_post_actions($bbformdata, $this->course);
         // Now run cron.
         ob_start();
         $this->runAdhocTasks();
         ob_get_clean(); // Suppress output as it can fail the test.
         $this->assertEquals(1, $messagesink->count());
-        // Do it a again, so we check we still have one event of type EVENT_MEETING_START.
+        $firstmessage = $messagesink->get_messages()[0];
+        $this->assertStringContainsString('is new in', $firstmessage->smallmessage);
+        $messagesink->clear();
+        // Do it a again, so we check we still have one event.
         mod_helper::process_post_save($bbformdata);
+        // Mark the form to trigger notification.
+        $bbformdata->update = true;
+        edit_module_post_actions($bbformdata, $this->course);
+        // Now run cron.
+        ob_start();
+        $this->runAdhocTasks();
+        ob_get_clean(); // Suppress output as it can fail the test.
         $this->assertEquals(1, $messagesink->count());
+        $firstmessage = $messagesink->get_messages()[0];
+        $this->assertStringContainsString('has been changed', $firstmessage->smallmessage);
     }
 }

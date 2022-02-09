@@ -9847,13 +9847,6 @@ a.text-dark:hover, a.text-dark:focus {
 .dir-rtl .custom-select {
   background-position: 0.75rem center; }
 
-/*rtl:raw:
-.dropdown-menu {
-    right: auto;
-    left: 0;
-    text-align: right;
-}
-*/
 .dir-rtl .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
   transform: translateX(-0.9375rem); }
 
@@ -10416,8 +10409,8 @@ table.mod_index {
   border: 1px solid #ccc; }
 
 .comment-message .picture {
-  width: 20px;
-  float: left; }
+  float: left;
+  margin-right: 0.25rem; }
 
 .comment-message .text {
   margin: 0;
@@ -11758,9 +11751,7 @@ ul {
     display: none; }
   .jsenabled .btn-footer-popover {
     display: block;
-    z-index: 1000; }
-  .jsenabled .drawers.show-drawer-right .btn-footer-popover {
-    display: none; } }
+    z-index: 1000; } }
 
 .bg-inverse a {
   color: #fff;
@@ -11896,6 +11887,12 @@ body.h5p-embed .h5pmessages {
 
 #h5pcontenttypes td {
   vertical-align: middle; }
+
+#page.drawers form#h5peditor,
+#page.drawers form#coolh5peditor,
+#page.drawers .core_contentbank_viewcontent {
+  max-width: 960px;
+  margin: 0 auto; }
 
 .text-decoration-none {
   text-decoration: none !important;
@@ -12210,6 +12207,8 @@ body.dragging .dragging {
 .drawers .block_myoverview {
   border: 0; }
   .drawers .block_myoverview > .card-body {
+    padding-top: 0 !important;
+    /* stylelint-disable-line declaration-no-important */
     padding-left: 0 !important;
     /* stylelint-disable-line declaration-no-important */
     padding-right: 0 !important;
@@ -12236,7 +12235,8 @@ body.dragging .dragging {
   margin: 0;
   padding: 0;
   box-sizing: content-box;
-  margin-right: 0.5rem; }
+  margin-right: 0.5rem;
+  margin-left: 0.5rem; }
   .icon.spacer {
     margin-right: 0; }
   .icon.iconsize-big {
@@ -12989,10 +12989,18 @@ body.dragging .dragging {
 .block .block-cards .card .coursemenubtn {
   margin-top: -0.5rem; }
 
-.block .block-cards a.coursename,
 .block .block-cards span.categoryname,
 .block .block-cards .btn-link {
-  color: inherit; }
+  color: #1d2125; }
+
+.block .block-cards .progress-text {
+  color: #6a737b; }
+
+.block .block-cards .dashboard-card-footer.menu {
+  opacity: 0; }
+
+.block .block-cards .dashboard-card:hover .dashboard-card-footer.menu, .block .block-cards .dashboard-card:focus .dashboard-card-footer.menu {
+  opacity: 1; }
 
 .block .block-cards .multiline {
   white-space: normal; }
@@ -13014,6 +13022,21 @@ body.dragging .dragging {
   width: 5rem;
   background-position: center;
   background-size: cover; }
+
+.dashboard-list-img {
+  height: 5rem;
+  width: 20rem;
+  background-position: center;
+  background-size: cover; }
+  @media (max-width: 1199.98px) {
+    .dashboard-list-img {
+      width: 100%; } }
+
+.course-listitem .menu {
+  opacity: 0; }
+
+.course-listitem:hover .menu, .course-listitem:focus .menu {
+  opacity: 1; }
 
 .dashboard-card-deck .dashboard-card {
   margin-bottom: 0.5rem;
@@ -13707,6 +13730,7 @@ table.calendartable caption {
   max-height: 190px;
   overflow-y: auto; }
 
+.cb-navigation-container .singleselect,
 .cb-navigation-container .singleselect .custom-select {
   width: 100%; }
 
@@ -14633,9 +14657,7 @@ span.editinstructions {
   background-color: #f5f9fc;
   border-color: #3584c9;
   border-width: 1px;
-  border-style: dashed;
-  width: 100%;
-  border-radius: 4px; }
+  width: 100%; }
   .activity-add hr,
   .block-add hr {
     border-top-color: #3077b5; }
@@ -18439,6 +18461,7 @@ div#dock {
   color: #343a40;
   font-weight: normal; }
   .userinitials.size-16, .userinitials.size-30 {
+    font-size: 0.7rem;
     width: 30px;
     height: 30px; }
   .userinitials.size-35 {
@@ -19490,6 +19513,29 @@ p.arrow_button {
 .path-grade-report-grader .gradeparent table .clickable {
   cursor: pointer; }
 
+.path-grade-report-grader .gradeparent tr.heading {
+  position: sticky;
+  top: 0;
+  z-index: 1; }
+
+.path-grade-report-grader .gradeparent tr.lastrow {
+  position: sticky;
+  bottom: 0;
+  z-index: 1; }
+  .path-grade-report-grader .gradeparent tr.lastrow td,
+  .path-grade-report-grader .gradeparent tr.lastrow th {
+    border-top: 1px solid #dee2e6; }
+
+.path-grade-report-grader .gradeparent th.header {
+  position: sticky;
+  left: -3rem; }
+
+.path-grade-report-grader .gradeparent td.noborder {
+  border-right: transparent; }
+
+.path-grade-report-grader .show-drawer-left .gradeparent th.header {
+  left: -1rem; }
+
 /**
  * User report.
  */
@@ -19770,6 +19816,15 @@ body.behat-site [data-region="message-drawer"] {
 
 body.behat-site.jsenabled #page-footer .footer-content-popover {
   display: block; }
+
+body.behat-site.path-grade-report-grader .gradeparent tr.heading,
+body.behat-site.path-grade-report-grader .gradeparent tr.lastrow,
+body.behat-site.path-grade-report-grader .gradeparent th.header {
+  position: relative;
+  left: auto; }
+
+body.behat-site.path-grade-report-grader .gradeparent tr.heading {
+  top: auto; }
 
 .phpinfo table,
 .phpinfo th,
@@ -20290,7 +20345,19 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
 #page.drawers {
   margin-top: calc(60px + 2rem);
   padding-left: 15px;
-  padding-right: 15px; }
+  padding-right: 15px;
+  scrollbar-width: thin;
+  scrollbar-color: #6a737b #f8f9fa; }
+  #page.drawers::-webkit-scrollbar {
+    width: 12px; }
+  #page.drawers::-webkit-scrollbar-track {
+    background: #f8f9fa; }
+  #page.drawers::-webkit-scrollbar-thumb {
+    background-color: #6a737b;
+    border-radius: 20px;
+    border: 3px solid #f8f9fa; }
+  #page.drawers::-webkit-scrollbar-thumb:hover {
+    background-color: #495057; }
   #page.drawers .main-inner {
     max-width: 100%;
     width: 100%;
@@ -20946,6 +21013,9 @@ div.editor_atto_toolbar button .icon {
     content: "\f00c";
     font-size: 0.75rem;
     padding-left: .25rem; }
+  @media (max-width: 767.98px) {
+    .navbar.fixed-top .langmenu .langbutton {
+      display: none; } }
   .navbar.fixed-top .moodle-actionmenu .menubar,
   .navbar.fixed-top .action-menu-trigger .dropdown {
     height: 100%;
@@ -21304,13 +21374,18 @@ div.editor_atto_toolbar button .icon {
   .courseindex .courseindex-item.rectrictions .courseindex-locked {
     display: block; }
   .courseindex .courseindex-item.pageitem {
-    background-color: #e9ecef;
-    color: black;
+    background-color: #0f6cbf;
+    color: #fff;
     scroll-margin: 6rem; }
     .courseindex .courseindex-item.pageitem a {
-      color: black; }
+      color: #fff; }
     .courseindex .courseindex-item.pageitem .courseindex-link {
-      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3); }
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3); }
+    .courseindex .courseindex-item.pageitem:hover, .courseindex .courseindex-item.pageitem:focus {
+      background-color: #0c589c;
+      color: #e6e5e5; }
+      .courseindex .courseindex-item.pageitem:hover .courseindex-link, .courseindex .courseindex-item.pageitem:focus .courseindex-link {
+        color: #e6e5e5; }
   .courseindex .courseindex-item .completioninfo {
     min-width: 24px; }
     .courseindex .courseindex-item .completioninfo.completion_complete {

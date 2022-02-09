@@ -25,6 +25,7 @@
 
 require_once(__DIR__ . '/../../../config.php');
 require_once(__DIR__ . '/../../editlib.php');
+
 global $DB, $OUTPUT, $PAGE, $COURSE;
 
 $moveselected = optional_param('move', false, PARAM_BOOL);
@@ -52,7 +53,7 @@ if ($cmid) {
     throw new moodle_exception('missingcourseorcmid', 'question');
 }
 
-$contexts = new question_edit_contexts($thiscontext);
+$contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
 $url = new moodle_url('/question/bank/bulkmove/move.php');
 
 $PAGE->set_url($url);

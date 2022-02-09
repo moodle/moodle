@@ -1435,10 +1435,14 @@ const Tour = class {
 
                 let drawertop = 0;
                 if (targetNode.parents('[data-usertour="scroller"]').length) {
-                    drawertop = targetNode.parents('[data-usertour="scroller"]').scrollTop();
-                    background.css({
-                       position: 'fixed'
-                    });
+                    const scrollerElement = targetNode.parents('[data-usertour="scroller"]');
+                    const navigationBuffer = scrollerElement.offset().top;
+                    if (scrollerElement.scrollTop() >= navigationBuffer) {
+                        drawertop = scrollerElement.scrollTop() - navigationBuffer;
+                        background.css({
+                            position: 'fixed'
+                        });
+                    }
                 }
 
                 background.css({

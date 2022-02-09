@@ -433,7 +433,7 @@ class GeoPattern {
                 if ($x == 0 && $y == 0) {
                     $xyT1 = 6 * $xSize / 2 - $xSize / 2;
                     $xyT2 = $dy - 6 * $xSize / 2;
-                    $this->svg->addGroup($group, array_merge($styles, ['transform' => "translate($xyT1, $xyT2) rotate(45, $halfXSize, $halfXSize"]));
+                    $this->svg->addGroup($group, array_merge($styles, ['transform' => "translate($xyT1, $xyT2) rotate(45, $halfXSize, $halfXSize)"]));
                 }
 
                 $i++;

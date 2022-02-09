@@ -31,6 +31,7 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/questionlib.php');
 
+use \core\notification;
 use qbank_previewquestion\form\preview_options_form;
 use qbank_previewquestion\question_preview_options;
 use qbank_previewquestion\helper;
@@ -48,6 +49,7 @@ define('QUESTION_PREVIEW_MAX_VARIANTS', 100);
 // Get and validate question id.
 $id = required_param('id', PARAM_INT);
 $returnurl = optional_param('returnurl', null, PARAM_RAW);
+
 $question = question_bank::load_question($id);
 
 if ($returnurl) {
@@ -132,8 +134,10 @@ $options->behaviour = $quba->get_preferred_behaviour();
 $options->maxmark = $quba->get_question_max_mark($slot);
 
 // Create the settings form, and initialise the fields.
-$optionsform = new preview_options_form(helper::question_preview_form_url($question->id, $context, $previewid, $returnurl),
-        ['quba' => $quba, 'maxvariant' => $maxvariant]);
+$versionids = helper::load_versions($question->questionbankentryid);
+$optionsform = new preview_options_form(helper::
+question_preview_form_url($question->id, $context, $previewid, $returnurl),
+        ['quba' => $quba, 'maxvariant' => $maxvariant, 'versions' => $versionids, 'questionversion' => $id]);
 $optionsform->set_data($options);
 
 // Process change of settings, if that was requested.
@@ -144,7 +148,7 @@ if ($newoptions = $optionsform->get_submitted_data()) {
         $newoptions->variant = $options->variant;
     }
     if (isset($newoptions->saverestart)) {
-        helper::restart_preview($previewid, $question->id, $newoptions, $context, $returnurl);
+        helper::restart_preview($previewid, $question->id, $newoptions, $context, $returnurl, $newoptions->version);
     }
 }
 
@@ -249,6 +253,17 @@ $PAGE->set_heading($title);
 echo $OUTPUT->header();
 
 $previewdata = [];
+
+$previewdata['questionicon'] = print_question_icon($question);
+$previewdata['questionidumber'] = $question->idnumber;
+$previewdata['questiontitle'] = $question->name;
+$islatestversion = is_latest($question->version, $question->questionbankentryid);
+if ($islatestversion) {
+    $previewdata['versiontitle'] = get_string('versiontitlelatest', 'qbank_previewquestion', $question->version);
+} else {
+    $previewdata['versiontitle'] = get_string('versiontitle', 'qbank_previewquestion', $question->version);
+}
+
 $previewdata['actionurl'] = $actionurl;
 $previewdata['session'] = sesskey();
 $previewdata['slot'] = $slot;
@@ -264,21 +279,6 @@ foreach ($technical as $info) {
     $previewdata['techinfo'] .= html_writer::tag('p', $info, ['class' => 'notifytiny']);
 }
 $previewdata['techinfo'] .= print_collapsible_region_end(true);
-
-// Output a link to export this single question.
-if (question_has_capability_on($question, 'view')) {
-    if (class_exists('qbank_exporttoxml\\helper')) {
-        if (\core\plugininfo\qbank::is_plugin_enabled('qbank_exporttoxml')) {
-            $exportfunction = '\\qbank_exporttoxml\\helper::question_get_export_single_question_url';
-            $previewdata['exporttoxml'] = html_writer::link($exportfunction($question),
-                    get_string('exportonequestion', 'question'));
-        }
-    } else {
-        $exportfunction = 'question_get_export_single_question_url';
-        $previewdata['exporttoxml'] = html_writer::link($exportfunction($question),
-                get_string('exportonequestion', 'question'));
-    }
-}
 
 // Display the settings form.
 $previewdata['options'] = $optionsform->render();
@@ -304,16 +304,12 @@ if (!is_null($returnurl)) {
     $previewdata['redirect'] = true;
     $previewdata['redirecturl'] = $returnurl;
 }
-
+$closeurl = new moodle_url('/question/edit.php', ['courseid' => $COURSE->id]);
 echo $PAGE->get_renderer('qbank_previewquestion')->render_preview_page($previewdata);
 
 // Log the preview of this question.
 $event = \core\event\question_viewed::create_from_question_instance($question, $context);
 $event->trigger();
 
-$PAGE->requires->js_call_amd('qbank_previewquestion/preview', 'init', [$previewdata['redirect']]);
-$PAGE->requires->js_call_amd('core_form/changechecker', 'watchFormById', ['responseform']);
-$PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_save_question_preview']);
-$PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_finish_question_preview']);
-$PAGE->requires->js_call_amd('core_form/submit', 'init', ['id_restart_question_preview']);
+$PAGE->requires->js_call_amd('qbank_previewquestion/preview', 'init', [$previewdata['redirect'], $closeurl->__toString()]);
 echo $OUTPUT->footer();

@@ -22,7 +22,6 @@ use comment;
 use context;
 use context_course;
 use core_question_generator;
-use question_edit_contexts;
 use stdClass;
 
 /**
@@ -66,7 +65,7 @@ class comment_created_deleted_test extends advanced_testcase {
         $this->context = context_course::instance($this->course->id);
 
         // Create a question in the default category.
-        $contexts = new question_edit_contexts($this->context);
+        $contexts = new \core_question\local\bank\question_edit_contexts($this->context);
         $cat = question_make_default_categories($contexts->all());
         $this->questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);

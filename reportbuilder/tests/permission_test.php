@@ -64,6 +64,20 @@ class permission_test extends advanced_testcase {
     }
 
     /**
+     * Test whether user can view reports list when custom reports are disabled
+     */
+    public function test_require_can_view_reports_list_disabled(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_config('enablecustomreports', 0);
+
+        $this->expectException(report_access_exception::class);
+        $this->expectExceptionMessage('You cannot view this report');
+        permission::require_can_view_reports_list();
+    }
+
+    /**
      * Test whether user can view specific report
      */
     public function test_require_can_view_report(): void {
@@ -124,6 +138,24 @@ class permission_test extends advanced_testcase {
         unassign_capability('moodle/reportbuilder:view', $userrole, context_system::instance());
 
         // User does not have view capability and belongs to an audience.
+        $this->expectException(report_access_exception::class);
+        $this->expectExceptionMessage('You cannot view this report');
+        permission::require_can_view_report($report);
+    }
+
+    /**
+     * Test whether user can view report when custom reports are disabled
+     */
+    public function test_require_can_view_report_disabled(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_config('enablecustomreports', 0);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+
         $this->expectException(report_access_exception::class);
         $this->expectExceptionMessage('You cannot view this report');
         permission::require_can_view_report($report);
@@ -207,6 +239,24 @@ class permission_test extends advanced_testcase {
     }
 
     /**
+     * Test whether user can edit report when custom reports are disabled
+     */
+    public function test_require_can_edit_report_disabled(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_config('enablecustomreports', 0);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+
+        $this->expectException(report_access_exception::class);
+        $this->expectExceptionMessage('You cannot edit this report');
+        permission::require_can_edit_report($report);
+    }
+
+    /**
      * Test that user can create a new report
      */
     public function test_require_can_create_report(): void {
@@ -247,5 +297,23 @@ class permission_test extends advanced_testcase {
         $this->expectException(report_access_exception::class);
         $this->expectExceptionMessage('You cannot create a new report');
         permission::require_can_create_report((int)$user3->id);
+    }
+
+    /**
+     * Test whether user can create report when custom reports are disabled
+     */
+    public function test_require_can_create_report_disabled(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        set_config('enablecustomreports', 0);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+
+        $this->expectException(report_access_exception::class);
+        $this->expectExceptionMessage('You cannot create a new report');
+        permission::require_can_create_report();
     }
 }

@@ -20,6 +20,8 @@ Feature: Confirm content bank events are triggered
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
     And I am on "Course 1" course homepage with editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
 
   Scenario: Content created and uploaded events when uploading a content file

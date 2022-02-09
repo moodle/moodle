@@ -1,23 +1,28 @@
 <?php
-/*
-@version   v5.21.0  2021-02-27
-@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-  Set tabs to 8.
-
-  This is the preferred driver for MySQL connections, and supports both transactional
-  and non-transactional table types. You can use this as a drop-in replacement for both
-  the mysql and mysqlt drivers. As of ADOdb Version 5.20.0, all other native MySQL drivers
-  are deprecated
-
-  Requires mysql client. Works on Windows and Unix.
-
-21 October 2003: MySQLi extension implementation by Arjen de Rijke (a.de.rijke@xs4all.nl)
-Based on adodb 3.40
-*/
+/**
+ * MySQL improved driver (mysqli)
+ *
+ * This is the preferred driver for MySQL connections. It  supports both
+ * transactional and non-transactional table types. You can use this as a
+ * drop-in replacement for both the mysql and mysqlt drivers.
+ * As of ADOdb Version 5.20.0, all other native MySQL drivers are deprecated.
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) {
@@ -78,6 +83,24 @@ class ADODB_mysqli extends ADOConnection {
 	private $useLastInsertStatement = false;
 
 	/**
+	 * @var bool True if the last executed statement is a SELECT {@see _query()}
+	 */
+	private $isSelectStatement = false;
+
+	/**
+	 * ADODB_mysqli constructor.
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+
+		// Forcing error reporting mode to OFF, which is no longer the default
+		// starting with PHP 8.1 (see #755)
+		mysqli_report(MYSQLI_REPORT_OFF);
+	}
+
+
+	/**
 	 * Sets the isolation level of a transaction.
 	 *
 	 * @link https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:settransactionmode
@@ -95,6 +118,27 @@ class ADODB_mysqli extends ADOConnection {
 		}
 		if (!stristr($transaction_mode,'isolation')) $transaction_mode = 'ISOLATION LEVEL '.$transaction_mode;
 		$this->execute("SET SESSION TRANSACTION ".$transaction_mode);
+	}
+
+	/**
+	 * Adds a parameter to the connection string.
+	 *
+	 * Parameter must be one of the the constants listed in mysqli_options().
+	 * @see https://www.php.net/manual/en/mysqli.options.php
+	 *
+	 * @param int $parameter The parameter to set
+	 * @param string $value The value of the parameter
+	 *
+	 * @example, for mssqlnative driver ('CharacterSet','UTF-8')
+	 * @return bool
+	 */
+	public function setConnectionParameter($parameter, $value) {
+		if(!is_numeric($parameter)) {
+			$this->outp_throw("Invalid connection parameter '$parameter'", __METHOD__);
+			return false;
+		}
+		$this->connectionParameters[$parameter] = $value;
+		return true;
 	}
 
 	/**
@@ -139,13 +183,15 @@ class ADODB_mysqli extends ADOConnection {
 			mysqli_options($this->_connectionID,$arr[0],$arr[1]);
 		}
 
-		/*
-		* Now merge in the standard connection parameters setting
-		*/
-		foreach ($this->connectionParameters as $options)
-		{
-			foreach($options as $k=>$v)
-				$ok = mysqli_options($this->_connectionID,$k,$v);
+		// Now merge in the standard connection parameters setting
+		foreach ($this->connectionParameters as $parameter => $value) {
+			// Make sure parameter is numeric before calling mysqli_options()
+			// that to avoid Warning (or TypeError exception on PHP 8).
+			if (!is_numeric($parameter)
+				|| !mysqli_options($this->_connectionID, $parameter, $value)
+			) {
+				$this->outp_throw("Invalid connection parameter '$parameter'", __METHOD__);
+			}
 		}
 
 		//https://php.net/manual/en/mysqli.persistconns.php
@@ -377,9 +423,9 @@ class ADODB_mysqli extends ADOConnection {
 	/**
 	 * Return the AUTO_INCREMENT id of the last row that has been inserted or updated in a table.
 	 *
-	 * @return int|string
+	 * @inheritDoc
 	 */
-	function _insertid()
+	protected function _insertID($table = '', $column = '')
 	{
 		// mysqli_insert_id does not return the last_insert_id if called after
 		// execution of a stored procedure so we execute this instead.
@@ -406,6 +452,12 @@ class ADODB_mysqli extends ADOConnection {
 	 */
 	function _affectedrows()
 	{
+		if ($this->isSelectStatement) {
+			// Affected rows works fine against selects, returning
+			// the rowcount, but ADOdb does not do that.
+			return false;
+		}
+
 		$result =  @mysqli_affected_rows($this->_connectionID);
 		if ($result == -1) {
 			if ($this->debug) ADOConnection::outp("mysqli_affected_rows() failed : "  . $this->errorMsg());
@@ -864,15 +916,15 @@ class ADODB_mysqli extends ADOConnection {
 		* Return assoc array where key is column name, value is column type
 		*    [1] => int unsigned
 		*/
-		
-		$SQL = "SELECT column_name, column_type 
-				  FROM information_schema.columns 
-				 WHERE table_schema='{$this->databaseName}' 
+
+		$SQL = "SELECT column_name, column_type
+				  FROM information_schema.columns
+				 WHERE table_schema='{$this->databaseName}'
 				   AND table_name='$table'";
-		
+
 		$schemaArray = $this->getAssoc($SQL);
 		$schemaArray = array_change_key_case($schemaArray,CASE_LOWER);
-	
+
 		$rs = $this->Execute(sprintf($this->metaColumnsSQL,$table));
 		if (isset($savem)) $this->SetFetchMode($savem);
 		$ADODB_FETCH_MODE = $save;
@@ -884,7 +936,7 @@ class ADODB_mysqli extends ADOConnection {
 			$fld = new ADOFieldObject();
 			$fld->name = $rs->fields[0];
 			$type = $rs->fields[1];
-			
+
 			/*
 			* Type from information_schema returns
 			* the same format in V8 mysql as V5
@@ -910,7 +962,7 @@ class ADODB_mysqli extends ADOConnection {
 				$fld->type = $type;
 				$fld->max_length = -1;
 			}
-			
+
 			$fld->not_null = ($rs->fields[2] != 'YES');
 			$fld->primary_key = ($rs->fields[3] == 'PRI');
 			$fld->auto_increment = (strpos($rs->fields[5], 'auto_increment') !== false);
@@ -1096,8 +1148,10 @@ class ADODB_mysqli extends ADOConnection {
 			}
 		} else {
 			$rs = mysqli_query($this->_connectionID, $sql, $ADODB_COUNTRECS ? MYSQLI_STORE_RESULT : MYSQLI_USE_RESULT);
-
-			if ($rs) return $rs;
+			if ($rs) {
+				$this->isSelectStatement = is_object($rs);
+				return $rs;
+			}
 		}
 
 		if($this->debug)
@@ -1173,46 +1227,29 @@ class ADODB_mysqli extends ADOConnection {
 		return 4294967295;
 	}
 
-	/**
-	 * Get the name of the character set the client connection is using now.
-	 *
-	 * @return string|bool The name of the character set, or false if it can't be determined.
-	 */
-	function GetCharSet()
+	function getCharSet()
 	{
-		//we will use ADO's builtin property charSet
-		if (!method_exists($this->_connectionID,'character_set_name'))
+		if (!$this->_connectionID || !method_exists($this->_connectionID,'character_set_name')) {
 			return false;
-
-		$this->charSet = @$this->_connectionID->character_set_name();
-		if (!$this->charSet) {
-			return false;
-		} else {
-			return $this->charSet;
 		}
+
+		$this->charSet = $this->_connectionID->character_set_name();
+		return $this->charSet ?: false;
 	}
 
-	/**
-	 * Sets the character set for database connections (limited databases).
-	 *
-	 * @link https://adodb.org/dokuwiki/doku.php?id=v5:reference:connection:setcharset
-	 *
-	 * @param string $charset_name The character set to switch to.
-	 *
-	 * @return bool True if the character set was changed successfully, otherwise false.
-	 */
-	function SetCharSet($charset_name)
+	function setCharSet($charset)
 	{
-		if (!method_exists($this->_connectionID,'set_charset')) {
+		if (!$this->_connectionID || !method_exists($this->_connectionID,'set_charset')) {
 			return false;
 		}
 
-		if ($this->charSet !== $charset_name) {
-			$if = @$this->_connectionID->set_charset($charset_name);
-			return ($if === true & $this->getCharSet() == $charset_name);
-		} else {
-			return true;
+		if ($this->charSet !== $charset) {
+			if (!$this->_connectionID->set_charset($charset)) {
+				return false;
+			}
+			$this->getCharSet();
 		}
+		return true;
 	}
 
 }

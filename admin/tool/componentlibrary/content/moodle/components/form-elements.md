@@ -23,7 +23,7 @@ Form elements are styled using the .form-control class, see the [Bootstrap](/boo
 
 ## Example form elements
 
-The example form below is showing an ifram with an actual Moodle form. Use the toggle options to display the different states for the form.
+The example form below is showing an iframe with an actual Moodle form. Use the toggle options to display the different states for the form.
 
 
-<iframe src="../../../../formfields.php" style="overflow:hidden;height:4000px;width:100%;border:0" title="Moodle formfields"></iframe>
+<iframe src="../../../../examples/formfields.php" style="overflow:hidden;height:4000px;width:100%;border:0" title="Moodle form fields"></iframe>

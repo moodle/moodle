@@ -81,6 +81,7 @@
     $hosts = $DB->get_records_select('mnet_host', "id <> ? AND deleted = 0", array($CFG->mnet_localhost_id), 'wwwroot ASC');
 
     echo $OUTPUT->header();
+    echo $OUTPUT->render(mnet_get_deprecation_notice());
 ?>
 <form method="post" action="index.php">
     <table align="center" width="635" class="generaltable" border="0" cellpadding="5" cellspacing="0">

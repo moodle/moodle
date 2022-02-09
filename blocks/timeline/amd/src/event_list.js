@@ -45,7 +45,7 @@ function(
     var courseview = false;
 
     var SELECTORS = {
-        EMPTY_MESSAGE: '[data-region="empty-message"]',
+        EMPTY_MESSAGE: '[data-region="no-events-empty-message"]',
         ROOT: '[data-region="event-list-container"]',
         EVENT_LIST_CONTENT: '[data-region="event-list-content"]',
         EVENT_LIST_WRAPPER: '[data-region="event-list-wrapper"]',

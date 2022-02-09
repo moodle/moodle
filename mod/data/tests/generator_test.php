@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * PHPUnit data generator tests.
- *
- * @package    mod_data
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
+namespace mod_data;
 
 /**
  * PHPUnit data generator testcase.
@@ -34,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_data_generator_testcase extends advanced_testcase {
+class generator_test extends \advanced_testcase {
     public function test_generator() {
         global $DB;
 
@@ -59,7 +49,7 @@ class mod_data_generator_testcase extends advanced_testcase {
         $this->assertEquals('data', $cm->modname);
         $this->assertEquals($course->id, $cm->course);
 
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
         $this->assertEquals($data->cmid, $context->instanceid);
 
         // test gradebook integration using low level DB access - DO NOT USE IN PLUGIN CODE!
@@ -95,7 +85,7 @@ class mod_data_generator_testcase extends advanced_testcase {
         $this->assertEquals('data', $cm->modname);
         $this->assertEquals($course->id, $cm->course);
 
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
         $this->assertEquals($data->cmid, $context->instanceid);
 
         $fieldtypes = array('checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url');
@@ -107,7 +97,7 @@ class mod_data_generator_testcase extends advanced_testcase {
 
             // Creating variables dynamically.
             $fieldname = 'field-' . $count;
-            $record = new StdClass();
+            $record = new \stdClass();
             $record->name = $fieldname;
             $record->type = $fieldtype;
 
@@ -156,7 +146,7 @@ class mod_data_generator_testcase extends advanced_testcase {
         $this->assertEquals('data', $cm->modname);
         $this->assertEquals($course->id, $cm->course);
 
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
         $this->assertEquals($data->cmid, $context->instanceid);
 
         $fieldtypes = array('checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url',
@@ -169,7 +159,7 @@ class mod_data_generator_testcase extends advanced_testcase {
 
             // Creating variables dynamically.
             $fieldname = 'field-' . $count;
-            $record = new StdClass();
+            $record = new \stdClass();
             $record->name = $fieldname;
             $record->type = $fieldtype;
             $record->required = 1;
@@ -237,6 +227,6 @@ class mod_data_generator_testcase extends advanced_testcase {
         $this->assertEquals($contents[++$contentstartid]->content, 'http://example.url');
         $this->assertEquals($contents[$contentstartid]->content1, 'sampleurl');
         $this->assertEquals(array('Cats', 'mice'),
-            array_values(core_tag_tag::get_item_tags_array('mod_data', 'data_records', $datarecordid)));
+            array_values(\core_tag_tag::get_item_tags_array('mod_data', 'data_records', $datarecordid)));
     }
 }

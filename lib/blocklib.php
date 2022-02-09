@@ -214,15 +214,17 @@ class block_manager {
             return $this->addableblocks;
         }
 
-        $unaddableblocks = self::get_undeletable_block_types();
+        $undeletableblocks = self::get_undeletable_block_types();
+        $unaddablebythemeblocks = $this->get_unaddable_by_theme_block_types();
         $requiredbythemeblocks = $this->get_required_by_theme_block_types();
         $pageformat = $this->page->pagetype;
         foreach($allblocks as $block) {
             if (!$bi = block_instance($block->name)) {
                 continue;
             }
-            if ($block->visible && !in_array($block->name, $unaddableblocks) &&
+            if ($block->visible && !in_array($block->name, $undeletableblocks) &&
                     !in_array($block->name, $requiredbythemeblocks) &&
+                    !in_array($block->name, $unaddablebythemeblocks) &&
                     $bi->can_block_be_added($this->page) &&
                     ($bi->instance_allow_multiple() || !$this->is_block_present($block->name)) &&
                     blocks_name_allowed_in_format($block->name, $pageformat) &&
@@ -426,6 +428,21 @@ class block_manager {
         } else {
             return $requiredbythemeblocks;
         }
+    }
+
+    /**
+     * It returns the list of blocks that can't be displayed in the "Add a block" list.
+     * This information is taken from the unaddableblocks theme setting.
+     *
+     * @return array A list with the blocks that won't be displayed in the "Add a block" list.
+     */
+    public function get_unaddable_by_theme_block_types(): array {
+        $unaddablebythemeblocks = [];
+        if (isset($this->page->theme->settings->unaddableblocks) && !empty($this->page->theme->settings->unaddableblocks)) {
+            $unaddablebythemeblocks = array_map('trim', explode(',', $this->page->theme->settings->unaddableblocks));
+        }
+
+        return $unaddablebythemeblocks;
     }
 
     /**

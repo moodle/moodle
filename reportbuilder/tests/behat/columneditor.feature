@@ -14,12 +14,13 @@ Feature: Manage custom report columns
     And I should see "Full name" in the "reportbuilder-table" "table"
 
   Scenario: Rename column in report
-    Given the following "core_reportbuilder > Reports" exist:
-      | name      | source                                   | default |
-      | My report | core_user\reportbuilder\datasource\users | 0       |
-    And the following "core_reportbuilder > Columns" exist:
-      | report    | uniqueidentifier |
-      | My report | user:fullname    |
+    Given the following "core_reportbuilder > Report" exists:
+      | name    | My report                                |
+      | source  | core_user\reportbuilder\datasource\users |
+      | default | 0                                        |
+    And the following "core_reportbuilder > Column" exists:
+      | report           | My report     |
+      | uniqueidentifier | user:fullname |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     When I set the field "Rename column 'Full name'" to "My renamed column"
     And I reload the page

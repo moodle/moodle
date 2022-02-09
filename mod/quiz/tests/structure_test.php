@@ -703,7 +703,11 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         $cat = $questiongenerator->create_question_category();
         quiz_add_random_questions($quizobj->get_quiz(), 1, $cat->id, 1, false);
         $structure = \mod_quiz\structure::create_for_quiz($quizobj);
-        $randomq = $DB->get_record('question', array('qtype' => 'random'));
+        $sql = 'SELECT qsr.*
+                 FROM {question_set_references} qsr
+                 JOIN {quiz_slots} qs ON qs.id = qsr.itemid
+                 WHERE qs.quizid = ?';
+        $randomq = $DB->get_record_sql($sql, [$quizobj->get_quizid()]);
 
         $structure->remove_slot(2);
 
@@ -711,7 +715,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         $this->assert_quiz_layout(array(
                 array('TF1', 1, 'truefalse'),
             ), $structure);
-        $this->assertFalse($DB->record_exists('question', array('id' => $randomq->id)));
+        $this->assertFalse($DB->record_exists('question_set_references', array('id' => $randomq->id)));
     }
 
     /**
@@ -897,150 +901,6 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         // Having called update page break, we need to reload $structure.
         $structure = \mod_quiz\structure::create_for_quiz($quizobj);
         $this->assertEquals(0, $structure->is_question_dependent_on_previous_slot(2));
-    }
-
-    /**
-     * Data provider for the get_slot_tags_for_slot test.
-     */
-    public function get_slot_tags_for_slot_test_cases() {
-        return [
-            'incorrect slot id' => [
-                'layout' => [
-                    ['TF1', 1, 'truefalse'],
-                    ['TF2', 1, 'truefalse'],
-                    ['TF3', 1, 'truefalse']
-                ],
-                'tagnames' => [
-                    ['foo'],
-                    ['bar'],
-                    ['baz']
-                ],
-                'slotnumber' => null,
-                'expected' => []
-            ],
-            'no tags' => [
-                'layout' => [
-                    ['TF1', 1, 'truefalse'],
-                    ['TF2', 1, 'truefalse'],
-                    ['TF3', 1, 'truefalse']
-                ],
-                'tagnames' => [
-                    ['foo'],
-                    [],
-                    ['baz']
-                ],
-                'slotnumber' => 2,
-                'expected' => []
-            ],
-            'one tag 1' => [
-                'layout' => [
-                    ['TF1', 1, 'truefalse'],
-                    ['TF2', 1, 'truefalse'],
-                    ['TF3', 1, 'truefalse']
-                ],
-                'tagnames' => [
-                    ['foo'],
-                    ['bar'],
-                    ['baz']
-                ],
-                'slotnumber' => 1,
-                'expected' => ['foo']
-            ],
-            'one tag 2' => [
-                'layout' => [
-                    ['TF1', 1, 'truefalse'],
-                    ['TF2', 1, 'truefalse'],
-                    ['TF3', 1, 'truefalse']
-                ],
-                'tagnames' => [
-                    ['foo'],
-                    ['bar'],
-                    ['baz']
-                ],
-                'slotnumber' => 2,
-                'expected' => ['bar']
-            ],
-            'multiple tags 1' => [
-                'layout' => [
-                    ['TF1', 1, 'truefalse'],
-                    ['TF2', 1, 'truefalse'],
-                    ['TF3', 1, 'truefalse']
-                ],
-                'tagnames' => [
-                    ['foo', 'bar'],
-                    ['bar'],
-                    ['baz']
-                ],
-                'slotnumber' => 1,
-                'expected' => ['foo', 'bar']
-            ],
-            'multiple tags 2' => [
-                'layout' => [
-                    ['TF1', 1, 'truefalse'],
-                    ['TF2', 1, 'truefalse'],
-                    ['TF3', 1, 'truefalse']
-                ],
-                'tagnames' => [
-                    ['foo', 'bar'],
-                    ['bar', 'baz'],
-                    ['baz']
-                ],
-                'slotnumber' => 2,
-                'expected' => ['bar', 'baz']
-            ]
-        ];
-    }
-
-    /**
-     * @dataProvider get_slot_tags_for_slot_test_cases()
-     * @param  array $layout Quiz layout for create_test_quiz function
-     * @param  array $tagnames Tags to create for each question slot
-     * @param  int $slotnumber The slot number to select tags from
-     * @param  string[] $expected The tags expected for the given $slotnumber
-     */
-    public function test_get_slot_tags_for_slot($layout, $tagnames, $slotnumber, $expected) {
-        global $DB;
-        $this->resetAfterTest();
-
-        $quiz = $this->create_test_quiz($layout);
-        $structure = \mod_quiz\structure::create_for_quiz($quiz);
-        $collid = core_tag_area::get_collection('core', 'question');
-        $slottagrecords = [];
-
-        if (is_null($slotnumber)) {
-            // Null slot number means to create a non-existent slot id.
-            $slot = $structure->get_last_slot();
-            $slotid = $slot->id + 100;
-        } else {
-            $slot = $structure->get_slot_by_number($slotnumber);
-            $slotid = $slot->id;
-        }
-
-        foreach ($tagnames as $index => $slottagnames) {
-            $tagslotnumber = $index + 1;
-            $tagslotid = $structure->get_slot_id_for_slot($tagslotnumber);
-            $tags = core_tag_tag::create_if_missing($collid, $slottagnames);
-            $records = array_map(function($tag) use ($tagslotid) {
-                return (object) [
-                    'slotid' => $tagslotid,
-                    'tagid' => $tag->id,
-                    'tagname' => $tag->name
-                ];
-            }, array_values($tags));
-            $slottagrecords = array_merge($slottagrecords, $records);
-        }
-
-        $DB->insert_records('quiz_slot_tags', $slottagrecords);
-
-        $actualslottags = $structure->get_slot_tags_for_slot_id($slotid);
-        $actual = array_map(function($slottag) {
-            return $slottag->tagname;
-        }, $actualslottags);
-
-        sort($expected);
-        sort($actual);
-
-        $this->assertEquals($expected, $actual);
     }
 
     /**

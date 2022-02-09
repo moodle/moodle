@@ -346,17 +346,21 @@ class calculator {
      * @param calculated $stats question stats to update.
      */
     protected function initial_question_walker($stats) {
-        $stats->markaverage = $stats->totalmarks / $stats->s;
+        if ($stats->s != 0) {
+            $stats->markaverage = $stats->totalmarks / $stats->s;
+            $stats->othermarkaverage = $stats->totalothermarks / $stats->s;
+            $stats->summarksaverage = $stats->totalsummarks / $stats->s;
+        } else {
+            $stats->markaverage = 0;
+            $stats->othermarkaverage = 0;
+            $stats->summarksaverage = 0;
+        }
 
         if ($stats->maxmark != 0) {
             $stats->facility = $stats->markaverage / $stats->maxmark;
         } else {
             $stats->facility = null;
         }
-
-        $stats->othermarkaverage = $stats->totalothermarks / $stats->s;
-
-        $stats->summarksaverage = $stats->totalsummarks / $stats->s;
 
         sort($stats->markarray, SORT_NUMERIC);
         sort($stats->othermarksarray, SORT_NUMERIC);

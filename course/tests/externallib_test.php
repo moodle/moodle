@@ -2552,7 +2552,7 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertTrue($navoptions->blogs);
                 $this->assertFalse($navoptions->notes);
                 $this->assertTrue($navoptions->participants);
-                $this->assertTrue($navoptions->badges);
+                $this->assertFalse($navoptions->badges);
                 $this->assertFalse($navoptions->tags);
                 $this->assertTrue($navoptions->grades);
                 $this->assertFalse($navoptions->search);

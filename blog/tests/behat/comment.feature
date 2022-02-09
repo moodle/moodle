@@ -12,6 +12,8 @@ Feature: Comment on a blog entry
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     # TODO MDL-57120 "Site blogs" link not accessible without navigation block.
     And I add the "Navigation" block if not present
     And I configure the "Navigation" block

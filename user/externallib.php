@@ -415,6 +415,18 @@ class core_user_external extends external_api {
         if (!empty($preferences)) {
             $userpref = ['id' => $userid];
             foreach ($preferences as $preference) {
+
+                /*
+                 * Rename user message provider preferences to avoid orphan settings on old app versions.
+                 * @todo Remove this "translation" block on MDL-73284.
+                 */
+                if (preg_match('/message_provider_.*_loggedin/', $preference['type']) ||
+                        preg_match('/message_provider_.*_loggedoff/', $preference['type'])) {
+                    $nameparts = explode('_', $preference['type']);
+                    array_pop($nameparts);
+                    $preference['type'] = implode('_', $nameparts).'_enabled';
+                }
+
                 $userpref['preference_' . $preference['type']] = $preference['value'];
             }
             useredit_update_user_preference($userpref);

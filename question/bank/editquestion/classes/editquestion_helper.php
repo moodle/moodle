@@ -27,6 +27,8 @@
 
 namespace qbank_editquestion;
 
+use core_question\local\bank\question_version_status;
+
 /**
  * Class editquestion_helper for methods related to add/edit/copy
  *
@@ -83,4 +85,27 @@ class editquestion_helper {
         }
         return $PAGE->get_renderer('qbank_editquestion')->render_create_new_question_button($addquestiondisplay);
     }
+
+    /**
+     * Get the string for the status of the question.
+     *
+     * @param string $status
+     * @return string
+     */
+    public static function get_question_status_string($status): string {
+        return get_string('questionstatus' . $status, 'qbank_editquestion');
+    }
+
+    /**
+     * Get the array of status of the questions.
+     *
+     * @return array
+     */
+    public static function get_question_status_list(): array {
+        $statuslist = [];
+        $statuslist[question_version_status::QUESTION_STATUS_READY] = get_string('questionstatusready', 'qbank_editquestion');
+        $statuslist[question_version_status::QUESTION_STATUS_DRAFT] = get_string('questionstatusdraft', 'qbank_editquestion');
+        return $statuslist;
+    }
+
 }

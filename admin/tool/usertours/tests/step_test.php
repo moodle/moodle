@@ -825,47 +825,24 @@ class step_testcase extends advanced_testcase {
     }
 
     /**
-     * Data Provider for get_string_from_input.
-     *
-     * @return array
+     * Ensure that the get_step_image_from_input function replace PIXICON placeholder with the correct images correctly.
      */
-    public function get_string_from_input_provider() {
-        return [
-            'Text'  => [
-                'example',
-                'example',
-            ],
-            'Text which looks like a langstring' => [
-                'example,fakecomponent',
-                'example,fakecomponent',
-            ],
-            'Text which is a langstring' => [
-                'administration,core',
-                'Administration',
-            ],
-            'Text which is a langstring but uses "moodle" instead of "core"' => [
-                'administration,moodle',
-                'Administration',
-            ],
-            'Text which is a langstring, but with extra whitespace' => [
-                '  administration,moodle  ',
-                'Administration',
-            ],
-            'Looks like a langstring, but has incorrect space around comma' => [
-                'administration , moodle',
-                'administration , moodle',
-            ],
-        ];
-    }
+    public function test_get_step_image_from_input() {
+        $stepcontent = '@@PIXICON::tour/tour_mycourses::tool_usertours@@<br>Test';
+        $stepcontent = \tool_usertours\step::get_step_image_from_input($stepcontent);
 
-    /**
-     * Ensure that the get_string_from_input function returns langstring strings correctly.
-     *
-     * @dataProvider get_string_from_input_provider
-     * @param   string  $string     The string to test
-     * @param   string  $expected   The expected result
-     */
-    public function test_get_string_from_input($string, $expected) {
-        $this->assertEquals($expected, \tool_usertours\step::get_string_from_input($string));
+        // If the format is correct, PIXICON placeholder will be replaced with the img tag.
+        $this->assertStringStartsWith('<img', $stepcontent);
+        $this->assertStringEndsWith('Test', $stepcontent);
+        $this->assertStringNotContainsString('PIXICON', $stepcontent);
+
+        $stepcontent = '@@PIXICON::tour/tour_mycourses<br>Test';
+        $stepcontent = \tool_usertours\step::get_step_image_from_input($stepcontent);
+
+        // If the format is not correct, PIXICON placeholder will not be replaced with the img tag.
+        $this->assertStringStartsNotWith('<img', $stepcontent);
+        $this->assertStringStartsWith('@@PIXICON', $stepcontent);
+        $this->assertStringEndsWith('Test', $stepcontent);
+        $this->assertStringContainsString('PIXICON', $stepcontent);
     }
 }

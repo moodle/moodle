@@ -176,6 +176,34 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
     }
 
     /**
+     * Override parent method of the same, to ensure that any columns with custom sort fields are accounted for
+     *
+     * @return string
+     */
+    public function get_sql_sort() {
+        $columnsbyalias = $this->report->get_active_columns_by_alias();
+        $columnsortby = [];
+
+        // Iterate over all sorted report columns, replace with columns own fields if applicable.
+        foreach ($this->get_sort_columns() as $alias => $order) {
+            $column = $columnsbyalias[$alias] ?? null;
+
+            // If the column is not being aggregated and defines custom sort fields, then use them.
+            if ($column && !$column->get_aggregation() &&
+                    ($sortfields = $column->get_sort_fields())) {
+
+                foreach ($sortfields as $sortfield) {
+                    $columnsortby[$sortfield] = $order;
+                }
+            } else {
+                $columnsortby[$alias] = $order;
+            }
+        }
+
+        return static::construct_order_by($columnsortby);
+    }
+
+    /**
      * Set the export class to use when downloading reports (TODO: consider applying to all tables, MDL-72058)
      *
      * @param table_default_export_format_parent|null $exportclass

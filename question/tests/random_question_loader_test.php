@@ -68,7 +68,8 @@ class random_question_loader_testcase extends advanced_testcase {
 
         $cat = $generator->create_question_category();
         $question1 = $generator->create_question('shortanswer', null, ['category' => $cat->id]);
-        $DB->set_field('question', 'hidden', 1, ['id' => $question1->id]);
+        $DB->set_field('question_versions', 'status',
+            \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN, ['questionid' => $question1->id]);
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
         $this->assertNull($loader->get_next_question_id($cat->id, 0));
@@ -373,16 +374,10 @@ class random_question_loader_testcase extends advanced_testcase {
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
         list($category, $questions) = $this->create_category_and_questions($numberofquestions);
 
-        // Sort the questions by id to match the ordering of the get_questions
-        // function.
-        usort($questions, function($a, $b) {
-            $aid = $a->id;
-            $bid = $b->id;
-
-            if ($aid == $bid) {
-                return 0;
-            }
-            return $aid < $bid ? -1 : 1;
+        // Add questionid as key to find them easily later.
+        $questionsbyid = [];
+        array_walk($questions, function (&$value) use (&$questionsbyid) {
+            $questionsbyid[$value->id] = $value;
         });
 
         for ($i = 0; $i < $numberofquestions; $i++) {
@@ -396,7 +391,7 @@ class random_question_loader_testcase extends advanced_testcase {
 
             $this->assertCount($limit, $result);
             $actual = array_shift($result);
-            $expected = $questions[$i];
+            $expected = $questionsbyid[$actual->id];
             $this->assertEquals($expected->id, $actual->id);
             $offset++;
         }

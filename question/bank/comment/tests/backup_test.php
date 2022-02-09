@@ -137,7 +137,8 @@ class qbank_comment_backup_restore_test extends \advanced_testcase {
      * across the backup and restore process.
      */
     public function test_backup_restore() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/comment/lib.php');
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -195,12 +196,18 @@ class qbank_comment_backup_restore_test extends \advanced_testcase {
         $this->restore_course($backupid, $coursefullname, $courseshortname . '_2', $newcategory->id);
 
         // The questions and their associated comments should have been restored.
-        $newquestion1 = $DB->get_record('question', ['idnumber' => 'q1']);
+        $sql =
+            'SELECT q.*
+               FROM {question} q
+               JOIN {question_versions} qv ON qv.questionid = q.id
+               JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+               WHERE qbe.idnumber = ?';
+        $newquestion1 = $DB->get_record_sql($sql, ['idnumber' => 'q1']);
         $args->itemid = $newquestion1->id;
         $commentobj = new \comment($args);
         $this->assertEquals($commentobj->count(), 2);
 
-        $newquestion2 = $DB->get_record('question', ['idnumber' => 'q2']);
+        $newquestion2 = $DB->get_record_sql($sql, ['idnumber' => 'q2']);
         $args->itemid = $newquestion2->id;
         $commentobj = new \comment($args);
         $this->assertEquals($commentobj->count(), 1);

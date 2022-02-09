@@ -37,13 +37,11 @@ require_once($CFG->dirroot . '/question/type/numerical/edit_numerical_form.php')
  *
  * @copyright  2006 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \question_type
+ * @covers \qtype_numerical
  */
 class qtype_numerical_test extends advanced_testcase {
-    public static $includecoverage = array(
-        'question/type/questiontypebase.php',
-        'question/type/numerical/questiontype.php'
-    );
-
     protected $tolerance = 0.00000001;
     protected $qtype;
 
@@ -144,7 +142,7 @@ class qtype_numerical_test extends advanced_testcase {
         $fromform = $form->get_data();
 
         $returnedfromsave = $this->qtype->save_question($questiondata, $fromform);
-        $actualquestionsdata = question_load_questions(array($returnedfromsave->id));
+        $actualquestionsdata = question_load_questions([$returnedfromsave->id], 'qbe.idnumber');
         $actualquestiondata = end($actualquestionsdata);
 
         foreach ($questiondata as $property => $value) {

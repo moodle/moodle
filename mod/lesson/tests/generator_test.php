@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * mod_lesson generator tests
- *
- * @package    mod_lesson
- * @category   test
- * @copyright  2013 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_lesson;
 
 /**
  * Genarator tests class for mod_lesson.
@@ -31,7 +24,7 @@
  * @copyright  2013 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lesson_generator_testcase extends advanced_testcase {
+class generator_test extends \advanced_testcase {
 
     public function test_create_instance() {
         global $DB;

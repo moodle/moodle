@@ -28,6 +28,7 @@ Feature: Preview a Multiple choice question
   @javascript @_switch_window
   Scenario: Preview a Multiple choice question and submit a partially correct response.
     When I choose "Preview" action for "Multi-choice-001" in the question bank
+    And I press "Preview options"
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I click on "One" "qtype_multichoice > Answer"
@@ -42,6 +43,7 @@ Feature: Preview a Multiple choice question
   @javascript @_switch_window
   Scenario: Preview a Multiple choice question and submit a correct response.
     When I choose "Preview" action for "Multi-choice-001" in the question bank
+    And I press "Preview options"
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I click on "One" "qtype_multichoice > Answer"
@@ -58,6 +60,7 @@ Feature: Preview a Multiple choice question
   @javascript @_switch_window
   Scenario: Preview a Multiple choice question and submit a correct response.
     When I choose "Preview" action for "Multi-choice-002" in the question bank
+    And I press "Preview options"
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I click on "One" "qtype_multichoice > Answer"
@@ -71,6 +74,7 @@ Feature: Preview a Multiple choice question
   @javascript @_switch_window
   Scenario: Preview a multiple choice question (single response) and clear a previous selected option.
     When I choose "Preview" action for "Multi-choice-002" in the question bank
+    And I press "Preview options"
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I click on "One" "qtype_multichoice > Answer"

@@ -1,14 +1,29 @@
 <?php
-/*
-  @version   v5.21.0  2021-02-27
-  @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-  @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-
-  Some pretty-printing by Chris Oxenreider <oxenreid@state.net>
-*/
+/**
+ * RecordSet to HTML Table
+ *
+ * Convert a recordset to a html table. Multiple tables are generated
+ * if the number of rows is > $gSQLBlockRows. This is because
+ * web browsers normally require the whole table to be downloaded
+ * before it can be rendered, so we break the output into several
+ * smaller, faster rendering tables.
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // specific code for tohtml
 GLOBAL $gSQLMaxRows,$gSQLBlockRows,$ADODB_ROUND;
@@ -17,14 +32,6 @@ $ADODB_ROUND=4; // rounding
 $gSQLMaxRows = 1000; // max no of rows to download
 $gSQLBlockRows=20; // max no of rows per table block
 
-// RecordSet to HTML Table
-//------------------------------------------------------------
-// Convert a recordset to a html table. Multiple tables are generated
-// if the number of rows is > $gSQLBlockRows. This is because
-// web browsers normally require the whole table to be downloaded
-// before it can be rendered, so we break the output into several
-// smaller faster rendering tables.
-//
 // $rs: the recordset
 // $ztabhtml: the table tag attributes (optional)
 // $zheaderarray: contains the replacement strings for the headers (optional)

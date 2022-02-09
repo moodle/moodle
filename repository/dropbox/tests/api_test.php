@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for the Dropbox API (v2).
- *
- * @package     repository_dropbox
- * @copyright   Andrew Nicols <andrew@nicols.co.uk>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace repository_dropbox;
 
 /**
  * Tests for the Dropbox API (v2).
@@ -29,7 +23,7 @@
  * @copyright   Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class repository_dropbox_api_testcase extends advanced_testcase {
+class api_test extends \advanced_testcase {
     /**
      * Data provider for has_additional_results.
      *

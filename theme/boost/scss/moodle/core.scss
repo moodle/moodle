@@ -657,8 +657,8 @@ table.mod_index {
 }
 
 .comment-message .picture {
-    width: 20px;
     float: left;
+    margin-right: 0.25rem;
 }
 
 .comment-message .text {
@@ -2353,9 +2353,6 @@ $footer-link-color: $bg-inverse-link-color !default;
         display: block;
         z-index: $zindex-dropdown;
     }
-    .jsenabled .drawers.show-drawer-right .btn-footer-popover {
-        display: none;
-    }
 }
 
 .bg-inverse a {
@@ -2509,6 +2506,15 @@ body.h5p-embed {
 
 #h5pcontenttypes td {
     vertical-align: middle;
+}
+
+#page.drawers {
+    form#h5peditor,
+    form#coolh5peditor,
+    .core_contentbank_viewcontent {
+        max-width: $h5p-content-maxwidth;
+        margin: 0 auto;
+    }
 }
 
 .text-decoration-none {
@@ -2910,6 +2916,7 @@ body.dragging {
     .block_myoverview {
         border: 0;
         & > .card-body {
+            padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
             padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
             padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
         }

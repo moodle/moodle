@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * mod_survey generator tests
- *
- * @package    mod_survey
- * @category   test
- * @copyright  2013 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_survey;
 
 /**
  * Genarator tests class for mod_survey.
@@ -31,7 +24,7 @@
  * @copyright  2013 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_survey_generator_testcase extends advanced_testcase {
+class generator_test extends \advanced_testcase {
 
     public function test_create_instance() {
         global $DB;
@@ -85,11 +78,11 @@ class mod_survey_generator_testcase extends advanced_testcase {
             $this->getDataGenerator()->create_module('survey', array('course' => $course,
                 'template' => 87654));
             $this->fail('Exception about non-existing numeric template is expected');
-        } catch (Exception $e) {}
+        } catch (\Exception $e) {}
         try {
             $this->getDataGenerator()->create_module('survey', array('course' => $course,
                 'template' => 'nonexistingcode'));
             $this->fail('Exception about non-existing string template is expected');
-        } catch (Exception $e) {}
+        } catch (\Exception $e) {}
     }
 }

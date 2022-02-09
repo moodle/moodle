@@ -114,11 +114,12 @@ function xmldb_tool_usertours_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021101300, 'tool', 'usertours');
     }
 
-    if ($oldversion < 2021101301) {
+    if ($oldversion < 2021101302) {
         // Update shipped tours.
+        // Normally, we just bump the version numbers because we need to call update_shipped_tours only once.
         manager::update_shipped_tours();
 
-        upgrade_plugin_savepoint(true, 2021101301, 'tool', 'usertours');
+        upgrade_plugin_savepoint(true, 2021101302, 'tool', 'usertours');
     }
 
     return true;

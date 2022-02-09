@@ -1706,8 +1706,13 @@ class core_course_courselib_testcase extends advanced_testcase {
                 $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
 
                 // Verify questions deleted.
-                $criteria = array('category' => $qcat->id);
-                $this->assertEquals(0, $DB->count_records('question', $criteria));
+                $criteria = [$qcat->id];
+                $sql = 'SELECT COUNT(q.id)
+                          FROM {question} q
+                          JOIN {question_versions} qv ON qv.questionid = q.id
+                          JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                          WHERE qbe.questioncategoryid = ?';
+                $this->assertEquals(0, $DB->count_records_sql($sql, $criteria));
                 break;
             default:
                 break;
@@ -3253,7 +3258,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertTrue($navoptions->blogs);
         $this->assertFalse($navoptions->notes);
         $this->assertTrue($navoptions->participants);
-        $this->assertTrue($navoptions->badges);
+        $this->assertFalse($navoptions->badges);
 
         // Disable some options.
         $CFG->badges_allowcoursebadges = 0;
@@ -3266,6 +3271,13 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertFalse($navoptions->notes);
         $this->assertFalse($navoptions->participants);
         $this->assertFalse($navoptions->badges);
+
+        // Re-enable some options to check badges are displayed as expected.
+        $CFG->badges_allowcoursebadges = 1;
+        assign_capability('moodle/badges:createbadge', CAP_ALLOW, $roleid, $context);
+
+        $navoptions = course_get_user_navigation_options($context);
+        $this->assertTrue($navoptions->badges);
     }
 
     /**

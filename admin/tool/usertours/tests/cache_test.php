@@ -164,7 +164,7 @@ class cache_testcase extends advanced_testcase {
             'Matches expected glob' => [
                 $tourconfigs,
                 '/my/index.php',
-                ['my_glob_1', 'my_glob_2'],
+                ['my_glob_1', 'my_glob_2', 'frontpage_match'],
             ],
             'Matches expected glob and exact' => [
                 $tourconfigs,

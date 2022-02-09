@@ -95,7 +95,8 @@ export const init = initialized => {
             Notification.saveCancelPromise(
                 getString('deletecolumn', 'core_reportbuilder', columnName),
                 getString('deletecolumnconfirm', 'core_reportbuilder', columnName),
-                getString('delete', 'core')
+                getString('delete', 'core'),
+                {triggerElement: reportRemoveColumn}
             ).then(() => {
                 const pendingPromise = new Pending('core_reportbuilder/columns:remove');
 

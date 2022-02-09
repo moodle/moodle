@@ -35,6 +35,7 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
     protected function get_creatable_entities(): array {
         return [
             'Reports' => [
+                'singular' => 'Report',
                 'datagenerator' => 'report',
                 'required' => [
                     'name',
@@ -42,6 +43,7 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
                 ],
             ],
             'Columns' => [
+                'singular' => 'Column',
                 'datagenerator' => 'column',
                 'required' => [
                     'report',
@@ -52,6 +54,7 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
                 ],
             ],
             'Conditions' => [
+                'singular' => 'Condition',
                 'datagenerator' => 'condition',
                 'required' => [
                     'report',
@@ -62,6 +65,7 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
                 ],
             ],
             'Filters' => [
+                'singular' => 'Filter',
                 'datagenerator' => 'filter',
                 'required' => [
                     'report',
@@ -72,6 +76,7 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
                 ],
             ],
             'Audiences' => [
+                'singular' => 'Audience',
                 'datagenerator' => 'audience',
                 'required' => [
                     'report',
@@ -82,6 +87,7 @@ class behat_core_reportbuilder_generator extends behat_generator_base {
                 ],
             ],
             'Schedules' => [
+                'singular' => 'Schedule',
                 'datagenerator' => 'schedule',
                 'required' => [
                     'report',

@@ -77,6 +77,38 @@ abstract class base {
     }
 
     /**
+     * Helper method for concatenating given fields for a column, so they are suitable for aggregation
+     *
+     * @param string[] $sqlfields
+     * @param string $delimeter
+     * @return string
+     */
+    final protected static function get_column_fields_concat(array $sqlfields, string $delimeter = ','): string {
+        global $DB;
+
+        $concatfields = [];
+        foreach ($sqlfields as $sqlfield) {
+
+            // We need to ensure all values are char (this ought to be done in the DML drivers, see MDL-72184).
+            switch ($DB->get_dbfamily()) {
+                case 'postgres' :
+                    $sqlfield = "CAST({$sqlfield} AS VARCHAR)";
+                    break;
+                case 'oracle' :
+                    $sqlfield = "TO_CHAR({$sqlfield})";
+                    break;
+            }
+
+            // Coalesce all the SQL fields, to remove all nulls.
+            $concatfields[] = "COALESCE({$sqlfield}, ' ')";
+            $concatfields[] = "'{$delimeter}'";
+        }
+
+        // Slice off the last delimeter.
+        return $DB->sql_concat(...array_slice($concatfields, 0, -1));
+    }
+
+    /**
      * Return the aggregated field SQL
      *
      * @param string $field

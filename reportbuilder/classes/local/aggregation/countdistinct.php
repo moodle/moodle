@@ -50,6 +50,20 @@ class countdistinct extends base {
     }
 
     /**
+     * Override base method to ensure all SQL fields are concatenated together if there are multiple
+     *
+     * @param array $sqlfields
+     * @return string
+     */
+    public static function get_column_field_sql(array $sqlfields): string {
+        if (count($sqlfields) === 1) {
+            return parent::get_column_field_sql($sqlfields);
+        }
+
+        return self::get_column_fields_concat($sqlfields);
+    }
+
+    /**
      * Return the aggregated field SQL
      *
      * @param string $field

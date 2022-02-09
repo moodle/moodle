@@ -17,6 +17,7 @@ Feature: Manage custom report columns sorting
       | username | firstname | lastname | email              |
       | user01   | Alice     | Zebra    | user01@example.com |
       | user02   | Zoe       | Aardvark | user02@example.com |
+      | user03   | Alice     | Badger   | user03@example.com |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
 
   Scenario: Toggle column sorting in report
@@ -52,6 +53,20 @@ Feature: Manage custom report columns sorting
     Then I should see "Updated sorting for column 'First name'"
     And "First name" "text" should appear before "Surname" "text" in the "#settingssorting" "css_element"
     And "user01" "table_row" should appear before "user02" "table_row"
+
+  Scenario: Change column sorting for column sorted by multiple fields
+    Given I change window size to "large"
+    And I click on "Add column 'Full name'" "link"
+    And I click on "Show/hide 'Sorting'" "button"
+    When I click on "Enable sorting for column 'Full name'" "checkbox"
+    Then I should see "Updated sorting for column 'Full name'"
+    # User1 = Alice Zebra; User2=Zoe Aardvark; User3 = Alice Badger.
+    And "user03" "table_row" should appear before "user01" "table_row"
+    And "user01" "table_row" should appear before "user02" "table_row"
+    And I click on "Sort column 'Full name' descending" "button"
+    And I should see "Updated sorting for column 'Full name'"
+    And "user02" "table_row" should appear before "user01" "table_row"
+    And "user01" "table_row" should appear before "user03" "table_row"
 
   Scenario: Configured report sorting is always applied when editing
     Given I change window size to "large"

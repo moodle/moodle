@@ -29,32 +29,21 @@
      data-course-id="{{$courseid}}{{/courseid}}"
      data-midnight="{{midnight}}"
 >
-    <div data-region="event-list-loading-placeholder">
-        <ul class="pl-0 list-group list-group-flush">
-            {{> block_timeline/placeholder-event-list-item }}
-            {{> block_timeline/placeholder-event-list-item }}
-            {{> block_timeline/placeholder-event-list-item }}
-            {{> block_timeline/placeholder-event-list-item }}
-            {{> block_timeline/placeholder-event-list-item }}
-        </ul>
-        <div class="pt-3 pb-2 d-flex justify-content-between">
-            <div class="w-25 bg-pulse-grey" style="height: 35px"></div>
+    {{#hascourses}}
+        <div data-region="event-list-loading-placeholder">
+            <ul class="pl-0 list-group list-group-flush">
+                {{> block_timeline/placeholder-event-list-item }}
+                {{> block_timeline/placeholder-event-list-item }}
+                {{> block_timeline/placeholder-event-list-item }}
+                {{> block_timeline/placeholder-event-list-item }}
+                {{> block_timeline/placeholder-event-list-item }}
+            </ul>
+            <div class="pt-3 pb-2 d-flex justify-content-between">
+                <div class="w-25 bg-pulse-grey" style="height: 35px"></div>
+            </div>
         </div>
-    </div>
+    {{/hascourses}}
     <div data-region="event-list-content"></div>
-    {{#urls.noevents}}
-    <div class="hidden text-xs-center text-center mt-3" data-region="empty-message">
-        <img
-            src="{{urls.noevents}}"
-            alt=""
-            style="height: 70px; width: 70px"
-        >
-        <p class="text-muted mt-1">{{#str}} noevents, block_timeline {{/str}}</p>
-    </div>
-    {{/urls.noevents}}
-    {{^urls.noevents}}
-    <div class="hidden text-xs-left text-left mt-3" data-region="empty-message">
-        <p class="text-muted mt-1">{{#str}} noevents, block_timeline {{/str}}</p>
-    </div>
-    {{/urls.noevents}}
+    {{> block_timeline/no-events }}
+    {{> block_timeline/no-courses }}
 </div>

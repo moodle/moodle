@@ -123,6 +123,11 @@
                 }
             }
         }
+        @include media-breakpoint-down(sm) {
+            .langbutton {
+                display: none;
+            }
+        }
     }
     .moodle-actionmenu .menubar,
     .action-menu-trigger .dropdown {

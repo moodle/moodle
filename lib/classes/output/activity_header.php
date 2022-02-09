@@ -174,6 +174,14 @@ class activity_header implements \renderable, \templatable {
             $completion = $output->activity_information($this->page->cm, $completiondetails, $activitydates);
         }
 
+        $format = course_get_format($this->page->course);
+        if ($format->supports_components()) {
+            $this->page->requires->js_call_amd(
+                'core_courseformat/local/content/activity_header',
+                'init'
+            );
+        }
+
         return [
             'title' => $this->title,
             'description' => $this->description,

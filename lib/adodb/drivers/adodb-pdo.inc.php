@@ -1,23 +1,23 @@
 <?php
 /**
-	@version   v5.21.0  2021-02-27
-	@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-	@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-
-	Released under both BSD license and Lesser GPL library license.
-	Whenever there is any discrepancy between the two licenses,
-	the BSD license will take precedence.
-
-	Set tabs to 4 for best viewing.
-
-	Latest version is available at https://adodb.org/
-
-	Requires ODBC. Works on Windows and Unix.
-
-	Problems:
-		Where is float/decimal type in pdo_param_type
-		LOB handling for CLOB/BLOB differs significantly
-*/
+ * ADOdb base PDO driver
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -85,7 +85,7 @@ class ADODB_pdo extends ADOConnection {
 	var $dsnType = '';
 	var $stmt = false;
 	var $_driver;
-	
+
 	/*
 	* Describe parameters passed directly to the PDO driver
 	*
@@ -159,8 +159,8 @@ class ADODB_pdo extends ADOConnection {
 		*/
 		if ($persist) {
 			$this->pdoParameters[\PDO::ATTR_PERSISTENT] = true;
-		} 
-		
+		}
+
 		try {
 			$this->_connectionID = new \PDO($argDSN, $argUsername, $argPassword, $this->pdoParameters);
 		} catch (Exception $e) {
@@ -197,7 +197,7 @@ class ADODB_pdo extends ADOConnection {
 					$this->_connectionID->setAttribute($k,$v);
 				}
 			}
-			
+
 			$class = 'ADODB_pdo_'.$this->dsnType;
 			//$this->_connectionID->setAttribute(PDO::ATTR_AUTOCOMMIT,true);
 			switch($this->dsnType) {
@@ -273,10 +273,10 @@ class ADODB_pdo extends ADOConnection {
 		return $this->_driver->MetaColumns($table,$normalize);
 	}
 
-	public function metaIndexes($table,$normalize=true)
+	public function metaIndexes($table,$normalize=true,$owner=false)
 	{
 		if (method_exists($this->_driver,'metaIndexes'))
-			return $this->_driver->metaIndexes($table,$normalize);
+			return $this->_driver->metaIndexes($table,$normalize,$owner);
 	}
 
 	/**
@@ -559,12 +559,16 @@ class ADODB_pdo extends ADOConnection {
 		} else {
 			$stmt = $this->_connectionID->prepare($sql);
 		}
-		
+
 		if ($stmt) {
 			if ($this->_driver instanceof ADODB_pdo) {
 				$this->_driver->debug = $this->debug;
 			}
 			if ($inputarr) {
+				/*
+				* inputarr must be numeric
+				*/
+				$inputarr = array_values($inputarr);
 				$ok = $stmt->execute($inputarr);
 			}
 			else {
@@ -605,13 +609,10 @@ class ADODB_pdo extends ADOConnection {
 
 	function _affectedrows()
 	{
-		if(method_exists($this->_driver, '_affectedrows'))
-			return $this->_driver->_affectedrows();
-		
 		return ($this->_stmt) ? $this->_stmt->rowCount() : 0;
 	}
 
-	function _insertid()
+	protected function _insertID($table = '', $column = '')
 	{
 		return ($this->_connectionID) ? $this->_connectionID->lastInsertId() : 0;
 	}
@@ -829,22 +830,22 @@ class ADORecordSet_pdo extends ADORecordSet {
 		}
 		//adodb_pr($arr);
 		$o->name = $arr['name'];
-		if (isset($arr['sqlsrv:decl_type']) && $arr['sqlsrv:decl_type'] <> "null") 
+		if (isset($arr['sqlsrv:decl_type']) && $arr['sqlsrv:decl_type'] <> "null")
 		{
 		    /*
 		    * If the database is SQL server, use the native built-ins
 		    */
 		    $o->type = $arr['sqlsrv:decl_type'];
 		}
-		elseif (isset($arr['native_type']) && $arr['native_type'] <> "null") 
+		elseif (isset($arr['native_type']) && $arr['native_type'] <> "null")
 		{
 		    $o->type = $arr['native_type'];
 		}
-		else 
+		else
 		{
 		     $o->type = adodb_pdo_type($arr['pdo_type']);
 		}
-		
+
 		$o->max_length = $arr['len'];
 		$o->precision = $arr['precision'];
 

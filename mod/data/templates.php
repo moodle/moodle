@@ -28,7 +28,7 @@ require_once('lib.php');
 
 $id    = optional_param('id', 0, PARAM_INT);  // course module id
 $d     = optional_param('d', 0, PARAM_INT);   // database id
-$mode  = optional_param('mode', 'singletemplate', PARAM_ALPHA);
+$mode  = optional_param('mode', 'listtemplate', PARAM_ALPHA);
 $useeditor = optional_param('useeditor', null, PARAM_BOOL);
 
 $url = new moodle_url('/mod/data/templates.php');
@@ -102,11 +102,14 @@ $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 $PAGE->force_settings_menu(true);
+$PAGE->activityheader->disable();
 
 echo $OUTPUT->header();
 
 $actionbar = new \mod_data\output\action_bar($data->id, $url);
 echo $actionbar->get_templates_action_bar();
+
+echo $OUTPUT->heading(get_string($mode, 'data'), 2, 'mb-4');
 
 /// Processing submitted data, i.e updating form.
 $resettemplate = false;

@@ -410,7 +410,7 @@ class event_vault implements event_vault_interface {
      * @return array|null
      */
     protected function generate_search_subquery(?string $searchvalue): ?array {
-        global $DB;
+        global $CFG, $DB;
         if (!$searchvalue) {
             return null;
         }
@@ -426,6 +426,19 @@ class event_vault implements event_vault_interface {
         // Activity type searching.
         $whereconditions[] = $DB->sql_like('e.modulename', ':modulename', false);
         $params['modulename'] = '%' . $DB->sql_like_escape($searchvalue) . '%';
+
+        // Activity type searching (localised type name).
+        require_once($CFG->dirroot . '/course/lib.php');
+        // Search in modules' singular and plural names.
+        $modules = array_keys(array_merge(
+            preg_grep('/' . $searchvalue . '/i', get_module_types_names()) ?: [],
+            preg_grep('/' . $searchvalue . '/i', get_module_types_names(true)) ?: [],
+        ));
+        if ($modules) {
+            [$insql, $inparams] = $DB->get_in_or_equal($modules, SQL_PARAMS_NAMED, 'exactmodulename');
+            $whereconditions[] = 'e.modulename ' . $insql;
+            $params += $inparams;
+        }
 
         $whereclause = '(' . implode(' OR ', $whereconditions) . ')';
 

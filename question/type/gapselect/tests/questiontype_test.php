@@ -105,7 +105,6 @@ class qtype_gapselect_test extends question_testcase {
 
         $expected = test_question_maker::make_question('gapselect');
         $expected->stamp = $qdata->stamp;
-        $expected->version = $qdata->version;
 
         $q = $this->qtype->make_question($qdata);
 
@@ -239,7 +238,7 @@ class qtype_gapselect_test extends question_testcase {
         $qdata->defaultmark = 3;
         $qdata->length = 1;
         $qdata->penalty = 0.3333333;
-        $qdata->hidden = 0;
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
 
         $qdata->options = new stdClass();
         $qdata->options->shuffleanswers = 1;

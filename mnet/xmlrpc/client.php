@@ -201,7 +201,8 @@ class mnet_xmlrpc_client {
         $decryptedenvelope = '';
 
         //                                          &$decryptedenvelope
-        $isOpen = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key), $this->mnet->get_private_key());
+        $isOpen = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key),
+            $this->mnet->get_private_key(), 'RC4');
 
         if (!$isOpen) {
             // Decryption failed... let's try our archived keys
@@ -214,7 +215,7 @@ class mnet_xmlrpc_client {
             }
             foreach($openssl_history as $keyset) {
                 $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
-                $isOpen      = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key), $keyresource);
+                $isOpen      = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key), $keyresource, 'RC4');
                 if ($isOpen) {
                     // It's an older code, sir, but it checks out
                     break;

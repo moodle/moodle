@@ -3508,7 +3508,7 @@ privatefiles,moodle|/user/files.php';
 
         if ($DB->count_records('adminpresets', ['iscore' => 1]) == 0) {
             // Create default core site admin presets.
-            require_once($CFG->dirroot . '/adminpresets/classes/helper.php');
+            require_once($CFG->dirroot . '/admin/presets/classes/helper.php');
             \core_adminpresets\helper::create_default_presets();
         }
 
@@ -3565,6 +3565,400 @@ privatefiles,moodle|/user/files.php';
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2022011100.01);
+    }
+
+    if ($oldversion < 2022012100.02) {
+        // Migrate default message output config.
+        $preferences = get_config('message');
+
+        $treatedprefs = [];
+
+        foreach ($preferences as $preference => $value) {
+            // Extract provider and preference name from the setting name.
+            // Example name: airnotifier_provider_enrol_imsenterprise_imsenterprise_enrolment_permitted
+            // Provider: airnotifier
+            // Preference: enrol_imsenterprise_imsenterprise_enrolment_permitted.
+            $providerparts = explode('_provider_', $preference);
+            if (count($providerparts) <= 1) {
+                continue;
+            }
+
+            $provider = $providerparts[0];
+            $preference = $providerparts[1];
+
+            // Extract and remove last part of the preference previously extracted: ie. permitted.
+            $parts = explode('_', $preference);
+            $key = array_pop($parts);
+
+            if (in_array($key, ['permitted', 'loggedin', 'loggedoff'])) {
+                if ($key == 'permitted') {
+                    // We will use provider name instead of permitted.
+                    $key = $provider;
+                } else {
+                    // Logged in and logged off values are a csv of the enabled providers.
+                    $value = explode(',', $value);
+                }
+
+                // Join the rest of the parts: ie enrol_imsenterprise_imsenterprise_enrolment.
+                $prefname = implode('_', $parts);
+
+                if (!isset($treatedprefs[$prefname])) {
+                    $treatedprefs[$prefname] = [];
+                }
+
+                // Save the value with the selected key.
+                $treatedprefs[$prefname][$key] = $value;
+            }
+        }
+
+        // Now take every preference previous treated and its values.
+        foreach ($treatedprefs as $prefname => $values) {
+            $enabled = []; // List of providers enabled for each preference.
+
+            // Enable if one of those is enabled.
+            $loggedin = isset($values['loggedin']) ? $values['loggedin'] : [];
+            foreach ($loggedin as $provider) {
+                $enabled[$provider] = 1;
+            }
+            $loggedoff = isset($values['loggedoff']) ? $values['loggedoff'] : [];
+            foreach ($loggedoff as $provider) {
+                $enabled[$provider] = 1;
+            }
+
+            // Do not treat those values again.
+            unset($values['loggedin']);
+            unset($values['loggedoff']);
+
+            // Translate rest of values coming from permitted "key".
+            foreach ($values as $provider => $value) {
+                $locked = false;
+
+                switch ($value) {
+                    case 'forced':
+                        // Provider is enabled by force.
+                        $enabled[$provider] = 1;
+                        $locked = true;
+                        break;
+                    case 'disallowed':
+                        // Provider is disabled by force.
+                        unset($enabled[$provider]);
+                        $locked = true;
+                        break;
+                    default:
+                        // Provider is not forced (permitted) or invalid values.
+                }
+
+                // Save locked.
+                if ($locked) {
+                    set_config($provider.'_provider_'.$prefname.'_locked', 1, 'message');
+                }
+                // Remove old value.
+                unset_config($provider.'_provider_'.$prefname.'_permitted', 'message');
+            }
+
+            // Save the new values.
+            $value = implode(',', array_keys($enabled));
+            set_config('message_provider_'.$prefname.'_enabled', $value, 'message');
+            // Remove old values.
+            unset_config('message_provider_'.$prefname.'_loggedin', 'message');
+            unset_config('message_provider_'.$prefname.'_loggedoff', 'message');
+        }
+
+        // Migrate user preferences. ie merging message_provider_moodle_instantmessage_loggedoff with
+        // message_provider_moodle_instantmessage_loggedin to message_provider_moodle_instantmessage_enabled.
+
+        $allrecordsloggedoff = $DB->sql_like('name', ':loggedoff');
+        $total = $DB->count_records_select(
+            'user_preferences',
+            $allrecordsloggedoff,
+            ['loggedoff' => 'message_provider_%_loggedoff']
+        );
+        $i = 0;
+        if ($total == 0) {
+            $total = 1; // Avoid division by zero.
+        }
+
+        // Show a progress bar.
+        $pbar = new progress_bar('upgradeusernotificationpreferences', 500, true);
+        $pbar->update($i, $total, "Upgrading user notifications preferences - $i/$total.");
+
+        // We're migrating provider per provider to reduce memory usage.
+        $providers = $DB->get_records('message_providers', null, 'name');
+        foreach ($providers as $provider) {
+            // 60 minutes to migrate each provider.
+            upgrade_set_timeout(3600);
+            $componentproviderbase = 'message_provider_'.$provider->component.'_'.$provider->name;
+
+            $loggedinname = $componentproviderbase.'_loggedin';
+            $loggedoffname = $componentproviderbase.'_loggedoff';
+
+            // Change loggedin to enabled.
+            $enabledname = $componentproviderbase.'_enabled';
+            $DB->set_field('user_preferences', 'name', $enabledname, ['name' => $loggedinname]);
+
+            $selectparams = [
+                'enabled' => $enabledname,
+                'loggedoff' => $loggedoffname,
+            ];
+            $sql = 'SELECT m1.id loggedoffid, m1.value as loggedoff, m2.value as enabled, m2.id as enabledid
+                FROM
+                    (SELECT id, userid, value FROM {user_preferences} WHERE name = :loggedoff) m1
+                LEFT JOIN
+                    (SELECT id, userid, value FROM {user_preferences} WHERE name = :enabled) m2
+                    ON m1.userid = m2.userid';
+
+            while (($rs = $DB->get_recordset_sql($sql, $selectparams, 0, 1000)) && $rs->valid()) {
+                // 10 minutes for every chunk.
+                upgrade_set_timeout(600);
+
+                $deleterecords = [];
+                $changename = [];
+                $changevalue = []; // Multidimensional array with possible values as key to reduce SQL queries.
+                foreach ($rs as $record) {
+                    if (empty($record->enabledid)) {
+                        // Enabled does not exists, change the name.
+                        $changename[] = $record->loggedoffid;
+                    } else if ($record->enabledid != $record->loggedoff) {
+                        // Exist and values differ (checked on SQL), update the enabled record.
+
+                        if ($record->enabled != 'none' && !empty($record->enabled)) {
+                            $enabledvalues = explode(',', $record->enabled);
+                        } else {
+                            $enabledvalues = [];
+                        }
+
+                        if ($record->loggedoff != 'none' && !empty($record->loggedoff)) {
+                            $loggedoffvalues = explode(',', $record->loggedoff);
+                        } else {
+                            $loggedoffvalues = [];
+                        }
+
+                        $values = array_unique(array_merge($enabledvalues, $loggedoffvalues));
+                        sort($values);
+
+                        $newvalue = empty($values) ? 'none' : implode(',', $values);
+                        if (!isset($changevalue[$newvalue])) {
+                            $changevalue[$newvalue] = [];
+                        }
+                        $changevalue[$newvalue][] = $record->enabledid;
+
+                        $deleterecords[] = $record->loggedoffid;
+                    } else {
+                        // They are the same, just delete loggedoff one.
+                        $deleterecords[] = $record->loggedoffid;
+                    }
+                    $i++;
+                }
+                $rs->close();
+
+                // Commit the changes.
+                if (!empty($changename)) {
+                    $changenameparams = [
+                        'name' => $loggedoffname,
+                    ];
+                    $changenameselect = 'name = :name AND id IN (' . implode(',', $changename) . ')';
+                    $DB->set_field_select('user_preferences', 'name', $enabledname, $changenameselect, $changenameparams);
+                }
+
+                if (!empty($changevalue)) {
+                    $changevalueparams = [
+                        'name' => $enabledname,
+                    ];
+                    foreach ($changevalue as $value => $ids) {
+                        $changevalueselect = 'name = :name AND id IN (' . implode(',', $ids) . ')';
+                        $DB->set_field_select('user_preferences', 'value', $value, $changevalueselect, $changevalueparams);
+                    }
+                }
+
+                if (!empty($deleterecords)) {
+                    $deleteparams = [
+                        'name' => $loggedoffname,
+                    ];
+                    $deleteselect = 'name = :name AND id IN (' . implode(',', $deleterecords) . ')';
+                    $DB->delete_records_select('user_preferences', $deleteselect, $deleteparams);
+                }
+
+                // Update progress.
+                $pbar->update($i, $total, "Upgrading user notifications preferences - $i/$total.");
+            }
+            $rs->close();
+
+            // Delete the rest of loggedoff values (that are equal than enabled).
+            $deleteparams = [
+                'name' => $loggedoffname,
+            ];
+            $deleteselect = 'name = :name';
+            $i += $DB->count_records_select('user_preferences', $deleteselect, $deleteparams);
+            $DB->delete_records_select('user_preferences', $deleteselect, $deleteparams);
+
+            // Update progress.
+            $pbar->update($i, $total, "Upgrading user notifications preferences - $i/$total.");
+        }
+
+        core_plugin_manager::reset_caches();
+
+        // Delete the orphan records.
+        $allrecordsparams = ['loggedin' => 'message_provider_%_loggedin', 'loggedoff' => 'message_provider_%_loggedoff'];
+        $allrecordsloggedin = $DB->sql_like('name', ':loggedin');
+        $allrecordsloggedinoffsql = "$allrecordsloggedin OR $allrecordsloggedoff";
+        $DB->delete_records_select('user_preferences', $allrecordsloggedinoffsql, $allrecordsparams);
+
+        // Update progress.
+        $pbar->update($total, $total, "Upgrading user notifications preferences - $total/$total.");
+
+        upgrade_main_savepoint(true, 2022012100.02);
+    }
+
+    // Introduce question versioning to core.
+    // First, create the new tables.
+    if ($oldversion < 2022020200.01) {
+        // Define table question_bank_entries to be created.
+        $table = new xmldb_table('question_bank_entries');
+
+        // Adding fields to table question_bank_entries.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('questioncategoryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+        $table->add_field('idnumber', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('ownerid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table question_bank_entries.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('questioncategoryid', XMLDB_KEY_FOREIGN, ['questioncategoryid'], 'question_categories', ['id']);
+        $table->add_key('ownerid', XMLDB_KEY_FOREIGN, ['ownerid'], 'user', ['id']);
+
+        // Conditionally launch create table for question_bank_entries.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Create category id and id number index.
+        $index = new xmldb_index('categoryidnumber', XMLDB_INDEX_UNIQUE, ['questioncategoryid', 'idnumber']);
+
+        // Conditionally launch add index categoryidnumber.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define table question_versions to be created.
+        $table = new xmldb_table('question_versions');
+
+        // Adding fields to table question_versions.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('questionbankentryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+        $table->add_field('version', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 1);
+        $table->add_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+        $table->add_field('status', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'ready');
+
+        // Adding keys to table question_versions.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('questionbankentryid', XMLDB_KEY_FOREIGN, ['questionbankentryid'], 'question_bank_entries', ['id']);
+        $table->add_key('questionid', XMLDB_KEY_FOREIGN, ['questionid'], 'question', ['id']);
+
+        // Conditionally launch create table for question_versions.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table question_references to be created.
+        $table = new xmldb_table('question_references');
+
+        // Adding fields to table question_references.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('usingcontextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('questionarea', XMLDB_TYPE_CHAR, '50', null, null, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('questionbankentryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+        $table->add_field('version', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table question_references.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('usingcontextid', XMLDB_KEY_FOREIGN, ['usingcontextid'], 'context', ['id']);
+        $table->add_key('questionbankentryid', XMLDB_KEY_FOREIGN, ['questionbankentryid'], 'question_bank_entries', ['id']);
+
+        // Conditionally launch create table for question_references.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table question_set_references to be created.
+        $table = new xmldb_table('question_set_references');
+
+        // Adding fields to table question_set_references.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('usingcontextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('questionarea', XMLDB_TYPE_CHAR, '50', null, null, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('questionscontextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+        $table->add_field('filtercondition', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Adding keys to table question_set_references.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('usingcontextid', XMLDB_KEY_FOREIGN, ['usingcontextid'], 'context', ['id']);
+        $table->add_key('questionscontextid', XMLDB_KEY_FOREIGN, ['questionscontextid'], 'context', ['id']);
+
+        // Conditionally launch create table for question_set_references.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022020200.01);
+    }
+
+    if ($oldversion < 2022020200.02) {
+        // Next, split question records into the new tables.
+        upgrade_migrate_question_table();
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022020200.02);
+    }
+
+    // Finally, drop fields from question table.
+    if ($oldversion < 2022020200.03) {
+        // Define fields to be dropped from questions.
+        $table = new xmldb_table('question');
+
+        $field = new xmldb_field('version');
+        // Conditionally launch drop field version.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        $field = new xmldb_field('hidden');
+        // Conditionally launch drop field hidden.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define index categoryidnumber (not unique) to be dropped form question.
+        $index = new xmldb_index('categoryidnumber', XMLDB_INDEX_UNIQUE, ['category', 'idnumber']);
+
+        // Conditionally launch drop index categoryidnumber.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Define key category (foreign) to be dropped form questions.
+        $key = new xmldb_key('category', XMLDB_KEY_FOREIGN, ['category'], 'question_categories', ['id']);
+
+        // Launch drop key category.
+        $dbman->drop_key($table, $key);
+
+        $field = new xmldb_field('idnumber');
+        // Conditionally launch drop field idnumber.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        $field = new xmldb_field('category');
+        // Conditionally launch drop field category.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022020200.03);
     }
 
     return true;

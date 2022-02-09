@@ -50,40 +50,60 @@ function get_module_from_cmid($cmid) {
 
     return array($modrec, $cmrec);
 }
+
 /**
-* Function to read all questions for category into big array
-*
-* @param int $category category number
-* @param bool $noparent if true only questions with NO parent will be selected
-* @param bool $recurse include subdirectories
-* @param bool $export set true if this is called by questionbank export
-*/
-function get_questions_category( $category, $noparent=false, $recurse=true, $export=true ) {
+ * Function to read all questions for category into big array
+ *
+ * @param object $category category number
+ * @param bool $noparent if true only questions with NO parent will be selected
+ * @param bool $recurse include subdirectories
+ * @param bool $export set true if this is called by questionbank export
+ * @param bool $latestversion if only the latest versions needed
+ * @return array
+ */
+function get_questions_category(object $category, bool $noparent, bool $recurse = true, bool $export = true,
+        bool $latestversion = false): array {
     global $DB;
 
-    // Build sql bit for $noparent
+    // Build sql bit for $noparent.
     $npsql = '';
     if ($noparent) {
-      $npsql = " and parent='0' ";
+        $npsql = " and q.parent='0' ";
     }
 
-    // Get list of categories
+    // Get list of categories.
     if ($recurse) {
         $categorylist = question_categorylist($category->id);
     } else {
-        $categorylist = array($category->id);
+        $categorylist = [$category->id];
     }
 
-    // Get the list of questions for the category
+    // Get the list of questions for the category.
     list($usql, $params) = $DB->get_in_or_equal($categorylist);
-    $questions = $DB->get_records_select('question', "category {$usql} {$npsql}", $params, 'category, qtype, name');
 
-    // Iterate through questions, getting stuff we need
-    $qresults = array();
+    // Get the latest version of a question.
+    $version = '';
+    if ($latestversion) {
+        $version = 'AND (qv.version = (SELECT MAX(v.version)
+                                         FROM {question_versions} v
+                                         JOIN {question_bank_entries} be
+                                           ON be.id = v.questionbankentryid
+                                        WHERE be.id = qbe.id) OR qv.version is null)';
+    }
+    $questions = $DB->get_records_sql("SELECT q.*, qv.status, qc.id AS category
+                                         FROM {question} q
+                                         JOIN {question_versions} qv ON qv.questionid = q.id
+                                         JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                                         JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                                        WHERE qc.id {$usql} {$npsql} {$version}
+                                     ORDER BY qc.id, q.qtype, q.name", $params);
+
+    // Iterate through questions, getting stuff we need.
+    $qresults = [];
     foreach($questions as $key => $question) {
         $question->export_process = $export;
         $qtype = question_bank::get_qtype($question->qtype, false);
-        if ($export && $qtype->name() == 'missingtype') {
+        if ($export && $qtype->name() === 'missingtype') {
             // Unrecognised question type. Skip this question when exporting.
             continue;
         }
@@ -307,7 +327,7 @@ function question_build_edit_resources($edittab, $baseurl, $params) {
     }
 
     if ($thiscontext){
-        $contexts = new question_edit_contexts($thiscontext);
+        $contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
         $contexts->require_one_edit_tab_cap($edittab);
     } else {
         $contexts = null;

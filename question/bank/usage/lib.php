@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return string rendered output
  */
 function qbank_usage_output_fragment_question_usage(array $args): string {
-    global $USER, $PAGE, $CFG;
+    global $USER, $PAGE, $CFG, $DB;
     require_once($CFG->dirroot . '/question/engine/bank.php');
     $displaydata = [];
 
@@ -40,11 +40,12 @@ function qbank_usage_output_fragment_question_usage(array $args): string {
     $quba = question_engine::make_questions_usage_by_activity('core_question_preview', context_user::instance($USER->id));
 
     $options = new \qbank_previewquestion\question_preview_options($question);
-    $options->load_user_defaults();
-    $options->set_from_request();
     $quba->set_preferred_behaviour($options->behaviour);
     $slot = $quba->add_question($question, $options->maxmark);
     $quba->start_question($slot, $options->variant);
+    $transaction = $DB->start_delegated_transaction();
+    question_engine::save_questions_usage_by_activity($quba);
+    $transaction->allow_commit();
     $displaydata['question'] = $quba->render_question($slot, $options, '1');
 
     $questionusagetable = new \qbank_usage\tables\question_usage_table('question_usage_table', $question);

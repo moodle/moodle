@@ -16,6 +16,8 @@
 
 namespace qbank_bulkmove;
 
+use core_question\local\bank\question_edit_contexts;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -53,7 +55,7 @@ class helper_test extends \advanced_testcase {
     protected $context;
 
     /**
-     * @var \question_edit_contexts $contexts
+     * @var \core_question\local\bank\question_edit_contexts $contexts
      */
     protected $contexts;
 
@@ -87,7 +89,7 @@ class helper_test extends \advanced_testcase {
         $this->context = \context_course::instance($this->course->id);
 
         // Create a question in the default category.
-        $this->contexts = new \question_edit_contexts($this->context);
+        $this->contexts = new question_edit_contexts($this->context);
         $this->cat = question_make_default_categories($this->contexts->all());
         $this->questiondata1 = $questiongenerator->create_question('numerical', null,
             ['name' => 'Example question', 'category' => $this->cat->id]);
@@ -202,7 +204,7 @@ class helper_test extends \advanced_testcase {
     public function test_get_displaydata() {
         $this->helper_setup();
         $coursecontext = \context_course::instance($this->course->id);
-        $contexts = new \question_edit_contexts($coursecontext);
+        $contexts = new question_edit_contexts($coursecontext);
         $addcontexts = $contexts->having_cap('moodle/question:add');
         $url = new \moodle_url('/question/bank/bulkmove/move.php');
         $displaydata = \qbank_bulkmove\helper::get_displaydata($addcontexts, $url, $url);

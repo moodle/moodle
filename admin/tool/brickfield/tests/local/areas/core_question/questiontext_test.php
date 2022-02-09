@@ -28,6 +28,7 @@ use tool_brickfield\area_test_base;
  * @package     tool_brickfield
  * @copyright   2020 onward: Brickfield Education Labs, https://www.brickfield.ie
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \tool_brickfield\local\areas\core_question\base
  */
 class questiontext_test extends area_test_base {
     /**
@@ -189,5 +190,33 @@ class questiontext_test extends area_test_base {
             SITEID,
             $category->id
         );
+    }
+
+    /**
+     * Test get course and category.
+     *
+     * @covers ::get_course_and_category
+     */
+    public function test_get_course_and_category() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat1 = $generator->create_question_category(['contextid' => $coursecontext->id]);
+        $question1 = $generator->create_question('multichoice', null, ['category' => $cat1->id]);
+        $event = \core\event\question_updated::create_from_question_instance($question1,
+            \context_course::instance($course->id));
+        $rs = base::get_course_and_category(CONTEXT_COURSE, $event->objectid);
+        $this->assertNotNull($rs);
+        $this->assertEquals(CONTEXT_COURSE, $rs->contextlevel);
+        $this->assertNotEquals(CONTEXT_MODULE, $rs->contextlevel);
+        // Invalid objectid.
+        $rs = base::get_course_and_category(CONTEXT_COURSE, 0);
+        $this->assertFalse($rs);
+        // Incorrect objectid.
+        $rs = base::get_course_and_category(CONTEXT_COURSE, 100);
+        $this->assertFalse($rs);
     }
 }

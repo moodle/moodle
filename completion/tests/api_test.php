@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test completion API.
- *
- * @package core_completion
- * @category test
- * @copyright 2017 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_completion;
 
 /**
  * Test completion API.
@@ -33,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_completion_api_testcase extends advanced_testcase {
+class api_test extends \advanced_testcase {
 
     /**
      * Test setup.
@@ -247,21 +238,21 @@ class core_completion_api_testcase extends advanced_testcase {
             array('completion' => 1));
         $cmdata = get_coursemodule_from_id('data', $data->cmid);
         $cm = get_coursemodule_from_instance('data', $data->id);
-        $c = new completion_info($course);
+        $c = new \completion_info($course);
 
         // Add activity completion criteria.
-        $criteriadata = new stdClass();
+        $criteriadata = new \stdClass();
         $criteriadata->id = $course->id;
         $criteriadata->criteria_activity = array();
         // Some activities.
         $criteriadata->criteria_activity[$cmdata->id] = 1;
-        $criterion = new completion_criteria_activity();
+        $criterion = new \completion_criteria_activity();
         $criterion->update_config($criteriadata);
 
         $this->setUser($teacher);
 
         // Mark activity complete for both users.
-        $completion = new stdClass();
+        $completion = new \stdClass();
         $completion->coursemoduleid = $cm->id;
         $completion->completionstate = COMPLETION_COMPLETE;
         $completion->timemodified = time();

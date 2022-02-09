@@ -42,25 +42,54 @@ $qtypes = question_bank::get_all_qtypes();
 $pluginmanager = core_plugin_manager::instance();
 
 // Get some data we will need - question counts and which types are needed.
-$counts = $DB->get_records_sql("
-        SELECT qtype, COUNT(1) as numquestions, SUM(hidden) as numhidden
-        FROM {question} GROUP BY qtype", array());
-$needed = array();
+$hiddenstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN;
+$draftstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_DRAFT;
+
+$sql = "SELECT result.qtype,
+               SUM(result.numquestions) AS numquestions,
+               SUM(result.numhidden) AS numhidden,
+               SUM(result.numdraft) AS numdraft
+          FROM (SELECT data.qtype,
+                       data.versionid,
+                       COUNT(data.numquestions) AS numquestions,
+                       (SELECT COUNT(qv.id)
+                          FROM {question_versions} qv
+                         WHERE qv.id = data.versionid
+                           AND qv.status = :hiddenstatus) AS numhidden,
+                       (SELECT COUNT(qv.id)
+                         FROM {question_versions} qv
+                        WHERE qv.id = data.versionid
+                          AND qv.status = :draftstatus) AS numdraft
+                  FROM (SELECT q.qtype, qv.id AS versionid, 1 AS numquestions
+                         FROM {question} q
+                         JOIN {question_versions} qv ON qv.questionid = q.id
+                         JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                         AND qv.version = (SELECT MAX(v.version)
+                                             FROM {question_versions} v
+                                             JOIN {question_bank_entries} be ON be.id = v.questionbankentryid
+                                            WHERE be.id = qbe.id)) data
+                GROUP BY data.qtype, data.versionid) result
+       GROUP BY result.qtype";
+
+$counts = $DB->get_records_sql($sql, ['hiddenstatus' => $hiddenstatus, 'draftstatus' => $draftstatus]);
+$needed = [];
 foreach ($qtypes as $qtypename => $qtype) {
     if (!isset($counts[$qtypename])) {
         $counts[$qtypename] = new stdClass;
         $counts[$qtypename]->numquestions = 0;
         $counts[$qtypename]->numhidden = 0;
+        $counts[$qtypename]->numdraft = 0;
     }
     $needed[$qtypename] = $counts[$qtypename]->numquestions > 0 ||
             $pluginmanager->other_plugins_that_require($qtype->plugin_name());
-    $counts[$qtypename]->numquestions -= $counts[$qtypename]->numhidden;
+    $counts[$qtypename]->numquestions -= ($counts[$qtypename]->numhidden + $counts[$qtypename]->numdraft);
 }
 $needed['missingtype'] = true; // The system needs the missing question type.
 foreach ($counts as $qtypename => $count) {
     if (!isset($qtypes[$qtypename])) {
-        $counts['missingtype']->numquestions += $count->numquestions - $count->numhidden;
+        $counts['missingtype']->numquestions += $count->numquestions - ($count->numhidden + $count->numdraft);
         $counts['missingtype']->numhidden += $count->numhidden;
+        $counts['missingtype']->numdraft += $count->numdraft;
     }
 }
 
@@ -153,8 +182,8 @@ foreach ($sortedqtypes as $qtypename => $localname) {
     $row[] = $icon . ' ' . $localname;
 
     // Number of questions of this type.
-    if ($counts[$qtypename]->numquestions + $counts[$qtypename]->numhidden > 0) {
-        if ($counts[$qtypename]->numhidden > 0) {
+    if ($counts[$qtypename]->numquestions + $counts[$qtypename]->numhidden + $counts[$qtypename]->numdraft > 0) {
+        if ($counts[$qtypename]->numhidden + $counts[$qtypename]->numdraft > 0) {
             $strcount = get_string('numquestionsandhidden', 'question', $counts[$qtypename]);
         } else {
             $strcount = $counts[$qtypename]->numquestions;

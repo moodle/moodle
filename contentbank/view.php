@@ -73,10 +73,10 @@ $PAGE->set_heading($pageheading);
 $title .= ": ".$record->name;
 $PAGE->set_title($title);
 $PAGE->set_pagetype('contentbank');
+$PAGE->set_pagelayout('incourse');
 
 // Create the cog menu with all the secondary actions, such as delete, rename...
 $actionmenu = new action_menu();
-$actionmenu->set_alignment(action_menu::TR, action_menu::BR);
 if ($contenttype->can_manage($content)) {
     // Add the visibility item to the menu.
     switch($content->get_visibility()) {

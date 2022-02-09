@@ -10,12 +10,14 @@ Feature: Manage custom report schedules
       | user1     | User      | One      |
       | user2     | User      | Two      |
       | user3     | User      | Three    |
-    And the following "core_reportbuilder > Reports" exist:
-      | name      | source                                   | default |
-      | My report | core_user\reportbuilder\datasource\users | 1       |
-    And the following "core_reportbuilder > Audiences" exist:
-      | report    | classname                                          | configdata |
-      | My report | core_reportbuilder\reportbuilder\audience\allusers |            |
+    And the following "core_reportbuilder > Report" exists:
+      | name    | My report                                |
+      | source  | core_user\reportbuilder\datasource\users |
+      | default | 1                                        |
+    And the following "core_reportbuilder > Audience" exists:
+      | report     | My report                                          |
+      | classname  | core_reportbuilder\reportbuilder\audience\allusers |
+      | configdata |                                                    |
 
   Scenario: Create report schedule
     Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
@@ -43,9 +45,9 @@ Feature: Manage custom report schedules
       | My schedule | ##tomorrow 11:00##%A, %d %B %Y, %H:%M## | Never          | Admin User  |
 
   Scenario: Rename report schedule
-    Given the following "core_reportbuilder > Schedules" exist:
-      | report    | name        |
-      | My report | My schedule |
+    Given the following "core_reportbuilder > Schedule" exists:
+      | report | My report   |
+      | name   | My schedule |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Schedules" dynamic tab
     When I set the field "Edit schedule name" in the "My schedule" "table_row" to "My renamed schedule"
@@ -58,8 +60,9 @@ Feature: Manage custom report schedules
       | My report | My schedule |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Schedules" dynamic tab
-    When I click on "Disable" "field" in the "My schedule" "table_row"
+    When I click on "Disable schedule" "field" in the "My schedule" "table_row"
     Then the "class" attribute of "My schedule" "table_row" should contain "dimmed_text"
+    And I click on "Enable schedule" "field" in the "My schedule" "table_row"
 
   Scenario: Edit report schedule
     Given the following "core_reportbuilder > Schedules" exist:

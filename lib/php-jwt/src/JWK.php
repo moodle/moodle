@@ -3,6 +3,7 @@
 namespace Firebase\JWT;
 
 use DomainException;
+use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
@@ -24,7 +25,7 @@ class JWK
      *
      * @param array $jwks The JSON Web Key Set as an associative array
      *
-     * @return array An associative array that represents the set of keys
+     * @return array<string, Key> An associative array of key IDs (kid) to Key objects
      *
      * @throws InvalidArgumentException     Provided JWK Set is empty
      * @throws UnexpectedValueException     Provided JWK Set was invalid
@@ -62,7 +63,7 @@ class JWK
      *
      * @param array $jwk An individual JWK
      *
-     * @return resource|array An associative array that represents the key
+     * @return Key The key object for the JWK
      *
      * @throws InvalidArgumentException     Provided JWK is empty
      * @throws UnexpectedValueException     Provided JWK was invalid
@@ -70,7 +71,7 @@ class JWK
      *
      * @uses createPemFromModulusAndExponent
      */
-    private static function parseKey(array $jwk)
+    public static function parseKey(array $jwk)
     {
         if (empty($jwk)) {
             throw new InvalidArgumentException('JWK must not be empty');
@@ -78,10 +79,16 @@ class JWK
         if (!isset($jwk['kty'])) {
             throw new UnexpectedValueException('JWK must contain a "kty" parameter');
         }
+        if (!isset($jwk['alg'])) {
+            // The "alg" parameter is optional in a KTY, but is required for parsing in
+            // this library. Add it manually to your JWK array if it doesn't already exist.
+            // @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.4
+            throw new UnexpectedValueException('JWK must contain an "alg" parameter');
+        }
 
         switch ($jwk['kty']) {
             case 'RSA':
-                if (\array_key_exists('d', $jwk)) {
+                if (!empty($jwk['d'])) {
                     throw new UnexpectedValueException('RSA private keys are not supported');
                 }
                 if (!isset($jwk['n']) || !isset($jwk['e'])) {
@@ -95,7 +102,7 @@ class JWK
                         'OpenSSL error: ' . \openssl_error_string()
                     );
                 }
-                return $publicKey;
+                return new Key($publicKey, $jwk['alg']);
             default:
                 // Currently only RSA is supported
                 break;

@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/externallib.php');
+
 /**
  * Unit tests for /lib/externallib.php.
  *
@@ -22,14 +29,7 @@
  * @copyright  2009 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/externallib.php');
-
-
-class core_externallib_testcase extends advanced_testcase {
+class externallib_test extends \advanced_testcase {
     protected $DB;
 
     public function setUp(): void {
@@ -54,7 +54,7 @@ class core_externallib_testcase extends advanced_testcase {
         $currentfile = $settings->get_file();
         $currentfileurl = $settings->get_fileurl();
 
-        $this->assertInstanceOf('external_settings', $settings);
+        $this->assertInstanceOf(\external_settings::class, $settings);
 
         // Check apis.
         $settings->set_file('plugin.php');
@@ -75,9 +75,9 @@ class core_externallib_testcase extends advanced_testcase {
 
     public function test_validate_params() {
         $params = array('text'=>'aaa', 'someid'=>'6');
-        $description = new external_function_parameters(array('someid' => new external_value(PARAM_INT, 'Some int value'),
-            'text'   => new external_value(PARAM_ALPHA, 'Some text value')));
-        $result = external_api::validate_parameters($description, $params);
+        $description = new \external_function_parameters(array('someid' => new \external_value(PARAM_INT, 'Some int value'),
+            'text'   => new \external_value(PARAM_ALPHA, 'Some text value')));
+        $result = \external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
         reset($result);
         $this->assertSame('someid', key($result));
@@ -85,9 +85,9 @@ class core_externallib_testcase extends advanced_testcase {
         $this->assertSame('aaa', $result['text']);
 
         $params = array('someids'=>array('1', 2, 'a'=>'3'), 'scalar'=>666);
-        $description = new external_function_parameters(array('someids' => new external_multiple_structure(new external_value(PARAM_INT, 'Some ID')),
-            'scalar'  => new external_value(PARAM_ALPHANUM, 'Some text value')));
-        $result = external_api::validate_parameters($description, $params);
+        $description = new \external_function_parameters(array('someids' => new \external_multiple_structure(new \external_value(PARAM_INT, 'Some ID')),
+            'scalar'  => new \external_value(PARAM_ALPHANUM, 'Some text value')));
+        $result = \external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
         reset($result);
         $this->assertSame('someids', key($result));
@@ -95,9 +95,9 @@ class core_externallib_testcase extends advanced_testcase {
         $this->assertSame('666', $result['scalar']);
 
         $params = array('text'=>'aaa');
-        $description = new external_function_parameters(array('someid' => new external_value(PARAM_INT, 'Some int value', false),
-            'text'   => new external_value(PARAM_ALPHA, 'Some text value')));
-        $result = external_api::validate_parameters($description, $params);
+        $description = new \external_function_parameters(array('someid' => new \external_value(PARAM_INT, 'Some int value', false),
+            'text'   => new \external_value(PARAM_ALPHA, 'Some text value')));
+        $result = \external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
         reset($result);
         $this->assertSame('someid', key($result));
@@ -105,9 +105,9 @@ class core_externallib_testcase extends advanced_testcase {
         $this->assertSame('aaa', $result['text']);
 
         $params = array('text'=>'aaa');
-        $description = new external_function_parameters(array('someid' => new external_value(PARAM_INT, 'Some int value', false, 6),
-            'text'   => new external_value(PARAM_ALPHA, 'Some text value')));
-        $result = external_api::validate_parameters($description, $params);
+        $description = new \external_function_parameters(array('someid' => new \external_value(PARAM_INT, 'Some int value', false, 6),
+            'text'   => new \external_value(PARAM_ALPHA, 'Some text value')));
+        $result = \external_api::validate_parameters($description, $params);
         $this->assertCount(2, $result);
         reset($result);
         $this->assertSame('someid', key($result));
@@ -116,14 +116,14 @@ class core_externallib_testcase extends advanced_testcase {
     }
 
     public function test_external_format_text() {
-        $settings = external_settings::get_instance();
+        $settings = \external_settings::get_instance();
 
         $currentraw = $settings->get_raw();
         $currentfilter = $settings->get_filter();
 
         $settings->set_raw(true);
         $settings->set_filter(false);
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         $test = '$$ \pi $$';
         $testformat = FORMAT_MARKDOWN;
@@ -163,7 +163,7 @@ class core_externallib_testcase extends advanced_testcase {
         $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
         $testformat = FORMAT_HTML;
         $correct = array('<p><a></a><a href="#test">Text</a></p>', FORMAT_HTML);
-        $options = new StdClass();
+        $options = new \stdClass();
         $options->allowid = false;
         // Function external_format_text should work with context id or context instance.
         $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
@@ -172,7 +172,7 @@ class core_externallib_testcase extends advanced_testcase {
         $test = '<p><a id="test"></a><a href="#test">Text</a></p>'."\n".'Newline';
         $testformat = FORMAT_MOODLE;
         $correct = array('<p><a id="test"></a><a href="#test">Text</a></p> Newline', FORMAT_HTML);
-        $options = new StdClass();
+        $options = new \stdClass();
         $options->newlines = false;
         // Function external_format_text should work with context id or context instance.
         $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
@@ -181,7 +181,7 @@ class core_externallib_testcase extends advanced_testcase {
         $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
         $testformat = FORMAT_MOODLE;
         $correct = array('<div class="text_to_html">'.$test.'</div>', FORMAT_HTML);
-        $options = new StdClass();
+        $options = new \stdClass();
         $options->para = true;
         // Function external_format_text should work with context id or context instance.
         $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
@@ -190,7 +190,7 @@ class core_externallib_testcase extends advanced_testcase {
         $test = '<p><a id="test"></a><a href="#test">Text</a></p>';
         $testformat = FORMAT_MOODLE;
         $correct = array($test, FORMAT_HTML);
-        $options = new StdClass();
+        $options = new \stdClass();
         $options->context = $context;
         // Function external_format_text should work with context id or context instance.
         $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0, $options), $correct);
@@ -202,19 +202,19 @@ class core_externallib_testcase extends advanced_testcase {
 
     public function test_external_format_string() {
         $this->resetAfterTest();
-        $settings = external_settings::get_instance();
+        $settings = \external_settings::get_instance();
         $currentraw = $settings->get_raw();
         $currentfilter = $settings->get_filter();
 
         // Enable multilang filter to on content and heading.
         filter_set_global_state('multilang', TEXTFILTER_ON);
         filter_set_applies_to_strings('multilang', 1);
-        $filtermanager = filter_manager::instance();
+        $filtermanager = \filter_manager::instance();
         $filtermanager->reset_caches();
 
         $settings->set_raw(true);
         $settings->set_filter(true);
-        $context = context_system::instance();
+        $context = \context_system::instance();
 
         $test = '<span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> ' .
             '<script>hi</script> <h3>there</h3>!';
@@ -261,18 +261,18 @@ class core_externallib_testcase extends advanced_testcase {
      */
     public function test_clean_returnvalue_return_php_type() {
 
-        $returndesc = new external_single_structure(
+        $returndesc = new \external_single_structure(
             array(
-                'value' => new external_value(PARAM_RAW, 'Some text', VALUE_OPTIONAL, null, NULL_NOT_ALLOWED)
+                'value' => new \external_value(PARAM_RAW, 'Some text', VALUE_OPTIONAL, null, NULL_NOT_ALLOWED)
             )
         );
 
         // Check return type on exception because the external values does not allow NULL values.
         $testdata = array('value' => null);
         try {
-            $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
-        } catch (moodle_exception $e) {
-            $this->assertInstanceOf('invalid_response_exception', $e);
+            $cleanedvalue = \external_api::clean_returnvalue($returndesc, $testdata);
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf(\invalid_response_exception::class, $e);
             $this->assertStringContainsString('of PHP type "NULL"', $e->debuginfo);
         }
     }
@@ -283,32 +283,32 @@ class core_externallib_testcase extends advanced_testcase {
     public function test_clean_returnvalue() {
 
         // Build some return value decription.
-        $returndesc = new external_multiple_structure(
-            new external_single_structure(
+        $returndesc = new \external_multiple_structure(
+            new \external_single_structure(
                 array(
-                    'object' => new external_single_structure(
-                                array('value1' => new external_value(PARAM_INT, 'this is a int'))),
-                    'value2' => new external_value(PARAM_TEXT, 'some text', VALUE_OPTIONAL))
+                    'object' => new \external_single_structure(
+                                array('value1' => new \external_value(PARAM_INT, 'this is a int'))),
+                    'value2' => new \external_value(PARAM_TEXT, 'some text', VALUE_OPTIONAL))
             ));
 
         // Clean an object (it should be cast into an array).
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->value1 = 1;
         $singlestructure['object'] = $object;
         $singlestructure['value2'] = 'Some text';
         $testdata = array($singlestructure);
-        $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
+        $cleanedvalue = \external_api::clean_returnvalue($returndesc, $testdata);
         $cleanedsinglestructure = array_pop($cleanedvalue);
         $this->assertSame($object->value1, $cleanedsinglestructure['object']['value1']);
         $this->assertSame($singlestructure['value2'], $cleanedsinglestructure['value2']);
 
         // Missing VALUE_OPTIONAL.
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->value1 = 1;
-        $singlestructure = new stdClass();
+        $singlestructure = new \stdClass();
         $singlestructure->object = $object;
         $testdata = array($singlestructure);
-        $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
+        $cleanedvalue = \external_api::clean_returnvalue($returndesc, $testdata);
         $cleanedsinglestructure = array_pop($cleanedvalue);
         $this->assertSame($object->value1, $cleanedsinglestructure['object']['value1']);
         $this->assertArrayNotHasKey('value2', $cleanedsinglestructure);
@@ -321,7 +321,7 @@ class core_externallib_testcase extends advanced_testcase {
         $singlestructure['value2'] = 'Some text';
         $singlestructure['unknownvalue'] = 'Some text to ignore';
         $testdata = array($singlestructure);
-        $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
+        $cleanedvalue = \external_api::clean_returnvalue($returndesc, $testdata);
         $cleanedsinglestructure = array_pop($cleanedvalue);
         $this->assertSame($object['value1'], $cleanedsinglestructure['object']['value1']);
         $this->assertSame($singlestructure['value2'], $cleanedsinglestructure['value2']);
@@ -334,15 +334,15 @@ class core_externallib_testcase extends advanced_testcase {
         $singlestructure['value2'] = 'Some text';
         $testdata = array($singlestructure);
         $this->expectException('invalid_response_exception');
-        $cleanedvalue = external_api::clean_returnvalue($returndesc, $testdata);
+        $cleanedvalue = \external_api::clean_returnvalue($returndesc, $testdata);
     }
     /*
-     * Test external_api::get_context_from_params().
+     * Test \external_api::get_context_from_params().
      */
     public function test_get_context_from_params() {
         $this->resetAfterTest(true);
         $course = $this->getDataGenerator()->create_course();
-        $realcontext = context_course::instance($course->id);
+        $realcontext = \context_course::instance($course->id);
 
         // Use context id.
         $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextid" => $realcontext->id));
@@ -356,26 +356,26 @@ class core_externallib_testcase extends advanced_testcase {
         try {
             $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextid" => 0));
             $this->fail('Exception expected from get_context_wrapper()');
-        } catch (moodle_exception $e) {
-            $this->assertInstanceOf('invalid_parameter_exception', $e);
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf(\invalid_parameter_exception::class, $e);
         }
 
         try {
             $fetchedcontext = test_exernal_api::get_context_wrapper(array("instanceid" => 0));
             $this->fail('Exception expected from get_context_wrapper()');
-        } catch (moodle_exception $e) {
-            $this->assertInstanceOf('invalid_parameter_exception', $e);
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf(\invalid_parameter_exception::class, $e);
         }
 
         try {
             $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextid" => null));
             $this->fail('Exception expected from get_context_wrapper()');
-        } catch (moodle_exception $e) {
-            $this->assertInstanceOf('invalid_parameter_exception', $e);
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf(\invalid_parameter_exception::class, $e);
         }
 
         // Tests for context with instanceid equal to 0 (System context).
-        $realcontext = context_system::instance();
+        $realcontext = \context_system::instance();
         $fetchedcontext = test_exernal_api::get_context_wrapper(array("contextlevel" => "system", "instanceid" => 0));
         $this->assertEquals($realcontext, $fetchedcontext);
 
@@ -385,7 +385,7 @@ class core_externallib_testcase extends advanced_testcase {
     }
 
     /*
-     * Test external_api::get_context()_from_params parameter validation.
+     * Test \external_api::get_context()_from_params parameter validation.
      */
     public function test_get_context_params() {
         global $USER;
@@ -396,7 +396,7 @@ class core_externallib_testcase extends advanced_testcase {
     }
 
     /*
-     * Test external_api::get_context()_from_params parameter validation.
+     * Test \external_api::get_context()_from_params parameter validation.
      */
     public function test_get_context_params2() {
         global $USER;
@@ -407,7 +407,7 @@ class core_externallib_testcase extends advanced_testcase {
     }
 
     /*
-     * Test external_api::get_context()_from_params parameter validation.
+     * Test \external_api::get_context()_from_params parameter validation.
      */
     public function test_get_context_params3() {
         global $USER;
@@ -437,14 +437,14 @@ class core_externallib_testcase extends advanced_testcase {
      * @dataProvider all_external_info_provider
      */
     public function test_all_external_info($f) {
-        $desc = external_api::external_function_info($f);
+        $desc = \external_api::external_function_info($f);
         $this->assertNotEmpty($desc->name);
         $this->assertNotEmpty($desc->classname);
         $this->assertNotEmpty($desc->methodname);
         $this->assertEquals($desc->component, clean_param($desc->component, PARAM_COMPONENT));
-        $this->assertInstanceOf('external_function_parameters', $desc->parameters_desc);
+        $this->assertInstanceOf(\external_function_parameters::class, $desc->parameters_desc);
         if ($desc->returns_desc != null) {
-            $this->assertInstanceOf('external_description', $desc->returns_desc);
+            $this->assertInstanceOf(\external_description::class, $desc->returns_desc);
         }
     }
 
@@ -459,7 +459,7 @@ class core_externallib_testcase extends advanced_testcase {
         $courseids = array($c1->id, $c2->id, $c3->id);
 
         $this->setAdminUser();
-        list($courses, $warnings) = external_util::validate_courses($courseids);
+        list($courses, $warnings) = \external_util::validate_courses($courseids);
         $this->assertEmpty($warnings);
         $this->assertCount(3, $courses);
         $this->assertArrayHasKey($c1->id, $courses);
@@ -470,7 +470,7 @@ class core_externallib_testcase extends advanced_testcase {
         $this->assertEquals($c3->id, $courses[$c3->id]->id);
 
         $this->setUser($u1);
-        list($courses, $warnings) = external_util::validate_courses($courseids);
+        list($courses, $warnings) = \external_util::validate_courses($courseids);
         $this->assertCount(2, $warnings);
         $this->assertEquals($c2->id, $warnings[0]['itemid']);
         $this->assertEquals($c3->id, $warnings[1]['itemid']);
@@ -495,7 +495,7 @@ class core_externallib_testcase extends advanced_testcase {
         $courseids = array($c1->id, $c2->id, $c3->id);
 
         $this->setUser($u1);
-        list($courses, $warnings) = external_util::validate_courses($courseids, [], false, true);
+        list($courses, $warnings) = \external_util::validate_courses($courseids, [], false, true);
         $this->assertCount(2, $warnings);
         $this->assertEquals($c2->id, $warnings[0]['itemid']);
         $this->assertEquals($c3->id, $warnings[1]['itemid']);
@@ -523,7 +523,7 @@ class core_externallib_testcase extends advanced_testcase {
         $courses = array($c2->id => $c2, $c3->id => $c3, $c4->id => $c4);
 
         $this->setUser($u1);
-        list($courses, $warnings) = external_util::validate_courses($courseids, $courses);
+        list($courses, $warnings) = \external_util::validate_courses($courseids, $courses);
         $this->assertCount(2, $courses);
         $this->assertCount(1, $warnings);
         $this->assertArrayHasKey($c1->id, $courses);
@@ -544,7 +544,7 @@ class core_externallib_testcase extends advanced_testcase {
         $this->setAdminUser();
         $category = $this->getDataGenerator()->create_category();
         $params = array(
-            'contextid' => context_coursecat::instance($category->id)->id,
+            'contextid' => \context_coursecat::instance($category->id)->id,
             'name' => 'aaagrrryyy',
             'idnumber' => '',
             'description' => ''
@@ -555,7 +555,7 @@ class core_externallib_testcase extends advanced_testcase {
         $beforepage = $PAGE;
         $beforecourse = $COURSE;
         $params = array('cohortids' => array($cohort1->id, $cohort2->id));
-        $result = external_api::call_external_function('core_cohort_get_cohorts', $params);
+        $result = \external_api::call_external_function('core_cohort_get_cohorts', $params);
 
         $this->assertSame($beforepage, $PAGE);
         $this->assertSame($beforecourse, $COURSE);
@@ -566,7 +566,7 @@ class core_externallib_testcase extends advanced_testcase {
         $beforepage = $PAGE;
         $beforecourse = $COURSE;
         $params = array('courseid' => $course->id, 'options' => array());
-        $result = external_api::call_external_function('core_enrol_get_enrolled_users', $params);
+        $result = \external_api::call_external_function('core_enrol_get_enrolled_users', $params);
 
         $this->assertSame($beforepage, $PAGE);
         $this->assertSame($beforecourse, $COURSE);
@@ -575,7 +575,7 @@ class core_externallib_testcase extends advanced_testcase {
         require_once($CFG->dirroot . '/lib/tests/fixtures/test_external_function_throwable.php');
 
         // Call our test function.
-        $result = test_external_function_throwable::call_external_function('core_throw_exception', array(), false);
+        $result = \test_external_function_throwable::call_external_function('core_throw_exception', array(), false);
 
         $this->assertTrue($result['error']);
         $this->assertArrayHasKey('exception', $result);
@@ -583,7 +583,7 @@ class core_externallib_testcase extends advanced_testcase {
     }
 
     /**
-     * Text external_util::get_area_files
+     * Text \external_util::get_area_files
      */
     public function test_external_util_get_area_files() {
         global $CFG, $DB;
@@ -622,7 +622,7 @@ class core_externallib_testcase extends advanced_testcase {
             'isexternalfile' => false,
         );
         // Get all the files for the area.
-        $files = external_util::get_area_files($context, $component, $filearea, false);
+        $files = \external_util::get_area_files($context, $component, $filearea, false);
         $this->assertEquals($expectedfiles, $files);
 
         $DB->method('get_in_or_equal')->willReturn([
@@ -631,7 +631,7 @@ class core_externallib_testcase extends advanced_testcase {
         ]);
 
         // Get just the file indicated by $itemid.
-        $files = external_util::get_area_files($context, $component, $filearea, $itemid);
+        $files = \external_util::get_area_files($context, $component, $filearea, $itemid);
         $this->assertEquals($expectedfiles, $files);
 
     }
@@ -641,7 +641,7 @@ class core_externallib_testcase extends advanced_testcase {
      */
     public function test_external_files() {
 
-        $description = new external_files();
+        $description = new \external_files();
 
         // First check that the expected default values and keys are returned.
         $expectedkeys = array_flip(array('filename', 'filepath', 'filesize', 'fileurl', 'timemodified', 'mimetype',
@@ -686,7 +686,7 @@ class core_externallib_testcase extends advanced_testcase {
 /*
  * Just a wrapper to access protected apis for testing
  */
-class test_exernal_api extends external_api {
+class test_exernal_api extends \external_api {
 
     public static function get_context_wrapper($params) {
         return self::get_context_from_params($params);

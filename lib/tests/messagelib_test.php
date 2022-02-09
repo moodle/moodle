@@ -412,7 +412,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $eventsink = $this->redirectEvents();
 
         // Will always use the pop-up processor.
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'none', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'none', $user2);
 
         $message = new \core\message\message();
         $message->courseid          = 1;
@@ -500,7 +500,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $eventsink->clear();
 
         // Will always use the pop-up processor.
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user2);
 
         $message = new \core\message\message();
         $message->courseid          = 1;
@@ -533,7 +533,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $user2->emailstop = '0';
 
         // Will always use the pop-up processor.
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user2);
 
         $message = new \core\message\message();
         $message->courseid          = 1;
@@ -566,7 +566,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\message_sent', $events[0]);
         $eventsink->clear();
 
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email,popup', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email,popup', $user2);
 
         $message = new \core\message\message();
         $message->courseid          = 1;
@@ -600,7 +600,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\message_sent', $events[0]);
         $eventsink->clear();
 
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'popup', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'popup', $user2);
 
         $message = new \core\message\message();
         $message->courseid          = 1;
@@ -635,7 +635,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $transaction->allow_commit();
 
         // Will always use the pop-up processor.
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'none', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'none', $user2);
 
         $message = new \core\message\message();
         $message->courseid          = 1;
@@ -668,7 +668,7 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\message_sent', $events[0]);
 
         // Will always use the pop-up processor.
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user2);
 
         $message = new \core\message\message();
         $message->courseid          = 1;
@@ -783,7 +783,7 @@ class core_messagelib_testcase extends advanced_testcase {
 
         // Ensure we're going to hit the email processor for this user.
         $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user2);
 
         // Now, send a message and verify the message processors (in this case, email) are hit.
         $sink = $this->redirectEmails();
@@ -869,7 +869,7 @@ class core_messagelib_testcase extends advanced_testcase {
 
         // Ensure we're going to hit the email processor for this user.
         $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user1);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user1);
 
         // Now, send a message and verify the message processors are empty (self-conversations are not processed for now).
         $sink = $this->redirectEmails();
@@ -941,8 +941,8 @@ class core_messagelib_testcase extends advanced_testcase {
 
         // Ensure the email processor is enabled for the recipient users.
         $DB->set_field_select('message_processors', 'enabled', 0, "name <> 'email'");
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user3);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user3);
 
         // Now, send a message and verify the email processor are hit.
         $messageid = message_send($message);
@@ -1016,8 +1016,8 @@ class core_messagelib_testcase extends advanced_testcase {
         $eventsink = $this->redirectEvents();
 
         // Will always use the pop-up processor.
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user2);
-        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user3);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user2);
+        set_user_preference('message_provider_moodle_instantmessage_enabled', 'email', $user3);
 
         $message = new \core\message\message();
         $message->courseid          = 1;

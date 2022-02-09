@@ -61,7 +61,6 @@ $renamedclasses = [
     'core_question\\bank\\copy_action_column' => 'qbank_editquestion\\copy_action_column',
     'core_question\\bank\\edit_action_column' => 'qbank_editquestion\\edit_action_column',
     'core_question\\bank\\creator_name_column' => 'qbank_viewcreator\\creator_name_column',
-    'core_question\\bank\\modifier_name_column' => 'qbank_viewcreator\\modifier_name_column',
     'core_question\\bank\\question_name_column' => 'qbank_viewquestionname\\viewquestionname_column_helper',
     'core_question\\bank\\question_name_idnumber_tags_column' => 'qbank_viewquestionname\\question_name_idnumber_tags_column',
     'core_question\\bank\\delete_action_column' => 'qbank_deletequestion\\delete_action_column',
@@ -81,5 +80,7 @@ $renamedclasses = [
     'export_form' => 'qbank_exportquestions\\form\\export_form',
     'preview_options_form' => 'qbank_previewquestion\\form\\preview_options_form',
     'question_preview_options' => 'qbank_previewquestion\\output\\question_preview_options',
-    'core_question\\form\\tags' => '\qbank_tagquestion\\form\\tags_form'
+    'core_question\\form\\tags' => 'qbank_tagquestion\\form\\tags_form',
+    'context_to_string_translator' => 'core_question\\local\\bank\\context_to_string_translator',
+    'question_edit_contexts' => 'core_question\\local\\bank\\question_edit_contexts',
 ];

@@ -21,6 +21,7 @@ use cache_store;
 use context_course;
 use core_tag_tag;
 use Exception;
+use Firebase\JWT\Key;
 use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\local\exceptions\bigbluebutton_exception;
 use mod_bigbluebuttonbn\local\exceptions\meeting_join_exception;
@@ -336,10 +337,10 @@ class meeting {
         // Check if auto_start_record is enable.
         if ($data['record'] == 'true' && $this->instance->should_record_from_start()) {
             $data['autoStartRecording'] = 'true';
-            // Check if hide_record_button is enable.
-            if (!$this->instance->should_show_recording_button()) {
-                $data['allowStartStopRecording'] = 'false';
-            }
+        }
+        // Check if hide_record_button is enable.
+        if (!$this->instance->should_show_recording_button()) {
+            $data['allowStartStopRecording'] = 'false';
         }
         $data['welcome'] = trim($this->instance->get_welcome_message());
         $voicebridge = intval($this->instance->get_voice_bridge());
@@ -432,8 +433,7 @@ class meeting {
             // Verify the authenticity of the request.
             $token = \Firebase\JWT\JWT::decode(
                 $authorization[1],
-                config::get('shared_secret'),
-                ['HS512']
+                new Key(config::get('shared_secret'), 'HS512')
             );
 
             // Get JSON string from the body.

@@ -24,15 +24,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\output\inplace_editable;
 use tool_usertours\helper;
 
 /**
  * Manage inplace editable saves.
  *
- * @param   string      $itemtype       The type of item.
- * @param   int         $itemid         The ID of the item.
- * @param   mixed       $newvalue       The new value
- * @return  string
+ * @param string $itemtype The type of item.
+ * @param int $itemid The ID of the item.
+ * @param mixed $newvalue The new value
+ * @return inplace_editable
  */
 function tool_usertours_inplace_editable($itemtype, $itemid, $newvalue) {
     $context = \context_system::instance();

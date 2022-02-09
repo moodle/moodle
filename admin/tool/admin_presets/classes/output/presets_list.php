@@ -89,7 +89,6 @@ class presets_list implements renderable, templatable {
                 $actionsmenu = new \action_menu();
                 $actionsmenu->set_menu_trigger(get_string('actions'));
                 $actionsmenu->set_owner_selector('preset-actions-' . $preset->id);
-                $actionsmenu->set_alignment(\action_menu::TL, \action_menu::BL);
 
                 $loadlink = new \moodle_url('/admin/tool/admin_presets/index.php', ['action' => 'load', 'id' => $preset->id]);
                 $actionsmenu->add(new \action_menu_link_secondary(

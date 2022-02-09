@@ -106,7 +106,7 @@ class primary extends view {
             } else if (in_array($this->context->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE])) {
                 $activekey = 'courses';
             } else if (in_array('siteadminnode', $children) && $node = $this->get_site_admin_node()) {
-                if ($this->context->contextlevel == CONTEXT_COURSECAT || $node->search_for_active_node()) {
+                if ($this->context->contextlevel == CONTEXT_COURSECAT || $node->search_for_active_node(URL_MATCH_EXACT)) {
                     $activekey = 'siteadminnode';
                 }
             }

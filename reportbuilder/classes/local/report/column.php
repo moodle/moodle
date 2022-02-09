@@ -94,6 +94,9 @@ final class column {
     /** @var bool $issortable Used to indicate if a column is sortable */
     private $issortable = false;
 
+    /** @var array $sortfields Fields to sort the column by */
+    private $sortfields = [];
+
     /** @var array $attributes */
     private $attributes = [];
 
@@ -567,10 +570,13 @@ final class column {
      * Sets the column as sortable
      *
      * @param bool $issortable
+     * @param array $sortfields Define the fields that should be used when the column is sorted, typically a subset of the fields
+     *      selected for the column, via {@see add_field}. If omitted then the first selected field is used
      * @return self
      */
-    public function set_is_sortable(bool $issortable): self {
+    public function set_is_sortable(bool $issortable, array $sortfields = []): self {
         $this->issortable = $issortable;
+        $this->sortfields = $sortfields;
         return $this;
     }
 
@@ -587,6 +593,33 @@ final class column {
         }
 
         return $this->issortable;
+    }
+
+    /**
+     * Return fields to use for sorting of the column, where available the field aliases will be returned
+     *
+     * @return array
+     */
+    public function get_sort_fields(): array {
+        $fieldsalias = $this->get_fields_sql_alias();
+
+        return array_map(static function(string $sortfield) use ($fieldsalias): string {
+
+            // Check whether sortfield refers to a defined field alias.
+            if (array_key_exists($sortfield, $fieldsalias)) {
+                return $fieldsalias[$sortfield]['alias'];
+            }
+
+            // Check whether sortfield refers to field SQL.
+            foreach ($fieldsalias as $field) {
+                if (strcasecmp($sortfield, $field['sql']) === 0) {
+                    $sortfield = $field['alias'];
+                    break;
+                }
+            }
+
+            return $sortfield;
+        }, $this->sortfields);
     }
 
     /**

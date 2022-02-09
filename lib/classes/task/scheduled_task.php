@@ -130,7 +130,7 @@ abstract class scheduled_task extends task_base {
      */
     public function set_minute($minute, $expandr = true) {
         if ($minute === 'R' && $expandr) {
-            $minute = mt_rand(self::HOURMIN, self::HOURMAX);
+            $minute = mt_rand(self::MINUTEMIN, self::MINUTEMAX);
         }
         $this->minute = $minute;
     }

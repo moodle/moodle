@@ -125,7 +125,6 @@ class controlmenu implements renderable, templatable {
 
         // Convert control array into an action_menu.
         $menu = new action_menu();
-        $menu->set_alignment(action_menu::TR, action_menu::BR);
         $icon = $output->pix_icon('i/menu', get_string('edit'));
         $menu->set_menu_trigger($icon, 'btn btn-icon d-flex align-items-center justify-content-center');
 

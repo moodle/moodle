@@ -1064,13 +1064,13 @@ function course_delete_module($cmid, $async = false) {
         }
     }
 
-    question_delete_activity($cm);
-
     // Call the delete_instance function, if it returns false throw an exception.
     if (!$deleteinstancefunction($cm->instance)) {
         throw new moodle_exception('cannotdeletemoduleinstance', '', '', null,
             "Cannot delete the module $modulename (instance).");
     }
+
+    question_delete_activity($cm);
 
     // Remove all module files in case modules forget to do that.
     $fs = get_file_storage();
@@ -3868,15 +3868,21 @@ function core_course_core_calendar_get_valid_event_timestart_range(\calendar_eve
  */
 function core_course_drawer(): string {
     global $PAGE;
-    $format = course_get_format($PAGE->course);
 
-    // Only course and modules are able to render course index.
-    $ismod = strpos($PAGE->pagetype, 'mod-') === 0;
-    if ($ismod || $PAGE->pagetype == 'course-view-' . $format->get_format()) {
-        $renderer = $format->get_renderer($PAGE);
-        if (method_exists($renderer, 'course_index_drawer')) {
-            return $renderer->course_index_drawer($format);
-        }
+    // Only add course index on non-site course pages.
+    if (!$PAGE->course || $PAGE->course->id == SITEID) {
+        return '';
+    }
+
+    // Show course index to users can access the course only.
+    if (!can_access_course($PAGE->course)) {
+        return '';
+    }
+
+    $format = course_get_format($PAGE->course);
+    $renderer = $format->get_renderer($PAGE);
+    if (method_exists($renderer, 'course_index_drawer')) {
+        return $renderer->course_index_drawer($format);
     }
 
     return '';
@@ -3999,7 +4005,7 @@ function course_get_tagged_course_modules($tag, $exclusivemode = false, $fromcon
  * @since  Moodle 3.2
  */
 function course_get_user_navigation_options($context, $course = null) {
-    global $CFG;
+    global $CFG, $USER;
 
     $isloggedin = isloggedin();
     $isguestuser = isguestuser();
@@ -4040,8 +4046,37 @@ function course_get_user_navigation_options($context, $course = null) {
     } else {
         // We are in a course, so make sure we use the proper capability (course:viewparticipants).
         $options->participants = course_can_view_participants($context);
-        $options->badges = !empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges) &&
-                            has_capability('moodle/badges:viewbadges', $context);
+
+        // Only display badges if they are enabled and the current user can manage them or if they can view them and have,
+        // at least, one available badge.
+        if (!empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges)) {
+            $canmanage = has_any_capability([
+                    'moodle/badges:createbadge',
+                    'moodle/badges:awardbadge',
+                    'moodle/badges:configurecriteria',
+                    'moodle/badges:configuremessages',
+                    'moodle/badges:configuredetails',
+                    'moodle/badges:deletebadge',
+                ],
+                $context
+            );
+            $totalbadges = [];
+            $canview = false;
+            if (!$canmanage) {
+                // This only needs to be calculated if the user can't manage badges (to improve performance).
+                $canview = has_capability('moodle/badges:viewbadges', $context);
+                if ($canview) {
+                    require_once($CFG->dirroot.'/lib/badgeslib.php');
+                    if (is_null($course)) {
+                        $totalbadges = count(badges_get_badges(BADGE_TYPE_SITE, 0, '', '', 0, 0, $USER->id));
+                    } else {
+                        $totalbadges = count(badges_get_badges(BADGE_TYPE_COURSE, $course->id, '', '', 0, 0, $USER->id));
+                    }
+                }
+            }
+
+            $options->badges = ($canmanage || ($canview && $totalbadges > 0));
+        }
         // Add view grade report is permitted.
         $grades = false;
 

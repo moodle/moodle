@@ -84,10 +84,21 @@ Feature: Test tertiary navigation as various users
       | nonediting | should not exist | Badges    |
 
   Scenario: Check navigation as a student
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I navigate to "Badges" in current page administration
-    Then "Back" "button" should not exist
+    Given I am on the "C1" "Course" page logged in as "student1"
+    And "Badges" "link" should not exist in current page administration
+    And I log out
+    # Enable one badge.
+    When I am on the "C1" "Course" page logged in as "admin"
+    And I navigate to "Badges" in current page administration
+    And I click on "Manage badges" "button"
+    And I click on "Enable access" "link" in the "Testing course badge" "table_row"
+    And I press "Continue"
+    And I log out
+    # Now student should see the Badges link.
+    And I am on the "C1" "Course" page logged in as "student1"
+    Then "Badges" "link" should exist in current page administration
+    And I navigate to "Badges" in current page administration
+    And "Back" "button" should not exist
     And "Manage badges" "button" should not exist
     And "Add a new badge" "button" should not exist
     And I should see "Badges" is active in secondary navigation

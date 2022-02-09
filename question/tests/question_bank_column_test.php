@@ -45,7 +45,7 @@ class question_bank_column_testcase extends advanced_testcase {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $questionbank = new core_question\local\bank\view(
-                new question_edit_contexts(context_course::instance($course->id)),
+                new core_question\local\bank\question_edit_contexts(context_course::instance($course->id)),
                 new moodle_url('/'),
                 $course
         );
@@ -79,7 +79,7 @@ class question_bank_column_testcase extends advanced_testcase {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $questionbank = new core_question\local\bank\view(
-                new question_edit_contexts(context_course::instance($course->id)),
+                new core_question\local\bank\question_edit_contexts(context_course::instance($course->id)),
                 new moodle_url('/'),
                 $course
         );

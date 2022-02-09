@@ -27,6 +27,7 @@ namespace mod_quiz\event;
 
 use quiz;
 use quiz_attempt;
+use context_module;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -929,6 +930,421 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($quizobj->get_context(), $event->get_context());
         $this->assertEquals($attempt->userid, $event->relateduserid);
         $this->assertNotEmpty($event->get_description());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the page break created event.
+     *
+     * There is no external API for creating page break, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_page_break_created() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'slotnumber' => 3,
+            ]
+        ];
+        $event = \mod_quiz\event\page_break_created::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\page_break_created', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the page break deleted event.
+     *
+     * There is no external API for deleting page break, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_page_deleted_created() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'slotnumber' => 3,
+            ]
+        ];
+        $event = \mod_quiz\event\page_break_deleted::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\page_break_deleted', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the quiz grade updated event.
+     *
+     * There is no external API for updating quiz grade, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_quiz_grade_updated() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => $quizobj->get_quizid(),
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'oldgrade' => 1,
+                'newgrade' => 3,
+            ]
+        ];
+        $event = \mod_quiz\event\quiz_grade_updated::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\quiz_grade_updated', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the quiz re-paginated event.
+     *
+     * There is no external API for re-paginating quiz, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_quiz_repaginated() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => $quizobj->get_quizid(),
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'slotsperpage' => 3,
+            ]
+        ];
+        $event = \mod_quiz\event\quiz_repaginated::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\quiz_repaginated', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the section break created event.
+     *
+     * There is no external API for creating section break, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_section_break_created() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'firstslotid' => 1,
+                'firstslotnumber' => 2,
+                'title' => 'New title'
+            ]
+        ];
+        $event = \mod_quiz\event\section_break_created::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\section_break_created', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertStringContainsString($params['other']['title'], $event->get_description());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the section break deleted event.
+     *
+     * There is no external API for deleting section break, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_section_break_deleted() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'firstslotid' => 1,
+                'firstslotnumber' => 2
+            ]
+        ];
+        $event = \mod_quiz\event\section_break_deleted::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\section_break_deleted', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the section shuffle updated event.
+     *
+     * There is no external API for updating section shuffle, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_section_shuffle_updated() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'firstslotid' => 1,
+                'firstslotnumber' => 2,
+                'shuffle' => true
+            ]
+        ];
+        $event = \mod_quiz\event\section_shuffle_updated::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\section_shuffle_updated', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the section title updated event.
+     *
+     * There is no external API for updating section title, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_section_title_updated() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'firstslotid' => 1,
+                'firstslotnumber' => 2,
+                'newtitle' => 'New title'
+            ]
+        ];
+        $event = \mod_quiz\event\section_title_updated::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\section_title_updated', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertStringContainsString($params['other']['newtitle'], $event->get_description());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the slot created event.
+     *
+     * There is no external API for creating slot, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_slot_created() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'slotnumber' => 1,
+                'page' => 1
+            ]
+        ];
+        $event = \mod_quiz\event\slot_created::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\slot_created', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the slot deleted event.
+     *
+     * There is no external API for deleting slot, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_slot_deleted() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'slotnumber' => 1,
+            ]
+        ];
+        $event = \mod_quiz\event\slot_deleted::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\slot_deleted', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the slot mark updated event.
+     *
+     * There is no external API for updating slot mark, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_slot_mark_updated() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'previousmaxmark' => 1,
+                'newmaxmark' => 2,
+            ]
+        ];
+        $event = \mod_quiz\event\slot_mark_updated::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\slot_mark_updated', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the slot moved event.
+     *
+     * There is no external API for moving slot, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_slot_moved() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'previousslotnumber' => 1,
+                'afterslotnumber' => 2,
+                'page' => 1
+            ]
+        ];
+        $event = \mod_quiz\event\slot_moved::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\slot_moved', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the slot require previous updated event.
+     *
+     * There is no external API for updating slot require previous option, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_slot_requireprevious_updated() {
+        $quizobj = $this->prepare_quiz();
+
+        $params = [
+            'objectid' => 1,
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => [
+                'quizid' => $quizobj->get_quizid(),
+                'requireprevious' => true
+            ]
+        ];
+        $event = \mod_quiz\event\slot_requireprevious_updated::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\slot_requireprevious_updated', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
 }

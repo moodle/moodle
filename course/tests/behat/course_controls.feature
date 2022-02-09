@@ -68,6 +68,8 @@ Feature: Course activity controls works as expected
     And I show section "1"
     And <belowpage> "section" <should_see_other_sections> exist
     And section "1" should be visible
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Section links" block
     And <belowpage> "section" <should_see_other_sections> exist
     And I should see "1 2 3 4 5" in the "Section links" "block"
@@ -127,6 +129,8 @@ Feature: Course activity controls works as expected
     And I show section "1"
     And <belowpage> "section" <should_see_other_sections> exist
     And section "1" should be visible
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Section links" block
     And <belowpage> "section" <should_see_other_sections> exist
     And I should see "1 2 3 4 5" in the "Section links" "block"

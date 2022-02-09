@@ -19,6 +19,7 @@
  *
  * @package    mod_quiz
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
+ * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,13 +30,13 @@ $slotid = required_param('slotid', PARAM_INT);
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
 // Get the quiz slot.
-$slot = $DB->get_record('quiz_slots', array('id' => $slotid));
-if (!$slot || empty($slot->questioncategoryid)) {
-    print_error('invalidrandomslot', 'mod_quiz');
+$slot = $DB->get_record('quiz_slots', ['id' => $slotid]);
+if (!$slot) {
+    new moodle_exception('invalidrandomslot', 'mod_quiz');
 }
 
-if (!$quiz = $DB->get_record('quiz', array('id' => $slot->quizid))) {
-    print_error('invalidquizid', 'quiz');
+if (!$quiz = $DB->get_record('quiz', ['id' => $slot->quizid])) {
+    new moodle_exception('invalidquizid', 'quiz');
 }
 
 $cm = get_coursemodule_from_instance('quiz', $slot->quizid, $quiz->course);
@@ -45,46 +46,46 @@ require_login($cm->course, false, $cm);
 if ($returnurl) {
     $returnurl = new moodle_url($returnurl);
 } else {
-    $returnurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cm->id));
+    $returnurl = new moodle_url('/mod/quiz/edit.php', ['cmid' => $cm->id]);
 }
 
-$url = new moodle_url('/mod/quiz/editrandom.php', array('slotid' => $slotid));
+$url = new moodle_url('/mod/quiz/editrandom.php', ['slotid' => $slotid]);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->add_body_class('limitedwidth');
 
-if (!$question = $DB->get_record('question', array('id' => $slot->questionid))) {
-    print_error('questiondoesnotexist', 'question', $returnurl);
-}
-
-$qtypeobj = question_bank::get_qtype('random');
+$setreference = $DB->get_record('question_set_references', ['itemid' => $slot->id]);
+$filterconditions = json_decode($setreference->filtercondition);
 
 // Validate the question category.
-if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
-    print_error('categorydoesnotexist', 'question', $returnurl);
+if (!$category = $DB->get_record('question_categories', ['id' => $filterconditions->questioncategoryid])) {
+    new moodle_exception('categorydoesnotexist', 'question', $returnurl);
 }
 
 // Check permissions.
-question_require_capability_on($question, 'edit');
+$catcontext = context::instance_by_id($category->contextid);
+require_capability('moodle/question:useall', $catcontext);
 
 $thiscontext = context_module::instance($cm->id);
-$contexts = new question_edit_contexts($thiscontext);
+$contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
 
-// Create the question editing form.
-$mform = new mod_quiz\form\randomquestion_form(new moodle_url('/mod/quiz/editrandom.php'),
-        array('contexts' => $contexts));
+// Create the editing form.
+$mform = new mod_quiz\form\randomquestion_form(new moodle_url('/mod/quiz/editrandom.php'), ['contexts' => $contexts]);
 
-// Send the question object and a few more parameters to the form.
-$toform = fullclone($question);
+// Set the form data.
+$toform = new stdClass();
 $toform->category = "{$category->id},{$category->contextid}";
-$toform->includesubcategories = $slot->includingsubcategories;
+$toform->includesubcategories = $filterconditions->includingsubcategories;
 $toform->fromtags = array();
-$currentslottags = quiz_retrieve_slot_tags($slot->id);
-foreach ($currentslottags as $slottag) {
-    $toform->fromtags[] = "{$slottag->tagid},{$slottag->tagname}";
+if (isset($filterconditions->tags)) {
+    $currentslottags = $filterconditions->tags;
+    foreach ($currentslottags as $slottag) {
+        $toform->fromtags[] = $slottag;
+    }
 }
-$toform->returnurl = $returnurl;
 
+$toform->returnurl = $returnurl;
+$toform->slotid = $slot->id;
 if ($cm !== null) {
     $toform->cmid = $cm->id;
     $toform->courseid = $cm->course;
@@ -92,89 +93,46 @@ if ($cm !== null) {
     $toform->courseid = $COURSE->id;
 }
 
-$toform->slotid = $slotid;
-
 $mform->set_data($toform);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($fromform = $mform->get_data()) {
-
-    // If we are moving a question, check we have permission to move it from
-    // whence it came. Where we are moving to is validated by the form.
     list($newcatid, $newcontextid) = explode(',', $fromform->category);
-    if (!empty($question->id) && $newcatid != $question->category) {
+    if ($newcatid != $category->id) {
         $contextid = $newcontextid;
-        question_require_capability_on($question, 'move');
     } else {
         $contextid = $category->contextid;
     }
+    $setreference->questionscontextid = $contextid;
 
-    $question = $qtypeobj->save_question($question, $fromform);
+    // Set the filter conditions.
+    $filtercondition = new stdClass();
+    $filtercondition->questioncategoryid = $newcatid;
+    $filtercondition->includingsubcategories = $fromform->includesubcategories;
 
-    // We need to save some data into the quiz_slots table.
-    $slot->questioncategoryid = $fromform->category;
-    $slot->includingsubcategories = $fromform->includesubcategories;
-
-    $DB->update_record('quiz_slots', $slot);
-
-    $tags = [];
-    foreach ($fromform->fromtags as $tagstring) {
-        list($tagid, $tagname) = explode(',', $tagstring);
-        $tags[] = (object) [
-            'id' => $tagid,
-            'name' => $tagname
-        ];
-    }
-
-    $recordstokeep = [];
-    $recordstoinsert = [];
-    $searchableslottags = array_map(function($slottag) {
-        return ['tagid' => $slottag->tagid, 'tagname' => $slottag->tagname];
-    }, $currentslottags);
-
-    foreach ($tags as $tag) {
-        if ($key = array_search(['tagid' => $tag->id, 'tagname' => $tag->name], $searchableslottags)) {
-            // If found, $key would be the id field in the quiz_slot_tags table.
-            // Therefore, there was no need to check !== false here.
-            $recordstokeep[] = $key;
-        } else {
-            $recordstoinsert[] = (object)[
-                'slotid' => $slot->id,
-                'tagid' => $tag->id,
-                'tagname' => $tag->name
-            ];
+    if (isset($fromform->fromtags)) {
+        $tags = [];
+        foreach ($fromform->fromtags as $tagstring) {
+            list($tagid, $tagname) = explode(',', $tagstring);
+            $tags[] = "{$tagid},{$tagname}";
+        }
+        if (!empty($tags)) {
+            $filtercondition->tags = $tags;
         }
     }
 
-    // Now, delete the remaining records.
-    if (!empty($recordstokeep)) {
-        list($select, $params) = $DB->get_in_or_equal($recordstokeep, SQL_PARAMS_QM, 'param', false);
-        array_unshift($params, $slot->id);
-        $DB->delete_records_select('quiz_slot_tags', "slotid = ? AND id $select", $params);
-    } else {
-        $DB->delete_records('quiz_slot_tags', array('slotid' => $slot->id));
-    }
+    $setreference->filtercondition = json_encode($filtercondition);
+    $DB->update_record('question_set_references', $setreference);
 
-    // And now, insert the extra records if there is any.
-    if (!empty($recordstoinsert)) {
-        $DB->insert_records('quiz_slot_tags', $recordstoinsert);
-    }
-
-    // Purge this question from the cache.
-    question_bank::notify_question_edited($question->id);
-
-    $returnurl->param('lastchanged', $question->id);
     redirect($returnurl);
 }
 
-$streditingquestion = $qtypeobj->get_heading();
-$PAGE->set_title($streditingquestion);
+$PAGE->set_title('Random question');
 $PAGE->set_heading($COURSE->fullname);
-$PAGE->navbar->add($streditingquestion);
+$PAGE->navbar->add('Random question');
 
-// Display a heading, question editing form and possibly some extra content needed for
-// for this question type.
+// Display a heading, question editing form.
 echo $OUTPUT->header();
 $heading = get_string('randomediting', 'mod_quiz');
 echo $OUTPUT->heading_with_help($heading, 'randomquestion', 'mod_quiz');

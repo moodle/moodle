@@ -30,6 +30,8 @@ Feature: Inline editing H5P content
     And I log in as "admin"
     # Add the navigation block.
     And I am on "Course 1" course homepage with editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     # Create an H5P activity with a link to the content-bank file.
     And I add a "H5P" to section "1"
@@ -90,6 +92,8 @@ Feature: Inline editing H5P content
     And I log in as "admin"
     # Add the navigation block.
     And I am on "Course 1" course homepage with editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     # Create an H5P activity with a copy to the content-bank file.
     And I add a "H5P" to section "1"

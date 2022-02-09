@@ -59,7 +59,7 @@ function mnet_server_strip_encryption($rawpostdata) {
     $payload          = '';    // Initialize payload var
 
     //                                          &$payload
-    $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $mnet->get_private_key());
+    $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $mnet->get_private_key(), 'RC4');
     if ($isOpen) {
         $remoteclient->was_encrypted();
         return $payload;
@@ -75,7 +75,7 @@ function mnet_server_strip_encryption($rawpostdata) {
     }
     foreach($openssl_history as $keyset) {
         $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
-        $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
+        $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource, 'RC4');
         if ($isOpen) {
             // It's an older code, sir, but it checks out
             $remoteclient->was_encrypted();
@@ -530,7 +530,7 @@ function mnet_keyswap($function, $params) {
 
     if (!empty($CFG->mnet_register_allhosts)) {
         $mnet_peer = new mnet_peer();
-        @list($wwwroot, $pubkey, $application) = each($params);
+        list($wwwroot, $pubkey, $application) = $params;
         $keyok = $mnet_peer->bootstrap($wwwroot, $pubkey, $application);
         if ($keyok) {
             $mnet_peer->commit();

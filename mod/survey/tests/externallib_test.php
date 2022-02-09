@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Survey module external functions tests
- *
- * @package    mod_survey
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
- */
+namespace mod_survey;
+
+use externallib_advanced_testcase;
+use mod_survey_external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,7 +35,7 @@ require_once($CFG->dirroot . '/mod/survey/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
-class mod_survey_external_testcase extends externallib_advanced_testcase {
+class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Set up for every test
@@ -53,7 +48,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
         $this->survey = $this->getDataGenerator()->create_module('survey', array('course' => $this->course->id));
-        $this->context = context_module::instance($this->survey->cmid);
+        $this->context = \context_module::instance($this->survey->cmid);
         $this->cm = get_coursemodule_from_instance('survey', $this->survey->id);
 
         // Create users.
@@ -78,7 +73,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         $course2 = self::getDataGenerator()->create_course();
 
         // Second survey.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->course = $course2->id;
         $survey2 = self::getDataGenerator()->create_module('survey', $record);
         // Force empty intro.
@@ -135,14 +130,14 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
 
         // Call the external function passing course ids.
         $result = mod_survey_external::get_surveys_by_courses(array($course2->id, $this->course->id));
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
 
         $this->assertEquals($expectedsurveys, $result['surveys']);
         $this->assertCount(0, $result['warnings']);
 
         // Call the external function without passing course id.
         $result = mod_survey_external::get_surveys_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedsurveys, $result['surveys']);
         $this->assertCount(0, $result['warnings']);
 
@@ -152,7 +147,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $result = mod_survey_external::get_surveys_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedsurveys, $result['surveys']);
 
         // Call for the second course we unenrolled the user from, expected warning.
@@ -171,25 +166,25 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         }
 
         $result = mod_survey_external::get_surveys_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedsurveys, $result['surveys']);
 
         // Admin also should get all the information.
         self::setAdminUser();
 
         $result = mod_survey_external::get_surveys_by_courses(array($this->course->id));
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedsurveys, $result['surveys']);
 
         // Now, prohibit capabilities.
         $this->setUser($this->student);
-        $contextcourse1 = context_course::instance($this->course->id);
+        $contextcourse1 = \context_course::instance($this->course->id);
         // Prohibit capability = mod/survey:participate on Course1 for students.
         assign_capability('mod/survey:participate', CAP_PROHIBIT, $this->studentrole->id, $contextcourse1->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         $surveys = mod_survey_external::get_surveys_by_courses(array($this->course->id));
-        $surveys = external_api::clean_returnvalue(mod_survey_external::get_surveys_by_courses_returns(), $surveys);
+        $surveys = \external_api::clean_returnvalue(mod_survey_external::get_surveys_by_courses_returns(), $surveys);
         $this->assertFalse(isset($surveys['surveys'][0]['intro']));
     }
 
@@ -203,7 +198,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         try {
             mod_survey_external::view_survey(0);
             $this->fail('Exception expected due to invalid mod_survey instance id.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('invalidrecord', $e->errorcode);
         }
 
@@ -213,7 +208,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         try {
             mod_survey_external::view_survey($this->survey->id);
             $this->fail('Exception expected due to not enrolled user.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
@@ -224,7 +219,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_survey_external::view_survey($this->survey->id);
-        $result = external_api::clean_returnvalue(mod_survey_external::view_survey_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_survey_external::view_survey_returns(), $result);
         $this->assertTrue($result['status']);
 
         $events = $sink->get_events();
@@ -247,7 +242,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         try {
             mod_survey_external::view_survey($this->survey->id);
             $this->fail('Exception expected due to missing capability.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
@@ -278,7 +273,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         }
 
         $result = mod_survey_external::get_questions($this->survey->id);
-        $result = external_api::clean_returnvalue(mod_survey_external::get_questions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_survey_external::get_questions_returns(), $result);
 
         // Check we receive the same questions.
         $this->assertCount(0, $result['warnings']);
@@ -302,7 +297,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         try {
             mod_survey_external::get_questions($this->survey->id);
             $this->fail('Exception expected due to missing capability.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
     }
@@ -342,7 +337,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         }
 
         $result = mod_survey_external::submit_answers($this->survey->id, $realquestions);
-        $result = external_api::clean_returnvalue(mod_survey_external::submit_answers_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_survey_external::submit_answers_returns(), $result);
 
         $this->assertTrue($result['status']);
         $this->assertCount(0, $result['warnings']);
@@ -357,7 +352,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         try {
             mod_survey_external::submit_answers($this->survey->id, $realquestions);
             $this->fail('Exception expected due to answers already submitted.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('alreadysubmitted', $e->errorcode);
         }
 
@@ -369,7 +364,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         try {
             mod_survey_external::submit_answers($this->survey->id, $realquestions);
             $this->fail('Exception expected due to missing capability.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
@@ -379,7 +374,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         try {
             mod_survey_external::submit_answers($this->survey->id, $realquestions);
             $this->fail('Exception expected due to not enrolled user.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
     }

@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains a test class for the message helper.
- *
- * @package core_message
- * @category test
- * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_message;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +30,7 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_message_helper_testcase extends advanced_testcase {
+class helper_test extends \advanced_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest(true);

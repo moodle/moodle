@@ -96,7 +96,6 @@ class settings {
         $this->add_preupload_settings();
         $this->add_userlimit_settings();
         $this->add_participants_settings();
-        $this->add_notifications_settings();
         $this->add_muteonstart_settings();
         $this->add_locksettings_settings();
         // Renders settings for extended capabilities.
@@ -710,40 +709,6 @@ class settings {
             );
         }
         $this->admin->add($this->section, $participantsettings);
-    }
-
-    /**
-     * Helper function renders notification settings if the feature is enabled.
-     */
-    protected function add_notifications_settings(): void {
-        // Configuration for "send notifications" feature.
-        $notificationssettings = new admin_settingpage(
-            "{$this->sectionnameprefix}_notifications",
-            get_string('config_sendnotifications', 'bigbluebuttonbn'),
-            'moodle/site:config',
-            !((boolean) setting_validator::section_send_notifications_shown()) && ($this->moduleenabled)
-        );
-
-        if ($this->admin->fulltree) {
-            $item = new admin_setting_heading(
-                'bigbluebuttonbn_config_sendnotifications',
-                '',
-                get_string('config_sendnotifications_description', 'bigbluebuttonbn')
-            );
-            $notificationssettings->add($item);
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_sendnotifications_enabled',
-                get_string('config_sendnotifications_enabled', 'bigbluebuttonbn'),
-                get_string('config_sendnotifications_enabled_description', 'bigbluebuttonbn'),
-                1
-            );
-            $this->add_conditional_element(
-                'sendnotifications_enabled',
-                $item,
-                $notificationssettings
-            );
-        }
-        $this->admin->add($this->section, $notificationssettings);
     }
 
     /**

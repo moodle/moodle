@@ -46,7 +46,9 @@ export const init = reportId => {
     prefetchStrings('core_reportbuilder', [
         'deleteschedule',
         'deletescheduleconfirm',
+        'disableschedule',
         'editscheduledetails',
+        'enableschedule',
         'newschedule',
         'schedulecreated',
         'scheduledeleted',
@@ -101,6 +103,12 @@ export const init = reportId => {
 
                     scheduleToggle.dataset.state = scheduleStateToggle;
 
+                    const stringKey = scheduleStateToggle ? 'disableschedule' : 'enableschedule';
+                    return getString(stringKey, 'core_reportbuilder');
+                })
+                .then(toggleLabel => {
+                    const labelContainer = scheduleToggle.parentElement.querySelector(`label[for="${scheduleToggle.id}"] > span`);
+                    labelContainer.innerHTML = toggleLabel;
                     return pendingPromise.resolve();
                 })
                 .catch(Notification.exception);
@@ -135,7 +143,8 @@ export const init = reportId => {
             Notification.saveCancelPromise(
                 getString('sendschedule', 'core_reportbuilder'),
                 getString('sendscheduleconfirm', 'core_reportbuilder', scheduleSend.dataset.scheduleName),
-                getString('confirm', 'core')
+                getString('confirm', 'core'),
+                {triggerElement: scheduleSend}
             ).then(() => {
                 const pendingPromise = new Pending('core_reportbuilder/schedules:send');
 
@@ -156,7 +165,8 @@ export const init = reportId => {
             Notification.saveCancelPromise(
                 getString('deleteschedule', 'core_reportbuilder'),
                 getString('deletescheduleconfirm', 'core_reportbuilder', scheduleDelete.dataset.scheduleName),
-                getString('delete', 'core')
+                getString('delete', 'core'),
+                {triggerElement: scheduleDelete}
             ).then(() => {
                 const pendingPromise = new Pending('core_reportbuilder/schedules:delete');
 

@@ -67,6 +67,10 @@ class qformat_multianswer extends qformat_default {
         $question->generalfeedbackformat = FORMAT_MOODLE;
         $question->length = 1;
         $question->penalty = 0.3333333;
+        $question->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        $question->version = 1;
+        $question->versionid = 0;
+        $question->questionbankentryid = 0;
 
         if (!empty($question)) {
             $question->name = $this->create_default_question_name($question->questiontext, get_string('questionname', 'question'));

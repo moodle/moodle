@@ -35,13 +35,11 @@ require_once($CFG->dirroot . '/question/type/calculated/tests/helper.php');
  *
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \question_type
+ * @covers \qtype_calculated
  */
 class qtype_calculated_test extends advanced_testcase {
-    public static $includecoverage = array(
-        'question/type/questiontypebase.php',
-        'question/type/calculated/questiontype.php'
-    );
-
     protected $tolerance = 0.00000001;
     protected $qtype;
 
@@ -88,8 +86,8 @@ class qtype_calculated_test extends advanced_testcase {
 
         $this->assertEquals(['id', 'category', 'parent', 'name', 'questiontext', 'questiontextformat',
                 'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty', 'qtype',
-                'length', 'stamp', 'version', 'hidden', 'timecreated', 'timemodified',
-                'createdby', 'modifiedby', 'idnumber', 'contextid', 'options', 'hints', 'categoryobject'],
+                'length', 'stamp', 'timecreated', 'timemodified', 'createdby', 'modifiedby', 'idnumber', 'contextid',
+                'status', 'versionid', 'version', 'questionbankentryid', 'categoryobject', 'options', 'hints'],
                 array_keys(get_object_vars($questiondata)));
         $this->assertEquals($category->id, $questiondata->category);
         $this->assertEquals(0, $questiondata->parent);
@@ -102,7 +100,7 @@ class qtype_calculated_test extends advanced_testcase {
         $this->assertEquals(0, $questiondata->penalty);
         $this->assertEquals('calculated', $questiondata->qtype);
         $this->assertEquals(1, $questiondata->length);
-        $this->assertEquals(0, $questiondata->hidden);
+        $this->assertEquals(\core_question\local\bank\question_version_status::QUESTION_STATUS_READY, $questiondata->status);
         $this->assertEquals($question->createdby, $questiondata->createdby);
         $this->assertEquals($question->createdby, $questiondata->modifiedby);
         $this->assertEquals('', $questiondata->idnumber);
