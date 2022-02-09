@@ -11537,12 +11537,8 @@ nav.navbar .logo img {
 /** Header-bar styles **/
 .page-context-header {
   overflow: hidden;
-  padding: 0.25rem 0; }
-  .page-context-header .page-header-image,
-  .page-context-header .page-header-headings {
-    float: left;
-    display: block;
-    position: relative; }
+  padding: 0.25rem 0;
+  display: flex; }
   .page-context-header .page-header-image > a {
     display: inline-block; }
   .page-context-header .page-header-headings,

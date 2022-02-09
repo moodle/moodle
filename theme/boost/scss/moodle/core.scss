@@ -2053,12 +2053,7 @@ nav.navbar .logo img {
     overflow: hidden;
     padding: 0.25rem 0;
 
-    .page-header-image,
-    .page-header-headings {
-        float: left;
-        display: block;
-        position: relative;
-    }
+    display: flex;
 
     .page-header-image {
         & > a {
