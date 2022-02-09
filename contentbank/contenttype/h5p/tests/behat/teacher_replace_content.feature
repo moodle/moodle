@@ -43,8 +43,8 @@ Feature: Replace H5P file from an existing content requires special capabilities
 
   Scenario: Teacher can replace its own H5P files
     Given I click on "teachercontent" "link"
-    When I open the action menu in "region-main-settings-menu" "region"
-    And I choose "Replace with file" in the open action menu
+    When I click on "More" "button"
+    And I click on "Replace with file" "link"
     And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Upload content" filemanager
     And I click on "Save changes" "button"
     Then I switch to "h5p-player" class iframe
@@ -54,25 +54,29 @@ Feature: Replace H5P file from an existing content requires special capabilities
 
   Scenario: Teacher cannot replace another user's H5P files
     When I click on "admincontent" "link"
-    Then "Replace with file" "link" should not exist in the "region-main-settings-menu" "region"
+    And I click on "More" "button"
+    Then I should not see "Replace with file"
 
   Scenario: Teacher cannot replace a content without having upload capability
     Given the following "permission overrides" exist:
       | capability                | permission | role           | contextlevel | reference |
       | moodle/contentbank:upload | Prevent    | editingteacher | Course       | C1        |
     When I click on "teachercontent" "link"
-    Then "Replace with file" "link" should not exist in the "region-main-settings-menu" "region"
+    And I click on "More" "button"
+    Then I should not see "Replace with file"
 
   Scenario: Teacher cannot replace a content without having the H5P upload capability
     Given the following "permission overrides" exist:
       | capability             | permission | role           | contextlevel | reference |
       | contenttype/h5p:upload | Prevent    | editingteacher | Course       | C1        |
     When I click on "teachercontent" "link"
-    Then "Replace with file" "link" should not exist in the "region-main-settings-menu" "region"
+    And I click on "More" "button"
+    Then I should not see "Replace with file"
 
   Scenario: Teacher cannot replace a content without having the manage own content capability
     Given the following "permission overrides" exist:
       | capability                          | permission | role           | contextlevel | reference |
       | moodle/contentbank:manageowncontent | Prevent    | editingteacher | Course       | C1        |
     When I click on "teachercontent" "link"
-    Then "Replace with file" "link" should not exist in the "region-main-settings-menu" "region"
+    And I click on "More" "button"
+    Then I should not see "Replace with file"
