@@ -66,7 +66,6 @@ Feature: Lesson reset
   Scenario: Use course reset to remove user overrides.
     When I am on the "Test lesson name" "lesson activity" page
     And I navigate to "Overrides" in current page administration
-    And I select "User overrides" from the "jump" singleselect
     And I follow "Add user override"
     And I set the following fields to these values:
         | Override user    | Student1  |
