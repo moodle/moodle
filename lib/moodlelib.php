@@ -9857,7 +9857,7 @@ function remove_dir($dir, $contentonly=false) {
         clearstatcache(); // Make sure file stat cache is properly invalidated.
         return $result;
     }
-    $result = rmdir($dir); // If anything left the result will be false, no need for && $result.
+    $result = @rmdir($dir); // If anything left the result will be false, no need for && $result.
     clearstatcache(); // Make sure file stat cache is properly invalidated.
     return $result;
 }
