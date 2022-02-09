@@ -202,9 +202,7 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
     $PAGE->requires->js_call_amd('report_progress/completion_override', 'init', [fullname($USER)]);
 
     // Handle groups (if enabled).
-    $groupurl = fullclone($url);
-    $groupurl->remove_params(['page', 'group']);
-    groups_print_course_menu($course, $groupurl);
+    echo $output->render_groups_select($url, $course);
 
     // Display include activity filter.
     echo $output->render_include_activity_select($url, $activitytypes, $activityinclude);
