@@ -64,8 +64,6 @@ class login implements renderable, templatable {
     public $instructions;
     /** @var moodle_url The form action login URL. */
     public $loginurl;
-    /** @var bool Whether the username should be remembered. */
-    public $rememberusername;
     /** @var moodle_url The sign-up URL. */
     public $signupurl;
     /** @var string The user name to pre-fill the form with. */
@@ -96,10 +94,8 @@ class login implements renderable, templatable {
         $this->cansignup = $CFG->registerauth == 'email' || !empty($CFG->registerauth);
         if ($CFG->rememberusername == 0) {
             $this->cookieshelpicon = new help_icon('cookiesenabledonlysession', 'core');
-            $this->rememberusername = false;
         } else {
             $this->cookieshelpicon = new help_icon('cookiesenabled', 'core');
-            $this->rememberusername = true;
         }
 
         $this->autofocusform = !empty($CFG->loginpageautofocus);
@@ -156,7 +152,6 @@ class login implements renderable, templatable {
         list($data->instructions, $data->instructionsformat) = external_format_text($this->instructions, FORMAT_MOODLE,
             context_system::instance()->id);
         $data->loginurl = $this->loginurl->out(false);
-        $data->rememberusername = $this->rememberusername;
         $data->signupurl = $this->signupurl->out(false);
         $data->username = $this->username;
         $data->logintoken = $this->logintoken;
