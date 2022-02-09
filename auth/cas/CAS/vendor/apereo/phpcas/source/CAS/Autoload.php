@@ -26,18 +26,24 @@ function CAS_autoload($class)
     // Static to hold the Include Path to CAS
     static $include_path;
     // Check only for CAS classes
-    if (substr($class, 0, 4) !== 'CAS_') {
+    if (substr($class, 0, 4) !== 'CAS_' && substr($class, 0, 7) !== 'PhpCas\\') {
         return false;
     }
+
     // Setup the include path if it's not already set from a previous call
     if (empty($include_path)) {
-        $include_path = array(dirname(dirname(__FILE__)), dirname(dirname(__FILE__)) . '/../test/' );
+        $include_path = array(dirname(__DIR__));
     }
 
     // Declare local variable to store the expected full path to the file
-
     foreach ($include_path as $path) {
-        $file_path = $path . '/' . str_replace('_', '/', $class) . '.php';
+        $class_path = str_replace('_', DIRECTORY_SEPARATOR, $class);
+        // PhpCas namespace mapping
+        if (substr($class_path, 0, 7) === 'PhpCas\\') {
+            $class_path = 'CAS' . DIRECTORY_SEPARATOR . substr($class_path, 7);
+        }
+
+        $file_path = $path . DIRECTORY_SEPARATOR . $class_path . '.php';
         $fp = @fopen($file_path, 'r', true);
         if ($fp) {
             fclose($fp);
@@ -54,6 +60,7 @@ function CAS_autoload($class)
             return true;
         }
     }
+
     $e = new Exception(
         'Class ' . $class . ' could not be loaded from ' .
         $file_path . ', file does not exist (Path="'
@@ -73,10 +80,10 @@ function CAS_autoload($class)
     die ((string) $e);
 }
 
-// set up __autoload
-if (!(spl_autoload_functions())
-    || !in_array('CAS_autoload', spl_autoload_functions())
-) {
+// Set up autoload if not already configured by composer.
+if (!class_exists('CAS_Client'))
+{
+    trigger_error('phpCAS autoloader is deprecated. Install phpCAS using composer instead.', E_USER_DEPRECATED);
     spl_autoload_register('CAS_autoload');
     if (function_exists('__autoload')
         && !in_array('__autoload', spl_autoload_functions())
@@ -86,5 +93,3 @@ if (!(spl_autoload_functions())
         spl_autoload_register('__autoload');
     }
 }
-
-?>
