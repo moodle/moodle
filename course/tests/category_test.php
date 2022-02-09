@@ -1344,4 +1344,47 @@ class category_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * This test ensures that the filter context list is populated by the correct filter contexts from make_category_list.
+     *
+     * @coversNothing
+     */
+    public function test_make_category_list_context() {
+        global $DB;
+        // Ensure that the category list is empty.
+        $DB->delete_records('course_categories');
+        set_config('perfdebug', 15);
+
+        // Create a few categories to populate the context cache.
+        $this->getDataGenerator()->create_category(['name' => 'cat1']);
+        $this->getDataGenerator()->create_category(['name' => 'cat2']);
+        $this->getDataGenerator()->create_category(['name' => 'cat3']);
+        $filtermanager = \filter_manager::instance();
+
+        // Configure a filter to apply to all content and headings.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+
+        $perf = $filtermanager->get_performance_summary();
+        $this->assertEquals(0, $perf[0]['contextswithfilters']);
+
+        // Now fill the cache with the category strings.
+        \core_course_category::make_categories_list();
+        // 3 Categories + system context.
+        $perf = $filtermanager->get_performance_summary();
+        $this->assertEquals(3, $perf[0]['contextswithfilters']);
+        $filtermanager->reset_caches();
+        // We need to refresh the instance, resetting caches unloads the singleton.
+        $filtermanager = \filter_manager::instance();
+        \cache_helper::purge_by_definition('core', 'coursecat');
+
+        // Now flip the bit on the filter context.
+        set_config('filternavigationwithsystemcontext', 1);
+
+        // Repeat the check. Only context should be system context.
+        \core_course_category::make_categories_list();
+        $perf = $filtermanager->get_performance_summary();
+        $this->assertEquals(1, $perf[0]['contextswithfilters']);
+    }
 }
