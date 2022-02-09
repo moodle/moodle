@@ -284,6 +284,11 @@ define(['jquery', 'core/dragdrop', 'core/key_codes'], function($, dragDrop, keys
                         cloneDrag.removeClass('beingdragged');
                         cloneDrag.removeAttr('tabindex');
                         hiddenDrag.after(cloneDrag);
+                        // Sometimes, for the question that has a lot of input groups and unlimited draggable items,
+                        // this 'clone' process takes longer than usual, so the questionManager.init() method
+                        // will not add the eventHandler for this cloned drag.
+                        // We need to make sure to add the eventHandler for the cloned drag too.
+                        questionManager.addEventHandlersToDrag(cloneDrag);
                     } else {
                         hiddenDrag.addClass('active');
                     }
