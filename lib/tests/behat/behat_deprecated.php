@@ -85,14 +85,13 @@ class behat_deprecated extends behat_base {
      * Clicks link with specified id|title|alt|text in the flat navigation drawer.
      *
      * @When /^I select "(?P<link_string>(?:[^"]|\\")*)" from flat navigation drawer$/
-     * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $link
      * @deprecated Since Moodle 4.0
      */
     public function i_select_from_flat_navigation_drawer(string $link) {
-        self::deprecated_message(['i_select_from_primary_navigation', 'i_select_from_secondary_navigation'], true);
+        $this->deprecated_message(['i_select_from_primary_navigation', 'i_select_from_secondary_navigation']);
 
-        $this->i_open_flat_navigation_drawer();
+        $this->execute('behat_navigation::i_open_flat_navigation_drawer');
         $this->execute('behat_general::i_click_on_in_the', [$link, 'link', '#nav-drawer', 'css_element']);
     }
 
