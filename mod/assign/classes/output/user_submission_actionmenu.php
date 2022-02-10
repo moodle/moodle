@@ -50,6 +50,8 @@ class user_submission_actionmenu implements templatable, renderable {
     protected $submission;
     /** @var stdClass A team submission for this activity. */
     protected $teamsubmission;
+    /** @var int The time limit for the submission. 0 = no time limit. */
+    protected $timelimit;
 
     /**
      * Constructor for this object.
@@ -59,15 +61,17 @@ class user_submission_actionmenu implements templatable, renderable {
      * @param bool $showedit Whether to show the edit button.
      * @param stdClass|null $submission A submission for this activity.
      * @param stdClass|null $teamsubmission A team submission for this activity.
+     * @param int $timelimit The time limit for completing this activity.
      */
     public function __construct(int $cmid, bool $showsubmit, bool $showedit, stdClass $submission = null,
-            stdClass $teamsubmission = null) {
+            stdClass $teamsubmission = null, int $timelimit = 0) {
 
         $this->cmid = $cmid;
         $this->showsubmit = $showsubmit;
         $this->showedit = $showedit;
         $this->submission = $submission;
         $this->teamsubmission = $teamsubmission;
+        $this->timelimit = $timelimit;
     }
 
     /**
@@ -115,15 +119,34 @@ class user_submission_actionmenu implements templatable, renderable {
                     'help' => $help->export_for_template($output)
                 ];
                 $url = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'editsubmission']);
-                $newattemptbutton = new single_button($url, get_string('addnewattempt', 'mod_assign'), 'get');
+                $newattemptbutton = new single_button($url, get_string('addnewattempt', 'mod_assign'), 'get', true);
                 $newattempthelp = new help_icon('addnewattempt', 'mod_assign');
                 $data['edit']['button'] = $newattemptbutton->export_for_template($output);
                 $data['edit']['help'] = $newattempthelp->export_for_template($output);
             }
             if ($status === ASSIGN_SUBMISSION_STATUS_NEW) {
-                $newattemptbutton = new single_button($url, get_string('addsubmission', 'mod_assign'), 'get');
-                $data['edit']['button'] = $newattemptbutton->export_for_template($output);
-                $data['edit']['help'] = '';
+
+                if ($this->timelimit && empty($this->submission->timestarted)) {
+                    $confirmation = new \confirm_action(
+                        get_string('confirmstart', 'assign', format_time($this->timelimit)),
+                        null,
+                        get_string('beginassignment', 'assign')
+                    );
+                    $urlparams = array('id' => $this->cmid, 'action' => 'editsubmission');
+                    $beginbutton = new \action_link(
+                        new moodle_url('/mod/assign/view.php', $urlparams),
+                            get_string('beginassignment', 'assign'),
+                            $confirmation,
+                            ['class' => 'btn btn-primary']
+                    );
+                    $data['edit']['button'] = $beginbutton->export_for_template($output);
+                    $data['edit']['begin'] = true;
+                    $data['edit']['help'] = '';
+                } else {
+                    $newattemptbutton = new single_button($url, get_string('addsubmission', 'mod_assign'), 'get', true);
+                    $data['edit']['button'] = $newattemptbutton->export_for_template($output);
+                    $data['edit']['help'] = '';
+                }
             }
         }
         if ($this->showsubmit) {
