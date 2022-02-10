@@ -30,6 +30,7 @@ class adminpresets_admin_setting_special_backupdays extends adminpresets_setting
 
     protected function set_value($value) {
         $this->value = clean_param($value, PARAM_SEQUENCE);
+        $this->set_visiblevalue();
     }
 
     protected function set_visiblevalue() {

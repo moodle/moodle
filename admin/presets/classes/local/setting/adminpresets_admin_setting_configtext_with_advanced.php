@@ -39,7 +39,9 @@ class adminpresets_admin_setting_configtext_with_advanced extends adminpresets_a
      */
     protected function set_visiblevalue() {
         parent::set_visiblevalue();
-        $value = $this->attributesvalues[$this->attributes['fix']];
-        $this->visiblevalue .= $this->delegation->extra_set_visiblevalue($value, 'advanced');
+        if (!is_null($this->attributesvalues) && array_key_exists($this->attributes['fix'], $this->attributesvalues)) {
+            $value = $this->attributesvalues[$this->attributes['fix']];
+            $this->visiblevalue .= $this->delegation->extra_set_visiblevalue($value, 'advanced');
+        }
     }
 }

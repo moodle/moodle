@@ -113,6 +113,11 @@ class adminpresets_setting {
         }
     }
 
+    /**
+     * Gets the setting value.
+     *
+     * @return mixed The setting value
+     */
     public function get_value() {
         return $this->value;
     }
@@ -127,6 +132,7 @@ class adminpresets_setting {
      */
     protected function set_value($value) {
         $this->value = $value;
+        $this->set_visiblevalue();
     }
 
     public function get_visiblevalue() {
