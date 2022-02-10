@@ -104,6 +104,7 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
                                                 null,
                                                 new pix_icon('i/competencies', ''));
         if (isset($settingsnode)) {
+            $settingsnode->set_force_into_more_menu(true);
             $navigation->add_node($settingsnode);
         }
     }
@@ -119,6 +120,7 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
                                                 null,
                                                 new pix_icon('i/competencies', ''));
         if (isset($settingsnode)) {
+            $settingsnode->set_force_into_more_menu(true);
             $navigation->add_node($settingsnode);
         }
     }
