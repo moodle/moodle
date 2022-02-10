@@ -19,7 +19,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="ltilinkid" TYPE="foreign" FIELDS="ltilinkid" REFTABLE="lti" REFFIELDS="id" COMMENT="The ID of the LTI element related with this lineitem."/>
-        <KEY NAME="itemnumbercourse" TYPE="foreign" FIELDS="gradeitemid,courseid" REFTABLE="grade_items" REFFIELDS="id,courseid" COMMENT="The row in gradeitems"/>
+        <KEY NAME="itemnumbercourse" TYPE="foreign" FIELDS="gradeitemid, courseid" REFTABLE="grade_items" REFFIELDS="id, courseid" COMMENT="The row in gradeitems"/>
       </KEYS>
     </TABLE>
   </TABLES>
