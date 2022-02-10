@@ -59,5 +59,14 @@ function xmldb_scorm_upgrade($oldversion) {
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2021052501) {
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('displayactivityname');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2021052501, 'scorm');
+    }
+
     return true;
 }

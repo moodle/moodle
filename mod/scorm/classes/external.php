@@ -726,7 +726,7 @@ class mod_scorm_external extends external_api {
                                             'forcenewattempt', 'lastattemptlock', 'displayattemptstatus', 'displaycoursestructure',
                                             'sha1hash', 'md5hash', 'revision', 'launch', 'skipview', 'hidebrowse', 'hidetoc', 'nav',
                                             'navpositionleft', 'navpositiontop', 'auto', 'popup', 'width', 'height', 'timeopen',
-                                            'timeclose', 'displayactivityname', 'scormtype', 'reference');
+                                            'timeclose', 'scormtype', 'reference');
 
                     // Check additional permissions for returning optional private settings.
                     if (has_capability('moodle/course:manageactivities', $context)) {
@@ -808,8 +808,6 @@ class mod_scorm_external extends external_api {
                             'height' => new external_value(PARAM_INT, 'Frame height', VALUE_OPTIONAL),
                             'timeopen' => new external_value(PARAM_INT, 'Available from', VALUE_OPTIONAL),
                             'timeclose' => new external_value(PARAM_INT, 'Available to', VALUE_OPTIONAL),
-                            'displayactivityname' => new external_value(PARAM_BOOL, 'Display the activity name above the player?',
-                                                                        VALUE_OPTIONAL),
                             'scormtype' => new external_value(PARAM_ALPHA, 'SCORM type', VALUE_OPTIONAL),
                             'reference' => new external_value(PARAM_NOTAGS, 'Reference to the package', VALUE_OPTIONAL),
                             'protectpackagedownloads' => new external_value(PARAM_BOOL, 'Protect package downloads?',

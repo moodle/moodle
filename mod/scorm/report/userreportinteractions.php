@@ -94,8 +94,13 @@ if (!$table->is_downloading($download, $exportfilename)) {
 
     $PAGE->navbar->add(fullname($user). " - $strattempt $attempt");
 
+    $PAGE->activityheader->set_attrs([
+        'hidecompletion' => true,
+        'description' => ''
+    ]);
+
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($scorm->name));
+
     // End of Print the page header.
     $currenttab = 'interactions';
 

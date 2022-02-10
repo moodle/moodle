@@ -97,10 +97,11 @@ $exportfilename = $courseshortname . '-' . format_string($scorm->name, true) . '
 $table = new flexible_table('mod_scorm-userreporttracks');
 
 if (!$table->is_downloading($download, $exportfilename)) {
+    $PAGE->activityheader->set_attrs([
+        'hidecompletion' => true,
+        'description' => ''
+    ]);
     echo $OUTPUT->header();
-    if (!$PAGE->has_secondary_navigation()) {
-        echo $OUTPUT->heading(format_string($scorm->name));
-    }
     $currenttab = '';
     $renderer = $PAGE->get_renderer('mod_scorm');
     $useractionreport = new \mod_scorm\output\userreportsactionbar($id, $userid, $attempt, 'attempt', $mode, $scoid);
