@@ -750,6 +750,7 @@ class behat_navigation extends behat_base {
      * | Permissions                | course shortname          | Permissions page for the course      |
      * | Enrolment methods          | course shortname          | Enrolment methods for the course     |
      * | Enrolled users             | course shortname          | The main participants page           |
+     * | Other users                | course shortname          | The course other users page          |
      *
      * Examples:
      *
@@ -869,6 +870,13 @@ class behat_navigation extends behat_base {
                             $identifier . '" does not exist');
                 }
                 return new moodle_url('/user/index.php', ['id' => $courseid]);
+            case 'other users':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                        $identifier . '" does not exist');
+                }
+                return new moodle_url('/enrol/otherusers.php', ['id' => $courseid]);
         }
 
         $parts = explode(' ', $type);
