@@ -85,9 +85,20 @@ EOF;
         // This is a special case because the frontpage uses a shortened page path making it difficult to detect exactly.
         $isfrontpage = $targetmatch->compare(new \moodle_url('/'), URL_MATCH_BASE);
         $isdashboard = $targetmatch->compare(new \moodle_url('/my/'), URL_MATCH_BASE);
+        $ismycourses = $targetmatch->compare(new \moodle_url('/my/courses.php'), URL_MATCH_BASE);
+
+        $possiblematches = [];
+        if ($isfrontpage) {
+            $possiblematches = ['FRONTPAGE', 'FRONTPAGE_MY', 'FRONTPAGE_MYCOURSES', 'FRONTPAGE_MY_MYCOURSES'];
+        } else if ($isdashboard) {
+            $possiblematches = ['MY', 'FRONTPAGE_MY', 'MY_MYCOURSES', 'FRONTPAGE_MY_MYCOURSES'];
+        } else if ($ismycourses) {
+            $possiblematches = ['MYCOURSES', 'FRONTPAGE_MYCOURSES', 'MY_MYCOURSES', 'FRONTPAGE_MY_MYCOURSES'];
+        }
+
         $target = $targetmatch->out_as_local_url();
-        return array_filter($tours, function($tour) use ($isfrontpage, $isdashboard, $target) {
-            if (($isfrontpage || $isdashboard) && $tour->pathmatch === 'FRONTPAGE') {
+        return array_filter($tours, function($tour) use ($possiblematches, $target) {
+            if (in_array($tour->pathmatch, $possiblematches)) {
                 return true;
             }
             $pattern = preg_quote($tour->pathmatch, '@');

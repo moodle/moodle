@@ -80,3 +80,21 @@ Feature: Steps can be navigated within a tour
     And I wait until the page is ready
     And I should see "This is the calendar block"
     Then I should see "CustomText"
+
+  @javascript
+  Scenario: Customised 'end tour' button text for one step tours can be translatable
+    Given I log in as "admin"
+    And I add a new user tour with:
+      | Name                    | Calendar tour             |
+      | Description             | Calendar tour             |
+      | Apply to URL match      | /my/%                     |
+      | Tour is enabled         | 1                         |
+      | End tour button's label | exporttour,tool_usertours |
+    And I add steps to the "Calendar tour" tour:
+      | targettype | Block    | Title           | id_content                 | Content type   |
+      | Block      | Calendar | Calendar events | This is the calendar block | Enter manually |
+    And I change window size to "large"
+    And I follow "Dashboard"
+    And I wait until the page is ready
+    And I should see "This is the calendar block"
+    Then I should see "Export tour"
