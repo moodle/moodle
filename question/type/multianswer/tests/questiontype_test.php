@@ -350,4 +350,43 @@ class qtype_multianswer_test extends advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test get_question_options.
+     *
+     * @covers \qtype_multianswer::get_question_options
+     */
+    public function test_get_question_options() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $syscontext = context_system::instance();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category(['contextid' => $syscontext->id]);
+
+        $fromform = test_question_maker::get_question_form_data('multianswer', 'twosubq');
+        $fromform->category = $category->id . ',' . $syscontext->id;
+
+        $question = new stdClass();
+        $question->category = $category->id;
+        $question->qtype = 'multianswer';
+        $question->createdby = 0;
+
+        $question = $this->qtype->save_question($question, $fromform);
+        $questiondata = question_bank::load_question_data($question->id);
+
+        $questiontodeletekey = array_keys($questiondata->options->questions)[0];
+        $questiontodelete = $questiondata->options->questions[$questiontodeletekey];
+
+        $this->assertCount(2, $questiondata->options->questions);
+        $this->assertEquals('shortanswer', $questiondata->options->questions[$questiontodeletekey]->qtype);
+
+        // Forcibly delete a subquestion to ensure get_question_options replaces it.
+        $DB->delete_records('question', ['id' => $questiontodelete->id]);
+        $this->qtype->get_question_options($questiondata);
+
+        $this->assertCount(2, $questiondata->options->questions);
+        $this->assertEquals('subquestion_replacement', $questiondata->options->questions[$questiontodeletekey]->qtype);
+    }
 }

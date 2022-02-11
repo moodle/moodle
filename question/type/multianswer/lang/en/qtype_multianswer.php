@@ -27,6 +27,7 @@ $string['confirmquestionsaveasedited'] = 'I confirm that I want the question to 
 $string['confirmsave'] = 'Confirm then save {$a}';
 $string['correctanswer'] = 'Correct answer';
 $string['correctanswerandfeedback'] = 'Correct answer and feedback';
+$string['corruptedquestion'] = 'This question is corrupted and contains subquestions that are not present in your system.';
 $string['decodeverifyquestiontext'] = 'Decode and verify the question text';
 $string['invalidmultianswerquestion'] = 'Invalid embedded answers (Cloze) question ({$a}).';
 $string['layout'] = 'Layout';
@@ -36,6 +37,7 @@ $string['layoutmultiple_vertical'] = 'Vertical column of checkboxes';
 $string['layoutselectinline'] = 'Drop-down menu in-line in the text';
 $string['layoutundefined'] = 'Undefined layout';
 $string['layoutvertical'] = 'Vertical column of radio buttons';
+$string['missingsubquestion'] = 'This subquestion is missing from your system and cannot be displayed.';
 $string['nooptionsforsubquestion'] = 'Unable to get options for question part # {$a->sub} (question->id={$a->id})';
 $string['noquestions'] = 'The Cloze(multianswer) question "<strong>{$a}</strong>" does not contain any question';
 $string['pleaseananswerallparts'] = 'Please answer all parts of the question.';
