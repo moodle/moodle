@@ -1,9 +1,4 @@
 <?php
-
-namespace Moodle;
-
-use ZipArchive;
-
 /**
  * Interface defining functions the h5p library needs the framework to implement
  */
@@ -2062,7 +2057,7 @@ class H5PCore {
    *
    * @param H5PFrameworkInterface $H5PFramework
    *  The frameworks implementation of the H5PFrameworkInterface
-   * @param string|H5PFileStorage $path H5P file storage directory or class.
+   * @param string|\H5PFileStorage $path H5P file storage directory or class.
    * @param string $url To file storage directory.
    * @param string $language code. Defaults to english.
    * @param boolean $export enabled?
@@ -2070,7 +2065,7 @@ class H5PCore {
   public function __construct(H5PFrameworkInterface $H5PFramework, $path, $url, $language = 'en', $export = FALSE) {
     $this->h5pF = $H5PFramework;
 
-    $this->fs = ($path instanceof H5PFileStorage ? $path : new H5PDefaultStorage($path));
+    $this->fs = ($path instanceof \H5PFileStorage ? $path : new \H5PDefaultStorage($path));
 
     $this->url = $url;
     $this->exportEnabled = $export;
@@ -2437,7 +2432,7 @@ class H5PCore {
     // Using content dependencies
     foreach ($dependencies as $dependency) {
       if (isset($dependency['path']) === FALSE) {
-        $dependency['path'] = $this->getDependencyPath($dependency);
+        $dependency['path'] = 'libraries/' . H5PCore::libraryToString($dependency, TRUE);
         $dependency['preloadedJs'] = explode(',', $dependency['preloadedJs']);
         $dependency['preloadedCss'] = explode(',', $dependency['preloadedCss']);
       }
@@ -2455,16 +2450,6 @@ class H5PCore {
     }
 
     return $files;
-  }
-
-  /**
-   * Get the path to the dependency.
-   *
-   * @param stdClass $dependency
-   * @return string
-   */
-  protected function getDependencyPath(array $dependency): string {
-    return H5PCore::libraryToString($dependency, TRUE);
   }
 
   private static function getDependenciesHash(&$dependencies) {
@@ -3217,23 +3202,21 @@ class H5PCore {
    * @return string
    */
   private static function hashToken($action, $time_factor) {
-    global $SESSION;
-
-    if (!isset($SESSION->h5p_token)) {
+    if (!isset($_SESSION['h5p_token'])) {
       // Create an unique key which is used to create action tokens for this session.
       if (function_exists('random_bytes')) {
-        $SESSION->h5p_token = base64_encode(random_bytes(15));
+        $_SESSION['h5p_token'] = base64_encode(random_bytes(15));
       }
       else if (function_exists('openssl_random_pseudo_bytes')) {
-        $SESSION->h5p_token = base64_encode(openssl_random_pseudo_bytes(15));
+        $_SESSION['h5p_token'] = base64_encode(openssl_random_pseudo_bytes(15));
       }
       else {
-        $SESSION->h5p_token = uniqid('', TRUE);
+        $_SESSION['h5p_token'] = uniqid('', TRUE);
       }
     }
 
     // Create hash and return
-    return substr(hash('md5', $action . $time_factor . $SESSION->h5p_token), -16, 13);
+    return substr(hash('md5', $action . $time_factor . $_SESSION['h5p_token']), -16, 13);
   }
 
   /**
