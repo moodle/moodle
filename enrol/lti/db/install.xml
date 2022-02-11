@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="enrol/lti/db" VERSION="20170113" COMMENT="XMLDB file for Moodle enrol/lti"
+<XMLDB PATH="enrol/lti/db" VERSION="20220211" COMMENT="XMLDB file for Moodle enrol/lti"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -57,6 +57,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="toolid" TYPE="foreign" FIELDS="toolid" REFTABLE="enrol_lti_tools" REFFIELDS="id"/>
+        <KEY NAME="ltideploymentid" TYPE="foreign" FIELDS="ltideploymentid" REFTABLE="enrol_lti_deployment" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="enrol_lti_lti2_consumer" COMMENT="LTI consumers interacting with moodle">
