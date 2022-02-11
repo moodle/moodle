@@ -87,7 +87,11 @@ class override_actionmenu implements templatable, renderable {
      * @return bool
      */
     protected function show_groups(): bool {
-        $groups = groups_get_all_groups($this->cm->course);
+        if ($this->canaccessallgroups) {
+            $groups = groups_get_all_groups($this->cm->course);
+        } else {
+            $groups = groups_get_activity_allowed_groups($this->cm);
+        }
         return !(empty($groups));
     }
 
