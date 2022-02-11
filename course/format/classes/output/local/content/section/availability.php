@@ -48,6 +48,12 @@ class availability implements renderable, templatable {
     /** @var section_info the section object */
     protected $section;
 
+    /** @var string the has availability attribute name */
+    protected $hasavailabilityname;
+
+    /** @var stdClass|null the instance export data */
+    protected $data = null;
+
     /**
      * Constructor.
      *
@@ -57,6 +63,7 @@ class availability implements renderable, templatable {
     public function __construct(course_format $format, section_info $section) {
         $this->format = $format;
         $this->section = $section;
+        $this->hasavailabilityname = 'hasavailability';
     }
 
     /**
@@ -66,16 +73,40 @@ class availability implements renderable, templatable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
+        $this->build_export_data($output);
+        return $this->data;
+    }
+
+    /**
+     * Returns if the output has availability info to display.
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return bool if the element has availability data to display
+     */
+    public function has_availability(\renderer_base $output): bool {
+        $this->build_export_data($output);
+        $attributename = $this->hasavailabilityname;
+        return $this->data->$attributename;
+    }
+
+    /**
+     * Protected method to build the export data.
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     */
+    protected function build_export_data(\renderer_base $output) {
+        if (!empty($this->data)) {
+            return;
+        }
 
         $data = (object)[
             'info' => $this->get_info($output),
         ];
 
-        if (!empty($data->info)) {
-            $data->hasavailability = true;
-        }
+        $attributename = $this->hasavailabilityname;
+        $data->$attributename = !empty($data->info);
 
-        return $data;
+        $this->data = $data;
     }
 
     /**

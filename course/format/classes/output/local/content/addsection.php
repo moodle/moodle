@@ -54,10 +54,15 @@ class addsection implements renderable, templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
+     * @param \renderer_base $output typically, the renderer that's calling this function
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
+
+        // If no editor must be displayed, just return an empty structure.
+        if (!$this->format->show_editor()) {
+            return new stdClass();
+        }
 
         $format = $this->format;
         $course = $format->get_course();
@@ -66,69 +71,95 @@ class addsection implements renderable, templatable {
         $lastsection = $format->get_last_section_number();
         $maxsections = $format->get_max_sections();
 
-        $data = new stdClass();
-
-        // If no editor must be displayed, just retun an empty structure.
-        if (!$format->show_editor()) {
-            return $data;
-        }
-
         // Component based formats handle add section button in the frontend.
-        $show = ($lastsection < $maxsections) || course_get_format($course)->supports_components();
+        $show = ($lastsection < $maxsections) || $format->supports_components();
 
         $supportsnumsections = array_key_exists('numsections', $options);
         if ($supportsnumsections) {
-            // Current course format has 'numsections' option, which is very confusing and we suggest course format
-            // developers to get rid of it (see MDL-57769 on how to do it).
-
-            if ($lastsection < $maxsections) {
-                $data->increase = (object) [
-                    'url' => new moodle_url(
-                        '/course/changenumsections.php',
-                        ['courseid' => $course->id, 'increase' => true, 'sesskey' => sesskey()]
-                    ),
-                ];
-            }
-
-            if ($course->numsections > 0) {
-                $data->decrease = (object) [
-                    'url' => new moodle_url(
-                        '/course/changenumsections.php',
-                        ['courseid' => $course->id, 'increase' => false, 'sesskey' => sesskey()]
-                    ),
-                ];
-            }
-
+            $data = $this->get_num_sections_data($output, $lastsection, $maxsections);
         } else if (course_get_format($course)->uses_sections() && $show) {
-            // Current course format does not have 'numsections' option but it has multiple sections suppport.
-            // Display the "Add section" link that will insert a section in the end.
-            // Note to course format developers: inserting sections in the other positions should check both
-            // capabilities 'moodle/course:update' and 'moodle/course:movesections'.
-
-            if (get_string_manager()->string_exists('addsections', 'format_'.$course->format)) {
-                $addstring = get_string('addsections', 'format_'.$course->format);
-            } else {
-                $addstring = get_string('addsections');
-            }
-
-            $params = ['courseid' => $course->id, 'insertsection' => 0, 'sesskey' => sesskey()];
-
-            $singlesection = $this->format->get_section_number();
-            if ($singlesection) {
-                $params['sectionreturn'] = $singlesection;
-            }
-
-            $data->addsections = (object) [
-                'url' => new moodle_url('/course/changenumsections.php', $params),
-                'title' => $addstring,
-                'newsection' => $maxsections - $lastsection,
-            ];
+            $data = $this->get_add_section_data($output, $lastsection, $maxsections);
         }
 
         if (count((array)$data)) {
             $data->showaddsection = true;
         }
 
+        return $data;
+    }
+
+    /**
+     * Get the legacy num section add/remove section buttons data.
+     *
+     * Current course format has 'numsections' option, which is very confusing and we suggest course format
+     * developers to get rid of it (see MDL-57769 on how to do it).
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @param int $lastsection the last section number
+     * @param int $maxsections the maximum number of sections
+     * @return stdClass data context for a mustache template
+     */
+    protected function get_num_sections_data(\renderer_base $output, int $lastsection, int $maxsections): stdClass {
+        $format = $this->format;
+        $course = $format->get_course();
+        $data = new stdClass();
+
+        if ($lastsection < $maxsections) {
+            $data->increase = (object) [
+                'url' => new moodle_url(
+                    '/course/changenumsections.php',
+                    ['courseid' => $course->id, 'increase' => true, 'sesskey' => sesskey()]
+                ),
+            ];
+        }
+
+        if ($course->numsections > 0) {
+            $data->decrease = (object) [
+                'url' => new moodle_url(
+                    '/course/changenumsections.php',
+                    ['courseid' => $course->id, 'increase' => false, 'sesskey' => sesskey()]
+                ),
+            ];
+        }
+        return $data;
+    }
+
+    /**
+     * Get the add section button data.
+     *
+     * Current course format does not have 'numsections' option but it has multiple sections suppport.
+     * Display the "Add section" link that will insert a section in the end.
+     * Note to course format developers: inserting sections in the other positions should check both
+     * capabilities 'moodle/course:update' and 'moodle/course:movesections'.
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @param int $lastsection the last section number
+     * @param int $maxsections the maximum number of sections
+     * @return stdClass data context for a mustache template
+     */
+    protected function get_add_section_data(\renderer_base $output, int $lastsection, int $maxsections): stdClass {
+        $format = $this->format;
+        $course = $format->get_course();
+        $data = new stdClass();
+
+        if (get_string_manager()->string_exists('addsections', 'format_' . $course->format)) {
+            $addstring = get_string('addsections', 'format_' . $course->format);
+        } else {
+            $addstring = get_string('addsections');
+        }
+
+        $params = ['courseid' => $course->id, 'insertsection' => 0, 'sesskey' => sesskey()];
+
+        $singlesection = $this->format->get_section_number();
+        if ($singlesection) {
+            $params['sectionreturn'] = $singlesection;
+        }
+
+        $data->addsections = (object) [
+            'url' => new moodle_url('/course/changenumsections.php', $params),
+            'title' => $addstring,
+            'newsection' => $maxsections - $lastsection,
+        ];
         return $data;
     }
 }

@@ -71,6 +71,15 @@ function label_add_instance($label) {
 }
 
 /**
+ * Sets the special label display on course page.
+ *
+ * @param cm_info $cm Course-module object
+ */
+function label_cm_info_view(cm_info $cm) {
+    $cm->set_custom_cmlist_item(true);
+}
+
+/**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
