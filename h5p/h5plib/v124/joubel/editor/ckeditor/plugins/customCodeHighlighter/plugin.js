@@ -35,7 +35,11 @@ CKEDITOR.plugins.add('customCodeHighlighter', {
       },
       highlighter: function (code, language, callback) {
         // Here we are highlighting the code and returning it.
-        callback(code);
+        /**
+         * Note: Since we're not adding any highlighting we have to
+         * encode the html so that the html is not being run.
+         */
+        callback(CKEDITOR.tools.htmlEncode(code));
       }
     });
     editor.plugins.codesnippet.setHighlighter(highlighter);
