@@ -1,5 +1,7 @@
 <?php
 
+namespace Moodle;
+
 /**
  * File info?
  */

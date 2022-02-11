@@ -9,6 +9,7 @@ H5P content or not. Default value for this parameter is false.
 * H5P subsystem is allowed to act as an API (level 2) too.
 * Plugins can now implement h5p\canedit::can_edit_content method to define, if required, any custom behaviour for deciding
 whether an H5P content can be edited or not. The specific plugin check will completely override the generic check.
+* The third-party library h5p/h5plib/v124/core has been updated to version 1.24.3.
 
 === 3.11 ===
 * Added $skipcapcheck parameter to H5P constructor, api::create_content_from_pluginfile_url() and
