@@ -89,7 +89,6 @@ Feature: Test if the login form provides the correct feedback
     Then the focused element is "Username" "field"
     And I set the field "Username" to "admin"
     And I set the field "Password" to "admin"
-    And I set the field "Remember username" to "1"
     And I press "Log in"
     And I log out
     And I follow "Log in"

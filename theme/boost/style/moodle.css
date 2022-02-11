@@ -17626,8 +17626,7 @@ textarea[data-auto-rows] {
   margin-bottom: 2rem; }
   .login-container .login-languagemenu {
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1rem; }
+    justify-content: flex-start; }
   .login-container .login-logo {
     display: flex;
     justify-content: center;
@@ -17642,6 +17641,12 @@ textarea[data-auto-rows] {
     font-size: 1.40625rem; }
   .login-container .login-identityproviders .login-identityprovider-btn {
     border: 1px solid #dee2e6; }
+  .login-container .divider {
+    width: 1px;
+    background-color: #dee2e6;
+    height: 1.875rem; }
+  .login-container .action-menu-trigger a {
+    margin: 0.5rem 0; }
 
 @media (min-width: 768px) {
   .login-container {
