@@ -110,7 +110,7 @@ class qtype_multianswer_question extends question_graded_automatically_with_coun
             $fractionmax += $subq->defaultmark;
             $fractionsum += $subq->defaultmark * $subq->get_min_fraction();
         }
-        return $fractionsum / $fractionmax;
+        return $fractionsum / (!empty($this->subquestions) ? $fractionmax : 1);
     }
 
     public function get_max_fraction() {
@@ -120,7 +120,7 @@ class qtype_multianswer_question extends question_graded_automatically_with_coun
             $fractionmax += $subq->defaultmark;
             $fractionsum += $subq->defaultmark * $subq->get_max_fraction();
         }
-        return $fractionsum / $fractionmax;
+        return $fractionsum / (!empty($this->subquestions) ? $fractionmax : 1);
     }
 
     public function get_expected_data() {

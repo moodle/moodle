@@ -354,8 +354,14 @@ function question_delete_question($questionid): void {
              WHERE q.id = ?';
     $questiondata = $DB->get_record_sql($sql, [$question->id]);
 
+    $questionstocheck = [$question->id];
+
+    if ($question->parent !== 0) {
+        $questionstocheck[] = $question->parent;
+    }
+
     // Do not delete a question if it is used by an activity module
-    if (questions_in_use([$question->id])) {
+    if (questions_in_use($questionstocheck)) {
         return;
     }
 
