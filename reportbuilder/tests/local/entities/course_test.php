@@ -27,6 +27,7 @@ use core_reportbuilder\manager;
 use core_reportbuilder\testable_system_report_table;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
+use core_reportbuilder\local\filters\tags;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\helpers\user_filter_manager;
@@ -76,6 +77,7 @@ class course_test extends advanced_testcase {
             'calendartype' => 'Gregorian',
             'theme' => 'afterburner',
             'lang' => 'en',
+            'tags' => ['dancing'],
         ]);
 
         $coursecategory2 = $this->getDataGenerator()->create_category();
@@ -154,6 +156,7 @@ class course_test extends advanced_testcase {
         $this->assertEquals('Gregorian', $courserow['calendartype']);
         $this->assertEquals('afterburner', $courserow['theme']);
         $this->assertEquals(get_string_manager()->get_list_of_translations()['en'], $courserow['lang']);
+        $this->assertEquals('dancing', $courserow['tags']);
         $expected = '<a href="https://www.example.com/moodle/course/view.php?id=' . $course1->id . '">Course 1</a>';
         $this->assertEquals($expected, $courserow['coursefullnamewithlink']);
         $expected = '<a href="https://www.example.com/moodle/course/view.php?id=' . $course1->id . '">C1</a>';
@@ -171,6 +174,8 @@ class course_test extends advanced_testcase {
      * Test filtering report by course fields
      */
     public function test_filters(): void {
+        global $DB;
+
         $this->resetAfterTest();
 
         [$coursecategory1] = $this->generate_courses();
@@ -243,6 +248,15 @@ class course_test extends advanced_testcase {
         $this->assertEquals([
             'Course 1',
         ], array_column($tablerows, 'fullname'));
+
+        // Filter by tags field.
+        $tablerows = $this->get_report_table_rows([
+            'course:tags_operator' => tags::EQUAL_TO,
+            'course:tags_value' => [
+                $DB->get_field('tag', 'id', ['name' => 'dancing'], MUST_EXIST),
+            ],
+        ]);
+        $this->assertEquals(['Course 1'], array_column($tablerows, 'fullname'));
     }
 
     /**
