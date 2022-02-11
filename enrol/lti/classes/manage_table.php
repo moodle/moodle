@@ -182,7 +182,8 @@ class manage_table extends \table_sql {
         $strenable = get_string('enable');
         $strdisable = get_string('disable');
 
-        $url = new \moodle_url('/enrol/lti/index.php', array('sesskey' => sesskey(), 'courseid' => $this->courseid));
+        $url = new \moodle_url('/enrol/lti/index.php',
+            array('sesskey' => sesskey(), 'courseid' => $this->courseid, 'legacy' => 1));
 
         if ($this->ltiplugin->can_delete_instance($instance)) {
             $aurl = new \moodle_url($url, array('action' => 'delete', 'instanceid' => $instance->id));
@@ -205,8 +206,11 @@ class manage_table extends \table_sql {
         if ($this->ltienabled && $this->canconfig) {
             $linkparams = array(
                 'courseid' => $instance->courseid,
-                'id' => $instance->id, 'type' => $instance->enrol,
-                'returnurl' => new \moodle_url('/enrol/lti/index.php', array('courseid' => $this->courseid))
+                'id' => $instance->id,
+                'type' => $instance->enrol,
+                'legacy' => 1,
+                'returnurl' => new \moodle_url('/enrol/lti/index.php',
+                    array('courseid' => $this->courseid, 'legacy' => 1))
             );
             $editlink = new \moodle_url("/enrol/editinstance.php", $linkparams);
             $buttons[] = $OUTPUT->action_icon($editlink, new \pix_icon('t/edit', get_string('edit'), 'core',
@@ -223,10 +227,10 @@ class manage_table extends \table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-        $total = \enrol_lti\helper::count_lti_tools(array('courseid' => $this->courseid));
+        $total = \enrol_lti\helper::count_lti_tools(['courseid' => $this->courseid, 'ltiversion' => 'LTI-1p0/LTI-2p0']);
         $this->pagesize($pagesize, $total);
-        $tools = \enrol_lti\helper::get_lti_tools(array('courseid' => $this->courseid), $this->get_page_start(),
-            $this->get_page_size());
+        $tools = \enrol_lti\helper::get_lti_tools(['courseid' => $this->courseid, 'ltiversion' => 'LTI-1p0/LTI-2p0'],
+            $this->get_page_start(), $this->get_page_size());
         $this->rawdata = $tools;
         // Set initial bars.
         if ($useinitialsbar) {
