@@ -126,14 +126,19 @@ class reports_list extends system_report {
             $this->get_report_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tablealias}.name, {$tablealias}.id")
-            ->set_is_sortable(true)
-            ->add_callback(function(string $value, stdClass $row) {
+            // We need enough fields to re-create the persistent and pass to the editable component.
+            ->add_fields(implode(', ', [
+                "{$tablealias}.id",
+                "{$tablealias}.name",
+                "{$tablealias}.contextid",
+                "{$tablealias}.type",
+                "{$tablealias}.usercreated",
+            ]))
+            ->set_is_sortable(true, ["{$tablealias}.name"])
+            ->add_callback(static function(string $value, stdClass $report): string {
                 global $PAGE;
 
-                $reportid = (int) $row->id;
-
-                $editable = new report_name_editable($reportid);
+                $editable = new report_name_editable(0, new report(0, $report));
                 return $editable->render($PAGE->get_renderer('core'));
             })
         );

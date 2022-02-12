@@ -146,7 +146,7 @@ class custom_report_filters_exporter extends exporter {
 
             $entityname = $filterinstance->get_entity_name();
             $displayvalue = $filterinstance->get_header();
-            $editable = new filter_heading_editable($filter->get('id'));
+            $editable = new filter_heading_editable(0, $filter);
 
             $activefilters[] = [
                 'id' => $filter->get('id'),

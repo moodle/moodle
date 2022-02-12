@@ -147,12 +147,13 @@ class report_schedules extends system_report {
             $this->get_schedule_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tablealias}.name, {$tablealias}.id")
-            ->set_is_sortable(true)
+            // We need enough fields to re-create the persistent and pass to the editable component.
+            ->add_fields("{$tablealias}.id, {$tablealias}.name, {$tablealias}.reportid")
+            ->set_is_sortable(true, ["{$tablealias}.name"])
             ->add_callback(function(string $value, stdClass $schedule): string {
                 global $PAGE;
 
-                $editable = new schedule_name_editable((int) $schedule->id);
+                $editable = new schedule_name_editable(0, new schedule(0, $schedule));
                 return $editable->render($PAGE->get_renderer('core'));
             })
         );
