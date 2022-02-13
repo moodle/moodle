@@ -1366,7 +1366,7 @@ function lti_verify_with_keyset($jwtparam, $keyseturl, $clientid) {
         $jwt = JWT::decode($jwtparam, $keys);
     } catch (Exception $e) {
         // Something went wrong, so attempt to update cached keyset and then try again.
-        $keyset = file_get_contents($keyseturl);
+        $keyset = download_file_content($keyseturl);
         $keysetarr = json_decode($keyset, true);
         // JWK::parseKeySet uses RS256 algorithm by default.
         $keys = JWK::parseKeySet($keysetarr);
