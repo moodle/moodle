@@ -129,6 +129,7 @@ $string['coursecompleted'] = 'Course completed';
 $string['coursecompletedmessage'] = '<p>Congratulations!</p><p>You have completed the course <a href="{$a->courselink}">{$a->coursename}</a>.</p>';
 $string['coursecompletion'] = 'Course completion';
 $string['coursecompletioncondition'] = 'Condition: {$a}';
+$string['coursecompletionnavigation'] = 'Course completion tertiary navigation';
 $string['coursegrade'] = 'Course grade';
 $string['coursesavailable'] = 'Courses available';
 $string['coursesavailableexplaination'] = 'Note: Course completion conditions must be set for a course to appear in the above list.';

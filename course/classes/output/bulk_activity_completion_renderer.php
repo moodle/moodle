@@ -112,4 +112,15 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
         ];
         return parent::render_from_template('core_course/editdefaultcompletion', $data);
     }
+
+    /**
+     * Renders the course completion action bar.
+     *
+     * @param \core_course\output\completion_action_bar $actionbar
+     * @return string The HTML output
+     */
+    public function render_course_completion_action_bar(\core_course\output\completion_action_bar $actionbar): string {
+        $data = $actionbar->export_for_template($this->output);
+        return $this->output->render_from_template('core_course/completion_action_bar', $data);
+    }
 }

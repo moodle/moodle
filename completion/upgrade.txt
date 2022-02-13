@@ -8,6 +8,8 @@ information provided here is intended especially for developers.
   tested. Currently contains - viewed, usegrade, passgrade. Any plugin that are dependent on these criteria can now check this array instead of retesting it.
 * The method \completion_criteria_completion::mark_complete() now has the optional $timecompleted parameter to specify when the
   criteria was completed.
+* New method get_available_completion_options() has been added in the core_completion\manager class. This method can be used
+  to obtain an array with the available completion options ([url => name]) for the current course and user.
 
 === 3.11 ===
 * New Behat steps for activity completion in the behat_completion class:
