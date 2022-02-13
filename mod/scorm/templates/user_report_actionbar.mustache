@@ -29,7 +29,8 @@
                 {"name": "Interactions", "value": "/mod/scorm/report/userreportinteractions.php?id=70&user=13&attempt=1"}
             ]
         },
-        "backurl": "http://localhost/moodle/mod/scorm/report.php?id=70&mode=interactions"
+        "backurl": "http://localhost/moodle/mod/scorm/report.php?id=70&mode=interactions",
+        "heading": "Sub page heading"
     }
 }}
 <div class="container-fluid mb-3">
@@ -40,3 +41,4 @@
         {{/userreport}}
     </div>
 </div>
+{{#heading}}<h2>{{heading}}</h2>{{/heading}}

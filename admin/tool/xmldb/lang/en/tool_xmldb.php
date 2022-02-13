@@ -176,6 +176,13 @@ $string['persistentfieldscomplete'] = 'The following fields have been added: ';
 $string['persistentfieldsexist'] = 'The following fields already exist: ';
 $string['pluginname'] = 'XMLDB editor';
 $string['primarykeyonlyallownotnullfields'] = 'Primary keys cannot be null';
+$string['reconcilefiles'] = 'Reconcile XMLDB files';
+$string['reconcile_files'] = 'Look for XMLDB files needing reconcile';
+$string['reconcile_files_intro'] = 'This functionality looks for the current contents of all the XMLDB files, verifying that they match the results of generating them from the XMLDB Editor.
+
+A list of files needing to be reconciled (regenerated) will be displayed and the XMLDB Editor should be used to fix them.';
+$string['reconcile_files_no'] = 'All files are ok, no reconcile action needed';
+$string['reconcile_files_yes'] = 'Found files to reconcile: ';
 $string['reserved'] = 'Reserved';
 $string['reservedwords'] = 'Reserved words';
 $string['revert'] = 'Revert';

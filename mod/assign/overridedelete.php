@@ -87,6 +87,7 @@ $PAGE->activityheader->set_attrs([
     "description" => "",
     "hidecompletion" => true
 ]);
+$PAGE->set_secondary_active_tab('mod_assign_useroverrides');
 
 echo $OUTPUT->header();
 

@@ -803,19 +803,7 @@ class step {
     public static function get_string_from_input($string) {
         debugging('Use of ' . __FUNCTION__ .
             '() have been deprecated, please update your code to use helper::get_string_from_input()', DEBUG_DEVELOPER);
-        $string = trim($string);
-
-        if (preg_match('|^([a-zA-Z][a-zA-Z0-9\.:/_-]*),([a-zA-Z][a-zA-Z0-9\.:/_-]*)$|', $string, $matches)) {
-            if ($matches[2] === 'moodle') {
-                $matches[2] = 'core';
-            }
-
-            if (get_string_manager()->string_exists($matches[1], $matches[2])) {
-                $string = get_string($matches[1], $matches[2]);
-            }
-        }
-
-        return $string;
+        return helper::get_string_from_input($string);
     }
 
     /**
@@ -825,20 +813,22 @@ class step {
      * @return string Processed tour content
      */
     public static function get_step_image_from_input(string $content): string {
-        global $OUTPUT;
-
-        if (preg_match('/(?<=@@PIXICON::).*?(?=@@)/', $content, $matches)) {
-            $bits = explode('::', $matches[0]);
-            $identifier = $bits[0];
-            $component = $bits[1];
-            if ($component == 'moodle') {
-                $component = 'core';
-            }
-            $image = \html_writer::img($OUTPUT->image_url($identifier, $component)->out(false),
-                '', ['class' => 'img-fluid']);
-            $contenttoreplace = '@@PIXICON::' . $matches[0] . '@@';
-            $content = str_replace($contenttoreplace, $image, $content);
+        if (strpos($content, '@@PIXICON') === false) {
+            return $content;
         }
+
+        $content = preg_replace_callback('%@@PIXICON::(?P<identifier>([^::]*))::(?P<component>([^@@]*))@@%',
+            function(array $matches) {
+                global $OUTPUT;
+                $component = $matches['component'];
+                if ($component == 'moodle') {
+                    $component = 'core';
+                }
+                return \html_writer::img($OUTPUT->image_url($matches['identifier'], $component)->out(false), '',
+                    ['class' => 'img-fluid']);
+            },
+            $content
+        );
 
         return $content;
     }

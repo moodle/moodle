@@ -59,7 +59,6 @@ Feature: Assign reset
   Scenario: Use course reset to remove user overrides.
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "User overrides" from the "jump" singleselect
     And I press "Add user override"
     And I set the following fields to these values:
         | Override user    | Student1  |

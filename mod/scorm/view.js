@@ -64,11 +64,9 @@ M.mod_scormform.init = function(Y) {
     }
 
     // Set mode and newattempt correctly.
-    var setlaunchoptions = function() {
-        var mode = Y.one('#scormviewform input[name=mode]:checked');
+    var setlaunchoptions = function(mode) {
         if (mode) {
-            var modevalue = mode.get('value');
-            launch_url += '&mode=' + (modevalue ? modevalue : 'normal');
+            launch_url += '&mode=' + (mode ? mode : 'normal');
         } else {
             launch_url += '&mode=normal';
         }
@@ -86,13 +84,13 @@ M.mod_scormform.init = function(Y) {
     }
     // Listen for view form submit and generate popup on user interaction.
     if (scormform) {
-        Y.on('submit', function(e) {
-            setlaunchoptions();
+        scormform.delegate('click', function(e) {
+            setlaunchoptions(e.currentTarget.getAttribute('value'));
             winobj = window.open(launch_url, 'Popup', poptions);
             this.target = 'Popup';
             scormredirect(winobj);
             winobj.opener = null;
             e.preventDefault();
-        }, scormform);
+        }, 'button[name=mode]');
     }
 }

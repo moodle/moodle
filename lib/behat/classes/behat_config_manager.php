@@ -105,9 +105,13 @@ class behat_config_manager {
 
         // Gets all the components with steps definitions.
         $stepsdefinitions = $behatconfigutil->get_components_contexts($component);
-        // We don't want the deprecated steps definitions here.
         if (!$testsrunner) {
-            unset($stepsdefinitions['behat_deprecated']);
+            // Exclude deprecated steps definitions from the available steps list.
+            foreach (array_keys($stepsdefinitions) as $key) {
+                if (preg_match('/_deprecated$/', $key)) {
+                    unset($stepsdefinitions[$key]);
+                }
+            }
         }
 
         // Get current run.

@@ -1,5 +1,8 @@
 This files describes API changes in the mod_scorm code.
 
+=== 4.0 ===
+* Setting 'displayactivityname' has been removed from scorm. This will be handled by activityheader and is theme dependent.
+
 === 3.6 ===
 
 * The following renamed classes have been completely removed:

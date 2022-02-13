@@ -44,8 +44,6 @@ class override_actionmenu implements templatable, renderable {
     protected $currenturl;
     /** @var \cm_info course module information */
     protected $cm;
-    /** @var int The activity group mode */
-    protected $groupmode;
     /** @var bool Can all groups be accessed */
     protected $canaccessallgroups;
     /** @var array Groups related to this activity */
@@ -60,8 +58,8 @@ class override_actionmenu implements templatable, renderable {
     public function __construct(moodle_url $currenturl, \cm_info $cm) {
         $this->currenturl = $currenturl;
         $this->cm = $cm;
-        $this->groupmode = groups_get_activity_groupmode($this->cm);
-        $this->canaccessallgroups = ($this->groupmode === NOGROUPS) ||
+        $groupmode = groups_get_activity_groupmode($this->cm);
+        $this->canaccessallgroups = ($groupmode === NOGROUPS) ||
                 has_capability('moodle/site:accessallgroups', $this->cm->context);
         $this->groups = $this->canaccessallgroups ? groups_get_all_groups($this->cm->course) :
                 groups_get_activity_allowed_groups($this->cm);
@@ -83,15 +81,18 @@ class override_actionmenu implements templatable, renderable {
     }
 
     /**
-     * Whether to show groups or not.
+     * Whether to show groups or not. Assignments can be have group overrides if there are groups available in the course.
+     * There is no restriction related to the assignment group setting.
      *
      * @return bool
      */
     protected function show_groups(): bool {
-        if ($this->groupmode == NOGROUPS) {
-            return false;
+        if ($this->canaccessallgroups) {
+            $groups = groups_get_all_groups($this->cm->course);
+        } else {
+            $groups = groups_get_activity_allowed_groups($this->cm);
         }
-        return !empty($this->groups);
+        return !(empty($groups));
     }
 
     /**

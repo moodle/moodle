@@ -77,16 +77,6 @@ class block_login extends block_base {
             $this->content->text .= ' class="form-control" value="" autocomplete="current-password"/>';
             $this->content->text .= '</div>';
 
-            if (isset($CFG->rememberusername) and $CFG->rememberusername == 2) {
-                $checked = $username ? 'checked="checked"' : '';
-                $this->content->text .= '<div class="form-check">';
-                $this->content->text .= '<label class="form-check-label">';
-                $this->content->text .= '<input type="checkbox" name="rememberusername" id="rememberusername"
-                        class="form-check-input" value="1" '.$checked.'/> ';
-                $this->content->text .= get_string('rememberusername', 'admin').'</label>';
-                $this->content->text .= '</div>';
-            }
-
             $this->content->text .= '<div class="form-group">';
             $this->content->text .= '<input type="submit" class="btn btn-primary btn-block" value="'.get_string('login').'" />';
             $this->content->text .= '</div>';

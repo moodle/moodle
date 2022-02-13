@@ -1669,7 +1669,7 @@ EOF;
         $this->js_call_amd('core/log', 'setConfig', array($logconfig));
         // Add any global JS that needs to run on all pages.
         $this->js_call_amd('core/page_global', 'init');
-        $this->js_call_amd('core/confirm');
+        $this->js_call_amd('core/utility');
 
         // Call amd init functions.
         $output .= $this->get_amd_footercode();

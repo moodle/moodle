@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="mod/quiz/accessrule/seb/db" VERSION="2019120400" COMMENT="XMLDB file for Moodle mod/quiz/accessrule/seb"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd">
+    xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="quizaccess_seb_quizsettings" COMMENT="Stores the quiz level Safe Exam Browser configuration.">
       <FIELDS>

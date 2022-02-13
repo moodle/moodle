@@ -541,6 +541,8 @@ class assign_grading_summary implements renderable {
     public $cangrade = false;
     /** @var boolean isvisible - Is the assignment's context module visible to students? */
     public $isvisible = true;
+    /** @var cm_info $cm - The course module object. */
+    public $cm = null;
 
     /** @var string no warning needed about group submissions */
     const WARN_GROUPS_NO = false;
@@ -568,6 +570,7 @@ class assign_grading_summary implements renderable {
      * @param int $coursestartdate unix timestamp representation of the course start date.
      * @param bool $cangrade
      * @param bool $isvisible
+     * @param cm_info|null $cm The course module object.
      */
     public function __construct($participantcount,
                                 $submissiondraftsenabled,
@@ -584,7 +587,8 @@ class assign_grading_summary implements renderable {
                                 $courserelativedatesmode,
                                 $coursestartdate,
                                 $cangrade = true,
-                                $isvisible = true) {
+                                $isvisible = true,
+                                cm_info $cm = null) {
         $this->participantcount = $participantcount;
         $this->submissiondraftsenabled = $submissiondraftsenabled;
         $this->submissiondraftscount = $submissiondraftscount;
@@ -601,6 +605,7 @@ class assign_grading_summary implements renderable {
         $this->coursestartdate = $coursestartdate;
         $this->cangrade = $cangrade;
         $this->isvisible = $isvisible;
+        $this->cm = $cm;
     }
 }
 

@@ -1034,7 +1034,7 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
     }
 
     if (has_capability('mod/lesson:manageoverrides', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/lesson/overrides.php', array('cmid' => $PAGE->cm->id));
+        $url = new moodle_url('/mod/lesson/overrides.php', array('cmid' => $PAGE->cm->id, 'mode' => 'user'));
         $node = navigation_node::create(get_string('overrides', 'lesson'), $url,
                 navigation_node::TYPE_SETTING, null, 'mod_lesson_useroverrides');
         $lessonnode->add_node($node, $beforekey);

@@ -341,7 +341,7 @@ class tour {
      */
     public function get_endtourlabel(): string {
         if ($this->endtourlabel) {
-            $label = $this->endtourlabel;
+            $label = helper::get_string_from_input($this->endtourlabel);
         } else if ($this->count_steps() == 1) {
             $label = get_string('endonesteptour', 'tool_usertours');
         } else {

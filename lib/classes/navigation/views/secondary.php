@@ -154,7 +154,8 @@ class secondary extends view {
      */
     protected function get_default_module_more_menu_nodes(): array {
         return ['roleoverride', 'rolecheck', 'logreport', 'roleassign', 'filtermanage', 'backup', 'restore',
-            'competencybreakdown'];
+            'competencybreakdown', "mod_{$this->page->activityname}_useroverrides",
+            "mod_{$this->page->activityname}_groupoverrides"];
     }
 
     /**

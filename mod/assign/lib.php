@@ -434,21 +434,12 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
     }
 
     if (has_capability('mod/assign:manageoverrides', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/assign/overrides.php', array('cmid' => $PAGE->cm->id));
+        $url = new moodle_url('/mod/assign/overrides.php', array('cmid' => $PAGE->cm->id, 'mode' => 'user'));
 
         $node = navigation_node::create(get_string('overrides', 'assign'),
             $url,
             navigation_node::TYPE_SETTING, null, 'mod_assign_useroverrides');
         $navref->add_node($node, $beforekey);
-    }
-
-    // Link to gradebook.
-    if (has_capability('gradereport/grader:view', $cm->context) &&
-            has_capability('moodle/grade:viewall', $cm->context)) {
-        $link = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
-        $linkname = get_string('viewgradebook', 'assign');
-        $node = $navref->add($linkname, $link, navigation_node::TYPE_SETTING);
-        $node->set_force_into_more_menu(true);
     }
 
     if (has_capability('mod/assign:revealidentities', $context)) {

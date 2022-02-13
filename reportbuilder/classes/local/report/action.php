@@ -118,7 +118,12 @@ final class action {
         );
 
         $this->attributes['role'] = 'button';
-        $this->attributes['title'] = $this->attributes['aria-label'] = (string) $this->title;
+
+        // Ensure we have a title attribute set, if one wasn't already provided.
+        if (!array_key_exists('title', $this->attributes)) {
+            $this->attributes['title'] = (string) $this->title;
+        }
+        $this->attributes['aria-label'] = $this->attributes['title'];
 
         if ($this->popup) {
             $this->attributes['data-action'] = 'report-action-popup';
