@@ -87,6 +87,9 @@ course formats don't have their own renderer.
   - print_course_request_buttons
 * New page_setup() method in the core_course_category class. This method can be used for a general page setup in the course
   category pages.
+* The method navigation() in the core_course_bulk_activity_completion_renderer class has been deprecated as the tabs navigation
+  structure in the course competency pages has been replaced with tertiary navigation. To render the navigation, please
+  render_course_completion_action_bar() instead.
 
 === 3.11 ===
 * A new callback xxx_coursemodule_definition_after_data that allows plugins to extend activity forms after the data is set.

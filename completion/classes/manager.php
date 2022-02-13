@@ -262,10 +262,14 @@ class manager {
     /**
      * Gets the available completion tabs for the current course and user.
      *
+     * @deprecated since Moodle 4.0
      * @param stdClass|int $courseorid the course object or id.
      * @return tabobject[]
      */
     public static function get_available_completion_tabs($courseorid) {
+        debugging('get_available_completion_tabs() has been deprecated. Please use ' .
+            'core_completion\manager::get_available_completion_options() instead.', DEBUG_DEVELOPER);
+
         $tabs = [];
 
         $courseid = is_object($courseorid) ? $courseorid->id : $courseorid;
