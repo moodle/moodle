@@ -137,6 +137,10 @@ if ($action == 'sendmessage' AND $canbulkmessaging) {
 /// Print the page header
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
+$PAGE->set_secondary_active_tab('responses');
+if ($responsesnode = $PAGE->settingsnav->find('responses', navigation_node::TYPE_CUSTOM)) {
+    $responsesnode->make_active();
+}
 $PAGE->activityheader->set_attrs([
     'hidecompletion' => true,
     'description' => ''

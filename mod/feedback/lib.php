@@ -2850,12 +2850,6 @@ function feedback_extend_settings_navigation(settings_navigation $settings,
         $feedbacknode->add(get_string(($hassecondary ? 'responses' : 'show_entries'), 'feedback'),
                     new moodle_url('/mod/feedback/show_entries.php', ['id' => $PAGE->cm->id]),
                         navigation_node::TYPE_CUSTOM, null, 'responses');
-
-        if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO AND $feedback->course != SITEID) {
-            $feedbacknode->add(get_string('show_nonrespondents', 'feedback'),
-                    new moodle_url('/mod/feedback/show_nonrespondents.php', ['id' => $PAGE->cm->id]),
-                        navigation_node::TYPE_CUSTOM, null, 'nonrespondents');
-        }
     } else {
         $feedbackcompletion = new mod_feedback_completion($feedback, $context, $PAGE->course->id);
         if ($feedbackcompletion->can_view_analysis()) {
