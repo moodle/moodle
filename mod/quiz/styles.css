@@ -248,6 +248,10 @@
     text-align: center;
 }
 
+#page-mod-quiz-view .quizinfo p {
+    margin-right: 1rem;
+}
+
 #page-mod-quiz-view #page .quizattemptsummary td p {
     margin-top: 0;
 }
