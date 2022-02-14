@@ -10,4 +10,4 @@ Feature: Run tests over my courses.
     And I am on the "My courses" page
     And I click on "Course management options" "link"
     And I click on "Manage courses" "link"
-    And I should see "Course and category management"
+    And I should see "Manage course categories and courses"
