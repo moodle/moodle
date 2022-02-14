@@ -328,6 +328,17 @@ class core_badges_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render an issued badge.
+     *
+     * @param \core_badges\output\badgeclass $badge
+     * @return string
+     */
+    protected function render_badgeclass(\core_badges\output\badgeclass $badge) {
+        $data = $badge->export_for_template($this);
+        return parent::render_from_template('core_badges/issued_badge', $data);
+    }
+
+    /**
      * Render an external badge.
      *
      * @param \core_badges\output\external_badge $ibadge
