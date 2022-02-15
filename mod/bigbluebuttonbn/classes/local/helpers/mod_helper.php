@@ -118,9 +118,6 @@ class mod_helper {
         if (!isset($bigbluebuttonbn->lockonjoin)) {
             $bigbluebuttonbn->lockonjoin = 0;
         }
-        if (!isset($bigbluebuttonbn->lockonjoinconfigurable)) {
-            $bigbluebuttonbn->lockonjoinconfigurable = 0;
-        }
     }
 
     /**

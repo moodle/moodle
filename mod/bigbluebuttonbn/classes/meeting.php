@@ -315,6 +315,18 @@ class meeting {
     }
 
     /**
+     * Conversion between form settings and lockSettings as set in BBB API.
+     */
+    const LOCK_SETTINGS_MEETING_DATA = [
+        'disablecam' => 'lockSettingsDisableCam',
+        'disablemic' => 'lockSettingsDisableMic',
+        'disableprivatechat' => 'lockSettingsDisablePrivateChat',
+        'disablepublicchat' => 'lockSettingsDisablePublicChat',
+        'disablenote' => 'lockSettingsDisableNote',
+        'lockonjoin' => 'lockSettingsLockOnJoin',
+        'hideuserlist' => 'lockSettingsHideUserList'
+    ];
+    /**
      * Helper to prepare data used for create meeting.
      *
      * @return array
@@ -346,6 +358,13 @@ class meeting {
         }
         if ($this->instance->get_mute_on_start()) {
             $data['muteOnStart'] = 'true';
+        }
+        // Locks settings.
+        foreach (self::LOCK_SETTINGS_MEETING_DATA as $instancevarname => $lockname) {
+            $instancevar = $this->instance->get_instance_var($instancevarname);
+            if (!is_null($instancevar)) {
+                $data[$lockname] = $instancevar ? 'true' : 'false';
+            }
         }
         return $data;
     }
