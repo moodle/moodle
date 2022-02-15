@@ -61,7 +61,7 @@ final class action {
      *
      * @param moodle_url $url
      * @param pix_icon $icon
-     * @param array $attributes
+     * @param string[] $attributes Array of attributes to include in action, each will be cast to string prior to use
      * @param bool $popup
      * @param ?lang_string $title
      */
@@ -136,7 +136,7 @@ final class action {
     /**
      * Given an array of values, replace all placeholders with corresponding property of the given row
      *
-     * @param array $values
+     * @param string[] $values
      * @param stdClass $row
      * @return array
      */
@@ -144,7 +144,7 @@ final class action {
         return array_map(static function($value) use ($row) {
             return preg_replace_callback('/^:(?<property>.*)$/', static function(array $matches) use ($row): string {
                 return (string) ($row->{$matches['property']} ?? '');
-            }, $value);
+            }, (string) $value);
         }, $values);
     }
 }
