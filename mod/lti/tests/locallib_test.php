@@ -1946,6 +1946,20 @@ MwIDAQAB
     }
 
     /**
+     * Verify that empty curl responses lead to the proper moodle_exception, not to XML ValueError.
+     *
+     * @covers ::lti_load_cartridge()
+     */
+    public function test_empty_reponse_lti_load_cartridge() {
+        // Mock the curl response to empty string, this is hardly
+        // reproducible in real life (only Windows + GHA).
+        \curl::mock_response('');
+
+        $this->expectException(\moodle_exception::class);
+        lti_load_cartridge('http://example.com/mocked/empty/response', []);
+    }
+
+    /**
      * Create an LTI Tool.
      *
      * @param object $config tool config.
