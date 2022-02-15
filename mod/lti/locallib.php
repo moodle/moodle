@@ -4476,7 +4476,7 @@ function lti_load_cartridge($url, $map, $propertiesmap = array()) {
     libxml_clear_errors();
 
     $document = new DOMDocument();
-    @$document->loadXML($response, LIBXML_DTDLOAD | LIBXML_DTDATTR);
+    @$document->loadXML($response, LIBXML_NONET);
 
     $cartridge = new DomXpath($document);
 
