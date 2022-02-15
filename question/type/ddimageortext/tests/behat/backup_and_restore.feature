@@ -87,7 +87,7 @@ Feature: Test duplicating a quiz containing a drag and drop onto image question
       | For any partially correct response  | Parts, but only parts, of your response are correct. |
       | id_shownumcorrect                   | 1                                                    |
       | For any incorrect response          | That is not right at all.                            |
-      | Penalty for each incorrect try      | 0.3333333                                            |
+      | Penalty for each incorrect try      | 33.33333%                                            |
       | Hint 1                              | Incorrect placements will be removed.                |
       | id_hintclearwrong_0                 | 1                                                    |
       | id_hintshownumcorrect_0             | 1                                                    |

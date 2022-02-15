@@ -59,11 +59,9 @@ class edit_letter_form extends moodleform {
             }
 
             $entry[] = $mform->createElement('static', '', '', '&ge;');
-            $entry[] = $mform->createElement('text', $gradeboundaryname, $gradeboundary." $i");
+            $entry[] = $mform->createElement('float', $gradeboundaryname, $gradeboundary." $i");
             $entry[] = $mform->createElement('static', '', '', '%');
             $mform->addGroup($entry, 'gradeentry'.$i, $gradeletter." $i", array(' '), false);
-
-            $mform->setType($gradeboundaryname, PARAM_FLOAT);
 
             if (!$admin) {
                 $mform->disabledIf($gradeboundaryname, 'override', 'notchecked');
