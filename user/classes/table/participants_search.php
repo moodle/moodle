@@ -156,6 +156,8 @@ class participants_search {
      * @return array
      */
     protected function get_participants_sql(string $additionalwhere, array $additionalparams): array {
+        global $CFG;
+
         $isfrontpage = ($this->course->id == SITEID);
         $accesssince = 0;
         // Whether to match on users who HAVE accessed since the given time (ie false is 'inactive for more than x').
@@ -169,7 +171,8 @@ class participants_search {
         // Note: This ensures the outer (filtering) query joins on distinct users, avoiding the need for GROUP BY.
         $innerselect = "SELECT DISTINCT {$inneruseralias}.id";
         $innerjoins = ["{user} {$inneruseralias}"];
-        $innerwhere = "WHERE {$inneruseralias}.deleted = 0";
+        $innerwhere = "WHERE {$inneruseralias}.deleted = 0 AND {$inneruseralias}.id <> :siteguest";
+        $params = ['siteguest' => $CFG->siteguest];
 
         $outerjoins = ["JOIN {user} u ON u.id = {$usersubqueryalias}.id"];
         $wheres = [];
@@ -189,8 +192,9 @@ class participants_search {
             'sql' => $esql,
             // SQL for enrolment filtering that must always be applied (eg due to capability restrictions).
             'forcedsql' => $esqlforced,
-            'params' => $params,
+            'params' => $eparams,
         ] = $this->get_enrolled_sql();
+        $params = array_merge($params, $eparams);
 
         // Get the fields for all contexts because there is a special case later where it allows
         // matches of fields you can't access if they are on your own account.
