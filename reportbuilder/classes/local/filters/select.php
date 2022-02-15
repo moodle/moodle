@@ -24,6 +24,11 @@ use core_reportbuilder\local\helpers\database;
 /**
  * Select report filter
  *
+ * The options for the select are defined when creating the filter by calling {@see set_options} or {@see set_options_callback}
+ *
+ * To extend this class in your own filter (e.g. to pre-populate available options), you should override the {@see get_operators}
+ * and/or {@see get_select_options} methods
+ *
  * @package     core_reportbuilder
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -44,7 +49,7 @@ class select extends base {
      *
      * @return array
      */
-    private function get_operators(): array {
+    protected function get_operators(): array {
         $operators = [
             self::ANY_VALUE => get_string('filterisanyvalue', 'core_reportbuilder'),
             self::EQUAL_TO => get_string('filterisequalto', 'core_reportbuilder'),
@@ -55,12 +60,11 @@ class select extends base {
     }
 
     /**
-     * Return the options for the filter as an array, to be used to populate the select input field. These options should be
-     * specified when creating the filter via the {@see set_options} or {@see set_options_callback} method
+     * Return the options for the filter as an array, to be used to populate the select input field
      *
      * @return array
      */
-    private function get_select_options(): array {
+    protected function get_select_options(): array {
         return (array) $this->filter->get_options();
     }
 
