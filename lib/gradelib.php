@@ -759,14 +759,14 @@ function grade_set_setting($courseid, $name, $value) {
 /**
  * Returns string representation of grade value
  *
- * @param float $value The grade value
+ * @param float|null $value The grade value
  * @param object $grade_item Grade item object passed by reference to prevent scale reloading
  * @param bool $localized use localised decimal separator
  * @param int $displaytype type of display. For example GRADE_DISPLAY_TYPE_REAL, GRADE_DISPLAY_TYPE_PERCENTAGE, GRADE_DISPLAY_TYPE_LETTER
  * @param int $decimals The number of decimal places when displaying float values
  * @return string
  */
-function grade_format_gradevalue($value, &$grade_item, $localized=true, $displaytype=null, $decimals=null) {
+function grade_format_gradevalue(?float $value, &$grade_item, $localized=true, $displaytype=null, $decimals=null) {
     if ($grade_item->gradetype == GRADE_TYPE_NONE or $grade_item->gradetype == GRADE_TYPE_TEXT) {
         return '';
     }
@@ -830,13 +830,13 @@ function grade_format_gradevalue($value, &$grade_item, $localized=true, $display
 /**
  * Returns a float representation of a grade value
  *
- * @param float $value The grade value
+ * @param float|null $value The grade value
  * @param object $grade_item Grade item object
  * @param int $decimals The number of decimal places
  * @param bool $localized use localised decimal separator
  * @return string
  */
-function grade_format_gradevalue_real($value, $grade_item, $decimals, $localized) {
+function grade_format_gradevalue_real(?float $value, $grade_item, $decimals, $localized) {
     if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
         if (!$scale = $grade_item->load_scale()) {
             return get_string('error');
@@ -853,13 +853,13 @@ function grade_format_gradevalue_real($value, $grade_item, $decimals, $localized
 /**
  * Returns a percentage representation of a grade value
  *
- * @param float $value The grade value
+ * @param float|null $value The grade value
  * @param object $grade_item Grade item object
  * @param int $decimals The number of decimal places
  * @param bool $localized use localised decimal separator
  * @return string
  */
-function grade_format_gradevalue_percentage($value, $grade_item, $decimals, $localized) {
+function grade_format_gradevalue_percentage(?float $value, $grade_item, $decimals, $localized) {
     $min = $grade_item->grademin;
     $max = $grade_item->grademax;
     if ($min == $max) {
@@ -874,11 +874,11 @@ function grade_format_gradevalue_percentage($value, $grade_item, $decimals, $loc
  * Returns a letter grade representation of a grade value
  * The array of grade letters used is produced by {@link grade_get_letters()} using the course context
  *
- * @param float $value The grade value
+ * @param float|null $value The grade value
  * @param object $grade_item Grade item object
  * @return string
  */
-function grade_format_gradevalue_letter($value, $grade_item) {
+function grade_format_gradevalue_letter(?float $value, $grade_item) {
     global $CFG;
     $context = context_course::instance($grade_item->courseid, IGNORE_MISSING);
     if (!$letters = grade_get_letters($context)) {
@@ -1587,10 +1587,10 @@ function grade_course_reset($courseid) {
  * Convert a number to 5 decimal point float, an empty string or a null db compatible format
  * (we need this to decide if db value changed)
  *
- * @param mixed $number The number to convert
- * @return mixed float or null
+ * @param float|null $number The number to convert
+ * @return float|null float or null
  */
-function grade_floatval($number) {
+function grade_floatval(?float $number) {
     if (is_null($number) or $number === '') {
         return null;
     }
@@ -1603,11 +1603,11 @@ function grade_floatval($number) {
  * Compare two float numbers safely. Uses 5 decimals php precision using {@link grade_floatval()}. Nulls accepted too.
  * Used for determining if a database update is required
  *
- * @param float $f1 Float one to compare
- * @param float $f2 Float two to compare
+ * @param float|null $f1 Float one to compare
+ * @param float|null $f2 Float two to compare
  * @return bool True if the supplied values are different
  */
-function grade_floats_different($f1, $f2) {
+function grade_floats_different(?float $f1, ?float $f2): bool {
     // note: db rounding for 10,5 is different from php round() function
     return (grade_floatval($f1) !== grade_floatval($f2));
 }
@@ -1619,11 +1619,11 @@ function grade_floats_different($f1, $f2) {
  * different from php round() function.
  *
  * @since Moodle 2.0
- * @param float $f1 Float one to compare
- * @param float $f2 Float two to compare
+ * @param float|null $f1 Float one to compare
+ * @param float|null $f2 Float two to compare
  * @return bool True if the values should be considered as the same grades
  */
-function grade_floats_equal($f1, $f2) {
+function grade_floats_equal(?float $f1, ?float $f2): bool {
     return (grade_floatval($f1) === grade_floatval($f2));
 }
 
