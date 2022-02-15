@@ -71,6 +71,7 @@ function bigbluebuttonbn_supports($feature) {
         FEATURE_GRADE_HAS_GRADE => false,
         FEATURE_GRADE_OUTCOMES => false,
         FEATURE_SHOW_DESCRIPTION => true,
+        FEATURE_MOD_PURPOSE => MOD_PURPOSE_OTHER
     ];
     if (isset($features[(string) $feature])) {
         return $features[$feature];
@@ -429,15 +430,6 @@ function bigbluebuttonbn_view($bigbluebuttonbn, $course, $cm, $context) {
 function bigbluebuttonbn_check_updates_since(cm_info $cm, $from, $filter = []) {
     $updates = course_check_module_updates_since($cm, $from, ['content'], $filter);
     return $updates;
-}
-
-/**
- * Get icon mapping for font-awesome.
- */
-function mod_bigbluebuttonbn_get_fontawesome_icon_map() {
-    return [
-        'mod_bigbluebuttonbn:icon' => 'icon-bigbluebutton',
-    ];
 }
 
 /**

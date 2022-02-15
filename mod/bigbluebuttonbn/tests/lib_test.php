@@ -442,17 +442,6 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
-     * Check font awesome icon map
-     *
-     * @covers ::mod_bigbluebuttonbn_get_fontawesome_icon_map
-     */
-    public function test_mod_bigbluebuttonbn_get_fontawesome_icon_map() {
-        $this->resetAfterTest();
-        $this->assertEquals(['mod_bigbluebuttonbn:icon' => 'icon-bigbluebutton'],
-            mod_bigbluebuttonbn_get_fontawesome_icon_map());
-    }
-
-    /**
      * Check event action (calendar)
      *
      * @covers ::mod_bigbluebuttonbn_core_calendar_provide_event_action
