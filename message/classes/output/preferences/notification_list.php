@@ -167,8 +167,11 @@ class notification_list implements templatable, renderable {
         //
         // We only want the first component to render with the help icon.
         if (!empty($context['components'])) {
-            $context['components'][0]['onlinehelphtml'] = $output->help_icon('loggedin', 'message');
-            $context['components'][0]['offlinehelphtml'] = $output->help_icon('loggedoff', 'message');
+            $withnotifications = array_search(true, array_column($context['components'], 'hasnotifications'), true);
+            if ($withnotifications !== false) {
+                $context['components'][$withnotifications]['onlinehelphtml'] = $output->help_icon('loggedin', 'message');
+                $context['components'][$withnotifications]['offlinehelphtml'] = $output->help_icon('loggedoff', 'message');
+            }
         }
 
         return $context;
