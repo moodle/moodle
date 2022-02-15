@@ -247,10 +247,23 @@ class behat_form_field implements behat_session_interface {
      * @return bool
      */
     protected function text_matches($expectedvalue) {
-        if (trim($expectedvalue) != trim($this->get_value())) {
-            return false;
+        // Non strict string comparison.
+        if (trim($expectedvalue) == trim($this->get_value())) {
+            return true;
         }
-        return true;
+
+        // Do one more matching attempt for floats that are valid with current decsep in use
+        // (let's continue non strict comparing them as strings, but once unformatted).
+        $expectedfloat = unformat_float(trim($expectedvalue), true);
+        $actualfloat = unformat_float(trim($this->get_value()), true);
+        // If they aren't null or false, then we are good to be compared (basically is_numeric()).
+        $goodfloats = !is_null($expectedfloat) && ($expectedfloat !== false) &&
+            !is_null($actualfloat) && ($actualfloat !== false);
+        if ($goodfloats && ((string)$expectedfloat == (string)$actualfloat)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

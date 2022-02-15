@@ -141,6 +141,7 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
         $feedback = false;
         $feedbackformat = false;
         if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
+            $value = (int)unformat_float($value);
             if ($value == -1) {
                 $finalgrade = null;
             } else {

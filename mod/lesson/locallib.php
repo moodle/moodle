@@ -3162,7 +3162,7 @@ class lesson extends lesson_base {
                         $this->add_message(get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned), 'notify');
                         if ($this->properties->grade != GRADE_TYPE_NONE) {
                             $a = new stdClass;
-                            $a->grade = number_format($gradeinfo->grade * $this->properties->grade / 100, 1);
+                            $a->grade = format_float($gradeinfo->grade * $this->properties->grade / 100, 1);
                             $a->total = $this->properties->grade;
                             $this->add_message(get_string('yourcurrentgradeisoutof', 'lesson', $a), 'notify');
                         }
@@ -3596,7 +3596,7 @@ class lesson extends lesson_base {
                     }
                     if ($this->properties->grade != GRADE_TYPE_NONE) {
                         $a = new stdClass;
-                        $a->grade = number_format($gradeinfo->grade * $this->properties->grade / 100, 1);
+                        $a->grade = format_float($gradeinfo->grade * $this->properties->grade / 100, 1);
                         $a->total = $this->properties->grade;
                         $data->yourcurrentgradeisoutof = $a;
                     }
