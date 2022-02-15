@@ -2575,6 +2575,8 @@ class core_renderer extends renderer_base {
      * @return string
      */
     protected function render_user_picture(user_picture $userpicture) {
+        global $CFG;
+
         $user = $userpicture->user;
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $this->page->context);
 
@@ -2611,8 +2613,8 @@ class core_renderer extends renderer_base {
             $attributes['title'] = $alt;
         }
 
-        // get the image html output first
-        if ($user->picture == 0 && !defined('BEHAT_SITE_RUNNING')) {
+        // Get the image html output first, auto generated based on initials if one isn't already set.
+        if ($user->picture == 0 && empty($CFG->enablegravatar) && !defined('BEHAT_SITE_RUNNING')) {
             $output = html_writer::tag('span', mb_substr($user->firstname, 0, 1) . mb_substr($user->lastname, 0, 1),
                 ['class' => 'userinitials size-' . $size]);
         } else {
