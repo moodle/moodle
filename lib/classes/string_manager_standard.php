@@ -309,6 +309,7 @@ class core_string_manager_standard implements core_string_manager {
             'strftimedaydatetime' => 1,
             'strftimedayshort' => 1,
             'strftimedaytime' => 1,
+            'strftimemonth' => 1,
             'strftimemonthyear' => 1,
             'strftimerecent' => 1,
             'strftimerecentfull' => 1,

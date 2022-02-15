@@ -50,6 +50,7 @@ $string['strftimedaydate'] = '%A, %d %B %Y';
 $string['strftimedaydatetime'] = '%A, %d %B %Y, %I:%M %p';
 $string['strftimedayshort'] = '%A, %d %B';
 $string['strftimedaytime'] = '%a, %H:%M';
+$string['strftimemonth'] = '%B';
 $string['strftimemonthyear'] = '%B %Y';
 $string['strftimerecent'] = '%d %b, %H:%M';
 $string['strftimerecentfull'] = '%a, %d %b %Y, %I:%M %p';
