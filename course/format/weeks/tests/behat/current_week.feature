@@ -7,7 +7,7 @@ Feature: The current week should be highlighted in the course.
   Scenario: Highlight first week
     Given the following "courses" exist:
       | fullname | shortname | format | coursedisplay | numsections | startdate |
-      | Course 1 | C1        | weeks  | 0             | 5           | ##today## |
+      | Course 1 | C1        | weeks  | 0             | 5           | ##yesterday## |
     When I am on the "C1" "Course" page logged in as "admin"
     Then I should see "This week" in the "#section-1" "css_element"
 
