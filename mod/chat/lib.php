@@ -1321,20 +1321,20 @@ function chat_extend_navigation($navigation, $course, $module, $cm) {
  * @param navigation_node $chatnode The node to add module settings to
  */
 function chat_extend_settings_navigation(settings_navigation $settings, navigation_node $chatnode) {
-    global $DB, $PAGE, $USER;
-    $chat = $DB->get_record("chat", array("id" => $PAGE->cm->instance));
+    global $DB;
+    $chat = $DB->get_record("chat", array("id" => $settings->get_page()->cm->instance));
 
-    $currentgroup = groups_get_activity_group($PAGE->cm, true);
+    $currentgroup = groups_get_activity_group($settings->get_page()->cm, true);
     if ($currentgroup) {
         $groupselect = " AND groupid = '$currentgroup'";
     } else {
         $groupselect = '';
     }
 
-    if ($chat->studentlogs || has_capability('mod/chat:readlog', $PAGE->cm->context)) {
+    if ($chat->studentlogs || has_capability('mod/chat:readlog', $settings->get_page()->cm->context)) {
         if ($DB->get_records_select('chat_messages', "chatid = ? $groupselect", array($chat->id))) {
             $chatnode->add(get_string('pastsessions', 'chat'),
-                new moodle_url('/mod/chat/report.php', array('id' => $PAGE->cm->id)));
+                new moodle_url('/mod/chat/report.php', array('id' => $settings->get_page()->cm->id)));
         }
     }
 }

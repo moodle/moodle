@@ -807,14 +807,13 @@ function survey_supports($feature) {
  * It is safe to rely on PAGE here as we will only ever be within the module
  * context when this is called
  *
- * @param navigation_node $settings
+ * @param settings_navigation $settings
  * @param navigation_node $surveynode
  */
-function survey_extend_settings_navigation($settings, $surveynode) {
-    global $PAGE;
-
-    if (has_capability('mod/survey:readresponses', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action' => 'summary'));
+function survey_extend_settings_navigation(settings_navigation $settings, navigation_node $surveynode) {
+    if (has_capability('mod/survey:readresponses', $settings->get_page()->cm->context)) {
+        $url = new moodle_url('/mod/survey/report.php', array('id' => $settings->get_page()->cm->id,
+            'action' => 'summary'));
         $surveynode->add(get_string("responsereports", "survey"), $url);
     }
 }

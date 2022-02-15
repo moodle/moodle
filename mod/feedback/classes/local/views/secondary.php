@@ -17,6 +17,8 @@
 namespace mod_feedback\local\views;
 
 use core\navigation\views\secondary as core_secondary;
+use settings_navigation;
+use navigation_node;
 
 /**
  * Custom secondary navigation class
@@ -41,25 +43,31 @@ class secondary extends core_secondary {
 
         return $basenodes;
     }
+
     /**
      * Custom module construct for feedback
+     *
+     * @param settings_navigation $settingsnav The settings navigation object related to the module page
+     * @param navigation_node|null $rootnode The node where the module navigation nodes should be added into as children.
+     *                                       If not explicitly defined, the nodes will be added to the secondary root
+     *                                       node by default.
      */
-    protected function load_module_navigation(): void {
-        $settingsnav = $this->page->settingsnav;
+    protected function load_module_navigation(settings_navigation $settingsnav, ?navigation_node $rootnode = null): void {
+        $rootnode = $rootnode ?? $this;
         $mainnode = $settingsnav->find('modulesettings', self::TYPE_SETTING);
         $nodes = $this->get_default_module_mapping();
 
         if ($mainnode) {
             $url = new \moodle_url('/mod/' . $this->page->activityname . '/view.php', ['id' => $this->page->cm->id]);
             $setactive = $url->compare($this->page->url, URL_MATCH_BASE);
-            $node = $this->add(get_string('modulename', 'feedback'), $url, null, null, 'modulepage');
+            $node = $rootnode->add(get_string('modulename', 'feedback'), $url, null, null, 'modulepage');
             if ($setactive) {
                 $node->make_active();
             }
 
             // Add the initial nodes.
             $nodesordered = $this->get_leaf_nodes($mainnode, $nodes);
-            $this->add_ordered_nodes($nodesordered);
+            $this->add_ordered_nodes($nodesordered, $rootnode);
 
             // Reorder the existing nodes in settings so the active node scan can pick it up.
             $existingnode = $settingsnav->find('questionnode', self::TYPE_CUSTOM);
@@ -69,7 +77,7 @@ class secondary extends core_secondary {
             }
             // We have finished inserting the initial structure.
             // Populate the menu with the rest of the nodes available.
-            $this->load_remaining_nodes($mainnode, $nodes);
+            $this->load_remaining_nodes($mainnode, $nodes, $rootnode);
         }
     }
 }

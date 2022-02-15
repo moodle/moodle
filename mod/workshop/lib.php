@@ -1628,17 +1628,13 @@ function workshop_extend_navigation(navigation_node $navref, stdclass $course, s
  * @param navigation_node $workshopnode {@link navigation_node}
  */
 function workshop_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $workshopnode=null) {
-    global $PAGE;
-
-    //$workshopobject = $DB->get_record("workshop", array("id" => $PAGE->cm->instance));
-
-    if (has_capability('mod/workshop:editdimensions', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/workshop/editform.php', array('cmid' => $PAGE->cm->id));
+    if (has_capability('mod/workshop:editdimensions', $settingsnav->get_page()->cm->context)) {
+        $url = new moodle_url('/mod/workshop/editform.php', array('cmid' => $settingsnav->get_page()->cm->id));
         $workshopnode->add(get_string('assessmentform', 'workshop'), $url,
         settings_navigation::TYPE_SETTING, null, 'workshopassessement');
     }
-    if (has_capability('mod/workshop:allocate', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/workshop/allocation.php', array('cmid' => $PAGE->cm->id));
+    if (has_capability('mod/workshop:allocate', $settingsnav->get_page()->cm->context)) {
+        $url = new moodle_url('/mod/workshop/allocation.php', array('cmid' => $settingsnav->get_page()->cm->id));
         $workshopnode->add(get_string('submissionsallocation', 'workshop'), $url, settings_navigation::TYPE_SETTING);
     }
 }
