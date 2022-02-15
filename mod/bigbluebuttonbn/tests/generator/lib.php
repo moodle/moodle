@@ -232,6 +232,7 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
      * @throws moodle_exception
      */
     protected function create_mockserver_recording(instance $instance, stdClass $recordingdata, array $data): string {
+        $now = time();
         $mockdata = array_merge((array) $recordingdata, [
             'meetingID' => $instance->get_meeting_id(),
             'meta' => [
@@ -246,7 +247,8 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
                 'bbb-recording-tags' => $data['tags'] ?? '',
             ],
         ]);
-
+        $mockdata['startTime'] = $data['starttime'] ?? $now;
+        $mockdata['endTime'] = $data['endtime'] ?? $mockdata['startTime'] + HOURSECS;
         $result = $this->send_mock_request('backoffice/createRecording', [], $mockdata);
 
         return (string) $result->recordID;
