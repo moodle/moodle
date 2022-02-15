@@ -26,12 +26,10 @@ $iconsizes: map-merge((
     font-size: $icon-height;
     width: $icon-width;
     height: $icon-height;
-    // vertical-align: middle;
     margin: 0;
     padding: 0;
     box-sizing: content-box;
     margin-right: 0.5rem;
-    margin-left: 0.5rem;
 
     &.spacer {
         margin-right: 0;
