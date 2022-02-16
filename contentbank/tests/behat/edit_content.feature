@@ -36,7 +36,7 @@ Feature: Content bank use editor feature
     And I click on "Save changes" "button"
     When I click on "Content bank" "link"
     And I click on "filltheblanks.h5p" "link"
-    And I click on "Close" "link"
+    And I click on "Exit" "link"
     Then I click on "[data-action=Add-content]" "css_element"
     And I should see "Fill in the Blanks"
 
@@ -59,7 +59,7 @@ Feature: Content bank use editor feature
     And I switch to "h5p-editor-iframe" class iframe
     And I switch to the main frame
     And I click on "Cancel" "button"
-    And I should see "filltheblanks.h5p" in the "h1" "css_element"
+    And I should see "filltheblanks.h5p" in the "h2" "css_element"
 
   Scenario: Users can create new content if they have the required permission
     Given I navigate to "H5P > Manage H5P content types" in site administration
@@ -113,7 +113,7 @@ Feature: Content bank use editor feature
     And I set the field "Title" to "New title"
     And I switch to the main frame
     When I click on "Save" "button"
-    And I should see "filltheblanks.h5p" in the "h1" "css_element"
+    And I should see "filltheblanks.h5p" in the "h2" "css_element"
     And I click on "Edit" "link"
     And I switch to "h5p-editor-iframe" class iframe
     Then the field "Title" matches value "New title"

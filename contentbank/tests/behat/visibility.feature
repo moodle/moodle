@@ -27,13 +27,13 @@ Feature: Make content public or unlisted
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I click on "filltheblanks.h5p" "link"
     And I wait until the page is ready
-    And I should not see "filltheblanks.h5p (Unlisted)" in the "h1" "css_element"
-    And I open the action menu in "region-main-settings-menu" "region"
+    And I should not see "filltheblanks.h5p (Unlisted)" in the "h2" "css_element"
+    And I click on "More" "button"
     And I should see "Make unlisted"
-    When I choose "Make unlisted" in the open action menu
+    And I click on "Make unlisted" "link"
     And I wait until the page is ready
-    Then I should see "filltheblanks.h5p (Unlisted)" in the "h1" "css_element"
-    And I open the action menu in "region-main-settings-menu" "region"
+    Then I should see "filltheblanks.h5p (Unlisted)" in the "h2" "css_element"
+    And I click on "More" "button"
     And I should see "Make public"
 
   Scenario: Unlisted content cannot be seen by other users
@@ -131,7 +131,7 @@ Feature: Make content public or unlisted
     And I click on "Upload" "link"
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Upload content" filemanager
     And I click on "Save changes" "button"
-    Then I should see "filltheblanks.h5p (Unlisted)" in the "h1" "css_element"
+    Then I should see "filltheblanks.h5p (Unlisted)" in the "h2" "css_element"
 
   @_file_upload
   Scenario: User preference concerning content visibility overrides site-wide default content visibility
@@ -149,5 +149,5 @@ Feature: Make content public or unlisted
     And I click on "Upload" "link"
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Upload content" filemanager
     And I click on "Save changes" "button"
-    Then I should see "filltheblanks.h5p" in the "h1" "css_element"
-    And I should not see "filltheblanks.h5p (Unlisted)" in the "h1" "css_element"
+    Then I should see "filltheblanks.h5p" in the "h2" "css_element"
+    And I should not see "filltheblanks.h5p (Unlisted)" in the "h2" "css_element"

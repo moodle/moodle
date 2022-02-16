@@ -52,7 +52,6 @@ if ($contextid == \context_system::instance()->id) {
     $PAGE->set_context($context);
 }
 $PAGE->set_title($title);
-$PAGE->set_heading($title);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagetype('contentbank');
 $PAGE->set_secondary_active_tab('contentbank');
@@ -110,6 +109,7 @@ if (has_capability('moodle/contentbank:upload', $context)) {
 }
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading($title, 2);
 echo $OUTPUT->box_start('generalbox');
 
 // If needed, display notifications.

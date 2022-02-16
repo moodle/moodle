@@ -26,7 +26,7 @@ Feature: Content bank link in the activity settings form
     Then I should see "Use the content bank (opens in new window) to manage your H5P files"
     And I click on "content bank (opens in new window)" "link" in the "General" "fieldset"
     And I switch to the browser tab opened by the app
-    And I should see "Content bank" in the "page-header" "region"
+    And I should see "Content bank" in the "page-content" "region"
     And I should see "filltheblanks.h5p" in the "page-content" "region"
     And I close all opened windows
 

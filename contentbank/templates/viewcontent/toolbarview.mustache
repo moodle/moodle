@@ -34,17 +34,51 @@ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
     Example context (json):
     {
         "usercanedit" : true,
+        "heading" : "This is a heading",
         "editcontenturl" : "http://something/contentbank/edit.php?contextid=1&plugin=h5p&id=1",
-        "closeurl" : "http://moodle.test/h5pcb/moodle/contentbank/index.php"
+        "closeurl" : "http://moodle.test/h5pcb/moodle/contentbank/index.php",
+        "actionmenu": {
+            "options": [
+                {
+                    "url": "www.google.com",
+                    "label": "Google",
+                    "attributes": [
+                        {
+                            "name": "data-attrib",
+                            "value": "1"
+                        }
+                    ]
+                }
+            ]
+        }
     }
 }}
+{{#heading}}<h2>{{heading}}</h2>{{/heading}}
 {{#usercanedit}}
-<div class="cb-toolbar-container my-2">
-    <a href="{{editcontenturl}}" class="btn btn-primary" data-action="edit-content">
-        {{#str}}edit{{/str}}
-    </a>
-    <a href="{{closeurl}}" class="btn btn-secondary" data-action="close-content">
-        {{#str}}close, core_contentbank{{/str}}
-    </a>
+<div class="cb-toolbar-container container-fluid my-2">
+    <div class="row">
+        <div class="d-flex">
+            <a href="{{editcontenturl}}" class="btn btn-primary" data-action="edit-content">
+                {{#str}}edit{{/str}}
+            </a>
+        </div>
+
+        {{#actionmenu}}
+            <div class="ml-3">
+                {{> core_contentbank/contentbankmenu }}
+            </div>
+        {{/actionmenu}}
+
+        <div class="ml-auto">
+            <a href="{{closeurl}}" class="btn btn-secondary" data-action="close-content">
+                {{#str}}exit, core_contentbank{{/str}}
+            </a>
+        </div>
+    </div>
 </div>
+{{/usercanedit}}
+{{^usercanedit}}
+    {{#actionmenu}}
+        {{> core_contentbank/contentbankmenu }}
+    {{/actionmenu}}
 {{/usercanedit}}
