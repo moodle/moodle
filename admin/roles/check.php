@@ -126,9 +126,9 @@ if (!is_null($reportuser)) {
     $rolenames = role_get_names($context);
 }
 
+$PAGE->set_navigation_overflow_state(false);
 echo $OUTPUT->header();
-// Display the participants tertiary action bar if within a course context.
-if ($course && $context->contextlevel == CONTEXT_COURSE) {
+if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_MODULE) {
     echo $OUTPUT->render_participants_tertiary_nav($course);
 }
 

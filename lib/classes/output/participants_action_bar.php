@@ -47,7 +47,8 @@ class participants_action_bar implements \renderable {
     public function __construct(object $course, moodle_page $page, ?string $renderedcontent) {
         $this->course = $course;
         $this->page = $page;
-        $this->node = $this->page->settingsnav->find('users', navigation_node::TYPE_CONTAINER);
+        $node = $this->page->context->contextlevel == CONTEXT_MODULE ? 'modulesettings' : 'users';
+        $this->node = $this->page->settingsnav->find($node, null);
         $this->renderedcontent = $renderedcontent;
     }
 
@@ -70,7 +71,10 @@ class participants_action_bar implements \renderable {
                 'override',
                 'roles',
                 'otherusers',
-                'permissions'
+                'permissions',
+                'roleoverride',
+                'rolecheck',
+                'roleassign',
             ]
         ];
     }
@@ -130,9 +134,13 @@ class participants_action_bar implements \renderable {
             }
         }
 
-        // Need to do some funky code here to find out if we have added third party navigation nodes.
-        $thirdpartynodearray = $this->get_thirdparty_node_array() ?: [];
-        return array_merge($formattedcontent, $thirdpartynodearray);
+        // If we are accessing a page from a module context additional nodes will not be visible.
+        if ($this->page->context->contextlevel != CONTEXT_MODULE) {
+            // Need to do some funky code here to find out if we have added third party navigation nodes.
+            $thirdpartynodearray = $this->get_thirdparty_node_array() ?: [];
+            $formattedcontent = array_merge($formattedcontent, $thirdpartynodearray);
+        }
+        return $formattedcontent;
     }
 
     /**
