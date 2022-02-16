@@ -14,44 +14,39 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Caches passed scenarios and skip only them if `--skip-passed` option provided.
- *
- * @copyright  2016 onwards Rajesh Taneja
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace Moodle\BehatExtension\Tester\Cli;
 
-use Behat\Behat\EventDispatcher\Event\AfterFeatureTested;
 use Behat\Behat\EventDispatcher\Event\AfterScenarioTested;
 use Behat\Behat\EventDispatcher\Event\ExampleTested;
-use Behat\Behat\EventDispatcher\Event\FeatureTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use Behat\Testwork\Cli\Controller;
 use Behat\Testwork\EventDispatcher\Event\ExerciseCompleted;
+use Behat\Testwork\Tester\Result\TestResult;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Behat\Testwork\Tester\Result\TestResult;
+
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
 
 /**
  * Caches passed scenarios and skip only them if `--skip-passed` option provided.
  *
+ * @package core
  * @copyright  2016 onwards Rajesh Taneja
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class SkipPassedController implements Controller {
     /**
      * @var EventDispatcherInterface
      */
-    private $eventDispatcher;
+    private $eventdispatcher;
 
     /**
      * @var null|string
      */
-    private $cachePath;
+    private $cachepath;
 
     /**
      * @var string
@@ -61,7 +56,7 @@ final class SkipPassedController implements Controller {
     /**
      * @var string[]
      */
-    private $lines = array();
+    private $lines = [];
 
     /**
      * @var string
@@ -71,13 +66,13 @@ final class SkipPassedController implements Controller {
     /**
      * Initializes controller.
      *
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param null|string              $cachePath
+     * @param EventDispatcherInterface $eventdispatcher
+     * @param null|string              $cachepath
      * @param string                   $basepath
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, $cachePath, $basepath) {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->cachePath = null !== $cachePath ? rtrim($cachePath, DIRECTORY_SEPARATOR) : null;
+    public function __construct(EventDispatcherInterface $eventdispatcher, $cachepath, $basepath) {
+        $this->eventdispatcher = $eventdispatcher;
+        $this->cachepath = null !== $cachepath ? rtrim($cachepath, DIRECTORY_SEPARATOR) : null;
         $this->basepath = $basepath;
     }
 
@@ -112,9 +107,9 @@ final class SkipPassedController implements Controller {
             return;
         }
 
-        $this->eventDispatcher->addListener(ScenarioTested::AFTER, array($this, 'collectPassedScenario'), -50);
-        $this->eventDispatcher->addListener(ExampleTested::AFTER, array($this, 'collectPassedScenario'), -50);
-        $this->eventDispatcher->addListener(ExerciseCompleted::AFTER, array($this, 'writeCache'), -50);
+        $this->eventdispatcher->addListener(ScenarioTested::AFTER, [$this, 'collectPassedScenario'], -50);
+        $this->eventdispatcher->addListener(ExampleTested::AFTER, [$this, 'collectPassedScenario'], -50);
+        $this->eventdispatcher->addListener(ExerciseCompleted::AFTER, [$this, 'writeCache'], -50);
         $this->key = $this->generateKey($input);
 
         if (!$this->getFileName() || !file_exists($this->getFileName())) {
@@ -141,8 +136,10 @@ final class SkipPassedController implements Controller {
         $feature = $event->getFeature();
         $suitename = $event->getSuite()->getName();
 
-        if (($event->getTestResult()->getResultCode() !== TestResult::PASSED) &&
-            ($event->getTestResult()->getResultCode() !== TestResult::SKIPPED)) {
+        if (
+            ($event->getTestResult()->getResultCode() !== TestResult::PASSED) &&
+            ($event->getTestResult()->getResultCode() !== TestResult::SKIPPED)
+        ) {
             unset($this->lines[$suitename][$feature->getFile()]);
             return;
         }
@@ -172,7 +169,7 @@ final class SkipPassedController implements Controller {
      */
     private function generateKey(InputInterface $input) {
         return md5(
-            $input->getParameterOption(array('--profile', '-p')) .
+            $input->getParameterOption(['--profile', '-p']) .
             $input->getOption('suite') .
             implode(' ', $input->getOption('name')) .
             implode(' ', $input->getOption('tags')) .
@@ -188,12 +185,12 @@ final class SkipPassedController implements Controller {
      * @return null|string
      */
     private function getFileName() {
-        if (null === $this->cachePath || null === $this->key) {
+        if (null === $this->cachepath || null === $this->key) {
             return null;
         }
-        if (!is_dir($this->cachePath)) {
-            mkdir($this->cachePath, 0777);
+        if (!is_dir($this->cachepath)) {
+            mkdir($this->cachepath, 0777);
         }
-        return $this->cachePath . DIRECTORY_SEPARATOR . $this->key . '.passed';
+        return $this->cachepath . DIRECTORY_SEPARATOR . $this->key . '.passed';
     }
 }

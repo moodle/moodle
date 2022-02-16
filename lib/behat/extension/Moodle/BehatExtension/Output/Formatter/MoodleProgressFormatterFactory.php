@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,42 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Moodle behat context class resolver.
- *
- * @package    behat
- * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace Moodle\BehatExtension\Output\Formatter;
 
 use Behat\Testwork\Exception\ServiceContainer\ExceptionExtension;
+use Behat\Testwork\Output\ServiceContainer\Formatter\FormatterFactory;
 use Behat\Testwork\Output\ServiceContainer\OutputExtension;
 use Behat\Testwork\ServiceContainer\ServiceProcessor;
+use Behat\Testwork\Translator\ServiceContainer\TranslatorExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use Behat\Behat\Output\ServiceContainer\Formatter\ProgressFormatterFactory;
-use Behat\Behat\EventDispatcher\Event\OutlineTested;
-use Behat\Testwork\Output\ServiceContainer\Formatter\FormatterFactory;
-use Behat\Testwork\Translator\ServiceContainer\TranslatorExtension;
 
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
+
+/**
+ * Moodle behat context class resolver.
+ *
+ * @package    core
+ * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class MoodleProgressFormatterFactory implements FormatterFactory {
-    /**
-     * @var ServiceProcessor
-     */
+    /** @var ServiceProcessor */
     private $processor;
 
-    /*
-     * Available services
-     */
+    /** @var string moodle progress ID */
     const ROOT_LISTENER_ID_MOODLE = 'output.node.listener.moodleprogress';
+
+    /** @var string moodle printer ID */
     const RESULT_TO_STRING_CONVERTER_ID_MOODLE = 'output.node.printer.result_to_string';
 
-    /*
-     * Available extension points
-     */
+    /** @var string Available extension points */
     const ROOT_LISTENER_WRAPPER_TAG_MOODLE = 'output.node.listener.moodleprogress.wrapper';
 
     /**
@@ -63,7 +57,9 @@ class MoodleProgressFormatterFactory implements FormatterFactory {
     }
 
     /**
-     * {@inheritdoc}
+     * Builds formatter configuration.
+     *
+     * @param ContainerBuilder $container
      */
     public function buildFormatter(ContainerBuilder $container) {
         $this->loadRootNodeListener($container);
@@ -73,7 +69,9 @@ class MoodleProgressFormatterFactory implements FormatterFactory {
     }
 
     /**
-     * {@inheritdoc}
+     * Processes formatter configuration.
+     *
+     * @param ContainerBuilder $container
      */
     public function processFormatter(ContainerBuilder $container) {
         $this->processListenerWrappers($container);
@@ -85,9 +83,9 @@ class MoodleProgressFormatterFactory implements FormatterFactory {
      * @param ContainerBuilder $container
      */
     protected function loadRootNodeListener(ContainerBuilder $container) {
-        $definition = new Definition('Behat\Behat\Output\Node\EventListener\AST\StepListener', array(
+        $definition = new Definition('Behat\Behat\Output\Node\EventListener\AST\StepListener', [
             new Reference('output.node.printer.moodleprogress.step')
-        ));
+        ]);
         $container->setDefinition(self::ROOT_LISTENER_ID_MOODLE, $definition);
     }
 
@@ -103,43 +101,44 @@ class MoodleProgressFormatterFactory implements FormatterFactory {
 
         $moodleconfig = $container->getParameter('behat.moodle.parameters');
 
-        $definition = new Definition('Moodle\BehatExtension\Output\Printer\MoodleProgressPrinter',
-            array($moodleconfig['moodledirroot']));
+        $definition = new Definition(
+            'Moodle\BehatExtension\Output\Printer\MoodleProgressPrinter',
+            [$moodleconfig['moodledirroot']]
+        );
         $container->setDefinition('moodle.output.node.printer.moodleprogress.printer', $definition);
 
-        $definition = new Definition('Behat\Testwork\Output\NodeEventListeningFormatter', array(
+        $definition = new Definition('Behat\Testwork\Output\NodeEventListeningFormatter', [
             'moodle_progress',
             'Prints information about then run followed by one character per step.',
-            array(
+            [
                 'timer' => true
-            ),
+            ],
             $this->createOutputPrinterDefinition(),
-            new Definition('Behat\Testwork\Output\Node\EventListener\ChainEventListener', array(
-                    array(
-                        new Reference(self::ROOT_LISTENER_ID_MOODLE),
-                        new Definition('Behat\Behat\Output\Node\EventListener\Statistics\StatisticsListener', array(
-                            new Reference('output.moodleprogress.statistics'),
-                            new Reference('output.node.printer.moodleprogress.statistics')
-                        )),
-                        new Definition('Behat\Behat\Output\Node\EventListener\Statistics\ScenarioStatsListener', array(
-                            new Reference('output.moodleprogress.statistics')
-                        )),
-                        new Definition('Behat\Behat\Output\Node\EventListener\Statistics\StepStatsListener', array(
-                            new Reference('output.moodleprogress.statistics'),
-                            new Reference(ExceptionExtension::PRESENTER_ID)
-                        )),
-                        new Definition('Behat\Behat\Output\Node\EventListener\Statistics\HookStatsListener', array(
-                            new Reference('output.moodleprogress.statistics'),
-                            new Reference(ExceptionExtension::PRESENTER_ID)
-                        )),
-                        new Definition('Behat\Behat\Output\Node\EventListener\AST\SuiteListener', array(
-                            new Reference('moodle.output.node.printer.moodleprogress.printer')
-                        ))
-                    )
-                )
-            )
-        ));
-        $definition->addTag(OutputExtension::FORMATTER_TAG, array('priority' => 1));
+            new Definition('Behat\Testwork\Output\Node\EventListener\ChainEventListener', [
+                [
+                    new Reference(self::ROOT_LISTENER_ID_MOODLE),
+                    new Definition('Behat\Behat\Output\Node\EventListener\Statistics\StatisticsListener', [
+                        new Reference('output.moodleprogress.statistics'),
+                        new Reference('output.node.printer.moodleprogress.statistics')
+                    ]),
+                    new Definition('Behat\Behat\Output\Node\EventListener\Statistics\ScenarioStatsListener', [
+                        new Reference('output.moodleprogress.statistics')
+                    ]),
+                    new Definition('Behat\Behat\Output\Node\EventListener\Statistics\StepStatsListener', [
+                        new Reference('output.moodleprogress.statistics'),
+                        new Reference(ExceptionExtension::PRESENTER_ID)
+                    ]),
+                    new Definition('Behat\Behat\Output\Node\EventListener\Statistics\HookStatsListener', [
+                        new Reference('output.moodleprogress.statistics'),
+                        new Reference(ExceptionExtension::PRESENTER_ID)
+                    ]),
+                    new Definition('Behat\Behat\Output\Node\EventListener\AST\SuiteListener', [
+                        new Reference('moodle.output.node.printer.moodleprogress.printer')
+                    ])
+                ]
+            ])
+        ]);
+        $definition->addTag(OutputExtension::FORMATTER_TAG, ['priority' => 1]);
         $container->setDefinition(OutputExtension::FORMATTER_TAG . '.moodleprogress', $definition);
     }
 
@@ -159,29 +158,29 @@ class MoodleProgressFormatterFactory implements FormatterFactory {
      * @param ContainerBuilder $container
      */
     protected function loadCorePrinters(ContainerBuilder $container) {
-        $definition = new Definition('Behat\Behat\Output\Node\Printer\CounterPrinter', array(
+        $definition = new Definition('Behat\Behat\Output\Node\Printer\CounterPrinter', [
             new Reference(self::RESULT_TO_STRING_CONVERTER_ID_MOODLE),
             new Reference(TranslatorExtension::TRANSLATOR_ID),
-        ));
+        ]);
         $container->setDefinition('output.node.moodle.printer.counter', $definition);
 
-        $definition = new Definition('Behat\Behat\Output\Node\Printer\ListPrinter', array(
+        $definition = new Definition('Behat\Behat\Output\Node\Printer\ListPrinter', [
             new Reference(self::RESULT_TO_STRING_CONVERTER_ID_MOODLE),
             new Reference(ExceptionExtension::PRESENTER_ID),
             new Reference(TranslatorExtension::TRANSLATOR_ID),
             '%paths.base%'
-        ));
+        ]);
         $container->setDefinition('output.node.moodle.printer.list', $definition);
 
-        $definition = new Definition('Behat\Behat\Output\Node\Printer\Progress\ProgressStepPrinter', array(
+        $definition = new Definition('Behat\Behat\Output\Node\Printer\Progress\ProgressStepPrinter', [
             new Reference(self::RESULT_TO_STRING_CONVERTER_ID_MOODLE)
-        ));
+        ]);
         $container->setDefinition('output.node.printer.moodleprogress.step', $definition);
 
-        $definition = new Definition('Behat\Behat\Output\Node\Printer\Progress\ProgressStatisticsPrinter', array(
+        $definition = new Definition('Behat\Behat\Output\Node\Printer\Progress\ProgressStatisticsPrinter', [
             new Reference('output.node.moodle.printer.counter'),
             new Reference('output.node.moodle.printer.list')
-        ));
+        ]);
         $container->setDefinition('output.node.printer.moodleprogress.statistics', $definition);
     }
 
@@ -191,9 +190,9 @@ class MoodleProgressFormatterFactory implements FormatterFactory {
      * @return Definition
      */
     protected function createOutputPrinterDefinition() {
-        return new Definition('Behat\Testwork\Output\Printer\StreamOutputPrinter', array(
+        return new Definition('Behat\Testwork\Output\Printer\StreamOutputPrinter', [
             new Definition('Behat\Behat\Output\Printer\ConsoleOutputFactory'),
-        ));
+        ]);
     }
 
     /**
@@ -202,6 +201,10 @@ class MoodleProgressFormatterFactory implements FormatterFactory {
      * @param ContainerBuilder $container
      */
     protected function processListenerWrappers(ContainerBuilder $container) {
-        $this->processor->processWrapperServices($container, self::ROOT_LISTENER_ID_MOODLE, self::ROOT_LISTENER_WRAPPER_TAG_MOODLE);
+        $this->processor->processWrapperServices(
+            $container,
+            self::ROOT_LISTENER_ID_MOODLE,
+            self::ROOT_LISTENER_WRAPPER_TAG_MOODLE
+        );
     }
 }
