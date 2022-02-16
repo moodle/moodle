@@ -89,18 +89,20 @@ class participants_action_bar implements \renderable {
             return [];
         }
 
-        // Pre-populate the formatted tertiary nav items with the "Enrolled users" node if user can view the participants page.
-        $coursecontext = context_course::instance($this->course->id);
-        $canviewparticipants = course_can_view_participants($coursecontext);
         $formattedcontent = [];
         $enrolmentsheading = get_string('enrolments', 'enrol');
-        if ($canviewparticipants) {
-            $participantsurl = (new moodle_url('/user/index.php', ['id' => $this->course->id]))->out();
-            $formattedcontent[] = [
+        if ($this->page->context->contextlevel != CONTEXT_MODULE) {
+            // Pre-populate the formatted tertiary nav items with the "Enrolled users" node if user can view the participants page.
+            $coursecontext = context_course::instance($this->course->id);
+            $canviewparticipants = course_can_view_participants($coursecontext);
+            if ($canviewparticipants) {
+                $participantsurl = (new moodle_url('/user/index.php', ['id' => $this->course->id]))->out();
+                $formattedcontent[] = [
                     $enrolmentsheading => [
-                            $participantsurl => get_string('enrolledusers', 'enrol'),
+                        $participantsurl => get_string('enrolledusers', 'enrol'),
                     ]
-            ];
+                ];
+            }
         }
 
         $nodes = $this->get_ordered_nodes();
