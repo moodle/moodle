@@ -23,15 +23,15 @@
 
     Example context (json):
     {
-        "highlighted" : "1",
+        "iscurrent" : true,
         "hiddenfromstudents" : "1",
         "notavailable" : "0",
         "highlightedlabel" : "Highlighted"
     }
 }}
-{{#highlighted}}
+{{#iscurrent}}
     <span class="badge badge-pill badge-primary order-1" data-type="highlighted">{{ highlightedlabel }}</span>
-{{/highlighted}}
+{{/iscurrent}}
 {{#hiddenfromstudents}}
     <span class="badge badge-pill badge-warning order-2" data-type="hiddenfromstudents">{{#str}}hiddenfromstudents{{/str}}</span>
 {{/hiddenfromstudents}}

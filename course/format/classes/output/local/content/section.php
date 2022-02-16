@@ -235,7 +235,7 @@ class section implements renderable, templatable {
         }
 
         if ($format->is_section_current($thissection)) {
-            $data->highlighted = true;
+            $data->iscurrent = true;
             $data->currentlink = get_accesshide(
                 get_string('currentsection', 'format_'.$format->get_format())
             );
