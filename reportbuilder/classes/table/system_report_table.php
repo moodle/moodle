@@ -94,7 +94,7 @@ class system_report_table extends base_report_table {
                 array_flip($this->report->get_exclude_columns_for_download()));
         }
 
-        $columnheaders = [];
+        $columnheaders = $columnsattributes = [];
         $columnindex = 1;
         foreach ($columns as $identifier => $column) {
             $column->set_index($columnindex++);
@@ -115,6 +115,9 @@ class system_report_table extends base_report_table {
             if (!$column->get_is_sortable()) {
                 $this->no_sorting($column->get_column_alias());
             }
+
+            // Generate column attributes to be included in each cell.
+            $columnsattributes[$column->get_column_alias()] = $column->get_attributes();
         }
 
         // If the report has any actions then append appropriate column, note that actions are excluded during download.
@@ -127,6 +130,9 @@ class system_report_table extends base_report_table {
 
         $this->define_columns(array_keys($columnheaders));
         $this->define_headers(array_values($columnheaders));
+
+        // Add column attributes to the table.
+        $this->set_columnsattributes($columnsattributes);
 
         // Initial table sort column.
         if ($sortcolumn = $this->report->get_initial_sort_column()) {
