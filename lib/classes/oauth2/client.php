@@ -487,9 +487,14 @@ class client extends \oauth2_client {
      * the fields back into moodle fields.
      *
      * @return array|false Moodle user fields for the logged in user (or false if request failed)
+     * @throws moodle_exception if the response is empty after decoding it.
      */
     public function get_userinfo() {
         $url = $this->get_issuer()->get_endpoint_url('userinfo');
+        if (empty($url)) {
+            return false;
+        }
+
         $response = $this->get($url);
         if (!$response) {
             return false;
@@ -499,6 +504,11 @@ class client extends \oauth2_client {
             $userinfo = json_decode($response);
         } catch (\Exception $e) {
             return false;
+        }
+
+        if (is_null($userinfo)) {
+            // Throw an exception displaying the original response, because, at this point, $userinfo shouldn't be empty.
+            throw new moodle_exception($response);
         }
 
         return $this->map_userinfo_to_fields($userinfo);
