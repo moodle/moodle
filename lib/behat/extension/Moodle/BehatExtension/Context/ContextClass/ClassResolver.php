@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,34 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace Moodle\BehatExtension\Context\ContextClass;
+
+use Behat\Behat\Context\ContextClass\ClassResolver as Resolver;
+
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
+
 /**
  * Moodle behat context class resolver.
  *
- * @package    behat
- * @copyright  2104 Rajesh Taneja <rajesh@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-namespace Moodle\BehatExtension\Context\ContextClass;
-
-use Behat\Behat\Context\Environment\Handler\ContextEnvironmentHandler;
-use Behat\Behat\Context\ContextClass\ClassResolver as Resolver;
-
-/**
  * Resolves arbitrary context strings into a context classes.
  *
  * @see ContextEnvironmentHandler
  *
- * @author Konstantin Kudryashov <ever.zet@gmail.com>
+ * @package    core
+ * @copyright  2104 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class ClassResolver implements Resolver {
 
-    /**
-     * @var array keep list of all behat contexts in moodle.
-     */
+    /** @var array keep list of all behat contexts in moodle. */
     private $moodlebehatcontexts = null;
 
     /**
-     * @param $parameters array list of params provided to moodle.
+     * Constructor for ClassResolver class.
+     *
+     * @param array $parameters list of params provided to moodle.
      */
     public function __construct($parameters) {
         $this->moodlebehatcontexts = $parameters['steps_definitions'];
@@ -51,19 +48,17 @@ final class ClassResolver implements Resolver {
      * Checks if resolvers supports provided class.
      * Moodle behat context class starts with behat_
      *
-     * @param string $contextString
-     *
+     * @param string $contextstring
      * @return Boolean
      */
-    public function supportsClass($contextString) {
-        return (strpos($contextString, 'behat_') === 0);
+    public function supportsClass($contextstring) {
+        return (strpos($contextstring, 'behat_') === 0);
     }
 
     /**
      * Resolves context class.
      *
-     * @param string $contexclass
-     *
+     * @param string $contextclass
      * @return string context class.
      */
     public function resolveClass($contextclass) {
@@ -72,11 +67,13 @@ final class ClassResolver implements Resolver {
         }
 
         // Using the key as context identifier load context class.
-        if (!empty($this->moodlebehatcontexts[$contextclass]) &&
-            (file_exists($this->moodlebehatcontexts[$contextclass]))) {
+        if (
+            !empty($this->moodlebehatcontexts[$contextclass]) &&
+            (file_exists($this->moodlebehatcontexts[$contextclass]))
+        ) {
             require_once($this->moodlebehatcontexts[$contextclass]);
         } else {
-            throw new \RuntimeException('Moodle behat context "'.$contextclass.'" not found');
+            throw new \RuntimeException('Moodle behat context "' . $contextclass . '" not found');
         }
         return $contextclass;
     }

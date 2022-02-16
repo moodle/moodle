@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Override step tester to ensure chained steps gets executed.
- *
- * @package    behat
- * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace Moodle\BehatExtension\Context\Step;
 
 use Behat\Gherkin\Node\StepNode;
+
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
+
 /**
- * Base ChainedStep class.
+ * Chained Step base class.
+ *
+ * @package    core
+ * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class ChainedStep extends StepNode {
     /**
@@ -33,16 +33,20 @@ abstract class ChainedStep extends StepNode {
      */
     private $language;
 
+    // phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
     /**
      * Initializes ChainedStep.
      *
-     * @param string $type
+     * @param string $keyword
      * @param string $text
      * @param array  $arguments
+     * @param int $line
+     * @param string $keywordtype
      */
-    public function __construct($keyword, $text, array $arguments, $line = 0, $keywordType = 'Given') {
-        parent::__construct($keyword, $text, $arguments, $line, $keywordType);
+    public function __construct($keyword, $text, array $arguments, $line = 0, $keywordtype = 'Given') {
+        parent::__construct($keyword, $text, $arguments, $line, $keywordtype);
     }
+    // phpcs:enable Generic.CodeAnalysis.UselessOverridingMethod.Found
 
     /**
      * Sets language.
