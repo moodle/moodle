@@ -3961,5 +3961,130 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022020200.03);
     }
 
+    if ($oldversion < 2022021100.01) {
+        // Some settings and plugins have been added/removed to the Starter and Full preset. Add them to the core presets if
+        // they haven't been included yet.
+        $params = ['name' => get_string('starterpreset', 'core_adminpresets'), 'iscore' => 1];
+        $starterpreset = $DB->get_record('adminpresets', $params);
+        $params = ['name' => get_string('fullpreset', 'core_adminpresets'), 'iscore' => 1];
+        $fullpreset = $DB->get_record('adminpresets', $params);
+
+        $settings = [
+            // Settings. Hide Guest login button for Starter preset (and back to show for Full).
+            [
+                'presetid' => $starterpreset->id,
+                'plugin' => 'none',
+                'name' => 'guestloginbutton',
+                'value' => '0',
+            ],
+            [
+                'presetid' => $fullpreset->id,
+                'plugin' => 'none',
+                'name' => 'guestloginbutton',
+                'value' => '1',
+            ],
+            // Settings. Set Activity chooser tabs to "Starred, All, Recommended"(1) for Starter and back it to default(0) for Full.
+            [
+                'presetid' => $starterpreset->id,
+                'plugin' => 'none',
+                'name' => 'activitychoosertabmode',
+                'value' => '1',
+            ],
+            [
+                'presetid' => $fullpreset->id,
+                'plugin' => 'none',
+                'name' => 'activitychoosertabmode',
+                'value' => '0',
+            ],
+        ];
+        foreach ($settings as $notused => $setting) {
+            $params = ['adminpresetid' => $setting['presetid'], 'plugin' => $setting['plugin'], 'name' => $setting['name']];
+            if (!$DB->record_exists('adminpresets_it', $params)) {
+                $record = new \stdClass();
+                $record->adminpresetid = $setting['presetid'];
+                $record->plugin = $setting['plugin'];
+                $record->name = $setting['name'];
+                $record->value = $setting['value'];
+                $DB->insert_record('adminpresets_it', $record);
+            }
+        }
+
+        $plugins = [
+            // Plugins. Blocks. Disable/enable Online users, Recently accessed courses and Starred courses.
+            [
+                'presetid' => $starterpreset->id,
+                'plugin' => 'block',
+                'name' => 'online_users',
+                'enabled' => '0',
+            ],
+            [
+                'presetid' => $fullpreset->id,
+                'plugin' => 'block',
+                'name' => 'online_users',
+                'enabled' => '1',
+            ],
+            [
+                'presetid' => $starterpreset->id,
+                'plugin' => 'block',
+                'name' => 'recentlyaccessedcourses',
+                'enabled' => '0',
+            ],
+            [
+                'presetid' => $fullpreset->id,
+                'plugin' => 'block',
+                'name' => 'recentlyaccessedcourses',
+                'enabled' => '1',
+            ],
+            [
+                'presetid' => $starterpreset->id,
+                'plugin' => 'block',
+                'name' => 'starredcourses',
+                'enabled' => '0',
+            ],
+            [
+                'presetid' => $fullpreset->id,
+                'plugin' => 'block',
+                'name' => 'starredcourses',
+                'enabled' => '1',
+            ],
+            // Plugins. Enrolments. Disable/enable Guest access.
+            [
+                'presetid' => $starterpreset->id,
+                'plugin' => 'enrol',
+                'name' => 'guest',
+                'enabled' => '0',
+            ],
+            [
+                'presetid' => $fullpreset->id,
+                'plugin' => 'enrol',
+                'name' => 'guest',
+                'enabled' => '1',
+            ],
+        ];
+        foreach ($plugins as $notused => $plugin) {
+            $params = ['adminpresetid' => $plugin['presetid'], 'plugin' => $plugin['plugin'], 'name' => $plugin['name']];
+            if (!$DB->record_exists('adminpresets_plug', $params)) {
+                $record = new \stdClass();
+                $record->adminpresetid = $plugin['presetid'];
+                $record->plugin = $plugin['plugin'];
+                $record->name = $plugin['name'];
+                $record->enabled = $plugin['enabled'];
+                $DB->insert_record('adminpresets_plug', $record);
+            }
+        }
+
+        // Settings: Remove customusermenuitems setting from Starter and Full presets.
+        $sql = "(adminpresetid = ? OR adminpresetid = ?) AND plugin = 'none' AND name = 'customusermenuitems'";
+        $params = [$starterpreset->id, $fullpreset->id];
+        $DB->delete_records_select('adminpresets_it', $sql, $params);
+
+        // Plugins. Question types. Re-enable Description and Essay for Starter.
+        $sql = "(adminpresetid = ? OR adminpresetid = ?) AND plugin = 'qtype' AND (name = 'description' OR name = 'essay')";
+        $DB->delete_records_select('adminpresets_plug', $sql, $params);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022021100.01);
+    }
+
     return true;
 }
