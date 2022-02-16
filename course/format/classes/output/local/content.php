@@ -158,7 +158,7 @@ class content implements renderable, templatable {
             // OR it is hidden but the course has a setting to display hidden sections as unavilable.
             $showsection = $thissection->uservisible ||
                     ($thissection->visible && !$thissection->available && !empty($thissection->availableinfo)) ||
-                    (!$thissection->visible && !$course->hiddensections);
+                    (!$thissection->visible && !($course->hiddensections ?? false));
             if (!$showsection) {
                 continue;
             }

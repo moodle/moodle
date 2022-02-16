@@ -195,11 +195,10 @@ class section implements renderable, templatable {
 
         $section = $this->section;
         $format = $this->format;
-        $course = $this->format->get_course();
 
         $showsummary = ($section->section != 0 &&
             $section->section != $format->get_section_number() &&
-            $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE &&
+            $format->get_course_display() == COURSE_DISPLAY_MULTIPAGE &&
             !$format->show_editor()
         );
 
@@ -310,10 +309,8 @@ class section implements renderable, templatable {
     protected function add_format_data(stdClass &$data, array $haspartials, renderer_base $output): bool {
         $section = $this->section;
         $format = $this->format;
-        $course = $this->format->get_course();
 
-        $coursedisplay = $course->coursedisplay ?? COURSE_DISPLAY_SINGLEPAGE;
-        $data->iscoursedisplaymultipage = ($coursedisplay == COURSE_DISPLAY_MULTIPAGE);
+        $data->iscoursedisplaymultipage = ($format->get_course_display() == COURSE_DISPLAY_MULTIPAGE);
 
         if ($data->num === 0 && !$data->iscoursedisplaymultipage) {
             $data->collapsemenu = true;

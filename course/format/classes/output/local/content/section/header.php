@@ -75,7 +75,7 @@ class header implements renderable, templatable {
 
         $data->title = $output->section_title_without_link($section, $course);
 
-        $coursedisplay = $course->coursedisplay ?? COURSE_DISPLAY_SINGLEPAGE;
+        $coursedisplay = $format->get_course_display();
         $data->headerdisplaymultipage = false;
         if ($coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
             $data->headerdisplaymultipage = true;
