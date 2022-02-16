@@ -1339,7 +1339,8 @@ class global_navigation extends navigation_node {
         // courses: Additional courses are added here.
         // users: Other users information loaded here.
         $this->rootnodes = array();
-        if (get_home_page() == HOMEPAGE_SITE) {
+        $defaulthomepage = get_home_page();
+        if ($defaulthomepage == HOMEPAGE_SITE) {
             // The home element should be my moodle because the root element is the site
             if (isloggedin() && !isguestuser()) {  // Makes no sense if you aren't logged in
                 $this->rootnodes['home'] = $this->add(get_string('myhome'), new moodle_url('/my/'),
@@ -1368,6 +1369,12 @@ class global_navigation extends navigation_node {
             'mycourses',
             new pix_icon('i/course', '')
         );
+        // We do not need to show this node in the breadcrumbs if the default homepage is mycourses.
+        // It will be automatically handled by the breadcrumb generator.
+        if ($defaulthomepage == HOMEPAGE_MYCOURSES) {
+            $this->rootnodes['mycourses']->mainnavonly = true;
+        }
+
         $this->rootnodes['courses'] = $this->add(get_string('courses'), new moodle_url('/course/index.php'), self::TYPE_ROOTNODE, null, 'courses');
         if (!core_course_category::user_top()) {
             $this->rootnodes['courses']->hide();
