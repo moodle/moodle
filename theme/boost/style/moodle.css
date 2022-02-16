@@ -21174,6 +21174,8 @@ div.editor_atto_toolbar button .icon {
     max-width: initial; }
   .reportbuilder-sidebar-settings div[data-region="settings-cardview"] form div[data-fieldtype="submit"] {
     flex-basis: auto; }
+  .reportbuilder-sidebar-settings .inplaceeditable.inplaceeditingon input {
+    width: 100%; }
 
 /* Add button styles when a toggle button is active. */
 .reportbuilder-wrapper button.btn-outline-secondary[data-toggle="collapse"]:not(.collapsed),
