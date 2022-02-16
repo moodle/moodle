@@ -116,7 +116,7 @@ class participants_action_bar implements \renderable {
         }
 
         // If we are accessing a page from a module context additional nodes will not be visible.
-        if ($this->page->context->contextlevel !== CONTEXT_MODULE) {
+        if ($this->page->context->contextlevel != CONTEXT_MODULE) {
             // Need to do some funky code here to find out if we have added third party navigation nodes.
             $thirdpartynodearray = $this->get_thirdparty_node_array() ?: [];
             $formattedcontent = array_merge($formattedcontent, $thirdpartynodearray);
