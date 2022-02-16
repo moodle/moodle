@@ -1132,7 +1132,6 @@ span.editinstructions {
     }
 
     > div {
-        display: inline-block;
         float: right;
 
         > div {
@@ -1340,6 +1339,8 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 }
 
 .description .course-description-item {
+    @include font-size($small-font-size);
+
     background-color: $gray-100;
     padding-left: map-get($spacers, 3);
     padding-right: map-get($spacers, 3);
