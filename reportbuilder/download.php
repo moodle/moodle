@@ -42,18 +42,20 @@ $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/reportbuilder/download.php'));
 
 if ($reportpersistent->get('type') === \core_reportbuilder\local\report\base::TYPE_SYSTEM_REPORT) {
-    $systemreport = system_report_factory::create($reportpersistent->get('source'), $context);
+    $parameters = (array) json_decode($parameters);
+
+    // Re-create the exact report that is being downloaded.
+    $systemreport = system_report_factory::create($reportpersistent->get('source'), $context, $reportpersistent->get('component'),
+        $reportpersistent->get('area'), $reportpersistent->get('itemid'), $parameters);
+
     if (!$systemreport->can_be_downloaded()) {
         throw new \core_reportbuilder\report_access_exception();
     }
 
     // Combine original report parameters with 'download' parameter.
-    $reportparameters = ['download' => $download];
-    if ($parameters) {
-        $reportparameters = array_merge($reportparameters, (array) json_decode($parameters));
-    }
+    $parameters['download'] = $download;
 
-    $outputreport = new \core_reportbuilder\output\system_report($reportpersistent, $systemreport, $reportparameters);
+    $outputreport = new \core_reportbuilder\output\system_report($reportpersistent, $systemreport, $parameters);
     echo $PAGE->get_renderer('core_reportbuilder')->render($outputreport);
 } else {
     permission::require_can_view_report($reportpersistent);
