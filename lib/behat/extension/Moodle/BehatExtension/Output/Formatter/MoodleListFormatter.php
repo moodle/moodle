@@ -14,53 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace Moodle\BehatExtension\Output\Formatter;
+
+use Behat\Behat\EventDispatcher\Event\AfterOutlineTested;
+use Behat\Behat\EventDispatcher\Event\AfterScenarioTested;
+use Behat\Testwork\Output\Formatter;
+use Behat\Testwork\Output\Printer\OutputPrinter;
+
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
+
 /**
  * Feature step counter for distributing features between parallel runs.
  *
  * Use it with --dry-run (and any other selectors combination) to
  * get the results quickly.
  *
+ * @package core
  * @copyright  2015 onwards Rajesh Taneja
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace Moodle\BehatExtension\Output\Formatter;
-
-use Behat\Behat\EventDispatcher\Event\AfterFeatureTested;
-use Behat\Behat\EventDispatcher\Event\AfterOutlineTested;
-use Behat\Behat\EventDispatcher\Event\AfterScenarioTested;
-use Behat\Behat\EventDispatcher\Event\AfterStepTested;
-use Behat\Behat\EventDispatcher\Event\BeforeFeatureTested;
-use Behat\Behat\EventDispatcher\Event\BeforeOutlineTested;
-use Behat\Behat\EventDispatcher\Event\BeforeScenarioTested;
-use Behat\Behat\Tester\Result\ExecutedStepResult;
-use Behat\Testwork\Counter\Memory;
-use Behat\Testwork\Counter\Timer;
-use Behat\Testwork\EventDispatcher\Event\AfterExerciseCompleted;
-use Behat\Testwork\EventDispatcher\Event\AfterSuiteTested;
-use Behat\Testwork\EventDispatcher\Event\BeforeExerciseCompleted;
-use Behat\Testwork\EventDispatcher\Event\BeforeSuiteTested;
-use Behat\Testwork\Output\Exception\BadOutputPathException;
-use Behat\Testwork\Output\Formatter;
-use Behat\Testwork\Output\Printer\OutputPrinter;
-
 class MoodleListFormatter implements Formatter {
 
-    /**
-     * @var OutputPrinter
-     */
+    /** @var OutputPrinter */
     private $printer;
-    /**
-     * @var array
-     */
+
+    /** @var array */
     private $parameters;
-    /**
-     * @var string
-     */
+
+    /** @var string */
     private $name;
-    /**
-     * @var string
-     */
+
+    /** @var string */
     private $description;
 
     /**
@@ -80,46 +64,60 @@ class MoodleListFormatter implements Formatter {
 
     /**
      * Returns an array of event names this subscriber wants to listen to.
+     *
      * @return array The event names to listen to
      */
     public static function getSubscribedEvents() {
-        return array(
+        return [
 
             'tester.scenario_tested.after'     => 'afterScenario',
             'tester.outline_tested.after'      => 'afterOutlineExample',
-        );
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * Returns formatter name.
+     *
+     * @return string
      */
     public function getName() {
         return $this->name;
     }
 
     /**
-     * {@inheritdoc}
+     * Returns formatter description.
+     *
+     * @return string
      */
     public function getDescription() {
         return $this->description;
     }
 
     /**
-     * {@inheritdoc}
+     * Returns formatter output printer.
+     *
+     * @return OutputPrinter
      */
     public function getOutputPrinter() {
         return $this->printer;
     }
 
     /**
-     * {@inheritdoc}
+     * Sets formatter parameter.
+     *
+     * @param string $name
+     * @param mixed  $value
      */
     public function setParameter($name, $value) {
         $this->parameters[$name] = $value;
     }
 
     /**
-     * {@inheritdoc}
+     * Returns parameter name.
+     *
+     * @param string $name
+     *
+     * @return mixed
      */
     public function getParameter($name) {
         return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
@@ -128,7 +126,7 @@ class MoodleListFormatter implements Formatter {
     /**
      * Listens to "scenario.after" event.
      *
-     * @param ScenarioEvent $event
+     * @param AfterScenarioTested $event
      */
     public function afterScenario(AfterScenarioTested $event) {
         $scenario = $event->getScenario();
@@ -139,7 +137,7 @@ class MoodleListFormatter implements Formatter {
     /**
      * Listens to "outline.example.after" event.
      *
-     * @param OutlineExampleEvent $event
+     * @param AfterOutlineTested $event
      */
     public function afterOutlineExample(AfterOutlineTested $event) {
         $outline = $event->getOutline();

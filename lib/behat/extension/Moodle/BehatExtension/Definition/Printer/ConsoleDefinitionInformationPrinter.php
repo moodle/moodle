@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -17,23 +16,23 @@
 
 namespace Moodle\BehatExtension\Definition\Printer;
 
-use Behat\Behat\Definition\Definition;
-use Behat\Testwork\Suite\Suite;
 use Behat\Behat\Definition\Printer\ConsoleDefinitionPrinter;
+use Behat\Testwork\Suite\Suite;
+
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
 
 /**
  * Moodle console definition information printer.
+ *
  * Used in moodle for definition printing.
  *
- * @package    behat
+ * @package    core
  * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class ConsoleDefinitionInformationPrinter extends ConsoleDefinitionPrinter {
-    /**
-     * @var null|string
-     */
-    private $searchCriterion;
+    /** @var null|string */
+    private $searchcriterion;
 
     /**
      * Sets search criterion.
@@ -41,11 +40,14 @@ final class ConsoleDefinitionInformationPrinter extends ConsoleDefinitionPrinter
      * @param string $criterion
      */
     public function setSearchCriterion($criterion) {
-        $this->searchCriterion = $criterion;
+        $this->searchcriterion = $criterion;
     }
 
     /**
-     * {@inheritdoc}
+     * Prints definition.
+     *
+     * @param Suite        $suite
+     * @param Definition[] $definitions
      */
     public function printDefinitions(Suite $suite, $definitions) {
         $template = <<<TPL
@@ -55,7 +57,7 @@ final class ConsoleDefinitionInformationPrinter extends ConsoleDefinitionPrinter
 </div>
 TPL;
 
-        $search = $this->searchCriterion;
+        $search = $this->searchcriterion;
 
         // If there is a specific type (given, when or then) required.
         if (strpos($search, '&&') !== false) {
@@ -71,7 +73,7 @@ TPL;
 
             $pattern = $definition->getPattern();
 
-            if ($search && !preg_match('/'.str_replace(' ', '.*', preg_quote($search, '/').'/'), $pattern)) {
+            if ($search && !preg_match('/' . str_replace(' ', '.*', preg_quote($search, '/') . '/'), $pattern)) {
                 continue;
             }
 
@@ -85,14 +87,16 @@ TPL;
                 '/"\(\?P<([^>]*)>(.*?)"( |$)/',
                 function ($matches) {
                     return '"' . strtoupper($matches[1]) . '" ';
-                }, $pattern);
+                },
+                $pattern
+            );
 
-            $definitiontoprint[] = strtr($template, array(
+            $definitiontoprint[] = strtr($template, [
                 '{regex}'       => $pattern,
                 '{type}'        => str_pad($definition->getType(), 5, ' ', STR_PAD_LEFT),
                 '{description}' => $description ? $description : '',
                 '{apipath}'     => $definition->getPath()
-            ));
+            ]);
 
             $this->write(implode("\n", $definitiontoprint));
             unset($definitiontoprint);

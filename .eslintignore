@@ -19,7 +19,6 @@ lib/editor/tinymce/plugins/spellchecker/rpc.php
 lib/editor/tinymce/tiny_mce/
 lib/mlbackend/php/phpml/
 lib/adodb/
-lib/behat/extension/
 lib/bennu/
 lib/evalmath/
 lib/phpspreadsheet/
