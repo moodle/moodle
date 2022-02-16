@@ -16,6 +16,7 @@
 
 namespace core\output;
 
+use context_course;
 use moodle_page;
 use navigation_node;
 use moodle_url;
@@ -84,8 +85,21 @@ class participants_action_bar implements \renderable {
             return [];
         }
 
-        $nodes = $this->get_ordered_nodes();
+        // Pre-populate the formatted tertiary nav items with the "Enrolled users" node if user can view the participants page.
+        $coursecontext = context_course::instance($this->course->id);
+        $canviewparticipants = course_can_view_participants($coursecontext);
         $formattedcontent = [];
+        $enrolmentsheading = get_string('enrolments', 'enrol');
+        if ($canviewparticipants) {
+            $participantsurl = (new moodle_url('/user/index.php', ['id' => $this->course->id]))->out();
+            $formattedcontent[] = [
+                    $enrolmentsheading => [
+                            $participantsurl => get_string('enrolledusers', 'enrol'),
+                    ]
+            ];
+        }
+
+        $nodes = $this->get_ordered_nodes();
         foreach ($nodes as $description => $content) {
             list($stringid, $location) = explode(':', $description);
             $heading = get_string($stringid, $location);
@@ -107,14 +121,18 @@ class participants_action_bar implements \renderable {
                 }
             }
             if ($items) {
-                $formattedcontent[][$heading] = $items;
+                if ($heading === $enrolmentsheading) {
+                    // Merge the contents of the "Enrolments" group with the ones from the course settings nav.
+                    $formattedcontent[0][$heading] = array_merge($formattedcontent[0][$heading], $items);
+                } else {
+                    $formattedcontent[][$heading] = $items;
+                }
             }
         }
 
         // Need to do some funky code here to find out if we have added third party navigation nodes.
         $thirdpartynodearray = $this->get_thirdparty_node_array() ?: [];
-        $formattedcontent = array_merge($formattedcontent, $thirdpartynodearray);
-        return $formattedcontent;
+        return array_merge($formattedcontent, $thirdpartynodearray);
     }
 
     /**
