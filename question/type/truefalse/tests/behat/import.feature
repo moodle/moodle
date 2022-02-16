@@ -20,7 +20,7 @@ Feature: Test importing True/False questions
   @javascript @_file_upload
   Scenario: import a True/False question.
     When I navigate to "Question bank" in current page administration
-    And I select "Import" from the "questionbankactionselect" singleselect
+    And I select "Import" from the "Question bank tertiary navigation" singleselect
     And I set the field "id_format_xml" to "1"
     And I upload "question/type/truefalse/tests/fixtures/testquestion.moodle.xml" file to "Import" filemanager
     And I press "id_submitbutton"

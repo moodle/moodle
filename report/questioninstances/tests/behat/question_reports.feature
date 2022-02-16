@@ -44,7 +44,7 @@ Feature: A Teacher can generate question instance reports
   @javascript
   Scenario: Generate report displaying hidden questions
     Given I am on the "Test quiz Q001" "quiz activity" page logged in as "admin"
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I click on "Edit" "link" in the "TF" "table_row"
     And I choose "Delete" in the open action menu
     And I press "Delete"

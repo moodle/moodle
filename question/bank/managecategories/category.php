@@ -146,7 +146,9 @@ if ($qcobject->catform->is_cancelled()) {
     redirect($thispageurl);
 }
 
-if ($param->edit !== null) {
+if ($param->edit !== null || $qcobject->catform->is_submitted()) {
+    // In the is_submitted case, we only get here if it was submitted,
+    // but not valid, so we need to show the validation error.
     $PAGE->navbar->add(get_string('editingcategory', 'question'));
 }
 
@@ -163,8 +165,11 @@ $qbankaction = new \core_question\output\qbank_action_menu($url);
 echo $renderer->render($qbankaction);
 
 // Display the UI.
-if ($param->edit !== null) {
-    $qcobject->edit_single_category($param->edit);
+if ($param->edit !== null || $qcobject->catform->is_submitted()) {
+    // In the is_submitted case, we only get here if it was submitted,
+    // but not valid, so we need to show the validation error.
+    // In this case, category id is in the 'id' hidden filed.
+    $qcobject->edit_single_category($param->edit ?? required_param('id', PARAM_INT));
 } else if ($questionstomove) {
     $qcobject->display_move_form($questionstomove, $category);
 } else {

@@ -26,7 +26,7 @@ Feature: Test exporting questions using Aiken format.
 
   Scenario: Aiken export
     When I navigate to "Question bank" in current page administration
-    And I select "Export" from the "questionbankactionselect" singleselect
+    And I select "Export" from the "Question bank tertiary navigation" singleselect
     And I set the field "id_format_aiken" to "1"
     When I press "Export questions to file"
     Then following "click here" should download between "68" and "70" bytes

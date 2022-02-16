@@ -68,6 +68,7 @@ class behat_mod_quiz extends behat_question_base {
      * | User overrides    | Quiz name                                   | The manage user overrides page               |
      * | Grades report     | Quiz name                                   | The overview report for a quiz               |
      * | Responses report  | Quiz name                                   | The responses report for a quiz              |
+     * | Manual grading report | Quiz name                               | The manual grading report for a quiz         |
      * | Statistics report | Quiz name                                   | The statistics report for a quiz             |
      * | Attempt review    | Quiz name > username > [Attempt] attempt no | Review page for a given attempt (review.php) |
      *

@@ -28,7 +28,7 @@ Feature: A teacher can put questions in categories in the question bank
 
   Scenario: A new question category can be created
     When I navigate to "Question bank" in current page administration
-    And I select "Categories" from the "questionbankactionselect" singleselect
+    And I select "Categories" from the "Question bank tertiary navigation" singleselect
     And I follow "Add category"
     And I set the following fields to these values:
       | Name            | New Category 1    |
@@ -46,7 +46,7 @@ Feature: A teacher can put questions in categories in the question bank
 
   Scenario: A question category can be edited
     When I navigate to "Question bank" in current page administration
-    And I select "Categories" from the "questionbankactionselect" singleselect
+    And I select "Categories" from the "Question bank tertiary navigation" singleselect
     And I click on "Edit this category" "link" in the "Subcategory" "list_item"
     And the field "parent" matches value "&nbsp;&nbsp;&nbsp;Default for C1"
     And I set the following fields to these values:
@@ -58,13 +58,13 @@ Feature: A teacher can put questions in categories in the question bank
 
   Scenario: An empty question category can be deleted
     When I navigate to "Question bank" in current page administration
-    And I select "Categories" from the "questionbankactionselect" singleselect
+    And I select "Categories" from the "Question bank tertiary navigation" singleselect
     And I click on "Delete" "link" in the "Subcategory" "list_item"
     Then I should not see "Subcategory"
 
   Scenario: An non-empty question category can be deleted if you move the contents elsewhere
     When I navigate to "Question bank" in current page administration
-    And I select "Categories" from the "questionbankactionselect" singleselect
+    And I select "Categories" from the "Question bank tertiary navigation" singleselect
     And I click on "Delete" "link" in the "Used category" "list_item"
     And I should see "The category 'Used category' contains 1 questions"
     And I press "Save in category"
