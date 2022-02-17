@@ -21,7 +21,10 @@
  * @category   dml
  * @copyright  2018 Srdjan Janković, Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \mysqli_native_moodle_database
  */
+
+namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +38,7 @@ require_once(__DIR__.'/fixtures/read_slave_moodle_database_mock_mysqli.php');
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_dml_mysqli_read_slave_testcase extends base_testcase {
+class dml_mysqli_read_slave_test extends \base_testcase {
     /**
      * Test readonly handle is not used for reading from special pg_*() call queries,
      * pg_try_advisory_lock and pg_advisory_unlock.
@@ -80,7 +83,7 @@ class core_dml_mysqli_read_slave_testcase extends base_testcase {
             'connecttimeout' => 1
         ];
 
-        $db2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        $db2 = \moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
         $db2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
         $this->assertTrue(count($db2->get_records('user')) > 0);
     }

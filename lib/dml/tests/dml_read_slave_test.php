@@ -24,6 +24,8 @@
  * @coversDefaultClass \moodle_temptables
  */
 
+namespace core;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/fixtures/read_slave_moodle_database_table_names.php');
