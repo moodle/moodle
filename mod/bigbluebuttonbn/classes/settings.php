@@ -193,6 +193,18 @@ class settings {
                 $item,
                 $settingsgeneral
             );
+            $settingsgeneral->add($item);
+            $item = new admin_setting_configcheckbox(
+                'bigbluebuttonbn_welcome_editable',
+                get_string('config_welcome_editable', 'bigbluebuttonbn'),
+                get_string('config_welcome_editable_description', 'bigbluebuttonbn'),
+                1,
+            );
+            $this->add_conditional_element(
+                'welcome_editable',
+                $item,
+                $settingsgeneral
+            );
         }
         return $settingsgeneral;
     }

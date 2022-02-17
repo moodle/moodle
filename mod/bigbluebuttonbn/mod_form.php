@@ -317,10 +317,15 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
      * @return void
      */
     private function bigbluebuttonbn_mform_add_block_room_room(MoodleQuickForm &$mform, array $cfg): void {
-        $field = ['type' => 'textarea', 'name' => 'welcome', 'data_type' => PARAM_CLEANHTML,
-            'description_key' => 'mod_form_field_welcome'];
-        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-            $field['description_key'], $cfg['welcome_default'], ['wrap' => 'virtual', 'rows' => 5, 'cols' => '60']);
+        $field = ['type' => 'hidden', 'name' => 'welcome', 'data_type' => PARAM_INT,
+            'description_key' => null];
+        if ($cfg['welcome_editable']) {
+            $field['type'] = 'textarea';
+            $field['data_type'] = PARAM_CLEANHTML;
+            $field['description_key'] = 'mod_form_field_welcome';
+            $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+                $field['description_key'], $cfg['welcome_default'], ['wrap' => 'virtual', 'rows' => 5, 'cols' => '60']);
+        }
         $field = ['type' => 'hidden', 'name' => 'voicebridge', 'data_type' => PARAM_INT,
             'description_key' => null];
         if ($cfg['voicebridge_editable']) {

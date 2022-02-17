@@ -797,6 +797,9 @@ EOF;
      */
     public function get_welcome_message(): string {
         $welcomestring = $this->get_instance_var('welcome');
+        if (!config::get('welcome_editable') || empty($welcomestring)) {
+            $welcomestring = config::get('welcome_default');
+        }
         if (empty($welcomestring)) {
             $welcomestring = get_string('mod_form_field_welcome_default', 'bigbluebuttonbn');
         }
