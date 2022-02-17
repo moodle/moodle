@@ -46,7 +46,7 @@
     }
 }}
 <nav class="moremenu navigation">
-    <ul id="moremenu-{{moremenuid}}-{{navbarstyle}}" role="menubar" class="nav more-nav {{navbarstyle}}">
+    <ul id="moremenu-{{moremenuid}}-{{navbarstyle}}" role="{{#istablist}}tablist{{/istablist}}{{^istablist}}menubar{{/istablist}}" class="nav more-nav {{navbarstyle}}">
         {{#nodecollection}}
             {{#children}}
                 {{> core/moremenu_children}}
@@ -56,7 +56,7 @@
             {{> core/moremenu_children}}
         {{/nodearray}}
         <li role="none" class="nav-item dropdown dropdownmoremenu d-none" data-region="morebutton">
-            <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}}" href="#" id="moremenu-dropdown-{{moremenuid}}" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="-1">
+            <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}}" href="#" id="moremenu-dropdown-{{moremenuid}}" role="{{#istablist}}tab{{/istablist}}{{^istablist}}menuitem{{/istablist}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="-1">
                 {{#str}}moremenu, core{{/str}}
             </a>
             <ul class="dropdown-menu dropdown-menu-left" data-region="moredropdown" aria-labelledby="moremenu-dropdown-{{moremenuid}}" role="menu">
