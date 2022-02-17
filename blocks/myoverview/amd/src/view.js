@@ -783,7 +783,7 @@ const registerEventListeners = (root, page) => {
             activeSearch(clearIcon);
             initializePagedContent(root, searchFunctionalityCurry(), input.value.trim());
         }
-    }, 300));
+    }, 1000));
 };
 
 /**
