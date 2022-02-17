@@ -15,7 +15,7 @@ Feature: Add badges to the system
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     Given I click on "Site badges" "link" in the "Navigation" "block"
-    Then I should see "There are no badges available."
+    Then I should see "There are currently no badges available for users to earn."
 
   @javascript @_file_upload
   Scenario: Add a badge
@@ -46,7 +46,7 @@ Feature: Add badges to the system
     And I should see "testuser@example.com"
     And I follow "Manage badges"
     And I should see "Number of badges available: 1"
-    And I should not see "There are no badges available."
+    And I should not see "There are currently no badges available for users to earn."
 
   @javascript @_file_upload
   Scenario: Add a badge related
@@ -159,7 +159,7 @@ Feature: Add badges to the system
     And I should not see "Create badge"
     And I follow "Manage badges"
     And I should see "Number of badges available: 1"
-    And I should not see "There are no badges available."
+    And I should not see "There are currently no badges available for users to earn."
     # See buttons from the "Site badges" page.
     And I am on homepage
     When I click on "Site pages" "list_item" in the "Navigation" "block"
