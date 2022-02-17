@@ -1,5 +1,9 @@
 This files describes API changes for the core question engine.
 
+=== 4.0 ===
+1) A new optional parameter $extraselect has been added as a part of load_questions_usages_where_question_in_state()
+   method in question/engine/datalib.php, anything passed here will be added to the SELECT list, use this to return extra data.
+
 === 3.9 ===
 
 1) In the past, whenever a question_usage_by_activity was loaded from the database,
