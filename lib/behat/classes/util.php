@@ -132,6 +132,12 @@ class behat_util extends testing_util {
         set_config('curlsecurityblockedhosts', '');
         set_config('curlsecurityallowedport', '');
 
+        // Execute all the adhoc tasks.
+        while ($task = \core\task\manager::get_next_adhoc_task(time())) {
+            $task->execute();
+            \core\task\manager::adhoc_task_complete($task);
+        }
+
         // Keeps the current version of database and dataroot.
         self::store_versions_hash();
 
