@@ -34,7 +34,7 @@
     "jsdoc": "^3.6.7",
     "jsdoc-to-markdown": "^7.0.1",
     "jshint": "^2.11.0",
-    "node-sass": "^4.14.0",
+    "node-sass": "^7.0.1",
     "semver": "7.3.2",
     "shifter": "https://github.com/andrewnicols/shifter/archive/v1.2.0_moodle-0.tar.gz",
     "stylelint": "13.3.3",
