@@ -67,4 +67,13 @@ class renderer extends \plugin_renderer_base {
         return $this->render_from_template('qbank_editquestion/question_info', $questiondata);
     }
 
+    /**
+     * Render status dropdown.
+     *
+     * @param array $dropdownoptions
+     * @return bool|string
+     */
+    public function render_status_dropdown($dropdownoptions) {
+        return $this->render_from_template('qbank_editquestion/question_status_dropdown', $dropdownoptions);
+    }
 }
