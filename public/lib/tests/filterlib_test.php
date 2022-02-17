@@ -592,7 +592,6 @@ final class filterlib_test extends \advanced_testcase {
         global $FILTERLIB_PRIVATE, $DB;
 
         // Use preload cache...
-        $FILTERLIB_PRIVATE = new \stdClass();
         filter_preload_activities($modinfo);
 
         // Get data and check no queries are made.
@@ -603,7 +602,7 @@ final class filterlib_test extends \advanced_testcase {
         $this->assertEquals($before, $after);
 
         // Repeat without cache and check it makes queries now.
-        $FILTERLIB_PRIVATE = new \stdClass;
+        $FILTERLIB_PRIVATE = null;
         $before = $DB->perf_get_reads();
         $filters1 = filter_get_active_in_context($activity1context);
         $filters2 = filter_get_active_in_context($activity2context);
@@ -673,6 +672,98 @@ final class filterlib_test extends \advanced_testcase {
         filter_set_local_config('frog', $coursecontext->id, 'q', 'x');
         filter_set_local_config('frog', $catcontext->id, 'q', 'z');
         $this->assert_matches($modinfo, $activity1context, $activity2context);
+    }
+
+    /**
+     * The test test_preload() checks if the result from the
+     * preloaded cache is the same as the result from calling the standard
+     * function filter_get_active_in_context without cache in many aspects but never
+     * looks at the order. Here we do this.
+     *
+     * @covers ::filter_get_active_in_context
+     * @covers ::filter_preload_activities
+     */
+    public function test_sorting_of_preload(): void {
+        global $FILTERLIB_PRIVATE;
+
+        $this->resetAfterTest();
+        $this->remove_all_filters_from_config();
+        [
+            'course' => $course,
+            'activity1context' => $activity1context,
+        ] = $this->setup_preload_activities_test();
+
+        // Setup fixture.
+        filter_set_global_state('one', TEXTFILTER_OFF);
+        filter_set_global_state('two', TEXTFILTER_OFF);
+        filter_set_global_state('three', TEXTFILTER_OFF);
+        // Here change the order, this simulates user behaviour and affects the order of rows in filter_active.
+        filter_set_local_state('two', $activity1context->id, TEXTFILTER_ON);
+        filter_set_local_state('three', $activity1context->id, TEXTFILTER_ON);
+        filter_set_local_state('one', $activity1context->id, TEXTFILTER_ON);
+
+        $expected = [
+            'one' => [],
+            'two' => [],
+            'three' => [],
+        ];
+
+        // Test order of filters in a given context.
+        $filters = filter_get_active_in_context($activity1context);
+        $this->assertSame($expected, $filters);
+
+        // Clear cache.
+        $FILTERLIB_PRIVATE = null;
+
+        // Test order of filters from course activities preload.
+        $modinfo = new \course_modinfo($course, 2);
+        filter_preload_activities($modinfo);
+        $filters = filter_get_active_in_context($activity1context);
+        $this->assertSame($expected, $filters);
+    }
+
+    /**
+     * Test that filter sorting is correct when one filter is left at its site-level
+     * default and another is overridden at course level. This mirrors the original
+     * bug scenario described in MDL-73856.
+     *
+     * @covers ::filter_get_active_in_context
+     * @covers ::filter_preload_activities
+     */
+    public function test_sorting_of_preload_with_course_override(): void {
+        global $FILTERLIB_PRIVATE;
+
+        $this->resetAfterTest();
+        $this->remove_all_filters_from_config();
+        [
+            'course' => $course,
+            'coursecontext' => $coursecontext,
+            'activity1context' => $activity1context,
+        ] = $this->setup_preload_activities_test();
+
+        // Setup fixture.
+        filter_set_global_state('urltolink', TEXTFILTER_ON);
+        filter_set_global_state('mediaplugin', TEXTFILTER_ON);
+        // Override mediaplugin at course level, creating a course-context filter_active row.
+        filter_set_local_state('mediaplugin', $coursecontext->id, TEXTFILTER_ON);
+
+        $expected = [
+            'urltolink' => [],
+            'mediaplugin' => [],
+        ];
+
+        // Test order of filters in a given context.
+        $filters = filter_get_active_in_context($activity1context);
+        $this->assertSame($expected, $filters);
+
+        // Clear cache.
+        $FILTERLIB_PRIVATE = null;
+
+        // Test order of filters from course activities preload.
+        $modinfo = new \course_modinfo($course, 2);
+        filter_preload_activities($modinfo);
+        $filters = filter_get_active_in_context($activity1context);
+        $this->assertSame($expected, $filters);
     }
 
     public function test_filter_delete_all_for_filter(): void {
