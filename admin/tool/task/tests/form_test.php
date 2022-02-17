@@ -39,237 +39,248 @@ class tool_task_form_testcase extends advanced_testcase {
      * Test validations for minute field.
      */
     public function test_validate_fields_minute() {
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '*');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '1');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '65');
-        $this->assertFalse($valid);
+        $checker = new \tool_task\scheduled_checker_task();
+        $checker->set_minute('*');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('1');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('65');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MINUTE));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '*/');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '*/1');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '*/20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '*/65');
-        $this->assertFalse($valid);
+        $checker->set_minute('*/');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('*/1');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('*/20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('*/60');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MINUTE));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '1,2');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '2,20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '20,30,45');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '65,20,30');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '25,75');
-        $this->assertFalse($valid);
+        $checker->set_minute('1,2');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('2,20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('20,30,45');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('65,20,30');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('25,75');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MINUTE));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '1-2');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '2-20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '20-30');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '65-20');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('minute', '25-75');
-        $this->assertFalse($valid);
+        $checker->set_minute('1-2');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('2-20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('20-30');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('65-20');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MINUTE));
+        $checker->set_minute('25-75');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MINUTE));
     }
 
     /**
      * Test validations for minute hour.
      */
     public function test_validate_fields_hour() {
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '*');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '1');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '65');
-        $this->assertFalse($valid);
+        $checker = new \tool_task\scheduled_checker_task();
+        $checker->set_hour('*');
+        $this->assertTrue($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('1');
+        $this->assertTrue($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('60');
+        $this->assertFalse($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('65');
+        $this->assertFalse($checker->is_valid($checker::FIELD_HOUR));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '*/');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '*/1');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '*/20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '*/65');
-        $this->assertFalse($valid);
+        $checker->set_hour('*/');
+        $this->assertFalse($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('*/1');
+        $this->assertTrue($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('*/20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('*/60');
+        $this->assertFalse($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('*/65');
+        $this->assertFalse($checker->is_valid($checker::FIELD_HOUR));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '1,2');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '2,20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '20,30,45');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '65,20,30');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '25,75');
-        $this->assertFalse($valid);
+        $checker->set_hour('1,2');
+        $this->assertTrue($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('2,20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('20,30,45');
+        $this->assertFalse($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('65,20,30');
+        $this->assertFalse($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('25,75');
+        $this->assertFalse($checker->is_valid($checker::FIELD_HOUR));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '1-2');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '2-20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '20-30');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '65-20');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('hour', '25-75');
-        $this->assertFalse($valid);
+        $checker->set_hour('1-2');
+        $this->assertTrue($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('2-20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('20-30');
+        $this->assertFalse($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('65-20');
+        $this->assertFalse($checker->is_valid($checker::FIELD_HOUR));
+        $checker->set_hour('24-75');
+        $this->assertFalse($checker->is_valid($checker::FIELD_HOUR));
     }
 
     /**
      * Test validations for day field.
      */
     public function test_validate_fields_day() {
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '*');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '1');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '65');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '35');
-        $this->assertFalse($valid);
+        $checker = new \tool_task\scheduled_checker_task();
+        $checker->set_day('*');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('1');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('65');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('35');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAY));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '*/');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '*/1');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '*/20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '*/65');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '*/35');
-        $this->assertFalse($valid);
+        $checker->set_day('*/');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('*/1');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('*/20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('*/65');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('*/35');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAY));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '1,2');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '2,20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '20,30,25');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '65,20,30');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '25,35');
-        $this->assertFalse($valid);
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '1-2');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '2-20');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '20-30');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '65-20');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('day', '25-35');
-        $this->assertFalse($valid);
+        $checker->set_day('1,2');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('2,20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('20,30,25');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('65,20,30');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('25,35');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAY));
+
+        $checker->set_day('1-2');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('2-20');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('20-30');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('65-20');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAY));
+        $checker->set_day('25-35');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAY));
     }
 
     /**
      * Test validations for month field.
      */
     public function test_validate_fields_month() {
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '*');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '1');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '10');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '13');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '35');
-        $this->assertFalse($valid);
+        $checker = new \tool_task\scheduled_checker_task();
+        $checker->set_month('*');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('1');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('10');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('13');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('35');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MONTH));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '*/');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '*/1');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '*/12');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '*/13');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '*/35');
-        $this->assertFalse($valid);
+        $checker->set_month('*/');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('*/1');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('*/12');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('*/13');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('*/35');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MONTH));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '1,2');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '2,11');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '2,10,12');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '65,2,13');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '25,35');
-        $this->assertFalse($valid);
+        $checker->set_month('1,2');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('2,11');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('2,10,12');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('65,2,13');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('25,35');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MONTH));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '1-2');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '2-12');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '3-6');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '65-2');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('month', '25-26');
-        $this->assertFalse($valid);
+        $checker->set_month('1-2');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('2-12');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('3-6');
+        $this->assertTrue($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('65-2');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MONTH));
+        $checker->set_month('25-26');
+        $this->assertFalse($checker->is_valid($checker::FIELD_MONTH));
     }
 
     /**
      * Test validations for dayofweek field.
      */
     public function test_validate_fields_dayofweek() {
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '*');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '0');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '1');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '6');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '7');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '20');
-        $this->assertFalse($valid);
+        $checker = new \tool_task\scheduled_checker_task();
+        $checker->set_day_of_week('*');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('0');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('1');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('6');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('7');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('20');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '*/');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '*/1');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '*/6');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '*/13');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '*/35');
-        $this->assertFalse($valid);
+        $checker->set_day_of_week('*/');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('*/1');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('*/6');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('*/7');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('*/13');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('*/35');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '1,2');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '2,6');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '2,6,3');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '65,2,13');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '25,35');
-        $this->assertFalse($valid);
+        $checker->set_day_of_week('1,2');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('2,6');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('2,6,3');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('65,2,13');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('25,35');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
 
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '1-2');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '2-6');
-        $this->assertTrue($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '65-2');
-        $this->assertFalse($valid);
-        $valid = \tool_task_edit_scheduled_task_form::validate_fields('dayofweek', '3-7');
-        $this->assertFalse($valid);
+        $checker->set_day_of_week('1-2');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('2-6');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('65-2');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('3-7');
+        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
     }
 }
-

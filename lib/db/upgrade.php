@@ -4084,6 +4084,27 @@ privatefiles,moodle|/user/files.php';
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2022021100.01);
+
+    }
+
+    if ($oldversion < 2022021100.02) {
+        $table = new xmldb_table('task_scheduled');
+
+        // Changing precision of field minute on table task_scheduled to (200).
+        $field = new xmldb_field('minute', XMLDB_TYPE_CHAR, '200', null, XMLDB_NOTNULL, null, null, 'blocking');
+        $dbman->change_field_precision($table, $field);
+        // Changing precision of field hour on table task_scheduled to (70).
+        $field = new xmldb_field('hour', XMLDB_TYPE_CHAR, '70', null, XMLDB_NOTNULL, null, null, 'minute');
+        $dbman->change_field_precision($table, $field);
+        // Changing precision of field day on table task_scheduled to (90).
+        $field = new xmldb_field('day', XMLDB_TYPE_CHAR, '90', null, XMLDB_NOTNULL, null, null, 'hour');
+        $dbman->change_field_precision($table, $field);
+        // Changing precision of field month on table task_scheduled to (30).
+        $field = new xmldb_field('month', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, 'day');
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022021100.02);
     }
 
     return true;
