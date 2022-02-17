@@ -326,6 +326,15 @@ trait moodle_read_slave_trait {
                     if (isset($this->written[$tablename])) {
                         if ($this->slavelatency) {
                             $now = $now ?: microtime(true);
+                            // Paranoid check.
+                            if ($this->written[$tablename] === true) {
+                                debugging(
+                                    "$tablename last written set to true outside transaction - should not happen!",
+                                    DEBUG_DEVELOPER
+                                );
+                                $this->written[$tablename] = $now;
+                                return false;
+                            }
                             if ($now - $this->written[$tablename] < $this->slavelatency) {
                                 return false;
                             }
@@ -339,7 +348,6 @@ trait moodle_read_slave_trait {
                 return true;
             case SQL_QUERY_INSERT:
             case SQL_QUERY_UPDATE:
-                // If we are in transaction we cannot set the written time yet.
                 $now = $this->slavelatency && !$this->transactions ? microtime(true) : true;
                 foreach ($this->table_names($sql) as $tablename) {
                     $this->written[$tablename] = $now;
@@ -364,23 +372,15 @@ trait moodle_read_slave_trait {
      * @throws dml_transaction_exception Creates and throws transaction related exceptions.
      */
     public function commit_delegated_transaction(moodle_transaction $transaction) {
-        parent::commit_delegated_transaction($transaction);
-
-        if ($this->transactions) {
-            return;
-        }
-
-        if (!$this->slavelatency) {
-            return;
-        }
-
-        $now = null;
-        foreach ($this->written as $tablename => $when) {
-            if ($when === true) {
-                $now = $now ?: microtime(true);
+        if ($this->slavelatency && $this->written) {
+            // Adjust the written time.
+            $now = microtime(true);
+            foreach ($this->written as $tablename => $when) {
                 $this->written[$tablename] = $now;
             }
         }
+
+        parent::commit_delegated_transaction($transaction);
     }
 
     /**
