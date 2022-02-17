@@ -42,14 +42,21 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $resetall = optional_param('resetall', false, PARAM_BOOL);
 
-$header = "$SITE->shortname: ".get_string('myhome')." (".get_string('mypage', 'admin').")";
+$pagetitle = get_string('mypage', 'admin');
 
 $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');
 admin_externalpage_setup('mypage', '', null, '', array('pagelayout' => 'mydashboard'));
+$PAGE->add_body_class('limitedwidth');
+$PAGE->set_pagetype('my-index');
+$PAGE->blocks->add_region('content');
+$PAGE->set_title($pagetitle);
+$PAGE->set_heading($pagetitle);
+$PAGE->has_secondary_navigation_setter(false);
+$PAGE->set_primary_active_tab('myhome');
 
 // If we are resetting all, just output a progress bar.
 if ($resetall && confirm_sesskey()) {
-    echo $OUTPUT->header($header);
+    echo $OUTPUT->header($pagetitle);
     echo $OUTPUT->heading(get_string('resettingdashboards', 'my'), 3);
 
     $progressbar = new progress_bar();
@@ -62,13 +69,6 @@ if ($resetall && confirm_sesskey()) {
     echo $OUTPUT->footer();
     die();
 }
-
-// Override pagetype to show blocks properly.
-$PAGE->set_pagetype('my-index');
-
-$PAGE->set_title($header);
-$PAGE->set_heading($header);
-$PAGE->blocks->add_region('content');
 
 // Get the My Moodle page info.  Should always return something unless the database is broken.
 if (!$currentpage = my_get_page(null, MY_PAGE_PRIVATE)) {
