@@ -175,7 +175,7 @@ class meeting_test extends \advanced_testcase {
         $this->assertEquals($canjoin['useringroup'], $meeting->can_join());
         if ($meeting->can_join()) {
             $meetinginfo = $meeting->get_meeting_info();
-            $this->assertStringContainsString("This conference is in progress", $meetinginfo->statusmessage);
+            $this->assertStringContainsString("The session is in progress.", $meetinginfo->statusmessage);
         }
         if ($groupname) {
             $this->setUser($usernotingroup);
