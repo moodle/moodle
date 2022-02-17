@@ -62,7 +62,8 @@ class get_recordings extends external_api {
      * @param string|null $tools
      * @param int|null $groupid
      * @return array of warnings and status result
-     * @throws \webservice_access_exception
+     * @throws \invalid_parameter_exception
+     * @throws restricted_context_exception
      */
     public static function execute(
         int $bigbluebuttonbnid = 0,

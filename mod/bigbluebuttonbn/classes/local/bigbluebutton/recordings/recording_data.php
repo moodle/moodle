@@ -47,7 +47,6 @@ class recording_data {
      * @param instance|null $instance
      * @param int $courseid
      * @return array
-     * @throws \coding_exception
      */
     public static function get_recording_table(array $recordings, array $tools, instance $instance = null,
         int $courseid = 0): array {

@@ -407,8 +407,6 @@ class recording extends persistent {
      *
      * @param instance $targetinstance
      * @return recording
-     * @throws \coding_exception
-     * @throws \core\invalid_persistent_exception
      */
     public function create_imported_recording(instance $targetinstance) {
         $recordingrec = $this->to_record();
@@ -611,7 +609,6 @@ class recording extends persistent {
      * Is protected. Return null if protected is not implemented.
      *
      * @return bool|null
-     * @throws \coding_exception
      */
     protected function get_protected() {
         $protectedtext = $this->metadata_get('protected');
@@ -622,7 +619,6 @@ class recording extends persistent {
      * Start time
      *
      * @return mixed|null
-     * @throws \coding_exception
      */
     protected function get_starttime() {
         return $this->metadata_get('starttime');
@@ -632,7 +628,6 @@ class recording extends persistent {
      * Start time
      *
      * @return mixed|null
-     * @throws \coding_exception
      */
     protected function get_endtime() {
         return $this->metadata_get('endtime');
@@ -642,7 +637,6 @@ class recording extends persistent {
      * Is published
      *
      * @return bool
-     * @throws \coding_exception
      */
     protected function get_published() {
         $publishedtext = $this->metadata_get('published');
@@ -654,7 +648,6 @@ class recording extends persistent {
      *
      * @param string $fieldname
      * @param mixed $value
-     * @throws \coding_exception
      */
     protected function metadata_set($fieldname, $value) {
         // Can we can change the metadata on the imported record ?

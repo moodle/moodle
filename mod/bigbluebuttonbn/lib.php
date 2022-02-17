@@ -408,7 +408,8 @@ function bigbluebuttonbn_view($bigbluebuttonbn, $course, $cm, $context) {
     ];
 
     $event = \mod_bigbluebuttonbn\event\course_module_viewed::create($params); // Fix event name.
-    $event->add_record_snapshot('course_modules', $cm->get_course_module_record());
+    $cmrecord = $cm->get_course_module_record();
+    $event->add_record_snapshot('course_modules', $cmrecord);
     $event->add_record_snapshot('course', $course);
     $event->add_record_snapshot('bigbluebuttonbn', $bigbluebuttonbn);
     $event->trigger();

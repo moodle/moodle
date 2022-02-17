@@ -401,7 +401,6 @@ class bigbluebutton_proxy extends proxy_base {
      * @param string|null $presentationurl
      * @return array
      * @throws bigbluebutton_exception
-     * @throws server_not_available_exception
      */
     public static function create_meeting(
         array $data,
