@@ -13973,12 +13973,12 @@ body:not(.editing) .sitetopic ul.section {
   position: relative; }
 
 .course-content .current::before {
+  border-left: #0f6cbf 3px solid;
+  bottom: 0;
   content: "";
-  border-left: #0f6cbf 2px solid;
+  left: -8px;
   position: absolute;
-  left: -1.25rem;
-  top: 0;
-  bottom: 0; }
+  top: 0; }
 
 .course-content .section-summary {
   border: 1px solid #dee2e6;
