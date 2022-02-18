@@ -702,14 +702,14 @@ class secondary_test extends \advanced_testcase {
             "Container node with external action and external children" => [
                 [
                     'parentnode1' => [
-                        'action' => '/test.php',
+                        'action' => 'https://example.com',
                         'children' => [
                             'child2.1' => 'https://example.org',
                             'child2.2' => 'https://example.net',
                         ]
                     ]
                 ],
-                ['parentnode', 'parentnode1']
+                ['parentnode', 'parentnode1', 'child2.1', 'child2.2']
             ],
             "Container node with external action and internal children" => [
                 [
@@ -722,6 +722,18 @@ class secondary_test extends \advanced_testcase {
                     ]
                 ],
                 ['parentnode', 'parentnode1', 'child2.1', 'child2.2']
+            ],
+            "Container node with internal actions and internal children" => [
+                [
+                    'parentnode1' => [
+                        'action' => '/test.php',
+                        'children' => [
+                            'child2.1' => '/course.php',
+                            'child2.2' => '/admin.php',
+                        ]
+                    ]
+                ],
+                ['parentnode', 'parentnode1']
             ],
         ];
     }
