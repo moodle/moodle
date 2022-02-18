@@ -79,7 +79,7 @@ class activity_information implements renderable, templatable {
         $data = $this->build_completion_data();
 
         $data->cmid = $this->cminfo->id;
-        $data->activityname = $this->cminfo->name;
+        $data->activityname = $this->cminfo->get_formatted_name();
         $this->build_dates_data($data);
         $data->hasdates = !empty($this->activitydates);
 
@@ -145,7 +145,7 @@ class activity_information implements renderable, templatable {
         // Set an accessible description for manual completions with overridden completion state.
         if (!$data->isautomatic && $data->overrideby) {
             $setbydata = (object)[
-                'activityname' => $this->cminfo->name,
+                'activityname' => $this->cminfo->get_formatted_name(),
                 'setby' => $data->overrideby,
             ];
             $setbylangkey = $data->overallcomplete ? 'completion_setby:manual:done' : 'completion_setby:manual:markdone';
