@@ -11,6 +11,7 @@ $query = trim(optional_param('query', '', PARAM_NOTAGS));  // Search string
 
 $context = context_system::instance();
 $PAGE->set_context($context);
+$PAGE->set_secondary_navigation(true, true);
 
 $hassiteconfig = has_capability('moodle/site:config', $context);
 
@@ -91,7 +92,7 @@ if ($showsettingslinks) {
     if ($node) {
         $secondarynavigation = false;
         if ($PAGE->has_secondary_navigation()) {
-            $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs');
+            $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, true);
             $secondarynavigation = $moremenu->export_for_template($OUTPUT);
         }
         echo $OUTPUT->render_from_template('core/settings_link_page',

@@ -36,7 +36,7 @@ $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->navbar->add($title);
-$PAGE->has_secondary_navigation_setter(false);
+$PAGE->set_secondary_navigation(false);
 
 // This allows the webserver to dictate wether the http status should remain
 // what it would have been, or force it to be a 404. Under other conditions
