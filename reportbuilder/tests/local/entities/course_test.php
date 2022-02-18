@@ -22,7 +22,6 @@ use advanced_testcase;
 use coding_exception;
 use context_system;
 use lang_string;
-use ReflectionClass;
 use core_reportbuilder\course_entity_report;
 use core_reportbuilder\manager;
 use core_reportbuilder\testable_system_report_table;
@@ -415,13 +414,11 @@ class course_test extends advanced_testcase {
         $tablejoin = "JOIN {course} c2 ON c2.id = c1.id";
         $courseentity->add_join($tablejoin);
 
-        $method = (new ReflectionClass(course::class))->getMethod('get_joins');
-        $method->setAccessible(true);
-        $this->assertEquals([$tablejoin], $method->invoke($courseentity));
+        $this->assertEquals([$tablejoin], $courseentity->get_joins());
     }
 
     /**
-     * Test adding multiple join
+     * Test adding multiple joins
      */
     public function test_add_joins(): void {
         $courseentity = (new course())
@@ -433,9 +430,25 @@ class course_test extends advanced_testcase {
         ];
         $courseentity->add_joins($tablejoins);
 
-        $method = (new ReflectionClass(course::class))->getMethod('get_joins');
-        $method->setAccessible(true);
-        $this->assertEquals($tablejoins, $method->invoke($courseentity));
+        $this->assertEquals($tablejoins, $courseentity->get_joins());
+    }
+
+    /**
+     * Test adding duplicate joins
+     */
+    public function test_add_duplicate_joins(): void {
+        $courseentity = (new course())
+            ->set_table_alias('course', 'c1');
+
+        $tablejoins = [
+            "JOIN {course} c2 ON c2.id = c1.id",
+            "JOIN {course} c3 ON c3.id = c1.id",
+        ];
+        $courseentity
+            ->add_joins($tablejoins)
+            ->add_joins($tablejoins);
+
+        $this->assertEquals($tablejoins, $courseentity->get_joins());
     }
 
     /**
