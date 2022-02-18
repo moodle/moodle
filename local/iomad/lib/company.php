@@ -1106,6 +1106,9 @@ class company {
                     }
                 }   
 
+                // Make sure all department records in the company match this.
+                $DB->set_field('company_users', 'managertype', 2, ['companyid' => $companyid, 'userid' => $userid]);
+
                 $companycount = $DB->count_records_select('company_users', "userid = :userid AND (managertype = 1 OR managertype = 2)",
                                                         array('userid' => $userid));
                 if ($companycount == 0) {
@@ -1120,18 +1123,6 @@ class company {
                 role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
                 role_assign($companyreporterrole->id, $userid, $systemcontext->id);
 
-                // Deal with course permissions.
-                if ($CFG->iomad_autoenrol_managers &&
-                    $companycourses = $DB->get_records('company_course',
-                                                        array('companyid' => $companyid))) {
-                    foreach ($companycourses as $companycourse) {
-                        if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
-                            company_user::unenrol($userid,
-                                                  array($companycourse->courseid),
-                                                        $companycourse->companyid);
-                        }
-                    }
-                }
                 if ($educator == 1 && !$CFG->iomad_autoenrol_managers ) {
                     // Deal with company course roles.
                     if ($companycourses = $DB->get_records('company_course',
@@ -1158,6 +1149,9 @@ class company {
                         }
                     }
                 }
+
+                // Make sure all department records in the company match this.
+                $DB->set_field('company_users', 'managertype', 4, ['companyid' => $companyid, 'userid' => $userid]);
             }
         } else {
             $s = [];
