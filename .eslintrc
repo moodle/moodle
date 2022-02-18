@@ -227,7 +227,7 @@
       },
       // We're using babel transpiling so use their parser
       // for linting.
-      parser: 'babel-eslint',
+      parser: '@babel/eslint-parser',
       // Check AMD with some slightly stricter rules.
       rules: {
         'no-unused-vars': 'error',
@@ -300,7 +300,8 @@
       },
       parserOptions: {
         'ecmaVersion': 9,
-        'sourceType': 'module'
+        'sourceType': 'module',
+        'requireConfigFile': false,
       }
     }
   ]
