@@ -38,34 +38,34 @@ $PAGE->has_secondary_navigation_setter(false);
 $user = isloggedin() && !isguestuser() ? $USER : null;
 $renderer = $PAGE->get_renderer('user');
 
-if (!$CFG->smtphosts) {
-    $supportemail = $CFG->supportemail;
-    $templatectx = $user ? ['supportemail' => html_writer::link("mailto:{$supportemail}", $supportemail)] : [];
-    $output = $renderer->render_from_template('user/contact_site_support_not_available', $templatectx);
-} else {
-    $form = new \core_user\form\contactsitesupport_form(null, $user);
-    if ($form->is_cancelled()) {
-        redirect($CFG->wwwroot);
-    } else if ($form->is_submitted() && $form->is_validated() && confirm_sesskey()) {
-        $data = $form->get_data();
+$form = new \core_user\form\contactsitesupport_form(null, $user);
+if ($form->is_cancelled()) {
+    redirect($CFG->wwwroot);
+} else if ($form->is_submitted() && $form->is_validated() && confirm_sesskey()) {
+    $data = $form->get_data();
 
-        $from = $user ?? core_user::get_noreply_user();
-        $subject = get_string('supportemailsubject', 'admin', format_string($SITE->fullname));
-        $data->notloggedinuser = (!$user);
-        $message = $renderer->render_from_template('user/contact_site_support_email_body', $data);
+    $from = $user ?? core_user::get_noreply_user();
+    $subject = get_string('supportemailsubject', 'admin', format_string($SITE->fullname));
+    $data->notloggedinuser = (!$user);
+    $message = $renderer->render_from_template('user/contact_site_support_email_body', $data);
 
-        if (!email_to_user(core_user::get_support_user(), $from, $subject, $message)) {
-            $form->set_data($data);
-            $notificationmessage = get_string('supportmessagenotsent', 'user');
-            \core\notification::add($notificationmessage, \core\output\notification::NOTIFY_ERROR);
-        } else {
-            $level = \core\output\notification::NOTIFY_SUCCESS;
-            redirect($CFG->wwwroot, get_string('supportmessagesent', 'user'), 3, $level);
-        }
+    if (!email_to_user(core_user::get_support_user(), $from, $subject, $message)) {
+        $supportemail = $CFG->supportemail;
+        $form->set_data($data);
+        $templatectx = [
+            'supportemail' => $user ? html_writer::link("mailto:{$supportemail}", $supportemail) : false,
+            'supportform' => $form->render(),
+        ];
 
+        $output = $renderer->render_from_template('user/contact_site_support_not_available', $templatectx);
+    } else {
+        $level = \core\output\notification::NOTIFY_SUCCESS;
+        redirect($CFG->wwwroot, get_string('supportmessagesent', 'user'), 3, $level);
     }
+} else {
     $output = $form->render();
 }
+
 echo $OUTPUT->header();
 
 echo $output;
