@@ -91,6 +91,7 @@ class externallib_test extends externallib_advanced_testcase {
             'tool_mobile_androidappid' => get_config('tool_mobile', 'androidappid'),
             'tool_mobile_setuplink' => get_config('tool_mobile', 'setuplink'),
             'tool_mobile_qrcodetype' => get_config('tool_mobile', 'qrcodetype'),
+            'supportpage' => $CFG->supportpage,
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);

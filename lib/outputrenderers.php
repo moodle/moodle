@@ -4137,14 +4137,18 @@ EOD;
     public function supportemail(): string {
         global $CFG;
 
-        if (empty($CFG->supportemail)) {
-            return '';
-        }
-
-        $supportemail = $CFG->supportemail;
         $label = get_string('contactsitesupport', 'admin');
         $icon = $this->pix_icon('t/email', '', 'moodle', ['class' => 'iconhelp icon-pre']);
-        return html_writer::tag('a', $icon . $label, ['href' => 'mailto:' . $supportemail]);
+        $content = $icon . $label;
+
+        if (!empty($CFG->supportpage)) {
+            $attributes = ['href' => $CFG->supportpage, 'target' => 'blank'];
+            $content .= $this->pix_icon('i/externallink', '', 'moodle', ['class' => 'iconhelp icon-pre']);
+        } else {
+            $attributes = ['href' => $CFG->wwwroot . '/user/contactsitesupport.php'];
+        }
+
+        return html_writer::tag('a', $content, $attributes);
     }
 
     /**
