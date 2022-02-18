@@ -113,6 +113,18 @@ Feature: I can apply presets
     And I navigate to "Plugins > Question types > Manage question types" in site administration
     And "Enabled" "icon" should not exist in the "Calculated multichoice" "table_row"
 
+  Scenario: Re-applying Starter Moodle preset does not display setting changes
+#   Apply Starter preset.
+    Given I navigate to "Site admin presets" in site administration
+    And I open the action menu in "Starter" "table_row"
+    And I choose "Review settings and apply" in the open action menu
+    And I click on "Apply" "button"
+    And I click on "Continue" "button"
+#   When the Starter preset it's applied again, no changes should be displayed.
+    When I open the action menu in "Starter" "table_row"
+    And I choose "Review settings and apply" in the open action menu
+    Then I should not see "Setting changes"
+
   Scenario: Applied exported settings
     Given I navigate to "Site admin presets" in site administration
     And I click on "Create preset" "button"
