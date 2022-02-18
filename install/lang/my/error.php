@@ -39,3 +39,4 @@ $string['cannotdownloadzipfile'] = 'ZIP ဖိုင်ကိုဒေါင်�
 $string['cannotfindcomponent'] = 'အစိတ်အပိုင်းကို ရှာဖွေမတွေ့ရှိပါ။';
 $string['cannotsavemd5file'] = 'md5 ဖိုင်ကို မသိမ်းဆည်းနိုင်ပါ';
 $string['cannotsavezipfile'] = 'ZIP ဖိုင်ကို မသိမ်းဆည်းနိုင်ပါ';
+$string['componentisuptodate'] = 'Component နောက်ဆုံးပေါ်ဖြစ်သည်။';

@@ -29,7 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'ພາສາທີ່ໃຊ້ໃນເວັບ';
+$string['language'] = 'ພາສາທີ່ໃຊ້';
 $string['moodlelogo'] = 'ໂລໂກ້ Moodle';
 $string['next'] = 'ຕໍ່ໄປ';
 $string['previous'] = 'ທີ່ຜ່ານມາ';
