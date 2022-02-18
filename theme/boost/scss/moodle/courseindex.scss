@@ -110,7 +110,8 @@ $courseindex-item-current: $primary !default;
             @include hover-focus() {
                 background-color: darken($courseindex-item-page-bg, 7.5%);
                 color: darken($courseindex-link-color-selected, 10%);
-                .courseindex-link {
+                .courseindex-link,
+                .courseindex-chevron {
                     color: darken($courseindex-link-color-selected, 10%);
                 }
             }
