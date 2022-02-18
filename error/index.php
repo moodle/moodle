@@ -38,6 +38,7 @@ $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->navbar->add($title);
+$PAGE->has_secondary_navigation_setter(false);
 
 // This allows the webserver to dictate wether the http status should remain
 // what it would have been, or force it to be a 404. Under other conditions
@@ -86,17 +87,7 @@ if ($data = $mform->get_data()) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->notification(get_string('pagenotexist', 'error', s($ME)), 'error');
-
-if (!empty($CFG->supportpage)) {
-    echo \html_writer::tag('h4', get_string('supportpage', 'admin'));
-    $link = \html_writer::link($CFG->supportpage, $CFG->supportpage);
-    echo \html_writer::tag('p', $link);
-}
-if (!empty($CFG->supportemail)) {
-    echo \html_writer::tag('h4', get_string('supportemail', 'admin'));
-    $link = \html_writer::link('mailto:' . $CFG->supportemail, $CFG->supportemail);
-    echo \html_writer::tag('p', $link);
-}
+echo $OUTPUT->supportemail(['class' => 'text-center d-block mb-3 font-weight-bold']);
 
 if ($canmessage) {
     echo \html_writer::tag('h4', get_string('sendmessage', 'error'));
@@ -106,4 +97,3 @@ if ($canmessage) {
 }
 
 echo $OUTPUT->footer();
-
