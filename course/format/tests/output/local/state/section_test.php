@@ -49,7 +49,6 @@ class section_test extends \advanced_testcase {
      * @covers ::export_for_template
      *
      * @param string $format the course format
-     * @param bool $addcanviewhidden if the canviewhidden capabilities must be added to the role.
      * @param string $rolename the user role name (editingteacher or student)
      * @param bool $hasavailability if the activity|section has availability
      * @param bool $available if the activity availability condition is available or not to the user
@@ -57,13 +56,12 @@ class section_test extends \advanced_testcase {
      */
     public function test_section_hasrestrictions_state(
         string $format = 'topics',
-        bool $addcanviewhidden = false,
         string $rolename = 'editingteacher',
         bool $hasavailability = false,
         bool $available = false,
         bool $expected = false
     ) {
-        $data = $this->setup_hasrestrictions_scenario($format, $addcanviewhidden, $rolename, $hasavailability, $available);
+        $data = $this->setup_hasrestrictions_scenario($format, $rolename, $hasavailability, $available);
 
         // Get the cm state.
         $courseformat = $data->courseformat;
@@ -84,7 +82,6 @@ class section_test extends \advanced_testcase {
      * Setup section or cm has restrictions scenario.
      *
      * @param string $format the course format
-     * @param bool $addcanviewhidden if the canviewhidden capabilities must be added to the role.
      * @param string $rolename the user role name (editingteacher or student)
      * @param bool $hasavailability if the section has availability
      * @param bool $available if the section availability condition is available or not to the user
@@ -92,7 +89,6 @@ class section_test extends \advanced_testcase {
      */
     private function setup_hasrestrictions_scenario(
         string $format = 'topics',
-        bool $addcanviewhidden = false,
         string $rolename = 'editingteacher',
         bool $hasavailability = false,
         bool $available = false
@@ -110,13 +106,6 @@ class section_test extends \advanced_testcase {
             $rolename
         );
         $this->setUser($user);
-
-        // Add capabilities if necessary.
-        if ($addcanviewhidden) {
-            $roleid = $DB->get_field('role', 'id', array('shortname' => $rolename), MUST_EXIST);
-            $coursecontext = context_course::instance($course->id);
-            assign_capability('moodle/course:viewhiddenactivities', CAP_ALLOW, $roleid, $coursecontext->id);
-        }
 
         // Set up the availability settings.
         if ($hasavailability) {
@@ -159,76 +148,133 @@ class section_test extends \advanced_testcase {
     public function hasrestrictions_state_provider(): array {
         return [
             // Teacher scenarios (topics).
-            'Topics, can edit, has availability and is available' => [
+            'Teacher, Topics, can edit, has availability and is available' => [
                 'format' => 'topics',
-                'addcanviewhidden' => false,
                 'rolename' => 'editingteacher',
                 'hasavailability' => true,
                 'available' => true,
                 'expected' => true,
             ],
-            'Topics, can edit, has availability and is not available' => [
+            'Teacher, Topics, can edit, has availability and is not available' => [
                 'format' => 'topics',
-                'addcanviewhidden' => false,
                 'rolename' => 'editingteacher',
                 'hasavailability' => true,
                 'available' => false,
                 'expected' => true,
             ],
-            'Topics, can edit and has not availability' => [
+            'Teacher, Topics, can edit and has not availability' => [
                 'format' => 'topics',
-                'addcanviewhidden' => false,
                 'rolename' => 'editingteacher',
                 'hasavailability' => false,
                 'available' => true,
                 'expected' => false,
             ],
             // Teacher scenarios (weeks).
-            'Weeks, can edit, has availability and is available' => [
+            'Teacher, Weeks, can edit, has availability and is available' => [
                 'format' => 'weeks',
-                'addcanviewhidden' => false,
                 'rolename' => 'editingteacher',
                 'hasavailability' => true,
                 'available' => true,
                 'expected' => true,
             ],
-            'Weeks, can edit, has availability and is not available' => [
+            'Teacher, Weeks, can edit, has availability and is not available' => [
                 'format' => 'weeks',
-                'addcanviewhidden' => false,
                 'rolename' => 'editingteacher',
                 'hasavailability' => true,
                 'available' => false,
                 'expected' => true,
             ],
-            'Weeks, can edit and has not availability' => [
+            'Teacher, Weeks, can edit and has not availability' => [
                 'format' => 'weeks',
-                'addcanviewhidden' => false,
                 'rolename' => 'editingteacher',
                 'hasavailability' => false,
                 'available' => true,
                 'expected' => false,
             ],
             // Teacher scenarios (mock format).
-            'Mock format, can edit, has availability and is available' => [
+            'Teacher, Mock format, can edit, has availability and is available' => [
                 'format' => 'theunittest',
-                'addcanviewhidden' => false,
                 'rolename' => 'editingteacher',
                 'hasavailability' => true,
                 'available' => true,
                 'expected' => true,
             ],
-            'Mock format, can edit, has availability and is not available' => [
+            'Teacher, Mock format, can edit, has availability and is not available' => [
                 'format' => 'theunittest',
-                'addcanviewhidden' => false,
                 'rolename' => 'editingteacher',
                 'hasavailability' => true,
                 'available' => false,
                 'expected' => true,
             ],
-            'Mock format, can edit and has not availability' => [
+            'Teacher, Mock format, can edit and has not availability' => [
                 'format' => 'theunittest',
-                'addcanviewhidden' => false,
                 'rolename' => 'editingteacher',
+                'hasavailability' => false,
+                'available' => true,
+                'expected' => false,
+            ],
+            // Non editing teacher scenarios (topics).
+            'Non editing teacher, Topics, can edit, has availability and is available' => [
+                'format' => 'topics',
+                'rolename' => 'teacher',
+                'hasavailability' => true,
+                'available' => true,
+                'expected' => false,
+            ],
+            'Non editing teacher, Topics, can edit, has availability and is not available' => [
+                'format' => 'topics',
+                'rolename' => 'teacher',
+                'hasavailability' => true,
+                'available' => false,
+                'expected' => false,
+            ],
+            'Non editing teacher, Topics, can edit and has not availability' => [
+                'format' => 'topics',
+                'rolename' => 'teacher',
+                'hasavailability' => false,
+                'available' => true,
+                'expected' => false,
+            ],
+            // Non editing teacher scenarios (weeks).
+            'Non editing teacher, Weeks, can edit, has availability and is available' => [
+                'format' => 'weeks',
+                'rolename' => 'teacher',
+                'hasavailability' => true,
+                'available' => true,
+                'expected' => false,
+            ],
+            'Non editing teacher, Weeks, can edit, has availability and is not available' => [
+                'format' => 'weeks',
+                'rolename' => 'teacher',
+                'hasavailability' => true,
+                'available' => false,
+                'expected' => false,
+            ],
+            'Non editing teacher, Weeks, can edit and has not availability' => [
+                'format' => 'weeks',
+                'rolename' => 'teacher',
+                'hasavailability' => false,
+                'available' => true,
+                'expected' => false,
+            ],
+            // Non editing teacher scenarios (mock format).
+            'Non editing teacher, Mock format, can edit, has availability and is available' => [
+                'format' => 'theunittest',
+                'rolename' => 'teacher',
+                'hasavailability' => true,
+                'available' => true,
+                'expected' => false,
+            ],
+            'Non editing teacher, Mock format, can edit, has availability and is not available' => [
+                'format' => 'theunittest',
+                'rolename' => 'teacher',
+                'hasavailability' => true,
+                'available' => false,
+                'expected' => false,
+            ],
+            'Non editing teacher, Mock format, can edit and has not availability' => [
+                'format' => 'theunittest',
+                'rolename' => 'teacher',
                 'hasavailability' => false,
                 'available' => true,
                 'expected' => false,
@@ -236,7 +282,6 @@ class section_test extends \advanced_testcase {
             // Student scenarios (topics).
             'Topics, cannot edit, has availability and is available' => [
                 'format' => 'topics',
-                'addcanviewhidden' => false,
                 'rolename' => 'student',
                 'hasavailability' => true,
                 'available' => true,
@@ -244,7 +289,6 @@ class section_test extends \advanced_testcase {
             ],
             'Topics, cannot edit, has availability and is not available' => [
                 'format' => 'topics',
-                'addcanviewhidden' => false,
                 'rolename' => 'student',
                 'hasavailability' => true,
                 'available' => false,
@@ -252,7 +296,6 @@ class section_test extends \advanced_testcase {
             ],
             'Topics, cannot edit and has not availability' => [
                 'format' => 'topics',
-                'addcanviewhidden' => false,
                 'rolename' => 'student',
                 'hasavailability' => false,
                 'available' => true,
@@ -261,7 +304,6 @@ class section_test extends \advanced_testcase {
             // Student scenarios (weeks).
             'Weeks, cannot edit, has availability and is available' => [
                 'format' => 'weeks',
-                'addcanviewhidden' => false,
                 'rolename' => 'student',
                 'hasavailability' => true,
                 'available' => true,
@@ -269,7 +311,6 @@ class section_test extends \advanced_testcase {
             ],
             'Weeks, cannot edit, has availability and is not available' => [
                 'format' => 'weeks',
-                'addcanviewhidden' => false,
                 'rolename' => 'student',
                 'hasavailability' => true,
                 'available' => false,
@@ -277,7 +318,6 @@ class section_test extends \advanced_testcase {
             ],
             'Weeks, cannot edit and has not availability' => [
                 'format' => 'weeks',
-                'addcanviewhidden' => false,
                 'rolename' => 'student',
                 'hasavailability' => false,
                 'available' => true,
@@ -286,7 +326,6 @@ class section_test extends \advanced_testcase {
             // Student scenarios (mock format).
             'Mock format, cannot edit, has availability and is available' => [
                 'format' => 'theunittest',
-                'addcanviewhidden' => false,
                 'rolename' => 'student',
                 'hasavailability' => true,
                 'available' => true,
@@ -294,7 +333,6 @@ class section_test extends \advanced_testcase {
             ],
             'Mock format, cannot edit, has availability and is not available' => [
                 'format' => 'theunittest',
-                'addcanviewhidden' => false,
                 'rolename' => 'student',
                 'hasavailability' => true,
                 'available' => false,
@@ -302,82 +340,6 @@ class section_test extends \advanced_testcase {
             ],
             'Mock format, cannot edit and has not availability' => [
                 'format' => 'theunittest',
-                'addcanviewhidden' => false,
-                'rolename' => 'student',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
-            // Students with view hidden activities capabilities (topics).
-            'Topics, can view hidden but not edit, has availability and is available' => [
-                'format' => 'topics',
-                'addcanviewhidden' => true,
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => false,
-            ],
-            'Topics, can view hidden but not edit, has availability and is not available' => [
-                'format' => 'topics',
-                'addcanviewhidden' => true,
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => true,
-            ],
-            'Topics, can view hidden but not edit and has not availability' => [
-                'format' => 'topics',
-                'addcanviewhidden' => true,
-                'rolename' => 'student',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
-            // Students with view hidden activities capabilities (weeks).
-            'Weeks, can view hidden but not edit, has availability and is available' => [
-                'format' => 'weeks',
-                'addcanviewhidden' => true,
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => false,
-            ],
-            'Weeks, can view hidden but not edit, has availability and is not available' => [
-                'format' => 'weeks',
-                'addcanviewhidden' => true,
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => true,
-            ],
-            'Weeks, can view hidden but not edit and has not availability' => [
-                'format' => 'weeks',
-                'addcanviewhidden' => true,
-                'rolename' => 'student',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
-            // Students with view hidden activities capabilities (mock format).
-            'Mock format, can view hidden but not edit, has availability and is available' => [
-                'format' => 'theunittest',
-                'addcanviewhidden' => true,
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => false,
-            ],
-            'Mock format, can view hidden but not edit, has availability and is not available' => [
-                'format' => 'theunittest',
-                'addcanviewhidden' => true,
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => true,
-            ],
-            'Mock format, can view hidden but not edit and has not availability' => [
-                'format' => 'theunittest',
-                'addcanviewhidden' => true,
                 'rolename' => 'student',
                 'hasavailability' => false,
                 'available' => true,

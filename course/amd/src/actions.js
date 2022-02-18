@@ -846,11 +846,7 @@ define(
 
                     case 'hide':
                     case 'show':
-                        cm.visible = (action === 'show') ? true : false;
-                        break;
-
                     case 'duplicate':
-                        // Duplicate requires to get extra data from the server.
                         courseeditor.dispatch('cmState', affectedids);
                         break;
                 }

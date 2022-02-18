@@ -117,21 +117,19 @@ class section implements renderable {
         $context = context_course::instance($course->id);
 
         // Hidden sections have no restriction indicator displayed.
-        if (!$section->visible || empty($CFG->enableavailability)) {
+        if (empty($section->visible) || empty($CFG->enableavailability)) {
             return false;
         }
-        if (!has_capability('moodle/course:viewhiddenactivities', $context)) {
-            // If the section is visible but not user visible means it has some locking rule.
-            return empty($section->uservisible);
-        }
-
-        if (has_capability('moodle/course:manageactivities', $context)) {
-            // Course editors can see all restrictions if the section is visible.
-            $ci = new info_section($section);
-            return !empty($ci->get_full_information());
-        } else {
-            // Some users can see restrictions even if it does not apply to them.
+        // The activity is not visible to the user but it may have some availability information.
+        if (!$section->uservisible) {
             return !empty($section->availableinfo);
         }
+        // Course editors can see all restrictions if the section is visible.
+        if (has_capability('moodle/course:viewhiddensections', $context)) {
+            $ci = new info_section($section);
+            return !empty($ci->get_full_information());
+        }
+        // Regular users can only see restrictions if apply to them.
+        return false;
     }
 }
