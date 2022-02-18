@@ -241,7 +241,7 @@ class manager {
                         // exist in the message_provider table (thus there is no default settings for them).
                         $preferrormsg = "Could not load preference $defaultpreference. Make sure the component and name you supplied
                     to message_send() are valid.";
-                        throw new coding_exception($preferrormsg);
+                        throw new \coding_exception($preferrormsg);
                     }
 
                     // Find out if user has configured this output.
