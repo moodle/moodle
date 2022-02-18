@@ -990,8 +990,6 @@ class secondary extends view {
             $page = new \moodle_page();
             $page->set_cm($module, $course);
             $page->set_url(new \moodle_url('/mod/' . $page->activityname . '/view.php', ['id' => $page->cm->id]));
-        } else if ($page->context instanceof \context_module) {
-            $this->page->set_secondary_active_tab($activitysecondarynode->key);
         }
 
         $this->load_module_navigation($page->settingsnav, $activitysecondarynode);
@@ -1002,9 +1000,15 @@ class secondary extends view {
             // a dropdown menu.
             $activitysecondarynode->showchildreninsubmenu = true;
             $this->add_node($activitysecondarynode);
+            if ($this->context instanceof \context_module) {
+                $this->page->set_secondary_active_tab($activitysecondarynode->key);
+            }
         } else { // Otherwise, add the 'View activity' node to the secondary navigation.
             $viewactivityurl = new \moodle_url('/mod/' . $page->activityname . '/view.php', ['id' => $page->cm->id]);
             $this->add(get_string('modulename', $page->activityname), $viewactivityurl, null, null, 'modulepage');
+            if ($this->context instanceof \context_module) {
+                $this->page->set_secondary_active_tab('modulepage');
+            }
         }
     }
 }
