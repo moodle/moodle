@@ -30,9 +30,9 @@ Feature: Download H5P content from the content bank
     Given I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I follow "filltheblanksmanager.h5p"
-    And I open the action menu in "region-main-settings-menu" "region"
+    And  I click on "More" "button"
     And I should see "Download"
-    When I choose "Download" in the open action menu
+    When I click on "Download" "link"
     Then I should see "filltheblanksmanager.h5p"
 
   Scenario: Users can download content created by different users
@@ -45,7 +45,7 @@ Feature: Download H5P content from the content bank
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I should see "filltheblanksadmin.h5p"
     And I follow "filltheblanksadmin.h5p"
-    And I open the action menu in "region-main-settings-menu" "region"
+    And  I click on "More" "button"
     Then I should see "Download"
     And I should not see "Rename"
 
@@ -59,5 +59,5 @@ Feature: Download H5P content from the content bank
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I should see "filltheblanksmanager.h5p"
     And I follow "filltheblanksmanager.h5p"
-    And I open the action menu in "region-main-settings-menu" "region"
+    And  I click on "More" "button"
     Then I should not see "Download"

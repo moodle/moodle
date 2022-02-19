@@ -16,6 +16,7 @@
 
 namespace core\output;
 
+use context_course;
 use moodle_page;
 use navigation_node;
 use moodle_url;
@@ -46,7 +47,8 @@ class participants_action_bar implements \renderable {
     public function __construct(object $course, moodle_page $page, ?string $renderedcontent) {
         $this->course = $course;
         $this->page = $page;
-        $this->node = $this->page->settingsnav->find('users', navigation_node::TYPE_CONTAINER);
+        $node = $this->page->context->contextlevel == CONTEXT_MODULE ? 'modulesettings' : 'users';
+        $this->node = $this->page->settingsnav->find($node, null);
         $this->renderedcontent = $renderedcontent;
     }
 
@@ -69,7 +71,10 @@ class participants_action_bar implements \renderable {
                 'override',
                 'roles',
                 'otherusers',
-                'permissions'
+                'permissions',
+                'roleoverride',
+                'rolecheck',
+                'roleassign',
             ]
         ];
     }
@@ -84,8 +89,23 @@ class participants_action_bar implements \renderable {
             return [];
         }
 
-        $nodes = $this->get_ordered_nodes();
         $formattedcontent = [];
+        $enrolmentsheading = get_string('enrolments', 'enrol');
+        if ($this->page->context->contextlevel != CONTEXT_MODULE) {
+            // Pre-populate the formatted tertiary nav items with the "Enrolled users" node if user can view the participants page.
+            $coursecontext = context_course::instance($this->course->id);
+            $canviewparticipants = course_can_view_participants($coursecontext);
+            if ($canviewparticipants) {
+                $participantsurl = (new moodle_url('/user/index.php', ['id' => $this->course->id]))->out();
+                $formattedcontent[] = [
+                    $enrolmentsheading => [
+                        $participantsurl => get_string('enrolledusers', 'enrol'),
+                    ]
+                ];
+            }
+        }
+
+        $nodes = $this->get_ordered_nodes();
         foreach ($nodes as $description => $content) {
             list($stringid, $location) = explode(':', $description);
             $heading = get_string($stringid, $location);
@@ -107,13 +127,21 @@ class participants_action_bar implements \renderable {
                 }
             }
             if ($items) {
-                $formattedcontent[][$heading] = $items;
+                if ($heading === $enrolmentsheading) {
+                    // Merge the contents of the "Enrolments" group with the ones from the course settings nav.
+                    $formattedcontent[0][$heading] = array_merge($formattedcontent[0][$heading], $items);
+                } else {
+                    $formattedcontent[][$heading] = $items;
+                }
             }
         }
 
-        // Need to do some funky code here to find out if we have added third party navigation nodes.
-        $thirdpartynodearray = $this->get_thirdparty_node_array() ?: [];
-        $formattedcontent = array_merge($formattedcontent, $thirdpartynodearray);
+        // If we are accessing a page from a module context additional nodes will not be visible.
+        if ($this->page->context->contextlevel != CONTEXT_MODULE) {
+            // Need to do some funky code here to find out if we have added third party navigation nodes.
+            $thirdpartynodearray = $this->get_thirdparty_node_array() ?: [];
+            $formattedcontent = array_merge($formattedcontent, $thirdpartynodearray);
+        }
         return $formattedcontent;
     }
 

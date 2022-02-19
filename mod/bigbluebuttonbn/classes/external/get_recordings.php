@@ -62,7 +62,8 @@ class get_recordings extends external_api {
      * @param string|null $tools
      * @param int|null $groupid
      * @return array of warnings and status result
-     * @throws \webservice_access_exception
+     * @throws \invalid_parameter_exception
+     * @throws restricted_context_exception
      */
     public static function execute(
         int $bigbluebuttonbnid = 0,
@@ -150,6 +151,7 @@ class get_recordings extends external_api {
                     'type' => new external_value(PARAM_ALPHANUMEXT, 'Column type', VALUE_OPTIONAL),
                     'sortable' => new external_value(PARAM_BOOL, 'Whether this column is sortable', VALUE_OPTIONAL, false),
                     'allowHTML' => new external_value(PARAM_BOOL, 'Whether this column contains HTML', VALUE_OPTIONAL, false),
+                    'formatter' => new external_value(PARAM_ALPHANUMEXT, 'Formatter name', VALUE_OPTIONAL),
                 ])),
                 'data' => new external_value(PARAM_RAW), // For now it will be json encoded.
             ], '', VALUE_OPTIONAL),

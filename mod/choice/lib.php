@@ -862,11 +862,9 @@ function choice_supports($feature) {
  * @param navigation_node $choicenode The node to add module settings to
  */
 function choice_extend_settings_navigation(settings_navigation $settings, navigation_node $choicenode) {
-    global $PAGE;
-
-    if (has_capability('mod/choice:readresponses', $PAGE->cm->context)) {
+    if (has_capability('mod/choice:readresponses', $settings->get_page()->cm->context)) {
         $choicenode->add(get_string('responses', 'choice'),
-            new moodle_url('/mod/choice/report.php', array('id' => $PAGE->cm->id)));
+            new moodle_url('/mod/choice/report.php', array('id' => $settings->get_page()->cm->id)));
     }
 }
 

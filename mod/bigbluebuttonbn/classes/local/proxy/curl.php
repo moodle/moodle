@@ -80,23 +80,22 @@ class curl extends \curl {
      * @param string $url
      * @param array|string $params
      * @param array $options
-     * @return bool
+     * @return null|SimpleXMLElement Null on error
      */
     public function post($url, $params = '', $options = []) {
         if (!is_string($params)) {
-            debugging('Only string paramaters are supported', DEBUG_DEVELOPER);
+            debugging('Only string parameters are supported', DEBUG_DEVELOPER);
             $params = '';
         }
-
-        $options = [
+        $options = array_merge($options, [
             'CURLOPT_HTTPHEADER' => [
                 'Content-Type: ' . $this->get_content_type(),
                 'Content-Length: ' . strlen($params),
                 'Content-Language: en-US',
-            ],
-        ];
+            ]
+        ]);
 
-        return !empty($this->handle_response(parent::post($url, $params, $options)));
+        return $this->handle_response(parent::post($url, $params, $options));
     }
 
     /**

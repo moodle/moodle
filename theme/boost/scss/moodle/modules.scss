@@ -1170,6 +1170,7 @@ div#dock {
     border-radius: 50%;
     color: $gray-800;
     font-weight: normal;
+    margin-right: $spacer / 4;
     &.size-16,
     &.size-30 {
         font-size: 0.7rem;
@@ -1185,6 +1186,10 @@ div#dock {
         height: 100px;
         font-size: $h2-font-size;
     }
+}
+
+img.userpicture {
+    margin-right: $spacer / 4;
 }
 
 @include media-breakpoint-down(sm) {

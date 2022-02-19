@@ -71,12 +71,13 @@ class get_recordings_to_import extends external_api {
      * Get a list of recordings
      *
      * @param int $destinationinstanceid the bigbluebuttonbn instance id where recordings have been already imported.
-     * @param int $sourcebigbluebuttonbnid the bigbluebuttonbn instance id to which the recordings are referred.
-     * @param int $sourcecourseid the source courseid to filter by
+     * @param int|null $sourcebigbluebuttonbnid the bigbluebuttonbn instance id to which the recordings are referred.
+     * @param int|null $sourcecourseid the source courseid to filter by
      * @param string|null $tools
      * @param int|null $groupid
      * @return array of warnings and status result
-     * @throws \webservice_access_exception
+     * @throws \invalid_parameter_exception
+     * @throws \restricted_context_exception
      */
     public static function execute(
         int $destinationinstanceid,

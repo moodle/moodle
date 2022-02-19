@@ -1705,8 +1705,8 @@ function quiz_get_extra_capabilities() {
  * @param navigation_node $quiznode
  * @return void
  */
-function quiz_extend_settings_navigation($settings, $quiznode) {
-    global $PAGE, $CFG;
+function quiz_extend_settings_navigation(settings_navigation $settings, navigation_node $quiznode) {
+    global $CFG;
 
     // Require {@link questionlib.php}
     // Included here as we only ever want to include this file if we really need to.
@@ -1723,25 +1723,24 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
         $beforekey = $keys[$i + 1];
     }
 
-    if (has_any_capability(['mod/quiz:manageoverrides', 'mod/quiz:viewoverrides'], $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/quiz/overrides.php', array('cmid' => $PAGE->cm->id, 'mode' => 'user'));
+    if (has_any_capability(['mod/quiz:manageoverrides', 'mod/quiz:viewoverrides'], $settings->get_page()->cm->context)) {
+        $url = new moodle_url('/mod/quiz/overrides.php', ['cmid' => $settings->get_page()->cm->id, 'mode' => 'user']);
         $node = navigation_node::create(get_string('overrides', 'quiz'),
                     $url, navigation_node::TYPE_SETTING, null, 'mod_quiz_useroverrides');
         $quiznode->add_node($node, $beforekey);
     }
 
-    if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
+    if (has_capability('mod/quiz:manage', $settings->get_page()->cm->context)) {
         $node = navigation_node::create(get_string('editquiz', 'quiz'),
-                new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id)),
-                navigation_node::TYPE_SETTING, null, 'mod_quiz_edit',
-                new pix_icon('t/edit', ''));
+            new moodle_url('/mod/quiz/edit.php', array('cmid' => $settings->get_page()->cm->id)),
+            navigation_node::TYPE_SETTING, null, 'mod_quiz_edit', new pix_icon('t/edit', ''));
         $editquiznode = $quiznode->add_node($node, $beforekey);
         $editquiznode->set_show_in_secondary_navigation(false);
     }
 
-    if (has_capability('mod/quiz:preview', $PAGE->cm->context)) {
+    if (has_capability('mod/quiz:preview', $settings->get_page()->cm->context)) {
         $url = new moodle_url('/mod/quiz/startattempt.php',
-                array('cmid'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
+                array('cmid' => $settings->get_page()->cm->id, 'sesskey' => sesskey()));
         $node = navigation_node::create(get_string('preview', 'quiz'), $url,
                 navigation_node::TYPE_SETTING, null, 'mod_quiz_preview',
                 new pix_icon('i/preview', ''));
@@ -1749,21 +1748,20 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
         $previewnode->set_show_in_secondary_navigation(false);
     }
 
-    question_extend_settings_navigation($quiznode, $PAGE->cm->context)->trim_if_empty();
+    question_extend_settings_navigation($quiznode, $settings->get_page()->cm->context)->trim_if_empty();
 
-    if (has_any_capability(array('mod/quiz:viewreports', 'mod/quiz:grade'), $PAGE->cm->context)) {
+    if (has_any_capability(array('mod/quiz:viewreports', 'mod/quiz:grade'), $settings->get_page()->cm->context)) {
         require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
-        $reportlist = quiz_report_list($PAGE->cm->context);
+        $reportlist = quiz_report_list($settings->get_page()->cm->context);
 
         $url = new moodle_url('/mod/quiz/report.php',
-                array('id' => $PAGE->cm->id, 'mode' => reset($reportlist)));
+                array('id' => $settings->get_page()->cm->id, 'mode' => reset($reportlist)));
         $reportnode = $quiznode->add_node(navigation_node::create(get_string('results', 'quiz'), $url,
                 navigation_node::TYPE_SETTING,
                 null, null, new pix_icon('i/report', '')));
 
         foreach ($reportlist as $report) {
-            $url = new moodle_url('/mod/quiz/report.php',
-                    array('id' => $PAGE->cm->id, 'mode' => $report));
+            $url = new moodle_url('/mod/quiz/report.php', ['id' => $settings->get_page()->cm->id, 'mode' => $report]);
             $reportnode->add_node(navigation_node::create(get_string($report, 'quiz_'.$report), $url,
                     navigation_node::TYPE_SETTING,
                     null, 'quiz_report_' . $report, new pix_icon('i/item', '')));

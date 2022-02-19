@@ -198,7 +198,6 @@ class lib_test extends \advanced_testcase {
      * @param int $user
      * @param int $group
      * @return array|void
-     * @throws \moodle_exception
      */
     protected function prepare_for_recent_activity_array($date, $user, $group) {
         // Same algorithm as in cource/recent.php, but stops at the first bbb activity.
@@ -439,17 +438,6 @@ class lib_test extends \advanced_testcase {
             '{"updated":false},"completion":{"updated":false}}',
             json_encode($result)
         );
-    }
-
-    /**
-     * Check font awesome icon map
-     *
-     * @covers ::mod_bigbluebuttonbn_get_fontawesome_icon_map
-     */
-    public function test_mod_bigbluebuttonbn_get_fontawesome_icon_map() {
-        $this->resetAfterTest();
-        $this->assertEquals(['mod_bigbluebuttonbn:icon' => 'icon-bigbluebutton'],
-            mod_bigbluebuttonbn_get_fontawesome_icon_map());
     }
 
     /**

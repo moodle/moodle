@@ -2797,13 +2797,9 @@ function feedback_encode_target_url($url) {
  * @param settings_navigation $settings The settings navigation object
  * @param navigation_node $feedbacknode The node to add module settings to
  */
-function feedback_extend_settings_navigation(settings_navigation $settings,
-                                             navigation_node $feedbacknode) {
-
-    global $PAGE;
-
-    $hassecondary = $PAGE->has_secondary_navigation();
-    if (!$context = context_module::instance($PAGE->cm->id, IGNORE_MISSING)) {
+function feedback_extend_settings_navigation(settings_navigation $settings, navigation_node $feedbacknode) {
+    $hassecondary = $settings->get_page()->has_secondary_navigation();
+    if (!$context = context_module::instance($settings->get_page()->cm->id, IGNORE_MISSING)) {
         print_error('badcontext');
     }
 
@@ -2811,53 +2807,43 @@ function feedback_extend_settings_navigation(settings_navigation $settings,
         $questionnode = $feedbacknode->add(get_string('questions', 'feedback'), null,
             navigation_node::TYPE_CUSTOM, null, 'questionnode');
         $questionnode->add(get_string('edit_items', 'feedback'),
-                    new moodle_url('/mod/feedback/edit.php',
-                                    ['id' => $PAGE->cm->id]));
+            new moodle_url('/mod/feedback/edit.php', ['id' => $settings->get_page()->cm->id]));
 
         $questionnode->add(get_string('export_questions', 'feedback'),
-                    new moodle_url('/mod/feedback/export.php',
-                                    array('id' => $PAGE->cm->id,
-                                          'action' => 'exportfile')));
+            new moodle_url('/mod/feedback/export.php', ['id' => $settings->get_page()->cm->id, 'action' => 'exportfile']));
 
         $questionnode->add(get_string('import_questions', 'feedback'),
-                    new moodle_url('/mod/feedback/import.php',
-                                    array('id' => $PAGE->cm->id)));
+            new moodle_url('/mod/feedback/import.php', ['id' => $settings->get_page()->cm->id]));
 
         $feedbacknode->add(get_string('templates', 'feedback'),
-                    new moodle_url('/mod/feedback/manage_templates.php', ['id' => $PAGE->cm->id, 'mode' => 'manage']),
-                    navigation_node::TYPE_CUSTOM, null, 'templatenode');
+            new moodle_url('/mod/feedback/manage_templates.php', ['id' => $settings->get_page()->cm->id, 'mode' => 'manage']),
+            navigation_node::TYPE_CUSTOM, null, 'templatenode');
     }
 
-    if (has_capability('mod/feedback:mapcourse', $context) && $PAGE->course->id == SITEID) {
+    if (has_capability('mod/feedback:mapcourse', $context) && $settings->get_page()->course->id == SITEID) {
         $feedbacknode->add(get_string('mappedcourses', 'feedback'),
-                    new moodle_url('/mod/feedback/mapcourse.php', ['id' => $PAGE->cm->id]),
-                    navigation_node::TYPE_CUSTOM, null, 'mapcourse');
+            new moodle_url('/mod/feedback/mapcourse.php', ['id' => $settings->get_page()->cm->id]),
+            navigation_node::TYPE_CUSTOM, null, 'mapcourse');
     }
 
-    $feedback = $PAGE->activityrecord;
+    $feedback = $settings->get_page()->activityrecord;
     if ($feedback->course == SITEID) {
         $analysisnode = navigation_node::create(get_string('analysis', 'feedback'),
-            new moodle_url('/mod/feedback/analysis_course.php', ['id' => $PAGE->cm->id]),
+            new moodle_url('/mod/feedback/analysis_course.php', ['id' => $settings->get_page()->cm->id]),
             navigation_node::TYPE_CUSTOM, null, 'feedbackanalysis');
     } else {
         $analysisnode = navigation_node::create(get_string('analysis', 'feedback'),
-            new moodle_url('/mod/feedback/analysis.php', ['id' => $PAGE->cm->id]),
+            new moodle_url('/mod/feedback/analysis.php', ['id' => $settings->get_page()->cm->id]),
             navigation_node::TYPE_CUSTOM, null, 'feedbackanalysis');
     }
 
     if (has_capability('mod/feedback:viewreports', $context)) {
         $feedbacknode->add_node($analysisnode);
         $feedbacknode->add(get_string(($hassecondary ? 'responses' : 'show_entries'), 'feedback'),
-                    new moodle_url('/mod/feedback/show_entries.php', ['id' => $PAGE->cm->id]),
-                        navigation_node::TYPE_CUSTOM, null, 'responses');
-
-        if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO AND $feedback->course != SITEID) {
-            $feedbacknode->add(get_string('show_nonrespondents', 'feedback'),
-                    new moodle_url('/mod/feedback/show_nonrespondents.php', ['id' => $PAGE->cm->id]),
-                        navigation_node::TYPE_CUSTOM, null, 'nonrespondents');
-        }
+            new moodle_url('/mod/feedback/show_entries.php', ['id' => $settings->get_page()->cm->id]),
+            navigation_node::TYPE_CUSTOM, null, 'responses');
     } else {
-        $feedbackcompletion = new mod_feedback_completion($feedback, $context, $PAGE->course->id);
+        $feedbackcompletion = new mod_feedback_completion($feedback, $context, $settings->get_page()->course->id);
         if ($feedbackcompletion->can_view_analysis()) {
             $feedbacknode->add_node($analysisnode);
         }

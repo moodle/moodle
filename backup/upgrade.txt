@@ -1,6 +1,10 @@
 This files describes API changes in /backup/*,
 information provided here is intended especially for developers.
 
+=== 4.0 ===
+
+* Backup UI labels now accept empty/whitespace-only contents.
+
 === 3.11 ===
 
  * New setting called "Include permission overrides" has been implemented. The default

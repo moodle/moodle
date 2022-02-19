@@ -22,8 +22,8 @@ Feature: Replace H5P file from an existing content
     And I switch to "h5p-iframe" class iframe
     And I should see "Of which countries"
     And I switch to the main frame
-    When I open the action menu in "region-main-settings-menu" "region"
-    And I choose "Replace with file" in the open action menu
+    When I click on "More" "button"
+    And I click on "Replace with file" "link"
     And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Upload content" filemanager
     And I click on "Save changes" "button"
     Then I switch to "h5p-player" class iframe

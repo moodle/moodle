@@ -1,33 +1,5 @@
 @charset "UTF-8";
 
-/* bigbluebutton-font */
-@font-face {
-    font-family: "bigbluebutton-font";
-    src:
-        url("../../../../mod/bigbluebuttonbn/fonts/bigbluebutton-font.woff") format("woff"),
-        url("../../../../mod/bigbluebuttonbn/fonts/bigbluebutton-font.ttf") format("truetype"),
-        url("../../../../mod/bigbluebuttonbn/fonts/bigbluebutton-font.svg#bigbluebutton-font") format("svg");
-    font-weight: normal;
-    font-style: normal;
-}
-
-[class^="icon-bigbluebutton"]:before,
-[class*=" icon-bigbluebutton"]:before {
-    font-family: "bigbluebutton-font";
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    speak: none;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-.icon-bigbluebutton:before {
-    content: "\e099";
-}
-
 /* bigbluebuttonbn resources */
 .recording-thumbnail {
     border: 1px solid #ddd;

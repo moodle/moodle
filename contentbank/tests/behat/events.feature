@@ -58,8 +58,8 @@ Feature: Confirm content bank events are triggered
     And I expand "Site pages" node
     And I click on "Content bank" "link"
     And I click on "Existing" "link"
-    And I open the action menu in "region-main-settings-menu" "region"
-    When I choose "Delete" in the open action menu
+    And  I click on "More" "button"
+    When I click on "Delete" "link"
     And I click on "Delete" "button" in the "Delete content" "dialogue"
     And I navigate to "Reports > Live logs" in site administration
     Then I should see "Content deleted"
@@ -71,8 +71,8 @@ Feature: Confirm content bank events are triggered
     And I expand "Site pages" node
     And I click on "Content bank" "link"
     And I click on "Existing" "link"
-    And I open the action menu in "region-main-settings-menu" "region"
-    When I choose "Rename" in the open action menu
+    And  I click on "More" "button"
+    When I click on "Rename" "link"
     And I set the field "Content name" to "New name"
     And I click on "Rename" "button"
     And I navigate to "Reports > Live logs" in site administration

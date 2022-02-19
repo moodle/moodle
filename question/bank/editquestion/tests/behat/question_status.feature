@@ -13,19 +13,29 @@ Feature: Use the qbank base view to test the status change using
       | contextlevel | reference | name           |
       | Course         | C1     | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name           | questiontext              |
-      | Test questions   | truefalse | First question | Answer the first question |
+      | questioncategory | qtype     | name            | questiontext              |
+      | Test questions   | truefalse | First question  | Answer the first question |
+      | Test questions   | truefalse | Second question | Answer the first question |
 
   @javascript
-  Scenario: Question status modal should change the status of the question
+  Scenario: Question status dropdown should change the status of the question
     Given I log in as "admin"
     And I am on the "Test quiz" "quiz activity" page
     And I navigate to "Question bank > Questions" in current page administration
     And I set the field "Select a category" to "Test questions"
     And I should see "Test questions"
     And I should see "Ready" in the "First question" "table_row"
-    When I click on "Ready" "link" in the "First question" "table_row"
-    Then I should see "Change question status"
-    And I should see "Question status"
-    And I click on "Close" "button" in the ".modal-dialog" "css_element"
-    And I should see "Ready" in the "First question" "table_row"
+    And I should see "Ready" in the "Second question" "table_row"
+    And I click on "question_status_dropdown" "select" in the "First question" "table_row"
+    And I should see "Draft"
+    And I click on "Draft" "option"
+    And I reload the page
+    And I should see "Draft" in the "First question" "table_row"
+    And I should see "Ready" in the "Second question" "table_row"
+    And I click on "question_status_dropdown" "select" in the "Second question" "table_row"
+    And I click on "Draft" "option"
+    And I click on "question_status_dropdown" "select" in the "First question" "table_row"
+    And I click on "Ready" "option"
+    And I reload the page
+    Then I should see "Ready" in the "First question" "table_row"
+    And I should see "Draft" in the "Second question" "table_row"

@@ -262,7 +262,7 @@ final class filter {
     }
 
     /**
-     * Set the options for the filter to be returned by a callback (that recieves no arguments) in the format that the filter
+     * Set the options for the filter to be returned by a callback (that receives no arguments) in the format that the filter
      * class expects
      *
      * @param callable $callback

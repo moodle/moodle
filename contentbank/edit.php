@@ -76,7 +76,8 @@ if (!$contenttype->can_edit($content)) {
 $values = [
     'contextid' => $contextid,
     'plugin' => $pluginname,
-    'id' => $id
+    'id' => $id,
+    'heading' => $heading
 ];
 
 $title = get_string('contentbank');
@@ -90,8 +91,6 @@ $PAGE->set_context($context);
 $PAGE->navbar->add(get_string('edit'));
 $PAGE->set_title($title);
 $PAGE->set_pagelayout('incourse');
-
-$PAGE->set_heading($heading);
 
 // Instantiate the content type form.
 $editorclass = "$contenttypename\\form\\editor";

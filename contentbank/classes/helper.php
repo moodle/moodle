@@ -44,6 +44,8 @@ class helper {
         global $PAGE, $DB;
 
         $PAGE->set_context($context);
+        $PAGE->set_heading(self::get_page_heading($context));
+        $PAGE->set_secondary_active_tab('contentbank');
         $cburl = new \moodle_url('/contentbank/index.php', ['contextid' => $context->id]);
 
         switch ($context->contextlevel) {
@@ -67,5 +69,28 @@ class helper {
                 }
                 $PAGE->set_pagelayout('standard');
         }
+    }
+
+    /**
+     * Get the page heading based on the current context
+     *
+     * @param \context $context The current context of the page
+     * @return string
+     */
+    public static function get_page_heading(\context $context): string {
+        global $SITE;
+
+        $title = get_string('contentbank');
+        if ($context->id == \context_system::instance()->id) {
+            $title = $SITE->fullname;
+        } else if ($context->contextlevel == CONTEXT_COURSE) {
+            $course = get_course($context->instanceid);
+            $title = $course->fullname;
+        } else if ($context->contextlevel == CONTEXT_COURSECAT) {
+            $category = \core_course_category::get($context->instanceid);
+            $title = $category->get_formatted_name();
+        }
+
+        return $title;
     }
 }

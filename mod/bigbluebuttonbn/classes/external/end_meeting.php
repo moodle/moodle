@@ -60,7 +60,9 @@ class end_meeting extends external_api {
      * @param int $bigbluebuttonbnid the bigbluebuttonbn instance id
      * @param int $groupid the groupid (either 0 or the groupid)
      * @return array (empty array for now)
-     * @throws \restricted_context_exception
+     * @throws \invalid_parameter_exception
+     * @throws \moodle_exception
+     * @throws restricted_context_exception
      */
     public static function execute(
         int $bigbluebuttonbnid,

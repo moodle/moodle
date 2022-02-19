@@ -78,3 +78,4 @@ loggedoff_help,core_message
 loggedoffdescription,core_message
 sendingvia,core_message
 sendingviawhen,core_message
+close,core_contentbank

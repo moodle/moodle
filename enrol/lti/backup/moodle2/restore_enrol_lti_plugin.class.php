@@ -69,6 +69,16 @@ class restore_enrol_lti_plugin extends restore_enrol_plugin {
         $data->timecreated = time();
         $data->timemodified = $data->timecreated;
 
+        // Set the correct legacy ltiversion when restoring old tools.
+        if (empty($data->ltiversion)) {
+            $data->ltiversion = 'LTI-1p0/LTI-2p0';
+        }
+
+        // Generate a new uuid for LTI Advantage restores.
+        if ($data->ltiversion == 'LTI-1p3') {
+            $data->uuid = \core\uuid::generate();
+        }
+
         // Now we can insert the new record.
         $data->id = $DB->insert_record('enrol_lti_tools', $data);
 

@@ -2575,6 +2575,8 @@ class core_renderer extends renderer_base {
      * @return string
      */
     protected function render_user_picture(user_picture $userpicture) {
+        global $CFG;
+
         $user = $userpicture->user;
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $this->page->context);
 
@@ -2611,8 +2613,8 @@ class core_renderer extends renderer_base {
             $attributes['title'] = $alt;
         }
 
-        // get the image html output first
-        if ($user->picture == 0 && !defined('BEHAT_SITE_RUNNING')) {
+        // Get the image html output first, auto generated based on initials if one isn't already set.
+        if ($user->picture == 0 && empty($CFG->enablegravatar) && !defined('BEHAT_SITE_RUNNING')) {
             $output = html_writer::tag('span', mb_substr($user->firstname, 0, 1) . mb_substr($user->lastname, 0, 1),
                 ['class' => 'userinitials size-' . $size]);
         } else {
@@ -4135,14 +4137,18 @@ EOD;
     public function supportemail(): string {
         global $CFG;
 
-        if (empty($CFG->supportemail)) {
-            return '';
-        }
-
-        $supportemail = $CFG->supportemail;
         $label = get_string('contactsitesupport', 'admin');
         $icon = $this->pix_icon('t/email', '', 'moodle', ['class' => 'iconhelp icon-pre']);
-        return html_writer::tag('a', $icon . $label, ['href' => 'mailto:' . $supportemail]);
+        $content = $icon . $label;
+
+        if (!empty($CFG->supportpage)) {
+            $attributes = ['href' => $CFG->supportpage, 'target' => 'blank'];
+            $content .= $this->pix_icon('i/externallink', '', 'moodle', ['class' => 'iconhelp icon-pre']);
+        } else {
+            $attributes = ['href' => $CFG->wwwroot . '/user/contactsitesupport.php'];
+        }
+
+        return html_writer::tag('a', $content, $attributes);
     }
 
     /**

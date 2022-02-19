@@ -73,7 +73,7 @@ abstract class view extends navigation_node {
         foreach ($nodes as $type => $leaves) {
             foreach ($leaves as $leaf => $location) {
                 if ($node = $source->find($leaf, $type)) {
-                    $nodesordered["$location"] = $node;
+                    $nodesordered["$location"] = $nodesordered["$location"] ?? $node;
                 }
             }
         }

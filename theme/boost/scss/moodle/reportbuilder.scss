@@ -170,6 +170,9 @@ $rb-right-sidebar-width: 350px;
             flex-basis: auto;
         }
     }
+    .inplaceeditable.inplaceeditingon input {
+        width: 100%;
+    }
 }
 
 /* Add button styles when a toggle button is active. */

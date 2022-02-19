@@ -41,10 +41,41 @@ abstract class scheduled_task extends task_base {
     /** Maximum hour value. */
     const HOURMAX = 23;
 
+    /** Minimum day of month value. */
+    const DAYMIN = 1;
+    /** Maximum day of month value. */
+    const DAYMAX = 31;
+
+    /** Minimum month value. */
+    const MONTHMIN = 1;
+    /** Maximum month value. */
+    const MONTHMAX = 12;
+
     /** Minimum dayofweek value. */
     const DAYOFWEEKMIN = 0;
     /** Maximum dayofweek value. */
     const DAYOFWEEKMAX = 6;
+
+    /**
+     * Minute field identifier.
+     */
+    const FIELD_MINUTE = 'minute';
+    /**
+     * Hour field identifier.
+     */
+    const FIELD_HOUR = 'hour';
+    /**
+     * Day-of-month field identifier.
+     */
+    const FIELD_DAY = 'day';
+    /**
+     * Month field identifier.
+     */
+    const FIELD_MONTH = 'month';
+    /**
+     * Day-of-week field identifier.
+     */
+    const FIELD_DAYOFWEEK = 'dayofweek';
 
     /** @var string $hour - Pattern to work out the valid hours */
     private $hour = '*';
@@ -75,6 +106,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Get the last run time for this scheduled task.
+     *
      * @return int
      */
     public function get_last_run_time() {
@@ -83,6 +115,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Set the last run time for this scheduled task.
+     *
      * @param int $lastruntime
      */
     public function set_last_run_time($lastruntime) {
@@ -91,6 +124,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Has this task been changed from it's default config?
+     *
      * @return bool
      */
     public function is_customised() {
@@ -99,6 +133,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Has this task been changed from it's default config?
+     *
      * @param bool
      */
     public function set_customised($customised) {
@@ -107,6 +142,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Has this task been changed from it's default config?
+     *
      * @return bool
      */
     public function is_overridden(): bool {
@@ -115,6 +151,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Set the overridden value.
+     *
      * @param bool $overridden
      */
     public function set_overridden(bool $overridden): void {
@@ -124,6 +161,7 @@ abstract class scheduled_task extends task_base {
     /**
      * Setter for $minute. Accepts a special 'R' value
      * which will be translated to a random minute.
+     *
      * @param string $minute
      * @param bool $expandr - if true (default) an 'R' value in a time is expanded to an appropriate int.
      *      If false, they are left as 'R'
@@ -137,6 +175,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Getter for $minute.
+     *
      * @return string
      */
     public function get_minute() {
@@ -146,6 +185,7 @@ abstract class scheduled_task extends task_base {
     /**
      * Setter for $hour. Accepts a special 'R' value
      * which will be translated to a random hour.
+     *
      * @param string $hour
      * @param bool $expandr - if true (default) an 'R' value in a time is expanded to an appropriate int.
      *      If false, they are left as 'R'
@@ -159,6 +199,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Getter for $hour.
+     *
      * @return string
      */
     public function get_hour() {
@@ -167,6 +208,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Setter for $month.
+     *
      * @param string $month
      */
     public function set_month($month) {
@@ -175,6 +217,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Getter for $month.
+     *
      * @return string
      */
     public function get_month() {
@@ -183,6 +226,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Setter for $day.
+     *
      * @param string $day
      */
     public function set_day($day) {
@@ -191,6 +235,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Getter for $day.
+     *
      * @return string
      */
     public function get_day() {
@@ -199,6 +244,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Setter for $dayofweek.
+     *
      * @param string $dayofweek
      * @param bool $expandr - if true (default) an 'R' value in a time is expanded to an appropriate int.
      *      If false, they are left as 'R'
@@ -212,6 +258,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Getter for $dayofweek.
+     *
      * @return string
      */
     public function get_day_of_week() {
@@ -220,6 +267,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Setter for $disabled.
+     *
      * @param bool $disabled
      */
     public function set_disabled($disabled) {
@@ -241,6 +289,57 @@ abstract class scheduled_task extends task_base {
      */
     public function get_run_if_component_disabled() {
         return false;
+    }
+
+    /**
+     * Informs whether the given field is valid.
+     * Use the constants FIELD_* to identify the field.
+     * Have to be called after the method set_{field}(string).
+     *
+     * @param string $field field identifier; expected values from constants FIELD_*.
+     *
+     * @return bool true if given field is valid. false otherwise.
+     */
+    public function is_valid(string $field): bool {
+        return !empty($this->get_valid($field));
+    }
+
+    /**
+     * Calculates the list of valid values according to the given field and stored expression.
+     *
+     * @param string $field field identifier. Must be one of those FIELD_*.
+     *
+     * @return array(int) list of matching values.
+     *
+     * @throws \coding_exception when passed an invalid field identifier.
+     */
+    private function get_valid(string $field): array {
+        switch($field) {
+            case self::FIELD_MINUTE:
+                $min = self::MINUTEMIN;
+                $max = self::MINUTEMAX;
+                break;
+            case self::FIELD_HOUR:
+                $min = self::HOURMIN;
+                $max = self::HOURMAX;
+                break;
+            case self::FIELD_DAY:
+                $min = self::DAYMIN;
+                $max = self::DAYMAX;
+                break;
+            case self::FIELD_MONTH:
+                $min = self::MONTHMIN;
+                $max = self::MONTHMAX;
+                break;
+            case self::FIELD_DAYOFWEEK:
+                $min = self::DAYOFWEEKMIN;
+                $max = self::DAYOFWEEKMAX;
+                break;
+            default:
+                throw new \coding_exception("Field '$field' is not a valid crontab identifier.");
+        }
+
+        return $this->eval_cron_field($this->{$field}, $min, $max);
     }
 
     /**
@@ -272,7 +371,6 @@ abstract class scheduled_task extends task_base {
         $last = 0;
         $inrange = false;
         $instep = false;
-
         foreach ($matches[0] as $match) {
             if ($match == '*') {
                 array_push($range, range($min, $max));
@@ -281,26 +379,33 @@ abstract class scheduled_task extends task_base {
             } else if ($match == '-') {
                 $inrange = true;
             } else if (is_numeric($match)) {
+                if ($min > $match || $match > $max) {
+                    // This is a value error: The value lays out of the expected range of values.
+                    return [];
+                }
                 if ($instep) {
-                    $i = 0;
                     for ($i = 0; $i < count($range[count($range) - 1]); $i++) {
                         if (($i) % $match != 0) {
                             $range[count($range) - 1][$i] = -1;
                         }
                     }
-                    $inrange = false;
+                    $instep = false;
                 } else if ($inrange) {
                     if (count($range)) {
                         $range[count($range) - 1] = range($last, $match);
                     }
                     $inrange = false;
                 } else {
-                    if ($match >= $min && $match <= $max) {
-                        array_push($range, $match);
-                    }
+                    array_push($range, $match);
                     $last = $match;
                 }
             }
+        }
+
+        // If inrange or instep were not processed, there is a syntax error.
+        // Cleanup any existing values to show up the error.
+        if ($inrange || $instep) {
+            return [];
         }
 
         // Flatten the result.
@@ -348,21 +453,19 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Calculate when this task should next be run based on the schedule.
+     *
      * @return int $nextruntime.
      */
     public function get_next_scheduled_time() {
-        global $CFG;
-
-        $validminutes = $this->eval_cron_field($this->minute, self::MINUTEMIN, self::MINUTEMAX);
-        $validhours = $this->eval_cron_field($this->hour, self::HOURMIN, self::HOURMAX);
-
         // We need to change to the server timezone before using php date() functions.
         \core_date::set_default_server_timezone();
 
-        $daysinmonth = date("t");
-        $validdays = $this->eval_cron_field($this->day, 1, $daysinmonth);
-        $validdaysofweek = $this->eval_cron_field($this->dayofweek, 0, 7);
-        $validmonths = $this->eval_cron_field($this->month, 1, 12);
+        $validminutes = $this->get_valid(self::FIELD_MINUTE);
+        $validhours = $this->get_valid(self::FIELD_HOUR);
+        $validdays = $this->get_valid(self::FIELD_DAY);
+        $validdaysofweek = $this->get_valid(self::FIELD_DAYOFWEEK);
+        $validmonths = $this->get_valid(self::FIELD_MONTH);
+
         $nextvalidyear = date('Y');
 
         $currentminute = date("i") + 1;
@@ -383,6 +486,7 @@ abstract class scheduled_task extends task_base {
         $nextvaliddayofmonth = $this->next_in_list($currentday, $validdays);
         $nextvaliddayofweek = $this->next_in_list($currentdayofweek, $validdaysofweek);
         $daysincrementbymonth = $nextvaliddayofmonth - $currentday;
+        $daysinmonth = date('t');
         if ($nextvaliddayofmonth < $currentday) {
             $daysincrementbymonth += $daysinmonth;
         }
@@ -431,6 +535,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Informs whether this task can be run.
+     *
      * @return bool true when this task can be run. false otherwise.
      */
     public function can_run(): bool {
@@ -441,6 +546,7 @@ abstract class scheduled_task extends task_base {
      * Checks whether the component and the task disabled flag enables to run this task.
      * This do not checks whether the task manager allows running them or if the
      * site allows tasks to "run now".
+     *
      * @return bool true if task is enabled. false otherwise.
      */
     public function is_enabled(): bool {
@@ -449,6 +555,7 @@ abstract class scheduled_task extends task_base {
 
     /**
      * Produces a valid id string to use as id attribute based on the given FQCN class name.
+     *
      * @param string $classname FQCN of a task.
      * @return string valid string to be used as id attribute.
      */
@@ -461,6 +568,6 @@ abstract class scheduled_task extends task_base {
      *
      * @return string
      */
-    public abstract function get_name();
+    abstract public function get_name();
 
 }

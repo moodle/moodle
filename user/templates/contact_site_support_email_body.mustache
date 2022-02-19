@@ -1,0 +1,102 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_user/contact_site_support_email_body
+
+    Support email email body.
+
+    Example context (json):
+    {
+        "subject": "email subject",
+        "notloggedinuser": true,
+        "name": "Sender name",
+        "email": "sender@mail.com",
+        "description": "Support request message"
+    }
+}}
+<head>
+    <style>
+        .table {
+            font-size: 18px;
+            margin-bottom: 20px;
+            width: 40%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+        .alert {
+            position: relative;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 0 solid transparent;
+            border-radius: 0.5rem;
+        }
+        .alert-warning {
+            color: #7d5a29;
+            background-color: #fcefdc;
+            border-color: #fbe8cd;
+        }
+
+        .subject {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+<table class="table">
+    <tr>
+        <td class="subject"><br /><b>{{#str}}subject{{/str}}:</b> {{subject}}<br /><br /></td>
+    </tr>
+    <tr>
+        <td>
+            <table style="width: 100%;">
+
+                <thead>
+                <tr>
+                {{#notloggedinuser}}
+                    <td class="alert alert-warning" colspan="2">
+                        {{#str}}supportmessagesentforloggedoutuser, user{{/str}}
+                    </td>
+                {{/notloggedinuser}}
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="2"><br /></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;<b>{{#str}}name{{/str}}</b></td>
+                    <td>{{name}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><hr></td>
+                </tr>
+                <tr style="border-top: 10px" >
+                    <td >&nbsp;<b>{{#str}}email{{/str}}</b></td>
+                    <td>{{email}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><hr></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;<b>{{#str}}description{{/str}}</b></td>
+                    <td>{{message}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>

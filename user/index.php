@@ -117,7 +117,7 @@ echo $OUTPUT->render_participants_tertiary_nav($course, html_writer::div($enrolb
     'data-table-uniqueid' => $participanttable->uniqueid,
 ]));
 
-echo $OUTPUT->heading(get_string('participants'));
+echo $OUTPUT->heading(get_string('enrolledusers', 'enrol'));
 
 $filterset = new \core_user\table\participants_filterset();
 $filterset->add_filter(new integer_filter('courseid', filter::JOINTYPE_DEFAULT, [(int)$course->id]));

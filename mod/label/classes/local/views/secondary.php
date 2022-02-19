@@ -17,6 +17,8 @@
 namespace mod_label\local\views;
 
 use core\navigation\views\secondary as core_secondary;
+use settings_navigation;
+use navigation_node;
 
 /**
  * Class secondary_navigation_view.
@@ -29,9 +31,19 @@ use core\navigation\views\secondary as core_secondary;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class secondary extends core_secondary {
-    protected function load_module_navigation(): void {
-        parent::load_module_navigation();
-        $node = $this->find('modulepage', null);
+
+    /**
+     * Custom module construct for label
+     *
+     * @param settings_navigation $settingsnav The settings navigation object related to the module page
+     * @param navigation_node|null $rootnode The node where the module navigation nodes should be added into as children.
+     *                                       If not explicitly defined, the nodes will be added to the secondary root
+     *                                       node by default.
+     */
+    protected function load_module_navigation(settings_navigation $settingsnav, ?navigation_node $rootnode = null): void {
+        parent::load_module_navigation($settingsnav, $rootnode);
+        $rootnode = $rootnode ?? $this;
+        $node = $rootnode->find('modulepage', null);
         if ($node) {
             // Label does not have a view and redirects to the course page. Change text to indicate this.
             $node->text = get_string('course');

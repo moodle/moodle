@@ -94,8 +94,7 @@ class custom_report_table extends base_report_table {
         $hasaggregatedcolumns = !empty($aggregatedcolumns);
         $showuniquerows = !$hasaggregatedcolumns && $this->persistent->get('uniquerows');
 
-        $columnheaders = [];
-        $columnsattributes = [];
+        $columnheaders = $columnsattributes = [];
         foreach ($columns as $column) {
             $columnheading = $column->get_persistent()->get_formatted_heading($this->report->get_context());
             $columnheaders[$column->get_column_alias()] = $columnheading !== '' ? $columnheading : $column->get_title();
@@ -127,7 +126,7 @@ class custom_report_table extends base_report_table {
                 $column->add_attributes(['data-cardviewhidden' => '']);
             }
 
-            // Generate row attributes to be included in each cell.
+            // Generate column attributes to be included in each cell.
             $columnsattributes[$column->get_column_alias()] = $column->get_attributes();
         }
 

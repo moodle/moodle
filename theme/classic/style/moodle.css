@@ -11537,12 +11537,8 @@ nav.navbar .logo img {
 /** Header-bar styles **/
 .page-context-header {
   overflow: hidden;
-  padding: 0.25rem 0; }
-  .page-context-header .page-header-image,
-  .page-context-header .page-header-headings {
-    float: left;
-    display: block;
-    position: relative; }
+  padding: 0.25rem 0;
+  display: flex; }
   .page-context-header .page-header-image > a {
     display: inline-block; }
   .page-context-header .page-header-headings,
@@ -12235,8 +12231,7 @@ body.dragging .dragging {
   margin: 0;
   padding: 0;
   box-sizing: content-box;
-  margin-right: 0.5rem;
-  margin-left: 0.5rem; }
+  margin-right: 0.5rem; }
   .icon.spacer {
     margin-right: 0; }
   .icon.iconsize-big {
@@ -12601,6 +12596,10 @@ body.dragging .dragging {
   text-align: center;
   padding: 0.5em;
   margin: 0; }
+
+.path-admin .header-maxwidth,
+.path-admin .secondary-navigation {
+  max-width: none; }
 
 .plugincheckwrapper {
   width: 100%; }
@@ -13075,6 +13074,7 @@ body.dragging .dragging {
 
 .block_recentlyaccessedcourses .paging-bar-container {
   margin-top: -2.4rem;
+  padding-right: 0.5rem;
   justify-content: flex-end; }
 
 @media (max-width: 575.98px) {
@@ -17149,6 +17149,9 @@ body.path-question-type .mform fieldset.hidden {
 [data-filterverb="2"] [data-filterverbfor="2"] {
   display: block; }
 
+#page-user-contactsitesupport .supporticon i {
+  font-size: 64px; }
+
 .search-results .result {
   margin-left: 0;
   margin-right: 0; }
@@ -18464,7 +18467,8 @@ div#dock {
   justify-content: center;
   border-radius: 50%;
   color: #343a40;
-  font-weight: normal; }
+  font-weight: normal;
+  margin-right: 0.25rem; }
   .userinitials.size-16, .userinitials.size-30 {
     font-size: 0.7rem;
     width: 30px;
@@ -18476,6 +18480,9 @@ div#dock {
     width: 100px;
     height: 100px;
     font-size: 1.875rem; }
+
+img.userpicture {
+  margin-right: 0.25rem; }
 
 @media (max-width: 767.98px) {
   .usertext {
@@ -21120,6 +21127,8 @@ div.editor_atto_toolbar button .icon {
     max-width: initial; }
   .reportbuilder-sidebar-settings div[data-region="settings-cardview"] form div[data-fieldtype="submit"] {
     flex-basis: auto; }
+  .reportbuilder-sidebar-settings .inplaceeditable.inplaceeditingon input {
+    width: 100%; }
 
 /* Add button styles when a toggle button is active. */
 .reportbuilder-wrapper button.btn-outline-secondary[data-toggle="collapse"]:not(.collapsed),
@@ -21335,7 +21344,9 @@ div.editor_atto_toolbar button .icon {
     .courseindex .courseindex-item.pageitem:hover, .courseindex .courseindex-item.pageitem:focus {
       background-color: #0c589c;
       color: #e6e5e5; }
-      .courseindex .courseindex-item.pageitem:hover .courseindex-link, .courseindex .courseindex-item.pageitem:focus .courseindex-link {
+      .courseindex .courseindex-item.pageitem:hover .courseindex-link,
+      .courseindex .courseindex-item.pageitem:hover .courseindex-chevron, .courseindex .courseindex-item.pageitem:focus .courseindex-link,
+      .courseindex .courseindex-item.pageitem:focus .courseindex-chevron {
         color: #e6e5e5; }
   .courseindex .courseindex-item .completioninfo {
     min-width: 24px; }

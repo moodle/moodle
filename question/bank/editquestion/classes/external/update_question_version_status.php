@@ -46,7 +46,7 @@ class update_question_version_status extends \external_api {
     public static function execute_parameters() {
         return new external_function_parameters([
             'questionid' => new external_value(PARAM_INT, 'The question id'),
-            'formdata' => new external_value(PARAM_RAW, 'The data from the status form'),
+            'status' => new external_value(PARAM_TEXT, 'The updated question status')
         ]);
     }
 
@@ -54,44 +54,49 @@ class update_question_version_status extends \external_api {
      * Handles the status form submission.
      *
      * @param int $questionid The question id.
-     * @param string $formdata The question tag form data in a URI encoded param string
+     * @param string $status The updated question status.
      * @return array The created or modified question tag
      */
-    public static function execute($questionid, $formdata) {
+    public static function execute($questionid, $status) {
         global $DB;
 
-        $data = [];
         $result = [
             'status' => false,
-            'statusname' => ''
+            'statusname' => '',
+            'error' => ''
         ];
 
         // Parameter validation.
         $params = self::validate_parameters(self::execute_parameters(), [
             'questionid' => $questionid,
-            'formdata' => $formdata
+            'status' => $status
         ]);
 
-        parse_str($params['formdata'], $data);
-
+        $statuslist = editquestion_helper::get_question_status_list();
+        $statusexists = array_key_exists($status, $statuslist);
+        if (!$statusexists) {
+            return [
+                'status' => false,
+                'statusname' => '',
+                'error' => get_string('unrecognizedstatus', 'qbank_editquestion')
+            ];
+        }
         $question = question_bank::load_question($params['questionid']);
         $editingcontext = \context::instance_by_id($question->contextid);
         self::validate_context($editingcontext);
         $canedit = question_has_capability_on($question, 'edit');
-        $mform = new \qbank_editquestion\form\question_status_form(null, null, 'post', '', null, $canedit, $data);
-        if ($validateddata = $mform->get_data()) {
-            if ($canedit && isset($validateddata->status)) {
-                $versionrecord = $DB->get_record('question_versions', ['questionid' => $params['questionid']]);
-                $versionrecord->status = $validateddata->status;
-                $DB->update_record('question_versions', $versionrecord);
-                question_bank::notify_question_edited($question->id);
-                $result = [
-                    'status' => true,
-                    'statusname' => editquestion_helper::get_question_status_string($versionrecord->status)
-                ];
-                $event = \core\event\question_updated::create_from_question_instance($question, $editingcontext);
-                $event->trigger();
-            }
+        if ($canedit) {
+            $versionrecord = $DB->get_record('question_versions', ['questionid' => $params['questionid']]);
+            $versionrecord->status = $params['status'];
+            $DB->update_record('question_versions', $versionrecord);
+            question_bank::notify_question_edited($question->id);
+            $result = [
+                'status' => true,
+                'statusname' => editquestion_helper::get_question_status_string($versionrecord->status),
+                'error' => ''
+            ];
+            $event = \core\event\question_updated::create_from_question_instance($question, $editingcontext);
+            $event->trigger();
         }
 
         return $result;
@@ -103,7 +108,8 @@ class update_question_version_status extends \external_api {
     public static function  execute_returns() {
         return new external_single_structure([
             'status' => new external_value(PARAM_BOOL, 'status: true if success'),
-            'statusname' => new external_value(PARAM_RAW, 'statusname: name of the status')
+            'statusname' => new external_value(PARAM_RAW, 'statusname: name of the status'),
+            'error' => new external_value(PARAM_TEXT, 'Error message if error exists')
         ]);
     }
 }

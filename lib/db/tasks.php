@@ -242,8 +242,8 @@ $tasks = array(
     array(
         'classname' => 'core\task\check_for_updates_task',
         'blocking' => 0,
-        'minute' => '0',
-        'hour' => '*/2',
+        'minute' => 'R',
+        'hour' => 'R',
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*'

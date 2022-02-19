@@ -86,7 +86,6 @@ XPATH
      * @param string $endpoint
      * @param array $params
      * @return moodle_url
-     * @throws moodle_exception
      */
     public static function get_mocked_server_url(string $endpoint = '', array $params = []): moodle_url {
         return new moodle_url(TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER . '/' . $endpoint, $params);
@@ -149,7 +148,6 @@ XPATH
      *
      * @param string $identifier
      * @return int
-     * @throws dml_exception
      */
     protected function get_course_id(string $identifier): int {
         global $DB;

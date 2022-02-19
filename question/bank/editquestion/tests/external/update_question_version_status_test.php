@@ -16,6 +16,7 @@
 
 namespace qbank_editquestion;
 
+use core_question\local\bank\question_version_status;
 use qbank_editquestion\external\update_question_version_status;
 
 /**
@@ -26,7 +27,7 @@ use qbank_editquestion\external\update_question_version_status;
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_question\local\bank\question_version_status
- * @coversDefaultClass \qbank_editquestion\form\question_status_form
+ * @coversDefaultClass \qbank_editquestion\external\update_question_version_status
  * @coversDefaultClass \qbank_editquestion\editquestion_helper
  */
 class update_question_version_status_test extends \advanced_testcase {
@@ -45,7 +46,6 @@ class update_question_version_status_test extends \advanced_testcase {
     /**
      * Test if the submit status webservice changes the status of the question.
      *
-     * @covers ::mock_generate_submit_keys
      * @covers ::execute
      * @covers ::get_question_status_string
      */
@@ -56,20 +56,38 @@ class update_question_version_status_test extends \advanced_testcase {
         $cat = $questiongenerator->create_question_category();
         $numq = $questiongenerator->create_question('essay', null,
             ['category' => $cat->id, 'name' => 'This is the first version']);
-        $data = ['status' => 2];
-        $mform = \qbank_editquestion\form\question_status_form::mock_generate_submit_keys($data);
-        $this->expectException('moodle_exception');
-        list($result, $statusname) = update_question_version_status::execute($numq->id, http_build_query($mform, '', '&'));
+        $result = update_question_version_status::execute($numq->id, 'draft');
         // Test if the version actually changed.
         $currentstatus = $DB->get_record('question_versions', ['questionid' => $numq->id]);
-        $this->assertEquals($data['status'], $currentstatus->status);
-        $this->assertEquals(editquestion_helper::get_question_status_string($currentstatus->status), $statusname);
+        $this->assertEquals(editquestion_helper::get_question_status_string($currentstatus->status), $result['statusname']);
+    }
+
+    /**
+     * Test submit status webservice only takes an existing parameter status.
+     *
+     * @covers ::execute
+     */
+    public function test_submit_status_error() {
+        global $DB;
+        $this->resetAfterTest();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+        $numq = $questiongenerator->create_question('essay', null,
+            ['category' => $cat->id, 'name' => 'This is the first version']);
+        // Passing a wrong status to web service.
+        $result = update_question_version_status::execute($numq->id, 'frog');
+        // Tests web service returns error.
+        $this->assertEquals(false, $result['status']);
+        $this->assertEquals('', $result['statusname']);
+        $this->assertEquals(get_string('unrecognizedstatus', 'qbank_editquestion'), $result['error']);
+        // Test version did not change.
+        $currentstatus = $DB->get_record('question_versions', ['questionid' => $numq->id]);
+        $this->assertEquals(question_version_status::QUESTION_STATUS_READY, $currentstatus->status);
     }
 
     /**
      * Test that updating the status does not create a new version.
      *
-     * @covers ::mock_generate_submit_keys
      * @covers ::execute
      */
     public function test_submit_status_does_not_create_a_new_version() {
@@ -81,10 +99,7 @@ class update_question_version_status_test extends \advanced_testcase {
             ['category' => $cat->id, 'name' => 'This is the first version']);
         $countcurrentrecords = $DB->count_records('question_versions');
         $this->assertEquals(1, $countcurrentrecords);
-        $data = ['status' => 2];
-        $mform = \qbank_editquestion\form\question_status_form::mock_generate_submit_keys($data);
-        $this->expectException('moodle_exception');
-        list($result, $statusname) = update_question_version_status::execute($numq->id, http_build_query($mform, '', '&'));
+        $result = update_question_version_status::execute($numq->id, 'draft');
         $countafterupdate = $DB->count_records('question_versions');
         $this->assertEquals($countcurrentrecords, $countafterupdate);
     }
