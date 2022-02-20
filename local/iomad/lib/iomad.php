@@ -380,7 +380,7 @@ class iomad {
      * @param array $categories list of category objects
      * @return array filtered list of categories
      */
-    public static function iomad_filter_categories( $categories, $userid = 0 ) {
+    public static function iomad_filter_categories( $categories ) {
         global $DB, $USER;
 
         // Check if its the client admin.
@@ -388,24 +388,33 @@ class iomad {
             return $categories;
         }
 
-        if (empty($userid)) {
-            $user = $USER;
-            $user->company = company::get_company_byuserid($USER->id);
-        } else {
-            $user = $DB->get_record('user', array('id' => $userid));
-            $user->company = company::get_company_byuserid($userid);
-        }
+        //if (empty($userid)) {
+        $companyid = iomad::get_my_companyid(context_system::instance());
+        $company = $DB->get_record('company', ['id' => $companyid]);
 
         // Get all of the company course categories including children.
-        $allcompanycategories = $DB->get_records_sql("SELECT DISTINCT cc.id
-                                                      FROM {course_categories} cc,
-                                                      {company} c
-                                                      WHERE cc.path like " . $DB->sql_concat('"/"', $DB->sql_concat("c.category", '"%"')));
+        $allcompanycategories = [];
+        $companyroots = $DB->get_records('company', [], 'category', 'category');
+        foreach ($companyroots as $companyroot) {
+            $allcompanycategories[$companyroot->category] = $companyroot->category;
+            $children = $DB->get_records_sql("SELECT DISTINCT id
+                                              FROM {course_categories}
+                                              WHERE " . $DB->sql_like("path", ":parentpath"),
+                                              ['parentpath' => "/" . $companyroot->category . "/%"]);
+            foreach ($children as $child) {
+                $allcompanycategories[$child->id] = $child->id;
+            }
+        }
 
         // Get the current company course categories.
-        $mycompanycategories = $DB->get_records_sql("SELECT DISTINCT cc.id
-                                                     FROM {course_categories} cc
-                                                     WHERE cc.path like " . $DB->sql_concat('"/"', $DB->sql_concat($user->company->category, '"%"')));
+        if (!empty($company->category)) {
+            $mycompanycategories = $DB->get_records_sql("SELECT DISTINCT cc.id
+                                                         FROM {course_categories} cc
+                                                         WHERE " . $DB->sql_like('cc.path', ':companycategorysearch'),
+                                                         ['companycategorysearch' => '/' . $company->category . '%']);
+        } else {
+            $mycompanycategories = [];
+        }
 
         // Set up the return array;
         $iomadcategories = array();
