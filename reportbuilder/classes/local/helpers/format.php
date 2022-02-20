@@ -61,6 +61,6 @@ class format {
      * @return string
      */
     public static function percent($value): string {
-        return sprintf('%.1f%%', (float) $value);
+        return format_float((float) $value, 1) . '%';
     }
 }

@@ -49,6 +49,7 @@ class avg extends base {
         return in_array($columntype, [
             column::TYPE_INTEGER,
             column::TYPE_FLOAT,
+            column::TYPE_BOOLEAN,
         ]);
     }
 
@@ -72,6 +73,6 @@ class avg extends base {
      * @return mixed
      */
     public static function format_value($value, array $values, array $callbacks) {
-        return sprintf('%.1f', (float) reset($values));
+        return format_float((float) reset($values), 1);
     }
 }

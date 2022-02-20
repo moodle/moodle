@@ -92,8 +92,30 @@ Feature: Manage custom report columns aggregation
       | Count distinct                  | 2            |
       | Maximum                         | Yes          |
       | Minimum                         | No           |
+      | Average                         | 0.7          |
       | Percentage                      | 66.7%        |
       | Sum                             | 2            |
+
+  Scenario Outline: Aggregated columns display localised floats
+    Given the following "language customisations" exist:
+      | component       | stringid | value |
+      | core_langconfig | decsep   | ,     |
+    And the following "core_reportbuilder > Reports" exist:
+      | name      | source                                   | default |
+      | My report | core_user\reportbuilder\datasource\users | 0       |
+    And the following "core_reportbuilder > Columns" exist:
+      | report    | uniqueidentifier |
+      | My report | user:lastname    |
+      | My report | user:confirmed   |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    And I change window size to "large"
+    When I set the "Confirmed" column aggregation to "<aggregation>"
+    Then I should see "Aggregated column 'Confirmed'"
+    And I should see "<output>" in the "Richie" "table_row"
+    Examples:
+      | aggregation | output |
+      | Average     | 0,7    |
+      | Percentage  | 66,7%  |
 
   Scenario: Show unique report rows
     Given the following "core_reportbuilder > Reports" exist:
