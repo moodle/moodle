@@ -1014,16 +1014,18 @@ class completion_info {
      *   fill the cache, retrieves information from the entire course not just for
      *   this one activity
      * @param int $userid User ID or 0 (default) for current user
-     * @param array $modinfo Supply the value here - this is used for unit
-     *   testing and so that it can be called recursively from within
-     *   get_fast_modinfo. (Needs only list of all CMs with IDs.)
-     *   Otherwise the method calls get_fast_modinfo itself.
+     * @param null $unused This parameter has been deprecated since 4.0 and should not be used anymore.
      * @return object Completion data. Record from course_modules_completion plus other completion statuses such as
      *                  - Completion status for 'must-receive-grade' completion rule.
      *                  - Custom completion statuses defined by the activity module plugin.
      */
-    public function get_data($cm, $wholecourse = false, $userid = 0, $modinfo = null) {
+    public function get_data($cm, $wholecourse = false, $userid = 0, $unused = null) {
         global $USER, $DB;
+
+        if ($unused !== null) {
+            debugging('Deprecated argument passed to ' . __FUNCTION__, DEBUG_DEVELOPER);
+        }
+
         $completioncache = cache::make('core', 'completion');
 
         // Get user ID
