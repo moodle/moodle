@@ -330,6 +330,11 @@ class navigation_node implements renderable {
      */
     public static function create($text, $action=null, $type=self::TYPE_CUSTOM,
             $shorttext=null, $key=null, pix_icon $icon=null) {
+        if ($action && !($action instanceof moodle_url || $action instanceof action_link)) {
+            debugging(
+                "It is required that the action provided be either an action_url|moodle_url." .
+                " Please update your definition.", E_NOTICE);
+        }
         // Properties array used when creating the new navigation node
         $itemarray = array(
             'text' => $text,
@@ -365,6 +370,9 @@ class navigation_node implements renderable {
      * @return navigation_node
      */
     public function add($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, pix_icon $icon=null) {
+        if ($action && is_string($action)) {
+            $action = new moodle_url($action);
+        }
         // Create child node
         $childnode = self::create($text, $action, $type, $shorttext, $key, $icon);
 
@@ -698,6 +706,26 @@ class navigation_node implements renderable {
      */
     public function has_action() {
         return !empty($this->action);
+    }
+
+    /**
+     * Used to easily determine if the action is an internal link.
+     *
+     * @return bool
+     */
+    public function has_internal_action(): bool {
+        global $CFG;
+        if ($this->has_action()) {
+            $url = $this->action();
+            if ($this->action() instanceof \action_link) {
+                $url = $this->action()->url;
+            }
+
+            if (($url->out() === $CFG->wwwroot) || (strpos($url->out(), $CFG->wwwroot.'/') === 0)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
