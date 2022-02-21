@@ -1251,20 +1251,8 @@ class company {
                     role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
                     role_assign($companyreporterrole->id, $userid, $systemcontext->id);
 
-                    // Deal with course permissions.
-                    if ($CFG->iomad_autoenrol_managers &&
-                        ($user->managertype == 1 || $user->managertype == 2) &&
-                        $companycourses = $DB->get_records('company_course',
-                                                            array('companyid' => $companyid))) {
-                        foreach ($companycourses as $companycourse) {
-                            if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
-                                company_user::unenrol($userid,
-                                                      array($companycourse->courseid),
-                                                            $companycourse->companyid);
-                            }
-                        }
-                    }   
                 }
+
                 if ($managertype == 1 || $user->managertype == 1) {
                     // Deal with child companies.
                     foreach ($company->get_child_companies_recursive() as $childcompany) {
@@ -1274,7 +1262,10 @@ class company {
                     }
                 }   
             }
-            if ($user->managertype != 0 && $managertype == 0) {
+            if (($user->managertype == 1 ||
+                 $user->managertype == 2 ||
+                 $user->managertype == 3)
+                 && $managertype == 0) {
                 // Demoting a manager to a user.
                 // Deal with company course roles.
                 if ($CFG->iomad_autoenrol_managers &&
