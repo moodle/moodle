@@ -35,4 +35,4 @@ Feature: Test the ability to run the full meeting lifecycle (start to end)
     And I switch to the main window
     And I reload the page
     Then I should see "Room recordings"
-    And I should see "This conference room is ready. You can join the session now."
+    And I should see "This room is ready. You can join the session now."

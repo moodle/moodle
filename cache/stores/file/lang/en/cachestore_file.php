@@ -29,7 +29,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['asyncpurge'] = 'Asynchronously purge directory';
-$string['asyncpurge_help'] = 'If enabled, new directory is created with cache revision and old directory will be deleted Asynchronously via schedule task';
+$string['asyncpurge_help'] = 'If enabled, the new directory is created with cache revision and the old directory will be deleted asynchronously via a scheduled task.';
 $string['autocreate'] = 'Auto create directory';
 $string['autocreate_help'] = 'If enabled the directory specified in path will be automatically created if it does not already exist.';
 $string['path'] = 'Cache path';

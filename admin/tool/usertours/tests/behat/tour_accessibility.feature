@@ -10,14 +10,14 @@ Feature: Apply accessibility to a tour
       | Show with backdrop  | 1 |
     And I add steps to the "First tour" tour:
       | targettype                | Title   | id_content    | Content type   |
-      | Display in middle of page | Welcome | Welcome tour. | Enter manually |
+      | Display in middle of page | Welcome | Welcome tour. | Manual |
     And I add steps to the tour:
       | targettype | targetvalue_selector | Title     | id_content | Content type   |
-      | Selector   | .usermenu            | User menu | Next page  | Enter manually |
-      | Selector   | .navbar-brand        | Page 2    | Next page  | Enter manually |
+      | Selector   | .usermenu            | User menu | Next page  | Manual |
+      | Selector   | .navbar-brand        | Page 2    | Next page  | Manual |
     And I add steps to the tour:
       | targettype                | Title  | id_content  | Content type   |
-      | Display in middle of page | Page 3 | Final page. | Enter manually |
+      | Display in middle of page | Page 3 | Final page. | Manual |
 
   @javascript
   Scenario: Check tabbing working correctly.

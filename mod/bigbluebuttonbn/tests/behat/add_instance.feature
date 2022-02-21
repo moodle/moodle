@@ -10,30 +10,30 @@ Feature: bigbluebuttonbn instance
       | fullname    | shortname   | category |
       | Test course | Test course | 0        |
 
-  Scenario: Add a mod_bigbluebuttonbn instance with Room/Activity with recordings
+  Scenario: Add a mod_bigbluebuttonbn instance with Room with recordings
     Given I am on the "Test course" "course" page logged in as "admin"
     And I am on "Test course" course homepage with editing mode on
     When I add a "BigBlueButton" to section "1" and I fill the form with:
       | name                   | BBB Instance name             |
-      | Instance type          | Room/Activity with recordings |
-      | Virtual classroom name | BBB Instance name             |
+      | Instance type          | Room with recordings          |
+      | Room name              | BBB Instance name             |
     And I am on the "Test course" course page
     Then I should see "BBB Instance name"
     And I am on the "BBB Instance name" "bigbluebuttonbn activity" page
-    And I should see "This conference room is ready. You can join the session now."
+    And I should see "This room is ready. You can join the session now."
     And I should see "Join session"
     And I should see "Recordings"
 
-  Scenario: Add a mod_bigbluebuttonbn instance with Room/Activity only
+  Scenario: Add a mod_bigbluebuttonbn instance with Room only
     Given I am on the "Test course" "course" page logged in as "admin"
     And I am on "Test course" course homepage with editing mode on
     When I add a "BigBlueButton" to section "1" and I fill the form with:
-      | Instance type          | Room/Activity only |
-      | Virtual classroom name | BBB Instance name  |
+      | Instance type          | Room only          |
+      | Room name              | BBB Instance name  |
     And I am on the "Test course" course page
     Then I should see "BBB Instance name"
     And I am on the "BBB Instance name" "bigbluebuttonbn activity" page
-    And I should see "This conference room is ready. You can join the session now."
+    And I should see "This room is ready. You can join the session now."
     And I should see "Join session"
     And I should not see "Recordings"
 
@@ -42,11 +42,11 @@ Feature: bigbluebuttonbn instance
     And I am on "Test course" course homepage with editing mode on
     When I add a "BigBlueButton" to section "1" and I fill the form with:
       | Instance type          | Recordings only   |
-      | Virtual classroom name | BBB Instance name |
+      | Room name              | BBB Instance name |
     And I am on the "Test course" course page
     Then I should see "BBB Instance name"
     And I am on the "BBB Instance name" "bigbluebuttonbn activity" page
-    And I should not see "This conference room is ready. You can join the session now."
+    And I should not see "This room is ready. You can join the session now."
     And I should not see "Join session"
     And I should see "Recordings"
 
@@ -59,6 +59,6 @@ Feature: bigbluebuttonbn instance
 
     Examples:
       | type                          |
-      | Room/Activity with recordings |
-      | Room/Activity only            |
+      | Room with recordings          |
+      | Room only                     |
       | Recordings only               |

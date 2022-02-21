@@ -16,7 +16,7 @@ Feature: Duplicate a user tour
       | Tour is enabled     | 0 |
     And I add steps to the "First tour" tour:
       | targettype                | Title   | id_content                                                                                                                     | Content type   |
-      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Enter manually |
+      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Manual         |
     And I open the User tour settings page
     And I should see "1" occurrences of "First tour" in the "admintable" "table"
     And I click on "Duplicate" "link" in the "My first tour" "table_row"

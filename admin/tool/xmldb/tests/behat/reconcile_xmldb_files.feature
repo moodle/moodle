@@ -8,5 +8,5 @@ Feature: The Reconcile XMLDB files report works and all the files are ok
     Given I log in as "admin"
     And I navigate to "Development > XMLDB editor" in site administration
     When I follow "[Reconcile XMLDB files]"
-    Then I should see "Look for XMLDB files needing reconcile"
-    And I should see "All files are ok, no reconcile action needed"
+    Then I should see "Look for XMLDB files needing reconciling"
+    And I should see "All files are OK. No reconciling is needed."

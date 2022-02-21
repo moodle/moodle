@@ -25,7 +25,7 @@
 $string['anypagematchingtheabove'] = 'Any page matching the above';
 $string['appearsinsubcontexts'] = 'Appears in sub-contexts';
 $string['assignrolesinblock'] = 'Assign roles in {$a} block';
-$string['blocksdrawertoggle'] = 'Hide/show blocks drawer';
+$string['blocksdrawertoggle'] = 'Hide/show block drawer';
 $string['blocksettings'] = 'Block settings';
 $string['bracketfirst'] = '{$a} (first)';
 $string['bracketlast'] = '{$a} (last)';
