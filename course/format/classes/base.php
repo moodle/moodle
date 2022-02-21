@@ -550,6 +550,8 @@ abstract class base {
 
     /**
      * Return the format section preferences.
+     *
+     * @return array of preferences indexed by sectionid
      */
     public function get_sections_preferences(): array {
         global $USER;
@@ -564,17 +566,7 @@ abstract class base {
             return $coursesections;
         }
 
-        // Calculate collapsed preferences.
-        try {
-            $sectionpreferences = (array) json_decode(
-                get_user_preferences('coursesectionspreferences_' . $course->id, null, $USER->id)
-            );
-            if (empty($sectionpreferences)) {
-                $sectionpreferences = [];
-            }
-        } catch (\Throwable $e) {
-            $sectionpreferences = [];
-        }
+        $sectionpreferences = $this->get_sections_preferences_by_preference();
 
         foreach ($sectionpreferences as $preference => $sectionids) {
             if (!empty($sectionids) && is_array($sectionids)) {
@@ -588,8 +580,46 @@ abstract class base {
         }
 
         $coursesectionscache->set($course->id, $result);
-
         return $result;
+    }
+
+    /**
+     * Return the format section preferences.
+     *
+     * @return array of preferences indexed by preference name
+     */
+    public function get_sections_preferences_by_preference(): array {
+        global $USER;
+        $course = $this->get_course();
+        try {
+            $sectionpreferences = (array) json_decode(
+                get_user_preferences('coursesectionspreferences_' . $course->id, null, $USER->id)
+            );
+            if (empty($sectionpreferences)) {
+                $sectionpreferences = [];
+            }
+        } catch (\Throwable $e) {
+            $sectionpreferences = [];
+        }
+        return $sectionpreferences;
+    }
+
+    /**
+     * Return the format section preferences.
+     *
+     * @param string $preferencename preference name
+     * @param int[] $sectionids affected section ids
+     *
+     */
+    public function set_sections_preference(string $preferencename, array $sectionids) {
+        global $USER;
+        $course = $this->get_course();
+        $sectionpreferences = $this->get_sections_preferences_by_preference();
+        $sectionpreferences[$preferencename] = $sectionids;
+        set_user_preference('coursesectionspreferences_' . $course->id, json_encode($sectionpreferences), $USER->id);
+        // Invalidate section preferences cache.
+        $coursesectionscache = cache::make('core', 'coursesectionspreferences');
+        $coursesectionscache->delete($course->id);
     }
 
     /**

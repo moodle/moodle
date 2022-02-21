@@ -289,11 +289,7 @@ class stateactions {
     }
 
     /**
-     * Some of the topic preferences has been updated.
-     *
-     * Section preferences can be handled by many user actions and even some of them can affect
-     * only the frontend part. Format plugins can override this method to add extra logic to the
-     * section preferences.
+     * Update the course content section collapsed value.
      *
      * @param stateupdates $updates the affected course elements track
      * @param stdClass $course the course object
@@ -301,15 +297,41 @@ class stateactions {
      * @param int $targetsectionid not used
      * @param int $targetcmid not used
      */
-    public function topic_preferences_updated(
+    public function section_content_collapsed(
         stateupdates $updates,
         stdClass $course,
         array $ids = [],
         ?int $targetsectionid = null,
         ?int $targetcmid = null
     ): void {
-        // Format plugins may override this method to provide extra functionalities to
-        // section preferences.
+        if (!empty($ids)) {
+            $this->validate_sections($course, $ids, __FUNCTION__);
+        }
+        $format = course_get_format($course->id);
+        $format->set_sections_preference('contentcollapsed', $ids);
+    }
+
+    /**
+     * Update the course index section collapsed value.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids the collapsed section ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function section_index_collapsed(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        if (!empty($ids)) {
+            $this->validate_sections($course, $ids, __FUNCTION__);
+        }
+        $format = course_get_format($course->id);
+        $format->set_sections_preference('indexcollapsed', $ids);
     }
 
     /**

@@ -261,9 +261,7 @@ class base_test extends advanced_testcase {
      * @covers ::get_sections_preferences
      */
     public function test_get_sections_preferences() {
-
         $this->resetAfterTest();
-
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
         $user = $generator->create_and_enrol($course, 'student');
@@ -289,7 +287,36 @@ class base_test extends advanced_testcase {
             (object)['pref1' => true],
             $preferences[2]
         );
+    }
 
+    /**
+     * Test for the default delete format data behaviour.
+     *
+     * @covers ::set_sections_preference
+     */
+    public function test_set_sections_preference() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user = $generator->create_and_enrol($course, 'student');
+
+        $format = course_get_format($course);
+        $this->setUser($user);
+
+        // Load data from user 1.
+        $format->set_sections_preference('pref1', [1, 2]);
+        $format->set_sections_preference('pref2', [1]);
+        $format->set_sections_preference('pref3', []);
+
+        $preferences = $format->get_sections_preferences();
+        $this->assertEquals(
+            (object)['pref1' => true, 'pref2' => true],
+            $preferences[1]
+        );
+        $this->assertEquals(
+            (object)['pref1' => true],
+            $preferences[2]
+        );
     }
 
     /**

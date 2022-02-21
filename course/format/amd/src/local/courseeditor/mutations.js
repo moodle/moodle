@@ -286,14 +286,42 @@ export default class {
         stateManager.setReadOnly(true);
     }
 
-    /*
-     * Get updated user preferences and state data related to some section ids.
+    /**
+     * Update the course index collapsed attribute of some sections.
      *
-     * @param {StateManager} stateManager the current state
-     * @param {array} sectionIds the list of section ids to update
-     * @param {Object} preferences the new preferences values
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the affected section ids
+     * @param {boolean} collapsed the new collapsed value
      */
-    async sectionPreferences(stateManager, sectionIds, preferences) {
+    async sectionIndexCollapsed(stateManager, sectionIds, collapsed) {
+        const collapsedIds = this._updateStateSectionPreference(stateManager, 'indexcollapsed', sectionIds, collapsed);
+        const course = stateManager.get('course');
+        await this._callEditWebservice('section_index_collapsed', course.id, collapsedIds);
+    }
+
+    /**
+     * Update the course content collapsed attribute of some sections.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the affected section ids
+     * @param {boolean} collapsed the new collapsed value
+     */
+    async sectionContentCollapsed(stateManager, sectionIds, collapsed) {
+        const collapsedIds = this._updateStateSectionPreference(stateManager, 'contentcollapsed', sectionIds, collapsed);
+        const course = stateManager.get('course');
+        await this._callEditWebservice('section_content_collapsed', course.id, collapsedIds);
+    }
+
+    /**
+     * Private batch update for a section preference attribute.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {string} preferenceName the preference name
+     * @param {array} sectionIds the affected section ids
+     * @param {boolean} preferenceValue the new preferenceValue value
+     * @return {array} the list of all sections with that preference set to true
+     */
+    _updateStateSectionPreference(stateManager, preferenceName, sectionIds, preferenceValue) {
         stateManager.setReadOnly(false);
         const affectedSections = new Set();
         // Check if we need to update preferences.
@@ -302,41 +330,25 @@ export default class {
             if (section === undefined) {
                 return;
             }
-            let newValue = preferences.contentcollapsed ?? section.contentcollapsed;
-            if (section.contentcollapsed != newValue) {
-                section.contentcollapsed = newValue;
-                affectedSections.add(section.id);
-            }
-            newValue = preferences.indexcollapsed ?? section.indexcollapsed;
-            if (section.indexcollapsed != newValue) {
-                section.indexcollapsed = newValue;
+            const newValue = preferenceValue ?? section[preferenceName];
+            if (section[preferenceName] != newValue) {
+                section[preferenceName] = newValue;
                 affectedSections.add(section.id);
             }
         });
         stateManager.setReadOnly(true);
-
-        if (affectedSections.size > 0) {
-            // Build the preference structures.
-            const course = stateManager.get('course');
-            const state = stateManager.state;
-            const prefKey = `coursesectionspreferences_${course.id}`;
-            const preferences = {
-                contentcollapsed: [],
-                indexcollapsed: [],
-            };
-            state.section.forEach(section => {
-                if (section.contentcollapsed) {
-                    preferences.contentcollapsed.push(section.id);
-                }
-                if (section.indexcollapsed) {
-                    preferences.indexcollapsed.push(section.id);
-                }
-            });
-            const jsonString = JSON.stringify(preferences);
-            M.util.set_user_preference(prefKey, jsonString);
-            // Inform the backend of the change.
-            await this._callEditWebservice('topic_preferences_updated', course.id, [...affectedSections]);
+        if (affectedSections.size == 0) {
+            return [];
         }
+        // Get all collapsed section ids.
+        const collapsedSectionIds = [];
+        const state = stateManager.state;
+        state.section.forEach(section => {
+            if (section[preferenceName]) {
+                collapsedSectionIds.push(section.id);
+            }
+        });
+        return collapsedSectionIds;
     }
 
     /**
