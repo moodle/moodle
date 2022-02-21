@@ -1123,33 +1123,6 @@ class company {
                 role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
                 role_assign($companyreporterrole->id, $userid, $systemcontext->id);
 
-                if ($educator == 1 && !$CFG->iomad_autoenrol_managers ) {
-                    // Deal with company course roles.
-                    if ($companycourses = $DB->get_records('company_course',
-                         array('companyid' => $companyid))) {
-                        foreach ($companycourses as $companycourse) {
-                            if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
-                                // If its a company created course then assign the editor role to the user.
-                                if ($DB->record_exists('company_created_courses',
-                                                        array ('companyid' => $companyid,
-                                                               'courseid' => $companycourse->courseid))) {
-                                    company_user::unenrol($userid,
-                                                          array($companycourse->courseid),
-                                                                $companycourse->companyid);
-                                    company_user::enrol($userid, array($companycourse->courseid),
-                                                        $companycourse->companyid,
-                                                        $companycourseeditorrole->id);
-
-                                } else {
-                                     company_user::enrol($userid, array($companycourse->courseid),
-                                                         $companycourse->companyid,
-                                                         $companycoursenoneditorrole->id);
-                                }
-                            }
-                        }
-                    }
-                }
-
                 // Make sure all department records in the company match this.
                 $DB->set_field('company_users', 'managertype', 4, ['companyid' => $companyid, 'userid' => $userid]);
             }
