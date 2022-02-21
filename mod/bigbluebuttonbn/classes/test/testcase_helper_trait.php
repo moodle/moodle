@@ -262,6 +262,7 @@ trait testcase_helper_trait {
      * @param instance $instance
      * @param int $userid
      * @param int $count
+     * @param bool $importrecordings
      * @return array
      */
     protected function create_legacy_log_entries(instance $instance, int $userid, int $count = 30,

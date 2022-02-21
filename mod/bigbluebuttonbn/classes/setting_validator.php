@@ -228,17 +228,6 @@ class setting_validator {
     }
 
     /**
-     * Validate if lockedlayout section will be shown.
-     *
-     * @return bool
-     */
-    public static function section_lockedlayout_shown() {
-        global $CFG;
-        return (!isset($CFG->bigbluebuttonbn['lockedlayout_default']) ||
-            !isset($CFG->bigbluebuttonbn['lockedlayout_editable']));
-    }
-
-    /**
      * Validate if lockonjoin section will be shown.
      *
      * @return bool
@@ -250,13 +239,17 @@ class setting_validator {
     }
 
     /**
-     * Validate if lockonjoinconfigurable section will be shown.
-     *
+     * Validate that session lock settings is shown or not
      * @return bool
      */
-    public static function section_lockonjoinconfigurable_shown() {
-        global $CFG;
-        return (!isset($CFG->bigbluebuttonbn['lockonjoinconfigurable_default']) ||
-            !isset($CFG->bigbluebuttonbn['lockonjoinconfigurable_editable']));
+    public static function section_lock_shown() {
+        return self::section_disablecam_shown() ||
+                self::section_disablemic_shown() ||
+                self::section_disablenote_shown() ||
+                self::section_disableprivatechat_shown() ||
+                self::section_disablepublicchat_shown() ||
+                self::section_disablenote_shown() ||
+                self::section_hideuserlist_shown() ||
+                self::section_lockonjoin_shown();
     }
 }

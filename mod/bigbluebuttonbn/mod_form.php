@@ -415,7 +415,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             $locksettings = true;
         }
         $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-            $field['description_key'], $cfg['disablecam_default']);
+                $field['description_key'], $cfg['disablecam_default']);
 
         $field = ['type' => 'hidden', 'name' => 'disablemic', 'data_type' => PARAM_INT, 'description_key' => null];
         if ($cfg['disablemic_editable']) {
@@ -424,7 +424,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             $locksettings = true;
         }
         $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-            $field['description_key'], $cfg['disablemic_default']);
+                $field['description_key'], $cfg['disablemic_default']);
 
         $field = ['type' => 'hidden', 'name' => 'disableprivatechat', 'data_type' => PARAM_INT, 'description_key' => null];
         if ($cfg['disableprivatechat_editable']) {
@@ -433,7 +433,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             $locksettings = true;
         }
         $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-            $field['description_key'], $cfg['disableprivatechat_default']);
+                $field['description_key'], $cfg['disableprivatechat_default']);
 
         $field = ['type' => 'hidden', 'name' => 'disablepublicchat', 'data_type' => PARAM_INT, 'description_key' => null];
         if ($cfg['disablepublicchat_editable']) {
@@ -442,7 +442,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             $locksettings = true;
         }
         $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-            $field['description_key'], $cfg['disablepublicchat_default']);
+                $field['description_key'], $cfg['disablepublicchat_default']);
 
         $field = ['type' => 'hidden', 'name' => 'disablenote', 'data_type' => PARAM_INT, 'description_key' => null];
         if ($cfg['disablenote_editable']) {
@@ -451,25 +451,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             $locksettings = true;
         }
         $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-            $field['description_key'], $cfg['disablenote_default']);
-
-        $field = ['type' => 'hidden', 'name' => 'hideuserlist', 'data_type' => PARAM_INT, 'description_key' => null];
-        if ($cfg['hideuserlist_editable']) {
-            $field['type'] = 'checkbox';
-            $field['description_key'] = 'mod_form_field_hideuserlist';
-            $locksettings = true;
-        }
-        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-            $field['description_key'], $cfg['hideuserlist_default']);
-
-        $field = ['type' => 'hidden', 'name' => 'lockedlayout', 'data_type' => PARAM_INT, 'description_key' => null];
-        if ($cfg['lockedlayout_editable']) {
-            $field['type'] = 'checkbox';
-            $field['description_key'] = 'mod_form_field_lockedlayout';
-            $locksettings = true;
-        }
-        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-            $field['description_key'], $cfg['lockedlayout_default']);
+                $field['description_key'], $cfg['disablenote_default']);
 
         $field = ['type' => 'hidden', 'name' => 'lockonjoin', 'data_type' => PARAM_INT, 'description_key' => null];
         if ($cfg['lockonjoin_editable']) {
@@ -478,23 +460,23 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             $locksettings = true;
         }
         $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-            $field['description_key'], $cfg['lockonjoin_default']);
+                $field['description_key'], $cfg['lockonjoin_default']);
 
-        $field = ['type' => 'hidden', 'name' => 'lockonjoinconfigurable', 'data_type' => PARAM_INT, 'description_key' => null];
-        if ($cfg['lockonjoinconfigurable_editable']) {
+        $field = ['type' => 'hidden', 'name' => 'hideuserlist', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['hideuserlist_editable']) {
             $field['type'] = 'checkbox';
-            $field['description_key'] = 'mod_form_field_lockonjoinconfigurable';
+            $field['description_key'] = 'mod_form_field_hideuserlist';
             $locksettings = true;
         }
         $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
-            $field['description_key'], $cfg['lockonjoinconfigurable_default']);
+                $field['description_key'], $cfg['hideuserlist_default']);
 
         // Output message if no settings.
         if (!$locksettings) {
             $field = ['type' => 'static', 'name' => 'no_locksettings',
-                'defaultvalue' => get_string('mod_form_field_nosettings', 'bigbluebuttonbn')];
+                    'defaultvalue' => get_string('mod_form_field_nosettings', 'bigbluebuttonbn')];
             $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], null, null,
-                $field['defaultvalue']);
+                    $field['defaultvalue']);
         }
     }
 
