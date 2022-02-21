@@ -75,7 +75,7 @@ Feature: Manage custom reports
       | My report | core_user\reportbuilder\datasource\users |
     And I log in as "admin"
     When I navigate to "Reports > Report builder > Custom reports" in site administration
-    And I click on "Edit report details" "link" in the "My report" "table_row"
+    When I press "Edit report details" action in the "My report" report row
     And I set the following fields in the "Edit report details" "dialogue" to these values:
       | Name | My renamed report |
     And I click on "Save" "button" in the "Edit report details" "dialogue"
@@ -108,7 +108,7 @@ Feature: Manage custom reports
       | My report | core_user\reportbuilder\datasource\users |
     And I log in as "admin"
     When I navigate to "Reports > Report builder > Custom reports" in site administration
-    And I click on "Delete report" "link" in the "My report" "table_row"
+    And I press "Delete report" action in the "My report" report row
     And I click on "Delete" "button" in the "Delete report" "dialogue"
     Then I should see "Report deleted"
     And I should see "Nothing to display"
@@ -130,17 +130,24 @@ Feature: Manage custom reports
     Then I should see "Preview" in the "[data-region='core_reportbuilder/report-header']" "css_element"
     And I should not see "Edit" in the "[data-region='core_reportbuilder/report-header']" "css_element"
 
-  Scenario Outline: Access report clicking on the report name or view icon
+  Scenario: Access report clicking on the report name
     Given the following "core_reportbuilder > Reports" exist:
       | name      | source                                   |
       | My report | core_user\reportbuilder\datasource\users |
     When I log in as "admin"
     And I navigate to "Reports > Report builder > Custom reports" in site administration
-    And I click on "<link>" "link" in the "My report" "table_row"
-    Then <previewvisible> "Preview" in the "[data-region='core_reportbuilder/report']" "css_element"
-    And <editvisible> "Edit" in the "[data-region='core_reportbuilder/report']" "css_element"
-    And "button[title='Filters']" "css_element" <filtersvisible> in the "[data-region='core_reportbuilder/report']" "css_element"
-    Examples:
-      | link       | previewvisible    | editvisible       | filtersvisible    |
-      | My report  | I should see      | I should not see  | should not exist  |
-      | View       | I should not see  | I should not see  | should exist      |
+    And I click on "My report" "link" in the "My report" "table_row"
+    Then I should see "Preview" in the "[data-region='core_reportbuilder/report']" "css_element"
+    And I should not see "Edit" in the "[data-region='core_reportbuilder/report']" "css_element"
+    And "button[title='Filters']" "css_element" should not exist in the "[data-region='core_reportbuilder/report']" "css_element"
+
+  Scenario: Access report clicking on the view icon
+    Given the following "core_reportbuilder > Reports" exist:
+      | name      | source                                   |
+      | My report | core_user\reportbuilder\datasource\users |
+    When I log in as "admin"
+    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I press "View" action in the "My report" report row
+    Then I should not see "Preview" in the "[data-region='core_reportbuilder/report']" "css_element"
+    And I should not see "Edit" in the "[data-region='core_reportbuilder/report']" "css_element"
+    And "button[title='Filters']" "css_element" should exist in the "[data-region='core_reportbuilder/report']" "css_element"

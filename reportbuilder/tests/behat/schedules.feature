@@ -70,7 +70,7 @@ Feature: Manage custom report schedules
       | My report | My schedule |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Schedules" dynamic tab
-    When I click on "Edit schedule details" "link" in the "My schedule" "table_row"
+    When I press "Edit schedule details" action in the "My schedule" report row
     And I set the following fields in the "Edit schedule details" "dialogue" to these values:
       | Name          | My updated schedule |
       | Starting from | ##tomorrow 11:00##  |
@@ -87,7 +87,7 @@ Feature: Manage custom report schedules
       | My report | My schedule |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Schedules" dynamic tab
-    When I click on "Send schedule" "link" in the "My schedule" "table_row"
+    When I press "Send schedule" action in the "My schedule" report row
     And I click on "Confirm" "button" in the "Send schedule" "dialogue"
     Then I should see "Schedule sent"
 
@@ -97,7 +97,7 @@ Feature: Manage custom report schedules
       | My report | My schedule |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Schedules" dynamic tab
-    When I click on "Delete schedule" "link" in the "My schedule" "table_row"
+    When I press "Delete schedule" action in the "My schedule" report row
     And I click on "Delete" "button" in the "Delete schedule" "dialogue"
     Then I should see "Schedule deleted"
     And I should see "Nothing to display"
