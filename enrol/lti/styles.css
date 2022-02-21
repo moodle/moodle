@@ -6,3 +6,6 @@
 form#auto_submit {
     display: none;
 }
+#registration-tab-content .input-group-append a.btn span.pix {
+    padding-left: 0.5rem;
+}
