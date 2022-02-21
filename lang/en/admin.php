@@ -894,6 +894,7 @@ $string['none'] = 'None';
 $string['nonewsettings'] = 'No new settings were added during this upgrade.';
 $string['nonexistentbookmark'] = 'The bookmark you requested does not exist.';
 $string['nosupportedlogstore'] = 'No supported logstore found';
+$string['noteunneededblocks'] = 'Note: Blocks set to show will not be listed in the \'Add a block\' menu in a course if they are specified in the theme setting \'Unneeded blocks\'.';
 $string['maxtimelimit'] = 'Maximum time limit';
 $string['maxtimelimit_desc'] = 'To restrict the maximum PHP execution time that Moodle will allow without any output being displayed, enter a value in seconds here. 0 means that Moodle default restrictions are used. If you have a front-end server with its own time limit, set this value lower to receive PHP errors in logs. Does not apply to CLI scripts.';
 $string['moodleapp'] = 'Moodle app';
@@ -1557,4 +1558,3 @@ $string['modchooserdefault'] = 'Activity chooser default';
 $string['coursepage'] = 'Course page';
 $string['mediapluginswf'] = 'Enable .swf filter';
 $string['mediapluginswfnote'] = 'As a default security measure, normal users should not be allowed to embed swf flash files.';
-

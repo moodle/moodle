@@ -69,6 +69,7 @@
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strmanageblocks);
 
+    echo $OUTPUT->notification(get_string('noteunneededblocks', 'admin'), 'info');
 /// Main display starts here
 
 /// Get and sort the existing blocks
