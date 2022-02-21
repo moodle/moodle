@@ -25,7 +25,7 @@
 $string['anypagematchingtheabove'] = 'Any page matching the above';
 $string['appearsinsubcontexts'] = 'Appears in sub-contexts';
 $string['assignrolesinblock'] = 'Assign roles in {$a} block';
-$string['blocksdrawertoggle'] = 'Hide/show blocks drawer';
+$string['blocksdrawertoggle'] = 'Hide/show block drawer';
 $string['blocksettings'] = 'Block settings';
 $string['bracketfirst'] = '{$a} (first)';
 $string['bracketlast'] = '{$a} (last)';
@@ -62,7 +62,7 @@ $string['showblock'] = 'Show {$a} block';
 $string['showoncontextandsubs'] = 'Display on \'{$a}\' and any pages within it';
 $string['showoncontextonly'] = 'Display on \'{$a}\' only';
 $string['showonentiresite'] = 'Display throughout the entire site';
-$string['showonfrontpageandsubs'] = 'Display on the front page and any pages added to the front page';
+$string['showonfrontpageandsubs'] = 'Display on the front page and any pages added to the front page.';
 $string['showonfrontpageonly'] = 'Display on the front page only';
 $string['site-*'] = 'Any top-level site page';
 $string['subpages'] = 'Select pages';

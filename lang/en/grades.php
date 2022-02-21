@@ -405,7 +405,7 @@ $string['importcsv'] = 'Import CSV';
 $string['importcsv_help'] = 'Grades can be imported via a CSV file with format as follows:
 
 * Each line of the file contains one record
-* Each record is a series of data separated by commas or an alternative separator
+* Each record is a series of data separated by the selected separator
 * The first record contains a list of fieldnames defining the format of the rest of the file
 * A fieldname containing user identity data is required - either username or ID number or email address
 
