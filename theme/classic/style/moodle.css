@@ -21329,6 +21329,10 @@ div.editor_atto_toolbar button .icon {
     .courseindex .courseindex-item.dimmed .courseindex-link,
     .courseindex .courseindex-item.dimmed .courseindex-chevron {
       color: #6a737b; }
+    .courseindex .courseindex-item.dimmed.pageitem {
+      color: #fff; }
+      .courseindex .courseindex-item.dimmed.pageitem a {
+        color: #fff; }
   .courseindex .courseindex-item .courseindex-locked {
     display: none; }
   .courseindex .courseindex-item.rectrictions .courseindex-locked {
@@ -21339,8 +21343,6 @@ div.editor_atto_toolbar button .icon {
     scroll-margin: 6rem; }
     .courseindex .courseindex-item.pageitem a {
       color: #fff; }
-    .courseindex .courseindex-item.pageitem .courseindex-link {
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3); }
     .courseindex .courseindex-item.pageitem:hover, .courseindex .courseindex-item.pageitem:focus {
       background-color: #0c589c;
       color: #e6e5e5; }
