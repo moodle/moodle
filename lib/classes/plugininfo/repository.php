@@ -51,6 +51,32 @@ class repository extends base {
         return $DB->get_records_menu('repository', null, 'type ASC', 'type, type AS val');
     }
 
+    /**
+     * Returns current status for a pluginname.
+     *
+     * Repositories needs to be calculated in a different way than the default method in the base class because they need to take
+     * into account the value of the visible column too.
+     *
+     * @param string $pluginname The plugin name to check.
+     * @return int The current status (enabled, disabled...) of $pluginname.
+     */
+    public static function get_enabled_plugin(string $pluginname): int {
+        global $DB;
+
+        $repository = $DB->get_record('repository', ['type' => $pluginname]);
+        if ($repository) {
+            switch ($repository->visible) {
+                case 1:
+                    $value = self::REPOSITORY_ON;
+                    break;
+                default:
+                    $value = self::REPOSITORY_OFF;
+            }
+        } else {
+            $value = self::REPOSITORY_DISABLED;
+        }
+        return $value;
+    }
 
     /**
      * Enable or disable a plugin.
