@@ -713,24 +713,29 @@ ORDER BY
      * @param int $limitfrom implements paging of the results.
      *      Ignored if $orderby = random or $limitnum is null.
      * @param int $limitnum implements paging of the results. null = all.
+     * @param string $extraselect anything passed here will be added to the SELECT list, use this to return extra data.
      * @return array with two elements, an array of usage ids, and a count of the total number.
      */
     public function load_questions_usages_where_question_in_state(
             qubaid_condition $qubaids, $summarystate, $slot, $questionid = null,
-            $orderby = 'random', $params = array(), $limitfrom = 0, $limitnum = null) {
+            $orderby = 'random', $params = array(), $limitfrom = 0, $limitnum = null, $extraselect = '') {
 
         $extrawhere = '';
         if ($questionid) {
             $extrawhere .= ' AND qa.questionid = :questionid';
             $params['questionid'] = $questionid;
         }
-        if ($summarystate != 'all') {
+        if ($summarystate !== 'all') {
             list($test, $sparams) = $this->in_summary_state_test($summarystate);
             $extrawhere .= ' AND qas.state ' . $test;
             $params += $sparams;
         }
 
-        if ($orderby == 'random') {
+        if (!empty($extraselect)) {
+            $extraselect = ', ' . $extraselect;
+        }
+
+        if ($orderby === 'random') {
             $sqlorderby = '';
         } else if ($orderby) {
             $sqlorderby = 'ORDER BY ' . $orderby;
@@ -747,29 +752,24 @@ ORDER BY
         $qubaidswhere = $qubaids->where(); // Must call this before params.
         $params += $qubaids->from_where_params();
         $params['slot'] = $slot;
+        $sql = "SELECT qa.questionusageid,
+                       1
+                       $extraselect
+                  FROM {$qubaids->from_question_attempts('qa')}
+                  JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+                   AND qas.sequencenumber = {$this->latest_step_for_qa_subquery()}
+                  JOIN {question} q ON q.id = qa.questionid
+                 WHERE {$qubaidswhere}
+                   AND qa.slot = :slot
+                       $extrawhere
+                       $sqlorderby";
 
-        $qubaids = $this->db->get_records_sql_menu("
-SELECT
-    qa.questionusageid,
-    1
-
-FROM {$qubaids->from_question_attempts('qa')}
-JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
-        AND qas.sequencenumber = {$this->latest_step_for_qa_subquery()}
-JOIN {question} q ON q.id = qa.questionid
-
-WHERE
-    {$qubaidswhere} AND
-    qa.slot = :slot
-    $extrawhere
-
-$sqlorderby
-        ", $params);
+        $qubaids = $this->db->get_records_sql_menu($sql, $params);
 
         $qubaids = array_keys($qubaids);
         $count = count($qubaids);
 
-        if ($orderby == 'random') {
+        if ($orderby === 'random') {
             shuffle($qubaids);
             $limitfrom = 0;
         }
