@@ -40,19 +40,25 @@
     {{> core/overlay_loading}}
     {{#events}}
         <div{{!
-            }} class="event"{{!
+            }} class="event d-flex border-bottom pt-2 pb-3"{{!
             }} data-eventtype-{{normalisedeventtype}}="1"{{!
             }} data-region="event-item"{{!
         }}>
-            <span>{{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}</span>
-            <a{{!
-                }} data-type="event"{{!
-                }} data-action="view-event"{{!
-                }} data-event-id="{{id}}"{{!
-                }} href="{{viewurl}}"{{!
-            }}>{{{name}}}</a>
-            <div class="date">{{{formattedtime}}}</div>
-            <hr>
+            <div class="activityiconcontainer small {{{purpose}}} courseicon mr-3">
+                {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
+            </div>
+            <div class="overflow-auto">
+                <h6 class="d-flex mb-1">
+                    <a{{!
+                        }} class="text-truncate"{{!
+                        }} data-type="event"{{!
+                        }} data-action="view-event"{{!
+                        }} data-event-id="{{id}}"{{!
+                        }} href="{{viewurl}}"{{!
+                    }}>{{{name}}}</a>
+                </h6>
+                <div class="date small">{{{formattedtime}}}</div>
+            </div>
         </div>
     {{/events}}
     {{^events}}

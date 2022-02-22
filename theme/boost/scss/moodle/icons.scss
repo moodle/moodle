@@ -140,6 +140,10 @@ $iconsizes: map-merge((
         height: 24px;
         width: 24px;
     }
+    &.small {
+        width: $activity-iconcontainer-width - 10px;
+        height: $activity-iconcontainer-height - 10px;
+    }
 }
 
 @each $type, $value in $activity-icon-colors {

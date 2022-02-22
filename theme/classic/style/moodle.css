@@ -12359,6 +12359,9 @@ body.dragging .dragging {
     margin: 0;
     height: 24px;
     width: 24px; }
+  .activityiconcontainer.small {
+    width: 40px;
+    height: 40px; }
 
 .activityiconcontainer.administration {
   background-color: #5d63f6; }
