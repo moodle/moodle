@@ -133,6 +133,7 @@ class page_helper {
 
         $PAGE->navigation->override_active_url($templatesurl);
         $PAGE->set_context($pagecontext);
+        $PAGE->set_url($url);
 
         if (!empty($template)) {
             $title = format_string($template->get('shortname'), true, array('context' => $context));
@@ -141,17 +142,19 @@ class page_helper {
         }
 
         if ($pagecontext->contextlevel == CONTEXT_SYSTEM) {
-            $heading = $SITE->fullname;
+            $PAGE->set_heading($SITE->fullname);
         } else if ($pagecontext->contextlevel == CONTEXT_COURSECAT) {
-            $heading = $pagecontext->get_context_name();
+            \core_course_category::page_setup();
+            // Set the learning plan templates node active in the settings navigation block.
+            if ($learningplannode = $PAGE->settingsnav->find('learningplantemplates', \navigation_node::TYPE_SETTING)) {
+                $learningplannode->make_active();
+            }
         } else {
             throw new coding_exception('Unexpected context!');
         }
 
         $PAGE->set_pagelayout('admin');
-        $PAGE->set_url($url);
         $PAGE->set_title($title);
-        $PAGE->set_heading($heading);
 
         if (!empty($template)) {
             $PAGE->navbar->add($title, $templateurl);
@@ -334,7 +337,7 @@ class page_helper {
      *               - Page framework URL
      */
     public static function setup_for_framework($id, $pagecontextid, $framework = null, $returntype = null) {
-        global $PAGE;
+        global $PAGE, $SITE;
 
         // We keep the original context in the URLs, so that we remain in the same context.
         $url = new moodle_url("/admin/tool/lp/editcompetencyframework.php", array('id' => $id, 'pagecontextid' => $pagecontextid));
@@ -343,8 +346,26 @@ class page_helper {
         }
         $frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $pagecontextid));
 
-        $PAGE->navigation->override_active_url($frameworksurl);
+        $context = context::instance_by_id($pagecontextid);
+        $PAGE->set_context($context);
+        $PAGE->set_pagelayout('admin');
+        $PAGE->set_url($url);
+
         $title = get_string('competencies', 'core_competency');
+
+        if ($context->contextlevel == CONTEXT_COURSECAT) {
+            \core_course_category::page_setup();
+            // Set the competency frameworks node active in the settings navigation block.
+            if ($competencyframeworksnode = $PAGE->settingsnav->find('competencyframeworks', \navigation_node::TYPE_SETTING)) {
+                $competencyframeworksnode->make_active();
+            }
+        } else if ($context->contextlevel == CONTEXT_SYSTEM) {
+            $PAGE->set_heading($SITE->fullname);
+        } else {
+            $PAGE->set_heading($title);
+        }
+
+        $PAGE->navigation->override_active_url($frameworksurl);
         if (empty($id)) {
             $pagetitle = get_string('competencyframeworks', 'tool_lp');
             $pagesubtitle = get_string('addnewcompetencyframework', 'tool_lp');
@@ -367,11 +388,7 @@ class page_helper {
             $PAGE->navbar->add($pagesubtitle, $url);
         }
 
-        $PAGE->set_context(context::instance_by_id($pagecontextid));
-        $PAGE->set_pagelayout('admin');
-        $PAGE->set_url($url);
         $PAGE->set_title($title);
-        $PAGE->set_heading($title);
         return array($pagetitle, $pagesubtitle, $url, $frameworksurl);
     }
 
