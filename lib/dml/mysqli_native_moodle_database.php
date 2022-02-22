@@ -313,7 +313,7 @@ class mysqli_native_moodle_database extends moodle_database {
         // - innodb_file_format_max
         // - innodb_large_prefix
         // 1. MySQL: deprecated in 5.7.7 and removed 8.0.0+.
-        $ismysqlge8d0d0 = ($this->get_dbtype() == 'mysqli') &&
+        $ismysqlge8d0d0 = ($this->get_dbtype() == 'mysqli' || $this->get_dbtype() == 'auroramysql') &&
                 version_compare($this->get_server_info()['version'], '8.0.0', '>=');
         // 2. MariaDB: deprecated in 10.2.0 and removed 10.3.1+.
         $ismariadbge10d3d1 = ($this->get_dbtype() == 'mariadb') &&
