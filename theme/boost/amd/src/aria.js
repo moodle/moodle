@@ -238,7 +238,7 @@ const updateTabFocus = e => {
     const arrowPrevious = vertical ? 'ArrowUp' : (rtl ? 'ArrowRight' : 'ArrowLeft');
     const tabs = Array.prototype.filter.call(
         tabList.querySelectorAll('[role="tab"]'),
-        tab => getComputedStyle(tab).display !== 'none'); // We only work with the visible tabs.
+        tab => !!tab.offsetHeight); // We only work with the visible tabs.
 
     for (let i = 0; i < tabs.length; i++) {
         tabs[i].index = i;
