@@ -21469,8 +21469,7 @@ div.editor_atto_toolbar button .icon {
 
 .moremenu {
   opacity: 0;
-  height: 60px;
-  /* TODO: MDL-72481: Update this style to also apply to aria-selected. */ }
+  height: 60px; }
   .moremenu.observed {
     opacity: 1; }
   .moremenu .nav-link {
