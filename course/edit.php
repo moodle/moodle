@@ -228,13 +228,15 @@ if (!empty($course->id)) {
         // If the user doesn't have either manage caps then they can only manage within the given category.
         $managementurl->param('categoryid', $categoryid);
     }
-    // Because the course category management interfaces are buried in the admin tree and that is loaded by ajax
+    // Because the course category interfaces are buried in the admin tree and that is loaded by ajax
     // we need to manually tell the navigation we need it loaded. The second arg does this.
-    navigation_node::override_active_url($managementurl, true);
+    navigation_node::override_active_url(new moodle_url('/course/index.php', ['categoryid' => $category->id]), true);
+    $PAGE->set_primary_active_tab('home');
+    $PAGE->navbar->add(get_string('coursemgmt', 'admin'), $managementurl);
 
     $pagedesc = $straddnewcourse;
     $title = "$site->shortname: $straddnewcourse";
-    $fullname = $site->fullname;
+    $fullname = format_string($category->name);
     $PAGE->navbar->add($pagedesc);
 }
 
