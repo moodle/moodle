@@ -60,8 +60,14 @@ if ($category) {
     $PAGE->set_pagelayout('admin');
     $PAGE->set_context($context);
     $PAGE->set_url('/cohort/index.php', array('contextid'=>$context->id));
+
+    core_course_category::page_setup();
+    // Set the cohorts node active in the settings navigation block.
+    if ($cohortsnode = $PAGE->settingsnav->find('cohort', navigation_node::TYPE_SETTING)) {
+        $cohortsnode->make_active();
+    }
+
     $PAGE->set_title($strcohorts);
-    $PAGE->set_heading($COURSE->fullname);
     $showall = false;
 } else {
     admin_externalpage_setup('cohorts', '', null, '', array('pagelayout'=>'report'));
