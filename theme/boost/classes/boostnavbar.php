@@ -58,6 +58,13 @@ class boostnavbar implements \renderable {
         // Defines whether section items with an action should be removed by default.
         $removesections = true;
 
+        if ($this->page->context->contextlevel == CONTEXT_COURSECAT) {
+            // Remove the 'Permissions' navbar node in the Check permissions page.
+            if ($this->page->pagetype === 'admin-roles-check') {
+                $this->remove('permissions');
+            }
+        }
+
         if ($this->page->context->contextlevel == CONTEXT_COURSE) {
             // Remove any duplicate navbar nodes.
             $this->remove_duplicate_items();
