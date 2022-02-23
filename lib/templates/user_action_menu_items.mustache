@@ -59,7 +59,7 @@
 }}
 {{#items}}
     {{#link}}
-        <a href="{{{url}}}" class="dropdown-item" role="menuitem">
+        <a href="{{{url}}}" class="dropdown-item" role="menuitem" tabindex="-1">
             {{#pixicon}}
                 {{#pix}}{{pixicon}}{{/pix}}
             {{/pixicon}}
@@ -70,7 +70,7 @@
         </a>
     {{/link}}
     {{#submenulink}}
-        <a href="#" class="carousel-navigation-link dropdown-item" role="menuitem" data-carousel-target-id="carousel-item-{{submenuid}}">
+        <a href="#" class="carousel-navigation-link dropdown-item" role="menuitem" tabindex="-1" data-carousel-target-id="carousel-item-{{submenuid}}">
             {{#pixicon}}
                 {{#pix}}{{pixicon}}{{/pix}}
             {{/pixicon}}
