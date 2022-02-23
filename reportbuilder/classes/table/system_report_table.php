@@ -224,6 +224,7 @@ class system_report_table extends base_report_table {
         $menu = new action_menu();
         $menu->set_menu_trigger($OUTPUT->pix_icon('a/setting', get_string('actions', 'core_reportbuilder')));
         foreach ($this->report->get_actions() as $action) {
+            // Ensure the action link can be displayed for the current row.
             $actionlink = $action->get_action_link($row);
             if ($actionlink) {
                 $menu->add($actionlink);
