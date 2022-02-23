@@ -1837,60 +1837,9 @@ class cache_session extends cache {
     public function get($key, $strictness = IGNORE_MISSING) {
         // Check the tracked user.
         $this->check_tracked_user();
-        // 2. Parse the key.
-        $parsedkey = $this->parse_key($key);
-        // 3. Get it from the store.
-        $result = $this->get_store()->get($parsedkey);
-        if ($result !== false) {
-            if ($result instanceof cache_ttl_wrapper) {
-                if ($result->has_expired()) {
-                    $this->get_store()->delete($parsedkey);
-                    $result = false;
-                } else {
-                    $result = $result->data;
-                }
-            }
-            if ($result instanceof cache_cached_object) {
-                $result = $result->restore_object();
-            }
-            if ($this->perfdebug) {
-                $readbytes = $this->get_store()->get_last_io_bytes();
-            }
-        }
-        // 4. Load if from the loader/datasource if we don't already have it.
-        if ($result === false) {
-            if ($this->perfdebug) {
-                cache_helper::record_cache_miss($this->get_store(), $this->get_definition());
-            }
-            if ($this->get_loader() !== false) {
-                // We must pass the original (unparsed) key to the next loader in the chain.
-                // The next loader will parse the key as it sees fit. It may be parsed differently
-                // depending upon the capabilities of the store associated with the loader.
-                $result = $this->get_loader()->get($key);
-            } else if ($this->get_datasource() !== false) {
-                $result = $this->get_datasource()->load_for_cache($key);
-            }
-            // 5. Set it to the store if we got it from the loader/datasource.
-            if ($result !== false) {
-                $this->set($key, $result);
-            }
-        } else if ($this->perfdebug) {
-            cache_helper::record_cache_hit($this->get_store(), $this->get_definition(), 1, $readbytes);
-        }
-        // 5. Validate strictness.
-        if ($strictness === MUST_EXIST && $result === false) {
-            throw new coding_exception('Requested key did not exist in any cache stores and could not be loaded.');
-        }
-        // 6. Make sure we don't pass back anything that could be a reference.
-        //    We don't want people modifying the data in the cache.
-        if (!$this->get_store()->supports_dereferencing_objects() && !is_scalar($result)) {
-            // If data is an object it will be a reference.
-            // If data is an array if may contain references.
-            // We want to break references so that the cache cannot be modified outside of itself.
-            // Call the function to unreference it (in the best way possible).
-            $result = $this->unref($result);
-        }
-        return $result;
+
+        // Use parent code.
+        return parent::get($key, $strictness);
     }
 
     /**
