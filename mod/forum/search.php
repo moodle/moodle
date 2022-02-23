@@ -223,9 +223,8 @@ echo html_writer::link($url, get_string('advancedsearch', 'forum').'...');
 
 echo '</div>';
 
-if (!$PAGE->has_secondary_navigation()) {
-    echo $OUTPUT->heading($strforums, 2);
-}
+echo $OUTPUT->heading($strforums, 2);
+
 echo $OUTPUT->heading("$strsearchresults: $totalcount", 3);
 
 $url = new moodle_url('search.php', array('search' => $search, 'id' => $course->id, 'perpage' => $perpage));

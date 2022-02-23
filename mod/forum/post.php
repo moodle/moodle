@@ -450,6 +450,8 @@ if (!empty($forum)) {
         $PAGE->navbar->add(get_string('delete', 'forum'));
         $PAGE->set_title($course->shortname);
         $PAGE->set_heading($course->fullname);
+        $PAGE->set_secondary_active_tab('modulepage');
+        $PAGE->activityheader->disable();
 
         if ($replycount) {
             if (!has_capability('mod/forum:deleteanypost', $modcontext)) {
@@ -552,6 +554,8 @@ if (!empty($forum)) {
 
     $PAGE->set_cm($cm);
     $PAGE->set_context($modcontext);
+    $PAGE->set_secondary_active_tab('modulepage');
+    $PAGE->activityheader->disable();
 
     $prunemform = new mod_forum_prune_form(null, array('prune' => $prune, 'confirm' => $prune));
 
@@ -632,7 +636,7 @@ if (!empty($forum)) {
         $course = $DB->get_record('course', array('id' => $forum->course));
         $subjectstr = format_string($post->subject, true);
         $PAGE->navbar->add($subjectstr, new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id)));
-        $PAGE->navbar->add(get_string("prune", "forum"));
+        $PAGE->navbar->add(get_string("prunediscussion", "forum"));
         $PAGE->set_title(format_string($discussion->name).": ".format_string($post->subject));
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
@@ -1077,23 +1081,31 @@ if (!empty($discussion->id)) {
     $PAGE->navbar->add($titlesubject, $urlfactory->get_discussion_view_url_from_discussion($discussionentity));
 }
 
-if ($post->parent) {
-    $PAGE->navbar->add(get_string('reply', 'forum'));
-}
-
 if ($edit) {
-    $PAGE->navbar->add(get_string('edit', 'forum'));
+    $PAGE->navbar->add(get_string('editdiscussiontopic', 'forum'), $PAGE->url);
+} else if ($reply) {
+    $PAGE->navbar->add(get_string('addreply', 'forum'));
+} else {
+    $PAGE->navbar->add(get_string('addanewdiscussion', 'forum'), $PAGE->url);
 }
 
 $PAGE->set_title("{$course->shortname}: {$strdiscussionname}{$titlesubject}");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_secondary_active_tab("modulepage");
 $activityheaderconfig['hidecompletion'] = true;
-if (!empty($parententity)) {
-        $activityheaderconfig['description'] = '';
-}
+$activityheaderconfig['description'] = '';
+
+// Remove the activity description.
 $PAGE->activityheader->set_attrs($activityheaderconfig);
 echo $OUTPUT->header();
+
+if ($edit) {
+    echo $OUTPUT->heading(get_string('editdiscussiontopic', 'forum'), 2);
+} else if ($reply) {
+    echo $OUTPUT->heading(get_string('replypostdiscussion', 'forum'), 2);
+} else {
+    echo $OUTPUT->heading(get_string('addanewdiscussion', 'forum'), 2);
+}
 
 // Checkup.
 if (!empty($parententity) && !$capabilitymanager->can_view_post($USER, $discussionentity, $parententity)) {

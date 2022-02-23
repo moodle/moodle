@@ -120,7 +120,9 @@ class mod_forum_renderer extends plugin_renderer_base {
         $output = '';
         $modinfo = get_fast_modinfo($course);
         if (!$users || !is_array($users) || count($users)===0) {
-            $output .= $this->output->heading(get_string("nosubscribers", "forum"));
+            $output .= $this->output->notification(
+                get_string("nosubscribers", "forum"),
+                \core\output\notification::NOTIFY_INFO, false);
         } else if (!isset($modinfo->instances['forum'][$forum->id])) {
             $output .= $this->output->heading(get_string("invalidmodule", "error"));
         } else {

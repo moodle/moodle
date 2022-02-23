@@ -172,7 +172,6 @@ if ($download) {
     \forumreport_summary\event\report_viewed::create($eventparams)->trigger();
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('summarytitle', 'forumreport_summary', $title), 2, 'pb-5');
 
     if (!empty($filters['groups'])) {
         \core\notification::info(get_string('viewsdisclaimer', 'forumreport_summary'));
@@ -183,6 +182,7 @@ if ($download) {
     $forumselect = new single_select($reporturl, 'forumid', $forumselectoptions, $forumid, '');
     $forumselect->set_label(get_string('forumselectlabel', 'forumreport_summary'));
     echo $OUTPUT->render($forumselect);
+    echo $OUTPUT->heading(get_string('nodetitle', 'forumreport_summary'), 2, 'pb-5 mt-3');
 
     // Render the report filters form.
     $renderer = $PAGE->get_renderer('forumreport_summary');

@@ -476,3 +476,39 @@ WHERE
 
     return $result;
 }
+
+/**
+ * Prints the editing button on subscribers page
+ *
+ * @deprecated since Moodle 4.0
+ * @todo MDL-73956 Final deprecation in Moodle 4.4
+ * @global object
+ * @global object
+ * @param int $courseid
+ * @param int $forumid
+ * @return string
+ */
+function forum_update_subscriptions_button($courseid, $forumid): string {
+    global $CFG, $USER;
+
+    debugging('The method forum_update_subscriptions_button() has been deprecated as it is no longer used.' .
+            'The \'Manage subscribers\' button has been replaced with tertiary navigation.', DEBUG_DEVELOPER);
+
+    if (!empty($USER->subscriptionsediting)) {
+        $string = get_string('managesubscriptionsoff', 'forum');
+        $edit = "off";
+    } else {
+        $string = get_string('managesubscriptionson', 'forum');
+        $edit = "on";
+    }
+
+    $subscribers = html_writer::start_tag('form', array('action' => $CFG->wwwroot . '/mod/forum/subscribers.php',
+        'method' => 'get', 'class' => 'form-inline'));
+    $subscribers .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => $string,
+        'class' => 'btn btn-secondary'));
+    $subscribers .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $forumid));
+    $subscribers .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'edit', 'value' => $edit));
+    $subscribers .= html_writer::end_tag('form');
+
+    return $subscribers;
+}
