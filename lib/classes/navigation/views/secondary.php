@@ -303,12 +303,15 @@ class secondary extends view {
      *
      * @param navigation_node $node The node which should be added to secondary
      * @param navigation_node $basenode The original parent node
+     * @param navigation_node|null $root The parent node nodes are to be added/removed to.
      * @param bool $forceadd Whether or not to bypass the external action check and force add all nodes
      */
-    protected function add_external_nodes_to_secondary(navigation_node $node, navigation_node $basenode, bool $forceadd = false) {
+    protected function add_external_nodes_to_secondary(navigation_node $node, navigation_node $basenode,
+           ?navigation_node $root = null, bool $forceadd = false) {
+        $root = $root ?? $this;
         // Add the first node.
         if ($node->has_action() && !$this->get($node->key)) {
-            $this->add_node(clone $node);
+            $root->add_node(clone $node);
         }
 
         // If the node has an external action add all children to the secondary navigation.
@@ -316,15 +319,15 @@ class secondary extends view {
             if ($node->has_children()) {
                 foreach ($node->children as $child) {
                     if ($child->has_children()) {
-                        $this->add_external_nodes_to_secondary($child, $basenode, true);
+                        $this->add_external_nodes_to_secondary($child, $basenode, $root, true);
                     } else if ($child->has_action() && !$this->get($child->key)) {
                         // Check whether the basenode matches a child's url.
                         // This would have happened in get_first_action_for_node.
                         // In these cases, we prefer the specific child content.
                         if ($basenode->has_action() && $basenode->action()->compare($child->action())) {
-                            $this->children->remove($basenode->key, $basenode->type);
+                            $root->children->remove($basenode->key, $basenode->type);
                         }
-                        $this->add_node(clone $child);
+                        $root->add_node(clone $child);
                     }
                 }
             }
@@ -387,10 +390,10 @@ class secondary extends view {
                 foreach ($value->children as $other) {
                     if (array_search($other->key, $expectedcourseadmin) === false) {
                         $othernode = $this->get_first_action_for_node($other);
-                        $recursivenode = $othernode && !$this->get($othernode->key) ? $othernode : $other;
+                        $recursivenode = $othernode && !$rootnode->get($othernode->key) ? $othernode : $other;
                         // Get the first node and check whether it's been added already.
                         // Also check if the first node is an external link. If it is, add all children.
-                        $this->add_external_nodes_to_secondary($recursivenode, $recursivenode);
+                        $this->add_external_nodes_to_secondary($recursivenode, $recursivenode, $rootnode);
                     }
                 }
             }
@@ -753,7 +756,7 @@ class secondary extends view {
 
                 // We have found the first node with an action.
                 if ($leftovernode) {
-                    $this->add_external_nodes_to_secondary($leftovernode, $leftovernode);
+                    $this->add_external_nodes_to_secondary($leftovernode, $leftovernode, $rootnode);
                 }
             }
         }
