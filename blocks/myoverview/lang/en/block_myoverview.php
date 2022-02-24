@@ -39,12 +39,9 @@ $string['aria:favourites'] = 'Show starred courses';
 $string['aria:future'] = 'Show future courses';
 $string['aria:groupingdropdown'] = 'Grouping drop-down menu';
 $string['aria:inprogress'] = 'Show courses in progress';
-$string['aria:lastaccessed'] = 'Sort courses by last accessed date';
 $string['aria:list'] = 'Switch to list view';
-$string['aria:title'] = 'Sort courses by course name';
 $string['aria:past'] = 'Show past courses';
 $string['aria:removefromfavourites'] = 'Remove star for';
-$string['aria:shortname'] = 'Sort courses by course short name';
 $string['aria:summary'] = 'Switch to summary view';
 $string['aria:sortingdropdown'] = 'Sorting drop-down menu';
 $string['availablegroupings'] = 'Available filters';
@@ -85,7 +82,13 @@ $string['hidden'] = 'Archived courses';
 $string['hidecourse'] = 'Archive';
 $string['hiddencourses'] = 'Archived';
 $string['show'] = 'Unarchive';
+$string['sortbytitle'] = 'Sort by course name';
+$string['sortbylastaccessed'] = 'Sort by last accessed';
+$string['sortbyshortname'] = 'Sort by short name';
 $string['privacy:request:preference:set'] = 'The value of the setting \'{$a->name}\' was \'{$a->value}\'';
 
 // Deprecated since Moodle 4.0.
 $string['clearsearch'] = "Clear search";
+$string['aria:lastaccessed'] = 'Sort courses by last accessed date';
+$string['aria:shortname'] = 'Sort courses by course short name';
+$string['aria:title'] = 'Sort courses by course name';
