@@ -49,7 +49,6 @@ class setting_validator {
         global $CFG;
         return (!isset($CFG->bigbluebuttonbn['recording_default']) ||
                 !isset($CFG->bigbluebuttonbn['recording_editable']) ||
-                !isset($CFG->bigbluebuttonbn['recording_icons_enabled']) ||
                 !isset($CFG->bigbluebuttonbn['recording_all_from_start_default']) ||
                 !isset($CFG->bigbluebuttonbn['recording_all_from_start_editable']) ||
                 !isset($CFG->bigbluebuttonbn['recording_hide_button_default']) ||
