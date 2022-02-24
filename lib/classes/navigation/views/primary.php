@@ -95,6 +95,7 @@ class primary extends view {
      *      - Fallback, set 'Home' as active
      */
     private function set_active_node(): void {
+        global $SITE;
         $activenode = $this->search_and_set_active_node($this);
         // If we haven't found an active node based on the standard search. Follow the criteria above.
         if (!$activenode) {
@@ -104,7 +105,9 @@ class primary extends view {
             if (isset($navactivenode->parent) && $navactivenode->parent->text == get_string('sitepages')) {
                 $activekey = 'home';
             } else if (in_array($this->context->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE])) {
-                $activekey = 'courses';
+                if ($this->page->course->id != $SITE->id) {
+                    $activekey = 'courses';
+                }
             } else if (in_array('siteadminnode', $children) && $node = $this->get_site_admin_node()) {
                 if ($this->context->contextlevel == CONTEXT_COURSECAT || $node->search_for_active_node(URL_MATCH_EXACT)) {
                     $activekey = 'siteadminnode';
