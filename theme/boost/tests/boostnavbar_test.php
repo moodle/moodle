@@ -33,12 +33,13 @@ class boostnavbar_test extends \advanced_testcase {
      */
     public function remove_no_link_items_provider(): array {
         return [
-            'All nodes have links links including leaf node' => [
+            'All nodes have links links including leaf node. Set to remove section nodes.' => [
                 [
-                    'node1' => true,
-                    'node2' => true,
-                    'node3' => true,
+                    'node1' => ['hasaction' => true, 'issection' => false],
+                    'node2' => ['hasaction' => true, 'issection' => false],
+                    'node3' => ['hasaction' => true, 'issection' => false],
                 ],
+                true,
                 [
                     'Home' => true,
                     'Courses' => true,
@@ -48,12 +49,13 @@ class boostnavbar_test extends \advanced_testcase {
                     'node3' => true,
                 ]
             ],
-            'Only some parent nodes have links. Leaf node has a link.' => [
+            'Only some parent nodes have links. Leaf node has a link. Set to remove section nodes.' => [
                 [
-                    'node1' => false,
-                    'node2' => true,
-                    'node3' => true,
+                    'node1' => ['hasaction' => false, 'issection' => false],
+                    'node2' => ['hasaction' => true, 'issection' => false],
+                    'node3' => ['hasaction' => true, 'issection' => false],
                 ],
+                true,
                 [
                     'Home' => true,
                     'Courses' => true,
@@ -62,12 +64,13 @@ class boostnavbar_test extends \advanced_testcase {
                     'node3' => true,
                 ]
             ],
-            'All parent nodes do not have links. Leaf node has a link.' => [
+            'All parent nodes do not have links. Leaf node has a link. Set to remove section nodes.' => [
                 [
-                    'node1' => false,
-                    'node2' => false,
-                    'node3' => true,
+                    'node1' => ['hasaction' => false, 'issection' => false],
+                    'node2' => ['hasaction' => false, 'issection' => false],
+                    'node3' => ['hasaction' => true, 'issection' => false],
                 ],
+                true,
                 [
                     'Home' => true,
                     'Courses' => true,
@@ -75,12 +78,13 @@ class boostnavbar_test extends \advanced_testcase {
                     'node3' => true,
                 ]
             ],
-            'All parent nodes have links. Leaf node does not has a link.' => [
+            'All parent nodes have links. Leaf node does not has a link. Set to remove section nodes.' => [
                 [
-                    'node1' => true,
-                    'node2' => true,
-                    'node3' => false,
+                    'node1' => ['hasaction' => true, 'issection' => false],
+                    'node2' => ['hasaction' => true, 'issection' => false],
+                    'node3' => ['hasaction' => false, 'issection' => false],
                 ],
+                true,
                 [
                     'Home' => true,
                     'Courses' => true,
@@ -90,12 +94,13 @@ class boostnavbar_test extends \advanced_testcase {
                     'node3' => false,
                 ]
             ],
-            'All parent nodes do not have links. Leaf node does not has a link.' => [
+            'All parent nodes do not have links. Leaf node does not has a link. Set to remove section nodes.' => [
                 [
-                    'node1' => false,
-                    'node2' => false,
-                    'node3' => false,
+                    'node1' => ['hasaction' => false, 'issection' => false],
+                    'node2' => ['hasaction' => false, 'issection' => false],
+                    'node3' => ['hasaction' => false, 'issection' => false],
                 ],
+                true,
                 [
                     'Home' => true,
                     'Courses' => true,
@@ -103,18 +108,70 @@ class boostnavbar_test extends \advanced_testcase {
                     'node3' => false,
                 ]
             ],
-            'Some parent nodes do not have links. Leaf node does not has a link.' => [
+            'Some parent nodes do not have links. Leaf node does not has a link. Set to remove section nodes.' => [
                 [
-                    'node1' => true,
-                    'node2' => false,
-                    'node3' => false,
+                    'node1' => ['hasaction' => true, 'issection' => false],
+                    'node2' => ['hasaction' => false, 'issection' => false],
+                    'node3' => ['hasaction' => false, 'issection' => false],
                 ],
+                true,
                 [
                     'Home' => true,
                     'Courses' => true,
                     'tc_1' => true,
                     'node1' => true,
                     'node3' => false,
+                ]
+            ],
+            'All nodes have links links including leaf node and section nodes. Set to remove section nodes.' => [
+                [
+                    'node1' => ['hasaction' => true, 'issection' => false],
+                    'node2' => ['hasaction' => true, 'issection' => false],
+                    'sectionnode1' => ['hasaction' => true, 'issection' => true],
+                    'node3' => ['hasaction' => true, 'issection' => false],
+                ],
+                true,
+                [
+                    'Home' => true,
+                    'Courses' => true,
+                    'tc_1' => true,
+                    'node1' => true,
+                    'node2' => true,
+                    'node3' => true,
+                ]
+            ],
+            'All nodes have links links including leaf node and section nodes. Set to not remove section nodes.' => [
+                [
+                    'node1' => ['hasaction' => true, 'issection' => false],
+                    'node2' => ['hasaction' => true, 'issection' => false],
+                    'sectionnode1' => ['hasaction' => true, 'issection' => true],
+                    'node3' => ['hasaction' => true, 'issection' => false],
+                ],
+                false,
+                [
+                    'Home' => true,
+                    'Courses' => true,
+                    'tc_1' => true,
+                    'node1' => true,
+                    'node2' => true,
+                    'sectionnode1' => true,
+                    'node3' => true,
+                ]
+            ],
+            'Only some parent nodes have links. Section node does not have a link. Set to not remove section nodes.' => [
+                [
+                    'node1' => ['hasaction' => false, 'issection' => false],
+                    'node2' => ['hasaction' => true, 'issection' => false],
+                    'sectionnode1' => ['hasaction' => false, 'issection' => true],
+                    'node3' => ['hasaction' => true, 'issection' => false],
+                ],
+                true,
+                [
+                    'Home' => true,
+                    'Courses' => true,
+                    'tc_1' => true,
+                    'node2' => true,
+                    'node3' => true,
                 ]
             ]
         ];
@@ -124,10 +181,11 @@ class boostnavbar_test extends \advanced_testcase {
      *
      * @dataProvider remove_no_link_items_provider
      * @param array $setup
+     * @param bool $removesectionnodes Whether to remove the section nodes with an associated action.
      * @param array $expected
      * @throws \ReflectionException
      */
-    public function test_remove_no_link_items(array $setup, array $expected) {
+    public function test_remove_no_link_items(array $setup, bool $removesectionnodes, array $expected) {
         global $PAGE;
 
         $this->resetAfterTest();
@@ -139,8 +197,9 @@ class boostnavbar_test extends \advanced_testcase {
         $page->set_url(new \moodle_url('/course/view.php', array('id' => $course->id)));
         // A dummy url to use. We don't care where it's pointing to.
         $url = new \moodle_url('/');
-        foreach ($setup as $node => $hasaction) {
-            $page->navbar->add($node, $hasaction ? $url : null);
+        foreach ($setup as $key => $value) {
+            $page->navbar->add($key, $value['hasaction'] ? $url : null,
+                $value['issection'] ? \navigation_node::TYPE_SECTION : null);
         }
 
         $boostnavbar = $this->getMockBuilder(boostnavbar::class)
@@ -156,7 +215,7 @@ class boostnavbar_test extends \advanced_testcase {
         // Make the call to the function.
         $rcm = $rc->getMethod('remove_no_link_items');
         $rcm->setAccessible(true);
-        $rcm->invoke($boostnavbar);
+        $rcm->invoke($boostnavbar, $removesectionnodes);
 
         // Get the value for the class variable that the function modifies.
         $values = $rcp->getValue($boostnavbar);

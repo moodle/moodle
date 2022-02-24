@@ -55,6 +55,9 @@ class boostnavbar implements \renderable {
     protected function prepare_nodes_for_boost(): void {
         global $PAGE;
 
+        // Defines whether section items with an action should be removed by default.
+        $removesections = true;
+
         if ($this->page->context->contextlevel == CONTEXT_COURSE) {
             // Remove any duplicate navbar nodes.
             $this->remove_duplicate_items();
@@ -90,6 +93,14 @@ class boostnavbar implements \renderable {
         // Remove 'My courses' if we are in the module context.
         if ($this->page->context->contextlevel == CONTEXT_MODULE) {
             $this->remove('mycourses');
+            $this->remove('courses');
+            // Remove the course category breadcrumb node.
+            $this->remove($this->page->course->category);
+            $courseformat = course_get_format($this->page->course)->get_course();
+            // Section items can be only removed if a course layout (coursedisplay) is not explicitly set in the
+            // given course format or the set course layout is not 'One section per page'.
+            $removesections = !isset($courseformat->coursedisplay) ||
+                $courseformat->coursedisplay != COURSE_DISPLAY_MULTIPAGE;
         }
 
         if (!is_null($this->get_item('root'))) { // We are in site administration.
@@ -107,7 +118,7 @@ class boostnavbar implements \renderable {
             $mycoursesnode->text = get_string('mycourses');
         }
 
-        $this->remove_no_link_items();
+        $this->remove_no_link_items($removesections);
 
         // Don't display the navbar if there is only one item. Apparently this is bad UX design.
         if ($this->item_count() <= 1) {
@@ -212,13 +223,16 @@ class boostnavbar implements \renderable {
     }
 
     /**
-     * Remove items that are categories or have no actions associated with them.
+     * Remove items that have no actions associated with them and optionally remove items that are sections.
      *
      * The only exception is the last item in the list which may not have a link but needs to be displayed.
+     *
+     * @param bool $removesections Whether section items should be also removed (only applies when they have an action)
      */
-    protected function remove_no_link_items(): void {
+    protected function remove_no_link_items(bool $removesections = true): void {
         foreach ($this->items as $key => $value) {
-            if (!$value->is_last() && (!$value->has_action() || $value->type == \navigation_node::TYPE_SECTION)) {
+            if (!$value->is_last() &&
+                    (!$value->has_action() || ($value->type == \navigation_node::TYPE_SECTION && $removesections))) {
                 unset($this->items[$key]);
             }
         }
