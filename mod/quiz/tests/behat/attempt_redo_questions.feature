@@ -137,9 +137,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And user "student" has attempted "Quiz 2" with responses:
       | slot | response    |
       | 1    | J.K.Rowling |
-    And I am on the "Quiz 2" "mod_quiz > View" page logged in as "teacher"
-    And I navigate to "Results" in current page administration
-    And I select "Manual grading" from the "jump" singleselect
+    And I am on the "Quiz 2" "mod_quiz > Manual grading report" page logged in as "teacher"
     And I follow "Also show questions that have been graded automatically"
     When I click on "update grades" "link" in the "SA1" "table_row"
     Then I set the field "Comment" to "I have adjusted your mark to 1.0"
