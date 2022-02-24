@@ -48,13 +48,14 @@ $PAGE->set_title($streditingquestions);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 
+echo $OUTPUT->header();
+
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
-echo $OUTPUT->header();
 // Render the selection action.
-$qbankaction = new \core_question\output\qbank_actionbar($url);
-echo $renderer->qbank_action_menu($qbankaction);
+$qbankaction = new \core_question\output\qbank_action_menu($url);
+echo $renderer->render($qbankaction);
 
 // Print the question area.
 $questionbank->display($pagevars, 'questions');

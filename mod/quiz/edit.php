@@ -59,7 +59,7 @@ $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contexti
 $quizhasattempts = quiz_has_attempts($quiz->id);
 
 $PAGE->set_url($thispageurl);
-$PAGE->set_secondary_active_tab("modulepage");
+$PAGE->set_secondary_active_tab("mod_quiz_edit");
 
 // Get the course object and related bits.
 $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
@@ -187,13 +187,7 @@ $node = $PAGE->settingsnav->find('mod_quiz_edit', navigation_node::TYPE_SETTING)
 if ($node) {
     $node->make_active();
 }
-
-$overwriteedit = new \mod_quiz\output\overwriteedit($cmid, quiz_has_questions($quiz->id));
-
 echo $OUTPUT->header();
-
-$renderer = $PAGE->get_renderer('mod_quiz');
-echo $renderer->overwrite_edit_action($overwriteedit);
 
 // Initialise the JavaScript.
 $quizeditconfig = new stdClass();

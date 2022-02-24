@@ -30,7 +30,7 @@ Feature: The various checks that may happen when an attept is started
       | question | page |
       | TF1      | 1    |
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
     Then I should see "Text of the first question"
 
   @javascript
@@ -42,11 +42,11 @@ Feature: The various checks that may happen when an attept is started
       | question | page |
       | TF1      | 1    |
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
-    Then I should see "To attempt this quiz you need to know the quiz password" in the "region-main" "region"
-    And I should see "Your attempt will have a time limit of 1 hour. When you " in the "region-main" "region"
+    And I press "Attempt quiz"
+    Then I should see "To attempt this quiz you need to know the quiz password" in the "Start attempt" "dialogue"
+    And I should see "Your attempt will have a time limit of 1 hour. When you " in the "Start attempt" "dialogue"
     And I set the field "Quiz password" to "Frog"
-    And I click on "Start attempt" "button" in the "region-main" "region"
+    And I click on "Start attempt" "button" in the "Start attempt" "dialogue"
     And I should see "Text of the first question"
 
   @javascript
@@ -58,10 +58,10 @@ Feature: The various checks that may happen when an attept is started
       | question | page |
       | TF1      | 1    |
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
-    And I click on "Cancel" "button" in the "region-main" "region"
+    And I press "Attempt quiz"
+    And I click on "Cancel" "button" in the "Start attempt" "dialogue"
     Then I should see "Quiz 1 description"
-    And "Attempt quiz" "link" should be visible
+    And "Attempt quiz" "button" should be visible
 
   @javascript
   Scenario: Start a quiz with time limit and password, get the password wrong first time
@@ -72,9 +72,9 @@ Feature: The various checks that may happen when an attept is started
       | question | page |
       | TF1      | 1    |
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
     And I set the field "Quiz password" to "Toad"
-    And I click on "Start attempt" "button" in the "region-main" "region"
+    And I click on "Start attempt" "button" in the "Start attempt" "dialogue"
     Then I should see "Quiz 1 description"
     And I should see "To attempt this quiz you need to know the quiz password"
     And I should see "Your attempt will have a time limit of 1 hour. When you "
@@ -94,9 +94,9 @@ Feature: The various checks that may happen when an attept is started
       | question | page |
       | TF1      | 1    |
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
     And I set the field "Quiz password" to "Toad"
-    And I click on "Start attempt" "button" in the "region-main" "region"
+    And I click on "Start attempt" "button" in the "Start attempt" "dialogue"
     And I should see "Quiz 1 description"
     And I should see "To attempt this quiz you need to know the quiz password"
     And I should see "Your attempt will have a time limit of 1 hour. When you "
@@ -106,4 +106,4 @@ Feature: The various checks that may happen when an attept is started
     And I press tab key in "Quiz password" "field"
     And I press "Cancel"
     Then I should see "Quiz 1 description"
-    And "Attempt quiz" "link" should be visible
+    And "Attempt quiz" "button" should be visible

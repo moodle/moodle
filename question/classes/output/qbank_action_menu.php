@@ -25,11 +25,17 @@ use url_select;
 /**
  * Rendered HTML elements for tertiary nav for Question bank.
  *
+ * Provides the links for question bank tertiary navigation, below
+ * are the links provided for the urlselector:
+ * Questions, Categories, Import and Export
+ * Also "Add category" button is added to tertiary nav for the categories.
+ * The "Add category" would take the user to separate page, add category page.
+ *
  * @package   core_question
  * @copyright 2021 Sujith Haridasan <sujith@moodle.com>
- * @package core_question
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbank_actionbar implements templatable, renderable {
+class qbank_action_menu implements templatable, renderable {
     /** @var moodle_url */
     private $currenturl;
 
@@ -57,7 +63,7 @@ class qbank_actionbar implements templatable, renderable {
         $exportlink = new moodle_url('/question/bank/exportquestions/export.php', $this->currenturl->params());
 
         $menu = [
-                $questionslink->out(false) => get_string('questions', 'question'),
+            $questionslink->out(false) => get_string('questions', 'question'),
         ];
 
         if (\core\plugininfo\qbank::is_plugin_enabled("qbank_managecategories")) {
@@ -65,39 +71,19 @@ class qbank_actionbar implements templatable, renderable {
         }
         $menu[$importlink->out(false)] = get_string('import', 'question');
         $menu[$exportlink->out(false)] = get_string('export', 'question');
-        $additional = $this->get_additional_menu_elements();
-        $menu += $additional ?: [];
+
+        $addcategory = null;
+        if (strpos($this->currenturl->get_path(), 'category.php') !== false &&
+                $this->currenturl->param('edit') === null) {
+            $addcategory = $this->currenturl->out(false, ['edit' => 0]);
+        }
 
         $urlselect = new url_select($menu, $this->currenturl->out(false), null, 'questionbankaction');
-        $urlselect->set_label('questionbankactionselect', ['class' => 'accesshide']);
+        $urlselect->set_label(get_string('questionbanknavigation', 'question'), ['class' => 'accesshide']);
 
-        return ['questionbankselect' => $urlselect->export_for_template($output)];
-    }
-
-    /**
-     * Gets the additional third party navigation nodes.
-     *
-     * @return array|null The additional menu elements.
-     */
-    protected function get_additional_menu_elements(): ?array {
-        global $PAGE;
-        $qbnode = $PAGE->settingsnav->find('questionbank', \navigation_node::TYPE_CONTAINER);
-        $othernodes = [];
-        foreach ($qbnode->children as $key => $value) {
-            if (array_search($value->key, $this->expected_nodes()) === false) {
-                $othernodes[] = $value;
-            }
-        }
-        $result = \core\navigation\views\secondary::create_menu_element($othernodes, true);
-        return $result;
-    }
-
-    /**
-     * Returns a list of expected child navigation nodes for 'questionbank'.
-     *
-     * @return array The expected nodes
-     */
-    protected function expected_nodes(): array {
-        return ['questions', 'categories', 'import', 'export'];
+        return [
+            'questionbankselect' => $urlselect->export_for_template($output),
+            'addcategory' => $addcategory
+        ];
     }
 }

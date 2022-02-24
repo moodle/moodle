@@ -57,6 +57,9 @@ class edit_renderer extends \plugin_renderer_base {
         \core_question\local\bank\question_edit_contexts $contexts, \moodle_url $pageurl, array $pagevars) {
         $output = '';
 
+        // Page title.
+        $output .= $this->heading(get_string('questions', 'quiz'));
+
         // Information at the top.
         $output .= $this->quiz_state_warnings($structure);
 

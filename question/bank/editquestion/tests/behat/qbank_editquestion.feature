@@ -23,7 +23,7 @@ Feature: Use the qbank plugin manager page for editquestion
     And I should see "Edit question"
     And I click on "Disable" "link" in the "Edit question" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     Then I should not see "Status"
     And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
     And I should not see "Edit question" in the "region-main" "region"
@@ -31,7 +31,7 @@ Feature: Use the qbank plugin manager page for editquestion
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Edit question" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
     Then I should see "Status"
     And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"

@@ -136,7 +136,8 @@ class question_category_object {
         foreach ($this->editlists as $key => $list) {
             list($paged, $count) = $this->editlists[$key]->list_from_records($paged, $count);
         }
-        $this->catform = new question_category_edit_form($this->pageurl, compact('contexts', 'currentcat'));
+        $this->catform = new question_category_edit_form($this->pageurl,
+                ['contexts' => $contexts, 'currentcat' => $currentcat ?? 0]);
         if (!$currentcat) {
             $this->catform->set_data(['parent' => $defaultcategory]);
         }
@@ -147,15 +148,8 @@ class question_category_object {
      *
      */
     public function display_user_interface(): void {
-
         // Interface for editing existing categories.
         $this->output_edit_lists();
-
-        echo \html_writer::empty_tag('br');
-        // Interface for adding a new category.
-        $this->output_new_table();
-        echo \html_writer::empty_tag('br');
-
     }
 
     /**
@@ -174,7 +168,7 @@ class question_category_object {
     public function output_edit_lists(): void {
         global $OUTPUT;
 
-        echo $OUTPUT->heading_with_help(get_string('editcategories', 'question'), 'editcategories', 'question');
+        echo $OUTPUT->heading_with_help(get_string('questioncategories', 'question'), 'editcategories', 'question');
 
         foreach ($this->editlists as $context => $list) {
             $listhtml = $list->to_html(0, ['str' => $this->str]);
@@ -208,26 +202,29 @@ class question_category_object {
     }
 
     /**
-     * Edit a category.
+     * Edit a category, or add a new one if the id is zero.
      *
      * @param int $categoryid Category id.
      */
     public function edit_single_category(int $categoryid): void {
         // Interface for adding a new category.
         global $DB;
-        // Interface for editing existing categories.
-        $category = $DB->get_record("question_categories", ["id" => $categoryid]);
-        if (empty($category)) {
-            throw new moodle_exception('invalidcategory', '', '', $categoryid);
-        } else if ($category->parent == 0) {
-            throw new moodle_exception('cannotedittopcat', 'question', '', $categoryid);
-        } else {
+
+        if ($categoryid) {
+            // Editing an existing category.
+            $category = $DB->get_record("question_categories", ["id" => $categoryid], '*', MUST_EXIST);
+            if ($category->parent == 0) {
+                throw new moodle_exception('cannotedittopcat', 'question', '', $categoryid);
+            }
+
             $category->parent = "{$category->parent},{$category->contextid}";
             $category->submitbutton = get_string('savechanges');
             $category->categoryheader = $this->str->edit;
             $this->catform->set_data($category);
-            $this->catform->display();
         }
+
+        // Show the form.
+        $this->catform->display();
     }
 
     /**

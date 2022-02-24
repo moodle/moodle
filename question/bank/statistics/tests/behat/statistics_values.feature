@@ -73,8 +73,7 @@ Feature: Show statistics in question bank
       |   1  | True     |
       |   2  | True     |
     When I am on the "Course 1" course page logged in as admin
-    When I navigate to "Question bank" in current page administration
-    And I select "Questions" from the "questionbankactionselect" singleselect
+    And I navigate to "Question bank" in current page administration
     And I should see "50.00%" in the "TF1" "table_row"
     And I should see "75.00%" in the "TF2" "table_row"
     And I should see "75.00%" in the "TF3" "table_row"
@@ -90,8 +89,7 @@ Feature: Show statistics in question bank
       |   1  | True     |
       |   2  | True     |
     When I am on the "Course 1" course page logged in as admin
-    When I navigate to "Question bank" in current page administration
-    And I select "Questions" from the "questionbankactionselect" singleselect
+    And I navigate to "Question bank" in current page administration
     And I should see "50.00%" in the "TF1" "table_row"
     And I should see "75.00%" in the "TF2" "table_row"
     And I should see "75.00%" in the "TF3" "table_row"
@@ -108,9 +106,6 @@ Feature: Show statistics in question bank
       |   2  | True     |
     When I am on the "Course 1" course page logged in as admin
     And I navigate to "Question bank" in current page administration
-    And I select "Questions" from the "questionbankactionselect" singleselect
-    When I navigate to "Question bank" in current page administration
-    And I select "Questions" from the "questionbankactionselect" singleselect
     And I should see "Likely" in the "TF1" "table_row"
     And I should see "Unlikely" in the "TF2" "table_row"
     And I should see "Unlikely" in the "TF3" "table_row"
@@ -132,8 +127,7 @@ Feature: Show statistics in question bank
       |   1  | True     |
       |   2  | False    |
     When I am on the "Course 1" course page logged in as admin
-    When I navigate to "Question bank" in current page administration
-    And I select "Questions" from the "questionbankactionselect" singleselect
+    And I navigate to "Question bank" in current page administration
     And I should see "Likely" in the "TF1" "table_row"
     And I should see "Very likely" in the "TF2" "table_row"
     And I should see "Very likely" in the "TF3" "table_row"

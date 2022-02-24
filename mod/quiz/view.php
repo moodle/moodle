@@ -147,12 +147,8 @@ if (html_is_blank($quiz->intro)) {
     $PAGE->activityheader->set_description('');
 }
 $PAGE->add_body_class('limitedwidth');
+/** @var mod_quiz_renderer $output */
 $output = $PAGE->get_renderer('mod_quiz');
-// MDL-71915 Will remove this place holder.
-if (defined('BEHAT_SITE_RUNNING')) {
-    $PAGE->has_secondary_navigation_setter(false);
-}
-$PAGE->add_header_action($OUTPUT->region_main_settings_menu());
 
 // Print table with existing attempts.
 if ($attempts) {
@@ -225,13 +221,13 @@ if (!$viewobj->quizhasquestions) {
             if ($viewobj->preventmessages) {
                 $viewobj->buttontext = '';
             } else if ($viewobj->numattempts == 0) {
-                $viewobj->buttontext = get_string('attemptquiznow', 'quiz');
+                $viewobj->buttontext = get_string('attemptquiz', 'quiz');
             } else {
                 $viewobj->buttontext = get_string('reattemptquiz', 'quiz');
             }
 
         } else if ($canpreview) {
-            $viewobj->buttontext = get_string('previewquiznow', 'quiz');
+            $viewobj->buttontext = get_string('previewquizstart', 'quiz');
         }
     }
 
@@ -254,11 +250,11 @@ echo $OUTPUT->header();
 
 if (isguestuser()) {
     // Guests can't do a quiz, so offer them a choice of logging in or going back.
-    echo $output->view_page_guest($course, $quiz, $cm, $context, $viewobj->infomessages, $viewobj->quizhasquestions);
+    echo $output->view_page_guest($course, $quiz, $cm, $context, $viewobj->infomessages, $viewobj);
 } else if (!isguestuser() && !($canattempt || $canpreview
           || $viewobj->canreviewmine)) {
     // If they are not enrolled in this course in a good enough role, tell them to enrol.
-    echo $output->view_page_notenrolled($course, $quiz, $cm, $context, $viewobj->infomessages, $viewobj->quizhasquestions);
+    echo $output->view_page_notenrolled($course, $quiz, $cm, $context, $viewobj->infomessages, $viewobj);
 } else {
     echo $output->view_page($course, $quiz, $cm, $context, $viewobj);
 }

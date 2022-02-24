@@ -120,7 +120,7 @@ Feature: A Teacher can comment in a question
   Scenario: Comments added from the quiz page are visible
     Given I log in as "teacher1"
     And I am on the "Test quiz" "quiz activity" page
-    When I navigate to "Edit quiz" in current page administration
+    When I navigate to "Questions" in current page administration
     And I press "Add"
     And I follow "from question bank"
     And I click on "Select" "checkbox" in the "First question" "table_row"
@@ -133,7 +133,7 @@ Feature: A Teacher can comment in a question
     And I should see "Some new comment"
     And I switch to the main window
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I choose "Preview" action for "First question" in the question bank
     And I click on "Comments" "link"
     And I should see "Some new comment"
@@ -141,7 +141,7 @@ Feature: A Teacher can comment in a question
     And I delete "Some new comment" comment from question preview
     And I should not see "Some new comment"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Edit quiz" in current page administration
+    And I navigate to "Questions" in current page administration
     And I click on "Preview question" "link"
     And I switch to "questionpreview" window
     And I press "Comments"

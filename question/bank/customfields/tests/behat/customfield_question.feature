@@ -38,7 +38,7 @@ Feature: A teacher can edit question with custom fields
       | Feedback for the response 'True'.  | So you think it is true                 |
       | Feedback for the response 'False'. | So you think it is false                |
     And I am on the "Test quiz name" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
 
   Scenario: Edit a previously created question and see the custom field in the overview table and in the question preview.
     When I choose "Edit question" action for "First question" in the question bank

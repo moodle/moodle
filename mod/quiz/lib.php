@@ -570,7 +570,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
  * @param int $userid the userid.
  * @param string $status 'all', 'finished' or 'unfinished' to control
  * @param bool $includepreviews
- * @return an array of all the user's attempts at this quiz. Returns an empty
+ * @return array of all the user's attempts at this quiz. Returns an empty
  *      array if there are none.
  */
 function quiz_get_user_attempts($quizids, $userid, $status = 'finished', $includepreviews = false) {
@@ -1727,15 +1727,14 @@ function quiz_extend_settings_navigation(settings_navigation $settings, navigati
         $url = new moodle_url('/mod/quiz/overrides.php', ['cmid' => $settings->get_page()->cm->id, 'mode' => 'user']);
         $node = navigation_node::create(get_string('overrides', 'quiz'),
                     $url, navigation_node::TYPE_SETTING, null, 'mod_quiz_useroverrides');
-        $quiznode->add_node($node, $beforekey);
+        $settingsoverride = $quiznode->add_node($node, $beforekey);
     }
 
     if (has_capability('mod/quiz:manage', $settings->get_page()->cm->context)) {
-        $node = navigation_node::create(get_string('editquiz', 'quiz'),
+        $node = navigation_node::create(get_string('questions', 'quiz'),
             new moodle_url('/mod/quiz/edit.php', array('cmid' => $settings->get_page()->cm->id)),
             navigation_node::TYPE_SETTING, null, 'mod_quiz_edit', new pix_icon('t/edit', ''));
-        $editquiznode = $quiznode->add_node($node, $beforekey);
-        $editquiznode->set_show_in_secondary_navigation(false);
+        $quiznode->add_node($node, $beforekey);
     }
 
     if (has_capability('mod/quiz:preview', $settings->get_page()->cm->context)) {
@@ -1758,7 +1757,7 @@ function quiz_extend_settings_navigation(settings_navigation $settings, navigati
                 array('id' => $settings->get_page()->cm->id, 'mode' => reset($reportlist)));
         $reportnode = $quiznode->add_node(navigation_node::create(get_string('results', 'quiz'), $url,
                 navigation_node::TYPE_SETTING,
-                null, null, new pix_icon('i/report', '')));
+                null, 'quiz_report', new pix_icon('i/report', '')));
 
         foreach ($reportlist as $report) {
             $url = new moodle_url('/mod/quiz/report.php', ['id' => $settings->get_page()->cm->id, 'mode' => $report]);

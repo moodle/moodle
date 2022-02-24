@@ -15,29 +15,33 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_quiz/quiz_overrides
+    @template mod_quiz/overrides_actions
     Actions bar at the top of the overrides page UI.
+
     Classes required for JS:
     * none
+
     Data attributes required for JS:
     * none
+
     Context variables required for this template:
-    * see mod/quiz/classes/output/overridesaction.php
+    * overridesnav - must alwasy be present.
+    * addoverridebutton - should only be present if the user has permission to add a new override.
+
     Example context (json):
     {
-        "overrides": {
+        "overridesnav": {
             "options": [{
                     "name": "User overrides",
                     "value": "/mod/quiz/overrides.php?cmid=71&mode=user"
                 },
                 {
-                    "name": "Group overrrides",
+                    "name": "Group overrides",
                     "value": "/mod/quiz/overrides.php?cmid=71&mode=group"
                 }
             ]
         },
-        "canedit": true,
-        "overridesbtn": {
+        "addoverridebutton": {
             "id": "single_button1234",
             "method": "get",
             "url": "http://localhost/moodle/mod/quiz/overrideedit.php",
@@ -59,17 +63,15 @@
 }}
 <div class="container-fluid mb-3">
     <div class="row">
-        {{#overrides}}
+        {{#overridesnav}}
             <div class="col-xs-6">
                 {{>core/url_select}}
             </div>
-        {{/overrides}}
-        {{#canedit}}
-            {{#overridesbtn}}
-                <div class="ml-2">
-                    {{>core/single_button}}
-                </div>
-            {{/overridesbtn}}
-        {{/canedit}}
+        {{/overridesnav}}
+        {{#addoverridebutton}}
+            <div class="ml-3">
+                {{>core/single_button}}
+            </div>
+        {{/addoverridebutton}}
     </div>
 </div>
