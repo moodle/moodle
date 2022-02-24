@@ -21389,7 +21389,7 @@ div.editor_atto_toolbar button .icon {
         color: #fff; }
   .courseindex .courseindex-item .courseindex-locked {
     display: none; }
-  .courseindex .courseindex-item.rectrictions .courseindex-locked {
+  .courseindex .courseindex-item.restrictions .courseindex-locked {
     display: block; }
   .courseindex .courseindex-item.pageitem {
     background-color: #0f6cbf;

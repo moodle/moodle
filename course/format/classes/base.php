@@ -1211,6 +1211,28 @@ abstract class base {
     }
 
     /**
+     * Returns if an specific section is visible to the current user.
+     *
+     * Formats can overrride this method to implement any special section logic.
+     *
+     * @param section_info $section the section modinfo
+     * @return bool;
+     */
+    public function is_section_visible(section_info $section): bool {
+        // Previous to Moodle 4.0 thas logic was hardcoded. To prevent errors in the contrib plugins
+        // the default logic is the same required for topics and weeks format and still uses
+        // a "hiddensections" format setting.
+        $course = $this->get_course();
+        $hidesections = $course->hiddensections ?? true;
+        // Show the section if the user is permitted to access it, OR if it's not available
+        // but there is some available info text which explains the reason & should display,
+        // OR it is hidden but the course has a setting to display hidden sections as unavailable.
+        return $section->uservisible ||
+            ($section->visible && !$section->available && !empty($section->availableinfo)) ||
+            (!$section->visible && !$hidesections);
+    }
+
+    /**
      * return true if the course editor must be displayed.
      *
      * @return bool true if edit controls must be displayed

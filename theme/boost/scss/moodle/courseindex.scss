@@ -98,7 +98,7 @@ $courseindex-item-current: $primary !default;
         .courseindex-locked {
             display: none;
         }
-        &.rectrictions {
+        &.restrictions {
             .courseindex-locked {
                 display: block;
             }
