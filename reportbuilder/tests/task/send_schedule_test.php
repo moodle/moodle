@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\task;
 
 use advanced_testcase;
+use core_collator;
 use core_reportbuilder_generator;
 use core_reportbuilder\manager;
 use core_reportbuilder\local\filters\user;
@@ -71,8 +72,8 @@ class send_schedule_test extends advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $userone = $this->getDataGenerator()->create_user(['username' => 'userone']);
-        $usertwo = $this->getDataGenerator()->create_user(['username' => 'usertwo']);
+        $userone = $this->getDataGenerator()->create_user(['username' => 'userone', 'email' => 'user1@example.com']);
+        $usertwo = $this->getDataGenerator()->create_user(['username' => 'usertwo', 'email' => 'user2@example.com']);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -108,10 +109,10 @@ class send_schedule_test extends advanced_testcase {
         // Send the schedule, catch emails in sink.
         $sink = $this->redirectEmails();
 
-        $this->expectOutputString("Sending schedule: My schedule\n" .
+        $this->expectOutputRegex("/^Sending schedule: My schedule\n" .
             "  Sending to: " . fullname($userone) . "\n" .
             "  Sending to: " . fullname($usertwo) . "\n" .
-            "Sending schedule complete\n"
+            "Sending schedule complete\n/"
         );
         $sendschedule = new send_schedule();
         $sendschedule->set_custom_data(['reportid' => $report->get('id'), 'scheduleid' => $schedule->get('id')]);
@@ -121,6 +122,10 @@ class send_schedule_test extends advanced_testcase {
         $this->assertCount(2, $messages);
 
         $sink->close();
+
+        // Ensure caught messages are consistently ordered by recipient email prior to assertions.
+        core_collator::asort_objects_by_property($messages, 'to');
+        $messages = array_values($messages);
 
         $messageoneattachment = self::extract_message_attachment($messages[0]->body);
         $this->assertEquals($userone->email, $messages[0]->to);
