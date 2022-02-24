@@ -33,6 +33,8 @@ if (empty($courseid)) {
     $context = context_system::instance();
     $coursename = format_string($SITE->fullname, true, array('context' => $context));
     $PAGE->set_context($context);
+    $PAGE->set_primary_active_tab('siteadminnode');
+    $PAGE->set_secondary_active_tab('reports');
 } else {
     $course = get_course($courseid);
     require_login($course);
@@ -65,6 +67,7 @@ if (empty($courseid)) {
 
 // Mform setup.
 if (!empty($ruleid)) {
+    $PAGE->navbar->add(get_string('editrule', 'tool_monitor'), $PAGE->url);
     $rule = \tool_monitor\rule_manager::get_rule($ruleid)->get_mform_set_data();
     $rule->minutes = $rule->timewindow / MINSECS;
     $subscriptioncount = \tool_monitor\subscription_manager::count_rule_subscriptions($ruleid);
@@ -75,6 +78,7 @@ if (!empty($ruleid)) {
         return $classname === $rule->eventname || !$classname::is_deprecated();
     }, ARRAY_FILTER_USE_KEY);
 } else {
+    $PAGE->navbar->add(get_string('addrule', 'tool_monitor'), $PAGE->url);
     $rule = new stdClass();
     $subscriptioncount = 0;
 

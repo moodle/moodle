@@ -37,7 +37,12 @@ $fservices = optional_param_array('fservices', [], PARAM_INT);
 
 admin_externalpage_setup('webservicetokens');
 
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->navbar->add(get_string('managetokens', 'webservice'),
+    new moodle_url('/admin/webservice/tokens.php'));
+
 if ($action === 'create') {
+    $PAGE->navbar->add(get_string('createtoken', 'webservice'), $PAGE->url);
     $webservicemanager = new webservice();
     $mform = new \core_webservice\token_form(null, ['action' => 'create']);
     $data = $mform->get_data();
@@ -81,6 +86,7 @@ if ($action === 'create') {
 }
 
 if ($action === 'delete') {
+    $PAGE->navbar->add(get_string('deletetoken', 'webservice'), $PAGE->url);
     $webservicemanager = new webservice();
     $token = $webservicemanager->get_token_by_id_with_details($tokenid);
 

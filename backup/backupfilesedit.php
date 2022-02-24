@@ -51,18 +51,20 @@ $PAGE->set_context($context);
 
 if ($context->contextlevel == CONTEXT_COURSECAT) {
     core_course_category::page_setup();
-    // Set the restore course node active in the settings navigation block.
-    if ($restorecoursenode = $PAGE->settingsnav->find('restorecourse', navigation_node::TYPE_SETTING)) {
-        $restorecoursenode->make_active();
-    }
-
     $PAGE->set_secondary_active_tab('restorecourse');
 } else if ($context->contextlevel == CONTEXT_COURSE) {
     $course = get_course($context->instanceid);
     $PAGE->set_heading($course->fullname);
+    $PAGE->set_secondary_active_tab('coursereuse');
+} else if ($context->contextlevel == CONTEXT_SYSTEM) {
+    $PAGE->set_heading($SITE->fullname);
+    $PAGE->set_primary_active_tab('siteadminnode');
+    $PAGE->set_secondary_active_tab('courses');
 } else {
     $PAGE->set_heading($SITE->fullname);
 }
+// Set the restore course node active in the settings navigation block.
+navigation_node::override_active_url(new moodle_url('/backup/restorefile.php', ['contextid' => $contextid]));
 
 $title = get_string('managefiles', 'backup');
 $PAGE->navbar->add($title);

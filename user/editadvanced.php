@@ -73,6 +73,8 @@ if ($id == -1) {
     $user->timezone = '99';
     require_capability('moodle/user:create', $systemcontext);
     admin_externalpage_setup('addnewuser', '', array('id' => -1));
+    $PAGE->set_primary_active_tab('siteadminnode');
+    $PAGE->navbar->add(get_string('addnewuser', 'moodle'), $PAGE->url);
 } else {
     // Editing existing user.
     require_capability('moodle/user:update', $systemcontext);

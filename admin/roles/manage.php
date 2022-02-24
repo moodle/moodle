@@ -60,6 +60,9 @@ $undeletableroles[$CFG->notloggedinroleid] = 1;
 $undeletableroles[$CFG->guestroleid] = 1;
 $undeletableroles[$CFG->defaultuserroleid] = 1;
 
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->navbar->add(get_string('defineroles', 'role'), $PAGE->url);
+
 // Process submitted data.
 $confirmed = (optional_param('confirm', false, PARAM_BOOL) && data_submitted() && confirm_sesskey());
 switch ($action) {

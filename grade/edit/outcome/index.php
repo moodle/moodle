@@ -53,6 +53,7 @@ if ($courseid) {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');
     $context = context_system::instance();
+    $PAGE->set_primary_active_tab('siteadminnode');
 }
 
 /// return tracking object

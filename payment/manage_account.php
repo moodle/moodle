@@ -46,6 +46,14 @@ if ($restore && $account->get('archived') && confirm_sesskey()) {
     redirect(new moodle_url('/payment/accounts.php'));
 }
 
+$PAGE->set_secondary_active_tab('siteadminnode');
+$PAGE->set_primary_active_tab('siteadminnode');
+if ($id == 0) {
+    $PAGE->navbar->add(get_string('createaccount', 'payment'), $PAGE->url);
+} else {
+    $PAGE->navbar->add(get_string('editpaymentaccount', 'payment'), $PAGE->url);
+}
+
 $PAGE->set_heading($id ? format_string($account->get('name')) : get_string('createaccount', 'payment'));
 
 $form = new \core_payment\form\account($pageurl->out(false), ['persistent' => $account]);

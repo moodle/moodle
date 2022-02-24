@@ -71,6 +71,12 @@ if ($category) {
     $showall = false;
 } else {
     admin_externalpage_setup('cohorts', '', null, '', array('pagelayout'=>'report'));
+    $PAGE->set_primary_active_tab('siteadminnode');
+    if ($showall == 1) {
+        $PAGE->navbar->add(get_string('allcohorts', 'cohort'), $PAGE->url);
+    } else if (!$showall) {
+        $PAGE->navbar->add(get_string('systemcohorts', 'cohort'), $PAGE->url);
+    }
 }
 
 echo $OUTPUT->header();

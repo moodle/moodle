@@ -97,6 +97,8 @@ if ($id) {
 if (!$courseid) {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');
+
+    $PAGE->set_primary_active_tab('siteadminnode');
 } else {
     navigation_node::override_active_url(new moodle_url('/grade/edit/outcome/course.php', ['id' => $courseid]));
     $PAGE->navbar->add(get_string('manageoutcomes', 'grades'),

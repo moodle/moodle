@@ -42,6 +42,9 @@
 
     $returnurl = new moodle_url('/admin/user.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage, 'page'=>$page));
 
+    $PAGE->set_primary_active_tab('siteadminnode');
+    $PAGE->navbar->add(get_string('userlist', 'admin'), $PAGE->url);
+
     // The $user variable is also used outside of these if statements.
     $user = null;
     if ($confirmuser and confirm_sesskey()) {

@@ -73,6 +73,9 @@ if ($isupdate) {
     $data['isupdate'] = true;
 }
 
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->set_secondary_active_tab('modules');
+
 $form = new mod_lti_register_types_form($pageurl, (object)$data);
 
 if ($form->is_cancelled()) {

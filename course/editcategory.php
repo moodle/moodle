@@ -73,6 +73,7 @@ if ($id) {
         $context = context_system::instance();
         $fullname = $SITE->fullname;
         $title = "$SITE->shortname: $strtitle";
+        $PAGE->set_secondary_active_tab('courses');
     }
 
     $category = new stdClass();

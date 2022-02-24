@@ -144,7 +144,10 @@ if ($data = $form->get_data()) {
 }
 
 $PAGE->set_title("$SITE->shortname: " . get_string('toolsetup', 'lti'));
-$PAGE->navbar->add(get_string('lti_administration', 'lti'), $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=modsettinglti');
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->set_secondary_active_tab('ltitoolconfigure');
+$PAGE->navbar->add(get_string('manage_external_tools', 'lti'), new moodle_url('/mod/lti/toolconfigure.php'));
+$PAGE->navbar->add(get_string('toolsetup', 'lti'), $PAGE->url);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('toolsetup', 'lti'));

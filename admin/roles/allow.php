@@ -49,6 +49,9 @@ if (optional_param('submit', false, PARAM_BOOL) && data_submitted() && confirm_s
     redirect($baseurl);
 }
 
+$PAGE->set_secondary_active_tab('users');
+$PAGE->set_primary_active_tab('siteadminnode');
+
 $controller->load_current_settings();
 
 // Display the editing form.

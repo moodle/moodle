@@ -32,6 +32,7 @@ $requestedqtype = optional_param('qtype', '', PARAM_SAFEDIR);
 
 // Print the header & check permissions.
 admin_externalpage_setup('reportquestioninstances', '', null, '', array('pagelayout'=>'report'));
+$PAGE->set_primary_active_tab('siteadminnode');
 echo $OUTPUT->header();
 
 // Log.

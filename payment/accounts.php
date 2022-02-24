@@ -30,6 +30,8 @@ $showarchived = optional_param('showarchived', false, PARAM_BOOL);
 admin_externalpage_setup('paymentaccounts');
 $PAGE->set_heading(get_string('paymentaccounts', 'payment'));
 
+$PAGE->set_primary_active_tab('siteadminnode');
+
 $enabledplugins = \core\plugininfo\paygw::get_enabled_plugins();
 
 echo $OUTPUT->header();

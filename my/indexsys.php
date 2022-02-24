@@ -44,7 +44,9 @@ $resetall = optional_param('resetall', false, PARAM_BOOL);
 
 $pagetitle = get_string('mypage', 'admin');
 
+$PAGE->set_secondary_active_tab('appearance');
 $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');
+$PAGE->set_url(new moodle_url('/my/indexsys.php'));
 admin_externalpage_setup('mypage', '', null, '', array('pagelayout' => 'mydashboard'));
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagetype('my-index');
