@@ -219,6 +219,10 @@ class tool_uploadcourse_processor {
 
                 $data = array_merge($data, $course->get_data(), array('id' => $course->get_id()));
                 $tracker->output($this->linenb, true, $status, $data);
+                if ($course->has_errors()) {
+                    $errors++;
+                    $tracker->output($this->linenb, false, $course->get_errors(), $data);
+                }
             } else {
                 $errors++;
                 $tracker->output($this->linenb, false, $course->get_errors(), $data);
