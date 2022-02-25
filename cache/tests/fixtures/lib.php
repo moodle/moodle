@@ -225,9 +225,15 @@ class cache_config_testing extends cache_config_writer {
     /**
      * Forcefully adds a file store.
      *
+     * You can turn off native TTL support if you want a way to test TTL wrapper objects.
+     *
      * @param string $name
+     * @param bool $nativettl If false, uses fixture that turns off native TTL support
      */
-    public function phpunit_add_file_store($name) {
+    public function phpunit_add_file_store(string $name, bool $nativettl = true): void {
+        if (!$nativettl) {
+            require_once(__DIR__ . '/cachestore_file_with_ttl_wrappers.php');
+        }
         $this->configstores[$name] = array(
             'name' => $name,
             'plugin' => 'file',
@@ -237,7 +243,7 @@ class cache_config_testing extends cache_config_writer {
             'features' => 6,
             'modes' => 3,
             'mappingsonly' => false,
-            'class' => 'cachestore_file',
+            'class' => $nativettl ? 'cachestore_file' : 'cachestore_file_with_ttl_wrappers',
             'default' => false,
             'lock' => 'cachelock_file_default'
         );

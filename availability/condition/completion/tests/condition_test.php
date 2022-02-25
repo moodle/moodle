@@ -210,6 +210,8 @@ class availability_completion_condition_testcase extends advanced_testcase {
                         'completion' => COMPLETION_TRACKING_AUTOMATIC]);
         $DB->set_field('course_modules', 'completiongradeitemnumber', 0,
                 ['id' => $assignrow->cmid]);
+        // As we manually set the field here, we are going to need to reset the modinfo cache.
+        rebuild_course_cache($course->id, true);
         $assign = new assign(context_module::instance($assignrow->cmid), false, false);
 
         // Get basic details.
