@@ -69,7 +69,6 @@ class create_gradecategories_test extends \externallib_advanced_testcase {
         // Check the path is correct.
         $this->assertEquals('/' . implode('/', [$courseparentcat->id, $record1->id, $record2->id]) . '/', $record2->path);
 
-        /* MDL-72377 commenting broken test.
         // Now create a category with some customised data and check the returns. This customises every value.
         $customopts = [
             'aggregation' => GRADE_AGGREGATE_MEAN,
@@ -118,7 +117,7 @@ class create_gradecategories_test extends \externallib_advanced_testcase {
         $this->assertEquals(1, $cat3->grade_item->weightoverride);
         // Coefficient is converted to percentage.
         $this->assertEquals(0.2, $cat3->grade_item->aggregationcoef2);
-        $this->assertEquals($record2->id, $cat3->parent);*/
+        $this->assertEquals($record2->id, $cat3->parent);
 
         // Now test creating 2 in parallel, and nesting them.
         $status4 = create_gradecategories::execute($course->id, [

@@ -78,7 +78,7 @@ class edit_outcomeitem_form extends moodleform {
         $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
         $mform->addHelpButton('hidden', 'hidden', 'grades');
         $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddenuntil', 'grades'), array('optional'=>true));
-        $mform->disabledIf('hidden', 'hiddenuntil[off]', 'notchecked');
+        $mform->disabledIf('hidden', 'hiddenuntil[enabled]', 'checked');
 
         //locking
         $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
