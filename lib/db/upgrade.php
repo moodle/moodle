@@ -4494,5 +4494,25 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022041900.03);
     }
 
+    if ($oldversion < 2022041901.05) {
+
+        // Changing precision of field hidden on table grade_categories to (10).
+        $table = new xmldb_table('grade_categories');
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+
+        // Launch change of precision for field hidden.
+        $dbman->change_field_precision($table, $field);
+
+        // Changing precision of field hidden on table grade_categories_history to (10).
+        $table = new xmldb_table('grade_categories_history');
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'aggregatesubcats');
+
+        // Launch change of precision for field hidden.
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022041901.05);
+    }
+
     return true;
 }
