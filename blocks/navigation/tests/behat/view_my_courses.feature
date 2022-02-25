@@ -104,3 +104,24 @@ Feature: View my courses in navigation block
     And I should not see "c2" in the "Navigation" "block"
     And I should see "c31" in the "Navigation" "block"
     And I should not see "c32" in the "Navigation" "block"
+
+  @javascript
+  Scenario: The course limit setting is applied in the navigation block
+    Given the following config values are set as admin:
+      | navcourselimit | 2 |
+    And I log in as "student1"
+    And I should see "More..." in the "Navigation" "block"
+    When I click on "More..." "link" in the "Navigation" "block"
+    Then I should see "My courses" in the "page-header" "region"
+
+  @javascript
+  Scenario: The dashboard node is not displayed in the navigation block when it is disabled
+    Given the following config values are set as admin:
+      | enabledashboard | 0 |
+    When I log in as "student1"
+    Then I should not see "Dashboard" in the "Navigation" "block"
+# Re-enable dashboard and check then it's displayed in the navigation block.
+    And the following config values are set as admin:
+      | enabledashboard | 1 |
+    And I reload the page
+    And I should see "Dashboard" in the "Navigation" "block"

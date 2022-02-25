@@ -1407,9 +1407,12 @@ class global_navigation extends navigation_node {
         if ($defaulthomepage == HOMEPAGE_SITE) {
             // The home element should be my moodle because the root element is the site
             if (isloggedin() && !isguestuser()) {  // Makes no sense if you aren't logged in
-                $this->rootnodes['home'] = $this->add(get_string('myhome'), new moodle_url('/my/'),
-                    self::TYPE_SETTING, null, 'myhome', new pix_icon('i/dashboard', ''));
-                $this->rootnodes['home']->showinflatnavigation = true;
+                if (!empty($CFG->enabledashboard)) {
+                    // Only add dashboard to home if it's enabled.
+                    $this->rootnodes['home'] = $this->add(get_string('myhome'), new moodle_url('/my/'),
+                        self::TYPE_SETTING, null, 'myhome', new pix_icon('i/dashboard', ''));
+                    $this->rootnodes['home']->showinflatnavigation = true;
+                }
             }
         } else {
             // The home element should be the site because the root node is my moodle
@@ -3289,7 +3292,7 @@ class global_navigation extends navigation_node {
         // Show a link to the course page if there are more courses the user is enrolled in.
         if ($showmorelinkinnav || $showmorelinkinflatnav) {
             // Adding hash to URL so the link is not highlighted in the navigation when clicked.
-            $url = new moodle_url('/my/');
+            $url = new moodle_url('/my/courses.php');
             $parent = $this->rootnodes['mycourses'];
             $coursenode = $parent->add(get_string('morenavigationlinks'), $url, self::TYPE_CUSTOM, null, self::COURSE_INDEX_PAGE);
 
@@ -3360,7 +3363,13 @@ class global_navigation_for_ajax extends global_navigation {
 
         $this->rootnodes = array();
         $this->rootnodes['site']    = $this->add_course($SITE);
-        $this->rootnodes['mycourses'] = $this->add(get_string('mycourses'), new moodle_url('/my'), self::TYPE_ROOTNODE, null, 'mycourses');
+        $this->rootnodes['mycourses'] = $this->add(
+            get_string('mycourses'),
+            new moodle_url('/my/courses.php'),
+            self::TYPE_ROOTNODE,
+            null,
+            'mycourses'
+        );
         $this->rootnodes['courses'] = $this->add(get_string('courses'), null, self::TYPE_ROOTNODE, null, 'courses');
         // The courses branch is always displayed, and is always expandable (although may be empty).
         // This mimicks what is done during {@link global_navigation::initialise()}.
@@ -5015,14 +5024,11 @@ class settings_navigation extends navigation_node {
 
         // Add a user setting branch.
         if ($gstitle == 'usercurrentsettings') {
-            $dashboard = $this->add(get_string('myhome'), new moodle_url('/my/'), self::TYPE_CONTAINER, null, 'dashboard');
+            $mainpage = $this->add(get_string('home'), new moodle_url('/'), self::TYPE_CONTAINER, null, 'site');
+
             // This should be set to false as we don't want to show this to the user. It's only for generating the correct
             // breadcrumb.
-            $dashboard->display = false;
-            $homepage = get_home_page();
-            if (($homepage == HOMEPAGE_MY || $homepage == HOMEPAGE_MYCOURSES)) {
-                $dashboard->mainnavonly = true;
-            }
+            $mainpage->display = false;
 
             $iscurrentuser = ($user->id == $USER->id);
 
@@ -5036,7 +5042,7 @@ class settings_navigation extends navigation_node {
             }
 
             // Add the user profile to the dashboard.
-            $profilenode = $dashboard->add(get_string('profile'), new moodle_url('/user/profile.php',
+            $profilenode = $mainpage->add(get_string('profile'), new moodle_url('/user/profile.php',
                     array('id' => $user->id)), self::TYPE_SETTING, null, 'myprofile');
 
             if (!empty($CFG->navadduserpostslinks)) {
@@ -5081,14 +5087,14 @@ class settings_navigation extends navigation_node {
                     $messageargs['user2'] = $user->id;
                 }
                 $url = new moodle_url('/message/index.php', $messageargs);
-                $dashboard->add(get_string('messages', 'message'), $url, self::TYPE_SETTING, null, 'messages');
+                $mainpage->add(get_string('messages', 'message'), $url, self::TYPE_SETTING, null, 'messages');
             }
 
             // Add the "My private files" link.
             // This link doesn't have a unique display for course context so only display it under the user's profile.
             if ($issitecourse && $iscurrentuser && has_capability('moodle/user:manageownfiles', $usercontext)) {
                 $url = new moodle_url('/user/files.php');
-                $dashboard->add(get_string('privatefiles'), $url, self::TYPE_SETTING, null, 'privatefiles');
+                $mainpage->add(get_string('privatefiles'), $url, self::TYPE_SETTING, null, 'privatefiles');
             }
 
             // Add a node to view the users notes if permitted.
@@ -5110,7 +5116,7 @@ class settings_navigation extends navigation_node {
                 } else { // Otherwise we are in a course and should redirect to the user grade report (Activity report version).
                     $url = new moodle_url('/course/user.php', array('mode' => 'grade', 'id' => $course->id, 'user' => $user->id));
                 }
-                $dashboard->add(get_string('grades', 'grades'), $url, self::TYPE_SETTING, null, 'mygrades');
+                $mainpage->add(get_string('grades', 'grades'), $url, self::TYPE_SETTING, null, 'mygrades');
             }
 
             // Let plugins hook into user navigation.
@@ -5124,7 +5130,7 @@ class settings_navigation extends navigation_node {
             }
 
             $usersetting = navigation_node::create(get_string('preferences', 'moodle'), $prefurl, self::TYPE_CONTAINER, null, $key);
-            $dashboard->add_node($usersetting);
+            $mainpage->add_node($usersetting);
         } else {
             $usersetting = $this->add(get_string('preferences', 'moodle'), $prefurl, self::TYPE_CONTAINER, null, $key);
             $usersetting->display = false;
