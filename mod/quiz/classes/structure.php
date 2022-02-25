@@ -661,7 +661,8 @@ class structure {
         foreach ($slots as $slot) {
             if ($slot->qtype === null) {
                 // Check if the question is random.
-                if ($setreference = $DB->get_record('question_set_references', ['itemid' => $slot->slotid])) {
+                if ($setreference = $DB->get_record('question_set_references',
+                    ['itemid' => $slot->slotid, 'component' => 'mod_quiz', 'questionarea' => 'slot'])) {
                     $filtercondition = json_decode($setreference->filtercondition);
                     $slot->id = $slot->slotid;
                     $slot->category = $filtercondition->questioncategoryid;
@@ -965,7 +966,8 @@ class structure {
         $questionsetreference = $DB->get_record('question_set_references',
                 ['component' => 'mod_quiz', 'questionarea' => 'slot', 'itemid' => $slot->id]);
         if ($questionsetreference) {
-            $DB->delete_records('question_set_references', ['id' => $questionsetreference->id]);
+            $DB->delete_records('question_set_references',
+                ['id' => $questionsetreference->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
         }
         $DB->delete_records('quiz_slots', array('id' => $slot->id));
         for ($i = $slot->slot + 1; $i <= $maxslot; $i++) {

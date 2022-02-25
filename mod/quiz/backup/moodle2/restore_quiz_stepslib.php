@@ -435,7 +435,8 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $data->tagname = $tag->name;
         }
         $tagstring = "{$data->tagid},{$data->tagname}";
-        $setreferencedata = $DB->get_record('question_set_references', ['itemid' => $slotid]);
+        $setreferencedata = $DB->get_record('question_set_references',
+            ['itemid' => $slotid, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
 
         $filtercondition = json_decode($setreferencedata->filtercondition);
         $tagstrings = [];

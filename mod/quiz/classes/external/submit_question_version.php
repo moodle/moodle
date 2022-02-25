@@ -70,7 +70,8 @@ class submit_question_version extends external_api {
         $params = self::validate_parameters(self::execute_parameters(), $params);
         $response = ['result' => false];
         // Get the required data.
-        $referencedata = $DB->get_record('question_references', ['itemid' => $params['slotid']]);
+        $referencedata = $DB->get_record('question_references',
+            ['itemid' => $params['slotid'], 'component' => 'mod_quiz', 'questionarea' => 'slot']);
         $slotdata = $DB->get_record('quiz_slots', ['id' => $slotid]);
 
         // Capability check.

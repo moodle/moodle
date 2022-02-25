@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20211221" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20220323" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1476,6 +1476,9 @@
         <KEY NAME="usingcontextid" TYPE="foreign" FIELDS="usingcontextid" REFTABLE="context" REFFIELDS="id"/>
         <KEY NAME="questionbankentryid" TYPE="foreign" FIELDS="questionbankentryid" REFTABLE="question_bank_entries" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="context-component-area-itemid" UNIQUE="true" FIELDS="usingcontextid, component, questionarea, itemid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="question_set_references" COMMENT="Records where groups of questions are used.">
       <FIELDS>
@@ -1492,6 +1495,9 @@
         <KEY NAME="usingcontextid" TYPE="foreign" FIELDS="usingcontextid" REFTABLE="context" REFFIELDS="id"/>
         <KEY NAME="questionscontextid" TYPE="foreign" FIELDS="questionscontextid" REFTABLE="context" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="context-component-area-itemid" UNIQUE="true" FIELDS="usingcontextid, component, questionarea, itemid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="question_answers" COMMENT="Answers, with a fractional grade (0-1) and feedback">
       <FIELDS>

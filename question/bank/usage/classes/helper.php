@@ -37,7 +37,7 @@ class helper {
 
         $sql = 'SELECT COUNT(*) FROM (' . self::question_usage_sql() . ') quizid';
 
-        return $DB->count_records_sql($sql, [$question->id, $question->questionbankentryid]);
+        return $DB->count_records_sql($sql, [$question->id, $question->questionbankentryid, 'mod_quiz', 'slot']);
     }
 
     /**
@@ -65,7 +65,9 @@ class helper {
                       JOIN {question_references} qr ON qr.itemid = slot.id
                       JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
                       JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-                     WHERE qv.questionbankentryid = ?)";
+                     WHERE qv.questionbankentryid = ?
+                       AND qr.component = ?
+                       AND qr.questionarea = ?)";
         return $sqlset;
     }
 

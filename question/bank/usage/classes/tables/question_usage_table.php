@@ -84,7 +84,7 @@ class question_usage_table extends table_sql {
         }
 
         $sql = helper::question_usage_sql();
-        $params = [$this->question->id, $this->question->questionbankentryid];
+        $params = [$this->question->id, $this->question->questionbankentryid, 'mod_quiz', 'slot'];
 
         if (!$this->is_downloading()) {
             $this->rawdata = $DB->get_records_sql($sql, $params, $this->get_page_start(), $this->get_page_size());
