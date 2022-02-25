@@ -42,7 +42,7 @@ Feature: Primary navigation
 
     Examples:
       | userpreference | homepage    |
-      |   Site         | Home        |
+      |   Home         | Home        |
       |   Dashboard    | Dashboard   |
       |   My courses   | My courses  |
 
