@@ -29,35 +29,15 @@ import Pending from 'core/pending';
  */
 const dropdownFix = () => {
     let focusEnd = false;
-    const setFocusEnd = () => {
-        focusEnd = true;
+    let focusBackToTrigger = true;
+    const setFocusEnd = (end = true) => {
+        focusEnd = end;
     };
     const getFocusEnd = () => {
         const result = focusEnd;
         focusEnd = false;
         return result;
     };
-
-    // Special handling for "up" keyboard control.
-    document.addEventListener('keydown', e => {
-        if (e.target.matches('[data-toggle="dropdown"]')) {
-            const trigger = e.key;
-
-            // Up key opens the menu at the end.
-            if (trigger == 'ArrowUp') {
-                // Focus the end of the menu, not the beginning.
-                setFocusEnd();
-            }
-
-            // Space key or Enter key opens the menu.
-            if (trigger == ' ' || trigger == 'Enter') {
-                // Cancel random scroll.
-                e.preventDefault();
-                // Open the menu instead.
-                e.target.click();
-            }
-        }
-    });
 
     // Special handling for navigation keys when menu is open.
     const shiftFocus = element => {
@@ -68,9 +48,37 @@ const dropdownFix = () => {
         setTimeout(delayedFocus, 50, new Pending('core/aria:delayed-focus'));
     };
 
-    $('.dropdown').on('shown.bs.dropdown', e => {
-        // We need to focus on the first menuitem.
-        const menu = e.target.querySelector('[role="menu"]');
+    // Event handling for the dropdown menu button.
+    const handleMenuButton = e => {
+        const trigger = e.key;
+        let fixFocus = false;
+
+        // Space key or Enter key opens the menu.
+        if (trigger === ' ' || trigger === 'Enter') {
+            fixFocus = true;
+            // Cancel random scroll.
+            e.preventDefault();
+            // Open the menu instead.
+            e.target.click();
+        }
+
+        // Up and Down keys also open the menu.
+        if (trigger === 'ArrowUp' || trigger === 'ArrowDown') {
+            fixFocus = true;
+        }
+
+        // Pressing tab on the menu button should focus on the next element in the DOM and not back to the menu trigger.
+        if (trigger === 'Tab') {
+            focusBackToTrigger = false;
+        }
+
+        if (!fixFocus) {
+            // No need to fix the focus. Return early.
+            return;
+        }
+
+        // Fix the focus on the menu items when the menu is opened.
+        const menu = e.target.parentElement.querySelector('[role="menu"]');
         let menuItems = false;
         let foundMenuItem = false;
 
@@ -78,6 +86,13 @@ const dropdownFix = () => {
             menuItems = menu.querySelectorAll('[role="menuitem"]');
         }
         if (menuItems && menuItems.length > 0) {
+            // Up key opens the menu at the end.
+            if (trigger === 'ArrowUp') {
+                setFocusEnd();
+            } else {
+                setFocusEnd(false);
+            }
+
             if (getFocusEnd()) {
                 foundMenuItem = menuItems[menuItems.length - 1];
             } else {
@@ -85,10 +100,12 @@ const dropdownFix = () => {
                 foundMenuItem = menuItems[0];
             }
         }
+
         if (foundMenuItem) {
             shiftFocus(foundMenuItem);
         }
-    });
+    };
+
     // Search for menu items by finding the first item that has
     // text starting with the typed character (case insensitive).
     document.addEventListener('keypress', e => {
@@ -117,6 +134,13 @@ const dropdownFix = () => {
 
     // Keyboard navigation for arrow keys, home and end keys.
     document.addEventListener('keydown', e => {
+
+        // We only want to set focus when users access the dropdown via keyboard as per
+        // guidelines defined in w3 aria practices 1.1 menu-button.
+        if (e.target.matches('[data-toggle="dropdown"]')) {
+            handleMenuButton(e);
+        }
+
         if (e.target.matches('.dropdown [role="menu"] [role="menuitem"]')) {
             const trigger = e.key;
             let next = false;
@@ -162,7 +186,11 @@ const dropdownFix = () => {
             } else if (trigger == 'End') {
                 // End key.
                 next = menuItems[menuItems.length - 1];
+            } else if (trigger == 'Tab') {
+                // Pressing tab in the menu should focus on the next element in the DOM and not back to the menu trigger.
+                focusBackToTrigger = false;
             }
+
             // Variable next is set if we do want to act on the keypress.
             if (next) {
                 e.preventDefault();
@@ -175,9 +203,11 @@ const dropdownFix = () => {
     $('.dropdown').on('hidden.bs.dropdown', e => {
         // We need to focus on the menu trigger.
         const trigger = e.target.querySelector('[data-toggle="dropdown"]');
-        if (trigger) {
+        if (trigger && focusBackToTrigger) {
             shiftFocus(trigger);
         }
+        // Reset flag to focus back to the menu trigger.
+        focusBackToTrigger = true;
     });
 };
 

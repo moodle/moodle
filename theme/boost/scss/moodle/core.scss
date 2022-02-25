@@ -2363,6 +2363,9 @@ $footer-link-color: $bg-inverse-link-color !default;
         display: block;
         width: 100%;
         color: $body-color;
+        &:focus-visible {
+            outline: 0;
+        }
     }
     &:active,
     &:hover,
