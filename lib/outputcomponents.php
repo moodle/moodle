@@ -4340,6 +4340,7 @@ class action_menu implements renderable, templatable {
     public function add_primary_action($action) {
         if ($action instanceof action_link || $action instanceof pix_icon) {
             $action->attributes['role'] = 'menuitem';
+            $action->attributes['tabindex'] = '-1';
             if ($action instanceof action_menu_link) {
                 $action->actionmenu = $this;
             }
@@ -4355,6 +4356,7 @@ class action_menu implements renderable, templatable {
     public function add_secondary_action($action) {
         if ($action instanceof action_link || $action instanceof pix_icon) {
             $action->attributes['role'] = 'menuitem';
+            $action->attributes['tabindex'] = '-1';
             if ($action instanceof action_menu_link) {
                 $action->actionmenu = $this;
             }
@@ -4412,7 +4414,8 @@ class action_menu implements renderable, templatable {
             'title' => $title,
             'aria-label' => $label,
             'id' => 'action-menu-toggle-'.$this->instance,
-            'role' => 'menuitem'
+            'role' => 'menuitem',
+            'tabindex' => '-1',
         );
         $link = html_writer::link('#', $string . $this->menutrigger . $pixicon, $attributes);
         if ($this->prioritise) {
