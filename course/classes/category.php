@@ -3118,4 +3118,32 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         }
         return true;
     }
+
+    /**
+     * General page setup for the course category pages.
+     *
+     * This method sets up things which are common for the course category pages such as page heading,
+     * the active nodes in the page navigation block, the active item in the primary navigation (when applicable).
+     *
+     * @return void
+     */
+    public static function page_setup() {
+        global $PAGE;
+
+        if ($PAGE->context->contextlevel != CONTEXT_COURSECAT) {
+            return;
+        }
+        $categoryid = $PAGE->context->instanceid;
+        // Highlight the 'Home' primary navigation item (when applicable).
+        $PAGE->set_primary_active_tab('home');
+        // Set the page heading to display the category name.
+        $coursecategory = self::get($categoryid, MUST_EXIST, true);
+        $PAGE->set_heading($coursecategory->get_formatted_name());
+        // Set the category node active in the navigation block.
+        if ($coursesnode = $PAGE->navigation->find('courses', navigation_node::COURSE_OTHER)) {
+            if ($categorynode = $coursesnode->find($categoryid, navigation_node::TYPE_CATEGORY)) {
+                $categorynode->make_active();
+            }
+        }
+    }
 }
