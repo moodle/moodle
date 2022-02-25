@@ -66,7 +66,6 @@ class core_course_renderer extends plugin_renderer_base {
     public function __construct(moodle_page $page, $target) {
         $this->strings = new stdClass;
         $courseid = $page->course->id;
-        user_preference_allow_ajax_update('coursesectionspreferences_' . $courseid, PARAM_RAW);
         parent::__construct($page, $target);
     }
 

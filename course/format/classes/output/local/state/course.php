@@ -65,6 +65,7 @@ class course implements renderable {
             'highlighted' => $format->get_section_highlighted_name(),
             'maxsections' => $format->get_max_sections(),
             'baseurl' => $url->out(),
+            'statekey' => course_format::session_cache($course),
         ];
 
         $sections = $modinfo->get_section_info_all();

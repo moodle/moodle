@@ -226,6 +226,48 @@ abstract class base {
     }
 
     /**
+     * Reset the current user course format cache.
+     *
+     * The course format cache resets every time the course cache resets but
+     * also when the user changes their course format preference, complete
+     * an activity...
+     *
+     * @param stdClass $course the course object
+     * @return string the new statekey
+     */
+    public static function session_cache_reset(stdClass $course): string {
+        $statecache = cache::make('core', 'courseeditorstate');
+        $newkey = $course->cacherev . '_' . time();
+        $statecache->set($course->id, $newkey);
+        return $newkey;
+    }
+
+    /**
+     * Return the current user course format cache key.
+     *
+     * The course format session cache can be used to cache the
+     * user course representation. The statekey will be reset when the
+     * the course state changes. For example when the course is edited,
+     * the user completes an activity or simply some course preference
+     * like collapsing a section happens.
+     *
+     * @param stdClass $course the course object
+     * @return string the current statekey
+     */
+    public static function session_cache(stdClass $course): string {
+        $statecache = cache::make('core', 'courseeditorstate');
+        $statekey = $statecache->get($course->id);
+        // Validate the statekey code.
+        if (preg_match('/^[0-9]+_[0-9]+$/', $statekey)) {
+            list($cacherev) = explode('_', $statekey);
+            if ($cacherev == $course->cacherev) {
+                return $statekey;
+            }
+        }
+        return self::session_cache_reset($course);
+    }
+
+    /**
      * Returns the format name used by this course
      *
      * @return string
@@ -508,6 +550,8 @@ abstract class base {
 
     /**
      * Return the format section preferences.
+     *
+     * @return array of preferences indexed by sectionid
      */
     public function get_sections_preferences(): array {
         global $USER;
@@ -522,17 +566,7 @@ abstract class base {
             return $coursesections;
         }
 
-        // Calculate collapsed preferences.
-        try {
-            $sectionpreferences = (array) json_decode(
-                get_user_preferences('coursesectionspreferences_' . $course->id, null, $USER->id)
-            );
-            if (empty($sectionpreferences)) {
-                $sectionpreferences = [];
-            }
-        } catch (\Throwable $e) {
-            $sectionpreferences = [];
-        }
+        $sectionpreferences = $this->get_sections_preferences_by_preference();
 
         foreach ($sectionpreferences as $preference => $sectionids) {
             if (!empty($sectionids) && is_array($sectionids)) {
@@ -546,8 +580,46 @@ abstract class base {
         }
 
         $coursesectionscache->set($course->id, $result);
-
         return $result;
+    }
+
+    /**
+     * Return the format section preferences.
+     *
+     * @return array of preferences indexed by preference name
+     */
+    public function get_sections_preferences_by_preference(): array {
+        global $USER;
+        $course = $this->get_course();
+        try {
+            $sectionpreferences = (array) json_decode(
+                get_user_preferences('coursesectionspreferences_' . $course->id, null, $USER->id)
+            );
+            if (empty($sectionpreferences)) {
+                $sectionpreferences = [];
+            }
+        } catch (\Throwable $e) {
+            $sectionpreferences = [];
+        }
+        return $sectionpreferences;
+    }
+
+    /**
+     * Return the format section preferences.
+     *
+     * @param string $preferencename preference name
+     * @param int[] $sectionids affected section ids
+     *
+     */
+    public function set_sections_preference(string $preferencename, array $sectionids) {
+        global $USER;
+        $course = $this->get_course();
+        $sectionpreferences = $this->get_sections_preferences_by_preference();
+        $sectionpreferences[$preferencename] = $sectionids;
+        set_user_preference('coursesectionspreferences_' . $course->id, json_encode($sectionpreferences), $USER->id);
+        // Invalidate section preferences cache.
+        $coursesectionscache = cache::make('core', 'coursesectionspreferences');
+        $coursesectionscache->delete($course->id);
     }
 
     /**

@@ -156,11 +156,9 @@ export default class Component extends BaseComponent {
                 // Update the state.
                 const sectionId = section.getAttribute('data-id');
                 this.reactive.dispatch(
-                    'sectionPreferences',
+                    'sectionContentCollapsed',
                     [sectionId],
-                    {
-                        contentcollapsed: !isCollapsed,
-                    },
+                    !isCollapsed
                 );
             }
         }
@@ -182,11 +180,9 @@ export default class Component extends BaseComponent {
 
         const course = this.reactive.get('course');
         this.reactive.dispatch(
-            'sectionPreferences',
+            'sectionContentCollapsed',
             course.sectionlist ?? [],
-            {
-                contentcollapsed: !isAllCollapsed,
-            }
+            !isAllCollapsed
         );
     }
 

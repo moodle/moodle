@@ -3311,10 +3311,13 @@ function include_course_editor(course_format $format) {
         return;
     }
 
+    $statekey = course_format::session_cache($course);
+
     // Edition mode and some format specs must be passed to the init method.
     $setup = (object)[
         'editing' => $format->show_editor(),
         'supportscomponents' => $format->supports_components(),
+        'statekey' => $statekey,
     ];
     // All the new editor elements will be loaded after the course is presented and
     // the initial course state will be generated using core_course_get_state webservice.

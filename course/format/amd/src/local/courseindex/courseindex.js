@@ -135,11 +135,9 @@ export default class Component extends BaseComponent {
                 // Update the state.
                 const sectionId = section.getAttribute('data-id');
                 this.reactive.dispatch(
-                    'sectionPreferences',
+                    'sectionIndexCollapsed',
                     [sectionId],
-                    {
-                        indexcollapsed: !isCollapsed,
-                    },
+                    !isCollapsed
                 );
             }
         }
