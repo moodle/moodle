@@ -33,6 +33,8 @@ class primary extends view {
      * Initialise the primary navigation node
      */
     public function initialise(): void {
+        global $CFG;
+
         if (during_initial_install() || $this->initialised) {
             return;
         }
@@ -56,8 +58,8 @@ class primary extends view {
                 }
 
                 // Add the dashboard link.
-                $showmyhomenode = empty($this->page->theme->removedprimarynavitems) ||
-                    !in_array('myhome', $this->page->theme->removedprimarynavitems);
+                $showmyhomenode = !empty($CFG->enabledashboard) && (empty($this->page->theme->removedprimarynavitems) ||
+                    !in_array('myhome', $this->page->theme->removedprimarynavitems));
                 if ($showmyhomenode) {
                     $this->add(get_string('myhome'), new \moodle_url('/my/'),
                         self::TYPE_SETTING, null, 'myhome', new \pix_icon('i/dashboard', ''));
