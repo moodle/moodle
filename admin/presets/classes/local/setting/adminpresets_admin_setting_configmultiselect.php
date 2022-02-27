@@ -41,6 +41,7 @@ class adminpresets_admin_setting_configmultiselect extends adminpresets_setting 
 
                     if ($key == $option) {
                         $this->value = $option;
+                        $this->set_visiblevalue();
                         return true;
                     }
                 }
@@ -48,8 +49,10 @@ class adminpresets_admin_setting_configmultiselect extends adminpresets_setting 
 
             $value = implode(',', $options);
         }
-
         $this->value = $value;
+        $this->set_visiblevalue();
+
+        return true;
     }
 
     protected function set_visiblevalue() {

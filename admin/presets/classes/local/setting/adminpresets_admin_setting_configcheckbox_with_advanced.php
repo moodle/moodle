@@ -39,7 +39,10 @@ class adminpresets_admin_setting_configcheckbox_with_advanced extends adminprese
      */
     protected function set_visiblevalue() {
         parent::set_visiblevalue();
-        $value = $this->attributesvalues[$this->attributes['adv']];
-        $this->visiblevalue .= $this->delegation->extra_set_visiblevalue($value, 'advanced');
+
+        if (!is_null($this->attributesvalues) && array_key_exists($this->attributes['adv'], $this->attributesvalues)) {
+            $value = $this->attributesvalues[$this->attributes['adv']];
+            $this->visiblevalue .= $this->delegation->extra_set_visiblevalue($value, 'advanced');
+        }
     }
 }

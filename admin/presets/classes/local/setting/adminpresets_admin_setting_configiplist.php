@@ -30,10 +30,12 @@ class adminpresets_admin_setting_configiplist extends adminpresets_admin_setting
         // Check ip format.
         if ($this->settingdata->validate($value) !== true) {
             $this->value = false;
+            $this->set_visiblevalue();
             return false;
         }
-
         $this->value = $value;
+        $this->set_visiblevalue();
+
         return true;
     }
 }

@@ -28,6 +28,8 @@ class adminpresets_admin_setting_configcheckbox extends adminpresets_setting {
 
     protected function set_value($value) {
         $this->value = clean_param($value, PARAM_BOOL);
+        $this->set_visiblevalue();
+
         return true;
     }
 
