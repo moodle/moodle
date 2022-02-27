@@ -21,6 +21,7 @@ Feature: To be able to see and save user message preferences as admin
     And I click on "Student 1" "link" in the "Student 1" "table_row"
     And I click on "Preferences" "link" in the "#region-main-box" "css_element"
     And I click on "Message preferences" "link" in the "#region-main-box" "css_element"
+    And I should not see "Enabled" in the "Email" "table_row"
     And I click on "//div[@class='preference-state']" "xpath_element"
     And I log out
     And I log in as "student1"

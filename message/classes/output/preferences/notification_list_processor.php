@@ -157,7 +157,7 @@ class notification_list_processor implements templatable, renderable {
         // If settings are disallowed or forced, just display the corresponding message, if not use user settings.
         if ($context['locked']) {
             if ($context['enabled']) {
-                $context['lockedmessage'] = get_string('forced', 'message');
+                $context['lockedmessage'] = get_string('forcedmessage', 'message');
                 $context['lockedlabel'] = get_string('providerprocesorislocked', 'message', $labelparams);
             } else {
                 $context['lockedmessage'] = get_string('disallowed', 'message');
