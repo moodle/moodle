@@ -1,7 +1,7 @@
 H5P PHP library
 ---------------
 
-Downloaded last release from: https://github.com/h5p/h5p-php-library/releases
+Downloaded last release from:  https://github.com/h5p/h5p-php-library/tags
 
 Import procedure:
 
@@ -14,18 +14,19 @@ Removed:
 Added:
  * readme_moodle.txt
 
-Downloaded version: 1.24.2 release
+NOTICE:
+ * We are following the composer version, 1.24.x according the suggestion from Joubel.
 
 Changes:
 1. In order to allow the dependency path to be overridden by child H5PCore classes, a couple of minor changes have been added to the
 h5p.classes.php file:
-    - Into the getDependenciesFiles method, the line 2440:
+    - Into the getDependenciesFiles method, the line 2435:
         $dependency['path'] = 'libraries/' . H5PCore::libraryToString($dependency, TRUE);
 
       has been changed to:
         $dependency['path'] = $this->getDependencyPath($dependency);
 
-     - The method getDependencyPath has been added (line 2466). It might be rewritten by child classes.
+     - The method getDependencyPath has been added (line 2460). It might be rewritten by child classes.
 A PR has been sent to the H5P library with these changes:
 https://github.com/h5p/h5p-php-library/compare/master...andrewnicols:libraryPathSubclass
 Hopefully, when upgrading, these patch won't be needed because it will be included in the H5P library by default.
@@ -38,6 +39,7 @@ h5p.classes.php file:
   - Into hashToken method:
     Declare the global $SESSION.
     Change all the $_SESSION by $SESSION.
+    Change all the $_SESSION['xxxx'] by $SESSION->xxxx.
 A script for testing this part can be found in MDL-68068
 
 

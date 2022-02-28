@@ -4,7 +4,7 @@
     <location>joubel/core</location>
     <name>h5p-php-library</name>
     <license>GPL-3.0</license>
-    <version>1.24.2</version>
+    <version>1.24.3</version>
   </library>
   <library>
     <location>joubel/editor</location>
