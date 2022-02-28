@@ -3651,6 +3651,8 @@ privatefiles,moodle|/user/files.php';
                 // Save locked.
                 if ($locked) {
                     set_config($provider.'_provider_'.$prefname.'_locked', 1, 'message');
+                } else {
+                    set_config($provider.'_provider_'.$prefname.'_locked', 0, 'message');
                 }
                 // Remove old value.
                 unset_config($provider.'_provider_'.$prefname.'_permitted', 'message');
@@ -4105,6 +4107,27 @@ privatefiles,moodle|/user/files.php';
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2022021100.02);
+    }
+
+    if ($oldversion < 2022022600.01) {
+        // Get all processor and existing preferences.
+        $processors = $DB->get_records('message_processors');
+        $providers = $DB->get_records('message_providers', null, '', 'id, name, component');
+        $existingpreferences = get_config('message');
+
+        foreach ($processors as $processor) {
+            foreach ($providers as $provider) {
+                // Setting default preference name.
+                $componentproviderbase = $provider->component . '_' . $provider->name;
+                $preferencename = $processor->name.'_provider_'.$componentproviderbase.'_locked';
+                // If we do not have this setting yet, set it to 0.
+                if (!isset($existingpreferences->{$preferencename})) {
+                    set_config($preferencename, 0, 'message');
+                }
+            }
+        }
+
+        upgrade_main_savepoint(true, 2022022600.01);
     }
 
     return true;
