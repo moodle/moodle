@@ -27,7 +27,6 @@
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\logger;
 use mod_bigbluebuttonbn\recording;
-use mod_bigbluebuttonbn\testing\generator\mockedserver;
 
 /**
  * bigbluebuttonbn module data generator
@@ -233,9 +232,8 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
     protected function create_mockserver_recording(instance $instance, stdClass $recordingdata, array $data): string {
         $now = time();
         $mockdata = array_merge((array) $recordingdata, [
-            'meetingID' => $instance->get_meeting_id(),
+            'sequence' => 1,
             'meta' => [
-                'isBreakout' => 'false',
                 'bn-presenter-name' => $data['presentername'] ?? 'Fake presenter',
                 'bn-recording-ready-url' => new moodle_url('/mod/bigbluebuttonbn/bbb_broker.php', [
                     'action' => 'recording_ready',
@@ -248,6 +246,17 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
         ]);
         $mockdata['startTime'] = $data['starttime'] ?? $now;
         $mockdata['endTime'] = $data['endtime'] ?? $mockdata['startTime'] + HOURSECS;
+
+        if (!empty($data['isBreakout'])) {
+            // If it is a breakout meeting, we do not have any way to know the real Id of the meeting
+            // unless we query the list of submeetings.
+            // For now we will just send the parent ID and let the mock server deal with the sequence + parentID
+            // to find the meetingID.
+            $mockdata['parentMeetingID'] = $instance->get_meeting_id();
+        } else {
+            $mockdata['meetingID'] = $instance->get_meeting_id();
+        }
+
         $result = $this->send_mock_request('backoffice/createRecording', [], $mockdata);
 
         return (string) $result->recordID;
@@ -270,7 +279,6 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
 
         // Default room configuration.
         $roomconfig = array_merge($data, [
-            'meetingID' => $meetingid,
             'meetingName' => $instance->get_meeting_name(),
             'attendeePW' => $instance->get_viewer_password(),
             'moderatorPW' => $instance->get_moderator_password(),
@@ -286,6 +294,14 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
                 'bbb-recording-name' => $instance->get_meeting_name(),
             ],
         ]);
+        if (!empty($roomconfig['isBreakout'])) {
+            // If it is a breakout meeting, we do not have any way to know the real Id of the meeting
+            // For now we will just send the parent ID and let the mock server deal with the sequence + parentID
+            // to find the meetingID.
+            $roomconfig['parentMeetingID'] = $instance->get_meeting_id();
+        } else {
+            $roomconfig['meetingID'] = $meetingid;
+        }
 
         $this->send_mock_request('backoffice/createMeeting', [], $roomconfig);
 
