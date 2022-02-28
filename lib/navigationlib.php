@@ -4042,9 +4042,11 @@ class flat_navigation_node extends navigation_node {
 
         if ($this->is_section()) {
             $active = $PAGE->navigation->find_active_node();
-            while ($active = $active->parent) {
-                if ($active->key == $this->key && $active->type == $this->type) {
-                    return true;
+            if ($active) {
+                while ($active = $active->parent) {
+                    if ($active->key == $this->key && $active->type == $this->type) {
+                        return true;
+                    }
                 }
             }
         }
