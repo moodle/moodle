@@ -25,13 +25,15 @@
 }}
 {{#thirdpartybutton}}
     {{#thirdpartynodes}}
-    <div>
+    <div class="navitem">
         <a href="{{link}}" class="btn btn-secondary">{{text}}</a>
     </div>
     {{/thirdpartynodes}}
 {{/thirdpartybutton}}
 {{^thirdpartybutton}}
     {{#thirdpartynodes}}
-        {{> core/url_select}}
+        <div class="navitem">
+            {{> core/url_select}}
+        </div>
     {{/thirdpartynodes}}
 {{/thirdpartybutton}}

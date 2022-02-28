@@ -64,19 +64,17 @@
         }
     }
 }}
-<div class="container-fluid mb-4">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="d-flex">
-            <div>
-                {{#generalnavselector}}
-                    {{>core/url_select}}
-                {{/generalnavselector}}
+        {{#generalnavselector}}
+            <div class="navitem">
+                {{>core/url_select}}
             </div>
-            <div class="ml-2">
-                {{#exportselector}}
-                    {{>core/url_select}}
-                {{/exportselector}}
+        {{/generalnavselector}}
+        {{#exportselector}}
+            <div class="navitem">
+                {{>core/url_select}}
             </div>
-        </div>
+        {{/exportselector}}
     </div>
 </div>

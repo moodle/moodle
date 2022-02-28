@@ -58,13 +58,17 @@
         "addcategory": "http://localhost/moodle/question/bank/managecategories/addcategory.php?cmid=71"
     }
 }}
-<div class="container-fluid mb-2">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
         {{#questionbankselect}}
-            {{>core/url_select}}
+            <div class="navitem">
+                {{>core/url_select}}
+            </div>
         {{/questionbankselect}}
         {{#addcategory}}
-            <a class="btn btn-primary ml-2" href="{{ addcategory }}">{{#str}}addcategory, question {{/str}}</a>
+            <div class="navitem">
+                <a class="btn btn-primary ml-2" href="{{ addcategory }}">{{#str}}addcategory, question {{/str}}</a>
+            </div>
         {{/addcategory}}
     </div>
 </div>

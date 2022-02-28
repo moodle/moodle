@@ -116,54 +116,50 @@
         }
     }
 }}
-<div class="container-fluid px-0">
-    <div class="row mx-0">
-        <div class="d-flex">
-            <div class="col-xs">
-                {{#addnewbutton}}
-                    {{> core/single_button }}
-                {{/addnewbutton}}
+<div class="container-fluid tertiary-navigation">
+    <div class="row">
+        {{#addnewbutton}}
+            <div class="navitem">
+                {{> core/single_button }}
             </div>
-        </div>
+        {{/addnewbutton}}
 
-        <div class="d-flex ml-auto">
+        <div class="d-flex ml-sm-auto">
             {{#tools}}
                 {{#button}}
-                    <div class="pr-1">
+                    <div class="navitem">
                         {{> core/single_button}}
                     </div>
                 {{/button}}
                 {{#select}}
-                <div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            ...
-                            <span class="sr-only">{{#str}} exportentries, mod_glossary {{/str}}</span>
-                        </button>
-                        <div class="dropdown-menu">
-                            {{#options}}
-                                <a class="dropdown-item" href="{{url}}"
-                                   {{#openinnewwindow}}target="_blank"{{/openinnewwindow}}>{{string}}</a>
-                            {{/options}}
+                    <div class="navitem">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                ...
+                                <span class="sr-only">{{#str}} exportentries, mod_glossary {{/str}}</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                {{#options}}
+                                    <a class="dropdown-item" href="{{url}}"
+                                    {{#openinnewwindow}}target="_blank"{{/openinnewwindow}}>{{string}}</a>
+                                {{/options}}
+                            </div>
                         </div>
                     </div>
-                </div>
                 {{/select}}
             {{/tools}}
         </div>
     </div>
-    <div class="row mt-2 ml-0">
-        <div class="d-flex">
-            {{#tabjumps}}
-            <div class="col-xs pr-1">
+    <div class="row">
+        {{#tabjumps}}
+            <div class="navitem">
                 {{> core/url_select }}
             </div>
-            {{/tabjumps}}
-            {{#searchbox}}
-            <div class="col-xs">
+        {{/tabjumps}}
+        {{#searchbox}}
+            <div class="navitem">
                 {{> core/search_input }}
             </div>
-            {{/searchbox}}
-        </div>
+        {{/searchbox}}
     </div>
 </div>

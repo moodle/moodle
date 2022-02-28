@@ -57,26 +57,24 @@
         }
     }
 }}
-<div class="container-fluid mt-2 mb-4">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="d-flex">
-            <div>
-                {{#urlselect}}
-                    {{>core/url_select}}
-                {{/urlselect}}
+        {{#urlselect}}
+            <div class="navitem">
+                {{>core/url_select}}
             </div>
-        </div>
-        <div class="ml-auto d-flex">
-            <div>
-                {{#saveaspreset}}
+        {{/urlselect}}
+        <div class="ml-sm-auto d-flex">
+            {{#saveaspreset}}
+                <div class="navitem">
                     {{>mod_data/save_as_preset}}
-                {{/saveaspreset}}
-            </div>
-            <div class="pl-2">
-                {{#exportpreset}}
+                </div>
+            {{/saveaspreset}}
+            {{#exportpreset}}
+                <div class="navitem">
                     {{>core/single_button}}
-                {{/exportpreset}}
-            </div>
+                </div>
+            {{/exportpreset}}
         </div>
     </div>
 </div>

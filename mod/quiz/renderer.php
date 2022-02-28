@@ -469,12 +469,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function during_attempt_tertiary_nav($quizviewurl): string {
         $output = '';
-        $output .= html_writer::start_div('container-fluid mb-3');
+        $output .= html_writer::start_div('container-fluid tertiary-navigation');
         $output .= html_writer::start_div('row');
-
+        $output .= html_writer::start_div('navitem');
         $output .= html_writer::link($quizviewurl, get_string('back'),
                 ['class' => 'btn btn-secondary']);
-
+        $output .= html_writer::end_div();
         $output .= html_writer::end_div();
         $output .= html_writer::end_div();
         return $output;
@@ -851,7 +851,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         }
 
         if ($content) {
-            return html_writer::div(html_writer::div($content, 'row'), 'container-fluid mb-3');
+            return html_writer::div(html_writer::div($content, 'row'), 'container-fluid tertiary-navigation');
         } else {
             return '';
         }

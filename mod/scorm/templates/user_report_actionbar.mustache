@@ -33,11 +33,15 @@
         "heading": "Sub page heading"
     }
 }}
-<div class="container-fluid mb-3">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <a class="btn btn-secondary mr-2" href="{{backurl}}">{{#str}}back, core {{/str}}</a>
+        <div class="navitem">
+            <a class="btn btn-secondary mr-2" href="{{backurl}}">{{#str}}back, core {{/str}}</a>
+        </div>
         {{#userreport}}
-            {{>core/url_select}}
+            <div class="navitem">
+                {{>core/url_select}}
+            </div>
         {{/userreport}}
     </div>
 </div>

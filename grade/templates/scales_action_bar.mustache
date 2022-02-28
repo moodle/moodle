@@ -56,19 +56,17 @@
         }
     }
 }}
-<div class="container-fluid mb-4">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="d-flex">
-            {{#generalnavselector}}
-                <div class="mr-2">
-                    {{>core/url_select}}
-                </div>
-            {{/generalnavselector}}
-            {{#addnewscalebutton}}
-                <div>
-                    {{>core/single_button}}
-                </div>
-            {{/addnewscalebutton}}
-        </div>
+        {{#generalnavselector}}
+            <div class="navitem">
+                {{>core/url_select}}
+            </div>
+        {{/generalnavselector}}
+        {{#addnewscalebutton}}
+            <div class="navitem">
+                {{>core/single_button}}
+            </div>
+        {{/addnewscalebutton}}
     </div>
 </div>

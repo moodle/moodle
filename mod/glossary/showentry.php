@@ -81,7 +81,8 @@ if (!empty($courseid)) {
 
 if ($glossary) {
     $url = new moodle_url('view.php', ['id' => $cm->id]);
-    echo html_writer::link($url, get_string('back'), ['class' => 'btn btn-secondary mb-2']);
+    $backlink = html_writer::link($url, get_string('back'), ['class' => 'btn btn-secondary']);
+    echo html_writer::tag('div', $backlink, ['class' => 'tertiary-navigation']);
 }
 
 if ($entries) {

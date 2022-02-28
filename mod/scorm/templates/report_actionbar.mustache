@@ -38,28 +38,27 @@
         "downloadtext": "http://localhost/moodle/mod/scorm/report.php?id=143&mode=basic&attemptsmode=0&sesskey=AmfcC7riSb&download=CSV"
     }
 }}
-<div class="container-fluid mb-3">
-    <div class="row justify-content-between">
+<div class="container-fluid tertiary-navigation">
+    <div class="row">
         {{#scormreports}}
-        <div>
-            {{>core/url_select}}
-        </div>
-        {{/scormreports}}
-
-        {{#candownload}}
-        <div class="dropdown show">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{#str}} download {{/str}}
-            </a>
-
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="{{ downloadods }}">{{#str}} downloadods {{/str}}</a>
-                <a class="dropdown-item" href="{{ downloadexcel }}">{{#str}} downloadexcel {{/str}}</a>
-                <a class="dropdown-item" href="{{ downloadtext }}">{{#str}} downloadtext {{/str}}</a>
+            <div class="navitem">
+                {{>core/url_select}}
             </div>
-        </div>
-        {{/candownload}}
+        {{/scormreports}}
+        {{#candownload}}
+            <div class="navitem ml-auto">
+                <div class="dropdown">
+                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{#str}} download {{/str}}
+                    </a>
 
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="{{ downloadods }}">{{#str}} downloadods {{/str}}</a>
+                        <a class="dropdown-item" href="{{ downloadexcel }}">{{#str}} downloadexcel {{/str}}</a>
+                        <a class="dropdown-item" href="{{ downloadtext }}">{{#str}} downloadtext {{/str}}</a>
+                    </div>
+                </div>
+            </div>
+        {{/candownload}}
     </div>
 </div>
-{{#heading}}<h2>{{heading}}</h2>{{/heading}}
