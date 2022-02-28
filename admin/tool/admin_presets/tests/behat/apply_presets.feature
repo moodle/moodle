@@ -92,7 +92,7 @@ Feature: I can apply presets
     And I should see "Server files" in the "Setting changes" "table"
     And I should see "Show data retention summary" in the "Setting changes" "table"
     And I should see "Social activities" in the "Setting changes" "table"
-    And I should see "Social format" in the "format" "table_row"
+    And I should see "Social format" in the "Setting changes" "table"
     And I should see "Starred courses" in the "Setting changes" "table"
     And I should see "Survey" in the "Setting changes" "table"
     And I should see "Tags" in the "Setting changes" "table"
@@ -101,6 +101,9 @@ Feature: I can apply presets
     And I should see "Wiki" in the "Setting changes" "table"
     And I should see "Wikimedia" in the "Setting changes" "table"
     And I should see "Workshop" in the "Setting changes" "table"
+#   Check filters and data formats strings are displayed properly.
+    And I should see "Activity names auto-linking" in the "Setting changes" "table"
+    And I should see "Javascript Object Notation (.json)" in the "Setting changes" "table"
 #   Apply the Starter preset.
     And I click on "Apply" "button"
     And I navigate to "Advanced features" in site administration
