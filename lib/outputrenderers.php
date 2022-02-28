@@ -4132,9 +4132,10 @@ EOD;
     /**
      * Returns the HTML for the site support email link
      *
+     * @param array $customattribs Array of custom attributes for the support email anchor tag.
      * @return string The html code for the support email link.
      */
-    public function supportemail(): string {
+    public function supportemail(array $customattribs = []): string {
         global $CFG;
 
         $label = get_string('contactsitesupport', 'admin');
@@ -4147,6 +4148,8 @@ EOD;
         } else {
             $attributes = ['href' => $CFG->wwwroot . '/user/contactsitesupport.php'];
         }
+
+        $attributes += $customattribs;
 
         return html_writer::tag('a', $content, $attributes);
     }
