@@ -49,6 +49,12 @@ use restore_controller;
 use stdClass;
 use testing_data_generator;
 
+defined('MOODLE_INTERNAL') or die();
+
+// Require library globally because it's constants are used within dataProvider methods, executed before setUpBeforeClass.
+global $CFG;
+require_once($CFG->dirroot . '/course/lib.php');
+
 /**
  * Course related unit tests
  *
@@ -65,7 +71,6 @@ class courselib_test extends advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
 
-        require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->dirroot . '/course/tests/fixtures/course_capability_assignment.php');
         require_once($CFG->dirroot . '/enrol/imsenterprise/tests/imsenterprise_test.php');
     }
