@@ -1393,7 +1393,7 @@ abstract class base {
         }
         if (!is_object($section)) {
             $section = $DB->get_record('course_sections', array('course' => $this->get_courseid(), 'section' => $section),
-                'id,course,section,sequence,summary');
+                'id,section,sequence,summary');
         }
         if (!$section || !$section->section) {
             // Not possible to delete 0-section.

@@ -92,6 +92,8 @@ course formats don't have their own renderer.
 * The following functions have been deprecated in favour partial course cache rebuild:
   - course_purge_section_cache (replaced by course_modinfo::purge_course_section_cache_by_id() and course_modinfo::purge_course_section_cache_by_number())
   - course_purge_module_cache (replaced by course_modinfo::purge_course_module_cache())
+  - get_array_of_activities (replaced by course_modinfo::get_array_of_activities() for better performance)
+* New course_modinfo::purge_course_cache function was created to purge the cache of a given course.
 
 === 3.11 ===
 * A new callback xxx_coursemodule_definition_after_data that allows plugins to extend activity forms after the data is set.

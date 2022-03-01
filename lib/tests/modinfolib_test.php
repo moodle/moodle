@@ -367,7 +367,7 @@ class modinfolib_test extends advanced_testcase {
         $this->assertEquals($USER->id, $modinfo->userid);
         $this->assertEquals(array(0 => array($forum0->cmid, $assign0->cmid),
             1 => array($forum1->cmid, $assign1->cmid, $page1->cmid), 3 => array($page3->cmid)), $modinfo->sections);
-        $this->assertEquals(array('assign', 'forum', 'page'), array_keys($modinfo->instances));
+        $this->assertEquals(array('forum', 'assign', 'page'), array_keys($modinfo->instances));
         $this->assertEquals(array($assign0->id, $assign1->id), array_keys($modinfo->instances['assign']));
         $this->assertEquals(array($forum0->id, $forum1->id), array_keys($modinfo->instances['forum']));
         $this->assertEquals(array($page1->id, $page3->id), array_keys($modinfo->instances['page']));
@@ -1023,7 +1023,7 @@ class modinfolib_test extends advanced_testcase {
         // Build course cache.
         get_fast_modinfo($course->id);
         // Get the course modinfo cache.
-        $coursemodinfo = $cache->get($course->id);
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
         // Get the section cache.
         $sectioncaches = $coursemodinfo->sectioncache;
 
@@ -1037,7 +1037,7 @@ class modinfolib_test extends advanced_testcase {
         // Purge cache for the section by id.
         course_modinfo::purge_course_section_cache_by_id($course->id, $sectioncaches[1]->id);
         // Get the course modinfo cache.
-        $coursemodinfo = $cache->get($course->id);
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
         // Get the section cache.
         $sectioncaches = $coursemodinfo->sectioncache;
 
@@ -1069,7 +1069,7 @@ class modinfolib_test extends advanced_testcase {
         // Build course cache.
         get_fast_modinfo($course->id);
         // Get the course modinfo cache.
-        $coursemodinfo = $cache->get($course->id);
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
         // Get the section cache.
         $sectioncaches = $coursemodinfo->sectioncache;
 
@@ -1083,7 +1083,7 @@ class modinfolib_test extends advanced_testcase {
         // Purge cache for the section with section number is 1.
         course_modinfo::purge_course_section_cache_by_number($course->id, 1);
         // Get the course modinfo cache.
-        $coursemodinfo = $cache->get($course->id);
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
         // Get the section cache.
         $sectioncaches = $coursemodinfo->sectioncache;
 

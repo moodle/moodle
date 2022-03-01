@@ -5347,8 +5347,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     fulldelete($CFG->dataroot.'/'.$course->id);
 
     // Delete from cache to reduce the cache size especially makes sense in case of bulk course deletion.
-    $cachemodinfo = cache::make('core', 'coursemodinfo');
-    $cachemodinfo->delete($courseid);
+    course_modinfo::purge_course_cache($courseid);
 
     // Trigger a course content deleted event.
     $event = \core\event\course_content_deleted::create(array(
