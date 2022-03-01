@@ -137,9 +137,24 @@ class secondary extends view {
      * @return array
      */
     protected function get_default_category_mapping(): array {
-        return [];
+        return [
+            self::TYPE_SETTING => [
+                'edit' => 1,
+                'permissions' => 2,
+                'roles' => 2.1,
+                'checkpermissions' => 2.2,
+            ]
+        ];
     }
 
+    /**
+     * Define the keys of the course secondary nav nodes that should be forced into the "more" menu by default.
+     *
+     * @return array
+     */
+    protected function get_default_category_more_menu_nodes(): array {
+        return ['addsubcat', 'roles', 'permissions', 'contentbank', 'cohort', 'filters', 'restorecourse'];
+    }
     /**
      * Define the keys of the course secondary nav nodes that should be forced into the "more" menu by default.
      *
@@ -211,6 +226,7 @@ class secondary extends view {
             case CONTEXT_COURSECAT:
                 $this->headertitle = get_string('categoryheader');
                 $this->load_category_navigation();
+                $defaultmoremenunodes = $this->get_default_category_more_menu_nodes();
                 break;
             case CONTEXT_SYSTEM:
                 $this->headertitle = get_string('homeheader');
@@ -589,7 +605,9 @@ class secondary extends view {
         // that are redirected to, be in the course context or module context depending on which callback was used.
         // Third part plugins were checked to see if any existing plugins had settings in a system context and none were found.
         // The request of third party developers is to keep their settings within the specified context.
-        if ($this->page->context->contextlevel != CONTEXT_COURSE && $this->page->context->contextlevel != CONTEXT_MODULE) {
+        if ($this->page->context->contextlevel != CONTEXT_COURSE
+                && $this->page->context->contextlevel != CONTEXT_MODULE
+                && $this->page->context->contextlevel != CONTEXT_COURSECAT) {
             return null;
         }
 
@@ -663,7 +681,7 @@ class secondary extends view {
 
         if ($mainnode) {
             $url = new \moodle_url('/course/index.php', ['categoryid' => $this->context->instanceid]);
-            $this->add($this->context->get_context_name(), $url, self::TYPE_CONTAINER, null, 'categorymain');
+            $this->add(get_string('category'), $url, self::TYPE_CONTAINER, null, 'categorymain');
 
             // Add the initial nodes.
             $nodesordered = $this->get_leaf_nodes($mainnode, $nodes);

@@ -1,4 +1,4 @@
-@core @core_course
+@core @core_course @javascript
 Feature: Users can request and approve courses
   As a moodle admin
   In order to improve course creation process
@@ -24,7 +24,8 @@ Feature: Users can request and approve courses
     And I log out
     When I log in as "user1"
     And I am on course index
-    And I press "Request a course"
+    And I click on "More actions" "button"
+    And I click on "Request a course" "link"
     And I set the following fields to these values:
       | Course full name  | My new course |
       | Course short name | Mynewcourse   |
@@ -37,7 +38,8 @@ Feature: Users can request and approve courses
     And I log out
     And I log in as "user2"
     And I am on course index
-    And I press "Courses pending approval"
+    And I click on "More actions" "button"
+    And I click on "Courses pending approval" "link"
     And I should see "Category 1" in the "My new course" "table_row"
     And I click on "Approve" "button" in the "My new course" "table_row"
     And I press "Save and return"
@@ -75,8 +77,9 @@ Feature: Users can request and approve courses
     And I log in as "user1"
     And I am on course index
     And I follow "English category"
-    And I press "Request a course"
-    And the "Course category" select box should contain "English category"
+    And I click on "More actions" "button"
+    And I click on "Request a course" "link"
+    And I should see "English category" in the ".form-autocomplete-selection" "css_element"
     And I set the following fields to these values:
       | Course full name  | My new course |
       | Course short name | Mynewcourse   |
@@ -86,17 +89,20 @@ Feature: Users can request and approve courses
     And I log in as "user2"
     And I am on course index
     And I follow "English category"
-    And "Courses pending approval" "button" should not exist
+    And I should not see "More" in the "region-main" "region"
+    And I should not see "Courses pending approval"
     And I am on course index
     And I follow "Science category"
-    And I press "Courses pending approval"
+    And I click on "More actions" "button"
+    And I click on "Courses pending approval" "link"
     And I should not see "Mynewcourse"
     And I press "Back to course listing"
     And I log out
     And I log in as "user3"
     And I am on course index
     And I follow "English category"
-    And I press "Courses pending approval"
+    And I click on "More actions" "button"
+    And I click on "Courses pending approval" "link"
     And I should see "English category" in the "Mynewcourse" "table_row"
     And I click on "Approve" "button" in the "Mynewcourse" "table_row"
     And I press "Save and return"

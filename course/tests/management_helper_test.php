@@ -1118,7 +1118,6 @@ class core_course_management_helper_test extends advanced_testcase {
         $this->assertArrayHasKey('moveup', $actions);
         $this->assertArrayHasKey('movedown', $actions);
         $this->assertArrayHasKey('delete', $actions);
-        $this->assertArrayHasKey('assignroles', $actions);
         $this->assertArrayHasKey('permissions', $actions);
         $this->assertArrayHasKey('cohorts', $actions);
         $this->assertArrayHasKey('filters', $actions);

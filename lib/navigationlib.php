@@ -5420,15 +5420,17 @@ class settings_navigation extends navigation_node {
         if (can_edit_in_category($catcontext->instanceid)) {
             $url = new moodle_url('/course/management.php', array('categoryid' => $catcontext->instanceid));
             $editstring = get_string('managecategorythis');
-            $categorynode->add($editstring, $url, self::TYPE_SETTING, null, 'managecategory', new pix_icon('i/edit', ''));
+            $node = $categorynode->add($editstring, $url, self::TYPE_SETTING, null, 'managecategory', new pix_icon('i/edit', ''));
+            $node->set_show_in_secondary_navigation(false);
         }
 
         if (has_capability('moodle/category:manage', $catcontext)) {
             $editurl = new moodle_url('/course/editcategory.php', array('id' => $catcontext->instanceid));
-            $categorynode->add(get_string('editcategorythis'), $editurl, self::TYPE_SETTING, null, 'edit', new pix_icon('i/edit', ''));
+            $categorynode->add(get_string('settings'), $editurl, self::TYPE_SETTING, null, 'edit', new pix_icon('i/edit', ''));
 
             $addsubcaturl = new moodle_url('/course/editcategory.php', array('parent' => $catcontext->instanceid));
-            $categorynode->add(get_string('addsubcategory'), $addsubcaturl, self::TYPE_SETTING, null, 'addsubcat', new pix_icon('i/withsubcat', ''));
+            $categorynode->add(get_string('addsubcategory'), $addsubcaturl, self::TYPE_SETTING, null,
+                'addsubcat', new pix_icon('i/withsubcat', ''))->set_show_in_secondary_navigation(false);
         }
 
         // Assign local roles
@@ -5448,13 +5450,6 @@ class settings_navigation extends navigation_node {
                 'moodle/role:override', 'moodle/role:assign'), $catcontext)) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid' => $catcontext->id));
             $categorynode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING, null, 'checkpermissions', new pix_icon('i/checkpermissions', ''));
-        }
-
-        $cb = new contentbank();
-        if ($cb->is_context_allowed($catcontext)
-                && has_capability('moodle/contentbank:access', $catcontext)) {
-            $url = new \moodle_url('/contentbank/index.php', ['contextid' => $catcontext->id]);
-            $categorynode->add(get_string('contentbank'), $url, self::TYPE_CUSTOM, null, 'contentbank', new \pix_icon('i/contentbank', ''));
         }
 
         // Add the context locking node.
@@ -5484,6 +5479,14 @@ class settings_navigation extends navigation_node {
             foreach ($plugins as $pluginfunction) {
                 $pluginfunction($categorynode, $catcontext);
             }
+        }
+
+        $cb = new contentbank();
+        if ($cb->is_context_allowed($catcontext)
+            && has_capability('moodle/contentbank:access', $catcontext)) {
+            $url = new \moodle_url('/contentbank/index.php', ['contextid' => $catcontext->id]);
+            $categorynode->add(get_string('contentbank'), $url, self::TYPE_CUSTOM, null,
+                'contentbank', new \pix_icon('i/contentbank', ''));
         }
 
         return $categorynode;

@@ -112,6 +112,11 @@ if ($id) {
     $PAGE->set_context($catcontext);
 }
 
+// We are adding a new course and have a category context.
+if (isset($catcontext)) {
+    $PAGE->set_secondary_active_tab('categorymain');
+}
+
 // Prepare course and the editor.
 $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
 $overviewfilesoptions = course_overviewfiles_options($course);
