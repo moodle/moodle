@@ -30,8 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
 
-define('DEFAULT_QUESTIONS_PER_PAGE', 20);
-define('MAXIMUM_QUESTIONS_PER_PAGE', 1000);
+define('DEFAULT_QUESTIONS_PER_PAGE', 100);
+define('MAXIMUM_QUESTIONS_PER_PAGE', 4000);
 
 function get_module_from_cmid($cmid) {
     global $CFG, $DB;
