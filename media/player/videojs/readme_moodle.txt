@@ -1,4 +1,4 @@
-VideoJS 7.10.0
+VideoJS 7.17.0
 --------------
 https://github.com/videojs/video.js
 
@@ -7,10 +7,6 @@ Instructions to import VideoJS player into Moodle:
 1. Download the latest release from https://github.com/videojs/video.js/releases
    (do not choose "Source code")
 2. copy 'video.js' into 'amd/src/video-lazy.js'
-   In the beginning of the js file replace
-     define(['global/window', 'global/document']
-   with
-     define(['./window', './document']
 3. copy 'font/' into 'fonts/' folder
 4. copy 'video-js.css' into 'styles.css'
    Add /* stylelint-disable */ in the beginning.

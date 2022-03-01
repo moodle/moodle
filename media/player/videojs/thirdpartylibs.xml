@@ -4,7 +4,7 @@
         <location>amd/src/video-lazy.js</location>
         <name>VideoJS</name>
         <license>Apache</license>
-        <version>7.10.0</version>
+        <version>7.17.0</version>
         <licenseversion>2.0</licenseversion>
     </library>
     <library>
@@ -18,7 +18,7 @@
         <location>videojs</location>
         <name>VideoJS support files</name>
         <license>Apache</license>
-        <version>7.10.0</version>
+        <version>7.17.0</version>
         <licenseversion>2.0</licenseversion>
     </library>
     <library>
