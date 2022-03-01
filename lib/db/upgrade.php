@@ -3544,6 +3544,22 @@ privatefiles,moodle|/user/files.php';
         $params = ['name' => get_string('fullpreset', 'core_adminpresets'), 'iscore' => 1];
         $fullpreset = $DB->get_record('adminpresets', $params);
 
+        if (!$fullpreset) {
+            // Full admin preset might have been created using the English name.
+            $name = get_string_manager()->get_string('fullpreset', 'core_adminpresets', null, 'en');
+            $params['name'] = $name;
+            $fullpreset = $DB->get_record('adminpresets', $params);
+        }
+        if (!$fullpreset) {
+            // We tried, but we didn't find full by name. Let's find a core preset that sets 'usecomments' setting to 1.
+            $sql = "SELECT preset.*
+                      FROM {adminpresets} preset
+                INNER JOIN {adminpresets_it} it ON preset.id = it.adminpresetid
+                     WHERE it.name = :name AND it.value = :value AND preset.iscore = 1";
+            $params = ['name' => 'usecomments', 'value' => '1'];
+            $fullpreset = $DB->get_record_sql($sql, $params);
+        }
+
         if ($fullpreset) {
             $blocknames = ['course_summary', 'feedback', 'rss_client', 'selfcompletion'];
             list($blocksinsql, $blocksinparams) = $DB->get_in_or_equal($blocknames);
@@ -3962,12 +3978,39 @@ privatefiles,moodle|/user/files.php';
     }
 
     if ($oldversion < 2022021100.01) {
+        $sql = "SELECT preset.*
+                  FROM {adminpresets} preset
+            INNER JOIN {adminpresets_it} it ON preset.id = it.adminpresetid
+                 WHERE it.name = :name AND it.value = :value AND preset.iscore = 1";
         // Some settings and plugins have been added/removed to the Starter and Full preset. Add them to the core presets if
         // they haven't been included yet.
         $params = ['name' => get_string('starterpreset', 'core_adminpresets'), 'iscore' => 1];
         $starterpreset = $DB->get_record('adminpresets', $params);
+        if (!$starterpreset) {
+            // Starter admin preset might have been created using the English name.
+            $name = get_string_manager()->get_string('starterpreset', 'core_adminpresets', null, 'en');
+            $params['name'] = $name;
+            $starterpreset = $DB->get_record('adminpresets', $params);
+        }
+        if (!$starterpreset) {
+            // We tried, but we didn't find starter by name. Let's find a core preset that sets 'usecomments' setting to 0.
+            $params = ['name' => 'usecomments', 'value' => '0'];
+            $starterpreset = $DB->get_record_sql($sql, $params);
+        }
+
         $params = ['name' => get_string('fullpreset', 'core_adminpresets'), 'iscore' => 1];
         $fullpreset = $DB->get_record('adminpresets', $params);
+        if (!$fullpreset) {
+            // Full admin preset might have been created using the English name.
+            $name = get_string_manager()->get_string('fullpreset', 'core_adminpresets', null, 'en');
+            $params['name'] = $name;
+            $fullpreset = $DB->get_record('adminpresets', $params);
+        }
+        if (!$fullpreset) {
+            // We tried, but we didn't find full by name. Let's find a core preset that sets 'usecomments' setting to 1.
+            $params = ['name' => 'usecomments', 'value' => '1'];
+            $fullpreset = $DB->get_record_sql($sql, $params);
+        }
 
         $settings = [
             // Settings. Hide Guest login button for Starter preset (and back to show for Full).
