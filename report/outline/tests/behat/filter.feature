@@ -54,7 +54,7 @@ Feature: Filter an outline report
       | filterstartdate[day]     | 12   |
       | filterstartdate[month]   | June |
       | filterstartdate[year]    | 2017 |
-    And I press "Filter"
+    And I click on "Filter" "button" in the "#fgroup_id_buttonar" "css_element"
     Then I should see "1 views by 1 users" in the "Book name" "table_row"
     And I should see "1 views by 1 users" in the "Forum name" "table_row"
 
@@ -87,6 +87,6 @@ Feature: Filter an outline report
       | filterenddate[day]     | 11   |
       | filterenddate[month]   | June |
       | filterenddate[year]    | 2017 |
-    And I press "Filter"
+    And I click on "Filter" "button" in the "#fgroup_id_buttonar" "css_element"
     Then I should see "1 views by 1 users" in the "Book name" "table_row"
     And I should not see "views by" in the "Forum name" "table_row"
