@@ -4199,6 +4199,24 @@ privatefiles,moodle|/user/files.php';
             $fullpreset->comments = get_string('fullpresetdescription', 'core_adminpresets');
             $fullpreset->iscore = 2;
             $DB->update_record('adminpresets', $fullpreset);
+
+            // We are applying again changes made on 2022011100.01 upgrading step because of MDL-73953 bug.
+            $blocknames = ['course_summary', 'feedback', 'rss_client', 'selfcompletion'];
+            list($blocksinsql, $blocksinparams) = $DB->get_in_or_equal($blocknames);
+
+            // Remove entries from the adminpresets_app_plug table (in case the preset has been applied).
+            $appliedpresets = $DB->get_records('adminpresets_app', ['adminpresetid' => $fullpreset->id], '', 'id');
+            if ($appliedpresets) {
+                list($appsinsql, $appsinparams) = $DB->get_in_or_equal(array_keys($appliedpresets));
+                $sql = "adminpresetapplyid $appsinsql AND plugin='block' AND name $blocksinsql";
+                $params = array_merge($appsinparams, $blocksinparams);
+                $DB->delete_records_select('adminpresets_app_plug', $sql, $params);
+            }
+
+            // Remove entries for these blocks from the adminpresets_plug table.
+            $sql = "adminpresetid = ? AND plugin='block' AND name $blocksinsql";
+            $params = array_merge([$fullpreset->id], $blocksinparams);
+            $DB->delete_records_select('adminpresets_plug', $sql, $params);
         }
 
         // Main savepoint reached.
