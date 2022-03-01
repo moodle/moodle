@@ -36,3 +36,4 @@ $string['cliincorrectvalueretry'] = 'Nepareiza vērtība, lūdzu, mēģiniet vē
 $string['clitypevalue'] = 'veida vērtība';
 $string['environmentrequireinstall'] = 'nepieciešams instalēt/iespējot';
 $string['environmentrequireversion'] = 'nepieciešama versija {$a->needed}, bet jūs izmantojat versiju {$a->current}';
+$string['upgradekeyset'] = 'Jaunināšanas atslēga (lai to neiestatītu, atstājiet tukšu)';
