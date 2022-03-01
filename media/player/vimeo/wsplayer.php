@@ -40,6 +40,7 @@ $token = required_param('token', PARAM_ALPHANUM);
 $video = required_param('video', PARAM_ALPHANUM);   // Video ids are numeric, but it's more solid to expect things like 00001.
 $width = optional_param('width', 0, PARAM_INT);
 $height = optional_param('height', 0, PARAM_INT);
+$h = optional_param('h', '', PARAM_ALPHANUM); // Security hash for restricted videos.
 
 // Authenticate the user.
 $webservicelib = new webservice();
@@ -50,6 +51,10 @@ if (empty($width) && empty($height)) {
     $display = 'style="position:absolute; top:0; left:0; width:100%; height:100%;"';
 } else {
     $display = "width=\"$width\" height=\"$height\"";
+}
+
+if (!empty($h)) {
+    $video .= '?h=' . $h;
 }
 
 $output = <<<OET
