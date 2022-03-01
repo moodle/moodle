@@ -262,17 +262,6 @@ class settings {
                 $item,
                 $recordingsetting
             );
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_recording_icons_enabled',
-                get_string('config_recording_icons_enabled', 'bigbluebuttonbn'),
-                get_string('config_recording_icons_enabled_description', 'bigbluebuttonbn'),
-                1
-            );
-            $this->add_conditional_element(
-                'recording_icons_enabled',
-                $item,
-                $recordingsetting
-            );
 
             // Add recording start to load and allow/hide stop/pause.
             $item = new admin_setting_configcheckbox(
