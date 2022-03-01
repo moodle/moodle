@@ -327,7 +327,7 @@ class section implements named_templatable, renderable {
         }
 
         if ($format->is_section_current($section)) {
-            $data->highlighted = true;
+            $data->iscurrent = true;
             $data->currentlink = get_accesshide(
                 get_string('currentsection', 'format_' . $format->get_format())
             );
