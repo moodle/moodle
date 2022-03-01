@@ -1118,6 +1118,11 @@ class cm_info implements IteratorAggregate {
     private $contentisformatted;
 
     /**
+     * @var bool True if the content has a special course item display like labels.
+     */
+    private $customcmlistitem;
+
+    /**
      * @var string
      */
     private $extraclasses;
@@ -1189,6 +1194,7 @@ class cm_info implements IteratorAggregate {
         'course' => 'get_course_id',
         'coursegroupmode' => 'get_course_groupmode',
         'coursegroupmodeforce' => 'get_course_groupmodeforce',
+        'customcmlistitem' => 'has_custom_cmlist_item',
         'effectivegroupmode' => 'get_effective_groupmode',
         'extra' => false,
         'groupingid' => false,
@@ -1398,6 +1404,19 @@ class cm_info implements IteratorAggregate {
             $options['context'] = $this->get_context();
         }
         return format_text($this->content, FORMAT_HTML, $options);
+    }
+
+    /**
+     * Return the module custom cmlist item flag.
+     *
+     * Activities like label uses this flag to indicate that it should be
+     * displayed as a custom course item instead of a tipical activity card.
+     *
+     * @return bool
+     */
+    public function has_custom_cmlist_item(): bool {
+        $this->obtain_view_data();
+        return $this->customcmlistitem ?? false;
     }
 
     /**
@@ -1786,6 +1805,18 @@ class cm_info implements IteratorAggregate {
     public function set_user_visible($uservisible) {
         $this->check_not_view_only();
         $this->uservisible = $uservisible;
+    }
+
+    /**
+     * Sets the 'customcmlistitem' flag
+     *
+     * This can be used (by setting true) to prevent the course from rendering the
+     * activity item as a regular activity card. This is applied to activities like labels.
+     *
+     * @param bool $customcmlistitem if the cmlist item of that activity has a special dysplay other than a card.
+     */
+    public function set_custom_cmlist_item(bool $customcmlistitem) {
+        $this->customcmlistitem = $customcmlistitem;
     }
 
     /**

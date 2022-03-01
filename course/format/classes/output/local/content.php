@@ -28,7 +28,6 @@ use core_courseformat\base as course_format;
 use course_modinfo;
 use renderable;
 use templatable;
-use stdClass;
 
 /**
  * Base class to render a course format.

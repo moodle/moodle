@@ -320,6 +320,20 @@ abstract class base {
     }
 
     /**
+     * Get the course display value for the current course.
+     *
+     * Formats extending topics or weeks will use coursedisplay as this setting name
+     * so they don't need to override the method. However, if the format uses a different
+     * display logic it must override this method to ensure the core renderers know
+     * if a COURSE_DISPLAY_MULTIPAGE or COURSE_DISPLAY_SINGLEPAGE is being used.
+     *
+     * @return int The current value (COURSE_DISPLAY_MULTIPAGE or COURSE_DISPLAY_SINGLEPAGE)
+     */
+    public function get_course_display(): int {
+        return $this->get_course()->coursedisplay ?? COURSE_DISPLAY_SINGLEPAGE;
+    }
+
+    /**
      * Return the current course modinfo.
      *
      * This method is used mainly by the output components to avoid unnecesary get_fast_modinfo calls.

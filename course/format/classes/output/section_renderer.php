@@ -1038,7 +1038,7 @@ abstract class section_renderer extends core_course_renderer {
                 continue;
             }
 
-            if (!$format->show_editor() && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+            if (!$format->show_editor() && $format->get_course_display() == COURSE_DISPLAY_MULTIPAGE) {
                 // Display section summary only.
                 echo $this->section_summary($thissection, $course, null);
             } else {
