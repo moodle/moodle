@@ -28,15 +28,14 @@ global $CFG;
 require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 
 /**
- * Unit tests for sum aggregation
+ * Unit tests for avg aggregation
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\aggregation\base
- * @covers      \core_reportbuilder\local\aggregation\sum
- * @copyright   2021 Paul Holden <paulh@moodle.com>
+ * @covers      \core_reportbuilder\local\aggregation\avg
+ * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sum_test extends core_reportbuilder_testcase {
+class avg_test extends core_reportbuilder_testcase {
 
     /**
      * Test aggregation when applied to column
@@ -46,7 +45,7 @@ class sum_test extends core_reportbuilder_testcase {
 
         // Test subjects.
         $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'suspended' => 1]);
-        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'suspended' => 1]);
+        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'suspended' => 0]);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -59,18 +58,18 @@ class sum_test extends core_reportbuilder_testcase {
 
         // This is the column we'll aggregate.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:suspended'])
-            ->set('aggregation', sum::get_class_name())
+            ->set('aggregation', avg::get_class_name())
             ->update();
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
             [
                 'c0_firstname' => 'Admin',
-                'c1_suspended' => 0,
+                'c1_suspended' => '0.0',
             ],
             [
                 'c0_firstname' => 'Bob',
-                'c1_suspended' => 2,
+                'c1_suspended' => '0.5',
             ],
         ], $content);
     }
