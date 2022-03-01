@@ -28,6 +28,9 @@ I need to limit the submittable file types
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
     Given I am on the "Quiz 1" "mod_quiz > edit" page logged in as teacher1
     And I click on "Edit question TF1" "link"
     And I set the field "Allow attachments" to "1"

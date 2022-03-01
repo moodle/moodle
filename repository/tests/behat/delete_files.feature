@@ -4,6 +4,11 @@ Feature: Delete files and folders from the file manager
   As a user
   I need to delete files from file areas
 
+  Background:
+    Given the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
+
   @javascript @_bug_phantomjs
   Scenario: Delete a file and a folder
     Given I log in as "admin"

@@ -174,8 +174,8 @@ function xmldb_block_myoverview_upgrade($oldversion) {
         )->id;
 
         // See if this block already somehow exists, it should not but who knows.
-        if (!$DB->get_record('block_instances', ['blockname' => 'myoverview',
-                'pagetypepattern' => 'my-index', 'subpagepattern' => $subpagepattern])) {
+        if (!$DB->record_exists('block_instances', ['blockname' => 'myoverview',
+            'pagetypepattern' => 'my-index', 'subpagepattern' => $subpagepattern])) {
             $page = new moodle_page();
             $systemcontext = context_system::instance();
             $page->set_context($systemcontext);

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file keeps track of upgrades to the recentlyaccesseditems block
+ * This file keeps track of upgrades to the timeline block
  *
  * Sometimes, changes between versions involve alterations to database structures
  * and other major things that may break installations.
@@ -31,43 +31,24 @@
  * Please do not forget to use upgrade_set_timeout()
  * before any action that may take longer time to finish.
  *
- * @package block_recentlyaccesseditems
- * @copyright 2019 Peter Dias
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package block_timeline
+ * @copyright 2022 Peter Dias
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
- * Upgrade the recentlyaccesseditems db table.
- *
- * @param $oldversion
- * @return bool
+ * Upgrade the timeline block
+ * @param int $oldversion
+ * @param object $block
  */
-function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
-    global $DB;
+function xmldb_block_timeline_upgrade($oldversion, $block) {
+    global $CFG, $DB;
+
+    // Automatically generated Moodle v3.6.0 release upgrade line.
+    // Put any upgrade step following this.
 
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
-    if ($oldversion < 2019052001) {
-        // Query the items to be deleted as a list of IDs. We cannot delete directly from this as a
-        // subquery because MySQL does not support delete with subqueries.
-        $fordeletion = $DB->get_fieldset_sql("
-                SELECT rai.id
-                  FROM {block_recentlyaccesseditems} rai
-             LEFT JOIN {course} c ON c.id = rai.courseid
-             LEFT JOIN {course_modules} cm ON cm.id = rai.cmid
-                 WHERE c.id IS NULL OR cm.id IS NULL");
-
-        // Delete the array in chunks of 500 (Oracle does not support more than 1000 parameters,
-        // let's leave some leeway, there are likely only one chunk anyway).
-        $chunks = array_chunk($fordeletion, 500);
-        foreach ($chunks as $chunk) {
-            $DB->delete_records_list('block_recentlyaccesseditems', 'id', $chunk);
-        }
-
-        upgrade_block_savepoint(true, 2019052001, 'recentlyaccesseditems', false);
-    }
 
     // Automatically generated Moodle v3.8.0 release upgrade line.
     // Put any upgrade step following this.
@@ -84,29 +65,29 @@ function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
         $pageparams['private'] = 1;
         $pages = $DB->get_recordset_select('my_pages', $pageselect, $pageparams);
         foreach ($pages as $subpage) {
-            $blockinstance = $DB->get_record('block_instances', ['blockname' => 'recentlyaccesseditems',
+            $blockinstance = $DB->get_record('block_instances', ['blockname' => 'timeline',
                 'pagetypepattern' => 'my-index', 'subpagepattern' => $subpage->id]);
 
             if (!$blockinstance) {
-                // Insert the recentlyaccesseditems into the default index page.
+                // Insert the timeline into the default index page.
                 $blockinstance = new stdClass;
-                $blockinstance->blockname = 'recentlyaccesseditems';
+                $blockinstance->blockname = 'timeline';
                 $blockinstance->parentcontextid = $context->id;
                 $blockinstance->showinsubcontexts = false;
                 $blockinstance->pagetypepattern = 'my-index';
                 $blockinstance->subpagepattern = $subpage->id;
-                $blockinstance->defaultregion = 'side-post';
+                $blockinstance->defaultregion = 'content';
                 $blockinstance->defaultweight = -10;
                 $blockinstance->timecreated = time();
                 $blockinstance->timemodified = time();
                 $DB->insert_record('block_instances', $blockinstance);
-            } else if ($blockinstance->defaultregion !== 'side-post') {
-                $blockinstance->defaultregion = 'side-post';
+            } else if ($blockinstance->defaultregion !== 'content') {
+                $blockinstance->defaultregion = 'content';
                 $DB->update_record('block_instances', $blockinstance);
             }
         }
         $pages->close();
-        upgrade_block_savepoint(true, 2022030200, 'recentlyaccesseditems', false);
+        upgrade_block_savepoint(true, 2022030200, 'timeline', false);
     }
 
     return true;

@@ -24,6 +24,9 @@ Feature: Teachers can edit course custom fields
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
 
   Scenario: Display custom fields on course edit form
     When I log in as "teacher1"

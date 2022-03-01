@@ -20,6 +20,9 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
       | course   | C1               |
       | activity | lesson           |
       | name     | Test lesson name |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
     And I log in as "teacher1"
     And I follow "Manage private files"
     And I upload "mod/lesson/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager

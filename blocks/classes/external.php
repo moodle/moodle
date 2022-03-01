@@ -282,6 +282,34 @@ class core_block_external extends external_api {
         $returninvisible = has_capability('moodle/my:manageblocks', $context) ? true : false;
         $allblocks = self::get_all_current_page_blocks($returninvisible, $params['returncontents']);
 
+        // Temporary hack to be removed in 4.1.
+        // Return always the course overview block so old versions of the app can list the user courses.
+        if ($mypage == MY_PAGE_DEFAULT && core_useragent::is_moodle_app()) {
+            $myoverviewfound = false;
+
+            foreach ($allblocks as $block) {
+                if ($block['name'] == 'myoverview' && $block['visible']) {
+                    $myoverviewfound = true;
+                    break;
+                }
+            }
+
+            if (!$myoverviewfound) {
+                // Include a course overview fake block.
+                $allblocks[] = [
+                    'instanceid' => 0,
+                    'name' => 'myoverview',
+                    'region' => 'forced',
+                    'positionid' => null,
+                    'collapsible' => true,
+                    'dockable' => false,
+                    'weight' => 0,
+                    'visible' => true,
+                ];
+            }
+        }
+        // End of the hack to be removed in 4.1 see MDL-73670.
+
         return array(
             'blocks' => $allblocks,
             'warnings' => $warnings
