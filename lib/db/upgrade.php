@@ -4150,5 +4150,60 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022021100.02);
     }
 
+    if ($oldversion < 2022030100.00) {
+        $sql = "SELECT preset.*
+                  FROM {adminpresets} preset
+            INNER JOIN {adminpresets_it} it ON preset.id = it.adminpresetid
+                 WHERE it.name = :name AND it.value = :value AND preset.iscore = 1";
+
+        $name = get_string('starterpreset', 'core_adminpresets');
+        $params = ['name' => $name, 'iscore' => 1];
+        $starterpreset = $DB->get_record('adminpresets', $params);
+        if (!$starterpreset) {
+            // Starter admin preset might have been created using the English name. Let's change it to current language.
+            $englishname = get_string_manager()->get_string('starterpreset', 'core_adminpresets', null, 'en');
+            $params['name'] = $englishname;
+            $starterpreset = $DB->get_record('adminpresets', $params);
+        }
+        if (!$starterpreset) {
+            // We tried, but we didn't find starter by name. Let's find a core preset that sets 'usecomments' setting to 0.
+            $params = ['name' => 'usecomments', 'value' => '0'];
+            $starterpreset = $DB->get_record_sql($sql, $params);
+        }
+        // The iscore field is already 1 for starterpreset, so we don't need to change it.
+        // We only need to update the name and comment in case they are different to current language strings.
+        if ($starterpreset && $starterpreset->name != $name) {
+            $starterpreset->name = $name;
+            $starterpreset->comments = get_string('starterpresetdescription', 'core_adminpresets');
+            $DB->update_record('adminpresets', $starterpreset);
+        }
+
+        // Let's mark Full admin presets with current FULL_PRESETS value and change the name to current language.
+        $name = get_string('fullpreset', 'core_adminpresets');
+        $params = ['name' => $name, 'iscore' => 1];
+        $fullpreset = $DB->get_record('adminpresets', $params);
+        if (!$fullpreset) {
+            // Full admin preset might have been created using the English name.
+            $englishname = get_string_manager()->get_string('fullpreset', 'core_adminpresets', null, 'en');
+            $params['name'] = $englishname;
+            $fullpreset = $DB->get_record('adminpresets', $params);
+        }
+        if (!$fullpreset) {
+            // We tried, but we didn't find full by name. Let's find a core preset that sets 'usecomments' setting to 1.
+            $params = ['name' => 'usecomments', 'value' => '1'];
+            $fullpreset = $DB->get_record_sql($sql, $params);
+        }
+        if ($fullpreset) {
+            // We need to update iscore field value, whether the name is the same or not.
+            $fullpreset->name = $name;
+            $fullpreset->comments = get_string('fullpresetdescription', 'core_adminpresets');
+            $fullpreset->iscore = 2;
+            $DB->update_record('adminpresets', $fullpreset);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022030100.00);
+    }
+
     return true;
 }

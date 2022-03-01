@@ -124,6 +124,15 @@ class manager {
         'moodlerelease' => 'MOODLE_RELEASE'
     ];
 
+    /** @var int Non-core preset */
+    public const NONCORE_PRESET = 0;
+
+    /** @var int Starter preset */
+    public const STARTER_PRESET = 1;
+
+    /** @var int Full preset */
+    public const FULL_PRESET = 2;
+
     /**
      * Gets the system settings
      *

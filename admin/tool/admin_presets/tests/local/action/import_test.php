@@ -16,6 +16,8 @@
 
 namespace tool_admin_presets\local\action;
 
+use core_adminpresets\manager;
+
 /**
  * Tests for the import class.
  *
@@ -104,7 +106,7 @@ class import_test extends \advanced_testcase {
                 $this->assertEquals($expectedpresetname, $preset->name);
                 $this->assertEquals('http://demo.moodle', $preset->site);
                 $this->assertEquals('Ada Lovelace', $preset->author);
-                $this->assertEquals(0, $preset->iscore);
+                $this->assertEquals(manager::NONCORE_PRESET, $preset->iscore);
 
                 if ($expectedsettings) {
                     // Check the items have been created.
