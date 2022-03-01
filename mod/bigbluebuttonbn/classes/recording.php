@@ -811,20 +811,22 @@ class recording extends persistent {
             $recording->set_status(self::RECORDING_STATUS_PROCESSED);
             $foundcount++;
 
-            // Iterate breakout recordings (if any) and update status.
-            foreach ($metadata['breakouts'] as $breakoutrecordingid => $breakoutmetadata) {
-                $breakoutrecording = self::get_record(['recordingid' => $breakoutrecordingid]);
-                if (!$breakoutrecording) {
-                    $breakoutrecording = new recording(0, (object) [
-                        'courseid' => $recording->get('courseid'),
-                        'bigbluebuttonbnid' => $recording->get('bigbluebuttonbnid'),
-                        'groupid' => $recording->get('groupid'),
-                        'recordingid' => $breakoutrecordingid
-                    ], $breakoutmetadata);
-                    $breakoutrecording->create();
+            if (array_key_exists('breakouts', $metadata)) {
+                // Iterate breakout recordings (if any) and update status.
+                foreach ($metadata['breakouts'] as $breakoutrecordingid => $breakoutmetadata) {
+                    $breakoutrecording = self::get_record(['recordingid' => $breakoutrecordingid]);
+                    if (!$breakoutrecording) {
+                        $breakoutrecording = new recording(0, (object) [
+                            'courseid' => $recording->get('courseid'),
+                            'bigbluebuttonbnid' => $recording->get('bigbluebuttonbnid'),
+                            'groupid' => $recording->get('groupid'),
+                            'recordingid' => $breakoutrecordingid
+                        ], $breakoutmetadata);
+                        $breakoutrecording->create();
+                    }
+                    $breakoutrecording->set_status(self::RECORDING_STATUS_PROCESSED);
+                    $foundcount++;
                 }
-                $breakoutrecording->set_status(self::RECORDING_STATUS_PROCESSED);
-                $foundcount++;
             }
         }
 
