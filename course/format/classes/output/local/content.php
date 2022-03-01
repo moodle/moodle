@@ -24,10 +24,10 @@
 
 namespace core_courseformat\output\local;
 
+use core\output\named_templatable;
 use core_courseformat\base as course_format;
 use course_modinfo;
 use renderable;
-use templatable;
 
 /**
  * Base class to render a course format.
@@ -36,7 +36,8 @@ use templatable;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class content implements renderable, templatable {
+class content implements named_templatable, renderable {
+    use courseformat_named_templatable;
 
     /** @var core_courseformat\base the course format class */
     protected $format;

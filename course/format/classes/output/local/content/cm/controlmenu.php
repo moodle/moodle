@@ -24,14 +24,15 @@
 
 namespace core_courseformat\output\local\content\cm;
 
+use action_menu;
+use action_menu_link;
 use cm_info;
+use core\output\named_templatable;
 use core_courseformat\base as course_format;
+use core_courseformat\output\local\courseformat_named_templatable;
 use renderable;
 use section_info;
 use stdClass;
-use templatable;
-use action_menu;
-use action_menu_link;
 
 /**
  * Base class to render a course module menu inside a course format.
@@ -40,7 +41,9 @@ use action_menu_link;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class controlmenu implements renderable, templatable {
+class controlmenu implements named_templatable, renderable {
+
+    use courseformat_named_templatable;
 
     /** @var course_format the course format */
     protected $format;

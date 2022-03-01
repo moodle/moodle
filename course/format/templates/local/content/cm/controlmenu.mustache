@@ -28,7 +28,9 @@
 {{#hasmenu}}
 <div class="cm_action_menu actions" data-cmid="{{id}}">
     {{#menu}}
-        {{> core/action_menu }}
+        {{$ core/action_menu }}
+            {{> core/action_menu }}
+        {{/ core/action_menu }}
     {{/menu}}
     {{#afterediticons}} {{{.}}} {{/afterediticons}}
 </div>

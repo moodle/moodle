@@ -24,15 +24,16 @@
 
 namespace core_courseformat\output\local\content\section;
 
-use core_courseformat\base as course_format;
-use section_info;
-use renderable;
-use templatable;
+use action_menu;
+use action_menu_link_secondary;
 use context_course;
+use core\output\named_templatable;
+use core_courseformat\base as course_format;
+use core_courseformat\output\local\courseformat_named_templatable;
 use moodle_url;
 use pix_icon;
-use action_menu_link_secondary;
-use action_menu;
+use renderable;
+use section_info;
 use stdClass;
 
 /**
@@ -42,7 +43,9 @@ use stdClass;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class controlmenu implements renderable, templatable {
+class controlmenu implements named_templatable, renderable {
+
+    use courseformat_named_templatable;
 
     /** @var course_format the course format class */
     protected $format;
