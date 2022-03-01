@@ -57,6 +57,8 @@ class restore_quiz_decode_testcase extends \core_privacy\tests\provider_testcase
 
         // Add to the quiz.
         quiz_add_quiz_question($question->id, $quiz);
+        mod_quiz\external\submit_question_version::execute(
+                $DB->get_field('quiz_slots', 'id', ['quizid' => $quiz->id, 'slot' => 1]), 1);
 
         $questiondata = question_bank::load_question_data($question->id);
 
@@ -81,7 +83,7 @@ class restore_quiz_decode_testcase extends \core_privacy\tests\provider_testcase
         $quizquestions = \mod_quiz\question\bank\qbank_helper::get_question_structure_data($newcm->instance);
         $questionids = [];
         foreach ($quizquestions as $quizquestion) {
-            $questionids [] = $quizquestion->id;
+            $questionids[] = $quizquestion->id;
         }
         list($condition, $param) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'questionid');
         $condition = 'WHERE qa.question ' . $condition;

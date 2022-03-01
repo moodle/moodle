@@ -76,3 +76,27 @@ Feature: Quiz question versioning
     And I press "id_saveupdate"
     And I click on "finish" "button"
     Then I should see "The correct answer is 'False'."
+
+  @javascript
+  Scenario: Creating a new question should have always latest in the version selection
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    And I click on "Add" "link"
+    And I follow "a new question"
+    And I set the field "item_qtype_essay" to "1"
+    And I press "submitbutton"
+    Then I should see "Adding an Essay question"
+    And I set the field "Question name" to "Essay 01 new"
+    And I set the field "Question text" to "Please write 200 words about Essay 01"
+    And I press "id_submitbutton"
+    And I should see "Essay 01 new" on quiz page "1"
+    And I should see "Always latest" on quiz page "1"
+
+  @javascript
+  Scenario: Adding a question from question bank should have always latest in the version selection
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    And I click on "Add" "link"
+    And I follow "from question bank"
+    And I set the field with xpath "//input[@type='checkbox' and @id='qbheadercheckbox']" to "1"
+    And I press "Add selected questions to the quiz"
+    And I should see "First question" on quiz page "1"
+    And I should see "Always latest" on quiz page "1"
