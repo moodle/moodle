@@ -21,16 +21,19 @@ namespace core\output;
  *
  * @package   core
  * @category  test
+ * @coversDefaultClass \core\output\activity_header
  * @copyright 2021 Peter
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class activity_header_test extends \advanced_testcase {
+
     /**
      * Test the title setter
      *
      * @dataProvider test_set_title_provider
      * @param string $value
      * @param string $expected
+     * @covers ::set_title
      */
     public function test_set_title(string $value, string $expected): void {
         global $PAGE, $DB;
@@ -69,5 +72,55 @@ class activity_header_test extends \advanced_testcase {
                 "<h2 id='heading'>Activity title</h2><h2>Header 2</h2>", "Activity title</h2><h2>Header 2"
             ],
         ];
+    }
+
+    /**
+     * Test setting multiple attributes
+     *
+     * @covers ::set_attrs
+     */
+    public function test_set_attrs(): void {
+        global $DB, $PAGE;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => true]);
+        $assign = $this->getDataGenerator()->create_module('assign', [
+            'course' => $course->id,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC,
+            'completionview' => 1
+        ]);
+
+        $cm = $DB->get_record('course_modules', ['id' => $assign->cmid]);
+        $PAGE->set_cm($cm);
+        $PAGE->set_activity_record($assign);
+
+        $PAGE->activityheader->set_attrs([
+            'hidecompletion' => true,
+            'additionalnavitems' => new \url_select([]),
+            'hideoverflow' => true,
+            'title' => 'My title',
+            'description' => 'My description',
+        ]);
+
+        $renderer = $PAGE->get_renderer('core');
+        $export = $PAGE->activityheader->export_for_template($renderer);
+
+        $this->assertEquals('My title', $export['title']);
+        $this->assertEquals('My description', $export['description']);
+        $this->assertEmpty($export['completion']); // Because hidecompletion = true.
+        $this->assertEmpty($export['additional_items']); // Because hideoverflow = true.
+    }
+
+    /**
+     * Test calling set_attrs with an invalid variable name
+     *
+     * @covers ::set_attrs
+     */
+    public function test_set_attrs_invalid_variable(): void {
+        global $PAGE;
+
+        $PAGE->activityheader->set_attrs(['unknown' => true]);
+        $this->assertDebuggingCalledCount(1, ['Invalid class member variable: unknown']);
     }
 }

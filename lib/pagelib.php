@@ -26,9 +26,11 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+
 use core\navigation\views\primary;
 use core\navigation\views\secondary;
 use core\navigation\output\primary as primaryoutput;
+use core\output\activity_header;
 
 /**
  * $PAGE is a central store of information about the current page we are
@@ -53,6 +55,8 @@ use core\navigation\output\primary as primaryoutput;
  * @property-read stdClass $activityrecord The row from the activities own database table (for example
  *      the forum or quiz table) that this page belongs to. Will be null
  *      if this page is not within a module.
+ * @property-read activity_header $activityheader The activity header for the page, representing standard components
+ *      displayed within the header
  * @property-read array $alternativeversions Mime type => object with ->url and ->title.
  * @property-read block_manager $blocks The blocks manager object for this page.
  * @property-read array $blockmanipulations
@@ -404,7 +408,7 @@ class moodle_page {
     protected $_activenodeprimary = null;
 
     /**
-     * @var \core\output\activity_header The default activity header for standardised.
+     * @var activity_header The activity header for the page.
      */
     protected $_activityheader;
 
@@ -835,12 +839,12 @@ class moodle_page {
 
     /**
      * Returns the activity header object
-     * @return secondary
+     * @return activity_header
      */
-    protected function magic_get_activityheader() {
+    protected function magic_get_activityheader(): activity_header {
         global $USER;
         if ($this->_activityheader === null) {
-            $class = 'core\output\activity_header';
+            $class = activity_header::class;
             // Try and load a custom class first.
             if (class_exists("mod_{$this->activityname}\\output\\activity_header")) {
                 $class = "mod_{$this->activityname}\\output\\activity_header";
