@@ -37,10 +37,12 @@ export default class extends DndSection {
         this.selectors = {
             SECTION_ITEM: `[data-for='section_title']`,
             CM: `[data-for="cmitem"]`,
+            SECTIONINFO: `[data-for="sectioninfo"]`,
         };
         // Most classes will be loaded later by DndCmItem.
         this.classes = {
             LOCKED: 'editinprogress',
+            HASDESCRIPTION: 'description',
         };
 
         // We need our id to watch specific events.
@@ -120,5 +122,10 @@ export default class extends DndSection {
         this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
         this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
         this.locked = element.locked;
+        // The description box classes depends on the section state.
+        const sectioninfo = this.getElement(this.selectors.SECTIONINFO);
+        if (sectioninfo) {
+            sectioninfo.classList.toggle(this.classes.HASDESCRIPTION, element.hasrestrictions);
+        }
     }
 }

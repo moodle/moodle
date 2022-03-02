@@ -128,7 +128,7 @@
     class="content {{^iscoursedisplaymultipage}}
         {{^sitehome}}course-content-item-content collapse {{^contentcollapsed}}show{{/contentcollapsed}}{{/sitehome}}
     {{/iscoursedisplaymultipage}}">
-    <div class="{{#hasavailability}}description small{{/hasavailability}} my-3">
+    <div class="{{#hasavailability}}description{{/hasavailability}} my-3" data-for="sectioninfo">
     {{#summary}}
         {{$ core_courseformat/local/content/section/summary }}
             {{> core_courseformat/local/content/section/summary }}

@@ -14561,7 +14561,6 @@ span.editinstructions {
     display: inline-block;
     text-align: left; }
   .coursecat-management-header > div {
-    display: inline-block;
     float: right; }
     .coursecat-management-header > div > div {
       margin: 10px 0 10px 1em;
@@ -14707,6 +14706,7 @@ span.editinstructions {
     display: inline-block; }
 
 .description .course-description-item {
+  font-size: 80%;
   background-color: #f8f9fa;
   padding-left: 1rem;
   padding-right: 1rem; }
