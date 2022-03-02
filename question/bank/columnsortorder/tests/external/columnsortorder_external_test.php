@@ -50,14 +50,11 @@ class columnsortorder_external_test extends advanced_testcase {
             $columnclasses[] = $columnnobject->class;
         }
         shuffle($columnclasses);
-        $columnclasses = implode(',', $columnclasses);
         set_columnbank_order::execute($columnclasses);
 
-        $currentconfig = (array)get_config('qbank_columnsortorder');
-        unset($currentconfig['version']);
-        asort($currentconfig);
-        $currentconfig = array_flip($currentconfig);
-        $columnclasses = explode(',', $columnclasses);
+        $currentconfig = (array)get_config('qbank_columnsortorder', 'enabledcol');
+        $currentconfig = explode(',', $currentconfig[0]);
+
         $this->assertSame($columnclasses, $currentconfig);
     }
 }
