@@ -137,23 +137,9 @@ function xmldb_tool_moodlenet_upgrade(int $oldversion) {
             set_config('enablemoodlenet', '1', 'tool_moodlenet');
             set_config('activitychooseractivefooter', 'tool_moodlenet');
 
-            // Send notification.
-            $message = new \core\message\message();
-            $message->component = 'moodle';
-            $message->name = 'notices';
-            $message->userfrom = \core_user::get_noreply_user();
-            $message->userto = get_admin();
-            $message->notification = 1;
-            $message->contexturl = (new moodle_url('/admin/settings.php',
-                ['section' => 'optionalsubsystems'], 'admin-enablemoodlenet'))->out(false);
-            $message->contexturlname = get_string('advancedfeatures', 'admin');
-            $message->subject = get_string('autoenablenotification_subject', 'tool_moodlenet');
-            $message->fullmessageformat = FORMAT_HTML;
-            $message->fullmessagehtml = get_string('autoenablenotification', 'tool_moodlenet', (object) [
-                'settingslink' => (new moodle_url('/admin/settings.php', ['section' => 'tool_moodlenet']))->out(false),
-            ]);
-            $message->smallmessage = strip_tags($message->fullmessagehtml);
-            message_send($message);
+            // Use an adhoc task to send a notification to admin stating MoodleNet is automatically enabled after upgrade.
+            $notificationtask = new tool_moodlenet\task\send_enable_notification();
+            core\task\manager::queue_adhoc_task($notificationtask);
         }
 
         upgrade_plugin_savepoint(true, 2022021600, 'tool', 'moodlenet');
