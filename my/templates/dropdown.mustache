@@ -31,7 +31,11 @@
         <i class="fa fa-ellipsis-v text-dark  py-2" aria-hidden="true"></i>
     </a>
     <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" href="{{newcourseurl}}">{{#str}}newcourse, core{{/str}}</a>
-        <a class="dropdown-item" href="{{manageurl}}">{{#str}}managecourses, core{{/str}}</a>
+        {{#newcourseurl}}
+            <a class="dropdown-item" href="{{newcourseurl}}">{{#str}}newcourse, core{{/str}}</a>
+        {{/newcourseurl}}
+        {{#manageurl}}
+            <a class="dropdown-item" href="{{manageurl}}">{{#str}}managecourses, core{{/str}}</a>
+        {{/manageurl}}
     </div>
 </div>
