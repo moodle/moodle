@@ -32,7 +32,8 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $action   = optional_param('action', '', PARAM_ALPHA);
 $scope    = optional_param('scope', 'custom', PARAM_ALPHA);
 
-$PAGE->set_url('/grade/edit/outcome/import.php', array('courseid' => $courseid));
+$url = new moodle_url('/grade/edit/outcome/import.php', array('courseid' => $courseid));
+$PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 
 /// Make sure they can even access this course
@@ -46,6 +47,11 @@ if ($courseid) {
     if (empty($CFG->enableoutcomes)) {
         redirect('../../index.php?id='.$courseid);
     }
+    navigation_node::override_active_url(new moodle_url('/grade/edit/outcome/course.php', ['id' => $courseid]));
+    $PAGE->navbar->add(get_string('manageoutcomes', 'grades'),
+        new moodle_url('/grade/edit/outcome/index.php', ['id' => $courseid]));
+    $PAGE->navbar->add(get_string('importoutcomes', 'grades'),
+        new moodle_url('/grade/edit/outcome/import.php', ['courseid' => $courseid]));
 
 } else {
     require_once $CFG->libdir.'/adminlib.php';
@@ -54,8 +60,6 @@ if ($courseid) {
 }
 
 require_capability('moodle/grade:manageoutcomes', $context);
-
-$navigation = grade_build_nav(__FILE__, get_string('outcomes', 'grades'), $courseid);
 
 $upload_form = new import_outcomes_form();
 

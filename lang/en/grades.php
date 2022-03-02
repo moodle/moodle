@@ -148,6 +148,7 @@ $string['decimalpoints_help'] = 'This setting determines the number of decimal p
 $string['default'] = 'Default';
 $string['defaultprev'] = 'Default ({$a})';
 $string['deletecategory'] = 'Delete category';
+$string['deletescale'] = 'Delete scale';
 $string['disablegradehistory'] = 'Disable grade history';
 $string['disablegradehistory_help'] = 'Disable history tracking of changes in grades related tables. This may speed up the server a little and conserve space in database.';
 $string['displaylettergrade'] = 'Display letter grades';

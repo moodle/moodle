@@ -73,7 +73,9 @@ $PAGE->set_context($context);
 $PAGE->set_url('/badges/criteria_settings.php', $urlparams);
 $PAGE->set_heading($heading);
 $PAGE->set_title($badge->name);
-$PAGE->navbar->add($badge->name, new moodle_url('overview.php', array('id' => $badge->id)))->add(get_string('criteria_' . $type, 'badges'));
+$PAGE->navbar->add($badge->name, new moodle_url('overview.php', array('id' => $badge->id)))
+    ->add(get_string('bcriteria', 'badges'), new moodle_url('criteria.php', ['id' => $badge->id]))
+    ->add(get_string('criteria_' . $type, 'badges'));
 
 $cparams = array('criteriatype' => $type, 'badgeid' => $badge->id);
 if ($edit) {

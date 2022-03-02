@@ -40,7 +40,8 @@ if (!$plugin) {
 require_login($course);
 require_capability('enrol/' . $type . ':config', $context);
 
-$PAGE->set_url('/enrol/editinstance.php', array('courseid' => $course->id, 'id' => $instanceid, 'type' => $type));
+$url = new moodle_url('/enrol/editinstance.php', ['courseid' => $course->id, 'id' => $instanceid, 'type' => $type]);
+$PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_docs_path('enrol/' . $type . '/edit');
 
@@ -54,6 +55,11 @@ if (!enrol_is_enabled($type)) {
 
 if ($instanceid) {
     $instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => $type, 'id' => $instanceid), '*', MUST_EXIST);
+    if ($instance->status == ENROL_INSTANCE_DISABLED) { // The instance is currently disabled.
+        navigation_node::override_active_url(new moodle_url('/enrol/instances.php', ['id' => $course->id]));
+        $name = $instance->name ?: get_string('pluginname', 'enrol_' . $type);
+        $PAGE->navbar->add($name, $url);
+    }
 
 } else {
     require_capability('moodle/course:enrolconfig', $context);
@@ -64,6 +70,7 @@ if ($instanceid) {
     $instance->id       = null;
     $instance->courseid = $course->id;
     $instance->status   = ENROL_INSTANCE_ENABLED; // Do not use default for automatically created instances here.
+    $PAGE->navbar->add(get_string('pluginname', 'enrol_' . $type), $url);
 }
 
 $mform = new enrol_instance_edit_form(null, array($instance, $plugin, $context, $type, $return));
