@@ -72,9 +72,9 @@ class boostnavbar implements \renderable {
             $this->remove('mycourses');
             $this->remove('courses');
             // Remove the course category breadcrumb node.
-            $this->remove($this->page->course->category);
+            $this->remove($this->page->course->category, \breadcrumb_navigation_node::TYPE_CATEGORY);
             // Remove the course breadcrumb node.
-            $this->remove($this->page->course->id);
+            $this->remove($this->page->course->id, \breadcrumb_navigation_node::TYPE_COURSE);
             // Remove the navbar nodes that already exist in the secondary navigation menu.
             $this->remove_items_that_exist_in_navigation($PAGE->secondarynav);
 
@@ -102,7 +102,7 @@ class boostnavbar implements \renderable {
             $this->remove('mycourses');
             $this->remove('courses');
             // Remove the course category breadcrumb node.
-            $this->remove($this->page->course->category);
+            $this->remove($this->page->course->category, \breadcrumb_navigation_node::TYPE_CATEGORY);
             $courseformat = course_get_format($this->page->course)->get_course();
             // Section items can be only removed if a course layout (coursedisplay) is not explicitly set in the
             // given course format or the set course layout is not 'One section per page'.
@@ -181,12 +181,18 @@ class boostnavbar implements \renderable {
      * Remove a boostnavbaritem from the boost navbar.
      *
      * @param  string|int $itemkey An identifier for the boostnavbaritem
+     * @param  int|null $itemtype An additional type identifier for the boostnavbaritem (optional)
      */
-    protected function remove($itemkey): void {
+    protected function remove($itemkey, ?int $itemtype = null): void {
 
         $itemfound = false;
         foreach ($this->items as $key => $item) {
             if ($item->key === $itemkey) {
+                // If a type identifier is also specified, check whether the type of the breadcrumb item matches the
+                // specified type. Skip if types to not match.
+                if (!is_null($itemtype) && $item->type !== $itemtype) {
+                    continue;
+                }
                 unset($this->items[$key]);
                 $itemfound = true;
                 break;
