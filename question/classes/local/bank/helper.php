@@ -51,5 +51,4 @@ class helper {
             throw new \moodle_exception('The following plugin is either disabled or missing from disk: ' . $pluginname);
         }
     }
-
 }

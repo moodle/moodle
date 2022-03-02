@@ -33,7 +33,7 @@ namespace core_question\local\bank;
  */
 abstract class action_column_base extends column_base {
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return '&#160;';
     }
 
