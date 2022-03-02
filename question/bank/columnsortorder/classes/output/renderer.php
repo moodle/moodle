@@ -16,10 +16,9 @@
 
 namespace qbank_columnsortorder\output;
 
-use qbank_columnsortorder\column_manager;
-use html_writer;
 use moodle_url;
 use plugin_renderer_base;
+use qbank_columnsortorder\column_manager;
 
 /**
  * Class renderer.

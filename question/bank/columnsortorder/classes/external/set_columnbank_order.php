@@ -17,13 +17,11 @@
 namespace qbank_columnsortorder\external;
 
 use context_system;
-use Exception;
 use external_api;
 use external_function_parameters;
 use external_multiple_structure;
 use external_value;
 use qbank_columnsortorder\column_manager;
-use stdClass;
 
 /**
  * External qbank_columnsortorder_set_columnbank_order API

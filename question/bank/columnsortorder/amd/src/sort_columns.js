@@ -31,12 +31,9 @@ import jQuery from 'jquery';
  * @param {Element} listRoot
  */
 const setupSortableLists = (listRoot) => {
-    new SortableList(
-        '.list',
-        {
-            moveHandlerSelector: '.item',
-        }
-    );
+    new SortableList('.list', {
+        moveHandlerSelector: '.item',
+    });
 
     jQuery('.item').on(SortableList.EVENTS.DROP, () => {
         const columns = getColumnOrder(listRoot);
@@ -56,26 +53,27 @@ const setupSortableLists = (listRoot) => {
  * @returns {Promise}
  */
 const setOrder = columns => fetchMany([{
-        methodname: 'qbank_columnsortorder_set_columnbank_order',
-        args: {columns: columns},
-    }])[0];
+    methodname: 'qbank_columnsortorder_set_columnbank_order',
+    args: {columns},
+}])[0];
 
 /**
  * Gets the newly reordered columns to display in the question bank view.
  * @param {Element} listRoot
  * @returns {Array}
  */
-const getColumnOrder = (listRoot) => {
-    const columns = Array.from(listRoot.querySelectorAll('[data-pluginname]')).map(column => column.dataset.pluginname);
+const getColumnOrder = listRoot => {
+    const columns = Array.from(listRoot.querySelectorAll('[data-pluginname]'))
+        .map(column => column.dataset.pluginname);
 
     return columns.filter((value, index) => columns.indexOf(value) === index);
 };
 
 /**
  * Initialize module
- * @param {int} id unique id for columns.
+ * @param {String} id unique id for columns.
  */
-export const init = (id) => {
+export const init = id => {
     const listRoot = document.querySelector(`#${id}`);
     setupSortableLists(listRoot);
 };

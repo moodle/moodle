@@ -1951,6 +1951,7 @@ class core_plugin_manager {
 
             'qbank' => [
                 'bulkmove',
+                'columnsortorder',
                 'comment',
                 'customfields',
                 'deletequestion',
