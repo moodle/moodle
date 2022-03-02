@@ -293,7 +293,7 @@ class manager_test extends \advanced_testcase {
         $this->assertArrayHasKey($presetid, $presets);
         $preset = $presets[$presetid];
         $this->assertEquals($presetname, $preset->name);
-        $this->assertEquals(0, $preset->iscore);
+        $this->assertEquals(manager::NONCORE_PRESET, $preset->iscore);
 
         // Check the preset includes settings and plugins.
         $this->assertTrue($settingsfound);
@@ -448,7 +448,7 @@ class manager_test extends \advanced_testcase {
                 $this->assertEquals($expectedpresetname, $preset->name);
                 $this->assertEquals('http://demo.moodle', $preset->site);
                 $this->assertEquals('Ada Lovelace', $preset->author);
-                $this->assertEquals(0, $preset->iscore);
+                $this->assertEquals(manager::NONCORE_PRESET, $preset->iscore);
 
                 if ($expectedsettings) {
                     // Check the items have been created.

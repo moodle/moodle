@@ -37,9 +37,11 @@ class generator_test extends \advanced_testcase {
      * @param string|null $comments Preset comments field.
      * @param string|null $author Preset author field.
      * @param bool $applypreset Whether the preset should be applied or not.
+     * @param int|null $iscore Whether the preset is a core preset or not.
+     * @param int|null $iscoreresult Expected iscore value for the result preset.
      */
     public function test_create_preset(?string $name = null, ?string $comments = null, ?string $author = null,
-            bool $applypreset = false): void {
+            bool $applypreset = false, ?int $iscore = null, ?int $iscoreresult = null): void {
         global $CFG, $DB;
 
         $this->resetAfterTest();
@@ -66,6 +68,12 @@ class generator_test extends \advanced_testcase {
         if ($applypreset) {
             $data['applypreset'] = $applypreset;
         }
+        if (isset($iscore)) {
+            $data['iscore'] = $iscore;
+        }
+        if (!isset($iscoreresult)) {
+            $iscoreresult = manager::NONCORE_PRESET;
+        }
 
         // Create a preset.
         $presetid = $this->getDataGenerator()->get_plugin_generator('core_adminpresets')->create_preset($data);
@@ -76,6 +84,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals($name, $preset->name);
         $this->assertEquals($comments, $preset->comments);
         $this->assertEquals($author, $preset->author);
+        $this->assertEquals($iscoreresult, $preset->iscore);
         $this->assertEquals($CFG->version, $preset->moodleversion);
         $this->assertEquals($CFG->release, $preset->moodlerelease);
         $this->assertEquals($CFG->wwwroot, $preset->site);
@@ -197,7 +206,31 @@ class generator_test extends \advanced_testcase {
                 'comments' => null,
                 'author' => null,
                 'applypreset' => true,
-            ]
+            ],
+            'Starter preset' => [
+                'name' => 'Starter',
+                'comments' => null,
+                'author' => null,
+                'applypreset' => false,
+                'iscore' => manager::STARTER_PRESET,
+                'iscoreresult' => manager::STARTER_PRESET,
+            ],
+            'Full preset' => [
+                'name' => 'Full',
+                'comments' => null,
+                'author' => null,
+                'applypreset' => false,
+                'iscore' => manager::FULL_PRESET,
+                'iscoreresult' => manager::FULL_PRESET,
+            ],
+            'Invalid iscore' => [
+                'name' => 'Invalid iscore value',
+                'comments' => null,
+                'author' => null,
+                'applypreset' => false,
+                'iscore' => -1,
+                'iscoreresult' => manager::NONCORE_PRESET,
+            ],
         ];
     }
 }

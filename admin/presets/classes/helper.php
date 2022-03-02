@@ -32,7 +32,7 @@ class helper {
      *   - name. To define the preset name.
      *   - comments. To change the comments field.
      *   - author. To update the author field.
-     *   - iscore. Whether the preset is a core preset or not.
+     *   - iscore. Whether the preset is a core preset or not. Valid values on \core_adminpresets\manager class.
      * @return int The identifier of the preset created.
      */
     public static function create_preset(array $data): int {
@@ -41,7 +41,13 @@ class helper {
         $name = array_key_exists('name', $data) ? $data['name'] : '';
         $comments = array_key_exists('comments', $data) ? $data['comments'] : '';
         $author = array_key_exists('author', $data) ? $data['author'] : fullname($USER);
-        $iscore = array_key_exists('iscore', $data) ? $data['iscore'] : 0;
+        $iscore = array_key_exists('iscore', $data) ? $data['iscore'] : manager::NONCORE_PRESET;
+
+        // Validate iscore value.
+        $allowed = [manager::NONCORE_PRESET, manager::STARTER_PRESET, manager::FULL_PRESET];
+        if (!in_array($iscore, $allowed)) {
+            $iscore = manager::NONCORE_PRESET;
+        }
 
         $preset = [
             'userid' => $USER->id,
@@ -168,7 +174,7 @@ class helper {
         $data = [
             'name' => get_string('starterpreset', 'core_adminpresets'),
             'comments' => get_string('starterpresetdescription', 'core_adminpresets'),
-            'iscore' => 1,
+            'iscore' => manager::STARTER_PRESET,
         ];
         $presetid = static::create_preset($data);
 
@@ -279,7 +285,7 @@ class helper {
         $data = [
             'name' => get_string('fullpreset', 'core_adminpresets'),
             'comments' => get_string('fullpresetdescription', 'core_adminpresets'),
-            'iscore' => 1,
+            'iscore' => manager::FULL_PRESET,
         ];
         $presetid = static::create_preset($data);
 
