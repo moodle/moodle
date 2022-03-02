@@ -4958,6 +4958,10 @@ EOD;
      */
     public function addblockbutton($region = ''): string {
         $addblockbutton = '';
+        $regions = $this->page->blocks->get_regions();
+        if (count($regions) == 0) {
+            return '';
+        }
         if (isset($this->page->theme->addblockposition) &&
                 $this->page->user_is_editing() &&
                 $this->page->user_can_edit_blocks() &&

@@ -38,7 +38,7 @@ $THEME->scss = function($theme) {
 $THEME->layouts = [
     // Most backwards compatible layout without the blocks.
     'base' => array(
-        'file' => 'columns2.php',
+        'file' => 'drawers.php',
         'regions' => array(),
     ),
     // Standard layout with blocks.
