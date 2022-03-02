@@ -40,7 +40,8 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         'profile,moodle|/user/profile.php
 grades,grades|/grade/report/mygrades.php
 calendar,core_calendar|/calendar/view.php?view=month
-privatefiles,moodle|/user/files.php',
+privatefiles,moodle|/user/files.php
+reports,core_reportbuilder|/reportbuilder/index.php',
         PARAM_RAW,
         '50',
         '10'

@@ -1408,3 +1408,23 @@ function upgrade_migrate_question_table(): void {
 
     $transaction->allow_commit();
 }
+
+/**
+ * Add a new item at the end of the usermenu.
+ *
+ * @param string $menuitem
+ */
+function upgrade_add_item_to_usermenu(string $menuitem): void {
+    global $CFG;
+
+    // Get current configuration data.
+    $currentcustomusermenuitems = str_replace(["\r\n", "\r"], "\n", $CFG->customusermenuitems);
+    $lines = preg_split('/\n/', $currentcustomusermenuitems, -1, PREG_SPLIT_NO_EMPTY);
+    $lines = array_map('trim', $lines);
+
+    if (!in_array($menuitem, $lines)) {
+        // Add the item to the menu.
+        $lines[] = $menuitem;
+        set_config('customusermenuitems', implode("\n", $lines));
+    }
+}
