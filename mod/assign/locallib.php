@@ -4927,12 +4927,10 @@ class assign {
             $PAGE->blocks->add_fake_block($bc, reset($regions));
         }
 
-        $PAGE->activityheader->disable();
-
         $o .= $this->get_renderer()->render(
             new assign_header($this->get_instance(),
                               $this->get_context(),
-                              false,
+                              $this->show_intro(),
                               $this->get_course_module()->id,
                               $title,
                               '',
