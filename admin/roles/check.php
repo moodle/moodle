@@ -100,7 +100,7 @@ switch ($context->contextlevel) {
         $showroles = 1;
         break;
     case CONTEXT_COURSECAT:
-        $PAGE->set_heading($SITE->fullname);
+        core_course_category::page_setup();
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {

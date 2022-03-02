@@ -51,6 +51,11 @@ if ($contextid == \context_system::instance()->id) {
 } else {
     $PAGE->set_context($context);
 }
+
+if ($context->contextlevel == CONTEXT_COURSECAT) {
+    $PAGE->set_primary_active_tab('home');
+}
+
 $PAGE->set_title($title);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagetype('contentbank');

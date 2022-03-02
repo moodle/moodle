@@ -100,7 +100,7 @@ if ($modulelist !== '') {
 }
 
 $strmanagement = new lang_string('coursecatmanagement');
-$pageheading = format_string($SITE->fullname, true, array('context' => $systemcontext));
+$pageheading = $category->get_formatted_name();
 
 $PAGE->set_context($context);
 $PAGE->set_url($url);
@@ -122,6 +122,21 @@ if (!core_course_category::has_capability_on_any(array('moodle/category:manage',
     redirect($url);
 }
 
+if (!$issearching && $category !== null) {
+    $parents = core_course_category::get_many($category->get_parents());
+    $parents[] = $category;
+    foreach ($parents as $parent) {
+        $PAGE->navbar->add(
+            $parent->get_formatted_name(),
+            new moodle_url('/course/index.php', array('categoryid' => $parent->id))
+        );
+    }
+    if ($course instanceof core_course_list_element) {
+        // Use the list name so that it matches whats being displayed below.
+        $PAGE->navbar->add($course->get_formatted_name());
+    }
+}
+
 // If the user poses any of these capabilities then they will be able to see the admin
 // tree and the management link within it.
 // This is the most accurate form of navigation.
@@ -133,32 +148,19 @@ $capabilities = array(
     'moodle/site:approvecourse'
 );
 if ($category && !has_any_capability($capabilities, $systemcontext)) {
-    // If the user doesn't poses any of these system capabilities then we're going to mark the manage link in the settings block
-    // as active, tell the page to ignore the active path and just build what the user would expect.
+    // If the user doesn't poses any of these system capabilities then we're going to mark the category link in the
+    // settings block as active, tell the page to ignore the active path and just build what the user would expect.
     // This will at least give the page some relevant navigation.
-    navigation_node::override_active_url(new moodle_url('/course/management.php', array('categoryid' => $category->id)));
+    navigation_node::override_active_url(new moodle_url('/course/index.php', array('categoryid' => $category->id)));
     $PAGE->set_category_by_id($category->id);
     $PAGE->navbar->ignore_active(true);
-    $PAGE->navbar->add(get_string('coursemgmt', 'admin'), $PAGE->url->out_omit_querystring());
 } else {
-    // If user has system capabilities, make sure the "Manage courses and categories" item in Administration block is active.
+    // If user has system capabilities, make sure the "Category" item in Administration block is active.
     navigation_node::require_admin_tree();
-    navigation_node::override_active_url(new moodle_url('/course/management.php'));
+    navigation_node::override_active_url(new moodle_url('/course/index.php'));
 }
-if (!$issearching && $category !== null) {
-    $parents = core_course_category::get_many($category->get_parents());
-    $parents[] = $category;
-    foreach ($parents as $parent) {
-        $PAGE->navbar->add(
-            $parent->get_formatted_name(),
-            new moodle_url('/course/management.php', array('categoryid' => $parent->id))
-        );
-    }
-    if ($course instanceof core_course_list_element) {
-        // Use the list name so that it matches whats being displayed below.
-        $PAGE->navbar->add($course->get_formatted_name());
-    }
-}
+$PAGE->navbar->add(get_string('coursemgmt', 'admin'), $PAGE->url->out_omit_querystring());
+$PAGE->set_primary_active_tab('home');
 
 $notificationspass = array();
 $notificationsfail = array();

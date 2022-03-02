@@ -57,14 +57,12 @@ $isfrontpage = ($context->contextlevel == CONTEXT_COURSE && $context->instanceid
 $contextname = $context->get_context_name();
 
 if ($context->contextlevel == CONTEXT_COURSECAT) {
-    $heading = $SITE->fullname;
+    core_course_category::page_setup();
 } else if ($context->contextlevel == CONTEXT_COURSE) {
-    $heading = $course->fullname;
+    $PAGE->set_heading($course->fullname);
 } else if ($context->contextlevel == CONTEXT_MODULE) {
     // Must be module context.
-    $heading = $PAGE->activityrecord->name;
-} else {
-    $heading = '';
+    $PAGE->set_heading($PAGE->activityrecord->name);
 }
 
 /// Check login and permissions.
@@ -72,7 +70,6 @@ require_login($course, false, $cm);
 require_capability('moodle/filter:manage', $context);
 
 $PAGE->set_context($context);
-$PAGE->set_heading($heading);
 
 /// Get the list of available filters.
 $availablefilters = filter_get_available_in_context($context);
