@@ -142,7 +142,7 @@ class secondary extends view {
                 'edit' => 1,
                 'permissions' => 2,
                 'roles' => 2.1,
-                'checkpermissions' => 2.2,
+                'rolecheck' => 2.2,
             ]
         ];
     }

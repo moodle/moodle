@@ -5447,7 +5447,7 @@ class settings_navigation extends navigation_node {
         if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
                 'moodle/role:override', 'moodle/role:assign'), $catcontext)) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid' => $catcontext->id));
-            $categorynode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING, null, 'checkpermissions', new pix_icon('i/checkpermissions', ''));
+            $categorynode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING, null, 'rolecheck', new pix_icon('i/checkpermissions', ''));
         }
 
         // Add the context locking node.

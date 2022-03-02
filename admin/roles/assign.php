@@ -183,10 +183,7 @@ switch ($context->contextlevel) {
         break;
 }
 
-// In a course category context we leverage overflow for the tertiary navigation
-if ($context->contextlevel != CONTEXT_COURSECAT) {
-    $PAGE->set_navigation_overflow_state(false);
-}
+$PAGE->set_navigation_overflow_state(false);
 
 // Within a course context we need to explicitly set active tab as there isn't a reference in the nav tree.
 if ($context->contextlevel == CONTEXT_COURSE) {
@@ -208,7 +205,7 @@ if ($roleid) {
 
 if ($backurl) {
     echo $OUTPUT->render(new single_button($backurl, get_string('back'), 'get'));
-} else if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_MODULE) {
+} else if (in_array($context->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE, CONTEXT_COURSECAT])) {
     // The front page doesn't have an intermediate page 'other users' but needs similar tertiary nav like a standard course.
     echo $OUTPUT->render_participants_tertiary_nav($course);
 }
