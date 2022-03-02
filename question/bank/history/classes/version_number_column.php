@@ -32,7 +32,7 @@ class version_number_column extends column_base {
         return 'questionversionnumber';
     }
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('questionversionnumber', 'qbank_history');
     }
 

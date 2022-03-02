@@ -1,4 +1,4 @@
-@core @qbank_columnsortorder @javascript
+@qbank @qbank_columnsortorder @javascript
 Feature: An plugin column can be reordered and displayed in the question bank view.
   In order to reorganise the question bank view columns
   As an admin
@@ -25,27 +25,24 @@ Feature: An plugin column can be reordered and displayed in the question bank vi
       | questioncategory    | qtype | name                     | user     | questiontext                  | idnumber  |
       | Question category 1 | essay | Test question to be seen | teacher1 | Write about whatever you want | idnumber1 |
 
-  @javascript
   Scenario: Teacher can see proper view
     Given I am on the "Test quiz Q001" "quiz activity" page logged in as "teacher1"
-    When I navigate to "Question bank > Questions" in current page administration
+    When I navigate to "Question bank" in current page administration
     And I click on "category" "select"
     And I click on "Question category 1" "option"
     And I should see "Test question to be seen"
     Then I should see "Teacher 1"
 
-  @javascript
   Scenario: Reordering question bank columns
     Given I log in as "admin"
     When I navigate to "Plugins > Question bank plugins > Column sort order" in site administration
     And I drag "Created by (creator_name_column)" "text" and I drop it in "T (question_type_column)" "text"
     And I am on the "Test quiz Q001" "quiz activity" page logged in as "teacher1"
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I click on "category" "select"
     And I click on "Question category 1" "option"
     Then ".creatorname" "css_element" should appear before ".qtype" "css_element"
 
-  @javascript
   Scenario: Disabling and enabling column display is proper
     Given I log in as "admin"
     When I navigate to "Plugins > Question bank plugins > Column sort order" in site administration
@@ -61,7 +58,6 @@ Feature: An plugin column can be reordered and displayed in the question bank vi
     Then I should not see "Columns below are currently disabled."
     And I should see "Created by (creator_name_column)"
 
-  @javascript
   Scenario: Custom fields are reorderable
     Given I log in as "admin"
     When I navigate to "Plugins > Question bank plugins > Question custom fields" in site administration
@@ -75,6 +71,7 @@ Feature: An plugin column can be reordered and displayed in the question bank vi
     Then I should see "checkboxcustomcolumn"
     And I navigate to "Plugins > Question bank plugins > Column sort order" in site administration
     And I should see "checkboxcustomcolumn"
+    And I change the window size to "large"
     And I drag "checkboxcustomcolumn" "text" and I drop it in "T (question_type_column)" "text"
     Then "checkboxcustomcolumn" "text" should appear before "T (question_type_column)" "text"
     And I click on "Manage question bank plugins" "link"
