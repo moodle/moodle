@@ -35,8 +35,7 @@ require_once($CFG->dirroot.'/mod/bigbluebuttonbn/backup/moodle2/restore_bigblueb
  * @copyright 2010 onwards, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_bigbluebuttonbn_activity_task extends restore_activity_task
-{
+class restore_bigbluebuttonbn_activity_task extends restore_activity_task {
     /**
      * Define (add) particular settings this activity can have.
      *

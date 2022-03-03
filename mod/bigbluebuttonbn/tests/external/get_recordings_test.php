@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2021 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @coversDefaultClass \mod_bigbluebuttonbn\external\get_recordings
+ * @covers \mod_bigbluebuttonbn\external\get_recordings
  */
 class get_recordings_test extends \externallib_advanced_testcase {
     use testcase_helper_trait;
@@ -50,7 +50,7 @@ class get_recordings_test extends \externallib_advanced_testcase {
     /**
      * Helper
      *
-     * @param ... $params
+     * @param mixed ...$params
      * @return array|bool|mixed
      */
     protected function get_recordings(...$params) {
@@ -123,7 +123,7 @@ class get_recordings_test extends \externallib_advanced_testcase {
         $this->assertArrayHasKey('status', $getrecordings);
         $this->assertEquals(true, $getrecordings['status']);
         $this->assertNotEmpty($getrecordings['tabledata']);
-        $this->assertEquals($getrecordings['tabledata']['data'], '[]');
+        $this->assertEquals('[]', $getrecordings['tabledata']['data']);
     }
 
     /**
@@ -317,7 +317,14 @@ class get_recordings_test extends \externallib_advanced_testcase {
     /**
      * Check if recording are visible/invisible depending on the group.
      *
-     * @covers       \mod_bigbluebuttonbn\external\get_recordings::execute
+     * @param string $type
+     * @param array $groups
+     * @param array $users
+     * @param array $recordingsdata
+     * @param array $test
+     * @param int $coursemode
+     *
+     * @covers   \mod_bigbluebuttonbn\external\get_recordings::execute
      * @dataProvider recording_group_test_data
      */
     public function test_get_recordings_groups($type, $groups, $users, $recordingsdata, $test, $coursemode) {
