@@ -24,8 +24,6 @@
  * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Define all the restore steps that will be used by the restore_url_activity_task.
  *
@@ -107,7 +105,7 @@ class restore_bigbluebuttonbn_activity_structure_step extends restore_activity_s
     /**
      * Actions to be executed after the restore is completed
      *
-     * @return array
+     * @return void
      */
     protected function after_execute() {
         // Add bigbluebuttonbn related files, no need to match by itemname (just internally handled context).

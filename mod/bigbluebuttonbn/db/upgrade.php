@@ -28,8 +28,6 @@ use mod_bigbluebuttonbn\plugin;
 use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\task\upgrade_recordings_task;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Performs data migrations and updates on upgrade.
  *

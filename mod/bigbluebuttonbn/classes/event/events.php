@@ -27,6 +27,7 @@ class events {
 
     /**
      * Event name matcher.
+     *
      * @var $events
      */
     public static $events = [

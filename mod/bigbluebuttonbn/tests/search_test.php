@@ -13,7 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+namespace mod_bigbluebuttonbn;
 
+use advanced_testcase;
+use context_course;
+use context_module;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
 
@@ -29,6 +33,8 @@ require_once($CFG->dirroot . '/search/tests/fixtures/testable_core_search.php');
  * @copyright 2021 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
+ * @covers \mod_bigbluebuttonbn\search\tags
+ * @covers \mod_bigbluebuttonbn\search\activity
  */
 class search_test extends advanced_testcase {
     use testcase_helper_trait;

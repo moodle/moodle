@@ -101,6 +101,7 @@ class instance_test extends advanced_testcase {
 
     /**
      * If the instance was not found, and exception should be thrown.
+     * @covers ::get_from_instanceid
      */
     public function test_get_from_instance_not_found(): void {
         $this->assertNull(instance::get_from_instanceid(100));
@@ -194,7 +195,7 @@ class instance_test extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $records = [];
         for ($i = 0; $i < 5; $i++) {
-            $records[] = $this->getDataGenerator()->create_module('bigbluebuttonbn', [
+            $this->getDataGenerator()->create_module('bigbluebuttonbn', [
                 'course' => $course->id,
             ]);
         }
@@ -303,6 +304,7 @@ class instance_test extends advanced_testcase {
      * @param null|int $openingtime
      * @param null|int $closingtime
      * @param bool $expected
+     * @covers ::is_currently_open
      */
     public function test_is_currently_open(?int $openingtime, ?int $closingtime, bool $expected): void {
         $stub = $this->getMockBuilder(instance::class)
@@ -337,6 +339,7 @@ class instance_test extends advanced_testcase {
      * @param bool $ismoderator
      * @param bool $haswaitingroom
      * @param bool $expected
+     * @covers ::user_must_wait_to_join
      */
     public function test_user_must_wait_to_join(bool $isadmin, bool $ismoderator, bool $haswaitingroom, bool $expected): void {
         $stub = $this->getMockBuilder(instance::class)
@@ -378,6 +381,7 @@ class instance_test extends advanced_testcase {
      * @param bool $isadmin
      * @param bool $ismoderator
      * @param bool $expected
+     * @covers ::does_current_user_count_towards_user_limit
      */
     public function test_does_current_user_count_towards_user_limit(
         bool $isadmin,
@@ -418,6 +422,7 @@ class instance_test extends advanced_testcase {
      * @param bool $isadmin
      * @param bool $ismoderator
      * @param bool $expectedmodpassword
+     * @covers ::get_current_user_password
      */
     public function test_get_current_user_password(bool $isadmin, bool $ismoderator, bool $expectedmodpassword): void {
         $stub = $this->getMockBuilder(instance::class)
@@ -462,6 +467,7 @@ class instance_test extends advanced_testcase {
      * @param bool $isrecorded
      * @param bool $showbuttons
      * @param bool $expected
+     * @covers ::allow_recording_start_stop
      */
     public function test_allow_recording_start_stop(
         bool $isrecorded,
