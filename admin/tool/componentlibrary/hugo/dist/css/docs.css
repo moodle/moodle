@@ -1088,6 +1088,21 @@
   text-decoration: none;
 }
 
+.path-admin-tool-componentlibrary #page.drawers {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.path-admin-tool-componentlibrary #page.drawers .main-inner {
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
+.path-admin-tool-componentlibrary #page.drawers div[role="main"] {
+  padding: 0;
+}
+
 .path-admin-tool-componentlibrary #page-header,
 .path-admin-tool-componentlibrary #maincontent,
 .path-admin-tool-componentlibrary .secondarynavigation {
