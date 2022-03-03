@@ -251,6 +251,7 @@ value to get the list of blocks that won't be displayed for a theme.
 * The parameter $modinfo of the get_data method in completion_info class has been deprecated and is not used anymore.
 * A new method, get_default_home_page(), has been added to moodlelib to get the default home page to display if current one is not
 defined or can't be applied.
+* Flat navigation classes have been marked for deprecation with the introduction of primary and secondary navigation concepts.
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
