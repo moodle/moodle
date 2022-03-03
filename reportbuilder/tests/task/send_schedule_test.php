@@ -109,14 +109,17 @@ class send_schedule_test extends advanced_testcase {
         // Send the schedule, catch emails in sink.
         $sink = $this->redirectEmails();
 
-        $this->expectOutputRegex("/^Sending schedule: My schedule\n" .
-            "  Sending to: " . fullname($userone) . "\n" .
-            "  Sending to: " . fullname($usertwo) . "\n" .
-            "Sending schedule complete\n/"
-        );
+        ob_start();
         $sendschedule = new send_schedule();
         $sendschedule->set_custom_data(['reportid' => $report->get('id'), 'scheduleid' => $schedule->get('id')]);
         $sendschedule->execute();
+        $output = ob_get_clean();
+
+        // Assert the output contains the following messages.
+        $this->assertStringContainsString("Sending schedule: My schedule", $output);
+        $this->assertStringContainsString("Sending to: " . fullname($userone), $output);
+        $this->assertStringContainsString("Sending to: " . fullname($usertwo), $output);
+        $this->assertStringContainsString("Sending schedule complete", $output);
 
         $messages = $sink->get_messages();
         $this->assertCount(2, $messages);
