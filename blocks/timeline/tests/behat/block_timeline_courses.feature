@@ -66,10 +66,10 @@ Feature: The timeline block allows users to see upcoming courses
     And I should see "Test feedback 2 closes" in the "Timeline" "block"
     And I should see "Test feedback 3 closes" in the "Timeline" "block"
     And I should see "Test assign 1 is due" in the "Timeline" "block"
-    And I should not see "More courses" in the "Timeline" "block"
-    And I should not see "Course 4" in the "Timeline" "block"
+    And I should see "More courses" in the "Timeline" "block"
+    And I should see "Course 4" in the "Timeline" "block"
     And I should not see "Test choice 2 closes" in the "Timeline" "block"
-    And I should not see "Test feedback 4 closes" in the "Timeline" "block"
+    And I should see "Test feedback 4 closes" in the "Timeline" "block"
 
   Scenario: Persistent sort filter
     Given I log in as "student1"
@@ -107,10 +107,10 @@ Feature: The timeline block allows users to see upcoming courses
     And I should see "Test feedback 2 closes" in the "Timeline" "block"
     And I should see "Test feedback 3 closes" in the "Timeline" "block"
     And I should see "Test assign 1 is due" in the "Timeline" "block"
-    And I should not see "More courses" in the "Timeline" "block"
-    And I should not see "Course 4" in the "Timeline" "block"
+    And I should see "More courses" in the "Timeline" "block"
+    And I should see "Course 4" in the "Timeline" "block"
     And I should not see "Test choice 2 closes" in the "Timeline" "block"
-    And I should not see "Test feedback 4 closes" in the "Timeline" "block"
+    And I should see "Test feedback 4 closes" in the "Timeline" "block"
 
   Scenario: Current filtering always applies in courses view
     Given I log in as "student1"
