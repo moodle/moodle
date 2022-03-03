@@ -680,7 +680,11 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      * @return int|null Memory used by Redis or null if we don't know
      */
     public function store_total_size(): ?int {
-        $details = $this->redis->info('MEMORY');
+        try {
+            $details = $this->redis->info('MEMORY');
+        } catch (\RedisException $e) {
+            return null;
+        }
         if (empty($details['used_memory'])) {
             return null;
         } else {
