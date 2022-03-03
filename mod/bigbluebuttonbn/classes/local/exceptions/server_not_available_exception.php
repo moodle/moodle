@@ -19,6 +19,9 @@ namespace mod_bigbluebuttonbn\local\exceptions;
 /**
  * Class server_not_available_exception
  *
+ * This kind of error cannot be recovered and should be displayed to the user
+ * signaling that there is an error in the configuration.
+ *
  * @package   mod_bigbluebuttonbn
  * @copyright 2010 onwards, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

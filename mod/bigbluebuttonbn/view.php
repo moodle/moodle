@@ -26,6 +26,7 @@
  */
 
 use mod_bigbluebuttonbn\instance;
+use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 use mod_bigbluebuttonbn\logger;
 use mod_bigbluebuttonbn\output\view_page;
@@ -78,6 +79,12 @@ $PAGE->set_heading($course->fullname);
 // Output starts.
 $renderer = $PAGE->get_renderer('mod_bigbluebuttonbn');
 
+try {
+    $renderedinfo = $renderer->render(new view_page($instance));
+} catch (server_not_available_exception $e) {
+    bigbluebutton_proxy::handle_server_not_available($instance);
+}
+
 echo $OUTPUT->header();
 
 // Validate if the user is in a role allowed to join.
@@ -92,7 +99,7 @@ if (!$instance->can_join() && $instance->get_type() != instance::TYPE_RECORDING_
     }
 }
 
-echo $renderer->render(new view_page($instance));
+echo $renderedinfo;
 
 // Output finishes.
 echo $OUTPUT->footer();

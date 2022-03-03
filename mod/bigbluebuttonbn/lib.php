@@ -30,9 +30,11 @@ use core_calendar\local\event\entities\action_interface;
 use mod_bigbluebuttonbn\completion\custom_completion;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\bigbluebutton;
+use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
 use mod_bigbluebuttonbn\local\helpers\files;
 use mod_bigbluebuttonbn\local\helpers\mod_helper;
 use mod_bigbluebuttonbn\local\helpers\reset;
+use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 use mod_bigbluebuttonbn\logger;
 use mod_bigbluebuttonbn\meeting;
 use mod_bigbluebuttonbn\recording;
@@ -482,8 +484,20 @@ function mod_bigbluebuttonbn_core_calendar_provide_event_action(
     $instance = instance::get_from_instanceid($bigbluebuttonbn->id);
     // Get if the room is available.
     $roomavailable = $instance->is_currently_open();
-    // Get if the user can join.
-    $meetinginfo = meeting::get_meeting_info_for_instance($instance);
+
+    $meetinginfo = null;
+    // Check first if the server can be contacted.
+    try {
+        if (empty(bigbluebutton_proxy::get_server_version())) {
+            // In this case we should already have debugging message printed.
+            return null;
+        }
+        // Get if the user can join.
+        $meetinginfo = meeting::get_meeting_info_for_instance($instance);
+    } catch (moodle_exception $e) {
+        debugging('Error - Cannot retrieve info from meeting ('.$instance->get_meeting_id().') ' . $e->getMessage());
+        return null;
+    }
     $usercanjoin = $meetinginfo->canjoin;
 
     // Check if the room is closed and the user has already joined this session or played the record.

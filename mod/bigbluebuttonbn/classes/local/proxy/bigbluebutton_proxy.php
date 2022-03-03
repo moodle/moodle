@@ -340,9 +340,14 @@ class bigbluebutton_proxy extends proxy_base {
      * @param instance $instance
      */
     public static function require_working_server(instance $instance): void {
+        $version = null;
         try {
-            self::get_server_version();
+            $version = self::get_server_version();
         } catch (server_not_available_exception $e) {
+            self::handle_server_not_available($instance);
+        }
+
+        if (empty($version)) {
             self::handle_server_not_available($instance);
         }
     }
@@ -384,7 +389,7 @@ class bigbluebutton_proxy extends proxy_base {
      */
     public static function get_server_not_available_url(instance $instance): string {
         if ($instance->is_admin()) {
-            return new moodle_url('/admin/settings.php', ['section' => 'modsettingbigbluebuttonbn']);
+            return new moodle_url('/admin/settings.php', ['section' => 'mod_bigbluebuttonbn_general']);
         } else if ($instance->is_moderator()) {
             return new moodle_url('/course/view.php', ['id' => $instance->get_course_id()]);
         } else {
