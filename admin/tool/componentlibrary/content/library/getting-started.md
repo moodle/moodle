@@ -13,7 +13,7 @@ weight: 1
 </style>
 <div class="d-flex">
   <div class="w-50 ml-auto mr-auto">
-{{< image "logo.png" "The Moodle logo">}}
+{{< image "logo.png" "The Moodle logo" "img-fluid">}}
 </div>
 </div>
 
