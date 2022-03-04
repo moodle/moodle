@@ -113,6 +113,13 @@ M.course_dndupload = {
                 self.sectionRefreshed.bind(self)
             );
         });
+        document.addEventListener('scroll', function() {
+            sections.each(function(el) {
+                if (el.hasClass('dndupload-dropzone')) {
+                    self.rePositionPreviewInfoElement(el);
+                }
+            }, this);
+        }, true);
     },
 
     /**
@@ -296,6 +303,24 @@ M.course_dndupload = {
     },
 
     /**
+     * Check if the event includes only data of the Files type
+     *
+     * Chrome drag page images as files. To differentiate a real file from a page
+     * image we need to check if all the dataTransfers types are files.
+     *
+     * @param {Event} e the event details
+     * @return true if the data types contains only Files related type
+     */
+    typesIncludesFilesOnly: function(e) {
+        return e._event.dataTransfer.types.every(function(currentType) {
+            return (currentType.toLowerCase() != 'text/uri-list'
+                && currentType.toLowerCase() != 'text/html'
+                && currentType.toLowerCase() != 'text/plain'
+            );
+        });
+    },
+
+    /**
      * Look through the event data, checking it against the registered data types
      * (in order of priority) and return details of the first matching data type
      * @param e the event details
@@ -319,7 +344,7 @@ M.course_dndupload = {
         }
 
         // Check for files first.
-        if (this.types_includes(e, 'Files')) {
+        if (this.types_includes(e, 'Files') && this.typesIncludesFilesOnly(e)) {
             if (e.type != 'drop' || e._event.dataTransfer.files.length != 0) {
                 if (this.handlers.filehandlers.length == 0) {
                     return false; // No available file handlers - ignore this drag.
@@ -397,7 +422,7 @@ M.course_dndupload = {
             }
         }
 
-        this.show_preview_element(section, type);
+        this.showPreviewInfoElement(section);
 
         return false;
     },
@@ -549,8 +574,9 @@ M.course_dndupload = {
      * Hide any visible dndupload-preview elements on the page
      */
     hide_preview_element: function() {
-        this.Y.all('li.dndupload-preview').addClass('dndupload-hidden');
+        this.Y.all('.dndupload-preview-wrapper').addClass('dndupload-hidden');
         this.Y.all('.dndupload-over').removeClass('dndupload-over');
+        this.Y.all('.dndupload-dropzone').removeClass('dndupload-dropzone');
     },
 
     /**
@@ -558,6 +584,7 @@ M.course_dndupload = {
      * the correct message
      * @param section the YUI node representing the selected course section
      * @param type the details of the data type detected in the drag (including the message to display)
+     * @deprecated Since Moodle 4.0. Please use showPreviewInfoElement() instead.
      */
     show_preview_element: function(section, type) {
         this.hide_preview_element();
@@ -570,36 +597,89 @@ M.course_dndupload = {
     },
 
     /**
+     * Unhide the preview information element for the given section and set it to display
+     * the correct message
+     * @param {Object} section the YUI node representing the selected course section
+     */
+    showPreviewInfoElement: function(section) {
+        this.hide_preview_element();
+        section.one('.dndupload-preview-wrapper').removeClass('dndupload-hidden');
+        section.addClass('dndupload-dropzone');
+        this.rePositionPreviewInfoElement(section);
+    },
+
+    /**
      * Add the preview element to a course section. Note: this needs to be done before 'addEventListener'
      * is called, otherwise Firefox will ignore events generated when the mouse is over the preview
      * element (instead of passing them up to the parent element)
-     * @param section the YUI node representing the selected course section
+     * @param {Object} section the YUI node representing the selected course section
      */
     add_preview_element: function(section) {
-        var modsel = this.get_mods_element(section);
-        var preview = {
-            li: document.createElement('li'),
+        const modsEl = this.get_mods_element(section);
+
+        // Create overlay div.
+        const overlay = document.createElement('div');
+        overlay.className = 'dndupload-preview-overlay';
+
+        modsEl.get('parentNode').appendChild(overlay);
+
+        // Create preview div.
+        const preview = {
+            wrapper: document.createElement('div'),
             div: document.createElement('div'),
-            icon: document.createElement('img'),
-            namespan: document.createElement('span')
+            iconSpan: document.createElement('span'),
+            nameSpan: document.createElement('span')
         };
 
-        preview.li.className = 'dndupload-preview dndupload-hidden';
-
-        preview.div.className = 'mod-indent';
-        preview.li.appendChild(preview.div);
-
-        preview.icon.src = M.util.image_url('t/addfile');
-        preview.icon.className = 'icon';
-        preview.div.appendChild(preview.icon);
-
+        preview.wrapper.className = 'dndupload-preview-wrapper dndupload-hidden';
+        preview.wrapper.appendChild(preview.div);
+        preview.div.className = 'dndupload-preview';
         preview.div.appendChild(document.createTextNode(' '));
+        preview.iconSpan.className = 'fa fa-arrow-circle-o-down';
+        preview.nameSpan.className = 'instancename';
+        preview.nameSpan.innerHTML = M.util.get_string('addfilehere', 'moodle');
+        preview.div.appendChild(preview.iconSpan);
+        preview.div.appendChild(preview.nameSpan);
 
-        preview.namespan.className = 'instancename';
-        preview.namespan.innerHTML = M.util.get_string('addfilehere', 'moodle');
-        preview.div.appendChild(preview.namespan);
+        modsEl.get('parentNode').appendChild(preview.wrapper);
+    },
 
-        modsel.appendChild(preview.li);
+    /**
+     * Re-position the preview information element by calculating the section position.
+     *
+     * @param {Object} section the YUI node representing the selected course section
+     */
+    rePositionPreviewInfoElement: function(section) {
+        const sectionElement = document.getElementById(section.get('id'));
+        const rect = sectionElement.getBoundingClientRect();
+        const sectionHeight = parseInt(window.getComputedStyle(sectionElement).height, 10);
+        const sectionOffset = rect.top;
+        const preview = sectionElement.querySelector('.dndupload-preview-wrapper');
+        const previewHeight = parseInt(window.getComputedStyle(preview).height, 10) +
+            (2 * parseInt(window.getComputedStyle(preview).padding, 10));
+        let top, bottom;
+        if (sectionOffset < 0) {
+            if (sectionHeight + sectionOffset >= previewHeight) {
+                // We have enough space here, just stick the preview to the top.
+                let offSetTop = 0 - sectionOffset;
+                const navBar = document.querySelector('nav.navbar.fixed-top');
+                if (navBar) {
+                    offSetTop = offSetTop + navBar.offsetHeight;
+                }
+                top = offSetTop + 'px';
+                bottom = 'unset';
+            } else {
+                // We do not have enough space here, just stick the preview to the bottom.
+                top = 'unset';
+                bottom = 0;
+            }
+        } else {
+            top = 0;
+            bottom = 'unset';
+        }
+
+        preview.style.top = top
+        preview.style.bottom = bottom;
     },
 
     /**
