@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a question through the interactive
- * behaviour.
- *
- * @package   qtype_match
- * @copyright 2010 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_match;
 
+use question_hint_with_parts;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,15 +28,16 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * Unit tests for the matching question type.
  *
+ * @package   qtype_match
  * @copyright 2010 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     public function test_deferred_feedback_unanswered() {
 
         // Create a matching question.
-        $m = test_question_maker::make_question('match');
+        $m = \test_question_maker::make_question('match');
         $m->shufflestems = false;
         $this->start_attempt_at_question($m, 'deferredfeedback', 4);
 
@@ -98,7 +94,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_deferred_feedback_partial_answer() {
 
         // Create a matching question.
-        $m = test_question_maker::make_question('match');
+        $m = \test_question_maker::make_question('match');
         $m->shufflestems = false;
         $this->start_attempt_at_question($m, 'deferredfeedback', 4);
 
@@ -155,7 +151,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_correct_no_submit() {
 
         // Create a matching question.
-        $m = test_question_maker::make_question('match');
+        $m = \test_question_maker::make_question('match');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -209,7 +205,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_partial_no_submit() {
 
         // Create a matching question.
-        $m = test_question_maker::make_question('match');
+        $m = \test_question_maker::make_question('match');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -263,7 +259,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_with_invalid() {
 
         // Create a matching question.
-        $m = test_question_maker::make_question('match');
+        $m = \test_question_maker::make_question('match');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -333,7 +329,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_match_with_tricky_html_choices() {
 
         // Create a matching question.
-        $m = test_question_maker::make_question('match');
+        $m = \test_question_maker::make_question('match');
         $m->stems = array(
             1 => '(1, 2]',
             2 => '[1, 2]',
@@ -380,14 +376,14 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
         $this->displayoptions->history = 1;
         $this->check_current_output(
-                new question_pattern_expectation('/' .
+                new \question_pattern_expectation('/' .
                         preg_quote(htmlspecialchars($rightresponsesummary), '/') . '/'));
     }
 
     public function test_match_clear_wrong() {
 
         // Create a matching question.
-        $m = test_question_maker::make_question('match');
+        $m = \test_question_maker::make_question('match');
         $m->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, true),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),

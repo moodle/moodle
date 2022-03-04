@@ -14,15 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains overall tests of multianswer questions.
- *
- * @package    qtype
- * @subpackage multianswer
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_multianswer;
 
+use question_display_options;
+use question_hint_with_parts;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,20 +29,21 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * Unit tests for the multianswer question type.
  *
+ * @package    qtype_multianswer
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     protected function get_contains_subq_status(question_state $state) {
-        return new question_pattern_expectation('~' .
+        return new \question_pattern_expectation('~' .
                 preg_quote($state->default_string(true), '~') . '<br />~');
     }
 
     public function test_deferred_feedback() {
 
         // Create a multianswer question.
-        $q = test_question_maker::make_question('multianswer', 'fourmc');
+        $q = \test_question_maker::make_question('multianswer', 'fourmc');
         $this->start_attempt_at_question($q, 'deferredfeedback', 4);
 
         // Check the initial state.
@@ -97,7 +94,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
         // Tests the situation found in MDL-35370.
 
         // Create a multianswer question with one numerical subquestion, right answer zero.
-        $q = test_question_maker::make_question('multianswer', 'numericalzero');
+        $q = \test_question_maker::make_question('multianswer', 'numericalzero');
         $this->start_attempt_at_question($q, 'deferredfeedback', 1);
 
         // Check the initial state.
@@ -116,7 +113,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_marked_out_of_summary(),
-                new question_pattern_expectation('~<input[^>]* class="[^"]*incorrect[^"]*" [^>]*/>~'),
+                new \question_pattern_expectation('~<input[^>]* class="[^"]*incorrect[^"]*" [^>]*/>~'),
                 $this->get_contains_subq_status(question_state::$gaveup),
                 $this->get_does_not_contain_validation_error_expectation());
     }
@@ -125,7 +122,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
         // Tests the situation found in MDL-35370.
 
         // Create a multianswer question with one numerical subquestion, right answer zero.
-        $q = test_question_maker::make_question('multianswer', 'numericalzero');
+        $q = \test_question_maker::make_question('multianswer', 'numericalzero');
         $this->start_attempt_at_question($q, 'deferredfeedback', 1);
 
         // Check the initial state.
@@ -164,7 +161,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
         // Tests the situation found in MDL-35370.
 
         // Create a multianswer question with one numerical subquestion, right answer zero.
-        $q = test_question_maker::make_question('multianswer', 'numericalzero');
+        $q = \test_question_maker::make_question('multianswer', 'numericalzero');
         $this->start_attempt_at_question($q, 'deferredfeedback', 1);
 
         // Check the initial state.
@@ -202,7 +199,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
     public function test_interactive_feedback() {
 
         // Create a multianswer question.
-        $q = test_question_maker::make_question('multianswer', 'fourmc');
+        $q = \test_question_maker::make_question('multianswer', 'fourmc');
         $q->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, true),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -330,7 +327,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
     public function test_interactive_partial_response_does_not_reveal_answer() {
 
         // Create a multianswer question.
-        $q = test_question_maker::make_question('multianswer', 'fourmc');
+        $q = \test_question_maker::make_question('multianswer', 'fourmc');
         $q->hints = array(
                 new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, true),
                 new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -388,7 +385,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
     public function test_interactivecountback_feedback() {
 
         // Create a multianswer question.
-        $q = test_question_maker::make_question('multianswer', 'fourmc');
+        $q = \test_question_maker::make_question('multianswer', 'fourmc');
         $q->hints = array(
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, true, true),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -426,7 +423,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new question_pattern_expectation('/Tries remaining: 2/'),
+                new \question_pattern_expectation('/Tries remaining: 2/'),
                 $this->get_contains_hint_expectation('This is the first hint.'));
         $this->check_output_contains_selectoptions(
                 $this->get_contains_select_expectation('sub1_answer', $choices, 1, false),
@@ -469,7 +466,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_does_not_contain_try_again_button_expectation(),
                 $this->get_contains_correct_expectation(),
-                new question_no_pattern_expectation('/class="control\b[^"]*\bpartiallycorrect"/'));
+                new \question_no_pattern_expectation('/class="control\b[^"]*\bpartiallycorrect"/'));
         $this->check_output_contains_selectoptions(
                 $this->get_contains_select_expectation('sub1_answer', $choices, '0', false),
                 $this->get_contains_select_expectation('sub2_answer', $choices, '1', false),
@@ -480,7 +477,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
     public function test_deferred_feedback_multiple() {
 
         // Create a multianswer question.
-        $q = test_question_maker::make_question('multianswer', 'multiple');
+        $q = \test_question_maker::make_question('multianswer', 'multiple');
         $this->start_attempt_at_question($q, 'deferredfeedback', 2);
 
         // Check the initial state.
