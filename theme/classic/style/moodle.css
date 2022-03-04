@@ -12036,13 +12036,19 @@ input[disabled] {
     width: 100%; }
   .breadcrumb:not(:empty) {
     width: 100%;
-    border: 2px solid #e9ecef;
-    padding: 0.25rem;
+    flex-wrap: nowrap;
     margin-bottom: 0.5rem; }
     .breadcrumb:not(:empty) .breadcrumb-item {
       padding-top: 0.3333333333rem;
       padding-bottom: 0.3333333333rem;
-      display: inline-block; }
+      display: inline-flex;
+      overflow: hidden;
+      flex-grow: 1; }
+    .breadcrumb:not(:empty) .breadcrumb-item a,
+    .breadcrumb:not(:empty) .breadcrumb-item span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap; }
   .mform {
     width: 100%;
     padding-right: 15px;
