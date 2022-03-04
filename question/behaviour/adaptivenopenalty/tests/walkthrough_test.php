@@ -14,16 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests that walks a question through the adaptive (no penalties)k
- * behaviour.
- *
- * @package    qbehaviour
- * @subpackage adaptivenopenalty
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qbehaviour_adaptivenopenalty;
 
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,31 +28,32 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 /**
  * Unit tests for the adaptive (no penalties) behaviour.
  *
+ * @package    qbehaviour_adaptivenopenalty
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     protected function get_does_not_contain_gradingdetails_expectation() {
-        return new question_no_pattern_expectation('/class="gradingdetails"/');
+        return new \question_no_pattern_expectation('/class="gradingdetails"/');
     }
 
     protected function get_does_not_contain_penalty_info_expectation() {
         $penaltyinfo = get_string('gradingdetailspenalty', 'qbehaviour_adaptive', 'XXXXX');
         $penaltypattern = '/'.str_replace('XXXXX', '\\w*', preg_quote($penaltyinfo, '/')).'/';
-        return new question_no_pattern_expectation($penaltypattern);
+        return new \question_no_pattern_expectation($penaltypattern);
     }
 
     protected function get_does_not_contain_total_penalty_expectation() {
         $penaltyinfo = get_string('gradingdetailspenaltytotal', 'qbehaviour_adaptive', 'XXXXX');
         $penaltypattern = '/'.str_replace('XXXXX', '\\w*', preg_quote($penaltyinfo, '/')).'/';
-        return new question_no_pattern_expectation($penaltypattern);
+        return new \question_no_pattern_expectation($penaltypattern);
     }
 
     public function test_multichoice() {
 
         // Create a multiple choice, single response question.
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $mc->penalty = 0.3333333;
         $this->start_attempt_at_question($mc, 'adaptivenopenalty', 3);
 
@@ -147,7 +141,7 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
         $this->check_current_mark(1);
         $this->check_current_output(
                 $this->get_contains_mark_summary(1),
-                new question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
+                new \question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
 
         // Now change the correct answer to the question, and regrade.
         $mc->answers[13]->fraction = -0.33333333;
@@ -169,7 +163,7 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
     public function test_multichoice2() {
 
         // Create a multiple choice, multiple response question.
-        $mc = test_question_maker::make_a_multichoice_multi_question();
+        $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->penalty = 0.3333333;
         $mc->shuffleanswers = 0;
         $this->start_attempt_at_question($mc, 'adaptivenopenalty', 2);
@@ -220,7 +214,7 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
     public function test_numerical_invalid() {
 
         // Create a numerical question
-        $numq = test_question_maker::make_question('numerical', 'pi');
+        $numq = \test_question_maker::make_question('numerical', 'pi');
         $numq->penalty = 0.1;
         $this->start_attempt_at_question($numq, 'adaptivenopenalty');
 
