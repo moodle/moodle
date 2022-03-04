@@ -167,22 +167,19 @@ class edit_category_form extends moodleform {
         $mform->addHelpButton('grade_item_rescalegrades', 'modgradecategoryrescalegrades', 'grades');
         $mform->disabledIf('grade_item_rescalegrades', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
 
-        $mform->addElement('text', 'grade_item_grademax', get_string('grademax', 'grades'));
-        $mform->setType('grade_item_grademax', PARAM_RAW);
+        $mform->addElement('float', 'grade_item_grademax', get_string('grademax', 'grades'));
         $mform->addHelpButton('grade_item_grademax', 'grademax', 'grades');
         $mform->disabledIf('grade_item_grademax', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
         $mform->disabledIf('grade_item_grademax', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
 
         if ((bool) get_config('moodle', 'grade_report_showmin')) {
-            $mform->addElement('text', 'grade_item_grademin', get_string('grademin', 'grades'));
-            $mform->setType('grade_item_grademin', PARAM_RAW);
+            $mform->addElement('float', 'grade_item_grademin', get_string('grademin', 'grades'));
             $mform->addHelpButton('grade_item_grademin', 'grademin', 'grades');
             $mform->disabledIf('grade_item_grademin', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
             $mform->disabledIf('grade_item_grademin', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
         }
 
-        $mform->addElement('text', 'grade_item_gradepass', get_string('gradepass', 'grades'));
-        $mform->setType('grade_item_gradepass', PARAM_RAW);
+        $mform->addElement('float', 'grade_item_gradepass', get_string('gradepass', 'grades'));
         $mform->addHelpButton('grade_item_gradepass', 'gradepass', 'grades');
         $mform->disabledIf('grade_item_gradepass', 'grade_item_gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('grade_item_gradepass', 'grade_item_gradetype', 'eq', GRADE_TYPE_TEXT);
@@ -247,9 +244,8 @@ class edit_category_form extends moodleform {
         $mform->addElement('advcheckbox', 'grade_item_weightoverride', get_string('adjustedweight', 'grades'));
         $mform->addHelpButton('grade_item_weightoverride', 'weightoverride', 'grades');
 
-        $mform->addElement('text', 'grade_item_aggregationcoef2', get_string('weight', 'grades'));
+        $mform->addElement('float', 'grade_item_aggregationcoef2', get_string('weight', 'grades'));
         $mform->addHelpButton('grade_item_aggregationcoef2', 'weight', 'grades');
-        $mform->setType('grade_item_aggregationcoef2', PARAM_RAW);
         $mform->disabledIf('grade_item_aggregationcoef2', 'grade_item_weightoverride');
 
         $options = array();
@@ -549,19 +545,28 @@ class edit_category_form extends moodleform {
                 $errors['grade_item_scaleid'] = get_string('missingscale', 'grades');
             }
         }
-        if (array_key_exists('grade_item_grademin', $data) and array_key_exists('grade_item_grademax', $data)) {
-            if (($data['grade_item_grademax'] != 0 OR $data['grade_item_grademin'] != 0) AND
-                ($data['grade_item_grademax'] == $data['grade_item_grademin'] OR
-                 $data['grade_item_grademax'] < $data['grade_item_grademin'])) {
-                 $errors['grade_item_grademin'] = get_string('incorrectminmax', 'grades');
-                 $errors['grade_item_grademax'] = get_string('incorrectminmax', 'grades');
-             }
+
+        // We need to make all the validations related with grademax and grademin
+        // with them being correct floats, keeping the originals unmodified for
+        // later validations / showing the form back...
+        // TODO: Note that once MDL-73994 is fixed we'll have to re-visit this and
+        // adapt the code below to the new values arriving here, without forgetting
+        // the special case of empties and nulls.
+        $grademax = isset($data['grade_item_grademax']) ? unformat_float($data['grade_item_grademax']) : null;
+        $grademin = isset($data['grade_item_grademin']) ? unformat_float($data['grade_item_grademin']) : null;
+
+        if (!is_null($grademin) and !is_null($grademax)) {
+            if (($grademax != 0 OR $grademin != 0) AND
+                    ($grademax == $grademin OR $grademax < $grademin)) {
+                $errors['grade_item_grademin'] = get_string('incorrectminmax', 'grades');
+                $errors['grade_item_grademax'] = get_string('incorrectminmax', 'grades');
+            }
         }
 
         if ($data['id'] && $gradeitem->has_overridden_grades()) {
             if ($gradeitem->gradetype == GRADE_TYPE_VALUE) {
-                if (grade_floats_different($data['grade_item_grademin'], $gradeitem->grademin) ||
-                    grade_floats_different($data['grade_item_grademax'], $gradeitem->grademax)) {
+                if (grade_floats_different($grademin, $gradeitem->grademin) ||
+                    grade_floats_different($grademax, $gradeitem->grademax)) {
                     if (empty($data['grade_item_rescalegrades'])) {
                         $errors['grade_item_rescalegrades'] = get_string('mustchooserescaleyesorno', 'grades');
                     }
@@ -571,5 +576,3 @@ class edit_category_form extends moodleform {
         return $errors;
     }
 }
-
-

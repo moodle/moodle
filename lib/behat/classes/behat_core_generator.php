@@ -362,6 +362,22 @@ class behat_core_generator extends behat_generator_base {
             $data['categoryid'] = $cat->id;
         }
 
+        // We need to ensure that all these attributes coming from data are not-localised floats.
+        $attrs = [
+            'grademax',
+            'grademin',
+            'gradepass',
+            'multfactor',
+            'plusfactor',
+            'aggregationcoef',
+            'aggregationcoef2',
+        ];
+        foreach ($attrs as $attr) {
+            if (array_key_exists($attr, $data)) {
+                $data[$attr] = unformat_float($data[$attr]);
+            }
+        }
+
         return $data;
     }
 

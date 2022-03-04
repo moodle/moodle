@@ -2,7 +2,7 @@
 Feature: In a lesson activity, if custom scoring is not enabled, student should see
   some informations at the end of lesson: questions answered, correct answers, grade, score
 
-  Scenario: Informations at end of lesson if custom scoring not enabled
+  Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
@@ -18,11 +18,10 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
       | activity   | name             | intro                   | course | section | idnumber  |
       | lesson     | Test lesson name | Test lesson description | C1     | 1       | lesson1   |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
-    And I navigate to "Settings" in current page administration
+    And I am on the "Test lesson name" "lesson activity editing" page
     And I set the following fields to these values:
-      | Custom scoring | No |
+      | Maximum grade  | 75 |
+      | Custom scoring | No    |
     And I press "Save and return to course"
     And I follow "Test lesson name"
     And I follow "Add a content page"
@@ -47,18 +46,40 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Test lesson name"
-    Then I should see "First page contents"
-    And I press "Next page"
+
+  Scenario: Informations at end of lesson if custom scoring not enabled
+    Given I am on "Course 1" course homepage
+    And I follow "Test lesson name"
+    And I should see "First page contents"
+    When I press "Next page"
     And I should see "1 + 1?"
     And I set the following fields to these values:
       | Your answer | 1 |
     And I press "Submit"
     And I should see "Incorrect answer"
     And I press "Continue"
-    And I should see "Congratulations - end of lesson reached"
+    Then I should see "Congratulations - end of lesson reached"
     And I should see "Number of questions answered: 1"
     And I should see "Number of correct answers: 0"
     And I should see "Your score is 0 (out of 1)."
-    And I should see "Your current grade is 0.0 out of 100"
+    And I should see "Your current grade is 0.0 out of 75"
+
+  Scenario: Informations at end of lesson if custom scoring not enabled with custom decimal separator
+    Given the following "language customisations" exist:
+      | component       | stringid | value |
+      | core_langconfig | decsep   | #     |
+    And I am on "Course 1" course homepage
+    And I follow "Test lesson name"
+    And I should see "First page contents"
+    When I press "Next page"
+    And I should see "1 + 1?"
+    And I set the following fields to these values:
+      | Your answer | 1 |
+    And I press "Submit"
+    And I should see "Incorrect answer"
+    And I press "Continue"
+    Then I should see "Congratulations - end of lesson reached"
+    And I should see "Number of questions answered: 1"
+    And I should see "Number of correct answers: 0"
+    And I should see "Your score is 0 (out of 1)."
+    And I should see "Your current grade is 0#0 out of 75"

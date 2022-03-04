@@ -199,6 +199,30 @@ Feature: We can set the grade to pass value
     And I follow "Settings"
     And the field "Grade to pass" matches value "80"
 
+  Scenario: Set a valid grade to pass for lesson activity with custom decimal separator
+    Given the following "activities" exist:
+      | activity   | name          | intro       | course | section | idnumber  |
+      | lesson     | Test Lesson 1 | Test        | C1     | 1       | lesson1   |
+    And the following "language customisations" exist:
+      | component       | stringid | value |
+      | core_langconfig | decsep   | #     |
+    And I am on "Course 1" course homepage with editing mode on
+    And I follow "Test Lesson 1"
+    And I navigate to "Settings" in current page administration
+    And I set the following fields to these values:
+      | Grade to pass | 90#50 |
+    And I press "Save and return to course"
+    And I navigate to "View > Grader report" in the course gradebook
+    And I click on "Edit  lesson Test Lesson 1" "link"
+    And I expand all fieldsets
+    Then the field "Grade to pass" matches value "90#50"
+    And I set the field "Grade to pass" to "80"
+    And I press "Save changes"
+    And I am on "Course 1" course homepage
+    And I follow "Test Lesson 1"
+    And I follow "Settings"
+    And the field "Grade to pass" matches value "80#00"
+
   Scenario: Set a valid grade to pass for database activity
     Given the following "activities" exist:
       | activity   | name            | intro       | course | section | idnumber  |

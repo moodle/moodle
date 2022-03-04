@@ -2,6 +2,16 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 4.0 ===
+* To better detect wrong floats (like, for example, unformatted, using local-dependent separators ones) a number of
+  gradebook functions now have stricter float type checking. All them will require now the "float" being passed to be
+  a correct float value (numeric or string). Usually, that's achieved by using unformat_float() or
+  PARAM_LOCALISEDFLOAT for all the user-entered grades before any processing on them. Functions affected are:
+    - grade_format_gradevalue(), $value param (keeping it as optional/nullable).
+    - grade_format_gradevalue_real(), $value param (keeping it as optional/nullable).
+    - grade_format_gradevalue_percentage(), $value param (keeping it as optional/nullable).
+    - grade_format_gradevalue_letter(), $value param (keeping it as optional/nullable).
+    - grade_floats_different(), $f1 and $f2 params (keeping them as optional/nullable).
+    - grade_floats_equal(), $f1 and $f2 params (keeping them as optional/nullable).
 * The method action_menu->set_alignment() has been deprecated, please use action_menu->set_menu_left if you need a dropdown
   to align to the left of the dropdown button.
 * The $OUTPUT->should_display_main_logo() function has been deprecated and should no longer be used.

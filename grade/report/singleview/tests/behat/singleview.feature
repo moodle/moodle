@@ -117,6 +117,24 @@ Feature: We can use Single view
     And I press "Save"
     Then I should see "Grades were set for 6 items"
 
+  Scenario: I can bulk update grades with custom decimal separator
+    Given the following "language customisations" exist:
+      | component       | stringid | value |
+      | core_langconfig | decsep   | #     |
+    And I follow "Single view for Ann, Jill, Grainne, Beauchamp"
+    And I should see "Gronya,Beecham"
+    When I set the field "For" to "All grades"
+    And I set the field "Insert value" to "1#25"
+    And I set the field "Perform bulk insert" to "1"
+    And I press "Save"
+    Then I should see "Grades were set for 6 items"
+    # Custome scale, cast to int
+    And the field "Grade for new grade item 1" matches value "Disappointing"
+    # Value grade, float with custom decsep.
+    And the field "Grade for Test assignment one" matches value "1#25"
+    # Numerical scale, cast to int, showing as float with custom decsep.
+    And the field "Grade for Test grade item" matches value "1#00"
+
   Scenario: Navigation works in the Single view.
     Given I follow "Single view for Ann, Jill, Grainne, Beauchamp"
     Then I should see "Gronya,Beecham"
