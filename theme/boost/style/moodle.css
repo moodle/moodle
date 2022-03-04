@@ -12592,7 +12592,9 @@ body.dragging .dragging {
   margin: 0; }
 
 .path-admin .header-maxwidth,
-.path-admin .secondary-navigation {
+.path-admin .secondary-navigation,
+.format-site .header-maxwidth,
+.format-site .secondary-navigation {
   max-width: none; }
 
 .plugincheckwrapper {
