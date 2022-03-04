@@ -14,16 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains the unittests for core scss.
- *
- * @package   core
- * @category  phpunit
- * @copyright 2016 onwards Ankit Agarwal
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
-defined('MOODLE_INTERNAL') || die();
+use core_scss;
 
 /**
  * This file contains the unittests for core scss.
@@ -33,14 +26,14 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 onwards Ankit Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_scss_testcase extends advanced_testcase {
+class scss_test extends \advanced_testcase {
 
     /**
      * Data provider for is_valid_file
      * @return array
      */
     public function is_valid_file_provider() {
-        $themedirectory = core_component::get_component_directory('theme_boost');
+        $themedirectory = \core_component::get_component_directory('theme_boost');
         $realroot = realpath($themedirectory);
         return [
             "File import 1" => [
@@ -130,7 +123,7 @@ CSS
      */
     public function test_is_valid_file($path, $valid) {
         $scss = new \core_scss();
-        $pathvalid = phpunit_util::call_internal_method($scss, 'is_valid_file', [$path], \core_scss::class);
+        $pathvalid = \phpunit_util::call_internal_method($scss, 'is_valid_file', [$path], \core_scss::class);
         $this->assertSame($valid, $pathvalid);
     }
 
