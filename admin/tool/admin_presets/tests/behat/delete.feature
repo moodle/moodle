@@ -14,8 +14,10 @@ Feature: Admin preset deletion
     And I should see "Custom preset"
     When I open the action menu in "Custom preset" "table_row"
     And I should see "Delete"
+    And I press the escape key
     And I open the action menu in "Full" "table_row"
     Then I should not see "Delete"
+    And I press the escape key
     And I open the action menu in "Starter" "table_row"
     And I should not see "Delete"
 
