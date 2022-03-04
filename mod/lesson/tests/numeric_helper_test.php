@@ -148,9 +148,7 @@ class mod_lesson_numeric_type_helper_test extends advanced_testcase {
      * It is not possible to directly change the result of get_string in
      * a unit test. Instead, we create a language pack for language 'xx' in
      * dataroot and make langconfig.php with the string we need to change.
-     * The default example separator used here is 'X'; on PHP 5.3 and before this
-     * must be a single byte character due to PHP bug/limitation in
-     * number_format, so you can't use UTF-8 characters.
+     * The default example separator used here is 'X'.
      *
      * @param string $decsep Separator character. Defaults to `'X'`.
      */

@@ -109,7 +109,7 @@ $mform = new edit_item_form(null, array('current'=>$item, 'gpr'=>$gpr));
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
-} else if ($data = $mform->get_data(false)) {
+} else if ($data = $mform->get_data()) {
 
     // This is a new item, and the category chosen is different than the default category.
     if (empty($grade_item->id) && isset($data->parentcategory) && $parent_category->id != $data->parentcategory) {

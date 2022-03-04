@@ -42,6 +42,19 @@ Feature: Preview a quiz as a teacher
     And "Review" "link" in the "Preview" "table_row" should be visible
 
   @javascript
+  Scenario: Review the quiz attempt with custom decimal separator
+    Given the following "language customisations" exist:
+      | component       | stringid | value |
+      | core_langconfig | decsep   | #     |
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
+    And I follow "Review"
+    Then I should see "1#00/4#00"
+    And I should see "25#00 out of 100#00"
+    And I should see "Mark 1#00 out of 1#00"
+    And I follow "Finish review"
+    And "Review" "link" in the "Preview" "table_row" should be visible
+
+  @javascript
   Scenario: Preview the quiz
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
     When I press "Preview quiz now"

@@ -93,6 +93,10 @@ class mod_quiz_generator extends testing_module_generator {
             }
         }
 
+        if (isset($record->gradepass)) {
+            $record->gradepass = unformat_float($record->gradepass);
+        }
+
         return parent::create_instance($record, (array)$options);
     }
 
