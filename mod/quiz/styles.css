@@ -900,6 +900,7 @@ table.quizreviewsummary td.cell {
 table#categoryquestions {
     width: 100%;
     table-layout: fixed;
+    overflow-x: visible;
 }
 
 #categoryquestions .iconcol {
