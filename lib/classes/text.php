@@ -158,21 +158,13 @@ class core_text {
         }
 
         if ($toCS === 'ascii') {
-            // Try to normalize the conversion a bit.
-            $text = self::specialtoascii($text, $fromCS);
+            // Try to normalize the conversion a bit if the target is ascii.
+            return self::specialtoascii($text, $fromCS);
         }
 
         // Prevent any error notices, do not use //IGNORE so that we get
         // consistent result if iconv fails.
-        $result = @iconv($fromCS, $toCS.'//TRANSLIT', $text);
-
-        if ($result === false or $result === '') {
-            // Note: iconv is prone to return empty string when invalid char encountered, or false if encoding unsupported.
-            $oldlevel = error_reporting(E_PARSE);
-            error_reporting($oldlevel);
-        }
-
-        return $result;
+        return @iconv($fromCS, $toCS.'//TRANSLIT', $text);
     }
 
     /**
@@ -341,10 +333,14 @@ class core_text {
         $charset = self::parse_charset($charset);
         $oldlevel = error_reporting(E_PARSE);
 
-        if ($charset == 'utf-8') {
-            $text = transliterator_transliterate('Any-Latin; Latin-ASCII', (string) $text);
+        // Always convert to utf-8, so transliteration can do its work always.
+        if ($charset !== 'utf-8') {
+            $text = iconv($charset, 'utf-8'.'//TRANSLIT', $text);
         }
-        $result = iconv($charset, 'ASCII//TRANSLIT//IGNORE', (string) $text);
+        $text = transliterator_transliterate('Any-Latin; Latin-ASCII', (string) $text);
+
+        // Still, apply iconv because some chars are not handled by transliterate.
+        $result = iconv('utf-8', 'ASCII//TRANSLIT//IGNORE', (string) $text);
 
         error_reporting($oldlevel);
         return $result;
