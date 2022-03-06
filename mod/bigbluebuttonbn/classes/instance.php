@@ -592,10 +592,10 @@ EOF;
      * @return bool
      */
     public function can_join(): bool {
-        global $USER;
         $groupid = $this->get_group_id();
         $context = $this->get_context();
-        $inrightgroup = !$groupid || $this->user_has_group_access($USER, $groupid);
+        $inrightgroup =
+            groups_group_visible($groupid, $this->get_course(), $this->get_cm());
         $hascapability = has_capability('moodle/category:manage', $context)
             || (has_capability('mod/bigbluebuttonbn:join', $context) && $inrightgroup);
         $canjoin = $this->get_type() != self::TYPE_RECORDING_ONLY && $hascapability; // Recording only cannot be joined ever.
