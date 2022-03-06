@@ -55,6 +55,7 @@ class text_test extends advanced_testcase {
      * @covers ::convert()
      */
     public function test_convert() {
+        $this->assertSame('', core_text::convert('', 'utf-8', 'utf-8'));
         $utf8 = "Žluťoučký koníček";
         $iso2 = pack("H*", "ae6c75bb6f75e86bfd206b6f6eede8656b");
         $win  = pack("H*", "8e6c759d6f75e86bfd206b6f6eede8656b");
@@ -367,8 +368,20 @@ class text_test extends advanced_testcase {
     public function test_specialtoascii() {
         $str = "Žluťoučký koníček";
         $this->assertSame('Zlutoucky konicek', core_text::specialtoascii($str));
+
         $utf8 = "Der eine stößt den Speer zum Mann";
+        $iso1 = core_text::convert($utf8, 'utf-8', 'iso-8859-1');
         $this->assertSame('Der eine stosst den Speer zum Mann', core_text::specialtoascii($utf8));
+        $this->assertSame('Der eine stosst den Speer zum Mann', core_text::specialtoascii($iso1, 'iso-8859-1'));
+
+        $str = 'àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ';
+        $this->assertSame('aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY', core_text::specialtoascii($str));
+
+        $utf8 = 'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ';
+        $this->assertSame('A ae Ubermensch pa hoyeste niva! I a lublu PHP! est\'. fi', core_text::specialtoascii($utf8, 'utf8'));
+
+        $utf8 = 'キャンパス Αλφαβητικός Κατάλογος Лорем ипсум долор сит амет';
+        $this->assertSame('kyanpasu Alphabetikos Katalogos Lorem ipsum dolor sit amet', core_text::specialtoascii($utf8));
     }
 
     /**
