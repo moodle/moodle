@@ -253,7 +253,6 @@ $string['notagfiltersapplied'] = 'No tag filters applied';
 $string['notenoughanswers'] = 'This type of question requires at least {$a} answers';
 $string['notenoughdatatoeditaquestion'] = 'Neither a question id, nor a category id and question type, was specified.';
 $string['notenoughdatatomovequestions'] = 'You need to provide the question ids of questions you want to move.';
-$string['notflagged'] = 'Not flagged';
 $string['novirtualquestiontype'] = 'No virtual question type for question type {$a}';
 $string['numqas'] = 'No. question attempts';
 $string['numquestions'] = 'No. questions';
@@ -497,3 +496,6 @@ $string['yougotnright'] = 'You have correctly selected {$a->num}.';
 $string['qbanknotfound'] = 'The \'{$a}\' question bank plugin doesn\'t exist or is not recognised.';
 $string['noquestionbanks'] = 'No question bank plugin found.';
 $string['questionloaderror'] = 'Could not load the question options.';
+
+// Deprecated since Moodle 4.0.
+$string['notflagged'] = 'Not flagged';
