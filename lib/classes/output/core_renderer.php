@@ -3486,6 +3486,14 @@ EOD;
         if (empty($custommenuitems) && !empty($CFG->custommenuitems)) {
             $custommenuitems = $CFG->custommenuitems;
         }
+
+        // If filtering of the primary custom menu is enabled, apply only the string filters.
+        if (!empty($CFG->navfilter && !empty($CFG->stringfilters))) {
+            // Apply filters that are enabled for Content and Headings.
+            $filtermanager = \filter_manager::instance();
+            $custommenuitems = $filtermanager->filter_string($custommenuitems, \context_system::instance());
+        }
+
         $custommenu = new custom_menu($custommenuitems, current_language());
         return $this->render_custom_menu($custommenu);
     }
@@ -3501,6 +3509,14 @@ EOD;
         if (empty($custommenuitems) && !empty($CFG->custommenuitems)) {
             $custommenuitems = $CFG->custommenuitems;
         }
+
+        // If filtering of the primary custom menu is enabled, apply only the string filters.
+        if (!empty($CFG->navfilter && !empty($CFG->stringfilters))) {
+            // Apply filters that are enabled for Content and Headings.
+            $filtermanager = \filter_manager::instance();
+            $custommenuitems = $filtermanager->filter_string($custommenuitems, \context_system::instance());
+        }
+
         $custommenu = new custom_menu($custommenuitems, current_language());
         $langs = get_string_manager()->get_list_of_translations();
         $haslangmenu = $this->lang_menu() != '';
