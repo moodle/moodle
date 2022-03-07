@@ -207,7 +207,13 @@ class schedule {
             return false;
         }
 
-         return $schedule->get('timenextsend') <= $timenow;
+        // If there's no recurrence, check whether it's been sent since initial scheduled start time. This ensures that even if
+        // the schedule was manually sent beforehand, it'll still be automatically sent once the start time is first reached.
+        if ($schedule->get('recurrence') === model::RECURRENCE_NONE) {
+            return $schedule->get('timelastsent') < $timescheduled;
+        }
+
+        return $schedule->get('timenextsend') <= $timenow;
     }
 
     /**
