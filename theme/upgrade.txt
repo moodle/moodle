@@ -2,6 +2,7 @@ This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
 === 4.0 ===
+* A new theme config 'removedprimarynavitems' allows a theme to customise primary navigation by specifying the list of items to remove.
 * A new theme config 'usescourseindex' allows a theme to specify whether it implements and uses course index.
 * A new theme setting 'unaddableblocks' allows admins to define the blocks that won't be displayed in the "Add a block" list.
 
