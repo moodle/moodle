@@ -39,6 +39,32 @@ class award_criteria_profile extends award_criteria {
     public $required_param = 'field';
     public $optional_params = array();
 
+    /* @var array The default profile fields allowed to be used as award criteria.
+     *
+     * Note: This is used instead of user_get_default_fields(), because it is not possible to
+     * determine which fields the user can modify.
+     */
+    protected $allowed_default_fields = [
+        'firstname',
+        'lastname',
+        'email',
+        'address',
+        'phone1',
+        'phone2',
+        'icq',
+        'skype',
+        'yahoo',
+        'aim',
+        'msn',
+        'department',
+        'institution',
+        'description',
+        'picture',
+        'city',
+        'url',
+        'country',
+    ];
+
     /**
      * Add appropriate new criteria options to the form
      *
@@ -49,10 +75,7 @@ class award_criteria_profile extends award_criteria {
         $none = true;
         $existing = array();
         $missing = array();
-
-        // Note: cannot use user_get_default_fields() here because it is not possible to decide which fields user can modify.
-        $dfields = array('firstname', 'lastname', 'email', 'address', 'phone1', 'phone2', 'icq', 'skype', 'yahoo',
-                         'aim', 'msn', 'department', 'institution', 'description', 'picture', 'city', 'url', 'country');
+        $dfields = $this->allowed_default_fields;
 
         $sql = "SELECT uf.id as fieldid, uf.name as name, ic.id as categoryid, ic.name as categoryname, uf.datatype
                 FROM {user_info_field} uf
@@ -228,8 +251,8 @@ class award_criteria_profile extends award_criteria {
                 $join .= " LEFT JOIN {user_info_data} uid{$idx} ON uid{$idx}.userid = u.id AND uid{$idx}.fieldid = :fieldid{$idx} ";
                 $params["fieldid{$idx}"] = $param['field'];
                 $whereparts[] = "uid{$idx}.id IS NOT NULL";
-            } else {
-                // This is a field from {user} table.
+            } else if (in_array($param['field'], $this->allowed_default_fields)) {
+                // This is a valid field from {user} table.
                 if ($param['field'] == 'picture') {
                     // The picture field is numeric and requires special handling.
                     $whereparts[] = "u.{$param['field']} != 0";
