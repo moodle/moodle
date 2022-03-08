@@ -19,8 +19,7 @@ class course_edit_form extends moodleform {
         global $CFG, $PAGE;
 
         $mform    = $this->_form;
-        $PAGE->requires->yui_module('moodle-course-formatchooser', 'M.course.init_formatchooser',
-                array(array('formid' => $mform->getAttribute('id'))));
+        $PAGE->requires->js_call_amd('core_course/formatchooser', 'init');
 
         $course        = $this->_customdata['course']; // this contains the data of this form
         $category      = $this->_customdata['category'];
@@ -220,13 +219,18 @@ class course_edit_form extends moodleform {
             }
         }
 
-        $mform->addElement('select', 'format', get_string('format'), $formcourseformats);
+        $mform->addElement('select', 'format', get_string('format'), $formcourseformats, [
+            'data-formatchooser-field' => 'selector',
+        ]);
         $mform->addHelpButton('format', 'format');
         $mform->setDefault('format', $courseconfig->format);
 
         // Button to update format-specific options on format change (will be hidden by JavaScript).
         $mform->registerNoSubmitButton('updatecourseformat');
-        $mform->addElement('submit', 'updatecourseformat', get_string('courseformatudpate'));
+        $mform->addElement('submit', 'updatecourseformat', get_string('courseformatudpate'), [
+            'data-formatchooser-field' => 'updateButton',
+            'class' => 'd-none',
+        ]);
 
         // Just a placeholder for the course format options.
         $mform->addElement('hidden', 'addcourseformatoptionshere');
