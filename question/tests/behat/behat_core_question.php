@@ -33,7 +33,94 @@ use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 class behat_core_question extends behat_question_base {
 
     /**
-     * Creates a question in the current course questions bank with the provided data. This step can only be used when creating question types composed by a single form.
+     * Convert page names to URLs for steps like 'When I am on the "[page name]" page'.
+     *
+     * Recognised page names are:
+     * | None so far!      |                                                              |
+     *
+     * @param string $page name of the page, with the component name removed e.g. 'Admin notification'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_url(string $page): moodle_url {
+        switch (strtolower($page)) {
+            default:
+                throw new Exception('Unrecognised core_question page type "' . $page . '."');
+        }
+    }
+
+    /**
+     * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
+     *
+     * Recognised page names are:
+     * | pagetype               | name meaning               | description                              |
+     * | course question bank   | Course name                | The question bank for a course           |
+     * | course question import | Course name                | The import questions screen for a course |
+     * | course question export | Course name                | The export questions screen for a course |
+     * | preview                | Question name              | The screen to preview a question         |
+     * | edit                   | Question name              | The screen to edit a question            |
+     *
+     * @param string $type identifies which type of page this is, e.g. 'Preview'.
+     * @param string $identifier identifies the particular page, e.g. 'My question'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
+        switch (strtolower($type)) {
+            case 'course question bank':
+                return new moodle_url('/question/edit.php',
+                        ['courseid' => $this->get_course_id($identifier)]);
+
+            case 'course question import':
+                return new moodle_url('/question/bank/importquestions/import.php',
+                        ['courseid' => $this->get_course_id($identifier)]);
+
+            case 'course question export':
+                return new moodle_url('/question/bank/exportquestions/export.php',
+                        ['courseid' => $this->get_course_id($identifier)]);
+
+            case 'preview':
+                [$questionid, $otheridtype, $otherid] = $this->find_question_by_name($identifier);
+                return new moodle_url('/question/bank/previewquestion/preview.php',
+                        ['id' => $questionid, $otheridtype => $otherid]);
+
+            case 'edit':
+                [$questionid, $otheridtype, $otherid] = $this->find_question_by_name($identifier);
+                return new moodle_url('/question/bank/editquestion/question.php',
+                        ['id' => $questionid, $otheridtype => $otherid]);
+
+            default:
+                throw new Exception('Unrecognised core_question page type "' . $type . '."');
+        }
+    }
+
+    /**
+     * Find a question, and where it is, from the question name.
+     *
+     * This is a helper used by resolve_page_instance_url.
+     *
+     * @param string $questionname
+     * @return array with three elemnets, int question id, a string 'cmid' or 'courseid',
+     *     and int either cmid or courseid as applicable.
+     */
+    protected function find_question_by_name(string $questionname): array {
+        global $DB;
+        $questionid = $DB->get_field('question', 'id', ['name' => $questionname], MUST_EXIST);
+        $question = question_bank::load_question_data($questionid);
+        $context = context_helper::instance_by_id($question->contextid);
+
+        if ($context->contextlevel == CONTEXT_MODULE) {
+            return [$questionid, 'cmid', $context->instanceid];
+        } else if ($context->contextlevel == CONTEXT_COURSE) {
+            return [$questionid, 'courseid', $context->instanceid];
+        } else {
+            throw new coding_exception('Unsupported context level ' . $context->contextlevel);
+        }
+    }
+
+    /**
+     * Creates a question in the current course questions bank with the provided data.
+     * This step can only be used when creating question types composed by a single form.
      *
      * @Given /^I add a "(?P<question_type_name_string>(?:[^"]|\\")*)" question filling the form with:$/
      * @param string $questiontypename The question type name
@@ -69,7 +156,8 @@ class behat_core_question extends behat_question_base {
                 "{$questiondescriptionliteral})]";
         $this->find('xpath', $questionxpath, $exception);
 
-        $exception = new ExpectationException('Question "' . $questiondescription . '" state is not "' . $state . '"', $this->getSession());
+        $exception = new ExpectationException('Question "' . $questiondescription .
+                '" state is not "' . $state . '"', $this->getSession());
         $xpath = $questionxpath . "/div[@class='info']/div[@class='state' and contains(., {$stateliteral})]";
         $this->find('xpath', $xpath, $exception);
     }
