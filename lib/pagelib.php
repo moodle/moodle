@@ -2031,7 +2031,9 @@ class moodle_page {
         $reportnode = null;
         $navigationnodeerror =
                 'Could not find the navigation node requested. Please check that the node you are looking for exists.';
-        if ($userid != $USER->id) {
+        if ($userid != $USER->id  || $this->context->contextlevel == CONTEXT_COURSE) {
+            // Within a course context we need to properly indicate how we have come to the page,
+            // regardless of whether it's currently logged in user or not.
             // Check that we have a valid node.
             if (empty($newusernode)) {
                 // Throw an error if we ever reach here.
