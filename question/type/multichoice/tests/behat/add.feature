@@ -6,20 +6,18 @@ Feature: Test creating a Multiple choice question
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | teacher1 | T1        | Teacher1 | teacher1@moodle.com |
+      | username |
+      | teacher  |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+      | user    | course | role           |
+      | teacher | C1     | editingteacher |
 
   Scenario: Create a Multiple choice question with multiple response
-    When I add a "Multiple choice" question filling the form with:
+    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    And I add a "Multiple choice" question filling the form with:
       | Question name            | Multi-choice-001                   |
       | Question text            | Find the capital cities in Europe. |
       | General feedback         | Paris and London                   |
@@ -39,7 +37,8 @@ Feature: Test creating a Multiple choice question
     Then I should see "Multi-choice-001"
 
   Scenario: Create a Multiple choice question with single response
-    When I add a "Multiple choice" question filling the form with:
+    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    And I add a "Multiple choice" question filling the form with:
       | Question name            | Multi-choice-002                       |
       | Question text            | Find the capital city of England.      |
       | General feedback         | London is the capital city of England. |
