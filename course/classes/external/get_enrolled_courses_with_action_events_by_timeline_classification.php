@@ -55,7 +55,7 @@ class get_enrolled_courses_with_action_events_by_timeline_classification extends
                     VALUE_DEFAULT, null),
                 'customfieldvalue' => new external_value(PARAM_RAW, 'Used when classification = customfield',
                     VALUE_DEFAULT, null),
-                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against',
+                'searchvalue' => new external_value(PARAM_RAW, 'The value a user wishes to search against',
                     VALUE_DEFAULT, null),
                 'eventsfrom' => new external_value(PARAM_INT, 'Optional starting timestamp for action events',
                 VALUE_DEFAULT, null),
@@ -117,7 +117,7 @@ class get_enrolled_courses_with_action_events_by_timeline_classification extends
         $sort = $params['sort'];
         $customfieldname = $params['customfieldname'];
         $customfieldvalue = $params['customfieldvalue'];
-        $searchvalue = $params['searchvalue'];
+        $searchvalue = clean_param($params['searchvalue'], PARAM_TEXT);
         $eventsfrom = $params['eventsfrom'];
         $eventsto = $params['eventsto'];
         $morecoursestofetch = true;

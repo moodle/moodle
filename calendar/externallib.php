@@ -408,7 +408,7 @@ class core_calendar_external extends external_api {
                 'limittononsuspendedevents' => new external_value(PARAM_BOOL,
                         'Limit the events to courses the user is not suspended in', VALUE_DEFAULT, false),
                 'userid' => new external_value(PARAM_INT, 'The user id', VALUE_DEFAULT, null),
-                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against', VALUE_DEFAULT, null)
+                'searchvalue' => new external_value(PARAM_RAW, 'The value a user wishes to search against', VALUE_DEFAULT, null)
             )
         );
     }
@@ -467,7 +467,7 @@ class core_calendar_external extends external_api {
             $params['limitnum'],
             $params['limittononsuspendedevents'],
             $user,
-            $params['searchvalue']
+            clean_param($params['searchvalue'], PARAM_TEXT)
         );
 
         $exportercache = new events_related_objects_cache($events);
@@ -499,7 +499,7 @@ class core_calendar_external extends external_api {
                 'timesortto' => new external_value(PARAM_INT, 'Time sort to', VALUE_DEFAULT, null),
                 'aftereventid' => new external_value(PARAM_INT, 'The last seen event id', VALUE_DEFAULT, 0),
                 'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 20),
-                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against', VALUE_DEFAULT, null)
+                'searchvalue' => new external_value(PARAM_RAW, 'The value a user wishes to search against', VALUE_DEFAULT, null)
             )
         );
     }
@@ -555,7 +555,7 @@ class core_calendar_external extends external_api {
             $params['timesortto'],
             $params['aftereventid'],
             $params['limitnum'],
-            $params['searchvalue']
+            clean_param($params['searchvalue'], PARAM_TEXT)
         );
 
         $exportercache = new events_related_objects_cache($events, $courses);
@@ -587,7 +587,7 @@ class core_calendar_external extends external_api {
                 'timesortfrom' => new external_value(PARAM_INT, 'Time sort from', VALUE_DEFAULT, null),
                 'timesortto' => new external_value(PARAM_INT, 'Time sort to', VALUE_DEFAULT, null),
                 'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 10),
-                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against', VALUE_DEFAULT, null)
+                'searchvalue' => new external_value(PARAM_RAW, 'The value a user wishes to search against', VALUE_DEFAULT, null)
             )
         );
     }
@@ -639,7 +639,7 @@ class core_calendar_external extends external_api {
             $params['timesortfrom'],
             $params['timesortto'],
             $params['limitnum'],
-            $params['searchvalue']
+            clean_param($params['searchvalue'], PARAM_TEXT)
         );
 
         if (empty($events)) {
