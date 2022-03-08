@@ -41,10 +41,31 @@ class WebDriverFactory extends UpstreamFactory implements DriverFactory {
         $extracapabilities = $config['capabilities']['extra_capabilities'];
         unset($config['capabilities']['extra_capabilities']);
 
-        // Ensure that the capabilites.browser is set correctly.
-        $config['capabilities']['browser'] = $config['browser'];
+        // Normalise the Edge browser name.
+        if ($config['browser'] === 'edge') {
+            $config['browser'] = 'MicrosoftEdge';
+        }
 
-        $capabilities = array_replace($this->guessCapabilities(), $extracapabilities, $config['capabilities']);
+        // Ensure that the capabilites.browserName is set correctly.
+        $config['capabilities']['browserName'] = $config['browser'];
+
+        $capabilities = array_replace($extracapabilities, $config['capabilities']);
+
+        // Incorrect top level capabilities lead to invalid Selenium browser selection.
+        // See https://github.com/SeleniumHQ/selenium/issues/10410 for more information.
+        // If any of these settings are mentioned then additional empty Capability options are created and a random
+        // browser is chosen.
+        $filteredcapabilities = [
+            'tags',
+            'ignoreZoomSetting',
+            'marionette',
+            'browser',
+            'name',
+        ];
+
+        foreach ($filteredcapabilities as $capabilityname) {
+            unset($capabilities[$capabilityname]);
+        }
 
         // Build driver definition.
         return new Definition(WebDriver::class, [
