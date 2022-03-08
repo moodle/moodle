@@ -78,6 +78,12 @@ This files describes API changes for code that uses the question API.
    anymore as the api is now self sufficient, calling the api will fetch all the features:
    process_actions(), process_actions_needing_ui().
 
+12) The Behat class for question-related steps has been renamed to behat_core_question
+    to match the expected naming convention. In the unlikely event that you are directly
+    referring to the behat_question class name (nothing in the standard Moodle code was)
+    then you will have to update your reference.
+
+
 === 3.9 ==
 
 1) For years, the ..._questions_in_use callback has been the right way for plugins to

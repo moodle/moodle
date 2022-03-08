@@ -16,7 +16,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__ . '/../../../../question/tests/behat/behat_question.php');
+require_once(__DIR__ . '/../../../../question/tests/behat/behat_core_question.php');
 use Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
@@ -27,7 +27,7 @@ use Behat\Gherkin\Node\TableNode as TableNode;
  * @copyright  2021 Mathew May
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_theme_classic_behat_question extends behat_question {
+class behat_theme_classic_behat_core_question extends behat_core_question {
     /**
      * Creates a question in the current course questions bank with the provided data.
      * This step can only be used when creating question types composed by a single form.
