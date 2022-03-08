@@ -56,24 +56,7 @@ if ($action == 'edit') {
         $PAGE->navbar->add(get_string('createnewservice', 'tool_oauth2') . ' ' . get_string('custom_service', 'tool_oauth2'));
     }
 
-    $showrequireconfirm = false;
-    if (!empty($issuerid)) {
-        // Show the "Require confirmation email" checkbox for trusted issuers like Google, Facebook and Microsoft.
-        $likefacebook = $DB->sql_like('url', ':facebook');
-        $likegoogle = $DB->sql_like('url', ':google');
-        $likemicrosoft = $DB->sql_like('url', ':microsoft');
-        $params = [
-            'issuerid' => $issuerid,
-            'facebook' => '%facebook%',
-            'google' => '%google%',
-            'microsoft' => '%microsoft%',
-        ];
-        $select = "issuerid = :issuerid AND ($likefacebook OR $likegoogle OR $likemicrosoft)";
-        // We're querying from the oauth2_endpoint table because the base URLs of FB and Microsoft can be empty in the issuer table.
-        $showrequireconfirm = $DB->record_exists_select('oauth2_endpoint', $select, $params);
-    }
-
-    $mform = new \tool_oauth2\form\issuer(null, ['persistent' => $issuer, 'showrequireconfirm' => $showrequireconfirm]);
+    $mform = new \tool_oauth2\form\issuer(null, ['persistent' => $issuer]);
 }
 
 if ($mform && $mform->is_cancelled()) {
@@ -128,11 +111,9 @@ if ($mform && $mform->is_cancelled()) {
 
     $type = required_param('type', PARAM_ALPHANUM);
     $docs = required_param('docslink', PARAM_ALPHAEXT);
-    $showrequireconfirm = optional_param('showrequireconfirm', false, PARAM_BOOL);
     require_sesskey();
     $issuer = core\oauth2\api::init_standard_issuer($type);
-    $mform = new \tool_oauth2\form\issuer(null, ['persistent' => $issuer, 'type' => $type,
-        'showrequireconfirm' => $showrequireconfirm]);
+    $mform = new \tool_oauth2\form\issuer(null, ['persistent' => $issuer, 'type' => $type]);
 
     $PAGE->navbar->add(get_string('createnewservice', 'tool_oauth2') . ' ' . get_string($type . '_service', 'tool_oauth2'));
     echo $OUTPUT->header();
@@ -207,22 +188,19 @@ if ($mform && $mform->is_cancelled()) {
 
     // Google template.
     $docs = 'admin/tool/oauth2/issuers/google';
-    $params = ['action' => 'edittemplate', 'type' => 'google', 'sesskey' => sesskey(), 'docslink' => $docs,
-        'showrequireconfirm' => true];
+    $params = ['action' => 'edittemplate', 'type' => 'google', 'sesskey' => sesskey(), 'docslink' => $docs];
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('google_service', 'tool_oauth2'));
 
     // Microsoft template.
     $docs = 'admin/tool/oauth2/issuers/microsoft';
-    $params = ['action' => 'edittemplate', 'type' => 'microsoft', 'sesskey' => sesskey(), 'docslink' => $docs,
-        'showrequireconfirm' => true];
+    $params = ['action' => 'edittemplate', 'type' => 'microsoft', 'sesskey' => sesskey(), 'docslink' => $docs];
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('microsoft_service', 'tool_oauth2'));
 
     // Facebook template.
     $docs = 'admin/tool/oauth2/issuers/facebook';
-    $params = ['action' => 'edittemplate', 'type' => 'facebook', 'sesskey' => sesskey(), 'docslink' => $docs,
-        'showrequireconfirm' => true];
+    $params = ['action' => 'edittemplate', 'type' => 'facebook', 'sesskey' => sesskey(), 'docslink' => $docs];
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('facebook_service', 'tool_oauth2'));
 
@@ -249,7 +227,5 @@ if ($mform && $mform->is_cancelled()) {
     echo $renderer->single_button($addurl, get_string('custom_service', 'tool_oauth2'));
 
     echo $renderer->container_end();
-
     echo $OUTPUT->footer();
-
 }
