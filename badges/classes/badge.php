@@ -141,7 +141,7 @@ class badge {
         $data = $DB->get_record('badge', array('id' => $badgeid));
 
         if (empty($data)) {
-            print_error('error:nosuchbadge', 'badges', $badgeid);
+            throw new moodle_exception('error:nosuchbadge', 'badges', '', $badgeid);
         }
 
         foreach ((array)$data as $field => $value) {
