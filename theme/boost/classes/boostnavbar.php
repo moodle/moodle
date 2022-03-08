@@ -55,6 +55,9 @@ class boostnavbar implements \renderable {
     protected function prepare_nodes_for_boost(): void {
         global $PAGE;
 
+        // Remove the navbar nodes that already exist in the primary navigation menu.
+        $this->remove_items_that_exist_in_navigation($PAGE->primarynav);
+
         // Defines whether section items with an action should be removed by default.
         $removesections = true;
 
@@ -93,9 +96,6 @@ class boostnavbar implements \renderable {
                     $this->remove('import');
             }
         }
-
-        $this->remove('myhome'); // Dashboard.
-        $this->remove('home');
 
         // Remove 'My courses' if we are in the module context.
         if ($this->page->context->contextlevel == CONTEXT_MODULE) {
