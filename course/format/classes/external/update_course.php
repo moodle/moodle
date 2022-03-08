@@ -28,6 +28,7 @@ use external_multiple_structure;
 use moodle_exception;
 use coding_exception;
 use context_course;
+use core_courseformat\base as course_format;
 
 /**
  * External secrvie to update the course from the course editor components.
@@ -135,8 +136,13 @@ class update_course extends external_api {
             throw new moodle_exception("Invalid course state action $action in ".get_class($actions));
         }
 
+        $course = $courseformat->get_course();
+
         // Execute the action.
-        $actions->$action($updates, $courseformat->get_course(), $ids, $targetsectionid, $targetcmid);
+        $actions->$action($updates, $course, $ids, $targetsectionid, $targetcmid);
+
+        // Any state action mark the state cache as dirty.
+        course_format::session_cache_reset($course);
 
         return json_encode($updates);
     }

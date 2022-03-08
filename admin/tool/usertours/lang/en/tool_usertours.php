@@ -44,12 +44,10 @@ $string['content'] = 'Content';
 $string['content_heading'] = 'Content';
 $string['content_help'] = 'Content describing the step may be added as plain text, enclosed in multilang tags (for use with the multi-language content filter) if required.';
 $string['content_type'] = 'Content type';
-$string['content_type_help'] = 'Content types are:
-
-* Read from language pack - Language string ID may be entered in the format identifier,component (with no brackets or space after the comma).
-* Enter manually - Using an editor to input the content';
-$string['content_type_langstring'] = 'Read from language pack';
-$string['content_type_manual'] = 'Enter manually';
+$string['content_type_help'] = '* Manual - content is entered using a text editor
+* Language string ID - in the format string identifier,component (with no space after the comma)';
+$string['content_type_langstring'] = 'Language string ID';
+$string['content_type_manual'] = 'Manual';
 $string['cssselector'] = 'CSS selector';
 $string['defaultvalue'] = 'Default ({$a})';
 $string['delay'] = 'Delay before showing the step';
@@ -60,7 +58,7 @@ $string['editstep'] = 'Editing "{$a}"';
 $string['tourisenabled'] = 'Tour is enabled';
 $string['enabled'] = 'Enabled';
 $string['endtourlabel'] = 'End tour button\'s label';
-$string['endtourlabel_help'] = 'You can optionally specify a custom label for the end tour button. The default label is "Got it" for single-step, and "End tour" for multiple-step tours..
+$string['endtourlabel_help'] = 'You can optionally specify a custom label for the end tour button. The default label is \'Got it\' for single-step and \'End tour\' for multiple-step tours.
 
 Alternatively, a language string ID may be entered in the format identifier,component (with no brackets or space after the comma).';
 $string['event_tour_started'] = 'Tour started';
@@ -89,10 +87,10 @@ $string['filter_theme_help'] = 'Show the tour when the user is using one of the 
 $string['filter_role'] = 'Role';
 $string['filter_role_help'] = 'A tour may be restricted to users with selected roles in the context where the tour is shown. For example, restricting a Dashboard tour to users with the role of student won\'t work if users have the role of student in a course (as is generally the case). A Dashboard tour can only be restricted to users with a system role.';
 $string['importtour'] = 'Import tour';
-$string['invalid_lang_id'] = 'Invalid language identifier';
+$string['invalid_lang_id'] = 'Invalid language string ID';
 $string['left'] = 'Left';
 $string['modifyshippedtourwarning'] = 'This is a user tour that has shipped with Moodle. Any modifications you make may be overridden during your next site upgrade.';
-$string['moodle_language_identifier'] = 'Moodle language identifier';
+$string['moodle_language_identifier'] = 'Language string ID';
 $string['movestepdown'] = 'Move step down';
 $string['movestepup'] = 'Move step up';
 $string['movetourdown'] = 'Move tour down';
@@ -282,8 +280,8 @@ $string['tour_navigation_course_student_tour_name'] = 'Course index';
 $string['tour_navigation_course_teacher_tour_des'] = 'Edit mode, drag and drop of activities and posting announcements in a course';
 $string['tour_navigation_course_teacher_tour_name'] = 'Course editing';
 $string['tour_navigation_dashboard_content'] = '@@PIXICON::tour/tour_dashboard::tool_usertours@@<br>This side panel can contain more features.';
-$string['tour_navigation_dashboard_title'] = 'Expand to explore!';
-$string['tour_navigation_dashboard_tour_des'] = 'Where blocks can be found on the Dashboard';
+$string['tour_navigation_dashboard_title'] = 'Expand to explore';
+$string['tour_navigation_dashboard_tour_des'] = 'Where blocks can be found';
 $string['tour_navigation_dashboard_tour_name'] = 'Block drawer';
 $string['tour_navigation_mycourses_content'] = '@@PIXICON::tour/tour_mycourses::tool_usertours@@<br>Add, copy, delete and hide courses from this menu.';
 $string['tour_navigation_mycourses_endtourlabel'] = 'I understand';

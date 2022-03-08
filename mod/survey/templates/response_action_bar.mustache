@@ -56,17 +56,17 @@
         }
     }
 }}
-<div class="container-fluid mb-3">
-    <div class="row justify-content-between">
-        <div class="col-xs-6 float-left">
+<div class="container-fluid tertiary-navigation">
+    <div class="row">
         {{#urlselect}}
-            {{>core/url_select}}
+            <div class="navitem">
+                {{>core/url_select}}
+            </div>
         {{/urlselect}}
-        </div>
         {{#download}}
-        <div class="col-sm-6 float-right">
-            <a class="btn btn-secondary float-right" href="{{link}}">{{text}}</a>
-        </div>
+            <div class="navitem ml-sm-auto">
+                <a class="btn btn-secondary float-right" href="{{link}}">{{text}}</a>
+            </div>
         {{/download}}
     </div>
 </div>

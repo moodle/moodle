@@ -40,6 +40,7 @@ $user           = optional_param('user', 0, PARAM_INT);        // The userid of 
 $discussionid   = optional_param('d', null, PARAM_INT);        // The discussionid to subscribe.
 $sesskey        = optional_param('sesskey', null, PARAM_RAW);
 $returnurl      = optional_param('returnurl', null, PARAM_LOCALURL);
+$edit           = optional_param('edit', 'off', PARAM_ALPHANUM);
 
 $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$id));
 if (!is_null($mode)) {
@@ -119,26 +120,28 @@ if ($returnurl) {
     $returnto = $returnurl;
 }
 
+$subscribersurl = new moodle_url('/mod/forum/subscribers.php', ['id' => $id, 'edit' => $edit]);
+
 if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context)) {
     require_sesskey();
     switch ($mode) {
         case FORUM_CHOOSESUBSCRIBE : // 0
             \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_CHOOSESUBSCRIBE);
             redirect(
-                    $returnto,
+                    $subscribersurl,
                     get_string('everyonecannowchoose', 'forum'),
                     null,
                     \core\output\notification::NOTIFY_SUCCESS
-                );
+            );
             break;
         case FORUM_FORCESUBSCRIBE : // 1
             \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_FORCESUBSCRIBE);
             redirect(
-                    $returnto,
+                    $subscribersurl,
                     get_string('everyoneisnowsubscribed', 'forum'),
                     null,
                     \core\output\notification::NOTIFY_SUCCESS
-                );
+            );
             break;
         case FORUM_INITIALSUBSCRIBE : // 2
             \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_INITIALSUBSCRIBE);
@@ -151,20 +154,20 @@ if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context
                 }
             }
             redirect(
-                    $returnto,
+                    $subscribersurl,
                     get_string('everyoneisnowsubscribed', 'forum'),
                     null,
                     \core\output\notification::NOTIFY_SUCCESS
-                );
+            );
             break;
         case FORUM_DISALLOWSUBSCRIBE : // 3
             \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_DISALLOWSUBSCRIBE);
             redirect(
-                    $returnto,
+                    $subscribersurl,
                     get_string('noonecansubscribenow', 'forum'),
                     null,
                     \core\output\notification::NOTIFY_SUCCESS
-                );
+            );
             break;
         default:
             print_error(get_string('invalidforcesubscribe', 'forum'));
@@ -172,12 +175,8 @@ if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context
 }
 
 if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
-    redirect(
-            $returnto,
-            get_string('everyoneisnowsubscribed', 'forum'),
-            null,
-            \core\output\notification::NOTIFY_SUCCESS
-        );
+    $subscribersurl->param('notification', 'everyoneisnowsubscribed');
+    redirect($subscribersurl);
 }
 
 $info = new stdClass();
@@ -209,11 +208,11 @@ if ($issubscribed) {
     if ($discussionid === null) {
         if (\mod_forum\subscriptions::unsubscribe_user($user->id, $forum, $context, true)) {
             redirect(
-                    $returnto,
-                    get_string('nownotsubscribed', 'forum', $info),
-                    null,
-                    \core\output\notification::NOTIFY_SUCCESS
-                );
+                $returnto,
+                get_string('nownotsubscribed', 'forum', $info),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
         } else {
             print_error('cannotunsubscribe', 'forum', get_local_referer(false));
         }
@@ -221,11 +220,11 @@ if ($issubscribed) {
         if (\mod_forum\subscriptions::unsubscribe_user_from_discussion($user->id, $discussion, $context)) {
             $info->discussion = $discussion->name;
             redirect(
-                    $returnto,
-                    get_string('discussionnownotsubscribed', 'forum', $info),
-                    null,
-                    \core\output\notification::NOTIFY_SUCCESS
-                );
+                $returnto,
+                get_string('discussionnownotsubscribed', 'forum', $info),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
         } else {
             print_error('cannotunsubscribe', 'forum', get_local_referer(false));
         }
@@ -262,19 +261,19 @@ if ($issubscribed) {
     if ($discussionid == null) {
         \mod_forum\subscriptions::subscribe_user($user->id, $forum, $context, true);
         redirect(
-                $returnto,
-                get_string('nowsubscribed', 'forum', $info),
-                null,
-                \core\output\notification::NOTIFY_SUCCESS
-            );
+            $returnto,
+            get_string('nowsubscribed', 'forum', $info),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
     } else {
         $info->discussion = $discussion->name;
         \mod_forum\subscriptions::subscribe_user_to_discussion($user->id, $discussion, $context);
         redirect(
-                $returnto,
-                get_string('discussionnowsubscribed', 'forum', $info),
-                null,
-                \core\output\notification::NOTIFY_SUCCESS
-            );
+            $returnto,
+            get_string('discussionnowsubscribed', 'forum', $info),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
     }
 }

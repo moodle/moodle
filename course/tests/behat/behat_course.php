@@ -93,7 +93,7 @@ class behat_course extends behat_base {
         // Go to course management page.
         $this->i_go_to_the_courses_management_page();
         // Ensure you are on course management page.
-        $this->execute("behat_course::i_should_see_the_courses_management_page", get_string('categories'));
+        $this->execute("behat_course::i_should_see_the_courses_management_page", get_string('categoriesandcourses'));
 
         // Select default course category.
         $this->i_click_on_category_in_the_management_interface(get_string('defaultcategoryname'));
@@ -1729,27 +1729,30 @@ class behat_course extends behat_base {
      * @param string $mode The mode to expected. One of 'Courses', 'Course categories' or 'Course categories and courses'
      */
     public function i_should_see_the_courses_management_page($mode) {
-        $this->execute("behat_general::assert_element_contains_text",
-            array("Course and category management", "h2", "css_element")
-        );
-
         switch ($mode) {
             case "Courses":
+                $heading = "Manage courses";
                 $this->execute("behat_general::should_not_exist", array("#category-listing", "css_element"));
                 $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
                 break;
 
             case "Course categories":
+                $heading = "Manage course categories";
                 $this->execute("behat_general::should_exist", array("#category-listing", "css_element"));
-                $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
+                $this->execute("behat_general::should_not_exist", array("#course-listing", "css_element"));
                 break;
 
             case "Courses categories and courses":
             default:
+                $heading = "Manage course categories and courses";
                 $this->execute("behat_general::should_exist", array("#category-listing", "css_element"));
                 $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
                 break;
         }
+
+        $this->execute("behat_general::assert_element_contains_text",
+            array($heading, "h2", "css_element")
+        );
 
         $this->execute("behat_general::should_not_exist", array("#course-detail", "css_element"));
     }
@@ -1761,26 +1764,29 @@ class behat_course extends behat_base {
      * @param string $mode The mode to expected. One of 'Courses', 'Course categories' or 'Course categories and courses'
      */
     public function i_should_see_the_courses_management_page_with_a_course_selected($mode) {
-        $this->execute("behat_general::assert_element_contains_text",
-            array("Course and category management", "h2", "css_element"));
-
         switch ($mode) {
             case "Courses":
+                $heading = "Manage courses";
                 $this->execute("behat_general::should_not_exist", array("#category-listing", "css_element"));
                 $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
                 break;
 
             case "Course categories":
+                $heading = "Manage course categories";
                 $this->execute("behat_general::should_exist", array("#category-listing", "css_element"));
                 $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
                 break;
 
             case "Courses categories and courses":
             default:
+                $heading = "Manage course categories and courses";
                 $this->execute("behat_general::should_exist", array("#category-listing", "css_element"));
                 $this->execute("behat_general::should_exist", array("#course-listing", "css_element"));
                 break;
         }
+
+        $this->execute("behat_general::assert_element_contains_text",
+            array($heading, "h2", "css_element"));
 
         $this->execute("behat_general::should_exist", array("#course-detail", "css_element"));
     }

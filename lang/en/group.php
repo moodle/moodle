@@ -43,7 +43,7 @@ $string['creategrouping'] = 'Create grouping';
 $string['creategroupinselectedgrouping'] = 'Create group in grouping';
 $string['createingrouping'] = 'Grouping of auto-created groups';
 $string['createorphangroup'] = 'Create orphan group';
-$string['csvdelimiter'] = 'CSV delimiter';
+$string['csvdelimiter'] = 'CSV separator';
 $string['databaseupgradegroups'] = 'Groups version is now {$a}';
 $string['defaultgrouping'] = 'Default grouping';
 $string['defaultgroupingname'] = 'Grouping';
@@ -138,7 +138,7 @@ $string['importgroups'] = 'Import groups';
 $string['importgroups_help'] = 'Groups may be imported via text file. The format of the file should be as follows:
 
 * Each line of the file contains one record
-* Each record is a series of data separated by commas
+* Each record is a series of data separated by the selected separator
 * The first record contains a list of fieldnames defining the format of the rest of the file
 * Required fieldname is groupname
 * Optional fieldnames are groupidnumber, description, enrolmentkey, groupingname, enablemessaging';

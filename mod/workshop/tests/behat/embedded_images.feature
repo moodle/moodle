@@ -14,6 +14,9 @@ Feature: Teachers can embed images into instructions and conclusion fields
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
     And I log in as "teacher1"
     # Upload an image into the private files.
     And I follow "Manage private files"

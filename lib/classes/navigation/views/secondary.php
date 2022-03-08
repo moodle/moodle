@@ -137,9 +137,24 @@ class secondary extends view {
      * @return array
      */
     protected function get_default_category_mapping(): array {
-        return [];
+        return [
+            self::TYPE_SETTING => [
+                'edit' => 1,
+                'permissions' => 2,
+                'roles' => 2.1,
+                'rolecheck' => 2.2,
+            ]
+        ];
     }
 
+    /**
+     * Define the keys of the course secondary nav nodes that should be forced into the "more" menu by default.
+     *
+     * @return array
+     */
+    protected function get_default_category_more_menu_nodes(): array {
+        return ['addsubcat', 'roles', 'permissions', 'contentbank', 'cohort', 'filters', 'restorecourse'];
+    }
     /**
      * Define the keys of the course secondary nav nodes that should be forced into the "more" menu by default.
      *
@@ -211,6 +226,7 @@ class secondary extends view {
             case CONTEXT_COURSECAT:
                 $this->headertitle = get_string('categoryheader');
                 $this->load_category_navigation();
+                $defaultmoremenunodes = $this->get_default_category_more_menu_nodes();
                 break;
             case CONTEXT_SYSTEM:
                 $this->headertitle = get_string('homeheader');
@@ -299,6 +315,42 @@ class secondary extends view {
     }
 
     /**
+     * Recursive call to add all custom navigation nodes to secondary
+     *
+     * @param navigation_node $node The node which should be added to secondary
+     * @param navigation_node $basenode The original parent node
+     * @param navigation_node|null $root The parent node nodes are to be added/removed to.
+     * @param bool $forceadd Whether or not to bypass the external action check and force add all nodes
+     */
+    protected function add_external_nodes_to_secondary(navigation_node $node, navigation_node $basenode,
+           ?navigation_node $root = null, bool $forceadd = false) {
+        $root = $root ?? $this;
+        // Add the first node.
+        if ($node->has_action() && !$this->get($node->key)) {
+            $root->add_node(clone $node);
+        }
+
+        // If the node has an external action add all children to the secondary navigation.
+        if (!$node->has_internal_action() || $forceadd) {
+            if ($node->has_children()) {
+                foreach ($node->children as $child) {
+                    if ($child->has_children()) {
+                        $this->add_external_nodes_to_secondary($child, $basenode, $root, true);
+                    } else if ($child->has_action() && !$this->get($child->key)) {
+                        // Check whether the basenode matches a child's url.
+                        // This would have happened in get_first_action_for_node.
+                        // In these cases, we prefer the specific child content.
+                        if ($basenode->has_action() && $basenode->action()->compare($child->action())) {
+                            $root->children->remove($basenode->key, $basenode->type);
+                        }
+                        $root->add_node(clone $child);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Returns a list of all expected nodes in the course administration.
      *
      * @return array An array of keys for navigation nodes in the course administration.
@@ -331,6 +383,8 @@ class secondary extends view {
      *                                       node by default.
      */
     protected function load_course_navigation(?navigation_node $rootnode = null): void {
+        global $SITE;
+
         $rootnode = $rootnode ?? $this;
         $course = $this->page->course;
         // Initialise the main navigation and settings nav.
@@ -339,7 +393,15 @@ class secondary extends view {
         $navigation = $this->page->navigation;
 
         $url = new \moodle_url('/course/view.php', ['id' => $course->id]);
-        $rootnode->add(get_string('course'), $url, self::TYPE_COURSE, null, 'coursehome');
+        $firstnodeidentifier = get_string('course');
+        $issitecourse = $course->id == $SITE->id;
+        if ($issitecourse) {
+            $firstnodeidentifier = get_string('home');
+            if ($frontpage = $settingsnav->get('frontpage')) {
+                $settingsnav = $frontpage;
+            }
+        }
+        $rootnode->add($firstnodeidentifier, $url, self::TYPE_COURSE, null, 'coursehome');
 
         $nodes = $this->get_default_course_mapping();
         $nodesordered = $this->get_leaf_nodes($settingsnav, $nodes['settings'] ?? []);
@@ -348,19 +410,19 @@ class secondary extends view {
 
         // Try to get any custom nodes defined by a user which may include containers.
         $expectedcourseadmin = $this->get_expected_course_admin_nodes();
+        $courseadminnode = $settingsnav;
+        if (!$issitecourse) {
+            $courseadminnode = $settingsnav->get('courseadmin');
+        }
 
-        foreach ($settingsnav->children as $value) {
-            if ($value->key == 'courseadmin') {
-                foreach ($value->children as $other) {
-                    if (array_search($other->key, $expectedcourseadmin) === false) {
-                        $othernode = $this->get_first_action_for_node($other);
-                        // Get the first node and check whether it's been added already.
-                        if ($othernode && !$this->get($othernode->key)) {
-                            $rootnode->add_node($othernode);
-                        } else {
-                            $rootnode->add_node($other);
-                        }
-                    }
+        if ($courseadminnode) {
+            foreach ($courseadminnode->children as $other) {
+                if (array_search($other->key, $expectedcourseadmin) === false) {
+                    $othernode = $this->get_first_action_for_node($other);
+                    $recursivenode = $othernode && !$rootnode->get($othernode->key) ? $othernode : $other;
+                    // Get the first node and check whether it's been added already.
+                    // Also check if the first node is an external link. If it is, add all children.
+                    $this->add_external_nodes_to_secondary($recursivenode, $recursivenode, $rootnode);
                 }
             }
         }
@@ -398,7 +460,7 @@ class secondary extends view {
 
         // Start with getting the base node for the front page or the course.
         $node = null;
-        if ($this->page->course == $SITE->id) {
+        if ($this->page->course->id == $SITE->id) {
             $node = $this->page->settingsnav->find('frontpage', navigation_node::TYPE_SETTING);
         } else {
             $node = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
@@ -543,7 +605,9 @@ class secondary extends view {
         // that are redirected to, be in the course context or module context depending on which callback was used.
         // Third part plugins were checked to see if any existing plugins had settings in a system context and none were found.
         // The request of third party developers is to keep their settings within the specified context.
-        if ($this->page->context->contextlevel != CONTEXT_COURSE && $this->page->context->contextlevel != CONTEXT_MODULE) {
+        if ($this->page->context->contextlevel != CONTEXT_COURSE
+                && $this->page->context->contextlevel != CONTEXT_MODULE
+                && $this->page->context->contextlevel != CONTEXT_COURSECAT) {
             return null;
         }
 
@@ -617,7 +681,7 @@ class secondary extends view {
 
         if ($mainnode) {
             $url = new \moodle_url('/course/index.php', ['categoryid' => $this->context->instanceid]);
-            $this->add($this->context->get_context_name(), $url, self::TYPE_CONTAINER, null, 'categorymain');
+            $this->add(get_string('category'), $url, self::TYPE_CONTAINER, null, 'categorymain');
 
             // Add the initial nodes.
             $nodesordered = $this->get_leaf_nodes($mainnode, $nodes);
@@ -720,9 +784,9 @@ class secondary extends view {
                     $leftovernode = $this->get_first_action_for_node($leftovernode);
                 }
 
-                // Confirm we have a valid object to add.
+                // We have found the first node with an action.
                 if ($leftovernode) {
-                    $rootnode->add_node(clone $leftovernode);
+                    $this->add_external_nodes_to_secondary($leftovernode, $leftovernode, $rootnode);
                 }
             }
         }

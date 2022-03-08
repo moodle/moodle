@@ -26,12 +26,13 @@
 
 namespace core_courseformat\output\local\content;
 
-use core_courseformat\base as course_format;
-use renderable;
-use templatable;
-use section_info;
 use context_course;
+use core\output\named_templatable;
+use core_courseformat\base as course_format;
+use core_courseformat\output\local\courseformat_named_templatable;
 use moodle_url;
+use renderable;
+use section_info;
 use stdClass;
 
 /**
@@ -41,7 +42,9 @@ use stdClass;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class frontpagesection implements renderable, templatable {
+class frontpagesection implements named_templatable, renderable {
+
+    use courseformat_named_templatable;
 
     /** @var course_format the course format class */
     protected $format;

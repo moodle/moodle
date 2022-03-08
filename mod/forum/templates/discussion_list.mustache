@@ -366,9 +366,9 @@
         {{/can_create_discussion}}
     {{/state.hasdiscussions}}
     {{^state.hasdiscussions}}
-        <div class="forumnodiscuss">
+        <div class="forumnodiscuss alert alert-info">
             {{$no_discussions_text}}
-                ({{#str}}nodiscussions, forum{{/str}})
+                {{#str}}nodiscussions, forum{{/str}}
             {{/no_discussions_text}}
         </div>
     {{/state.hasdiscussions}}

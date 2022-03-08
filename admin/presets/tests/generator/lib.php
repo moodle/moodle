@@ -64,6 +64,14 @@ class core_adminpresets_generator extends \component_generator_base {
         if (!isset($data['author'])) {
             $data['author'] = 'Default author';
         }
+        if (!isset($data['iscore'])) {
+            $data['iscore'] = manager::NONCORE_PRESET;
+        }
+        // Validate iscore value.
+        $allowed = [manager::NONCORE_PRESET, manager::STARTER_PRESET, manager::FULL_PRESET];
+        if (!in_array($data['iscore'], $allowed)) {
+            $data['iscore'] = manager::NONCORE_PRESET;
+        }
 
         $preset = [
             'userid' => $USER->id,
@@ -75,6 +83,7 @@ class core_adminpresets_generator extends \component_generator_base {
             'moodlerelease' => $CFG->release,
             'timecreated' => time(),
             'timeimported' => 0,
+            'iscore' => $data['iscore'],
         ];
 
         $presetid = $DB->insert_record('adminpresets', $preset);

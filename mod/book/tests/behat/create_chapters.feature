@@ -8,12 +8,14 @@ Feature: In a book, create chapters and sub chapters
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+      | student1 | C1 | student        |
     And the following "activities" exist:
       | activity | name      | intro                 | course | section |
       | book     | Test book | A book about dreams!  | C1     | 1       |
@@ -27,6 +29,7 @@ Feature: In a book, create chapters and sub chapters
       | Chapter title | Dummy first chapter |
       | Content | Dream is the start of a journey |
     And I press "Save changes"
+    And I should not see "No content has been added to this book yet."
     And I should see "1. Dummy first chapter" in the "Table of contents" "block"
     And I click on "Add new chapter after \"Dummy first chapter\"" "link" in the "Table of contents" "block"
     And I should see "Dummy first chapter"
@@ -78,3 +81,8 @@ Feature: In a book, create chapters and sub chapters
     And "Delete chapter \"1. Dummy first chapter\"" "link" should not exist in the "Table of contents" "block"
     And "Hide chapter \"1. Dummy first chapter\"" "link" should not exist in the "Table of contents" "block"
     And "Add new chapter after \"Dummy first chapter\"" "link" should not exist in the "Table of contents" "block"
+
+  Scenario: When chapters are not created yet, students can see a notification in the book activity
+    Given I am on the "Test book" "book activity" page logged in as student1
+    Then I should see "No content has been added to this book yet." in the ".alert-info" "css_element"
+    And I should not see "Table of contents"

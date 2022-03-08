@@ -61,6 +61,10 @@ if (!$content->is_view_allowed()) {
     redirect($cburl);
 }
 
+if ($context->contextlevel == CONTEXT_COURSECAT) {
+    $PAGE->set_primary_active_tab('home');
+}
+
 $PAGE->set_url(new \moodle_url('/contentbank/view.php', ['id' => $id]));
 $PAGE->set_context($context);
 $PAGE->navbar->add($record->name);
@@ -68,6 +72,7 @@ $title .= ": ".$record->name;
 $PAGE->set_title($title);
 $PAGE->set_pagetype('contentbank');
 $PAGE->set_pagelayout('incourse');
+$PAGE->set_secondary_active_tab('contentbank');
 
 echo $OUTPUT->header();
 

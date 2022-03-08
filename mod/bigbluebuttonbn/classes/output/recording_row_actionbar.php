@@ -116,54 +116,42 @@ class recording_row_actionbar implements renderable, templatable {
                 $disabledwhen = $buttonpayload['disablewhen'] ?? null;
                 $this->actionbar_update_diplay($buttonpayload, $disabledwhen, $this->recording, 'disabled');
                 $this->actionbar_update_diplay($buttonpayload, $conditionalhiding, $this->recording);
-
                 if (!empty($buttonpayload)) {
-                    // With text for $manageaction.
                     $iconortext = '';
-                    $linkattributes = [
-                        'class' => 'btn btn-xs btn-danger',
-                    ];
-
                     $target = $buttonpayload['action'];
                     if (isset($buttonpayload['target'])) {
                         $target .= '-' . $buttonpayload['target'];
                     }
                     $id = 'recording-' . $target . '-' . $this->recording->get('recordingid');
-                    if ((boolean) config::get('recording_icons_enabled')) {
-                        // With icon for $manageaction.
-                        $iconattributes = [
-                            'id' => $id,
-                            'class' => 'iconsmall',
-                        ];
-                        $linkattributes = [
-                            'id' => $id,
-                            'data-action' => $buttonpayload['action'],
-                            'data-require-confirmation' => !empty($buttonpayload['requireconfirmation']),
-                            'class' => 'action-icon'
-                        ];
-                        if ($this->recording->get('imported')) {
-                            $linkattributes['data-links'] = recording::count_records(
-                                [
-                                    'recordingid' => $this->recording->get('recordingid'),
-                                    'imported' => true,
-                                ]
-                            );
-                        }
-                        if (isset($buttonpayload['disabled'])) {
-                            $iconattributes['class'] .= ' fa-' . $buttonpayload['disabled'];
-                            $linkattributes['class'] .= ' disabled';
-                        }
-                        $icon = new pix_icon(
-                            'i/' . $buttonpayload['icon'],
-                            get_string('view_recording_list_actionbar_' . $buttonpayload['action'], 'bigbluebuttonbn'),
-                            'moodle',
-                            $iconattributes
+                    $iconattributes = [
+                        'id' => $id,
+                        'class' => 'iconsmall',
+                    ];
+                    $linkattributes = [
+                        'id' => $id,
+                        'data-action' => $buttonpayload['action'],
+                        'data-require-confirmation' => !empty($buttonpayload['requireconfirmation']),
+                        'class' => 'action-icon'
+                    ];
+                    if ($this->recording->get('imported')) {
+                        $linkattributes['data-links'] = recording::count_records(
+                            [
+                                'recordingid' => $this->recording->get('recordingid'),
+                                'imported' => true,
+                            ]
                         );
-                        $iconortext = $output->render($icon);
-                    } else {
-                        $iconortext = get_string($buttonpayload['action']);
-                        $linkattributes['title'] = get_string($buttonpayload['action']);
                     }
+                    if (isset($buttonpayload['disabled'])) {
+                        $iconattributes['class'] .= ' fa-' . $buttonpayload['disabled'];
+                        $linkattributes['class'] .= ' disabled';
+                    }
+                    $icon = new pix_icon(
+                        'i/' . $buttonpayload['icon'],
+                        get_string('view_recording_list_actionbar_' . $buttonpayload['action'], 'bigbluebuttonbn'),
+                        'moodle',
+                        $iconattributes
+                    );
+                    $iconortext = $output->render($icon);
                     $actionlink = new \action_link(new \moodle_url('#'), $iconortext, null, $linkattributes);
                     $context->tools [] = $actionlink->export_for_template($output);
                 }

@@ -5,7 +5,10 @@ Feature: Store the content bank view preference
   I need to be able to store my view preference
 
   Background:
-    Given I log in as "admin"
+    Given the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
+    And I log in as "admin"
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager
     And I upload "h5p/tests/fixtures/greeting-card-887.h5p" file to "Files" filemanager

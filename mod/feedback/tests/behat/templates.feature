@@ -144,7 +144,7 @@ Feature: Saving, using and deleting feedback templates
     And I select "Use a template" from the "jump" singleselect
     And I follow "My public template"
     Then I should not see "Delete"
-    And I click on "Back" "link" in the "#action_bar" "css_element"
+    And I click on "Back" "link" in the ".tertiary-navigation" "css_element"
     And "My course template" "text" should exist in the ".coursetemplates" "css_element"
     And I follow "My course template"
     And I click on "Delete" "link"

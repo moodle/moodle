@@ -35,6 +35,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\named_templatable;
 use core_completion\cm_completion_details;
 use core_course\output\activity_information;
 
@@ -227,14 +228,29 @@ class renderer_base {
         $classparts = explode('\\', get_class($widget));
         // Strip namespaces.
         $classname = array_pop($classparts);
-        // Remove _renderable suffixes
+        // Remove _renderable suffixes.
         $classname = preg_replace('/_renderable$/', '', $classname);
 
-        $rendermethod = 'render_'.$classname;
+        $rendermethod = "render_{$classname}";
         if (method_exists($this, $rendermethod)) {
+            // Call the render_[widget_name] function.
+            // Note: This has a higher priority than the named_templatable to allow the theme to override the template.
             return $this->$rendermethod($widget);
         }
+
+        if ($widget instanceof named_templatable) {
+            // This is a named templatable.
+            // Fetch the template name from the get_template_name function instead.
+            // Note: This has higher priority than the guessed template name.
+            return $this->render_from_template(
+                $widget->get_template_name($this),
+                $widget->export_for_template($this)
+            );
+        }
+
         if ($widget instanceof templatable) {
+            // Guess the templat ename based on the class name.
+            // Note: There's no benefit to moving this aboved the named_templatable and this approach is more costly.
             $component = array_shift($classparts);
             if (!$component) {
                 $component = 'core';
@@ -243,7 +259,7 @@ class renderer_base {
             $context = $widget->export_for_template($this);
             return $this->render_from_template($template, $context);
         }
-        throw new coding_exception('Can not render widget, renderer method ('.$rendermethod.') not found.');
+        throw new coding_exception("Can not render widget, renderer method ('{$rendermethod}') not found.");
     }
 
     /**
@@ -455,17 +471,33 @@ class plugin_renderer_base extends renderer_base {
      */
     public function render(renderable $widget) {
         $classname = get_class($widget);
+
         // Strip namespaces.
         $classname = preg_replace('/^.*\\\/', '', $classname);
-        // Keep a copy at this point, we may need to look for a deprecated method.
-        $deprecatedmethod = 'render_'.$classname;
-        // Remove _renderable suffixes
-        $classname = preg_replace('/_renderable$/', '', $classname);
 
-        $rendermethod = 'render_'.$classname;
+        // Keep a copy at this point, we may need to look for a deprecated method.
+        $deprecatedmethod = "render_{$classname}";
+
+        // Remove _renderable suffixes.
+        $classname = preg_replace('/_renderable$/', '', $classname);
+        $rendermethod = "render_{$classname}";
+
         if (method_exists($this, $rendermethod)) {
+            // Call the render_[widget_name] function.
+            // Note: This has a higher priority than the named_templatable to allow the theme to override the template.
             return $this->$rendermethod($widget);
         }
+
+        if ($widget instanceof named_templatable) {
+            // This is a named templatable.
+            // Fetch the template name from the get_template_name function instead.
+            // Note: This has higher priority than the deprecated method which is not overridable by themes anyway.
+            return $this->render_from_template(
+                $widget->get_template_name($this),
+                $widget->export_for_template($this)
+            );
+        }
+
         if ($rendermethod !== $deprecatedmethod && method_exists($this, $deprecatedmethod)) {
             // This is exactly where we don't want to be.
             // If you have arrived here you have a renderable component within your plugin that has the name
@@ -475,15 +507,20 @@ class plugin_renderer_base extends renderer_base {
             // You need to change your renderers render_blah_renderable to render_blah.
             // Until you do this it will not be possible for a theme to override the renderer to override your method.
             // Please do it ASAP.
-            static $debugged = array();
+            static $debugged = [];
             if (!isset($debugged[$deprecatedmethod])) {
-                debugging(sprintf('Deprecated call. Please rename your renderables render method from %s to %s.',
-                    $deprecatedmethod, $rendermethod), DEBUG_DEVELOPER);
+                debugging(sprintf(
+                    'Deprecated call. Please rename your renderables render method from %s to %s.',
+                    $deprecatedmethod,
+                    $rendermethod
+                ), DEBUG_DEVELOPER);
                 $debugged[$deprecatedmethod] = true;
             }
             return $this->$deprecatedmethod($widget);
         }
-        // pass to core renderer if method not found here
+
+        // Pass to core renderer if method not found here.
+        // Note: this is not a parent. This is _new_ renderer which respects the requested format, and output type.
         return $this->output->render($widget);
     }
 
@@ -4132,9 +4169,10 @@ EOD;
     /**
      * Returns the HTML for the site support email link
      *
+     * @param array $customattribs Array of custom attributes for the support email anchor tag.
      * @return string The html code for the support email link.
      */
-    public function supportemail(): string {
+    public function supportemail(array $customattribs = []): string {
         global $CFG;
 
         $label = get_string('contactsitesupport', 'admin');
@@ -4147,6 +4185,8 @@ EOD;
         } else {
             $attributes = ['href' => $CFG->wwwroot . '/user/contactsitesupport.php'];
         }
+
+        $attributes += $customattribs;
 
         return html_writer::tag('a', $content, $attributes);
     }

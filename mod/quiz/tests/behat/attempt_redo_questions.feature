@@ -34,7 +34,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
   @javascript
   Scenario: After completing a question, there is a redo question button that restarts the question
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    When I follow "Attempt quiz"
+    When I press "Attempt quiz"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I press "Try another question like this one"
@@ -44,7 +44,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
   @javascript
   Scenario: The redo question button is visible but disabled for teachers
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    When I follow "Attempt quiz"
+    When I press "Attempt quiz"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I log out
@@ -56,7 +56,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
   @javascript
   Scenario: The redo question buttons are no longer visible after the attempt is submitted.
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    When I follow "Attempt quiz"
+    When I press "Attempt quiz"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I press "Finish attempt ..."
@@ -67,7 +67,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
   @javascript @_switch_window
   Scenario: Teachers reviewing can see all the questions attempted in a slot
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    When I follow "Attempt quiz"
+    When I press "Attempt quiz"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I press "Try another question like this one"
@@ -86,8 +86,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I switch to the main window
     And the state of "First question" question is shown as "Not answered"
     And I should not see "Submit" in the ".history" "css_element"
-    And I am on the "Quiz 1" "mod_quiz > View" page
-    And I navigate to "Results > Statistics" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Statistics report" page logged in as teacher
     And I follow "TF1"
     And "False" row "Frequency" column of "quizresponseanalysis" table should contain "100.00%"
     And "True" row "Frequency" column of "quizresponseanalysis" table should contain "0.00%"
@@ -96,7 +95,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
   @javascript
   Scenario: Redoing question 1 should save any changes to question 2 on the same page
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    When I follow "Attempt quiz"
+    When I press "Attempt quiz"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I click on "True" "radio" in the "Second question" "question"
@@ -117,7 +116,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
       | slot | actualquestion |
       | 1    | TF1            |
     And I am on the "Quiz 2" "mod_quiz > View" page logged in as "student"
-    When I follow "Attempt quiz"
+    When I press "Continue your attempt"
     And I should see "First question"
     And I click on "False" "radio"
     And I click on "Check" "button"
@@ -138,8 +137,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And user "student" has attempted "Quiz 2" with responses:
       | slot | response    |
       | 1    | J.K.Rowling |
-    And I am on the "Quiz 2" "mod_quiz > View" page logged in as "teacher"
-    And I navigate to "Results > Manual grading" in current page administration
+    And I am on the "Quiz 2" "mod_quiz > Manual grading report" page logged in as "teacher"
     And I follow "Also show questions that have been graded automatically"
     When I click on "update grades" "link" in the "SA1" "table_row"
     Then I set the field "Comment" to "I have adjusted your mark to 1.0"

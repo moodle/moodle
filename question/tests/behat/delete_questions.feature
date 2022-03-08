@@ -60,7 +60,7 @@ Feature: A teacher can delete questions in the question bank
     And I click on "Also show old questions" "checkbox"
     And I should see "Test used question to be deleted"
     And I am on the "Test quiz" "quiz activity" page
-    And I follow "Preview quiz"
+    And I click on "Preview quiz" "button"
     And I should see "Write about whatever you want"
 
   @javascript

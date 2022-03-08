@@ -5,16 +5,23 @@ Feature: Course category management interface performs as expected
   I need to expand and collapse categories.
 
   @javascript
-  Scenario: Test general look of management interface
+  Scenario Outline: Test general look of management interface
     Given the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
     And I log in as "admin"
     And I go to the courses management page
-    And I should see "Course and category management" in the "h2" "css_element"
-    And I should see "Course categories" in the ".view-mode-selector" "css_element"
-    And I should see "Course categories" in the "#page-content" "css_element"
-    And I should see the "Course categories and courses" management page
+    And I select "<selected>" from the "Viewing" singleselect
+    And I should see "<heading>" in the "h2" "css_element"
+    And I should see "<selected>" in the "Viewing" "select"
+    And I should see "<pagecontent>" in the "#page-content" "css_element"
+    And I should see the "<selected>" management page
+
+    Examples:
+      | heading                              | selected                      | pagecontent       |
+      | Manage course categories and courses | Course categories and courses | Course categories |
+      | Manage course categories             | Course categories             | Course categories |
+      | Manage courses                       | Courses                       | Cat 1             |
 
   @javascript
   Scenario: Test view mode functionality
@@ -30,20 +37,12 @@ Feature: Course category management interface performs as expected
     And I should see the "Course categories and courses" management page
     And I should see "Course categories" in the "#category-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
-    And I should see "Course categories" in the ".view-mode-selector" "css_element"
-    And I should not see "Course categories and courses" in the ".view-mode-selector .menu" "css_element"
-    And I should not see "Course categories" in the ".view-mode-selector .menu" "css_element"
-    And I should not see "Courses" in the ".view-mode-selector .menu" "css_element"
-    And I open the action menu in ".view-mode-selector" "css_element"
+    And I should see "Course categories" in the "Viewing" "select"
+    And the field "jump" matches value "Course categories and courses"
     And I start watching to see if a new page loads
-    Then I should see "Course categories and courses" in the ".view-mode-selector .menu" "css_element"
-    And I should see "Course categories" in the ".view-mode-selector .menu" "css_element"
-    And I should see "Courses" in the ".view-mode-selector .menu" "css_element"
-    And I click on "Course categories and courses" "link" in the ".view-mode-selector .menu" "css_element"
-    And a new page should have loaded since I started watching
-    And I start watching to see if a new page loads
-    And I should see the "Course categories and courses" management page
-    And I should see "Course categories" in the "#category-listing h3" "css_element"
+    Then I should see "Course categories and courses" in the "Viewing" "select"
+    And I should see "Course categories" in the "Viewing" "select"
+    And I should see "Courses" in the "Viewing" "select"
     And I should see "Category 1" in the "#course-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
     And I should see "No courses in this category" in the "#course-listing" "css_element"
@@ -55,9 +54,8 @@ Feature: Course category management interface performs as expected
     And I should see "Cat 1" in the "#course-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
     And I should see "Course 1" in the "#course-listing" "css_element"
-    And I open the action menu in ".view-mode-selector" "css_element"
-    Then I should see "Courses" in the ".view-mode-selector .menu" "css_element"
-    And I click on "Courses" "link" in the ".view-mode-selector .menu" "css_element"
+    Then I should see "Courses" in the "Viewing" "select"
+    And I select "Courses" from the "jump" singleselect
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
     And I should see the "Courses" management page

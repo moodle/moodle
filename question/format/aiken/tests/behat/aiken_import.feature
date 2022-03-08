@@ -20,7 +20,7 @@ Feature: Test importing questions from Aiken format.
   @javascript @_file_upload
   Scenario: import some Aiken questions
     When I navigate to "Question bank" in current page administration
-    And I select "Import" from the "questionbankactionselect" singleselect
+    And I select "Import" from the "Question bank tertiary navigation" singleselect
     And I set the field "id_format_aiken" to "1"
     And I upload "question/format/aiken/tests/fixtures/questions.aiken.txt" file to "Import" filemanager
     And I press "id_submitbutton"

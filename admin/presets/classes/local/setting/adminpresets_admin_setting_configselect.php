@@ -43,12 +43,13 @@ class adminpresets_admin_setting_configselect extends adminpresets_setting {
 
                 if ($key == $value) {
                     $this->value = $value;
+                    $this->set_visiblevalue();
                     return true;
                 }
             }
         }
-
         $this->value = false;
+        $this->set_visiblevalue();
         return false;
     }
 

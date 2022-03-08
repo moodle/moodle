@@ -28,6 +28,9 @@ import events from 'core_course/events';
 // A map with all the course editor instances.
 const courseEditorMap = new Map();
 
+// Map with all the state keys the backend send us to know if the frontend cache is valid or not.
+const courseStateKeyMap = new Map();
+
 /**
  * Trigger a state changed event.
  *
@@ -51,12 +54,22 @@ function dispatchStateChangedEvent(detail, target) {
 /**
  * Setup the current view settings
  *
+ * The backend cache state revision is a combination of the course->cacherev, the
+ * user course preferences and completion state. The backend updates that number
+ * everytime some change in the course affects the user course state.
+ *
  * @param {number} courseId the course id
  * @param {setup} setup format, page and course settings
  * @param {boolean} setup.editing if the page is in edit mode
  * @param {boolean} setup.supportscomponents if the format supports components for content
+ * @param {boolean} setup.statekey the backend cached state revision
  */
 export const setViewFormat = (courseId, setup) => {
+    courseId = parseInt(courseId);
+    // Caches are ignored in edit mode.
+    if (!setup.editing) {
+        courseStateKeyMap.set(courseId, setup.statekey);
+    }
     const editor = getCourseEditor(courseId);
     editor.setViewFormat(setup);
 };
@@ -82,7 +95,7 @@ export const getCourseEditor = (courseId) => {
                 mutations: new DefaultMutations(),
             })
         );
-        courseEditorMap.get(courseId).loadCourse(courseId);
+        courseEditorMap.get(courseId).loadCourse(courseId, courseStateKeyMap.get(courseId));
     }
     return courseEditorMap.get(courseId);
 };

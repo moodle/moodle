@@ -120,7 +120,7 @@
                             title="{{#str}}opendrawerblocks, core{{/str}}"
                         >
                             <span class="sr-only">{{#str}}opendrawerblocks, core{{/str}}</span>
-                            {{#pix}}t/blocks_drawer, core, {{#str}}opendrawerblocks, core{{/str}}{{/pix}}
+                            {{#pix}}t/blocks_drawer, core{{/pix}}
                         </button>
                     </div>
                 {{/hasblocks}}
@@ -148,7 +148,11 @@
                             {{> core/activity_header }}
                         {{/headercontent}}
                         {{#overflow}}
-                            {{> core/url_select}}
+                            <div class="container-fluid tertiary-navigation">
+                                <div class="navitem">
+                                    {{> core/url_select}}
+                                </div>
+                            </div>
                         {{/overflow}}
                         {{{ output.main_content }}}
                         {{{ output.activity_navigation }}}

@@ -43,7 +43,7 @@ Feature: Set a quiz to be marked complete when the student completes a minimum a
     And I am on "Course 1" course homepage
     And the "Make attempts: 2" completion condition of "Test quiz name" is displayed as "todo"
     And I follow "Test quiz name"
-    And I follow "Attempt quiz"
+    And I press "Re-attempt quiz"
     And I set the field "False" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"

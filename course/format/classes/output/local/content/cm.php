@@ -25,16 +25,17 @@
 namespace core_courseformat\output\local\content;
 
 use cm_info;
-use context_module;
 use core\activity_dates;
+use core\output\named_templatable;
+use core_availability\info_module;
 use core_completion\cm_completion_details;
-use core_courseformat\base as course_format;
 use core_course\output\activity_information;
+use core_courseformat\base as course_format;
+use core_courseformat\output\local\courseformat_named_templatable;
 use renderable;
+use renderer_base;
 use section_info;
 use stdClass;
-use templatable;
-use \core_availability\info_module;
 
 /**
  * Base class to render a course module inside a course format.
@@ -43,7 +44,8 @@ use \core_availability\info_module;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cm implements renderable, templatable {
+class cm implements named_templatable, renderable {
+    use courseformat_named_templatable;
 
     /** @var course_format the course format */
     protected $format;
@@ -84,9 +86,12 @@ class cm implements renderable, templatable {
         $this->format = $format;
         $this->section = $section;
         $this->mod = $mod;
-        $this->displayoptions = $displayoptions;
 
+        // Add extra display options.
         $this->load_classes();
+        $displayoptions['linkclasses'] = $this->get_link_classes();
+        $displayoptions['textclasses'] = $this->get_text_classes();
+        $this->displayoptions = $displayoptions;
 
         // Get the necessary classes.
         $this->cmnameclass = $format->get_output_classname('content\\cm\\cmname');
@@ -97,138 +102,206 @@ class cm implements renderable, templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @param renderer_base $output typically, the renderer that's calling this function
      * @return stdClass data context for a mustache template
      */
-    public function export_for_template(\renderer_base $output): stdClass {
-        global $USER;
-
-        $format = $this->format;
-        $section = $this->section;
+    public function export_for_template(renderer_base $output): stdClass {
         $mod = $this->mod;
         $displayoptions = $this->displayoptions;
-        $course = $mod->get_course();
-
-        // Fetch completion details.
-        $showcompletionconditions = $course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS;
-        $completiondetails = cm_completion_details::get_instance($mod, $USER->id, $showcompletionconditions);
-
-        // Fetch activity dates.
-        $activitydates = [];
-        if ($course->showactivitydates) {
-            $activitydates = activity_dates::get_dates_for_module($mod, $USER->id);
-        }
-
-        $displayoptions['linkclasses'] = $this->get_link_classes();
-        $displayoptions['textclasses'] = $this->get_text_classes();
-
-        // Grouping activity.
-        $groupinglabel = $mod->get_grouping_label($displayoptions['textclasses']);
-
-        $activityinfodata = (object) ['hasdates' => false, 'hascompletion' => false];
-        // - There are activity dates to be shown; or
-        // - Completion info needs to be displayed
-        //   * The activity tracks completion; AND
-        //   * The showcompletionconditions setting is enabled OR an activity that tracks manual completion needs the manual
-        //     completion button to be displayed on the course homepage.
-        $showcompletioninfo = $completiondetails->has_completion() && ($showcompletionconditions ||
-                        (!$completiondetails->is_automatic() && $completiondetails->show_manual_completion()));
-        if ($showcompletioninfo || !empty($activitydates)) {
-            $activityinfo = new activity_information($mod, $completiondetails, $activitydates);
-            $activityinfodata = $activityinfo->export_for_template($output);
-        }
-
-        // Mod inplace name editable.
-        $cmname = new $this->cmnameclass(
-            $format,
-            $this->section,
-            $mod,
-            $format->show_editor(),
-            $this->displayoptions
-        );
-
-        // Mod availability.
-        $availability = new $this->availabilityclass(
-            $format,
-            $this->section,
-            $mod,
-            $this->displayoptions
-        );
-
-        $modavailability = $availability->export_for_template($output);
 
         $data = (object)[
-            'cmname' => $cmname->export_for_template($output),
-            'grouping' => $groupinglabel,
-            'afterlink' => $mod->afterlink,
-            'altcontent' => $mod->get_formatted_content(['overflowdiv' => true, 'noclean' => true]),
-            'modavailability' => $mod->visible ? $modavailability : null,
+            'grouping' => $mod->get_grouping_label($displayoptions['textclasses']),
             'modname' => get_string('pluginname', 'mod_' . $mod->modname),
             'url' => $mod->url,
-            'activityinfo' => $activityinfodata,
             'activityname' => $mod->get_formatted_name(),
             'textclasses' => $displayoptions['textclasses'],
-            'classlist' => []
+            'classlist' => [],
         ];
 
-        if (!empty($mod->indent) && $format->uses_indentation()) {
-            $data->indent = $mod->indent;
-            if ($mod->indent > 15) {
-                $data->hugeindent = true;
-            }
-        }
+        // Add partial data segments.
+        $haspartials = [];
+        $haspartials['cmname'] = $this->add_cm_name_data($data, $output);
+        $haspartials['availability'] = $this->add_availability_data($data, $output);
+        $haspartials['alternative'] = $this->add_alternative_content_data($data, $output);
+        $haspartials['completion'] = $this->add_completion_data($data, $output);
+        $haspartials['editor'] = $this->add_editor_data($data, $output);
+        $this->add_format_data($data, $haspartials, $output);
 
-        $data->altcontent = (empty($data->altcontent)) ? false : $data->altcontent;
-
-        $data->hasname = !empty($data->cmname['displayvalue']);
-
+        // Calculated fields.
         if (!empty($data->url)) {
             $data->hasurl = true;
         }
 
-        if (!$mod->visible) {
+        return $data;
+    }
+
+    /**
+     * Add course module name attributes to the data structure.
+     *
+     * @param stdClass $data the current cm data reference
+     * @param renderer_base $output typically, the renderer that's calling this function
+     * @return bool if the cm has name data
+     */
+    protected function add_cm_name_data(stdClass &$data, renderer_base $output): bool {
+        // Mod inplace name editable.
+        $cmname = new $this->cmnameclass(
+            $this->format,
+            $this->section,
+            $this->mod,
+            $this->format->show_editor(),
+            $this->displayoptions
+        );
+        $data->cmname = $cmname->export_for_template($output);
+        $data->hasname = !empty($data->cmname['displayvalue']);
+        return $data->hasname;
+    }
+
+    /**
+     * Add the module availability to the data structure.
+     *
+     * @param stdClass $data the current cm data reference
+     * @param renderer_base $output typically, the renderer that's calling this function
+     * @return bool if the cm has mod availability
+     */
+    protected function add_availability_data(stdClass &$data, renderer_base $output): bool {
+        if (!$this->mod->visible) {
+            $data->modavailability = null;
+            return false;
+        }
+        // Mod availability output class.
+        $availability = new $this->availabilityclass(
+            $this->format,
+            $this->section,
+            $this->mod,
+            $this->displayoptions
+        );
+        $modavailability = $availability->export_for_template($output);
+        $data->modavailability = $modavailability;
+        return $availability->has_availability($output);
+    }
+
+    /**
+     * Add the alternative content to the data structure.
+     *
+     * @param stdClass $data the current cm data reference
+     * @param renderer_base $output typically, the renderer that's calling this function
+     * @return bool if the cm has alternative content
+     */
+    protected function add_alternative_content_data(stdClass &$data, renderer_base $output): bool {
+        $altcontent = $this->mod->get_formatted_content(
+            ['overflowdiv' => true, 'noclean' => true]
+        );
+        $data->altcontent = (empty($altcontent)) ? false : $altcontent;
+        $data->afterlink = $this->mod->afterlink;
+        return !empty($data->altcontent);
+    }
+
+    /**
+     * Add activity completion information to the data structure.
+     *
+     * @param stdClass $data the current cm data reference
+     * @param renderer_base $output typically, the renderer that's calling this function
+     * @return bool the module has completion information
+     */
+    protected function add_completion_data(stdClass &$data, renderer_base $output): bool {
+        global $USER;
+        $course = $this->mod->get_course();
+        // Fetch completion details.
+        $showcompletionconditions = $course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS;
+        $completiondetails = cm_completion_details::get_instance($this->mod, $USER->id, $showcompletionconditions);
+
+        // Fetch activity dates.
+        $activitydates = [];
+        if ($course->showactivitydates) {
+            $activitydates = activity_dates::get_dates_for_module($this->mod, $USER->id);
+        }
+
+        $activityinfodata = (object) ['hasdates' => false, 'hascompletion' => false];
+        // There are activity dates to be shown; or
+        // Completion info needs to be displayed
+        // * The activity tracks completion; AND
+        // * The showcompletionconditions setting is enabled OR an activity that tracks manual
+        // completion needs the manual completion button to be displayed on the course homepage.
+        $showcompletioninfo = $completiondetails->has_completion() && ($showcompletionconditions ||
+            (!$completiondetails->is_automatic() && $completiondetails->show_manual_completion()));
+        if ($showcompletioninfo || !empty($activitydates)) {
+            $activityinfo = new activity_information($this->mod, $completiondetails, $activitydates);
+            $activityinfodata = $activityinfo->export_for_template($output);
+        }
+
+        $data->activityinfo = $activityinfodata;
+        return $activityinfodata->hascompletion;
+    }
+
+    /**
+     * Add activity information to the data structure.
+     *
+     * @param stdClass $data the current cm data reference
+     * @param bool[] $haspartials the result of loading partial data elements
+     * @param renderer_base $output typically, the renderer that's calling this function
+     * @return bool if the cm has format data
+     */
+    protected function add_format_data(stdClass &$data, array $haspartials, renderer_base $output): bool {
+        $result = false;
+        // Legacy indentation.
+        if (!empty($this->mod->indent) && $this->format->uses_indentation()) {
+            $data->indent = $this->mod->indent;
+            if ($this->mod->indent > 15) {
+                $data->hugeindent = true;
+                $result = true;
+            }
+        }
+        // Stealth and hidden from student.
+        if (!$this->mod->visible) {
             // This module is hidden but current user has capability to see it.
             $data->modhiddenfromstudents = true;
-        } else if ($mod->is_stealth()) {
+            $result = true;
+        } else if ($this->mod->is_stealth()) {
             // This module is available but is normally not displayed on the course page
             // (this user can see it because they can manage it).
             $data->modstealth = true;
+            $result = true;
         }
-
-        if ($mod->modname == 'label' &&
-            !$modavailability->hasmodavailability &&
-            !$activityinfodata->hascompletion &&
+        // Special inline activity format.
+        if (
+            $this->mod->has_custom_cmlist_item() &&
+            !$haspartials['availability'] &&
+            !$haspartials['completion'] &&
             !isset($data->modhiddenfromstudents) &&
             !isset($data->modstealth) &&
-            !$format->show_editor()
-            ) {
+            !$this->format->show_editor()
+        ) {
             $data->modinline = true;
+            $result = true;
         }
+        return $result;
+    }
 
-        $returnsection = $format->get_section_number();
-
-        if ($format->show_editor()) {
-            // Edit actions.
-            $controlmenu = new $this->controlmenuclass(
-                $format,
-                $this->section,
-                $mod,
-                $this->displayoptions
-            );
-            $data->controlmenu = $controlmenu->export_for_template($output);
-
-            if ($format->supports_components()) {
-                $data->moveicon = $output->pix_icon('i/dragdrop', '', 'moodle', ['class' => 'editing_move dragicon']);
-            } else {
-                // Add the legacy YUI move link.
-                $data->moveicon = course_get_cm_move($mod, $returnsection);
-            }
-
-            // Move and select options.
-            $modcontext = context_module::instance($mod->id);
+    /**
+     * Add course editor attributes to the data structure.
+     *
+     * @param stdClass $data the current cm data reference
+     * @param renderer_base $output typically, the renderer that's calling this function
+     * @return bool if the cm has editor data
+     */
+    protected function add_editor_data(stdClass &$data, renderer_base $output): bool {
+        if (!$this->format->show_editor()) {
+            return false;
         }
-
-        return $data;
+        $returnsection = $this->format->get_section_number();
+        // Edit actions.
+        $controlmenu = new $this->controlmenuclass(
+            $this->format,
+            $this->section,
+            $this->mod,
+            $this->displayoptions
+        );
+        $data->controlmenu = $controlmenu->export_for_template($output);
+        if (!$this->format->supports_components()) {
+            // Add the legacy YUI move link.
+            $data->moveicon = course_get_cm_move($this->mod, $returnsection);
+        }
+        return true;
     }
 
     /**
@@ -236,7 +309,6 @@ class cm implements renderable, templatable {
      *
      */
     protected function load_classes() {
-
         $mod = $this->mod;
 
         $linkclasses = '';

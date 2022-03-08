@@ -104,7 +104,7 @@ Feature: Award badges
     And I add the "Navigation" block if not present
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Site badges" "link" in the "Navigation" "block"
-    Then I should see "There are no badges available."
+    Then I should see "There are currently no badges available for users to earn."
     And I should not see "Manage badges"
     And I should not see "Add a new badge"
 
@@ -138,7 +138,7 @@ Feature: Award badges
     And I press "Update profile"
     And I follow "Profile" in the user menu
     Then I should see "Profile Badge"
-    And I should not see "There are no badges available."
+    And I should not see "There are currently no badges available for users to earn."
 
   @javascript
   Scenario: Award site badge

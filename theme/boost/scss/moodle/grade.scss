@@ -36,7 +36,7 @@
         overflow-x: visible;
         min-width: 100%;
         width: auto;
-        display: inline-flex;
+        display: flex;
         flex-direction: column;
         & > .card {
             width: auto;

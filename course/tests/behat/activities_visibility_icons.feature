@@ -115,7 +115,7 @@ Feature: Toggle activities visibility from the course page
     And "Test forum name" activity should be hidden
     And I click on "Test forum name" "link" in the "Recent activity" "block"
     And I should see "Test forum name"
-    And I should see "(There are no discussion topics yet in this forum)"
+    And I should see "There are no discussion topics yet in this forum"
 
   @javascript
   Scenario: Activities can be made available but not visible on a course page

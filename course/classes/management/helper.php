@@ -173,6 +173,14 @@ class helper {
         $manageurl = new \moodle_url('/course/management.php', array('categoryid' => $category->id));
         $baseurl = new \moodle_url($manageurl, array('sesskey' => \sesskey()));
         $actions = array();
+
+        // View link.
+        $actions['view'] = [
+            'url' => new \moodle_url('/course/index.php', ['categoryid' => $category->id]),
+            'icon' => null,
+            'string' => get_string('view')
+        ];
+
         // Edit.
         if ($category->can_edit()) {
             $actions['edit'] = array(
@@ -252,33 +260,12 @@ class helper {
             );
         }
 
-        // Assign roles.
-        if ($category->can_review_roles()) {
-            $actions['assignroles'] = array(
-                'url' => new \moodle_url('/admin/roles/assign.php', array('contextid' => $category->get_context()->id,
-                    'returnurl' => $manageurl->out_as_local_url(false))),
-                'icon' => new \pix_icon('t/assignroles', new \lang_string('assignroles', 'role')),
-                'string' => new \lang_string('assignroles', 'role')
-            );
-        }
-
         // Permissions.
         if ($category->can_review_permissions()) {
             $actions['permissions'] = array(
-                'url' => new \moodle_url('/admin/roles/permissions.php', array('contextid' => $category->get_context()->id,
-                    'returnurl' => $manageurl->out_as_local_url(false))),
+                'url' => new \moodle_url('/admin/roles/permissions.php', ['contextid' => $category->get_context()->id]),
                 'icon' => new \pix_icon('i/permissions', new \lang_string('permissions', 'role')),
                 'string' => new \lang_string('permissions', 'role')
-            );
-        }
-
-        // Check permissions.
-        if ($category->can_review_permissions()) {
-            $actions['checkroles'] = array(
-                'url' => new \moodle_url('/admin/roles/check.php', array('contextid' => $category->get_context()->id,
-                    'returnurl' => $manageurl->out_as_local_url(false))),
-                'icon' => new \pix_icon('i/checkpermissions', new \lang_string('checkpermissions', 'role')),
-                'string' => new \lang_string('checkpermissions', 'role')
             );
         }
 
@@ -349,6 +336,16 @@ class helper {
                     ];
                 }
             }
+        }
+
+        // Content bank.
+        if ($category->has_contentbank()) {
+            $url = new \moodle_url('/contentbank/index.php', ['contextid' => $category->get_context()->id]);
+            $actions['contentbank'] = [
+                'url' => $url,
+                'icon' => new \pix_icon('i/contentbank', ''),
+                'string' => get_string('contentbank')
+            ];
         }
 
         return $actions;

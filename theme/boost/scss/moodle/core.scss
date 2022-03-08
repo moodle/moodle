@@ -319,19 +319,6 @@ a.autolink.glossary:hover {
     display: block;
 }
 
-.collapsible-actions .collapseexpand {
-    padding-left: 20px;
-    background: url([[pix:t/collapsed]]) 2px center no-repeat;
-}
-/*rtl:raw:
-.collapsible-actions .collapseexpand {
-    background: url([[pix:t/collapsed_rtl]]) right center no-repeat;
-}
-*/
-.collapsible-actions .collapse-all {
-    background-image: url([[pix:t/expanded]]);
-}
-
 .yui-overlay .yui-widget-bd {
     background-color: #ffee69;
     border: 1px solid #a6982b;

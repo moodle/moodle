@@ -25,7 +25,7 @@ Feature: Test exporting True/False questions
 
   Scenario: Export a True/False question
     When I navigate to "Question bank" in current page administration
-    And I select "Export" from the "questionbankactionselect" singleselect
+    And I select "Export" from the "Question bank tertiary navigation" singleselect
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
     Then following "click here" should download between "1000" and "1200" bytes

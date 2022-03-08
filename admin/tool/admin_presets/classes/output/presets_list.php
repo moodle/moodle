@@ -23,6 +23,7 @@
  */
 namespace tool_admin_presets\output;
 
+use core_adminpresets\manager;
 use renderable;
 use templatable;
 use renderer_base;
@@ -105,7 +106,7 @@ class presets_list implements renderable, templatable {
                 ));
 
                 // Delete button won't be displayed for the pre-installed core "Starter" and "Full" presets.
-                if (!$preset->iscore) {
+                if ($preset->iscore == manager::NONCORE_PRESET) {
                     $deletelink = new \moodle_url('/admin/tool/admin_presets/index.php',
                     ['action' => 'delete', 'id' => $preset->id]
                     );

@@ -340,12 +340,12 @@ body:not(.editing)  .sitetopic ul.section {
 }
 
 .course-content .current::before {
-    content: "";
-    border-left: $primary 2px solid;
-    position: absolute;
-    left: -$card-spacer-x;
-    top: 0;
+    border-left: $primary 3px solid;
     bottom: 0;
+    content: "";
+    left: -8px;
+    position: absolute;
+    top: 0;
 }
 
 .course-content .section-summary {
@@ -1132,7 +1132,6 @@ span.editinstructions {
     }
 
     > div {
-        display: inline-block;
         float: right;
 
         > div {
@@ -1340,6 +1339,8 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 }
 
 .description .course-description-item {
+    @include font-size($small-font-size);
+
     background-color: $gray-100;
     padding-left: map-get($spacers, 3);
     padding-right: map-get($spacers, 3);

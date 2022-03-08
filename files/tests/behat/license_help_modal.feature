@@ -4,6 +4,11 @@ Feature: View licence links
   As a user
   I need to be able to navigate to a page containing licence terms from the file manager
 
+  Background:
+    Given the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
+
   @javascript
   Scenario: Uploading a file displays licence list modal
     Given I log in as "admin"

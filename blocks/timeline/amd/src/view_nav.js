@@ -110,6 +110,12 @@ function(
                     elementsWithDaysOffset.removeAttr('data-days-limit');
                 }
 
+                if (option.attr('data-filtername') === 'overdue') {
+                    elementsWithDaysOffset.attr('data-filter-overdue', true);
+                } else {
+                    elementsWithDaysOffset.removeAttr('data-filter-overdue');
+                }
+
                 // Reset the views to reinitialise the event lists now that we've
                 // updated the day limits.
                 View.reset(timelineViewRoot);

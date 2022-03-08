@@ -80,29 +80,27 @@
         }
     }
 }}
-<div class="container-fluid mb-4">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="d-flex">
-            <div>
-                {{#generalnavselector}}
-                    {{>core/url_select}}
-                {{/generalnavselector}}
+        {{#generalnavselector}}
+            <div class="navitem">
+                {{>core/url_select}}
             </div>
-            {{#addgradeitembutton}}
-                <div class="ml-2">
-                    {{>core/single_button}}
-                </div>
-            {{/addgradeitembutton}}
-            {{#addoutcomeitembutton}}
-                <div class="ml-2">
-                    {{>core/single_button}}
-                </div>
-            {{/addoutcomeitembutton}}
-            {{#addcategorybutton}}
-                <div class="ml-2">
-                    {{>core/single_button}}
-                </div>
-            {{/addcategorybutton}}
-        </div>
+        {{/generalnavselector}}
+        {{#addgradeitembutton}}
+            <div class="navitem">
+                {{>core/single_button}}
+            </div>
+        {{/addgradeitembutton}}
+        {{#addoutcomeitembutton}}
+            <div class="navitem">
+                {{>core/single_button}}
+            </div>
+        {{/addoutcomeitembutton}}
+        {{#addcategorybutton}}
+            <div class="navitem">
+                {{>core/single_button}}
+            </div>
+        {{/addcategorybutton}}
     </div>
 </div>

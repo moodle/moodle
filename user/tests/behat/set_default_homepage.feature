@@ -33,7 +33,7 @@ Feature: Set the site home page and dashboard as the default home page
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
     And I navigate to "Appearance > Navigation" in site administration
-    And I set the field "Home page for users" to "User preference"
+    And I set the field "Start page for users" to "User preference"
     And I press "Save changes"
     And I am on site homepage
     And I follow "Make this my home page"
@@ -57,13 +57,13 @@ Feature: Set the site home page and dashboard as the default home page
   Scenario Outline: User can configure their preferred default home page when allowed by admin
     Given I log in as "admin"
     And I navigate to "Appearance > Navigation" in site administration
-    And I set the field "Home page for users" to "User preference"
+    And I set the field "Start page for users" to "User preference"
     And I press "Save changes"
     And I log out
     When I log in as "user1"
     And I follow "Preferences" in the user menu
-    And I follow "Home page"
-    And I set the field "Home page" to "<preference>"
+    And I follow "Start page"
+    And I set the field "Start page" to "<preference>"
     And I press "Save changes"
     And I log out
     And I log in as "user1"

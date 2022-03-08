@@ -79,31 +79,31 @@
         }
     }
 }}
-<div class="container-fluid mt-2 mb-4">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
         <div class="d-flex">
-            <div>
-                {{#urlselect}}
+            {{#urlselect}}
+                <div class="navitem">
                     {{>core/url_select}}
-                {{/urlselect}}
-            </div>
-            <div class='pl-2 fieldadd'>
-                {{#fieldselect}}
+                </div>
+            {{/urlselect}}
+            {{#fieldselect}}
+                <div class='navitem fieldadd'>
                     {{>core/single_select}}
-                {{/fieldselect}}
-            </div>
+                </div>
+            {{/fieldselect}}
         </div>
-        <div class="ml-auto d-flex">
-            <div>
-                {{#saveaspreset}}
+        <div class="ml-sm-auto d-flex">
+            {{#saveaspreset}}
+                <div class="navitem">
                     {{>mod_data/save_as_preset}}
-                {{/saveaspreset}}
-            </div>
-            <div class="pl-2">
-                {{#exportpreset}}
+                </div>
+            {{/saveaspreset}}
+            {{#exportpreset}}
+                <div class="navitem">
                     {{>core/single_button}}
-                {{/exportpreset}}
-            </div>
+                </div>
+            {{/exportpreset}}
         </div>
     </div>
 </div>

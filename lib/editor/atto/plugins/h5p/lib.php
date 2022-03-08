@@ -80,7 +80,6 @@ function atto_h5p_strings_for_js() {
     );
 
     $PAGE->requires->strings_for_js($strings, 'atto_h5p');
+    $PAGE->requires->strings_for_js(['expand', 'collapse'], 'moodle');
     $PAGE->requires->js(autoloader::get_h5p_core_library_url('js/h5p-resizer.js'));
 }
-
-

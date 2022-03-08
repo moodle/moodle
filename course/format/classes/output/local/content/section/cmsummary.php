@@ -24,11 +24,12 @@
 
 namespace core_courseformat\output\local\content\section;
 
-use core_courseformat\base as course_format;
-use section_info;
 use completion_info;
+use core\output\named_templatable;
+use core_courseformat\base as course_format;
+use core_courseformat\output\local\courseformat_named_templatable;
 use renderable;
-use templatable;
+use section_info;
 use stdClass;
 
 /**
@@ -38,7 +39,9 @@ use stdClass;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cmsummary implements renderable, templatable {
+class cmsummary implements named_templatable, renderable {
+
+    use courseformat_named_templatable;
 
     /** @var course_format the course format class */
     protected $format;

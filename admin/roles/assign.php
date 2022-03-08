@@ -165,7 +165,7 @@ switch ($context->contextlevel) {
         $showroles = 1;
         break;
     case CONTEXT_COURSECAT:
-        $PAGE->set_heading($SITE->fullname);
+        core_course_category::page_setup();
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
@@ -204,8 +204,10 @@ if ($roleid) {
 }
 
 if ($backurl) {
-    echo $OUTPUT->render(new single_button($backurl, get_string('back'), 'get'));
-} else if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_MODULE) {
+    $backbutton = new single_button($backurl, get_string('back'), 'get');
+    $backbutton->class = 'singlebutton navitem';
+    echo html_writer::tag('div', $OUTPUT->render($backbutton), ['class' => 'tertiary-navigation']);
+} else if (in_array($context->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE, CONTEXT_COURSECAT])) {
     // The front page doesn't have an intermediate page 'other users' but needs similar tertiary nav like a standard course.
     echo $OUTPUT->render_participants_tertiary_nav($course);
 }

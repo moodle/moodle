@@ -53,7 +53,7 @@ Feature: The recording can be managed through the room page
   Scenario: I can rename the recording
     Given the BigBlueButtonBN server has sent recording ready notifications
     And I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as admin
-    When I set the field "Edit Name" in the "Recording 1" "table_row" to "Recording with an updated name 1"
+    When I set the field "Edit name" in the "Recording 1" "table_row" to "Recording with an updated name 1"
     Then I should see "Recording with an updated name 1"
     And I should see "Recording 2"
     And I reload the page
@@ -64,7 +64,7 @@ Feature: The recording can be managed through the room page
   Scenario: I can set a new description for this recording
     Given the BigBlueButtonBN server has sent recording ready notifications
     And I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as admin
-    When I set the field "Edit Description" in the "Recording 1" "table_row" to "This is a new recording description 1"
+    When I set the field "Edit description" in the "Recording 1" "table_row" to "This is a new recording description 1"
     Then I should see "This is a new recording description 1"
     And I should see "Description 2" in the "Recording 2" "table_row"
     And I reload the page

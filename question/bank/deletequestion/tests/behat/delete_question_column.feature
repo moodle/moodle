@@ -23,13 +23,13 @@ Feature: Use the qbank plugin manager page for deletequestion
     And I should see "Delete question"
     And I click on "Disable" "link" in the "Delete question" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
     Then I should not see "Delete" in the "region-main" "region"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Delete question" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
     And I should see "Delete" in the "region-main" "region"
 
@@ -40,13 +40,13 @@ Feature: Use the qbank plugin manager page for deletequestion
     And I should see "Delete question"
     And I click on "Disable" "link" in the "Delete question" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I click on "With selected" "button"
     Then I should not see question bulk action "deleteselected"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Delete question" "table_row"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I click on "With selected" "button"
     And I should see question bulk action "deleteselected"
 
@@ -54,7 +54,7 @@ Feature: Use the qbank plugin manager page for deletequestion
   Scenario: I should not see the deleted questions in the base view
     Given I log in as "admin"
     And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank > Questions" in current page administration
+    And I navigate to "Question bank" in current page administration
     And I click on "First question" "checkbox"
     And I click on "First question second" "checkbox"
     And I click on "With selected" "button"

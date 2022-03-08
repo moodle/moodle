@@ -53,6 +53,12 @@ class availability extends section_avalability {
     /** @var array optional display options */
     protected $displayoptions;
 
+    /** @var bool the has availability attribute name */
+    protected $hasavailabilityname;
+
+    /** @var stdClass|null the instance export data */
+    protected $data = null;
+
     /**
      * Constructor.
      *
@@ -66,85 +72,90 @@ class availability extends section_avalability {
         $this->section = $section;
         $this->mod = $mod;
         $this->displayoptions = $displayoptions;
+        $this->hasavailabilityname = 'hasmodavailability';
     }
 
     /**
-     * Export this data so it can be used as the context for a mustache template.
+     * Get the availability data to be used as the context for a mustache template.
      *
      * @param \renderer_base $output typically, the renderer that's calling this function
-     * @return stdClass data context for a mustache template
-     */
-    public function export_for_template(\renderer_base $output): stdClass {
-
-        $data = (object)[
-            'info' => $this->get_info($output),
-            'hasmodavailability' => false,
-        ];
-
-        if (!empty($data->info)) {
-            $data->hasmodavailability = true;
-        }
-
-        return $data;
-    }
-
-    /**
-     * Get the availability HTML form the course renderer.
-     *
-     * @param \renderer_base $output typically, the renderer that's calling this function
-     * @return string the availability HTML
+     * @return array the availability data.
      */
     protected function get_info(\renderer_base $output): array {
-        global $CFG;
+        if (!$this->mod->is_visible_on_course_page()) {
+            // Nothing to be displayed to the user.
+            return [];
+        }
+        if (!$this->mod->uservisible) {
+            return $this->user_availability_info($output);
+        }
 
-        $format = $this->format;
-        $mod = $this->mod;
-        $section = $this->section;
+        return $this->conditional_availability_info($output);
+    }
+
+    /**
+     * Get the current user availability data.
+     *
+     * This is a student who is not allowed to see the module but might be allowed
+     * to see availability info (i.e. "Available from ...").
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return array the availability data.
+     */
+    protected function user_availability_info(\renderer_base $output): array {
+        if (empty($this->mod->availableinfo)) {
+            return [];
+        }
 
         $info = [];
+        $formattedinfo = \core_availability\info::format_info(
+            $this->mod->availableinfo,
+            $this->mod->get_course()
+        );
+        $info[] = $this->availability_info($formattedinfo, 'isrestricted');
+        return $info;
+    }
 
-        if (!$mod->is_visible_on_course_page()) {
-            // Nothing to be displayed to the user.
-            return $info;
-        }
-
-        if (!$mod->uservisible) {
-            // This is a student who is not allowed to see the module but might be allowed
-            // to see availability info (i.e. "Available from ...").
-            if (!empty($mod->availableinfo)) {
-                $formattedinfo = \core_availability\info::format_info(
-                    $mod->availableinfo,
-                    $mod->get_course()
-                );
-                $info[] = $this->availability_info($formattedinfo, 'isrestricted');
-            }
-            return $info;
-        }
+    /**
+     * Get the activity availability data to display.
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return array the availability data.
+     */
+    protected function conditional_availability_info(\renderer_base $output): array {
+        global $CFG;
 
         // This is a teacher who is allowed to see module but still should see the
         // information that module is not available to all/some students.
+        $mod  = $this->mod;
         $modcontext = $mod->context;
         $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $modcontext);
-
-        if ($canviewhidden && !empty($CFG->enableavailability)) {
-            // Display information about conditional availability.
-            // Don't add availability information if user is not editing and activity is hidden.
-            if ($mod->visible || $format->show_editor()) {
-                $hidinfoclass = 'isrestricted isfullinfo';
-                if (!$mod->visible) {
-                    $hidinfoclass .= ' hide';
-                }
-                $ci = new info_module($mod);
-                $fullinfo = $ci->get_full_information();
-                if ($fullinfo) {
-                    $formattedinfo = info::format_info(
-                        $fullinfo,
-                        $mod->get_course()
-                    );
-                    $info[] = $this->availability_info($formattedinfo, $hidinfoclass);
-                }
-            }
+        if (!$canviewhidden || empty($CFG->enableavailability)) {
+            return [];
         }
+
+        // Display information about conditional availability.
+        // Don't add availability information if user is not editing and activity is hidden.
+        if (!$mod->visible && !$this->format->show_editor()) {
+            return [];
+        }
+
+        $ci = new info_module($mod);
+        $fullinfo = $ci->get_full_information();
+        if (!$fullinfo) {
+            return [];
+        }
+
+        $info = [];
+        $hidinfoclass = 'isrestricted isfullinfo';
+        if (!$mod->visible) {
+            $hidinfoclass .= ' hide';
+        }
+        $formattedinfo = info::format_info(
+            $fullinfo,
+            $mod->get_course()
+        );
+        $info[] = $this->availability_info($formattedinfo, $hidinfoclass);
 
         return $info;
     }

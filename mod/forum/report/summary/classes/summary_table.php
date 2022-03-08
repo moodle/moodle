@@ -377,7 +377,7 @@ class summary_table extends table_sql {
     public function print_nothing_to_display(): void {
         global $OUTPUT;
 
-        echo $OUTPUT->heading(get_string('nothingtodisplay'), 4);
+        echo $OUTPUT->notification(get_string('nothingtodisplay'), \core\output\notification::NOTIFY_INFO);
     }
 
     /**

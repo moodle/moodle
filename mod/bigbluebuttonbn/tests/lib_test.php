@@ -123,7 +123,7 @@ class lib_test extends \advanced_testcase {
         logger::log_recording_played_event($instance, 1);
 
         $result = bigbluebuttonbn_user_outline($this->get_course(), $user, $bbactivitycm, $bbactivity);
-        $this->assertStringContainsString('Has joined the meeting or played a recording 2 time(s)', $result->info);
+        $this->assertStringContainsString(get_string('completionview_event_desc', 'mod_bigbluebuttonbn', 2), $result->info);
     }
 
     /**
@@ -149,7 +149,7 @@ class lib_test extends \advanced_testcase {
         bigbluebuttonbn_user_complete($this->get_course(), $user, $bbactivitycm, $bbactivity);
         $output = ob_get_contents();
         ob_end_clean();
-        $this->assertStringContainsString('Has joined the meeting or played a recording', $output);
+        $this->assertStringContainsString(get_string('completionview_event_desc', 'mod_bigbluebuttonbn', 2), $output);
     }
 
     /**

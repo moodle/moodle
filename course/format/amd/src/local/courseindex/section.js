@@ -46,7 +46,7 @@ export default class Component extends DndSection {
             SECTIONHIDDEN: 'dimmed',
             SECTIONCURRENT: 'current',
             LOCKED: 'editinprogress',
-            RESTRICTIONS: 'rectrictions',
+            RESTRICTIONS: 'restrictions',
             PAGEITEM: 'pageitem',
         };
 
@@ -127,10 +127,10 @@ export default class Component extends DndSection {
         // Update classes.
         const sectionItem = this.getElement(this.selectors.SECTION_ITEM);
         sectionItem.classList.toggle(this.classes.SECTIONHIDDEN, !element.visible);
+        sectionItem.classList.toggle(this.classes.RESTRICTIONS, element.hasrestrictions ?? false);
         this.element.classList.toggle(this.classes.SECTIONCURRENT, element.current);
         this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
         this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
-        this.element.classList.toggle(this.classes.RESTRICTIONS, element.hasrestrictions ?? false);
         this.locked = element.locked;
         // Update title.
         this.getElement(this.selectors.SECTION_TITLE).innerHTML = element.title;

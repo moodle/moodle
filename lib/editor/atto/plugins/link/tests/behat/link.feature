@@ -4,7 +4,10 @@ Feature: Add links to Atto
 
   @javascript
   Scenario: Insert a links
-    Given I log in as "admin"
+    Given the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
+    And I log in as "admin"
     And I follow "Manage private files..."
     And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
     And I click on "Save changes" "button"

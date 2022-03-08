@@ -72,6 +72,6 @@ class percent extends base {
      * @return mixed
      */
     public static function format_value($value, array $values, array $callbacks) {
-        return format::percent((float) reset($values));
+        return format::percent(reset($values));
     }
 }

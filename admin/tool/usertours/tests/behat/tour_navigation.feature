@@ -14,7 +14,7 @@ Feature: Steps can be navigated within a tour
       | Tour is enabled     | 1 |
     And I add steps to the "Calendar tour" tour:
       | targettype | Block    | Title           | id_content                 | Content type   |
-      | Block      | Calendar | Calendar events | This is the calendar block | Enter manually |
+      | Block      | Calendar | Calendar events | This is the calendar block | Manual |
     And I change window size to "large"
     And I follow "Dashboard"
     And I wait until the page is ready
@@ -33,7 +33,7 @@ Feature: Steps can be navigated within a tour
       | Tour is enabled     | 1 |
     And I add steps to the "Calendar tour" tour:
       | targettype | Block    | Title           | id_content                 | Content type   |
-      | Block      | Calendar | Calendar events | This is the calendar block | Enter manually |
+      | Block      | Calendar | Calendar events | This is the calendar block | Manual |
     And I change window size to "large"
     And I follow "Dashboard"
     And I wait until the page is ready
@@ -50,11 +50,11 @@ Feature: Steps can be navigated within a tour
       | Tour is enabled     | 1 |
     And I add steps to the "First tour" tour:
       | targettype                | Title   | id_content                                                                                                                     | Content type   |
-      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Enter manually |
+      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Manual |
     And I add steps to the "First tour" tour:
       | targettype | targetvalue_block | Title    | id_content                                                                    | Content type   |
-      | Block      | Timeline          | Timeline | This is the Timeline. All of your upcoming activities can be found here       | Enter manually |
-      | Block      | Calendar          | Calendar | This is the Calendar. All of your assignments and due dates can be found here | Enter manually |
+      | Block      | Timeline          | Timeline | This is the Timeline. All of your upcoming activities can be found here       | Manual |
+      | Block      | Calendar          | Calendar | This is the Calendar. All of your assignments and due dates can be found here | Manual |
     When I am on homepage
     Then I should see "Skip tour"
     And I should see "Next (1/3)"
@@ -74,7 +74,7 @@ Feature: Steps can be navigated within a tour
       | End tour button's label | CustomText    |
     And I add steps to the "Calendar tour" tour:
       | targettype | Block    | Title           | id_content                 | Content type   |
-      | Block      | Calendar | Calendar events | This is the calendar block | Enter manually |
+      | Block      | Calendar | Calendar events | This is the calendar block | Manual |
     And I change window size to "large"
     And I follow "Dashboard"
     And I wait until the page is ready
@@ -92,7 +92,7 @@ Feature: Steps can be navigated within a tour
       | End tour button's label | exporttour,tool_usertours |
     And I add steps to the "Calendar tour" tour:
       | targettype | Block    | Title           | id_content                 | Content type   |
-      | Block      | Calendar | Calendar events | This is the calendar block | Enter manually |
+      | Block      | Calendar | Calendar events | This is the calendar block | Manual |
     And I change window size to "large"
     And I follow "Dashboard"
     And I wait until the page is ready

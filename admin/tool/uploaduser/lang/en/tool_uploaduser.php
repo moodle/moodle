@@ -35,7 +35,7 @@ $string['clihelp'] = 'Print out this help.';
 $string['climissingargument'] = 'Argument --{$a} is required';
 $string['clititle'] = 'Command line Upload user tool.';
 $string['clivalidationerror'] = 'Validation error:';
-$string['csvdelimiter'] = 'CSV delimiter';
+$string['csvdelimiter'] = 'CSV separator';
 $string['defaultvalues'] = 'Default values';
 $string['deleteerrors'] = 'Delete errors';
 $string['encoding'] = 'Encoding';
@@ -76,7 +76,7 @@ $string['uploadusers'] = 'Upload users';
 $string['uploadusers_help'] = 'Users may be uploaded (and optionally enrolled in courses) via text file. The format of the file should be as follows:
 
 * Each line of the file contains one record
-* Each record is a series of data separated by commas (or other delimiters)
+* Each record is a series of data separated by the selected separator
 * The first record contains a list of fieldnames defining the format of the rest of the file
 * Required fieldnames are username, password, firstname, lastname, email';
 $string['uploadusers_link'] = 'admin/tool/uploaduser/index';

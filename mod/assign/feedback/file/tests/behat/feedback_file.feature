@@ -43,7 +43,7 @@ Feature: In an assignment, teacher can submit feedback files during grading
       | file    | mod/assign/feedback/file/tests/fixtures/submission.txt  |
 
     And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I click on "Grade" "link" in the ".submissionlinks" "css_element"
+    And I click on "Grade" "link" in the ".tertiary-navigation" "css_element"
     And I upload "mod/assign/feedback/file/tests/fixtures/feedback.txt" file to "Feedback files" filemanager
 
   @javascript

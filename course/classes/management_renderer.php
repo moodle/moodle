@@ -64,12 +64,16 @@ class core_course_management_renderer extends plugin_renderer_base {
     /**
      * Displays a heading for the management pages.
      *
+     * @deprecated since Moodle 4.0. This is now handled/replaced with the tertiary navigation
+     * @todo Final deprecation MDL-73975
      * @param string $heading The heading to display
      * @param string|null $viewmode The current view mode if there are options.
      * @param int|null $categoryid The currently selected category if there is one.
      * @return string
      */
     public function management_heading($heading, $viewmode = null, $categoryid = null) {
+        debugging('management_heading() is deprecated. Use the class manage_categories_action_bar instead.', DEBUG_DEVELOPER);
+
         $html = html_writer::start_div('coursecat-management-header clearfix');
         if (!empty($heading)) {
             $html .= $this->heading($heading);
@@ -1294,11 +1298,13 @@ class core_course_management_renderer extends plugin_renderer_base {
     /**
      * Renders html to display a course search form
      *
+     * @deprecated since Moodle 4.0. This is now handled within manage_categories_action_bar
+     * @todo Final deprecation MDL-73975
      * @param string $value default value to populate the search field
      * @return string
      */
     public function course_search_form($value = '') {
-
+        debugging('course_search_form() is deprecated. Use the class manage_categories_action_bar instead.', DEBUG_DEVELOPER);
         $data = [
             'action' => new moodle_url('/course/management.php'),
             'btnclass' => 'btn-primary',
@@ -1337,4 +1343,13 @@ class core_course_management_renderer extends plugin_renderer_base {
         return $html;
     }
 
+    /**
+     * Render the tertiary nav for the manage categories page.
+     *
+     * @param \core_course\output\manage_categories_action_bar $actionbar
+     * @return string The renderered template
+     */
+    public function render_action_bar(\core_course\output\manage_categories_action_bar $actionbar): string {
+        return $this->render_from_template('core_course/manage_category_actionbar', $actionbar->export_for_template($this));
+    }
 }

@@ -64,28 +64,28 @@
     }
 
 }}
-<div class="container-fluid mb-2">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
         {{#edit}}
-            <div class="col-xs-6 pr-2">
-                {{#button}}
+            {{#button}}
+                <div class="navitem">
                     {{>core/single_button}}
-                {{/button}}
-            </div>
+                </div>
+            {{/button}}
         {{/edit}}
         {{#editcontents}}
-            <div class="col-xs-6 pr-2">
-                {{#button}}
+            {{#button}}
+                <div class="navitem">
                     {{>core/single_button}}
-                {{/button}}
-            </div>
+                </div>
+            {{/button}}
         {{/editcontents}}
         {{#gradeessays}}
-            <div class="col-xs-6">
-                {{#button}}
+            {{#button}}
+                <div class="navitem">
                     {{>core/single_button}}
-                {{/button}}
-            </div>
+                </div>
+            {{/button}}
         {{/gradeessays}}
     </div>
 </div>

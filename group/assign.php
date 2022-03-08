@@ -132,7 +132,8 @@ navigation_node::override_active_url(new moodle_url('/group/index.php', array('i
 $PAGE->set_pagelayout('admin');
 
 $PAGE->navbar->add($strparticipants, new moodle_url('/user/index.php', array('id'=>$courseid)));
-$PAGE->navbar->add($strgroups, new moodle_url('/group/index.php', array('id'=>$courseid)));
+$PAGE->navbar->add(get_string('groupings', 'group'),
+    new moodle_url('/group/groupings.php', ['id' => $courseid]));
 $PAGE->navbar->add($straddgroupstogroupings);
 
 /// Print header

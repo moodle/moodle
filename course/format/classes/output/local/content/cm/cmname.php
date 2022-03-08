@@ -25,13 +25,16 @@
 namespace core_courseformat\output\local\content\cm;
 
 use cm_info;
+use context_module;
+use core\output\inplace_editable;
+use core\output\named_templatable;
 use core_courseformat\base as course_format;
+use core_courseformat\output\local\courseformat_named_templatable;
+use external_api;
+use lang_string;
+use renderable;
 use section_info;
 use stdClass;
-use context_module;
-use lang_string;
-use external_api;
-use core\output\inplace_editable;
 
 /**
  * Base class to render a course module inplace editable header.
@@ -40,7 +43,9 @@ use core\output\inplace_editable;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cmname extends inplace_editable {
+class cmname extends inplace_editable implements named_templatable, renderable {
+
+    use courseformat_named_templatable;
 
     /** @var course_format the course format */
     protected $format;

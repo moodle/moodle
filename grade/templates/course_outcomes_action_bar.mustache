@@ -56,19 +56,17 @@
         }
     }
 }}
-<div class="container-fluid mb-4">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="d-flex">
-            <div>
-                {{#generalnavselector}}
-                    {{>core/url_select}}
-                {{/generalnavselector}}
+        {{#generalnavselector}}
+            <div class="navitem">
+                {{>core/url_select}}
             </div>
-            {{#manageoutcomesbutton}}
-                <div class="ml-2">
-                    {{>core/single_button}}
-                </div>
-            {{/manageoutcomesbutton}}
-        </div>
+        {{/generalnavselector}}
+        {{#manageoutcomesbutton}}
+            <div class="navitem">
+                {{>core/single_button}}
+            </div>
+        {{/manageoutcomesbutton}}
     </div>
 </div>

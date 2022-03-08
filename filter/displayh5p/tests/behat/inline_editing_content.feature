@@ -30,6 +30,9 @@ Feature: Inline editing H5P content anywhere
       | capability                 | permission | role           | contextlevel | reference |
       | moodle/course:update       | Allow      | teacher        | System       |           |
       | moodle/course:update       | Allow      | student        | System       |           |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
 
   @javascript @mod @mod_page
   Scenario: Edit H5P content from a page using link to private file

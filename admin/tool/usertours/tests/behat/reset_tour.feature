@@ -14,7 +14,7 @@ Feature: Reset a tour
       | Show with backdrop | 1             |
     And I add steps to the "First tour" tour:
       | targettype                | Title   | id_content    | Content type   |
-      | Display in middle of page | Welcome | Welcome tour. | Enter manually |
+      | Display in middle of page | Welcome | Welcome tour. | Manual         |
 
   @javascript
   Scenario: Reset the tour with mobile view

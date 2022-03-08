@@ -17,14 +17,14 @@ Feature: Add a new user tour
       | Tour is enabled     | 1 |
     And I add steps to the "First tour" tour:
       | targettype                | Title   | id_content                                                                                                                     | Content type   |
-      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Enter manually |
+      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Manual         |
     And I add steps to the "First tour" tour:
       | targettype | targetvalue_block | Title    | id_content                                                                    | Content type   |
-      | Block      | Timeline          | Timeline | This is the Timeline. All of your upcoming activities can be found here       | Enter manually |
-      | Block      | Calendar          | Calendar | This is the Calendar. All of your assignments and due dates can be found here | Enter manually |
+      | Block      | Timeline          | Timeline | This is the Timeline. All of your upcoming activities can be found here       | Manual         |
+      | Block      | Calendar          | Calendar | This is the Calendar. All of your assignments and due dates can be found here | Manual         |
     And I add steps to the "First tour" tour:
       | targettype | targetvalue_selector | Title     | id_content                                                                                         | Content type   |
-      | Selector   | .usermenu            | User menu | This is your personal user menu. You'll find your personal preferences and your user profile here. | Enter manually |
+      | Selector   | .usermenu            | User menu | This is your personal user menu. You'll find your personal preferences and your user profile here. | Manual         |
     When I am on homepage
     Then I should see "Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful"
     And I click on "Next" "button" in the "[data-role='flexitour-step']" "css_element"
@@ -54,7 +54,7 @@ Feature: Add a new user tour
       | Tour is enabled     | 0 |
     And I add steps to the "First tour" tour:
       | targettype                | Title   | id_content                                                                                                                     | Content type   |
-      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Enter manually |
+      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Manual         |
     When I am on homepage
     Then I should not see "Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful"
 
@@ -71,7 +71,7 @@ Feature: Add a new user tour
       | Tour is enabled     | 0 |
     And I add steps to the "First tour" tour:
       | targettype                | Title   | id_content                                                                                                                     | Content type   |
-      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Enter manually |
+      | Display in middle of page | Welcome | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful | Manual         |
     And I open the User tour settings page
     When I click on "Enable" "link" in the "My first tour" "table_row"
     And I am on homepage
@@ -92,11 +92,11 @@ Feature: Add a new user tour
       | End tour button's label | Sample end label |
     And I add steps to the "Steps tour" tour:
       | targettype                | Title   | id_content             | Content type   |
-      | Display in middle of page | Welcome | First step of the Tour | Enter manually |
+      | Display in middle of page | Welcome | First step of the Tour | Manual         |
     And I add steps to the "Steps tour" tour:
       | targettype | targetvalue_block | Title    | id_content              | Content type   |
-      | Block      | Timeline          | Timeline | Second step of the Tour | Enter manually |
-      | Block      | Calendar          | Calendar | Third step of the Tour  | Enter manually |
+      | Block      | Timeline          | Timeline | Second step of the Tour | Manual         |
+      | Block      | Calendar          | Calendar | Third step of the Tour  | Manual         |
     When I am on homepage
     Then I should see "First step of the Tour"
     And I should see "Next (1/3)"
@@ -126,11 +126,11 @@ Feature: Add a new user tour
       | Display step numbers | 0             |
     And I add steps to the "Steps tour" tour:
       | targettype                | Title   | id_content             | Content type   |
-      | Display in middle of page | Welcome | First step of the Tour | Enter manually |
+      | Display in middle of page | Welcome | First step of the Tour | Manual         |
     And I add steps to the "Steps tour" tour:
       | targettype | targetvalue_block | Title    | id_content              | Content type   |
-      | Block      | Timeline          | Timeline | Second step of the Tour | Enter manually |
-      | Block      | Calendar          | Calendar | Third step of the Tour  | Enter manually |
+      | Block      | Timeline          | Timeline | Second step of the Tour | Manual         |
+      | Block      | Calendar          | Calendar | Third step of the Tour  | Manual         |
     When I am on homepage
     Then I should see "First step of the Tour"
     And I should see "Next"
@@ -154,7 +154,7 @@ Feature: Add a new user tour
       | Display step numbers | 1             |
     And I add steps to the "Steps tour" tour:
       | targettype                | Title   | id_content                 | Content type   |
-      | Display in middle of page | Welcome | This is a single step tour | Enter manually |
+      | Display in middle of page | Welcome | This is a single step tour | Manual         |
     When I am on homepage
     Then I should see "This is a single step tour"
     And I should not see "Next (1/1)"

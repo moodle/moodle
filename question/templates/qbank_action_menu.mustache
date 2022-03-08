@@ -16,48 +16,59 @@
 }}
 {{!
     @template core_question/qbank_action_menu
-    Add selector in the question bank tab.
+
+    Question bank tertiary navigtion.
+
     Classes required for JS:
     * none
-    Data attributes required for JS:
-    * data-region
+
     Context variables required for this template:
     * see question/classes/output/qbank_actionbar.php
+
     Example context (json):
     {
-        "action" : "http://localhost/moodle/course/jumpto.php",
-        "classes" : "urlselect",
-        "formid" : "questionbankaction",
-        "id" : "url_select61a85bc543dca7",
-        "label" : "questionbankactionselect",
-        "options" : [
-            {
-                 "name" : "Questions",
-                 "selected" : true,
-                 "value" : "/question/edit.php?courseid=7"
-            },
-            {
-                 "name" : "Categories",
-                 "selected" : false,
-                 "value" : "/question/bank/managecategories/category.php?courseid=7"
-            },
-            {
-                 "name" : "Import",
-                 "selected" : false,
-                 "value" : "/question/bank/importquestions/import.php?courseid=7"
-            },
-            {
-                 "name" : "Export",
-                 "selected" : false,
-                 "value" : "/question/bank/exportquestions/export.php?courseid=7"
-            }
-        ]
+        "questionbankselect": {
+            "action": "http://localhost/moodle/course/jumpto.php",
+            "classes": "urlselect",
+            "formid": "questionbankaction",
+            "id": "url_select61a85bc543dca7",
+            "label": "Question bank tertiary navigation",
+            "options": [{
+                    "name": "Questions",
+                    "selected": true,
+                    "value": "/question/edit.php?courseid=7"
+                },
+                {
+                    "name": "Categories",
+                    "selected": false,
+                    "value": "/question/bank/managecategories/category.php?courseid=7"
+                },
+                {
+                    "name": "Import",
+                    "selected": false,
+                    "value": "/question/bank/importquestions/import.php?courseid=7"
+                },
+                {
+                    "name": "Export",
+                    "selected": false,
+                    "value": "/question/bank/exportquestions/export.php?courseid=7"
+                }
+            ]
+        },
+        "addcategory": "http://localhost/moodle/question/bank/managecategories/addcategory.php?cmid=71"
     }
 }}
-<div class="container-fluid mb-2">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
         {{#questionbankselect}}
-            {{>core/url_select}}
+            <div class="navitem">
+                {{>core/url_select}}
+            </div>
         {{/questionbankselect}}
+        {{#addcategory}}
+            <div class="navitem">
+                <a class="btn btn-primary ml-2" href="{{ addcategory }}">{{#str}}addcategory, question {{/str}}</a>
+            </div>
+        {{/addcategory}}
     </div>
 </div>

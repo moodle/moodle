@@ -97,7 +97,7 @@ class settings {
         $this->add_userlimit_settings();
         $this->add_participants_settings();
         $this->add_muteonstart_settings();
-        $this->add_locksettings_settings();
+        $this->add_lock_settings();
         // Renders settings for extended capabilities.
         $this->add_extended_settings();
         // Renders settings for experimental features.
@@ -259,17 +259,6 @@ class settings {
             );
             $this->add_conditional_element(
                 'recording_editable',
-                $item,
-                $recordingsetting
-            );
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_recording_icons_enabled',
-                get_string('config_recording_icons_enabled', 'bigbluebuttonbn'),
-                get_string('config_recording_icons_enabled_description', 'bigbluebuttonbn'),
-                1
-            );
-            $this->add_conditional_element(
-                'recording_icons_enabled',
                 $item,
                 $recordingsetting
             );
@@ -769,393 +758,61 @@ class settings {
     }
 
     /**
-     * Helper function renders general settings if the feature is enabled.
+     * Helper function to render lock settings.
      */
-    protected function add_locksettings_settings(): void {
-        $category = new admin_category(
+    protected function add_lock_settings(): void {
+        $lockingsetting = new admin_settingpage(
             "{$this->sectionnameprefix}_locksettings",
             get_string('config_locksettings', 'bigbluebuttonbn'),
-            get_string('config_locksettings_description', 'bigbluebuttonbn')
+            'moodle/site:config',
+            !((boolean) setting_validator::section_lock_shown()) && ($this->moduleenabled)
         );
-
-        $this->admin->add($this->section, $category);
-
         // Configuration for various lock settings for meetings.
-        $this->add_disablecam_settings($category);
-        $this->add_disablemic_settings($category);
-        $this->add_disablepublicchat_settings($category);
-        $this->add_disablenote_settings($category);
-        $this->add_hideuserlist_settings($category);
-        $this->add_lockedlayout_settings($category);
-        $this->add_lockonjoin_settings($category);
-        $this->add_lockonjoinconfigurable_settings($category);
-    }
-
-    /**
-     * Helper function renders general settings if the feature is enabled.
-     *
-     * @param admin_category $category The parent category to add to
-     */
-    protected function add_disablecam_settings(admin_category $category): void {
-        // Configuration for BigBlueButton.
-        $disablecamsettings = new admin_settingpage(
-            "{$this->sectionnameprefix}_disablecam",
-            get_string('config_disablecam_default', 'bigbluebuttonbn'),
-            'moodle/site:config',
-            !((boolean) setting_validator::section_disablecam_shown()) && ($this->moduleenabled)
-        );
-
         if ($this->admin->fulltree) {
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_disablecam_default',
-                get_string('config_disablecam_default', 'bigbluebuttonbn'),
-                get_string('config_disablecam_default_description', 'bigbluebuttonbn'),
-                0
-            );
-            $this->add_conditional_element(
-                'disablecam_default',
-                $item,
-                $disablecamsettings
-            );
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_disablecam_editable',
-                get_string('config_disablecam_editable', 'bigbluebuttonbn'),
-                get_string('config_disablecam_editable_description', 'bigbluebuttonbn'),
-                1
-            );
-            $this->add_conditional_element(
-                'disablecam_editable',
-                $item,
-                $disablecamsettings
-            );
+            $this->add_lock_setting_from_name('disablecam', $lockingsetting);
+            $this->add_lock_setting_from_name('disablemic', $lockingsetting);
+            $this->add_lock_setting_from_name('disableprivatechat', $lockingsetting);
+            $this->add_lock_setting_from_name('disablepublicchat', $lockingsetting);
+            $this->add_lock_setting_from_name('disablenote', $lockingsetting);
+            $this->add_lock_setting_from_name('hideuserlist', $lockingsetting);
+            $this->add_lock_setting_from_name('lockonjoin', $lockingsetting);
         }
-        $this->admin->add($category->name, $disablecamsettings);
+        $this->admin->add($this->section, $lockingsetting);
     }
 
     /**
-     * Helper function renders general settings if the feature is enabled.
+     * Helper function renders setting if the feature is enabled.
      *
-     * @param admin_category $category The parent category to add to
+     * @param string $settingname
+     * @param admin_settingpage $lockingsetting The parent settingpage to add to
      */
-    protected function add_disablemic_settings(admin_category $category): void {
-        // Configuration for BigBlueButton.
-        $disablemicsetting = new admin_settingpage(
-            "{$this->sectionnameprefix}_disablemic",
-            get_string('config_disablemic_default', 'bigbluebuttonbn'),
-            'moodle/site:config',
-            !((boolean) setting_validator::section_disablemic_shown()) && ($this->moduleenabled)
-        );
-
-        if ($this->admin->fulltree) {
+    protected function add_lock_setting_from_name(string $settingname, admin_settingpage $lockingsetting): void {
+        $validatorname = "section_{$settingname}_shown";
+        if ((boolean) setting_validator::$validatorname()) {
+            // Configuration for BigBlueButton.
             $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_disablemic_default',
-                get_string('config_disablemic_default', 'bigbluebuttonbn'),
-                get_string('config_disablemic_default_description', 'bigbluebuttonbn'),
-                0
+                    'bigbluebuttonbn_' . $settingname . '_default',
+                    get_string('config_' . $settingname . '_default', 'bigbluebuttonbn'),
+                    get_string('config_' . $settingname . '_default_description', 'bigbluebuttonbn'),
+                    config::defaultvalue($settingname . '_default')
             );
             $this->add_conditional_element(
-                'disablemic_default',
-                $item,
-                $disablemicsetting
-            );
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_disablemic_editable',
-                get_string('config_disablemic_editable', 'bigbluebuttonbn'),
-                get_string('config_disablemic_editable_description', 'bigbluebuttonbn'),
-                1
-            );
-            $this->add_conditional_element(
-                'disablecam_editable',
-                $item,
-                $disablemicsetting
-            );
-        }
-        $this->admin->add($category->name, $disablemicsetting);
-    }
-
-    /**
-     * Helper function renders general settings if the feature is enabled.
-     *
-     * @param admin_category $category The parent category to add to
-     */
-    protected function add_disableprivatechat_settings(admin_category $category): void {
-        // Configuration for BigBlueButton.
-        $disableprivatechatsetting = new admin_settingpage(
-            "{$this->sectionnameprefix}_disableprivatechat",
-            get_string('config_disableprivatechat_default', 'bigbluebuttonbn'),
-            'moodle/site:config',
-            !((boolean) setting_validator::section_disableprivatechat_shown()) && ($this->moduleenabled)
-        );
-
-        if ($this->admin->fulltree) {
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_disableprivatechat_default',
-                get_string('config_disableprivatechat_default', 'bigbluebuttonbn'),
-                get_string('config_disableprivatechat_default_description', 'bigbluebuttonbn'),
-                0
-            );
-            $this->add_conditional_element(
-                'disableprivatechat_default',
-                $item,
-                $disableprivatechatsetting
-            );
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_disableprivatechat_editable',
-                get_string('config_disableprivatechat_editable', 'bigbluebuttonbn'),
-                get_string('config_disableprivatechat_editable_description', 'bigbluebuttonbn'),
-                1
-            );
-            $this->add_conditional_element(
-                'disableprivatechat_editable',
-                $item,
-                $disableprivatechatsetting
-            );
-        }
-        $this->admin->add($category->name, $disableprivatechatsetting);
-    }
-
-    /**
-     * Helper function renders general settings if the feature is enabled.
-     *
-     * @param admin_category $category The parent category to add to
-     */
-    protected function add_disablepublicchat_settings(admin_category $category): void {
-        // Configuration for BigBlueButton.
-        $disablepublicchatsetting = new admin_settingpage(
-            "{$this->sectionnameprefix}_disablepublicchat",
-            get_string('config_disableprivatechat_default', 'bigbluebuttonbn'),
-            'moodle/site:config',
-            !((boolean) setting_validator::section_disablepublicchat_shown()) && ($this->moduleenabled)
-        );
-
-        if ($this->admin->fulltree) {
-            $item = new admin_setting_configcheckbox('bigbluebuttonbn_disablepublicchat_default',
-                get_string('config_disablepublicchat_default', 'bigbluebuttonbn'),
-                get_string('config_disablepublicchat_default_description', 'bigbluebuttonbn'),
-                0);
-            $this->add_conditional_element(
-                'disablepublicchat_default',
-                $item,
-                $disablepublicchatsetting
-            );
-            $item = new admin_setting_configcheckbox('bigbluebuttonbn_disablepublicchat_editable',
-                get_string('config_disablepublicchat_editable', 'bigbluebuttonbn'),
-                get_string('config_disablepublicchat_editable_description', 'bigbluebuttonbn'),
-                1);
-            $this->add_conditional_element(
-                'disablepublicchat_editable',
-                $item,
-                $disablepublicchatsetting
-            );
-        }
-        $this->admin->add($category->name, $disablepublicchatsetting);
-    }
-
-    /**
-     * Helper function renders general settings if the feature is enabled.
-     *
-     * @param admin_category $category The parent category to add to
-     */
-    protected function add_disablenote_settings(admin_category $category): void {
-        // Configuration for BigBlueButton.
-        $disablenotesetting = new admin_settingpage(
-            "{$this->sectionnameprefix}_disablenote",
-            get_string('config_disablenote_default', 'bigbluebuttonbn'),
-            'moodle/site:config',
-            !((boolean) setting_validator::section_disablenote_shown()) && ($this->moduleenabled)
-        );
-
-        if ($this->admin->fulltree) {
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_disablenote_default',
-                get_string('config_disablenote_default', 'bigbluebuttonbn'),
-                get_string('config_disablenote_default_description', 'bigbluebuttonbn'),
-                0
-            );
-            $this->add_conditional_element(
-                'disablenote_default',
-                $item,
-                $disablenotesetting
-            );
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_disablenote_editable',
-                get_string('config_disablenote_editable', 'bigbluebuttonbn'),
-                get_string('config_disablenote_editable_description', 'bigbluebuttonbn'),
-                1
-            );
-            $this->add_conditional_element(
-                'disablenote_editable',
-                $item,
-                $disablenotesetting
-            );
-        }
-        $this->admin->add($category->name, $disablenotesetting);
-    }
-
-    /**
-     * Helper function renders general settings if the feature is enabled.
-     *
-     * @param admin_category $category The parent category to add to
-     */
-    protected function add_hideuserlist_settings(admin_category $category): void {
-        // Configuration for BigBlueButton.
-        $hideuserlistsetting = new admin_settingpage(
-            "{$this->sectionnameprefix}_hideuserlist",
-            get_string('config_hideuserlist_default', 'bigbluebuttonbn'),
-            'moodle/site:config',
-            !((boolean) setting_validator::section_hideuserlist_shown()) && ($this->moduleenabled)
-        );
-
-        if ($this->admin->fulltree) {
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_hideuserlist_default',
-                get_string('config_hideuserlist_default', 'bigbluebuttonbn'),
-                get_string('config_hideuserlist_default_description', 'bigbluebuttonbn'),
-                0
-            );
-            $this->add_conditional_element(
-                'hideuserlist_default',
-                $item,
-                $hideuserlistsetting
-            );
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_hideuserlist_editable',
-                get_string('config_hideuserlist_editable', 'bigbluebuttonbn'),
-                get_string('config_hideuserlist_editable_description', 'bigbluebuttonbn'),
-                1
-            );
-            $this->add_conditional_element(
-                'hideuserlist_editable',
-                $item,
-                $hideuserlistsetting
-            );
-        }
-        $this->admin->add($category->name, $hideuserlistsetting);
-    }
-
-    /**
-     * Helper function renders general settings if the feature is enabled.
-     *
-     * @param admin_category $category The parent category to add to
-     */
-    protected function add_lockedlayout_settings(admin_category $category): void {
-        // Configuration for BigBlueButton.
-        $lockedlayoutsetting = new admin_settingpage(
-            "{$this->sectionnameprefix}_lockedlayout",
-            get_string('config_lockedlayout_default', 'bigbluebuttonbn'),
-            'moodle/site:config',
-            !((boolean) setting_validator::section_lockedlayout_shown()) && ($this->moduleenabled)
-        );
-
-        if ($this->admin->fulltree) {
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_lockedlayout_default',
-                get_string('config_lockedlayout_default', 'bigbluebuttonbn'),
-                get_string('config_lockedlayout_default_description', 'bigbluebuttonbn'),
-                0
-            );
-            $this->add_conditional_element(
-                'lockedlayout_default',
-                $item,
-                $lockedlayoutsetting
-            );
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_lockedlayout_editable',
-                get_string('config_lockedlayout_editable', 'bigbluebuttonbn'),
-                get_string('config_lockedlayout_editable_description', 'bigbluebuttonbn'),
-                1
-            );
-            $this->add_conditional_element(
-                'lockedlayout_editable',
-                $item,
-                $lockedlayoutsetting
-            );
-        }
-        $this->admin->add($category->name, $lockedlayoutsetting);
-    }
-
-    /**
-     * Helper function renders general settings if the feature is enabled.
-     *
-     * @param admin_category $category The parent category to add to
-     */
-    protected function add_lockonjoin_settings(admin_category $category): void {
-        // Configuration for BigBlueButton.
-        $lockonjoinsetting = new admin_settingpage(
-            "{$this->sectionnameprefix}_lockonjoin",
-            get_string('config_lockonjoin_default', 'bigbluebuttonbn'),
-            'moodle/site:config',
-            !((boolean) setting_validator::section_lockonjoin_shown()) && ($this->moduleenabled)
-        );
-
-        if ($this->admin->fulltree) {
-            if ((boolean) setting_validator::section_lockonjoin_shown()) {
-                $item = new admin_setting_configcheckbox(
-                    'bigbluebuttonbn_lockonjoin_default',
-                    get_string('config_lockonjoin_default', 'bigbluebuttonbn'),
-                    get_string('config_lockonjoin_default_description', 'bigbluebuttonbn'),
-                    0
-                );
-                $this->add_conditional_element(
-                    'lockonjoin_default',
+                    $settingname . '_default',
                     $item,
-                    $lockonjoinsetting
-                );
-                $item = new admin_setting_configcheckbox(
-                    'bigbluebuttonbn_lockonjoin_editable',
-                    get_string('config_lockonjoin_editable', 'bigbluebuttonbn'),
-                    get_string('config_lockonjoin_editable_description', 'bigbluebuttonbn'),
-                    1
-                );
-                $this->add_conditional_element(
-                    'lockonjoin_editable',
+                    $lockingsetting
+            );
+            $item = new admin_setting_configcheckbox(
+                    'bigbluebuttonbn_' . $settingname . '_editable',
+                    get_string('config_' . $settingname . '_editable', 'bigbluebuttonbn'),
+                    get_string('config_' . $settingname . '_editable_description', 'bigbluebuttonbn'),
+                    config::defaultvalue($settingname . '_editable')
+            );
+            $this->add_conditional_element(
+                    $settingname . '_editable',
                     $item,
-                    $lockonjoinsetting
-                );
-            }
-        }
-        $this->admin->add($category->name, $lockonjoinsetting);
-    }
-
-    /**
-     * Helper function renders general settings if the feature is enabled.
-     *
-     * @param admin_category $category The parent category to add to
-     */
-    protected function add_lockonjoinconfigurable_settings(admin_category $category): void {
-        // Configuration for BigBlueButton.
-        $lockonjoinconfigurablesetting = new admin_settingpage(
-            "{$this->sectionnameprefix}_lockonjoinconfigurable",
-            get_string('config_lockonjoinconfigurable_default', 'bigbluebuttonbn'),
-            'moodle/site:config',
-            !((boolean) setting_validator::section_lockonjoinconfigurable_shown()) && ($this->moduleenabled)
-        );
-
-        if ($this->admin->fulltree) {
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_lockonjoinconfigurable_default',
-                get_string('config_lockonjoinconfigurable_default', 'bigbluebuttonbn'),
-                get_string('config_lockonjoinconfigurable_default_description', 'bigbluebuttonbn'),
-                0
-            );
-            $this->add_conditional_element(
-                'lockonjoinconfigurable_default',
-                $item,
-                $lockonjoinconfigurablesetting
-            );
-            $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_lockonjoinconfigurable_editable',
-                get_string('config_lockonjoinconfigurable_editable', 'bigbluebuttonbn'),
-                get_string('config_lockonjoinconfigurable_editable_description', 'bigbluebuttonbn'),
-                1
-            );
-            $this->add_conditional_element(
-                'lockonjoinconfigurable_editable',
-                $item,
-                $lockonjoinconfigurablesetting
+                    $lockingsetting
             );
         }
-        $this->admin->add($category->name, $lockonjoinconfigurablesetting);
     }
 
     /**

@@ -68,15 +68,15 @@
     }
 
 }}
-<div class="container-fluid mb-2">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="col-xs-6">
         {{#urlselect}}
-            {{>core/url_select}}
+            <div class="navitem">
+                {{>core/url_select}}
+            </div>
         {{/urlselect}}
-        </div>
         {{#addoverride}}
-            <div class="col-sm-6 pl-2">
+            <div class="navitem">
                 <a class="btn btn-primary" href="{{link}}">{{text}}</a>
             </div>
         {{/addoverride}}

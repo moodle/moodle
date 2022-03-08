@@ -30,6 +30,7 @@
  * @param {String} srcPath the  matched src path
  * @return {String} The rewritten destination path.
  */
+
 const babelRename = function(destPath, srcPath) {
     destPath = srcPath.replace('src', 'build');
     destPath = destPath.replace('.js', '.min.js');
@@ -53,65 +54,139 @@ module.exports = grunt => {
 
     // Register JS tasks.
     grunt.registerTask('yui', ['eslint:yui', 'shifter']);
-    grunt.registerTask('amd', ['ignorefiles', 'eslint:amd', 'babel']);
+    grunt.registerTask('amd', ['ignorefiles', 'eslint:amd', 'rollup']);
     grunt.registerTask('js', ['amd', 'yui']);
 
     // Register NPM tasks.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-rollup');
 
-    // Load the Babel tasks and config.
-    grunt.loadNpmTasks('grunt-babel');
+    const babelTransform = require('@babel/core').transform;
+    const babel = (options = {}) => {
+        return {
+            name: 'babel',
+
+            transform: (code, id) => {
+                grunt.log.debug(`Transforming ${id}`);
+                options.filename = id;
+                const transformed = babelTransform(code, options);
+
+                return {
+                    code: transformed.code,
+                    map: transformed.map
+                };
+            }
+        };
+    };
+
+    // Note: We have to use a rate limit plugin here because rollup runs all tasks asynchronously and in parallel.
+    // When we kick off a full run, if we kick off a rollup of every file this will fork-bomb the machine.
+    // To work around this we use a concurrent Promise queue based on the number of available processors.
+    const rateLimit = () => {
+        const queue = [];
+        let queueRunner;
+
+        const startQueue = () => {
+            if (queueRunner) {
+                return;
+            }
+
+            queueRunner = setTimeout(() => {
+                const limit = Math.max(1, require('os').cpus().length / 2);
+                grunt.log.debug(`Starting rollup with queue size of ${limit}`);
+                runQueue(limit);
+            }, 100);
+        };
+
+        // The queue runner will run the next `size` items in the queue.
+        const runQueue = (size = 1) => {
+            queue.splice(0, size).forEach(resolve => {
+                resolve();
+            });
+        };
+
+        return {
+            name: 'ratelimit',
+
+            // The options hook is run in parallel.
+            // We can return an unresolved Promise which is queued for later resolution.
+            options: async() => {
+                return new Promise(resolve => {
+                    queue.push(resolve);
+                    startQueue();
+                });
+            },
+
+            // When an item in the queue completes, start the next item in the queue.
+            buildEnd: () => {
+                runQueue();
+            },
+        };
+    };
+
+    const terser = require('rollup-plugin-terser').terser;
     grunt.config.merge({
-        babel: {
+        rollup: {
             options: {
-                sourceMaps: true,
-                comments: false,
+                format: 'esm',
+                dir: 'output',
+                sourcemap: true,
+                treeshake: false,
+                context: 'window',
                 plugins: [
-                    'transform-es2015-modules-amd-lazy',
-                    'system-import-transformer',
-                    // This plugin modifies the Babel transpiling for "export default"
-                    // so that if it's used then only the exported value is returned
-                    // by the generated AMD module.
-                    //
-                    // It also adds the Moodle plugin name to the AMD module definition
-                    // so that it can be imported as expected in other modules.
-                    path.resolve('.grunt/babel-plugin-add-module-to-define.js'),
-                    '@babel/plugin-syntax-dynamic-import',
-                    '@babel/plugin-syntax-import-meta',
-                    ['@babel/plugin-proposal-class-properties', {'loose': false}],
-                    '@babel/plugin-proposal-json-strings'
+                    rateLimit(),
+                    babel({
+                        sourceMaps: true,
+                        comments: false,
+                        compact: false,
+                        plugins: [
+                            'transform-es2015-modules-amd-lazy',
+                            'system-import-transformer',
+                            // This plugin modifies the Babel transpiling for "export default"
+                            // so that if it's used then only the exported value is returned
+                            // by the generated AMD module.
+                            //
+                            // It also adds the Moodle plugin name to the AMD module definition
+                            // so that it can be imported as expected in other modules.
+                            path.resolve('.grunt/babel-plugin-add-module-to-define.js'),
+                            '@babel/plugin-syntax-dynamic-import',
+                            '@babel/plugin-syntax-import-meta',
+                            ['@babel/plugin-proposal-class-properties', {'loose': false}],
+                            '@babel/plugin-proposal-json-strings'
+                        ],
+                        presets: [
+                            ['@babel/preset-env', {
+                                targets: {
+                                    browsers: [
+                                        ">0.3%",
+                                        "last 2 versions",
+                                        "not ie >= 0",
+                                        "not op_mini all",
+                                        "not Opera > 0",
+                                        "not dead"
+                                    ]
+                                },
+                                modules: false,
+                                useBuiltIns: false
+                            }]
+                        ]
+                    }),
+
+                    terser({
+                        // Do not mangle variables.
+                        // Makes debugging easier.
+                        mangle: false,
+                    }),
                 ],
-                presets: [
-                    ['minify', {
-                        // This minification plugin needs to be disabled because it breaks the
-                        // source map generation and causes invalid source maps to be output.
-                        simplify: false,
-                        builtIns: false
-                    }],
-                    ['@babel/preset-env', {
-                        targets: {
-                            browsers: [
-                                ">0.25%",
-                                "last 2 versions",
-                                "not ie <= 10",
-                                "not op_mini all",
-                                "not Opera > 0",
-                                "not dead"
-                            ]
-                        },
-                        modules: false,
-                        useBuiltIns: false
-                    }]
-                ]
             },
             dist: {
                 files: [{
                     expand: true,
                     src: grunt.moodleEnv.files ? grunt.moodleEnv.files : grunt.moodleEnv.amdSrc,
                     rename: babelRename
-                }]
-            }
+                }],
+            },
         },
     });
 
@@ -135,7 +210,7 @@ module.exports = grunt => {
     let changedFiles = Object.create(null);
     const onChange = grunt.util._.debounce(function() {
         const files = Object.keys(changedFiles);
-        grunt.config('babel.dist.files', [{expand: true, src: files, rename: babelRename}]);
+        grunt.config('rollup.dist.files', [{expand: true, src: files, rename: babelRename}]);
         changedFiles = Object.create(null);
     }, 200);
 

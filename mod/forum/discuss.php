@@ -312,6 +312,7 @@ if ($node && $post->get_id() != $discussion->get_first_post_id()) {
 $isnestedv2displaymode = $displaymode == FORUM_MODE_NESTED_V2;
 $PAGE->set_title("$course->shortname: " . format_string($discussion->get_name()));
 $PAGE->set_heading($course->fullname);
+$PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->disable();
 if ($isnestedv2displaymode) {
     $PAGE->add_body_class('nested-v2-display-mode reset-style');

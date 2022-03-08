@@ -8,10 +8,8 @@ This files describes API changes in the quiz code.
   - quiz_send_notification_messages() in mod/quiz/locallib.php
 * The completionpass criteria has been moved to core as 'completionpassgrade'. Refer to completion/upgrade.txt for
   further information.
-* New argument quizhasquestions has been added to public methods: view_information, view_page_notenrolled and view_page_guest
-  in mod/quiz/renderer.php.
-* The function no_questions_message() in class mod_quiz_renderer is deprecated. Please use generate_no_questions_message()
-  in the same class.
+* New argument quizhasquestions has been added to public methods: view_information in mod/quiz/renderer.php.
+* The function no_questions_message() in class mod_quiz_renderer is deprecated. There is no replacement.
 * quiz_slots has been updated as a part of https://docs.moodle.org/dev/Question_bank_improvements_for_Moodle_4.0
   The fields removed will be now manage by a new table in core_question:
   - question_set_reference -> Records where a specific question is used.

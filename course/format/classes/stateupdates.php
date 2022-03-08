@@ -111,14 +111,15 @@ class stateupdates implements JsonSerializable {
         }
         $course = $this->format->get_course();
         $modinfo = course_modinfo::instance($course);
+        $format = $this->format;
 
         $section = $modinfo->get_section_info_by_id($sectionid, MUST_EXIST);
 
-        if (!$section->uservisible) {
+        if (!$format->is_section_visible($section)) {
             return;
         }
 
-        $sectionclass = $this->format->get_output_classname('state\\section');
+        $sectionclass = $format->get_output_classname('state\\section');
         $currentstate = new $sectionclass($this->format, $section);
 
         $this->add_update('section', $action, $currentstate->export_for_template($this->output));
@@ -162,12 +163,13 @@ class stateupdates implements JsonSerializable {
 
         $cm = $modinfo->get_cm($cmid);
         $section = $modinfo->get_section_info_by_id($cm->section);
+        $format = $this->format;
 
         if (!$section->uservisible || !$cm->is_visible_on_course_page()) {
             return;
         }
 
-        $cmclass = $this->format->get_output_classname('state\\cm');
+        $cmclass = $format->get_output_classname('state\\cm');
         $currentstate = new $cmclass($this->format, $section, $cm);
 
         $this->add_update('cm', $action, $currentstate->export_for_template($this->output));

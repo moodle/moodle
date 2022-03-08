@@ -64,7 +64,7 @@ class edit_menu_column extends column_base {
         return $remainingcolumns;
     }
 
-    protected function get_title() {
+    public function get_title() {
         return get_string('actions');
     }
 

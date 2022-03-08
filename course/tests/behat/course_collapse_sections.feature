@@ -172,8 +172,8 @@ Feature: Collapse course sections
     When I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Format      | Weekly format     |
       | Course layout | Show one section per page |
+      | Format        | Weekly format             |
     And I press "Save and display"
     And "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
     And I click on "8 May - 14 May" "link" in the "region-main" "region"

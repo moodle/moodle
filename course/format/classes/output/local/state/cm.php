@@ -86,20 +86,12 @@ class cm implements renderable {
             'sectionid' => $section->id,
             'sectionnumber' => $section->section,
             'uservisible' => $cm->uservisible,
+            'hascmrestrictions' => $this->get_has_restrictions(),
         ];
 
         // Check the user access type to this cm.
         $info = new info_module($cm);
         $data->accessvisible = ($data->visible && $info->is_available_for_all());
-
-        // Check if restriction access are visible to the user.
-        $canviewhidden = has_capability('moodle/course:viewhiddenactivities', $cm->context);
-        if (!empty($CFG->enableavailability) && $canviewhidden) {
-            // Some users can see restrictions even if it does not apply to them.
-            $data->hascmrectrictions = !empty($cm->availableinfo);
-        } else {
-            $data->hascmrectrictions = !$data->accessvisible || !$cm->uservisible;
-        }
 
         // Add url if the activity is compatible.
         $url = $cm->url;
@@ -120,5 +112,34 @@ class cm implements renderable {
         }
 
         return $data;
+    }
+
+    /**
+     * Return if the activity has a restrictions icon displayed or not.
+     *
+     * @return bool if the activity has visible restrictions for the user.
+     */
+    protected function get_has_restrictions(): bool {
+        global $CFG;
+        $cm = $this->cm;
+
+        if (empty($cm->visible) || empty($CFG->enableavailability)) {
+            return false;
+        }
+        // Nothing to be displayed to the user.
+        if (!$cm->is_visible_on_course_page()) {
+            return false;
+        }
+        // Not allowed to see the module but might be allowed to see some availability.
+        if (!$cm->uservisible) {
+            return !empty($cm->availableinfo);
+        }
+        // Content editors can see all restrictions if the activity is visible.
+        if (has_capability('moodle/course:viewhiddenactivities', $cm->context)) {
+            $ci = new info_module($cm);
+            return !empty($ci->get_full_information());
+        }
+        // Regular users can only see restrictions if apply to them.
+        return false;
     }
 }

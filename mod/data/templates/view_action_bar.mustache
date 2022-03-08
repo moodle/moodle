@@ -64,31 +64,29 @@
         }
     }
 }}
-<div class="container-fluid mt-2 mb-4">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="d-flex">
-            <div>
-                {{#urlselect}}
-                    {{>core/url_select}}
-                {{/urlselect}}
+        {{#urlselect}}
+            <div class="navitem">
+                {{>core/url_select}}
             </div>
-            <div class="pl-2">
-                {{#addentrybutton}}
+        {{/urlselect}}
+        {{#addentrybutton}}
+            <div class="navitem">
+                {{>core/single_button}}
+            </div>
+        {{/addentrybutton}}
+        <div class="ml-sm-auto d-flex">
+            {{#importentriesbutton}}
+                <div class="navitem">
                     {{>core/single_button}}
-                {{/addentrybutton}}
-            </div>
-        </div>
-        <div class="ml-auto d-flex">
-            <div>
-                {{#importentriesbutton}}
+                </div>
+            {{/importentriesbutton}}
+            {{#exportentriesbutton}}
+                <div class="navitem">
                     {{>core/single_button}}
-                {{/importentriesbutton}}
-            </div>
-            <div class="pl-2">
-                {{#exportentriesbutton}}
-                    {{>core/single_button}}
-                {{/exportentriesbutton}}
-            </div>
+                </div>
+            {{/exportentriesbutton}}
         </div>
     </div>
 </div>

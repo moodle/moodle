@@ -218,7 +218,7 @@ class custom_report_table extends base_report_table {
      *
      * @return column[]
      */
-    private function get_active_columns(): array {
+    protected function get_active_columns(): array {
         return $this->report->get_active_columns();
     }
 

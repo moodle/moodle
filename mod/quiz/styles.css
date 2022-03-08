@@ -243,8 +243,7 @@
 
 /** Mod quiz view **/
 #page-mod-quiz-view .quizinfo,
-#page-mod-quiz-view #page .quizgradefeedback,
-#page-mod-quiz-view #page .quizattempt {
+#page-mod-quiz-view #page .quizgradefeedback {
     text-align: center;
 }
 

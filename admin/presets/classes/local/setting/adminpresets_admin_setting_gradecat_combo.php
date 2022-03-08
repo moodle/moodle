@@ -46,14 +46,16 @@ class adminpresets_admin_setting_gradecat_combo extends adminpresets_admin_setti
     protected function set_visiblevalue() {
         parent::set_visiblevalue();
 
-        $flagvalue = $this->attributesvalues[$this->settingdata->name . '_flag'];
+        if (!is_null($this->attributesvalues) && array_key_exists($this->settingdata->name . '_flag', $this->attributesvalues)) {
+            $flagvalue = $this->attributesvalues[$this->settingdata->name . '_flag'];
 
-        if (isset($flagvalue)) {
-            $forcedvalue = (($flagvalue % 2) == 1);
-            $advancedvalue = ($flagvalue >= 2);
+            if (isset($flagvalue)) {
+                $forcedvalue = (($flagvalue % 2) == 1);
+                $advancedvalue = ($flagvalue >= 2);
 
-            $this->visiblevalue .= $this->delegation->extra_set_visiblevalue($forcedvalue, 'forced');
-            $this->visiblevalue .= $this->delegation->extra_set_visiblevalue($advancedvalue, 'advanced');
+                $this->visiblevalue .= $this->delegation->extra_set_visiblevalue($forcedvalue, 'forced');
+                $this->visiblevalue .= $this->delegation->extra_set_visiblevalue($advancedvalue, 'advanced');
+            }
         }
     }
 }

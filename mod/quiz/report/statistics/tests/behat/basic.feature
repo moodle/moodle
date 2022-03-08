@@ -39,12 +39,11 @@ Feature: Basic use of the Statistics report
 
   @javascript
   Scenario: Report works when there are no attempts
-    Given I am on the "Quiz 1" "quiz activity" page logged in as teacher1
-    And I navigate to "Results > Statistics" in current page administration
+    When I am on the "Quiz 1" "mod_quiz > Statistics report" page logged in as teacher1
     Then I should see "No attempts have been made at this quiz, or all attempts have questions that need manual grading."
     And I should not see "Statistics for question positions"
     And "Show chart data" "link" should not exist
-    When user "student1" has attempted "Quiz 1" with responses:
+    And user "student1" has attempted "Quiz 1" with responses:
       | slot | response |
       |   1  | True     |
       |   2  | False    |
@@ -59,10 +58,9 @@ Feature: Basic use of the Statistics report
       |   1  | False    |
       |   2  | False    |
       |   3  | False    |
-    And I am on the "Quiz 1" "quiz activity" page logged in as teacher1
-    And I navigate to "Results > Statistics" in current page administration
+    And I am on the "Quiz 1" "mod_quiz > Statistics report" page logged in as teacher1
     And I press "Show report"
-    Then I should not see "No questions have been attempted yet"
+    And I should not see "No questions have been attempted yet"
     And "Show chart data" "link" should exist
 
     # Question A statistics breakdown.

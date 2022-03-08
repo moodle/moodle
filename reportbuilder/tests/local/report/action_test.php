@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\report;
 
 use advanced_testcase;
+use lang_string;
 use moodle_url;
 use pix_icon;
 use stdClass;
@@ -55,6 +56,51 @@ class action_test extends advanced_testcase {
             });
 
         $this->assertNull($action->get_action_link(new stdClass()));
+    }
+
+    /**
+     * Data provider for {@see test_action_title}
+     *
+     * @return array[]
+     */
+    public function action_title_provider(): array {
+        $title = new lang_string('yes');
+        return [
+            'Specified via constructor' => ['', [], $title],
+            'Specified via pix icon' => [(string) $title],
+            'Specified via attributes' => ['', ['title' => $title]],
+            'Specified via attributes placeholder' => ['', ['title' => ':title'], null, ['title' => $title]],
+        ];
+    }
+
+    /**
+     * Test action title is correct
+     *
+     * @param string $pixiconalt
+     * @param array $attributes
+     * @param lang_string|null $title
+     * @param array $row
+     *
+     * @dataProvider action_title_provider
+     */
+    public function test_action_title(
+        string $pixiconalt,
+        array $attributes = [],
+        ?lang_string $title = null,
+        array $row = []
+    ): void {
+
+        $action = new action(
+            new moodle_url('#'),
+            new pix_icon('t/edit', $pixiconalt),
+            $attributes,
+            false,
+            $title
+        );
+
+        // Assert correct title appears inside action link, after the icon.
+        $actionlink = $action->get_action_link((object) $row);
+        $this->assertStringEndsWith('</i>Yes</a>', $actionlink);
     }
 
     /**

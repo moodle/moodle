@@ -56,9 +56,12 @@ class adminpresets_admin_setting_configtime extends adminpresets_setting {
         }
 
         $this->value = $value;
+        $this->set_visiblevalue();
     }
 
     protected function set_visiblevalue() {
-        $this->visiblevalue = $this->value . ':' . $this->attributesvalues[$this->settingdata->name2];
+        if (!is_null($this->attributesvalues) && array_key_exists($this->settingdata->name2, $this->attributesvalues)) {
+            $this->visiblevalue = $this->value . ':' . $this->attributesvalues[$this->settingdata->name2];
+        }
     }
 }

@@ -54,8 +54,9 @@ $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->disable();
 
 echo $OUTPUT->header();
-echo html_writer::link(new moodle_url('view.php', ['id' => $cm->id]),
-    get_string('back'), ['class' => 'btn btn-secondary mb-2']);
+$backlink = html_writer::link(new moodle_url('view.php', ['id' => $cm->id]),
+    get_string('back'), ['class' => 'btn btn-secondary']);
+echo html_writer::tag('div', $backlink, ['class' => 'tertiary-navigation']);
 echo $OUTPUT->heading($strexportentries);
 echo $OUTPUT->box_start('glossarydisplay generalbox');
 $exporturl = moodle_url::make_pluginfile_url($context->id, 'mod_glossary', 'export', 0, "/$cat/", 'export.xml', true);

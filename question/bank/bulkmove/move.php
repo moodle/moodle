@@ -60,6 +60,8 @@ $PAGE->set_url($url);
 $streditingquestions = get_string('movequestions', 'qbank_bulkmove');
 $PAGE->set_title($streditingquestions);
 $PAGE->set_heading($COURSE->fullname);
+$PAGE->activityheader->disable();
+$PAGE->set_secondary_active_tab("questionbank");
 
 if ($category) {
     list($tocategoryid, $contextid) = explode(',', $category);

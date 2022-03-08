@@ -38,7 +38,7 @@ class viewquestionname_column_helper extends column_base {
         return 'questionname';
     }
 
-    protected function get_title(): string {
+    public function get_title(): string {
         return get_string('question');
     }
 

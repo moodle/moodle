@@ -41,7 +41,7 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
     And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
     And I follow "Test quiz name"
-    And I follow "Attempt quiz"
+    And I press "Re-attempt quiz"
     And I set the field "<answer>" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"

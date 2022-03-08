@@ -88,11 +88,10 @@ $string['searchcohort'] = 'Search cohort';
 $string['uploadcohorts_help'] = 'Cohorts may be uploaded via text file. The format of the file should be as follows:
 
 * Each line of the file contains one record
-* Each record is a series of data separated by commas (or other delimiters)
+* Each record is a series of data separated by the selected separator
 * The first record contains a list of fieldnames defining the format of the rest of the file
 * Required fieldname is name
-* Optional fieldnames are idnumber, description, descriptionformat, visible, context, category, category_id, category_idnumber, category_path
-';
+* Optional fieldnames are idnumber, description, descriptionformat, visible, context, category, category_id, category_idnumber, category_path';
 $string['visible'] = 'Visible';
 $string['visible_help'] = "Any cohort can be viewed by users who have 'moodle/cohort:view' capability in the cohort context.<br/>
 Visible cohorts can also be viewed by users in the underlying courses.";

@@ -8,11 +8,14 @@ Feature: Select file feature
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
+    And I log in as "admin"
 
   @javascript
   Scenario: Select a file from the "Recent files" repository using "icons" view
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
+    Given I am on "Course 1" course homepage with editing mode on
     And I add a "Folder" to section "1"
     And I set the following fields to these values:
       | Name        | Test folder             |
@@ -32,8 +35,7 @@ Feature: Select file feature
 
   @javascript
   Scenario: Select a file from the "Recent files" repository using "list" view
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
+    Given I am on "Course 1" course homepage with editing mode on
     And I add a "Folder" to section "1"
     And I set the following fields to these values:
       | Name        | Test folder             |
@@ -53,8 +55,7 @@ Feature: Select file feature
 
   @javascript
   Scenario: Select a file from the "Recent files" repository using "tree" view
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
+    Given I am on "Course 1" course homepage with editing mode on
     And I add a "Folder" to section "1"
     And I set the following fields to these values:
       | Name        | Test folder             |

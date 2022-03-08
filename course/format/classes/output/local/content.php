@@ -24,11 +24,10 @@
 
 namespace core_courseformat\output\local;
 
+use core\output\named_templatable;
 use core_courseformat\base as course_format;
 use course_modinfo;
 use renderable;
-use templatable;
-use stdClass;
 
 /**
  * Base class to render a course format.
@@ -37,7 +36,8 @@ use stdClass;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class content implements renderable, templatable {
+class content implements named_templatable, renderable {
+    use courseformat_named_templatable;
 
     /** @var core_courseformat\base the course format class */
     protected $format;
@@ -153,13 +153,7 @@ class content implements renderable, templatable {
                 continue;
             }
 
-            // Show the section if the user is permitted to access it, OR if it's not available
-            // but there is some available info text which explains the reason & should display,
-            // OR it is hidden but the course has a setting to display hidden sections as unavilable.
-            $showsection = $thissection->uservisible ||
-                    ($thissection->visible && !$thissection->available && !empty($thissection->availableinfo)) ||
-                    (!$thissection->visible && !$course->hiddensections);
-            if (!$showsection) {
+            if (!$format->is_section_visible($thissection)) {
                 continue;
             }
 

@@ -34,6 +34,9 @@ import selectors from 'tool_componentlibrary/selectors';
 export const jsRunner = () => {
     const compLib = document.querySelector(selectors.componentlibrary);
     compLib.querySelectorAll(selectors.jscode).forEach(runjs => {
-        eval(runjs.innerText); // eslint-disable-line no-eval
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.innerHTML = runjs.textContent;
+        document.head.appendChild(script);
     });
 };

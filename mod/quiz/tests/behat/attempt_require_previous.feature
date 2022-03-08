@@ -35,7 +35,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
 
     Then I should see "First question"
     And I should see "This question cannot be attempted until the previous question has been completed."
@@ -63,7 +63,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
     And I click on "True" "radio" in the "First question" "question"
     And I press "Check"
 
@@ -88,7 +88,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
@@ -111,7 +111,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
 
     Then I should see "First question"
     And I should see "Second question"
@@ -135,7 +135,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | Section 1 | 1         | 1       |
 
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
 
     Then I should see "First question"
     And I should see "Second question"
@@ -160,7 +160,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | Section 2 | 2         | 0       |
 
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
     And I press "Next page"
 
     Then I should see "Second question"
@@ -181,7 +181,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
 
     Then I should see "First question"
     And I should see "Second question"
@@ -202,7 +202,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF2      | 1    | 1               |
 
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
 
     Then I should see "First question"
     And I should see "Second question"
@@ -223,7 +223,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
       | TF1      | 1    | 1               |
 
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
 
     Then I should see "Read me"
     And I should see "First question"

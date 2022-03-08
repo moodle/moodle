@@ -36,6 +36,11 @@ class custom_report_table_view extends custom_report_table {
      * Override printed headers, to use those of grandparent class
      */
     public function print_headers() {
+        $columns = $this->get_active_columns();
+        if (empty($columns)) {
+            return;
+        }
+
         base_report_table::print_headers();
     }
 

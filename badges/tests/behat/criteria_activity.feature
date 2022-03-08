@@ -57,7 +57,7 @@ Feature: Award badges based on activity completion
     And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
     And the "Receive a pass grade or complete all available attempts" completion condition of "Test quiz name" is displayed as "todo"
     When I am on the "Test quiz name" "quiz activity" page
-    And I follow "Attempt quiz"
+    And I press "Re-attempt quiz"
     And I set the field "False" to "1"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"

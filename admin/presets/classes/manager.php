@@ -124,6 +124,15 @@ class manager {
         'moodlerelease' => 'MOODLE_RELEASE'
     ];
 
+    /** @var int Non-core preset */
+    public const NONCORE_PRESET = 0;
+
+    /** @var int Starter preset */
+    public const STARTER_PRESET = 1;
+
+    /** @var int Full preset */
+    public const FULL_PRESET = 2;
+
     /**
      * Gets the system settings
      *
@@ -926,13 +935,17 @@ class manager {
         // Plugins.
         $plugins = $DB->get_records('adminpresets_app_plug', ['adminpresetapplyid' => $presetappid]);
         if ($plugins) {
+            $pluginmanager = \core_plugin_manager::instance();
             foreach ($plugins as $plugin) {
                 $pluginclass = \core_plugin_manager::resolve_plugininfo_class($plugin->plugin);
                 $pluginclass::enable_plugin($plugin->name, (int) $plugin->oldvalue);
 
-                $visiblename = $plugin->plugin . '_' . $plugin->name;
-                if (get_string_manager()->string_exists('pluginname', $plugin->plugin . '_' . $plugin->name)) {
-                    $visiblename = get_string('pluginname', $plugin->plugin . '_' . $plugin->name);
+                // Get the plugininfo object for this plugin, to get its proper visible name.
+                $plugininfo = $pluginmanager->get_plugin_info($plugin->plugin . '_' . $plugin->name);
+                if ($plugininfo != null) {
+                    $visiblename = $plugininfo->displayname;
+                } else {
+                    $visiblename = $plugin->plugin . '_' . $plugin->name;
                 }
 
                 // Output table.
@@ -1087,14 +1100,19 @@ class manager {
         $strdisabled = get_string('disabled', 'core_adminpresets');
 
         $plugins = $DB->get_records('adminpresets_plug', ['adminpresetid' => $presetid]);
+        $pluginmanager = \core_plugin_manager::instance();
         foreach ($plugins as $plugin) {
             $pluginclass = \core_plugin_manager::resolve_plugininfo_class($plugin->plugin);
             $oldvalue = $pluginclass::get_enabled_plugin($plugin->name);
 
-            $visiblename = $plugin->plugin . '_' . $plugin->name;
-            if (get_string_manager()->string_exists('pluginname', $plugin->plugin . '_' . $plugin->name)) {
-                $visiblename = get_string('pluginname', $plugin->plugin . '_' . $plugin->name);
+            // Get the plugininfo object for this plugin, to get its proper visible name.
+            $plugininfo = $pluginmanager->get_plugin_info($plugin->plugin . '_' . $plugin->name);
+            if ($plugininfo != null) {
+                $visiblename = $plugininfo->displayname;
+            } else {
+                $visiblename = $plugin->plugin . '_' . $plugin->name;
             }
+
             if ($plugin->enabled > 0) {
                 $visiblevalue = $strenabled;
             } else if ($plugin->enabled == 0) {

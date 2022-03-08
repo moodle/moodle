@@ -20,7 +20,7 @@ Feature: Test importing Description questions
   @javascript @_file_upload
   Scenario: import a Description question.
     When I navigate to "Question bank" in current page administration
-    And I select "Import" from the "questionbankactionselect" singleselect
+    And I select "Import" from the "Question bank tertiary navigation" singleselect
     And I set the field "id_format_xml" to "1"
     And I upload "question/type/description/tests/fixtures/testquestion.moodle.xml" file to "Import" filemanager
     And I press "id_submitbutton"

@@ -51,7 +51,7 @@ Feature: Add and configure blocks throughout the site
   Scenario: Blocks on the dashboard page can have roles assigned to them
     Given I log in as "manager1"
     When I turn editing mode on
-    Then I should see "Assign roles in Private files block"
+    Then I should see "Assign roles in Recently accessed items block"
 
   Scenario: Blocks on courses can have roles assigned to them
     Given I log in as "teacher1"

@@ -35,8 +35,11 @@ class helper_test extends \advanced_testcase {
      *
      * @param string|null $name Preset name field.
      * @param string|null $comments Preset comments field.
+     * @param int|null $iscore Preset iscore field.
+     * @param int|null $iscoreresult Expected iscore value for the result preset.
      */
-    public function test_create_preset(?string $name = null, ?string $comments = null): void {
+    public function test_create_preset(?string $name = null, ?string $comments = null, ?int $iscore = null,
+           ?int $iscoreresult = null): void {
         global $CFG, $DB, $USER;
 
         $this->resetAfterTest();
@@ -48,6 +51,12 @@ class helper_test extends \advanced_testcase {
         if (isset($comments)) {
             $data['comments'] = $comments;
         }
+        if (isset($iscore)) {
+            $data['iscore'] = $iscore;
+        }
+        if (!isset($iscoreresult)) {
+            $iscoreresult = manager::NONCORE_PRESET;
+        }
 
         // Create a preset.
         $presetid = helper::create_preset($data);
@@ -58,6 +67,7 @@ class helper_test extends \advanced_testcase {
         $this->assertEquals($name, $preset->name);
         $this->assertEquals($comments, $preset->comments);
         $this->assertEquals(fullname($USER), $preset->author);
+        $this->assertEquals($iscoreresult, $preset->iscore);
         $this->assertEquals($CFG->version, $preset->moodleversion);
         $this->assertEquals($CFG->release, $preset->moodlerelease);
         $this->assertEquals($CFG->wwwroot, $preset->site);
@@ -88,6 +98,24 @@ class helper_test extends \advanced_testcase {
             'Name and comments not empty' => [
                 'name' => 'Preset with a super-nice name',
                 'comments' => 'This is a comment different from the previous one',
+            ],
+            'Starter preset' => [
+                'name' => 'Starter',
+                'comments' => null,
+                'iscore' => manager::STARTER_PRESET,
+                'iscoreresult' => manager::STARTER_PRESET,
+            ],
+            'Full preset' => [
+                'name' => 'Full',
+                'comments' => null,
+                'iscore' => manager::FULL_PRESET,
+                'iscoreresult' => manager::FULL_PRESET,
+            ],
+            'Invalid iscore' => [
+                'name' => 'Invalid iscore value',
+                'comments' => null,
+                'iscore' => -1,
+                'iscoreresult' => manager::NONCORE_PRESET,
             ],
         ];
     }

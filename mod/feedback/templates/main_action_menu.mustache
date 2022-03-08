@@ -150,36 +150,34 @@
         }
     }
 }}
-<div class="container-fluid pl-0 pb-1 mb-2" id="action_bar">
-    <div class="row pl-0 ml-0">
-        <div class="d-flex">
+<div class="container-fluid tertiary-navigation">
+    <div class="row">
         {{#left}}
             {{#actionlink}}
-            <div class="col-xs-4 pr-1">
-                {{> core/action_link}}
-            </div>
+                <div class="navitem">
+                    {{> core/action_link}}
+                </div>
             {{/actionlink}}
             {{#urlselect}}
-            <div class="col-xs-4 pr-1">
-                {{> core/url_select}}
-            </div>
+                <div class="navitem">
+                    {{> core/url_select}}
+                </div>
             {{/urlselect}}
             {{#singleselect}}
-            <div class="col-xs-4 pr-1">
-                {{> core/single_select}}
-            </div>
+                <div class="navitem">
+                    {{> core/single_select}}
+                </div>
             {{/singleselect}}
         {{/left}}
         {{#usetemplate }}
-            <div class="col-xs-4 pr-1">
+            <div class="navitem">
                 {{> mod_feedback/use_template }}
             </div>
         {{/usetemplate}}
-        </div>
         {{#export}}
-        <div class="ml-auto">
-            {{> core/action_link }}
-        </div>
+            <div class="navitem ml-sm-auto">
+                {{> core/action_link }}
+            </div>
         {{/export}}
     </div>
 </div>

@@ -35,10 +35,10 @@ const stringsWithKeys = {
     prev: 'view_recording_yui_prev',
     next: 'view_recording_yui_next',
     last: 'view_recording_yui_last',
-    page: 'view_recording_yui_page',
-    go: 'view_recording_yui_go',
-    rows: 'view_recording_yui_rows',
-    all: 'view_recording_yui_all',
+    goToLabel: 'view_recording_yui_page',
+    goToAction: 'view_recording_yui_go',
+    perPage: 'view_recording_yui_rows',
+    showAll: 'view_recording_yui_show_all',
 };
 // Load global strings.
 prefetchStrings('bigbluebuttonbn', Object.entries(stringsWithKeys).map((entry) => entry[1]));

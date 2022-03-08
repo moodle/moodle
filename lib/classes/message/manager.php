@@ -228,7 +228,7 @@ class manager {
                         // exist in the message_provider table (thus there is no default settings for them).
                         $preferrormsg = "Could not load preference $defaultlockedpreference.
                      Make sure the component and name you supplied to message_send() are valid.";
-                        throw new coding_exception($preferrormsg);
+                        throw new \coding_exception($preferrormsg);
                     }
 
                     $enabledpreference = 'message_provider_'.$preferencebase . '_enabled';

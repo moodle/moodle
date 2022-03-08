@@ -109,10 +109,29 @@ function xmldb_block_myoverview_upgrade($oldversion) {
             'id',
             IGNORE_MULTIPLE
         )->id;
-        $instances = $DB->get_records('block_instances', ['blockname' => 'myoverview',
-            'pagetypepattern' => 'my-index', 'subpagepattern' => $mysubpagepattern]);
-        foreach ($instances as $instance) {
-            delete_block_instance($instance);
+
+        $instanceselect = 'blockname = :blockname and pagetypepattern = :pagetypepattern and subpagepattern = :subpagepattern';
+        $instanceparams['blockname'] = 'myoverview';
+        $instanceparams['pagetypepattern'] = 'my-index';
+        $instanceparams['subpagepattern'] = $mysubpagepattern;
+
+        $total = $DB->count_records_select('block_instances', $instanceselect, $instanceparams);
+        // Check if where have blocks to delete.
+        if ($total > 0) {
+            $instances = $DB->get_recordset_select('block_instances', $instanceselect, $instanceparams);
+            // Show a progress bar.
+            $pbar = new progress_bar('deleteblockinstances', 500, true);
+            $i = 0;
+            $pbar->update($i, $total, "Deleting block instance - $i/$total.");
+            foreach ($instances as $instance) {
+                delete_block_instance($instance);
+                // Update progress.
+                $pbar->update($i, $total, "Deleting block instance - $i/$total.");
+                $i++;
+            }
+            $instances->close();
+            // Update progress.
+            $pbar->update($total, $total, "Deleting block instance - $total/$total.");
         }
 
         // Begin looking for any and all instances of course overview in customised /my pages.
@@ -120,18 +139,31 @@ function xmldb_block_myoverview_upgrade($oldversion) {
         $pageparams['name'] = MY_PAGE_DEFAULT;
         $pageparams['private'] = MY_PAGE_PRIVATE;
 
-        $pages = $DB->get_recordset_select('my_pages', $pageselect, $pageparams);
-        foreach ($pages as $page) {
-            $blocksql = 'blockname = :blockname and pagetypepattern = :pagetypepattern and subpagepattern = :subpagepattern';
-            $blockparams['blockname'] = 'myoverview';
-            $blockparams['pagetypepattern'] = 'my-index';
-            $blockparams['subpagepattern'] = $page->id;
-            $instances = $DB->get_records_select('block_instances', $blocksql, $blockparams);
-            foreach ($instances as $instance) {
-                delete_block_instance($instance);
+        $total = $DB->count_records_select('my_pages', $pageselect, $pageparams);
+        // Check if where have pages to check for blocks.
+        if ($total > 0) {
+            $pages = $DB->get_recordset_select('my_pages', $pageselect, $pageparams);
+            // Show a progress bar.
+            $pagepbar = new progress_bar('deletepageblockinstances', 500, true);
+            $i = 0;
+            $pagepbar->update($i, $total, "Deleting user page block instance - $i/$total.");
+            foreach ($pages as $page) {
+                $blocksql = 'blockname = :blockname and pagetypepattern = :pagetypepattern and subpagepattern = :subpagepattern';
+                $blockparams['blockname'] = 'myoverview';
+                $blockparams['pagetypepattern'] = 'my-index';
+                $blockparams['subpagepattern'] = $page->id;
+                $instances = $DB->get_records_select('block_instances', $blocksql, $blockparams);
+                foreach ($instances as $instance) {
+                    delete_block_instance($instance);
+                }
+                // Update progress.
+                $pagepbar->update($i, $total, "Deleting user page block instance - $i/$total.");
+                $i++;
             }
+            $pages->close();
+            // Update progress.
+            $pagepbar->update($total, $total, "Deleting user page block instance - $total/$total.");
         }
-        $pages->close();
 
         // Add new instance to the /my/courses.php page.
         $subpagepattern = $DB->get_record(
@@ -142,8 +174,8 @@ function xmldb_block_myoverview_upgrade($oldversion) {
         )->id;
 
         // See if this block already somehow exists, it should not but who knows.
-        if (!$DB->get_record('block_instances', ['blockname' => 'myoverview',
-                'pagetypepattern' => 'my-index', 'subpagepattern' => $subpagepattern])) {
+        if (!$DB->record_exists('block_instances', ['blockname' => 'myoverview',
+            'pagetypepattern' => 'my-index', 'subpagepattern' => $subpagepattern])) {
             $page = new moodle_page();
             $systemcontext = context_system::instance();
             $page->set_context($systemcontext);

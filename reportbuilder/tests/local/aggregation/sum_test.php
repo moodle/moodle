@@ -28,7 +28,7 @@ global $CFG;
 require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 
 /**
- * Unit tests for percent aggregation
+ * Unit tests for sum aggregation
  *
  * @package     core_reportbuilder
  * @covers      \core_reportbuilder\local\aggregation\base

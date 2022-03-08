@@ -14,6 +14,9 @@ Feature: Enable Block Badges on the dashboard and view awarded badges
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "blocks" exist:
+      | blockname  | contextlevel | reference | pagetypepattern | defaultregion |
+      | badges     | System       | 1         | my-index        | side-post     |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     # Issue badge 1 of 2

@@ -101,9 +101,10 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
                                                 $path,
                                                 navigation_node::TYPE_SETTING,
                                                 null,
-                                                null,
+                                                'learningplantemplates',
                                                 new pix_icon('i/competencies', ''));
         if (isset($settingsnode)) {
+            $settingsnode->set_force_into_more_menu(true);
             $navigation->add_node($settingsnode);
         }
     }
@@ -116,9 +117,10 @@ function tool_lp_extend_navigation_category_settings($navigation, $coursecategor
                                                 $path,
                                                 navigation_node::TYPE_SETTING,
                                                 null,
-                                                null,
+                                                'competencyframeworks',
                                                 new pix_icon('i/competencies', ''));
         if (isset($settingsnode)) {
+            $settingsnode->set_force_into_more_menu(true);
             $navigation->add_node($settingsnode);
         }
     }

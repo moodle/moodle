@@ -475,14 +475,14 @@ class course_modinfo {
         $cachecoursemodinfo = cache::make('core', 'coursemodinfo');
 
         // Retrieve modinfo from cache. If not present or cacherev mismatches, call rebuild and retrieve again.
-        $coursemodinfo = $cachecoursemodinfo->get($course->id);
-        if ($coursemodinfo === false || ($course->cacherev != $coursemodinfo->cacherev)) {
+        $coursemodinfo = $cachecoursemodinfo->get_versioned($course->id, $course->cacherev);
+        if (!$coursemodinfo) {
             $lock = self::get_course_cache_lock($course->id);
             try {
                 // Only actually do the build if it's still needed after getting the lock (not if
                 // somebody else, who might have been holding the lock, built it already).
-                $coursemodinfo = $cachecoursemodinfo->get($course->id);
-                if ($coursemodinfo === false || ($course->cacherev != $coursemodinfo->cacherev)) {
+                $coursemodinfo = $cachecoursemodinfo->get_versioned($course->id, $course->cacherev);
+                if (!$coursemodinfo) {
                     $coursemodinfo = self::inner_build_course_cache($course, $lock);
                 }
             } finally {
@@ -681,17 +681,12 @@ class course_modinfo {
         global $DB, $CFG;
         require_once("{$CFG->dirroot}/course/lib.php");
 
-        // Ensure object has all necessary fields.
-        foreach (self::$cachedfields as $key) {
-            if (!isset($course->$key)) {
-                $course = $DB->get_record('course', array('id' => $course->id),
-                        implode(',', array_merge(array('id'), self::$cachedfields)), MUST_EXIST);
-                break;
-            }
-        }
+        // Always reload the course object from database to ensure we have the latest possible
+        // value for cacherev.
+        $course = $DB->get_record('course', ['id' => $course->id],
+                implode(',', array_merge(['id'], self::$cachedfields)), MUST_EXIST);
+
         // Retrieve all information about activities and sections.
-        // This may take time on large courses and it is possible that another user modifies the same course during this process.
-        // Field cacherev stored in both DB and cache will ensure that cached data matches the current course state.
         $coursemodinfo = new stdClass();
         $coursemodinfo->modinfo = get_array_of_activities($course->id);
         $coursemodinfo->sectioncache = self::build_course_section_cache($course);
@@ -700,7 +695,7 @@ class course_modinfo {
         }
         // Set the accumulated activities and sections information in cache, together with cacherev.
         $cachecoursemodinfo = cache::make('core', 'coursemodinfo');
-        $cachecoursemodinfo->set($course->id, $coursemodinfo);
+        $cachecoursemodinfo->set_versioned($course->id, $course->cacherev, $coursemodinfo);
         return $coursemodinfo;
     }
 }
@@ -1123,6 +1118,11 @@ class cm_info implements IteratorAggregate {
     private $contentisformatted;
 
     /**
+     * @var bool True if the content has a special course item display like labels.
+     */
+    private $customcmlistitem;
+
+    /**
      * @var string
      */
     private $extraclasses;
@@ -1194,6 +1194,7 @@ class cm_info implements IteratorAggregate {
         'course' => 'get_course_id',
         'coursegroupmode' => 'get_course_groupmode',
         'coursegroupmodeforce' => 'get_course_groupmodeforce',
+        'customcmlistitem' => 'has_custom_cmlist_item',
         'effectivegroupmode' => 'get_effective_groupmode',
         'extra' => false,
         'groupingid' => false,
@@ -1403,6 +1404,19 @@ class cm_info implements IteratorAggregate {
             $options['context'] = $this->get_context();
         }
         return format_text($this->content, FORMAT_HTML, $options);
+    }
+
+    /**
+     * Return the module custom cmlist item flag.
+     *
+     * Activities like label uses this flag to indicate that it should be
+     * displayed as a custom course item instead of a tipical activity card.
+     *
+     * @return bool
+     */
+    public function has_custom_cmlist_item(): bool {
+        $this->obtain_view_data();
+        return $this->customcmlistitem ?? false;
     }
 
     /**
@@ -1791,6 +1805,18 @@ class cm_info implements IteratorAggregate {
     public function set_user_visible($uservisible) {
         $this->check_not_view_only();
         $this->uservisible = $uservisible;
+    }
+
+    /**
+     * Sets the 'customcmlistitem' flag
+     *
+     * This can be used (by setting true) to prevent the course from rendering the
+     * activity item as a regular activity card. This is applied to activities like labels.
+     *
+     * @param bool $customcmlistitem if the cmlist item of that activity has a special dysplay other than a card.
+     */
+    public function set_custom_cmlist_item(bool $customcmlistitem) {
+        $this->customcmlistitem = $customcmlistitem;
     }
 
     /**

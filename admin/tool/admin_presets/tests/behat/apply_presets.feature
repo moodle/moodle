@@ -41,6 +41,8 @@ Feature: I can apply presets
     And I should see "Calculated multichoice" in the "Setting changes" "table"
     And I should see "Calculated simple" in the "Setting changes" "table"
     And I should see "Chat" in the "Setting changes" "table"
+    And "Chat" row "Current value" column of "Setting changes" table should contain "Enabled"
+    And "Chat" row "New value" column of "Setting changes" table should contain "Disabled"
     And I should see "Cohort sync" in the "Setting changes" "table"
     And I should see "Comments" in the "Setting changes" "table"
     And I should see "Course completion status" in the "Setting changes" "table"
@@ -51,6 +53,8 @@ Feature: I can apply presets
     And I should see "Drag and drop onto image" in the "Setting changes" "table"
     And I should see "Embedded answers (Cloze)" in the "Setting changes" "table"
     And I should see "Enable badges" in the "Setting changes" "table"
+    And "Enable badges" row "Current value" column of "Setting changes" table should contain "Yes"
+    And "Enable badges" row "New value" column of "Setting changes" table should contain "No"
     And I should see "Enable blogs" in the "Setting changes" "table"
     And I should see "Enable comments" in the "Setting changes" "table"
     And I should see "Enable competencies" in the "core_competency" "table_row"
@@ -70,6 +74,8 @@ Feature: I can apply presets
     And I should see "Login" in the "Setting changes" "table"
     And I should see "Main menu" in the "Setting changes" "table"
     And I should see "Maximum number of attachments" in the "Setting changes" "table"
+    And "Maximum number of attachments" row "Current value" column of "Setting changes" table should contain "9"
+    And "Maximum number of attachments" row "New value" column of "Setting changes" table should contain "3"
     And I should see "Mentees" in the "Setting changes" "table"
     And I should see "Network servers" in the "Setting changes" "table"
     And I should see "Numerical" in the "Setting changes" "table"
@@ -86,7 +92,7 @@ Feature: I can apply presets
     And I should see "Server files" in the "Setting changes" "table"
     And I should see "Show data retention summary" in the "Setting changes" "table"
     And I should see "Social activities" in the "Setting changes" "table"
-    And I should see "Social format" in the "format" "table_row"
+    And I should see "Social format" in the "Setting changes" "table"
     And I should see "Starred courses" in the "Setting changes" "table"
     And I should see "Survey" in the "Setting changes" "table"
     And I should see "Tags" in the "Setting changes" "table"
@@ -95,6 +101,9 @@ Feature: I can apply presets
     And I should see "Wiki" in the "Setting changes" "table"
     And I should see "Wikimedia" in the "Setting changes" "table"
     And I should see "Workshop" in the "Setting changes" "table"
+#   Check filters and data formats strings are displayed properly.
+    And I should see "Activity names auto-linking" in the "Setting changes" "table"
+    And I should see "Javascript Object Notation (.json)" in the "Setting changes" "table"
 #   Apply the Starter preset.
     And I click on "Apply" "button"
     And I navigate to "Advanced features" in site administration
@@ -112,6 +121,18 @@ Feature: I can apply presets
     And "Enabled" "icon" should not exist in the "Immediate feedback with CBM" "table_row"
     And I navigate to "Plugins > Question types > Manage question types" in site administration
     And "Enabled" "icon" should not exist in the "Calculated multichoice" "table_row"
+
+  Scenario: Re-applying Starter Moodle preset does not display setting changes
+#   Apply Starter preset.
+    Given I navigate to "Site admin presets" in site administration
+    And I open the action menu in "Starter" "table_row"
+    And I choose "Review settings and apply" in the open action menu
+    And I click on "Apply" "button"
+    And I click on "Continue" "button"
+#   When the Starter preset it's applied again, no changes should be displayed.
+    When I open the action menu in "Starter" "table_row"
+    And I choose "Review settings and apply" in the open action menu
+    Then I should not see "Setting changes"
 
   Scenario: Applied exported settings
     Given I navigate to "Site admin presets" in site administration

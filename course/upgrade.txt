@@ -81,6 +81,12 @@ course formats don't have their own renderer.
   - Returns courses the user is enrolled in which contain at least one action event in the supplied time/text filtering parameters.
   - Provides a similar response to get_enrolled_courses_by_timeline_classification, but omits courses which have no matching
     action events.
+* The following functions have been deprecated in favour the tertiary navigation constructs:
+  - management_heading
+  - course_search_form
+  - print_course_request_buttons
+* New page_setup() method in the core_course_category class. This method can be used for a general page setup in the course
+  category pages.
 
 === 3.11 ===
 * A new callback xxx_coursemodule_definition_after_data that allows plugins to extend activity forms after the data is set.

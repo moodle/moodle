@@ -71,7 +71,7 @@ class question_category_edit_form extends moodleform {
         $mform->addHelpButton('idnumber', 'idnumber', 'question');
         $mform->setType('idnumber', PARAM_RAW);
 
-        $this->add_action_buttons(false, get_string('addcategory', 'question'));
+        $this->add_action_buttons(true, get_string('addcategory', 'question'));
 
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);

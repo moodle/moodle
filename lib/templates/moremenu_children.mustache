@@ -38,7 +38,15 @@
         <div class="dropdown-menu" role="menu" id="drop-down-menu-{{moremenuid}}" aria-labelledby="drop-down-{{moremenuid}}">
             {{#children}}
                 {{^divider}}
-                    <a class="dropdown-item" role="menuitem" href="{{{url}}}{{{action}}}">{{{text}}}</a>
+                    {{#is_action_link}}
+                        <a class="dropdown-item" role="menuitem" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} href="{{{url}}}{{{action}}}" data-disableactive="true">{{{text}}}</a>
+                        {{#action_link_actions}}
+                            {{> core/actions }}
+                        {{/action_link_actions}}
+                    {{/is_action_link}}
+                    {{^is_action_link}}
+                        <a class="dropdown-item" role="menuitem" href="{{{url}}}{{{action}}}">{{{text}}}</a>
+                    {{/is_action_link}}
                 {{/divider}}
                 {{#divider}}
                     <div class="dropdown-divider"></div>
@@ -50,14 +58,34 @@
 {{^haschildren}}
     <li class="nav-item" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
         {{#tab}}
-            <a role="menuitem" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} href="{{tab}}" data-toggle="tab" data-text="{{{text}}}" aria-current="false" tabindex="-1">
-                {{{text}}}
-            </a>
+            {{#is_action_link}}
+                <a role="menuitem" class="nav-link {{#classes}}{{.}} {{/classes}}" href="{{tab}}" data-toggle="tab" data-text="{{{text}}}" aria-current="false" data-disableactive="true" tabindex="-1">
+                    {{{text}}}
+                </a>
+                {{#action_link_actions}}
+                    {{> core/actions }}
+                {{/action_link_actions}}
+            {{/is_action_link}}
+            {{^is_action_link}}
+                <a role="menuitem" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{tab}}" data-toggle="tab" data-text="{{{text}}}" aria-current="false" tabindex="-1">
+                    {{{text}}}
+                </a>
+            {{/is_action_link}}
         {{/tab}}
         {{^tab}}
-            <a role="menuitem" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1">
-                {{{text}}}
-            </a>
+            {{#is_action_link}}
+                <a role="menuitem" class="nav-link {{#classes}}{{.}} {{/classes}}" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} href="{{{url}}}{{{action}}}" data-disableactive="true" tabindex="-1">
+                    {{{text}}}
+                </a>
+                {{#action_link_actions}}
+                    {{> core/actions }}
+                {{/action_link_actions}}
+            {{/is_action_link}}
+            {{^is_action_link}}
+                <a role="menuitem" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1">
+                    {{{text}}}
+                </a>
+            {{/is_action_link}}
         {{/tab}}
     </li>
 {{/haschildren}}

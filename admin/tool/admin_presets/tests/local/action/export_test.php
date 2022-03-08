@@ -16,6 +16,8 @@
 
 namespace tool_admin_presets\local\action;
 
+use core_adminpresets\manager;
+
 /**
  * Tests for the export class.
  *
@@ -86,7 +88,7 @@ class export_test extends \advanced_testcase {
             $this->assertArrayHasKey($presetid, $presets);
             $preset = $presets[$presetid];
             $this->assertEquals($presetname, $preset->name);
-            $this->assertEquals(0, $preset->iscore);
+            $this->assertEquals(manager::NONCORE_PRESET, $preset->iscore);
 
             // Check the items, advanced attributes and plugins have been created.
             $this->assertGreaterThan(0, $DB->count_records('adminpresets_it', ['adminpresetid' => $presetid]));

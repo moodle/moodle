@@ -242,18 +242,14 @@ Feature: Test category management actions
     And the following "courses" exist:
       | category | fullname | shortname | idnumber |
       | CAT1 | Course 1 | Course 1 | C1 |
-
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories and courses" management page
-    And I click on "assignroles" action for "Cat 1" in management category listing
+    And I click on "permissions" action for "Cat 1" in management category listing
+    And I select "Assign roles" from the "jump" singleselect
     # Redirect
     And I should see "Assign roles in Category: Cat 1"
     And I should see "Please choose a role to assign"
-    And I click on "Back" "button"
-    # Redirect
-    And I should see the "Course categories and courses" management page
-    And "Cat 1" "link" should exist in the "#category-listing" "css_element"
 
   Scenario: Test I can set access permissions for a category through the management interface.
     Given the following "categories" exist:
@@ -271,8 +267,7 @@ Feature: Test category management actions
     And I should see "Permissions in Category: Cat 1"
     And I click on "Back to Category: Cat 1" "link"
     # Redirect
-    And I should see the "Course categories and courses" management page
-    And I should see "Cat 1" in the "#course-listing" "css_element"
+    And I should see "Cat 1" in the "h1" "css_element"
 
   Scenario: Test clicking to manage cohorts for a category through the management interface.
     Given the following "categories" exist:

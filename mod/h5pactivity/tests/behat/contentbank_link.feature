@@ -17,6 +17,9 @@ Feature: Content bank link in the activity settings form
     And the following "contentbank content" exist:
       | contextlevel | reference | contenttype     | user     | contentname         | filepath                                  |
       | Course       | C1        | contenttype_h5p | admin    | filltheblanks.h5p   | /h5p/tests/fixtures/filltheblanks.h5p     |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
 
   @javascript
   Scenario: The content bank link should go to the course Content bank

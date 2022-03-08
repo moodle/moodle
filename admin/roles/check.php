@@ -100,7 +100,7 @@ switch ($context->contextlevel) {
         $showroles = 1;
         break;
     case CONTEXT_COURSECAT:
-        $PAGE->set_heading($SITE->fullname);
+        core_course_category::page_setup();
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
@@ -127,8 +127,9 @@ if (!is_null($reportuser)) {
 }
 
 $PAGE->set_navigation_overflow_state(false);
+
 echo $OUTPUT->header();
-if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_MODULE) {
+if (in_array($context->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE, CONTEXT_COURSECAT])) {
     echo $OUTPUT->render_participants_tertiary_nav($course);
 }
 

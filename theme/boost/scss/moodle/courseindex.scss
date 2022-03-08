@@ -83,13 +83,22 @@ $courseindex-item-current: $primary !default;
             .courseindex-chevron {
                 color: $courseindex-link-dimmed-color;
             }
+
+            // Current page dimmed item.
+            &.pageitem {
+                color: $courseindex-link-color-selected;
+
+                a {
+                    color: $courseindex-link-color-selected;
+                }
+            }
         }
 
         // Restrictions icon.
         .courseindex-locked {
             display: none;
         }
-        &.rectrictions {
+        &.restrictions {
             .courseindex-locked {
                 display: block;
             }
@@ -102,9 +111,6 @@ $courseindex-item-current: $primary !default;
             scroll-margin: 6rem;
             a {
                 color: $courseindex-link-color-selected;
-            }
-            .courseindex-link {
-                text-shadow: 0 1px 0 rgba($courseindex-link-color-selected, .3);
             }
 
             @include hover-focus() {

@@ -94,9 +94,8 @@ final class action {
     }
 
     /**
-     * Return renderer action icon suitable for output
-     *
-     * @uses core_renderer::action_icon()
+     * Return rendered action link suitable for output, or null if the action cannot be displayed (because one of it's callbacks
+     * returned false, {@see add_callback})
      *
      * @param stdClass $row
      * @return string|null
@@ -130,7 +129,14 @@ final class action {
             $this->attributes['data-popup-action'] = json_encode(new popup_action('click', $url));
         }
 
-        return $OUTPUT->action_icon($url, $this->icon, null, self::replace_placeholders($this->attributes, $row));
+        // Interpolate any placeholders with correct values.
+        $attributes = self::replace_placeholders($this->attributes, $row);
+
+        // Ensure title attribute isn't duplicated.
+        $title = $attributes['title'];
+        unset($attributes['title']);
+
+        return $OUTPUT->action_link($url, $title, null, $attributes, $this->icon);
     }
 
     /**

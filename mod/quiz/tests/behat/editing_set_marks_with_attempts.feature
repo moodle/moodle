@@ -20,7 +20,6 @@ Feature: Edit quiz marks with attempts
       | activity   | name   | course | idnumber | grade | decimalpoints | questiondecimalpoints |
       | quiz       | Quiz 1 | C1     | quiz1    | 20    | 2             | -1                    |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
     And I add a "True/False" question to the "Quiz 1" quiz with:
       | Question name | First question |
       | Question text | Answer me      |
@@ -31,7 +30,7 @@ Feature: Edit quiz marks with attempts
       | Default mark  | 3.0             |
     And I log out
     And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
     And I log out
     And I log in as "teacher1"
     And I am on the "Quiz 1" "mod_quiz > Edit" page

@@ -69,7 +69,9 @@ $PAGE->set_context($context);
 
 // Set up navigation and breadcrumbs.
 $strrecipients = get_string('recipients', 'badges');
-$PAGE->navbar->add($badge->name, new moodle_url('overview.php', array('id' => $badge->id)))->add($strrecipients);
+$PAGE->navbar->add($badge->name, new moodle_url('overview.php', array('id' => $badge->id)))
+    ->add($strrecipients, new moodle_url('recipients.php', array('id' => $badge->id)))
+    ->add(get_string('award', 'badges'));
 $PAGE->set_title($strrecipients);
 $PAGE->set_heading($heading);
 

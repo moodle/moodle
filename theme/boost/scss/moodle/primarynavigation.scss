@@ -13,9 +13,8 @@
     .primary-navigation {
         display: none;
     }
-    .editmode-switch-form .custom-control-label {
-        font-size: 0;
-        color: transparent;
+    .editmode-switch-form label {
+        @include sr-only();
     }
 }
 

@@ -15,6 +15,9 @@ Feature: Overwrite file feature
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
     When I log in as "teacher1"
     And I follow "Manage private files"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager

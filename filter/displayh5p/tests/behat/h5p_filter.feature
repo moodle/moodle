@@ -18,6 +18,9 @@ Feature: Render H5P content using filters
       | activity | name       | intro      | introformat | course | content  | contentformat | idnumber |
       | page     | PageName1  | PageDesc1  | 1           | C1     | H5Ptest  | 1             | 1        |
       | page     | PageName2  | PageDesc1  | 1           | C1     | H5Ptest  | 1             | 1        |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
     And the "displayh5p" filter is "on"
     And the following config values are set as admin:
       | allowedsources | https://moodle.h5p.com/content/[id]/embed | filter_displayh5p |

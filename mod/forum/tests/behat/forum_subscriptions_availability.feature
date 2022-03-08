@@ -83,7 +83,6 @@ Feature: As a teacher I need to see an accurate list of subscribed users
     And I should see "Student 1"
     And I should see "Student 2"
     And I should see "Student 3"
-    And the "Subscribers" select box should contain "View subscribers"
 
   Scenario: A forced and hidden forum lists only teachers
     Given the following "activity" exists:

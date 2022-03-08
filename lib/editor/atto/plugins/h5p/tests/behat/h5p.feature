@@ -18,6 +18,9 @@ Feature: Add h5ps to Atto
     And the "displayh5p" filter is "on"
     And the following config values are set as admin:
       | allowedsources | https://moodle.h5p.com/content/[id] | filter_displayh5p |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
 
   @javascript @external
   Scenario: Insert an embedded h5p

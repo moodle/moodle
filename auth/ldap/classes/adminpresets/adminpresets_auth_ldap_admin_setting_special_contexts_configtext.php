@@ -54,6 +54,7 @@ class adminpresets_auth_ldap_admin_setting_special_contexts_configtext extends a
         } else {
             $this->value = clean_param($this->value, constant($paramtype));
         }
+        $this->set_visiblevalue();
 
         return true;
     }

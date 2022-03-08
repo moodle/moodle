@@ -186,3 +186,13 @@ Feature: Quiz user override
 
     And I click on "Delete" "link" in the "Student One" "table_row"
     And I should see "Student One (student1@example.com, yellow frog)"
+
+  Scenario: Add button disabled if no users
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 2 | C2        | 0        |
+    And the following "activities" exist:
+      | activity   | name       | course | idnumber |
+      | quiz       | Other quiz | C2     | quiz2    |
+    When I am on the "Other quiz" "mod_quiz > User overrides" page logged in as "admin"
+    Then the "Add user override" "button" should be disabled

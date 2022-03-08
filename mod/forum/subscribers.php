@@ -34,7 +34,8 @@ $url = new moodle_url('/mod/forum/subscribers.php', array('id'=>$id));
 if ($group !== 0) {
     $url->param('group', $group);
 }
-if ($edit !== 0) {
+
+if ($edit === 1) {
     $url->param('edit', 'on');
 } else {
     $url->param('edit', 'off');
@@ -108,7 +109,7 @@ $PAGE->set_heading($COURSE->fullname);
 $PAGE->set_secondary_active_tab("forumsubscriptions");
 
 // Output starts from here.
-$actionbar = new \mod_forum\output\subscription_actionbar($id, $url, $forum);
+$actionbar = new \mod_forum\output\subscription_actionbar($id, $url, $forum, $edit);
 $PAGE->activityheader->disable();
 echo $OUTPUT->header();
 if (!$PAGE->has_secondary_navigation()) {
@@ -116,14 +117,16 @@ if (!$PAGE->has_secondary_navigation()) {
 }
 echo $forumoutput->subscription_actionbar($actionbar);
 
-if ($edit === 0) {
+if ($edit === 1 && !\mod_forum\subscriptions::is_forcesubscribed($forum)) {
+    echo $OUTPUT->heading(get_string('managesubscriptionson', 'forum'), 2);
+    echo $forumoutput->subscriber_selection_form($existingselector, $subscriberselector);
+} else {
+    echo $OUTPUT->heading(get_string('subscribers', 'forum'), 2);
     $subscribers = \mod_forum\subscriptions::fetch_subscribed_users($forum, $currentgroup, $context);
     if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
         $subscribers = mod_forum_filter_hidden_users($cm, $context, $subscribers);
     }
     echo $forumoutput->subscriber_overview($subscribers, $forum, $course);
-} else {
-    echo $forumoutput->subscriber_selection_form($existingselector, $subscriberselector);
 }
 
 echo $OUTPUT->footer();

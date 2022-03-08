@@ -135,7 +135,7 @@ class format_topics extends core_courseformat\base {
                     $usercoursedisplay = COURSE_DISPLAY_SINGLEPAGE;
                 }
             } else {
-                $usercoursedisplay = $course->coursedisplay;
+                $usercoursedisplay = $course->coursedisplay ?? COURSE_DISPLAY_SINGLEPAGE;
             }
             if ($sectionno != 0 && $usercoursedisplay == COURSE_DISPLAY_MULTIPAGE) {
                 $url->param('section', $sectionno);

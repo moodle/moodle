@@ -7,6 +7,10 @@ Information provided here is intended especially for developers.
 * The cache_store class now has functions cache_size_details(), store_total_size(), and
   estimate_stored_size(), related to size used by the cache. These can be overridden by a cache
   store to provide better information for the new cache usage admin page.
+* New functions cache::set_versioned() and cache::get_versioned() can be used to ensure correct
+  behaviour when using a multi-level cache with early cache levels stored locally. (Used when
+  rebuilding modinfo.) There is also a new interface cache_data_source_versionable which can
+  be implemented if you want to make a data source that supports versioning.
 
 === 3.10 ===
 * The function supports_recursion() from the lock_factory interface has been deprecated including the related implementations.

@@ -148,6 +148,7 @@ $string['decimalpoints_help'] = 'This setting determines the number of decimal p
 $string['default'] = 'Default';
 $string['defaultprev'] = 'Default ({$a})';
 $string['deletecategory'] = 'Delete category';
+$string['deletescale'] = 'Delete scale';
 $string['disablegradehistory'] = 'Disable grade history';
 $string['disablegradehistory_help'] = 'Disable history tracking of changes in grades related tables. This may speed up the server a little and conserve space in database.';
 $string['displaylettergrade'] = 'Display letter grades';
@@ -403,7 +404,7 @@ $string['importcsv'] = 'Import CSV';
 $string['importcsv_help'] = 'Grades can be imported via a CSV file with format as follows:
 
 * Each line of the file contains one record
-* Each record is a series of data separated by commas or an alternative separator
+* Each record is a series of data separated by the selected separator
 * The first record contains a list of fieldnames defining the format of the rest of the file
 * A fieldname containing user identity data is required - either username or ID number or email address
 

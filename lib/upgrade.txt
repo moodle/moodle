@@ -233,6 +233,10 @@ value to get the list of blocks that won't be displayed for a theme.
   $strength passed to it.
 * A new method get_page() has been added to the settings_navigation class. This method can be used to obtain the
   moodle_page object associated to the settings navigation.
+* A new interface, `core\output\named_templatable` has been created to allow renderable classes to define a
+  `get_template_name(\renderer_base): string` function which will inform the default render() function with a template
+  name.
+* The parameter $modinfo of the get_data method in completion_info class has been deprecated and is not used anymore.
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.

@@ -51,6 +51,7 @@ class adminpresets_admin_setting_configtext extends adminpresets_setting {
         } else {
             $this->value = clean_param($this->value, constant($paramtype));
         }
+        $this->set_visiblevalue();
 
         return true;
     }

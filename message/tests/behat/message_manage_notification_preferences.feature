@@ -75,6 +75,19 @@ Feature: Manage notification preferences - Email
     And I click on "Notification preferences" "link" in the "#page-content" "css_element"
     And I should not see "Assignment notifications"
 
+  Scenario: User can disable email notifications for Assignment notifications
+    Given I log in as "admin"
+    And I navigate to "Messaging > Notification settings" in site administration
+    And I set the field "email" to "1"
+    And I press "Save changes"
+    And I follow "Preferences" in the user menu
+    And I click on "Notification preferences" "link" in the "#page-content" "css_element"
+    And I should not see "Enabled" in the "Assignment notifications" "table_row"
+    When I set the field "message_provider_mod_assign_assign_notification_email" to "0"
+    And I reload the page
+    Then the field "message_provider_mod_assign_assign_notification_email" matches value "0"
+    And I should not see "Enabled" in the "Assignment notifications" "table_row"
+
   Scenario: Lock email notifications for Forum providers
     Given I log in as "admin"
     When I navigate to "Messaging > Notification settings" in site administration
@@ -92,8 +105,8 @@ Feature: Manage notification preferences - Email
     And the field "mod_forum_digests_locked[email]" matches value "1"
     And I follow "Preferences" in the user menu
     And I click on "Notification preferences" "link" in the "#page-content" "css_element"
-    And I should see "Locked" in the "[data-preference-key=message_provider_mod_forum_posts]" "css_element"
-    And I should see "Disallowed" in the "[data-preference-key=message_provider_mod_forum_digests]" "css_element"
+    And I should see "Locked on" in the "[data-preference-key=message_provider_mod_forum_posts]" "css_element"
+    And I should see "Locked off" in the "[data-preference-key=message_provider_mod_forum_digests]" "css_element"
 
   Scenario: User can disable notification preferences
     Given the following "courses" exist:

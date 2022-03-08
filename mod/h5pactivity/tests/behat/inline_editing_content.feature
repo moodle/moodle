@@ -21,6 +21,9 @@ Feature: Inline editing H5P content
     And the following "permission overrides" exist:
       | capability                 | permission | role           | contextlevel | reference |
       | moodle/h5p:updatelibraries | Allow      | editingteacher | System       |           |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
 
   @javascript
   Scenario: Add H5P activity using link to content bank file

@@ -66,7 +66,6 @@ class core_course_renderer extends plugin_renderer_base {
     public function __construct(moodle_page $page, $target) {
         $this->strings = new stdClass;
         $courseid = $page->course->id;
-        user_preference_allow_ajax_update('coursesectionspreferences_' . $courseid, PARAM_RAW);
         parent::__construct($page, $target);
     }
 
@@ -1668,14 +1667,8 @@ class core_course_renderer extends plugin_renderer_base {
             $coursecat = core_course_category::get(is_object($category) ? $category->id : $category);
         }
         $site = get_site();
-        $output = '';
-
-        if ($coursecat->can_create_course() || $coursecat->has_manage_capability()) {
-            // Add 'Manage' button if user has permissions to edit this category.
-            $managebutton = $this->single_button(new moodle_url('/course/management.php',
-                array('categoryid' => $coursecat->id)), get_string('managecourses'), 'get');
-            $this->page->set_button($managebutton);
-        }
+        $actionbar = new \core_course\output\category_action_bar($this->page, $coursecat);
+        $output = $this->render_from_template('core_course/category_actionbar', $actionbar->export_for_template($this));
 
         if (core_course_category::is_simple_site()) {
             // There is only one category in the system, do not display link to it.
@@ -1687,17 +1680,6 @@ class core_course_renderer extends plugin_renderer_base {
         } else {
             $strfulllistofcourses = get_string('fulllistofcourses');
             $this->page->set_title("$site->shortname: $strfulllistofcourses");
-
-            // Print the category selector
-            $categorieslist = core_course_category::make_categories_list();
-            if (count($categorieslist) > 1) {
-                $output .= html_writer::start_tag('div', array('class' => 'categorypicker'));
-                $select = new single_select(new moodle_url('/course/index.php'), 'categoryid',
-                        core_course_category::make_categories_list(), $coursecat->id, null, 'switchcategory');
-                $select->set_label(get_string('categories').':', ['class' => 'sr-only']);
-                $output .= $this->render($select);
-                $output .= html_writer::end_tag('div'); // .categorypicker
-            }
         }
 
         // Print current category description
@@ -1742,32 +1724,9 @@ class core_course_renderer extends plugin_renderer_base {
             $catdisplayoptions['viewmoreurl'] = new moodle_url($baseurl, array('browse' => 'categories', 'page' => 1));
         }
         $chelper->set_courses_display_options($coursedisplayoptions)->set_categories_display_options($catdisplayoptions);
-        // Add course search form.
-        $output .= $this->course_search_form();
 
         // Display course category tree.
         $output .= $this->coursecat_tree($chelper, $coursecat);
-
-        // Add action buttons
-        $output .= $this->container_start('buttons mt-3');
-        if ($coursecat->is_uservisible()) {
-            $context = get_category_or_system_context($coursecat->id);
-            if (has_capability('moodle/course:create', $context)) {
-                // Print link to create a new course, for the 1st available category.
-                if ($coursecat->id) {
-                    $url = new moodle_url('/course/edit.php', array('category' => $coursecat->id, 'returnto' => 'category'));
-                } else {
-                    $url = new moodle_url('/course/edit.php',
-                        array('category' => $CFG->defaultrequestcategory, 'returnto' => 'topcat'));
-                }
-                $output .= $this->single_button($url, get_string('addnewcourse'), 'get');
-            }
-            ob_start();
-            print_course_request_buttons($context);
-            $output .= ob_get_contents();
-            ob_end_clean();
-        }
-        $output .= $this->container_end();
 
         return $output;
     }

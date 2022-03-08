@@ -16,6 +16,7 @@
 
 namespace core\navigation\views;
 
+use booktool_print\output\renderer;
 use navigation_node;
 use ReflectionMethod;
 use moodle_url;
@@ -656,6 +657,146 @@ class secondary_test extends \advanced_testcase {
             "No navigation node returned when node has children but no actions available." => [
                 "child1",
                 null
+            ],
+        ];
+    }
+
+    /**
+     * Test the add_external_nodes_to_secondary function.
+     *
+     * @param array $structure The structure of the navigation node tree to setup with.
+     * @param array $expectednodes The expected nodes added to the secondary navigation
+     * @param bool $separatenode Whether or not to create a separate node to add nodes to.
+     * @dataProvider add_external_nodes_to_secondary_provider
+     */
+    public function test_add_external_nodes_to_secondary(array $structure, array $expectednodes, bool $separatenode = false) {
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = \context_course::instance($course->id);
+        $PAGE->set_context($context);
+        $PAGE->set_url('/');
+
+        $node = $this->generate_node_tree_construct($structure, 'parentnode');
+        $secondary = new secondary($PAGE);
+        $secondary->add_node($node);
+        $firstnode = $node->get('parentnode1');
+        $customparent = null;
+        if ($separatenode) {
+            $customparent = navigation_node::create('Custom parent');
+        }
+
+        $method = new ReflectionMethod('core\navigation\views\secondary', 'add_external_nodes_to_secondary');
+        $method->setAccessible(true);
+        $method->invoke($secondary, $firstnode, $firstnode, $customparent);
+
+        $actualnodes = $separatenode ? $customparent->get_children_key_list() : $secondary->get_children_key_list();
+        $this->assertEquals($expectednodes, $actualnodes);
+    }
+
+    /**
+     * Provider for the add_external_nodes_to_secondary function.
+     *
+     * @return array
+     */
+    public function add_external_nodes_to_secondary_provider() {
+        return [
+            "Container node with internal action and external children" => [
+                [
+                    'parentnode1' => [
+                        'action' => '/test.php',
+                        'children' => [
+                            'child2.1' => 'https://example.org',
+                            'child2.2' => 'https://example.net',
+                        ]
+                    ]
+                ],
+                ['parentnode', 'parentnode1']
+            ],
+            "Container node with external action and external children" => [
+                [
+                    'parentnode1' => [
+                        'action' => 'https://example.com',
+                        'children' => [
+                            'child2.1' => 'https://example.org',
+                            'child2.2' => 'https://example.net',
+                        ]
+                    ]
+                ],
+                ['parentnode', 'parentnode1', 'child2.1', 'child2.2']
+            ],
+            "Container node with external action and internal children" => [
+                [
+                    'parentnode1' => [
+                        'action' => 'https://example.org',
+                        'children' => [
+                            'child2.1' => '/view/course.php',
+                            'child2.2' => '/view/admin.php',
+                        ]
+                    ]
+                ],
+                ['parentnode', 'parentnode1', 'child2.1', 'child2.2']
+            ],
+            "Container node with internal actions and internal children" => [
+                [
+                    'parentnode1' => [
+                        'action' => '/test.php',
+                        'children' => [
+                            'child2.1' => '/course.php',
+                            'child2.2' => '/admin.php',
+                        ]
+                    ]
+                ],
+                ['parentnode', 'parentnode1']
+            ],
+            "Container node with internal action and external children adding to custom node" => [
+                [
+                    'parentnode1' => [
+                        'action' => '/test.php',
+                        'children' => [
+                            'child2.1' => 'https://example.org',
+                            'child2.2' => 'https://example.net',
+                        ]
+                    ]
+                ],
+                ['parentnode1'], true
+            ],
+            "Container node with external action and external children adding to custom node" => [
+                [
+                    'parentnode1' => [
+                        'action' => 'https://example.com',
+                        'children' => [
+                            'child2.1' => 'https://example.org',
+                            'child2.2' => 'https://example.net',
+                        ]
+                    ]
+                ],
+                ['parentnode1', 'child2.1', 'child2.2'], true
+            ],
+            "Container node with external action and internal children adding to custom node" => [
+                [
+                    'parentnode1' => [
+                        'action' => 'https://example.org',
+                        'children' => [
+                            'child2.1' => '/view/course.php',
+                            'child2.2' => '/view/admin.php',
+                        ]
+                    ]
+                ],
+                ['parentnode1', 'child2.1', 'child2.2'], true
+            ],
+            "Container node with internal actions and internal children adding to custom node" => [
+                [
+                    'parentnode1' => [
+                        'action' => '/test.php',
+                        'children' => [
+                            'child2.1' => '/course.php',
+                            'child2.2' => '/admin.php',
+                        ]
+                    ]
+                ],
+                ['parentnode1'], true
             ],
         ];
     }

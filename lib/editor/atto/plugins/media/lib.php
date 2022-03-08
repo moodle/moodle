@@ -80,6 +80,7 @@ function atto_media_strings_for_js() {
                                           'videowidth',
                                           'width'),
                                           'atto_media');
+    $PAGE->requires->strings_for_js(array('expand', 'collapse'), 'moodle');
 }
 
 /**

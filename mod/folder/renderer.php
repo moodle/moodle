@@ -61,6 +61,7 @@ class mod_folder_renderer extends plugin_renderer_base {
         if ($canmanagefolderfiles && ($folder->display != FOLDER_DISPLAY_INLINE || !$canmanagecourseactivities)) {
             $editbutton = new single_button(new moodle_url('/mod/folder/edit.php', ['id' => $cm->id]),
                 get_string('edit'), 'post', true);
+            $editbutton->class = 'navitem';
             $buttons .= $this->render($editbutton);
         }
 
@@ -69,13 +70,15 @@ class mod_folder_renderer extends plugin_renderer_base {
         if ($downloadable) {
             $downloadbutton = new single_button(new moodle_url('/mod/folder/download_folder.php', ['id' => $cm->id]),
                 get_string('downloadfolder', 'folder'), 'get');
-            $downloadbutton->class .= ' ml-auto';
+            $downloadbutton->class = 'navitem ml-auto';
             $buttons .= $this->render($downloadbutton);
         }
 
         if ($buttons) {
-            $output .= $this->output->container_start("box generalbox d-flex mb-3 folderbuttons");
+            $output .= $this->output->container_start("container-fluid tertiary-navigation");
+            $output .= $this->output->container_start("row");
             $output .= $buttons;
+            $output .= $this->output->container_end();
             $output .= $this->output->container_end();
         }
 

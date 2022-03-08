@@ -125,7 +125,13 @@ class ChainedStepTester implements StepTester {
             // Extra step, looking for a moodle exception, a debugging() message or a PHP debug message.
             $checkingStep = new StepNode('Given', self::EXCEPTIONS_STEP_TEXT, array(), $step->getLine());
             $afterExceptionCheckingEvent = $this->singlesteptester->test($env, $feature, $checkingStep, $skip);
-            return $this->checkSkipResult($afterExceptionCheckingEvent);
+            $exceptionCheckResult = $this->checkSkipResult($afterExceptionCheckingEvent);
+
+            if (!$exceptionCheckResult->isPassed()) {
+                return $exceptionCheckResult;
+            }
+
+            return $result;
         }
 
         return $this->runChainedSteps($env, $feature, $result, $skip);

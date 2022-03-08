@@ -19,6 +19,9 @@ Feature: H5P file upload to content bank for non admins
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | teacher2 | C1     | editingteacher |
+    And the following "blocks" exist:
+      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files | System       | 1         | my-index        | side-post     |
     And I log in as "teacher1"
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Files" filemanager

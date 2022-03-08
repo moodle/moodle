@@ -597,6 +597,95 @@ class core_navigationlib_testcase extends advanced_testcase {
                 ],
         ];
     }
+
+    /**
+     * Test the is_action_link method.
+     *
+     * @param navigation_node $node The sample navigation node
+     * @param bool $expected Whether the navigation node contains an action link
+     * @dataProvider test_is_action_link_provider
+     * @covers navigation_node::is_action_link
+     */
+    public function test_is_action_link(navigation_node $node, bool $expected) {
+        $this->assertEquals($node->is_action_link(), $expected);
+    }
+
+    /**
+     * Data provider for the test_is_action_link function.
+     *
+     * @return array
+     */
+    public function test_is_action_link_provider(): array {
+        return [
+            'The navigation node has an action link.' =>
+                [
+                    navigation_node::create('Node', new action_link(new moodle_url('/'), '',
+                        new popup_action('click', new moodle_url('/'))), navigation_node::TYPE_SETTING),
+                    true
+                ],
+
+            'The navigation node does not have an action link.' =>
+                [
+                    navigation_node::create('Node', new moodle_url('/'), navigation_node::TYPE_SETTING),
+                    false
+                ],
+        ];
+    }
+
+    /**
+     * Test the action_link_actions method.
+     *
+     * @param navigation_node $node The sample navigation node
+     * @dataProvider test_action_link_actions_provider
+     * @covers navigation_node::action_link_actions
+     */
+    public function test_action_link_actions(navigation_node $node) {
+        // Get the formatted array of action link actions.
+        $data = $node->action_link_actions();
+        // The navigation node has an action link.
+        if ($node->action instanceof action_link) {
+            if (!empty($node->action->actions)) { // There are actions added to the action link.
+                $this->assertArrayHasKey('actions', $data);
+                $this->assertCount(1, $data['actions']);
+                $expected = (object)[
+                    'id' => $node->action->attributes['id'],
+                    'event' => $node->action->actions[0]->event,
+                    'jsfunction' => $node->action->actions[0]->jsfunction,
+                    'jsfunctionargs' => json_encode($node->action->actions[0]->jsfunctionargs)
+                ];
+                $this->assertEquals($expected, $data['actions'][0]);
+            } else { // There are no actions added to the action link.
+                $this->assertArrayHasKey('actions', $data);
+                $this->assertEmpty($data['actions']);
+            }
+        } else { // The navigation node does not have an action link.
+            $this->assertEmpty($data);
+        }
+    }
+
+    /**
+     * Data provider for the test_action_link_actions function.
+     *
+     * @return array
+     */
+    public function test_action_link_actions_provider(): array {
+        return [
+            'The navigation node has an action link with an action attached.' =>
+                [
+                    navigation_node::create('Node', new action_link(new moodle_url('/'), '',
+                        new popup_action('click', new moodle_url('/'))), navigation_node::TYPE_SETTING),
+                ],
+            'The navigation node has an action link without an action.' =>
+                [
+                    navigation_node::create('Node', new action_link(new moodle_url('/'), '', null),
+                        navigation_node::TYPE_SETTING),
+                ],
+            'The navigation node does not have an action link.' =>
+                [
+                    navigation_node::create('Node', new moodle_url('/'), navigation_node::TYPE_SETTING),
+                ],
+        ];
+    }
 }
 
 

@@ -44,7 +44,8 @@
         "daysoffset": -14,
         "dayslimit": false,
         "limit": 0,
-        "hascourses": true
+        "hascourses": true,
+        "overdue": false
     }
 }}
 <div data-region="timeline-view">
@@ -61,6 +62,7 @@
             data-days-limit="{{dayslimit}}"
             data-days-offset="{{daysoffset}}"
             data-no-events-url="{{urls.noevents}}"
+            {{#overdue}}data-filter-overdue="{{overdue}}"{{/overdue}}
             id="view_courses_{{uniqid}}"
         >
             {{> block_timeline/view-courses }}

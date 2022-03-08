@@ -17,23 +17,29 @@
 {{!
     @template core_user/contact_site_support_not_available
 
-    Fallback for the contact support page if smtp is not configured.
+    Content displayed on the contact site support page if attempting to submit the support form fails.
 
     Example context (json):
     {
-        "supportemail": "<a href=\"mailto:support@mail.com\">support@mail.com</a>"
+        "supportemail": "<a href=\"mailto:support@mail.com\">support@mail.com</a>",
+        "supportform": "<input type='text' value='test'>"
     }
 }}
 <div class="card">
-    <div class="card-body bg-light text-center">
-        <div class="supporticon mt-6">{{#pix}}t/life-ring, core{{/pix}}</div>
-        <div class="my-3 p-3 h3 font-weight-normal">{{#str}}supportmessagenotsent, user{{/str}}</div>
-        {{#supportemail}}
-            <div class="mb-6 p-3">
-                <span class="w-75 rounded border p-3">
-                    {{#str}}supportmessagealternative, user, {{{supportemail}}}{{/str}}
-                </span>
+    <div class="card-body bg-light d-flex flex-row">
+        <div class="p-3 mr-3 align-self-center supporticon">{{#pix}}t/life-ring, core{{/pix}}</div>
+        <div class = "p-1 align-self-center text-muted">
+            <div class="h4 font-weight-normal mb-0">{{#str}}supportmessagenotsent, user{{/str}}</div>
+                {{#supportemail}}
+                    <div class="py-3 mt-2">
+                        <span class="h5 font-weight-normal w-75 rounded border p-3">
+                            {{#str}}supportmessagealternative, user, {{{supportemail}}}{{/str}}
+                        </span>
+                    </div>
+                {{/supportemail}}
             </div>
-        {{/supportemail}}
     </div>
+</div>
+<div class="py-1 pt-3">
+    {{{supportform}}}
 </div>

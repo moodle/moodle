@@ -16,6 +16,7 @@
 
 namespace core_courseformat;
 
+use core_courseformat\base as course_format;
 use core_courseformat\stateupdates;
 use cm_info;
 use section_info;
@@ -24,6 +25,7 @@ use course_modinfo;
 use moodle_exception;
 use context_module;
 use context_course;
+use cache;
 
 /**
  * Contains the core course state actions.
@@ -284,6 +286,52 @@ class stateactions {
             $sections[$sectionid] = $modinfo->get_section_info_by_id($sectionid);
         }
         return $sections;
+    }
+
+    /**
+     * Update the course content section collapsed value.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids the collapsed section ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function section_content_collapsed(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        if (!empty($ids)) {
+            $this->validate_sections($course, $ids, __FUNCTION__);
+        }
+        $format = course_get_format($course->id);
+        $format->set_sections_preference('contentcollapsed', $ids);
+    }
+
+    /**
+     * Update the course index section collapsed value.
+     *
+     * @param stateupdates $updates the affected course elements track
+     * @param stdClass $course the course object
+     * @param int[] $ids the collapsed section ids
+     * @param int $targetsectionid not used
+     * @param int $targetcmid not used
+     */
+    public function section_index_collapsed(
+        stateupdates $updates,
+        stdClass $course,
+        array $ids = [],
+        ?int $targetsectionid = null,
+        ?int $targetcmid = null
+    ): void {
+        if (!empty($ids)) {
+            $this->validate_sections($course, $ids, __FUNCTION__);
+        }
+        $format = course_get_format($course->id);
+        $format->set_sections_preference('indexcollapsed', $ids);
     }
 
     /**

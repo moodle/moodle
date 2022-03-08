@@ -24,7 +24,12 @@
 
 namespace core_question\local\bank;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/question/editlib.php');
+use core_plugin_manager;
 use core_question\bank\search\condition;
+use qbank_columnsortorder\column_manager;
 use qbank_editquestion\editquestion_helper;
 use qbank_managecategories\helper;
 
@@ -242,9 +247,11 @@ class view {
                 'copy_action_column',
                 'tags_action_column',
                 'preview_action_column',
+                'history_action_column',
                 'delete_action_column',
                 'export_xml_action_column',
                 'question_status_column',
+                'version_number_column',
                 'creator_name_column',
                 'comment_count_column'
         ];
@@ -298,9 +305,15 @@ class view {
             $questionbankclasscolumns[$key] = $newpluginclasscolumn;
         }
 
+        // Check if qbank_columnsortorder is enabled.
+        if (array_key_exists('columnsortorder', core_plugin_manager::instance()->get_enabled_plugins('qbank'))) {
+            $columnorder = new column_manager();
+            $questionbankclasscolumns = $columnorder->get_sorted_columns($questionbankclasscolumns);
+        }
+
         // Mitigate the error in case of any regression.
         foreach ($questionbankclasscolumns as $shortname => $questionbankclasscolumn) {
-            if (empty($questionbankclasscolumn)){
+            if (empty($questionbankclasscolumn)) {
                 unset($questionbankclasscolumns[$shortname]);
             }
         }
@@ -1227,18 +1240,9 @@ class view {
 
     /**
      * Gets visible columns.
-     * @return array $this->visiblecolumns Visible columns.
+     * @return array Visible columns.
      */
     public function get_visiblecolumns(): array {
         return $this->visiblecolumns;
-    }
-
-    /**
-     * Get required columns.
-     *
-     * @return array Required columns.
-     */
-    public function get_requiredcolumns(): array {
-        return $this->requiredcolumns;
     }
 }

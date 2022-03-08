@@ -70,28 +70,26 @@
         }
     }
 }}
-<div class="container-fluid mb-4">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="d-flex">
-            {{#backbutton}}
-                <div class="mr-2">
-                    {{>core/single_button}}
-                </div>
-            {{/backbutton}}
-            {{#addoutcomebutton}}
-                <div>
-                    {{>core/single_button}}
-                </div>
-            {{/addoutcomebutton}}
-        </div>
+        {{#backbutton}}
+            <div class="navitem">
+                {{>core/single_button}}
+            </div>
+        {{/backbutton}}
+        {{#addoutcomebutton}}
+            <div class="navitem">
+                {{>core/single_button}}
+            </div>
+        {{/addoutcomebutton}}
         <div class="ml-auto d-flex">
             {{#importoutcomesbutton}}
-                <div class="ml-2">
+                <div class="navitem">
                     {{>core/single_button}}
                 </div>
             {{/importoutcomesbutton}}
             {{#exportoutcomesbutton}}
-                <div class="ml-2">
+                <div class="navitem">
                     {{>core/single_button}}
                 </div>
             {{/exportoutcomesbutton}}

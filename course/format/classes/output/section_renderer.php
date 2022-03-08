@@ -103,20 +103,7 @@ abstract class section_renderer extends core_course_renderer {
         if (method_exists($this, $rendermethod)) {
             return $this->$rendermethod($widget);
         }
-        // Check for special course format templatables.
-        if ($widget instanceof templatable) {
-            // Templatables from both core_courseformat\output\xxx_format\* and format_xxx\output\xxx_format\*
-            // use core_crouseformat/local/xxx_format templates by default.
-            $corepath = 'core_courseformat\/output\/local';
-            $pluginpath = 'format_.+\/output\/courseformat';
-            $specialrenderers = '/^(?<componentpath>' . $corepath . '|' . $pluginpath . ')\/(?<template>.+)$/';
-            $matches = null;
 
-            if (preg_match($specialrenderers, $fullpath, $matches)) {
-                $data = $widget->export_for_template($this);
-                return $this->render_from_template('core_courseformat/local/' . $matches['template'], $data);
-            }
-        }
         // If nothing works, let the parent class decide.
         return parent::render($widget);
     }
@@ -1033,17 +1020,12 @@ abstract class section_renderer extends core_course_renderer {
                 // Activities inside this section are 'orphaned', this section will be printed as 'stealth' below.
                 continue;
             }
-            // Show the section if the user is permitted to access it, OR if it's not available
-            // but there is some available info text which explains the reason & should display,
-            // OR it is hidden but the course has a setting to display hidden sections as unavilable.
-            $showsection = $thissection->uservisible ||
-                ($thissection->visible && !$thissection->available && !empty($thissection->availableinfo)) ||
-                (!$thissection->visible && !$course->hiddensections);
-            if (!$showsection) {
+
+            if (!$format->is_section_visible($thissection)) {
                 continue;
             }
 
-            if (!$format->show_editor() && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+            if (!$format->show_editor() && $format->get_course_display() == COURSE_DISPLAY_MULTIPAGE) {
                 // Display section summary only.
                 echo $this->section_summary($thissection, $course, null);
             } else {

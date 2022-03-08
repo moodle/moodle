@@ -102,7 +102,7 @@ class get_state extends external_api {
         // Sections and course modules state.
         $sections = $modinfo->get_section_info_all();
         foreach ($sections as $section) {
-            if (!empty($section->uservisible)) {
+            if ($courseformat->is_section_visible($section)) {
                 // Only return this section data if it's visible by current user on the course page.
                 $sectionstate = new $sectionclass($courseformat, $section);
                 $result->section[] = $sectionstate->export_for_template($renderer);

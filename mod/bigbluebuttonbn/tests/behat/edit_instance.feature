@@ -10,21 +10,21 @@ When a bibluebutton instance has been created I can edit it
       | fullname    | shortname   | category |
       | Test course | Test course | 0        |
 
-  Scenario Outline: Add a mod_bigbluebuttonbn instance with Room/Activity with recordings
+  Scenario Outline: Add a mod_bigbluebuttonbn instance with Room with recordings
     Then I log in as "admin"
     And I am on "Test course" course homepage with editing mode on
     When I add a "BigBlueButton" to section "1" and I fill the form with:
       | name                   | <activityname> |
       | Instance type          | <instancetype> |
-      | Virtual classroom name | <activityname> |
+      | Room name              | <activityname> |
     Given I am on the "<activityname>" "bigbluebuttonbn activity" page logged in as admin
     And I click on "Settings" "link"
     And the field "Instance type" matches value "<instancetype>"
     And I <shouldseerole> "Role assigned during live session"
     And I expand all fieldsets
-    And I <shouldseesession> "Session can be recorded"
+    And I <shouldseesession> "The session may be recorded."
     Examples:
       | activityname            | instancetype                  | shouldseerole  | shouldseesession |
-      | Activity with recording | Room/Activity with recordings | should see     | should see       |
-      | Activity only           | Room/Activity only            | should see     | should see       |
+      | Activity with recording | Room with recordings          | should see     | should see       |
+      | Activity only           | Room only            | should see     | should see       |
       | Recordings only         | Recordings only               | should not see | should not see   |

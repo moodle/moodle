@@ -59,57 +59,11 @@
 <div class="activity-item {{#modstealth}}hiddenactivity{{/modstealth}}{{!
         }}{{#modhiddenfromstudents}}hiddenactivity{{/modhiddenfromstudents}}{{!
         }}{{#modinline}}activityinline{{/modinline}}" data-activityname="{{activityname}}">
-    {{#moveicon}} {{{moveicon}}} {{/moveicon}}
-    <div class="activity-basis d-flex align-items-center">
-        <div class="d-flex flex-column flex-md-row w-100 align-self-start">
-            {{^hasname}}
-                {{> core_courseformat/local/content/cm/badges }}
-            {{/hasname}}
-            {{#cmname}} {{> core/inplace_editable }} {{/cmname}}
-            {{#afterlink}}
-                <div class="afterlink">
-                    {{{afterlink}}}
-                </div>
-            {{/afterlink}}
-
-            {{#activityinfo}}
-                <div class="activity-info mt-1 mt-md-0">
-                    {{> core_courseformat/local/content/cm/activity_info}}
-                </div>
-            {{/activityinfo}}
-        </div>
-
-        {{#controlmenu}}
-            <div class="activity-actions align-self-start">
-                {{> core_courseformat/local/content/cm/controlmenu }}
-            </div>
-        {{/controlmenu}}
-    </div>
-    {{#hasname}}
-        {{> core_courseformat/local/content/cm/badges }}
-    {{/hasname}}
-
-    <div class="description">
-        {{#activityinfo}}
-            {{#hasdates}}
-            <div data-region="activity-dates" class="activity-dates small course-description-item">
-                <div class="description-inner">
-                    {{#activitydates}}
-                        {{>core_course/activity_date}}
-                    {{/activitydates}}
-                </div>
-            </div>
-            {{/hasdates}}
-        {{/activityinfo}}
-        {{#altcontent}}
-            <div class="activity-altcontent {{#hasname}}course-description-item small{{/hasname}}{{^hasname}}contentwithoutlink{{/hasname}} d-flex">
-                <div class="flex-fill description-inner">
-                    {{{altcontent}}}
-                </div>
-            </div>
-        {{/altcontent}}
-        {{#modavailability}}
-            {{> core_courseformat/local/content/cm/availability }}
-        {{/modavailability}}
-    </div>
+    {{!
+      Place the actual content of the activity-item in a separate template to make it easier for other formats to add
+      additional content to the activity wrapper.
+    }}
+    {{$ core_courseformat/local/content/cm/activity }}
+        {{> core_courseformat/local/content/cm/activity }}
+    {{/ core_courseformat/local/content/cm/activity }}
 </div>

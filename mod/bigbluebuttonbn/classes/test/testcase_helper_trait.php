@@ -159,17 +159,18 @@ trait testcase_helper_trait {
      * @param array $recordingdata array of recording information
      * @return array
      */
-    protected function create_recordings_for_instance(instance $instance, array $recordingdata = []): array {
+    protected function create_recordings_for_instance(instance $instance, array $recordingdata = [],
+        $additionalmeetingdata = []): array {
         $recordings = [];
         $bbbgenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
         // Create the meetings on the mock server, so like this we can find the recordings.
         $meeting = new meeting($instance);
         if (!$meeting->is_running()) {
-            $bbbgenerator->create_meeting([
+            $additionalmeetingdata = array_merge([
                 'instanceid' => $instance->get_instance_id(),
                 'groupid' => $instance->get_group_id()
-
-            ]);
+            ], $additionalmeetingdata);
+            $bbbgenerator->create_meeting($additionalmeetingdata);
         }
         foreach ($recordingdata as $rindex => $data) {
             $recordings[] = $bbbgenerator->create_recording(
@@ -262,10 +263,15 @@ trait testcase_helper_trait {
      * @param instance $instance
      * @param int $userid
      * @param int $count
+     * @param bool $importrecordings
      * @return array
      */
-    protected function create_legacy_log_entries(instance $instance, int $userid, int $count = 30,
-        $importrecordings = false): array {
+    protected function create_legacy_log_entries(
+        instance $instance,
+        int $userid,
+        int $count = 30,
+        $importrecordings = false
+    ): array {
         $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
         $plugingenerator->create_meeting([
             'instanceid' => $instance->get_instance_id(),

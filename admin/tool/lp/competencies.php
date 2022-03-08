@@ -61,9 +61,21 @@ $PAGE->set_context($pagecontext);
 $PAGE->navigation->override_active_url($frameworksurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_url($url);
+
+if ($pagecontext->contextlevel == CONTEXT_COURSECAT) {
+    core_course_category::page_setup();
+    // Set the competency frameworks node active in the settings navigation block.
+    if ($competencyframeworksnode = $PAGE->settingsnav->find('competencyframeworks', navigation_node::TYPE_SETTING)) {
+        $competencyframeworksnode->make_active();
+    }
+} else if ($pagecontext->contextlevel == CONTEXT_SYSTEM) {
+    $PAGE->set_heading($SITE->fullname);
+} else {
+    $PAGE->set_heading($title);
+}
+
 $PAGE->navbar->add($framework->get('shortname'), $url);
 $PAGE->set_title($title);
-$PAGE->set_heading($title);
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 

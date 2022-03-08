@@ -14,19 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Privacy provider tests.
- *
- * @package   mod_bigbluebuttonbn
- * @copyright 2018 - present, Blindside Networks Inc
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
- */
-
 namespace mod_bigbluebuttonbn\local\bigbluebutton\recordings;
 
 /**
- * Privacy provider tests class.
+ * Recording data tests.
  *
  * @package   mod_bigbluebuttonbn
  * @copyright 2018 - present, Blindside Networks Inc

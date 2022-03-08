@@ -43,7 +43,7 @@ Feature: Backup user data
       | Feedback for the response 'False'. | So you think it is false                |
     And I log out
     When I am on the "Quiz 1" "quiz activity" page logged in as student1
-    And I follow "Attempt quiz"
+    And I press "Attempt quiz"
     And I click on "True" "radio" in the "First question" "question"
     And I click on "False" "radio" in the "Second question" "question"
     And I press "Finish attempt"

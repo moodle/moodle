@@ -68,17 +68,16 @@
     }
 
 }}
-<div class="container-fluid mb-2">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="pr-2">
+        <div class="navitem">
             <a class="btn btn-secondary" href="{{back.link}}">{{back.text}}</a>
         </div>
-        <div>
         {{#viewselect}}
+            <div class="navitem">
             {{>core/url_select}}
+            </div>
         {{/viewselect}}
-        </div>
     </div>
 </div>
 <h3>{{heading}}</h3>
-

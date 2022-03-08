@@ -78,8 +78,7 @@ class report_helper {
 
             $select = new url_select($menuarray, $activeurl, null, 'choosecoursereport');
             $select->set_label(get_string('reporttype'), ['class' => 'accesshide']);
-            $select->class .= " mb-1";
-            echo $OUTPUT->render($select);
+            echo \html_writer::tag('div', $OUTPUT->render($select), ['class' => 'tertiary-navigation']);
         }
         echo $OUTPUT->heading($pluginname, 2, 'mb-3');
     }

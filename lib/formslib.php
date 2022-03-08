@@ -3022,10 +3022,6 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      */
     var $_openHiddenFieldsetTemplate = "\n\t<fieldset class=\"hidden\"><div>";
 
-    /** @var string Header Template string */
-    var $_headerTemplate =
-       "\n\t\t<legend class=\"ftoggler\">{header}</legend>\n\t\t<div class=\"fcontainer clearfix\">\n\t\t";
-
     /** @var string Template used when opening a fieldset */
     var $_openFieldsetTemplate = "\n\t<fieldset class=\"{classes}\" {id}>";
 
@@ -3122,7 +3118,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      * @param MoodleQuickForm $form reference of the form
      */
     function startForm(&$form){
-        global $PAGE;
+        global $PAGE, $OUTPUT;
         $this->_reqHTML = $form->getReqHTML();
         $this->_elementTemplates = str_replace('{req}', $this->_reqHTML, $this->_elementTemplates);
         $this->_advancedHTML = $form->getAdvancedHTML();
@@ -3144,8 +3140,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
         if (!empty($this->_collapsibleElements)) {
             if (count($this->_collapsibleElements) > 1) {
-                $this->_collapseButtons = $this->_collapseButtonsTemplate;
-                $this->_collapseButtons = str_replace('{strexpandall}', get_string('expandall'), $this->_collapseButtons);
+                $this->_collapseButtons = $OUTPUT->render_from_template('core_form/collapsesections', (object)[]);
             }
             $PAGE->requires->yui_module('moodle-form-shortforms', 'M.form.shortforms', array(array('formid' => $formid)));
         }
@@ -3327,18 +3322,29 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     * @global moodle_page $PAGE
     */
     function renderHeader(&$header) {
-        global $PAGE;
+        global $PAGE, $OUTPUT;
 
         $header->_generateId();
         $name = $header->getName();
 
+        $collapsed = $collapseable = '';
+        if (isset($this->_collapsibleElements[$header->getName()])) {
+            $collapseable = true;
+            $collapsed = $this->_collapsibleElements[$header->getName()];
+        }
+
         $id = empty($name) ? '' : ' id="' . $header->getAttribute('id') . '"';
-        if (is_null($header->_text)) {
-            $header_html = '';
-        } elseif (!empty($name) && isset($this->_templates[$name])) {
-            $header_html = str_replace('{header}', $header->toHtml(), $this->_templates[$name]);
+        if (!empty($name) && isset($this->_templates[$name])) {
+            $headerhtml = str_replace('{header}', $header->toHtml(), $this->_templates[$name]);
         } else {
-            $header_html = str_replace('{header}', $header->toHtml(), $this->_headerTemplate);
+            $headerhtml = $OUTPUT->render_from_template('core_form/element-header',
+                (object)[
+                    'header' => $header->toHtml(),
+                    'id' => $header->getAttribute('id'),
+                    'collapseable' => $collapseable,
+                    'collapsed' => $collapsed,
+                    'helpbutton' => $header->getHelpButton(),
+                ]);
         }
 
         if ($this->_fieldsetsOpen > 0) {
@@ -3363,7 +3369,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         $openFieldsetTemplate = str_replace('{id}', $id, $this->_openFieldsetTemplate);
         $openFieldsetTemplate = str_replace('{classes}', join(' ', $fieldsetclasses), $openFieldsetTemplate);
 
-        $this->_html .= $openFieldsetTemplate . $header_html;
+        $this->_html .= $openFieldsetTemplate . $headerhtml;
         $this->_fieldsetsOpen++;
     }
 
