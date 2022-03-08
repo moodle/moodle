@@ -1296,7 +1296,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     padding-left: 0;
     border-bottom: $border-width solid $border-color;
 
-    &:last-child {
+    &:last-child:not(.section-summary) {
         border-bottom: 0;
     }
 

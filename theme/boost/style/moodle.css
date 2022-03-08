@@ -14681,7 +14681,7 @@ span.editinstructions {
   list-style: none;
   padding-left: 0;
   border-bottom: 1px solid #dee2e6; }
-  .course-section:last-child {
+  .course-section:last-child:not(.section-summary) {
     border-bottom: 0; }
   .course-section .sectionbadges .badge {
     margin-left: 0.5rem; }
