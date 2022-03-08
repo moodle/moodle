@@ -510,11 +510,16 @@ class cache implements cache_loader {
             try {
                 $validversion = self::check_version($result, $requiredversion);
             } catch (\coding_exception $e) {
-                // If we get an exception because there is incorrect data in the cache (not
+                // In certain circumstances this could happen before users are taken to the upgrade
+                // screen when upgrading from an earlier Moodle version that didn't use a versioned
+                // cache for this item, so redirect instead of showing error if that's the case.
+                redirect_if_major_upgrade_required();
+
+                // If we still get an exception because there is incorrect data in the cache (not
                 // versioned when it ought to be), delete it so this exception goes away next time.
                 // The exception should only happen if there is a code bug (which is why we still
-                // throw it) but there are unusual scenarios where it might happen and that would
-                // be annoying if it doesn't fix itself.
+                // throw it) but there are unusual scenarios in development where it might happen
+                // and that would be annoying if it doesn't fix itself.
                 $this->store->delete($parsedkey);
                 throw $e;
             }
