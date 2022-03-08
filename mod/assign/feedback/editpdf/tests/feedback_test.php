@@ -517,4 +517,41 @@ class feedback_test extends \advanced_testcase {
         // No modification.
         $this->assertFalse($plugin->is_feedback_modified($grade, $data));
     }
+
+    /**
+     * Test Convert submissions scheduled task limit.
+     *
+     * @covers \assignfeedback_editpdf\task\convert_submissions
+     */
+    public function test_conversion_task_limit() {
+        global $DB;
+        $this->require_ghostscript();
+        $this->resetAfterTest();
+        cron_setup_user();
+
+        $course = $this->getDataGenerator()->create_course();
+        $assignopts = [
+            'assignsubmission_file_enabled' => 1,
+            'assignsubmission_file_maxfiles' => 1,
+            'assignfeedback_editpdf_enabled' => 1,
+            'assignsubmission_file_maxsizebytes' => 1000000,
+        ];
+        $assign = $this->create_instance($course, $assignopts);
+
+        // Generate 110 submissions.
+        for ($i = 0; $i < 110; $i++) {
+            $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+            $this->add_file_submission($student, $assign);
+        }
+        $this->assertEquals(110, $DB->count_records('assignfeedback_editpdf_queue'));
+
+        // Run the conversion task.
+        $task = new \assignfeedback_editpdf\task\convert_submissions;
+        ob_start();
+        $task->execute();
+        ob_end_clean();
+
+        // Confirm, that 100 records were processed and 10 were left for the next task run.
+        $this->assertEquals(10, $DB->count_records('assignfeedback_editpdf_queue'));
+    }
 }
