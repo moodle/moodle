@@ -26,3 +26,5 @@ Added:
 
 Our changes (to be checked on next update if they are already applied upstream)::
  * https://github.com/ADOdb/ADOdb/issues/711
+Our changes (to be checked on next update if they are already applied upstream):
+ * https://github.com/ADOdb/ADOdb/issues/791
