@@ -38,6 +38,7 @@ class behat_reportbuilder extends behat_base {
      * Recognised page names are:
      * | type   | identifier  | description          |
      * | Editor | Report name | Custom report editor |
+     * | View   | Report name | Custom report view   |
      *
      * @param string $type
      * @param string $identifier
@@ -52,6 +53,9 @@ class behat_reportbuilder extends behat_base {
         switch ($type) {
             case 'Editor':
                 return new moodle_url('/reportbuilder/edit.php', ['id' => $report->get('id')]);
+
+            case 'View':
+                return new moodle_url('/reportbuilder/view.php', ['id' => $report->get('id')]);
 
             default:
                 throw new Exception("Unrecognised reportbuilder page type '{$type}'");
