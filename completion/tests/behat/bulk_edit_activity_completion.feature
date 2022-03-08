@@ -37,7 +37,7 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I navigate to "Course completion" in current page administration
-    And I follow "Bulk edit activity completion"
+    And I select "Bulk edit activity completion" from the "Course completion tertiary navigation" singleselect
     And I click on "Test assignment one" "checkbox"
     And I click on "Test assignment two" "checkbox"
     And I click on "Edit" "button"
@@ -68,7 +68,7 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I navigate to "Course completion" in current page administration
-    And I follow "Bulk edit activity completion"
+    And I select "Bulk edit activity completion" from the "Course completion tertiary navigation" singleselect
     And I click on "Test assignment one" "checkbox"
     And I click on "Test assignment two" "checkbox"
     And I click on "Edit" "button"
