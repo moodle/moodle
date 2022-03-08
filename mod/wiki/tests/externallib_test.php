@@ -644,10 +644,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check that WS doesn't return page content if includecontent is false, it returns the size instead.
         foreach ($expectedpages as $i => $expectedpage) {
-            if (function_exists('mb_strlen') && ((int)ini_get('mbstring.func_overload') & 2)) {
-                $expectedpages[$i]['contentsize'] = mb_strlen($expectedpages[$i]['cachedcontent'], '8bit');
-            } else {
-                $expectedpages[$i]['contentsize'] = strlen($expectedpages[$i]['cachedcontent']);
+            $expectedpages[$i]['contentsize'] = strlen($expectedpages[$i]['cachedcontent']);
+            // TODO: Remove this block of code once PHP 8.0 is the min version supported.
+            // For PHP < 8.0, if strlen() was overloaded, calculate
+            // the bytes using mb_strlen(..., '8bit').
+            if (PHP_VERSION_ID < 80000) {
+                if (function_exists('mb_strlen') && ((int)ini_get('mbstring.func_overload') & 2)) {
+                    $expectedpages[$i]['contentsize'] = mb_strlen($expectedpages[$i]['cachedcontent'], '8bit');
+                }
             }
             unset($expectedpages[$i]['cachedcontent']);
             unset($expectedpages[$i]['contentformat']);
