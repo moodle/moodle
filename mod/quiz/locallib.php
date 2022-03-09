@@ -2396,9 +2396,7 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         $questionreferences->questionarea = 'slot';
         $questionreferences->itemid = $slotid;
         $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
-        $version = get_question_version($questionid);
-        $questionreferences->version = $version[array_key_first($version)]->version;
-
+        $questionreferences->version = null; // Always latest.
         $DB->insert_record('question_references', $questionreferences);
 
     } else if ($qreferenceitem->itemid === 0 || $qreferenceitem->itemid === null) {
@@ -2414,8 +2412,7 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         $questionreferences->questionarea = 'slot';
         $questionreferences->itemid = $slotid;
         $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
-        $version = get_question_version($questionid);
-        $questionreferences->version = $version[array_key_first($version)]->version;
+        $questionreferences->version = null; // Always latest.
         $DB->insert_record('question_references', $questionreferences);
     }
 

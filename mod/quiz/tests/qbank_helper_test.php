@@ -204,6 +204,7 @@ class qbank_helper_test extends \advanced_testcase {
      * @covers ::get_specific_version_question_ids
      */
     public function test_get_specific_version_question_ids() {
+        global $DB;
         $this->resetAfterTest();
         $quiz = $this->create_test_quiz($this->course);
         // Test for questions from a different context.
@@ -217,6 +218,7 @@ class qbank_helper_test extends \advanced_testcase {
         $questiongenerator->update_question($numq, null, ['name' => 'This is the second version']);
         $questiongenerator->update_question($numq, null, ['name' => 'This is the third version']);
         quiz_add_quiz_question($numq->id, $quiz);
+        submit_question_version::execute($DB->get_field('quiz_slots', 'id', ['quizid' => $quiz->id, 'slot' => 1]), 3);
         $specificversionquestionid = qbank_helper::get_specific_version_question_ids($quiz->id);
         $specificversionquestionid = reset($specificversionquestionid);
         $this->assertEquals($numq->id, $specificversionquestionid);
