@@ -27,9 +27,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// @codingStandardsIgnoreStart
-require('../config.php');
-// @codingStandardsIgnoreEnd
+require('../config.php'); // phpcs:ignore
 
 $context = context_system::instance();
 $title = get_string('pagenotexisttitle', 'error');

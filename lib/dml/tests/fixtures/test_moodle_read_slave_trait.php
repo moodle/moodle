@@ -36,14 +36,12 @@ require_once(__DIR__.'/../../pgsql_native_moodle_database.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 trait test_moodle_read_slave_trait {
-    // @codingStandardsIgnoreStart
     /**
      * Constructs a mock db driver
      *
      * @param bool $external
      */
     public function __construct($external = false) {
-    // @codingStandardsIgnoreEnd
         parent::__construct($external);
 
         $rw = fopen("php://memory", 'r+');
