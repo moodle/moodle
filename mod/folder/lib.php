@@ -590,49 +590,52 @@ function folder_downloaded($folder, $course, $cm, $context) {
  * @param int $groupid not used, but required for compatibilty with other modules
  */
 function folder_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
-    global $COURSE, $DB, $OUTPUT;
+    global $DB, $OUTPUT;
 
-    if ($COURSE->id == $courseid) {
-        $course = $COURSE;
-    } else {
-        $course = $DB->get_record('course', array('id' => $courseid));
-    }
-
-    $modinfo = get_fast_modinfo($course);
+    $modinfo = get_fast_modinfo($courseid);
     $cm = $modinfo->cms[$cmid];
 
     $context = context_module::instance($cm->id);
     if (!has_capability('mod/folder:view', $context)) {
         return;
     }
+    $instance = $DB->get_record('folder', ['id' => $cm->instance], '*', MUST_EXIST);
+
     $files = folder_get_recent_activity($context, $timestart, $userid);
-
     foreach ($files as $file) {
-        $tmpactivity = new stdClass();
+        $tmpactivity = (object) [
+            'type' => 'folder',
+            'cmid' => $cm->id,
+            'sectionnum' => $cm->sectionnum,
+            'timestamp' => $file->get_timemodified(),
+            'user' => core_user::get_user($file->get_userid()),
+        ];
 
-        $tmpactivity->type       = 'folder';
-        $tmpactivity->cmid       = $cm->id;
-        $tmpactivity->sectionnum = $cm->sectionnum;
-        $tmpactivity->timestamp  = $file->get_timemodified();
-        $tmpactivity->user       = core_user::get_user($file->get_userid());
-
-        $tmpactivity->content           = new stdClass();
-        $tmpactivity->content->url      = moodle_url::make_pluginfile_url($file->get_contextid(), 'mod_folder', 'content',
-            $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+        $url = moodle_url::make_pluginfile_url(
+            $file->get_contextid(),
+            'mod_folder',
+            'content',
+            $file->get_itemid(),
+            $file->get_filepath(),
+            $file->get_filename(),
+            !empty($instance->forcedownload)
+        );
 
         if (file_extension_in_typegroup($file->get_filename(), 'web_image')) {
-            $image = $tmpactivity->content->url->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
+            $image = $url->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
             $image = html_writer::empty_tag('img', array('src' => $image));
         } else {
             $image = $OUTPUT->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
         }
 
-        $tmpactivity->content->image    = $image;
-        $tmpactivity->content->filename = $file->get_filename();
+        $tmpactivity->content = (object) [
+            'image' => $image,
+            'filename' => $file->get_filename(),
+            'url' => $url,
+        ];
 
         $activities[$index++] = $tmpactivity;
     }
-
 }
 
 /**
@@ -725,7 +728,10 @@ function folder_print_recent_activity($course, $viewfullnames, $timestart) {
         return false;
     }
 
-    $newfiles = array();
+    // The list of all new files.
+    $newfiles = [];
+    // Save the force download setting of all instances with files indexed by context.
+    $forcedownloads = [];
 
     $modinfo = get_fast_modinfo($course);
     foreach ($folders as $folder) {
@@ -738,6 +744,9 @@ function folder_print_recent_activity($course, $viewfullnames, $timestart) {
 
         // Get the files uploaded in the current time frame.
         $newfiles = array_merge($newfiles, folder_get_recent_activity($context, $timestart));
+        if (!isset($forcedownloads[$context->id])) {
+            $forcedownloads[$context->id] = !empty($folder->forcedownload);
+        }
     }
 
     if (empty($newfiles)) {
@@ -749,8 +758,15 @@ function folder_print_recent_activity($course, $viewfullnames, $timestart) {
     $list = html_writer::start_tag('ul', ['class' => 'unlist']);
     foreach ($newfiles as $file) {
         $filename = $file->get_filename();
-        $url = moodle_url::make_pluginfile_url($file->get_contextid(), 'mod_folder', 'content',
-            $file->get_itemid(), $file->get_filepath(), $filename);
+        $contextid = $file->get_contextid();
+        $url = moodle_url::make_pluginfile_url(
+            $contextid,
+            'mod_folder',
+            'content',
+            $file->get_itemid(),
+            $file->get_filepath(), $filename,
+            $forcedownloads[$contextid] ?? false
+        );
 
         $list .= html_writer::start_tag('li');
         $list .= html_writer::start_div('head');
