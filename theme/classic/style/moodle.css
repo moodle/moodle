@@ -21074,6 +21074,9 @@ div.editor_atto_toolbar button .icon {
 .reportbuilder-report-container {
   min-width: 0; }
 
+.reportbuilder-editor-table-container {
+  overflow-x: auto; }
+
 /* Custom table headers */
 .reportbuilder-table th button[data-action="report-remove-column"] .icon,
 .reportbuilder-table th span[data-drag-type="move"] .icon {
