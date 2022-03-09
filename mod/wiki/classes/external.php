@@ -512,10 +512,14 @@ class mod_wiki_external extends external_api {
                     $retpage['contentformat'] = $contentformat;
                 } else {
                     // Return the size of the content.
-                    if (function_exists('mb_strlen') && ((int)ini_get('mbstring.func_overload') & 2)) {
-                        $retpage['contentsize'] = mb_strlen($cachedcontent, '8bit');
-                    } else {
-                        $retpage['contentsize'] = strlen($cachedcontent);
+                    $retpage['contentsize'] = strlen($cachedcontent);
+                    // TODO: Remove this block of code once PHP 8.0 is the min version supported.
+                    // For PHP < 8.0, if strlen() was overloaded, calculate
+                    // the bytes using mb_strlen(..., '8bit').
+                    if (PHP_VERSION_ID < 80000) {
+                        if (function_exists('mb_strlen') && ((int)ini_get('mbstring.func_overload') & 2)) {
+                            $retpage['contentsize'] = mb_strlen($cachedcontent, '8bit');
+                        }
                     }
                 }
 
