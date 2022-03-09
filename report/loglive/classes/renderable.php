@@ -198,7 +198,7 @@ class report_loglive_renderable implements renderable {
         } else {
             if (defined('REPORT_LOGLIVE_REFRESH')) {
                 // Backward compatibility.
-                $this->refresh = REPORT_LOGLIVE_REFERESH;
+                $this->refresh = REPORT_LOGLIVE_REFRESH;
             } else {
                 // Default.
                 $this->refresh = 60;
