@@ -52,7 +52,7 @@ function xmldb_auth_lti_upgrade($oldversion) {
         // Adding keys to table auth_lti_linked_login.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $table->add_key('userid_key', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
-        $table->add_key('unique_key', XMLDB_KEY_UNIQUE, ['userid, issuer256, sub256']);
+        $table->add_key('unique_key', XMLDB_KEY_UNIQUE, ['userid', 'issuer256', 'sub256']);
 
         // Conditionally launch create table for auth_lti_linked_login.
         if (!$dbman->table_exists($table)) {
@@ -61,6 +61,28 @@ function xmldb_auth_lti_upgrade($oldversion) {
 
         // Auth LTI savepoint reached.
         upgrade_plugin_savepoint(true, 2021100500, 'auth', 'lti');
+    }
+
+    if ($oldversion < 2022030900) {
+        // Fix the unique key made up of {userid, issuer256, sub256}.
+        // This was improperly defined as ['userid, issuer256, sub256'] in the upgrade step above (note the quotes),
+        // resulting in the potential for missing keys on some databases.
+        // Drop and re-add the key to make sure we have it in place.
+
+        // Define table auth_lti_linked_login to be modified.
+        $table = new xmldb_table('auth_lti_linked_login');
+
+        // Define the key to be dropped and re-added.
+        $key = new xmldb_key('unique_key', XMLDB_KEY_UNIQUE, ['userid', 'issuer256', 'sub256'], 'auth_lti_linked_login');
+
+        // Drop the key.
+        $dbman->drop_key($table, $key);
+
+        // Create the key.
+        $dbman->add_key($table, $key);
+
+        // Auth LTI savepoint reached.
+        upgrade_plugin_savepoint(true, 2022030900, 'auth', 'lti');
     }
 
     return true;
