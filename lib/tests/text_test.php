@@ -33,11 +33,15 @@ defined('MOODLE_INTERNAL') || die();
  * @category   phpunit
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_text
+ *
  */
 class text_test extends advanced_testcase {
 
     /**
      * Tests the static parse charset method.
+     *
+     * @covers ::parse_charset()
      */
     public function test_parse_charset() {
         $this->assertSame('windows-1250', core_text::parse_charset('Cp1250'));
@@ -47,8 +51,11 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static convert method.
+     *
+     * @covers ::convert()
      */
     public function test_convert() {
+        $this->assertSame('', core_text::convert('', 'utf-8', 'utf-8'));
         $utf8 = "Žluťoučký koníček";
         $iso2 = pack("H*", "ae6c75bb6f75e86bfd206b6f6eede8656b");
         $win  = pack("H*", "8e6c759d6f75e86bfd206b6f6eede8656b");
@@ -103,6 +110,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static sub string method.
+     *
+     * @covers ::substr()
      */
     public function test_substr() {
         $str = "Žluťoučký koníček";
@@ -145,6 +154,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static string length method.
+     *
+     * @covers ::strlen()
      */
     public function test_strlen() {
         $str = "Žluťoučký koníček";
@@ -184,6 +195,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Test unicode safe string truncation.
+     *
+     * @covers ::str_max_bytes()
      */
     public function test_str_max_bytes() {
         // These are all 3 byte characters, so this is a 12-byte string.
@@ -234,6 +247,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static strtolower method.
+     *
+     * @covers ::strtolower()
      */
     public function test_strtolower() {
         $str = "Žluťoučký koníček";
@@ -270,6 +285,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static strtoupper.
+     *
+     * @covers ::strtoupper()
      */
     public function test_strtoupper() {
         $str = "Žluťoučký koníček";
@@ -303,6 +320,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Test the strrev method.
+     *
+     * @covers ::strrev()
      */
     public function test_strrev() {
         $strings = array(
@@ -323,6 +342,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static strpos method.
+     *
+     * @covers ::strpos()
      */
     public function test_strpos() {
         $str = "Žluťoučký koníček";
@@ -331,6 +352,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static strrpos.
+     *
+     * @covers ::strrpos()
      */
     public function test_strrpos() {
         $str = "Žluťoučký koníček";
@@ -339,17 +362,33 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static specialtoascii method.
+     *
+     * @covers ::specialtoascii()
      */
     public function test_specialtoascii() {
         $str = "Žluťoučký koníček";
         $this->assertSame('Zlutoucky konicek', core_text::specialtoascii($str));
+
         $utf8 = "Der eine stößt den Speer zum Mann";
+        $iso1 = core_text::convert($utf8, 'utf-8', 'iso-8859-1');
         $this->assertSame('Der eine stosst den Speer zum Mann', core_text::specialtoascii($utf8));
+        $this->assertSame('Der eine stosst den Speer zum Mann', core_text::specialtoascii($iso1, 'iso-8859-1'));
+
+        $str = 'àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ';
+        $this->assertSame('aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY', core_text::specialtoascii($str));
+
+        $utf8 = 'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ';
+        $this->assertSame('A ae Ubermensch pa hoyeste niva! I a lublu PHP! est\'. fi', core_text::specialtoascii($utf8, 'utf8'));
+
+        $utf8 = 'キャンパス Αλφαβητικός Κατάλογος Лорем ипсум долор сит амет';
+        $this->assertSame('kyanpasu Alphabetikos Katalogos Lorem ipsum dolor sit amet', core_text::specialtoascii($utf8));
     }
 
     /**
      * Tests the static encode_mimeheader method.
-     * This also tests method moodle_phpmailer::encodeHeader that calls core_text::encode_mimeheader
+     *
+     * @covers ::encode_mimeheader()
+     * @covers \moodle_phpmailer::encodeHeader()
      */
     public function test_encode_mimeheader() {
         global $CFG;
@@ -388,6 +427,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static entities_to_utf8 method.
+     *
+     * @covers ::entities_to_utf8()
      */
     public function test_entities_to_utf8() {
         $str = "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&iacute;&#269;ek&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
@@ -396,6 +437,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static utf8_to_entities method.
+     *
+     * @covers ::utf8_to_entities()
      */
     public function test_utf8_to_entities() {
         $str = "&#x17d;luťoučký kon&iacute;ček&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
@@ -409,6 +452,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static trim_utf8_bom method.
+     *
+     * @covers ::trim_utf8_bom()
      */
     public function test_trim_utf8_bom() {
         $bom = "\xef\xbb\xbf";
@@ -418,6 +463,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static remove_unicode_non_characters method.
+     *
+     * @covers ::remove_unicode_non_characters()
      */
     public function test_remove_unicode_non_characters() {
         // Confirm that texts which don't contain these characters are unchanged.
@@ -439,6 +486,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static get_encodings method.
+     *
+     * @covers ::get_encodings()
      */
     public function test_get_encodings() {
         $encodings = core_text::get_encodings();
@@ -449,6 +498,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static code2utf8 method.
+     *
+     * @covers ::code2utf8()
      */
     public function test_code2utf8() {
         $this->assertSame('Ž', core_text::code2utf8(381));
@@ -456,6 +507,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static utf8ord method.
+     *
+     * @covers ::utf8ord()
      */
     public function test_utf8ord() {
         $this->assertSame(ord(''), core_text::utf8ord(''));
@@ -468,6 +521,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Tests the static strtotitle method.
+     *
+     * @covers ::strtotitle()
      */
     public function test_strtotitle() {
         $str = "žluťoučký koníček";
@@ -476,6 +531,8 @@ class text_test extends advanced_testcase {
 
     /**
      * Test strrchr.
+     *
+     * @covers ::strrchr()
      */
     public function test_strrchr() {
         $str = "Žluťoučký koníček";
@@ -491,6 +548,7 @@ class text_test extends advanced_testcase {
      * @dataProvider is_charset_supported_provider()
      * @param string $charset
      * @param bool $expected
+     * @covers ::is_charset_supported()
      */
     public function test_is_charset_supported(string $charset, bool $expected) {
         $charset = core_text::parse_charset($charset);
