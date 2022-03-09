@@ -560,11 +560,11 @@ function get_array_of_activities($courseid) {
 }
 
 /**
- * Returns the localised human-readable names of all used modules
+ * Returns an array where the key is the module name (component name without 'mod_')
+ * and the value is a lang_string object with a human-readable string.
  *
- * @param bool $plural if true returns the plural forms of the names
- * @return array where key is the module name (component name without 'mod_') and
- *     the value is the human-readable string. Array sorted alphabetically by value
+ * @param bool $plural If true, the function returns the plural forms of the names.
+ * @return lang_string[] Localised human-readable names of all used modules.
  */
 function get_module_types_names($plural = false) {
     static $modnames = null;

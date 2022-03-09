@@ -1554,10 +1554,10 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * Returns a localised human-readable name of the module type
+     * Returns a localised human-readable name of the module type.
      *
-     * @param bool $plural return plural form
-     * @return string
+     * @param bool $plural If true, the function returns the plural form of the name.
+     * @return lang_string
      */
     public function get_module_type_name($plural = false) {
         $modnames = get_module_types_names($plural);
