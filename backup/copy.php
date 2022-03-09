@@ -57,6 +57,7 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
 $PAGE->set_heading($heading);
+$PAGE->set_secondary_active_tab('coursereuse');
 
 // Get data ready for mform.
 $mform = new \core_backup\output\copy_form(
