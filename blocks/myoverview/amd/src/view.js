@@ -228,7 +228,7 @@ const addToFavourites = (root, courseId) => {
 
     setCourseFavouriteState(courseId, true).then(success => {
         if (success) {
-            PubSub.publish(CourseEvents.favorited, courseId);
+            PubSub.publish(CourseEvents.favourited, courseId);
             removeAction.removeClass('hidden');
             addAction.addClass('hidden');
             showFavouriteIcon(root, courseId);
