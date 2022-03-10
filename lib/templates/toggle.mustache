@@ -28,6 +28,7 @@
             "name": "action",
             "value": "toggle-reality"
         }],
+        "title": "Title example",
         "label": "Enable/disable reality",
         "labelclasses": "sr-only"
     }
@@ -41,7 +42,7 @@
             {{#disabled}}disabled{{/disabled}}
         {{/attributes}}>
     {{$labelmarkup}}
-        <label class="custom-control-label" for="{{$id}}{{id}}{{/id}}">
+        <label class="custom-control-label" for="{{$id}}{{id}}{{/id}}" {{#title}}data-toggle="tooltip" data-placement="top" title="{{title}}"{{/title}}>
             <span class="{{$labelclasses}}{{labelclasses}}{{/labelclasses}}">{{$label}}{{label}}{{/label}}</span>
         </label>
     {{/labelmarkup}}
