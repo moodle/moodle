@@ -234,14 +234,12 @@ $card-gutter : $card-deck-margin * 2;
     }
 }
 
-@media (min-width: 1200px) {
-    #block-region-side-pre {
-        .dashboard-card-deck:not(.fixed-width-cards) {
-            margin-left: 0;
-            margin-right: 0;
-            .dashboard-card {
-                width: calc(100% - #{$card-gutter}) !important;
-            }
+#block-region-side-pre {
+    .dashboard-card-deck:not(.fixed-width-cards) {
+        margin-left: 0;
+        margin-right: 0;
+        .dashboard-card {
+            width: calc(100% - #{$card-gutter}) !important;
         }
     }
 }

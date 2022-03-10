@@ -12359,6 +12359,9 @@ body.dragging .dragging {
     margin: 0;
     height: 24px;
     width: 24px; }
+  .activityiconcontainer.small {
+    width: 40px;
+    height: 40px; }
 
 .activityiconcontainer.administration {
   background-color: #5d63f6; }
@@ -13061,12 +13064,11 @@ body.dragging .dragging {
   .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
     width: calc(33.33% - 0.5rem); } }
 
-@media (min-width: 1200px) {
-  #block-region-side-pre .dashboard-card-deck:not(.fixed-width-cards) {
-    margin-left: 0;
-    margin-right: 0; }
-    #block-region-side-pre .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-      width: calc(100% - 0.5rem) !important; } }
+#block-region-side-pre .dashboard-card-deck:not(.fixed-width-cards) {
+  margin-left: 0;
+  margin-right: 0; }
+  #block-region-side-pre .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
+    width: calc(100% - 0.5rem) !important; }
 
 .block_recentlyaccessedcourses .paging-bar-container {
   margin-top: -2.4rem;
