@@ -4848,6 +4848,29 @@ class accesslib_test extends advanced_testcase {
         $this->expectException(\required_capability_exception::class);
         require_all_capabilities($sca, $coursecontext);
     }
+
+    /**
+     * Test get_navigation_filter_context.
+     *
+     * @covers ::get_navigation_filter_context
+     */
+    public function test_get_navigation_filter_context() {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        set_config('filternavigationwithsystemcontext', 0);
+        // First test passed values are returned if disabled.
+        $this->assertNull(context_helper::get_navigation_filter_context(null));
+        $coursecontext = context_course::instance($course->id);
+        $filtercontext = context_helper::get_navigation_filter_context($coursecontext);
+        $this->assertEquals($coursecontext->id, $filtercontext->id);
+
+        // Now test that any input returns system context if enabled.
+        set_config('filternavigationwithsystemcontext', 1);
+        $filtercontext = context_helper::get_navigation_filter_context(null);
+        $this->assertInstanceOf('\context_system', $filtercontext);
+        $filtercontext = context_helper::get_navigation_filter_context($coursecontext);
+        $this->assertInstanceOf('\context_system', $filtercontext);
+    }
 }
 
 /**
