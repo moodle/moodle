@@ -199,10 +199,10 @@ class date extends base {
                     return ['', []];
                 }
 
-                $paramdatefrom = database::generate_param_name();
-                $paramdateto = database::generate_param_name();
-
+                // Generate parameters and SQL clause for the relative date comparison.
+                [$paramdatefrom, $paramdateto] = database::generate_param_names(2);
                 $sql = "{$fieldsql} >= :{$paramdatefrom} AND {$fieldsql} <= :{$paramdateto}";
+
                 [
                     $params[$paramdatefrom],
                     $params[$paramdateto],

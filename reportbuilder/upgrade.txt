@@ -1,0 +1,5 @@
+This file describes API changes in /reportbuilder/*
+Information provided here is intended especially for developers.
+
+=== 4.1 ===
+* New database helper methods for generating multiple unique values: `generate_aliases` and `generate_param_names`

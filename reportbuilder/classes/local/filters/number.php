@@ -122,8 +122,8 @@ class number extends base {
             return ['', []];
         }
 
-        $param = database::generate_param_name();
-        $param2 = database::generate_param_name();
+        [$param, $param2] = database::generate_param_names(2);
+
         $fieldsql = $this->filter->get_field_sql();
         $params = $this->filter->get_field_params();
 
