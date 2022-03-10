@@ -183,7 +183,7 @@ class core_tag_manage_table extends table_sql {
      * @return string added to the class="" attribute of the tr.
      */
     public function get_row_class($row) {
-        return $row->flag ? 'flagged-tag' : '';
+        return $row->flag ? 'table-warning' : '';
     }
 
     /**
