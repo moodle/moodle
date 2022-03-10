@@ -14,13 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Skips gherkin features using a file with the list of scenarios.
- *
- * @copyright  2016 onwards Rajesh Taneja
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace Moodle\BehatExtension\Locator;
 
 use Behat\Behat\Gherkin\Specification\LazyFeatureIterator;
@@ -29,10 +22,14 @@ use Behat\Testwork\Specification\Locator\SpecificationLocator;
 use Behat\Testwork\Specification\NoSpecificationsIterator;
 use Behat\Testwork\Suite\Suite;
 
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
+
 /**
  * Skips gherkin features using a file with the list of scenarios.
  *
+ * @package core
  * @copyright  2016 onwards Rajesh Taneja
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class FilesystemSkipPassedListLocator implements SpecificationLocator {
     /**
@@ -50,14 +47,21 @@ final class FilesystemSkipPassedListLocator implements SpecificationLocator {
     }
 
     /**
-     * {@inheritdoc}
+     * Returns array of strings representing examples of supported specification locators.
+     *
+     * @return string[]
      */
     public function getLocatorExamples() {
-        return array();
+        return [];
     }
 
     /**
-     * {@inheritdoc}
+     * Locates specifications and wraps them into iterator.
+     *
+     * @param Suite  $suite
+     * @param string $locator
+     *
+     * @return SpecificationIterator
      */
     public function locateSpecifications(Suite $suite, $locator) {
         if (!is_file($locator) || 'passed' !== pathinfo($locator, PATHINFO_EXTENSION)) {
@@ -88,7 +92,8 @@ final class FilesystemSkipPassedListLocator implements SpecificationLocator {
     private function getSuitePaths(Suite $suite) {
         if (!is_array($suite->getSetting('paths'))) {
             throw new SuiteConfigurationException(
-                sprintf('`paths` setting of the "%s" suite is expected to be an array, %s given.',
+                sprintf(
+                    '"paths" setting of the "%s" suite is expected to be an array, %s given.',
                     $suite->getName(),
                     gettype($suite->getSetting('paths'))
                 ),

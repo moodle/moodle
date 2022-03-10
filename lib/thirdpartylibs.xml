@@ -15,13 +15,6 @@
     <licenseversion>2.0</licenseversion>
   </library>
   <library>
-    <location>behat/extension</location>
-    <name>Moodle behat extension</name>
-    <license>GPL</license>
-    <version>3.311.5</version>
-    <licenseversion>3.0+</licenseversion>
-  </library>
-  <library>
     <location>bennu</location>
     <name>Bennu</name>
     <license>LGPL</license>

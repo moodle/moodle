@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,28 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Moodle behat context class resolver.
- *
- * @package    behat
- * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace Moodle\BehatExtension\Output\Printer;
 
 use Behat\Behat\Output\Node\Printer\SetupPrinter;
-use Behat\Testwork\Output\Formatter;
-use Behat\Testwork\Tester\Setup\Setup;
-use Behat\Testwork\Tester\Setup\Teardown;
 use Behat\Testwork\Call\CallResult;
 use Behat\Testwork\Hook\Tester\Setup\HookedTeardown;
+use Behat\Testwork\Output\Formatter;
 use Behat\Testwork\Output\Printer\OutputPrinter;
-use Behat\Testwork\Tester\Result\TestResult;
+use Behat\Testwork\Tester\Setup\Setup;
+use Behat\Testwork\Tester\Setup\Teardown;
 use Moodle\BehatExtension\Driver\WebDriver;
+
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
 
 /**
  * Prints hooks in a pretty fashion.
+ *
+ * @package    core
+ * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class MoodleProgressPrinter implements SetupPrinter {
 
@@ -60,7 +56,10 @@ final class MoodleProgressPrinter implements SetupPrinter {
     }
 
     /**
-     * {@inheritdoc}
+     * Prints setup state.
+     *
+     * @param Formatter $formatter
+     * @param Setup     $setup
      */
     public function printSetup(Formatter $formatter, Setup $setup) {
         if (empty(self::$outputdisplayed)) {
@@ -70,15 +69,18 @@ final class MoodleProgressPrinter implements SetupPrinter {
     }
 
     /**
-     * {@inheritdoc}
+     * Prints teardown state.
+     *
+     * @param Formatter $formatter
+     * @param Teardown  $teardown
      */
     public function printTeardown(Formatter $formatter, Teardown $teardown) {
         if (!$teardown instanceof HookedTeardown) {
             return;
         }
 
-        foreach ($teardown->getHookCallResults() as $callResult) {
-            $this->printTeardownHookCallResult($formatter->getOutputPrinter(), $callResult);
+        foreach ($teardown->getHookCallResults() as $callresult) {
+            $this->printTeardownHookCallResult($formatter->getOutputPrinter(), $callresult);
         }
     }
 
@@ -105,20 +107,24 @@ final class MoodleProgressPrinter implements SetupPrinter {
      * Prints teardown hook call result.
      *
      * @param OutputPrinter $printer
-     * @param CallResult    $callResult
+     * @param CallResult    $callresult
      */
-    private function printTeardownHookCallResult(OutputPrinter $printer, CallResult $callResult) {
+    private function printTeardownHookCallResult(OutputPrinter $printer, CallResult $callresult) {
         // Notify dev that chained step is being used.
         if (\Moodle\BehatExtension\EventDispatcher\Tester\ChainedStepTester::is_chained_step_used()) {
             $printer->writeln();
-            $printer->write("{+failed}Chained steps are deprecated. See https://docs.moodle.org/dev/Acceptance_testing/Migrating_from_Behat_2.5_to_3.x_in_Moodle#Changes_required_in_context_file{-failed}");
+            $printer->write(
+                "{+failed}Chained steps are deprecated. " .
+                "See https://docs.moodle.org/dev/Acceptance_testing/" .
+                "Migrating_from_Behat_2.5_to_3.x_in_Moodle#Changes_required_in_context_file{-failed}"
+            );
         }
 
-        if (!$callResult->hasStdOut() && !$callResult->hasException()) {
+        if (!$callresult->hasStdOut() && !$callresult->hasException()) {
             return;
         }
 
-        $hook = $callResult->getCall()->getCallee();
+        $hook = $callresult->getCall()->getCallee();
         $path = $hook->getPath();
 
         $printer->writeln($hook);
