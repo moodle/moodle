@@ -193,7 +193,7 @@ $PAGE->navbar->add($strcalendar, $viewcalendarurl);
 $PAGE->navbar->add($title);
 $PAGE->set_title($course->shortname.': '.$strcalendar.': '.$title);
 $PAGE->set_heading($course->fullname);
-
+$PAGE->has_secondary_navigation_setter(false);
 $renderer = $PAGE->get_renderer('core_calendar');
 $calendar->add_sidecalendar_blocks($renderer);
 
