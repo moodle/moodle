@@ -44,6 +44,7 @@ $PAGE->add_body_class('limitedwidth');
 $PAGE->set_pagetype('user-files');
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading($title);
 echo $OUTPUT->box_start('generalbox');
 
 echo html_writer::start_div('', ['id' => 'userfilesform']);
