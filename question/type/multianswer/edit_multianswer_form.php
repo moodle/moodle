@@ -150,7 +150,8 @@ class qtype_multianswer_edit_form extends question_edit_form {
                 $storemess = '';
                 if (isset($this->savedquestiondisplay->options->questions[$sub]->qtype) &&
                         $this->savedquestiondisplay->options->questions[$sub]->qtype !=
-                                $this->questiondisplay->options->questions[$sub]->qtype) {
+                                $this->questiondisplay->options->questions[$sub]->qtype &&
+                        $this->savedquestiondisplay->options->questions[$sub]->qtype != 'subquestion_replacement') {
                     $this->qtypechange = true;
                     $storemess = ' ' . html_writer::tag('span', get_string(
                             'storedqtype', 'qtype_multianswer', question_bank::get_qtype_name(
@@ -276,6 +277,8 @@ class qtype_multianswer_edit_form extends question_edit_form {
                             case 'numerical':
                                 $parsableanswerdef .= 'NUMERICAL:';
                                 break;
+                            case 'subquestion_replacement':
+                                continue 2;
                             default:
                                 print_error('unknownquestiontype', 'question', '',
                                         $wrapped->qtype);

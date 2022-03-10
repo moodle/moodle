@@ -1301,6 +1301,24 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         // Does not currently verify hint text.
         return new question_contains_tag_with_attribute('div', 'class', 'hint');
     }
+
+    /**
+     * Returns an expectation that a string contains a corrupted question notification.
+     *
+     * @return question_pattern_expectation an expectation for use with check_current_output.
+     */
+    protected function get_contains_corruption_notification() {
+        return new question_pattern_expectation('/' . preg_quote(get_string('corruptedquestion', 'qtype_multianswer'), '/') . '/');
+    }
+
+    /**
+     * Returns an expectation that a string contains a corrupted subquestion message.
+     *
+     * @return question_pattern_expectation an expectation for use with check_current_output.
+     */
+    protected function get_contains_corrupted_subquestion_message() {
+        return new question_pattern_expectation('/' . preg_quote(get_string('missingsubquestion', 'qtype_multianswer'), '/') . '/');
+    }
 }
 
 /**
