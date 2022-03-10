@@ -355,8 +355,14 @@ function question_delete_question($questionid) {
         return;
     }
 
+    $questionstocheck = [$question->id];
+
+    if ($question->parent !== 0) {
+        $questionstocheck[] = $question->parent;
+    }
+
     // Do not delete a question if it is used by an activity module
-    if (questions_in_use(array($questionid))) {
+    if (questions_in_use($questionstocheck)) {
         return;
     }
 

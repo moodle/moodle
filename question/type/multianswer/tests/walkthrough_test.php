@@ -16,9 +16,12 @@
 
 namespace qtype_multianswer;
 
+use qtype_multianswer;
+use question_bank;
 use question_display_options;
 use question_hint_with_parts;
 use question_state;
+use test_question_maker;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -529,5 +532,44 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             $this->get_contains_mark_summary(1.5),
             $this->get_contains_partcorrect_expectation(),
             $this->get_does_not_contain_validation_error_expectation());
+    }
+
+    /**
+     * Test corrupted question display.
+     *
+     * @covers \qtype_multianswer_renderer::subquestion
+     */
+    public function test_corrupted_question() {
+        global $DB;
+
+        $syscontext = \context_system::instance();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category(['contextid' => $syscontext->id]);
+
+        $fromform = test_question_maker::get_question_form_data('multianswer', 'twosubq');
+        $fromform->category = $category->id . ',' . $syscontext->id;
+
+        $question = new \stdClass();
+        $question->category = $category->id;
+        $question->qtype = 'multianswer';
+        $question->createdby = 0;
+
+        $question = (new qtype_multianswer)->save_question($question, $fromform);
+        $questiondata = question_bank::load_question_data($question->id);
+        $questiontodeletekey = array_keys($questiondata->options->questions)[0];
+        $questiontodelete = $questiondata->options->questions[$questiontodeletekey];
+        $DB->delete_records('question', ['id' => $questiontodelete->id]);
+
+        question_bank::notify_question_edited($question->id);
+        $question = question_bank::load_question($question->id);
+
+        $this->start_attempt_at_question($question, 'deferredfeedback', 2);
+        $this->check_current_output(
+            $this->get_contains_marked_out_of_summary(),
+            $this->get_does_not_contain_feedback_expectation(),
+            $this->get_does_not_contain_validation_error_expectation(),
+            $this->get_contains_corruption_notification(),
+            $this->get_contains_corrupted_subquestion_message(),
+        );
     }
 }
