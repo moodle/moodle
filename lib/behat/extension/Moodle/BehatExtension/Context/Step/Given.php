@@ -14,17 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace Moodle\BehatExtension\Context\Step;
+
 /**
- * Override step tester to ensure chained steps gets executed.
+ * Chained `Given` step.
  *
- * @package    behat
+ * @package    core
  * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-namespace Moodle\BehatExtension\Context\Step;
-/**
- * Given sub-step.
  */
 class Given extends ChainedStep {
     /**
