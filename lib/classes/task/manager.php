@@ -1116,7 +1116,7 @@ class manager {
 
         if (!self::is_runnable()) {
             $redirecturl = new \moodle_url('/admin/settings.php', ['section' => 'systempaths']);
-            throw new \moodle_exception('cannotfindthepathtothecli', 'core_task', $redirecturl->out());
+            throw new \moodle_exception('cannotfindthepathtothecli', 'tool_task', $redirecturl->out());
         } else {
             // Shell-escaped path to the PHP binary.
             $phpbinary = escapeshellarg(self::find_php_cli_path());
