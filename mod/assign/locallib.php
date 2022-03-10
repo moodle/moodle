@@ -1909,6 +1909,33 @@ class assign {
     }
 
     /**
+     * Check if the intro attachments should be provided to the user.
+     *
+     * @param int $userid User id.
+     * @return bool
+     */
+    public function should_provide_intro_attachments(int $userid): bool {
+        $instance = $this->get_instance($userid);
+
+        // Check if user has permission to view attachments regardless of assignment settings.
+        if (has_capability('moodle/course:manageactivities', $this->get_context())) {
+            return true;
+        }
+
+        // If assignment does not show intro, we never provide intro attachments.
+        if (!$this->show_intro()) {
+            return false;
+        }
+
+        // If intro attachments should only be shown when submission is started, check if there is an open submission.
+        if (!empty($instance->submissionattachments) && !$this->submissions_open($userid, true)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Return a grade in user-friendly form, whether it's a scale or not.
      *
      * @param mixed $grade int|null
@@ -9685,6 +9712,41 @@ class assign {
         }
 
         return $submissionstatement;
+    }
+
+    /**
+     * Check if time limit for assignment enabled and set up.
+     *
+     * @param int|null $userid User ID. If null, use global user.
+     * @return bool
+     */
+    public function is_time_limit_enabled(?int $userid = null): bool {
+        $instance = $this->get_instance($userid);
+        return get_config('assign', 'enabletimelimit') && !empty($instance->timelimit);
+    }
+
+    /**
+     * Check if an assignment submission is already started and not yet submitted.
+     *
+     * @param int|null $userid User ID. If null, use global user.
+     * @param int $groupid Group ID. If 0, use user id to determine group.
+     * @param int $attemptnumber Attempt number. If -1, check latest submission.
+     * @return bool
+     */
+    public function is_attempt_in_progress(?int $userid = null, int $groupid = 0, int $attemptnumber = -1): bool {
+        if ($this->get_instance($userid)->teamsubmission) {
+            $submission = $this->get_group_submission($userid, $groupid, false, $attemptnumber);
+        } else {
+            $submission = $this->get_user_submission($userid, false, $attemptnumber);
+        }
+
+        // If time limit is enabled, we only assume it is in progress if there is a start time for submission.
+        $timedattemptstarted = true;
+        if ($this->is_time_limit_enabled($userid)) {
+            $timedattemptstarted = !empty($submission) && !empty($submission->timestarted);
+        }
+
+        return !empty($submission) && $submission->status !== ASSIGN_SUBMISSION_STATUS_SUBMITTED && $timedattemptstarted;
     }
 }
 
