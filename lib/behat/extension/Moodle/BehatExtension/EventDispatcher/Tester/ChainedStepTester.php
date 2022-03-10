@@ -14,39 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Override step tester to ensure chained steps gets executed.
- *
- * @package    behat
- * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace Moodle\BehatExtension\EventDispatcher\Tester;
 
+use Behat\Behat\EventDispatcher\Event\AfterStepSetup;
+use Behat\Behat\EventDispatcher\Event\AfterStepTested;
+use Behat\Behat\EventDispatcher\Event\BeforeStepTeardown;
+use Behat\Behat\EventDispatcher\Event\BeforeStepTested;
 use Behat\Behat\Tester\Result\ExecutedStepResult;
 use Behat\Behat\Tester\Result\SkippedStepResult;
 use Behat\Behat\Tester\Result\StepResult;
-use Behat\Behat\Tester\StepTester;
 use Behat\Behat\Tester\Result\UndefinedStepResult;
-use Moodle\BehatExtension\Context\Step\Given;
-use Moodle\BehatExtension\Context\Step\ChainedStep;
+use Behat\Behat\Tester\StepTester;
 use Behat\Gherkin\Node\FeatureNode;
 use Behat\Gherkin\Node\StepNode;
 use Behat\Testwork\Call\CallResult;
 use Behat\Testwork\Environment\Environment;
 use Behat\Testwork\EventDispatcher\TestworkEventDispatcher;
-use Behat\Behat\EventDispatcher\Event\AfterStepSetup;
-use Behat\Behat\EventDispatcher\Event\AfterStepTested;
-use Behat\Behat\EventDispatcher\Event\BeforeStepTeardown;
-use Behat\Behat\EventDispatcher\Event\BeforeStepTested;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Moodle\BehatExtension\Context\Step\ChainedStep;
 use Moodle\BehatExtension\Exception\SkippedException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
 
 /**
  * Override step tester to ensure chained steps gets executed.
  *
- * @package    behat
+ * @package    core
  * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -64,7 +57,7 @@ class ChainedStepTester implements StepTester {
     /**
      * @var EventDispatcher keep step event dispatcher.
      */
-    private $eventDispatcher;
+    private $eventdispatcher;
 
     /**
      * Keep status of chained steps if used.
@@ -84,21 +77,34 @@ class ChainedStepTester implements StepTester {
     /**
      * Set event dispatcher to use for events.
      *
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param EventDispatcherInterface $eventdispatcher
      */
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher) {
-        $this->eventDispatcher = $eventDispatcher;
+    public function setEventDispatcher(EventDispatcherInterface $eventdispatcher) {
+        $this->eventdispatcher = $eventdispatcher;
     }
 
     /**
-     * {@inheritdoc}
+     * Sets up step for a test.
+     *
+     * @param Environment $env
+     * @param FeatureNode $feature
+     * @param StepNode    $step
+     * @param bool     $skip
+     *
+     * @return Setup
      */
     public function setUp(Environment $env, FeatureNode $feature, StepNode $step, $skip) {
         return $this->singlesteptester->setUp($env, $feature, $step, $skip);
     }
 
     /**
-     * {@inheritdoc}
+     * Tests step.
+     *
+     * @param Environment $env
+     * @param FeatureNode $feature
+     * @param StepNode    $step
+     * @param bool     $skip
+     * @return StepResult
      */
     public function test(Environment $env, FeatureNode $feature, StepNode $step, $skip) {
         $result = $this->singlesteptester->test($env, $feature, $step, $skip);
@@ -123,12 +129,12 @@ class ChainedStepTester implements StepTester {
 
             // Check for exceptions.
             // Extra step, looking for a moodle exception, a debugging() message or a PHP debug message.
-            $checkingStep = new StepNode('Given', self::EXCEPTIONS_STEP_TEXT, array(), $step->getLine());
-            $afterExceptionCheckingEvent = $this->singlesteptester->test($env, $feature, $checkingStep, $skip);
-            $exceptionCheckResult = $this->checkSkipResult($afterExceptionCheckingEvent);
+            $checkingstep = new StepNode('Given', self::EXCEPTIONS_STEP_TEXT, [], $step->getLine());
+            $afterexceptioncheckingevent = $this->singlesteptester->test($env, $feature, $checkingstep, $skip);
+            $exceptioncheckresult = $this->checkSkipResult($afterexceptioncheckingevent);
 
-            if (!$exceptionCheckResult->isPassed()) {
-                return $exceptionCheckResult;
+            if (!$exceptioncheckresult->isPassed()) {
+                return $exceptioncheckresult;
             }
 
             return $result;
@@ -138,7 +144,14 @@ class ChainedStepTester implements StepTester {
     }
 
     /**
-     * {@inheritdoc}
+     * Tears down step after a test.
+     *
+     * @param Environment $env
+     * @param FeatureNode $feature
+     * @param StepNode    $step
+     * @param bool     $skip
+     * @param StepResult  $result
+     * @return Teardown
      */
     public function tearDown(Environment $env, FeatureNode $feature, StepNode $step, $skip, StepResult $result) {
         return $this->singlesteptester->tearDown($env, $feature, $step, $skip, $result);
@@ -172,21 +185,20 @@ class ChainedStepTester implements StepTester {
      * @param Environment $env
      * @param FeatureNode $feature
      * @param ExecutedStepResult $result
-     * @param $skip
-     *
+     * @param bool $skip
      * @return ExecutedStepResult|StepResult
      */
     private function runChainedSteps(Environment $env, FeatureNode $feature, ExecutedStepResult $result, $skip) {
         // Set chained setp is used, so it can be used by formatter to o/p.
         self::$chainedstepused = true;
 
-        $callResult = $result->getCallResult();
-        $steps = $callResult->getReturn();
+        $callresult = $result->getCallResult();
+        $steps = $callresult->getReturn();
 
         if (!is_array($steps)) {
             // Test it, no need to dispatch events for single chain.
-            $stepResult = $this->test($env, $feature, $steps, $skip);
-            return $this->checkSkipResult($stepResult);
+            $stepresult = $this->test($env, $feature, $steps, $skip);
+            return $this->checkSkipResult($stepresult);
         }
 
         // Test all steps.
@@ -195,10 +207,10 @@ class ChainedStepTester implements StepTester {
             $event = new BeforeStepTested($env, $feature, $step);
             if (TestworkEventDispatcher::DISPATCHER_VERSION === 2) {
                 // Symfony 4.3 and up.
-                $this->eventDispatcher->dispatch($event, $event::BEFORE);
+                $this->eventdispatcher->dispatch($event, $event::BEFORE);
             } else {
                 // TODO: Remove when our min supported version is >= 4.3.
-                $this->eventDispatcher->dispatch($event::BEFORE, $event);
+                $this->eventdispatcher->dispatch($event::BEFORE, $event);
             }
 
             $setup = $this->setUp($env, $feature, $step, $skip);
@@ -206,23 +218,23 @@ class ChainedStepTester implements StepTester {
             $event = new AfterStepSetup($env, $feature, $step, $setup);
             if (TestworkEventDispatcher::DISPATCHER_VERSION === 2) {
                 // Symfony 4.3 and up.
-                $this->eventDispatcher->dispatch($event, $event::AFTER_SETUP);
+                $this->eventdispatcher->dispatch($event, $event::AFTER_SETUP);
             } else {
                 // TODO: Remove when our min supported version is >= 4.3.
-                $this->eventDispatcher->dispatch($event::AFTER_SETUP, $event);
+                $this->eventdispatcher->dispatch($event::AFTER_SETUP, $event);
             }
 
             // Test it.
-            $stepResult = $this->test($env, $feature, $step, $skip);
+            $stepresult = $this->test($env, $feature, $step, $skip);
 
             // Tear down.
             $event = new BeforeStepTeardown($env, $feature, $step, $result);
             if (TestworkEventDispatcher::DISPATCHER_VERSION === 2) {
                 // Symfony 4.3 and up.
-                $this->eventDispatcher->dispatch($event, $event::BEFORE_TEARDOWN);
+                $this->eventdispatcher->dispatch($event, $event::BEFORE_TEARDOWN);
             } else {
                 // TODO: Remove when our min supported version is >= 4.3.
-                $this->eventDispatcher->dispatch($event::BEFORE_TEARDOWN, $event);
+                $this->eventdispatcher->dispatch($event::BEFORE_TEARDOWN, $event);
             }
 
             $teardown = $this->tearDown($env, $feature, $step, $skip, $result);
@@ -230,18 +242,17 @@ class ChainedStepTester implements StepTester {
             $event = new AfterStepTested($env, $feature, $step, $result, $teardown);
             if (TestworkEventDispatcher::DISPATCHER_VERSION === 2) {
                 // Symfony 4.3 and up.
-                $this->eventDispatcher->dispatch($event, $event::AFTER);
+                $this->eventdispatcher->dispatch($event, $event::AFTER);
             } else {
                 // TODO: Remove when our min supported version is >= 4.3.
-                $this->eventDispatcher->dispatch($event::AFTER, $event);
+                $this->eventdispatcher->dispatch($event::AFTER, $event);
             }
 
-            //
-            if (!$stepResult->isPassed()) {
-                return $this->checkSkipResult($stepResult);
+            if (!$stepresult->isPassed()) {
+                return $this->checkSkipResult($stepresult);
             }
         }
-        return $this->checkSkipResult($stepResult);
+        return $this->checkSkipResult($stepresult);
     }
 
     /**
