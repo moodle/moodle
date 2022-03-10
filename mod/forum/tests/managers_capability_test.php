@@ -240,6 +240,18 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
         $this->getDataGenerator()->create_group_member(['userid' => $user->id, 'groupid' => $group->id]);
 
         $this->assertTrue($capabilitymanager->can_create_discussions($user, $group->id));
+
+        // Test if cut off date is reached.
+        $now = time();
+        $forum = $this->create_forum(['cutoffdate' => $now + 86400 , 'blockafter' => 5, 'blockperiod' => 86400]);
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+        $this->prevent_capability('mod/forum:postwithoutthrottling');
+        $this->assertTrue($capabilitymanager->can_create_discussions($user));
+
+        $forum = $this->create_forum(['cutoffdate' => $now + 86400 , 'blockafter' => 1, 'blockperiod' => 86400]);
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+        $this->prevent_capability('mod/forum:postwithoutthrottling');
+        $this->assertFalse($capabilitymanager->can_create_discussions($user));
     }
 
     /**
@@ -622,6 +634,18 @@ class mod_forum_managers_capability_testcase extends advanced_testcase {
         $this->getDataGenerator()->create_group_member(['userid' => $user->id, 'groupid' => $group->id]);
 
         $this->assertTrue($capabilitymanager->can_post_in_discussion($user, $discussion));
+
+        $now = time();
+        $forum = $this->create_forum(['cutoffdate' => $now + 86400 , 'blockafter' => 5, 'blockperiod' => 86400]);
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+        $this->prevent_capability('mod/forum:postwithoutthrottling');
+        $this->give_capability('mod/forum:replypost');
+        $this->assertTrue($capabilitymanager->can_post_in_discussion($user, $discussion));
+
+        $forum = $this->create_forum(['cutoffdate' => $now + 86400 , 'blockafter' => 1, 'blockperiod' => 86400]);
+        $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
+        $this->prevent_capability('mod/forum:postwithoutthrottling');
+        $this->assertFalse($capabilitymanager->can_post_in_discussion($user, $discussion));
     }
 
     /**

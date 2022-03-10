@@ -27,6 +27,17 @@
 
     Example context (json):
     {
+        "html": {
+            "hasanyactions": true,
+            "posts": "<article id='p33' class='forum-post-container mb-2' data-post-id='33'></article>",
+            "modeselectorform": "<div class='singleselect d-inline-block'> <form method='get' action='http://localhost/m/pg_stable_master/mod/forum/discuss.php' class='form-inline' id='mode'></div>",
+            "subscribe": null,
+            "movediscussion": null,
+            "pindiscussion": null,
+            "neighbourlinks": "<div class='discussion-nav clearfix'></div>",
+            "exportdiscussion": null
+        },
+        "throttlingwarningmsg": "You are approaching the posting threshold. You have posted 3 times in the last 1 week and the limit is 4 posts."
     }
 }}
 
@@ -47,6 +58,9 @@
 require(['jquery', 'mod_forum/discussion_nested_v2'], function($, Discussion) {
     var root = $('#discussion-container-{{uniqid}}');
     Discussion.init(root, {
+        {{#throttlingwarningmsg}}
+            throttlingwarningmsg: {{#quote}}{{throttlingwarningmsg}}{{/quote}},
+        {{/throttlingwarningmsg}}
         {{#loggedinuser}}
         loggedinuser: {
             profileimageurl: '{{{profileimageurl}}}',
