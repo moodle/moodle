@@ -164,7 +164,8 @@ Feature: Set availability dates for an assignment
     And I set the field "timelimit[timeunit]" to "seconds"
     # Set 'Due date' to 2 days 5 hours 30 minutes ago.
     And I set the field "Due date" to "##2 days 5 hours 30 minutes ago##"
-    And I press "Save and return to course"
+    And I press "Save and display"
+    And I should see "5 secs" in the "Time limit" "table_row"
     And I log out
 
     When I am on the "Assignment name" Activity page logged in as student1

@@ -371,6 +371,14 @@ class renderer extends \plugin_renderer_base {
 
         }
 
+        // Add time limit info if there is one.
+        $timelimitenabled = get_config('assign', 'enabletimelimit');
+        if ($timelimitenabled && $summary->timelimit > 0) {
+            $cell1content = get_string('timelimit', 'assign');
+            $cell2content = format_time($summary->timelimit);
+            $this->add_table_row_tuple($t, $cell1content, $cell2content, [], []);
+        }
+
         // All done - write the table.
         $o .= \html_writer::table($t);
         $o .= $this->output->box_end();
