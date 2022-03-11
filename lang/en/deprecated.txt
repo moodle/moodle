@@ -79,3 +79,4 @@ loggedoffdescription,core_message
 sendingvia,core_message
 sendingviawhen,core_message
 close,core_contentbank
+notflagged,core_question

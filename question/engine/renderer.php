@@ -256,8 +256,6 @@ class core_question_renderer extends plugin_renderer_base {
      * @param int $flagsoption the option that says whether flags should be displayed.
      */
     protected function question_flag(question_attempt $qa, $flagsoption) {
-        global $CFG;
-
         $divattributes = array('class' => 'questionflag');
 
         switch ($flagsoption) {
@@ -283,17 +281,14 @@ class core_question_renderer extends plugin_renderer_base {
 
                 $flagcontent = html_writer::empty_tag('input',
                                 array('type' => 'hidden', 'name' => $id, 'value' => 0)) .
-                        html_writer::empty_tag('input', $checkboxattributes) .
                         html_writer::empty_tag('input',
                                 array('type' => 'hidden', 'value' => $postdata, 'class' => 'questionflagpostdata')) .
+                        html_writer::empty_tag('input', $checkboxattributes) .
                         html_writer::tag('label', $this->get_flag_html($qa->is_flagged(), $id . 'img'),
                                 array('id' => $id . 'label', 'for' => $id . 'checkbox')) . "\n";
 
                 $divattributes = array(
                     'class' => 'questionflag editable',
-                    'aria-atomic' => 'true',
-                    'aria-relevant' => 'text',
-                    'aria-live' => 'assertive',
                 );
 
                 break;
@@ -315,18 +310,16 @@ class core_question_renderer extends plugin_renderer_base {
     protected function get_flag_html($flagged, $id = '') {
         if ($flagged) {
             $icon = 'i/flagged';
-            $alt = get_string('flagged', 'question');
             $label = get_string('clickunflag', 'question');
         } else {
             $icon = 'i/unflagged';
-            $alt = get_string('notflagged', 'question');
             $label = get_string('clickflag', 'question');
         }
-        $attributes = array(
+        $attributes = [
             'src' => $this->image_url($icon),
-            'alt' => $alt,
+            'alt' => '',
             'class' => 'questionflagimage',
-        );
+        ];
         if ($id) {
             $attributes['id'] = $id;
         }
@@ -336,10 +329,14 @@ class core_question_renderer extends plugin_renderer_base {
         return $img;
     }
 
-    protected function edit_question_link(question_attempt $qa,
-            question_display_options $options) {
-        global $CFG;
-
+    /**
+     * Generate the display of the edit question link.
+     *
+     * @param question_attempt $qa The question attempt to display.
+     * @param question_display_options $options controls what should and should not be displayed.
+     * @return string
+     */
+    protected function edit_question_link(question_attempt $qa, question_display_options $options) {
         if (empty($options->editquestionparams)) {
             return '';
         }
