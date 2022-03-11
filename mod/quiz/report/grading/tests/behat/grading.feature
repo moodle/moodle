@@ -58,9 +58,7 @@ Feature: Basic use of the Manual grading report
       | Short answer 001 | 1    |
 
   Scenario: Manual grading report without attempts
-    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher1"
-    And I navigate to "Results" in current page administration
-    And I select "Manual grading" from the "jump" singleselect
+    When I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "teacher1"
     Then I should see "Separate groups (Tutor groups)"
     And I should see "All participants"
     And I should see "Quiz 1"
@@ -74,9 +72,7 @@ Feature: Basic use of the Manual grading report
       | slot | response |
       | 1    | Paris    |
     And I reload the page
-    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher1"
-    And I navigate to "Results" in current page administration
-    And I select "Manual grading" from the "jump" singleselect
+    When I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "teacher1"
     Then I should see "Separate groups (Tutor groups)"
     And I should see "All participants"
     And I should see "Quiz 1"
@@ -158,15 +154,13 @@ Feature: Basic use of the Manual grading report
     And I should not see "You must enter a number that is greater than 0."
 
   Scenario: A marker cannot access the report in separate group
-    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "marker"
-    And user "student1" has attempted "Quiz 1" with responses:
+    Given user "student1" has attempted "Quiz 1" with responses:
       | slot | response |
       | 1    | frog     |
     And user "student2" has attempted "Quiz 1" with responses:
       | slot | response |
       | 1    | Duck     |
-    When I navigate to "Results" in current page administration
-    And I select "Manual grading" from the "jump" singleselect
+    When I am on the "Quiz 1" "mod_quiz > Manual grading report" page logged in as "marker"
     Then I should see "Quiz 1"
     And I should see "Separate groups: All participants"
     Then I should see "Sorry, but you need to be part of a group to see this page."
