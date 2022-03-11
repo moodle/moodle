@@ -541,7 +541,7 @@ abstract class question_edit_form extends question_wizard_form {
         }
         $penaltyoptions = array();
         foreach ($penalties as $penalty) {
-            $penaltyoptions["{$penalty}"] = (100 * $penalty) . '%';
+            $penaltyoptions["{$penalty}"] = format_float(100 * $penalty, 5, true, true) . '%';
         }
         $mform->addElement('select', 'penalty',
                 get_string('penaltyforeachincorrecttry', 'question'), $penaltyoptions);

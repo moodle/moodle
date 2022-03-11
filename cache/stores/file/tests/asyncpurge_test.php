@@ -16,7 +16,6 @@
 
 namespace cachestore_file;
 
-use advanced_testcase;
 use cache_definition;
 use cache_store;
 use cachestore_file;
@@ -30,7 +29,7 @@ use cachestore_file;
  * @author    Jackson D'Souza <jackson.dsouza@catalyst-eu.net>
  * @coversDefaultClass \cachestore_file
  */
-class asyncpurge_test extends advanced_testcase {
+class asyncpurge_test extends \advanced_testcase {
 
     /**
      * Testing Asynchronous file store cache purge

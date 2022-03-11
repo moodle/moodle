@@ -14,16 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test completion progress API.
- *
- * @package core_completion
- * @category test
- * @copyright 2017 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_completion;
 
-defined('MOODLE_INTERNAL') || die();
+use completion_completion;
 
 /**
  * Test completion progress API.
@@ -33,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_completion_progress_testcase extends advanced_testcase {
+class progress_test extends \advanced_testcase {
 
     /**
      * Test setup.
@@ -75,7 +68,7 @@ class core_completion_progress_testcase extends advanced_testcase {
         // Mark two of them as completed for a user.
         $cmassign = get_coursemodule_from_id('assign', $assign->cmid);
         $cmdata = get_coursemodule_from_id('data', $data->cmid);
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->update_state($cmassign, COMPLETION_COMPLETE, $user->id);
         $completion->update_state($cmdata, COMPLETION_COMPLETE, $user->id);
 
@@ -114,7 +107,7 @@ class core_completion_progress_testcase extends advanced_testcase {
         // Mark two of them as completed for a user.
         $cmassign = get_coursemodule_from_id('assign', $assign->cmid);
         $cmdata = get_coursemodule_from_id('data', $data->cmid);
-        $completion = new completion_info($course);
+        $completion = new \completion_info($course);
         $completion->update_state($cmassign, COMPLETION_COMPLETE, $user->id);
         $completion->update_state($cmdata, COMPLETION_COMPLETE, $user->id);
 

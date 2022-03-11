@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the essay question definition class.
- *
- * @package    qtype
- * @subpackage essay
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_essay;
 
+use question_attempt_step;
+use question_display_options;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,12 +28,13 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * Unit tests for the matching question definition class.
  *
+ * @package qtype_essay
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_essay_question_test extends advanced_testcase {
+class question_test extends \advanced_testcase {
     public function test_get_question_summary() {
-        $essay = test_question_maker::make_an_essay_question();
+        $essay = \test_question_maker::make_an_essay_question();
         $essay->questiontext = 'Hello <img src="http://example.com/globe.png" alt="world" />';
         $this->assertEquals('Hello [world]', $essay->get_question_summary());
     }
@@ -65,7 +61,7 @@ class qtype_essay_question_test extends advanced_testcase {
         $attachments = $this->create_user_and_sample_attachments($numberofattachments);
 
         // Create the essay question under test.
-        $essay = test_question_maker::make_an_essay_question();
+        $essay = \test_question_maker::make_an_essay_question();
         $essay->start_attempt(new question_attempt_step(), 1);
 
         $essay->responseformat = 'editor';
@@ -105,7 +101,7 @@ class qtype_essay_question_test extends advanced_testcase {
     }
 
     public function test_is_same_response() {
-        $essay = test_question_maker::make_an_essay_question();
+        $essay = \test_question_maker::make_an_essay_question();
 
         $essay->responsetemplate = '';
 
@@ -149,7 +145,7 @@ class qtype_essay_question_test extends advanced_testcase {
     }
 
     public function test_is_same_response_with_template() {
-        $essay = test_question_maker::make_an_essay_question();
+        $essay = \test_question_maker::make_an_essay_question();
 
         $essay->responsetemplate = 'Once upon a time';
 
@@ -199,7 +195,7 @@ class qtype_essay_question_test extends advanced_testcase {
         $attachments = $this->create_user_and_sample_attachments();
 
         // Create the essay question under test.
-        $essay = test_question_maker::make_an_essay_question();
+        $essay = \test_question_maker::make_an_essay_question();
         $essay->start_attempt(new question_attempt_step(), 1);
 
         // Test the "traditional" case, where we must receive a response from the user.
@@ -309,10 +305,10 @@ class qtype_essay_question_test extends advanced_testcase {
     public function test_get_question_definition_for_external_rendering() {
         $this->resetAfterTest();
 
-        $essay = test_question_maker::make_an_essay_question();
+        $essay = \test_question_maker::make_an_essay_question();
         $essay->minwordlimit = 15;
         $essay->start_attempt(new question_attempt_step(), 1);
-        $qa = test_question_maker::get_a_qa($essay);
+        $qa = \test_question_maker::get_a_qa($essay);
         $displayoptions = new question_display_options();
 
         $options = $essay->get_question_definition_for_external_rendering($qa, $displayoptions);
@@ -343,7 +339,7 @@ class qtype_essay_question_test extends advanced_testcase {
      */
     public function test_get_validation_error(int $responserequired,
                                               int $minwordlimit, int $maxwordlimit, string $expected): void {
-        $question = test_question_maker::make_an_essay_question();
+        $question = \test_question_maker::make_an_essay_question();
         $response = ['answer' => 'One two three four five six seven eight nine ten eleven twelve thirteen fourteen.'];
         $question->responserequired = $responserequired;
         $question->minwordlimit = $minwordlimit;
@@ -380,7 +376,7 @@ class qtype_essay_question_test extends advanced_testcase {
      * @param string $expected error message | null
      */
     public function test_get_word_count_message_for_review(?int $minwordlimit, ?int $maxwordlimit, string $expected): void {
-        $question = test_question_maker::make_an_essay_question();
+        $question = \test_question_maker::make_an_essay_question();
         $question->minwordlimit = $minwordlimit;
         $question->maxwordlimit = $maxwordlimit;
 
@@ -425,7 +421,7 @@ class qtype_essay_question_test extends advanced_testcase {
         $this->setUser($user);
 
         // Create sample attachments to use in testing.
-        $helper = test_question_maker::get_test_helper('essay');
+        $helper = \test_question_maker::get_test_helper('essay');
         $attachments = [];
         for ($i = 0; $i < ($numberofattachments + 1); ++$i) {
             $attachments[$i] = $helper->make_attachments_saver($i);

@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
+
+
 /**
  * These tests rely on the rsstest.xml file on download.moodle.org,
  * from eloys listing:
@@ -24,30 +32,23 @@
  * If networking/proxy configuration is wrong these tests will fail..
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2009 Dan Poltawski
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
-
-
-class core_rsslib_testcase extends advanced_testcase {
+class rsslib_test extends \advanced_testcase {
 
     // The number of seconds tests should wait for the server to respond (high to prevent false positives).
     const TIMEOUT = 10;
 
     protected function setUp(): void {
-        moodle_simplepie::reset_cache();
+        \moodle_simplepie::reset_cache();
     }
 
     public function test_getfeed() {
-        $feed = new moodle_simplepie($this->getExternalTestFileUrl('/rsstest.xml'), self::TIMEOUT);
+        $feed = new \moodle_simplepie($this->getExternalTestFileUrl('/rsstest.xml'), self::TIMEOUT);
 
-        $this->assertInstanceOf('moodle_simplepie', $feed);
+        $this->assertInstanceOf('\moodle_simplepie', $feed);
 
         $this->assertNull($feed->error(), "Failed to load the sample RSS file. Please check your proxy settings in Moodle. %s");
 
@@ -103,7 +104,7 @@ EOD;
 
         // We do not want this in php error log.
         $errorlevel = error_reporting($CFG->debug & ~E_USER_NOTICE);
-        $feed = new moodle_simplepie($this->getExternalTestFileUrl('/rsstest-which-doesnt-exist.xml'), self::TIMEOUT);
+        $feed = new \moodle_simplepie($this->getExternalTestFileUrl('/rsstest-which-doesnt-exist.xml'), self::TIMEOUT);
         error_reporting($errorlevel);
 
         $this->assertNotEmpty($feed->error());
@@ -121,7 +122,7 @@ EOD;
         $oldproxybypass = $CFG->proxybypass; // Ensure we don't get locally served extests bypassing the proxy.
         $CFG->proxybypass = '';
 
-        $feed = new moodle_simplepie($this->getExternalTestFileUrl('/rsstest.xml'));
+        $feed = new \moodle_simplepie($this->getExternalTestFileUrl('/rsstest.xml'));
 
         $this->assertNotEmpty($feed->error());
         $this->assertEmpty($feed->get_title());
@@ -133,7 +134,7 @@ EOD;
      * Test retrieving a url which sends a redirect to another valid feed.
      */
     public function test_redirect() {
-        $feed = new moodle_simplepie($this->getExternalTestFileUrl('/rss_redir.php'), self::TIMEOUT);
+        $feed = new \moodle_simplepie($this->getExternalTestFileUrl('/rss_redir.php'), self::TIMEOUT);
 
         $this->assertNull($feed->error());
         $this->assertSame('Moodle News', $feed->get_title());

@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Search engine base unit tests.
- *
- * @package     core_search
- * @copyright   2017 Matt Porritt <mattp@catalyst-au.net>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_search;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +29,7 @@ require_once($CFG->dirroot . '/search/tests/fixtures/mock_search_area.php');
  * @copyright   2017 Matt Porritt <mattp@catalyst-au.net>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_base_testcase extends advanced_testcase {
+class base_test extends \advanced_testcase {
     /**
      * @var \core_search::manager
      */
@@ -56,7 +50,7 @@ class search_base_testcase extends advanced_testcase {
         set_config('enableglobalsearch', true);
 
         // Set \core_search::instance to the mock_search_engine as we don't require the search engine to be working to test this.
-        $search = testable_core_search::instance();
+        $search = \testable_core_search::instance();
 
         $this->generator = self::getDataGenerator()->get_plugin_generator('core_search');
         $this->generator->setup();
@@ -107,7 +101,7 @@ class search_base_testcase extends advanced_testcase {
         // Construct the search document.
         $rec = new \stdClass();
         $rec->contextid = 1;
-        $area = new core_mocksearch\search\mock_search_area();
+        $area = new \core_mocksearch\search\mock_search_area();
         $record = $this->generator->create_record($rec);
         $document = $area->get_document($record);
 
@@ -135,7 +129,7 @@ class search_base_testcase extends advanced_testcase {
      * Tests the base version (stub) of get_contexts_to_reindex.
      */
     public function test_get_contexts_to_reindex() {
-        $area = new core_mocksearch\search\mock_search_area();
+        $area = new \core_mocksearch\search\mock_search_area();
         $this->assertEquals([\context_system::instance()],
                 iterator_to_array($area->get_contexts_to_reindex(), false));
     }

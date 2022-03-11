@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace logstore_legacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/fixtures/event.php');
+require_once(__DIR__ . '/fixtures/store.php');
+
 /**
  * Legacy log store tests.
  *
@@ -21,13 +28,7 @@
  * @copyright  2014 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/fixtures/event.php');
-require_once(__DIR__ . '/fixtures/store.php');
-
-class logstore_legacy_store_testcase extends advanced_testcase {
+class store_test extends \advanced_testcase {
     public function test_log_writing() {
         global $DB;
         $this->resetAfterTest();
@@ -58,12 +59,12 @@ class logstore_legacy_store_testcase extends advanced_testcase {
 
         $this->setUser(0);
         $event1 = \logstore_legacy\event\unittest_executed::create(
-            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)));
+            array('context' => \context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)));
         $event1->trigger();
 
         $this->setUser($user1);
         $event2 = \logstore_legacy\event\unittest_executed::create(
-            array('context' => context_course::instance($course2->id), 'other' => array('sample' => 6, 'xx' => 11)));
+            array('context' => \context_course::instance($course2->id), 'other' => array('sample' => 6, 'xx' => 11)));
         $event2->trigger();
 
         $logs = $DB->get_records('log', array(), 'id ASC');

@@ -26,32 +26,31 @@
     }
 }}
 
-<div class="mb-1 mr-1 d-flex align-items-center">
+<div class="mb-1 mr-1 d-flex flex-wrap align-items-center">
     <div class="dropdown">
-        <button id="sortingdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:sortingdropdown, block_myoverview {{/str}}">
-            {{#pix}} t/sort_by {{/pix}}
-            <span class="sr-only" data-active-item-text>
-                {{#title}}{{#str}} title, block_myoverview {{/str}}{{/title}}
-                {{#lastaccessed}}{{#str}} lastaccessed, block_myoverview {{/str}}{{/lastaccessed}}
-                {{#shortname}}{{#str}} shortname, block_myoverview {{/str}}{{/shortname}}
+        <button id="sortingdropdown" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:sortingdropdown, block_myoverview {{/str}}">
+            <span data-active-item-text>
+                {{#title}}{{#str}} sortbytitle, block_myoverview {{/str}}{{/title}}
+                {{#lastaccessed}}{{#str}} sortbylastaccessed, block_myoverview {{/str}}{{/lastaccessed}}
+                {{#shortname}}{{#str}} sortbyshortname, block_myoverview {{/str}}{{/shortname}}
             </span>
         </button>
         <ul class="dropdown-menu" role="menu" data-show-active-item data-skip-active-class="true" aria-labelledby="sortingdropdown">
             <li>
-                <a class="dropdown-item" href="#" data-filter="sort" data-pref="title" data-value="fullname" aria-label="{{#str}} aria:title, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#title}}aria-current="true"{{/title}}>
-                    {{#str}} title, block_myoverview {{/str}}
+                <a class="dropdown-item" href="#" data-filter="sort" data-pref="title" data-value="fullname" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#title}}aria-current="true"{{/title}}>
+                    {{#str}} sortbytitle, block_myoverview {{/str}}
                 </a>
             </li>
             {{#showsortbyshortname}}
             <li>
-                <a class="dropdown-item" href="#" data-filter="sort" data-pref="shortname" data-value="shortname" aria-label="{{#str}} aria:shortname, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#shortname}}aria-current="true"{{/shortname}}>
-                    {{#str}} shortname, block_myoverview {{/str}}
+                <a class="dropdown-item" href="#" data-filter="sort" data-pref="shortname" data-value="shortname" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#shortname}}aria-current="true"{{/shortname}}>
+                    {{#str}} sortbyshortname, block_myoverview {{/str}}
                 </a>
             </li>
              {{/showsortbyshortname}}
             <li>
-                <a class="dropdown-item" href="#" data-filter="sort" data-pref="lastaccessed" data-value="ul.timeaccess desc" aria-label="{{#str}} aria:lastaccessed, block_myoverview {{/str}}" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#lastaccessed}}aria-current="true"{{/lastaccessed}}>
-                    {{#str}} lastaccessed, block_myoverview {{/str}}
+                <a class="dropdown-item" href="#" data-filter="sort" data-pref="lastaccessed" data-value="ul.timeaccess desc" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#lastaccessed}}aria-current="true"{{/lastaccessed}}>
+                    {{#str}} sortbylastaccessed, block_myoverview {{/str}}
                 </a>
             </li>
         </ul>

@@ -2690,13 +2690,20 @@ $picker-emojis-per-row: 7 !default;
 
     .breadcrumb:not(:empty) {
         width: 100%;
-        border: ($border-width * 2) solid $gray-200;
-        padding: $spacer / 4;
+        flex-wrap: nowrap;
         margin-bottom: $spacer / 2;
         .breadcrumb-item {
             padding-top: $spacer / 3;
             padding-bottom: $spacer / 3;
-            display: inline-block;
+            display: inline-flex;
+            overflow: hidden;
+            flex-grow: 1;
+        }
+        .breadcrumb-item a,
+        .breadcrumb-item span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 

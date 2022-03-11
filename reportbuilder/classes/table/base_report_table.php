@@ -262,7 +262,7 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
 
         $this->wrap_html_start();
 
-        echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+        echo html_writer::start_tag('div');
         echo html_writer::start_tag('table', $this->attributes);
     }
 }

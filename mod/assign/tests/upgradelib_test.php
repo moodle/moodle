@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for (some of) mod/assign/upgradelib.php.
- *
- * @package    mod_assign
- * @category   phpunit
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+namespace mod_assign;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,10 +26,12 @@ require_once($CFG->dirroot . '/mod/assignment/lib.php');
 /**
  * Unit tests for (some of) mod/assign/upgradelib.php.
  *
+ * @package    mod_assign
+ * @category   test
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assign_upgradelib_testcase extends advanced_testcase {
+class upgradelib_test extends \advanced_testcase {
 
     /**
      * Data provider for assignment upgrade.
@@ -133,15 +127,15 @@ class mod_assign_upgradelib_testcase extends advanced_testcase {
         // Run the upgrade.
         $this->setAdminUser();
         $log = '';
-        $upgrader = new assign_upgrade_manager();
+        $upgrader = new \assign_upgrade_manager();
 
         $this->assertTrue($upgrader->upgrade_assignment($assignment->id, $log));
         $record = $DB->get_record('assign', ['course' => $course->id]);
 
         $cm = get_coursemodule_from_instance('assign', $record->id);
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
 
-        $assign = new assign($context, $cm, $course);
+        $assign = new \assign($context, $cm, $course);
 
         foreach ($plugins as $plugin => $isempty) {
             $plugin = $assign->get_submission_plugin_by_type($plugin);

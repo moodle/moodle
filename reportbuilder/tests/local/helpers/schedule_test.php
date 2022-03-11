@@ -300,8 +300,23 @@ class schedule_test extends advanced_testcase {
                 'recurrence' => model::RECURRENCE_NONE,
                 'timescheduled' => $yesterday,
             ], true],
+            'Time scheduled in the past, already sent prior to schedule' => [[
+                'recurrence' => model::RECURRENCE_NONE,
+                'timescheduled' => $yesterday,
+                'timelastsent' => $yesterday - HOURSECS,
+            ], true],
+            'Time scheduled in the past, already sent on schedule' => [[
+                'recurrence' => model::RECURRENCE_NONE,
+                'timescheduled' => $yesterday,
+                'timelastsent' => $yesterday,
+            ], false],
             'Time scheduled in the future' => [[
                 'recurrence' => model::RECURRENCE_NONE,
+                'timescheduled' => $tomorrow,
+            ], false],
+            'Time scheduled in the future, already sent prior to schedule' => [[
+                'recurrence' => model::RECURRENCE_NONE,
+                'timelastsent' => $yesterday,
                 'timescheduled' => $tomorrow,
             ], false],
             'Next send in the past' => [[

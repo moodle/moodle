@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the condition.
- *
- * @package availability_group
- * @copyright 2014 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-use availability_group\condition;
+namespace availability_group;
 
 /**
  * Unit tests for the condition.
@@ -33,7 +23,7 @@ use availability_group\condition;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class availability_group_condition_testcase extends advanced_testcase {
+class condition_test extends \advanced_testcase {
     /**
      * Load required classes.
      */
@@ -125,7 +115,7 @@ class availability_group_condition_testcase extends advanced_testcase {
         try {
             $cond = new condition($structure);
             $this->fail();
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertStringContainsString('Invalid ->id', $e->getMessage());
         }
 

@@ -69,6 +69,47 @@ Feature: Grade letters can be overridden
       |    |       |    |       |    |       | A  | 95.25 | B  | 76.75 | C  | 50.01 | D  | 40 | F  | 0.01 | F- | 0  | 100.00 % | 95.25 %  | A       | 95.24 % | 76.75 % | B       | 76.74 %  | 50.01 % | C       | 50.00 %  | 40.00 % | D       | 39.99 %  | 0.01 %  | F       | 0.00 %   | 0.00 %  | F-      |
       |    |       | A  | 95.25 | B  | 76.75 | C  | 50.01 |    |       |    |       | D  | 40 | F  | 0.01 | F- | 0  | 100.00 % | 95.25 %  | A       | 95.24 % | 76.75 % | B       | 76.74 %  | 50.01 % | C       | 50.00 %  | 40.00 % | D       | 39.99 %  | 0.01 %  | F       | 0.00 %   | 0.00 %  | F-      |
 
+  Scenario Outline: Define grade letters with custom decimal separator
+    Given the following "language customisations" exist:
+      | component       | stringid | value        |
+      | core_langconfig | decsep   | <decsep>     |
+    When I set the following fields to these values:
+      | override               | 1    |
+      | Grade letter 1         | <l1> |
+      | gradeboundary1         | <b1> |
+      | Grade letter 2         | <l2> |
+      | gradeboundary2         | <b2> |
+      | Grade letter 3         | <l3> |
+      | gradeboundary3         | <b3> |
+      | Grade letter 4         |      |
+      | gradeboundary4         |      |
+      | Grade letter 5         |      |
+      | gradeboundary5         |      |
+      | Grade letter 6         |      |
+      | gradeboundary6         |      |
+      | Grade letter 7         |      |
+      | gradeboundary7         |      |
+      | Grade letter 8         |      |
+      | gradeboundary8         |      |
+      | Grade letter 9         |      |
+      | gradeboundary9         |      |
+      | Grade letter 10        |      |
+      | gradeboundary10        |      |
+      | Grade letter 11        |      |
+      | gradeboundary11        |      |
+    And I press "Save changes"
+    Then I should see "The default grade letters are currently overridden."
+    And the following should exist in the "grade-letters-view" table:
+      | Highest | Lowest | Letter |
+      | <high1> | <low1> | <l1>   |
+      | <high2> | <low2> | <l2>   |
+      | <high3> | <low3> | <l3>   |
+
+    Examples:
+      | decsep | l1 | b1    | l2 | b2    | l3 | b3   | high1    | low1    | high2   | low2    | high3   | low3   |
+      | .      | A  | 88.88 | B  | 50.00 | C  | 0.00 | 100.00 % | 88.88 % | 88.87 % | 50.00 % | 49.99 % | 0.00 % |
+      | #      | A  | 88#88 | B  | 50#00 | C  | 0#00 | 100#00 % | 88#88 % | 88#87 % | 50#00 % | 49#99 % | 0#00 % |
+
   Scenario: I delete a grade letter
     Given I set the following fields to these values:
       | override               | 1  |

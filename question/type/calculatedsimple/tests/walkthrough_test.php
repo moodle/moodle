@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains overall tests of simple calculated questions.
- *
- * @package    qtype
- * @subpackage calculatedsimple
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_calculatedsimple;
 
+use question_hint;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,14 +28,15 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * Unit tests for the simple calculated question type.
  *
+ * @package    qtype_calculatedsimple
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculatedsimple_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_interactive() {
 
         // Create a gapselect question.
-        $q = test_question_maker::make_question('calculatedsimple');
+        $q = \test_question_maker::make_question('calculatedsimple');
         $q->hints = array(
             new question_hint(1, 'This is the first hint.', FORMAT_HTML),
             new question_hint(2, 'This is the second hint.', FORMAT_HTML),
@@ -84,7 +80,7 @@ class qtype_calculatedsimple_walkthrough_test extends qbehaviour_walkthrough_tes
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_contains_validation_error_expectation(),
-                new question_pattern_expectation('/' .
+                new \question_pattern_expectation('/' .
                         preg_quote(get_string('invalidnumber', 'qtype_numerical'), '/') . '/'),
                 $this->get_does_not_contain_try_again_button_expectation(),
                 $this->get_no_hint_visible_expectation());
