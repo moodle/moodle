@@ -622,6 +622,7 @@ class helper {
             'isdrawer' => $isdrawer,
             'showemojipicker' => !empty($CFG->allowemojipicker),
             'messagemaxlength' => api::MESSAGE_MAX_LENGTH,
+            'caneditownmessageprofile' => has_capability('moodle/user:editownmessageprofile', \context_system::instance())
         ];
 
         if ($sendtouser || $conversationid) {
