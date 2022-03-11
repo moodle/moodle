@@ -36,6 +36,10 @@ $login-identity-provider-btn-border: $border-color !default;
     .login-languagemenu {
         display: flex;
         justify-content: flex-start;
+        .dropdown-menu {
+            max-height: 300px;
+            overflow-y: auto;
+        }
     }
     .login-logo {
         display: flex;
