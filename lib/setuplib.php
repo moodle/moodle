@@ -1423,7 +1423,7 @@ function disable_output_buffering() {
  */
 function is_major_upgrade_required() {
     global $CFG;
-    $lastmajordbchanges = 2021101900.01;
+    $lastmajordbchanges = 2022022200.00;
 
     $required = empty($CFG->version);
     $required = $required || (float)$CFG->version < $lastmajordbchanges;
