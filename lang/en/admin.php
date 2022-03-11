@@ -1327,6 +1327,7 @@ $string['task_duration'] = 'Duration';
 $string['task_dbstats'] = 'Database';
 $string['task_result'] = 'Result';
 $string['tasktype'] = 'Type';
+$string['tasklockcleanuptask'] = 'Clean up ad hoc task metadata';
 $string['taskadmintitle'] = 'Tasks';
 $string['taskanalyticscleanup'] = 'Analytics cleanup';
 $string['taskautomatedbackup'] = 'Automated backups';
