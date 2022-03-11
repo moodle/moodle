@@ -27,13 +27,15 @@
 
     Context variables required for this template:
     * displayname   The component display name
-    * processors    The list of processors for this component
+    * colspan       The number of columns the row should span
+    * hasnotifications Whether any notifications exist
     * notifications The list of notifications
 
     Example context (json):
     {
         "displayname": "System",
         "colspan": 2,
+        "hasnotifications": 1,
         "notifications": [
             {
                 "displayname": "Notices about minor problems",
@@ -52,9 +54,11 @@
         ]
     }
 }}
-<tr>
-    <th colspan="{{{colspan}}}">{{{displayname}}}</th>
-</tr>
-{{#notifications}}
-    {{> message/notification_preferences_component_notification }}
-{{/notifications}}
+{{#hasnotifications}}
+    <tr>
+        <th colspan="{{{colspan}}}">{{{displayname}}}</th>
+    </tr>
+    {{#notifications}}
+        {{> message/notification_preferences_component_notification }}
+    {{/notifications}}
+{{/hasnotifications}}
