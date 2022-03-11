@@ -94,4 +94,23 @@ class badges_test extends core_reportbuilder_testcase {
             return array_values($row);
         }, $content));
     }
+
+    /**
+     * Stress test datasource
+     */
+    public function test_stress_datasource(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+
+        /** @var core_badges_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
+        $badge = $generator->create_badge(['name' => 'Course badge', 'type' => BADGE_TYPE_COURSE, 'courseid' => $course->id]);
+        $badge->issue($user->id, true);
+
+        $this->datasource_stress_test_columns(badges::class);
+        $this->datasource_stress_test_columns_aggregation(badges::class);
+        $this->datasource_stress_test_conditions(badges::class, 'badge:name');
+    }
 }

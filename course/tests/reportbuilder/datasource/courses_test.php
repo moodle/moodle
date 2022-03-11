@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_course\reportbuilder\datasource;
 
+use core_customfield_generator;
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\filters\tags;
@@ -191,5 +192,24 @@ class courses_test extends core_reportbuilder_testcase {
         } else {
             $this->assertEmpty($content);
         }
+    }
+
+    /**
+     * Stress test datasource
+     */
+    public function test_stress_datasource(): void {
+        $this->resetAfterTest();
+
+        /** @var core_customfield_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
+        $customfieldcategory = $generator->create_category();
+        $generator->create_field(['categoryid' => $customfieldcategory->get('id'), 'shortname' => 'hi']);
+
+        $category = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course(['category' => $category->id, 'customfield_hi' => 'Hello']);
+
+        $this->datasource_stress_test_columns(courses::class);
+        $this->datasource_stress_test_columns_aggregation(courses::class);
+        $this->datasource_stress_test_conditions(courses::class, 'course:idnumber');
     }
 }

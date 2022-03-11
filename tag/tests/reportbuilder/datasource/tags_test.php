@@ -258,4 +258,17 @@ class tags_test extends core_reportbuilder_testcase {
             $this->assertEmpty($content);
         }
     }
+
+    /**
+     * Stress test datasource
+     */
+    public function test_stress_datasource(): void {
+        $this->resetAfterTest();
+
+        $this->getDataGenerator()->create_course(['tags' => ['Horses']]);
+
+        $this->datasource_stress_test_columns(tags::class);
+        $this->datasource_stress_test_columns_aggregation(tags::class);
+        $this->datasource_stress_test_conditions(tags::class, 'tag:name');
+    }
 }

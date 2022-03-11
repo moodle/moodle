@@ -29,7 +29,7 @@ global $CFG;
 require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 
 /**
- * Unit tests for users datasources
+ * Unit tests for users datasource
  *
  * @package     core_user
  * @covers      \core_user\reportbuilder\datasource\users
@@ -154,5 +154,19 @@ class users_test extends core_reportbuilder_testcase {
         } else {
             $this->assertEmpty($content);
         }
+    }
+
+    /**
+     * Stress test datasource
+     */
+    public function test_stress_datasource(): void {
+        $this->resetAfterTest();
+
+        $this->getDataGenerator()->create_custom_profile_field(['datatype' => 'text', 'name' => 'Hi', 'shortname' => 'hi']);
+        $user = $this->getDataGenerator()->create_user(['profile_field_hi' => 'Hello']);
+
+        $this->datasource_stress_test_columns(users::class);
+        $this->datasource_stress_test_columns_aggregation(users::class);
+        $this->datasource_stress_test_conditions(users::class, 'user:username');
     }
 }

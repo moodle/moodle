@@ -40,4 +40,8 @@ Information provided here is intended especially for developers.
   - `tags` for reports containing entities with support for core_tag API
   - `autocomplete` for reports that contain pre-defined values for selection.
 * New method `get_sample_values()` added to base filter class, to be overridden in all filter types to support stress testing
+* New test helpers for automated stress testing of report sources:
+  - `datasource_stress_test_columns`
+  - `datasource_stress_test_columns_aggregation`
+  - `datasource_stress_test_conditions`
 * The test helper method `get_custom_report_content()` now accepts a list of filter values and applies them to the report
