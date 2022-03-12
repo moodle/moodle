@@ -146,7 +146,7 @@ class mod_quiz_mod_form extends moodleform_mod {
                 get_string('newpage', 'quiz'), quiz_questions_per_page_options(), array('id' => 'id_questionsperpage'));
         $mform->setDefault('questionsperpage', $quizconfig->questionsperpage);
 
-        if (!empty($this->_cm)) {
+        if (!empty($this->_cm) && !quiz_has_attempts($this->_cm->instance)) {
             $pagegroup[] = $mform->createElement('checkbox', 'repaginatenow', '',
                     get_string('repaginatenow', 'quiz'), array('id' => 'id_repaginatenow'));
         }
