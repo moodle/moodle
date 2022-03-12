@@ -154,7 +154,7 @@ function quiz_update_instance($quiz, $mform) {
     quiz_delete_previews($quiz);
 
     // Repaginate, if asked to.
-    if (!empty($quiz->repaginatenow)) {
+    if (!empty($quiz->repaginatenow) && !quiz_has_attempts($quiz->id)) {
         quiz_repaginate_questions($quiz->id, $quiz->questionsperpage);
     }
 
