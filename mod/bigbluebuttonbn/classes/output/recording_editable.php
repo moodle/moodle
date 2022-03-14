@@ -115,7 +115,8 @@ abstract class recording_editable extends \core\output\inplace_editable {
         $recording = recording::get_record(['id' => $itemid]);
         $instance = instance::get_from_instanceid($recording->get('bigbluebuttonbnid'));
 
-        require_login($instance->get_course());
+        require_login($instance->get_course(), true, $instance->get_cm());
+        require_capability('mod/bigbluebuttonbn:managerecordings', $instance->get_context());
 
         $recording->set(static::get_type(), $value);
         $recording->update();
