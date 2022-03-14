@@ -153,11 +153,11 @@ class standard_action_bar implements renderable, templatable {
      * Render the add entry button
      *
      * @param renderer_base $output
-     * @return \stdClass
+     * @return \stdClass|null
      */
-    private function create_add_button(renderer_base $output): \stdClass {
+    private function create_add_button(renderer_base $output): ?\stdClass {
         if (!has_capability('mod/glossary:write', $this->context)) {
-            return '';
+            return null;
         }
         $btn = new single_button(new moodle_url('/mod/glossary/edit.php', ['cmid' => $this->cm->id]),
             get_string('addsingleentry', 'glossary'), 'post', true);
