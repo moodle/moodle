@@ -474,7 +474,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
 
                     if ($module->activity && $assign->submissions_open($USER->id, true)) {
                         list($assignment['activity'], $assignment['activityformat']) = external_format_text($module->activity,
-                                $module->activityformat, $context->id, 'mod_assign', ASSIGN_ACTIVITYATTACHMENT_FILEAREA);
+                                $module->activityformat, $context->id, 'mod_assign', ASSIGN_ACTIVITYATTACHMENT_FILEAREA, 0);
                         $assignment['activityattachments'] = external_util::get_area_files($context->id, 'mod_assign',
                             ASSIGN_ACTIVITYATTACHMENT_FILEAREA, 0);
                     }
@@ -2499,7 +2499,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
         }
         if ($instance->activity && ($lastattempt || $assign->submissions_open($user->id, true))) {
             list($assignmentdata['activity'], $assignmentdata['activityformat']) = external_format_text($instance->activity,
-                $instance->activityformat, $context->id, 'mod_assign', ASSIGN_ACTIVITYATTACHMENT_FILEAREA);
+                $instance->activityformat, $context->id, 'mod_assign', ASSIGN_ACTIVITYATTACHMENT_FILEAREA, 0);
             $attachments['activity'] = external_util::get_area_files($context->id, 'mod_assign',
                 ASSIGN_ACTIVITYATTACHMENT_FILEAREA, 0);
         }
