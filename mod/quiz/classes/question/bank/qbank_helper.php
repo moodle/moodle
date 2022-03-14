@@ -56,7 +56,7 @@ class qbank_helper {
      */
     public static function get_version_options($questionid): array {
         global $DB;
-        $sql = "SELECT qv.id AS versionid, qv.version
+        $sql = "SELECT qv.id AS versionid, qv.version, qv.questionid
                   FROM {question_versions} qv
                  WHERE qv.questionbankentryid = (SELECT DISTINCT qbe.id
                                                    FROM {question_bank_entries} qbe

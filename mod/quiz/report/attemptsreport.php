@@ -51,7 +51,7 @@ abstract class quiz_attempts_report extends quiz_default_report {
     /** @var string the mode this report is. */
     protected $mode;
 
-    /** @var object the quiz context. */
+    /** @var context_module the quiz context. */
     protected $context;
 
     /** @var mod_quiz_attempts_report_form The settings form to use. */
