@@ -4246,5 +4246,12 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022030100.00);
     }
 
+    if ($oldversion < 2022031100.01) {
+        $reportsusermenuitem = 'reports,core_reportbuilder|/reportbuilder/index.php';
+        upgrade_add_item_to_usermenu($reportsusermenuitem);
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022031100.01);
+    }
+
     return true;
 }

@@ -1018,6 +1018,7 @@ class behat_navigation extends behat_base {
     /**
      * Clicks link with specified id|title|alt|text in the secondary navigation
      *
+     * @When I select :link from secondary navigation
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $link
      */

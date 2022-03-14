@@ -221,6 +221,7 @@ $string['renamefilter'] = 'Rename filter \'{$a}\'';
 $string['reportbuilder'] = 'Report builder';
 $string['reportcreated'] = 'Report created';
 $string['reportdeleted'] = 'Report deleted';
+$string['reports'] = 'Reports';
 $string['reportsource'] = 'Report source';
 $string['reportsource_help'] = 'The report source defines where the data for the report will come from.';
 $string['reportupdated'] = 'Report updated';

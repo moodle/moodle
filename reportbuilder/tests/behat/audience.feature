@@ -137,9 +137,8 @@ Feature: Configure access to reports based on intended audience
       | moodle/reportbuilder:editall  | Prohibit   | viewreportsrole | System       |           |
       | moodle/reportbuilder:edit     | Prohibit   | viewreportsrole | System       |           |
       | moodle/reportbuilder:view     | Allow      | viewreportsrole | System       |           |
-      | moodle/site:configview        | Allow      | viewreportsrole | System       |           |
     When I log in as "user1"
-    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I follow "Reports" in the user menu
     And I should see "Custom reports"
     And I should not see "My report"
     And I should not see "My second report"
@@ -154,7 +153,7 @@ Feature: Configure access to reports based on intended audience
     And I press "Save changes"
     And I log out
     And I log in as "user1"
-    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I follow "Reports" in the user menu
     And I should not see "My second report"
     And I click on "My report" "link" in the "My report" "table_row"
 
@@ -173,9 +172,8 @@ Feature: Configure access to reports based on intended audience
       | moodle/reportbuilder:editall  | Prohibit    | viewreportsrole | System       |           |
       | moodle/reportbuilder:edit     | Allow       | viewreportsrole | System       |           |
       | moodle/reportbuilder:view     | Prohibit    | viewreportsrole | System       |           |
-      | moodle/site:configview        | Allow       | viewreportsrole | System       |           |
     When I log in as "user1"
-    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I follow "Reports" in the user menu
     And I should see "Custom reports"
     And I should not see "My report"
     And I should not see "My second report"
@@ -198,7 +196,7 @@ Feature: Configure access to reports based on intended audience
     And I press "Save changes"
     And I log out
     And I log in as "user1"
-    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I follow "Reports" in the user menu
     And I should not see "My second report"
     And I should see "My user1 report"
     And I click on "My report" "link" in the "My report" "table_row"
@@ -218,9 +216,8 @@ Feature: Configure access to reports based on intended audience
       | moodle/reportbuilder:editall  | Allow       | viewreportsrole | System       |           |
       | moodle/reportbuilder:edit     | Prohibit    | viewreportsrole | System       |           |
       | moodle/reportbuilder:view     | Prohibit    | viewreportsrole | System       |           |
-      | moodle/site:configview        | Allow       | viewreportsrole | System       |           |
     When I log in as "user1"
-    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I follow "Reports" in the user menu
     And I should see "Custom reports"
     And I should see "My report"
     Then I click on "My second report" "link" in the "My second report" "table_row"

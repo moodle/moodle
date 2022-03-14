@@ -1619,4 +1619,56 @@ class upgradelib_test extends advanced_testcase {
         $this->assertEquals('xmlrpc_mahara_usage', $result->getInfo());
         $this->assertFalse($result->getStatus());
     }
+
+    /**
+     * Data provider of usermenu items.
+     *
+     * @return array
+     */
+    public function usermenu_items_dataprovider(): array {
+        return [
+            'Add new item to empty usermenu' => [
+                '',
+                'reports,core_reportbuilder|/reportbuilder/index.php',
+                'reports,core_reportbuilder|/reportbuilder/index.php',
+            ],
+            'Add new item to usermenu' => [
+                'profile,moodle|/user/profile.php
+grades,grades|/grade/report/mygrades.php',
+                'reports,core_reportbuilder|/reportbuilder/index.php',
+                'profile,moodle|/user/profile.php
+grades,grades|/grade/report/mygrades.php
+reports,core_reportbuilder|/reportbuilder/index.php',
+            ],
+            'Add existing item to usermenu' => [
+                'profile,moodle|/user/profile.php
+reports,core_reportbuilder|/reportbuilder/index.php
+calendar,core_calendar|/calendar/view.php?view=month',
+                'reports,core_reportbuilder|/reportbuilder/index.php',
+                'profile,moodle|/user/profile.php
+reports,core_reportbuilder|/reportbuilder/index.php
+calendar,core_calendar|/calendar/view.php?view=month',
+            ],
+        ];
+    }
+
+    /**
+     * Test the functionality of the {@link upgrade_add_item_to_usermenu()} function.
+     *
+     * @covers ::upgrade_add_item_to_usermenu
+     * @dataProvider usermenu_items_dataprovider
+     */
+    public function test_upgrade_add_item_to_usermenu(string $initialmenu, string $newmenuitem, string $expectedmenu) {
+        global $CFG;
+
+        $this->resetAfterTest();
+        // Set the base user menu.
+        $CFG->customusermenuitems = $initialmenu;
+
+        // Add the new item to the user menu.
+        upgrade_add_item_to_usermenu($newmenuitem);
+        $newcustomusermenu = $CFG->customusermenuitems;
+
+        $this->assertEquals($expectedmenu, $newcustomusermenu);
+    }
 }
