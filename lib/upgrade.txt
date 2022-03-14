@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.1 ===
+* Added $strictness parameter to persistent `get_record` method, optionally allowing caller to ensure record exists
+
 === 4.0 ===
 
 * To better detect wrong floats (like, for example, unformatted, using local-dependent separators ones) a number of

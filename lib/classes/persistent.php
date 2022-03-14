@@ -854,12 +854,14 @@ abstract class persistent {
      * Load a single record.
      *
      * @param array $filters Filters to apply.
+     * @param int $strictness Similar to the internal DB get_record call, indicate whether a missing record should be
+     *      ignored/return false ({@see IGNORE_MISSING}) or should cause an exception to be thrown ({@see MUST_EXIST})
      * @return false|static
      */
-    public static function get_record($filters = array()) {
+    public static function get_record(array $filters = [], int $strictness = IGNORE_MISSING) {
         global $DB;
 
-        $record = $DB->get_record(static::TABLE, $filters);
+        $record = $DB->get_record(static::TABLE, $filters, '*', $strictness);
         return $record ? new static(0, $record) : false;
     }
 
