@@ -125,11 +125,9 @@ class action_bar {
      * Generate the output for the action selector in the view page.
      *
      * @param bool $hasentries Whether entries exist.
-     * @param int|null $numentries Number of entries made by user.
-     * @param int|null $maxentries Maximum number of entries allowed.
      * @return string The HTML code for the action selector.
      */
-    public function get_view_action_bar(bool $hasentries, ?int $numentries = null, ?int $maxentries = null): string {
+    public function get_view_action_bar(bool $hasentries): string {
         global $PAGE;
 
         $viewlistlink = new moodle_url('/mod/data/view.php', ['d' => $this->id]);
@@ -149,7 +147,7 @@ class action_bar {
         $urlselect = new \url_select($menu, $activeurl->out(false), null, 'viewactionselect');
         $urlselect->set_label(get_string('viewnavigation', 'mod_data'), ['class' => 'sr-only']);
         $renderer = $PAGE->get_renderer('mod_data');
-        $viewactionbar = new view_action_bar($this->id, $urlselect, $hasentries, $numentries, $maxentries);
+        $viewactionbar = new view_action_bar($this->id, $urlselect, $hasentries);
 
         return $renderer->render_view_action_bar($viewactionbar);
     }
