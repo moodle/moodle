@@ -3042,6 +3042,7 @@ class global_navigation extends navigation_node {
                     self::TYPE_SETTING, null, 'privatefiles', new pix_icon('i/privatefiles', ''));
                 $node->display = false;
                 $node->showinflatnavigation = true;
+                $node->mainnavonly = true;
             }
         }
 
