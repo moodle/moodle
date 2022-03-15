@@ -46,7 +46,7 @@ function(
         PREVIEW_CONTAINER: 'td.previewaction',
         SEARCH_OPTIONS: '#advancedsearch',
         DISPLAY_OPTIONS: '#displayoptions',
-        ADD_QUESTIONS_FORM: 'form[action="edit.php"]',
+        ADD_QUESTIONS_FORM: 'form#questionsubmit',
     };
 
     /**
