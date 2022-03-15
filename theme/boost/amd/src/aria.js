@@ -293,8 +293,8 @@ const tabElementFix = () => {
     });
 
     document.addEventListener('click', e => {
-        if (e.target.matches('[role="tablist"] [role="tab"]')) {
-            const tabs = e.target.closest('[role="tablist"]').querySelectorAll('[role="tab"]');
+        if (e.target.matches('[role="tablist"] [data-toggle="tab"], [role="tablist"] [data-toggle="pill"]')) {
+            const tabs = e.target.closest('[role="tablist"]').querySelectorAll('[data-toggle="tab"], [data-toggle="pill"]');
             e.preventDefault();
             $(e.target).tab('show');
             tabs.forEach(tab => {
