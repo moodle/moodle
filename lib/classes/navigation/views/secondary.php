@@ -1024,15 +1024,20 @@ class secondary extends view {
     protected function load_single_activity_course_navigation(): void {
         $page = $this->page;
         $course = $page->course;
-        // Create 'Course' node and add it to the secondary navigation.
-        $coursesecondarynode = $this->add(get_string('course'), null, self::TYPE_COURSE, null, 'course');
+
+        // Create 'Course' navigation node.
+        $coursesecondarynode = navigation_node::create(get_string('course'), null, self::TYPE_COURSE, null, 'course');
         $this->load_course_navigation($coursesecondarynode);
         // Remove the unnecessary 'Course' child node generated in load_course_navigation().
         $coursesecondarynode->find('coursehome', self::TYPE_COURSE)->remove();
 
-        // Once all the items have been added to the 'Course' secondary navigation node, set the 'showchildreninsubmenu'
-        // property to true. This is required to force the template to output these items within a dropdown menu.
-        $coursesecondarynode->showchildreninsubmenu = true;
+        // Add the 'Course' node to the secondary navigation only if this node has children nodes.
+        if (count($coursesecondarynode->children) > 0) {
+            $this->add_node($coursesecondarynode);
+            // Once all the items have been added to the 'Course' secondary navigation node, set the 'showchildreninsubmenu'
+            // property to true. This is required to force the template to output these items within a dropdown menu.
+            $coursesecondarynode->showchildreninsubmenu = true;
+        }
 
         // Create 'Activity' navigation node.
         $activitysecondarynode = navigation_node::create(get_string('activity'), null, self::TYPE_ACTIVITY, null, 'activity');
