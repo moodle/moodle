@@ -435,7 +435,8 @@ class behat_mod_quiz extends behat_question_base {
      */
     public function i_should_see_on_quiz_page($questionname, $pagenumber) {
         $xpath = "//li[contains(., '" . $this->escape($questionname) .
-                "')][./preceding-sibling::li[contains(., 'Page " . $pagenumber . "')]]";
+            "')][./preceding-sibling::li[contains(@class, 'pagenumber')][1][contains(., 'Page " .
+            $pagenumber . "')]]";
 
         $this->execute('behat_general::should_exist', array($xpath, 'xpath_element'));
     }
