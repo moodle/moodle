@@ -1815,7 +1815,6 @@ class block_manager {
             $editpage->navbar->add($block->get_title());
             $editpage->navbar->add(get_string('configuration'));
             echo $output->header();
-            echo $output->heading($strheading, 2);
             $mform->display();
             echo $output->footer();
             exit;
