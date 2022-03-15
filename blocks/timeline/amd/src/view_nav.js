@@ -171,7 +171,7 @@ function(
             } else {
                 clearSearchState(clearSearchIcon, timelineViewRoot);
             }
-        }, 300));
+        }, 1000));
         clearSearchIcon.on('click', () => {
             searchInput.val('');
             clearSearchState(clearSearchIcon, timelineViewRoot);
