@@ -121,10 +121,40 @@ class completion_daily_task extends scheduled_task {
                     if ($prev->completionid) {
                         $completion->id = $prev->completionid;
                     }
-                    $completion->mark_enrolled();
 
-                    if (debugging()) {
-                        mtrace('Marked started user ' . $prev->userid . ' in course ' . $prev->course);
+                    try {
+                        $completion->mark_enrolled();
+
+                        if (debugging()) {
+                            mtrace('Marked started user '.$prev->userid.' in course '.$prev->course);
+                        }
+                    } catch (\dml_write_exception $e) {
+                        // Most likely this happened because the completion object was created while we were working.
+                        // So get the record and make sure it has a time enrolled set.
+                        if (debugging()) {
+                            mtrace('Exception while marking started user '.$prev->userid.' in course '.$prev->course.', retrying');
+                        }
+
+                        $params = ['userid' => $completion->userid, 'course' => $completion->course];
+                        $existing = new \completion_completion($params);
+                        if (!empty($existing->id) && empty($existing->timeenrolled)) {
+                            $existing->timeenrolled = $completion->timeenrolled;
+                            try {
+                                $existing->mark_enrolled();
+                            } catch (\Exception $e) {
+                                // Catch everything, so we can continue on to other records.
+                                if (debugging()) {
+                                    mtrace('Exception again while marking started user '.$prev->userid.' in course '.$prev->course.
+                                        ': '.$e->getMessage()."\n".$e->getTraceAsString());
+                                }
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        // Catch anything else, so we can continue on to other records.
+                        if (debugging()) {
+                            mtrace('Exception while marking started user '.$prev->userid.' in course '.$prev->course.
+                                ': '.$e->getMessage()."\n".$e->getTraceAsString());
+                        }
                     }
                 } else if ($prev && $current) {
                     // Else, if this record is for the same user/course use oldest timeenrolled.
