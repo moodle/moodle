@@ -401,7 +401,7 @@ if ($showactivity) {
         $hasrecords = !empty($records);
 
         $actionbar = new \mod_data\output\action_bar($data->id, $pageurl);
-        echo $actionbar->get_view_action_bar($hasrecords, $numentries, $data->maxentries);
+        echo $actionbar->get_view_action_bar($hasrecords);
 
         if ($mode === 'single') {
             echo $OUTPUT->heading(get_string('singleview', 'mod_data'), 2, 'mb-4');

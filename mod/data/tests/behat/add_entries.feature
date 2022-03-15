@@ -117,3 +117,14 @@ Feature: Users can add entries to database activities
     And I log out
     And I am on the "Test database name" "data activity" page logged in as student1
     And I should see "Add entry"
+
+  @javascript
+  Scenario: Guest user cannot add entries to a database
+    Given I am on the "Course 1" "enrolment methods" page logged in as teacher1
+    And I click on "Enable" "link" in the "Guest access" "table_row"
+    And I am on "Course 1" course homepage
+    And I add a "Text area" field to "Test database name" database and I fill the form with:
+      | Field name | Textarea field name |
+    And I log out
+    When I am on the "Test database name" "data activity" page logged in as "guest"
+    Then I should not see "Add entry"

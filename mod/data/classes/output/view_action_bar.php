@@ -38,28 +38,17 @@ class view_action_bar implements templatable, renderable {
     /** @var bool $hasentries Whether entries exist. */
     private $hasentries;
 
-    /** @var int $numentries Number of entries made by the user. */
-    private $numentries;
-
-    /** @var int $maxentries Maximum number of entries allowed. */
-    private $maxentries;
-
     /**
      * The class constructor.
      *
      * @param int $id The database module id.
      * @param \url_select $urlselect The URL selector object.
      * @param bool $hasentries Whether entries exist.
-     * @param int|null $numentries Number of entries made by the user.
-     * @param int|null $maxentries Maximum number of entries allowed.
      */
-    public function __construct(int $id, \url_select $urlselect, bool $hasentries,
-            ?int $numentries = null, ?int $maxentries = null) {
+    public function __construct(int $id, \url_select $urlselect, bool $hasentries) {
         $this->id = $id;
         $this->urlselect = $urlselect;
         $this->hasentries = $hasentries;
-        $this->numentries = $numentries;
-        $this->maxentries = $maxentries;
     }
 
     /**
@@ -69,20 +58,18 @@ class view_action_bar implements templatable, renderable {
      * @return array
      */
     public function export_for_template(\renderer_base $output): array {
-        global $PAGE;
-
-        $showaddentry = true;
-        if (!has_capability('mod/data:manageentries', $PAGE->context)) {
-            if ($this->maxentries > 0 && $this->numentries >= $this->maxentries) {
-                $showaddentry = false;
-            }
-        }
+        global $PAGE, $DB;
 
         $data = [
             'urlselect' => $this->urlselect->export_for_template($output),
         ];
 
-        if ($showaddentry) {
+        $database = $DB->get_record('data', ['id' => $this->id]);
+        $cm = get_coursemodule_from_instance('data', $this->id);
+        $currentgroup = groups_get_activity_group($cm);
+        $groupmode = groups_get_activity_groupmode($cm);
+
+        if (data_user_can_add_entry($database, $currentgroup, $groupmode, $PAGE->context)) {
             $addentrylink = new moodle_url('/mod/data/edit.php', ['d' => $this->id, 'backto' => $PAGE->url->out(false)]);
             $addentrybutton = new \single_button($addentrylink, get_string('add', 'mod_data'), 'get', true);
             $data['addentrybutton'] = $addentrybutton->export_for_template($output);
