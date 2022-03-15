@@ -168,7 +168,7 @@ class renderer extends \plugin_renderer_base {
             $fullname = fullname($summary->user, $summary->viewfullnames);
             $extrainfo = array();
             foreach ($summary->extrauserfields as $extrafield) {
-                $extrainfo[] = $summary->user->$extrafield;
+                $extrainfo[] = s($summary->user->$extrafield);
             }
             if (count($extrainfo)) {
                 $fullname .= ' (' . implode(', ', $extrainfo) . ')';
