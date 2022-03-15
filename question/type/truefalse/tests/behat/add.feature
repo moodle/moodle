@@ -6,20 +6,18 @@ Feature: Test creating a True/False question
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | teacher1 | T1        | Teacher1 | teacher1@moodle.com |
+      | username |
+      | teacher  |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+      | user    | course | role           |
+      | teacher | C1     | editingteacher |
 
   Scenario: Create a True/False question with Correct answer as False
-    When I add a "True/False" question filling the form with:
+    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    And I add a "True/False" question filling the form with:
       | Question name                      | true-false-001                             |
       | Question text                      | Manchester is the capital city of England. |
       | Default mark                       | 1                                          |
@@ -30,7 +28,8 @@ Feature: Test creating a True/False question
     Then I should see "true-false-001"
 
   Scenario: Create a True/False question with Correct answer as True
-    When I add a "True/False" question filling the form with:
+    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    And I add a "True/False" question filling the form with:
       | Question name                      | true-false-002                         |
       | Question text                      | London is the capital city of England. |
       | Default mark                       | 1                                      |

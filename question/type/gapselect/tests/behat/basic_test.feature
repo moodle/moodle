@@ -5,20 +5,18 @@ Feature: Test all the basic functionality of this question type
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | teacher1 | T1        | Teacher1 | teacher1@moodle.com |
+      | username |
+      | teacher  |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
+      | user    | course | role           |
+      | teacher | C1     | editingteacher |
 
   @javascript
   Scenario: Create, edit then preview a gapselect question.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
 
     # Create a new question.
     And I add a "Select missing words" question filling the form with:
@@ -38,7 +36,7 @@ Feature: Test all the basic functionality of this question type
     Then I should see "Select missing words 001"
 
     # Preview it.
-    When I choose "Preview" action for "Select missing words 001" in the question bank
+    And I choose "Preview" action for "Select missing words 001" in the question bank
     And I switch to "questionpreview" window
 
     # Gaps (drop-down menus) do not have labels. ids and names are generated
@@ -60,7 +58,7 @@ Feature: Test all the basic functionality of this question type
     And I set space "2" to "sat" in the select missing words question
     And I set space "3" to "mat" in the select missing words question
     And I press "Check"
-    Then I should see "Your answer is correct"
+    And I should see "Your answer is correct"
     And I should see "The cat sat on the mat"
     And I should see "The correct answer is: The [cat] [sat] on the [mat]."
     And I press "Start again"
@@ -70,19 +68,19 @@ Feature: Test all the basic functionality of this question type
     And I set space "2" to "sat" in the select missing words question
     And I set space "3" to "dog" in the select missing words question
     And I press "Check"
-    Then I should see "Your answer is partially correct"
+    And I should see "Your answer is partially correct"
     And I should see "First hint"
 
-    When I press "Try again"
+    And I press "Try again"
     And I set space "3" to "table" in the select missing words question
     And I press "Check"
-    Then I should see "Your answer is partially correct"
+    And I should see "Your answer is partially correct"
     And I should see "Second hint"
 
-    When I press "Try again"
+    And I press "Try again"
     And I set space "3" to "mat" in the select missing words question
     And I press "Check"
-    Then I should see "Your answer is correct"
+    And I should see "Your answer is correct"
     And I should see "The cat sat on the mat"
     And I should see "The correct answer is: The [cat] [sat] on the [mat]."
 
@@ -92,8 +90,8 @@ Feature: Test all the basic functionality of this question type
     And I press "Start again with these options"
 
     # Answer question correctly
-    When I press "Check"
-    Then I should see "Please put an answer in each box."
+    And I press "Check"
+    And I should see "Please put an answer in each box."
     And I set space "1" to "cat" in the select missing words question
     And I set space "2" to "sat" in the select missing words question
     And I set space "3" to "mat" in the select missing words question
@@ -108,7 +106,7 @@ Feature: Test all the basic functionality of this question type
     And I set space "2" to "sat" in the select missing words question
     And I set space "3" to "cat" in the select missing words question
     And I press "Check"
-    Then I should see "Your answer is partially correct"
+    And I should see "Your answer is partially correct"
     And I should see "You have correctly selected 1."
     And I should see "The cat sat on the mat"
     And I should see "The correct answer is: The [cat] [sat] on the [mat]."
@@ -119,25 +117,25 @@ Feature: Test all the basic functionality of this question type
     And I set space "2" to "ran" in the select missing words question
     And I set space "3" to "table" in the select missing words question
     And I press "Check"
-    Then I should see "Your answer is incorrect"
+    And I should see "Your answer is incorrect"
     And I should see "The cat sat on the mat"
     And I should see "The correct answer is: The [cat] [sat] on the [mat]."
     And I switch to the main window
 
     # Backup the course and restore it.
-    When I log out
+    And I log out
     And I log in as "admin"
-    When I backup "Course 1" course using this options:
+    And I backup "Course 1" course using this options:
       | Confirmation | Filename | test_backup.mbz |
-    When I restore "test_backup.mbz" backup into a new course using this options:
+    And I restore "test_backup.mbz" backup into a new course using this options:
       | Schema | Course name | Course 2 |
-    Then I should see "Course 2"
-    When I navigate to "Question bank" in current page administration
-    Then I should see "Select missing words 001"
+    And I should see "Course 2"
+    And I navigate to "Question bank" in current page administration
+    And I should see "Select missing words 001"
 
     # Edit the copy and verify the form field contents.
-    When I choose "Edit question" action for "Select missing words 001" in the question bank
-    Then the following fields match these values:
+    And I choose "Edit question" action for "Select missing words 001" in the question bank
+    And the following fields match these values:
       | Question name             | Select missing words 001      |
       | Question text             | The [[1]] [[2]] on the [[3]]. |
       | General feedback          | The cat sat on the mat.       |
@@ -154,4 +152,4 @@ Feature: Test all the basic functionality of this question type
     And I set the following fields to these values:
       | Question name | Edited question name |
     And I press "id_submitbutton"
-    Then I should see "Edited question name"
+    And I should see "Edited question name"
