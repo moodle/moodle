@@ -6,33 +6,24 @@ Feature: Preview a drag-drop marker question
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | teacher1 | T1        | Teacher1 | teacher1@moodle.com |
+      | username |
+      | teacher  |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
+      | user    | course | role           |
+      | teacher | C1     | editingteacher |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype    | name         | template |
       | Test questions   | ddmarker | Drag markers | mkmap    |
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
 
   @javascript @_bug_phantomjs
-  Scenario: Preview a question using the mouse.
-    When I choose "Preview" action for "Drag markers" in the question bank
-    And I switch to "questionpreview" window
-    # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
-    # Keep window large else drag will scroll the window to find element.
-    And I change window size to "large"
-    And I wait "2" seconds
-    # Odd, but the <br>s go to nothing, not a space.
+  Scenario: Preview a question using the mouse
+    When I am on the "Drag markers" "core_question > preview" page logged in as teacher
     And I drag "OU" to "322,213" in the drag and drop markers question
     And I drag "Railway station" to "144,84" in the drag and drop markers question
     And I drag "Railway station" to "195,180" in the drag and drop markers question
@@ -40,27 +31,19 @@ Feature: Preview a drag-drop marker question
     And I press "Submit and finish"
     Then the state of "Please place the markers on the map of Milton Keynes" question is shown as "Correct"
     And I should see "Mark 1.00 out of 1.00"
-    And I switch to the main window
 
   @javascript
-  Scenario: Preview a question using the keyboard.
-    When I choose "Preview" action for "Drag markers" in the question bank
-    And I switch to "questionpreview" window
-    # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
-    # Keep window large else drag will scroll the window to find element.
-    And I change window size to "medium"
-    And I wait "2" seconds
+  Scenario: Preview a question using the keyboard
+    When I am on the "Drag markers" "core_question > preview" page logged in as teacher
     And I type "up" "88" times on marker "Railway station" in the drag and drop markers question
     And I type "right" "26" times on marker "Railway station" in the drag and drop markers question
     And I press "Submit and finish"
     Then the state of "Please place the markers on the map of Milton Keynes" question is shown as "Partially correct"
     And I should see "Mark 0.25 out of 1.00"
-    And I switch to the main window
 
   @javascript
-  Scenario: Preview a question in multiple viewports.
-    When I choose "Preview" action for "Drag markers" in the question bank
-    And I switch to "questionpreview" window
+  Scenario: Preview a question in multiple viewports
+    When I am on the "Drag markers" "core_question > preview" page logged in as teacher
     And I change viewport size to "large"
     And I drag "OU" to "322,213" in the drag and drop markers question
     And I drag "Railway station" to "144,84" in the drag and drop markers question
