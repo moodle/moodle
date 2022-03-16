@@ -21554,6 +21554,10 @@ div.editor_atto_toolbar button .icon {
   .tertiary-navigation .navitem:not(:last-child) {
     margin-right: 20px; }
 
+@media print {
+  .tertiary-navigation {
+    display: none; } }
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
