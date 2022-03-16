@@ -87,12 +87,19 @@ class activity_header implements \renderable, \templatable {
     /**
      * Bulk set class member variables. Only updates variables which have corresponding setters
      *
-     * @param array $config
+     * @param mixed[] $config Array of variables to set, with keys being their name. Valid names/types as follows:
+     *      'hidecompletion' => bool
+     *      'additionalnavitems' => url_select
+     *      'hideoverflow' => bool
+     *      'title' => string
+     *      'description' => string
      */
     public function set_attrs(array $config): void {
         foreach ($config as $key => $value) {
             if (method_exists($this, "set_$key")) {
                 $this->{"set_$key"}($value);
+            } else {
+                debugging("Invalid class member variable: {$key}", DEBUG_DEVELOPER);
             }
         }
     }
