@@ -56,7 +56,7 @@
     </li>
 {{/haschildren}}
 {{^haschildren}}
-    <li class="nav-item" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
+    <li data-key="{{key}}" class="nav-item" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
         {{#tab}}
             {{#is_action_link}}
                 <a role="menuitem" class="nav-link {{#classes}}{{.}} {{/classes}}" href="{{tab}}" data-toggle="tab" data-text="{{{text}}}" aria-current="false" data-disableactive="true" tabindex="-1">
