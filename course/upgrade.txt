@@ -56,9 +56,9 @@ renderer and course format renderer:
   - course_section_cm_name_title (replaced by core_courseformat\output\local\cm\title)
   - course_section_cm_text (integrated in core_courseformat\output\local\content\cm)
   - course_section_cm_availability (replaced by core_courseformat\output\local\content\cm\availability))
-* The following abstract methods are deleted:
   - start_section_list (integrated in core_courseformat\output\local\content)
   - end_section_list (integrated in core_courseformat\output\local\content)
+* The following abstract methods are deleted:
   - page_title (moved to core_courseformat\output\local\content)
 * Course formats should have a renderer (until now it was only highly recommended but not mandatory). For backwards
 compatibility (to not break third-party plugins without it), legacy_format_renderer has been created and will be used when

@@ -823,10 +823,8 @@ class core_course_renderer extends plugin_renderer_base {
             $mod->get_section_info(),
             $mod,
         );
-
         $renderer = $format->get_renderer($this->page);
-        $data = $availability->export_for_template($renderer);
-        return $data->info ?? '';
+        return $renderer->render($availability);
     }
 
     /**
