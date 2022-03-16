@@ -54,3 +54,12 @@ Feature: Primary navigation
     And "Side panel" "button" should exist
     And I click on "Side panel" "button"
     And I should see "Home" in the "theme_boost-drawers-primary" "region"
+
+  @theme_boost
+  Scenario: Guest users can only see the Home item in the primary navigation menu
+    Given I log in as "guest"
+    When I am on site homepage
+    Then I should see "Home" in the ".primary-navigation" "css_element"
+    And I should not see "Dashboard" in the ".primary-navigation" "css_element"
+    And I should not see "My courses" in the ".primary-navigation" "css_element"
+    And I should not see "Site administration" in the ".primary-navigation" "css_element"
