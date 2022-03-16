@@ -111,7 +111,7 @@ if ($iscoursecalendar && !empty($courseid)) {
 } else {
     $PAGE->set_context(context_system::instance());
 }
-$PAGE->has_secondary_navigation_setter(false);
+$PAGE->set_secondary_navigation(false);
 
 require_login($course, false);
 
