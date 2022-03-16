@@ -131,7 +131,7 @@ $headingstr = ($courseid != SITEID && !empty($courseid)) ? "{$headingstr}: {$COU
 $PAGE->set_title($course->shortname.': '.get_string('calendar', 'calendar').': '.$pagetitle);
 $PAGE->set_heading($headingstr);
 $PAGE->set_pagelayout('standard');
-$PAGE->has_secondary_navigation_setter(false);
+$PAGE->set_secondary_navigation(false);
 
 $renderer = $PAGE->get_renderer('core_calendar');
 $calendar->add_sidecalendar_blocks($renderer);

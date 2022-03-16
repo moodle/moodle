@@ -69,7 +69,7 @@ if (!calendar_user_can_add_event($course)) {
 $heading = get_string('importcalendar', 'calendar');
 $pagetitle = $course->shortname . ': ' . get_string('calendar', 'calendar') . ': ' . $heading;
 
-$PAGE->has_secondary_navigation_setter(false);
+$PAGE->set_secondary_navigation(false);
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($heading);
 $PAGE->set_url($pageurl);

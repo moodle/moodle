@@ -53,7 +53,7 @@ if ($courseid != SITEID && !empty($courseid)) {
 
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
-$PAGE->has_secondary_navigation_setter(false);
+$PAGE->set_secondary_navigation(false);
 
 if ($courseid != SITEID && !empty($courseid)) {
     // Course ID must be valid and existing.
