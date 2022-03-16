@@ -94,11 +94,11 @@ class cohort extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_INTEGER)
+            ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.contextid")
             ->set_is_sortable(true)
-            ->add_callback(static function(int $contextid): string {
-                return context::instance_by_id($contextid)->get_context_name(false);
+            ->add_callback(static function($contextid): string {
+                return context::instance_by_id((int) $contextid)->get_context_name(false);
             });
 
         // Name column.
