@@ -48,7 +48,7 @@ if (!empty($CFG->forceloginforprofiles)) {
     require_login();
     if (isguestuser()) {
         $PAGE->set_context(context_system::instance());
-        $PAGE->has_secondary_navigation_setter(false);
+        $PAGE->set_secondary_navigation(false);
         echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('guestcantaccessprofiles', 'error'),
                               get_login_url(),
