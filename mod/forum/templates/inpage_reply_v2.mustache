@@ -53,6 +53,11 @@
             {{#loggedinuser}}
                 <h4 class="h5 font-weight-bold reply-author">{{#str}} replyauthorself, mod_forum, {{firstname}}{{/str}}</h4>
             {{/loggedinuser}}
+            {{#throttlingwarningmsg}}
+                <div class="alert alert-danger alert-block fade in " role="alert">
+                    {{throttlingwarningmsg}}
+                </div>
+            {{/throttlingwarningmsg}}
             <form data-post-id="{{postid}}" data-content="inpage-reply-form" action="{{{reply_url}}}">
                 <textarea
                     name="post"
