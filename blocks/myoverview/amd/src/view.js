@@ -436,7 +436,7 @@ const setCourseFavouriteState = (courseId, status) => {
         if (result.warnings.length === 0) {
             loadedPages.forEach(courseList => {
                 courseList.courses.forEach((course, index) => {
-                    if (course.id === courseId) {
+                    if (course.id == courseId) {
                         courseList.courses[index].isfavourite = status;
                     }
                 });
