@@ -13,7 +13,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Javascript events for the `core_filter` subsystem.
+ * Javascript events for the `core_filters` subsystem.
  *
  * @module     core_filters/events
  * @copyright  2021 Andrew Nicols <andrew@nicols.co.uk>
@@ -21,7 +21,7 @@
  * @since      4.0
  *
  * @example <caption>Example of listening to a filter event.</caption>
- * import {eventTypes as filterEventTypes} from 'core_filter/events';
+ * import {eventTypes as filterEventTypes} from 'core_filters/events';
  *
  * document.addEventListener(filterEventTypes.filterContentUpdated, e => {
  *     window.console.log(e.detail.nodes); // A list of the HTMLElements whose content was updated
@@ -33,7 +33,7 @@ import {getList as normalistNodeList} from 'core/normalise';
 import jQuery from 'jquery';
 
 /**
- * Events for the `core_filter` subsystem.
+ * Events for the `core_filters` subsystem.
  *
  * @constant
  * @property {String} filterContentUpdated See {@link event:filterContentUpdated}
