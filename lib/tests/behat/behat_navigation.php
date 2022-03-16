@@ -1057,7 +1057,7 @@ class behat_navigation extends behat_base {
             $tabxpath = '//ul[@role=\'tablist\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
             $menubarxpath = '//ul[@role=\'menubar\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
             $linkname = behat_context_helper::escape(get_string('moremenu'));
-            $menubarmorexpath = '//ul[@role=\'menubar\']/li/a[contains(normalize-space(.), ' . $linkname . ')]';
+            $menubarmorexpath = '//ul[contains(@class,\'more-nav\')]/li/a[contains(normalize-space(.), ' . $linkname . ')]';
             $tabnode = $this->getSession()->getPage()->find('xpath', $tabxpath);
             $menunode = $this->getSession()->getPage()->find('xpath', $menubarxpath);
             $menubuttons = $this->getSession()->getPage()->findAll('xpath', $menubarmorexpath);

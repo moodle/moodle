@@ -238,7 +238,7 @@ const updateTabFocus = e => {
     const arrowPrevious = vertical ? 'ArrowUp' : (rtl ? 'ArrowRight' : 'ArrowLeft');
     const tabs = Array.prototype.filter.call(
         tabList.querySelectorAll('[role="tab"]'),
-        tab => getComputedStyle(tab).display !== 'none'); // We only work with the visible tabs.
+        tab => !!tab.offsetHeight); // We only work with the visible tabs.
 
     for (let i = 0; i < tabs.length; i++) {
         tabs[i].index = i;
@@ -293,8 +293,8 @@ const tabElementFix = () => {
     });
 
     document.addEventListener('click', e => {
-        if (e.target.matches('[role="tablist"] [role="tab"]')) {
-            const tabs = e.target.closest('[role="tablist"]').querySelectorAll('[role="tab"]');
+        if (e.target.matches('[role="tablist"] [data-toggle="tab"], [role="tablist"] [data-toggle="pill"]')) {
+            const tabs = e.target.closest('[role="tablist"]').querySelectorAll('[data-toggle="tab"], [data-toggle="pill"]');
             e.preventDefault();
             $(e.target).tab('show');
             tabs.forEach(tab => {

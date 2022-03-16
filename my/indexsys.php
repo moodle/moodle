@@ -51,7 +51,7 @@ $PAGE->set_pagetype('my-index');
 $PAGE->blocks->add_region('content');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($pagetitle);
-$PAGE->has_secondary_navigation_setter(false);
+$PAGE->set_secondary_navigation(false);
 $PAGE->set_primary_active_tab('myhome');
 
 // If we are resetting all, just output a progress bar.

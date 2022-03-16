@@ -15,14 +15,14 @@ Feature: Primary navigation
     And the following config values are set as admin:
       | defaulthomepage | <defaulthomepageset> |
     And I am on homepage
-    And I should see "<homepage>" in the "//a[contains(@class,'nav-link active') and contains(., '<homepage>')]" "xpath_element"
-    And I should see "<sitehome>" in the "<linkelement>" "xpath_element"
+    And I should see "<homepage>" in the "a.nav-link.active:not([tabindex])" "css_element"
+    And I should see "<sitehome>" in the "<linkelement>" "css_element"
 
     Examples:
-      | defaulthomepageset | homepage    |  sitehome  |   linkelement                                                                                               |
-      |   0                | Home        |   Home     |  //a[contains(@class, 'nav-link active') and contains(@tabindex, 0) and not(contains(@href, 'redirect=0'))] |
-      |   1                | Dashboard   |   Home     |  //a[contains(@class, 'nav-link') and contains(@tabindex, 0) and (contains(@href, 'redirect=0'))]          |
-      |   3                | My courses  |   Home     |  //a[contains(@class, 'nav-link') and contains(@tabindex, 0) and (contains(@href, 'redirect=0'))]          |
+      | defaulthomepageset | homepage    |  sitehome  |  linkelement                                                  |
+      |   0                | Home        |   Home     |  a.nav-link.active:not([tabindex]):not([href*='redirect=0'])  |
+      |   1                | Dashboard   |   Home     |  a.nav-link[tabindex='-1'][href$='redirect=0']                |
+      |   3                | My courses  |   Home     |  a.nav-link[tabindex='-1'][href$='redirect=0']                |
 
   @javascript @theme_boost
   Scenario Outline: Admin sets defaulthomepage to user preference and verifies the landing page based on it
@@ -38,7 +38,7 @@ Feature: Primary navigation
       | defaulthomepage | 2 |
     And I log out
     And I log in as "admin"
-    And I should see "<homepage>" in the "//a[contains(@class,'nav-link active') and contains(., '<homepage>')]" "xpath_element"
+    And I should see "<homepage>" in the "a.nav-link.active:not([tabindex])" "css_element"
 
     Examples:
       | userpreference | homepage    |

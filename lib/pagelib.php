@@ -394,6 +394,11 @@ class moodle_page {
     protected $_hassecondarynavigation = true;
 
     /**
+     * @var bool Should the secondary menu be rendered as a tablist as opposed to a menubar.
+     */
+    protected $_hastablistsecondarynavigation = false;
+
+    /**
      * @var string the key of the secondary node to be activated.
      */
     protected $_activekeysecondary = null;
@@ -2213,10 +2218,13 @@ class moodle_page {
     /**
      * Set the flag to indicate if the secondary navigation should be rendered.
      *
-     * @param bool $value If the secondary navigation should be rendered.
+     * @param bool $hassecondarynavigation If the secondary navigation should be rendered.
+     * @param bool $istablist When true, the navigation bar should be rendered and behave with a tablist ARIA role.
+     *                        If false, it's rendered with a menubar ARIA role. Defaults to false.
      */
-    public function has_secondary_navigation_setter(bool $value) : void {
-        $this->_hassecondarynavigation = $value;
+    public function set_secondary_navigation(bool $hassecondarynavigation, bool $istablist = false): void {
+        $this->_hassecondarynavigation = $hassecondarynavigation;
+        $this->_hastablistsecondarynavigation = $istablist;
     }
 
     /**
@@ -2224,8 +2232,17 @@ class moodle_page {
      *
      * @return bool
      */
-    public function has_secondary_navigation() : bool {
+    public function has_secondary_navigation(): bool {
         return $this->_hassecondarynavigation;
+    }
+
+    /**
+     * Check if the secondary navigation should be rendered with a tablist as opposed to a menubar.
+     *
+     * @return bool
+     */
+    public function has_tablist_secondary_navigation(): bool {
+        return $this->_hastablistsecondarynavigation;
     }
 
     /**
