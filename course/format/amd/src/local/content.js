@@ -106,6 +106,12 @@ export default class Component extends BaseComponent {
         const toogleAll = this.getElement(this.selectors.TOGGLEALL);
         if (toogleAll) {
             this.addEventListener(toogleAll, 'click', this._allSectionToggler);
+            this.addEventListener(toogleAll, 'keydown', e => {
+                // Collapse/expand all sections when Space key is pressed on the toggle button.
+                if (e.key === ' ') {
+                    this._allSectionToggler(e);
+                }
+            });
             this._refreshAllSectionsToggler(state);
         }
 
@@ -263,9 +269,11 @@ export default class Component extends BaseComponent {
         );
         if (allcollapsed) {
             target.classList.add(this.classes.COLLAPSED);
+            target.setAttribute('aria-expanded', false);
         }
         if (allexpanded) {
             target.classList.remove(this.classes.COLLAPSED);
+            target.setAttribute('aria-expanded', true);
         }
     }
 

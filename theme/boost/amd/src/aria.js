@@ -305,8 +305,26 @@ const tabElementFix = () => {
     });
 };
 
+/**
+ * Fix keyboard interaction with Bootstrap Collapse elements.
+ *
+ * @see {@link https://www.w3.org/TR/wai-aria-practices-1.1/#disclosure|WAI-ARIA Authoring Practices 1.1 - Disclosure (Show/Hide)}
+ */
+const collapseFix = () => {
+    document.addEventListener('keydown', e => {
+        if (e.target.matches('[data-toggle="collapse"]')) {
+            // Pressing space should toggle expand/collapse.
+            if (e.key === ' ') {
+                e.preventDefault();
+                e.target.click();
+            }
+        }
+    });
+};
+
 export const init = () => {
     dropdownFix();
     autoFocus();
     tabElementFix();
+    collapseFix();
 };
