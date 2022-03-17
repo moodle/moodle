@@ -92,6 +92,10 @@ $rb-right-sidebar-width: 350px;
     @extend .flex-fill;
     min-width: 0;
 }
+// Allow horizontal scroll in editor table.
+.reportbuilder-editor-table-container {
+    overflow-x: auto;
+}
 
 /* Custom table headers */
 .reportbuilder-table th {
