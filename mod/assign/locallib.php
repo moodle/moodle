@@ -684,6 +684,7 @@ class assign {
         } else if ($action == 'fixrescalednullgrades') {
             $o .= $this->view_fix_rescaled_null_grades();
         } else {
+            $PAGE->add_body_class('limitedwidth');
             $o .= $this->view_submission_page();
         }
 
