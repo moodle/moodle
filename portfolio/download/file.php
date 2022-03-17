@@ -29,9 +29,11 @@ echo $OUTPUT->notification('<a href="' . $returnurl . '">' . get_string('returnt
 // if they don't have javascript, they can submit the form here to get the file.
 // if they do, it does it nicely for them.
 echo '<div id="redirect">
-    <form action="' . $exporter->get('instance')->get_base_file_url() . '" method="post" id="redirectform">
+    <form action="' . $exporter->get('instance')->get_base_file_url() . '" method="post" id="redirectform" target="download-iframe">
       <input type="submit" value="' . get_string('downloadfile', 'portfolio_download') . '" />
-    </form></div>
+    </form>
+    <iframe class="d-none" name="download-iframe" src=""></iframe>
+    </div>
 ';
 
 $PAGE->requires->js_amd_inline("
@@ -41,5 +43,3 @@ require(['jquery'], function($) {
     }).submit();
 });");
 echo $OUTPUT->footer();
-
-
