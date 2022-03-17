@@ -5196,4 +5196,143 @@ EOF;
             ],
         ];
     }
+
+    /**
+     * Test get_home_page() method.
+     *
+     * @dataProvider get_home_page_provider
+     * @param string $user Whether the user is logged, guest or not logged.
+     * @param int $expected Expected value after calling the get_home_page method.
+     * @param int $defaulthomepage The $CFG->defaulthomepage setting value.
+     * @param int $enabledashboard Whether the dashboard should be enabled or not.
+     * @param int $userpreference User preference for the home page setting.
+     * @covers ::get_home_page
+     */
+    public function test_get_home_page(string $user, int $expected, ?int $defaulthomepage = null, ?int $enabledashboard = null,
+            ?int $userpreference = null) {
+        global $CFG, $USER;
+
+        $this->resetAfterTest();
+
+        if ($user == 'guest') {
+            $this->setGuestUser();
+        } else if ($user == 'logged') {
+            $this->setUser($this->getDataGenerator()->create_user());
+        }
+
+        if (isset($defaulthomepage)) {
+            $CFG->defaulthomepage = $defaulthomepage;
+        }
+        if (isset($enabledashboard)) {
+            $CFG->enabledashboard = $enabledashboard;
+        }
+
+        if ($USER) {
+            set_user_preferences(['user_home_page_preference' => $userpreference], $USER->id);
+        }
+
+        $homepage = get_home_page();
+        $this->assertEquals($expected, $homepage);
+    }
+
+    /**
+     * Data provider for get_home_page checks.
+     *
+     * @return array
+     */
+    public function get_home_page_provider(): array {
+        return [
+            'No logged user' => [
+                'user' => 'nologged',
+                'expected' => HOMEPAGE_SITE,
+            ],
+            'Guest user' => [
+                'user' => 'guest',
+                'expected' => HOMEPAGE_SITE,
+            ],
+            'Logged user. Dashboard set as default home page and enabled' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_MY,
+                'defaulthomepage' => HOMEPAGE_MY,
+                'enabledashboard' => 1,
+            ],
+            'Logged user. Dashboard set as default home page but disabled' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_MYCOURSES,
+                'defaulthomepage' => HOMEPAGE_MY,
+                'enabledashboard' => 0,
+            ],
+            'Logged user. My courses set as default home page with dashboard enabled' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_MYCOURSES,
+                'defaulthomepage' => HOMEPAGE_MYCOURSES,
+                'enabledashboard' => 1,
+            ],
+            'Logged user. My courses set as default home page with dashboard disabled' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_MYCOURSES,
+                'defaulthomepage' => HOMEPAGE_MYCOURSES,
+                'enabledashboard' => 0,
+            ],
+            'Logged user. Site set as default home page with dashboard enabled' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_SITE,
+                'defaulthomepage' => HOMEPAGE_SITE,
+                'enabledashboard' => 1,
+            ],
+            'Logged user. Site set as default home page with dashboard disabled' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_SITE,
+                'defaulthomepage' => HOMEPAGE_SITE,
+                'enabledashboard' => 0,
+            ],
+            'Logged user. User preference set as default page with dashboard enabled and user preference set to dashboard' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_MY,
+                'defaulthomepage' => HOMEPAGE_USER,
+                'enabledashboard' => 1,
+                'userpreference' => HOMEPAGE_MY,
+            ],
+            'Logged user. User preference set as default page with dashboard disabled and user preference set to dashboard' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_MYCOURSES,
+                'defaulthomepage' => HOMEPAGE_USER,
+                'enabledashboard' => 0,
+                'userpreference' => HOMEPAGE_MY,
+            ],
+            'Logged user. User preference set as default page with dashboard enabled and user preference set to my courses' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_MYCOURSES,
+                'defaulthomepage' => HOMEPAGE_USER,
+                'enabledashboard' => 1,
+                'userpreference' => HOMEPAGE_MYCOURSES,
+            ],
+            'Logged user. User preference set as default page with dashboard disabled and user preference set to my courses' => [
+                'user' => 'logged',
+                'expected' => HOMEPAGE_MYCOURSES,
+                'defaulthomepage' => HOMEPAGE_USER,
+                'enabledashboard' => 0,
+                'userpreference' => HOMEPAGE_MYCOURSES,
+            ],
+        ];
+    }
+
+    /**
+     * Test get_default_home_page() method.
+     *
+     * @covers ::get_default_home_page
+     */
+    public function test_get_default_home_page() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $CFG->enabledashboard = 1;
+        $default = get_default_home_page();
+        $this->assertEquals(HOMEPAGE_MY, $default);
+
+        $CFG->enabledashboard = 0;
+        $default = get_default_home_page();
+        $this->assertEquals(HOMEPAGE_MYCOURSES, $default);
+    }
 }

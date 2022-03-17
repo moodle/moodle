@@ -138,8 +138,6 @@ switch ($mode) {
         // Change the navigation to point to the my grade node (If we are a student).
         if ($USER->id == $user->id) {
             require_once($CFG->dirroot . '/user/lib.php');
-            // Make the dashboard active so that it shows up in the navbar correctly.
-            $gradenode = $PAGE->settingsnav->find('dashboard', null)->make_active();
             // Get the correct 'Grades' url to point to.
             $activeurl = user_mygrades_url();
             $navbar = $PAGE->navbar->add(get_string('grades', 'grades'), $activeurl, navigation_node::TYPE_SETTING);

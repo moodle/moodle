@@ -73,7 +73,7 @@
         if (!has_capability('moodle/site:config',
                 context_system::instance()) and !empty($CFG->defaulthomepage) and !isguestuser()) {
             if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
-                if ($CFG->defaulthomepage == HOMEPAGE_MY) {
+                if ($CFG->defaulthomepage == HOMEPAGE_MY && !empty($CFG->enabledashboard)) {
                     $urltogo = $CFG->wwwroot.'/my/';
                 } else if ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES) {
                     $urltogo = $CFG->wwwroot.'/my/courses.php';
@@ -99,5 +99,3 @@
     } else {
         print_error('shib_not_set_up_error', 'auth_shibboleth', '', $readmeurl);
     }
-
-

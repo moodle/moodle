@@ -62,6 +62,7 @@ Feature: Set the site home page and dashboard as the default home page
     And I log out
     When I log in as "user1"
     And I follow "Preferences" in the user menu
+    And I should see "Home" in the ".breadcrumb" "css_element"
     And I follow "Start page"
     And I set the field "Start page" to "<preference>"
     And I press "Save changes"
@@ -71,6 +72,6 @@ Feature: Set the site home page and dashboard as the default home page
 
     Examples:
       | preference | breadcrumb |
-      | Site       | Home       |
+      | Home       | Home       |
       | Dashboard  | Dashboard  |
       | My courses | My courses |

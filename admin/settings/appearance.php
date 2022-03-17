@@ -186,15 +186,29 @@ reports,core_reportbuilder|/reportbuilder/index.php',
 
     // Navigation settings
     $temp = new admin_settingpage('navigation', new lang_string('navigation'));
-    $choices = array(
-        HOMEPAGE_SITE => new lang_string('site'),
-        HOMEPAGE_MY => new lang_string('mymoodle', 'admin'),
-        HOMEPAGE_MYCOURSES => new lang_string('mycourses', 'admin'),
-        HOMEPAGE_USER => new lang_string('userpreference', 'admin')
-    );
+    $temp->add(new admin_setting_configcheckbox(
+        'enabledashboard',
+        new lang_string('enabledashboard', 'admin'),
+        new lang_string('enabledashboard_help', 'admin'),
+        1
+    ));
+
+    $choices = [HOMEPAGE_SITE => new lang_string('home')];
+    if (!empty($CFG->enabledashboard)) {
+        $choices[HOMEPAGE_MY] = new lang_string('mymoodle', 'admin');
+    }
+    $choices[HOMEPAGE_MYCOURSES] = new lang_string('mycourses', 'admin');
+    $choices[HOMEPAGE_USER] = new lang_string('userpreference', 'admin');
     $temp->add(new admin_setting_configselect('defaulthomepage', new lang_string('defaulthomepage', 'admin'),
-            new lang_string('configdefaulthomepage', 'admin'), HOMEPAGE_MY, $choices));
-    $temp->add(new admin_setting_configcheckbox('allowguestmymoodle', new lang_string('allowguestmymoodle', 'admin'), new lang_string('configallowguestmymoodle', 'admin'), 1));
+            new lang_string('configdefaulthomepage', 'admin'), get_default_home_page(), $choices));
+    if (!empty($CFG->enabledashboard)) {
+        $temp->add(new admin_setting_configcheckbox(
+            'allowguestmymoodle',
+            new lang_string('allowguestmymoodle', 'admin'),
+            new lang_string('configallowguestmymoodle', 'admin'),
+            1
+        ));
+    }
     $temp->add(new admin_setting_configcheckbox('navshowfullcoursenames', new lang_string('navshowfullcoursenames', 'admin'), new lang_string('navshowfullcoursenames_help', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('navshowcategories', new lang_string('navshowcategories', 'admin'), new lang_string('confignavshowcategories', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('navshowmycoursecategories', new lang_string('navshowmycoursecategories', 'admin'), new lang_string('navshowmycoursecategories_help', 'admin'), 0));
@@ -237,9 +251,11 @@ reports,core_reportbuilder|/reportbuilder/index.php',
     $temp->add(new admin_setting_configcheckbox('doctonewwindow', new lang_string('doctonewwindow', 'admin'), new lang_string('configdoctonewwindow', 'admin'), 0));
     $ADMIN->add('appearance', $temp);
 
-    $temp = new admin_externalpage('mypage', new lang_string('mypage', 'admin'), $CFG->wwwroot . '/my/indexsys.php',
-            'moodle/my:configsyspages');
-    $ADMIN->add('appearance', $temp);
+    if (!empty($CFG->enabledashboard)) {
+        $temp = new admin_externalpage('mypage', new lang_string('mypage', 'admin'), $CFG->wwwroot . '/my/indexsys.php',
+                'moodle/my:configsyspages');
+        $ADMIN->add('appearance', $temp);
+    }
 
     $temp = new admin_externalpage('profilepage', new lang_string('myprofile', 'admin'), $CFG->wwwroot . '/user/profilesys.php',
             'moodle/my:configsyspages');

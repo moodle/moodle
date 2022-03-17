@@ -1988,7 +1988,7 @@ class core_course_renderer extends plugin_renderer_base {
                 // There are more enrolled courses than we can display, display link to 'My courses'.
                 $courses = array_slice($courses, 0, $CFG->frontpagecourselimit, true);
                 $chelper->set_courses_display_options(array(
-                        'viewmoreurl' => new moodle_url('/my/'),
+                        'viewmoreurl' => new moodle_url('/my/courses.php'),
                         'viewmoretext' => new lang_string('mycourses')
                     ));
             } else if (core_course_category::top()->is_uservisible()) {

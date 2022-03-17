@@ -933,6 +933,8 @@ class core_user {
      * @return void
      */
     protected static function fill_preferences_cache() {
+        global $CFG;
+
         if (self::$preferencescache !== null) {
             return;
         }
@@ -966,13 +968,22 @@ class core_user {
                 global $USER;
                 return $USER->id == $user->id && has_capability('moodle/blog:view', context_system::instance());
             });
-        $preferences['user_home_page_preference'] = array('type' => PARAM_INT, 'null' => NULL_ALLOWED, 'default' => HOMEPAGE_MY,
-            'choices' => array(HOMEPAGE_SITE, HOMEPAGE_MY, HOMEPAGE_MYCOURSES),
+
+        $choices = [HOMEPAGE_SITE];
+        if (!empty($CFG->enabledashboard)) {
+            $choices[] = HOMEPAGE_MY;
+        }
+        $choices[] = HOMEPAGE_MYCOURSES;
+        $preferences['user_home_page_preference'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_ALLOWED,
+            'default' => get_default_home_page(),
+            'choices' => $choices,
             'permissioncallback' => function ($user, $preferencename) {
                 global $CFG;
                 return (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER));
             }
-        );
+        ];
 
         // Core components that may want to define their preferences.
         // List of core components implementing callback is hardcoded here for performance reasons.

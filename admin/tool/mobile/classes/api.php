@@ -340,6 +340,10 @@ class api {
             $settings->coursegraceperiodbefore = $CFG->coursegraceperiodbefore;
         }
 
+        if (empty($section) || $section === 'navigation') {
+            $settings->enabledashboard = $CFG->enabledashboard;
+        }
+
         return $settings;
     }
 

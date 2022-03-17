@@ -42,7 +42,7 @@ Feature: Primary navigation
 
     Examples:
       | userpreference | homepage    |
-      |   Site         | Home        |
+      |   Home         | Home        |
       |   Dashboard    | Dashboard   |
       |   My courses   | My courses  |
 
@@ -63,3 +63,58 @@ Feature: Primary navigation
     And I should not see "Dashboard" in the ".primary-navigation" "css_element"
     And I should not see "My courses" in the ".primary-navigation" "css_element"
     And I should not see "Site administration" in the ".primary-navigation" "css_element"
+
+  Scenario: Dashboard is not displayed in the primary navigation when it is disabled
+    Given the following config values are set as admin:
+      | enabledashboard | 0 |
+    When I am on the "My courses" page logged in as "user1"
+    Then I should not see "Dashboard"
+    And the following config values are set as admin:
+      | enabledashboard | 1 |
+# We need to reload the page to skip the "Welcome, xxxx!" and display the real page title.
+    And I reload the page
+    And I should see "Dashboard"
+
+  Scenario: Start page when default home is dashboard but dashboard is disabled
+    Given the following config values are set as admin:
+      | enabledashboard | 0 |
+# 1 = Dashboard.
+      | defaulthomepage | 1 |
+    When I log in as "admin"
+# We need to reload the page to skip the "Welcome, xxxx!" and display the real page title.
+    And I reload the page
+    Then I should not see "Dashboard" in the "page-header" "region"
+    And I should see "My courses" in the "page-header" "region"
+    And I log out
+# Check dashboard is displayed when it's re-enabled.
+    And the following config values are set as admin:
+      | enabledashboard | 1 |
+    And I log in as "admin"
+# We need to reload the page to skip the "Welcome, xxxx!" and display the real page title.
+    And I reload the page
+    And I should see "Dashboard" in the "page-header" "region"
+    And I should not see "My courses" in the "page-header" "region"
+
+  Scenario: Start page when default home is user preference set to dashboard but dashboard is disabled
+    Given the following config values are set as admin:
+      | enabledashboard | 0 |
+# 2 = User preference.
+      | defaulthomepage | 2 |
+# 1 = Dashboard.
+    And the following "user preferences" exist:
+      | user      | preference                       | value |
+      | admin     | user_home_page_preference        | 1     |
+    When I log in as "admin"
+# We need to reload the page to skip the "Welcome, xxxx!" and display the real page title.
+    And I reload the page
+    Then I should not see "Dashboard"
+    And I should see "My courses" in the "page-header" "region"
+    And I log out
+# Check dashboard is displayed when it's re-enabled.
+    And the following config values are set as admin:
+      | enabledashboard | 1 |
+    And I log in as "admin"
+# We need to reload the page to skip the "Welcome, xxxx!" and display the real page title.
+    And I reload the page
+    And I should see "Dashboard" in the "page-header" "region"
+    And I should not see "My courses" in the "page-header" "region"

@@ -52,6 +52,18 @@ if ($hassiteconfig && moodle_needs_upgrading()) {
 
 $strmymoodle = get_string('myhome');
 
+if (empty($CFG->enabledashboard)) {
+    // Dashboard is disabled, so the /my page shouldn't be displayed.
+    $defaultpage = get_default_home_page();
+    if ($defaultpage == HOMEPAGE_MYCOURSES) {
+        // If default page is set to "My courses", redirect to it.
+        redirect(new moodle_url('/my/courses.php'));
+    } else {
+        // Otherwise, raise an exception to inform the dashboard is disabled.
+        throw new moodle_exception('error:dashboardisdisabled', 'my');
+    }
+}
+
 if (isguestuser()) {  // Force them to see system default, no editing allowed
     // If guests are not allowed my moodle, send them to front page.
     if (empty($CFG->allowguestmymoodle)) {

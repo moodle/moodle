@@ -60,3 +60,20 @@ Feature: Site home displays items in different modes
     And I should not see "Category A child" in the "region-main" "region"
     And I toggle "Category A" category children visibility in frontpage
     And I should see "Course 11 1" in the "region-main" "region"
+
+  Scenario: Displays Enrolled users in frontpage
+    Given the following "users" exist:
+      | username | firstname | lastname | email           | profile_field_frog |
+      | user1    | User      | One      | one@example.com | Kermit             |
+    And the following "course enrolments" exist:
+      | user  | course       | role    |
+      | admin | COURSE1_1    | student |
+      | admin | COURSE2_1    | student |
+      | admin | COURSE2_2    | student |
+    And I set the following administration settings values:
+      | Site home items when logged in | Enrolled courses |
+      | frontpagecourselimit           | 2                |
+    And I log in as "admin"
+    And I am on site homepage
+    When I click on "My courses" "link" in the "frontpage-course-list" "region"
+    Then I should see "My courses" in the "page-header" "region"

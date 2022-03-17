@@ -10366,15 +10366,38 @@ function get_home_page() {
     global $CFG;
 
     if (isloggedin() && !isguestuser() && !empty($CFG->defaulthomepage)) {
+        // If dashboard is disabled, home will be set to default page.
+        $defaultpage = get_default_home_page();
         if ($CFG->defaulthomepage == HOMEPAGE_MY) {
-            return HOMEPAGE_MY;
+            if (!empty($CFG->enabledashboard)) {
+                return HOMEPAGE_MY;
+            } else {
+                return $defaultpage;
+            }
         } else if ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES) {
             return HOMEPAGE_MYCOURSES;
         } else {
-            return (int)get_user_preferences('user_home_page_preference', HOMEPAGE_MY);
+            $userhomepage = (int) get_user_preferences('user_home_page_preference', $defaultpage);
+            if (empty($CFG->enabledashboard) && $userhomepage == HOMEPAGE_MY) {
+                // If the user was using the dashboard but it's disabled, return the default home page.
+                $userhomepage = $defaultpage;
+            }
+            return $userhomepage;
         }
     }
     return HOMEPAGE_SITE;
+}
+
+/**
+ * Returns the default home page to display if current one is not defined or can't be applied.
+ * The default behaviour is to return Dashboard if it's enabled or My courses page if it isn't.
+ *
+ * @return int The default home page.
+ */
+function get_default_home_page(): int {
+    global $CFG;
+
+    return !empty($CFG->enabledashboard) ? HOMEPAGE_MY : HOMEPAGE_MYCOURSES;
 }
 
 /**
