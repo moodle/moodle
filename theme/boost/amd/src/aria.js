@@ -29,7 +29,6 @@ import Pending from 'core/pending';
  */
 const dropdownFix = () => {
     let focusEnd = false;
-    let focusBackToTrigger = true;
     const setFocusEnd = (end = true) => {
         focusEnd = end;
     };
@@ -65,11 +64,6 @@ const dropdownFix = () => {
         // Up and Down keys also open the menu.
         if (trigger === 'ArrowUp' || trigger === 'ArrowDown') {
             fixFocus = true;
-        }
-
-        // Pressing tab on the menu button should focus on the next element in the DOM and not back to the menu trigger.
-        if (trigger === 'Tab') {
-            focusBackToTrigger = false;
         }
 
         if (!fixFocus) {
@@ -165,7 +159,6 @@ const dropdownFix = () => {
                     // Wrap to first item.
                     next = menuItems[0];
                 }
-
             } else if (trigger == 'ArrowUp') {
                 // Up key.
                 for (let i = 1; i < menuItems.length; i++) {
@@ -178,7 +171,6 @@ const dropdownFix = () => {
                     // Wrap to last item.
                     next = menuItems[menuItems.length - 1];
                 }
-
             } else if (trigger == 'Home') {
                 // Home key.
                 next = menuItems[0];
@@ -186,9 +178,6 @@ const dropdownFix = () => {
             } else if (trigger == 'End') {
                 // End key.
                 next = menuItems[menuItems.length - 1];
-            } else if (trigger == 'Tab') {
-                // Pressing tab in the menu should focus on the next element in the DOM and not back to the menu trigger.
-                focusBackToTrigger = false;
             }
 
             // Variable next is set if we do want to act on the keypress.
@@ -203,11 +192,10 @@ const dropdownFix = () => {
     $('.dropdown').on('hidden.bs.dropdown', e => {
         // We need to focus on the menu trigger.
         const trigger = e.target.querySelector('[data-toggle="dropdown"]');
-        if (trigger && focusBackToTrigger) {
+        const focused = document.activeElement != document.body ? document.activeElement : null;
+        if (trigger && focused && e.target.contains(focused)) {
             shiftFocus(trigger);
         }
-        // Reset flag to focus back to the menu trigger.
-        focusBackToTrigger = true;
     });
 };
 
