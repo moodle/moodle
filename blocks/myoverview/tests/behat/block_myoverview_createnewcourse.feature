@@ -26,3 +26,19 @@ Feature: If there is no course yet, users with capabilities have a link to creat
     Given I am on the "My courses" page logged in as "teacher1"
     When I should see "No courses"
     Then I should not see "Create new course"
+
+  Scenario: Course creators on a subcategory can see a link to new course form from my overview block
+    Given the following "categories" exist:
+      | name  | category | idnumber |
+      | Cat 1 | 0        | CAT1     |
+      | Cat 2 | CAT1     | CAT2     |
+    And the following "role assigns" exist:
+      | user     | role          | contextlevel | reference |
+      | teacher1 | coursecreator | Category     | CAT2      |
+    And I am on the "My courses" page logged in as "teacher1"
+    And I should see "No courses"
+    And I should see "Create new course" in the "region-main" "region"
+    And I should not see "Add a new course"
+    When I click on "Create new course" "link" in the "region-main" "region"
+    Then I should see "Add a new course"
+    And I should see "Cat 2" in the "page-header" "region"
