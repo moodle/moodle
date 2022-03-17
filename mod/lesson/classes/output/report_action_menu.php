@@ -69,7 +69,7 @@ class report_action_menu implements templatable, renderable {
         $reportselect = new \url_select($menu, $this->url->out(false), null, 'lesson-report-select');
         $data = [
             'reportselect' => $reportselect->export_for_template($output),
-            'heading' => $menu[$reportselect->selected]
+            'heading' => $menu[$reportselect->selected] ?? ''
         ];
         return $data;
     }

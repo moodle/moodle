@@ -4229,9 +4229,11 @@ abstract class lesson_page extends lesson_base {
                 }
                 // "number of attempts remaining" message if $this->lesson->maxattempts > 1
                 // displaying of message(s) is at the end of page for more ergonomic display
-                if (!$result->correctanswer && ($result->newpageid == 0)) {
+                // If we are showing the number of remaining attempts, we need to show it regardless of what the next
+                // jump to page is.
+                if (!$result->correctanswer) {
                     // Retrieve the number of attempts left counter for displaying at bottom of feedback page.
-                    if (!empty($this->lesson->maxattempts) && $nattempts >= $this->lesson->maxattempts) {
+                    if ($result->newpageid == 0 && !empty($this->lesson->maxattempts) && $nattempts >= $this->lesson->maxattempts) {
                         if ($this->lesson->maxattempts > 1) { // don't bother with message if only one attempt
                             $result->maxattemptsreached = true;
                         }

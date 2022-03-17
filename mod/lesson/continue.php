@@ -76,7 +76,7 @@ if ($result->nodefaultresponse || $result->inmediatejump) {
 
 // Set Messages.
 $lesson->add_messages_on_page_process($page, $result, $reviewmode);
-
+$PAGE->set_secondary_active_tab('modulepage');
 $PAGE->set_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
 $PAGE->set_subpage($page->id);
 
