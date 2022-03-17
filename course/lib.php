@@ -4125,12 +4125,11 @@ function course_get_user_administration_options($course, $context) {
     global $CFG;
     $isfrontpage = $course->id == SITEID;
     $completionenabled = $CFG->enablecompletion && $course->enablecompletion;
-    $hascompletiontabs = count(core_completion\manager::get_available_completion_tabs($course, $context)) > 0;
+    $hascompletionoptions = count(core_completion\manager::get_available_completion_options($course->id)) > 0;
     $options = new stdClass;
     $options->update = has_capability('moodle/course:update', $context);
-    $options->editcompletion = $CFG->enablecompletion &&
-                               $course->enablecompletion &&
-                               ($options->update || $hascompletiontabs);
+    $options->editcompletion = $CFG->enablecompletion && $course->enablecompletion &&
+        ($options->update || $hascompletionoptions);
     $options->filters = has_capability('moodle/filter:manage', $context) &&
                         count(filter_get_available_in_context($context)) > 0;
     $options->reports = has_capability('moodle/site:viewreports', $context);

@@ -89,6 +89,9 @@ course formats don't have their own renderer.
   category pages.
 * New core_course_category::get_nearest_editable_subcategory():
   - Return the core_course_category object for the first subcategory that the current user has the permission on it.
+* The method navigation() in the core_course_bulk_activity_completion_renderer class has been deprecated as the tabs navigation
+  structure in the course competency pages has been replaced with tertiary navigation. To render the navigation, please
+  render_course_completion_action_bar() instead.
 
 === 3.11 ===
 * A new callback xxx_coursemodule_definition_after_data that allows plugins to extend activity forms after the data is set.
@@ -102,6 +105,7 @@ course formats don't have their own renderer.
   - activity_dates_information_in_activity_should_not_exist()
     - Given the activity date information in "<ActivityName>" should not exist
 * A user preference usemodchooser has been removed and the activities/resources (non-ajax) activity chooser has been deprecated and will be removed in the future.
+
 === 3.10 ===
 
 * The function make_categories_options() has now been deprecated. Please use \core_course_category::make_categories_list() instead.

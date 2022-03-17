@@ -38,11 +38,16 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
     /**
      * Render the navigation tabs for the completion page.
      *
+     * @deprecated since Moodle 4.0
      * @param int|stdClass $courseorid the course object or id.
      * @param String $page the tab to focus.
      * @return string html
      */
     public function navigation($courseorid, $page) {
+        debugging('navigation() has been deprecated as the tabs navigation structure in the completion page ' .
+            'has been replaced with tertiary navigation. Please use render_course_completion_action_bar() instead.',
+            DEBUG_DEVELOPER);
+
         $tabs = core_completion\manager::get_available_completion_tabs($courseorid);
         if (count($tabs) > 1) {
             return $this->tabtree($tabs, $page);
@@ -111,5 +116,16 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
             'modulescount' => count($modules),
         ];
         return parent::render_from_template('core_course/editdefaultcompletion', $data);
+    }
+
+    /**
+     * Renders the course completion action bar.
+     *
+     * @param \core_course\output\completion_action_bar $actionbar
+     * @return string The HTML output
+     */
+    public function render_course_completion_action_bar(\core_course\output\completion_action_bar $actionbar): string {
+        $data = $actionbar->export_for_template($this->output);
+        return $this->output->render_from_template('core_course/completion_action_bar', $data);
     }
 }
