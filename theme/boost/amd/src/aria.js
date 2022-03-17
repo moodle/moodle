@@ -256,15 +256,6 @@ const updateTabFocus = e => {
         case 'End':
             e.preventDefault();
             tabs[tabs.length - 1].focus();
-            break;
-        case 'Enter':
-        case ' ':
-            e.preventDefault();
-            $(e.target).tab('show');
-            tabs.forEach(tab => {
-                tab.tabIndex = -1;
-            });
-            e.target.tabIndex = 0;
     }
 };
 
@@ -273,7 +264,7 @@ const updateTabFocus = e => {
  */
 const tabElementFix = () => {
     document.addEventListener('keydown', e => {
-        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Enter', ' '].includes(e.key)) {
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
             if (e.target.matches('[role="tablist"] [role="tab"]')) {
                 updateTabFocus(e);
             }
