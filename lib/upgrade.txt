@@ -42,7 +42,9 @@ information provided here is intended especially for developers.
 * The completion_info function display_help_icon() which returned the 'Your progress' help icon has been deprecated and
   should no longer be used.
 * The completion_info function print_help_icon() which has been deprecated since Moodle 2.0 should no longer be used.
-* @babel/polyfill has been removed in favour of corejs@3
+* @babel/polyfill has been removed in favour of corejs@3.
+* A new parameter $partialrebuild has been added to the rebuild_course_cache to invalidate the cache
+  of the section or module only, not the whole course cache
 * A new parameter $isbulkupdate has been added to the following functions:
   - grade_category::update()
   - grade_category::insert()

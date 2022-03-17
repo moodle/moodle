@@ -3687,4 +3687,60 @@ function print_grade_plugin_selector($plugin_info, $active_type, $active_plugin,
         // only one option - no plugin selector needed
         return '';
     }
+
+    /**
+     * Purge the cache of a course section.
+     *
+     * $sectioninfo must have following attributes:
+     *   - course: course id
+     *   - section: section number
+     *
+     * @param object $sectioninfo section info
+     * @return void
+     * @deprecated since Moodle 4.0. Please use {@link course_modinfo::purge_course_section_cache_by_id()}
+     *             or {@link course_modinfo::purge_course_section_cache_by_number()} instead.
+     */
+    function course_purge_section_cache(object $sectioninfo): void {
+        debugging(__FUNCTION__ . '() is deprecated. ' .
+            'Please use course_modinfo::purge_course_section_cache_by_id() ' .
+            'or course_modinfo::purge_course_section_cache_by_number() instead.',
+            DEBUG_DEVELOPER);
+        $sectionid = $sectioninfo->section;
+        $courseid = $sectioninfo->course;
+        course_modinfo::purge_course_section_cache_by_id($courseid, $sectionid);
+    }
+
+    /**
+     * Purge the cache of a course module.
+     *
+     * $cm must have following attributes:
+     *   - id: cmid
+     *   - course: course id
+     *
+     * @param cm_info|stdClass $cm course module
+     * @return void
+     * @deprecated since Moodle 4.0. Please use {@link course_modinfo::purge_course_module_cache()} instead.
+     */
+    function course_purge_module_cache($cm): void {
+        debugging(__FUNCTION__ . '() is deprecated. ' . 'Please use course_modinfo::purge_course_module_cache() instead.',
+            DEBUG_DEVELOPER);
+        $cmid = $cm->id;
+        $courseid = $cm->course;
+        course_modinfo::purge_course_module_cache($courseid, $cmid);
+    }
+}
+
+/**
+ * For a given course, returns an array of course activity objects
+ * Each item in the array contains he following properties:
+ *
+ * @param int $courseid course id
+ * @param bool $usecache get activities from cache if modinfo exists when $usecache is true
+ * @return array list of activities
+ * @deprecated since Moodle 4.0. Please use {@link course_modinfo::get_array_of_activities()} instead.
+ */
+function get_array_of_activities(int $courseid, bool $usecache = false): array {
+    debugging(__FUNCTION__ . '() is deprecated. ' . 'Please use course_modinfo::get_array_of_activities() instead.',
+        DEBUG_DEVELOPER);
+    return course_modinfo::get_array_of_activities(get_course($courseid), $usecache);
 }

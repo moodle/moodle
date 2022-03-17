@@ -1044,6 +1044,80 @@ class courselib_test extends advanced_testcase {
         $this->assertEquals(3, $course->marker);
     }
 
+    /**
+     * Test move_section_to method with caching
+     *
+     * @covers ::move_section_to
+     * @return void
+     */
+    public function test_move_section_with_section_cache(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $cache = cache::make('core', 'coursemodinfo');
+
+        // Generate the course and pre-requisite module.
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 3], ['createsections' => true]);
+        // Reset course cache.
+        rebuild_course_cache($course->id, true);
+
+        // Build course cache.
+        get_fast_modinfo($course->id);
+        // Get the course modinfo cache.
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
+        // Get the section cache.
+        $sectioncaches = $coursemodinfo->sectioncache;
+
+        // Make sure that we will have 4 section caches here.
+        $this->assertCount(4, $sectioncaches);
+        $this->assertArrayHasKey(0, $sectioncaches);
+        $this->assertArrayHasKey(1, $sectioncaches);
+        $this->assertArrayHasKey(2, $sectioncaches);
+        $this->assertArrayHasKey(3, $sectioncaches);
+
+        // Move section.
+        move_section_to($course, 2, 3);
+        // Get the course modinfo cache.
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
+        // Get the section cache.
+        $sectioncaches = $coursemodinfo->sectioncache;
+
+        // Make sure that we will have 2 section caches left.
+        $this->assertCount(2, $sectioncaches);
+        $this->assertArrayHasKey(0, $sectioncaches);
+        $this->assertArrayHasKey(1, $sectioncaches);
+        $this->assertArrayNotHasKey(2, $sectioncaches);
+        $this->assertArrayNotHasKey(3, $sectioncaches);
+    }
+
+    /**
+     * Test move_section_to method.
+     * Make sure that we only update the moving sections, not all the sections in the current course.
+     *
+     * @covers ::move_section_to
+     * @return void
+     */
+    public function test_move_section_to(): void {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Generate the course and pre-requisite module.
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 3], ['createsections' => true]);
+
+        ob_start();
+        $DB->set_debug(true);
+        // Move section.
+        move_section_to($course, 2, 3);
+        $DB->set_debug(false);
+        $debuginfo = ob_get_contents();
+        ob_end_clean();
+        $sectionmovequerycount = substr_count($debuginfo, 'UPDATE ' . $CFG->phpunit_prefix . 'course_sections SET');
+        // We are updating the course_section table in steps to avoid breaking database uniqueness constraint.
+        // So the queries will be doubled. See: course/lib.php:1423
+        // Make sure that we only need 4 queries to update the position of section 2 and section 3.
+        $this->assertEquals(4, $sectionmovequerycount);
+    }
+
     public function test_course_can_delete_section() {
         global $DB;
         $this->resetAfterTest(true);
@@ -1143,6 +1217,7 @@ class courselib_test extends advanced_testcase {
 
         // Delete section in the middle (2).
         $this->assertFalse(course_delete_section($course, 2, false));
+        $this->assertEquals(4, course_get_format($course)->get_last_section_number());
         $this->assertTrue(course_delete_section($course, 2, true));
         $this->assertFalse($DB->record_exists('course_modules', array('id' => $assign21->cmid)));
         $this->assertFalse($DB->record_exists('course_modules', array('id' => $assign22->cmid)));

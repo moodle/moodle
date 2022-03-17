@@ -1095,7 +1095,15 @@ abstract class base {
             }
         }
         if ($needrebuild) {
-            rebuild_course_cache($this->courseid, true);
+            if ($sectionid) {
+                // Invalidate the section cache by given section id.
+                course_modinfo::purge_course_section_cache_by_id($this->courseid, $sectionid);
+                // Partial rebuild sections that have been invalidated.
+                rebuild_course_cache($this->courseid, true, true);
+            } else {
+                // Full rebuild if sectionid is null.
+                rebuild_course_cache($this->courseid);
+            }
         }
         if ($changed) {
             // Reset internal caches.
@@ -1422,7 +1430,10 @@ abstract class base {
         // Delete section and it's format options.
         $DB->delete_records('course_format_options', array('sectionid' => $section->id));
         $DB->delete_records('course_sections', array('id' => $section->id));
-        rebuild_course_cache($course->id, true);
+        // Invalidate the section cache by given section id.
+        course_modinfo::purge_course_section_cache_by_id($course->id, $section->id);
+        // Partial rebuild section cache that has been purged.
+        rebuild_course_cache($course->id, true, true);
 
         // Delete section summary files.
         $context = \context_course::instance($course->id);

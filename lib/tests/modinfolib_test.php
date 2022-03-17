@@ -1004,4 +1004,96 @@ class modinfolib_test extends advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test purge_section_cache_by_id method
+     *
+     * @covers \course_modinfo::purge_course_section_cache_by_id
+     * @return void
+     */
+    public function test_purge_section_cache_by_id(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $cache = cache::make('core', 'coursemodinfo');
+
+        // Generate the course and pre-requisite section.
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 3], ['createsections' => true]);
+        // Reset course cache.
+        rebuild_course_cache($course->id, true);
+        // Build course cache.
+        get_fast_modinfo($course->id);
+        // Get the course modinfo cache.
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
+        // Get the section cache.
+        $sectioncaches = $coursemodinfo->sectioncache;
+
+        // Make sure that we will have 4 section caches here.
+        $this->assertCount(4, $sectioncaches);
+        $this->assertArrayHasKey(0, $sectioncaches);
+        $this->assertArrayHasKey(1, $sectioncaches);
+        $this->assertArrayHasKey(2, $sectioncaches);
+        $this->assertArrayHasKey(3, $sectioncaches);
+
+        // Purge cache for the section by id.
+        course_modinfo::purge_course_section_cache_by_id($course->id, $sectioncaches[1]->id);
+        // Get the course modinfo cache.
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
+        // Get the section cache.
+        $sectioncaches = $coursemodinfo->sectioncache;
+
+        // Make sure that we will have 3 section caches left.
+        $this->assertCount(3, $sectioncaches);
+        $this->assertArrayNotHasKey(1, $sectioncaches);
+        $this->assertArrayHasKey(0, $sectioncaches);
+        $this->assertArrayHasKey(2, $sectioncaches);
+        $this->assertArrayHasKey(3, $sectioncaches);
+        // Make sure that the cacherev will be reset.
+        $this->assertEquals(-1, $coursemodinfo->cacherev);
+    }
+
+    /**
+     * Test purge_section_cache_by_number method
+     *
+     * @covers \course_modinfo::purge_course_section_cache_by_number
+     * @return void
+     */
+    public function test_section_cache_by_number(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $cache = cache::make('core', 'coursemodinfo');
+
+        // Generate the course and pre-requisite section.
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 3], ['createsections' => true]);
+        // Reset course cache.
+        rebuild_course_cache($course->id, true);
+        // Build course cache.
+        get_fast_modinfo($course->id);
+        // Get the course modinfo cache.
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
+        // Get the section cache.
+        $sectioncaches = $coursemodinfo->sectioncache;
+
+        // Make sure that we will have 4 section caches here.
+        $this->assertCount(4, $sectioncaches);
+        $this->assertArrayHasKey(0, $sectioncaches);
+        $this->assertArrayHasKey(1, $sectioncaches);
+        $this->assertArrayHasKey(2, $sectioncaches);
+        $this->assertArrayHasKey(3, $sectioncaches);
+
+        // Purge cache for the section with section number is 1.
+        course_modinfo::purge_course_section_cache_by_number($course->id, 1);
+        // Get the course modinfo cache.
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
+        // Get the section cache.
+        $sectioncaches = $coursemodinfo->sectioncache;
+
+        // Make sure that we will have 3 section caches left.
+        $this->assertCount(3, $sectioncaches);
+        $this->assertArrayNotHasKey(1, $sectioncaches);
+        $this->assertArrayHasKey(0, $sectioncaches);
+        $this->assertArrayHasKey(2, $sectioncaches);
+        $this->assertArrayHasKey(3, $sectioncaches);
+        // Make sure that the cacherev will be reset.
+        $this->assertEquals(-1, $coursemodinfo->cacherev);
+    }
 }
