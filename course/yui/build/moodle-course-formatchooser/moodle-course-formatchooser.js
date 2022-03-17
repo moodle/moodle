@@ -7,14 +7,15 @@ var FORMATCHOOSER = function() {
 Y.extend(FORMATCHOOSER, Y.Base, {
     initializer: function(params) {
         if (params && params.formid) {
-            var updatebut = Y.one('#' + params.formid + ' #id_updatecourseformat');
-            var formatselect = Y.one('#' + params.formid + ' #id_format');
+            var form = Y.one('#' + params.formid);
+            var updatebut = form.one('#id_updatecourseformat');
+            var formatselect = form.one('#id_format');
             var ancestor = updatebut.ancestor('fieldset');
-            var action = Y.one('form.mform').get('action');
+            var action = form.get('action');
             if (updatebut && formatselect) {
                 updatebut.setStyle('display', 'none');
                 formatselect.on('change', function() {
-                    Y.one('form.mform').set('action', action + '#' + ancestor.get('id'));
+                    form.set('action', action + '#' + ancestor.get('id'));
                     updatebut.simulate('click');
                 });
             }
