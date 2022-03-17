@@ -15,3 +15,9 @@
         margin-right: 20px;
     }
 }
+
+@media print {
+    .tertiary-navigation {
+        display: none;
+    }
+}
