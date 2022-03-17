@@ -39,6 +39,18 @@ class qformat_multianswer extends qformat_default {
         return true;
     }
 
+    /**
+     * Validate the given file.
+     *
+     * For more expensive or detailed integrity checks.
+     *
+     * @param stored_file $file the file to check
+     * @return string the error message that occurred while validating the given file
+     */
+    public function validate_file(stored_file $file): string {
+        return $this->validate_is_utf8_file($file);
+    }
+
     public function readquestions($lines) {
         question_bank::get_qtype('multianswer'); // Ensure the multianswer code is loaded.
 

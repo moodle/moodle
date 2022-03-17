@@ -202,6 +202,7 @@ $string['importparseerror'] = 'Error(s) found parsing the import file. No questi
 $string['importquestions'] = 'Import questions from file';
 $string['importquestions_help'] = 'This function enables questions in a variety of formats to be imported via text file. Note that the file must use UTF-8 encoding.';
 $string['importquestions_link'] = 'question/import';
+$string['importwrongfileencoding'] = 'The file you selected is not in UFT-8 character encoding. {$a} files must use UTF-8.';
 $string['importwrongfiletype'] = 'The type of the file you selected ({$a->actualtype}) does not match the type expected by this import format ({$a->expectedtype}).';
 $string['invalidarg'] = 'No valid arguments supplied or incorrect server configuration';
 $string['invalidcategoryidforparent'] = 'Invalid category id for parent!';
