@@ -47,6 +47,20 @@ Feature: Manage custom report filters
     Then I should see "English" in the "[data-region='active-filters']" "css_element"
     And I should not see "Spanish" in the "[data-region='active-filters']" "css_element"
 
+  Scenario: Rename filter in report using special characters
+    Given the following "core_reportbuilder > Reports" exist:
+      | name      | source                                   | default |
+      | My report | core_user\reportbuilder\datasource\users | 0       |
+    And the following "core_reportbuilder > Filters" exist:
+      | report    | uniqueidentifier |
+      | My report | user:email       |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    And I click on "Show/hide 'Filters'" "button"
+    When I set the field "Rename filter 'Email address'" to "Fish & Chips"
+    And I click on "Switch to preview mode" "button"
+    And I click on "Filters" "button"
+    Then I should see "Fish & Chips" in the "[data-region='report-filters']" "css_element"
+
   Scenario: Move filter in report
     Given the following "core_reportbuilder > Reports" exist:
       | name      | source                                   | default |

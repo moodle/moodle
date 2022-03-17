@@ -151,3 +151,12 @@ Feature: Manage custom reports
     Then I should not see "Preview" in the "[data-region='core_reportbuilder/report']" "css_element"
     And I should not see "Edit" in the "[data-region='core_reportbuilder/report']" "css_element"
     And "button[title='Filters']" "css_element" should exist in the "[data-region='core_reportbuilder/report']" "css_element"
+
+  Scenario: Special characters in report name are shown correctly
+    Given the following "core_reportbuilder > Reports" exist:
+      | name                    | source                                   |
+      | My fish & chips report  | core_user\reportbuilder\datasource\users |
+    When I log in as "admin"
+    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I press "Edit report content" action in the "My fish & chips report" report row
+    Then I should see "My fish & chips report" in the "#region-main .navbar" "css_element"
