@@ -9,6 +9,8 @@ discussions about Examview in the last 10 years.
 
 * The WebCT question format has been completely removed (WebCT was acquired by Blackboard in 2006).
 
+* The new validate_file() method in question/format.php can be overwritten
+  to implement more expensive or detailed file integrity checks for question imports.
 
 === 3.6 ===
 
