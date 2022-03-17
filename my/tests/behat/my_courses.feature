@@ -30,6 +30,13 @@ Feature: Run tests over my courses.
     Given I am on the "My courses" page logged in as "user1"
     Then "Course management options" "link" should not exist
 
+  Scenario: User without capability to browse courses cannot see any link
+    Given the following "permission overrides" exist:
+      | capability                     | permission | role | contextlevel | reference |
+      | moodle/category:viewcourselist | Prevent    | user | System       |           |
+    Given I am on the "My courses" page logged in as "user1"
+    Then "Course management options" "link" should not exist
+
   @javascript
   Scenario: User with creating a course permission can see the Create course link only
     Given the following "permission overrides" exist:
