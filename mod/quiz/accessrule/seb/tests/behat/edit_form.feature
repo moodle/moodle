@@ -5,12 +5,11 @@ Feature: Safe Exam Browser settings in quiz edit form
     Given the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I turn editing mode on
 
   Scenario: Quiz setting "Require the use of Safe Exam Browser" has all types, except "Use an existing template".
-    When I add a "Quiz" to section "1"
+    When I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add a "Quiz" to section "1"
     And I expand all fieldsets
     And the "Require the use of Safe Exam Browser" select box should contain "Yes – Configure manually"
     And the "Require the use of Safe Exam Browser" select box should not contain "Yes – Use an existing template"
@@ -22,6 +21,8 @@ Feature: Safe Exam Browser settings in quiz edit form
     Given the following "quizaccess_seb > seb templates" exist:
       | name       |
       | Template 1 |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
     When I add a "Quiz" to section "1"
     And I expand all fieldsets
     And the "Require the use of Safe Exam Browser" select box should contain "Yes – Configure manually"
@@ -30,10 +31,40 @@ Feature: Safe Exam Browser settings in quiz edit form
     And the "Require the use of Safe Exam Browser" select box should contain "Yes – Use SEB client config"
     And the field "Require the use of Safe Exam Browser" matches value "No"
 
+  Scenario: Quiz can be edited without capability to select SEB template
+    Given the following "permission override" exists:
+      | role         | editingteacher                       |
+      | capability   | quizaccess/seb:manage_seb_templateid |
+      | permission   | Prevent                              |
+      | contextlevel | System                               |
+      | reference    |                                      |
+    And the following "user" exists:
+      | username     | teacher |
+      | firstname    | Teacher |
+      | lastname     | One     |
+    And the following "course enrolment" exists:
+      | user         | teacher        |
+      | course       | C1             |
+      | role         | editingteacher |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage with editing mode on
+    # Create the quiz.
+    When I add a "Quiz" to section "0" and I fill the form with:
+      | Name | My quiz |
+    Then I should not see "Adding a new Quiz"
+    # Edit the quiz.
+    And I open "My quiz" actions menu
+    And I click on "Edit settings" "link" in the "My quiz" activity
+    And I set the field "Name" to "My quiz edited"
+    And I press "Save and return to course"
+    And I should not see "Updating: Quiz"
+
   Scenario: SEB settings if using No SEB
     Given the following "quizaccess_seb > seb templates" exist:
       | name       |
       | Template 1 |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
     When I add a "Quiz" to section "1"
     And I expand all fieldsets
     And I set the field "Require the use of Safe Exam Browser" to "No"
@@ -66,6 +97,8 @@ Feature: Safe Exam Browser settings in quiz edit form
     Given the following "quizaccess_seb > seb templates" exist:
       | name       |
       | Template 1 |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
     When I add a "Quiz" to section "1"
     And I expand all fieldsets
     And I set the field "Require the use of Safe Exam Browser" to "Yes – Use SEB client config"
@@ -98,6 +131,8 @@ Feature: Safe Exam Browser settings in quiz edit form
     Given the following "quizaccess_seb > seb templates" exist:
       | name       |
       | Template 1 |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
     When I add a "Quiz" to section "1"
     And I expand all fieldsets
     And I set the field "Require the use of Safe Exam Browser" to "Yes – Upload my own config"
@@ -130,6 +165,8 @@ Feature: Safe Exam Browser settings in quiz edit form
     Given the following "quizaccess_seb > seb templates" exist:
       | name       |
       | Template 1 |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
     When I add a "Quiz" to section "1"
     And I expand all fieldsets
     And I set the field "Require the use of Safe Exam Browser" to "Yes – Use an existing template"
@@ -164,6 +201,8 @@ Feature: Safe Exam Browser settings in quiz edit form
     Given the following "quizaccess_seb > seb templates" exist:
       | name       |
       | Template 1 |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
     When I add a "Quiz" to section "1"
     And I expand all fieldsets
     And I set the field "Require the use of Safe Exam Browser" to "Yes – Configure manually"
