@@ -2264,11 +2264,14 @@ class core_renderer extends renderer_base {
         $icon = $this->pix_icon('book', '', 'moodle', array('class' => 'iconhelp icon-pre', 'role' => 'presentation'));
 
         $attributes['href'] = new moodle_url(get_docs_url($path));
+        $newwindowicon = '';
         if (!empty($CFG->doctonewwindow) || $forcepopup) {
-            $attributes['class'] = 'helplinkpopup';
+            $attributes['target'] = '_blank';
+            $newwindowicon = $this->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle',
+            ['class' => 'fa fa-externallink fa-fw']);
         }
 
-        return html_writer::tag('a', $icon.$text, $attributes);
+        return html_writer::tag('a', $icon . $text . $newwindowicon, $attributes);
     }
 
     /**
