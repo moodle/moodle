@@ -119,10 +119,12 @@ class schedule {
 
         // Now convert audiences to SQL for user retrieval.
         [$wheres, $params] = audience::user_audience_sql($audiences);
+        [$userorder] = users_order_by_sql('u');
 
         $sql = 'SELECT u.*
                   FROM {user} u
-                 WHERE ' . implode(' OR ', $wheres);
+                 WHERE ' . implode(' OR ', $wheres) . '
+              ORDER BY ' . $userorder;
 
         return $DB->get_records_sql($sql, $params);
     }

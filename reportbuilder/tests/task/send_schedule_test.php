@@ -72,8 +72,18 @@ class send_schedule_test extends advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $userone = $this->getDataGenerator()->create_user(['username' => 'userone', 'email' => 'user1@example.com']);
-        $usertwo = $this->getDataGenerator()->create_user(['username' => 'usertwo', 'email' => 'user2@example.com']);
+        $userone = $this->getDataGenerator()->create_user([
+            'username' => 'userone',
+            'email' => 'user1@example.com',
+            'firstname' => 'Zoe',
+            'lastname' => 'Zebra',
+        ]);
+        $usertwo = $this->getDataGenerator()->create_user([
+            'username' => 'usertwo',
+            'email' => 'user2@example.com',
+            'firstname' => 'Henrietta',
+            'lastname' => 'Hamster',
+        ]);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -106,20 +116,17 @@ class send_schedule_test extends advanced_testcase {
             'audiences' => json_encode([$audience->get_persistent()->get('id')]),
         ]);
 
-        // Send the schedule, catch emails in sink.
+        // Send the schedule, catch emails in sink (noting the users are sorted alphabetically).
         $sink = $this->redirectEmails();
 
-        ob_start();
+        $this->expectOutputRegex("/^Sending schedule: My schedule\n" .
+            "  Sending to: " . fullname($usertwo) . "\n" .
+            "  Sending to: " . fullname($userone) . "\n" .
+            "Sending schedule complete\n/"
+        );
         $sendschedule = new send_schedule();
         $sendschedule->set_custom_data(['reportid' => $report->get('id'), 'scheduleid' => $schedule->get('id')]);
         $sendschedule->execute();
-        $output = ob_get_clean();
-
-        // Assert the output contains the following messages.
-        $this->assertStringContainsString("Sending schedule: My schedule", $output);
-        $this->assertStringContainsString("Sending to: " . fullname($userone), $output);
-        $this->assertStringContainsString("Sending to: " . fullname($usertwo), $output);
-        $this->assertStringContainsString("Sending schedule complete", $output);
 
         $messages = $sink->get_messages();
         $this->assertCount(2, $messages);
