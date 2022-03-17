@@ -733,6 +733,7 @@ class course_modinfo {
         if ($coursemodinfo !== false) {
             foreach ($coursemodinfo->sectioncache as $sectionno => $sectioncache) {
                 if ($sectioncache->id == $sectionid) {
+                    $coursemodinfo->cacherev = -1;
                     unset($coursemodinfo->sectioncache[$sectionno]);
                     $cache->set($courseid, $coursemodinfo);
                     break;
@@ -753,6 +754,7 @@ class course_modinfo {
         $cache->acquire_lock($courseid);
         $coursemodinfo = $cache->get($courseid);
         if ($coursemodinfo !== false && array_key_exists($sectionno, $coursemodinfo->sectioncache)) {
+            $coursemodinfo->cacherev = -1;
             unset($coursemodinfo->sectioncache[$sectionno]);
             $cache->set($courseid, $coursemodinfo);
         }
@@ -771,6 +773,7 @@ class course_modinfo {
         $coursemodinfo = $cache->get($courseid);
         $hascache = ($coursemodinfo !== false) && array_key_exists($cmid, $coursemodinfo->modinfo);
         if ($hascache) {
+            $coursemodinfo->cacherev = -1;
             unset($coursemodinfo->modinfo[$cmid]);
             $cache->set($courseid, $coursemodinfo);
         }
