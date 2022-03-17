@@ -21,7 +21,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], function($, dragDrop, Shapes, keys) {
+define([
+    'jquery',
+    'core/dragdrop',
+    'qtype_ddmarker/shapes',
+    'core/key_codes',
+    'core_form/changechecker'
+], function(
+    $,
+    dragDrop,
+    Shapes,
+    keys,
+    FormChangeChecker
+) {
 
     "use strict";
 
@@ -41,6 +53,7 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
         this.shapes = [];
         this.shapeSVGs = [];
         this.isPrinting = false;
+        this.questionAnswer = {};
         if (readOnly) {
             this.getRoot().addClass('qtype_ddmarker-readonly');
         }
@@ -150,6 +163,48 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
                 thisQ.cloneDragIfNeeded(drag);
             }
         });
+
+        // Save the question answer.
+        thisQ.questionAnswer = thisQ.getQuestionAnsweredValues();
+    };
+
+    /**
+     * Get the question answered values.
+     *
+     * @return {Object} Contain key-value with key is the input id and value is the input value.
+     */
+    DragDropMarkersQuestion.prototype.getQuestionAnsweredValues = function() {
+        let result = {};
+        this.getRoot().find('input.choices').each((i, inputNode) => {
+            result[inputNode.id] = inputNode.value;
+        });
+
+        return result;
+    };
+
+    /**
+     * Check if the question is being interacted or not.
+     *
+     * @return {boolean} Return true if the user has changed the question-answer.
+     */
+    DragDropMarkersQuestion.prototype.isQuestionInteracted = function() {
+        const oldAnswer = this.questionAnswer;
+        const newAnswer = this.getQuestionAnsweredValues();
+        let isInteracted = false;
+
+        // First, check both answers have the same structure or not.
+        if (JSON.stringify(newAnswer) !== JSON.stringify(oldAnswer)) {
+            isInteracted = true;
+            return isInteracted;
+        }
+        // Check the values.
+        Object.keys(newAnswer).forEach(key => {
+            if (newAnswer[key] !== oldAnswer[key]) {
+                isInteracted = true;
+            }
+        });
+
+        return isInteracted;
     };
 
     /**
@@ -320,6 +375,12 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
         }
 
         this.getRoot().find('input.choice' + choiceNo).val(coords.join(';'));
+        if (this.isQuestionInteracted()) {
+            // The user has interacted with the draggable items. We need to mark the form as dirty.
+            questionManager.handleFormDirty();
+            // Save the new answered value.
+            this.questionAnswer = this.getQuestionAnsweredValues();
+        }
     };
 
     /**
@@ -844,6 +905,14 @@ define(['jquery', 'core/dragdrop', 'qtype_ddmarker/shapes', 'core/key_codes'], f
         getQuestionForEvent: function(e) {
             var containerId = $(e.currentTarget).closest('.que.ddmarker').attr('id');
             return questionManager.questions[containerId];
+        },
+
+        /**
+         * Handle when the form is dirty.
+         */
+        handleFormDirty: function() {
+            const responseForm = document.getElementById('responseform');
+            FormChangeChecker.markFormAsDirty(responseForm);
         }
     };
 
