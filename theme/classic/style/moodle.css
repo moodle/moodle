@@ -12031,6 +12031,9 @@ input[disabled] {
 .alert a {
   font-weight: 700; }
 
+.breadcrumb:empty {
+  padding: 0; }
+
 @media (max-width: 767.98px) {
   #page-navbar {
     width: 100%; }
@@ -14903,12 +14906,6 @@ span.editinstructions {
     margin-bottom: -1px; }
   #nav-drawer .list-group li:last-child {
     margin-bottom: 0; }
-
-#page {
-  margin-top: 50px; }
-
-.pagelayout-embedded #page {
-  margin-top: 0; }
 
 body.drawer-ease {
   transition: margin-left 0.5s ease, margin-right 0.5s ease; }
@@ -20322,7 +20319,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
       font-size: 4em; }
 
 #page.drawers {
-  margin-top: calc(50px + 2rem);
+  margin-top: 50px;
   padding-left: 15px;
   padding-right: 15px;
   scrollbar-width: thin;
@@ -20344,7 +20341,7 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     border-radius: 0.25rem;
     background-color: #fff;
     padding: 1.5rem 0.5rem;
-    margin-top: 3rem;
+    margin-top: 0.5rem;
     margin-bottom: 3rem;
     flex: 1 0 auto; }
   #page.drawers div[role="main"] {
@@ -20430,9 +20427,12 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     pointer-events: auto;
     visibility: hidden; } }
 
+@media (min-width: 576px) {
+  #page.drawers .main-inner {
+    margin-top: 1.5rem; } }
+
 @media (min-width: 768px) {
   #page.drawers {
-    margin-top: 50px;
     padding-left: 3rem;
     padding-right: 3rem; } }
 
@@ -20446,7 +20446,6 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     overflow-y: auto;
     transition: 0.2s;
     height: calc(100vh - 50px);
-    margin-top: 50px;
     left: 0;
     right: 0; } }
   @media (min-width: 992px) and (prefers-reduced-motion: reduce) {
@@ -21017,6 +21016,9 @@ div.editor_atto_toolbar button .icon {
 
 #page {
   margin-top: 50px; }
+
+.pagelayout-embedded #page {
+  margin-top: 0; }
 
 /**
 * Reportbuilder.

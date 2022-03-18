@@ -2683,6 +2683,10 @@ $picker-emojis-per-row: 7 !default;
     font-weight: $font-weight-bold;
 }
 
+.breadcrumb:empty {
+    padding: 0;
+}
+
 @include media-breakpoint-down(sm) {
     #page-navbar {
         width: 100%;

@@ -83,12 +83,7 @@ $drawer-bg: darken($body-bg, 5%) !default;
         }
     }
 }
-#page {
-    margin-top: $fixed-header-y;
-}
-.pagelayout-embedded #page {
-    margin-top: 0;
-}
+
 body.drawer-ease {
     @include transition(margin-left 0.5s ease, margin-right 0.5s ease);
 }
