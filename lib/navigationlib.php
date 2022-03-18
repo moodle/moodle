@@ -5029,6 +5029,10 @@ class settings_navigation extends navigation_node {
             // This should be set to false as we don't want to show this to the user. It's only for generating the correct
             // breadcrumb.
             $mainpage->display = false;
+            $homepage = get_home_page();
+            if (($homepage == HOMEPAGE_MY || $homepage == HOMEPAGE_MYCOURSES)) {
+                $mainpage->mainnavonly = true;
+            }
 
             $iscurrentuser = ($user->id == $USER->id);
 
