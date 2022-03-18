@@ -153,7 +153,7 @@
 
         .drawer-right-toggle,
         .drawer-left-toggle {
-            top: calc(99vh - (#{$navbar-height} * 2));
+            top: calc(99vh - (#{$navbar-height} * 2.5));
         }
     }
     #page.drawers.scroll-down {
