@@ -2103,24 +2103,43 @@ class theme_config {
 
         } else {
             if (strpos($component, '_') === false) {
-                $component = 'mod_'.$component;
+                $component = "mod_{$component}";
             }
             list($type, $plugin) = explode('_', $component, 2);
 
-            if ($imagefile = $this->image_exists("$this->dir/pix_plugins/$type/$plugin/$image", $svg)) {
-                return $imagefile;
+            // In Moodle 4.0 we introduced a new image format.
+            // Support that image format here.
+            $candidates = [$image];
+
+            if ($type === 'mod') {
+                if ($image === 'icon') {
+                    debugging(
+                        "The 'icon' image for activity modules has been replaced with a new 'monologo'. " .
+                            "Please update your calling code to fetch the new icon where possible. " .
+                            "Called for component {$component}.",
+                        DEBUG_DEVELOPER
+                    );
+                }
+                $candidates = ['monologo', 'icon'];
             }
-            foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
-                if ($imagefile = $this->image_exists("$parent_config->dir/pix_plugins/$type/$plugin/$image", $svg)) {
+            foreach ($candidates as $image) {
+                if ($imagefile = $this->image_exists("$this->dir/pix_plugins/$type/$plugin/$image", $svg)) {
                     return $imagefile;
                 }
-            }
-            if ($imagefile = $this->image_exists("$CFG->dataroot/pix_plugins/$type/$plugin/$image", $svg)) {
-                return $imagefile;
-            }
-            $dir = core_component::get_plugin_directory($type, $plugin);
-            if ($imagefile = $this->image_exists("$dir/pix/$image", $svg)) {
-                return $imagefile;
+
+                // Base first, the immediate parent last.
+                foreach (array_reverse($this->parent_configs) as $parentconfig) {
+                    if ($imagefile = $this->image_exists("$parentconfig->dir/pix_plugins/$type/$plugin/$image", $svg)) {
+                        return $imagefile;
+                    }
+                }
+                if ($imagefile = $this->image_exists("$CFG->dataroot/pix_plugins/$type/$plugin/$image", $svg)) {
+                    return $imagefile;
+                }
+                $dir = core_component::get_plugin_directory($type, $plugin);
+                if ($imagefile = $this->image_exists("$dir/pix/$image", $svg)) {
+                    return $imagefile;
+                }
             }
             return null;
         }

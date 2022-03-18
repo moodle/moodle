@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
   the settings_navigation class in order to obtain the correct moodle_page information associated to the given settings
   navigation. After the recent changes to the navigation in single activity courses, using the global $PAGE may result
   in returning inaccurate data in this course format, therefore it is advisable to use $settingsnavigation->get_page().
+* A new style of icons has been created for activities. When creating an icon in the new style it should be named
+  'monologo' and can site alongside the legacy icon if desired. Only the new logo types will be used.
 
 === 3.9 ===
 
