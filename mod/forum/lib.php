@@ -4208,7 +4208,7 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
     $output .= html_writer::start_div($class);
     if ($detail) {
         $aname = s($activity->name);
-        $output .= $OUTPUT->image_icon('icon', $aname, $activity->type);
+        $output .= $OUTPUT->image_icon('monologo', $aname, $activity->type);
     }
     $discussionurl = new moodle_url('/mod/forum/discuss.php', ['d' => $content->discussion]);
     $discussionurl->set_anchor('p' . $activity->content->id);

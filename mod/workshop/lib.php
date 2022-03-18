@@ -989,7 +989,7 @@ function workshop_print_recent_mod_activity($activity, $courseid, $detail, $modn
             echo html_writer::start_tag('h4', array('class'=>'workshop'));
             $url = new moodle_url('/mod/workshop/view.php', array('id'=>$activity->cmid));
             $name = s($activity->name);
-            echo $OUTPUT->image_icon('icon', $name, $activity->type);
+            echo $OUTPUT->image_icon('monologo', $name, $activity->type);
             echo ' ' . $modnames[$activity->type];
             echo html_writer::link($url, $name, array('class'=>'name', 'style'=>'margin-left: 5px'));
             echo html_writer::end_tag('h4');
@@ -1026,7 +1026,7 @@ function workshop_print_recent_mod_activity($activity, $courseid, $detail, $modn
             echo html_writer::start_tag('h4', array('class'=>'workshop'));
             $url = new moodle_url('/mod/workshop/view.php', array('id'=>$activity->cmid));
             $name = s($activity->name);
-            echo $OUTPUT->image_icon('icon', $name, $activity->type);
+            echo $OUTPUT->image_icon('monologo', $name, $activity->type);
             echo ' ' . $modnames[$activity->type];
             echo html_writer::link($url, $name, array('class'=>'name', 'style'=>'margin-left: 5px'));
             echo html_writer::end_tag('h4');

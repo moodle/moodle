@@ -2319,7 +2319,7 @@ class global_navigation extends navigation_node {
             if ($activity->icon) {
                 $icon = new pix_icon($activity->icon, get_string('modulename', $activity->modname), $activity->iconcomponent);
             } else {
-                $icon = new pix_icon('icon', get_string('modulename', $activity->modname), $activity->modname);
+                $icon = new pix_icon('monologo', get_string('modulename', $activity->modname), $activity->modname);
             }
 
             // Prepare the default name and url for the node
@@ -2373,7 +2373,7 @@ class global_navigation extends navigation_node {
         if ($cm->icon) {
             $icon = new pix_icon($cm->icon, get_string('modulename', $cm->modname), $cm->iconcomponent);
         } else {
-            $icon = new pix_icon('icon', get_string('modulename', $cm->modname), $cm->modname);
+            $icon = new pix_icon('monologo', get_string('modulename', $cm->modname), $cm->modname);
         }
         $url = $cm->url;
         $activitynode = $coursenode->add(format_string($cm->name), $url, navigation_node::TYPE_ACTIVITY, null, $cm->id, $icon);

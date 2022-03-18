@@ -187,7 +187,7 @@ foreach ($items as $item) {
         if (isset($modules[$item->module])) {
             $mod = $modules[$item->module];
             $modname = get_string('modulename', $mod->name);
-            $name = $OUTPUT->image_icon('icon', $modname, $mod->name) . $name;
+            $name = $OUTPUT->image_icon('monologo', $modname, $mod->name) . $name;
         }
     }
 

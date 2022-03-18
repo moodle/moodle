@@ -939,7 +939,7 @@ function assign_print_recent_mod_activity($activity, $courseid, $detail, $modnam
     if ($detail) {
         $modname = $modnames[$activity->type];
         echo '<div class="title">';
-        echo $OUTPUT->image_icon('icon', $modname, 'assign');
+        echo $OUTPUT->image_icon('monologo', $modname, 'assign');
         echo '<a href="' . $CFG->wwwroot . '/mod/assign/view.php?id=' . $activity->cmid . '">';
         echo $activity->name;
         echo '</a>';

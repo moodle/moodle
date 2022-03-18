@@ -152,7 +152,7 @@ foreach ($sections as $i => $section) {
                                 break;
                             case "complete":
                                 $user_complete = $mod->modname."_user_complete";
-                                $image = $OUTPUT->pix_icon('icon', $mod->modfullname, 'mod_'.$mod->modname, array('class'=>'icon'));
+                                $image = $OUTPUT->pix_icon('monologo', $mod->modfullname, 'mod_'.$mod->modname, array('class'=>'icon'));
                                 echo "<h4>$image $mod->modfullname: ".
                                      "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
                                      format_string($instance->name,true)."</a></h4>";

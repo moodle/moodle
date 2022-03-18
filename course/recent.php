@@ -231,7 +231,7 @@ if (!empty($activities)) {
                 $name        = format_string($cm->name);
                 $modfullname = $modnames[$cm->modname];
 
-                $image = $OUTPUT->pix_icon('icon', $modfullname, $cm->modname, array('class' => 'icon smallicon'));
+                $image = $OUTPUT->pix_icon('monologo', $modfullname, $cm->modname, array('class' => 'icon smallicon'));
                 $link = html_writer::link(new moodle_url("/mod/$cm->modname/view.php",
                             array("id" => $cm->id)), $name, array('class' => $class));
                 echo html_writer::tag('li', "$image $modfullname $link");

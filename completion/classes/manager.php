@@ -223,7 +223,7 @@ class manager {
         $canmanage = has_capability('moodle/course:manageactivities', $coursecontext);
         $course = get_course($this->courseid);
         foreach ($data->modules as $module) {
-            $module->icon = $OUTPUT->image_url('icon', $module->name)->out();
+            $module->icon = $OUTPUT->image_url('monologo', $module->name)->out();
             $module->formattedname = format_string(get_string('modulenameplural', 'mod_' . $module->name),
                 true, ['context' => $coursecontext]);
             $module->canmanage = $canmanage && course_allowed_module($course, $module->name);

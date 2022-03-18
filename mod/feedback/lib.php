@@ -496,7 +496,7 @@ function feedback_print_recent_mod_activity($activity, $courseid, $detail, $modn
     if ($detail) {
         $modname = $modnames[$activity->type];
         echo '<div class="title">';
-        echo $OUTPUT->image_icon('icon', $modname, $activity->type);
+        echo $OUTPUT->image_icon('monologo', $modname, $activity->type);
         echo "<a href=\"$CFG->wwwroot/mod/feedback/view.php?id={$activity->cmid}\">{$activity->name}</a>";
         echo '</div>';
     }

@@ -63,7 +63,7 @@ class event_icon_exporter extends exporter {
         $isuserevent = ($user && !empty($userid));
 
         if ($isactivityevent) {
-            $key = 'icon';
+            $key = 'monologo';
             $component = $coursemodule->get('modname');
 
             if (get_string_manager()->string_exists($event->get_type(), $component)) {
