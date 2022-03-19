@@ -2340,6 +2340,8 @@ EOF;
         // Option to strip ending zeros after rounding.
         $this->assertEquals('5.43', format_float(5.43, 5, true, true));
         $this->assertEquals('5', format_float(5.0001, 3, true, true));
+        $this->assertEquals('100', format_float(100, 2, true, true));
+        $this->assertEquals('100', format_float(100, 0, true, true));
 
         // Tests with a localised decimal separator.
         $this->define_local_decimal_separator();
