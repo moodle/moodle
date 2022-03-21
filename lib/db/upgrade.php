@@ -2764,7 +2764,7 @@ function xmldb_main_upgrade($oldversion) {
         // Set the description field to HTML format for the Default course category.
         $category = $DB->get_record('course_categories', ['id' => 1]);
 
-        if ($category->descriptionformat == FORMAT_MOODLE) {
+        if (!empty($category) && $category->descriptionformat == FORMAT_MOODLE) {
             // Format should be changed only if it's still set to FORMAT_MOODLE.
             if (!is_null($category->description)) {
                 // If description is not empty, format the content to HTML.
