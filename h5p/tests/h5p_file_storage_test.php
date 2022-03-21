@@ -31,9 +31,8 @@ use core_h5p\helper;
 use file_archive;
 use moodle_exception;
 use ReflectionMethod;
+use stored_file;
 use zip_archive;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Test class covering the H5PFileStorage interface implementation.
@@ -782,7 +781,6 @@ class h5p_file_storage_test extends \advanced_testcase {
      * Tests that the content folder of an H5P content is imported in the Moodle filesystem.
      */
     public function test_moveContentDiretory(): void {
-        global $DB;
 
         // Create temp folder.
         $tempfolder = make_request_directory(false);
@@ -818,19 +816,21 @@ class h5p_file_storage_test extends \advanced_testcase {
         $this->h5p_file_storage->moveContentDirectory($h5pcontentfolder, $targeth5pcontentid);
 
         // Get database records.
-        $sql = "SELECT concat(filepath, filename)
-                  FROM {files}
-                 WHERE filearea = :filearea AND itemid = :itemid AND component = :component AND filename != '.'";
-        $params = [
-            'component' => file_storage::COMPONENT,
-            'filearea' => file_storage::CONTENT_FILEAREA,
-            'itemid' => $targeth5pcontentid
-        ];
-        $filesdb = $DB->get_fieldset_sql($sql, $params);
-        sort($filesdb);
+        $files = $this->h5p_fs_fs->get_area_files(
+            $this->h5p_fs_context->id,
+            file_storage::COMPONENT,
+            file_storage::CONTENT_FILEAREA,
+            $targeth5pcontentid,
+            'filepath, filename',
+            false
+        );
+
+        $filepaths = array_map(static function(stored_file $file): string {
+            return $file->get_filepath() . $file->get_filename();
+        }, $files);
 
         // Check that created files match with database records.
-        $this->assertEquals($filesexpected, $filesdb);
+        $this->assertEquals($filesexpected, array_values($filepaths));
     }
 
     /**
