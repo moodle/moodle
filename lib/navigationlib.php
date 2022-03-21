@@ -4743,7 +4743,7 @@ class settings_navigation extends navigation_node {
 
             $coursenode->add($linkattr->displaystring, $actionlink, self::TYPE_SETTING, null, 'download',
                     new pix_icon('t/download', ''));
-            $coursenode->get('download')->set_force_into_more_menu();
+            $coursenode->get('download')->set_force_into_more_menu(true);
         }
 
         // Return we are done
