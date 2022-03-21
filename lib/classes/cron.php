@@ -328,6 +328,21 @@ class cron {
     }
 
     /**
+     * Execute a (failed) adhoc task.
+     *
+     * @param   int       $taskid
+     */
+    public static function run_adhoc_task(int $taskid): void {
+        $task = \core\task\manager::get_adhoc_task($taskid);
+        if (!$task->get_fail_delay() && $task->get_next_run_time() > time()) {
+            throw new \moodle_exception('wontrunfuturescheduledtask');
+        }
+
+        self::run_inner_adhoc_task($task);
+        self::set_process_title("Running adhoc task $taskid");
+    }
+
+    /**
      * Shared code that handles running of a single scheduled task within the cron.
      *
      * Not intended for calling directly outside of this library!

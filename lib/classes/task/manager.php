@@ -474,7 +474,7 @@ class manager {
      * This function load the adhoc tasks for a given classname.
      *
      * @param string $classname
-     * @return \core\task\adhoc_task[]
+     * @return array
      */
     public static function get_adhoc_tasks($classname) {
         global $DB;
@@ -645,10 +645,10 @@ class manager {
      *
      * @param int $timestart
      * @param bool $checklimits Should we check limits?
-     * @return \core\task\adhoc_task or null if not found
+     * @return \core\task\adhoc_task|null
      * @throws \moodle_exception
      */
-    public static function get_next_adhoc_task($timestart, $checklimits = true) {
+    public static function get_next_adhoc_task(int $timestart, bool $checklimits = true): ?adhoc_task {
         global $DB;
 
         $concurrencylimit = get_config('core', 'task_adhoc_concurrency_limit');
@@ -797,21 +797,9 @@ class manager {
                     }
                 }
 
-                // The global cron lock is under the most contention so request it
-                // as late as possible and release it as soon as possible.
-                if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
-                    $lock->release();
-                    throw new \moodle_exception('locktimeout');
-                }
-
-                $task->set_lock($lock);
-                if (!$task->is_blocking()) {
-                    $cronlock->release();
-                } else {
-                    $task->set_cron_lock($cronlock);
-                }
-
+                self::set_locks($task, $lock, $cronlockfactory);
                 unset(self::$miniqueue[$taskid]);
+
                 return $task;
             } else {
                 unset(self::$miniqueue[$taskid]);
@@ -878,6 +866,64 @@ class manager {
             0,
             $limit
         );
+    }
+
+    /**
+     * This function will get a (failed) adhoc task by id. The task will be handed out
+     * with an open lock - possibly on the entire cron process. Make sure you call either
+     * {@see ::adhoc_task_failed} or {@see ::adhoc_task_complete} to release the lock and reschedule the task.
+     *
+     * @param int $taskid
+     * @return \core\task\adhoc_task|null
+     * @throws \moodle_exception
+     */
+    public static function get_adhoc_task(int $taskid): ?adhoc_task {
+        global $DB;
+
+        $record = $DB->get_record('task_adhoc', array('id' => $taskid));
+        if (!$record) {
+            throw new \moodle_exception('invalidtaskid');
+        }
+
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+
+        if ($lock = $cronlockfactory->get_lock('adhoc_' . $record->id, 0)) {
+            $task = self::adhoc_task_from_record($record);
+            // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
+            if (!$task) {
+                $lock->release();
+                throw new \moodle_exception('invalidtaskclassname');
+            }
+
+            self::set_locks($task, $lock, $cronlockfactory);
+            return $task;
+        }
+
+        return null;
+    }
+
+    /**
+     * This function will set locks on the task.
+     *
+     * @param \core\task\adhoc_task    $task
+     * @param \core\lock\lock          $lock task lock
+     * @param \core\lock\lock_factory  $cronlockfactory
+     * @throws \moodle_exception
+     */
+    private static function set_locks($task, $lock, $cronlockfactory): void {
+        // The global cron lock is under the most contention so request it
+        // as late as possible and release it as soon as possible.
+        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+            $lock->release();
+            throw new \moodle_exception('locktimeout');
+        }
+
+        $task->set_lock($lock);
+        if (!$task->is_blocking()) {
+            $cronlock->release();
+        } else {
+            $task->set_cron_lock($cronlock);
+        }
     }
 
     /**

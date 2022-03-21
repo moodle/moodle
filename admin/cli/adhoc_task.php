@@ -30,13 +30,14 @@ require_once("{$CFG->libdir}/clilib.php");
 
 list($options, $unrecognized) = cli_get_params(
     [
-        'execute' => false,
         'help' => false,
-        'keep-alive' => 0,
         'showsql' => false,
         'showdebugging' => false,
+        'execute' => false,
+        'keep-alive' => 0,
         'ignorelimits' => false,
         'force' => false,
+        'id' => null,
     ], [
         'h' => 'help',
         'e' => 'execute',
@@ -51,6 +52,9 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
+if ($options['id']) {
+    $options['execute'] = true;
+}
 if ($options['help'] or empty($options['execute'])) {
     $help = <<<EOT
 Ad hoc cron tasks.
@@ -63,9 +67,11 @@ Options:
  -k, --keep-alive=N        Keep this script alive for N seconds and poll for new adhoc tasks
  -i  --ignorelimits        Ignore task_adhoc_concurrency_limit and task_adhoc_max_runtime limits
  -f, --force               Run even if cron is disabled
+     --id                  Run (failed) task with id
 
 Example:
 \$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --execute
+\$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --id=123456
 
 EOT;
 
@@ -91,10 +97,6 @@ if (moodle_needs_upgrading()) {
     exit(1);
 }
 
-if (empty($options['execute'])) {
-    exit(0);
-}
-
 if (!get_config('core', 'cron_enabled') && !$options['force']) {
     mtrace('Cron is disabled. Use --force to override.');
     exit(1);
@@ -111,8 +113,6 @@ if (!empty($CFG->showcrondebugging)) {
     set_debugging(DEBUG_DEVELOPER, true);
 }
 
-$checklimits = empty($options['ignorelimits']);
-
 core_php_time_limit::raise();
 
 // Increase memory limit.
@@ -121,10 +121,18 @@ raise_memory_limit(MEMORY_EXTRA);
 // Emulate normal session - we use admin account by default.
 \core\cron::setup_user();
 
-$humantimenow = date('r', time());
-$keepalive = (int)$options['keep-alive'];
-
 \core\local\cli\shutdown::script_supports_graceful_exit();
-
+$humantimenow = date('r', time());
 mtrace("Server Time: {$humantimenow}\n");
-\core\cron::run_adhoc_tasks(time(), $keepalive, $checklimits);
+
+if (!empty($options['id'])) {
+    $taskid = (int) $options['id'];
+    \core\cron::run_adhoc_task($taskid);
+} elseif (!empty($options['execute'])) {
+
+    $checklimits = empty($options['ignorelimits']);
+
+    $keepalive = (int)$options['keep-alive'];
+
+    \core\cron::run_adhoc_tasks(time(), $keepalive, $checklimits);
+}
