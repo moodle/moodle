@@ -39,6 +39,10 @@ $context = context_course::instance($course->id);
 
 require_capability('gradereport/outcomes:view', $context);
 
+if (empty($CFG->enableoutcomes)) {
+    redirect(course_get_url($course), get_string('outcomesdisabled', 'core_grades'));
+}
+
 // First make sure we have proper final grades.
 grade_regrade_final_grades_if_required($course);
 
