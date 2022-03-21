@@ -376,7 +376,7 @@ $customdata = null;
 
 // Set up the table.
 $table = new \local_report_emails\tables\emails_table('user_report_logins');
-$table->is_downloading($download, 'user_report_logins', 'user_report_logins123');
+$table->is_downloading($download, format_string($company->get('name')) . ' ' . get_string('pluginname', 'local_report_emails'), 'user_report_logins123');
 
 if (!$table->is_downloading()) {
     echo $output->header();

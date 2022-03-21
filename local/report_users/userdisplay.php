@@ -342,14 +342,14 @@ if (!empty($action)) {
 }
 
 // Set up the table.
+$userinfo = $DB->get_record('user', array('id' => $userid));
 $table = new \local_report_users\tables\completion_table('user_report_completion');
-$table->is_downloading($download, 'user_report_completion', 'user_report_completion123');
+$table->is_downloading($download, format_string($company->get('name')) . ' course completion report ' . fullname($userinfo), 'user_report_completion123');
 
 if (!$table->is_downloading()) {
     $mainadmin = get_admin();
 
     echo $output->header();
-    $userinfo = $DB->get_record('user', array('id' => $userid));
 
     echo "<h2>".get_string('userdetails', 'local_report_users').
           $userinfo->firstname." ".

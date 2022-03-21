@@ -275,7 +275,7 @@ $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departme
 
 // Set up the table.
 $table = new \local_report_user_license_allocations\tables\allocations_table('user_report_license_allocations');
-$table->is_downloading($download, 'user_report_license_allocations', 'user_report_license_allocations123');
+$table->is_downloading($download, format_string($company->get('name')) . ' ' . get_sring('pluginname', 'local_report_user_license_allocations'), 'user_report_license_allocations123');
 
 if (!$table->is_downloading()) {
     echo $output->header();
