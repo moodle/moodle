@@ -600,6 +600,7 @@ $string['outcomescoursecustom'] = 'Custom used (no remove)';
 $string['outcomescoursenotused'] = 'Standard not used';
 $string['outcomescourseused'] = 'Standard used (no remove)';
 $string['outcomescustom'] = 'Custom outcomes';
+$string['outcomesdisabled'] = 'Outcomes are not enabled';
 $string['outcomeshortname'] = 'Short name';
 $string['outcomesstandard'] = 'Standard outcomes';
 $string['outcomesstandardavailable'] = 'Available standard outcomes';
