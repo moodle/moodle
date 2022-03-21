@@ -13,10 +13,11 @@ Feature: Verify the breadcrumbs in users account and cohort site administration 
     And "Add a new user" "text" should exist in the ".breadcrumb" "css_element"
     And "Accounts" "link" should exist in the ".breadcrumb" "css_element"
     And I navigate to "Users > Accounts > Cohorts" in site administration
-    And "System cohorts" "text" should exist in the ".breadcrumb" "css_element"
+    And "Cohorts" "text" should exist in the ".breadcrumb" "css_element"
     And "Accounts" "link" should exist in the ".breadcrumb" "css_element"
     When I click on "All cohorts" "link"
     Then "All cohorts" "text" should exist in the ".breadcrumb" "css_element"
+    And "Cohorts" "link" should exist in the ".breadcrumb" "css_element"
     And "Accounts" "link" should exist in the ".breadcrumb" "css_element"
     And I click on "Add new cohort" "link"
     And "Add new cohort" "text" should exist in the ".breadcrumb" "css_element"
