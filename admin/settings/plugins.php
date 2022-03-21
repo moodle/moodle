@@ -328,6 +328,13 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_managedataformats());
     $ADMIN->add('dataformatsettings', $temp);
 
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
+    core_collator::asort_objects_by_property($plugins, 'displayname');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\dataformat $plugin */
+        $plugin->load_settings($ADMIN, 'dataformatsettings', $hassiteconfig);
+    }
+
     //== Portfolio settings ==
     require_once($CFG->libdir. '/portfoliolib.php');
     $catname = new lang_string('portfolios', 'portfolio');
