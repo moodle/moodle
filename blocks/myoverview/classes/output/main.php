@@ -412,7 +412,7 @@ class main implements renderable, templatable {
 
         $newcourseurl = '';
         $coursecat = \core_course_category::user_top();
-        if ($category = \core_course_category::get_nearest_editable_subcategory($coursecat, ['create'])) {
+        if ($coursecat && ($category = \core_course_category::get_nearest_editable_subcategory($coursecat, ['create']))) {
             $newcourseurl = new \moodle_url('/course/edit.php', ['category' => $category->id]);
         }
 
