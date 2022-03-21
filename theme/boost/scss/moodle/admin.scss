@@ -254,6 +254,13 @@
         max-width: none;
     }
 }
+.path-admin.path-admin-roles:not(.format-site),
+.path-admin.path-admin-tool-lp {
+    .header-maxwidth,
+    .secondary-navigation {
+        max-width: $course-content-maxwidth;
+    }
+}
 
 .plugincheckwrapper {
     width: 100%;

@@ -12603,6 +12603,12 @@ body.dragging .dragging {
 .format-site .secondary-navigation {
   max-width: none; }
 
+.path-admin.path-admin-roles:not(.format-site) .header-maxwidth,
+.path-admin.path-admin-roles:not(.format-site) .secondary-navigation,
+.path-admin.path-admin-tool-lp .header-maxwidth,
+.path-admin.path-admin-tool-lp .secondary-navigation {
+  max-width: 830px; }
+
 .plugincheckwrapper {
   width: 100%; }
 
