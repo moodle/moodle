@@ -133,6 +133,64 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
 
+  Scenario: Student reattempts a question until out of attempts with specific jumps
+    Given the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber    |
+      | lesson     | Test lesson name | Test lesson description | C1     | lesson1     |
+    And I am on the "Test lesson name" "lesson activity" page
+    And I navigate to "Settings" in current page administration
+    And I set the following fields to these values:
+      | id_review      | Yes |
+      | id_maxattempts | 3   |
+    And I press "Save and return to course"
+    And I follow "Test lesson name"
+    And I follow "Add a question page"
+    And I set the following fields to these values:
+      | id_qtype | True/false |
+    And I press "Add a question page"
+    And I set the following fields to these values:
+      | Page title         | Test question  |
+      | Page contents      | Test content 1 |
+      | id_answer_editor_0 | right          |
+      | id_answer_editor_1 | wrong          |
+    And I press "Save page"
+    And I select "Add a question page" from the "qtype" singleselect
+    And I set the field "Select a question type" to "True/false"
+    And I press "Add a question page"
+    And I set the following fields to these values:
+      | Page title         | Test question 2 |
+      | Page contents      | Test content 2  |
+      | id_answer_editor_0 | right           |
+      | id_jumpto_0        | Test question   |
+      | id_answer_editor_1 | wrong           |
+      | id_jumpto_1        | Test question   |
+    And I press "Save page"
+    And I log out
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
+    Then I should see "Test content 1"
+    And I set the following fields to these values:
+      | right | 1 |
+    And I press "Submit"
+    And I should see "Test content 2"
+    And I set the following fields to these values:
+      | wrong | 1 |
+    And I press "Submit"
+    And I should see "You have 2 attempt(s) remaining"
+    And I press "Yes, I'd like to try again"
+    And I should see "Test content 2"
+    And I set the following fields to these values:
+      | wrong | 1 |
+    And I press "Submit"
+    And I should see "You have 1 attempt(s) remaining"
+    And I press "Yes, I'd like to try again"
+    And I should see "Test content 2"
+    And I set the following fields to these values:
+      | wrong | 1 |
+    And I press "Submit"
+    And I should not see "Yes, I'd like to try again"
+    And I press "Continue"
+    And I should see "Test content 1"
+
   Scenario: Student should not see remaining attempts notification if maximum number of attempts is set to unlimited
     Given the following "activities" exist:
       | activity   | name             | intro                   | course | idnumber    |

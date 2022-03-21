@@ -4240,6 +4240,9 @@ abstract class lesson_page extends lesson_base {
                         $result->newpageid = LESSON_NEXTPAGE;
                     } else if ($this->lesson->maxattempts > 1) { // don't bother with message if only one attempt
                         $result->attemptsremaining = $this->lesson->maxattempts - $nattempts;
+                        if ($result->attemptsremaining == 0) {
+                            $result->maxattemptsreached = true;
+                        }
                     }
                 }
             }
