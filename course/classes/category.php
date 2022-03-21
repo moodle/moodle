@@ -3196,7 +3196,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         // Check the child categories.
         $subcategoryids = $parentcat->get_all_children_ids();
         foreach ($subcategoryids as $subcategoryid) {
-            $subcategory = static::get($subcategoryid);
+            $subcategory = static::get($subcategoryid, MUST_EXIST, true);
             if ($subcategory->has_capabilities($permissionstocheck)) {
                 return $subcategory;
             }

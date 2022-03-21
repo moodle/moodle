@@ -1207,4 +1207,143 @@ class core_course_category_testcase extends advanced_testcase {
         $this->assertNotEmpty(core_course_category::get_nearest_editable_subcategory($coursecat, []));
         // End scenario 5.
     }
+
+    /**
+     * Test get_nearest_editable_subcategory() method with hidden categories.
+     *
+     * @param int $visible  Whether the category is visible or not.
+     * @param bool $child   Whether the category is child of main category or not.
+     * @param string $role  The role the user must have.
+     * @param array $permissions An array of permissions we must check.
+     * @param bool $result Whether the result should be the category or null.
+     *
+     * @dataProvider get_nearest_editable_subcategory_provider
+     * @covers \core_course_category::get_nearest_editable_subcategory
+     */
+    public function test_get_nearest_editable_subcategory_with_hidden_categories(
+        int $visible = 0,
+        bool $child = false,
+        string $role = 'manager',
+        array $permissions = [],
+        bool $result = false
+    ): void {
+        global $DB;
+
+        $userrole = $DB->get_record('role', ['shortname' => $role]);
+        $maincat = core_course_category::create(['name' => 'Main cat']);
+
+        $catparams = new stdClass();
+        $catparams->name = 'Test category';
+        $catparams->visible = $visible;
+        if ($child) {
+            $catparams->parent = $maincat->id;
+        }
+        $category = core_course_category::create($catparams);
+        $catcontext = $category->get_context();
+        $user = $this->getDataGenerator()->create_user();
+        role_assign($userrole->id, $user->id, $catcontext->id);
+        $this->setUser($user);
+
+        $nearestcat = core_course_category::get_nearest_editable_subcategory(core_course_category::user_top(), $permissions);
+
+        if ($result) {
+            $this->assertEquals($category->id, $nearestcat->id);
+        } else {
+            $this->assertEmpty($nearestcat);
+        }
+    }
+
+    /**
+     * Data provider for test_get_nearest_editable_subcategory_with_hidden_categories().
+     *
+     * @return array
+     */
+    public function get_nearest_editable_subcategory_provider(): array {
+        return [
+            'Hidden main category for manager. Checking create and manage' => [
+                0,
+                false,
+                'manager',
+                ['create', 'manage'],
+                true,
+            ],
+            'Hidden main category for course creator. Checking create and manage' => [
+                0,
+                false,
+                'coursecreator',
+                ['create', 'manage'],
+                false,
+            ],
+            'Hidden main category for student. Checking create and manage' => [
+                0,
+                false,
+                'student',
+                ['create', 'manage'],
+                false,
+            ],
+            'Hidden main category for manager. Checking create' => [
+                0,
+                false,
+                'manager',
+                ['create'],
+                true,
+            ],
+            'Hidden main category for course creator. Checking create' => [
+                0,
+                false,
+                'coursecreator',
+                ['create'],
+                true,
+            ],
+            'Hidden main category for student. Checking create' => [
+                0,
+                false,
+                'student',
+                ['create'],
+                false,
+            ],
+            'Hidden subcategory for manager. Checking create and manage' => [
+                0,
+                true,
+                'manager',
+                ['create', 'manage'],
+                true,
+            ],
+            'Hidden subcategory for course creator. Checking create and manage' => [
+                0,
+                true,
+                'coursecreator',
+                ['create', 'manage'],
+                false,
+            ],
+            'Hidden subcategory for student. Checking create and manage' => [
+                0,
+                true,
+                'student',
+                ['create', 'manage'],
+                false,
+            ],
+            'Hidden subcategory for manager. Checking create' => [
+                0,
+                true,
+                'manager',
+                ['create'],
+                true,
+            ],
+            'Hidden subcategory for course creator. Checking create' => [
+                0,
+                true,
+                'coursecreator',
+                ['create'],
+                true,
+            ],
+            'Hidden subcategory for student. Checking create' => [
+                0,
+                true,
+                'student',
+                ['create'],
+                false,
+            ],
+        ];
+    }
 }
