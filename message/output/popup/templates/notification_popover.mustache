@@ -62,11 +62,12 @@
             <span class="normal-icon">{{#pix}} t/markasread, core {{/pix}}</span>
             {{> core/loading }}
         </a>
-        <a href="{{{urls.preferences}}}"
-           title="{{#str}} notificationpreferences, message {{/str}}"
-           aria-label="{{#str}} notificationpreferences, message {{/str}}">
-            {{#pix}} i/settings, core {{/pix}}
-        </a>
+        {{# urls.preferences }}
+            <a href="{{{ . }}}"
+               title="{{#str}} notificationpreferences, message {{/str}}"
+               aria-label="{{#str}} notificationpreferences, message {{/str}}">
+                {{#pix}} i/settings, core {{/pix}}</a>
+        {{/ urls.preferences }}
     {{/headeractions}}
 
     {{$content}}
