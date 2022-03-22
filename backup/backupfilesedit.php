@@ -60,6 +60,7 @@ if ($context->contextlevel == CONTEXT_COURSECAT) {
 } else if ($context->contextlevel == CONTEXT_COURSE) {
     $course = get_course($context->instanceid);
     $PAGE->set_heading($course->fullname);
+    $PAGE->set_secondary_active_tab('coursereuse');
 } else {
     $PAGE->set_heading($SITE->fullname);
 }
