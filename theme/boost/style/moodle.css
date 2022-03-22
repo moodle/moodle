@@ -17666,6 +17666,9 @@ textarea[data-auto-rows] {
   .login-container .login-languagemenu {
     display: flex;
     justify-content: flex-start; }
+    .login-container .login-languagemenu .dropdown-menu {
+      max-height: 300px;
+      overflow-y: auto; }
   .login-container .login-logo {
     display: flex;
     justify-content: center;
