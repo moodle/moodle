@@ -1,7 +1,19 @@
 This files describes API changes for question type plugins.
 
+=== 4.0 ===
+
+1) The major question bank changes should not affect most basic question type plugins.
+   The navigation changes may affect Behat tests. If you encounter this,
+   the best way to fix it is to use the new navigation steps in MDL-74130.
+
+2) The qualification 'most' is because some question types do more complex things, which
+   will require changes related to question versionning. Some examples that come to mind:
+   - the way qtype_mulitanswer (or qtype_combined) aggregates several sub-questions into a parent question.
+   - the way some contrib plugins (e.g. qtype_stack, qtype_pmatch) store additional data (question tests)
+     linked to questions. That relationship will need to be updated.
 
 === 3.11 ===
+
 * Introducing the following \question_type base class methods to save/fetch the last form values
   that were used when creating questions as the new defaults when creating new questions:
   - \question_type::get_default_value()
@@ -18,6 +30,7 @@ This files describes API changes for question type plugins.
 
   This will help teachers who repeatedly create questions and use the same values for the fields
   (e.g. Default mark, Penalty for each incorrect try, etc.) in the question edit form.
+
 
 === 3.8 ===
 
