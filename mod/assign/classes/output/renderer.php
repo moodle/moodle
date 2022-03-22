@@ -1305,7 +1305,7 @@ class renderer extends \plugin_renderer_base {
 
         // There is a submission, display the relevant early/late message.
         if ($submission && $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
-            $latecalculation = $submission->timemodified - ($timelimitenabledbeforeduedate ? $submission->timecreated : 0);
+            $latecalculation = $submission->timemodified - ($timelimitenabledbeforeduedate ? $submission->timestarted : 0);
             $latethreshold = $timelimitenabledbeforeduedate ? $status->timelimit : $status->duedate;
             $earlystring = $timelimitenabledbeforeduedate ? 'submittedundertime' : 'submittedearly';
             $latestring = $timelimitenabledbeforeduedate ? 'submittedovertime' : 'submittedlate';
