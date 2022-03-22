@@ -286,7 +286,7 @@ function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 
     // Set security posture for in-browser display.
     if (!$forcedownload) {
-        header("Content-Security-Policy: default-src 'none'; img-src 'self'");
+        header("Content-Security-Policy: default-src 'none'; img-src 'self'; media-src 'self'");
     }
 
     // Finally send the file.
