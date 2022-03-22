@@ -54,7 +54,6 @@
     'no-unsafe-finally': 'error',
     'no-unsafe-negation': 'error',
     'use-isnan': 'error',
-    'valid-jsdoc': ['warn', { 'requireReturn': false, 'requireParamDescription': false, 'requireReturnDescription': false }],
     'valid-typeof': 'error',
 
     // === Best Practices ===
@@ -141,8 +140,6 @@
     'max-statements-per-line': ['warn', { max: 2 }],
     'new-cap': ['warn', { 'properties': false }],
     'new-parens': 'warn',
-    'newline-after-var': 'off',
-    'newline-before-return': 'off',
     'newline-per-chained-call': 'off',
     'no-array-constructor': 'off',
     'no-bitwise': 'error',
@@ -172,7 +169,6 @@
     'padded-blocks': 'off',
     'quote-props': ['warn', 'as-needed', {'unnecessary': false, 'keywords': true, 'numbers': true}],
     'quotes': 'off',
-    'require-jsdoc': 'warn',
     'semi': 'error',
     'semi-spacing': ['warn', {'before': false, 'after': true}],
     'sort-vars': 'off',
