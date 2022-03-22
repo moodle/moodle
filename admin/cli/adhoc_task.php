@@ -39,6 +39,7 @@ list($options, $unrecognized) = cli_get_params(
         'force' => false,
         'id' => null,
         'classname' => null,
+        'taskslimit' => null,
     ], [
         'h' => 'help',
         'e' => 'execute',
@@ -46,6 +47,7 @@ list($options, $unrecognized) = cli_get_params(
         'i' => 'ignorelimits',
         'f' => 'force',
         'c' => 'classname',
+        'l' => 'taskslimit',
     ]
 );
 
@@ -54,11 +56,7 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-if ($options['id'] || $options['classname']) {
-    $options['execute'] = true;
-}
-if ($options['help'] or empty($options['execute'])) {
-    $help = <<<EOT
+$help = <<<EOT
 Ad hoc cron tasks.
 
 Options:
@@ -71,26 +69,29 @@ Options:
  -f, --force               Run even if cron is disabled
      --id                  Run (failed) task with id
  -c, --classname           Run tasks with a certain classname (FQN)
+ -l, --taskslimit=N        Run at most N tasks
 
-Example:
+Run all queued tasks:
 \$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --execute
-\$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --id=123456
+
+Run all queued tasks of specific class:
 \$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --classname=\\\\core_course\\\\task\\\\course_delete_modules
 
 Double backslash for the shell escape reasons.
+Run a specific task:
+\$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --id=123456
+
+Run a specific task with debugging:
+\$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --id=123456 --showsql --showdebugging
+
+To profile a long running task:
+\$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --taskslimit=1 --classname='\\some\\class\\name' --ignorelimits
 
 EOT;
 
+if ($options['help']) {
     echo $help;
-    die;
-}
-
-if ($options['showdebugging']) {
-    set_debugging(DEBUG_DEVELOPER, true);
-}
-
-if ($options['showsql']) {
-    $DB->set_debug(true);
+    exit(0);
 }
 
 if (CLI_MAINTENANCE) {
@@ -108,8 +109,13 @@ if (!get_config('core', 'cron_enabled') && !$options['force']) {
     exit(1);
 }
 
-if (empty($options['keep-alive'])) {
-    $options['keep-alive'] = 0;
+// Common debugging options.
+if ($options['showdebugging']) {
+    set_debugging(DEBUG_DEVELOPER, true);
+}
+
+if ($options['showsql']) {
+    $DB->set_debug(true);
 }
 
 if (!empty($CFG->showcronsql)) {
@@ -119,6 +125,7 @@ if (!empty($CFG->showcrondebugging)) {
     set_debugging(DEBUG_DEVELOPER, true);
 }
 
+// Process params.
 core_php_time_limit::raise();
 
 // Increase memory limit.
@@ -131,14 +138,28 @@ raise_memory_limit(MEMORY_EXTRA);
 $humantimenow = date('r', time());
 mtrace("Server Time: {$humantimenow}\n");
 
+// Run a single adhoc task only, if requested.
 if (!empty($options['id'])) {
     $taskid = (int) $options['id'];
     \core\cron::run_adhoc_task($taskid);
-} elseif (!empty($options['execute'])) {
-
-    $checklimits = empty($options['ignorelimits']);
-
-    $keepalive = (int)$options['keep-alive'];
-
-    \core\cron::run_adhoc_tasks(time(), $keepalive, $checklimits, null, $options['classname']);
+    exit(0);
 }
+
+// Examine params and determine if we should run.
+$execute = (bool) $options['execute'];
+$classname = $options['classname'];
+$keepalive = empty($options['keep-alive']) ? 0 : (int) $options['keep-alive'];
+$taskslimit = empty($options['taskslimit']) ? null : (int) $options['taskslimit'];
+$checklimits = empty($options['ignorelimits']);
+
+if ($classname || $keepalive || $taskslimit) {
+    $execute = true;
+}
+
+// Output the help text if no criteria for running the adhoc tasks are given.
+if (!$execute) {
+    echo $help;
+    exit(0);
+}
+
+\core\cron::run_adhoc_tasks(time(), $keepalive, $checklimits, null, $taskslimit, $classname);

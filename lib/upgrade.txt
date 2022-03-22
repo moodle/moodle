@@ -116,6 +116,7 @@ information provided here is intended especially for developers.
   `.activityiconcontainer .activityicon` containers to determine whether CSS filtering should be applied to the icon. If the icon
   needs to be rendered as is and not whitened out, the `.nofilter` CSS class needs to be applied to the icon.
 * Functions get_next_adhoc_task() and cron::run_adhoc_tasks() have additional parameter $classname to filter by the specified class.
+* Function cron::run_adhoc_tasks() has additional parameter $number to limit the number of the tasks to run.
 
 === 4.1 ===
 

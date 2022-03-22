@@ -226,6 +226,7 @@ class cron {
      * @param   int     $keepalive Keep this public static function alive for N seconds and poll for new adhoc tasks.
      * @param   bool    $checklimits Should we check limits?
      * @param   null|int $startprocesstime The time this process started.
+     * @param   int|null $maxtasks Limit number of tasks to run`
      * @param   null|string $classname Run only tasks of this class
      * @throws \moodle_exception
      */
@@ -234,6 +235,7 @@ class cron {
         $keepalive = 0,
         $checklimits = true,
         ?int $startprocesstime = null,
+        ?int $maxtasks = null,
         ?string $classname = null,
     ): void {
         // Allow a restriction on the number of adhoc task runners at once.
@@ -300,6 +302,9 @@ class cron {
                 self::run_inner_adhoc_task($task);
                 self::set_process_title("Waiting for next adhoc task");
                 $taskcount++;
+                if ($maxtasks && $taskcount >= $maxtasks) {
+                    break;
+                }
                 unset($task);
             } else {
                 $timeleft = $finishtime - time();
