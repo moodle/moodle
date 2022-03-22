@@ -226,6 +226,7 @@ class cron {
      * @param   int     $keepalive Keep this public static function alive for N seconds and poll for new adhoc tasks.
      * @param   bool    $checklimits Should we check limits?
      * @param   null|int $startprocesstime The time this process started.
+     * @param   null|string $classname Run only tasks of this class
      * @throws \moodle_exception
      */
     public static function run_adhoc_tasks(
@@ -233,6 +234,7 @@ class cron {
         $keepalive = 0,
         $checklimits = true,
         ?int $startprocesstime = null,
+        ?string $classname = null,
     ): void {
         // Allow a restriction on the number of adhoc task runners at once.
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
@@ -281,7 +283,7 @@ class cron {
             }
 
             try {
-                $task = \core\task\manager::get_next_adhoc_task(time(), $checklimits);
+                $task = \core\task\manager::get_next_adhoc_task(time(), $checklimits, $classname);
             } catch (\Throwable $e) {
                 if ($adhoclock) {
                     // Release the adhoc task runner lock.

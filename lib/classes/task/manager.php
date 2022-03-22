@@ -645,10 +645,11 @@ class manager {
      *
      * @param int $timestart
      * @param bool $checklimits Should we check limits?
+     * @param string|null $classname Return only task of this class
      * @return \core\task\adhoc_task|null
      * @throws \moodle_exception
      */
-    public static function get_next_adhoc_task(int $timestart, bool $checklimits = true): ?adhoc_task {
+    public static function get_next_adhoc_task(int $timestart, ?bool $checklimits = true, ?string $classname = null): ?adhoc_task {
         global $DB;
 
         $concurrencylimit = get_config('core', 'task_adhoc_concurrency_limit');
@@ -759,6 +760,11 @@ class manager {
         $skipclasses = array();
 
         foreach (self::$miniqueue as $taskid => $record) {
+
+            if (!empty($classname) && $record->classname != self::get_canonical_class_name($classname)) {
+                // Skip the task if The class is specified, and doesn't match.
+                continue;
+            }
 
             if (in_array($record->classname, $skipclasses)) {
                 // Skip the task if it can't be started due to per-task concurrency limit.

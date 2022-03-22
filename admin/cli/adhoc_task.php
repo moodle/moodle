@@ -38,12 +38,14 @@ list($options, $unrecognized) = cli_get_params(
         'ignorelimits' => false,
         'force' => false,
         'id' => null,
+        'classname' => null,
     ], [
         'h' => 'help',
         'e' => 'execute',
         'k' => 'keep-alive',
         'i' => 'ignorelimits',
         'f' => 'force',
+        'c' => 'classname',
     ]
 );
 
@@ -52,7 +54,7 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-if ($options['id']) {
+if ($options['id'] || $options['classname']) {
     $options['execute'] = true;
 }
 if ($options['help'] or empty($options['execute'])) {
@@ -68,10 +70,14 @@ Options:
  -i  --ignorelimits        Ignore task_adhoc_concurrency_limit and task_adhoc_max_runtime limits
  -f, --force               Run even if cron is disabled
      --id                  Run (failed) task with id
+ -c, --classname           Run tasks with a certain classname (FQN)
 
 Example:
 \$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --execute
 \$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --id=123456
+\$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --classname=\\\\core_course\\\\task\\\\course_delete_modules
+
+Double backslash for the shell escape reasons.
 
 EOT;
 
@@ -134,5 +140,5 @@ if (!empty($options['id'])) {
 
     $keepalive = (int)$options['keep-alive'];
 
-    \core\cron::run_adhoc_tasks(time(), $keepalive, $checklimits);
+    \core\cron::run_adhoc_tasks(time(), $keepalive, $checklimits, null, $options['classname']);
 }

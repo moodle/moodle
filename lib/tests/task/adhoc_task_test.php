@@ -53,6 +53,8 @@ class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test basic adhoc task execution.
+     *
+     * @covers ::get_next_adhoc_task
      */
     public function test_get_next_adhoc_task_now() {
         $this->resetAfterTest(true);
@@ -66,6 +68,33 @@ class adhoc_task_test extends \advanced_testcase {
         $now = time();
         // Get it from the scheduler.
         $task = manager::get_next_adhoc_task($now);
+        $this->assertInstanceOf('\\core\\task\\adhoc_test_task', $task);
+        $task->execute();
+        manager::adhoc_task_complete($task);
+    }
+
+    /**
+     * Test basic adhoc task execution.
+     *
+     * @covers ::get_next_adhoc_task
+     */
+    public function test_get_next_adhoc_task_class() {
+        $this->resetAfterTest(true);
+
+        // Create an adhoc task.
+        $task = new \core\task\adhoc_test_task();
+
+        // Queue it.
+        manager::queue_adhoc_task($task);
+
+        $now = time();
+        $classname = get_class($task);
+
+        // The task will not be returned.
+        $this->assertNull(manager::get_next_adhoc_task($now, true, "${classname}x"));
+
+        // Get it from the scheduler.
+        $task = manager::get_next_adhoc_task($now, true, $classname);
         $this->assertInstanceOf('\\core\\task\\adhoc_test_task', $task);
         $task->execute();
         manager::adhoc_task_complete($task);

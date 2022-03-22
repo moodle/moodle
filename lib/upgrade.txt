@@ -115,6 +115,7 @@ information provided here is intended especially for developers.
   parameter. This information can be used by the plugins when enclosing the icons in `.activityiconcontainer .icon` or
   `.activityiconcontainer .activityicon` containers to determine whether CSS filtering should be applied to the icon. If the icon
   needs to be rendered as is and not whitened out, the `.nofilter` CSS class needs to be applied to the icon.
+* Functions get_next_adhoc_task() and cron::run_adhoc_tasks() have additional parameter $classname to filter by the specified class.
 
 === 4.1 ===
 
