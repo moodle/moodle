@@ -262,46 +262,20 @@
         'promise/avoid-new': 'off',
 
         // === JSDocs ===
-        "jsdoc/check-access": [
-          'error',
-        ],
-        "jsdoc/check-alignment": 1, // Recommended.
-        "jsdoc/check-param-names": [
-          'error',
-        ],
-        "jsdoc/check-property-names": [
-          'error',
-        ],
-        "jsdoc/empty-tags": [
-          'error',
-        ],
-        "jsdoc/implements-on-classes": [
-          'error',
-        ],
-        "jsdoc/multiline-blocks": [
-          'error',
-        ],
-        "jsdoc/require-jsdoc": [
-          'error',
-        ],
-        "jsdoc/require-param": [
-          'error',
-        ],
-        "jsdoc/require-param-name": [
-          'error',
-        ],
-        "jsdoc/require-param-type": [
-          'error',
-        ],
-        "jsdoc/require-property": [
-          'error',
-        ],
-        "jsdoc/require-property-name": [
-          'error',
-        ],
-        "jsdoc/require-property-type": [
-          'error',
-        ],
+        'jsdoc/check-access': 'error',
+        'jsdoc/check-alignment': 1, // Recommended.
+        'jsdoc/check-param-names': 'error',
+        'jsdoc/check-property-names': 'error',
+        'jsdoc/empty-tags': 'error',
+        'jsdoc/implements-on-classes': 'error',
+        'jsdoc/multiline-blocks': 'error',
+        'jsdoc/require-jsdoc': 'error',
+        'jsdoc/require-param': 'error',
+        'jsdoc/require-param-name': 'error',
+        'jsdoc/require-param-type': 'error',
+        'jsdoc/require-property': 'error',
+        'jsdoc/require-property-name': 'error',
+        'jsdoc/require-property-type': 'error'
       },
       parserOptions: {
         'sourceType': 'module',
