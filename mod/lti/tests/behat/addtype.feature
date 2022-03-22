@@ -15,7 +15,7 @@ Feature: Add preconfigured tools via teacher interface
       | user | course | role |
       | teacher1 | C1 | editingteacher |
 
-  @javascript @skip_interim
+  @javascript
   Scenario: Add a tool from a cartridge
     Given the following "activity" exists:
       | course   | C1                 |
@@ -31,7 +31,7 @@ Feature: Add preconfigured tools via teacher interface
     And the field "Icon URL" matches value "http://download.moodle.org/unittest/test.jpg"
     And the field "Secure icon URL" matches value "https://download.moodle.org/unittest/test.jpg"
 
-  @javascript @_switch_window @skip_interim
+  @javascript @_switch_window
   Scenario: Add a preconfigured tool from a cartridge
     Given the following "activity" exists:
       | course   | C1                   |
