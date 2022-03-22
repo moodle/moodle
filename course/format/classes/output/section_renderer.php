@@ -414,6 +414,34 @@ abstract class section_renderer extends core_course_renderer {
     }
 
     /**
+     * Generate the starting container html for a list of sections.
+     *
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.
+     *
+     * @return string HTML to output.
+     */
+    protected function start_section_list() {
+        debugging('start_section_list() is deprecated. Please use ' .
+            'core_courseformat\\output\\local\\content\\section to render individual sections or .' .
+            'core_courseformat\\output\\local\\content to render the full course', DEBUG_DEVELOPER);
+        return html_writer::start_tag('ul', ['class' => 'sections']);
+    }
+
+    /**
+     * Generate the closing container html for a list of sections.
+     *
+     * @deprecated since 4.0 MDL-72656 - use core_course output components instead.y
+     *
+     * @return string HTML to output.
+     */
+    protected function end_section_list() {
+        debugging('end_section_list() is deprecated. Please use ' .
+            'core_courseformat\\output\\local\\content\\section to render individual sections or .' .
+            'core_courseformat\\output\\local\\content to render the full course', DEBUG_DEVELOPER);
+        return html_writer::end_tag('ul');
+    }
+
+    /**
      * Old method to print section edit controls. Do not use it!
      *
      * @deprecated since Moodle 3.0 MDL-48947 - Use core_courseformat\output\section_renderer::section_edit_control_items() instead
