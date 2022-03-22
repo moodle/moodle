@@ -188,4 +188,6 @@ if ($regresponse) {
     }
 }
 
-echo "<script>(window.opener || window.parent).postMessage({subject: 'org.imsglobal.lti.close'});</script>";
+echo "<script>
+(window.opener || window.parent).postMessage({subject: 'org.imsglobal.lti.close'}, '$openidconfig->issuer');
+</script>";
