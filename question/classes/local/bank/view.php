@@ -1103,7 +1103,7 @@ class view {
      */
     protected function print_table($questions): void {
         // Start of the table.
-        echo \html_writer::start_tag('table', ['id' => 'categoryquestions']);
+        echo \html_writer::start_tag('table', ['id' => 'categoryquestions', 'class' => 'table-responsive']);
 
         // Prints the table header.
         echo \html_writer::start_tag('thead');
