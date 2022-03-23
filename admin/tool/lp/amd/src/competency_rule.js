@@ -71,14 +71,12 @@ define(['jquery'], function($) {
         return null;
     };
 
-    // eslint-disable-line valid-jsdoc
     /**
      * Return the type of the module.
      *
      * @return {String}
      * @method getType
      */
-    // eslint-enable-line valid-jsdoc
     Rule.prototype.getType = function() {
         throw new Error('Not implemented');
     };

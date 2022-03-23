@@ -121,7 +121,6 @@ define(['tool_moodlenet/validator',
         });
         // Trigger the transition between 'pages'.
         carousel.carousel(2);
-        // eslint-disable-next-line max-len
         modal.setFooter(Templates.render('tool_moodlenet/chooser_footer_close_mnet', {}));
     };
 
