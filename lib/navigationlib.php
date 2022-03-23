@@ -4665,6 +4665,10 @@ class settings_navigation extends navigation_node {
             foreach ($reports as $reportfunction) {
                 $reportfunction($reportnav, $course, $coursecontext);
             }
+
+            if (!$reportnav->has_children()) {
+                $reportnav->remove();
+            }
         }
 
         // Check if we can view the gradebook's setup page.
@@ -5632,6 +5636,10 @@ class settings_navigation extends navigation_node {
             $reports = get_plugin_list_with_function('report', 'extend_navigation_course', 'lib.php');
             foreach ($reports as $reportfunction) {
                 $reportfunction($frontpagenav, $course, $coursecontext);
+            }
+
+            if (!$frontpagenav->has_children()) {
+                $frontpagenav->remove();
             }
         }
 

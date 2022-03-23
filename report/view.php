@@ -36,22 +36,30 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 }
 require_login($course);
 
-// Get all course reports from the settings navigation.
-if ($reportsnode = $PAGE->settingsnav->find('coursereports', \navigation_node::TYPE_CONTAINER)) {
-    // If there are available course reports to the user.
-    if ($reportsnode->children->count() > 0) {
-        // Redirect to the first course report from the list.
-        $firstreportnode = $reportsnode->children->getIterator()[0];
-        redirect($firstreportnode->action()->out(false));
-    }
-}
 // Otherwise, output the page with a notification stating that there are no available course reports.
 $PAGE->set_title(get_string('reports'));
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagetype('course-view-' . $course->format);
+$PAGE->add_body_class('limitedwidth');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('reports'));
-echo html_writer::div($OUTPUT->notification(get_string('noreports', 'debug'), 'error'), 'mt-3');
+
+// Check if there is at least one displayable report.
+$hasreports = false;
+if ($reportnode = $PAGE->settingsnav->find('coursereports', \navigation_node::TYPE_CONTAINER)) {
+    foreach ($reportnode->children as $child) {
+        if ($child->display) {
+            $hasreports = true;
+            break;
+        }
+    }
+}
+
+if ($hasreports) {
+    echo $OUTPUT->render_from_template('core/report_link_page', ['node' => $reportnode]);
+} else {
+    echo html_writer::div($OUTPUT->notification(get_string('noreports', 'debug'), 'error'), 'mt-3');
+}
 echo $OUTPUT->footer();
