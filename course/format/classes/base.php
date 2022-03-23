@@ -217,6 +217,7 @@ abstract class base {
                     // In case somebody keeps the reference to course format object.
                     self::$instances[$courseid][$format]->course = false;
                     self::$instances[$courseid][$format]->formatoptions = array();
+                    self::$instances[$courseid][$format]->modinfo = null;
                 }
                 unset(self::$instances[$courseid]);
             }
@@ -1639,9 +1640,30 @@ abstract class base {
                 throw new moodle_exception('sectionactionnotsupported', 'core', null, s($action));
         }
 
+        return ['modules' => $this->get_section_modules_updated($section)];
+    }
+
+    /**
+     * Return an array with all section modules content.
+     *
+     * This method is used in section_action method to generate the updated modules content
+     * after a modinfo change.
+     *
+     * @param section_info $section the section
+     * @return string[] the full modules content.
+     */
+    protected function get_section_modules_updated(section_info $section): array {
+        global $PAGE;
+
         $modules = [];
 
-        // Load the cmlist output.
+        if (!$this->uses_sections() || !$section->section) {
+            return $modules;
+        }
+
+        // Load the cmlist output from the updated modinfo.
+        $renderer = $this->get_renderer($PAGE);
+        $modinfo = $this->get_modinfo();
         $coursesections = $modinfo->sections;
         if (array_key_exists($section->section, $coursesections)) {
             foreach ($coursesections[$section->section] as $cmid) {
@@ -1649,8 +1671,7 @@ abstract class base {
                 $modules[] = $renderer->course_section_updated_cm_item($this, $section, $cm);
             }
         }
-
-        return ['modules' => $modules];
+        return $modules;
     }
 
     /**
