@@ -986,7 +986,7 @@ class manager {
         $params = ['now1' => time(), 'now2' => time()];
 
         $sql = "SELECT subquery.*
-                  FROM (SELECT concat('s', ts.id) as uniqueid,
+                  FROM (SELECT " . $DB->sql_concat("'s'", 'ts.id') . " as uniqueid,
                                ts.id,
                                'scheduled' as type,
                                ts.classname,
@@ -997,7 +997,7 @@ class manager {
                           FROM {task_scheduled} ts
                          WHERE ts.timestarted IS NOT NULL
                          UNION ALL
-                        SELECT concat('a', ta.id) as uniqueid,
+                        SELECT " . $DB->sql_concat("'a'", 'ta.id') . " as uniqueid,
                                ta.id,
                                'adhoc' as type,
                                ta.classname,
