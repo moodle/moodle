@@ -3499,6 +3499,7 @@ class lesson extends lesson_base {
             'displayscorewithessays' => false,
             'displayscorewithoutessays' => false,
             'yourcurrentgradeisoutof' => false,
+            'yourcurrentgradeis' => false,
             'eolstudentoutoftimenoanswers' => false,
             'welldone' => false,
             'progressbar' => false,
@@ -3589,12 +3590,6 @@ class lesson extends lesson_base {
                     } else {
                         $data->displayscorewithoutessays = $a;
                     }
-                    if ($this->properties->grade != GRADE_TYPE_NONE) {
-                        $a = new stdClass;
-                        $a->grade = format_float($gradeinfo->grade * $this->properties->grade / 100, 1);
-                        $a->total = $this->properties->grade;
-                        $data->yourcurrentgradeisoutof = $a;
-                    }
 
                     $grade = new stdClass();
                     $grade->lessonid = $this->properties->id;
@@ -3612,6 +3607,25 @@ class lesson extends lesson_base {
                     } else {
                         $newgradeid = $DB->insert_record("lesson_grades", $grade);
                     }
+
+                    // Update central gradebook.
+                    lesson_update_grades($this, $USER->id);
+
+                    // Print grade (grade type Point).
+                    if ($this->properties->grade > 0) {
+                        $a = new stdClass;
+                        $a->grade = format_float($gradeinfo->grade * $this->properties->grade / 100, 1);
+                        $a->total = $this->properties->grade;
+                        $data->yourcurrentgradeisoutof = $a;
+                    }
+
+                    // Print grade (grade type Scale).
+                    if ($this->properties->grade < 0) {
+                        // Grade type is Scale.
+                        $grades = grade_get_grades($course->id, 'mod', 'lesson', $cm->instance, $USER->id);
+                        $grade = reset($grades->items[0]->grades);
+                        $data->yourcurrentgradeis = $grade->str_grade;
+                    }
                 } else {
                     if ($this->properties->timelimit) {
                         if ($outoftime == 'normal') {
@@ -3622,14 +3636,15 @@ class lesson extends lesson_base {
                             $grade->completed = time();
                             $newgradeid = $DB->insert_record("lesson_grades", $grade);
                             $data->eolstudentoutoftimenoanswers = true;
+
+                            // Update central gradebook.
+                            lesson_update_grades($this, $USER->id);
                         }
                     } else {
                         $data->welldone = true;
                     }
                 }
 
-                // Update central gradebook.
-                lesson_update_grades($this, $USER->id);
                 $data->progresscompleted = $progresscompleted;
             }
         } else {
