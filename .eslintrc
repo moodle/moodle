@@ -20,6 +20,8 @@
     'M': true,
     'Y': true
   },
+  // Warn about unused eslint-disable statements.
+  'reportUnusedDisableDirectives': true,
   'rules': {
     // See http://eslint.org/docs/rules/ for all rules and explanations of all
     // rules.
