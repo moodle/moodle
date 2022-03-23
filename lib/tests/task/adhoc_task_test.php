@@ -91,7 +91,7 @@ class adhoc_task_test extends \advanced_testcase {
         $classname = get_class($task);
 
         // The task will not be returned.
-        $this->assertNull(manager::get_next_adhoc_task($now, true, "${classname}x"));
+        $this->assertNull(manager::get_next_adhoc_task($now, true, "{$classname}notexists"));
 
         // Get it from the scheduler.
         $task = manager::get_next_adhoc_task($now, true, $classname);
@@ -556,5 +556,53 @@ class adhoc_task_test extends \advanced_testcase {
         $task = manager::get_next_adhoc_task(time());
         $this->assertEquals('Task 1', $task->get_custom_data_as_string());
         manager::adhoc_task_complete($task);
+    }
+
+    /**
+     * Test adhoc task run from CLI.
+     * @covers ::run_adhoc_from_cli
+     */
+    public function test_run_adhoc_from_cli() {
+        $this->resetAfterTest(true);
+
+        $taskid = 1;
+
+        if (!manager::is_runnable()) {
+            $this->markTestSkipped("Cannot run tasks");
+        }
+
+        ob_start();
+        manager::run_adhoc_from_cli($taskid);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertMatchesRegularExpression(
+            sprintf('!admin/cli/adhoc_task.php\W+--id=%d\W+--force!', $taskid),
+            $output
+        );
+    }
+
+    /**
+     * Test adhoc class run from CLI.
+     * @covers ::run_all_adhoc_from_cli
+     */
+    public function test_run_all_adhoc_from_cli() {
+        $this->resetAfterTest(true);
+
+        $classname = 'fake';
+
+        if (!manager::is_runnable()) {
+            $this->markTestSkipped("Cannot run tasks");
+        }
+
+        ob_start();
+        manager::run_all_adhoc_from_cli(false, $classname);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertMatchesRegularExpression(
+            sprintf('!admin/cli/adhoc_task.php\W+--classname=%s\W+--force!', $classname),
+            $output
+        );
     }
 }

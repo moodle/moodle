@@ -24,6 +24,9 @@
  */
 namespace core\task;
 
+use core\lock\lock;
+use core\lock\lock_factory;
+
 define('CORE_TASK_TASKS_FILENAME', 'db/tasks.php');
 /**
  * Collection of task related methods.
@@ -317,12 +320,12 @@ class manager {
      *
      * @param \stdClass $record
      * @return \core\task\adhoc_task
+     * @throws \moodle_exception
      */
     public static function adhoc_task_from_record($record) {
         $classname = self::get_canonical_class_name($record->classname);
         if (!class_exists($classname)) {
-            debugging("Failed to load task: " . $classname, DEBUG_DEVELOPER);
-            return false;
+            throw new \moodle_exception('invalidtaskclassname', '', '', $record->classname);
         }
         $task = new $classname;
         if (isset($record->nextruntime)) {
@@ -474,18 +477,83 @@ class manager {
      * This function load the adhoc tasks for a given classname.
      *
      * @param string $classname
+     * @param bool $failedonly
+     * @param bool $skiprunning do not return tasks that are in the running state
      * @return array
      */
-    public static function get_adhoc_tasks($classname) {
+    public static function get_adhoc_tasks(string $classname, bool $failedonly = false, bool $skiprunning = false): array {
         global $DB;
 
-        $classname = self::get_canonical_class_name($classname);
-        // We are just reading - so no locks required.
-        $records = $DB->get_records('task_adhoc', array('classname' => $classname));
+        $conds[] = 'classname = ?';
+        $params[] = self::get_canonical_class_name($classname);
 
+        if ($failedonly) {
+            $conds[] = 'faildelay > 0';
+        }
+        if ($skiprunning) {
+            $conds[] = 'timestarted IS NULL';
+        }
+
+        // We are just reading - so no locks required.
+        $sql = 'SELECT * FROM {task_adhoc}';
+        if ($conds) {
+            $sql .= ' WHERE '.implode(' AND ', $conds);
+        }
+        $rs = $DB->get_records_sql($sql, $params);
         return array_map(function($record) {
             return self::adhoc_task_from_record($record);
-        }, $records);
+        }, $rs);
+    }
+
+    /**
+     * This function returns adhoc tasks summary per component classname
+     *
+     * @return array
+     */
+    public static function get_adhoc_tasks_summary(): array {
+        global $DB;
+
+        $now = time();
+        $records = $DB->get_records('task_adhoc');
+        $summary = [];
+        foreach ($records as $r) {
+            if (!isset($summary[$r->component])) {
+                $summary[$r->component] = [];
+            }
+
+            if (isset($summary[$r->component][$r->classname])) {
+                $classsummary = $summary[$r->component][$r->classname];
+            } else {
+                $classsummary = [
+                    'nextruntime' => null,
+                    'count' => 0,
+                    'failed' => 0,
+                    'running' => 0,
+                    'due' => 0,
+                ];
+            }
+
+            $classsummary['count']++;
+            $nextruntime = (int)$r->nextruntime;
+            if (!$classsummary['nextruntime'] || $nextruntime < $classsummary['nextruntime']) {
+                $classsummary['nextruntime'] = $nextruntime;
+            }
+
+            if ((int)$r->timestarted > 0) {
+                $classsummary['running']++;
+            } else {
+                if ((int)$r->faildelay > 0) {
+                    $classsummary['failed']++;
+                }
+
+                if ($nextruntime <= $now) {
+                    $classsummary['due']++;
+                }
+            }
+
+            $summary[$r->component][$r->classname] = $classsummary;
+        }
+        return $summary;
     }
 
     /**
@@ -550,9 +618,10 @@ class manager {
         $records = $DB->get_records_sql('SELECT * from {task_adhoc} WHERE faildelay > ?', [$delay]);
 
         foreach ($records as $record) {
-            $task = self::adhoc_task_from_record($record);
-            if ($task) {
-                $tasks[] = $task;
+            try {
+                $tasks[] = self::adhoc_task_from_record($record);
+            } catch (\moodle_exception $e) {
+                debugging("Failed to load task: $record->classname", DEBUG_DEVELOPER, $e->getTrace());
             }
         }
         return $tasks;
@@ -781,9 +850,11 @@ class manager {
                     continue;
                 }
 
-                $task = self::adhoc_task_from_record($record);
                 // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
-                if (!$task) {
+                try {
+                    $task = self::adhoc_task_from_record($record);
+                } catch (\moodle_exception $e) {
+                    debugging("Failed to load task: $record->classname", DEBUG_DEVELOPER);
                     $lock->release();
                     unset(self::$miniqueue[$taskid]);
                     continue;
@@ -875,7 +946,7 @@ class manager {
     }
 
     /**
-     * This function will get a (failed) adhoc task by id. The task will be handed out
+     * This function will get an adhoc task by id. The task will be handed out
      * with an open lock - possibly on the entire cron process. Make sure you call either
      * {@see ::adhoc_task_failed} or {@see ::adhoc_task_complete} to release the lock and reschedule the task.
      *
@@ -886,7 +957,7 @@ class manager {
     public static function get_adhoc_task(int $taskid): ?adhoc_task {
         global $DB;
 
-        $record = $DB->get_record('task_adhoc', array('id' => $taskid));
+        $record = $DB->get_record('task_adhoc', ['id' => $taskid]);
         if (!$record) {
             throw new \moodle_exception('invalidtaskid');
         }
@@ -894,11 +965,12 @@ class manager {
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
 
         if ($lock = $cronlockfactory->get_lock('adhoc_' . $record->id, 0)) {
-            $task = self::adhoc_task_from_record($record);
             // Safety check in case the task in the DB does not match a real class (maybe something was uninstalled).
-            if (!$task) {
+            try {
+                $task = self::adhoc_task_from_record($record);
+            } catch (\moodle_exception $e) {
                 $lock->release();
-                throw new \moodle_exception('invalidtaskclassname');
+                throw $e;
             }
 
             self::set_locks($task, $lock, $cronlockfactory);
@@ -911,12 +983,12 @@ class manager {
     /**
      * This function will set locks on the task.
      *
-     * @param \core\task\adhoc_task    $task
-     * @param \core\lock\lock          $lock task lock
-     * @param \core\lock\lock_factory  $cronlockfactory
+     * @param adhoc_task    $task
+     * @param lock          $lock task lock
+     * @param lock_factory  $cronlockfactory
      * @throws \moodle_exception
      */
-    private static function set_locks($task, $lock, $cronlockfactory): void {
+    private static function set_locks(adhoc_task $task, lock $lock, lock_factory $cronlockfactory): void {
         // The global cron lock is under the most contention so request it
         // as late as possible and release it as soon as possible.
         if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
@@ -1418,11 +1490,11 @@ class manager {
     /**
      * Executes a cron from web invocation using PHP CLI.
      *
-     * @param \core\task\task_base $task Task that be executed via CLI.
+     * @param scheduled_task $task Task that be executed via CLI.
      * @return bool
      * @throws \moodle_exception
      */
-    public static function run_from_cli(\core\task\task_base $task):bool {
+    public static function run_from_cli(scheduled_task $task): bool {
         global $CFG;
 
         if (!self::is_runnable()) {
@@ -1448,6 +1520,73 @@ class manager {
         }
 
         return true;
+    }
+
+    /**
+     * Executes an ad hoc task from web invocation using PHP CLI.
+     *
+     * @param int   $taskid Task to execute via CLI.
+     * @throws \moodle_exception
+     */
+    public static function run_adhoc_from_cli(int $taskid) {
+        // Shell-escaped task name.
+        $taskarg = escapeshellarg("--id={$taskid}");
+
+        self::run_adhoc_from_cli_base($taskarg);
+    }
+
+    /**
+     * Executes ad hoc tasks from web invocation using PHP CLI.
+     *
+     * @param bool|null   $failedonly
+     * @param string|null $classname  Task class to execute via CLI.
+     * @throws \moodle_exception
+     */
+    public static function run_all_adhoc_from_cli(?bool $failedonly = false, ?string $classname = null) {
+        $taskargs = [];
+        if ($failedonly) {
+            $taskargs[] = '--failed';
+        }
+        if ($classname) {
+            // Shell-escaped task select.
+            $taskargs[] = escapeshellarg("--classname={$classname}");
+        }
+
+        self::run_adhoc_from_cli_base($taskargs ? implode(' ', $taskargs) : '--execute');
+    }
+
+    /**
+     * Executes an ad hoc task from web invocation using PHP CLI.
+     *
+     * @param string $taskarg Task to execute via CLI.
+     * @throws \moodle_exception
+     */
+    private static function run_adhoc_from_cli_base(string $taskarg): void {
+        global $CFG;
+
+        if (!self::is_runnable()) {
+            $redirecturl = new \moodle_url('/admin/settings.php', ['section' => 'systempaths']);
+            throw new \moodle_exception('cannotfindthepathtothecli', 'tool_task', $redirecturl->out());
+        }
+
+        // Shell-escaped path to the PHP binary.
+        $phpbinary = escapeshellarg(self::find_php_cli_path());
+
+        // Shell-escaped path CLI script.
+        $pathcomponents = [$CFG->dirroot, $CFG->admin, 'cli', 'adhoc_task.php'];
+        $scriptpath = escapeshellarg(implode(DIRECTORY_SEPARATOR, $pathcomponents));
+
+        // Build the CLI command.
+        $command = "{$phpbinary} {$scriptpath} {$taskarg} --force";
+
+        // We cannot run it in phpunit.
+        if (PHPUNIT_TEST) {
+            echo $command;
+            return;
+        }
+
+        // Execute it.
+        passthru($command);
     }
 
     /**
