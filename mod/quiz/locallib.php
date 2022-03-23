@@ -2791,41 +2791,6 @@ function quiz_retrieve_tags_for_slot_ids($slotids) {
 }
 
 /**
- * Retrieves tag information for the given quiz slot.
- * A quiz slot have some tags if and only if it is representing a random question by tags.
- *
- * @param int $slotid The id of the quiz slot.
- * @return array List of tags.
- */
-function quiz_retrieve_slot_tags($slotid) {
-    $referencedata = \mod_quiz\question\bank\qbank_helper::get_random_question_data_from_slot($slotid);
-    if (isset($referencedata->filtercondition)) {
-        $filtercondition = json_decode($referencedata->filtercondition);
-        if (isset($filtercondition->tags)) {
-            return $filtercondition->tags;
-        }
-    }
-    return [];
-}
-
-/**
- * Retrieves tag ids for the given quiz slot.
- * A quiz slot have some tags if and only if it is representing a random question by tags.
- *
- * @param int $slotid The id of the quiz slot.
- * @return int[]
- */
-function quiz_retrieve_slot_tag_ids($slotid) {
-    $tagids = [];
-    $tags = quiz_retrieve_slot_tags($slotid);
-    foreach ($tags as $tag) {
-        $tagstring = explode(',', $tag);
-        $tagids [] = $tagstring[0];
-    }
-    return $tagids;
-}
-
-/**
  * Get quiz attempt and handling error.
  *
  * @param int $attemptid the id of the current attempt.

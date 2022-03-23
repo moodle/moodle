@@ -73,7 +73,7 @@ class mod_quiz_tags_testcase extends advanced_testcase {
         $tag3 = core_tag_tag::get_by_name(0, 't3', 'id, name');
         $this->assertNotFalse($tag3);
 
-        $slottags = quiz_retrieve_slot_tags($question->slotid);
+        $slottags = $this->get_tags_for_slot($question->slotid);
         $slottags = reset($slottags);
         $slottags = explode(',', $slottags);
         $this->assertEquals("{$tag2->id},{$tag2->name}", "{$slottags[0]},{$slottags[1]}");
@@ -83,5 +83,22 @@ class mod_quiz_tags_testcase extends advanced_testcase {
         $randomincludingsubcategories = $DB->get_record('question_set_references', ['itemid' => reset($slots)->id]);
         $filtercondition = json_decode($randomincludingsubcategories->filtercondition);
         $this->assertEquals(0, $filtercondition->includingsubcategories);
+    }
+
+    /**
+     * Helper to get the random tags, if any, for a slot.
+     *
+     * @param int $slotid the id of the slot to get tags for.
+     * @return array the tags.
+     */
+    protected function get_tags_for_slot(int $slotid): array {
+        $referencedata = \mod_quiz\question\bank\qbank_helper::get_random_question_data_from_slot($slotid);
+        if (isset($referencedata->filtercondition)) {
+            $filtercondition = json_decode($referencedata->filtercondition);
+            if (isset($filtercondition->tags)) {
+                return $filtercondition->tags;
+            }
+        }
+        return [];
     }
 }
