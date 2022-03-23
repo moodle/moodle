@@ -178,7 +178,9 @@ define([
                     })
                     .then(function() {
                         location.href = "#p" + newid;
-                        return;
+
+                        // Reload the page, say if threshold is being set by user those would get reflected through the templates.
+                        location.reload();
                     })
                     .catch(function(error) {
                         hideSubmitButtonLoadingIcon(submitButton);
