@@ -234,6 +234,14 @@ class discussion {
             ];
         }
 
+        $exporteddiscussion['throttlingwarningmsg'] = '';
+        if (($warningobj = forum_check_throttling($this->forumrecord)) && $warningobj->canpost) {
+            $throttlewarnnotification = (new notification(
+                    get_string($warningobj->errorcode, $warningobj->module, $warningobj->additional)
+            ))->set_show_closebutton();
+            $exporteddiscussion['throttlingwarningmsg'] = $throttlewarnnotification->get_message();
+        }
+
         if ($this->displaymode === FORUM_MODE_NESTED_V2) {
             $template = 'mod_forum/forum_discussion_nested_v2';
         } else {
@@ -428,6 +436,7 @@ class discussion {
                     'blockperiod' => get_string('secondstotime' . $forum->get_block_period())
                 ])
             ))->set_show_closebutton();
+
         }
 
         return array_map(function($notification) {
