@@ -20342,8 +20342,6 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
 
 #page.drawers {
   margin-top: 50px;
-  padding-left: 15px;
-  padding-right: 15px;
   scrollbar-width: thin;
   scrollbar-color: #6a737b #f8f9fa; }
   #page.drawers::-webkit-scrollbar {
@@ -20366,9 +20364,6 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
     margin-top: 0.5rem;
     margin-bottom: 3rem;
     flex: 1 0 auto; }
-  #page.drawers div[role="main"] {
-    padding-left: 15px;
-    padding-right: 15px; }
   #page.drawers .activity-header {
     margin-left: 15px;
     margin-right: 15px; }
@@ -20456,7 +20451,12 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
 @media (min-width: 768px) {
   #page.drawers {
     padding-left: 3rem;
-    padding-right: 3rem; } }
+    padding-right: 3rem; }
+    #page.drawers .main-inner {
+      padding: 1.5rem 0.5rem; }
+    #page.drawers div[role="main"] {
+      padding-left: 15px;
+      padding-right: 15px; } }
 
 @media (min-width: 992px) {
   .drawer-left,
@@ -21558,7 +21558,7 @@ div.editor_atto_toolbar button .icon {
 .secondary-navigation {
   max-width: 830px;
   margin: 0 auto;
-  padding: 0 15px 15px; }
+  padding-bottom: 15px; }
   .secondary-navigation .navigation {
     border-top: 1px solid #dee2e6;
     border-bottom: 1px solid #dee2e6;
@@ -21568,6 +21568,10 @@ div.editor_atto_toolbar button .icon {
       border: none; }
       .secondary-navigation .navigation .nav-tabs .nav-link {
         border-radius: initial; }
+
+@media (min-width: 768px) {
+  .secondary-navigation {
+    padding: 0 15px 15px; } }
 
 .tertiary-navigation {
   padding-top: 10px; }
