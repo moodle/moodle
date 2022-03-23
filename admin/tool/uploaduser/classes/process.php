@@ -692,7 +692,11 @@ class process {
             $dologout = false;
 
             if ($this->get_update_type() != UU_UPDATE_NOCHANGES and !$remoteuser) {
-                if (!empty($user->auth) and $user->auth !== $existinguser->auth) {
+
+                // Handle 'auth' column separately, the field can never be missing from a user.
+                if (!empty($user->auth) && ($user->auth !== $existinguser->auth) &&
+                        ($this->get_update_type() != UU_UPDATE_MISSING)) {
+
                     $this->upt->track('auth', s($existinguser->auth).'-->'.s($user->auth), 'info', false);
                     $existinguser->auth = $user->auth;
                     if (!isset($this->supportedauths[$user->auth])) {
