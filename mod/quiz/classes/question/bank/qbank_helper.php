@@ -69,23 +69,6 @@ class qbank_helper {
     }
 
     /**
-     * Sort the elements of an array according to a key.
-     *
-     * @param array $arrays
-     * @param string $on
-     * @param int $order
-     * @return array
-     */
-    public static function question_array_sort($arrays, $on, $order = SORT_ASC): array {
-        $element = [];
-        foreach ($arrays as $array) {
-            $element[$array->$on] = $array;
-        }
-        ksort($element, $order);
-        return $element;
-    }
-
-    /**
      * Get the question id from slot id.
      *
      * @param int $slotid
@@ -204,10 +187,10 @@ class qbank_helper {
     /**
      * Get the question structure data for the given quiz or question ids.
      *
-     * @param null $quizid
+     * @param int $quizid ID of the quiz to load data for.
      * @param array $questionids
-     * @param bool $attempt
-     * @return array
+     * @param bool $attempt if false (default) array key is slot number, else array key is question.id.
+     * @return array the question data, ordered by slot number.
      */
     public static function get_question_structure_data($quizid, $questionids = [], $attempt = false) {
         global $DB;
@@ -245,15 +228,13 @@ class qbank_helper {
              LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
              LEFT JOIN {question} q ON q.id = qv.questionid
                  WHERE slot.quizid = :quizid
-             $condition";
+                       $condition
+              ORDER BY slot.slot";
         $questiondatas = $DB->get_records_sql($sql, $params);
         foreach ($questiondatas as $questiondata) {
             $questiondata->_partiallyloaded = true;
         }
-        if (!empty($questiondatas)) {
-            return $questiondatas;
-        }
-        return [];
+        return $questiondatas;
     }
 
     /**
@@ -274,7 +255,9 @@ class qbank_helper {
             }
         }
 
-        return self::question_array_sort(array_merge($firstslotsets, $secondslotsets), 'slot');
+        $data = array_merge($firstslotsets, $secondslotsets);
+        ksort($data);
+        return $data;
     }
 
     /**
@@ -325,11 +308,11 @@ class qbank_helper {
             $randomquestiondata->randomincludingsubcategories = $filtercondition->includingsubcategories;
             $randomquestiondata->questionid = $randomloader->get_next_question_id($randomquestiondata->randomfromcategory,
                 $randomquestiondata->randomincludingsubcategories, $tagids);
-            $randomquestions [] = $randomquestiondata;
+            $randomquestions[] = $randomquestiondata;
         }
 
         foreach ($randomquestions as $randomquestion) {
-            // Should not add if there is no question found from the ramdom question loader, maybe empty category.
+            // Should not add if there is no question found from the random question loader, maybe empty category.
             if ($randomquestion->questionid === null) {
                 continue;
             }
@@ -345,6 +328,8 @@ class qbank_helper {
             }
             $questiondata[$question->id] = $question;
         }
+
+        uasort($questiondata, function (\stdClass $a, \stdClass $b): int { return ($a->slot <=> $b->slot); });
 
         return $questiondata;
     }

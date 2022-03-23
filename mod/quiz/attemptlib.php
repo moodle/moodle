@@ -152,8 +152,8 @@ class quiz {
         if (!empty($questionids)) {
             $questiondata = \mod_quiz\question\bank\qbank_helper::get_question_structure_data($this->quiz->id, $questionids, true);
         }
-        $allquestiondata = \mod_quiz\question\bank\qbank_helper::question_array_sort(
-            \mod_quiz\question\bank\qbank_helper::question_load_random_questions($this->quiz->id, $questiondata), 'slot');
+        $allquestiondata = \mod_quiz\question\bank\qbank_helper::question_load_random_questions(
+                $this->quiz->id, $questiondata);
         $this->questions = $allquestiondata;
     }
 

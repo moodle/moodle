@@ -80,7 +80,6 @@ class qbank_helper_test extends \advanced_testcase {
      * @covers ::get_question_for_redo
      * @covers ::get_always_latest_version_question_ids
      * @covers ::question_load_random_questions
-     * @covers ::question_array_sort
      */
     public function test_reference_records() {
         $this->resetAfterTest();
@@ -130,7 +129,6 @@ class qbank_helper_test extends \advanced_testcase {
      *
      * @covers ::get_question_structure
      * @covers ::get_question_structure_data
-     * @covers ::question_array_sort
      * @covers ::get_always_latest_version_question_ids
      * @covers ::question_load_random_questions
      */

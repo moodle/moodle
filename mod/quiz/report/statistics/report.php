@@ -856,7 +856,8 @@ class quiz_statistics_report extends quiz_default_report {
         foreach ($randomquestions as $randomquestion) {
             $questiondata[$randomquestion->slot] = $randomquestion;
         }
-        return \mod_quiz\question\bank\qbank_helper::question_array_sort($questiondata, 'slot');
+        ksort($questiondata);
+        return $questiondata;
     }
 
     /**
