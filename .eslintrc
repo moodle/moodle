@@ -1,8 +1,11 @@
 {
   'plugins': [
-    'babel',
+    '@babel',
     'promise',
-    'jsdoc',
+    'jsdoc'
+  ],
+  'extends': [
+    'eslint:recommended'
   ],
   'env': {
     'browser': true,
@@ -195,7 +198,7 @@
     "no-restricted-properties": ['warn', {
         'object': 'M',
         'property': 'str',
-        'message': 'Use AMD module "core/str" or M.util.get_string()'
+        'message': 'Use "core/str" module or M.util.get_string()'
     }],
   },
   overrides: [
@@ -247,15 +250,13 @@
         'semi': 'off',
         'no-unused-expressions': 'off',
         // Enable all of the babel version of these rules.
-        'babel/new-cap': ['warn', { 'properties': false }],
+        '@babel/new-cap': ['warn', { 'properties': false }],
         // Not using this rule for the time being because it isn't
         // compatible with jQuery and ES6.
-        'babel/no-invalid-this': 'off',
-        'babel/object-curly-spacing': 'warn',
-        // This is off in the original style int.
-        'babel/quotes': 'off',
-        'babel/semi': 'error',
-        'babel/no-unused-expressions': 'error',
+        '@babel/no-invalid-this': 'off',
+        '@babel/object-curly-spacing': 'warn',
+        '@babel/semi': 'error',
+        '@babel/no-unused-expressions': 'error',
         // === Promises ===
         // We have Promise now that we're using ES6.
         'promise/no-native': 'off',
@@ -305,7 +306,7 @@
       },
       parserOptions: {
         'sourceType': 'module',
-        'requireConfigFile': false,
+        'requireConfigFile': false
       }
     }
   ]
