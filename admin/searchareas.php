@@ -26,7 +26,7 @@ require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('searchareas');
 
-$areaid = optional_param('areaid', null, PARAM_ALPHAEXT);
+$areaid = optional_param('areaid', null, PARAM_ALPHANUMEXT);
 $action = optional_param('action', null, PARAM_ALPHA);
 $indexingenabled = \core_search\manager::is_indexing_enabled(); // This restricts many of the actions on this page.
 
