@@ -297,6 +297,7 @@ defined or can't be applied.
 * Default blocks for dashboard has been updated. The page will now have the following in the corresponding region:
     * Calendar, Timeline - Center
     * Recently accessed courses - Side bar/blocks drawer
+* Flat navigation classes have been marked for deprecation with the introduction of primary and secondary navigation concepts.
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.

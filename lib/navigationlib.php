@@ -444,11 +444,13 @@ class navigation_node implements renderable {
     /**
      * Walk the tree building up a list of all the flat navigation nodes.
      *
+     * @deprecated since Moodle 4.0
      * @param flat_navigation $nodes List of the found flat navigation nodes.
      * @param boolean $showdivider Show a divider before the first node.
      * @param string $label A label for the collection of navigation links.
      */
     public function build_flat_navigation_list(flat_navigation $nodes, $showdivider = false, $label = '') {
+        debugging("Function has been deprecated with the deprecation of the flat_navigation class.");
         if ($this->showinflatnavigation) {
             $indent = 0;
             if ($this->type == self::TYPE_COURSE || $this->key === self::COURSE_INDEX_PAGE) {
@@ -3981,6 +3983,7 @@ class breadcrumb_navigation_node extends navigation_node {
  * Subclass of navigation_node allowing different rendering for the flat navigation
  * in particular allowing dividers and indents.
  *
+ * @deprecated since Moodle 4.0 - do not use any more. Leverage secondary/tertiary navigation concepts
  * @package   core
  * @category  navigation
  * @copyright 2016 Damyon Wiese
@@ -4003,6 +4006,7 @@ class flat_navigation_node extends navigation_node {
      * @param mixed $navnode A navigation_node or an array
      */
     public function __construct($navnode, $indent) {
+        debugging("Flat nav has been deprecated in favour of primary/secondary navigation concepts");
         if (is_array($navnode)) {
             parent::__construct($navnode);
         } else if ($navnode instanceof navigation_node) {
@@ -4114,6 +4118,7 @@ class flat_navigation_node extends navigation_node {
  * Class used to generate a collection of navigation nodes most closely related
  * to the current page.
  *
+ * @deprecated since Moodle 4.0 - do not use any more. Leverage secondary/tertiary navigation concepts
  * @package core
  * @copyright 2016 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -4131,6 +4136,7 @@ class flat_navigation extends navigation_node_collection {
         if (during_initial_install()) {
             return false;
         }
+        debugging("Flat navigation has been deprecated in favour of primary/secondary navigation concepts");
         $this->page = $page;
     }
 
@@ -4207,6 +4213,24 @@ class flat_navigation extends navigation_node_collection {
             $flat->key = 'sitesettings';
             $flat->icon = new pix_icon('t/preferences', '');
             $this->add($flat);
+        }
+
+        // Add-a-block in editing mode.
+        if (isset($this->page->theme->addblockposition) &&
+                $this->page->theme->addblockposition == BLOCK_ADDBLOCK_POSITION_FLATNAV &&
+                $PAGE->user_is_editing() && $PAGE->user_can_edit_blocks()) {
+            $url = new moodle_url($PAGE->url, ['bui_addblock' => '', 'sesskey' => sesskey()]);
+            $addablock = navigation_node::create(get_string('addblock'), $url);
+            $flat = new flat_navigation_node($addablock, 0);
+            $flat->set_showdivider(true, get_string('blocksaddedit'));
+            $flat->key = 'addblock';
+            $flat->icon = new pix_icon('i/addblock', '');
+            $this->add($flat);
+
+            $addblockurl = "?{$url->get_query_string(false)}";
+
+            $PAGE->requires->js_call_amd('core/addblockmodal', 'init',
+                [$PAGE->pagetype, $PAGE->pagelayout, $addblockurl]);
         }
     }
 

@@ -108,7 +108,4 @@ $templatecontext = [
     'addblockbutton' => $addblockbutton
 ];
 
-$nav = $PAGE->flatnav;
-$templatecontext['firstcollectionlabel'] = $nav->get_collectionlabel();
-
 echo $OUTPUT->render_from_template('theme_boost/drawers', $templatecontext);
