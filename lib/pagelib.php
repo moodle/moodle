@@ -423,6 +423,11 @@ class moodle_page {
     protected $_navigationoverflow = true;
 
     /**
+     * @var bool Whether to override/remove all editing capabilities for blocks on the page.
+     */
+    protected $_forcelockallblocks = false;
+
+    /**
      * Force the settings menu to be displayed on this page. This will only force the
      * settings menu on an activity / resource page that is being displayed on a theme that
      * uses a settings menu.
@@ -1052,10 +1057,12 @@ class moodle_page {
 
     /**
      * Does the user have permission to edit blocks on this page.
+     * Can be forced to false by calling the force_lock_all_blocks() method.
+     *
      * @return bool
      */
     public function user_can_edit_blocks() {
-        return has_capability($this->_blockseditingcap, $this->_context);
+        return $this->_forcelockallblocks ? false : has_capability($this->_blockseditingcap, $this->_context);
     }
 
     /**
@@ -1594,6 +1601,17 @@ class moodle_page {
         if (!is_null($this->_theme)) {
             $this->_theme = theme_config::load($this->_theme->name);
         }
+    }
+
+    /**
+     * Remove access to editing/moving on all blocks on a page.
+     * This overrides any capabilities and is intended only for pages where no user (including admins) should be able to
+     * modify blocks on the page (eg My Courses).
+     *
+     * @return void
+     */
+    public function force_lock_all_blocks(): void {
+        $this->_forcelockallblocks = true;
     }
 
     /**

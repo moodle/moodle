@@ -21,6 +21,7 @@
  * @category  phpunit
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \moodle_page
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -762,6 +763,47 @@ class core_moodle_page_testcase extends advanced_testcase {
                 'expected' => 'classic',
             ],
         ];
+    }
+
+    /**
+     * Tests user_can_edit_blocks() returns the expected response.
+     * @covers ::user_can_edit_blocks()
+     */
+    public function test_user_can_edit_blocks() {
+        global $DB;
+
+        $systemcontext = context_system::instance();
+        $this->testpage->set_context($systemcontext);
+
+        $user = $this->getDataGenerator()->create_user();
+        $role = $DB->get_record('role', ['shortname' => 'teacher']);
+        role_assign($role->id, $user->id, $systemcontext->id);
+        $this->setUser($user);
+
+        // Confirm expected response (false) when user does not have access to edit blocks.
+        $capability = $this->testpage->all_editing_caps()[0];
+        assign_capability($capability, CAP_PROHIBIT, $role->id, $systemcontext, true);
+        $this->assertFalse($this->testpage->user_can_edit_blocks());
+
+        // Give capability and confirm expected response (true) now user has access to edit blocks.
+        assign_capability($capability, CAP_ALLOW, $role->id, $systemcontext, true);
+        $this->assertTrue($this->testpage->user_can_edit_blocks());
+    }
+
+    /**
+     * Tests that calling force_lock_all_blocks() will cause user_can_edit_blocks() to return false, regardless of capabilities.
+     * @covers ::force_lock_all_blocks()
+     */
+    public function test_force_lock_all_blocks() {
+        $this->testpage->set_context(context_system::instance());
+        $this->setAdminUser();
+
+        // Confirm admin user has access to edit blocks.
+        $this->assertTrue($this->testpage->user_can_edit_blocks());
+
+        // Force lock and confirm user can no longer edit, despite having the capability.
+        $this->testpage->force_lock_all_blocks();
+        $this->assertFalse($this->testpage->user_can_edit_blocks());
     }
 }
 

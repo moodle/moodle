@@ -224,6 +224,9 @@ defined or can't be applied.
     * Calendar, Timeline - Center
     * Recently accessed courses - Side bar/blocks drawer
 * Flat navigation classes have been marked for deprecation with the introduction of primary and secondary navigation concepts.
+* A new method, force_lock_all_blocks(), has been added to the moodle_page class to allow pages to force the value of
+  user_can_edit_blocks() to return false where necessary. This makes it possible to remove block editing on a page
+  from ALL users, including admins, where required on pages with multi region layouts exist, such as "My courses".
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
