@@ -386,8 +386,10 @@ function grade_regrade_final_grades_if_required($course, callable $callback = nu
     }
 
     if (grade_needs_regrade_progress_bar($course->id)) {
-        $PAGE->set_heading($course->fullname);
-        echo $OUTPUT->header();
+        if ($PAGE->state !== moodle_page::STATE_IN_BODY) {
+            $PAGE->set_heading($course->fullname);
+            echo $OUTPUT->header();
+        }
         echo $OUTPUT->heading(get_string('recalculatinggrades', 'grades'));
         $progress = new \core\progress\display(true);
         $status = grade_regrade_final_grades($course->id, null, null, $progress);
