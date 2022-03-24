@@ -150,7 +150,7 @@ Feature: Course index depending on role
     And I should see "Activity sample 2" in the "courseindex-content" "region"
     And I should see "Topic 3" in the "courseindex-content" "region"
     And I should see "Activity sample 3" in the "courseindex-content" "region"
-    # Uncollapse section 1 via Topic name.
+    # Expand section 1 via Topic name.
     And I click on "Topic 1" "link" in the "courseindex-content" "region"
     And I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Activity sample 1" in the "courseindex-content" "region"
@@ -168,8 +168,17 @@ Feature: Course index depending on role
     And I should not see "Activity sample 2" in the "courseindex-content" "region"
     And I should see "Topic 3" in the "courseindex-content" "region"
     And I should see "Activity sample 3" in the "courseindex-content" "region"
-    # Uncollapse section 2 via chevron.
+    # Expand section 2 via chevron.
     And I click on "Expand" "link" in the ".courseindex-section[data-number='2']" "css_element"
+    And I should see "Topic 1" in the "courseindex-content" "region"
+    And I should see "Activity sample 1" in the "courseindex-content" "region"
+    And I should see "Second activity in section 1" in the "courseindex-content" "region"
+    And I should see "Topic 2" in the "courseindex-content" "region"
+    And I should see "Activity sample 2" in the "courseindex-content" "region"
+    And I should see "Topic 3" in the "courseindex-content" "region"
+    And I should see "Activity sample 3" in the "courseindex-content" "region"
+    # Click a section name does not collapse the section.
+    And I click on "Topic 2" "link" in the "courseindex-content" "region"
     And I should see "Topic 1" in the "courseindex-content" "region"
     And I should see "Activity sample 1" in the "courseindex-content" "region"
     And I should see "Second activity in section 1" in the "courseindex-content" "region"

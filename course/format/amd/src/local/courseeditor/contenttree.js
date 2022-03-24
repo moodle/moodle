@@ -109,6 +109,26 @@ export default class extends Tree {
     }
 
     /**
+     * Handle an item click.
+     *
+     * @param {Event} event the click event
+     * @param {jQuery} jQueryItem the item clicked
+     */
+    handleItemClick(event, jQueryItem) {
+        const isChevron = event.target.closest(this.selectors.COLLAPSE);
+        // Only chevron clicks toogle the sections always.
+        if (isChevron) {
+            super.handleItemClick(event, jQueryItem);
+            return;
+        }
+        // This is a title or activity name click.
+        jQueryItem.focus();
+        if (this.isGroupItem(jQueryItem)) {
+            this.expandGroup(jQueryItem);
+        }
+    }
+
+    /**
      * Check if a gorup item is collapsed.
      *
      * @param {JQuery} jQueryItem  the jQuery object
