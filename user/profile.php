@@ -198,6 +198,10 @@ profile_view($user, $usercontext);
 echo $OUTPUT->header();
 echo '<div class="userprofile">';
 
+$hiddenfields = [];
+if (!has_capability('moodle/user:viewhiddendetails', $usercontext)) {
+    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+}
 if ($user->description && !isset($hiddenfields['description'])) {
     echo '<div class="description">';
     if (!empty($CFG->profilesforenrolledusersonly) && !$currentuser &&

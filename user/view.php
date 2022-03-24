@@ -193,6 +193,10 @@ if ($user->deleted) {
 // Trigger a user profile viewed event.
 profile_view($user, $coursecontext, $course);
 
+$hiddenfields = [];
+if (!has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
+    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+}
 if ($user->description && !isset($hiddenfields['description'])) {
     echo '<div class="description">';
     if (!empty($CFG->profilesforenrolledusersonly) && !$DB->record_exists('role_assignments', array('userid' => $id))) {
