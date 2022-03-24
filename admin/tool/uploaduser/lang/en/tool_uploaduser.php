@@ -49,7 +49,7 @@ $string['examplecsv_help'] = 'To use the example text file, download it then ope
 The example text file may also be used for testing, as you are able to preview user data and can choose to cancel the action before user accounts are created.';
 $string['infoprefix'] = 'Info:';
 $string['invalidupdatetype'] = 'This option cannot be selected with the chosen upload type.';
-$string['invaliduserdata'] = 'Invalid data detected for user {$a} and it has been automatically cleaned.';
+$string['invaliduserdatavalues'] = 'Invalid data detected for user \'{$a->username}\' ({$a->values}), which has been automatically cleaned.';
 $string['invalidtheme'] = 'Theme "{$a}" is not installed and will be ignored.';
 $string['linex'] = 'Line {$a}';
 $string['matchemail'] = 'Match on email address';
@@ -120,3 +120,6 @@ $string['uuupdatetype'] = 'Existing user details';
 $string['uuusernametemplate'] = 'Username template';
 $string['privacy:metadata'] = 'The User upload plugin does not store any personal data.';
 $string['warningprefix'] = 'Warning:';
+
+// Deprecated since Moodle 4.4.
+$string['invaliduserdata'] = 'Invalid data detected for user {$a} and it has been automatically cleaned.';
