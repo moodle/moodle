@@ -40,6 +40,7 @@ list($options, $unrecognized) = cli_get_params(
         'id' => null,
         'classname' => null,
         'taskslimit' => null,
+        'failed' => false,
     ], [
         'h' => 'help',
         'e' => 'execute',
@@ -70,6 +71,7 @@ Options:
      --id                  Run (failed) task with id
  -c, --classname           Run tasks with a certain classname (FQN)
  -l, --taskslimit=N        Run at most N tasks
+     --failed              Run only tasks that failed, ie those with a fail delay
 
 Run all queued tasks:
 \$sudo -u www-data /usr/bin/php admin/cli/adhoc_task.php --execute
@@ -138,6 +140,8 @@ raise_memory_limit(MEMORY_EXTRA);
 $humantimenow = date('r', time());
 mtrace("Server Time: {$humantimenow}\n");
 
+$classname = $options['classname'];
+
 // Run a single adhoc task only, if requested.
 if (!empty($options['id'])) {
     $taskid = (int) $options['id'];
@@ -145,9 +149,14 @@ if (!empty($options['id'])) {
     exit(0);
 }
 
+// Run all failed tasks.
+if (!empty($options['failed'])) {
+    \core\cron::run_failed_adhoc_tasks($classname);
+    exit(0);
+}
+
 // Examine params and determine if we should run.
 $execute = (bool) $options['execute'];
-$classname = $options['classname'];
 $keepalive = empty($options['keep-alive']) ? 0 : (int) $options['keep-alive'];
 $taskslimit = empty($options['taskslimit']) ? null : (int) $options['taskslimit'];
 $checklimits = empty($options['ignorelimits']);

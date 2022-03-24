@@ -335,7 +335,7 @@ class cron {
     }
 
     /**
-     * Execute a (failed) adhoc task.
+     * Execute an adhoc task.
      *
      * @param   int       $taskid
      */
@@ -347,6 +347,26 @@ class cron {
 
         self::run_inner_adhoc_task($task);
         self::set_process_title("Running adhoc task $taskid");
+    }
+
+    /**
+     * Execute all failed adhoc tasks.
+     *
+     * @param string|null  $classname Run only tasks of this class
+     */
+    public static function run_failed_adhoc_tasks(?string $classname = null): void {
+        global $DB;
+
+        $where = 'faildelay > 0';
+        $params = [];
+        if ($classname) {
+            $where .= ' AND classname = :classname';
+            $params['classname'] = \core\task\manager::get_canonical_class_name($classname);
+        }
+        $tasks = $DB->get_records_sql("SELECT * from {task_adhoc} WHERE $where", $params);
+        foreach ($tasks as $t) {
+            self::run_adhoc_task($t->id);
+        }
     }
 
     /**

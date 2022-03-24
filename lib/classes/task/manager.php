@@ -1359,7 +1359,7 @@ class manager {
      *
      * @param string|task_base $taskorstring Task object or a string
      */
-    protected static function get_canonical_class_name($taskorstring) {
+    public static function get_canonical_class_name($taskorstring) {
         if (is_string($taskorstring)) {
             $classname = $taskorstring;
         } else {
