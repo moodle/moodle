@@ -86,3 +86,28 @@ Feature: Run tests over my courses.
     And I click on "Manage courses" "link"
     And I wait to be redirected
     And I should see "Manage course categories and courses"
+
+  @javascript
+  Scenario: Admin can see relevant blocks but not add or move them
+    Given I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    And I add the "Text" block
+    And I configure the "(new text block)" block
+    And I set the following fields to these values:
+      | Page contexts    | Display throughout the entire site |
+      | Text block title | Text on all pages                  |
+      | Content          | This is visible on all pages       |
+      | Default region   | Right                              |
+    And I press "Save changes"
+    And I should see "This is visible on all pages"
+    And "Move Text on all pages block" "button" should exist in the "Text on all pages" "block"
+    When I am on the "My courses" page
+    # Check blocks visible but are "locked" in place.
+    Then "Course overview" "text" should exist in the "region-main" "region"
+    And I should not see "Add a block"
+    And I should see "This is visible on all pages"
+    And "Move Text on all pages block" "button" should not exist in the "Text on all pages" "block"
+    And "Move Course overview block" "button" should not exist in the "Course overview" "block"
+    And I click on "Actions menu" "icon" in the "Course overview" "block"
+    And I should not see "Delete Course overview block"
