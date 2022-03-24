@@ -706,8 +706,10 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         $sql = 'SELECT qsr.*
                  FROM {question_set_references} qsr
                  JOIN {quiz_slots} qs ON qs.id = qsr.itemid
-                 WHERE qs.quizid = ?';
-        $randomq = $DB->get_record_sql($sql, [$quizobj->get_quizid()]);
+                 WHERE qs.quizid = ?
+                   AND qsr.component = ?
+                   AND qsr.questionarea = ?';
+        $randomq = $DB->get_record_sql($sql, [$quizobj->get_quizid(), 'mod_quiz', 'slot']);
 
         $structure->remove_slot(2);
 
@@ -715,7 +717,8 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         $this->assert_quiz_layout(array(
                 array('TF1', 1, 'truefalse'),
             ), $structure);
-        $this->assertFalse($DB->record_exists('question_set_references', array('id' => $randomq->id)));
+        $this->assertFalse($DB->record_exists('question_set_references',
+            array('id' => $randomq->id, 'component' => 'mod_quiz', 'questionarea' => 'slot')));
     }
 
     /**

@@ -2260,9 +2260,12 @@ function quiz_has_question_use($quiz, $slot) {
               JOIN {question_bank_entries} qbe ON qbe.id = qre.questionbankentryid
               JOIN {question_versions} qve ON qve.questionbankentryid = qbe.id
               JOIN {question} q ON q.id = qve.questionid
-             WHERE slot.quizid = ? AND slot.slot = ?';
+             WHERE slot.quizid = ?
+               AND slot.slot = ?
+               AND qre.component = ?
+               AND qre.questionarea = ?';
 
-    $question = $DB->get_record_sql($sql, [$quiz->id, $slot]);
+    $question = $DB->get_record_sql($sql, [$quiz->id, $slot, 'mod_quiz', 'slot']);
 
     if (!$question) {
         return false;
@@ -2306,9 +2309,11 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
               FROM {quiz_slots} slot
               JOIN {question_references} qr ON qr.itemid = slot.id
               JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
-             WHERE slot.quizid = ?";
+             WHERE slot.quizid = ?
+               AND qr.component = ?
+               AND qr.questionarea = ?";
 
-    $questionslots = $DB->get_records_sql($sql, [$quiz->id]);
+    $questionslots = $DB->get_records_sql($sql, [$quiz->id, 'mod_quiz', 'slot']);
 
     $currententry = get_question_bank_entry($questionid);
 
@@ -2385,8 +2390,10 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
               JOIN {question_references} qr ON qbe.id = qr.questionbankentryid AND qr.version = qv.version
               JOIN {quiz_slots} qs ON qs.id = qr.itemid
              WHERE q.id = ?
-               AND qs.id =?";
-    $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slotid]);
+               AND qs.id = ?
+               AND qr.component = ?
+               AND qr.questionarea = ?";
+    $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slotid, 'mod_quiz', 'slot']);
 
     if (!$qreferenceitem) {
         // Create a new reference record for questions created already.

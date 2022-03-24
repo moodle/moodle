@@ -1435,12 +1435,16 @@ function quiz_get_post_actions() {
 function quiz_questions_in_use($questionids) {
     global $DB;
     list($test, $params) = $DB->get_in_or_equal($questionids);
+    $params['component'] = 'mod_quiz';
+    $params['questionarea'] = 'slot';
     $sql = "SELECT qs.id
               FROM {quiz_slots} qs
               JOIN {question_references} qr ON qr.itemid = qs.id
               JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
               JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-              WHERE qv.questionid $test";
+             WHERE qv.questionid $test
+               AND qr.component = ?
+               AND qr.questionarea = ?";
     return $DB->record_exists_sql($sql, $params) || question_engine::questions_in_use(
             $questionids, new qubaid_join('{quiz_attempts} quiza',
             'quiza.uniqueid', 'quiza.preview = 0'));

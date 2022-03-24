@@ -88,8 +88,10 @@ class helper_test extends \advanced_testcase {
         $q2d = $DB->get_record_sql("SELECT qsr.*
                                       FROM {quiz_slots} qs
                                       JOIN {question_set_references} qsr ON qsr.itemid = qs.id
-                                     WHERE qs.quizid = ?",
-            ['quizid' => $this->quiz->id], MUST_EXIST);
+                                     WHERE qs.quizid = ?
+                                       AND qsr.component = ?
+                                       AND qsr.questionarea = ?",
+            [$this->quiz->id, 'mod_quiz', 'slot'], MUST_EXIST);
 
         // The following 2 lines have to be after the quiz_add_random_questions() call above.
         // Otherwise, quiz_add_random_questions() will to be "smart" and use them instead of creating a new "random" question.
@@ -138,7 +140,8 @@ class helper_test extends \advanced_testcase {
         $this->assertFalse($DB->record_exists('question', ['id' => $q2a->id]));
         $this->assertTrue($DB->record_exists('question', ['id' => $q2b->id]));
         $this->assertFalse($DB->record_exists('question', ['id' => $q2c->id]));
-        $this->assertTrue($DB->record_exists('question_set_references', ['id' => $q2d->id]));
+        $this->assertTrue($DB->record_exists('question_set_references',
+            ['id' => $q2d->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']));
     }
 
     /**

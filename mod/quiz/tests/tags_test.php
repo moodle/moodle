@@ -80,7 +80,8 @@ class mod_quiz_tags_testcase extends advanced_testcase {
 
         $defaultcategory = question_get_default_category(context_course::instance($newcourseid)->id);
         $this->assertEquals($defaultcategory->id, $question->categoryobject->id);
-        $randomincludingsubcategories = $DB->get_record('question_set_references', ['itemid' => reset($slots)->id]);
+        $randomincludingsubcategories = $DB->get_record('question_set_references',
+            ['itemid' => reset($slots)->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
         $filtercondition = json_decode($randomincludingsubcategories->filtercondition);
         $this->assertEquals(0, $filtercondition->includingsubcategories);
     }

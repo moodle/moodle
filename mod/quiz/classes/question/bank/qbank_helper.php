@@ -400,7 +400,8 @@ class qbank_helper {
         $alwaysuselatest->version = 0;
         $alwaysuselatest->versionvalue = get_string('alwayslatest', 'quiz');
         array_unshift($versionsoptions, $alwaysuselatest);
-        $referencedata = $DB->get_record('question_references', ['itemid' => $slotid]);
+        $referencedata = $DB->get_record('question_references',
+            ['itemid' => $slotid, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
         if (!isset($referencedata->version) || ($referencedata->version === null)) {
             $currentversion = 0;
         } else {
