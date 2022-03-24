@@ -276,6 +276,7 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
         // Set up the registration and deployment.
         $reg = application_registration::create(
             'Example LMS application',
+            'a2c94a2c94',
             new moodle_url($this->issuer),
             '123',
             new moodle_url('https://example.org/authrequesturl'),

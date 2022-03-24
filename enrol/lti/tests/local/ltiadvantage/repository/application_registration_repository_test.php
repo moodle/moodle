@@ -31,16 +31,19 @@ class application_registration_repository_test extends \advanced_testcase {
      * Helper to generate a new application_registration object.
      *
      * @param string|null $issuer the issuer of the application, or null to use a default.
+     * @param string|null $uniqueid unique id for the tool registration, or null to use a default.
      * @param string|null $clientid the clientid of the platform's tool registration, or null to use a default.
      * @return application_registration the application_registration instance.
      */
-    protected function generate_application_registration(string $issuer = null,
+    protected function generate_application_registration(string $issuer = null, string $uniqueid = null,
             string $clientid = null): application_registration {
 
         $issuer = $issuer ?? 'https://lms.example.org';
+        $uniqueid = $uniqueid ?? 'a2c94a2c94';
         $clientid = $clientid ?? 'clientid_123';
         return application_registration::create(
             'Example LMS application',
+            $uniqueid,
             new \moodle_url($issuer),
             $clientid,
             new \moodle_url('https://example.org/authrequesturl'),
@@ -64,6 +67,8 @@ class application_registration_repository_test extends \advanced_testcase {
             $check->get_authenticationrequesturl());
         $this->assertEquals($expected->get_jwksurl(), $check->get_jwksurl());
         $this->assertEquals($expected->get_accesstokenurl(), $check->get_accesstokenurl());
+        $this->assertEquals($expected->is_complete(), $check->is_complete());
+        $this->assertEquals($expected->get_uniqueid(), $check->get_uniqueid());
     }
 
     /**
@@ -81,24 +86,95 @@ class application_registration_repository_test extends \advanced_testcase {
         $this->assertEquals($registration->get_authenticationrequesturl(), $record->authenticationrequesturl);
         $this->assertEquals($registration->get_jwksurl(), $record->jwksurl);
         $this->assertEquals($registration->get_accesstokenurl(), $record->accesstokenurl);
+        $expectedstatus = $registration->is_complete() ? application_registration::REGISTRATION_STATUS_COMPLETE
+            : application_registration::REGISTRATION_STATUS_INCOMPLETE;
+        $this->assertEquals($expectedstatus, $record->status);
         $this->assertNotEmpty($record->timecreated);
         $this->assertNotEmpty($record->timemodified);
     }
 
     /**
-     * Tests adding an application_registration to the repository.
+     * Tests saving application_registration instances using the repository.
      *
+     * @dataProvider save_data_provider
      * @covers ::save
+     * @param array $regdata the registration data
      */
-    public function test_save_new() {
+    public function test_save_new(array $regdata) {
         $this->resetAfterTest();
-        $registration = $this->generate_application_registration();
-        $repository = new application_registration_repository();
-        $createdregistration = $repository->save($registration);
 
-        $this->assertIsInt($createdregistration->get_id());
-        $this->assert_same_registration_values($registration, $createdregistration);
+        $reg = application_registration::create_draft($regdata['name'], $regdata['uniqueid']);
+        if (isset($regdata['platformid'])) {
+            $reg->set_platformid($regdata['platformid']);
+        }
+        if (isset($regdata['clientid'])) {
+            $reg->set_clientid($regdata['clientid']);
+        }
+        if (isset($regdata['authenticationrequesturl'])) {
+            $reg->set_authenticationrequesturl($regdata['authenticationrequesturl']);
+        }
+        if (isset($regdata['jwksurl'])) {
+            $reg->set_jwksurl($regdata['jwksurl']);
+        }
+        if (isset($regdata['accesstokenurl'])) {
+            $reg->set_accesstokenurl($regdata['accesstokenurl']);
+        }
+        if (!empty($regdata['setcomplete'])) {
+            $reg->complete_registration();
+        }
+        $repository = new application_registration_repository();
+        $createdregistration = $repository->save($reg);
+
+        $this->assert_same_registration_values($reg, $createdregistration);
         $this->assert_registration_db_values($createdregistration);
+
+    }
+
+    /**
+     * Provides registrations in different states for use in test_save_new.
+     *
+     * @return array the array of test data.
+     */
+    public function save_data_provider(): array {
+        return [
+            'minimal draft' => [
+                'registrationdata' => [
+                    'name' => 'My test platform',
+                    'uniqueid' => 'acbhd4355',
+                ]
+            ],
+            'draft with only some properties completed' => [
+                'registrationdata' => [
+                    'name' => 'My test platform',
+                    'uniqueid' => 'acbhd4355',
+                    'platformid' => new \moodle_url('https://lms.example.com'),
+                    'clientid' => 'abc345',
+                ]
+            ],
+            'draft with all fields completed, not marked complete' => [
+                'registrationdata' => [
+                    'name' => 'My test platform',
+                    'uniqueid' => 'acbhd4355',
+                    'platformid' => new \moodle_url('https://lms.example.com'),
+                    'clientid' => 'abc345',
+                    'authenticationrequesturl' => new \moodle_url('https://lms.example.com/auth'),
+                    'jwksurl' => new \moodle_url('https://lms.example.com/jwks'),
+                    'accesstokenurl' => new \moodle_url('https://lms.example.com/token'),
+                ]
+            ],
+            'draft with all fields completed, marked complete' => [
+                'registrationdata' => [
+                    'name' => 'My test platform',
+                    'uniqueid' => 'acbhd4355',
+                    'platformid' => new \moodle_url('https://lms.example.com'),
+                    'clientid' => 'abc345',
+                    'authenticationrequesturl' => new \moodle_url('https://lms.example.com/auth'),
+                    'jwksurl' => new \moodle_url('https://lms.example.com/jwks'),
+                    'accesstokenurl' => new \moodle_url('https://lms.example.com/token'),
+                    'setcomplete' => true,
+                ]
+            ],
+        ];
     }
 
     /**
@@ -108,19 +184,37 @@ class application_registration_repository_test extends \advanced_testcase {
      */
     public function test_save_existing() {
         $this->resetAfterTest();
-        $testregistration = $this->generate_application_registration();
         $repository = new application_registration_repository();
 
-        $createdregistration = $repository->save($testregistration);
-        $updatedregistration = application_registration::create(
-            'Updated name',
+        // Modifying a draft registration.
+        $draftreg = application_registration::create_draft('My test platform', 'bcvd34gs');
+        $createddraft = $repository->save($draftreg);
+        $createddraft->set_platformid(new \moodle_url('https://lms.example.com'));
+        $createddraft->set_clientid(new \moodle_url('clientid_test_33333'));
+        $createddraft->set_name('Something else');
+        $createddraft->set_jwksurl(new \moodle_url('https://lms.example.com/jwks'));
+        $createddraft->set_authenticationrequesturl(new \moodle_url('https://lms.example.com/auth'));
+        $createddraft->set_accesstokenurl(new \moodle_url('https://lms.example.com/token'));
+        $createddraft->complete_registration();
+        $updateddraft = $repository->save($createddraft);
+
+        $this->assertEquals($createddraft->get_id(), $updateddraft->get_id());
+        $this->assert_same_registration_values($createddraft, $updateddraft);
+        $this->assert_registration_db_values($updateddraft);
+
+        // Modifying a complete registration.
+        $registration = application_registration::create(
+            'My platform name',
+            'a2c94a2c94',
             new \moodle_url('https://updated-lms.example.org/'),
             'Updated-client-id',
             new \moodle_url('https://updated-lms.example.org/auth'),
             new \moodle_url('https://updated-lms.example.org/jwks'),
             new \moodle_url('https://updated-lms.example.org/token'),
-            $createdregistration->get_id()
         );
+        $createdregistration = $repository->save($registration);
+        $createdregistration->set_name('Something else');
+        $createdregistration->set_clientid('hhh444');
         $updatedregistration = $repository->save($createdregistration);
 
         $this->assertEquals($createdregistration->get_id(), $updatedregistration->get_id());
@@ -162,6 +256,53 @@ class application_registration_repository_test extends \advanced_testcase {
     }
 
     /**
+     * Test finding an application registration by its unique id.
+     *
+     * @covers ::find_by_uniqueid
+     */
+    public function test_find_by_uniqueid() {
+        $this->resetAfterTest();
+        $testregistration = $this->generate_application_registration('https://lms.example.org', 'abc12345');
+        $repository = new application_registration_repository();
+        $createdregistration = $repository->save($testregistration);
+        $foundregistration = $repository->find_by_uniqueid($createdregistration->get_uniqueid());
+
+        $this->assertEquals($createdregistration->get_id(), $foundregistration->get_id());
+        $this->assert_same_registration_values($testregistration, $foundregistration);
+        $this->assertNull($repository->find_by_uniqueid('cccc'));
+    }
+
+    /**
+     * Test finding an application registration by its platform and unique id combination.
+     *
+     * @covers ::find_by_platform_uniqueid
+     */
+    public function test_find_by_platform_uniqueid() {
+        $this->resetAfterTest();
+        $repository = new application_registration_repository();
+
+        $testregistration = $this->generate_application_registration('https://lms.example.org', 'abc12345');
+        $createdregistration = $repository->save($testregistration);
+        $foundregistration = $repository->find_by_platform_uniqueid($createdregistration->get_platformid(),
+            $createdregistration->get_uniqueid());
+
+        $this->assertEquals($createdregistration->get_id(), $foundregistration->get_id());
+        $this->assert_same_registration_values($testregistration, $foundregistration);
+
+        // Same platformid, empty uniqueid.
+        $this->assertNull($repository->find_by_platform_uniqueid('https://lms.example.org', ''));
+
+        // Same platformid, different uniqueid.
+        $this->assertNull($repository->find_by_platform_uniqueid('https://lms.example.org', 'bbbbb'));
+
+        // Different platformid, empty uniqueid.
+        $this->assertNull($repository->find_by_platform_uniqueid('https://lms-two.example.org', ''));
+
+        // Different platformid, same uniqueid.
+        $this->assertNull($repository->find_by_platform_uniqueid('https://lms-two.example.org', 'abc12345'));
+    }
+
+    /**
      * Test verifying that find_all() returns all registrations.
      *
      * @covers ::find_all
@@ -173,8 +314,8 @@ class application_registration_repository_test extends \advanced_testcase {
         $this->assertEquals([], $repository->find_all());
 
         // Add two registrations.
-        $reg1 = $this->generate_application_registration('https://some.platform.org');
-        $reg2 = $this->generate_application_registration('https://another.platform.org');
+        $reg1 = $this->generate_application_registration('https://some.platform.org', '123');
+        $reg2 = $this->generate_application_registration('https://another.platform.org', '456');
         $reg1 = $repository->save($reg1);
         $regns[$reg1->get_id()] = $reg1;
         $reg2 = $repository->save($reg2);
@@ -201,8 +342,8 @@ class application_registration_repository_test extends \advanced_testcase {
         $this->assertNull($repository->find_by_platform('https://some.platform.org', 'abc'));
 
         // Create 2 registrations.
-        $reg1 = $this->generate_application_registration('https://some.platform.org', 'abc');
-        $reg2 = $this->generate_application_registration('https://another.platform.org', 'def');
+        $reg1 = $this->generate_application_registration('https://some.platform.org', '123', 'abc');
+        $reg2 = $this->generate_application_registration('https://another.platform.org', '456', 'def');
         $reg1 = $repository->save($reg1);
         $reg2 = $repository->save($reg2);
 

@@ -17,11 +17,9 @@
 namespace enrol_lti\local\ltiadvantage\service;
 
 use enrol_lti\local\ltiadvantage\entity\application_registration;
-use enrol_lti\local\ltiadvantage\entity\registration_url;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
 use enrol_lti\local\ltiadvantage\repository\context_repository;
 use enrol_lti\local\ltiadvantage\repository\deployment_repository;
-use enrol_lti\local\ltiadvantage\repository\registration_url_repository;
 use enrol_lti\local\ltiadvantage\repository\resource_link_repository;
 use enrol_lti\local\ltiadvantage\repository\user_repository;
 
@@ -75,29 +73,58 @@ class application_registration_service {
      * @return application_registration the application_registration object
      */
     private function registration_from_dto(\stdClass $dto): application_registration {
-        return application_registration::create(
+        $registration = $this->appregistrationrepo->find($dto->id);
+        $registration->set_name($dto->name);
+        $registration->set_platformid(new \moodle_url($dto->platformid));
+        $registration->set_clientid($dto->clientid);
+        $registration->set_accesstokenurl(new \moodle_url($dto->accesstokenurl));
+        $registration->set_jwksurl(new \moodle_url($dto->jwksurl));
+        $registration->set_authenticationrequesturl(new \moodle_url($dto->authenticationrequesturl));
+        $registration->complete_registration();
+        return $registration;
+    }
+
+    /**
+     * Gets a unique id for the registration, with uniqueness guaranteed with a lookup.
+     *
+     * @return string the unique id.
+     */
+    private function get_unique_id(): string {
+        global $DB;
+        do {
+            $bytes = random_bytes(30);
+            $uniqueid = bin2hex($bytes);
+        } while ($DB->record_exists('enrol_lti_app_registration', ['uniqueid' => $uniqueid]));
+
+        return $uniqueid;
+    }
+
+    /**
+     * Convert a DTO into a new DRAFT application_registration domain object.
+     *
+     * @param \stdClass $dto the object containing information needed to create the draft registration.
+     * @return application_registration the draft application_registration object
+     */
+    private function draft_registration_from_dto(\stdClass $dto): application_registration {
+        return application_registration::create_draft(
             $dto->name,
-            new \moodle_url($dto->platformid),
-            $dto->clientid,
-            new \moodle_url($dto->authenticationrequesturl),
-            new \moodle_url($dto->jwksurl),
-            new \moodle_url($dto->accesstokenurl),
-            $dto->id ?? null
+            $this->get_unique_id()
         );
     }
 
     /**
-     * Application service handling the use case "As an admin I can register an application as an LTI platform".
+     * Application service handling the use case "As an admin I can create a draft platform registration".
      *
-     * @param \stdClass $appregdto details of the application to register.
+     * @param \stdClass $appregdto details of the draft application to create.
      * @return application_registration the application_registration domain object.
+     * @throws \coding_exception if the DTO doesn't contain required fields.
      */
-    public function create_application_registration(\stdClass $appregdto): application_registration {
-        if ($this->appregistrationrepo->find_by_platform($appregdto->platformid, $appregdto->clientid)) {
-            throw new \moodle_exception("A registration for issuer '$appregdto->platformid', "
-                ."clientid '$appregdto->clientid' already exists.");
+    public function create_draft_application_registration(\stdClass $appregdto): application_registration {
+        if (empty($appregdto->name)) {
+            throw new \coding_exception('Cannot create draft registration. Name is missing.');
         }
-        return $this->appregistrationrepo->save($this->registration_from_dto($appregdto));
+        $draftregistration = $this->draft_registration_from_dto($appregdto);
+        return $this->appregistrationrepo->save($draftregistration);
     }
 
     /**
@@ -135,42 +162,5 @@ class application_registration_service {
         }
 
         $this->appregistrationrepo->delete($registrationid);
-    }
-
-    /**
-     * Get a one-time-use dynamic registration URL which is valid only for the specified duration.
-     *
-     * @param int $durationsecs how long, in seconds, the registration URL will be valid for.
-     * @return registration_url the registration_url instnace.
-     */
-    public function create_registration_url(int $durationsecs = 86400): registration_url {
-        if ($durationsecs <= 0) {
-            throw new \coding_exception('Invalid registration URL duration. Must be greater than 0.');
-        }
-
-        $regurl = new registration_url(time() + $durationsecs);
-        $regurlrepo = new registration_url_repository();
-        return $regurlrepo->save($regurl);
-    }
-
-    /**
-     * Get the current dynamic registration URL.
-     *
-     * Will return null if the URL doesn't exist, or if the URL has expired.
-     *
-     * @param string $token Used to get the registration url by token.
-     * @return registration_url|null the registration_url instance if valid, otherwise null.
-     */
-    public function get_registration_url(string $token = ''): ?registration_url {
-        $regurlrepo = new registration_url_repository();
-        return $token ? $regurlrepo->find_by_token($token) : $regurlrepo->find();
-    }
-
-    /**
-     * Delete the current dynamic registration URL.
-     */
-    public function delete_registration_url(): void {
-        $regurlrepo = new registration_url_repository();
-        $regurlrepo->delete();
     }
 }

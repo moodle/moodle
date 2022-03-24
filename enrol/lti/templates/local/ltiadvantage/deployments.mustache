@@ -1,0 +1,85 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template enrol_lti/loca/ltiadvantage/deployments
+
+    Template which displays a table view of all deployments attached to a registration, with options to delete and add.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * deployments_info
+    * has_deployments
+    * add_deployment_url
+
+    Optional context variables for this template:
+    * tool_deployments
+
+    Example context (json):
+    {
+        "deployments_info": "A deployment ID will be generated when...",
+        "has_deployments": true,
+        "tool_deployments": [
+            {
+                "name": "Site level deployment of tool x in platform y",
+                "deploymentid": "deploy-id-12345",
+                "deleteurl": "https://example.org/enrol/lti/manage_deployments.php?action=delete&id=2&registrationid=1"
+            }
+        ],
+        "add_deployment_url": "https://example.org/enrol/lti/manage_deployments.php?action=add"
+    }
+}}
+<div id="lti_tool_deployments" class="mb-3">
+    <div class="alert alert-info alert-block">
+        {{{deployments_info}}}
+    </div>
+    {{#has_deployments}}
+    <table class="admintable generaltable">
+        <thead>
+        <tr>
+            <th>{{#str}}name, core{{/str}}</th>
+            <th>{{#str}}deploymentid, enrol_lti{{/str}}</th>
+            <th>{{#str}}actions, core{{/str}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#tool_deployments}}
+            <tr>
+                <th>{{name}}</th>
+                <td>{{deploymentid}}</td>
+                <td>
+                    <a class="delete" href="{{deleteurl}}" title="{{#str}} delete {{/str}}">{{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}</a>
+                </td>
+            </tr>
+        {{/tool_deployments}}
+        </tbody>
+    </table>
+    {{/has_deployments}}
+    {{^has_deployments}}
+        <div>
+            {{#str}}nodeployments, enrol_lti{{/str}}
+        </div>
+        <br>
+    {{/has_deployments}}
+    <div>
+        <a class="btn btn-secondary" href="{{add_deployment_url}}">{{#str}}deploymentadd, enrol_lti{{/str}}</a>
+    </div>
+</div>

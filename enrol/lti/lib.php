@@ -461,10 +461,20 @@ function enrol_lti_extend_navigation_course($navigation, $course, $context) {
         // Check that they can add an instance.
         $ltiplugin = enrol_get_plugin('lti');
         if ($ltiplugin->can_add_instance($course->id)) {
-            $url = new moodle_url('/enrol/lti/index.php', array('courseid' => $course->id));
+            $url = new moodle_url(array('courseid' => $course->id), '/enrol/lti/index.php');
             $settingsnode = navigation_node::create(get_string('sharedexternaltools', 'enrol_lti'), $url,
                 navigation_node::TYPE_SETTING, null, 'publishedtools', new pix_icon('i/settings', ''));
             $navigation->add_node($settingsnode);
         }
     }
+}
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function enrol_lti_get_fontawesome_icon_map() {
+    return [
+        'enrol_lti:managedeployments' => 'fa-sitemap',
+        'enrol_lti:platformdetails' => 'fa-pencil-square-o'
+    ];
 }
