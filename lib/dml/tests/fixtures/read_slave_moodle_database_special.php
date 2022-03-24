@@ -23,10 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/read_slave_moodle_database.php');
-require_once(__DIR__.'/read_slave_moodle_recordset_special.php');
 
 /**
  * Database driver mock test class that uses read_slave_moodle_recordset_special
@@ -51,6 +52,19 @@ class read_slave_moodle_database_special extends read_slave_moodle_database {
     }
 
     /**
+     * Returns read_slave_moodle_database::get_records_sql()
+     * For the tests where we need both fake result and dbhandle info.
+     * @param string $sql the SQL select query to execute.
+     * @param array $params array of sql parameters
+     * @param int $limitfrom return a subset of records, starting at this point (optional).
+     * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+     * @return string $handle handle property
+     */
+    public function get_records_sql_p($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
+        return parent::get_records_sql($sql, $params);
+    }
+
+    /**
      * Returns fake recordset
      * @param string $sql
      * @param array $params
@@ -72,5 +86,48 @@ class read_slave_moodle_database_special extends read_slave_moodle_database {
      */
     public function count_records($table, array $conditions = null) {
         return 1;
+    }
+}
+
+/**
+ * Database recordset mock test class
+ *
+ * @package    core
+ * @category   dml
+ * @copyright  2018 Catalyst IT
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class read_slave_moodle_recordset_special extends \moodle_recordset {
+    /**
+     * Iterator interface
+     * @return void
+     */
+    public function close() {
+    }
+    /**
+     * Iterator interface
+     * @return stdClass
+     */
+    public function current() {
+        return new stdClass();
+    }
+    /**
+     * Iterator interface
+     * @return void
+     */
+    public function next() {
+    }
+    /**
+     * Iterator interface
+     * @return mixed
+     */
+    public function key() {
+    }
+    /**
+     * Iterator interface
+     * @return bool
+     */
+    public function valid() {
+        return false;
     }
 }

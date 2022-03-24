@@ -105,8 +105,9 @@ $CFG->dboptions = array(
       'latency' => 0.5,      // Set read-only slave sync latency in seconds.
                              // When 'latency' seconds have lapsed after an update to a table
                              // it is deemed safe to use readonly slave for reading from the table.
-                             // It is optional. If omitted once written to a table it will always
-                             // use master handle for reading.
+                             // It is optional, defaults to 1 second. If you want once written to a table
+                             // to always use master handle for reading set it to something ridiculosly big,
+                             // eg 10.
                              // Lower values increase the performance, but setting it too low means
                              // missing the master-slave sync.
       'exclude_tables' => [  // Tables to exclude from read-only slave feature.

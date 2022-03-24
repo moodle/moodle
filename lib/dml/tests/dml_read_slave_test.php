@@ -21,12 +21,16 @@
  * @category   dml
  * @copyright  2018 Srdjan Janković, Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \moodle_temptables
  */
+
+namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/fixtures/read_slave_moodle_database_table_names.php');
 require_once(__DIR__.'/fixtures/read_slave_moodle_database_special.php');
+require_once(__DIR__.'/../../tests/fixtures/event_fixtures.php');
 
 /**
  * DML read/read-write database handle use tests
@@ -36,10 +40,12 @@ require_once(__DIR__.'/fixtures/read_slave_moodle_database_special.php');
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_dml_read_slave_testcase extends base_testcase {
+class dml_read_slave_test extends \base_testcase {
 
     /** @var float */
     static private $dbreadonlylatency = 0.8;
+    /** @var float */
+    static private $defaultlatency = 1;
 
     /**
      * Instantiates a test database interface object.
@@ -223,18 +229,27 @@ class core_dml_read_slave_testcase extends base_testcase {
         $this->assertEquals('test_rw::test:test', $handle);
         $this->assertEquals(0, $DB->perf_get_reads_slave());
 
-        sleep(1);
         $handle = $DB->get_records('table');
         $this->assertEquals('test_rw::test:test', $handle);
         $this->assertEquals(0, $DB->perf_get_reads_slave());
 
-        $handle = $DB->get_records('table2');
+        $handle = $DB->get_records_sql("SELECT * FROM {table2} JOIN {table}");
+        $this->assertEquals('test_rw::test:test', $handle);
+        $this->assertEquals(0, $DB->perf_get_reads_slave());
+
+        sleep(1);
+
+        $handle = $DB->get_records('table');
         $this->assert_readonly_handle($handle);
         $this->assertEquals(1, $DB->perf_get_reads_slave());
 
+        $handle = $DB->get_records('table2');
+        $this->assert_readonly_handle($handle);
+        $this->assertEquals(2, $DB->perf_get_reads_slave());
+
         $handle = $DB->get_records_sql("SELECT * FROM {table2} JOIN {table}");
-        $this->assertEquals('test_rw::test:test', $handle);
-        $this->assertEquals(1, $DB->perf_get_reads_slave());
+        $this->assert_readonly_handle($handle);
+        $this->assertEquals(3, $DB->perf_get_reads_slave());
     }
 
     /**
@@ -278,12 +293,15 @@ class core_dml_read_slave_testcase extends base_testcase {
      * so the latency parameter is applied properly.
      *
      * @return void
+     * @covers ::can_use_readonly
+     * @covers ::commit_delegated_transaction
      */
-    public function test_transaction() : void {
+    public function test_transaction(): void {
         $DB = $this->new_db(true);
 
         $this->assertNull($DB->get_dbhwrite());
 
+        $skip = false;
         $transaction = $DB->start_delegated_transaction();
         $now = microtime(true);
         $handle = $DB->get_records_sql("SELECT * FROM {table}");
@@ -304,11 +322,92 @@ class core_dml_read_slave_testcase extends base_testcase {
 
             // Make sure enough time passes.
             sleep(1);
+        } else {
+            $skip = true;
         }
 
         // Exceeded latency time, use ro handle.
         $handle = $DB->get_records_sql("SELECT * FROM {table}");
         $this->assert_readonly_handle($handle);
+
+        if ($skip) {
+            $this->markTestSkipped("Delay too long to test write handle immediately after transaction");
+        }
+    }
+
+    /**
+     * Test readonly handle is not used with events
+     * when the latency parameter is applied properly.
+     *
+     * @return void
+     * @covers ::can_use_readonly
+     * @covers ::commit_delegated_transaction
+     */
+    public function test_transaction_with_events(): void {
+        $this->with_global_db(function () {
+            global $DB;
+
+            $DB = $this->new_db(true, ['test_ro'], read_slave_moodle_database_special::class);
+            $DB->set_tables([
+                'config_plugins' => [
+                    'columns' => [
+                        'plugin' => (object)['meta_type' => ''],
+                    ]
+                ]
+            ]);
+
+            $this->assertNull($DB->get_dbhwrite());
+
+            $this->_called = false;
+            $transaction = $DB->start_delegated_transaction();
+            $now = microtime(true);
+
+            $observers = [
+                [
+                    'eventname'   => '\core_tests\event\unittest_executed',
+                    'callback'    => function (\core_tests\event\unittest_executed $event) use ($DB, $now) {
+                        $this->_called = true;
+                        $this->assertFalse($DB->is_transaction_started());
+
+                        // This condition should always evaluate true, however we need to
+                        // safeguard from an unaccounted delay that can break this test.
+                        if (microtime(true) - $now < 1 + self::$dbreadonlylatency) {
+                            // Not enough time passed, use rw handle.
+                            $handle = $DB->get_records_sql_p("SELECT * FROM {table}");
+                            $this->assertEquals('test_rw::test:test', $handle);
+
+                            // Make sure enough time passes.
+                            sleep(1);
+                        } else {
+                            $this->markTestSkipped("Delay too long to test write handle immediately after transaction");
+                        }
+
+                        // Exceeded latency time, use ro handle.
+                        $handle = $DB->get_records_sql_p("SELECT * FROM {table}");
+                        $this->assertEquals('test_ro::test:test', $handle);
+                    },
+                    'internal'    => 0,
+                ],
+            ];
+            \core\event\manager::phpunit_replace_observers($observers);
+
+            $handle = $DB->get_records_sql_p("SELECT * FROM {table}");
+            // Use rw handle during transaction.
+            $this->assertEquals('test_rw::test:test', $handle);
+
+            $handle = $DB->insert_record_raw('table', array('name' => 'blah'));
+            // Introduce delay so we can check that table write timestamps
+            // are adjusted properly.
+            sleep(1);
+            $event = \core_tests\event\unittest_executed::create([
+                'context' => \context_system::instance(),
+                'other' => ['sample' => 1]
+            ]);
+            $event->trigger();
+            $transaction->allow_commit();
+
+            $this->assertTrue($this->_called);
+        });
     }
 
     /**
