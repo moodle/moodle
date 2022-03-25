@@ -1338,7 +1338,8 @@ function chat_extend_settings_navigation(settings_navigation $settings, navigati
     if ($chat->studentlogs || has_capability('mod/chat:readlog', $settings->get_page()->cm->context)) {
         if ($DB->get_records_select('chat_messages', "chatid = ? $groupselect", array($chat->id))) {
             $chatnode->add(get_string('pastsessions', 'chat'),
-                new moodle_url('/mod/chat/report.php', array('id' => $settings->get_page()->cm->id)));
+                new moodle_url('/mod/chat/report.php', array('id' => $settings->get_page()->cm->id)),
+                navigation_node::TYPE_SETTING, null, 'pastsessions');
         }
     }
 }
