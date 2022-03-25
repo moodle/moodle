@@ -58,6 +58,7 @@ if ($context->contextlevel == CONTEXT_SYSTEM or $context->contextlevel == CONTEX
     $admin = true;
     $returnurl = "$CFG->wwwroot/grade/edit/letter/index.php";
     $editparam = '?edit=1';
+    $PAGE->set_primary_active_tab('siteadminnode');
 } else if ($context->contextlevel == CONTEXT_COURSE) {
 
     $PAGE->set_pagelayout('standard');//calling this here to make blocks display

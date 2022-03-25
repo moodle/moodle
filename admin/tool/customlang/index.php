@@ -40,6 +40,8 @@ $next     = optional_param('next', 'edit', PARAM_ALPHA);
 admin_externalpage_setup('toolcustomlang');
 $langs = get_string_manager()->get_list_of_translations();
 
+$PAGE->set_primary_active_tab('siteadminnode');
+
 // pre-output actions
 if ($action === 'checkout') {
     require_sesskey();

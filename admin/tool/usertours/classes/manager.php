@@ -158,7 +158,9 @@ class manager {
      * @param   string  $action     The action to perform.
      */
     public function execute($action) {
+        global $PAGE;
         $this->setup_admin_externalpage($action);
+        $PAGE->set_primary_active_tab('siteadminnode');
 
         // Add the main content.
         switch($action) {

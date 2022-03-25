@@ -76,6 +76,8 @@ if ($tagcoll) {
 
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 
+$PAGE->set_primary_active_tab('siteadminnode');
+
 switch($action) {
 
     case 'colladd':

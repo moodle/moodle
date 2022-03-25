@@ -37,6 +37,8 @@ try {
     // In action cases, we'll throw this exception below. In non-action cases, we produce a lang string error.
 }
 
+$PAGE->set_primary_active_tab('siteadminnode');
+
 // Handle all the actions.
 if ($action) {
     // If dealing with an areaid, we need to check that the area exists.

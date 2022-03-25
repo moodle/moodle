@@ -38,6 +38,11 @@ admin_externalpage_setup('toolcustomlang', '', null,
     array('pagelayout' => 'report')); // Hack: allows for wide page contents.
 
 $PAGE->requires->js_init_call('M.tool_customlang.init_editor', array(), true);
+$PAGE->set_context(context_system::instance());
+$PAGE->set_secondary_active_tab('siteadminnode');
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->navbar->add(get_string('editlangpack', 'tool_customlang'), $PAGE->url);
+
 
 if (empty($lng)) {
     // PARAM_LANG validation failed

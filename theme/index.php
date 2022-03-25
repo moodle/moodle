@@ -43,6 +43,9 @@ if (!empty($device)) {
 
 unset($SESSION->theme);
 
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->navbar->add(get_string('themeselector', 'admin'), $PAGE->url);
+
 if ($reset and confirm_sesskey()) {
     theme_reset_all_caches();
 } else if ($choose && $confirmation) {

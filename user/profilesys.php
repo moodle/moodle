@@ -34,7 +34,7 @@ require_once($CFG->libdir.'/adminlib.php');
 $resetall = optional_param('resetall', null, PARAM_BOOL);
 
 
-$header = "$SITE->shortname: ".get_string('publicprofile')." (".get_string('myprofile', 'admin').")";
+$header = "$SITE->fullname: ".get_string('publicprofile')." (".get_string('myprofile', 'admin').")";
 
 $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');
 admin_externalpage_setup('profilepage', '', null, '', array('pagelayout' => 'mypublic'));

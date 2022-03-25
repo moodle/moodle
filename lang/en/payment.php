@@ -33,6 +33,7 @@ $string['accountnotavailable'] = 'Not available';
 $string['paymentaccountsexplained'] = 'Create one or multiple payment accounts for this site. Each account includes configuration for available payment gateways. The person who configures payments on the site (for example, payment for the course enrolment) will be able to choose from the available accounts.';
 $string['createaccount'] = 'Create payment account';
 $string['deleteorarchive'] = 'Delete or archive';
+$string['editpaymentaccount'] = 'Edit payment account';
 $string['eventaccountcreated'] = 'Payment account created';
 $string['eventaccountdeleted'] = 'Payment account deleted';
 $string['eventaccountupdated'] = 'Payment account updated';

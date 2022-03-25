@@ -110,9 +110,7 @@ class boostnavbar implements \renderable {
                 $courseformat->coursedisplay != COURSE_DISPLAY_MULTIPAGE;
         }
 
-        if (!is_null($this->get_item('root'))) { // We are in site administration.
-            // Remove the 'Site administration' navbar node as it already exists in the primary navigation menu.
-            $this->remove('root');
+        if ($this->page->context->contextlevel == CONTEXT_SYSTEM) {
             // Remove the navbar nodes that already exist in the secondary navigation menu.
             $this->remove_items_that_exist_in_navigation($PAGE->secondarynav);
         }

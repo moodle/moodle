@@ -20,6 +20,9 @@ if (empty($CFG->messaging)) {
     print_error('messagingdisable', 'error');
 }
 
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->set_secondary_active_tab('users');
+
 //TODO: add support for large number of users
 
 if ($confirm and !empty($msg) and confirm_sesskey()) {

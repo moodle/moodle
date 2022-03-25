@@ -463,6 +463,7 @@ class administration_display_helper extends \core_cache\administration_helper {
             redirect($PAGE->url, get_string('addstoresuccess', 'cache', $storepluginsummaries[$plugin]['name']), 5);
         }
 
+        $PAGE->navbar->add(get_string('addstore', 'cache', 'cache'), $PAGE->url);
         return array('form' => $mform, 'title' => $title);
     }
 
@@ -573,6 +574,7 @@ class administration_display_helper extends \core_cache\administration_helper {
             redirect($PAGE->url);
         }
 
+        $PAGE->navbar->add(get_string('updatedefinitionmapping', 'cache'), $PAGE->url);
         return array('form' => $mform, 'title' => $title);
     }
 
@@ -611,6 +613,7 @@ class administration_display_helper extends \core_cache\administration_helper {
             redirect($PAGE->url);
         }
 
+        $PAGE->navbar->add(get_string('updatedefinitionsharing', 'cache'), $PAGE->url);
         return array('form' => $mform, 'title' => $title);
     }
 

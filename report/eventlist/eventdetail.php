@@ -134,6 +134,9 @@ if (isset($allobserverslist[$eventname])) {
     $observers = array_merge($observers, $allobserverslist[$eventname]);
 }
 
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->set_secondary_active_tab('reports');
+
 // OUTPUT.
 $renderer = $PAGE->get_renderer('report_eventlist');
 echo $renderer->render_event_detail($observers, $eventinformation);
