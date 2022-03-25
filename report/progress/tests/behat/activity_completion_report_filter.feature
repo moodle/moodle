@@ -37,7 +37,7 @@ Feature: Teacher can view and filter activity completion data by group and activ
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Activity completion" from the "Report type" singleselect
+    And I click on "Activity completion" "link"
     Then "My quiz B" "link" should appear before "My quiz A" "link" in the "completion-progress" "table"
     And I should see "My assignment" in the "completion-progress" "table"
     And I should see "My page" in the "completion-progress" "table"

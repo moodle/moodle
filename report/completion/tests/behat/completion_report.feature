@@ -34,5 +34,5 @@ Feature: See the completion for items in a course
     And I press "Save changes"
     And I am on "Course 1" course homepage
     When I navigate to "Reports" in current page administration
-    And I select "Course completion" from the "Report type" singleselect
+    And I click on "Course completion" "link" in the "region-main" "region"
     Then I should see "Ann, Jill, Grainne, Beauchamp"
