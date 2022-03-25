@@ -5045,16 +5045,28 @@ function forum_check_throttling($forum, $cm = null) {
         return false; // This is broken.
     }
 
-    if (!$cm) {
-        $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course, false, MUST_EXIST);
-    }
-
     if (empty($forum->blockafter)) {
         return false;
     }
 
     if (empty($forum->blockperiod)) {
         return false;
+    }
+
+    if (!$cm) {
+        // Try to fetch the $cm object via get_fast_modinfo() so we don't incur DB reads.
+        $modinfo = get_fast_modinfo($forum->course);
+        $forumcms = $modinfo->get_instances_of('forum');
+        foreach ($forumcms as $tmpcm) {
+            if ($tmpcm->instance == $forum->id) {
+                $cm = $tmpcm;
+                break;
+            }
+        }
+        // Last resort. Try to fetch via get_coursemodule_from_instance().
+        if (!$cm) {
+            $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course, false, MUST_EXIST);
+        }
     }
 
     $modcontext = context_module::instance($cm->id);
