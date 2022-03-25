@@ -236,7 +236,8 @@ class discussion {
         }
 
         $exporteddiscussion['throttlingwarningmsg'] = '';
-        if (($warningobj = forum_check_throttling($this->forumrecord)) && $warningobj->canpost) {
+        $cmrecord = $this->forum->get_course_module_record();
+        if (($warningobj = forum_check_throttling($this->forumrecord, $cmrecord)) && $warningobj->canpost) {
             $throttlewarnnotification = (new notification(
                     get_string($warningobj->errorcode, $warningobj->module, $warningobj->additional)
             ))->set_show_closebutton();
