@@ -1,0 +1,66 @@
+<form id="theform" method="post" action="messageselect.php">
+    <input type="hidden" name="id" value="<?php p($id) ?>" />
+    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
+    <input type="hidden" name="returnto" value="<?php p($returnto) ?>" />
+    <input type="hidden" name="deluser" value="" />
+    <?php echo $OUTPUT->box_start(); ?>
+    <table border="0" cellpadding="5">
+        <tr valign="top">
+            <td align="right"><b>
+                <?php print_string("messagebody"); ?>:
+            </b></td>
+            <td align="left">
+                <?php echo $OUTPUT->print_textarea("messagebody", "edit-messagebody", $messagebody, 15, 65); ?>
+            </td>
+        </tr>
+
+        <tr valign="top">
+            <td align="right"><label for="menuformat">
+                <b><?php print_string("formattexttype", 'mod_attendance'); ?>:</b></label>
+            </td>
+            <td>
+                <?php
+        print_string('formathtml');
+        echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+                ?>
+            </td>
+        </tr>
+
+        <tr><td align="center" colspan="2">
+            <input type="submit" name="send" value="<?php print_string('sendmessage', 'message'); ?>" />
+            <input type="submit" name="preview" value="<?php print_string('preview'); ?>" />
+        </td></tr>
+    </table>
+    <?php echo $OUTPUT->box_end(); ?>
+    <table align="center">
+        <tr>
+            <th colspan="4" scope="row"><?php print_string('currentlyselectedusers', 'mod_attendance'); ?></th>
+        </tr>
+        <?php
+    if (count($SESSION->emailto[$id])) {
+        foreach ($SESSION->emailto[$id] as $user) {
+        echo '<tr><td>'.fullname($user,true).'</td>';
+            // Check to see if we should be showing the email address.
+            if ($user->maildisplay == 0) { // 0 = don't display my email to anyone.
+            echo '<td>' . get_string('emaildisplayhidden') . '</td><td>';
+                } else {
+                echo '<td>'.$user->email.'</td><td>';
+                }
+                if (empty($user->email)) {
+                $error = get_string('emailempty');
+                }
+                if (!empty($error)) {
+                echo $OUTPUT->pix_icon('t/emailno', $error);
+                unset($error);
+                }
+                echo '</td><td>
+                       <input type="submit" onClick="this.form.deluser.value='.$user->id.';" value="' . get_string('remove') . '" />
+                      </td></tr>';
+        }
+        }
+        else {
+        echo '<tr><td colspan="3" align="center">'.get_string('nousersyet').'</td></tr>';
+        }
+        ?>
+    </table>
+</form>
