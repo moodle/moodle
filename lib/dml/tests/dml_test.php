@@ -719,6 +719,41 @@ EOD;
         $this->assertSame('id', $composed['columns'][1]);
     }
 
+    /**
+     * Let's verify get_indexes() when we mix null and not null columns in unique indexes.
+     *
+     * Some databases, for unique indexes of this type, need to create function indexes to
+     * provide cross-db behaviour. Here we check that those indexes don't break get_indexes().
+     *
+     * Note that, strictly speaking, unique indexes on null columns are far from ideal. Both
+     * conceptually and also in practice, because they cause DBs to use full scans in a
+     * number of situations. But if we support them, we need to ensure get_indexes() work on them.
+     */
+    public function test_get_indexes_unique_mixed_nullability() {
+        $DB = $this->tdb;
+        $dbman = $this->tdb->get_manager();
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('nullable01', XMLDB_TYPE_INTEGER, 10, null, null, null, null);
+        $table->add_field('nullable02', XMLDB_TYPE_INTEGER, 10, null, null, null, null);
+        $table->add_field('nonullable01', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('nonullable02', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $indexcolumns = ['nullable01', 'nonullable01', 'nullable02', 'nonullable02'];
+        $table->add_index('course-id', XMLDB_INDEX_UNIQUE, $indexcolumns);
+        $dbman->create_table($table);
+
+        $indexes = $DB->get_indexes($tablename);
+        $this->assertIsArray($indexes);
+        $this->assertCount(1, $indexes);
+
+        $index = array_shift($indexes);
+        $this->assertTrue($index['unique']);
+        $this->assertSame($indexcolumns, $index['columns']);
+    }
+
     public function test_get_columns() {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();

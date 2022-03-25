@@ -438,9 +438,10 @@ class oci_native_moodle_database extends moodle_database {
         $indexes = array();
         $tablename = strtoupper($this->prefix.$table);
 
-        $sql = "SELECT i.INDEX_NAME, i.UNIQUENESS, c.COLUMN_POSITION, c.COLUMN_NAME, ac.CONSTRAINT_TYPE
+        $sql = "SELECT i.INDEX_NAME, i.INDEX_TYPE, i.UNIQUENESS, c.COLUMN_POSITION, c.COLUMN_NAME, e.COLUMN_EXPRESSION, ac.CONSTRAINT_TYPE
                   FROM ALL_INDEXES i
                   JOIN ALL_IND_COLUMNS c ON c.INDEX_NAME=i.INDEX_NAME
+             LEFT JOIN ALL_IND_EXPRESSIONS e ON (e.INDEX_NAME = c.INDEX_NAME AND e.COLUMN_POSITION = c.COLUMN_POSITION)
              LEFT JOIN ALL_CONSTRAINTS ac ON (ac.TABLE_NAME=i.TABLE_NAME AND ac.CONSTRAINT_NAME=i.INDEX_NAME AND ac.CONSTRAINT_TYPE='P')
                  WHERE i.TABLE_NAME = '$tablename'
               ORDER BY i.INDEX_NAME, c.COLUMN_POSITION";
@@ -463,6 +464,20 @@ class oci_native_moodle_database extends moodle_database {
                                              'unique'  => ($record['UNIQUENESS'] === 'UNIQUE'),
                                              'columns' => array());
             }
+
+            // If this is an unique, function-based, index, then we have to look to the expression
+            // and calculate the column name by parsing it.
+            if ($record['UNIQUENESS'] === 'UNIQUE' && $record['INDEX_TYPE'] === 'FUNCTION-BASED NORMAL') {
+                // Only if there is an expression to look.
+                if (!empty($record['COLUMN_EXPRESSION'])) {
+                    // Let's parse the usual code used for these unique indexes.
+                    $regex = '/^CASE *WHEN .* THEN "(?<column_name>[^"]+)" ELSE NULL END *$/';
+                    if (preg_match($regex, $record['COLUMN_EXPRESSION'], $matches)) {
+                        $record['COLUMN_NAME'] = $matches['column_name'] ?? $record['COLUMN_NAME'];
+                    }
+                }
+            }
+
             $indexes[$indexname]['columns'][] = strtolower($record['COLUMN_NAME']);
         }
 
