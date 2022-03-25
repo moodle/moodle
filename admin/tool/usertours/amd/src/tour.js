@@ -38,6 +38,15 @@ import {get_string as getString} from 'core/str';
 import {prefetchStrings} from 'core/prefetch';
 
 /**
+ * The minimum spacing for tour step to display.
+ *
+ * @private
+ * @constant
+ * @type {number}
+ */
+const MINSPACING = 50;
+
+/**
  * A user tour.
  *
  * @class tool_usertours/tour
@@ -813,7 +822,6 @@ const Tour = class {
             $(document.body).append(currentStepNode);
             this.currentStepNode = currentStepNode;
 
-            this.currentStepNode.offset(this.calculateStepPositionInPage());
             this.currentStepNode.css('position', 'fixed');
 
             this.currentStepPopper = new Popper(
@@ -831,6 +839,17 @@ const Tour = class {
                             onLoad: null,
                             enabled: false,
                         },
+                    },
+                    onCreate: () => {
+                        // First, we need to check if the step's content contains any images.
+                        const images = this.currentStepNode.find('img');
+                        if (images.length) {
+                            // Images found, need to calculate the position when the image is loaded.
+                            images.on('load', () => {
+                                this.calculateStepPositionInPage(currentStepNode);
+                            });
+                        }
+                        this.calculateStepPositionInPage(currentStepNode);
                     }
                 }
             );
@@ -1240,20 +1259,31 @@ const Tour = class {
     /**
      * Calculate dialogue position for page middle.
      *
+     * @param {jQuery} currentStepNode Current step node
      * @method  calculateScrollTop
-     * @return  {Number}
      */
-    calculateStepPositionInPage() {
-        let viewportHeight = $(window).height();
-        let stepHeight = this.currentStepNode.height();
-
-        let viewportWidth = $(window).width();
-        let stepWidth = this.currentStepNode.width();
-
-        return {
-            top: Math.ceil((viewportHeight - stepHeight) / 2),
+    calculateStepPositionInPage(currentStepNode) {
+        let top = MINSPACING;
+        const viewportHeight = $(window).height();
+        const stepHeight = currentStepNode.height();
+        const viewportWidth = $(window).width();
+        const stepWidth = currentStepNode.width();
+        if (viewportHeight >= (stepHeight + (MINSPACING * 2))) {
+            top = Math.ceil((viewportHeight - stepHeight) / 2);
+        } else {
+            const headerHeight = currentStepNode.find('.modal-header').first().outerHeight() ?? 0;
+            const footerHeight = currentStepNode.find('.modal-footer').first().outerHeight() ?? 0;
+            const currentStepBody = currentStepNode.find('[data-placeholder="body"]').first();
+            const maxHeight = viewportHeight - (MINSPACING * 2) - headerHeight - footerHeight;
+            currentStepBody.css({
+                'max-height': maxHeight + 'px',
+                'overflow': 'auto',
+            });
+        }
+        currentStepNode.offset({
+            top: top,
             left: Math.ceil((viewportWidth - stepWidth) / 2)
-        };
+        });
     }
 
     /**
