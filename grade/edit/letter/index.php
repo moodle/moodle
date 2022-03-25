@@ -78,7 +78,6 @@ $strgrades = get_string('grades');
 $pagename  = get_string('letters', 'grades');
 
 $letters = grade_get_letters($context);
-$num = count($letters) + 3;
 
 $override = $DB->record_exists('grade_letters', array('contextid' => $context->id));
 
@@ -129,18 +128,18 @@ if (!$edit) {
     $data = new stdClass();
     $data->id = $context->id;
 
-    $i = 1;
+    $i = 0;
     foreach ($letters as $boundary=>$letter) {
-        $gradelettername = 'gradeletter'.$i;
-        $gradeboundaryname = 'gradeboundary'.$i;
-
-        $data->$gradelettername   = $letter;
-        $data->$gradeboundaryname = $boundary;
+        $data->gradeletter[$i] = $letter;
+        $data->gradeboundary[$i] = $boundary;
         $i++;
     }
     $data->override = $override;
 
-    $mform = new edit_letter_form($returnurl.$editparam, array('num'=>$num, 'admin'=>$admin));
+    // Count number of letters, used to build the repeated elements of the form.
+    $lettercount = count($letters);
+
+    $mform = new edit_letter_form($returnurl.$editparam, ['lettercount' => $lettercount, 'admin' => $admin]);
     $mform->set_data($data);
 
     if ($mform->is_cancelled()) {
@@ -169,24 +168,19 @@ if (!$edit) {
         }
 
         $letters = array();
-        for ($i=1; $i < $num+1; $i++) {
-            $gradelettername = 'gradeletter'.$i;
-            $gradeboundaryname = 'gradeboundary'.$i;
-
-            if (property_exists($data, $gradeboundaryname) and $data->$gradeboundaryname != -1) {
-                $letter = trim($data->$gradelettername);
-                if ($letter == '') {
-                    continue;
-                }
-
-                $boundary = floatval($data->$gradeboundaryname);
-                if ($boundary < 0 || $boundary > 100) {
-                    continue;    // Skip if out of range.
-                }
-
-                // The keys need to be strings so floats are not truncated.
-                $letters[number_format($boundary, 5)] = $letter;
+        for ($i = 0; $i < $data->gradeentrycount; $i++) {
+            $letter = $data->gradeletter[$i];
+            if ($letter === '') {
+                continue;
             }
+
+            $boundary = floatval($data->gradeboundary[$i]);
+            if ($boundary < 0 || $boundary > 100) {
+                continue;    // Skip if out of range.
+            }
+
+            // The keys need to be strings so floats are not truncated.
+            $letters[number_format($boundary, 5)] = $letter;
         }
 
         $pool = array();
