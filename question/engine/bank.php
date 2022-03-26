@@ -289,6 +289,27 @@ abstract class question_bank {
     }
 
     /**
+     * Get all the versions of a particular question.
+     *
+     * @param int $questionid id of the question
+     * @return array The array keys are version number, and the values are objects with three int fields
+     * version (same as array key), versionid and questionid.
+     */
+    public static function get_all_versions_of_question(int $questionid): array {
+        global $DB;
+        $sql = "SELECT qv.id AS versionid, qv.version, qv.questionid
+                  FROM {question_versions} qv
+                 WHERE qv.questionbankentryid = (SELECT DISTINCT qbe.id
+                                                   FROM {question_bank_entries} qbe
+                                                   JOIN {question_versions} qv ON qbe.id = qv.questionbankentryid
+                                                   JOIN {question} q ON qv.questionid = q.id
+                                                  WHERE q.id = ?)
+              ORDER BY qv.version DESC";
+
+        return $DB->get_records_sql($sql, [$questionid]);
+    }
+
+    /**
      * @return question_finder a question finder.
      */
     public static function get_finder() {

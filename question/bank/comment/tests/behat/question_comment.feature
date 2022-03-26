@@ -146,3 +146,25 @@ Feature: A Teacher can comment in a question
     And I switch to "questionpreview" window
     And I press "Comments"
     Then I should not see "Some new comment"
+
+  @javascript
+  Scenario: Comments modal can change the version using dropdown
+    Given I log in as "teacher1"
+    And I am on the "Test quiz" "quiz activity" page
+    When I navigate to "Question bank" in current page administration
+    And I set the field "Select a category" to "Test questions"
+    And I should see "First question"
+    And I click on "Edit" "link" in the "First question" "table_row"
+    And I follow "Edit question"
+    And I set the field "id_name" to "Renamed question v2"
+    And I set the field "id_questiontext" to "edited question"
+    And I press "id_submitbutton"
+    And I should not see "First question"
+    And I should see "Renamed question v2"
+    And I click "0" on the row on the comments column
+    And I should see "Version 2"
+    Then I should see "edited question"
+    And I click on "question_version_dropdown" "select"
+    And I should see "Version 1"
+    And I click on "Version 1" "option"
+    And I should see "Answer the first question"
