@@ -40,4 +40,8 @@ class version_number_column extends column_base {
         print_string('questionversiondata', 'qbank_history', $question->version);
     }
 
+    public function get_extra_classes(): array {
+        return ['pr-3'];
+    }
+
 }

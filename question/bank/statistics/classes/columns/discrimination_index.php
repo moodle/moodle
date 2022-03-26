@@ -63,4 +63,9 @@ class discrimination_index extends column_base {
         $discriminationindex = helper::calculate_average_question_discrimination_index($question->id);
         echo $PAGE->get_renderer('qbank_statistics')->render_discrimination_index($discriminationindex);
     }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
+    }
+
 }
