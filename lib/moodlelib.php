@@ -3886,10 +3886,6 @@ function create_user_record($username, $password, $auth = 'manual') {
         }
     }
 
-    if (!isset($newuser->city)) {
-        $newuser->city = '';
-    }
-
     $newuser->auth = $auth;
     $newuser->username = $username;
 
