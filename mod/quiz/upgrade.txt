@@ -10,18 +10,19 @@ This files describes API changes in the quiz code.
   further information.
 * New argument quizhasquestions has been added to public methods: view_information in mod/quiz/renderer.php.
 * The function no_questions_message() in class mod_quiz_renderer is deprecated. There is no replacement.
-* quiz_slots has been updated as a part of https://docs.moodle.org/dev/Question_bank_improvements_for_Moodle_4.0
-  The fields removed will be now manage by a new table in core_question:
-  - question_set_reference -> Records where a specific question is used.
-  - question_set_reference -> Records where groups of questions are used (e.g.: Random questions).
-  The quiz_slots_tags table will be removed entirely.
-* The method get_slot_tags_for_slot_id() from mod/quiz/classes/structure.php has been deprecated and the associated
-  code for this method have been removed to make sure any unnecessary error doesn't happen as a part of any call.
+* Related to the Moodle 4.0 question bank changes, the quiz_slots database table.
+  The fields removed are now manage by new core_question tables:
+  - question_references -> Records where a specific question is used.
+  - question_set_references -> Records where groups of questions are used (e.g. random questions).
+  The quiz_slots_tags table has been removed entirely, as has the get_slot_tags_for_slot_id() method
+  from mod/quiz/classes/structure.php. That information now comes from question_set_references.
+
 
 === 3.11 ===
 
 * External function mod_quiz_external::get_user_best_grade now returns and additional optional field:
   - gradetopass: The grade to pass the quiz (if set)
+
 
 === 3.10.1 ===
 
