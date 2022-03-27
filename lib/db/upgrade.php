@@ -3926,14 +3926,182 @@ privatefiles,moodle|/user/files.php';
     }
 
     if ($oldversion < 2022020200.02) {
-        // Next, split question records into the new tables.
-        upgrade_migrate_question_table();
+        // Define a new temporary field in the question_bank_entries tables.
+        // Creating temporary field questionid to populate the data in question version table.
+        // This will make sure the appropriate question id is inserted the version table without making any complex joins.
+        $table = new xmldb_table('question_bank_entries');
+        $field = new xmldb_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_TYPE_INTEGER);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+        upgrade_set_timeout(3600);
+        // Create the data for the question_bank_entries table with, including the new temporary field.
+        $sql = <<<EOF
+            INSERT INTO {question_bank_entries}
+                (questionid, questioncategoryid, idnumber, ownerid)
+            SELECT id, category, idnumber, createdby
+            FROM {question} q
+            EOF;
+
+        // Inserting question_bank_entries data.
+        $DB->execute($sql);
+
+        $transaction->allow_commit();
+
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2022020200.02);
     }
 
-    // Finally, drop fields from question table.
     if ($oldversion < 2022020200.03) {
+        $transaction = $DB->start_delegated_transaction();
+        upgrade_set_timeout(3600);
+        // Create the question_versions using that temporary field.
+        $sql = <<<EOF
+            INSERT INTO {question_versions}
+                (questionbankentryid, questionid, status)
+            SELECT
+                qbe.id,
+                q.id,
+                CASE
+                    WHEN q.hidden > 0 THEN 'hidden'
+                    ELSE 'ready'
+                END
+            FROM {question_bank_entries} qbe
+            INNER JOIN {question} q ON qbe.questionid = q.id
+            EOF;
+
+        // Inserting question_versions data.
+        $DB->execute($sql);
+
+        $transaction->allow_commit();
+
+        // Dropping temporary field questionid.
+        $table = new xmldb_table('question_bank_entries');
+        $field = new xmldb_field('questionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_TYPE_INTEGER);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022020200.03);
+    }
+
+    if ($oldversion < 2022020200.04) {
+        $transaction = $DB->start_delegated_transaction();
+        upgrade_set_timeout(3600);
+        // Create the base data for the random questions in the set_references table.
+        // This covers most of the hard work in one go.
+        $concat = $DB->sql_concat("'{\"questioncategoryid\":\"'", 'q.category', "'\",\"includingsubcategories\":\"'",
+            'qs.includingsubcategories', "'\"}'");
+        $sql = <<<EOF
+            INSERT INTO {question_set_references}
+            (usingcontextid, component, questionarea, itemid, questionscontextid, filtercondition)
+            SELECT
+                c.id,
+                'mod_quiz',
+                'slot',
+                qs.id,
+                qc.contextid,
+                $concat
+            FROM {question} q
+            INNER JOIN {quiz_slots} qs on q.id = qs.questionid
+            INNER JOIN {course_modules} cm ON cm.instance = qs.quizid AND cm.module = :quizmoduleid
+            INNER JOIN {context} c ON cm.id = c.instanceid AND c.contextlevel = :contextmodule
+            INNER JOIN {question_categories} qc ON qc.id = q.category
+            WHERE q.qtype = :random
+            EOF;
+
+        // Inserting question_set_references data.
+        $DB->execute($sql, [
+            'quizmoduleid' => $DB->get_field('modules', 'id', ['name' => 'quiz']),
+            'contextmodule' => CONTEXT_MODULE,
+            'random' => 'random',
+        ]);
+
+        $transaction->allow_commit();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022020200.04);
+    }
+
+    if ($oldversion < 2022020200.05) {
+        $transaction = $DB->start_delegated_transaction();
+        upgrade_set_timeout(3600);
+
+        // Count all the slot tags to be migrated (for progress bar).
+        $total = $DB->count_records('quiz_slot_tags');
+        $pbar = new progress_bar('migratequestiontags', 1000, true);
+        $i = 0;
+        // Updating slot_tags for random question tags.
+        // Now fetch any quiz slot tags and update those slot details into the question_set_references.
+        $slottags = $DB->get_recordset('quiz_slot_tags', [], 'slotid ASC');
+
+        $tagstrings = [];
+        $lastslot = null;
+        $runinsert = function (int $lastslot, array $tagstrings) use ($DB) {
+            $conditiondata = $DB->get_field('question_set_references', 'filtercondition',
+                ['itemid' => $lastslot, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+            $condition = json_decode($conditiondata);
+            $condition->tags = $tagstrings;
+            $DB->set_field('question_set_references', 'filtercondition', json_encode($condition),
+                ['itemid' => $lastslot, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+        };
+
+        foreach ($slottags as $tag) {
+            upgrade_set_timeout(3600);
+            if ($lastslot && $tag->slotid != $lastslot) {
+                if (!empty($tagstrings)) {
+                    // Insert the data.
+                    $runinsert($lastslot, $tagstrings);
+                }
+                // Prepare for the next slot id.
+                $tagstrings = [];
+            }
+
+            $lastslot = $tag->slotid;
+            $tagstrings[] = "{$tag->tagid},{$tag->tagname}";
+            // Update progress.
+            $i++;
+            $pbar->update($i, $total, "Migrating question tags - $i/$total.");
+        }
+        if ($tagstrings) {
+            $runinsert($lastslot, $tagstrings);
+        }
+        $slottags->close();
+
+        $transaction->allow_commit();
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022020200.05);
+    }
+
+    if ($oldversion < 2022020200.06) {
+        $transaction = $DB->start_delegated_transaction();
+        upgrade_set_timeout(3600);
+        // Create question_references record for each question.
+        // Except if qtype is random. That case is handled by question_set_reference.
+        $sql = "INSERT INTO {question_references}
+                        (usingcontextid, component, questionarea, itemid, questionbankentryid)
+                 SELECT c.id, 'mod_quiz', 'slot', qs.id, qv.questionbankentryid
+                   FROM {question} q
+                   JOIN {question_versions} qv ON q.id = qv.questionid
+                   JOIN {quiz_slots} qs ON q.id = qs.questionid
+                   JOIN {modules} m ON m.name = 'quiz'
+                   JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = qs.quizid
+                   JOIN {context} c ON c.instanceid = cm.id AND c.contextlevel = " . CONTEXT_MODULE . "
+                  WHERE q.qtype <> 'random'";
+
+        // Inserting question_references data.
+        $DB->execute($sql);
+
+        $transaction->allow_commit();
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022020200.06);
+    }
+
+    // Finally, drop fields from question table.
+    if ($oldversion < 2022020200.07) {
         // Define fields to be dropped from questions.
         $table = new xmldb_table('question');
 
@@ -3976,7 +4144,7 @@ privatefiles,moodle|/user/files.php';
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2022020200.03);
+        upgrade_main_savepoint(true, 2022020200.07);
     }
 
     if ($oldversion < 2022021100.01) {
