@@ -129,7 +129,7 @@ class section implements named_templatable, renderable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(renderer_base $output): stdClass {
-        global $USER;
+        global $USER, $PAGE;
 
         $format = $this->format;
         $course = $format->get_course();
@@ -145,6 +145,7 @@ class section implements named_templatable, renderable {
             'summary' => $summary->export_for_template($output),
             'highlightedlabel' => $format->get_section_highlighted_name(),
             'sitehome' => $course->id == SITEID,
+            'editing' => $PAGE->user_is_editing()
         ];
 
         $haspartials = [];
