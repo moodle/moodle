@@ -356,7 +356,7 @@ function question_delete_question($questionid): void {
 
     $questionstocheck = [$question->id];
 
-    if ($question->parent !== 0) {
+    if ($question->parent) {
         $questionstocheck[] = $question->parent;
     }
 
