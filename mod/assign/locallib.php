@@ -4474,10 +4474,17 @@ class assign {
         $cancelurl = new moodle_url('/mod/assign/view.php', $urlparams);
 
         if ($userid == $USER->id) {
-            $confirmstr = get_string('removesubmissionconfirm', 'assign');
+            if ($this->is_time_limit_enabled($userid)) {
+                $confirmstr = get_string('removesubmissionconfirmwithtimelimit', 'assign');
+            } else {
+                $confirmstr = get_string('removesubmissionconfirm', 'assign');
+            }
         } else {
-            $name = $this->fullname($user);
-            $confirmstr = get_string('removesubmissionconfirmforstudent', 'assign', $name);
+            if ($this->is_time_limit_enabled($userid)) {
+                $confirmstr = get_string('removesubmissionconfirmforstudentwithtimelimit', 'assign', $this->fullname($user));
+            } else {
+                $confirmstr = get_string('removesubmissionconfirmforstudent', 'assign', $this->fullname($user));
+            }
         }
         $o .= $this->get_renderer()->confirm($confirmstr,
                                              $confirmurl,
