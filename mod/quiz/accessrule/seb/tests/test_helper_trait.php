@@ -278,8 +278,8 @@ trait quizaccess_seb_test_helper_trait {
      *
      * @return \stdClass Settings.
      */
-    protected function get_test_settings() : \stdClass {
-        return (object) [
+    protected function get_test_settings(array $settings = []) : \stdClass {
+        return (object) array_merge([
             'quizid' => 1,
             'cmid' => 1,
             'requiresafeexambrowser' => '1',
@@ -303,7 +303,7 @@ trait quizaccess_seb_test_helper_trait {
             'expressionsblocked' => '',
             'regexblocked' => '',
             'showsebdownloadlink' => '1',
-        ];
+        ], $settings);
     }
 
 }

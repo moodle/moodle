@@ -180,7 +180,8 @@ class helper_test extends \advanced_testcase {
             . "<false/><key>audioMute</key><false/><key>allowSpellCheck</key><false/><key>browserWindowAllowReload</key>"
             . "<true/><key>URLFilterEnable</key><false/><key>URLFilterEnableContentFilter</key><false/>"
             . "<key>URLFilterRules</key><array/><key>startURL</key><string>$url</string>"
-            . "<key>sendBrowserExamKey</key><true/><key>examSessionClearCookiesOnStart</key><false/>"
+            . "<key>sendBrowserExamKey</key><true/><key>browserWindowWebView</key><integer>3</integer>"
+            . "<key>examSessionClearCookiesOnStart</key><false/>"
             . "<key>allowPreferencesWindow</key><false/></dict></plist>\n", $config);
     }
 
