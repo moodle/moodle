@@ -34,6 +34,17 @@ class auth_db_testcase extends advanced_testcase {
     /** @var int The amount of users to create for the large user set deletion test  */
     protected $largedeletionsetsize = 128;
 
+    public static function tearDownAfterClass(): void {
+        global $DB;
+        // Apply sqlsrv native driver error and logging default
+        // settings while finishing the AdoDB tests.
+        if ($DB->get_dbfamily() === 'mssql') {
+            sqlsrv_configure("WarningsReturnAsErrors", false);
+            sqlsrv_configure("LogSubsystems", SQLSRV_LOG_SYSTEM_OFF);
+            sqlsrv_configure("LogSeverity", SQLSRV_LOG_SEVERITY_ERROR);
+        }
+    }
+
     protected function init_auth_database() {
         global $DB, $CFG;
         require_once("$CFG->dirroot/auth/db/auth.php");
