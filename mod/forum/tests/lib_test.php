@@ -16,6 +16,8 @@
 
 namespace mod_forum;
 
+use mod_forum_generator;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -4082,5 +4084,181 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($expectednormal, forum_get_layout_modes());
         $this->assertEquals($expectednormal, forum_get_layout_modes(false));
         $this->assertEquals($expectedexperimental, forum_get_layout_modes(true));
+    }
+
+    /**
+     * Provides data for tests that cause forum_check_throttling to return early.
+     *
+     * @return array
+     */
+    public function forum_check_throttling_early_returns_provider() {
+        return [
+            'Empty blockafter' => [(object)['id' => 1, 'course' => SITEID, 'blockafter' => 0]],
+            'Empty blockperiod' => [(object)['id' => 1, 'course' => SITEID, 'blockafter' => DAYSECS, 'blockperiod' => 0]],
+        ];
+    }
+
+    /**
+     * Tests the early return scenarios of forum_check_throttling.
+     *
+     * @dataProvider forum_check_throttling_early_returns_provider
+     * @covers ::forum_check_throttling
+     * @param \stdClass $forum The forum data.
+     */
+    public function test_forum_check_throttling_early_returns(\stdClass $forum) {
+        $this->assertFalse(forum_check_throttling($forum));
+    }
+
+    /**
+     * Provides data for tests that cause forum_check_throttling to throw exceptions early.
+     *
+     * @return array
+     */
+    public function forum_check_throttling_early_exceptions_provider() {
+        return [
+            'Non-object forum' => ['a'],
+            'Forum ID not set' => [(object)['id' => false]],
+            'Course ID not set' => [(object)['id' => 1]],
+        ];
+    }
+
+    /**
+     * Tests the early exception scenarios of forum_check_throttling.
+     *
+     * @dataProvider forum_check_throttling_early_exceptions_provider
+     * @covers ::forum_check_throttling
+     * @param mixed $forum The forum data.
+     */
+    public function test_forum_check_throttling_early_exceptions($forum) {
+        $this->expectException(\coding_exception::class);
+        $this->assertFalse(forum_check_throttling($forum));
+    }
+
+    /**
+     * Tests forum_check_throttling when a non-existent numeric ID is passed for its forum parameter.
+     *
+     * @covers ::forum_check_throttling
+     */
+    public function test_forum_check_throttling_nonexistent_numeric_id() {
+        $this->resetAfterTest();
+
+        $this->expectException(\moodle_exception::class);
+        forum_check_throttling(1);
+    }
+
+    /**
+     * Tests forum_check_throttling when a non-existent forum record is passed for its forum parameter.
+     *
+     * @covers ::forum_check_throttling
+     */
+    public function test_forum_check_throttling_nonexistent_forum_cm() {
+        $this->resetAfterTest();
+
+        $dummyforum = (object)[
+            'id' => 1,
+            'course' => SITEID,
+            'blockafter' => 2,
+            'blockperiod' => DAYSECS,
+        ];
+        $this->expectException(\moodle_exception::class);
+        forum_check_throttling($dummyforum);
+    }
+
+    /**
+     * Tests forum_check_throttling when a user with the 'mod/forum:postwithoutthrottling' capability.
+     *
+     * @covers ::forum_check_throttling
+     */
+    public function test_forum_check_throttling_teacher() {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $teacher = $generator->create_and_enrol($course, 'teacher');
+
+        /** @var mod_forum_generator $forumgenerator */
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+        // Forum that limits students from creating more than two posts per day.
+        $forum = $forumgenerator->create_instance(
+            [
+                'course' => $course->id,
+                'blockafter' => 2,
+                'blockperiod' => DAYSECS,
+            ]
+        );
+
+        $this->setUser($teacher);
+        $discussionrecord = [
+            'course' => $course->id,
+            'forum' => $forum->id,
+            'userid' => $teacher->id,
+        ];
+        $discussion = $forumgenerator->create_discussion($discussionrecord);
+        // Create a forum post as the teacher.
+        $postrecord = [
+            'userid' => $teacher->id,
+            'discussion' => $discussion->id,
+        ];
+        $forumgenerator->create_post($postrecord);
+        // Create another forum post.
+        $forumgenerator->create_post($postrecord);
+
+        $this->assertFalse(forum_check_throttling($forum));
+    }
+
+    /**
+     * Tests forum_check_throttling for students.
+     *
+     * @covers ::forum_check_throttling
+     */
+    public function test_forum_check_throttling_student() {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $student = $generator->create_and_enrol($course, 'student');
+
+        /** @var mod_forum_generator $forumgenerator */
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+        // Forum that limits students from creating more than two posts per day.
+        $forum = $forumgenerator->create_instance(
+            [
+                'course' => $course->id,
+                'blockafter' => 2,
+                'blockperiod' => DAYSECS,
+                'warnafter' => 1,
+            ]
+        );
+
+        $this->setUser($student);
+
+        // Student hasn't posted yet so no warning will be shown.
+        $throttling = forum_check_throttling($forum);
+        $this->assertFalse($throttling);
+
+        // Create a discussion.
+        $discussionrecord = [
+            'course' => $course->id,
+            'forum' => $forum->id,
+            'userid' => $student->id,
+        ];
+        $discussion = $forumgenerator->create_discussion($discussionrecord);
+
+        // A warning will be shown to the student, but they should still be able to post.
+        $throttling = forum_check_throttling($forum);
+        $this->assertIsObject($throttling);
+        $this->assertTrue($throttling->canpost);
+
+        // Create another forum post as the student.
+        $postrecord = [
+            'userid' => $student->id,
+            'discussion' => $discussion->id,
+        ];
+        $forumgenerator->create_post($postrecord);
+
+        // Student should now be unable to post after their second post.
+        $throttling = forum_check_throttling($forum);
+        $this->assertIsObject($throttling);
+        $this->assertFalse($throttling->canpost);
     }
 }

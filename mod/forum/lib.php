@@ -5050,15 +5050,16 @@ function forum_check_throttling($forum, $cm = null) {
     global $CFG, $DB, $USER;
 
     if (is_numeric($forum)) {
-        $forum = $DB->get_record('forum', array('id' => $forum), '*', MUST_EXIST);
+        $forum = $DB->get_record('forum', ['id' => $forum], 'id, course, blockperiod, blockafter, warnafter', MUST_EXIST);
     }
 
-    if (!is_object($forum)) {
-        return false; // This is broken.
-    }
-
-    if (!$cm) {
-        $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course, false, MUST_EXIST);
+    if (!is_object($forum) || !isset($forum->id) || !isset($forum->course)) {
+        // The passed forum parameter is invalid. This can happen if:
+        // - a non-object and non-numeric forum is passed; or
+        // - the forum object does not have an ID or course attributes.
+        // This is unlikely to happen with properly formed forum record fetched from the database,
+        // so it's most likely a dev error if we hit such this case.
+        throw new coding_exception('Invalid forum parameter passed');
     }
 
     if (empty($forum->blockafter)) {
@@ -5067,6 +5068,22 @@ function forum_check_throttling($forum, $cm = null) {
 
     if (empty($forum->blockperiod)) {
         return false;
+    }
+
+    if (!$cm) {
+        // Try to fetch the $cm object via get_fast_modinfo() so we don't incur DB reads.
+        $modinfo = get_fast_modinfo($forum->course);
+        $forumcms = $modinfo->get_instances_of('forum');
+        foreach ($forumcms as $tmpcm) {
+            if ($tmpcm->instance == $forum->id) {
+                $cm = $tmpcm;
+                break;
+            }
+        }
+        // Last resort. Try to fetch via get_coursemodule_from_instance().
+        if (!$cm) {
+            $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course, false, MUST_EXIST);
+        }
     }
 
     $modcontext = context_module::instance($cm->id);
@@ -5108,6 +5125,9 @@ function forum_check_throttling($forum, $cm = null) {
 
         return $warning;
     }
+
+    // No warning needs to be shown yet.
+    return false;
 }
 
 /**
