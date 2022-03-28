@@ -616,13 +616,13 @@ define(
                 replaceActionItem(actionItem, 'i/marked',
                     'highlightoff', 'core', 'removemarker');
                 courseeditor.dispatch('legacySectionAction', action, sectionid);
-                setSectionBadge(sectionElement[0], 'iscurrent', true);
+                setSectionBadge(sectionElement[0], 'highlighted', true);
             } else if (action === 'removemarker') {
                 sectionElement.removeClass('current');
                 replaceActionItem(actionItem, 'i/marker',
                     'highlight', 'core', 'setmarker');
                 courseeditor.dispatch('legacySectionAction', action, sectionid);
-                setSectionBadge(sectionElement[0], 'iscurrent', false);
+                setSectionBadge(sectionElement[0], 'highlighted', false);
             }
         };
 
