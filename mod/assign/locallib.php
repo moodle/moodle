@@ -4447,14 +4447,14 @@ class assign {
      * @return string
      */
     protected function view_remove_submission_confirm() {
-        global $USER, $DB;
+        global $USER;
 
         $userid = optional_param('userid', $USER->id, PARAM_INT);
 
         if (!$this->can_edit_submission($userid, $USER->id)) {
             print_error('nopermission');
         }
-        $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+        $user = core_user::get_user($userid, '*', MUST_EXIST);
 
         $o = '';
         $header = new assign_header($this->get_instance(),
