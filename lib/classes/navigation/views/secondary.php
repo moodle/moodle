@@ -778,7 +778,7 @@ class secondary extends view {
         $existingkeys = $completenode->get_children_key_list();
         $leftover = array_diff($existingkeys, $populatedkeys);
         foreach ($leftover as $key) {
-            if (!in_array($key, $flattenednodes) && $leftovernode = $completenode->get($key)) {
+            if (!in_array($key, $flattenednodes, true) && $leftovernode = $completenode->get($key)) {
                 // Check for nodes with children and potentially no action to direct to.
                 if ($leftovernode->has_children()) {
                     $leftovernode = $this->get_first_action_for_node($leftovernode);
