@@ -516,6 +516,11 @@ class quiz_settings extends persistent {
         $quizurl = new moodle_url($CFG->wwwroot . "/mod/quiz/view.php", ['id' => $this->get('cmid')]);
         $this->plist->set_or_update_value('startURL', new CFString($quizurl->out(true)));
         $this->plist->set_or_update_value('sendBrowserExamKey', new CFBoolean(true));
+
+        // Use the modern WebView and JS API if the SEB version supports it.
+        // Documentation: https://safeexambrowser.org/developer/seb-config-key.html .
+        // "Set the key browserWindowWebView to the policy "Prefer Modern" (value 3)".
+        $this->plist->set_or_update_value('browserWindowWebView', new CFNumber(3));
     }
 
     /**

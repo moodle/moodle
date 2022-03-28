@@ -45,6 +45,8 @@ class events_test extends \advanced_testcase {
 
     /**
      * Test creating the access_prevented event.
+     *
+     * @covers \quizaccess_seb\event\access_prevented
      */
     public function test_event_access_prevented() {
         $this->resetAfterTest();
@@ -92,7 +94,57 @@ class events_test extends \advanced_testcase {
     }
 
     /**
+     * Test creating the access_prevented event with provided SEB keys.
+     *
+     * @covers \quizaccess_seb\event\access_prevented
+     */
+    public function test_event_access_prevented_with_keys() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $quiz = $this->create_test_quiz($this->course, \quizaccess_seb\settings_provider::USE_SEB_CONFIG_MANUALLY);
+        $accessmanager = new \quizaccess_seb\access_manager(new quiz($quiz,
+            get_coursemodule_from_id('quiz', $quiz->cmid), $this->course));
+
+        // Set up event with data.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $event = \quizaccess_seb\event\access_prevented::create_strict($accessmanager, 'Because I said so.',
+                'configkey', 'browserexamkey');
+
+        // Create an event sink, trigger event and retrieve event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $this->assertEquals(1, count($events));
+        $event = reset($events);
+
+        $expectedconfigkey = $accessmanager->get_valid_config_key();
+
+        // Test that the event data is as expected.
+        $this->assertInstanceOf('\quizaccess_seb\event\access_prevented', $event);
+        $this->assertEquals('Quiz access was prevented', $event->get_name());
+        $this->assertEquals(
+            "The user with id '$user->id' has been prevented from accessing quiz with id '$quiz->id' by the "
+            . "Safe Exam Browser access plugin. The reason was 'Because I said so.'. "
+            . "Expected config key: '$expectedconfigkey'. "
+            . "Received config key: 'configkey'. Received browser exam key: 'browserexamkey'.",
+            $event->get_description());
+        $this->assertEquals(\context_module::instance($quiz->cmid), $event->get_context());
+        $this->assertEquals($user->id, $event->userid);
+        $this->assertEquals($quiz->id, $event->objectid);
+        $this->assertEquals($this->course->id, $event->courseid);
+        $this->assertEquals('Because I said so.', $event->other['reason']);
+        $this->assertEquals($expectedconfigkey, $event->other['savedconfigkey']);
+        $this->assertEquals('configkey', $event->other['receivedconfigkey']);
+        $this->assertEquals('browserexamkey', $event->other['receivedbrowserexamkey']);
+    }
+
+    /**
      * Test creating the template_created event.
+     *
+     * @covers \quizaccess_seb\event\template_created
      */
     public function test_event_create_template() {
         $this->resetAfterTest();
