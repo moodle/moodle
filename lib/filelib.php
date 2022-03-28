@@ -2678,6 +2678,8 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
 function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownload=false, array $options=array()) {
     global $CFG, $COURSE;
 
+    static $recursion = 0;
+
     if (empty($options['filename'])) {
         $filename = null;
     } else {
@@ -2721,6 +2723,13 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
 
     // handle external resource
     if ($stored_file && $stored_file->is_external_file() && !isset($options['sendcachedexternalfile'])) {
+
+        // Have we been here before?
+        $recursion++;
+        if ($recursion > 10) {
+            throw new coding_exception('Recursive file serving detected');
+        }
+
         $stored_file->send_file($lifetime, $filter, $forcedownload, $options);
         die;
     }
