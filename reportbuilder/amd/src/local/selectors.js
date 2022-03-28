@@ -48,6 +48,7 @@ const SELECTORS = {
         audiencesContainer: '[data-region="audiences"]',
         audienceFormContainer: '[data-region="audience-form-container"]',
         audienceCard: '[data-region="audience-card"]',
+        audienceHeading: '[data-region="audience-heading"]',
         audienceForm: '[data-region="audience-form"]',
         audienceEmptyMessage: '[data-region=no-instances-message]',
         audienceDescription: '[data-region=audience-description]',

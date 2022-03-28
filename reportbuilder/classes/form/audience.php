@@ -22,9 +22,9 @@ use context;
 use context_system;
 use core_form\dynamic_form;
 use core_reportbuilder\local\audiences\base;
+use core_reportbuilder\output\audience_heading_editable;
 use core_reportbuilder\manager;
 use core_reportbuilder\permission;
-use core_reportbuilder\report_access_exception;
 use moodle_exception;
 use moodle_url;
 use stdClass;
@@ -116,6 +116,8 @@ class audience extends dynamic_form {
      * Process the form submission, used if form was submitted via AJAX
      */
     public function process_dynamic_submission() {
+        global $PAGE;
+
         $formdata = $this->get_data();
         $audience = $this->get_audience();
 
@@ -131,7 +133,15 @@ class audience extends dynamic_form {
             // Editing audience.
             $audience->update_configdata($configdata, true);
         }
-        return ['instanceid' => $audience->get_persistent()->get('id'), 'description' => $audience->get_description()];
+
+        $persistent = $audience->get_persistent();
+        $editable = new audience_heading_editable(0, $persistent);
+
+        return [
+            'instanceid' => $persistent->get('id'),
+            'heading' => $editable->render($PAGE->get_renderer('core')),
+            'description' => $audience->get_description(),
+        ];
     }
 
     /**

@@ -23,6 +23,7 @@
 
 "use strict";
 
+import 'core/inplace_editable';
 import Templates from 'core/templates';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
@@ -118,9 +119,12 @@ const initAudienceCardForm = audienceCard => {
 
     // After submitting the form, update the card instance and description properties.
     audienceForm.addEventListener(audienceForm.events.FORM_SUBMITTED, data => {
+        const audienceHeading = audienceCard.querySelector(reportSelectors.regions.audienceHeading);
         const audienceDescription = audienceCard.querySelector(reportSelectors.regions.audienceDescription);
 
         audienceCard.dataset.instanceid = data.detail.instanceid;
+
+        audienceHeading.innerHTML = data.detail.heading;
         audienceDescription.innerHTML = data.detail.description;
 
         closeAudienceCardForm(audienceCard);
