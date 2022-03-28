@@ -106,6 +106,9 @@ class audience extends dynamic_form {
     protected function check_access_for_dynamic_submission(): void {
         $audience = $this->get_audience();
 
+        $report = $audience->get_persistent()->get_report();
+        permission::require_can_edit_report($report);
+
         // Check whether we are able to add/edit the current audience.
         $audience->get_persistent()->get('id') === 0
             ? $audience->require_user_can_add()
@@ -120,10 +123,6 @@ class audience extends dynamic_form {
 
         $formdata = $this->get_data();
         $audience = $this->get_audience();
-
-        // Check permissions.
-        $report = manager::get_report_from_id($formdata->reportid);
-        permission::require_can_edit_report($report->get_report_persistent());
 
         $configdata = $audience::retrieve_configdata($formdata);
         if (!$formdata->id) {
