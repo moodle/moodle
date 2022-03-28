@@ -23,14 +23,14 @@
 
     Example context (json):
     {
-        "highlighted" : true,
+        "iscurrent" : true,
         "hiddenfromstudents" : "1",
         "notavailable" : "0",
         "highlightedlabel" : "Highlighted"
     }
 }}
 {{#editing}}
-    <span class="badge badge-pill badge-primary order-1 {{^highlighted}}d-none{{/highlighted}}" data-type="highlighted">
+    <span class="badge badge-pill badge-primary order-1 {{^iscurrent}}d-none{{/iscurrent}}" data-type="iscurrent">
         {{ highlightedlabel }}
     </span>
     <span class="badge badge-pill badge-warning order-2 {{^hiddenfromstudents}}d-none{{/hiddenfromstudents}}" data-type="hiddenfromstudents">
@@ -41,9 +41,9 @@
     </span>
 {{/editing}}
 {{^editing}}
-    {{#highlighted}}
+    {{#iscurrent}}
         <span class="badge badge-pill badge-primary order-1">{{ highlightedlabel }}</span>
-    {{/highlighted}}
+    {{/iscurrent}}
     {{#hiddenfromstudents}}
         <span class="badge badge-pill badge-warning order-2">{{#str}}hiddenfromstudents{{/str}}</span>
     {{/hiddenfromstudents}}
