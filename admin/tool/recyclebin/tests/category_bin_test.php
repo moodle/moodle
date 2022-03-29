@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Recycle bin tests.
- *
- * @package    tool_recyclebin
- * @copyright  2015 University of Kent
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace tool_recyclebin;
 
 /**
  * Recycle bin category tests.
@@ -31,15 +23,15 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_recyclebin_category_bin_tests extends advanced_testcase {
+class category_bin_test extends \advanced_testcase {
 
     /**
-     * @var stdClass $course
+     * @var \stdClass $course
      */
     protected $course;
 
     /**
-     * @var stdClass $coursebeingrestored
+     * @var \stdClass $coursebeingrestored
      */
     protected $coursebeingrestored;
 
@@ -96,7 +88,7 @@ class tool_recyclebin_category_bin_tests extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('tool_recyclebin_category'));
 
         // Now let's delete the course category.
-        $category = core_course_category::get($this->course->category);
+        $category = \core_course_category::get($this->course->category);
         $category->delete_full(false);
 
         // Check that the course was deleted from the category recycle bin.
@@ -242,7 +234,7 @@ class tool_recyclebin_category_bin_tests extends advanced_testcase {
         $this->assertEquals(0, count($recyclebin->get_items()));
 
         // Verify that student DOES continue enrolled.
-        $this->assertTrue(is_enrolled(context_course::instance($newcourse->id), $student->id));
+        $this->assertTrue(is_enrolled(\context_course::instance($newcourse->id), $student->id));
     }
 
     /**
@@ -286,6 +278,6 @@ class tool_recyclebin_category_bin_tests extends advanced_testcase {
         $this->assertEquals(0, count($recyclebin->get_items()));
 
         // Verify that student DOES NOT continue enrolled.
-        $this->assertFalse(is_enrolled(context_course::instance($newcourse->id), $student->id));
+        $this->assertFalse(is_enrolled(\context_course::instance($newcourse->id), $student->id));
     }
 }

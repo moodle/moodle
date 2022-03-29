@@ -13,7 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-defined('MOODLE_INTERNAL') || exit();
+
+namespace tool_monitor;
 
 /**
  * Unit tests for the tool_monitor clean events task.
@@ -24,7 +25,7 @@ defined('MOODLE_INTERNAL') || exit();
  * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_monitor_task_check_subscriptions_testcase extends advanced_testcase {
+class task_check_subscriptions_test extends \advanced_testcase {
 
     private $course;
     private $user;
@@ -45,7 +46,7 @@ class tool_monitor_task_check_subscriptions_testcase extends advanced_testcase {
         $this->user = $this->getDataGenerator()->create_user();
         $this->course = $this->getDataGenerator()->create_course();
 
-        $rule = new stdClass();
+        $rule = new \stdClass();
         $rule->userid = 2; // Rule created by admin.
         $rule->courseid = $this->course->id;
         $rule->plugin = 'mod_book';
@@ -54,7 +55,7 @@ class tool_monitor_task_check_subscriptions_testcase extends advanced_testcase {
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
         $this->rule = $monitorgenerator->create_rule($rule);
 
-        $sub = new stdClass();
+        $sub = new \stdClass();
         $sub->courseid = $this->course->id;
         $sub->userid = $this->user->id;
         $sub->ruleid = $this->rule->id;
@@ -90,7 +91,7 @@ class tool_monitor_task_check_subscriptions_testcase extends advanced_testcase {
     public function test_site_level_subscription() {
         // Create a site level subscription.
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
-        $sub = new stdClass();
+        $sub = new \stdClass();
         $sub->userid = $this->user->id;
         $sub->ruleid = $this->rule->id;
         $this->subscription = $monitorgenerator->create_subscription($sub);
@@ -104,7 +105,7 @@ class tool_monitor_task_check_subscriptions_testcase extends advanced_testcase {
         $this->assertEquals(false, \tool_monitor\subscription_manager::subscription_is_active($this->subscription));
 
         // Now, assign the user as a teacher role at system context.
-        $this->getDataGenerator()->role_assign($this->teacherrole->id, $this->user->id, context_system::instance());
+        $this->getDataGenerator()->role_assign($this->teacherrole->id, $this->user->id, \context_system::instance());
 
         // Run the task.
         $task = new \tool_monitor\task\check_subscriptions();
@@ -238,7 +239,7 @@ class tool_monitor_task_check_subscriptions_testcase extends advanced_testcase {
         $book = $this->getDataGenerator()->create_module('book', array('course' => $this->course->id));
 
         // And add a subscription to it.
-        $sub = new stdClass();
+        $sub = new \stdClass();
         $sub->courseid = $this->course->id;
         $sub->userid = $this->user->id;
         $sub->ruleid = $this->rule->id;
