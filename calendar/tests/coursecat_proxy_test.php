@@ -14,25 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * coursecat_proxy tests.
- *
- * @package     core_calendar
- * @copyright   2017 Andrew Nicols <andrew@nicols.co.uk>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_calendar;
 
 use core_calendar\local\event\proxies\coursecat_proxy;
 
 /**
  * coursecat_proxy testcase.
  *
+ * @package     core_calendar
  * @copyright   2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_coursecat_proxy_testcase extends advanced_testcase {
+class coursecat_proxy_test extends \advanced_testcase {
 
     public function test_valid_coursecat() {
         global $DB;
@@ -43,7 +36,7 @@ class core_calendar_coursecat_proxy_testcase extends advanced_testcase {
         $category = $generator->create_category([
                 'name' => $name,
             ]);
-        cache_helper::purge_by_event('changesincoursecat');
+        \cache_helper::purge_by_event('changesincoursecat');
 
         // Fetch the proxy.
         $startreads = $DB->perf_get_reads();

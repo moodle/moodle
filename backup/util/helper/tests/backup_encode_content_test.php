@@ -14,21 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    core_backup
- * @category   phpunit
- * @copyright  2013 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup_course_task;
 
 defined('MOODLE_INTERNAL') || die();
-
 
 global $CFG;
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_course_task.class.php');
-
-
 
 /**
  * Tests for encoding content links in backup_course_task.
@@ -36,8 +30,13 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_course_task.class.php');
  * The code that this tests is actually in backup/moodle2/backup_course_task.class.php,
  * but there is no place for unit tests near there, and perhaps one day it will
  * be refactored so it becomes more generic.
+ *
+ * @package    core_backup
+ * @category   test
+ * @copyright  2013 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_course_task_testcase extends basic_testcase {
+class backup_encode_content_test extends \basic_testcase {
 
     /**
      * Test the encode_content_links method for course.

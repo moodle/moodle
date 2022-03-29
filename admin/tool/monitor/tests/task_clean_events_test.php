@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_monitor;
+
 /**
  * Unit tests for the tool_monitor clean events task.
  *
@@ -22,15 +24,7 @@
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-/**
- * Class used to test the tool_monitor clean events task.
- */
-class tool_monitor_task_clean_events_testcase extends advanced_testcase {
+class task_clean_events_test extends \advanced_testcase {
 
     /**
      * Test set up.
@@ -51,16 +45,16 @@ class tool_monitor_task_clean_events_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
-        $bookcontext = context_module::instance($book->cmid);
+        $bookcontext = \context_module::instance($book->cmid);
         $bookchapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
         $course2 = $this->getDataGenerator()->create_course();
         $book2 = $this->getDataGenerator()->create_module('book', array('course' => $course2->id));
-        $book2context = context_module::instance($book2->cmid);
+        $book2context = \context_module::instance($book2->cmid);
         $book2chapter = $bookgenerator->create_chapter(array('bookid' => $book2->id));
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
 
         // Let's set some data for the rules we need before we can generate them.
-        $rule = new stdClass();
+        $rule = new \stdClass();
         $rule->userid = $user->id;
         $rule->courseid = $course->id;
         $rule->plugin = 'mod_book';
@@ -96,7 +90,7 @@ class tool_monitor_task_clean_events_testcase extends advanced_testcase {
 
 
         // Let's subscribe to these rules.
-        $sub = new stdClass;
+        $sub = new \stdClass;
         $sub->courseid = $course->id;
         $sub->ruleid = $rule1->id;
         $sub->userid = $user->id;
@@ -133,7 +127,7 @@ class tool_monitor_task_clean_events_testcase extends advanced_testcase {
 
         // Trigger a bunch of other events.
         $eventparams = array(
-            'context' => context_course::instance($course->id)
+            'context' => \context_course::instance($course->id)
         );
         for ($i = 0; $i < 5; $i++) {
             \mod_quiz\event\course_module_instance_list_viewed::create($eventparams)->trigger();
@@ -164,7 +158,7 @@ class tool_monitor_task_clean_events_testcase extends advanced_testcase {
         $this->assertEquals($course2->id, $event4->courseid);
 
         // Update the timewindow for two of the rules.
-        $updaterule = new stdClass();
+        $updaterule = new \stdClass();
         $updaterule->id = $rule1->id;
         $updaterule->timewindow = 0;
         \tool_monitor\rule_manager::update_rule($updaterule);

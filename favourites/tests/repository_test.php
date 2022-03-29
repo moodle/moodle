@@ -14,27 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_favourites;
+
+use core_favourites\local\repository\favourite_repository;
+use core_favourites\local\entity\favourite;
+
 /**
- * Testing the repository objects within core_favourites.
+ * Test class covering the favourite_repository.
  *
  * @package    core_favourites
  * @category   test
  * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-use \core_favourites\local\repository\favourite_repository;
-use \core_favourites\local\entity\favourite;
-
-/**
- * Test class covering the favourite_repository.
- *
- * @copyright  2018 Jake Dallimore <jrhdallimore@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class favourite_repository_testcase extends advanced_testcase {
+class repository_test extends \advanced_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -48,8 +41,8 @@ class favourite_repository_testcase extends advanced_testcase {
         $user2context = \context_user::instance($user2->id);
         $course1 = self::getDataGenerator()->create_course();
         $course2 = self::getDataGenerator()->create_course();
-        $course1context = context_course::instance($course1->id);
-        $course2context = context_course::instance($course2->id);
+        $course1context = \context_course::instance($course1->id);
+        $course2context = \context_course::instance($course2->id);
         return [$user1context, $user2context, $course1context, $course2context];
     }
 
@@ -200,7 +193,7 @@ class favourite_repository_testcase extends advanced_testcase {
 
         // Try to get a favourite we know doesn't exist.
         // We expect an exception in this case.
-        $this->expectException(dml_exception::class);
+        $this->expectException(\dml_exception::class);
         $favouritesrepo->find(0);
     }
 
