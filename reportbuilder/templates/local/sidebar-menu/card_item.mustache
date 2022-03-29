@@ -29,21 +29,25 @@
     <a href="#"
        title="{{title}}"
        role="button"
-       class="list-group-item list-group-item-action d-flex align-items-start justify-content-between pr-2 bg-transparent"
+       class="list-group-item list-group-item-action pr-2 bg-transparent"
+       data-region="sidebar-item"
        data-action="{{action}}"
        data-unique-identifier="{{identifier}}"
-       data-name="{{name}}">
-        {{{name}}}
-        <span class="my-auto ml-1">
+       data-name="{{name}}"
+    >
+        <span class="d-flex align-items-center justify-content-between">
+            {{{name}}}
             {{#pix}} t/add, core {{/pix}}
         </span>
     </a>
 {{/disabled}}
 {{#disabled}}
     <div title="{{title}}"
-          class="list-group-item list-group-item-action d-flex align-items-start justify-content-between pr-2 bg-transparent text-muted" >
+         class="list-group-item list-group-item-action pr-2 bg-transparent text-muted"
+         data-region="sidebar-item"
+    >
+        <span class="d-flex align-items-center justify-content-between">
             {{{name}}}
-        <span class="ml-auto ml-1 ">
             {{#pix}} i/info, core {{/pix}}
         </span>
     </div>

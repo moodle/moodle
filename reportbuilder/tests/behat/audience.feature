@@ -91,6 +91,17 @@ Feature: Configure access to reports based on intended audience
     # This audience type should be disabled because there are no cohorts available.
     And "Add audience 'Member of cohort'" "link" should not exist
 
+  Scenario: Search for and add audience to report
+    Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    And I click on the "Audience" dynamic tab
+    When I set the field "Search" in the "[data-region=sidebar-menu]" "css_element" to "All users"
+    Then I should see "All users" in the "[data-region=sidebar-menu]" "css_element"
+    And I should not see "Member of cohort" in the "[data-region=sidebar-menu]" "css_element"
+    And I click on "Add audience 'All users'" "link"
+    And I should see "Added audience 'All users'"
+    And I press "Save changes"
+    And I should see "Audience saved"
+
   Scenario: Rename report audience
     Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Audience" dynamic tab

@@ -38,6 +38,7 @@ const SELECTORS = {
         filtersForm: '[data-region="filters-form"]',
         sidebarMenu: '[data-region="sidebar-menu"]',
         sidebarCard: '[data-region="sidebar-card"]',
+        sidebarItem: '[data-region="sidebar-item"]',
         settingsConditions: '[data-region="settings-conditions"]',
         activeConditions: '[data-region="active-conditions"]',
         activeCondition: '[data-region="active-condition"]',
