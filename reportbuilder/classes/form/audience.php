@@ -131,7 +131,7 @@ class audience extends dynamic_form {
             $audience = $audience::create($formdata->reportid, $configdata);
         } else {
             // Editing audience.
-            $audience->update_configdata($configdata, true);
+            $audience->update_configdata($configdata);
         }
 
         $persistent = $audience->get_persistent();
@@ -149,17 +149,22 @@ class audience extends dynamic_form {
      */
     public function set_data_for_dynamic_submission(): void {
         $audience = $this->get_audience();
-        if ($audience->get_persistent()->get('id') !== 0) {
-            // Populate form with exisiting data.
+        $persistent = $audience->get_persistent();
+
+        // Populate form data based on whether we are editing/creating an audience.
+        if ($persistent->get('id') !== 0) {
             $formdata = [
-                'id' => $audience->get_persistent()->get('id'),
-                'reportid' => $audience->get_persistent()->get('reportid'),
-            ];
-            $formdata += $audience->get_configdata();
+                'id' => $persistent->get('id'),
+                'reportid' => $persistent->get('reportid'),
+                'classname' => $persistent->get('classname'),
+            ] + $audience->get_configdata();
         } else {
-            $formdata['reportid'] = $this->optional_param('reportid', null, PARAM_INT);
+            $formdata = [
+                'reportid' => $this->optional_param('reportid', null, PARAM_INT),
+                'classname' => $this->optional_param('classname', null, PARAM_RAW_TRIMMED),
+            ];
         }
-        $formdata['classname'] = $this->optional_param('classname', null, PARAM_RAW_TRIMMED);
+
         $this->set_data($formdata);
     }
 
