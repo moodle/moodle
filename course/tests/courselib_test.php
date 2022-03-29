@@ -14,23 +14,58 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Course related unit tests
- *
- * @package    core
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_course;
 
-defined('MOODLE_INTERNAL') || die();
+use advanced_testcase;
+use backup_controller;
+use backup;
+use blog_entry;
+use cache;
+use calendar_event;
+use coding_exception;
+use comment;
+use completion_criteria_date;
+use completion_completion;
+use context_course;
+use context_module;
+use context_system;
+use context_coursecat;
+use core_completion_external;
+use core_external;
+use core_tag_index_builder;
+use core_tag_tag;
+use course_capability_assignment;
+use course_request;
+use core_course_category;
+use enrol_imsenterprise\imsenterprise_test;
+use external_api;
+use grade_item;
+use grading_manager;
+use moodle_exception;
+use moodle_url;
+use phpunit_util;
+use rating_manager;
+use restore_controller;
+use stdClass;
+use testing_data_generator;
 
+defined('MOODLE_INTERNAL') or die();
+
+// Require library globally because it's constants are used within dataProvider methods, executed before setUpBeforeClass.
 global $CFG;
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/tests/fixtures/course_capability_assignment.php');
 require_once($CFG->dirroot . '/enrol/imsenterprise/tests/imsenterprise_test.php');
 
-class core_course_courselib_testcase extends advanced_testcase {
+/**
+ * Course related unit tests
+ *
+ * @package    core_course
+ * @category   test
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class courselib_test extends advanced_testcase {
 
     /**
      * Set forum specific test values for calling create_module().
@@ -1782,7 +1817,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Create the XML file we want to use.
         $course->category = (array)$course->category;
-        $imstestcase = new enrol_imsenterprise_testcase();
+        $imstestcase = new imsenterprise_test();
         $imstestcase->imsplugin = enrol_get_plugin('imsenterprise');
         $imstestcase->set_test_config();
         $imstestcase->set_xml_file(false, array($course));

@@ -14,18 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Course competency persistent class tests.
- *
- * @package    core_competency
- * @copyright  2016 Frédéric Massart - FMCorz.net
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-
-use core_competency\course_competency;
+namespace core_competency;
 
 /**
  * Course competency persistent testcase.
@@ -34,7 +23,7 @@ use core_competency\course_competency;
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_competency_course_competency_testcase extends advanced_testcase {
+class course_competency_test extends \advanced_testcase {
 
     public function test_get_courses_with_competency_and_user() {
         global $CFG, $DB;

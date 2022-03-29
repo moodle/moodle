@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Asyncronhous helper tests.
- *
- * @package    core_backup
- * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use async_helper;
+use backup;
+use backup_controller;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,10 +29,11 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 /**
  * Asyncronhous helper tests.
  *
+ * @package    core_backup
  * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_async_helper_testcase extends \core_privacy\tests\provider_testcase {
+class async_helper_test extends \advanced_testcase {
 
     /**
      * Tests sending message for asynchronous backup.
@@ -113,7 +112,7 @@ class core_backup_async_helper_testcase extends \core_privacy\tests\provider_tes
         // We need a grade, easiest is to add an assignment.
         $assignrow = $generator->create_module('assign', array(
             'course' => $course->id));
-        $assign = new assign(context_module::instance($assignrow->cmid), false, false);
+        $assign = new \assign(\context_module::instance($assignrow->cmid), false, false);
         $item = $assign->get_grade_item();
 
         // Make a test grouping as well.
@@ -137,7 +136,7 @@ class core_backup_async_helper_testcase extends \core_privacy\tests\provider_tes
         $bc->destroy();
         unset($bc);
 
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $renderer = $PAGE->get_renderer('core', 'backup');
 
         $result = \async_helper::get_async_backups($renderer, $coursecontext->instanceid);

@@ -15,11 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Test xml_writer tests.
+ *
  * @package   core_backup
- * @category  phpunit
+ * @category  test
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core_backup;
+
+use memory_xml_output;
+use xml_contenttransformer;
+use xml_output;
+use xml_writer;
+use xml_writer_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,9 +41,14 @@ require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.ph
 require_once($CFG->dirroot . '/backup/util/xml/contenttransformer/xml_contenttransformer.class.php');
 
 /**
- * xml_writer tests
+ * Test xml_writer tests.
+ *
+ * @package   core_backup
+ * @category  test
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class xml_writer_testcase extends basic_testcase {
+class writer_test extends \basic_testcase {
 
     /**
      * test xml_writer public methods
@@ -48,25 +63,25 @@ class xml_writer_testcase extends basic_testcase {
         try {
             $xw = new mock_xml_writer(null);
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'invalid_xml_output');
         }
 
         // Instantiate xml_writer with wrong xml_output object
         try {
-            $xw = new mock_xml_writer(new stdclass());
+            $xw = new mock_xml_writer(new \stdClass());
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'invalid_xml_output');
         }
 
         // Instantiate xml_writer with wrong xml_contenttransformer object
         try {
-            $xw = new mock_xml_writer($xo, new stdclass());
+            $xw = new mock_xml_writer($xo, new \stdClass());
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'invalid_xml_contenttransformer');
         }
@@ -77,7 +92,7 @@ class xml_writer_testcase extends basic_testcase {
         try {
             $xw->start();
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'xml_writer_already_started');
         }
@@ -90,7 +105,7 @@ class xml_writer_testcase extends basic_testcase {
         try {
             $xw->stop();
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'xml_writer_already_stopped');
         }
@@ -101,7 +116,7 @@ class xml_writer_testcase extends basic_testcase {
         try {
             $xw->stop();
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'xml_writer_not_started');
         }
@@ -114,7 +129,7 @@ class xml_writer_testcase extends basic_testcase {
         try {
             $xw->start();
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'xml_writer_already_stopped');
         }
@@ -126,14 +141,14 @@ class xml_writer_testcase extends basic_testcase {
         try {
             $xw->set_nonamespace_schema('http://moodle.org');
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'xml_writer_already_started');
         }
         try {
             $xw->set_prologue('sweet prologue');
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'xml_writer_already_started');
         }
@@ -172,7 +187,7 @@ class xml_writer_testcase extends basic_testcase {
         try {
             $xw->end_tag('first');
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'xml_writer_end_tag_no_match');
         }
@@ -184,7 +199,7 @@ class xml_writer_testcase extends basic_testcase {
         try {
             $xw->end_tag('first');
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'xml_writer_end_tag_no_match');
         }
@@ -249,7 +264,7 @@ class xml_writer_testcase extends basic_testcase {
         try {
             $xw->stop();
             $this->assertTrue(false, 'xml_writer_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof xml_writer_exception);
             $this->assertEquals($e->errorcode, 'xml_writer_open_tags_remaining');
         }

@@ -22,10 +22,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use enrol_lti\data_connector;
-use enrol_lti\helper;
+namespace enrol_lti;
+
 use enrol_lti\task\sync_members;
-use enrol_lti\tool_provider;
 use IMSGlobal\LTI\ToolProvider\Context;
 use IMSGlobal\LTI\ToolProvider\ResourceLink;
 use IMSGlobal\LTI\ToolProvider\ToolConsumer;
@@ -40,11 +39,11 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sync_members_testcase extends advanced_testcase {
+class sync_members_test extends \advanced_testcase {
     /** @var dummy_sync_members_task $task */
     protected $task;
 
-    /** @var  stdClass $tool The published tool. */
+    /** @var  \stdClass $tool The published tool. */
     protected $tool;
 
     /** @var User[] $members */
@@ -367,12 +366,12 @@ class dummy_sync_members_task extends sync_members {
     /**
      * Exposes sync_members::sync_member_information()
      *
-     * @param stdClass $tool
+     * @param \stdClass $tool
      * @param ToolConsumer $consumer
      * @param User[] $members
      * @return array
      */
-    public function sync_member_information(stdClass $tool, ToolConsumer $consumer, $members) {
+    public function sync_member_information(\stdClass $tool, ToolConsumer $consumer, $members) {
         $result = parent::sync_member_information($tool, $consumer, $members);
         return $result;
     }
@@ -390,10 +389,10 @@ class dummy_sync_members_task extends sync_members {
     /**
      * Exposes sync_members::sync_unenrol()
      *
-     * @param stdClass $tool
+     * @param \stdClass $tool
      * @return int
      */
-    public function sync_unenrol(stdClass $tool) {
+    public function sync_unenrol(\stdClass $tool) {
         $count = parent::sync_unenrol($tool);
         return $count;
     }
