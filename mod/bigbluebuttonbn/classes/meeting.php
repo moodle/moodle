@@ -518,13 +518,14 @@ class meeting {
     public function join(int $origin): string {
         $this->do_get_meeting_info(true);
         if ($this->is_running()) {
-            if ($this->instance->has_user_limit_been_reached($this->get_participant_count())
-                && $this->instance->does_current_user_count_towards_user_limit()) {
+            if (
+                $this->instance->has_user_limit_been_reached($this->get_participant_count())
+                && $this->instance->does_current_user_count_towards_user_limit()
+            ) {
                 throw new meeting_join_exception('userlimitreached');
             }
-        }
-        // If user is not administrator nor moderator (user is student) and waiting is required.
-        if ($this->instance->user_must_wait_to_join()) {
+        } else if ($this->instance->user_must_wait_to_join()) {
+            // If user is not administrator nor moderator (user is student) and waiting is required.
             throw new meeting_join_exception('waitformoderator');
         }
 

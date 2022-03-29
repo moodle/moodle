@@ -214,6 +214,78 @@ class meeting_test extends \advanced_testcase {
     }
 
     /**
+     * Test can join is working if the "Wait for moderator to join" setting is set and a moderator has not yet joined.
+     *
+     * @covers ::join
+     * @covers ::join_meeting
+     */
+    public function test_join_wait_for_moderator_not_joined() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $bbbgenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
+        $student = $this->getDataGenerator()->create_and_enrol($this->get_course());
+        $meetinginfo = [
+            'course' => $this->get_course()->id,
+            'type' => instance::TYPE_ALL,
+            'wait' => 1,
+        ];
+        $activity = $bbbgenerator->create_instance($meetinginfo, [
+            'wait' => 1,
+        ]);
+        $instance = instance::get_from_instanceid($activity->id);
+        $meeting = new meeting($instance);
+
+        // The moderator has not joined.
+        $this->setUser($student);
+        $meeting->update_cache();
+        $this->expectException(\mod_bigbluebuttonbn\local\exceptions\meeting_join_exception::class);
+        meeting::join_meeting($instance);
+    }
+
+    /**
+     * Test can join is working if the "Wait for moderator to join" setting is set and a moderator has already joined.
+     *
+     * @covers ::join
+     * @covers ::join_meeting
+     */
+    public function test_join_wait_for_moderator_is_joined() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $bbbgenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
+        $moderator = $this->getDataGenerator()->create_and_enrol($this->get_course(), 'editingteacher');
+        $student = $this->getDataGenerator()->create_and_enrol($this->get_course());
+        $meetinginfo = [
+            'course' => $this->get_course()->id,
+            'type' => instance::TYPE_ALL,
+            'wait' => 1,
+            'moderators' => 'role:editingteacher',
+        ];
+        $activity = $bbbgenerator->create_instance($meetinginfo, [
+            'wait' => 1,
+        ]);
+        $instance = instance::get_from_instanceid($activity->id);
+        $meeting = new meeting($instance);
+        $bbbgenerator->create_meeting([
+            'instanceid' => $instance->get_instance_id(),
+        ]);
+
+        $this->setUser($moderator);
+        $meeting->update_cache();
+        $joinurl = $meeting->join(logger::ORIGIN_BASE);
+        $this->assertIsString($joinurl);
+        $this->join_meeting($joinurl);
+        $meeting->update_cache();
+        $this->assertCount(1, $meeting->get_attendees());
+
+        // The student can now join the meeting as a moderator is present.
+        $this->setUser($student);
+        $joinurl = $meeting->join(logger::ORIGIN_BASE);
+        $this->assertIsString($joinurl);
+    }
+
+    /**
      * Test that attendees returns the right list of attendees
      *
      * @covers ::get_attendees
