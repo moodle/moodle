@@ -125,9 +125,14 @@ class permission {
             return false;
         }
 
+        // To edit their own reports, users must have either of the 'edit' or 'editall' capabilities. For reports belonging
+        // to other users, they must have the specific 'editall' capability.
         $userid = $userid ?: (int) $USER->id;
         if ($report->get('usercreated') === $userid) {
-            return has_capability('moodle/reportbuilder:edit', context_system::instance(), $userid);
+            return has_any_capability([
+                'moodle/reportbuilder:edit',
+                'moodle/reportbuilder:editall',
+            ], context_system::instance(), $userid);
         } else {
             return has_capability('moodle/reportbuilder:editall', context_system::instance(), $userid);
         }
