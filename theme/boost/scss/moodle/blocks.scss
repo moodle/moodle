@@ -267,10 +267,22 @@ $card-gutter : $card-deck-margin * 2;
 }
 
 .block_recentlyaccesseditems {
-    img.icon {
-        height: 24px;
-        width: 24px;
-        margin-right: 6px;
+    .activityiconcontainer {
+        width: 40px;
+        height: 40px;
+    }
+
+    aside[id^="block-region-side-"] & .dashboard-card-deck.one-row {
+        flex-flow: wrap;
+        overflow-x: hidden;
+    }
+
+    aside[id^="block-region-side-"] & .dashboard-card-deck .card:nth-of-type(n+4) {
+        display: none;
+    }
+
+    #block-region-content & [data-region="more-items-button-container"] {
+        display: none;
     }
 }
 
