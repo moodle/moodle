@@ -1768,9 +1768,10 @@ class grade_report_grader extends grade_report {
      */
     protected static function filter_collapsed_categories($courseid, $collapsed) {
         global $DB;
-        if (empty($collapsed)) {
-            $collapsed = array('aggregatesonly' => array(), 'gradesonly' => array());
-        }
+        // Ensure we always have an element for aggregatesonly and another for gradesonly, no matter it's empty.
+        $collapsed['aggregatesonly'] = $collapsed['aggregatesonly'] ?? [];
+        $collapsed['gradesonly'] = $collapsed['gradesonly'] ?? [];
+
         if (empty($collapsed['aggregatesonly']) && empty($collapsed['gradesonly'])) {
             return $collapsed;
         }
@@ -1791,12 +1792,23 @@ class grade_report_grader extends grade_report {
      */
     protected static function get_collapsed_preferences($courseid) {
         if ($collapsed = get_user_preferences('grade_report_grader_collapsed_categories'.$courseid)) {
-            return json_decode($collapsed, true);
+            $collapsed = json_decode($collapsed, true);
+            // Ensure we always have an element for aggregatesonly and another for gradesonly, no matter it's empty.
+            $collapsed['aggregatesonly'] = $collapsed['aggregatesonly'] ?? [];
+            $collapsed['gradesonly'] = $collapsed['gradesonly'] ?? [];
+            return $collapsed;
         }
 
         // Try looking for old location of user setting that used to store all courses in one serialized user preference.
+        $collapsed = ['aggregatesonly' => [], 'gradesonly' => []]; // Use this if old settings are not found.
+        $collapsedall = [];
+        $oldprefexists = false;
         if (($oldcollapsedpref = get_user_preferences('grade_report_grader_collapsed_categories')) !== null) {
+            $oldprefexists = true;
             if ($collapsedall = unserialize_array($oldcollapsedpref)) {
+                // Ensure we always have an element for aggregatesonly and another for gradesonly, no matter it's empty.
+                $collapsedall['aggregatesonly'] = $collapsedall['aggregatesonly'] ?? [];
+                $collapsedall['gradesonly'] = $collapsedall['gradesonly'] ?? [];
                 // We found the old-style preference, filter out only categories that belong to this course and update the prefs.
                 $collapsed = static::filter_collapsed_categories($courseid, $collapsedall);
                 if (!empty($collapsed['aggregatesonly']) || !empty($collapsed['gradesonly'])) {
@@ -1805,17 +1817,21 @@ class grade_report_grader extends grade_report {
                     $collapsedall['gradesonly'] = array_diff($collapsedall['gradesonly'], $collapsed['gradesonly']);
                     if (!empty($collapsedall['aggregatesonly']) || !empty($collapsedall['gradesonly'])) {
                         set_user_preference('grade_report_grader_collapsed_categories', serialize($collapsedall));
-                    } else {
-                        unset_user_preference('grade_report_grader_collapsed_categories');
                     }
                 }
-            } else {
-                // We found the old-style preference, but it is unreadable, discard it.
-                unset_user_preference('grade_report_grader_collapsed_categories');
             }
-        } else {
-            $collapsed = array('aggregatesonly' => array(), 'gradesonly' => array());
         }
+
+        // Arrived here, if the old pref exists and it doesn't contain
+        // more information, it means that the migration of all the
+        // data to new, by course, preferences is completed, so
+        // the old one can be safely deleted.
+        if ($oldprefexists &&
+                empty($collapsedall['aggregatesonly']) &&
+                empty($collapsedall['gradesonly'])) {
+            unset_user_preference('grade_report_grader_collapsed_categories');
+        }
+
         return $collapsed;
     }
 
