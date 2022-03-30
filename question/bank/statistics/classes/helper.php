@@ -38,12 +38,12 @@ require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 class helper {
 
     /**
-     * @var float Threshold to determine 'need for revision'
+     * @var float Threshold to determine 'Needs checking?'
      */
     private const NEED_FOR_REVISION_LOWER_THRESHOLD = 30;
 
     /**
-     * @var float Threshold to determine 'need for revision'
+     * @var float Threshold to determine 'Needs checking?'
      */
     private const NEED_FOR_REVISION_UPPER_THRESHOLD = 50;
 
@@ -198,7 +198,7 @@ class helper {
     }
 
     /**
-     * Format discrimination index (need for revision).
+     * Format discrimination index (Needs checking?).
      *
      * @param float|null $value stats value
      * @return array

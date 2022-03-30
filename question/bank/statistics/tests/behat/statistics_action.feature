@@ -25,11 +25,11 @@ Feature: Use the qbank plugin manager page for statistics
     And I navigate to "Question bank" in current page administration
     Then I should not see "Facility index"
     And I should not see "Discriminative efficiency"
-    And I should not see "Need for revision"
+    And I should not see "Needs checking?"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Question statistics" "table_row"
     And I am on the "Test quiz" "quiz activity" page
     And I navigate to "Question bank" in current page administration
     And I should see "Facility index"
     And I should see "Discriminative efficiency"
-    And I should see "Need for revision"
+    And I should see "Needs checking?"
