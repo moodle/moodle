@@ -91,6 +91,15 @@ Feature: Configure access to reports based on intended audience
     # This audience type should be disabled because there are no cohorts available.
     And "Add audience 'Member of cohort'" "link" should not exist
 
+  Scenario: Rename report audience
+    Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    And I click on the "Audience" dynamic tab
+    And I click on "Add audience 'All users'" "link"
+    And I press "Save changes"
+    When I set the field "Rename audience 'All users'" to "All my lovely users"
+    And I reload the page
+    Then I should see "All my lovely users" in the "[data-region='audience-card']" "css_element"
+
   Scenario: Delete report audience
     Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Audience" dynamic tab

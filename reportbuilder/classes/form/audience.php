@@ -22,9 +22,9 @@ use context;
 use context_system;
 use core_form\dynamic_form;
 use core_reportbuilder\local\audiences\base;
+use core_reportbuilder\output\audience_heading_editable;
 use core_reportbuilder\manager;
 use core_reportbuilder\permission;
-use core_reportbuilder\report_access_exception;
 use moodle_exception;
 use moodle_url;
 use stdClass;
@@ -116,6 +116,8 @@ class audience extends dynamic_form {
      * Process the form submission, used if form was submitted via AJAX
      */
     public function process_dynamic_submission() {
+        global $PAGE;
+
         $formdata = $this->get_data();
         $audience = $this->get_audience();
 
@@ -129,9 +131,17 @@ class audience extends dynamic_form {
             $audience = $audience::create($formdata->reportid, $configdata);
         } else {
             // Editing audience.
-            $audience->update_configdata($configdata, true);
+            $audience->update_configdata($configdata);
         }
-        return ['instanceid' => $audience->get_persistent()->get('id'), 'description' => $audience->get_description()];
+
+        $persistent = $audience->get_persistent();
+        $editable = new audience_heading_editable(0, $persistent);
+
+        return [
+            'instanceid' => $persistent->get('id'),
+            'heading' => $editable->render($PAGE->get_renderer('core')),
+            'description' => $audience->get_description(),
+        ];
     }
 
     /**
@@ -139,17 +149,22 @@ class audience extends dynamic_form {
      */
     public function set_data_for_dynamic_submission(): void {
         $audience = $this->get_audience();
-        if ($audience->get_persistent()->get('id') !== 0) {
-            // Populate form with exisiting data.
+        $persistent = $audience->get_persistent();
+
+        // Populate form data based on whether we are editing/creating an audience.
+        if ($persistent->get('id') !== 0) {
             $formdata = [
-                'id' => $audience->get_persistent()->get('id'),
-                'reportid' => $audience->get_persistent()->get('reportid'),
-            ];
-            $formdata += $audience->get_configdata();
+                'id' => $persistent->get('id'),
+                'reportid' => $persistent->get('reportid'),
+                'classname' => $persistent->get('classname'),
+            ] + $audience->get_configdata();
         } else {
-            $formdata['reportid'] = $this->optional_param('reportid', null, PARAM_INT);
+            $formdata = [
+                'reportid' => $this->optional_param('reportid', null, PARAM_INT),
+                'classname' => $this->optional_param('classname', null, PARAM_RAW_TRIMMED),
+            ];
         }
-        $formdata['classname'] = $this->optional_param('classname', null, PARAM_RAW_TRIMMED);
+
         $this->set_data($formdata);
     }
 

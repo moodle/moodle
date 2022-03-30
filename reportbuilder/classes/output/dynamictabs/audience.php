@@ -111,7 +111,6 @@ class audience extends base {
             $editable = new audience_heading_editable($persistent->get('id'));
 
             $params = [
-                'identifier' => $persistent->get('classname'),
                 'instanceid' => $persistent->get('id'),
                 'description' => $reportaudience->get_description(),
                 'heading' => $reportaudience->get_name(),
