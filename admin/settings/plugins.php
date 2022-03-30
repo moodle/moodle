@@ -527,7 +527,10 @@ if ($hassiteconfig && !empty($CFG->enableplagiarism)) {
         $plugin->load_settings($ADMIN, 'plagiarism', $hassiteconfig);
     }
 }
-$ADMIN->add('reports', new admin_externalpage('comments', new lang_string('comments'), $CFG->wwwroot.'/comment/', 'moodle/site:viewreports'));
+
+// Comments report, note this page is really just a means to delete comments so check that.
+$ADMIN->add('reports', new admin_externalpage('comments', new lang_string('comments'), $CFG->wwwroot . '/comment/index.php',
+    'moodle/comment:delete'));
 
 // Course reports settings
 if ($hassiteconfig) {
