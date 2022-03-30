@@ -170,35 +170,65 @@ class recording_proxy extends proxy_base {
     /**
      * Helper function to fetch recordings from a BigBlueButton server.
      *
-     * @param array $keyids list of meetingids or recordingids
-     * @param string $key the param name used for the BBB request (<recordID>|meetingID)
+     * We use a cache to store recording indexed by keyids/recordingID.
+     * @param array $keyids list of recordingids
      * @return array (associative) with recordings indexed by recordID, each recording is a non sequential array
+     *  and sorted by {@see recording_proxy::sort_recordings}
      */
-    public static function fetch_recordings(array $keyids = [], string $key = 'recordID'): array {
+    public static function fetch_recordings(array $keyids = []): array {
         $recordings = [];
 
         // If $ids is empty return array() to prevent a getRecordings with meetingID and recordID set to ''.
         if (empty($keyids)) {
             return $recordings;
         }
-
         $cache = cache::make('mod_bigbluebuttonbn', 'recordings');
         $currentfetchcache = cache::make('mod_bigbluebuttonbn', 'currentfetch');
         $recordings = array_filter($cache->get_many($keyids));
         $missingkeys = array_diff(array_values($keyids), array_keys($recordings));
 
-        $pagesize = 25;
-        while ($ids = array_splice($missingkeys, 0, $pagesize)) {
-            $fetchrecordings = self::fetch_recordings_page($ids, $key);
-            $cache->set_many($fetchrecordings);
-            $currentfetchcache->set_many(array_flip(array_keys($fetchrecordings)));
+        $recordings += self::do_fetch_recordings($missingkeys);
+        $cache->set_many($recordings);
+        $currentfetchcache->set_many(array_flip(array_keys($recordings)));
+        return $recordings;
+    }
 
+    /**
+     * Helper function to fetch recordings from a BigBlueButton server.
+     *
+     * @param array $keyids list of meetingids
+     * @return array (associative) with recordings indexed by recordID, each recording is a non sequential array
+     *  and sorted by {@see recording_proxy::sort_recordings}
+     */
+    public static function fetch_recording_by_meeting_id(array $keyids = []): array {
+        $recordings = [];
+
+        // If $ids is empty return array() to prevent a getRecordings with meetingID and recordID set to ''.
+        if (empty($keyids)) {
+            return $recordings;
+        }
+        $recordings = self::do_fetch_recordings($keyids, 'meetingID');
+        return $recordings;
+    }
+
+    /**
+     * Helper function to fetch recordings from a BigBlueButton server.
+     *
+     * @param array $keyids list of meetingids or recordingids
+     * @param string $key the param name used for the BBB request (<recordID>|meetingID)
+     * @return array (associative) with recordings indexed by recordID, each recording is a non sequential array.
+     *  and sorted {@see recording_proxy::sort_recordings}
+     */
+    private static function do_fetch_recordings(array $keyids = [], string $key = 'recordID'): array {
+        $recordings = [];
+        $pagesize = 25;
+        while ($ids = array_splice($keyids, 0, $pagesize)) {
+            $fetchrecordings = self::fetch_recordings_page($ids, $key);
             $recordings += $fetchrecordings;
         }
         // Sort recordings.
         return self::sort_recordings($recordings);
     }
-
     /**
      * Helper function to fetch a page of recordings from the remote server.
      *
