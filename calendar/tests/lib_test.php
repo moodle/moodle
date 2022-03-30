@@ -14,18 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains the class containing unit tests for the calendar lib.
- *
- * @package    core_calendar
- * @copyright  2017 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_calendar;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/helpers.php');
 
 /**
  * Class contaning unit tests for the calendar lib.
@@ -35,6 +24,15 @@ require_once(__DIR__ . '/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class lib_test extends \advanced_testcase {
+
+    /**
+     * Load required test libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+
+        require_once("{$CFG->dirroot}/calendar/tests/helpers.php");
+    }
 
     /**
      * Tests set up
@@ -1045,5 +1043,36 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(true, $result);
         $result = calendar_can_manage_user_event($adminevent);
         $this->assertEquals(false, $result);
+    }
+
+    /**
+     * Data provider for {@see test_calendar_format_event_location}
+     *
+     * @return array[]
+     */
+    public function calendar_format_event_location_provider(): array {
+        return [
+            'Empty' => ['', ''],
+            'Text' => ['Barcelona', 'Barcelona'],
+            'Link (http)' => ['http://example.com', '<a title=".*" href="http://example.com">http://example.com</a>'],
+            'Link (https)' => ['https://example.com', '<a title=".*" href="https://example.com">https://example.com</a>'],
+        ];
+    }
+
+    /**
+     * Test formatting event location
+     *
+     * @param string $location
+     * @param string $expectedpattern
+     *
+     * @covers ::calendar_format_event_location
+     * @dataProvider calendar_format_event_location_provider
+     */
+    public function test_calendar_format_event_location(string $location, string $expectedpattern): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $event = create_event(['location' => $location]);
+        $this->assertMatchesRegularExpression("|^({$expectedpattern})$|", calendar_format_event_location($event));
     }
 }

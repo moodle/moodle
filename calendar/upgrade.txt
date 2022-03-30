@@ -1,6 +1,10 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 4.1 ===
+* New method `calendar_format_event_location` which will format the location property of an event, converting any
+  links into suitable markup
+
 === 4.0 ===
 * The following external functions now accepts an optional parameter 'searchvalue' to search the events:
   - core_calendar_external::get_calendar_action_events_by_timesort

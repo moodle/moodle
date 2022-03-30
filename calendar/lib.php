@@ -2555,6 +2555,25 @@ function calendar_format_event_time($event, $now, $linkparams = null, $usecommon
 }
 
 /**
+ * Format event location property
+ *
+ * @param calendar_event $event
+ * @return string
+ */
+function calendar_format_event_location(calendar_event $event): string {
+    $location = format_text($event->location, FORMAT_PLAIN, ['context' => $event->context]);
+
+    // If it looks like a link, convert it to one.
+    if (preg_match('/^https?:\/\//i', $location) && clean_param($location, PARAM_URL)) {
+        $location = \html_writer::link($location, $location, [
+            'title' => get_string('eventnamelocation', 'core_calendar', ['name' => $event->name, 'location' => $location]),
+        ]);
+    }
+
+    return $location;
+}
+
+/**
  * Checks to see if the requested type of event should be shown for the given user.
  *
  * @param int $type The type to check the display for (default is to display all)
