@@ -36,6 +36,7 @@ class user_repository_test extends \advanced_testcase {
     protected function generate_user(int $mockresourceid = 1): user {
         $registration = application_registration::create(
             'Test',
+            'a2c94a2c94',
             new \moodle_url('http://lms.example.org'),
             'clientid_123',
             new \moodle_url('https://example.org/authrequesturl'),

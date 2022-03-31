@@ -17,7 +17,6 @@
 namespace enrol_lti\local\ltiadvantage\service;
 
 use enrol_lti\helper;
-use enrol_lti\local\ltiadvantage\entity\registration_url;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
 use enrol_lti\local\ltiadvantage\repository\context_repository;
 use enrol_lti\local\ltiadvantage\repository\deployment_repository;
@@ -54,99 +53,87 @@ class application_registration_service_test extends \lti_advantage_testcase {
     /**
      * Test the use case "As an admin, I can register an application as an LTI consumer (platform)".
      *
-     * @covers ::create_application_registration
+     * @covers ::create_draft_application_registration
      */
-    public function test_register_application() {
+    public function test_create_draft_application() {
         $this->resetAfterTest();
-        $reg = (object) [
-            'name' => 'Example LMS application',
-            'platformid' => 'https://lms.example.org',
-            'clientid' => '123',
-            'authenticationrequesturl' => new \moodle_url('https://example.org/authrequesturl'),
-            'jwksurl' => new \moodle_url('https://example.org/jwksurl'),
-            'accesstokenurl' => new \moodle_url('https://example.org/accesstokenurl')
-        ];
-
         $service = $this->get_application_registration_service();
-        $createdreg = $service->create_application_registration($reg);
 
-        $regrepo = new application_registration_repository();
-        $this->assertTrue($regrepo->exists($createdreg->get_id()));
+        // Create a draft, passing the required name.
+        $draftreg = $service->create_draft_application_registration((object) ['name' => 'My test platform']);
+        $this->assertEquals('My test platform', $draftreg->get_name());
+        $this->assertNull($draftreg->get_authenticationrequesturl());
+        $this->assertNull($draftreg->get_jwksurl());
+        $this->assertNull($draftreg->get_accesstokenurl());
+        $this->assertNull($draftreg->get_platformid());
+        $this->assertNull($draftreg->get_clientid());
+        $this->assertFalse($draftreg->is_complete());
+
+        // Try to create a draft omitting name.
+        $this->expectException(\coding_exception::class);
+        $service->create_draft_application_registration((object) []);
     }
 
     /**
-     * Test verifying that the service cannot save two identical (same issuer and clientid) application registrations.
-     *
-     * @covers ::create_application_registration
-     */
-    public function test_register_application_unique_constraints() {
-        $this->resetAfterTest();
-        $reg = (object) [
-            'name' => 'Example LMS application',
-            'platformid' => 'https://lms.example.org',
-            'clientid' => '123',
-            'authenticationrequesturl' => new \moodle_url('https://example.org/authrequesturl'),
-            'jwksurl' => new \moodle_url('https://example.org/jwksurl'),
-            'accesstokenurl' => new \moodle_url('https://example.org/accesstokenurl')
-        ];
-
-        $service = $this->get_application_registration_service();
-        $service->create_application_registration($reg);
-
-        $this->expectException(\moodle_exception::class);
-        $service->create_application_registration($reg);
-    }
-
-    /**
-     * Test the use case "As an admin, I can update an application registered as an LTI consumer (platform)".
+     * Test the update_application_registration method.
      *
      * @covers ::update_application_registration
      */
     public function test_update_application_registration() {
         $this->resetAfterTest();
-        $reg = (object) [
-            'name' => 'Example LMS application',
+
+        // Create a registration in the draft state.
+        $service = $this->get_application_registration_service();
+        $draftreg = $service->create_draft_application_registration((object) ['name' => 'My test platform']);
+
+        // Update the draft.
+        $updatedto = (object) [
+            'id' => $draftreg->get_id(),
+            'name' => 'My test platform name edit 1',
             'platformid' => 'https://lms.example.org',
             'clientid' => '123',
-            'authenticationrequesturl' => new \moodle_url('https://example.org/authrequesturl'),
-            'jwksurl' => new \moodle_url('https://example.org/jwksurl'),
-            'accesstokenurl' => new \moodle_url('https://example.org/accesstokenurl')
+            'authenticationrequesturl' => 'https://lms.example.org/authrequesturl',
+            'jwksurl' => 'https://lms.example.org/jwksurl',
+            'accesstokenurl' => 'https://lms.example.org/accesstokenurl'
         ];
+        $reg = $service->update_application_registration($updatedto);
 
-        $service = $this->get_application_registration_service();
-        $createdreg = $service->create_application_registration($reg);
+        // Verify details saved and complete status.
+        $this->assertEquals($updatedto->id, $reg->get_id());
+        $this->assertEquals($updatedto->name, $reg->get_name());
+        $this->assertEquals(new \moodle_url($updatedto->platformid), $reg->get_platformid());
+        $this->assertEquals($updatedto->clientid, $reg->get_clientid());
+        $this->assertEquals(new \moodle_url($updatedto->authenticationrequesturl), $reg->get_authenticationrequesturl());
+        $this->assertEquals(new \moodle_url($updatedto->jwksurl), $reg->get_jwksurl());
+        $this->assertEquals(new \moodle_url($updatedto->accesstokenurl), $reg->get_accesstokenurl());
+        $this->assertTrue($reg->is_complete());
 
-        $reg->id = $createdreg->get_id();
-        $reg->jwksurl = new \moodle_url('https://example.org/updated_jwksurl');
-
-        $updatedreg = $service->update_application_registration($reg);
-        $this->assertEquals($reg->name, $updatedreg->get_name());
-        $this->assertEquals($reg->jwksurl, $updatedreg->get_jwksurl());
-    }
-
-    /**
-     * Test verifying that the service requires an object id.
-     *
-     * @covers ::update_application_registration
-     */
-    public function test_update_application_registration_missing_id() {
-        $this->resetAfterTest();
-        $reg = (object) [
-            'name' => 'Example LMS application',
-            'platformid' => 'https://lms.example.org',
-            'clientid' => '123',
-            'authenticationrequesturl' => new \moodle_url('https://example.org/authrequesturl'),
-            'jwksurl' => new \moodle_url('https://example.org/jwksurl'),
-            'accesstokenurl' => new \moodle_url('https://example.org/accesstokenurl')
+        // Update again.
+        $updatedto = (object) [
+            'id' => $draftreg->get_id(),
+            'name' => 'My test platform name edit 2',
+            'platformid' => 'https://different.example.org',
+            'clientid' => 'abcd1234',
+            'authenticationrequesturl' => 'https://lms.example.org/authrequesturl2',
+            'jwksurl' => 'https://lms.example.org/jwksurl2',
+            'accesstokenurl' => 'https://lms.example.org/accesstokenurl2'
         ];
+        $reg = $service->update_application_registration($updatedto);
 
-        $service = $this->get_application_registration_service();
-        $service->create_application_registration($reg);
+        // Verify again.
+        $this->assertEquals($updatedto->id, $reg->get_id());
+        $this->assertEquals($updatedto->name, $reg->get_name());
+        $this->assertEquals(new \moodle_url($updatedto->platformid), $reg->get_platformid());
+        $this->assertEquals($updatedto->clientid, $reg->get_clientid());
+        $this->assertEquals(new \moodle_url($updatedto->authenticationrequesturl), $reg->get_authenticationrequesturl());
+        $this->assertEquals(new \moodle_url($updatedto->jwksurl), $reg->get_jwksurl());
+        $this->assertEquals(new \moodle_url($updatedto->accesstokenurl), $reg->get_accesstokenurl());
+        $this->assertTrue($reg->is_complete());
 
-        $reg->jwksurl = new \moodle_url('https://example.org/updated_jwksurl');
-
+        // Update missing id.
+        unset($updatedto->id);
         $this->expectException(\coding_exception::class);
-        $service->update_application_registration($reg);
+        $service->update_application_registration($updatedto);
     }
 
     /**
@@ -210,115 +197,5 @@ class application_registration_service_test extends \lti_advantage_testcase {
 
         // Verify the tool record stays in place (I.e. the published resource is still available).
         $this->assertNotEmpty(helper::get_lti_tool($resource->id));
-    }
-
-    /**
-     * Test creation of a dynamic registration url.
-     * @dataProvider registration_url_data_provider
-     * @param int|null $duration how long the URL is valid for, in seconds.
-     * @param array $expected the array of expected values/results.
-     * @covers ::create_registration_url
-     */
-    public function test_create_registration_url(?int $duration, array $expected) {
-        $this->resetAfterTest();
-        $appregservice = $this->get_application_registration_service();
-        if ($expected['exception']) {
-            $this->expectException($expected['exception']);
-        }
-        if (!is_null($duration)) {
-            $regurl = $appregservice->create_registration_url($duration);
-        } else {
-            $regurl = $appregservice->create_registration_url();
-        }
-        $this->assertInstanceOf(registration_url::class, $regurl);
-        $this->assertGreaterThanOrEqual($expected['expirytime'], $regurl->get_expiry_time());
-    }
-
-    /**
-     * Data provider for testing registration url creation.
-     *
-     * @return array the test data.
-     */
-    public function registration_url_data_provider() {
-        return [
-            'no params' => [
-                'duration' => null,
-                'expected' => [
-                    'expirytime' => time() + 86400,
-                    'exception' => false,
-                ]
-            ],
-            'expiry specified' => [
-                'duration' => 3600,
-                'expected' => [
-                    'expirytime' => time() + 3600,
-                    'exception' => false,
-                ]
-            ],
-            'invalid expiry specified' => [
-                'duration' => -5,
-                'expected' => [
-                    'expirytime' => null,
-                    'exception' => \coding_exception::class,
-                ]
-            ]
-        ];
-    }
-
-    /**
-     * Test getting the current registration url.
-     *
-     * @covers ::get_registration_url
-     */
-    public function test_get_registration_url() {
-        $this->resetAfterTest();
-        $appregservice = $this->get_application_registration_service();
-
-        // Check when not existing.
-        $this->assertNull($appregservice->get_registration_url());
-
-        // Check after creation.
-        $appregservice->create_registration_url();
-        $regurl = $appregservice->get_registration_url();
-        $this->assertInstanceOf(registration_url::class, $regurl);
-    }
-
-    /**
-     * Test getting a registration URL by its token.
-     *
-     * @covers ::get_registration_url
-     */
-    public function test_get_registration_url_using_token() {
-        $this->resetAfterTest();
-        $appregservice = $this->get_application_registration_service();
-        $createdregurl = $appregservice->create_registration_url();
-
-        // Check valid token.
-        $token = $createdregurl->param('token');
-        $regurl = $appregservice->get_registration_url($token);
-        $this->assertInstanceOf(registration_url::class, $regurl);
-
-        // Check invalid token.
-        $this->assertNull($appregservice->get_registration_url('invalid_token'));
-    }
-
-    /**
-     * Test deletion of the current registration URL.
-     *
-     * @covers ::delete_registration_url
-     */
-    public function test_delete_registration_url() {
-        $this->resetAfterTest();
-        $appregservice = $this->get_application_registration_service();
-
-        // Deletion when no URL exists.
-        $this->assertNull($appregservice->delete_registration_url());
-
-        // Deletion of a URL.
-        $appregservice->create_registration_url();
-        $regurl = $appregservice->get_registration_url();
-        $this->assertInstanceOf(registration_url::class, $regurl);
-        $appregservice->delete_registration_url();
-        $this->assertNull($appregservice->get_registration_url());
     }
 }

@@ -35,14 +35,25 @@ class enrol_lti_generator extends component_generator_base {
      * @return application_registration
      */
     public function create_application_registration(array $data): application_registration {
-        $registration = application_registration::create(
-            $data['name'],
-            new moodle_url($data['platformid']),
-            $data['clientid'],
-            new moodle_url($data['authrequesturl']),
-            new moodle_url($data['jwksurl']),
-            new moodle_url($data['accesstokenurl'])
-        );
+        $bytes = random_bytes(30);
+        $uniqueid = bin2hex($bytes);
+        if (empty($data['platformid']) || empty($data['clientid']) || empty($data['authrequesturl']) || empty($data['jwksurl']) ||
+                empty($data['accesstokenurl'])) {
+            $registration = application_registration::create_draft(
+                $data['name'],
+                $uniqueid
+            );
+        } else {
+            $registration = application_registration::create(
+                $data['name'],
+                $uniqueid,
+                new moodle_url($data['platformid']),
+                $data['clientid'],
+                new moodle_url($data['authrequesturl']),
+                new moodle_url($data['jwksurl']),
+                new moodle_url($data['accesstokenurl'])
+            );
+        }
 
         $appregrepo = new application_registration_repository();
         $createdregistration = $appregrepo->save($registration);

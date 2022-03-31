@@ -68,6 +68,14 @@ if (!in_array($targetlinkuri, $validuris)) {
     throw new coding_exception($msg);
 }
 
+// Because client_id is optional, this endpoint receives a param 'id', a unique id generated when creating the registration.
+// A registration can thus be located by either the tuple {iss, client_id} (if client_id is provided), or by the tuple {iss, id},
+// (if client_id is not provided). See https://www.imsglobal.org/spec/lti/v1p3/#client_id-login-parameter.
+global $_REQUEST;
+if (empty($_REQUEST['client_id']) && !empty($_REQUEST['id'])) {
+    $_REQUEST['client_id'] = $_REQUEST['id'];
+}
+
 // Now, do the OIDC login.
 LtiOidcLogin::new(
     new issuer_database(new application_registration_repository(), new deployment_repository()),

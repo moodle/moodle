@@ -38,6 +38,7 @@ class application_registration_test extends \advanced_testcase {
         if ($expectations['valid']) {
             $reg = application_registration::create(...array_values($args));
             $this->assertEquals($args['name'], $reg->get_name());
+            $this->assertEquals($args['uniqueid'], $reg->get_uniqueid());
             $this->assertEquals($args['platformid'], $reg->get_platformid());
             $this->assertEquals($args['clientid'], $reg->get_clientid());
             $this->assertEquals($args['authrequesturl'], $reg->get_authenticationrequesturl());
@@ -45,6 +46,7 @@ class application_registration_test extends \advanced_testcase {
             $this->assertEquals($args['accesstokenurl'], $reg->get_accesstokenurl());
             $expectedid = $args['id'] ?? null;
             $this->assertEquals($expectedid, $reg->get_id());
+            $this->assertTrue($reg->is_complete());
         } else {
             $this->expectException($expectations['exception']);
             $this->expectExceptionMessage($expectations['exceptionmessage']);
@@ -62,6 +64,7 @@ class application_registration_test extends \advanced_testcase {
             'Valid, only required args provided' => [
                 'args' => [
                     'name' => 'Platform X',
+                    'uniqueid' => 'a2c94a2c94',
                     'platformid' => new \moodle_url('https://lms.example.com'),
                     'clientid' => 'client-id-12345',
                     'authrequesturl' => new \moodle_url('https://lms.example.com/auth'),
@@ -75,6 +78,7 @@ class application_registration_test extends \advanced_testcase {
             'Valid, all args provided' => [
                 'args' => [
                     'name' => 'Platform X',
+                    'uniqueid' => 'a2c94a2c94',
                     'platformid' => new \moodle_url('https://lms.example.com'),
                     'clientid' => 'client-id-12345',
                     'authrequesturl' => new \moodle_url('https://lms.example.com/auth'),
@@ -89,6 +93,7 @@ class application_registration_test extends \advanced_testcase {
             'Invalid, empty name provided' => [
                 'args' => [
                     'name' => '',
+                    'uniqueid' => 'a2c94a2c94',
                     'platformid' => new \moodle_url('https://lms.example.com'),
                     'clientid' => 'client-id-12345',
                     'authrequesturl' => new \moodle_url('https://lms.example.com/auth'),
@@ -101,9 +106,26 @@ class application_registration_test extends \advanced_testcase {
                     'exceptionmessage' => "Invalid 'name' arg. Cannot be an empty string."
                 ]
             ],
+            'Invalid, empty uniqueid provided' => [
+                'args' => [
+                    'name' => 'Platform X',
+                    'uniqueid' => '',
+                    'platformid' => new \moodle_url('https://lms.example.com'),
+                    'clientid' => 'client-id-12345',
+                    'authrequesturl' => new \moodle_url('https://lms.example.com/auth'),
+                    'jwksurl' => new \moodle_url('https://lms.example.com/jwks'),
+                    'accesstokenurl' => new \moodle_url('https://lms.example.com/token'),
+                ],
+                'expectations' => [
+                    'valid' => false,
+                    'exception' => \coding_exception::class,
+                    'exceptionmessage' => "Invalid 'uniqueid' arg. Cannot be an empty string."
+                ]
+            ],
             'Invalid, empty clientid provided' => [
                 'args' => [
                     'name' => 'Platform X',
+                    'uniqueid' => 'a2c94a2c94',
                     'platformid' => new \moodle_url('https://lms.example.com'),
                     'clientid' => '',
                     'authrequesturl' => new \moodle_url('https://lms.example.com/auth'),
@@ -114,6 +136,103 @@ class application_registration_test extends \advanced_testcase {
                     'valid' => false,
                     'exception' => \coding_exception::class,
                     'exceptionmessage' => "Invalid 'clientid' arg. Cannot be an empty string."
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Test the creation of a draft application_registration instances.
+     *
+     * @dataProvider create_draft_data_provider
+     * @param array $args the arguments to the creation method.
+     * @param array $expectations various expectations for the test cases.
+     * @covers ::create_draft
+     */
+    public function test_create_draft(array $args, array $expectations) {
+        if ($expectations['valid']) {
+            $reg = application_registration::create_draft(...array_values($args));
+            $this->assertEquals($args['name'], $reg->get_name());
+            $this->assertEquals($args['uniqueid'], $reg->get_uniqueid());
+            $this->assertNull($reg->get_platformid());
+            $this->assertNull($reg->get_clientid());
+            $this->assertNull($reg->get_authenticationrequesturl());
+            $this->assertNull($reg->get_jwksurl());
+            $this->assertNull($reg->get_accesstokenurl());
+            $expectedid = $args['id'] ?? null;
+            $this->assertEquals($expectedid, $reg->get_id());
+            $this->assertFalse($reg->is_complete());
+        } else {
+            $this->expectException($expectations['exception']);
+            $this->expectExceptionMessage($expectations['exceptionmessage']);
+            application_registration::create_draft(...array_values($args));
+        }
+    }
+
+    /**
+     * Test that complete registration can transition a pending registration in the correct state to a complete registration.
+     *
+     * @covers ::complete_registration
+     */
+    public function test_complete_registration() {
+        // Create a draft registration which should initially be incomplete.
+        $draft = application_registration::create_draft('Test platform name', '1234bfda');
+        $this->assertFalse($draft->is_complete());
+
+        // Add information to the draft, but don't complete it. It should still be incomplete.
+        $draft->set_name('Adjusted platform name');
+        $draft->set_platformid(new \moodle_url('https://lms.example.com'));
+        $draft->set_clientid('bcgd23');
+        $draft->set_authenticationrequesturl(new \moodle_url('https://lms.example.com/auth'));
+        $draft->set_jwksurl(new \moodle_url('https://lms.example.com/jwks'));
+        $draft->set_accesstokenurl(new \moodle_url('https://lms.example.com/token'));
+        $this->assertFalse($draft->is_complete());
+
+        // Complete the registration. It will now be indicated as complete.
+        $draft->complete_registration();
+        $this->assertTrue($draft->is_complete());
+
+        // Now, create another draft registration and try to mark it complete. It should throw.
+        $draft2 = application_registration::create_draft('Another platform', '3434bfafas');
+        $this->expectException(\coding_exception::class);
+        $draft2->complete_registration();
+    }
+
+    /**
+     * Data provider for testing draft creation.
+     *
+     * @return array the test case data.
+     */
+    public function create_draft_data_provider(): array {
+        return [
+            'Valid, new draft' => [
+                'args' => [
+                    'name' => 'Platform X',
+                    'uniqueid' => 'a2c94a2c94',
+                ],
+                'expectations' => [
+                    'valid' => true
+                ]
+            ],
+            'Valid, existing draft' => [
+                'args' => [
+                    'name' => 'Platform X',
+                    'uniqueid' => 'a2c94a2c94',
+                    'id' => 24
+                ],
+                'expectations' => [
+                    'valid' => true
+                ]
+            ],
+            'Invalid, empty identifier' => [
+                'args' => [
+                    'name' => 'Platform X',
+                    'uniqueid' => '',
+                ],
+                'expectations' => [
+                    'valid' => false,
+                    'exception' => \coding_exception::class,
+                    'exceptionmessage' => "Invalid 'uniqueid' arg. Cannot be an empty string."
                 ]
             ]
         ];
@@ -155,6 +274,7 @@ class application_registration_test extends \advanced_testcase {
                 'args' => [
                     'registration' => [
                         'name' => 'Platform X',
+                        'uniqueid' => 'a2c94a2c94',
                         'platformid' => new \moodle_url('https://lms.example.com'),
                         'clientid' => 'client-id-12345',
                         'authrequesturl' => new \moodle_url('https://lms.example.com/auth'),
@@ -175,6 +295,7 @@ class application_registration_test extends \advanced_testcase {
                 'args' => [
                     'registration' => [
                         'name' => 'Platform X',
+                        'uniqueid' => 'a2c94a2c94',
                         'platformid' => new \moodle_url('https://lms.example.com'),
                         'clientid' => 'client-id-12345',
                         'authrequesturl' => new \moodle_url('https://lms.example.com/auth'),
@@ -196,6 +317,7 @@ class application_registration_test extends \advanced_testcase {
                 'args' => [
                     'registration' => [
                         'name' => 'Platform X',
+                        'uniqueid' => 'a2c94a2c94',
                         'platformid' => new \moodle_url('https://lms.example.com'),
                         'clientid' => 'client-id-12345',
                         'authrequesturl' => new \moodle_url('https://lms.example.com/auth'),
@@ -218,6 +340,7 @@ class application_registration_test extends \advanced_testcase {
                 'args' => [
                     'registration' => [
                         'name' => 'Platform X',
+                        'uniqueid' => 'a2c94a2c94',
                         'platformid' => new \moodle_url('https://lms.example.com'),
                         'clientid' => 'client-id-12345',
                         'authrequesturl' => new \moodle_url('https://lms.example.com/auth'),

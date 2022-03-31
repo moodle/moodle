@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use enrol_lti\local\ltiadvantage\admin\admin_setting_toolendpoints;
 use enrol_lti\local\ltiadvantage\admin\admin_setting_registeredplatforms;
 
 defined('MOODLE_INTERNAL') || die;
@@ -85,10 +84,6 @@ $ADMIN->add('enrolltifolder', $settings);
 $settings = new admin_settingpage('enrolsettingslti_registrations', "Tool registration", 'moodle/site:config',
     $this->is_enabled() === false);
 
-$settings->add(new admin_setting_heading('enrol_lti_tool_endpoints_heading',
-    get_string('registrationendpoints', 'enrol_lti'), ''));
-$settings->add(new admin_setting_toolendpoints());
-
 $settings->add(new admin_setting_heading('enrol_lti_tool_registrations_heading',
     get_string('registeredplatforms', 'enrol_lti'), ''));
 $settings->add(new admin_setting_registeredplatforms());
@@ -99,11 +94,6 @@ $ADMIN->add('enrolltifolder', $settings);
 // On this page, we'll  override the active node to force a match on enrolsettingslti_registrations settings page.
 $ADMIN->add('enrolltifolder', new admin_externalpage('enrolsettingslti_registrations_edit',
     get_string('registerplatformadd', 'enrol_lti'), "$CFG->wwwroot/$CFG->admin/enrol/lti/register_platform.php",
-    'moodle/site:config', true));
-
-// And do the same for the deployments list.
-$ADMIN->add('enrolltifolder', new admin_externalpage('enrolsettingslti_deployments_list',
-    get_string('deployments', 'enrol_lti'), "$CFG->wwwroot/$CFG->admin/enrol/lti/app_tool_deployments.php",
     'moodle/site:config', true));
 
 // And deployments add/edit.

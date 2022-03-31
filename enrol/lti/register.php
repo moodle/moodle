@@ -34,7 +34,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use enrol_lti\local\ltiadvantage\entity\application_registration;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
 use enrol_lti\local\ltiadvantage\repository\context_repository;
 use enrol_lti\local\ltiadvantage\repository\deployment_repository;
@@ -69,10 +68,12 @@ $appregservice = new application_registration_service(
     new user_repository()
 );
 
-if (!$regurl = $appregservice->get_registration_url($token)) {
+// Using the application registration repo, find the incomplete registration using its unique id.
+$appregrepo = new application_registration_repository();
+$draftreg = $appregrepo->find_by_uniqueid($token);
+if (is_null($draftreg) || $draftreg->is_complete()) {
     throw new moodle_exception('invalidexpiredregistrationurl', 'enrol_lti');
 }
-$appregservice->delete_registration_url();
 
 // Get the OpenID config from the platform.
 $curl = new curl();
@@ -100,7 +101,7 @@ $regrequest = (object) [
     'application_type' => 'web',
     'grant_types' => ['client_credentials', 'implicit'],
     'response_types' => ['id_token'],
-    'initiate_login_uri' => $CFG->wwwroot . '/enrol/lti/login.php',
+    'initiate_login_uri' => $CFG->wwwroot . '/enrol/lti/login.php?id=' . $draftreg->get_uniqueid(),
     'redirect_uris' => [
         $CFG->wwwroot . '/enrol/lti/launch.php',
         $CFG->wwwroot . '/enrol/lti/launch_deeplink.php',
@@ -166,23 +167,22 @@ if ($regresponse) {
     $regresponse = json_decode($regresponse);
     if ($regresponse->client_id) {
         $toolconfig = $regresponse->{'https://purl.imsglobal.org/spec/lti-tool-configuration'};
-        $appregrepo = new application_registration_repository();
 
         if ($appregrepo->find_by_platform($openidconfig->issuer, $regresponse->client_id)) {
             throw new moodle_exception('existingregistrationerror', 'enrol_lti');
         }
 
-        // Registration of the tool on the platform was successful. Now save the platform registration.
-        $appreg = application_registration::create(
-            $openidconfig->issuer,
-            new moodle_url($openidconfig->issuer),
-            $regresponse->client_id,
-            new moodle_url($openidconfig->authorization_endpoint),
-            new moodle_url($openidconfig->jwks_uri),
-            new moodle_url($openidconfig->token_endpoint)
-        );
-        $savedappreg = $appregrepo->save($appreg);
-        $deployment = $savedappreg->add_tool_deployment($toolconfig->deployment_id, $toolconfig->deployment_id);
+        // Registration of the tool on the platform was successful.
+        // Now update the platform details in the registration and mark it complete.
+        $draftreg->set_accesstokenurl(new moodle_url($openidconfig->token_endpoint));
+        $draftreg->set_authenticationrequesturl(new moodle_url($openidconfig->authorization_endpoint));
+        $draftreg->set_clientid($regresponse->client_id);
+        $draftreg->set_jwksurl(new moodle_url($openidconfig->jwks_uri));
+        $draftreg->set_platformid(new moodle_url($openidconfig->issuer));
+        $draftreg->complete_registration();
+        $appreg = $appregrepo->save($draftreg);
+
+        $deployment = $appreg->add_tool_deployment($toolconfig->deployment_id, $toolconfig->deployment_id);
         $deploymentrepo = new deployment_repository();
         $deploymentrepo->save($deployment);
     }
