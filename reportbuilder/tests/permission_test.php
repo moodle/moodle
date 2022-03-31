@@ -179,6 +179,24 @@ class permission_test extends advanced_testcase {
     }
 
     /**
+     * Test that user cannot edit any reports without capabilities
+     */
+    public function test_require_can_edit_report_none(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'User', 'source' => users::class]);
+
+        $this->expectException(report_access_exception::class);
+        $this->expectExceptionMessage('You cannot edit this report');
+        permission::require_can_edit_report($report);
+    }
+
+    /**
      * Test that user can edit their own reports
      */
     public function test_require_can_edit_report_own(): void {
@@ -194,14 +212,13 @@ class permission_test extends advanced_testcase {
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $reportuser = $generator->create_report(['name' => 'User', 'source' => users::class]);
-        $reportadmin = $generator->create_report(['name' => 'Admin', 'source' => users::class, 'usercreated' => get_admin()->id]);
 
-        try {
-            permission::require_can_edit_report($reportuser);
-        } catch (Throwable $exception) {
-            $this->fail($exception->getMessage());
-        }
+        // Confirm user can edit their own report.
+        $reportuser = $generator->create_report(['name' => 'User', 'source' => users::class]);
+        permission::require_can_edit_report($reportuser);
+
+        // Create a report by another user, confirm current user cannot edit it.
+        $reportadmin = $generator->create_report(['name' => 'Admin', 'source' => users::class, 'usercreated' => get_admin()->id]);
 
         $this->expectException(report_access_exception::class);
         $this->expectExceptionMessage('You cannot edit this report');
@@ -212,29 +229,25 @@ class permission_test extends advanced_testcase {
      * Test that user can edit any reports
      */
     public function test_require_can_edit_report_all(): void {
+        global $DB;
+
         $this->resetAfterTest();
-        $this->setAdminUser();
 
         $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $userrole = $DB->get_field('role', 'id', ['shortname' => 'user']);
+        assign_capability('moodle/reportbuilder:editall', CAP_ALLOW, $userrole, context_system::instance());
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $reportuser = $generator->create_report(['name' => 'User', 'source' => users::class, 'usercreated' => $user->id]);
-        $reportadmin = $generator->create_report(['name' => 'Admin', 'source' => users::class]);
 
-        // User with permission.
-        $this->setAdminUser();
-        try {
-            permission::require_can_edit_report($reportuser);
-        } catch (Throwable $exception) {
-            $this->fail($exception->getMessage());
-        }
+        // Confirm user can edit their own report.
+        $reportuser = $generator->create_report(['name' => 'User', 'source' => users::class]);
+        permission::require_can_edit_report($reportuser);
 
-        // User without permission.
-        $this->setUser($user);
-
-        $this->expectException(report_access_exception::class);
-        $this->expectExceptionMessage('You cannot edit this report');
+        // Create a report by another user, confirm current user can edit it.
+        $reportadmin = $generator->create_report(['name' => 'Admin', 'source' => users::class, 'usercreated' => get_admin()->id]);
         permission::require_can_edit_report($reportadmin);
     }
 
