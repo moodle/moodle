@@ -97,7 +97,13 @@
             $PAGE->navbar->add(get_string('downloadresults', 'survey'));
             break;
         case 'summary':
+            if ($survey->template == SURVEY_CIQ) {
+                throw new moodle_exception('cannotviewreport');
+            }
         case 'scales':
+            if ($survey->template == SURVEY_CIQ) {
+                throw new moodle_exception('cannotviewreport');
+            }
         case 'questions':
             $PAGE->navbar->add($strreport);
             $PAGE->navbar->add(${'str'.$action});
@@ -248,7 +254,7 @@
             $questions = $DB->get_records_list("survey_questions", "id", explode(',',$survey->questions));
             $questionorder = explode(",", $survey->questions);
 
-            echo $OUTPUT->heading($strallquestions, 3);
+            echo $OUTPUT->heading($strquestions, 3);
         }
 
         if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
@@ -516,6 +522,9 @@
         }
 
         break;
+
+      default:
+        throw new moodle_exception('cannotviewreport');
 
     }
     echo $OUTPUT->footer();
