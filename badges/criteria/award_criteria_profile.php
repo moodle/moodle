@@ -206,8 +206,8 @@ class award_criteria_profile extends award_criteria {
                 $join .= " LEFT JOIN {user_info_data} uid{$idx} ON uid{$idx}.userid = u.id AND uid{$idx}.fieldid = :fieldid{$idx} ";
                 $sqlparams["fieldid{$idx}"] = $param['field'];
                 $whereparts[] = "uid{$idx}.id IS NOT NULL";
-            } else {
-                // This is a field from {user} table.
+            } else if (in_array($param['field'], $this->allowed_default_fields)) {
+                // This is a valid field from {user} table.
                 if ($param['field'] == 'picture') {
                     // The picture field is numeric and requires special handling.
                     $whereparts[] = "u.{$param['field']} != 0";
