@@ -461,7 +461,7 @@ function enrol_lti_extend_navigation_course($navigation, $course, $context) {
         // Check that they can add an instance.
         $ltiplugin = enrol_get_plugin('lti');
         if ($ltiplugin->can_add_instance($course->id)) {
-            $url = new moodle_url(array('courseid' => $course->id), '/enrol/lti/index.php');
+            $url = new moodle_url('/enrol/lti/index.php', ['courseid' => $course->id]);
             $settingsnode = navigation_node::create(get_string('sharedexternaltools', 'enrol_lti'), $url,
                 navigation_node::TYPE_SETTING, null, 'publishedtools', new pix_icon('i/settings', ''));
             $navigation->add_node($settingsnode);
