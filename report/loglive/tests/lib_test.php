@@ -55,4 +55,42 @@ class lib_test extends \advanced_testcase {
             $this->assertContains($expectedstore, $stores);
         }
     }
+
+    /**
+     * Test the latest record timestamp of the report data set.
+     *
+     * @covers ::get_until()
+     */
+    public function test_report_get_until() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+        $now = time();
+
+        // Configure log store.
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+        $manager = get_log_manager();
+        $stores = $manager->get_readers();
+        $store = $stores['logstore_standard'];
+        $DB->delete_records('logstore_standard_log');
+
+        // Build the report.
+        $url = new \moodle_url("/report/loglive/index.php");
+        $renderable = new \report_loglive_renderable('logstore_standard', 0, $url);
+        $table = $renderable->get_table();
+        $table->query_db(100);
+        $until = $table->get_until();
+
+        // There is no record in the log table at this stage so until date is supposed to be equal to CUTOFF date.
+        $this->assertLessThanOrEqual(time() - \report_loglive_renderable::CUTOFF, $until);
+
+        // Create a user, store the event and re-build the report.
+        $this->getDataGenerator()->create_user();
+        $store->flush();
+        $table->query_db(100);
+        $until = $table->get_until();
+
+        // Assert that until date reflects user creation event date (now).
+        $this->assertGreaterThanOrEqual($now, $until);
+    }
 }

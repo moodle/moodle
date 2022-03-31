@@ -143,7 +143,7 @@ Y.extend(FetchLogs, Y.Base, {
             // Let us chop off some data from end of table to prevent really long pages.
             var oldChildren = tbody.get('children').slice(this.get('perpage'));
             oldChildren.remove();
-            Y.later(5000, this, 'removeHighlight', responseobject.until); // Remove highlighting from new rows.
+            Y.later(5000, this, 'removeHighlight'); // Remove highlighting from new rows.
         }
     },
 
@@ -152,8 +152,8 @@ Y.extend(FetchLogs, Y.Base, {
      *
      * @method removeHighlight
      */
-    removeHighlight: function(timeStamp) {
-        Y.all('.time' + timeStamp).removeClass(CSS.NEWROW);
+    removeHighlight: function() {
+        Y.all(SELECTORS.NEWROW).removeClass(CSS.NEWROW);
     },
 
     /**
