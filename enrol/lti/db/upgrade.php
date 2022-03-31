@@ -407,23 +407,16 @@ function xmldb_enrol_lti_upgrade($oldversion) {
         $key = new xmldb_key('uniqueid', XMLDB_KEY_UNIQUE, ['uniqueid']);
         $dbman->add_key($table, $key);
 
-        // Define field status to be added to enrol_lti_app_registration (defined as null to allow data migration).
-        $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'uniqueid');
+        // Define field status to be added to enrol_lti_app_registration with a default value of 1 (to set existing rows).
+        $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'uniqueid');
 
         // Conditionally launch add field status.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
 
-            $recordset = $DB->get_recordset('enrol_lti_app_registration');
-            foreach ($recordset as $record) {
-                $record->status = 1;
-                $DB->update_record('enrol_lti_app_registration', $record);
-            }
-            $recordset->close();
-
-            // Now make the field notnull.
-            $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'uniqueid');
-            $dbman->change_field_notnull($table, $field);
+            // Now change the default value to '0'.
+            $field = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'uniqueid');
+            $dbman->change_field_default($table, $field);
         }
 
         // Define field platformuniqueidhash to be added to enrol_lti_app_registration.
