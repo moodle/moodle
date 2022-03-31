@@ -208,14 +208,15 @@ if (!$viewobj->quizhasquestions) {
 
 } else {
     if ($unfinished) {
-        if ($canattempt) {
-            $viewobj->buttontext = get_string('continueattemptquiz', 'quiz');
-        } else if ($canpreview) {
+        if ($canpreview) {
             $viewobj->buttontext = get_string('continuepreview', 'quiz');
+        } else if ($canattempt) {
+            $viewobj->buttontext = get_string('continueattemptquiz', 'quiz');
         }
-
     } else {
-        if ($canattempt) {
+        if ($canpreview) {
+            $viewobj->buttontext = get_string('previewquizstart', 'quiz');
+        } else if ($canattempt) {
             $viewobj->preventmessages = $viewobj->accessmanager->prevent_new_attempt(
                     $viewobj->numattempts, $viewobj->lastfinishedattempt);
             if ($viewobj->preventmessages) {
@@ -225,15 +226,12 @@ if (!$viewobj->quizhasquestions) {
             } else {
                 $viewobj->buttontext = get_string('reattemptquiz', 'quiz');
             }
-
-        } else if ($canpreview) {
-            $viewobj->buttontext = get_string('previewquizstart', 'quiz');
         }
     }
 
-    // If, so far, we think a button should be printed, so check if they will be
+    // If this is not a preview and, so far, we think a button should be printed, so check if they will be
     // allowed to access it.
-    if ($viewobj->buttontext) {
+    if (!$canpreview && $viewobj->buttontext) {
         if (!$viewobj->moreattempts) {
             $viewobj->buttontext = '';
         } else if ($canattempt
