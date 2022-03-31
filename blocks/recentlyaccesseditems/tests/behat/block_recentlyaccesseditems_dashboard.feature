@@ -31,7 +31,7 @@ Feature: The recently accessed items block allows users to easily access their m
     When I am on the "Test forum name" "forum activity" page
     And I follow "Dashboard"
     Then I should see "Test forum name" in the "Recently accessed items" "block"
-    And I should not see "Show/hide more" in the "Recently accessed items" "block"
+    And I should not see "Show more items" in the "Recently accessed items" "block"
 
   Scenario: User has accessed more than 3 items
     Given the following "activities" exist:
@@ -42,6 +42,7 @@ Feature: The recently accessed items block allows users to easily access their m
       | data       | Test database name     | Test database description     | C1     | data1       |
     And I change window size to "large"
     And I am on the "Test forum name" "forum activity" page
+    And I am on the "Test database name" "data activity" page
     And I am on the "Test assignment name" "assign activity" page
     And I am on the "Test book name" "book activity" page
     And I am on the "Test choice name" "choice activity" page
