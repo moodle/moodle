@@ -811,9 +811,16 @@ function survey_supports($feature) {
  * @param navigation_node $surveynode
  */
 function survey_extend_settings_navigation(settings_navigation $settings, navigation_node $surveynode) {
+    global $DB;
     if (has_capability('mod/survey:readresponses', $settings->get_page()->cm->context)) {
-        $url = new moodle_url('/mod/survey/report.php', array('id' => $settings->get_page()->cm->id,
-            'action' => 'summary'));
+        $cm = get_coursemodule_from_id('survey', $settings->get_page()->cm->id);
+        $survey = $DB->get_record("survey", ["id" => $cm->instance]);
+        $url = new moodle_url('/mod/survey/report.php', ['id' => $settings->get_page()->cm->id]);
+        if ($survey && ($survey->template != SURVEY_CIQ)) {
+            $url->param('action', 'summary');
+        } else {
+            $url->param('action', 'questions');
+        }
         $surveynode->add(get_string("responsereports", "survey"), $url);
     }
 }

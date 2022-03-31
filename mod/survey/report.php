@@ -87,7 +87,6 @@
     $strquestions = get_string("questions", "survey");
     $strdownload = get_string("download", "survey");
     $strallscales = get_string("allscales", "survey");
-    $strallquestions = get_string("allquestions", "survey");
     $strselectedquestions = get_string("selectedquestions", "survey");
     $strseemoredetail = get_string("seemoredetail", "survey");
     $strnotes = get_string("notes", "survey");
@@ -148,6 +147,10 @@
     switch ($action) {
 
       case "summary":
+        // If survey type is Critical incidents then we don't show summary report.
+        if ($survey->template == SURVEY_CIQ) {
+            throw new moodle_exception('cannotviewreport');
+        }
         echo $OUTPUT->heading($strsummary, 3);
 
         if ($groupsactivitymenu) {
@@ -164,6 +167,10 @@
         break;
 
       case "scales":
+        // If survey type is Critical incidents then we don't show scales report.
+        if ($survey->template == SURVEY_CIQ) {
+          throw new moodle_exception('cannotviewreport');
+        }
         echo $OUTPUT->heading($strscales, 3);
 
         if ($groupsactivitymenu) {
@@ -218,7 +225,7 @@
             $questions = $DB->get_records_list("survey_questions", "id", explode(',',$survey->questions));
             $questionorder = explode(",", $survey->questions);
 
-            echo $OUTPUT->heading($strallquestions, 3);
+            echo $OUTPUT->heading($strquestions, 3);
         }
 
         if ($groupsactivitymenu) {
@@ -505,6 +512,9 @@
         }
 
         break;
+
+      default:
+        throw new moodle_exception('cannotviewreport');
 
     }
     echo $OUTPUT->footer();
