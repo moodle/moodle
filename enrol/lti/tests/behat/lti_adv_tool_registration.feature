@@ -18,11 +18,11 @@ Feature: Register a platform with the tool
     And I should see "Manual registration"
     And I should see "Platform details"
     And I follow "Back"
-    And "Edit" "link" should exist in the "My test platform" "table_row"
     And "Manage deployments" "link" should exist in the "My test platform" "table_row"
+    And "View platform details" "link" should exist in the "My test platform" "table_row"
     And "Delete" "link" should exist in the "My test platform" "table_row"
     And I should see "Pending" in the "My test platform" "table_row"
-    And I click on "Edit" "link" in the "My test platform" "table_row"
+    And I click on "View platform details" "link" in the "My test platform" "table_row"
     And I follow "Edit platform details"
     And I set the following fields to these values:
       | Platform ID (issuer) | https://lms.example.com |
@@ -41,7 +41,7 @@ Feature: Register a platform with the tool
     And I follow "Back"
     And I should see "https://lms.example.com" in the "My test platform" "table_row"
     And I should see "Active" in the "My test platform" "table_row"
-    And "Edit" "link" should exist in the "My test platform" "table_row"
+    And "View platform details" "link" should exist in the "My test platform" "table_row"
     And "Manage deployments" "link" should exist in the "My test platform" "table_row"
     And "Delete" "link" should exist in the "My test platform" "table_row"
 
@@ -51,7 +51,7 @@ Feature: Register a platform with the tool
       | My test platform | https://lms.example.com | abcd1234 | https://lms.example.com/auth | https://lms.example.com/jwks | https://lms.example.com/token |
     And I log in as "admin"
     And I navigate to "Plugins > Enrolments > Publish as LTI tool > Tool registration" in site administration
-    When I click on "Edit" "link" in the "My test platform" "table_row"
+    When I click on "View platform details" "link" in the "My test platform" "table_row"
     And I follow "Edit platform details"
     And I set the following fields to these values:
       | Platform name | Changed test platform |
@@ -191,7 +191,7 @@ Feature: Register a platform with the tool
     And I log in as "admin"
     And I change window size to "large"
     And I navigate to "Plugins > Enrolments > Publish as LTI tool > Tool registration" in site administration
-    When I click on "Edit" "link" in the "My test platform" "table_row"
+    When I click on "View platform details" "link" in the "My test platform" "table_row"
     And I follow "Tool details"
     And the "value" attribute of "Registration URL" "field" should contain "enrol/lti/register.php"
     And the "value" attribute of "Tool URL" "field" should contain "enrol/lti/launch.php"
