@@ -45,14 +45,14 @@ $discussionvault = $vaultfactory->get_discussion_vault();
 $discussion = $discussionvault->get_from_id($d);
 
 if (!$discussion) {
-    throw new \moodle_exception('Unable to find discussion with id ' . $discussionid);
+    throw new \moodle_exception('errordiscussionnotfound', 'mod_forum');
 }
 
 $forumvault = $vaultfactory->get_forum_vault();
 $forum = $forumvault->get_from_id($discussion->get_forum_id());
 
 if (!$forum) {
-    throw new \moodle_exception('Unable to find forum with id ' . $discussion->get_forum_id());
+    throw new \moodle_exception('errorforumnotfound', 'mod_forum');
 }
 
 $course = $forum->get_course_record();
