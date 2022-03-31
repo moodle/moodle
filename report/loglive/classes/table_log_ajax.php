@@ -47,15 +47,14 @@ class report_loglive_table_log_ajax extends report_loglive_table_log {
     public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
         $this->query_db($pagesize, false);
         $html = '';
-        $until = time();
         if ($this->rawdata && $this->columns) {
             foreach ($this->rawdata as $row) {
-                $formatedrow = $this->format_row($row, "newrow time$until");
+                $formatedrow = $this->format_row($row);
                 $formatedrow = $this->get_row_from_keyed($formatedrow);
-                $html .= $this->get_row_html($formatedrow, "newrow time$until");
+                $html .= $this->get_row_html($formatedrow, 'newrow');
             }
         }
-        $result = array('logs' => $html, 'until' => $until);
+        $result = array('logs' => $html, 'until' => $this->get_until());
         return json_encode($result);
     }
 
