@@ -124,7 +124,7 @@ Feature: Register a platform with the tool
       | Public keyset URL          | https://lms.example.com/jwks |
       | Access token URL           | https://lms.example.com/token |
     And I press "Save changes"
-    Then I should see "Invalid Client ID. This Client ID is already registered for the Platform ID provided."
+    Then I should see "Invalid client ID. This client ID is already registered for the platform ID provided."
 
   Scenario: An admin can add deployment ids for a given platform registration
     Given the following "enrol_lti > application registrations" exist:
