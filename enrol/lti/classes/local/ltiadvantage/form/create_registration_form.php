@@ -42,9 +42,6 @@ class create_registration_form extends \moodleform {
         $mform->addHelpButton('name', 'registerplatform:name', 'enrol_lti');
 
         // Continue/cancel buttons.
-        $buttonarray = [];
-        $buttonarray[] = $mform->createElement('cancel');
-        $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('continue'));
-        $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
+        $this->add_action_buttons(true, get_string('continue'));
     }
 }
