@@ -553,7 +553,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
      * @return void
      */
     private function bigbluebuttonbn_mform_add_block_preuploads(MoodleQuickForm &$mform, array $cfg): void {
-        if ($cfg['preuploadpresentation_enabled']) {
+        if ($cfg['preuploadpresentation_editable']) {
             $mform->addElement('header', 'preuploadpresentation',
                 get_string('mod_form_block_presentation', 'bigbluebuttonbn'));
             $mform->setExpanded('preuploadpresentation');

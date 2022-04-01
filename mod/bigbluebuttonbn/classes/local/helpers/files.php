@@ -140,36 +140,37 @@ class files {
         global $CFG;
         $fs = get_file_storage();
         $files = [];
-        if (empty($presentation)) {
-            if ($CFG->bigbluebuttonbn_preuploadpresentation_enabled) {
-                // Item has not presentation but presentation is enabled..
-                // Check if exist some file by default in general mod setting ("presentationdefault").
-                $files = $fs->get_area_files(
-                    context_system::instance()->id,
-                    'mod_bigbluebuttonbn',
-                    'presentationdefault',
-                    0,
-                    "filename",
-                    false
-                );
-                $id = null; // This is the general presentation/default so we will generate
-                // an id as if the activity was null.
+        $defaultpresentation = $fs->get_area_files(
+            context_system::instance()->id,
+            'mod_bigbluebuttonbn',
+            'presentationdefault',
+            0,
+            "filename",
+            false
+        );
+        $activitypresentation = $files = $fs->get_area_files(
+            $context->id,
+            'mod_bigbluebuttonbn',
+            'presentation',
+            false,
+            'itemid, filepath, filename',
+            false
+        );
+        // Presentation upload logic based on config settings.
+        if (empty($defaultpresentation)) {
+            if (empty($activitypresentation) || !\mod_bigbluebuttonbn\local\config::get('preuploadpresentation_editable')) {
+                return null;
             }
+            $files = $activitypresentation;
+
         } else {
-            $files = $fs->get_area_files(
-                $context->id,
-                'mod_bigbluebuttonbn',
-                'presentation',
-                false,
-                'itemid, filepath, filename',
-                false
-            );
+            if (empty($activitypresentation) || !\mod_bigbluebuttonbn\local\config::get('preuploadpresentation_editable')) {
+                $files = $defaultpresentation;
+                $id = null;
+            } else {
+                $files = $activitypresentation;
+            }
         }
-
-        if (count($files) == 0) {
-            return null; // No presentation.
-        }
-
         $pnoncevalue = 0;
         if ($withnonce) {
             $nonceid = 0;

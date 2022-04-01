@@ -593,13 +593,13 @@ class settings {
             $preuploadsettings->add($item);
 
             $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_preuploadpresentation_enabled',
-                get_string('config_preuploadpresentation_enabled', 'bigbluebuttonbn'),
-                get_string('config_preuploadpresentation_enabled_description', 'bigbluebuttonbn'),
+                'bigbluebuttonbn_preuploadpresentation_editable',
+                get_string('config_preuploadpresentation_editable', 'bigbluebuttonbn'),
+                get_string('config_preuploadpresentation_editable_description', 'bigbluebuttonbn'),
                 0
             );
             $this->add_conditional_element(
-                'preuploadpresentation_enabled',
+                'preuploadpresentation_editable',
                 $item,
                 $preuploadsettings
             );
