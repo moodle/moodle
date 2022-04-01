@@ -53,4 +53,4 @@ Feature: Test importing questions from GIFT format.
     And I set the field "id_format_gift" to "1"
     And I upload "question/format/gift/tests/fixtures/questions_encoding_windows-1252.gift.txt" file to "Import" filemanager
     And I press "id_submitbutton"
-    Then I should see "The file you selected is not in UFT-8 character encoding. GIFT format files must use UTF-8."
+    Then I should see "The file you selected does not use UTF-8 character encoding. GIFT format files must use UTF-8."
