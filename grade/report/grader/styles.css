@@ -119,6 +119,9 @@
  */
 .path-grade-report-grader .gradeparent .avg .cell {
     text-align: right;
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 /**
  * Content styling.
@@ -162,8 +165,9 @@
  * Editing fields.
  */
 .path-grade-report-grader .gradeparent select {
-    margin: 0;
-    padding: 0;
+    text-overflow: ellipsis;
+    min-width: 8rem;
+    width: 100%;
 }
 
 .path-grade-report-grader .gradeparent .text {
