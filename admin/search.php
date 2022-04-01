@@ -11,7 +11,10 @@ $query = trim(optional_param('query', '', PARAM_NOTAGS));  // Search string
 
 $context = context_system::instance();
 $PAGE->set_context($context);
-$PAGE->set_secondary_navigation(true, true);
+
+// If we are performing a search we need to display the secondary navigation with links as opposed to just anchors.
+// NOTE: hassecondarynavigation will be overridden in classic.
+$PAGE->set_secondary_navigation(true, !$query);
 
 $hassiteconfig = has_capability('moodle/site:config', $context);
 
