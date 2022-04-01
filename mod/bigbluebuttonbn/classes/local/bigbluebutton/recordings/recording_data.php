@@ -301,8 +301,8 @@ class recording_data {
             return true;
         }
         // When groups are enabled, exclude those to which the user doesn't have access to.
-        if ($instance->uses_groups()) {
-            return intval($rec->get('groupid')) === intval($instance->get_group_id());
+        if ($instance->uses_groups() && !$instance->can_manage_recordings()) {
+            return intval($rec->get('groupid')) === $instance->get_group_id();
         }
         return true;
     }
