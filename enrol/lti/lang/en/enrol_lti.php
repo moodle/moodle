@@ -26,7 +26,7 @@ $string['addcontent'] = 'Add content';
 $string['adddeployment:name'] = 'Deployment name';
 $string['adddeployment:deploymentid'] = 'Deployment ID';
 $string['adddeployment:deploymentid_help'] = 'Each deployment of the tool (this site) in a platform will be assigned a Deployment ID that is unique to the registration. The Deployment ID must be registered with the tool (this site) before launches from the respective tool deployment are allowed.';
-$string['adddeployment:invaliddeploymentiderror'] = 'Invalid Deployment ID. That Deployment ID already exists for this app registration.';
+$string['adddeployment:invaliddeploymentiderror'] = 'Invalid deployment ID. The deployment ID already exists for this app registration.';
 $string['addtocourse'] = 'Add to course';
 $string['addtogradebook'] = 'Add to gradebook';
 $string['allowframeembedding'] = 'Note: It is recommended that the site administration setting \'Allow frame embedding\' is enabled, so that tools are displayed within a frame rather than in a new window.';
@@ -39,7 +39,7 @@ $string['deeplinkingurl'] = 'Deep linking URL';
 $string['deploymentadd'] = 'Add a deployment';
 $string['deploymentaddnotice'] = 'Deployment added';
 $string['deploymentdelete'] = 'Delete deployment';
-$string['deploymentdeleteconfirm'] = 'Warning: Deleting a deployment will result in a loss of access for any users following resource links tied to this tool deployment in the platform. Member and grade sync services will also be removed for these resources. Are you sure you want to delete deploymentid \'{$a}\'?';
+$string['deploymentdeleteconfirm'] = 'Warning: Deleting a deployment will result in a loss of access for any users following resource links tied to this tool deployment in the platform. Member and grade sync services will also be removed for these resources. Are you sure you want to delete deployment ID \'{$a}\'?';
 $string['deploymentdeletenotice'] = 'Deployment deleted';
 $string['deploymentid'] = 'Deployment ID';
 $string['deployments'] = 'Deployments';
@@ -71,8 +71,8 @@ $string['loginurl'] = 'Initiate login URL';
 $string['ltiadvdynregerror:invalidopenidconfigjson'] = "There was a problem fetching the OpenID configuration from the platform. The result was not valid JSON. This may also be caused by blocked hosts configuration. Please make sure your site is configured to connect to the platform domain and try again using a new registration URL.";
 $string['ltiadvlauncherror:missingid'] = 'Invalid launch data. The custom claim field \'id\' is required to launch an activity or resource over LTI Advantage.';
 $string['ltiadvlauncherror:invalidid'] = 'Invalid launch data. The resource \'{$a}\' is unavailable or does not exist.';
-$string['ltiadvlauncherror:invalidregistration'] = 'Invalid launch data or tool configuration. A platform registration could not be found (issuer: {$a->platform}, clientid: {$a->clientid}).';
-$string['ltiadvlauncherror:invaliddeployment'] = 'Invalid launch data or tool configuration. The deployment could not be found (deployment_id: {$a}).';
+$string['ltiadvlauncherror:invalidregistration'] = 'Invalid launch data or tool configuration. A platform registration could not be found (issuer: {$a->platform}, client ID: {$a->clientid}).';
+$string['ltiadvlauncherror:invaliddeployment'] = 'Invalid launch data or tool configuration. The deployment could not be found (deployment ID: {$a}).';
 $string['ltilegacy'] = 'Legacy LTI (1.1/2.0)';
 $string['ltilegacydeprecatednotice'] = 'Legacy LTI (1.1/2.0) tools are deprecated. Content should now be shared using LTI Advantage.';
 $string['lti13'] = 'LTI Advantage';
@@ -110,7 +110,7 @@ $string['lti:unenrol'] = 'Unenrol users from the course';
 $string['opensslconfiginvalid'] = 'LTI 1.3 requires a valid openssl.cnf to be configured and available to your web server. Please contact the site administrator to configure and enable openssl for this site.';
 $string['opentool'] = 'Open tool';
 $string['publishedcontent'] = 'Published content';
-$string['publishedcontent_help'] = 'A published resource or activity can be used in registered platforms via the content selection (deep linking) flow. Additionally, a resource link can be created manually in the platform by using the launch url and the custom properties provided.';
+$string['publishedcontent_help'] = 'A published resource or activity can be used in registered platforms via the content selection (deep linking) flow. Additionally, a resource link can be created manually in the platform by using the launch URL and the custom properties provided.';
 $string['platformdetails'] = 'Platform details';
 $string['platformdetailsinfo'] = 'Once the tool has been set up in the platform, details from the platform must be recorded here to complete the registration.
 <ul>
@@ -130,7 +130,7 @@ $string['provisioningmode'] = 'Provisioning mode';
 $string['provisioningmode_help'] = 'This setting determines how accounts are handled on first launch. Several modes are supported:
 <ul>
 <li>New accounts only (automatic). Accounts will be automatically created for users launching from the platform. This is the default for student launches.</li>
-<li>Existing and new accounts (prompt). The user will be given a choice of what to do. They can decide to link an existing account, or have a new account created for them. This is the most flexible option and the default for Teacher launches.</li>
+<li>Existing and new accounts (prompt). The user will be given a choice of what to do. They can decide to link an existing account, or have a new account created for them. This is the most flexible option and the default for teacher launches.</li>
 <li>Existing accounts only (prompt). The user will be asked to link an existing account and cannot access the tool resources without doing so.</li>
 </ul>';
 $string['registerplatform:accesstokenurl'] = 'Access token URL';
@@ -139,7 +139,7 @@ $string['registerplatform:authrequesturl'] = 'Authentication request URL';
 $string['registerplatform:authrequesturl_help'] = 'The URL to which OpenID Connect authentication requests will be sent by the tool. Will be provided by the platform.';
 $string['registerplatform:clientid'] = 'Client ID';
 $string['registerplatform:clientid_help'] = 'A string used to identify the tool registration on the platform. Will be provided by the platform.';
-$string['registerplatform:duplicateregistrationerror'] = 'Invalid Client ID. This Client ID is already registered for the Platform ID provided.';
+$string['registerplatform:duplicateregistrationerror'] = 'Invalid client ID. This client ID is already registered for the platform ID provided.';
 $string['registerplatform:jwksurl'] = 'Public keyset URL';
 $string['registerplatform:jwksurl_help'] = 'The public keyset or JWKS URL, used to get the platform\'s public key. Will be provided by the platform.';
 $string['registerplatform:name'] = 'Platform name';
