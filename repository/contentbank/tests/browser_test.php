@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Content bank repository browser unit tests.
- *
- * @package    repository_contentbank
- * @copyright  2020 Mihail Geshoski <mihail@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace repository_contentbank;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +29,7 @@ require_once("$CFG->dirroot/repository/lib.php");
  * @copyright  2020 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class repository_contentbank_browser_testcase extends advanced_testcase {
+class browser_test extends \advanced_testcase {
 
     /**
      * Test get_content() in the system context with users that have capability to access/view content bank content

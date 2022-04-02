@@ -14,23 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Assign feedback unit tests.
- *
- * @package     mod_assign
- * @category    test
- * @copyright   2019 Ilya Tregubov ilyatregubov@catalyst-au.net
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_assign;
+
+use assignfeedback_editpdf\document_services;
+use assignfeedback_editpdf\combined_document;
+use mod_assign_test_generator;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
-
-use \assignfeedback_editpdf\document_services;
-use \assignfeedback_editpdf\combined_document;
 
 /**
  * Provides the unit tests for feedback.
@@ -40,7 +34,7 @@ use \assignfeedback_editpdf\combined_document;
  * @copyright   2019 Ilya Tregubov ilyatregubov@catalyst-au.net
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assign_feedback_testcase extends advanced_testcase {
+class feedback_test extends \advanced_testcase {
 
     // Use the generator helper.
     use mod_assign_test_generator;

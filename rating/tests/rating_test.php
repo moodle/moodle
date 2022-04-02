@@ -17,11 +17,15 @@
 /**
  * Unit tests for rating/lib.php
  *
- * @package    core_ratings
- * @category   phpunit
+ * @package    core_rating
+ * @category   test
  * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core_rating;
+
+use rating_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,8 +36,13 @@ require_once($CFG->dirroot . '/rating/lib.php');
 
 /**
  * Unit test case for all the rating/lib.php requiring DB mockup & manipulation
+ *
+ * @package    core_rating
+ * @category   test
+ * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_rating_testcase extends advanced_testcase {
+class rating_test extends \advanced_testcase {
 
     protected $syscontext;
     protected $neededcaps = array('view', 'viewall', 'viewany', 'rate');
@@ -55,7 +64,7 @@ class core_rating_testcase extends advanced_testcase {
         global $DB;
 
         // We load 3 items. Each is rated twice. For simplicity itemid == user id of the item owner.
-        $ctxid = context_system::instance()->id;
+        $ctxid = \context_system::instance()->id;
         $ratings = array(
             // User 1's items. Average == 2.
             array('contextid' => $ctxid,
@@ -136,7 +145,7 @@ class core_rating_testcase extends advanced_testcase {
 
         // Prepare the default options.
         $defaultoptions = array (
-            'context'    => context_system::instance(),
+            'context'    => \context_system::instance(),
             'component'  => 'mod_forum',
             'ratingarea' => 'post',
             'scaleid'    => 10,
@@ -345,7 +354,7 @@ class core_rating_testcase extends advanced_testcase {
      * @dataProvider get_aggregate_string_provider
      */
     public function test_get_aggregate_string($method, $aggregate, $isnumeric, $scaleitems, $expectation) {
-        $options = new stdClass();
+        $options = new \stdClass();
         $options->aggregate = $aggregate;
         $options->context = null;
         $options->component = null;
@@ -354,13 +363,13 @@ class core_rating_testcase extends advanced_testcase {
         $options->scaleid = null;
         $options->userid = null;
 
-        $options->settings = new stdClass();
+        $options->settings = new \stdClass();
         $options->settings->aggregationmethod = $method;
-        $options->settings->scale = new stdClass();
+        $options->settings->scale = new \stdClass();
         $options->settings->scale->isnumeric = $isnumeric;
         $options->settings->scale->scaleitems = $scaleitems;
 
-        $rating = new rating($options);
+        $rating = new \rating($options);
         $this->assertEquals($expectation, $rating->get_aggregate_string());
     }
 }

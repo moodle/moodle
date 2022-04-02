@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for user/lib.php.
- *
- * @package    core_user
- * @copyright  2017 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_user;
 
 /**
  * Unit tests for user roles editable class.
@@ -31,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class userroleseditable_testcase extends advanced_testcase {
+class userroleseditable_test extends \advanced_testcase {
     /**
      * Test user roles editable.
      */
@@ -45,7 +37,7 @@ class userroleseditable_testcase extends advanced_testcase {
         $user2 = $this->getDataGenerator()->create_user();
 
         $course1 = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course1->id);
+        $coursecontext = \context_course::instance($course1->id);
         $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id);

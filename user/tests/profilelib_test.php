@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for user/profile/lib.php.
- *
- * @package core_user
- * @copyright 2014 The Open University
- * @licensehttp://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
+namespace core_user;
 
 /**
  * Unit tests for user/profile/lib.php.
@@ -33,7 +23,7 @@ global $CFG;
  * @copyright 2014 The Open University
  * @licensehttp://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_user_profilelib_testcase extends advanced_testcase {
+class profilelib_test extends \advanced_testcase {
     /**
      * Tests profile_get_custom_fields function and checks it is consistent
      * with profile_user_record.
@@ -111,9 +101,9 @@ class core_user_profilelib_testcase extends advanced_testcase {
 
         // Course without sections.
         $course = $this->getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $user = $this->getDataGenerator()->create_user();
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
 
         $this->setUser($user);
 

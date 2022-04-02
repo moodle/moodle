@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests cleaning up the gradebook services task.
- *
- * @package ltiservice_gradebookservices
- * @category test
- * @copyright 2018 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace ltiservice_gradebookservices\task;
 
 /**
  * Tests cleaning up the gradebook services task.
@@ -33,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2018 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class ltiservice_gradebookservices_cleanup_task_testcase extends advanced_testcase {
+class cleanup_test extends \advanced_testcase {
 
     /**
      * Test set up.
@@ -71,7 +62,7 @@ class ltiservice_gradebookservices_cleanup_task_testcase extends advanced_testca
         $gradeitem2 = $DB->get_record('grade_items', $conditions);
 
         // Insert these into the 'ltiservice_gradebookservices' table.
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->gradeitemid = $gradeitem->id;
         $data->courseid = $course->id;
         $DB->insert_record('ltiservice_gradebookservices', $data);
@@ -79,7 +70,7 @@ class ltiservice_gradebookservices_cleanup_task_testcase extends advanced_testca
         $data->gradeitemid = $gradeitem2->id;
         $DB->insert_record('ltiservice_gradebookservices', $data);
 
-        $task = new \ltiservice_gradebookservices\task\cleanup_task();
+        $task = new cleanup_task();
         $task->execute();
 
         // Check they both still exist.
@@ -89,7 +80,7 @@ class ltiservice_gradebookservices_cleanup_task_testcase extends advanced_testca
         course_delete_module($lti->cmid);
 
         // Run the task again.
-        $task = new \ltiservice_gradebookservices\task\cleanup_task();
+        $task = new cleanup_task();
         $task->execute();
 
         // Check only the second grade item exists.
@@ -116,17 +107,17 @@ class ltiservice_gradebookservices_cleanup_task_testcase extends advanced_testca
             'courseid' => $course->id,
             'itemtype' => 'manual'
         ];
-        $gradeitem = new grade_item($params);
+        $gradeitem = new \grade_item($params);
         $gradeitem->insert();
 
         // Insert it into the 'ltiservice_gradebookservices' table.
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->gradeitemid = $gradeitem->id;
         $data->courseid = $course->id;
         $DB->insert_record('ltiservice_gradebookservices', $data);
 
         // Run the task.
-        $task = new \ltiservice_gradebookservices\task\cleanup_task();
+        $task = new cleanup_task();
         $task->execute();
 
         // Check it still exist.
@@ -136,7 +127,7 @@ class ltiservice_gradebookservices_cleanup_task_testcase extends advanced_testca
         $gradeitem->delete();
 
         // Run the task again.
-        $task = new \ltiservice_gradebookservices\task\cleanup_task();
+        $task = new cleanup_task();
         $task->execute();
 
         // Check it has been removed.

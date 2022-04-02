@@ -14,22 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test api's in message lib.
- *
- * @package core_message
- * @category test
- * @copyright 2014 Rajesh Taneja <rajesh@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_message;
+
+use core_message\tests\helper as testhelper;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/message/lib.php');
 
-use \core_message\tests\helper as testhelper;
-
 /**
  * Test api's in message lib.
  *
@@ -38,7 +31,7 @@ use \core_message\tests\helper as testhelper;
  * @copyright 2014 Rajesh Taneja <rajesh@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_message_messagelib_testcase extends advanced_testcase {
+class messagelib_test extends \advanced_testcase {
 
     /** @var phpunit_message_sink keep track of messages. */
     protected $messagesink = null;
@@ -61,8 +54,8 @@ class core_message_messagelib_testcase extends advanced_testcase {
      * sent from a user to another. We should stop using it once {@link message_send()} will support
      * transactions. This is not clean at all, this is just used to add rows to the table.
      *
-     * @param stdClass $userfrom user object of the one sending the message.
-     * @param stdClass $userto user object of the one receiving the message.
+     * @param \stdClass $userfrom user object of the one sending the message.
+     * @param \stdClass $userto user object of the one receiving the message.
      * @param string $message message to send.
      * @param int $notification if the message is a notification.
      * @param int $time the time the message was sent
@@ -76,7 +69,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
         }
 
         if ($notification) {
-            $record = new stdClass();
+            $record = new \stdClass();
             $record->useridfrom = $userfrom->id;
             $record->useridto = $userto->id;
             $record->subject = 'No subject';
@@ -110,7 +103,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
         }
 
         // Ok, send the message.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->useridfrom = $userfrom->id;
         $record->conversationid = $conversationid;
         $record->subject = 'No subject';
