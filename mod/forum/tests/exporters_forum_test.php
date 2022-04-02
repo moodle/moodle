@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The discussion forum tests.
- *
- * @package    mod_forum
- * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace mod_forum;
 
 use mod_forum\local\entities\forum as forum_entity;
 use mod_forum\local\exporters\forum as forum_exporter;
@@ -34,7 +26,7 @@ use mod_forum\local\exporters\forum as forum_exporter;
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_forum_exporters_forum_testcase extends advanced_testcase {
+class exporters_forum_test extends \advanced_testcase {
     /**
      * Test the export function returns expected values.
      */
@@ -51,9 +43,9 @@ class mod_forum_exporters_forum_testcase extends advanced_testcase {
             'groupmode' => VISIBLEGROUPS
         ]);
         $coursemodule = get_coursemodule_from_instance('forum', $forum->id);
-        $context = context_module::instance($coursemodule->id);
+        $context = \context_module::instance($coursemodule->id);
         $entityfactory = \mod_forum\local\container::get_entity_factory();
-        $forum = $entityfactory->get_forum_from_stdclass($forum, $context, $coursemodule, $course);
+        $forum = $entityfactory->get_forum_from_stdClass($forum, $context, $coursemodule, $course);
 
         $exporter = new forum_exporter($forum, [
             'legacydatamapperfactory' => \mod_forum\local\container::get_legacy_data_mapper_factory(),

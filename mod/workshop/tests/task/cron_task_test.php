@@ -14,14 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Provides the {@link mod_workshop_cron_task_testcase} class.
- *
- * @package     mod_workshop
- * @category    test
- * @copyright   2019 David Mudrák <david@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_workshop\task;
+
+use workshop;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,10 +27,12 @@ require_once($CFG->dirroot.'/mod/workshop/lib.php');
 /**
  * Test the functionality provided by  the {@link mod_workshop\task\cron_task} scheduled task.
  *
+ * @package     mod_workshop
+ * @category    test
  * @copyright 2019 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_workshop_cron_task_testcase extends advanced_testcase {
+class cron_task_test extends \advanced_testcase {
 
     /**
      * Test that the phase is automatically switched after the submissions deadline.

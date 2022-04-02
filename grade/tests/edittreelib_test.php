@@ -14,25 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for grade/edit/tree/lib.php.
- *
- * @package  core_grades
- * @category phpunit
- * @author   Andrew Davis
- * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
+namespace core_grades;
+
+use grade_edit_tree;
+use grade_edit_tree_column;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot.'/grade/edit/tree/lib.php');
 
-
 /**
  * Tests grade_edit_tree (deals with the data on the 'Gradebook setup' page in the gradebook)
+ *
+ * @package  core_grades
+ * @category test
+ * @author   Andrew Davis
+ * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class core_grade_edittreelib_testcase extends advanced_testcase {
+class edittreelib_test extends \advanced_testcase {
     public function test_format_number() {
         $numinput = array(0,   1,   1.01, '1.010', 1.2345);
         $numoutput = array(0.0, 1.0, 1.01,  1.01,   1.2345);
@@ -52,9 +52,9 @@ class core_grade_edittreelib_testcase extends advanced_testcase {
         $scale = $this->getDataGenerator()->create_scale();
         $course = $this->getDataGenerator()->create_course();
         $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
-        $modulecontext = context_module::instance($assign->cmid);
+        $modulecontext = \context_module::instance($assign->cmid);
         // The generator returns a dummy object, lets get the real assign object.
-        $assign = new assign($modulecontext, false, false);
+        $assign = new \assign($modulecontext, false, false);
         $cm = $assign->get_course_module();
 
         // Get range column.
@@ -74,7 +74,7 @@ class core_grade_edittreelib_testcase extends advanced_testcase {
         $instance->instance = $instance->id;
         $assign->update_instance($instance);
 
-        $gradeitem = grade_item::fetch($gradeitemparams);
+        $gradeitem = \grade_item::fetch($gradeitemparams);
         $cell = $column->get_item_cell($gradeitem, array());
 
         $this->assertEquals(GRADE_TYPE_VALUE, $gradeitem->gradetype);
@@ -87,7 +87,7 @@ class core_grade_edittreelib_testcase extends advanced_testcase {
         $instance->instance = $instance->id;
         $assign->update_instance($instance);
 
-        $gradeitem = grade_item::fetch($gradeitemparams);
+        $gradeitem = \grade_item::fetch($gradeitemparams);
         $cell = $column->get_item_cell($gradeitem, array());
 
         // Make the expected scale text.
@@ -113,7 +113,7 @@ class core_grade_edittreelib_testcase extends advanced_testcase {
         $instance->instance = $instance->id;
         $assign->update_instance($instance);
 
-        $gradeitem = grade_item::fetch($gradeitemparams);
+        $gradeitem = \grade_item::fetch($gradeitemparams);
         $cell = $column->get_item_cell($gradeitem, array());
 
         $this->assertEquals(GRADE_TYPE_TEXT, $gradeitem->gradetype);
@@ -127,7 +127,7 @@ class core_grade_edittreelib_testcase extends advanced_testcase {
         $instance->instance = $instance->id;
         $assign->update_instance($instance);
 
-        $gradeitem = grade_item::fetch($gradeitemparams);
+        $gradeitem = \grade_item::fetch($gradeitemparams);
         $cell = $column->get_item_cell($gradeitem, array());
 
         $this->assertEquals(GRADE_TYPE_NONE, $gradeitem->gradetype);

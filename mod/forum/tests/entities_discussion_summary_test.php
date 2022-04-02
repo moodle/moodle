@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The discussion_summary entity tests.
- *
- * @package    mod_forum
- * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace mod_forum;
 
 use mod_forum\local\entities\author as author_entity;
 use mod_forum\local\entities\discussion as discussion_entity;
@@ -36,7 +28,7 @@ use mod_forum\local\entities\post as post_entity;
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_forum_entities_discussion_summary_testcase extends advanced_testcase {
+class entities_discussion_summary_test extends \advanced_testcase {
     /**
      * Test the entity returns expected values.
      */

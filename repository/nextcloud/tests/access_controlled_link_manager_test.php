@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests for the repository_nextcloud class.
- *
- * @package     repository_nextcloud
- * @copyright  2017 Project seminar (Learnweb, University of Münster)
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace repository_nextcloud;
 
-use core\oauth2\system_account;
+use testable_access_controlled_link_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,11 +26,13 @@ require_once($CFG->dirroot . '/repository/nextcloud/tests/fixtures/testable_acce
 
 /**
  * Class repository_nextcloud_testcase
+ *
+ * @package repository_nextcloud
  * @group repository_nextcloud
  * @copyright  2017 Project seminar (Learnweb, University of Münster)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class repository_nextcloud_access_controlled_link_manager_testcase extends advanced_testcase {
+class access_controlled_link_manager_test extends \advanced_testcase {
 
     /** @var null|testable_access_controlled_link_manager a malleable variant of the access_controlled_link_manager. */
     public $linkmanager = null;
@@ -64,24 +60,24 @@ class repository_nextcloud_access_controlled_link_manager_testcase extends advan
         $generator->test_create_endpoints($this->issuer->get('id'));
 
         // Mock clients.
-        $this->ocsmockclient = $this->getMockBuilder(repository_nextcloud\ocs_client::class
+        $this->ocsmockclient = $this->getMockBuilder(ocs_client::class
         )->disableOriginalConstructor()->disableOriginalClone()->getMock();
         $this->oauthsystemmock = $this->getMockBuilder(\core\oauth2\client::class
         )->disableOriginalConstructor()->disableOriginalClone()->getMock();
         $systemwebdavclient = $this->getMockBuilder(\webdav_client::class
         )->disableOriginalConstructor()->disableOriginalClone()->getMock();
-        $systemocsclient = $systemocsclient = $this->getMockBuilder(repository_nextcloud\ocs_client::class
+        $systemocsclient = $systemocsclient = $this->getMockBuilder(ocs_client::class
         )->disableOriginalConstructor()->disableOriginalClone()->getMock();
 
         // Pseudo system account user.
         $this->systemaccountusername = 'pseudouser';
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->issuerid = $this->issuer->get('id');
         $record->refreshtoken = 'pseudotoken';
         $record->grantedscopes = 'scopes';
         $record->email = '';
         $record->username = $this->systemaccountusername;
-        $systemaccount = new system_account(0, $record);
+        $systemaccount = new \core\oauth2\system_account(0, $record);
         $systemaccount->create();
 
         $this->linkmanager = new testable_access_controlled_link_manager($this->ocsmockclient,
@@ -220,7 +216,7 @@ XML;
      */
     protected function set_up_mocks_for_create_folder_path($returnisdir, $returnestedcontext, $callmkcol = false,
                                                            $returnmkcol = 201) {
-        $mockcontext = $this->createMock(context_module::class);
+        $mockcontext = $this->createMock(\context_module::class);
         $mockclient = $this->getMockBuilder(\webdav_client::class
         )->disableOriginalConstructor()->disableOriginalClone()->getMock();
         $parsedwebdavurl = parse_url($this->issuer->get_endpoint_url('webdav'));
@@ -345,7 +341,7 @@ XML;
             'path' => '/Kernsystem/Kursbereich Miscellaneous/Kurs Example Course/Datei zet/mod_resource/content/0/picture.png',
             'reshares' => true
         ];
-        $reference = new stdClass();
+        $reference = new \stdClass();
         $reference->link = "/Kernsystem/Kursbereich Miscellaneous/Kurs Example Course/Datei zet/mod_resource/content/0/picture.png";
         $reference->name = "f\u00fcrdennis.png";
         $reference->usesystem = true;
@@ -435,7 +431,7 @@ XML;
      */
     public function test_create_system_dav() {
         // Initialize mock and params.
-        $fakeaccesstoken = new stdClass();
+        $fakeaccesstoken = new \stdClass();
         $fakeaccesstoken->token = "fake access token";
         // Use `atLeastOnce` instead of `exactly(2)` because it is only called a second time on dev systems that allow http://.
         $this->oauthsystemmock->expects($this->atLeastOnce())->method('get_accesstoken')->willReturn($fakeaccesstoken);
@@ -453,7 +449,7 @@ XML;
         $this->delete_endpoints('webdav_endpoint');
         // Creates a new one which requires different ports.
         try {
-            $endpoint = new stdClass();
+            $endpoint = new \stdClass();
             $endpoint->name = "webdav_endpoint";
             $endpoint->url = 'http://www.default.test/webdav/index.php';
             $endpoint->issuerid = $this->issuer->get('id');
@@ -587,7 +583,7 @@ XML;
      * @return ReflectionProperty the resulting reflection property.
      */
     protected function set_private_property($value, $propertyname, $class) {
-        $refclient = new ReflectionClass($class);
+        $refclient = new \ReflectionClass($class);
         $private = $refclient->getProperty($propertyname);
         $private->setAccessible(true);
         $private->setValue($class, $value);
@@ -601,7 +597,7 @@ XML;
      * @return mixed the resulting value.
      */
     protected function get_private_property($propertyname, $class) {
-        $refclient = new ReflectionClass($class);
+        $refclient = new \ReflectionClass($class);
         $private = $refclient->getProperty($propertyname);
         $private->setAccessible(true);
         $property = $private->getValue($private);
@@ -626,7 +622,7 @@ XML;
             return;
         }
         foreach ($arrayofids as $id) {
-            core\oauth2\api::delete_endpoint($id);
+            \core\oauth2\api::delete_endpoint($id);
         }
     }
 
