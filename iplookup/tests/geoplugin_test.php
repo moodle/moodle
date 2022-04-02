@@ -14,22 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * GeoIP tests
- *
- * @package    core_iplookup
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
+namespace core;
 
 /**
  * GeoIp data file parsing test.
+ *
+ * @package    core
+ * @category   test
+ * @copyright  2012 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_iplookup_geoplugin_testcase extends advanced_testcase {
+class geoplugin_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $CFG;

@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests the send email task.
- *
- * @package message_email
- * @category test
- * @copyright 2018 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace message_email\task;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +30,7 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @copyright 2019 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_message_send_email_task_testcase extends advanced_testcase {
+class send_email_test extends \advanced_testcase {
 
     /**
      * Test sending email task.
@@ -72,7 +65,7 @@ class core_message_send_email_task_testcase extends advanced_testcase {
             'core_group',
             'groups',
             $group1->id,
-            context_course::instance($course->id)->id
+            \context_course::instance($course->id)->id
         );
 
         $conversation2 = \core_message\api::create_conversation(
@@ -83,7 +76,7 @@ class core_message_send_email_task_testcase extends advanced_testcase {
             'core_group',
             'groups',
             $group2->id,
-            context_course::instance($course->id)->id
+            \context_course::instance($course->id)->id
         );
 
         // Go through each conversation.
@@ -115,7 +108,7 @@ class core_message_send_email_task_testcase extends advanced_testcase {
 
         // Only 1 email is sent as the messages are included in it at a digest.
         $sink = $this->redirectEmails();
-        $task = new \message_email\task\send_email_task();
+        $task = new send_email_task();
         $task->execute();
         $this->assertEquals(1, $sink->count());
 
@@ -137,7 +130,7 @@ class core_message_send_email_task_testcase extends advanced_testcase {
 
         // Confirm running it again does not send another.
         $sink = $this->redirectEmails();
-        $task = new \message_email\task\send_email_task();
+        $task = new send_email_task();
         $task->execute();
         $this->assertEquals(0, $sink->count());
     }

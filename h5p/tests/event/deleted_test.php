@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for h5p deleted event.
- *
- * @package    core_h5p
- * @category   test
- * @copyright  2019 Carlos Escobedo <carlos@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.8
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_h5p\event;
 
 use core_h5p\local\library\autoloader;
 
@@ -37,7 +27,7 @@ use core_h5p\local\library\autoloader;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.8
  */
-class core_h5p_event_h5p_deleted_testcase extends advanced_testcase {
+class deleted_test extends \advanced_testcase {
 
     /**
      * Setup test.
@@ -74,7 +64,7 @@ class core_h5p_event_h5p_deleted_testcase extends advanced_testcase {
         // Prepare redirect Events.
         $sink = $this->redirectEvents();
         // Test the event H5P deleted.
-        $event = \core_h5p\event\h5p_deleted::create($params);
+        $event = h5p_deleted::create($params);
         $event->trigger();
         $result = $sink->get_events();
         $event = reset($result);
