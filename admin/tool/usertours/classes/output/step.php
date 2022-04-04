@@ -88,8 +88,6 @@ class step implements \renderable {
             'element'   => $step->get_target()->convert_to_css(),
         ];
 
-        $result->content = str_replace("\n", "<br>\n", $result->content);
-
         foreach ($step->get_config_keys() as $key) {
             $result->$key = $step->get_config($key);
         }
