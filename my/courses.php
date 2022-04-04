@@ -58,6 +58,13 @@ $PAGE->blocks->add_region('content');
 $PAGE->set_subpage($currentpage->id);
 $PAGE->set_title(get_string('mycourses'));
 $PAGE->set_heading(get_string('mycourses'));
+
+// No blocks can be edited on this page (including by managers/admins) because:
+// - Course overview is a fixed item on the page and cannot be moved/removed.
+// - We do not want new blocks on the page.
+// - Only global blocks (if any) should be visible on the site panel, and cannot be moved int othe centre pane.
+$PAGE->force_lock_all_blocks();
+
 // Force the add block out of the default area.
 $PAGE->theme->addblockposition  = BLOCK_ADDBLOCK_POSITION_CUSTOM;
 
