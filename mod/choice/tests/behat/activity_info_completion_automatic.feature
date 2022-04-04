@@ -46,7 +46,7 @@ Feature: Automatic completion in the choice activity
   Scenario: Overriding automatic choice completion for a user
     Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Reports" in current page administration
-    And I select "Activity completion" from the "Report type" singleselect
+    And I click on "Activity completion" "link"
     And I click on "Student 1, What to drink?: Not completed" "link"
     And I press "Save changes"
     And I log out

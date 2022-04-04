@@ -60,7 +60,7 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
     And "Test quiz name" should have the "Receive a pass grade or complete all available attempts" completion condition
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Activity completion" from the "Report type" singleselect
+    And I click on "Activity completion" "link"
     And "<expectedactivitycompletion>" "icon" should exist in the "Student 1" "table_row"
 
     Examples:

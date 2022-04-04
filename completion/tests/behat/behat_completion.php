@@ -88,7 +88,7 @@ class behat_completion extends behat_base {
 
         $this->execute("behat_navigation::i_navigate_to_in_current_page_administration",
                 $reportsnode);
-        $this->execute("behat_forms::i_select_from_the_singleselect", [$completionnode, "Report type"]);
+        $this->execute("behat_general::i_click_on_in_the", [$completionnode, "link", "region-main", "region"]);
     }
 
     /**

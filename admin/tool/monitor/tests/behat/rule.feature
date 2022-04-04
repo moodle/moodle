@@ -19,7 +19,7 @@ Feature: tool_monitor_rule
     And I click on "Enable" "link"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Event monitoring rules" from the "Report type" singleselect
+    And I click on "Event monitoring rules" "link"
     And I press "Add a new rule"
     And I set the following fields to these values:
       | name                 | New rule course level                             |
@@ -47,7 +47,7 @@ Feature: tool_monitor_rule
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Event monitoring rules" from the "Report type" singleselect
+    And I click on "Event monitoring rules" "link"
     When I press "Add a new rule"
     And I set the following fields to these values:
       | name                 | New rule                                          |
@@ -68,7 +68,7 @@ Feature: tool_monitor_rule
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Event monitoring rules" from the "Report type" singleselect
+    And I click on "Event monitoring rules" "link"
     When I click on "Delete rule" "link"
     Then I should see "Are you sure you want to delete the rule \"New rule course level\"?"
     And I press "Continue"
@@ -79,7 +79,7 @@ Feature: tool_monitor_rule
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Event monitoring rules" from the "Report type" singleselect
+    And I click on "Event monitoring rules" "link"
     When I click on "Edit rule" "link"
     And I set the following fields to these values:
       | name                 | New rule quiz                                  |
@@ -99,7 +99,7 @@ Feature: tool_monitor_rule
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Event monitoring rules" from the "Report type" singleselect
+    And I click on "Event monitoring rules" "link"
     When I click on "Duplicate rule" "link" in the "New rule course level" "table_row"
     Then I should see "Rule successfully duplicated"
     And "#toolmonitorrules_r1" "css_element" should appear before "#toolmonitorrules_r2" "css_element"
@@ -159,7 +159,7 @@ Feature: tool_monitor_rule
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Event monitoring rules" from the "Report type" singleselect
+    And I click on "Event monitoring rules" "link"
     When I click on "Duplicate rule" "link" in the "New rule site level" "table_row"
     Then I should see "Rule successfully duplicated"
     And "#toolmonitorrules_r2" "css_element" should appear after "#toolmonitorrules_r1" "css_element"

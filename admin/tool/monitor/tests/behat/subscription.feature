@@ -24,7 +24,7 @@ Feature: tool_monitor_subscriptions
     And I click on "Enable" "link"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Event monitoring rules" from the "Report type" singleselect
+    And I click on "Event monitoring rules" "link"
     And I press "Add a new rule"
     And I set the following fields to these values:
       | name                 | New rule course level                             |

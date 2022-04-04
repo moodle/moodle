@@ -43,7 +43,7 @@ Feature: In a participation report, admin can filter student actions
 
     When I am on the "Course 1" course page logged in as admin
     When I navigate to "Reports" in current page administration
-    And I select "Course participation" from the "Report type" singleselect
+    And I click on "Course participation" "link"
     And I set the field "instanceid" to "Test book name"
     And I set the field "roleid" to "Student"
     And I press "Go"
@@ -73,7 +73,7 @@ Feature: In a participation report, admin can filter student actions
     And I log in as "admin"
     And I am on "Course 1" course homepage
     When I navigate to "Reports" in current page administration
-    And I select "Course participation" from the "Report type" singleselect
+    And I click on "Course participation" "link"
     And I set the field "instanceid" to "Test book name"
     And I set the field "roleid" to "Student"
     And I press "Go"
@@ -87,7 +87,7 @@ Feature: In a participation report, admin can filter student actions
     And I log in as "admin"
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Course participation" from the "Report type" singleselect
+    And I click on "Course participation" "link"
     And I set the field "instanceid" to "Test book name"
     And I set the field "roleid" to "Student"
     And I press "Go"
