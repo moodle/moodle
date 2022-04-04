@@ -456,7 +456,7 @@ export default class Drawers {
             getBackdrop().then(backdrop => {
                 backdrop.show();
 
-                const pageWrapper = document.getElementById('page-wrapper');
+                const pageWrapper = document.getElementById('page');
                 pageWrapper.style.overflow = 'hidden';
                 return backdrop;
             })
@@ -522,7 +522,7 @@ export default class Drawers {
             backdrop.hide();
 
             if (isSmall()) {
-                const pageWrapper = document.getElementById('page-wrapper');
+                const pageWrapper = document.getElementById('page');
                 pageWrapper.style.overflow = 'auto';
             }
             return backdrop;

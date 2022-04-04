@@ -13,7 +13,9 @@ body {
         display: flex;
         flex-direction: column;
         #page {
-            flex: 1 0 auto;
+            &:not(.drawers) {
+                flex: 1 0 auto;
+            }
             display: flex;
             flex-direction: column;
             #page-content {
@@ -22,6 +24,21 @@ body {
         }
         #page-footer {
             flex-shrink: 0;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    #page-wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        #page {
+            &:not(.drawers) {
+                flex: 1 0 auto;
+            }
+            display: flex;
+            flex-direction: column;
         }
     }
 }

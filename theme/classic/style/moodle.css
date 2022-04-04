@@ -19575,7 +19575,7 @@ p.arrow_button {
 
 .path-grade-report-grader .gradeparent tr.heading {
   position: sticky;
-  top: 0;
+  top: 0vh;
   z-index: 1; }
 
 .path-grade-report-grader .gradeparent tr.lastrow {
@@ -19867,13 +19867,25 @@ body {
     display: flex;
     flex-direction: column; }
     #page-wrapper #page {
-      flex: 1 0 auto;
       display: flex;
       flex-direction: column; }
+      #page-wrapper #page:not(.drawers) {
+        flex: 1 0 auto; }
       #page-wrapper #page #page-content {
         flex: 1 0 auto; }
     #page-wrapper #page-footer {
       flex-shrink: 0; } }
+
+@media (max-width: 767.98px) {
+  #page-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column; }
+    #page-wrapper #page {
+      display: flex;
+      flex-direction: column; }
+      #page-wrapper #page:not(.drawers) {
+        flex: 1 0 auto; } }
 
 .popover-region {
   position: relative; }
