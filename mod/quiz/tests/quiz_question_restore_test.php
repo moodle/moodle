@@ -283,4 +283,61 @@ class quiz_question_restore_test extends \advanced_testcase {
         $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quizobj->get_quizid(), $newcourseid)->id);
         $this->assertEquals(0, $this->question_count($context->id));
     }
+
+    /**
+     * Test pre 4.0 quiz restore for random question tags.
+     *
+     * @covers ::process_quiz_question_legacy_instance
+     */
+    public function test_pre_4_quiz_restore_for_random_question_tags() {
+        global $USER, $DB;
+        $this->resetAfterTest();
+        $randomtags = [
+            '1' => ['first question', 'one', 'number one'],
+            '2' => ['first question', 'one', 'number one'],
+            '3' => ['one', 'number one', 'second question'],
+        ];
+        $backupid = 'abc';
+        $backuppath = make_backup_temp_directory($backupid);
+        get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
+            __DIR__ . "/fixtures/moodle_311_quiz.mbz", $backuppath);
+
+        // Do the restore to new course with default settings.
+        $categoryid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
+        $newcourseid = \restore_dbops::create_new_course('Test fullname', 'Test shortname', $categoryid);
+        $rc = new \restore_controller($backupid, $newcourseid, \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+            \backup::TARGET_NEW_COURSE);
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Get the information about the resulting course and check that it is set up correctly.
+        $modinfo = get_fast_modinfo($newcourseid);
+        $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
+        $quizobj = \quiz::create($quiz->instance);
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        // Count the questions in quiz qbank.
+        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quizobj->get_quizid(), $newcourseid)->id);
+        $this->assertEquals(2, $this->question_count($context->id));
+
+        // Are the correct slots returned?
+        $slots = $structure->get_slots();
+        $this->assertCount(3, $slots);
+
+        // Check if the tags match with the actual restored data.
+        foreach ($slots as $slot) {
+            $setreference = $DB->get_record('question_set_references',
+                ['itemid' => $slot->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+            $filterconditions = json_decode($setreference->filtercondition);
+            $tags = [];
+            foreach ($filterconditions->tags as $tagstring) {
+                $tag = explode(',', $tagstring);
+                $tags[] = $tag[1];
+            }
+            $this->assertEquals([], array_diff($randomtags[$slot->slot], $tags));
+        }
+
+    }
 }
