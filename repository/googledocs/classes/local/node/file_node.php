@@ -49,6 +49,9 @@ class file_node implements node {
     /** @var string The thumbnail of the file. */
     private $thumbnail;
 
+    /** @var string|null The type of the Google Doc file (document, presentation, etc.), null if it is a regular file. */
+    private $googledoctype;
+
     /**
      * Constructor.
      *
@@ -72,6 +75,8 @@ class file_node implements node {
         // in displaying 16px file thumbnails in the repository. To avoid this, the link can be slightly modified in
         // order to get a larger version of the icon as there isn't an option to request this through the API call.
         $this->thumbnail = !empty($gdfile->iconLink) ? str_replace('/16/', '/64/', $gdfile->iconLink) : '';
+        $this->googledoctype = !isset($gdfile->fileExtension) ?
+            str_replace('application/vnd.google-apps.', '', $gdfile->mimeType) : null;
     }
 
     /**
@@ -97,6 +102,7 @@ class file_node implements node {
                     'name' => $this->name,
                     'link' => $this->link,
                     'exportformat' => $this->exportformat,
+                    'googledoctype' => $this->googledoctype,
                 ]
             ),
             'date' => $this->modified,
