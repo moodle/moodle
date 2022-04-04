@@ -130,6 +130,8 @@
 
 .path-admin-tool-lp .competency-rule-points {
     margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .path-admin-tool-lp .competency-rule-points table input {
