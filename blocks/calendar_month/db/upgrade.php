@@ -37,6 +37,10 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once("{$CFG->libdir}/db/upgradelib.php");
+
 /**
  * Upgrade the calendar_month block
  * @param int $oldversion
@@ -58,36 +62,8 @@ function xmldb_block_calendar_month_upgrade($oldversion, $block) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2022030200) {
-        $context = context_system::instance();
-
-        // Begin looking for any and all customised /my pages.
-        $pageselect = 'name = :name and private = :private';
-        $pageparams['name'] = '__default';
-        $pageparams['private'] = 1;
-        $pages = $DB->get_recordset_select('my_pages', $pageselect, $pageparams);
-        foreach ($pages as $subpage) {
-            $blockinstance = $DB->get_record('block_instances', ['blockname' => 'calendar_month',
-                'pagetypepattern' => 'my-index', 'subpagepattern' => $subpage->id]);
-
-            if (!$blockinstance) {
-                // Insert the calendar month into the default index page.
-                $blockinstance = new stdClass;
-                $blockinstance->blockname = 'calendar_month';
-                $blockinstance->parentcontextid = $context->id;
-                $blockinstance->showinsubcontexts = false;
-                $blockinstance->pagetypepattern = 'my-index';
-                $blockinstance->subpagepattern = $subpage->id;
-                $blockinstance->defaultregion = 'content';
-                $blockinstance->defaultweight = 0;
-                $blockinstance->timecreated = time();
-                $blockinstance->timemodified = time();
-                $DB->insert_record('block_instances', $blockinstance);
-            } else if ($blockinstance->defaultregion !== 'content') {
-                $blockinstance->defaultregion = 'content';
-                $DB->update_record('block_instances', $blockinstance);
-            }
-        }
-        $pages->close();
+        // Update all calendar_month blocks in the my-index to be in the main content region.
+        upgrade_block_set_defaultregion('calendar_month', '__default', 'my-index', 'content');
         upgrade_block_savepoint(true, 2022030200, 'calendar_month', false);
     }
 
