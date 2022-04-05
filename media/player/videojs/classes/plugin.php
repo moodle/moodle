@@ -419,6 +419,9 @@ class media_videojs_plugin extends core_media_player_native {
      * @param moodle_page $page The page we are going to add requirements to.
      */
     public function setup($page) {
+        if (during_initial_install() || is_major_upgrade_required()) {
+            return;
+        }
 
         // Load dynamic loader. It will scan page for videojs media and load necessary modules.
         // Loader will be loaded on absolutely every page, however the videojs will only be loaded
