@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 use mod_quiz\question\bank\qbank_helper;
 use \mod_quiz\structure;
 use \html_writer;
-use \qbank_previewquestion\helper;
 use renderable;
 
 /**
@@ -733,7 +732,6 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function question(structure $structure, int $slot, \moodle_url $pageurl) {
-        global $DB;
         // Get the data required by the question_slot template.
         $slotid = $structure->get_slot_id_for_slot($slot);
 

@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_quiz\question\bank\qbank_helper;
+
 /**
  * Class mod_quiz_local_structure_slot_random_test
  * Class for tests related to the {@link \mod_quiz\local\structure\slot_random} class.
@@ -352,7 +354,7 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
     }
 
     public function test_insert() {
-        global $SITE, $DB;
+        global $SITE;
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -360,6 +362,7 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         // Create a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $quiz = $quizgenerator->create_instance(array('course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0));
+        $quizcontext = context_module::instance($quiz->cmid);
 
         // Create a question category in the system context.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -400,7 +403,7 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         $randomslotdata = new stdClass();
         $randomslotdata->quizid = $quiz->id;
         $randomslotdata->maxmark = 1;
-        $randomslotdata->usingcontextid = context_module::instance($quiz->cmid)->id;
+        $randomslotdata->usingcontextid = $quizcontext->id;
         $randomslotdata->questionscontextid = $category->contextid;
 
         // Insert the random question to the quiz.

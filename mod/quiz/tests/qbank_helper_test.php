@@ -37,6 +37,11 @@ class qbank_helper_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
     /**
+     * @var \stdClass test student user.
+     */
+    protected $student;
+
+    /**
      * Called before every test.
      */
     public function setUp(): void {
@@ -79,29 +84,33 @@ class qbank_helper_test extends \advanced_testcase {
      * @covers ::get_version_options
      * @covers ::get_question_for_redo
      * @covers ::get_always_latest_version_question_ids
-     * @covers ::question_load_random_questions
      */
     public function test_reference_records() {
         $this->resetAfterTest();
+
         $quiz = $this->create_test_quiz($this->course);
         // Test for questions from a different context.
         $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quiz->id, $this->course->id)->id);
+
         // Create a couple of questions.
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category(['contextid' => $context->id]);
         $numq = $questiongenerator->create_question('essay', null,
             ['category' => $cat->id, 'name' => 'This is the first version']);
+
         // Create two version.
         $questiongenerator->update_question($numq, null, ['name' => 'This is the second version']);
         $questiongenerator->update_question($numq, null, ['name' => 'This is the third version']);
         quiz_add_quiz_question($numq->id, $quiz);
+
         // Create the quiz object.
         $quizobj = \quiz::create($quiz->id);
         $quizobj->preload_questions();
         $quizobj->load_questions();
         $questions = $quizobj->get_questions();
         $question = reset($questions);
-        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $structure = structure::create_for_quiz($quizobj);
         $slots = $structure->get_slots();
         $slot = reset($slots);
         $this->assertEquals(3, count(qbank_helper::get_version_options($question->id)));
@@ -119,6 +128,7 @@ class qbank_helper_test extends \advanced_testcase {
         $questions = $quizobj->get_questions();
         $question = reset($questions);
         $this->assertEquals($question->id, qbank_helper::get_question_for_redo($slot->id));
+
         // Test always latest version question ids.
         $latestquestionids = qbank_helper::get_always_latest_version_question_ids($quiz->id);
         $this->assertEquals($question->id, reset($latestquestionids));

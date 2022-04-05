@@ -903,7 +903,7 @@ class question_type {
      *                         specific information (it is passed by reference).
      */
     public function get_question_options($question) {
-        global $CFG, $DB, $OUTPUT;
+        global $DB, $OUTPUT;
 
         if (!isset($question->options)) {
             $question->options = new stdClass();
