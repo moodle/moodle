@@ -83,7 +83,7 @@
      case "question.png":
 
        $question = $DB->get_record("survey_questions", array("id"=>$qid));
-       $question->text = get_string($question->text, "survey");
+       $question->text = wordwrap(get_string($question->text, "survey"), SURVEY_QLENGTH_WRAP);
        $question->options = get_string($question->options, "survey");
 
        $options = explode(",",$question->options);
