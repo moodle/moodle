@@ -489,8 +489,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
         if (!$messages) {
             return '';
         }
-        return $this->box($this->heading(get_string('accessnoticesheader', 'quiz'), 3) .
-                $this->access_messages($messages), 'quizaccessnotices');
+        return $this->notification(
+            html_writer::tag('p', get_string('accessnoticesheader', 'quiz')) . $this->access_messages($messages),
+            'warning',
+            false
+        );
     }
 
     /**

@@ -208,14 +208,15 @@ if (!$viewobj->quizhasquestions) {
 
 } else {
     if ($unfinished) {
-        if ($canattempt) {
-            $viewobj->buttontext = get_string('continueattemptquiz', 'quiz');
-        } else if ($canpreview) {
+        if ($canpreview) {
             $viewobj->buttontext = get_string('continuepreview', 'quiz');
+        } else if ($canattempt) {
+            $viewobj->buttontext = get_string('continueattemptquiz', 'quiz');
         }
-
     } else {
-        if ($canattempt) {
+        if ($canpreview) {
+            $viewobj->buttontext = get_string('previewquizstart', 'quiz');
+        } else if ($canattempt) {
             $viewobj->preventmessages = $viewobj->accessmanager->prevent_new_attempt(
                     $viewobj->numattempts, $viewobj->lastfinishedattempt);
             if ($viewobj->preventmessages) {
@@ -225,20 +226,21 @@ if (!$viewobj->quizhasquestions) {
             } else {
                 $viewobj->buttontext = get_string('reattemptquiz', 'quiz');
             }
-
-        } else if ($canpreview) {
-            $viewobj->buttontext = get_string('previewquizstart', 'quiz');
         }
     }
 
-    // If, so far, we think a button should be printed, so check if they will be
-    // allowed to access it.
-    if ($viewobj->buttontext) {
+    // Users who can preview the quiz should be able to see all messages for not being able to access the quiz.
+    if ($canpreview) {
+        $viewobj->preventmessages = $viewobj->accessmanager->prevent_access();
+    } else if ($viewobj->buttontext) {
+        // If, so far, we think a button should be printed, so check if they will be allowed to access it.
         if (!$viewobj->moreattempts) {
             $viewobj->buttontext = '';
-        } else if ($canattempt
-                && $viewobj->preventmessages = $viewobj->accessmanager->prevent_access()) {
-            $viewobj->buttontext = '';
+        } else if ($canattempt) {
+            $viewobj->preventmessages = $viewobj->accessmanager->prevent_access();
+            if ($viewobj->preventmessages) {
+                $viewobj->buttontext = '';
+            }
         }
     }
 }

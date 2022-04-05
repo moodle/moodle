@@ -54,9 +54,27 @@ Feature: Preview a quiz as a teacher
     And I follow "Finish review"
     And "Review" "link" in the "Preview" "table_row" should be visible
 
-  @javascript
   Scenario: Preview the quiz
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
+    When I press "Preview quiz"
+    Then I should see "Question 1"
+    And "Start a new preview" "button" should exist
+
+  Scenario: Teachers should see a notice if the quiz is not available to students
+    Given the following "activities" exist:
+      | activity   | name   | course | timeclose     |
+      | quiz       | Quiz 2 | C1     | ##yesterday## |
+    And quiz "Quiz 2" contains the following questions:
+      | question | page | maxmark |
+      | TF1      | 1    |         |
+      | TF2      | 1    | 3.0     |
+    When I am on the "Quiz 2" "mod_quiz > View" page logged in as "admin"
+    And I should see "This quiz is not currently available"
+    And I press "Preview quiz"
+    Then I should see "if this were a real attempt, you would be blocked" in the ".alert-warning" "css_element"
+
+  Scenario: Admins should be able to preview a quiz
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "admin"
     When I press "Preview quiz"
     Then I should see "Question 1"
     And "Start a new preview" "button" should exist
