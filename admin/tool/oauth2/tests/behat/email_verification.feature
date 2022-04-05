@@ -16,10 +16,10 @@ Feature: OAuth2 email verification
       | Name                       | Testing service                           |
       | Client ID                  | thisistheclientid                         |
       | Client secret              | supersecret                               |
-    Then I should not see "I understand that disabling email verification can be a security issue"
+    Then I should not see "I understand that disabling email verification can be a security issue."
     And I click on "Require email verification" "checkbox"
-    And I should see "I understand that disabling email verification can be a security issue"
-    And I click on "I understand that disabling email verification can be a security issue" "checkbox"
+    And I should see "I understand that disabling email verification can be a security issue."
+    And I click on "I understand that disabling email verification can be a security issue." "checkbox"
     And I press "Save changes"
     And I should see "Changes saved"
     And I click on "Edit" "link" in the "Testing service" "table_row"
