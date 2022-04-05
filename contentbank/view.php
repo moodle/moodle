@@ -66,7 +66,11 @@ if ($context->contextlevel == CONTEXT_COURSECAT) {
 }
 
 $PAGE->set_url(new \moodle_url('/contentbank/view.php', ['id' => $id]));
-$PAGE->set_context($context);
+if ($context->id == \context_system::instance()->id) {
+    $PAGE->set_context(context_course::instance($context->id));
+} else {
+    $PAGE->set_context($context);
+}
 $PAGE->navbar->add($record->name);
 $title .= ": ".$record->name;
 $PAGE->set_title($title);

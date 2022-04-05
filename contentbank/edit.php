@@ -93,7 +93,11 @@ if ($context->contextlevel == CONTEXT_COURSECAT) {
 }
 
 $PAGE->set_url(new \moodle_url('/contentbank/edit.php', $values));
-$PAGE->set_context($context);
+if ($context->id == \context_system::instance()->id) {
+    $PAGE->set_context(context_course::instance($context->id));
+} else {
+    $PAGE->set_context($context);
+}
 if ($content) {
     $PAGE->navbar->add($content->get_name(), new \moodle_url('/contentbank/view.php', ['id' => $id]));
 }
