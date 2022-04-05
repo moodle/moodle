@@ -728,8 +728,6 @@ class secondary extends view {
                     $siteadminnode->add_node(clone $child);
                 }
             }
-        } else if ($this->page->course->id == $SITE->id) {
-            $this->load_course_navigation();
         }
     }
 
