@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Question statistics';
-$string['privacy:metadata'] = 'The Question statistics question bank plugin does not store any user data.';
+$string['privacy:metadata'] = 'The Question statistics question bank plugin does not store any personal data.';
 
 // Columns.
 $string['facility_index'] = 'Facility index';

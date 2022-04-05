@@ -27,6 +27,6 @@ $string['close_history'] = 'Close';
 $string['history_action'] = 'History';
 $string['history_header'] = 'Question history';
 $string['pluginname'] = 'Question history';
-$string['privacy:metadata'] = 'Question history plugin does not store any user data.';
+$string['privacy:metadata'] = 'The Question history question bank plugin does not store any personal data.';
 $string['questionversionnumber'] = 'Version';
 $string['questionversiondata'] = 'v{$a}';

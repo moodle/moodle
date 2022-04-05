@@ -11,7 +11,7 @@ Feature: Enable dashboard setting
       | defaulthomepage | 2 |
     When I log in as "admin"
     And I navigate to "Appearance > Navigation" in site administration
-    Then the field "Enable dashboard" matches value "0"
+    Then the field "Enable Dashboard" matches value "0"
     And I should not see "Allow guest access to Dashboard"
     And I should not see "Dashboard" in the "Start page for users" "select"
     And I follow "Appearance"

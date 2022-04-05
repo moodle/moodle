@@ -135,7 +135,7 @@ $string['config_server_url_description'] = 'The default credentials are for a <a
 <li>Student webcams are only visible to the moderator.</li>
 </ol>';
 $string['config_shared_secret'] = 'BigBlueButton shared secret';
-$string['config_shared_secret_description'] = 'The security secret of your BigBlueButton server. The default secret is for a free BigBlueButton server provided by Blindside Networks.';
+$string['config_shared_secret_description'] = 'The security secret of your BigBlueButton server. The default secret is for a free BigBlueButton service provided by Blindside Networks.';
 
 $string['config_recording'] = 'Recording';
 $string['config_recording_description'] = 'These settings are feature specific';
