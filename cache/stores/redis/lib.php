@@ -468,7 +468,6 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      * Cleans up after an instance of the store.
      */
     public function instance_deleted() {
-        $this->purge();
         $this->redis->close();
         unset($this->redis);
     }
