@@ -25,8 +25,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
+
+use mod_quiz\question\bank\qbank_helper;
 
 
 /**
@@ -79,7 +80,11 @@ class quiz {
     /** @var context the quiz context. */
     protected $context;
 
-    /** @var stdClass[] of questions augmented with slot information. */
+    /**
+     * @var stdClass[] of questions augmented with slot information. For non-random
+     *     questions, the array key is question id. For random quesions it is 's' . $slotid.
+     *     probalby best to use ->questionid field of the object instead.
+     */
     protected $questions = null;
     /** @var stdClass[] of quiz_section rows. */
     protected $sections = null;
@@ -145,35 +150,33 @@ class quiz {
      * Load just basic information about all the questions in this quiz.
      */
     public function preload_questions() {
-        $specificquestionids = \mod_quiz\question\bank\qbank_helper::get_specific_version_question_ids($this->quiz->id);
-        $latestquestionids = \mod_quiz\question\bank\qbank_helper::get_always_latest_version_question_ids($this->quiz->id);
-        $questionids = array_merge($specificquestionids, $latestquestionids);
-        $questiondata = [];
-        if (!empty($questionids)) {
-            $questiondata = \mod_quiz\question\bank\qbank_helper::get_question_structure_data($this->quiz->id, $questionids, true);
+        $slots = qbank_helper::get_question_structure($this->quiz->id, $this->context);
+        $this->questions = [];
+        foreach ($slots as $slot) {
+            $this->questions[$slot->questionid] = $slot;
         }
-        $allquestiondata = \mod_quiz\question\bank\qbank_helper::question_load_random_questions(
-                $this->quiz->id, $questiondata);
-        $this->questions = $allquestiondata;
     }
 
     /**
      * Fully load some or all of the questions for this quiz. You must call
      * {@link preload_questions()} first.
      *
-     * @param array|null $questionids question ids of the questions to load. null for all.
+     * @param array|null $deprecated no longer supported (it was not used).
      */
-    public function load_questions($questionids = null) {
+    public function load_questions($deprecated = null) {
+        if ($deprecated !== null) {
+            debugging('The argument to quiz::load_questions is no longer supported. ' .
+                    'All questions are always loaded.', DEBUG_DEVELOPER);
+        }
         if ($this->questions === null) {
             throw new coding_exception('You must call preload_questions before calling load_questions.');
         }
-        if (is_null($questionids)) {
-            $questionids = array_keys($this->questions);
-        }
-        $questionstoprocess = array();
-        foreach ($questionids as $id) {
-            if (array_key_exists($id, $this->questions)) {
-                $questionstoprocess[$id] = $this->questions[$id];
+
+        $questionstoprocess = [];
+        foreach ($this->questions as $question) {
+            if (is_number($question->questionid)) {
+                $question->id = $question->questionid;
+                $questionstoprocess[$question->questionid] = $question;
             }
         }
         get_question_options($questionstoprocess);
@@ -540,8 +543,17 @@ class quiz {
         $qcategories = array();
 
         foreach ($this->get_questions() as $questiondata) {
-            if (!in_array($questiondata->qtype, $questiontypes)) {
-                $questiontypes[] = $questiondata->qtype;
+            if ($questiondata->qtype == 'random' and $includepotential) {
+                if (!isset($qcategories[$questiondata->category])) {
+                    $qcategories[$questiondata->category] = false;
+                }
+                if ($questiondata->includingsubcategories) {
+                    $qcategories[$questiondata->category] = true;
+                }
+            } else {
+                if (!in_array($questiondata->qtype, $questiontypes)) {
+                    $questiontypes[] = $questiondata->qtype;
+                }
             }
         }
 

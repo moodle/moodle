@@ -353,7 +353,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $questionreference->questionarea = 'slot';
             $questionreference->itemid = $data->id;
             $questionreference->questionbankentryid = $question->questionbankentryid;
-            $questionreference->version = $question->version;
+            $questionreference->version = null; // Default to Always latest.
             $DB->insert_record('question_references', $questionreference);
         }
     }

@@ -61,23 +61,37 @@ class quiz_question_restore_test extends \advanced_testcase {
      * @covers ::get_question_structure
      */
     public function test_quiz_restore_in_a_different_course_using_course_question_bank() {
-        global $DB;
         $this->resetAfterTest();
+
+        // Create the test quiz.
         $quiz = $this->create_test_quiz($this->course);
+        $oldquizcontext = \context_module::instance($quiz->cmid);
         // Test for questions from a different context.
-        $context = \context_course::instance($this->course->id);
+        $coursecontext = \context_course::instance($this->course->id);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->add_regular_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
-        $this->add_random_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
+        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $coursecontext->id]);
+        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $coursecontext->id]);
+
+        // Make the backup.
         $backupid = $this->backup_quiz($quiz, $this->user);
+
         // Delete the current course to make sure there is no data.
         delete_course($this->course, false);
-        // Check if the questions and associated datas are deleted properly.
-        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure($quiz->id)));
+
+        // Check if the questions and associated data are deleted properly.
+        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
+                $quiz->id, $oldquizcontext)));
+
+        /// Restore the course.
         $newcourse = $this->getDataGenerator()->create_course();
         $this->restore_quiz($backupid, $newcourse, $this->user);
-        $module = $DB->get_record('quiz', ['course' => $newcourse->id]);
-        $this->assertEquals(3, count(\mod_quiz\question\bank\qbank_helper::get_question_structure($module->id)));
+
+        // Verify.
+        $modules = get_fast_modinfo($newcourse->id)->get_instances_of('quiz');
+        $module = reset($modules);
+        $questions = \mod_quiz\question\bank\qbank_helper::get_question_structure(
+                $module->instance, $module->context);
+        $this->assertCount(3, $questions);
     }
 
     /**
@@ -103,11 +117,18 @@ class quiz_question_restore_test extends \advanced_testcase {
         delete_course($this->course, false);
 
         // Check if the questions and associated datas are deleted properly.
-        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure($quiz->id)));
+        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
+                $quiz->id, $quizcontext)));
+
+        /// Restore the course.
         $newcourse = $this->getDataGenerator()->create_course();
         $this->restore_quiz($backupid, $newcourse, $this->user);
-        $module = $DB->get_record('quiz', ['course' => $newcourse->id]);
-        $this->assertEquals(3, count(\mod_quiz\question\bank\qbank_helper::get_question_structure($module->id)));
+
+        // Verify.
+        $modules = get_fast_modinfo($newcourse->id)->get_instances_of('quiz');
+        $module = reset($modules);
+        $this->assertEquals(3, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
+                $module->instance, $module->context)));
     }
 
     /**
@@ -179,28 +200,37 @@ class quiz_question_restore_test extends \advanced_testcase {
      * @covers ::get_question_structure
      */
     public function test_quiz_restore_with_attempts() {
-        global $DB;
         $this->resetAfterTest();
+
+        // Create a quiz.
         $quiz = $this->create_test_quiz($this->course);
-        // Test for questions from a different context.
-        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quiz->id, $this->course->id)->id);
+        $quizcontext = \context_module::instance($quiz->cmid);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->add_regular_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
-        $this->add_random_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
-        list($quizobj, $quba, $attemptobj) = $this->attempt_quiz($quiz, $this->student);
-        $userattempts = quiz_get_user_attempts($quiz->id, $this->student->id);
-        // Count the attempts for this quiz.
+        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $quizcontext->id]);
+        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $quizcontext->id]);
+
+        // Attempt it as a student, and check.
+        /** @var \question_usage_by_activity $quba */
+        [, $quba] = $this->attempt_quiz($quiz, $this->student);
         $this->assertEquals(3, $quba->question_count());
-        $this->assertEquals(1, count($userattempts));
+        $this->assertCount(1, quiz_get_user_attempts($quiz->id, $this->student->id));
+
+        // Make the backup.
         $backupid = $this->backup_quiz($quiz, $this->user);
+
         // Delete the current course to make sure there is no data.
         delete_course($this->course, false);
+
+        // Restore the backup.
         $newcourse = $this->getDataGenerator()->create_course();
         $this->restore_quiz($backupid, $newcourse, $this->user);
-        $module = $DB->get_record('quiz', ['course' => $newcourse->id]);
-        $userattempts = quiz_get_user_attempts($module->id, $this->student->id);
-        $this->assertEquals(1, count($userattempts));
-        $this->assertEquals(3, count(\mod_quiz\question\bank\qbank_helper::get_question_structure($module->id)));
+
+        // Verify.
+        $modules = get_fast_modinfo($newcourse->id)->get_instances_of('quiz');
+        $module = reset($modules);
+        $this->assertCount(1, quiz_get_user_attempts($module->instance, $this->student->id));
+        $this->assertCount(3, \mod_quiz\question\bank\qbank_helper::get_question_structure(
+                $module->instance, $module->context));
     }
 
     /**

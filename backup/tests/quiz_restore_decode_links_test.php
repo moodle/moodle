@@ -80,10 +80,13 @@ class restore_quiz_decode_testcase extends \core_privacy\tests\provider_testcase
 
         $newcm = duplicate_module($course, get_fast_modinfo($course)->get_cm($quiz->cmid));
 
-        $quizquestions = \mod_quiz\question\bank\qbank_helper::get_question_structure_data($newcm->instance);
+        $quizquestions = \mod_quiz\question\bank\qbank_helper::get_question_structure(
+                $newcm->instance, context_module::instance($newcm->id));
         $questionids = [];
         foreach ($quizquestions as $quizquestion) {
-            $questionids[] = $quizquestion->id;
+            if ($quizquestion->questionid) {
+                $questionids[] = $quizquestion->questionid;
+            }
         }
         list($condition, $param) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'questionid');
         $condition = 'WHERE qa.question ' . $condition;

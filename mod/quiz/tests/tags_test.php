@@ -81,7 +81,7 @@ class mod_quiz_tags_testcase extends advanced_testcase {
         $this->assertEquals("{$tag2->id},{$tag2->name}", "{$slottags[0]},{$slottags[1]}");
 
         $defaultcategory = question_get_default_category(context_course::instance($newcourseid)->id);
-        $this->assertEquals($defaultcategory->id, $question->categoryobject->id);
+        $this->assertEquals($defaultcategory->id, $question->category);
         $randomincludingsubcategories = $DB->get_record('question_set_references',
             ['itemid' => reset($slots)->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
         $filtercondition = json_decode($randomincludingsubcategories->filtercondition);
@@ -95,7 +95,9 @@ class mod_quiz_tags_testcase extends advanced_testcase {
      * @return array the tags.
      */
     protected function get_tags_for_slot(int $slotid): array {
-        $referencedata = \mod_quiz\question\bank\qbank_helper::get_random_question_data_from_slot($slotid);
+        global $DB;
+        $referencedata = $DB->get_record('question_set_references',
+                ['itemid' => $slotid, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
         if (isset($referencedata->filtercondition)) {
             $filtercondition = json_decode($referencedata->filtercondition);
             if (isset($filtercondition->tags)) {

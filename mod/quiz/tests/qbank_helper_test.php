@@ -65,17 +65,14 @@ class qbank_helper_test extends \advanced_testcase {
         // Test for questions from a different context.
         $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quiz->id, $this->course->id)->id);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->add_random_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
+        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $context->id]);
         // Create the quiz object.
         $quizobj = \quiz::create($quiz->id);
-        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $structure = structure::create_for_quiz($quizobj);
         $slots = $structure->get_slots();
         foreach ($slots as $slot) {
             $this->assertEquals(true, qbank_helper::is_random($slot->id));
-            // Test random data for slot.
-            $this->assertEquals($slot->id, qbank_helper::get_random_question_data_from_slot($slot->id)->itemid);
         }
-
     }
 
     /**
@@ -83,7 +80,6 @@ class qbank_helper_test extends \advanced_testcase {
      *
      * @covers ::get_version_options
      * @covers ::get_question_for_redo
-     * @covers ::get_always_latest_version_question_ids
      */
     public function test_reference_records() {
         $this->resetAfterTest();
@@ -119,8 +115,10 @@ class qbank_helper_test extends \advanced_testcase {
         $questions = $quizobj->get_questions();
         $question = reset($questions);
         $this->assertEquals($question->id, qbank_helper::get_question_for_redo($slot->id));
+
         // Create another version.
         $questiongenerator->update_question($numq, null, ['name' => 'This is the latest version']);
+
         // Change to always latest.
         submit_question_version::execute($slot->id, 0);
         $quizobj->preload_questions();
@@ -128,108 +126,46 @@ class qbank_helper_test extends \advanced_testcase {
         $questions = $quizobj->get_questions();
         $question = reset($questions);
         $this->assertEquals($question->id, qbank_helper::get_question_for_redo($slot->id));
-
-        // Test always latest version question ids.
-        $latestquestionids = qbank_helper::get_always_latest_version_question_ids($quiz->id);
-        $this->assertEquals($question->id, reset($latestquestionids));
     }
 
     /**
      * Test question structure data.
      *
      * @covers ::get_question_structure
-     * @covers ::get_question_structure_data
      * @covers ::get_always_latest_version_question_ids
-     * @covers ::question_load_random_questions
      */
     public function test_get_question_structure() {
         $this->resetAfterTest();
+
+        // Create a quiz.
         $quiz = $this->create_test_quiz($this->course);
-        // Test for questions from a different context.
-        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quiz->id, $this->course->id)->id);
-        // Create a couple of questions.
+        $quizcontext = \context_module::instance(get_coursemodule_from_instance("quiz", $quiz->id, $this->course->id)->id);
+
+        // Create a question in the quiz question bank.
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $cat = $questiongenerator->create_question_category(['contextid' => $context->id]);
-        $numq = $questiongenerator->create_question('essay', null,
+        $cat = $questiongenerator->create_question_category(['contextid' => $quizcontext->id]);
+        $q = $questiongenerator->create_question('essay', null,
             ['category' => $cat->id, 'name' => 'This is the first version']);
-        // Create two version.
-        $questiongenerator->update_question($numq, null, ['name' => 'This is the second version']);
-        $questiongenerator->update_question($numq, null, ['name' => 'This is the third version']);
-        quiz_add_quiz_question($numq->id, $quiz);
-        // Create the quiz object.
+
+        // Edit it to create a second and third version.
+        $questiongenerator->update_question($q, null, ['name' => 'This is the second version']);
+        $finalq = $questiongenerator->update_question($q, null, ['name' => 'This is the third version']);
+
+        // Add the question to the quiz.
+        quiz_add_quiz_question($q->id, $quiz);
+
+        // Load the quiz object and check.
         $quizobj = \quiz::create($quiz->id);
         $quizobj->preload_questions();
         $quizobj->load_questions();
         $questions = $quizobj->get_questions();
         $question = reset($questions);
-        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $this->assertEquals($finalq->id, $question->id);
+
+        $structure = structure::create_for_quiz($quizobj);
         $slots = $structure->get_slots();
         $slot = reset($slots);
-        $structuredatas = qbank_helper::get_question_structure($quiz->id);
-        $structuredata = reset($structuredatas);
-        $this->assertEquals($structuredata->slotid, $slot->id);
-        $this->assertEquals($structuredata->id, $question->id);
+        $this->assertEquals($finalq->id, $slot->questionid);
     }
-
-    /**
-     * Test to get the version information for a question to show in the version selection dropdown.
-     *
-     * @covers ::get_question_version_info
-     */
-    public function test_get_question_version_info() {
-        $this->resetAfterTest();
-        $quiz = $this->create_test_quiz($this->course);
-        // Test for questions from a different context.
-        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quiz->id, $this->course->id)->id);
-        // Create a couple of questions.
-        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $cat = $questiongenerator->create_question_category(['contextid' => $context->id]);
-        $numq = $questiongenerator->create_question('essay', null,
-            ['category' => $cat->id, 'name' => 'This is the first version']);
-        // Create two version.
-        $questiongenerator->update_question($numq, null, ['name' => 'This is the second version']);
-        $questiongenerator->update_question($numq, null, ['name' => 'This is the third version']);
-        quiz_add_quiz_question($numq->id, $quiz);
-        // Create the quiz object.
-        $quizobj = \quiz::create($quiz->id);
-        $quizobj->preload_questions();
-        $quizobj->load_questions();
-        $questions = $quizobj->get_questions();
-        $question = reset($questions);
-        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
-        $slots = $structure->get_slots();
-        $slot = reset($slots);
-        $versiondata = qbank_helper::get_question_version_info($question->id, $slot->id);
-        $this->assertEquals(4, count($versiondata));
-        $this->assertEquals('Always latest', $versiondata[0]->versionvalue);
-        $this->assertEquals('v3 (latest)', $versiondata[1]->versionvalue);
-        $this->assertEquals('v1', $versiondata[3]->versionvalue);
-    }
-
-    /**
-     * Test get the question ids for specific question version.
-     *
-     * @covers ::get_specific_version_question_ids
-     */
-    public function test_get_specific_version_question_ids() {
-        global $DB;
-        $this->resetAfterTest();
-        $quiz = $this->create_test_quiz($this->course);
-        // Test for questions from a different context.
-        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quiz->id, $this->course->id)->id);
-        // Create a couple of questions.
-        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $cat = $questiongenerator->create_question_category(['contextid' => $context->id]);
-        $numq = $questiongenerator->create_question('essay', null,
-            ['category' => $cat->id, 'name' => 'This is the first version']);
-        // Create two version.
-        $questiongenerator->update_question($numq, null, ['name' => 'This is the second version']);
-        $questiongenerator->update_question($numq, null, ['name' => 'This is the third version']);
-        quiz_add_quiz_question($numq->id, $quiz);
-        submit_question_version::execute($DB->get_field('quiz_slots', 'id', ['quizid' => $quiz->id, 'slot' => 1]), 3);
-        $specificversionquestionid = qbank_helper::get_specific_version_question_ids($quiz->id);
-        $specificversionquestionid = reset($specificversionquestionid);
-        $this->assertEquals($numq->id, $specificversionquestionid);
-    }
-
 }

@@ -930,4 +930,37 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         $structure = structure::create_for_quiz($quiz);
         $this->assertFalse($structure->can_add_random_questions());
     }
+
+    /**
+     * Test to get the version information for a question to show in the version selection dropdown.
+     *
+     * @covers ::get_question_version_info
+     */
+    public function test_get_version_choices_for_slot() {
+        $this->resetAfterTest();
+
+        $quizobj = $this->create_test_quiz([]);
+
+        // Create a question with two versions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category(['contextid' => $quizobj->get_context()->id]);
+        $q = $questiongenerator->create_question('essay', null,
+                ['category' => $cat->id, 'name' => 'This is the first version']);
+        $questiongenerator->update_question($q, null, ['name' => 'This is the second version']);
+        $questiongenerator->update_question($q, null, ['name' => 'This is the third version']);
+        quiz_add_quiz_question($q->id, $quizobj->get_quiz());
+
+        // Create the quiz object.
+        $structure = structure::create_for_quiz($quizobj);
+        $versiondata = $structure->get_version_choices_for_slot(1);
+        $this->assertEquals(4, count($versiondata));
+        $this->assertEquals('Always latest', $versiondata[0]->versionvalue);
+        $this->assertEquals('v3 (latest)', $versiondata[1]->versionvalue);
+        $this->assertEquals('v2', $versiondata[2]->versionvalue);
+        $this->assertEquals('v1', $versiondata[3]->versionvalue);
+        $this->assertTrue($versiondata[0]->selected);
+        $this->assertFalse($versiondata[1]->selected);
+        $this->assertFalse($versiondata[2]->selected);
+        $this->assertFalse($versiondata[3]->selected);
+    }
 }

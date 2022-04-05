@@ -412,15 +412,13 @@ class mod_quiz_local_structure_slot_random_test extends advanced_testcase {
         $randomslot->set_filter_condition($filtercondition);
         $randomslot->insert(1); // Put the question on the first page of the quiz.
 
-        // Get the random question's quiz_slot. It is at the first slot.
-        $quizslot = $DB->get_record('quiz_slots', array('quizid' => $quiz->id, 'slot' => 1));
-        // Get the random question's tags from quiz_slot_tags. It is at the first slot.
-        $setreference = \mod_quiz\question\bank\qbank_helper::get_random_question_data_from_slot($quizslot->id);
+        $slots = qbank_helper::get_question_structure($quiz->id, $quizcontext);
+        $quizslot = reset($slots);
 
-        $this->assertEquals($category->id, json_decode($setreference->filtercondition)->questioncategoryid);
-        $this->assertEquals(1, json_decode($setreference->filtercondition)->includingsubcategories);
+        $this->assertEquals($category->id, $quizslot->category);
+        $this->assertEquals(1, $quizslot->randomrecurse);
         $this->assertEquals(1, $quizslot->maxmark);
-        $tagspropery = (array)json_decode($setreference->filtercondition)->tags;
+        $tagspropery = $quizslot->randomtags;
 
         $this->assertCount(2, $tagspropery);
         $this->assertEqualsCanonicalizing(
