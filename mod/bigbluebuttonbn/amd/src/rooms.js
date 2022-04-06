@@ -42,9 +42,7 @@ export const init = (bigbluebuttonbnid) => {
     document.addEventListener('click', e => {
         const joinButton = e.target.closest('[data-action="join"]');
         if (joinButton) {
-            roomUpdater.start();
             window.open(joinButton.href, 'bigbluebutton_conference');
-
             e.preventDefault();
         }
     });
@@ -60,6 +58,8 @@ export const init = (bigbluebuttonbnid) => {
         roomUpdater.updateRoom();
         fetchNotifications();
     });
+    // Room update.
+    roomUpdater.start();
 };
 
 /**
