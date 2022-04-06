@@ -812,16 +812,21 @@ function survey_supports($feature) {
  * @param navigation_node $surveynode
  */
 function survey_extend_settings_navigation($settings, $surveynode) {
-    global $PAGE;
+    global $PAGE, $DB;
 
     if (has_capability('mod/survey:readresponses', $PAGE->cm->context)) {
         $responsesnode = $surveynode->add(get_string("responsereports", "survey"));
 
-        $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'summary'));
-        $responsesnode->add(get_string("summary", "survey"), $url);
 
-        $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'scales'));
-        $responsesnode->add(get_string("scales", "survey"), $url);
+        $cm = get_coursemodule_from_id('survey', $PAGE->cm->id);
+        $survey = $DB->get_record("survey", ["id" => $cm->instance]);
+        if ($survey && ($survey->template != SURVEY_CIQ)) {
+            $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action' => 'summary'));
+            $responsesnode->add(get_string("summary", "survey"), $url);
+
+            $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action' => 'scales'));
+            $responsesnode->add(get_string("scales", "survey"), $url);
+        }
 
         $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action'=>'questions'));
         $responsesnode->add(get_string("question", "survey"), $url);
