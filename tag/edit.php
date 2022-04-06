@@ -69,6 +69,7 @@ $PAGE->set_subpage($tag->id);
 $PAGE->set_context($systemcontext);
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 $PAGE->set_pagelayout('standard');
+$PAGE->set_secondary_navigation(false);
 
 $tagname = $tag->get_display_name();
 $tagcollid = $tag->tagcollid;

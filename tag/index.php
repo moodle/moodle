@@ -85,6 +85,7 @@ $tagnode = $PAGE->navigation->find('tags', null);
 $tagnode->make_active();
 $PAGE->set_pagelayout('standard');
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
+$PAGE->set_secondary_navigation(false);
 
 $buttons = '';
 if (has_capability('moodle/tag:manage', context_system::instance())) {
