@@ -106,7 +106,7 @@ class files_test extends \advanced_testcase {
 
         list($user, $bbactivity) = $this->create_user_and_activity($CFG->dirroot . self::PRESENTATION_FILEPATH);
         $this->setUser($user);
-
+        $CFG->bigbluebuttonbn_preuploadpresentation_editable = true;
         $instance = instance::get_from_instanceid($bbactivity->id);
         $presentation = $instance->get_presentation_for_bigbluebutton_upload();
         $fulldirset = explode('/', $presentation['url']);
@@ -135,7 +135,7 @@ class files_test extends \advanced_testcase {
 
         list($user, $bbactivity) = $this->create_user_and_activity($CFG->dirroot . self::PRESENTATION_FILEPATH);
         $this->setUser($user);
-
+        $CFG->bigbluebuttonbn_preuploadpresentation_editable = true;
         $instance = instance::get_from_instanceid($bbactivity->id);
         $presentation = $instance->get_presentation();
         $fulldirset = explode('/', $presentation['url']);
@@ -155,11 +155,13 @@ class files_test extends \advanced_testcase {
      * Get filename test
      */
     public function test_pluginfile_filename() {
+        global $CFG;
         $this->resetAfterTest();
 
         list($user, $bbactivity, $bbactivitycm, $bbactivitycontext) = $this->create_user_and_activity();
         $this->setUser($user);
         $this->create_sample_file(self::PRESENTATION_FILENAME, $bbactivitycontext->id);
+        $CFG->bigbluebuttonbn_preuploadpresentation_editable = true;
         $presentationdef = files::get_presentation($bbactivitycontext, self::PRESENTATION_FILENAME, $bbactivity->id, true);
         $pathparts = explode('/', $presentationdef['url']);
         $filename = array_pop($pathparts);
