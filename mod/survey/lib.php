@@ -54,6 +54,8 @@ define("SURVEY_COLLES_PREFERRED",        "2");
 define("SURVEY_COLLES_PREFERRED_ACTUAL", "3");
 define("SURVEY_ATTLS",                   "4");
 define("SURVEY_CIQ",                     "5");
+// Question length to wrap.
+define("SURVEY_QLENGTH_WRAP",            "80");
 
 require_once(__DIR__ . '/deprecatedlib.php');
 
