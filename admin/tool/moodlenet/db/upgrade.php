@@ -145,5 +145,24 @@ function xmldb_tool_moodlenet_upgrade(int $oldversion) {
         upgrade_plugin_savepoint(true, 2022021600, 'tool', 'moodlenet');
     }
 
+    if ($oldversion < 2022021601) {
+
+        $selectsql = "moodlenetprofile IS NOT NULL AND moodlenetprofile != ''";
+
+        // If there are any users with MoodleNet profile set.
+        if ($DB->count_records_select('user', $selectsql)) {
+            // Remove the value set for the MoodleNet profile as this format can no longer be used to authenticate
+            // MoodleNet users.
+            $DB->set_field_select('user', 'moodlenetprofile', '', $selectsql);
+
+            // Use an adhoc task to send a notification to admin stating that the user data related to the linked
+            // MoodleNet profiles has been removed.
+            $notificationtask = new tool_moodlenet\task\send_mnet_profiles_data_removed_notification();
+            core\task\manager::queue_adhoc_task($notificationtask);
+        }
+
+        upgrade_plugin_savepoint(true, 2022021601, 'tool', 'moodlenet');
+    }
+
     return true;
 }
