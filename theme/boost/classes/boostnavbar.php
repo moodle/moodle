@@ -67,7 +67,6 @@ class boostnavbar implements \renderable {
                 $this->remove('permissions');
             }
         }
-
         if ($this->page->context->contextlevel == CONTEXT_COURSE) {
             // Remove any duplicate navbar nodes.
             $this->remove_duplicate_items();
@@ -94,6 +93,9 @@ class boostnavbar implements \renderable {
                 case 'course-reset':
                     // Remove the 'Import' navbar node in the Backup, Restore, Copy course and Reset pages.
                     $this->remove('import');
+                case 'course-user':
+                    $this->remove('mygrades');
+                    $this->remove('grades');
             }
         }
 
