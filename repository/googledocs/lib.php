@@ -528,8 +528,26 @@ class repository_googledocs extends repository {
             if ($checktype == 'application/rtf') {
                 $checktype = 'text/rtf';
             }
+            // Determine the relevant default import format config for the given file.
+            switch ($source->googledoctype) {
+                case 'document':
+                    $importformatconfig = get_config('googledocs', 'documentformat');
+                    break;
+                case 'presentation':
+                    $importformatconfig = get_config('googledocs', 'presentationformat');
+                    break;
+                case 'spreadsheet':
+                    $importformatconfig = get_config('googledocs', 'spreadsheetformat');
+                    break;
+                case 'drawing':
+                    $importformatconfig = get_config('googledocs', 'drawingformat');
+                    break;
+                default:
+                    $importformatconfig = null;
+            }
+
             foreach ($types as $extension => $info) {
-                if ($info['type'] == $checktype) {
+                if ($info['type'] == $checktype && $extension === $importformatconfig) {
                     $newfilename = $source->name . '.' . $extension;
                     break;
                 }
