@@ -7603,16 +7603,23 @@ class context_block extends context {
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "SELECT ".CONTEXT_BLOCK.", bi.id
-                  FROM {block_instances} bi
-                 WHERE NOT EXISTS (SELECT 'x'
-                                     FROM {context} cx
-                                    WHERE bi.id = cx.instanceid AND cx.contextlevel=".CONTEXT_BLOCK.")";
-        $contextdata = $DB->get_recordset_sql($sql);
-        foreach ($contextdata as $context) {
-            context::insert_context_record(CONTEXT_BLOCK, $context->id, null);
-        }
-        $contextdata->close();
+        $sql = <<<EOF
+            INSERT INTO {context} (
+                contextlevel,
+                instanceid
+            ) SELECT
+                :contextlevel,
+                bi.id as instanceid
+               FROM {block_instances} bi
+               WHERE NOT EXISTS (
+                   SELECT 'x' FROM {context} cx WHERE bi.id = cx.instanceid AND cx.contextlevel = :existingcontextlevel
+               )
+        EOF;
+
+        $DB->execute($sql, [
+            'contextlevel' => CONTEXT_BLOCK,
+            'existingcontextlevel' => CONTEXT_BLOCK,
+        ]);
     }
 
     /**
