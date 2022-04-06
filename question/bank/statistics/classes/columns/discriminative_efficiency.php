@@ -61,4 +61,8 @@ class discriminative_efficiency extends column_base {
         $discriminativeefficiency = helper::calculate_average_question_discriminative_efficiency($question->id);
         echo $PAGE->get_renderer('qbank_statistics')->render_discriminative_efficiency($discriminativeefficiency);
     }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
+    }
 }

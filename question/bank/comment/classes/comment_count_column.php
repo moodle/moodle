@@ -77,4 +77,8 @@ class comment_count_column extends column_base {
         echo \html_writer::tag('a', $commentcount, $attributes);
     }
 
+    public function get_extra_classes(): array {
+        return ['pr-3'];
+    }
+
 }

@@ -61,4 +61,9 @@ class facility_index extends column_base {
         $facility = helper::calculate_average_question_facility($question->id);
         echo $PAGE->get_renderer('qbank_statistics')->render_facility_index($facility);
     }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
+    }
+
 }

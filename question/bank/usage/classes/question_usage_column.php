@@ -58,4 +58,8 @@ class question_usage_column extends column_base {
         echo \html_writer::tag('a', $usagecount, $attributes);
     }
 
+    public function get_extra_classes(): array {
+        return ['pr-3'];
+    }
+
 }
