@@ -82,7 +82,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
                 $quiz->id, $oldquizcontext)));
 
-        /// Restore the course.
+        // Restore the course.
         $newcourse = $this->getDataGenerator()->create_course();
         $this->restore_quiz($backupid, $newcourse, $this->user);
 
@@ -120,7 +120,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
                 $quiz->id, $quizcontext)));
 
-        /// Restore the course.
+        // Restore the course.
         $newcourse = $this->getDataGenerator()->create_course();
         $this->restore_quiz($backupid, $newcourse, $this->user);
 

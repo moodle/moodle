@@ -2111,8 +2111,9 @@ class quiz_attempt {
         $transaction = $DB->start_delegated_transaction();
 
         // Add the question to the usage. It is important we do this before we choose a variant.
-        $newquestion = question_bank::load_question(
-            \mod_quiz\question\bank\qbank_helper::choose_question_for_redo($this->slots[$slot]->id, $qubaids));
+        $newquestionid = qbank_helper::choose_question_for_redo($this->get_quizid(),
+                    $this->get_quizobj()->get_context(), $this->slots[$slot]->id, $qubaids);
+        $newquestion = question_bank::load_question($newquestionid, $this->get_quiz()->shuffleanswers);
         $newslot = $this->quba->add_question_in_place_of_other($slot, $newquestion);
 
         // Choose the variant.

@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\question\bank\qbank_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -45,11 +46,9 @@ class quiz_overview_report extends quiz_attempts_report {
     protected $hasgroupstudents;
 
     /**
-     * @var array|null used during regrades, to cache which new questionid to use for each old on.
-     *      for slots which are not random, stores slot => questionid for the question to use.
-     *      See get_new_question_for_regrade.
+     * @var array|null cached copy of qbank_helper::get_question_structure for use during regrades.
      */
-    protected $slotquestionids = null;
+    protected $structureforregrade = null;
 
     /**
      * @var array|null used during regrades, to cache which new questionid to use for each old on.
@@ -339,7 +338,7 @@ class quiz_overview_report extends quiz_attempts_report {
      * @param array $slots if null, regrade all questions, otherwise, just regrade
      *      the questions with those slots.
      */
-    protected function regrade_attempt($attempt, $dryrun = false, $slots = null) {
+    public function regrade_attempt($attempt, $dryrun = false, $slots = null) {
         global $DB;
         // Need more time for a quiz with many questions.
         core_php_time_limit::raise(300);
@@ -395,6 +394,14 @@ class quiz_overview_report extends quiz_attempts_report {
     }
 
     /**
+     * For use in tests only. Clear the cached regrade data.
+     */
+    public function clear_regrade_date_cache(): void {
+        $this->structureforregrade = null;
+        $this->newquestionidsforold = null;
+    }
+
+    /**
      * Work out of we should be using a new question version for a particular slot in a regrade.
      *
      * @param stdClass $attempt the attempt being regraded.
@@ -407,40 +414,27 @@ class quiz_overview_report extends quiz_attempts_report {
         global $DB;
 
         // If the cache is empty, get information about all the slots.
-        if ($this->slotquestionids === null) {
+        if ($this->structureforregrade === null) {
             $this->newquestionidsforold = [];
             // Load the data about all the non-random slots now.
-            $this->slotquestionids = $DB->get_records_sql_menu("
-                    SELECT slot.slot, qve.questionid
-                      FROM {quiz_slots} slot
-                      JOIN {question_references} qref ON qref.itemid = slot.id
-                            AND qref.component = 'mod_quiz' AND qref.questionarea = 'slot' AND qref.usingcontextid = ?
-                      JOIN {question_versions} qve ON qve.questionbankentryid = qref.questionbankentryid
-                     WHERE slot.quizid = ?
-                       AND (qve.version = qref.version OR
-                            qref.version IS NULL AND qve.version = (
-                                SELECT MAX(version)
-                                  FROM {question_versions} iqve
-                                 WHERE iqve.questionbankentryid = qref.questionbankentryid
-                                )
-                           )
-                ", [$this->context->id, $attempt->quiz]);
+            $this->structureforregrade = qbank_helper::get_question_structure(
+                    $attempt->quiz, $this->context);
         }
 
         // If this is a non-random slot, we will have the right info cached.
-        if (array_key_exists($slot, $this->slotquestionids)) {
+        if ($this->structureforregrade[$slot]->qtype != 'random') {
             // This is a non-random slot.
-            return question_bank::load_question($this->slotquestionids[$slot]);
+            return question_bank::load_question($this->structureforregrade[$slot]->questionid);
         }
 
         // We must be dealing with a random question. Check that cache.
         $currentquestion = $quba->get_question_attempt($slot)->get_question(false);
-        if (array_key_exists($currentquestion->id, $this->newquestionidsforold)) {
+        if (isset($this->newquestionidsforold[$currentquestion->id])) {
             return question_bank::load_question($this->newquestionidsforold[$currentquestion->id]);
         }
 
         // This is a random question we have not seen yet. Find the latest version.
-        $versionsoptions = \mod_quiz\question\bank\qbank_helper::get_version_options($currentquestion->id);
+        $versionsoptions = qbank_helper::get_version_options($currentquestion->id);
         $latestversion = reset($versionsoptions);
         $this->newquestionidsforold[$currentquestion->id] = $latestversion->questionid;
         return question_bank::load_question($latestversion->questionid);

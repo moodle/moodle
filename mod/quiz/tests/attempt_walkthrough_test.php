@@ -86,9 +86,6 @@ class mod_quiz_attempt_walkthrough_testcase extends advanced_testcase {
         $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertFalse($attemptobj->has_response_to_at_least_one_graded_question());
 
-        $prefix1 = $quba->get_field_prefix(1);
-        $prefix2 = $quba->get_field_prefix(2);
-
         $tosubmit = array(1 => array('answer' => 'frog'),
                           2 => array('answer' => '3.14'));
 

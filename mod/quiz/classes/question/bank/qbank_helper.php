@@ -17,6 +17,9 @@
 namespace mod_quiz\question\bank;
 
 use core_question\local\bank\question_version_status;
+use core_question\local\bank\random_question_loader;
+use qubaid_condition;
+use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,22 +36,6 @@ require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbank_helper {
-
-    /**
-     * Check if the slot is a random question or not.
-     *
-     * @param int $slotid
-     * @return bool
-     */
-    public static function is_random(int $slotid): bool {
-        global $DB;
-        $params = [
-            'itemid' => $slotid,
-            'component' => 'mod_quiz',
-            'questionarea' => 'slot'
-            ];
-        return $DB->record_exists('question_set_references', $params);
-    }
 
     /**
      * Get the available versions of a question where one of the version has the given question id.
@@ -79,39 +66,6 @@ class qbank_helper {
     }
 
     /**
-     * Get the question id from slot id.
-     *
-     * @param int $slotid
-     * @return mixed
-     */
-    public static function get_question_for_redo(int $slotid) {
-        global $DB;
-        $params = [
-            'itemid' => $slotid,
-            'component' => 'mod_quiz',
-            'questionarea' => 'slot'
-        ];
-        $referencerecord = $DB->get_record('question_references', $params);
-        if ($referencerecord->version === null) {
-            $questionsql = 'SELECT q.id
-                              FROM {question} q
-                              JOIN {question_versions} qv ON qv.questionid = q.id
-                             WHERE qv.version = (SELECT MAX(v.version)
-                                                   FROM {question_versions} v
-                                                   JOIN {question_bank_entries} be
-                                                     ON be.id = v.questionbankentryid
-                                                  WHERE be.id = qv.questionbankentryid)
-                               AND qv.questionbankentryid = ?';
-            $questionid = $DB->get_record_sql($questionsql, [$referencerecord->questionbankentryid])->id;
-        } else {
-            $questionid = $DB->get_field('question_versions', 'questionid',
-                ['questionbankentryid' => $referencerecord->questionbankentryid,
-                'version' => $referencerecord->version]);
-        }
-        return $questionid;
-    }
-
-    /**
      * Get the information about which questions should be used to create a quiz attempt.
      *
      * Each element in the returned array is indexed by slot.slot (slot number) an each object hass:
@@ -124,11 +78,24 @@ class qbank_helper {
      *   randomtags, and note that these also have a ->name set and ->qtype set to 'random'.
      *
      * @param int $quizid the id of the quiz to load the data for.
-     * @param \context $quizcontext
+     * @param \context_module $quizcontext the context of this quiz.
+     * @param int|null $slotid optional, if passed only load the data for this one slot (if it is in this quiz).
      * @return array indexed by slot, with information about the content of each slot.
      */
-    public static function get_question_structure(int $quizid, \context $quizcontext) {
+    public static function get_question_structure(int $quizid, \context_module $quizcontext,
+            int $slotid = null): array {
         global $DB;
+
+        $params = [
+            'draft' => question_version_status::QUESTION_STATUS_DRAFT,
+            'quizcontextid' => $quizcontext->id, 'quizcontextid2' => $quizcontext->id,
+            'quizid' => $quizid
+        ];
+        $slotidtest = '';
+        if ($slotid !== null) {
+            $params['slotid'] = $slotid;
+            $slotidtest = ' AND slot.id = :slotid';
+        }
 
         // Load all the data about each slot.
         $slotdata = $DB->get_records_sql("
@@ -169,12 +136,12 @@ class qbank_helper {
                                         AND qsr.questionarea = 'slot' AND qsr.itemid = slot.id
 
                  WHERE slot.quizid = :quizid
-              ORDER BY slot.slot
-              ", ['draft' => question_version_status::QUESTION_STATUS_DRAFT,
-                    'quizcontextid' => $quizcontext->id, 'quizcontextid2' => $quizcontext->id,
-                    'quizid' => $quizid]);
+                       $slotidtest
 
-        // Uppack the random info from question_set_reference.
+              ORDER BY slot.slot
+              ", $params);
+
+        // Unpack the random info from question_set_reference.
         foreach ($slotdata as $slot) {
             // Ensure the right id is the id.
             $slot->id = $slot->slotid;
@@ -184,7 +151,7 @@ class qbank_helper {
                 $filtercondition = json_decode($slot->filtercondition);
                 $slot->questionid = 's' . $slot->id; // Sometimes this is used as an array key, so needs to be unique.
                 $slot->category = $filtercondition->questioncategoryid;
-                $slot->randomrecurse = $filtercondition->includingsubcategories;
+                $slot->randomrecurse = (bool) $filtercondition->includingsubcategories;
                 $slot->randomtags = isset($filtercondition->tags) ? (array) $filtercondition->tags : [];
                 $slot->qtype = 'random';
                 $slot->name = get_string('random', 'quiz');
@@ -229,34 +196,31 @@ class qbank_helper {
     }
 
     /**
-     * Choose question for redo.
+     * Choose question for redo in a particular slot.
      *
-     * @param int $slotid
-     * @param \qubaid_condition $qubaids
-     * @return int
+     * @param int $quizid the id of the quiz to load the data for.
+     * @param \context_module $quizcontext the context of this quiz.
+     * @param int $slotid optional, if passed only load the data for this one slot (if it is in this quiz).
+     * @param qubaid_condition $qubaids attempts to consider when avoiding picking repeats of random questions.
+     * @return int the id of the question to use.
      */
-    public static function choose_question_for_redo($slotid, $qubaids): int {
-        // Choose the replacement question.
-        if (!self::is_random($slotid)) {
-            $newqusetionid = self::get_question_for_redo($slotid);
-        } else {
-            $tagids = [];
-            $randomquestiondata = self::get_random_question_data_from_slot($slotid);
-            $filtercondition = json_decode($randomquestiondata->filtercondition);
-            if (isset($filtercondition->tags)) {
-                foreach ($filtercondition->tags as $tag) {
-                    $tagstring = explode(',', $tag);
-                    $tagids [] = $tagstring[0];
-                }
-            }
+    public static function choose_question_for_redo(int $quizid, \context_module $quizcontext,
+            int $slotid, qubaid_condition $qubaids): int {
+        $slotdata = self::get_question_structure($quizid, $quizcontext, $slotid);
+        $slotdata = reset($slotdata);
 
-            $randomloader = new \core_question\local\bank\random_question_loader($qubaids, []);
-            $newqusetionid = $randomloader->get_next_question_id($filtercondition->questioncategoryid,
-                (bool) $filtercondition->includingsubcategories, $tagids);
-            if ($newqusetionid === null) {
-                throw new \moodle_exception('notenoughrandomquestions', 'quiz');
-            }
+        // Non-random question.
+        if ($slotdata->qtype != 'random') {
+            return $slotdata->questionid;
+        }
 
+        // Random question.
+        $randomloader = new random_question_loader($qubaids, []);
+        $newqusetionid = $randomloader->get_next_question_id($slotdata->category,
+                $slotdata->randomrecurse, self::get_tag_ids_for_slot($slotdata));
+
+        if ($newqusetionid === null) {
+            throw new \moodle_exception('notenoughrandomquestions', 'quiz');
         }
         return $newqusetionid;
     }

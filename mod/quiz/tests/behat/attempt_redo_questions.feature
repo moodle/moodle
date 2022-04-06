@@ -6,16 +6,18 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | student  | Student   | One      | student@example.com |
-      | teacher  | Teacher   | One      | teacher@example.com |
+      | username | firstname | lastname |
+      | student  | Student   | One      |
+      | teacher  | Teacher   | One      |
+      | editor   | Question  | Editor   |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user    | course | role    |
-      | student | C1     | student |
-      | teacher | C1     | teacher |
+      | user    | course | role           |
+      | student | C1     | student        |
+      | teacher | C1     | teacher        |
+      | editor  | C1     | editingteacher |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
@@ -40,6 +42,39 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I press "Try another question like this one"
     Then the state of "First question" question is shown as "Not complete"
     And I should see "Marked out of 2.00" in the "First question" "question"
+
+  @javascript
+  Scenario: Start attempt, teacher edits question, redo picks up latest non-draft version
+    # Start attempt as student.
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    And I press "Attempt quiz"
+    And I click on "False" "radio" in the "First question" "question"
+    And I click on "Check" "button" in the "First question" "question"
+    And I log out
+
+    # Now edit the question as teacher to add a real version and a draft version.
+    # Would be nice to do this with a generator, but I don't have time right now.
+    And I am on the "TF1" "core_question > edit" page logged in as "editor"
+    And I set the following fields to these values:
+      | Question name   | TF1-v2                 |
+      | Question text   | The new first question |
+      | Correct answer  | False                  |
+    And I press "id_submitbutton"
+    And I am on the "TF1-v2" "core_question > edit" page
+    And I set the following fields to these values:
+      | Question name   | TF1-v3                     |
+      | Question text   | This is only draft for now |
+      | Correct answer  | True                       |
+      | Question status | Draft                      |
+    And I press "id_submitbutton"
+    And I log out
+
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    And I press "Continue your attempt"
+    And I press "Try another question like this one"
+    Then the state of "The new first question" question is shown as "Not complete"
+    And I should see "Marked out of 2.00" in the "The new first question" "question"
+    And I should not see "This is only draft for now"
 
   @javascript
   Scenario: The redo question button is visible but disabled for teachers
