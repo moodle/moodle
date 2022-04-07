@@ -113,7 +113,7 @@ class format_singleactivity extends core_courseformat\base {
         if ($cm->icon) {
             $icon = new pix_icon($cm->icon, $cm->modfullname, $cm->iconcomponent);
         } else {
-            $icon = new pix_icon('icon', $cm->modfullname, $cm->modname);
+            $icon = new pix_icon('monologo', $cm->modfullname, $cm->modname);
         }
         $activitynode = $node->add($activityname, $action, navigation_node::TYPE_ACTIVITY, null, $cm->id, $icon);
         if (global_navigation::module_extends_navigation($cm->modname)) {

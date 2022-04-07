@@ -1451,7 +1451,7 @@ class grade_structure {
                         if (isset($modinfo->instances[$module][$instanceid])) {
                             $icon->url = $modinfo->instances[$module][$instanceid]->get_icon_url();
                         } else {
-                            $icon->pix = 'icon';
+                            $icon->pix = 'monologo';
                             $icon->component = $element['object']->itemmodule;
                         }
                         $icon->title = s(get_string('modulename', $element['object']->itemmodule));

@@ -209,7 +209,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                 $mod->name,
                 new lang_string_title("modulename", $mod->name),
                 new \moodle_url(''), // No course scope, so just an empty link.
-                $OUTPUT->pix_icon('icon', '', $mod->name, ['class' => 'icon activityicon']),
+                $OUTPUT->pix_icon('monologo', '', $mod->name, ['class' => 'icon activityicon']),
                 $help,
                 $archetype,
                 'mod_' . $mod->name,
@@ -274,7 +274,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                 $mod->name,
                 new lang_string_title("modulename", $mod->name),
                 new \moodle_url($urlbase, ['add' => $mod->name]),
-                $OUTPUT->pix_icon('icon', '', $mod->name, ['class' => 'icon activityicon']),
+                $OUTPUT->pix_icon('monologo', '', $mod->name, ['class' => 'icon activityicon']),
                 $help,
                 $archetype,
                 'mod_' . $mod->name,

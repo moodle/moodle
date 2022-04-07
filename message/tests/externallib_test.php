@@ -1485,7 +1485,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertObjectHasAttribute('datakey', json_decode($messages['messages'][0]['customdata']));
         $this->assertEquals('mod_feedback', $messages['messages'][0]['component']);
         $this->assertEquals('submission', $messages['messages'][0]['eventtype']);
-        $feedbackicon = clean_param($PAGE->get_renderer('core')->image_url('icon', 'mod_feedback')->out(), PARAM_URL);
+        $feedbackicon = clean_param($PAGE->get_renderer('core')->image_url('monologo', 'mod_feedback')->out(), PARAM_URL);
         $this->assertEquals($feedbackicon, $messages['messages'][0]['iconurl']);
 
         // Test warnings.

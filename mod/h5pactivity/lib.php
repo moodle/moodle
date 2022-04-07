@@ -727,7 +727,7 @@ function h5pactivity_print_recent_mod_activity(stdClass $activity, int $courseid
     if ($detail) {
         $modinfo['modname'] = $activity->name;
         $modinfo['modurl'] = new moodle_url('/mod/h5pactivity/view.php', ['id' => $activity->cmid]);
-        $modinfo['modicon'] = $OUTPUT->image_icon('icon', $modnames[$activity->type], 'h5pactivity');
+        $modinfo['modicon'] = $OUTPUT->image_icon('monologo', $modnames[$activity->type], 'h5pactivity');
     }
 
     $userpicture = $OUTPUT->user_picture($activity->user);
