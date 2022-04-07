@@ -431,8 +431,7 @@ class lib_test extends \advanced_testcase {
         global $DB;
         $this->resetAfterTest();
         $data = new stdClass();
-        $datagenerator = $this->getDataGenerator();
-        $user = $datagenerator->create_user();
+        $user = $this->getDataGenerator()->create_user();
 
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
         $this->getDataGenerator()->enrol_user($user->id, $this->course->id);
@@ -440,7 +439,7 @@ class lib_test extends \advanced_testcase {
 
         // Now create another activity in a course and add a couple of logs.
         // Aim is to make sure that only logs from one course are deleted.
-        $course1 = $datagenerator->create_course();
+        $course1 = $this->getDataGenerator()->create_course();
         list($bbactivitycontext1, $bbactivitycm1, $bbactivity1) = $this->create_instance($course1);
         logger::log_meeting_joined_event(instance::get_from_instanceid($bbactivity1->id), 0);
 
@@ -465,8 +464,7 @@ class lib_test extends \advanced_testcase {
         global $DB;
         $this->resetAfterTest();
         $data = new stdClass();
-        $datagenerator = $this->getDataGenerator();
-        $user = $datagenerator->create_user();
+        $user = $this->getDataGenerator()->create_user();
 
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
         $this->getDataGenerator()->enrol_user($user->id, $this->course->id);
