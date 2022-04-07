@@ -48,19 +48,15 @@ if ($slashargument = min_get_slash_argument()) {
     $themename = min_clean_param($themename, 'SAFEDIR');
     $component = min_clean_param($component, 'SAFEDIR');
     $rev       = min_clean_param($rev, 'INT');
-    $images    = explode('.', $image);
+    $image     = min_clean_param($image, 'SAFEPATH');
+
 } else {
     $themename = min_optional_param('theme', 'standard', 'SAFEDIR');
     $component = min_optional_param('component', 'core', 'SAFEDIR');
     $rev       = min_optional_param('rev', -1, 'INT');
-    $images    = min_optional_param('images', '', 'RAW');
-    $images    = explode('.', $images);
+    $image     = min_optional_param('image', '', 'SAFEPATH');
     $usesvg    = (bool)min_optional_param('svg', '1', 'INT');
 }
-$images = array_map(function (string $image) {
-    return min_clean_param($image, 'SAFEPATH');
-}, $images);
-$image = reset($images);
 
 if (empty($component) or $component === 'moodle' or $component === 'core') {
     $component = 'core';
@@ -82,48 +78,31 @@ $candidatelocation = "$CFG->localcachedir/theme/$rev/$themename/pix/$component";
 $etag = sha1("$rev/$themename/$component/$image");
 
 if ($rev > 0) {
-    $cacheimage = false;
-    $lookuprequired = false;
-    foreach ($images as $image) {
-        if (file_exists("$candidatelocation/$image.error")) {
-            // This is a major speedup if there are multiple missing images,
-            // the only problem is that random requests may pollute our cache.
-            continue;
-        }
-
-        $lookuprequired = true;
-        if ($usesvg && file_exists("$candidatelocation/$image.svg")) {
-            $cacheimage = "$candidatelocation/$image.svg";
-            $ext = 'svg';
-        } else if (file_exists("$candidatelocation/$image.png")) {
-            $cacheimage = "$candidatelocation/$image.png";
-            $ext = 'png';
-        } else if (file_exists("$candidatelocation/$image.gif")) {
-            $cacheimage = "$candidatelocation/$image.gif";
-            $ext = 'gif';
-        } else if (file_exists("$candidatelocation/$image.jpg")) {
-            $cacheimage = "$candidatelocation/$image.jpg";
-            $ext = 'jpg';
-        } else if (file_exists("$candidatelocation/$image.jpeg")) {
-            $cacheimage = "$candidatelocation/$image.jpeg";
-            $ext = 'jpeg';
-        } else if (file_exists("$candidatelocation/$image.ico")) {
-            $cacheimage = "$candidatelocation/$image.ico";
-            $ext = 'ico';
-        }
-
-        if ($cacheimage) {
-            // The image was found in a candidate location.
-            // It will be served outside of the loop.
-            break;
-        }
-    }
-
-    if (!$lookuprequired) {
-        // None of the images required a lookup - all had previously cached error states.
+    if (file_exists("$candidatelocation/$image.error")) {
+        // This is a major speedup if there are multiple missing images,
+        // the only problem is that random requests may pollute our cache.
         image_not_found();
     }
-
+    $cacheimage = false;
+    if ($usesvg && file_exists("$candidatelocation/$image.svg")) {
+        $cacheimage = "$candidatelocation/$image.svg";
+        $ext = 'svg';
+    } else if (file_exists("$candidatelocation/$image.png")) {
+        $cacheimage = "$candidatelocation/$image.png";
+        $ext = 'png';
+    } else if (file_exists("$candidatelocation/$image.gif")) {
+        $cacheimage = "$candidatelocation/$image.gif";
+        $ext = 'gif';
+    } else if (file_exists("$candidatelocation/$image.jpg")) {
+        $cacheimage = "$candidatelocation/$image.jpg";
+        $ext = 'jpg';
+    } else if (file_exists("$candidatelocation/$image.jpeg")) {
+        $cacheimage = "$candidatelocation/$image.jpeg";
+        $ext = 'jpeg';
+    } else if (file_exists("$candidatelocation/$image.ico")) {
+        $cacheimage = "$candidatelocation/$image.ico";
+        $ext = 'ico';
+    }
     if ($cacheimage) {
         if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
             // We do not actually need to verify the etag value because our files
@@ -157,15 +136,8 @@ $themerev = theme_get_revision();
 if ($themerev <= 0 or $rev != $themerev) {
     // Do not send caching headers if they do not request current revision,
     // we do not want to pollute browser caches with outdated images.
-    foreach ($images as $image) {
-        $imagefile = $theme->resolve_image_location($image, $component, $usesvg);
-        if (!empty($imagefile) && is_readable($imagefile)) {
-            break;
-        }
-        $imagefile = null;
-    }
-
-    if (empty($imagefile)) {
+    $imagefile = $theme->resolve_image_location($image, $component, $usesvg);
+    if (empty($imagefile) or !is_readable($imagefile)) {
         image_not_found();
     }
     send_uncached_image($imagefile);
@@ -182,13 +154,9 @@ make_localcache_directory('theme', false);
 // * if the browser has requested the non-SVG version, we *must* cache _both_ the SVG, and the non-SVG versions.
 
 // First get all copies - including, potentially, the SVG version.
-$imagefile = null;
-foreach ($images as $image) {
-    $imagefile = $theme->resolve_image_location($image, $component, true);
-    if (!empty($imagefile) && is_readable($imagefile)) {
-        break;
-    }
+$imagefile = $theme->resolve_image_location($image, $component, true);
 
+if (empty($imagefile) || !is_readable($imagefile)) {
     // Unable to find a copy of the image file in any format.
     // We write a .error file for the image now - this will be used above when searching for cached copies to prevent
     // trying to find the image in the future.
@@ -199,11 +167,6 @@ foreach ($images as $image) {
     $cacheimage = "$candidatelocation/$image.error";
     $fp = fopen($cacheimage, 'w');
     fclose($fp);
-
-    $imagefile = null;
-}
-
-if ($imagefile == null) {
     image_not_found();
 }
 
