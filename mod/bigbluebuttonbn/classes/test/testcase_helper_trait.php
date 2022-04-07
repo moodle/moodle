@@ -221,7 +221,7 @@ trait testcase_helper_trait {
             'users' => $users) = $dataset;
         $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
 
-        $coursedata = empty($groups) ? [] : ['groupmodeforce' => true, 'groupmode' => VISIBLEGROUPS];
+        $coursedata = empty($groups) ? [] : ['groupmodeforce' => true, 'groupmode' => $dataset['coursemode'] ?? VISIBLEGROUPS];
         $this->course = $this->getDataGenerator()->create_course($coursedata);
 
         foreach ($users as $userdata) {
