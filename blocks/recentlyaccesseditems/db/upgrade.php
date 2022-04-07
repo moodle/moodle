@@ -38,6 +38,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once("{$CFG->libdir}/db/upgradelib.php");
+
 /**
  * Upgrade the recentlyaccesseditems db table.
  *
@@ -76,36 +78,8 @@ function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2022030200) {
-        $context = context_system::instance();
-
-        // Begin looking for any and all customised /my pages.
-        $pageselect = 'name = :name and private = :private';
-        $pageparams['name'] = '__default';
-        $pageparams['private'] = 1;
-        $pages = $DB->get_recordset_select('my_pages', $pageselect, $pageparams);
-        foreach ($pages as $subpage) {
-            $blockinstance = $DB->get_record('block_instances', ['blockname' => 'recentlyaccesseditems',
-                'pagetypepattern' => 'my-index', 'subpagepattern' => $subpage->id]);
-
-            if (!$blockinstance) {
-                // Insert the recentlyaccesseditems into the default index page.
-                $blockinstance = new stdClass;
-                $blockinstance->blockname = 'recentlyaccesseditems';
-                $blockinstance->parentcontextid = $context->id;
-                $blockinstance->showinsubcontexts = false;
-                $blockinstance->pagetypepattern = 'my-index';
-                $blockinstance->subpagepattern = $subpage->id;
-                $blockinstance->defaultregion = 'side-post';
-                $blockinstance->defaultweight = -10;
-                $blockinstance->timecreated = time();
-                $blockinstance->timemodified = time();
-                $DB->insert_record('block_instances', $blockinstance);
-            } else if ($blockinstance->defaultregion !== 'side-post') {
-                $blockinstance->defaultregion = 'side-post';
-                $DB->update_record('block_instances', $blockinstance);
-            }
-        }
-        $pages->close();
+        // Update all recentlyaccesseditems blocks in the my-index to be in the main side-post region.
+        upgrade_block_set_defaultregion('recentlyaccesseditems', '__default', 'my-index', 'side-post');
         upgrade_block_savepoint(true, 2022030200, 'recentlyaccesseditems', false);
     }
 

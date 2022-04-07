@@ -36,6 +36,10 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once("{$CFG->libdir}/db/upgradelib.php");
+
 /**
  * Upgrade the timeline block
  * @param int $oldversion
@@ -57,36 +61,8 @@ function xmldb_block_timeline_upgrade($oldversion, $block) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2022030200) {
-        $context = context_system::instance();
-
-        // Begin looking for any and all customised /my pages.
-        $pageselect = 'name = :name and private = :private';
-        $pageparams['name'] = '__default';
-        $pageparams['private'] = 1;
-        $pages = $DB->get_recordset_select('my_pages', $pageselect, $pageparams);
-        foreach ($pages as $subpage) {
-            $blockinstance = $DB->get_record('block_instances', ['blockname' => 'timeline',
-                'pagetypepattern' => 'my-index', 'subpagepattern' => $subpage->id]);
-
-            if (!$blockinstance) {
-                // Insert the timeline into the default index page.
-                $blockinstance = new stdClass;
-                $blockinstance->blockname = 'timeline';
-                $blockinstance->parentcontextid = $context->id;
-                $blockinstance->showinsubcontexts = false;
-                $blockinstance->pagetypepattern = 'my-index';
-                $blockinstance->subpagepattern = $subpage->id;
-                $blockinstance->defaultregion = 'content';
-                $blockinstance->defaultweight = -10;
-                $blockinstance->timecreated = time();
-                $blockinstance->timemodified = time();
-                $DB->insert_record('block_instances', $blockinstance);
-            } else if ($blockinstance->defaultregion !== 'content') {
-                $blockinstance->defaultregion = 'content';
-                $DB->update_record('block_instances', $blockinstance);
-            }
-        }
-        $pages->close();
+        // Update all timeline blocks in the my-index to be in the main content region.
+        upgrade_block_set_defaultregion('timeline', '__default', 'my-index', 'content');
         upgrade_block_savepoint(true, 2022030200, 'timeline', false);
     }
 
