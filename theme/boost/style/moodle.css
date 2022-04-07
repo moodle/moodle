@@ -16529,7 +16529,8 @@ a.ygtvspacer:hover {
   margin: 0; }
   #categoryquestions td,
   #categoryquestions th {
-    padding: 0 0.2em; }
+    padding: 0 0.2em;
+    max-width: 40vw; }
   #categoryquestions th {
     text-align: left;
     font-weight: normal; }
@@ -16953,6 +16954,11 @@ body.path-question-type .mform fieldset.hidden {
     width: auto; }
   .que .content {
     margin: 0; } }
+
+@media (max-width: 991.98px) {
+  #categoryquestions td,
+  #categoryquestions th {
+    max-width: 75vw; } }
 
 /* user.less */
 .userprofile .fullprofilelink {
