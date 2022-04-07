@@ -136,14 +136,14 @@ class schedule extends dynamic_form {
             $persistent = $audience->get_persistent();
 
             // Check for a custom name, otherwise fall back to default.
-            if ('' === $audiencelabel = (string) $persistent->get('heading')) {
+            if ('' === $audiencelabel = $persistent->get_formatted_heading($context)) {
                 $audiencelabel = get_string('audiencelabel', 'core_reportbuilder', (object) [
                     'name' => $audience->get_name(),
                     'description' => $audience->get_description(),
                 ]);
             }
 
-            $audiencecheckboxes[] = $mform->createElement('checkbox', $audience->get_persistent()->get('id'), $audiencelabel);
+            $audiencecheckboxes[] = $mform->createElement('checkbox', $persistent->get('id'), $audiencelabel);
         }
 
         $mform->addElement('group', 'audiences', '', $audiencecheckboxes, html_writer::div('', 'w-100 mb-2'));

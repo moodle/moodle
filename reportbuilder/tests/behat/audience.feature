@@ -111,6 +111,18 @@ Feature: Configure access to reports based on intended audience
     And I reload the page
     Then I should see "All my lovely users" in the "[data-region='audience-card']" "css_element"
 
+  Scenario: Rename report audience using filters
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    And I click on the "Audience" dynamic tab
+    And I click on "Add audience 'All users'" "link"
+    And I press "Save changes"
+    When I set the field "Rename audience 'All users'" to "<span class=\"multilang\" lang=\"en\">English</span><span class=\"multilang\" lang=\"es\">Spanish</span>"
+    And I reload the page
+    Then I should see "English" in the "[data-region='audience-card']" "css_element"
+    And I should not see "Spanish" in the "[data-region='audience-card']" "css_element"
+
   Scenario: Delete report audience
     Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Audience" dynamic tab
