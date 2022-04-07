@@ -1790,26 +1790,26 @@ class cm_info implements IteratorAggregate {
         if (!$output) {
             $output = $OUTPUT;
         }
-        // Support modules setting their own, external, icon image
-        if (!empty($this->iconurl)) {
-            $icon = $this->iconurl;
 
-        // Fallback to normal local icon + component procesing
+        if (!empty($this->iconurl)) {
+            // Support modules setting their own, external, icon image.
+            $icon = $this->iconurl;
         } else if (!empty($this->icon)) {
+            // Fallback to normal local icon + component processing.
             if (substr($this->icon, 0, 4) === 'mod/') {
                 list($modname, $iconname) = explode('/', substr($this->icon, 4), 2);
                 $icon = $output->image_url($iconname, $modname);
             } else {
                 if (!empty($this->iconcomponent)) {
-                    // Icon  has specified component
+                    // Icon has specified component.
                     $icon = $output->image_url($this->icon, $this->iconcomponent);
                 } else {
-                    // Icon does not have specified component, use default
+                    // Icon does not have specified component, use default.
                     $icon = $output->image_url($this->icon);
                 }
             }
         } else {
-            $icon = $output->image_url('icon', $this->modname);
+            $icon = $output->image_url('monologo', $this->modname);
         }
         return $icon;
     }
