@@ -243,7 +243,7 @@ class task_log extends base {
         $filters[] = (new filter(
             text::class,
             'name',
-            new lang_string('name'),
+            new lang_string('classname', 'tool_task'),
             $this->get_entity_name(),
             "{$tablealias}.classname"
         ))
