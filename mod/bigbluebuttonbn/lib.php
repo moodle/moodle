@@ -327,6 +327,13 @@ function bigbluebuttonbn_reset_userdata(stdClass $data) {
         unset($items['tags']);
         $status[] = reset::reset_getstatus('tags');
     }
+
+    if (!empty($data->reset_bigbluebuttonbn_logs)) {
+        // Remove all the tags linked to the room/activities in this course.
+        reset::reset_logs($data->courseid);
+        unset($items['logs']);
+        $status[] = reset::reset_getstatus('logs');
+    }
     return $status;
 }
 
