@@ -2332,10 +2332,11 @@ class quiz_attempt {
         // Add a fragment to scroll down to the question.
         $fragment = '';
         if ($slot !== null) {
-            if ($slot == reset($this->pagelayout[$page])) {
-                // First question on page, go to top.
+            if ($slot == reset($this->pagelayout[$page]) && $thispage != $page) {
+                // Changing the page, go to top.
                 $fragment = '#';
             } else {
+                // Link to the question container.
                 $qa = $this->get_question_attempt($slot);
                 $fragment = '#' . $qa->get_outer_question_div_unique_id();
             }
