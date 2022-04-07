@@ -302,6 +302,12 @@ class recording_data {
         }
         // When groups are enabled, exclude those to which the user doesn't have access to.
         if ($instance->uses_groups() && !$instance->can_manage_recordings()) {
+            if (groups_get_activity_groupmode($instance->get_cm()) == VISIBLEGROUPS) {
+                // In case we are in visible group mode, we show all recordings.
+                return true;
+            }
+            // Else we check if the Recording group is the same as the instance. Instance group
+            // being the group chosen for this instance.
             return intval($rec->get('groupid')) === $instance->get_group_id();
         }
         return true;

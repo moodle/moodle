@@ -382,7 +382,8 @@ class get_recordings_test extends \externallib_advanced_testcase {
                     't1' => ['Recording1', 'Recording2', 'Recording3'], // A moderator should see all recordings.
                     's1' => ['Recording1'], // S1 can only see the recordings from his group.
                     's2' => ['Recording2'], // S2 can only see the recordings from his group.
-                    's3' => ['Recording3'] // S3 should see recordings which have no groups.
+                    's3' => ['Recording3', 'Recording2', 'Recording1']
+                    // S3 should see recordings which have no groups and his groups's recording.
                 ],
                 'coursemode' => VISIBLEGROUPS
             ],
