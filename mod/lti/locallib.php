@@ -4013,7 +4013,7 @@ function get_tool_type_icon_url(stdClass $type) {
     }
 
     if (empty($iconurl)) {
-        $iconurl = $OUTPUT->image_url('icon', 'lti')->out();
+        $iconurl = $OUTPUT->image_url('monologo', 'lti')->out();
     }
 
     return $iconurl;
@@ -4100,7 +4100,7 @@ function get_tool_proxy_urls(stdClass $proxy) {
     global $OUTPUT;
 
     $urls = array(
-        'icon' => $OUTPUT->image_url('icon', 'lti')->out(),
+        'icon' => $OUTPUT->image_url('monologo', 'lti')->out(),
         'edit' => get_tool_proxy_edit_url($proxy),
     );
 
