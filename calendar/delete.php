@@ -94,7 +94,9 @@ $PAGE->navbar->add($strcalendar, $viewcalendarurl);
 $PAGE->navbar->add($title);
 $PAGE->set_title($site->shortname.': '.$strcalendar.': '.$title);
 $PAGE->set_heading($COURSE->fullname);
-$PAGE->set_secondary_navigation(false);
+if ($course) {
+    $PAGE->set_secondary_navigation(false);
+}
 echo $OUTPUT->header();
 echo $OUTPUT->box_start('eventlist');
 
