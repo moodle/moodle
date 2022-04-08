@@ -88,13 +88,19 @@ class qbank_helper {
 
         $params = [
             'draft' => question_version_status::QUESTION_STATUS_DRAFT,
-            'quizcontextid' => $quizcontext->id, 'quizcontextid2' => $quizcontext->id,
-            'quizid' => $quizid
+            'quizcontextid' => $quizcontext->id,
+            'quizcontextid2' => $quizcontext->id,
+            'quizcontextid3' => $quizcontext->id,
+            'quizid' => $quizid,
+            'quizid2' => $quizid,
         ];
         $slotidtest = '';
+        $slotidtest2 = '';
         if ($slotid !== null) {
             $params['slotid'] = $slotid;
+            $params['slotid2'] = $slotid;
             $slotidtest = ' AND slot.id = :slotid';
+            $slotidtest2 = ' AND lslot.id = :slotid2';
         }
 
         // Load all the data about each slot.
@@ -121,18 +127,34 @@ class qbank_helper {
              LEFT JOIN {question_references} qr ON qr.usingcontextid = :quizcontextid AND qr.component = 'mod_quiz'
                                         AND qr.questionarea = 'slot' AND qr.itemid = slot.id
              LEFT JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
+
+             -- This way of getting the latest version for each slot is a bit more complicated
+             -- than we would like, but the simpler SQL did not work in Oracle 11.2.
+             -- (It did work find in Oracle 19.x, so once we have updated our min supported
+             -- version we could consider digging the old code out of git history from
+             -- just before the commit that added this comment.
+             -- For relevant question_bank_entries, this gets the latest non-draft slot number.
+             LEFT JOIN (
+                   SELECT lv.questionbankentryid, MAX(lv.version) AS version
+                     FROM {quiz_slots} lslot
+                     JOIN {question_references} lqr ON lqr.usingcontextid = :quizcontextid2 AND lqr.component = 'mod_quiz'
+                                        AND lqr.questionarea = 'slot' AND lqr.itemid = lslot.id
+                     JOIN {question_versions} lv ON lv.questionbankentryid = lqr.questionbankentryid
+                    WHERE lslot.quizid = :quizid2
+                          $slotidtest2
+                      AND lqr.version IS NULL
+                      AND lv.status <> :draft
+                 GROUP BY lv.questionbankentryid
+             ) latestversions ON latestversions.questionbankentryid = qr.questionbankentryid
+
              LEFT JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-                                        -- Either specified version, or latest ready version.
-                                        AND qv.version = COALESCE(qr.version, (
-                                             SELECT MAX(version)
-                                               FROM {question_versions}
-                                              WHERE questionbankentryid = qbe.id AND status <> :draft
-                                        ))
+                                       -- Either specified version, or latest ready version.
+                                       AND qv.version = COALESCE(qr.version, latestversions.version)
              LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
              LEFT JOIN {question} q ON q.id = qv.questionid
 
              -- Case where a random question has been added.
-             LEFT JOIN {question_set_references} qsr ON qsr.usingcontextid = :quizcontextid2 AND qsr.component = 'mod_quiz'
+             LEFT JOIN {question_set_references} qsr ON qsr.usingcontextid = :quizcontextid3 AND qsr.component = 'mod_quiz'
                                         AND qsr.questionarea = 'slot' AND qsr.itemid = slot.id
 
                  WHERE slot.quizid = :quizid
