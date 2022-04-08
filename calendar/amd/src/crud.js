@@ -246,9 +246,12 @@ function(
             // When something within the calendar tells us the user wants
             // to edit an event then show the event form modal.
             $('body').on(CalendarEvents.editEvent, function(e, eventId) {
-                var calendarWrapper = root.find(CalendarSelectors.wrapper);
+                var target = root.find(`[data-event-id=${eventId}]`),
+                    calendarWrapper = root.find(CalendarSelectors.wrapper);
+
                 modal.setEventId(eventId);
                 modal.setContextId(calendarWrapper.data('contextId'));
+                modal.setReturnElement(target);
                 modal.show();
 
                 e.stopImmediatePropagation();
