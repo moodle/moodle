@@ -28,7 +28,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
@@ -40,6 +39,7 @@ require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
+use mod_quiz\question\bank\qbank_helper;
 
 /**
  * @var int We show the countdown timer if there is less than this amount of time left before the
@@ -81,7 +81,7 @@ define('QUIZ_SHOWIMAGE_LARGE', 2);
  *
  * @param object $quizobj the quiz object to create an attempt for.
  * @param int $attemptnumber the sequence number for the attempt.
- * @param object $lastattempt the previous attempt by this user, if any. Only needed
+ * @param stdClass|null $lastattempt the previous attempt by this user, if any. Only needed
  *         if $attemptnumber > 1 and $quiz->attemptonlast is true.
  * @param int $timenow the time the attempt was started at.
  * @param bool $ispreview whether this new attempt is a preview.
@@ -171,12 +171,10 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
 
     // First load all the non-random questions.
     $randomfound = false;
-    $randomtestfound = false;
     $slot = 0;
     $questions = array();
     $maxmark = array();
     $page = array();
-    $questiondatarandom = [];
     foreach ($quizobj->get_questions() as $questiondata) {
         $slot += 1;
         $maxmark[$slot] = $questiondata->maxmark;
@@ -185,34 +183,55 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
             $randomfound = true;
             continue;
         }
-
-        // Intended for testing purposes only.
-        foreach ($questionids as $key => $questionid) {
-            if ($questionid !== (int)$questiondata->id && $slot === $key) {
-                $randomtestfound = true;
-                $questiondatarandom[$key] = $questiondata;
-                continue 2;
-            }
-        }
-
         if (!$quizobj->get_quiz()->shuffleanswers) {
             $questiondata->options->shuffleanswers = false;
         }
         $questions[$slot] = question_bank::make_question($questiondata);
     }
 
-    // Then find a question throw an error as something horribly wrong might have happened.
+    // Then find a question to go in place of each random question.
     if ($randomfound) {
-        throw new coding_exception(
-            'Using "random" questions directly in an attempt is deprecated. Please use question_set_references table instead.'
-        );
-    }
+        $slot = 0;
+        $usedquestionids = array();
+        foreach ($questions as $question) {
+            if ($question->id && isset($usedquestions[$question->id])) {
+                $usedquestionids[$question->id] += 1;
+            } else {
+                $usedquestionids[$question->id] = 1;
+            }
+        }
+        $randomloader = new \core_question\local\bank\random_question_loader($qubaids, $usedquestionids);
 
-    // Then find a question to go in place of each random question. Intended for testing purposes only.
-    if ($randomtestfound) {
-        foreach ($questiondatarandom as $slot => $questiondata) {
+        foreach ($quizobj->get_questions() as $questiondata) {
+            $slot += 1;
+            if ($questiondata->qtype != 'random') {
+                continue;
+            }
+
+            $tagids = qbank_helper::get_tag_ids_for_slot($questiondata);
+
             // Deal with fixed random choices for testing.
-            $questions[$slot] = question_bank::load_question($questionids[$slot], $quizobj->get_quiz()->shuffleanswers);
+            if (isset($questionids[$quba->next_slot_number()])) {
+                if ($randomloader->is_question_available($questiondata->category,
+                        (bool) $questiondata->questiontext, $questionids[$quba->next_slot_number()], $tagids)) {
+                    $questions[$slot] = question_bank::load_question(
+                            $questionids[$quba->next_slot_number()], $quizobj->get_quiz()->shuffleanswers);
+                    continue;
+                } else {
+                    throw new coding_exception('Forced question id not available.');
+                }
+            }
+
+            // Normal case, pick one at random.
+            $questionid = $randomloader->get_next_question_id($questiondata->category,
+                    $questiondata->randomrecurse, $tagids);
+            if ($questionid === null) {
+                throw new moodle_exception('notenoughrandomquestions', 'quiz',
+                                           $quizobj->view_url(), $questiondata);
+            }
+
+            $questions[$slot] = question_bank::load_question($questionid,
+                    $quizobj->get_quiz()->shuffleanswers);
         }
     }
 

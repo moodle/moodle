@@ -72,6 +72,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
         global $SITE, $DB;
         $this->setAdminUser();
 
+        /** @var core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $slots = array();
         $qidsbycat = array();
@@ -147,8 +148,8 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
      * @param array $quizsettings Quiz overrides for this quiz.
      * @param array $csvdata Data loaded from csv files for this test.
      */
-    protected function create_quiz_simulate_attempts_and_check_results($quizsettings, $csvdata) {
-        $this->resetAfterTest(true);
+    protected function create_quiz_simulate_attempts_and_check_results(array $quizsettings, array $csvdata) {
+        $this->resetAfterTest();
 
         $this->create_quiz($quizsettings, $csvdata['questions']);
 
@@ -166,7 +167,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
      * @param string $test
      * @return string full path of file.
      */
-    protected function get_full_path_of_csv_file($setname, $test) {
+    protected function get_full_path_of_csv_file(string $setname, string $test): string {
         return  __DIR__."/fixtures/{$setname}{$test}.csv";
     }
 
@@ -177,7 +178,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
      * @param string $test
      * @return array
      */
-    protected function load_csv_data_file($setname, $test='') {
+    protected function load_csv_data_file(string $setname, string $test = ''): array {
         $files = array($setname => $this->get_full_path_of_csv_file($setname, $test));
         return $this->dataset_from_files($files)->get_rows([$setname]);
     }
@@ -188,7 +189,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
      * @param array $row from csv file with field names with parts separate by '.'.
      * @return array the row with each part of the field name following a '.' being a separate sub array's index.
      */
-    protected function explode_dot_separated_keys_to_make_subindexs(array $row) {
+    protected function explode_dot_separated_keys_to_make_subindexs(array $row): array {
         $parts = array();
         foreach ($row as $columnkey => $value) {
             $newkeys = explode('.', trim($columnkey));
@@ -214,7 +215,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
      * @return array One array element for each run of the test. Each element contains an array with the params for
      *                  test_walkthrough_from_csv.
      */
-    public function get_data_for_walkthrough() {
+    public function get_data_for_walkthrough(): array {
         $quizzes = $this->load_csv_data_file('quizzes')['quizzes'];
         $datasets = array();
         foreach ($quizzes as $quizsettings) {
@@ -230,10 +231,10 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
     }
 
     /**
-     * @param $steps array the step data from the csv file.
+     * @param array $steps the step data from the csv file.
      * @return array attempt no as in csv file => the id of the quiz_attempt as stored in the db.
      */
-    protected function walkthrough_attempts($steps) {
+    protected function walkthrough_attempts(array $steps): array {
         global $DB;
         $attemptids = array();
         foreach ($steps as $steprow) {
@@ -256,7 +257,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
                 $prevattempts = quiz_get_user_attempts($this->quiz->id, $user->id, 'all', true);
                 $attemptnumber = count($prevattempts) + 1;
                 $timenow = time();
-                $attempt = quiz_create_attempt($quizobj, $attemptnumber, false, $timenow, false, $user->id);
+                $attempt = quiz_create_attempt($quizobj, $attemptnumber, null, $timenow, false, $user->id);
                 // Select variant and / or random sub question.
                 if (!isset($step['variants'])) {
                     $step['variants'] = array();
@@ -291,10 +292,10 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
     }
 
     /**
-     * @param $results array the results data from the csv file.
-     * @param $attemptids array attempt no as in csv file => the id of the quiz_attempt as stored in the db.
+     * @param array $results the results data from the csv file.
+     * @param array $attemptids attempt no as in csv file => the id of the quiz_attempt as stored in the db.
      */
-    protected function check_attempts_results($results, $attemptids) {
+    protected function check_attempts_results(array $results, array $attemptids) {
         foreach ($results as $resultrow) {
             $result = $this->explode_dot_separated_keys_to_make_subindexs($resultrow);
             // Re-load quiz attempt data.
@@ -308,9 +309,8 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
      *
      * @param array        $result             row of data read from csv file.
      * @param quiz_attempt $attemptobj         the attempt object loaded from db.
-     * @throws coding_exception
      */
-    protected function check_attempt_results($result, $attemptobj) {
+    protected function check_attempt_results(array $result, quiz_attempt $attemptobj) {
         foreach ($result as $fieldname => $value) {
             if ($value === '!NULL!') {
                 $value = null;

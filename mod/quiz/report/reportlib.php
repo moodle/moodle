@@ -114,11 +114,11 @@ function quiz_report_get_significant_questions($quiz) {
         }
         $qsbyslot[$slotreport->slot] = $slotreport;
     }
-    $qsbyslot = \mod_quiz\question\bank\qbank_helper::question_array_sort($qsbyslot, 'slot');
+    ksort($qsbyslot);
     $number = 1;
     foreach ($qsbyslot as $question) {
         $question->number = $number;
-        $number ++;
+        $number++;
     }
     return $qsbyslot;
 }

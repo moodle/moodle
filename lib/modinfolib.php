@@ -271,7 +271,7 @@ class course_modinfo {
 
     /**
      * Obtains all instances of a particular module on this course.
-     * @param $modname Name of module (not full frankenstyle) e.g. 'label'
+     * @param string $modname Name of module (not full frankenstyle) e.g. 'label'
      * @return cm_info[] Array from instance id => cm_info for modules on this course; empty if none
      */
     public function get_instances_of($modname) {

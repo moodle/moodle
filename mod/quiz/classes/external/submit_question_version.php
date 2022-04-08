@@ -58,7 +58,7 @@ class submit_question_version extends external_api {
      * Set the questions slot parameters to display the question template.
      *
      * @param int $slotid Slot id to display.
-     * @param int $newversion
+     * @param int $newversion the version to set. 0 means 'always latest'.
      * @return array
      */
     public static function execute(int $slotid, int $newversion): array {

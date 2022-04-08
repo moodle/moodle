@@ -319,7 +319,7 @@ class external_test extends externallib_advanced_testcase {
         // We only see a limited set of fields.
         $this->assertCount(4, $result['quizzes'][0]);
         $this->assertEquals($quiz2->id, $result['quizzes'][0]['id']);
-        $this->assertEquals($quiz2->coursemodule, $result['quizzes'][0]['coursemodule']);
+        $this->assertEquals($quiz2->cmid, $result['quizzes'][0]['coursemodule']);
         $this->assertEquals($quiz2->course, $result['quizzes'][0]['course']);
         $this->assertEquals($quiz2->name, $result['quizzes'][0]['name']);
         $this->assertEquals($quiz2->course, $result['quizzes'][0]['course']);

@@ -17,7 +17,7 @@ This files describes API changes in the quiz code.
 * The quiz_slots_tags database table has been removed entirely, as has the get_slot_tags_for_slot_id() method
   from mod/quiz/classes/structure.php and the the locallib.php functions quiz_retrieve_slot_tags and
   quiz_retrieve_slot_tag_ids. This information is now stored in question_set_references
-  and can be accessed using qbank_helper::get_random_question_data_from_slot.
+  and can be accessed in the results of qbank_helper::get_question_structure.
 
 
 === 3.11 ===
