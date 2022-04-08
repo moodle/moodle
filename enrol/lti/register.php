@@ -96,6 +96,12 @@ if (empty($regendpoint)) {
 $wwwrooturl = $CFG->wwwroot;
 $parsed = parse_url($wwwrooturl);
 $sitefullname = format_string(get_site()->fullname);
+$scopes = [
+    'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
+    'https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly',
+    'https://purl.imsglobal.org/spec/lti-ags/scope/score',
+    'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly',
+];
 
 $regrequest = (object) [
     'application_type' => 'web',
@@ -111,16 +117,11 @@ $regrequest = (object) [
     'jwks_uri' => $CFG->wwwroot . '/enrol/lti/jwks.php',
     'logo_uri' => $OUTPUT->image_url('moodlelogo')->out(false),
     'token_endpoint_auth_method' => 'private_key_jwt',
+    'scope' => implode(" ", $scopes),
     'https://purl.imsglobal.org/spec/lti-tool-configuration' => [
         'domain' => $parsed['host'],
         'target_link_uri' => $CFG->wwwroot . '/enrol/lti/launch.php',
         'custom_parameters' => [],
-        'scopes' => [
-            'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
-            'https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly',
-            'https://purl.imsglobal.org/spec/lti-ags/scope/score',
-            'https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly',
-        ],
         'claims' => [
             'iss',
             'sub',
