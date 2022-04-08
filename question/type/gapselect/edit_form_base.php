@@ -281,7 +281,6 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         }
         $slots = $cleanedslots;
 
-        $found = false;
         foreach ($slots as $slot) {
             $found = false;
             foreach ($choices as $key => $choice) {
@@ -299,10 +298,21 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
                         html_writer::tag('b', $slot));
             }
         }
-        return false;
+        return $this->extra_slot_validation($slots, $choices) ?? false;
     }
 
     public function qtype() {
         return '';
+    }
+
+    /**
+     * Finds more errors in question slots.
+     *
+     * @param array $slots The question text
+     * @param array $choices Question choices
+     * @return string|null Error message or false if no errors
+     */
+    protected function extra_slot_validation(array $slots, array $choices): ?string {
+        return null;
     }
 }
