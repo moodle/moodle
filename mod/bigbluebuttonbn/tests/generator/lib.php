@@ -177,9 +177,10 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
      * The recording is created both locally, and a recording record is created on the mocked BBB server.
      *
      * @param array $data
+     * @param bool $serveronly create it only on the server, not in the database.
      * @return stdClass the recording object
      */
-    public function create_recording(array $data): stdClass {
+    public function create_recording(array $data, $serveronly = false): stdClass {
         $instance = instance::get_from_instanceid($data['bigbluebuttonbnid']);
 
         if (isset($data['imported']) && filter_var($data['imported'], FILTER_VALIDATE_BOOLEAN)) {
@@ -216,7 +217,9 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
                 $recording->recordingid = $this->create_mockserver_recording($instance, $recording, $data);
             }
             $precording = new recording(0, $recording);
-            $precording->create();
+            if (!$serveronly) {
+                $precording->create();
+            }
         }
         return $precording->to_record();
     }
@@ -357,7 +360,8 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
      * @param string $endpoint
      * @param array $params
      * @param array $mockdata
-     * @return SimpleXMLElement
+     * @return SimpleXMLElement|bool
+     * @throws moodle_exception
      */
     protected function send_mock_request(string $endpoint, array $params = [], array $mockdata = []): SimpleXMLElement {
         $url = $this->get_mocked_server_url($endpoint, $params);
@@ -376,7 +380,11 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
         $curl = new \curl();
         $result = $curl->get($url->out_omit_querystring(), $url->params());
 
-        return simplexml_load_string($result, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOBLANKS);
+        $retvalue = @simplexml_load_string($result, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOBLANKS);
+        if ($retvalue === false) {
+            throw new moodle_exception('mockserverconnfailed', 'mod_bigbluebutton');
+        }
+        return $retvalue;
     }
 
     /**

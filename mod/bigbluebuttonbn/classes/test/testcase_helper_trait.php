@@ -149,7 +149,14 @@ trait testcase_helper_trait {
                 'The TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER constant must be defined to run mod_bigbluebuttonbn tests'
             );
         }
-        $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn')->reset_mock();
+        try {
+            $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn')->reset_mock();
+        } catch (\moodle_exception $e) {
+            $this->markTestSkipped(
+                'Cannot connect to the mock server for this test. Make sure that TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER points
+                to an active Mock server'
+            );
+        }
     }
 
     /**
@@ -157,6 +164,7 @@ trait testcase_helper_trait {
      *
      * @param instance $instance
      * @param array $recordingdata array of recording information
+     * @param array $additionalmeetingdata
      * @return array
      */
     protected function create_recordings_for_instance(instance $instance, array $recordingdata = [],
@@ -263,61 +271,61 @@ trait testcase_helper_trait {
      * @param instance $instance
      * @param int $userid
      * @param int $count
-     * @param bool $importrecordings
+     * @param bool $importedrecordings
+     * @param bool $withremoterecordings create recording on the mock server ?
      * @return array
      */
     protected function create_legacy_log_entries(
         instance $instance,
         int $userid,
         int $count = 30,
-        $importrecordings = false
+        bool $importedrecordings = false,
+        bool $withremoterecordings = true
     ): array {
-        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
-        $plugingenerator->create_meeting([
-            'instanceid' => $instance->get_instance_id(),
-            'groupid' => $instance->get_group_id(),
-        ]);
-
         // Create log entries for each (30 for the ungrouped, 30 for the grouped).
         $baselogdata = [
             'courseid' => $instance->get_course_id(),
             'userid' => $userid,
-            'log' => $importrecordings ? 'Import' : 'Create',
+            'log' => $importedrecordings ? 'Import' : 'Create',
             'meta' => json_encode(['record' => true]),
-            'imported' => $importrecordings,
+            'imported' => $importedrecordings,
         ];
-
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
         for ($i = 0; $i < $count; $i++) {
-            // Create a recording.
-            $recording = $plugingenerator->create_recording([
-                'bigbluebuttonbnid' => $instance->get_instance_id(),
-                'groupid' => $instance->get_group_id()
-            ]);
+            if ($withremoterecordings) {
+                // Create a recording.
+                $starttime = time() - random_int(HOURSECS, WEEKSECS);
+                $recording = $plugingenerator->create_recording([
+                        'bigbluebuttonbnid' => $instance->get_instance_id(),
+                        'groupid' => $instance->get_group_id(),
+                        'starttime' => $starttime,
+                        'endtime' => $starttime + HOURSECS,
+                ], true); // Create them on the server only.
 
-            $baselogdata['meetingid'] = $instance->get_meeting_id();
-            if ($importrecordings) {
-                // Fetch the data.
-                $data = recording_proxy::fetch_recordings([$recording->recordingid]);
-                $data = end($data);
-                if ($data) {
-                    $metaonly = array_filter($data, function($key) {
-                        return strstr($key, 'meta_');
-                    }, ARRAY_FILTER_USE_KEY);
+                $baselogdata['meetingid'] = $instance->get_meeting_id();
+                if ($importedrecordings) {
+                    // Fetch the data.
+                    $data = recording_proxy::fetch_recordings([$recording->recordingid]);
+                    $data = end($data);
+                    if ($data) {
+                        $metaonly = array_filter($data, function($key) {
+                            return strstr($key, 'meta_');
+                        }, ARRAY_FILTER_USE_KEY);
+                    } else {
+                        $data = [];
+                    }
+                    $baselogdata['meta'] = json_encode(array_merge([
+                            'recording' => array_diff_key($data, $metaonly),
+                    ], $metaonly));
+
                 } else {
-                    $data = [];
+                    $baselogdata['meta'] = json_encode((object) ['record' => true]);
                 }
-                $baselogdata['meta'] = json_encode(array_merge([
-                    'recording' => array_diff_key($data, $metaonly),
-                ], $metaonly));
-
-            } else {
-                $baselogdata['meta'] = json_encode((object) ['record' => true]);
             }
-
             // Insert the legacy log entry.
             $logs[] = $plugingenerator->create_log(array_merge($baselogdata, [
                 'bigbluebuttonbnid' => $instance->get_instance_id(),
-                'timecreated' => time() - WEEKSECS + (HOURSECS * $i),
+                'timecreated' => time() - random_int(HOURSECS, WEEKSECS) + (HOURSECS * $i),
             ]));
         }
 
