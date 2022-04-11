@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\systemreports;
 
+use context;
 use lang_string;
 use moodle_url;
 use pix_icon;
@@ -62,7 +63,9 @@ class report_schedules extends system_report {
         $this->add_join('JOIN {' . report::TABLE . '} rb ON rb.id = sc.reportid');
 
         $this->add_base_condition_simple('sc.reportid', $this->get_parameter('reportid', 0, PARAM_INT));
-        $this->add_base_fields('sc.id, sc.name, sc.enabled'); // Necessary for actions/row class.
+
+        // Select fields required for actions, permission checks, and row class callbacks.
+        $this->add_base_fields('sc.id, sc.name, sc.enabled, rb.contextid');
 
         // Join user entity for "User modified" column.
         $entityuser = new user();
@@ -280,21 +283,39 @@ class report_schedules extends system_report {
         ));
 
         // Send now action.
-        $this->add_action(new action(
+        $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('t/email', ''),
             ['data-action' => 'schedule-send', 'data-schedule-id' => ':id', 'data-schedule-name' => ':name'],
             false,
             new lang_string('sendschedule', 'core_reportbuilder')
-        ));
+        ))
+            ->add_callback(function(stdClass $row): bool {
+
+                // Ensure data name attribute is properly formatted.
+                $row->name = (new schedule(0, $row))->get_formatted_name(
+                    context::instance_by_id($row->contextid));
+
+                return true;
+            })
+        );
 
         // Delete action.
-        $this->add_action(new action(
+        $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('t/delete', ''),
             ['data-action' => 'schedule-delete', 'data-schedule-id' => ':id', 'data-schedule-name' => ':name'],
             false,
             new lang_string('deleteschedule', 'core_reportbuilder')
-        ));
+        ))
+            ->add_callback(function(stdClass $row): bool {
+
+                // Ensure data name attribute is properly formatted.
+                $row->name = (new schedule(0, $row))->get_formatted_name(
+                    context::instance_by_id($row->contextid));
+
+                return true;
+            })
+        );
     }
 }

@@ -44,6 +44,18 @@ Feature: Manage custom report schedules
       | Name        | Starting from                           | Time last sent | Modified by |
       | My schedule | ##tomorrow 11:00##%A, %d %B %Y, %H:%M## | Never          | Admin User  |
 
+  Scenario: Create report schedule for audience renamed using filters
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    And I click on the "Audience" dynamic tab
+    And I set the field "Rename audience 'All users'" to "<span class=\"multilang\" lang=\"en\">English</span><span class=\"multilang\" lang=\"es\">Spanish</span>"
+    When I click on the "Schedules" dynamic tab
+    And I press "New schedule"
+    Then I should see "English" in the "New schedule" "dialogue"
+    And I should not see "Spanish" in the "New schedule" "dialogue"
+    And I click on "Cancel" "button" in the "New schedule" "dialogue"
+
   Scenario: Rename report schedule
     Given the following "core_reportbuilder > Schedule" exists:
       | report | My report   |
@@ -53,6 +65,26 @@ Feature: Manage custom report schedules
     When I set the field "Edit schedule name" in the "My schedule" "table_row" to "My renamed schedule"
     And I reload the page
     Then I should see "My renamed schedule" in the "reportbuilder-table" "table"
+
+  Scenario: Rename report schedule using filters
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And the following "core_reportbuilder > Schedule" exists:
+      | report | My report   |
+      | name   | My schedule |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    And I click on the "Schedules" dynamic tab
+    When I set the field "Edit schedule name" in the "My schedule" "table_row" to "<span class=\"multilang\" lang=\"en\">English</span><span class=\"multilang\" lang=\"es\">Spanish</span>"
+    And I reload the page
+    Then I should see "English" in the "reportbuilder-table" "table"
+    And I should not see "Spanish" in the "reportbuilder-table" "table"
+    # Confirm schedule name is correctly shown in actions.
+    And I press "Send schedule" action in the "English" report row
+    And I should see "Are you sure you want to queue the schedule 'English' for sending immediately?" in the "Send schedule" "dialogue"
+    And I click on "Cancel" "button" in the "Send schedule" "dialogue"
+    And I press "Delete schedule" action in the "English" report row
+    And I should see "Are you sure you want to delete the schedule 'English'?" in the "Delete schedule" "dialogue"
+    And I click on "Cancel" "button" in the "Delete schedule" "dialogue"
 
   Scenario: Toggle report schedule
     Given the following "core_reportbuilder > Schedules" exist:
