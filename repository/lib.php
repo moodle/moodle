@@ -1497,10 +1497,10 @@ abstract class repository implements cacheable_object {
         //if the context is SYSTEM, so we call it from administration page
         $admin = ($context->id == SYSCONTEXTID) ? true : false;
         if ($admin) {
-            $baseurl = new moodle_url('/'.$CFG->admin.'/repositoryinstance.php', array('sesskey'=>sesskey()));
+            $baseurl = new moodle_url('/admin/repositoryinstance.php');
             $output .= $OUTPUT->heading(get_string('siteinstances', 'repository'));
         } else {
-            $baseurl = new moodle_url('/repository/manage_instances.php', array('contextid'=>$context->id, 'sesskey'=>sesskey()));
+            $baseurl = new moodle_url('/repository/manage_instances.php', ['contextid' => $context->id]);
         }
 
         $namestr = get_string('name');
