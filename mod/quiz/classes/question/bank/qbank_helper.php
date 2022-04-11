@@ -214,6 +214,19 @@ class qbank_helper {
     }
 
     /**
+     * Given a slot from the array returned by get_question_structure, describe the random question it represents.
+     *
+     * @param \stdClass $slotdata one of the array elements returned by get_question_structure.
+     * @return string that can be used to display the random slot.
+     */
+    public static function describe_random_question(\stdClass $slotdata): string {
+        global $DB;
+        $category = $DB->get_record('question_categories', ['id' => $slotdata->category]);
+        return \question_bank::get_qtype('random')->question_name(
+               $category, $slotdata->randomrecurse, $slotdata->randomtags);
+    }
+
+    /**
      * Choose question for redo in a particular slot.
      *
      * @param int $quizid the id of the quiz to load the data for.

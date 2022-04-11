@@ -1039,6 +1039,7 @@ class edit_renderer extends \plugin_renderer_base {
 
         $temp = clone($question);
         $temp->questiontext = '';
+        $temp->name = qbank_helper::describe_random_question($slot);
         $instancename = quiz_question_tostring($temp);
 
         $configuretitle = get_string('configurerandomquestion', 'quiz');
