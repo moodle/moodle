@@ -37,7 +37,6 @@ $output = $PAGE->get_renderer('core', 'badges');
 $PAGE->set_url('/badges/badge.php', array('hash' => $id));
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('issuedbadge', 'badges'));
-$PAGE->set_secondary_navigation(false);
 
 $badge = new \core_badges\output\issued_badge($id);
 if (!empty($badge->recipient->id)) {

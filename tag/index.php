@@ -72,6 +72,7 @@ if (empty($tag)) {
 if ($ctx && ($context = context::instance_by_id($ctx, IGNORE_MISSING)) && $context->contextlevel >= CONTEXT_COURSE) {
     list($context, $course, $cm) = get_context_info_array($context->id);
     require_login($course, false, $cm, false, true);
+    $PAGE->set_secondary_navigation(false);
 } else {
     $PAGE->set_context($systemcontext);
 }
@@ -85,7 +86,6 @@ $tagnode = $PAGE->navigation->find('tags', null);
 $tagnode->make_active();
 $PAGE->set_pagelayout('standard');
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
-$PAGE->set_secondary_navigation(false);
 
 $buttons = '';
 if (has_capability('moodle/tag:manage', context_system::instance())) {

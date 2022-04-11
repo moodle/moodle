@@ -51,7 +51,6 @@ $PAGE->set_context($context);
 $PAGE->set_url('/my/courses.php');
 $PAGE->add_body_classes(['limitedwidth', 'page-mycourses']);
 $PAGE->set_pagelayout('mycourses');
-$PAGE->set_secondary_navigation(false);
 
 $PAGE->set_pagetype('my-index');
 $PAGE->blocks->add_region('content');
