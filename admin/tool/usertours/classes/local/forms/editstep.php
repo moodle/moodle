@@ -214,7 +214,7 @@ class editstep extends \moodleform {
             if ($data->contenttype == static::CONTENTTYPE_LANGSTRING) {
                 $data->content = [
                     'text' => $data->contentlangstring,
-                    'format' => FORMAT_HTML,
+                    'format' => FORMAT_MOODLE,
                 ];
             }
         }

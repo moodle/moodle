@@ -866,10 +866,10 @@ class manager {
         // the format filename => version. The version value needs to
         // be increased if the tour has been updated.
         $shippedtours = [
-            '40_tour_navigation_dashboard.json' => 2,
-            '40_tour_navigation_mycourse.json' => 2,
-            '40_tour_navigation_course_teacher.json' => 1,
-            '40_tour_navigation_course_student.json' => 1,
+            '40_tour_navigation_dashboard.json' => 4,
+            '40_tour_navigation_mycourse.json' => 4,
+            '40_tour_navigation_course_teacher.json' => 3,
+            '40_tour_navigation_course_student.json' => 3,
         ];
 
         // These are tours that we used to ship but don't ship any longer.

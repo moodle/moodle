@@ -100,26 +100,33 @@ function xmldb_tool_usertours_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021100700, 'tool', 'usertours');
     }
 
-    if ($oldversion < 2021101300) {
+    if ($oldversion < 2022040601) {
         // Define field contentformat to be added to tool_usertours_steps.
         $table = new xmldb_table('tool_usertours_steps');
-        $field = new xmldb_field('contentformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1', 'content');
+        $field = new xmldb_field('contentformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, FORMAT_MOODLE, 'content');
 
         // Conditionally launch add field contentformat.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
+        } else {
+            // Field was added by previous upgrade step with the default value is FORMAT_HTML.
+            // Need to drop the field and re-create with the new structure to make sure all the existing tours use FORMAT_MOODLE.
+            // FORMAT_MOODLE will force the external_format_text method to use nl2br to convert the new line to line break tag.
+            $dbman->drop_field($table, $field);
+            // Add the field again.
+            $dbman->add_field($table, $field);
         }
 
         // Usertours savepoint reached.
-        upgrade_plugin_savepoint(true, 2021101300, 'tool', 'usertours');
+        upgrade_plugin_savepoint(true, 2022040601, 'tool', 'usertours');
     }
 
-    if ($oldversion < 2021101303) {
+    if ($oldversion < 2022040602) {
         // Update shipped tours.
         // Normally, we just bump the version numbers because we need to call update_shipped_tours only once.
         manager::update_shipped_tours();
 
-        upgrade_plugin_savepoint(true, 2021101303, 'tool', 'usertours');
+        upgrade_plugin_savepoint(true, 2022040602, 'tool', 'usertours');
     }
 
     return true;

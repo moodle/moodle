@@ -167,7 +167,7 @@ class step {
             $this->title    = $record->title;
             $this->content  = $record->content;
         }
-        $this->contentformat = isset($record->contentformat) ? $record->contentformat : 1;
+        $this->contentformat = isset($record->contentformat) ? $record->contentformat : FORMAT_MOODLE;
         $this->targettype   = $record->targettype;
         $this->targetvalue  = $record->targetvalue;
         $this->sortorder    = $record->sortorder;
