@@ -4505,7 +4505,9 @@ function forum_tp_is_post_old($post, $time=null) {
  * @return array
  */
 function forum_tp_get_course_unread_posts($userid, $courseid) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
+
+    $course_context = context_course::instance($courseid);
 
     $modinfo = get_fast_modinfo($courseid);
     $forumcms = $modinfo->get_instances_of('forum');
@@ -4543,7 +4545,7 @@ function forum_tp_get_course_unread_posts($userid, $courseid) {
                             AND (SELECT trackforums FROM {user} WHERE id = :trackforumuser) = 1)";
     }
 
-    $sql = "SELECT f.id, COUNT(p.id) AS unread,
+    $select = "SELECT f.id, COUNT(p.id) AS unread,
                    COUNT(p.privatereply) as privatereplies,
                    COUNT(p.privatereplytouser) as privaterepliestouser
               FROM (
@@ -4559,12 +4561,36 @@ function forum_tp_get_course_unread_posts($userid, $courseid) {
                    JOIN {forum} f                   ON f.id = d.forum
                    JOIN {course} c                  ON c.id = f.course
                    LEFT JOIN {forum_read} r         ON (r.postid = p.id AND r.userid = :readuserid)
-                   LEFT JOIN {forum_track_prefs} tf ON (tf.userid = :trackprefsuser AND tf.forumid = f.id)
-             WHERE f.course = :courseid
+                   LEFT JOIN {forum_track_prefs} tf ON (tf.userid = :trackprefsuser AND tf.forumid = f.id)";
+
+    $where = " WHERE f.course = :courseid
                    AND r.id is NULL
                    $trackingsql
-                   $timedsql
-          GROUP BY f.id";
+                   $timedsql ";
+
+    $groupby = " GROUP BY f.id";
+
+    if (!has_capability('moodle/site:accessallgroups', $course_context, $USER)) {
+        // Get all user's groups for the course
+        $mygroups = $DB->get_records_sql(
+            "SELECT g.id FROM {groups} g 
+        JOIN {groups_members} gm ON gm.groupid = g.id
+        JOIN {course} c ON g.courseid = c.id
+        WHERE gm.userid = :userid AND c.id = :courseid",
+            ['userid' => $USER->id, 'courseid' => $courseid]);
+        $mygroups_ids = [];
+        foreach ($mygroups as $g) {
+            $mygroups_ids[] = $g->id;
+        }
+        // Add where condition to only get the groups that the user has access to
+        if (!empty($mygroups_ids)) {
+            list ($ingroupssql, $ingroupsparams) = $DB->get_in_or_equal($mygroups_ids, SQL_PARAMS_NAMED);
+            $where .= " AND (d.groupid $ingroupssql OR d.groupid = -1) ";
+            $params = array_merge($params, $ingroupsparams);
+        }
+    }
+
+    $sql = $select . $where . $groupby;
 
     $results = [];
     if ($records = $DB->get_records_sql($sql, $params)) {
