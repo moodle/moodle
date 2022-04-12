@@ -475,13 +475,7 @@ class question_category_object {
         // If the category name has changed, rename any random questions in that category.
         if ($oldcat->name != $cat->name) {
             // Get the question ids for each question category.
-            $sql = "SELECT q.id
-                      FROM {question} q
-                      JOIN {question_versions} qv ON qv.questionid = q.id
-                      JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                     WHERE qbe.questioncategoryid = ?";
-
-            $questionids = $DB->get_records_sql($sql, [$cat->id]);
+            $questionids = $this->get_real_question_ids_in_category($cat->id);
 
             foreach ($questionids as $question) {
                 $where = "qtype = 'random' AND id = ? AND " . $DB->sql_compare_text('questiontext') . " = ?";
