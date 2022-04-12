@@ -144,7 +144,7 @@ case 'downloaddir':
         $fileurl = moodle_url::make_draftfile_url($newdraftitemid, '/', $filename)->out();
         header('Location: ' . $fileurl);
     } else {
-        print_error('cannotdownloaddir', 'repository');
+        throw new \moodle_exception('cannotdownloaddir', 'repository');
     }
     break;
 

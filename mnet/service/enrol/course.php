@@ -49,7 +49,7 @@ if (!$service->is_available()) {
 $hosts = $service->get_remote_publishers();
 
 if (empty($hosts[$hostid])) {
-    print_error('wearenotsubscribedtothishost', 'mnetservice_enrol');
+    throw new \moodle_exception('wearenotsubscribedtothishost', 'mnetservice_enrol');
 }
 $host   = $hosts[$hostid];
 $course = $DB->get_record('mnetservice_enrol_courses', array('id'=>$courseid, 'hostid'=>$host->id), '*', MUST_EXIST);

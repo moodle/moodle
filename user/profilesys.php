@@ -53,7 +53,7 @@ $PAGE->blocks->add_region('content');
 
 // Get the Public Profile page info.  Should always return something unless the database is broken.
 if (!$currentpage = my_get_page(null, MY_PAGE_PUBLIC)) {
-    print_error('publicprofilesetup');
+    throw new \moodle_exception('publicprofilesetup');
 }
 $PAGE->set_subpage($currentpage->id);
 

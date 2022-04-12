@@ -2694,7 +2694,7 @@ class course_request {
         }
         if (empty($properties->requester)) {
             if (!($this->properties = $DB->get_record('course_request', array('id' => $properties->id)))) {
-                print_error('unknowncourserequest');
+                throw new \moodle_exception('unknowncourserequest');
             }
         } else {
             $this->properties = $properties;

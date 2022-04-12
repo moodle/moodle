@@ -45,38 +45,38 @@ $serialdelete = optional_param('serialdelete', null, PARAM_RAW);
 
 if ($id) {
     if (! $cm = get_coursemodule_from_id('data', $id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     $record = NULL;
 
 } else if ($rid) {
     if (! $record = $DB->get_record('data_records', array('id'=>$rid))) {
-        print_error('invalidrecord', 'data');
+        throw new \moodle_exception('invalidrecord', 'data');
     }
     if (! $data = $DB->get_record('data', array('id'=>$record->dataid))) {
-        print_error('invalidid', 'data');
+        throw new \moodle_exception('invalidid', 'data');
     }
     if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 } else {   // We must have $d
     if (! $data = $DB->get_record('data', array('id'=>$d))) {
-        print_error('invalidid', 'data');
+        throw new \moodle_exception('invalidid', 'data');
     }
     if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     $record = NULL;
 }
@@ -266,7 +266,7 @@ echo $OUTPUT->header();
 
 // Detect entries not approved yet and show hint instead of not found error.
 if ($record and !data_can_view_record($data, $record, $currentgroup, $canmanageentries)) {
-    print_error('notapproved', 'data');
+    throw new \moodle_exception('notapproved', 'data');
 }
 
 // Do we need to show a link to the RSS feed for the records?

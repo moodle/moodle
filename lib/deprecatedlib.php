@@ -664,7 +664,7 @@ function groups_course_module_visible() {
  */
 function error() {
     throw new coding_exception('notlocalisederrormessage', 'error', $link, $message, 'error() is a removed, please call
-            print_error() instead of error()');
+            throw new \moodle_exception() instead of error()');
 }
 
 
@@ -3733,4 +3733,25 @@ function get_array_of_activities(int $courseid, bool $usecache = false): array {
     debugging(__FUNCTION__ . '() is deprecated. ' . 'Please use course_modinfo::get_array_of_activities() instead.',
         DEBUG_DEVELOPER);
     return course_modinfo::get_array_of_activities(get_course($courseid), $usecache);
+}
+
+/**
+ * Abort execution by throwing of a general exception,
+ * default exception handler displays the error message in most cases.
+ *
+ * @deprecated since Moodle 4.1
+ * @todo MDL-74484 Final deprecation in Moodle 4.5.
+ * @param string $errorcode The name of the language string containing the error message.
+ *      Normally this should be in the error.php lang file.
+ * @param string $module The language file to get the error message from.
+ * @param string $link The url where the user will be prompted to continue.
+ *      If no url is provided the user will be directed to the site index page.
+ * @param object $a Extra words and phrases that might be required in the error string
+ * @param string $debuginfo optional debugging information
+ * @return void, always throws exception!
+ */
+function print_error($errorcode, $module = 'error', $link = '', $a = null, $debuginfo = null) {
+    debugging("The function print_error() is deprecated. " .
+            "Please throw a new moodle_exception instance instead.", DEBUG_DEVELOPER);
+    throw new \moodle_exception($errorcode, $module, $link, $a, $debuginfo);
 }

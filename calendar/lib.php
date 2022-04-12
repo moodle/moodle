@@ -478,7 +478,7 @@ class calendar_event {
         if (empty($this->properties->id) || $this->properties->id < 1) {
             if ($checkcapability) {
                 if (!calendar_add_event_allowed($this->properties)) {
-                    print_error('nopermissiontoupdatecalendar');
+                    throw new \moodle_exception('nopermissiontoupdatecalendar');
                 }
             }
 
@@ -594,7 +594,7 @@ class calendar_event {
 
             if ($checkcapability) {
                 if (!calendar_edit_event_allowed($this->properties)) {
-                    print_error('nopermissiontoupdatecalendar');
+                    throw new \moodle_exception('nopermissiontoupdatecalendar');
                 }
             }
 
@@ -810,7 +810,7 @@ class calendar_event {
                     // First check the course is valid.
                     $course = $DB->get_record('course', array('id' => $properties->courseid));
                     if (!$course) {
-                        print_error('invalidcourse');
+                        throw new \moodle_exception('invalidcourse');
                     }
                     // Course context.
                     $this->editorcontext = $this->get_context();
@@ -2875,7 +2875,7 @@ function calendar_add_subscription($sub) {
             return $sub->id;
         }
     } else {
-        print_error('errorbadsubscription', 'importcalendar');
+        throw new \moodle_exception('errorbadsubscription', 'importcalendar');
     }
 }
 
@@ -3619,7 +3619,7 @@ function calendar_output_fragment_event_form($args) {
         $event = calendar_event::load($eventid);
 
         if (!calendar_edit_event_allowed($event)) {
-            print_error('nopermissiontoupdatecalendar');
+            throw new \moodle_exception('nopermissiontoupdatecalendar');
         }
 
         $mapper = new \core_calendar\local\event\mappers\create_update_form_mapper();

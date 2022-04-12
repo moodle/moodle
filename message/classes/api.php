@@ -1911,7 +1911,7 @@ class api {
                 }
                 $processor->available = 1;
             } else {
-                print_error('errorcallingprocessor', 'message');
+                throw new \moodle_exception('errorcallingprocessor', 'message');
             }
         } else {
             $processor->available = 0;

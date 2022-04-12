@@ -30,7 +30,7 @@ if ($id = optional_param('id', 0, PARAM_INT)) {
     redirect($CFG->wwwroot . '/mod/quiz/startattempt.php?cmid=' . $id . '&sesskey=' . sesskey());
 } else if ($qid = optional_param('q', 0, PARAM_INT)) {
     if (!$cm = get_coursemodule_from_instance('quiz', $qid)) {
-        print_error('invalidquizid', 'quiz');
+        throw new \moodle_exception('invalidquizid', 'quiz');
     }
     redirect(new moodle_url('/mod/quiz/startattempt.php',
             array('cmid' => $cm->id, 'sesskey' => sesskey())));
@@ -85,7 +85,7 @@ $accessmanager->setup_attempt_page($PAGE);
 $output = $PAGE->get_renderer('mod_quiz');
 $messages = $accessmanager->prevent_access();
 if (!$attemptobj->is_preview_user() && $messages) {
-    print_error('attempterror', 'quiz', $attemptobj->view_url(),
+    throw new \moodle_exception('attempterror', 'quiz', $attemptobj->view_url(),
             $output->access_messages($messages));
 }
 if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {

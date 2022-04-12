@@ -10,7 +10,7 @@
 
     if (!extension_loaded('openssl')) {
         echo $OUTPUT->header();
-        print_error('requiresopenssl', 'mnet', '', NULL, true);
+        throw new \moodle_exception('requiresopenssl', 'mnet', '', null, true);
     }
 
     $site = get_site();

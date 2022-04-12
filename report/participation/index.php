@@ -58,11 +58,11 @@ if ($action != 'view' and $action != 'post') {
 }
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('invalidcourse');
+    throw new \moodle_exception('invalidcourse');
 }
 
 if ($roleid != 0 and !$role = $DB->get_record('role', array('id'=>$roleid))) {
-    print_error('invalidrole');
+    throw new \moodle_exception('invalidrole');
 }
 
 require_login($course);

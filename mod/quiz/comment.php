@@ -38,7 +38,7 @@ $student = $DB->get_record('user', array('id' => $attemptobj->get_userid()));
 
 // Can only grade finished attempts.
 if (!$attemptobj->is_finished()) {
-    print_error('attemptclosed', 'quiz');
+    throw new \moodle_exception('attemptclosed', 'quiz');
 }
 
 // Check login and permissions.

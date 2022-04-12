@@ -55,7 +55,7 @@ $entry->id = null;
 
 if ($id) {
     if (!$entry = new blog_entry($id)) {
-        print_error('wrongentryid', 'blog');
+        throw new \moodle_exception('wrongentryid', 'blog');
     }
     $userid = $entry->userid;
 } else {
@@ -75,11 +75,11 @@ if ($modid) {
 require_login($courseid);
 
 if (empty($CFG->enableblogs)) {
-    print_error('blogdisable', 'blog');
+    throw new \moodle_exception('blogdisable', 'blog');
 }
 
 if (isguestuser()) {
-    print_error('noguest');
+    throw new \moodle_exception('noguest');
 }
 
 $returnurl = new moodle_url('/blog/index.php');
@@ -98,19 +98,19 @@ if (!empty($modid)) {
 $blogheaders = blog_get_headers();
 
 if (!has_capability('moodle/blog:create', $sitecontext) && !has_capability('moodle/blog:manageentries', $sitecontext)) {
-    print_error('cannoteditentryorblog');
+    throw new \moodle_exception('cannoteditentryorblog');
 }
 
 // Make sure that the person trying to edit has access right.
 if ($id) {
     if (!blog_user_can_edit_entry($entry)) {
-        print_error('notallowedtoedit', 'blog');
+        throw new \moodle_exception('notallowedtoedit', 'blog');
     }
     $entry->subject      = clean_text($entry->subject);
     $entry->summary      = clean_text($entry->summary, $entry->format);
 } else {
     if (!has_capability('moodle/blog:create', $sitecontext)) {
-        print_error('noentry', 'blog'); // The capability "manageentries" is not enough for adding.
+        throw new \moodle_exception('noentry', 'blog'); // The capability "manageentries" is not enough for adding.
     }
 }
 $returnurl->param('userid', $userid);
@@ -125,12 +125,12 @@ if ($action === 'delete') {
     comment::init();
 
     if (empty($entry->id)) {
-        print_error('wrongentryid', 'blog');
+        throw new \moodle_exception('wrongentryid', 'blog');
     }
     if (data_submitted() && $confirm && confirm_sesskey()) {
         // Make sure the current user is the author of the blog entry, or has some deleteanyentry capability.
         if (!blog_user_can_edit_entry($entry)) {
-            print_error('nopermissionstodeleteentry', 'blog');
+            throw new \moodle_exception('nopermissionstodeleteentry', 'blog');
         } else {
             $entry->delete();
             blog_rss_delete_file($userid);
@@ -232,14 +232,14 @@ if ($blogeditform->is_cancelled()) {
 
         case 'edit':
             if (empty($entry->id)) {
-                print_error('wrongentryid', 'blog');
+                throw new \moodle_exception('wrongentryid', 'blog');
             }
 
             $entry->edit($data, $blogeditform, $summaryoptions, $attachmentoptions);
         break;
 
         default :
-            print_error('invalidaction');
+            throw new \moodle_exception('invalidaction');
     }
 
     redirect($returnurl);
@@ -272,14 +272,14 @@ switch ($action) {
 
     case 'edit':
         if (empty($entry->id)) {
-            print_error('wrongentryid', 'blog');
+            throw new \moodle_exception('wrongentryid', 'blog');
         }
         $strformheading = get_string('updateentrywithid', 'blog');
 
         break;
 
     default :
-        print_error('unknowaction');
+        throw new \moodle_exception('unknowaction');
 }
 
 $entry->modid = $modid;

@@ -34,41 +34,41 @@ $PAGE->set_url($url);
 
 if ($rid) {
     if (! $record = $DB->get_record('data_records', array('id'=>$rid))) {
-        print_error('invalidrecord', 'data');
+        throw new \moodle_exception('invalidrecord', 'data');
     }
     if (! $data = $DB->get_record('data', array('id'=>$record->dataid))) {
-        print_error('invalidid', 'data');
+        throw new \moodle_exception('invalidid', 'data');
     }
     if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     if (! $field = $DB->get_record('data_fields', array('id'=>$fieldid))) {
-        print_error('invalidfieldid', 'data');
+        throw new \moodle_exception('invalidfieldid', 'data');
     }
     if (! $field->type == 'latlong') { // Make sure we're looking at a latlong data type!
-        print_error('invalidfieldtype', 'data');
+        throw new \moodle_exception('invalidfieldtype', 'data');
     }
     if (! $content = $DB->get_record('data_content', array('fieldid'=>$fieldid, 'recordid'=>$rid))) {
-        print_error('nofieldcontent', 'data');
+        throw new \moodle_exception('nofieldcontent', 'data');
     }
 } else {   // We must have $d
     if (! $data = $DB->get_record('data', array('id'=>$d))) {
-        print_error('invalidid', 'data');
+        throw new \moodle_exception('invalidid', 'data');
     }
     if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     if (! $field = $DB->get_record('data_fields', array('id'=>$fieldid))) {
-        print_error('invalidfieldid', 'data');
+        throw new \moodle_exception('invalidfieldid', 'data');
     }
     if (! $field->type == 'latlong') { // Make sure we're looking at a latlong data type!
-        print_error('invalidfieldtype', 'data');
+        throw new \moodle_exception('invalidfieldtype', 'data');
     }
     $record = NULL;
 }

@@ -8814,15 +8814,15 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
         if (!$hassiteconfig) {
             // The requested section could depend on a different capability
             // but most likely the user has inadequate capabilities
-            print_error('accessdenied', 'admin');
+            throw new \moodle_exception('accessdenied', 'admin');
         } else {
-            print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
+            throw new \moodle_exception('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
         }
     }
 
     // this eliminates our need to authenticate on the actual pages
     if (!$extpage->check_access()) {
-        print_error('accessdenied', 'admin');
+        throw new \moodle_exception('accessdenied', 'admin');
         die;
     }
 

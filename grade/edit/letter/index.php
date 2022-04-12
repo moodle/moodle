@@ -38,7 +38,7 @@ $contextid = null;//now we have a context object throw away the $contextid from 
 //if viewing
 if (!$edit) {
     if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:manageletters', $context)) {
-        print_error('nopermissiontoviewletergrade');
+        throw new \moodle_exception('nopermissiontoviewletergrade');
     }
 } else {//else we're editing
     require_capability('moodle/grade:manageletters', $context);
@@ -71,7 +71,7 @@ if ($context->contextlevel == CONTEXT_SYSTEM or $context->contextlevel == CONTEX
 
     $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'letter', 'courseid'=>$course->id));
 } else {
-    print_error('invalidcourselevel');
+    throw new \moodle_exception('invalidcourselevel');
 }
 
 $strgrades = get_string('grades');

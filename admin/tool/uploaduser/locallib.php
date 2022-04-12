@@ -192,12 +192,12 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $pr
     if (empty($columns)) {
         $cir->close();
         $cir->cleanup();
-        print_error('cannotreadtmpfile', 'error', $returnurl);
+        throw new \moodle_exception('cannotreadtmpfile', 'error', $returnurl);
     }
     if (count($columns) < 2) {
         $cir->close();
         $cir->cleanup();
-        print_error('csvfewcolumns', 'error', $returnurl);
+        throw new \moodle_exception('csvfewcolumns', 'error', $returnurl);
     }
 
     // test columns
@@ -240,12 +240,12 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $pr
         } else {
             $cir->close();
             $cir->cleanup();
-            print_error('invalidfieldname', 'error', $returnurl, $field);
+            throw new \moodle_exception('invalidfieldname', 'error', $returnurl, $field);
         }
         if (in_array($newfield, $processed)) {
             $cir->close();
             $cir->cleanup();
-            print_error('duplicatefieldname', 'error', $returnurl, $newfield);
+            throw new \moodle_exception('duplicatefieldname', 'error', $returnurl, $newfield);
         }
         $processed[$key] = $newfield;
     }

@@ -139,7 +139,7 @@ class auth_plugin_email extends auth_plugin_base {
         \core\event\user_created::create_from_userid($user->id)->trigger();
 
         if (! send_confirmation_email($user, $confirmationurl)) {
-            print_error('auth_emailnoemail', 'auth_email');
+            throw new \moodle_exception('auth_emailnoemail', 'auth_email');
         }
 
         if ($notify) {

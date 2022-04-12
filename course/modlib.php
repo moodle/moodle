@@ -116,7 +116,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     $transaction = $DB->start_delegated_transaction();
 
     if (!$moduleinfo->coursemodule = add_course_module($newcm)) {
-        print_error('cannotaddcoursemodule');
+        throw new \moodle_exception('cannotaddcoursemodule');
     }
 
     if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true) &&
@@ -142,9 +142,10 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         if ($returnfromfunc instanceof moodle_exception) {
             throw $returnfromfunc;
         } else if (!is_number($returnfromfunc)) {
-            print_error('invalidfunction', '', course_get_url($course, $moduleinfo->section));
+            throw new \moodle_exception('invalidfunction', '', course_get_url($course, $moduleinfo->section));
         } else {
-            print_error('cannotaddnewmodule', '', course_get_url($course, $moduleinfo->section), $moduleinfo->modulename);
+            throw new \moodle_exception('cannotaddnewmodule', '', course_get_url($course, $moduleinfo->section),
+                $moduleinfo->modulename);
         }
     }
 
@@ -493,7 +494,7 @@ function can_add_moduleinfo($course, $modulename, $section) {
     $cw = get_fast_modinfo($course)->get_section_info($section);
 
     if (!course_allowed_module($course, $module->name)) {
-        print_error('moduledisable');
+        throw new \moodle_exception('moduledisable');
     }
 
     return array($module, $context, $cw);
@@ -634,7 +635,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
 
     $updateinstancefunction = $moduleinfo->modulename."_update_instance";
     if (!$updateinstancefunction($moduleinfo, $mform)) {
-        print_error('cannotupdatemod', '', course_get_url($course, $cm->section), $moduleinfo->modulename);
+        throw new \moodle_exception('cannotupdatemod', '', course_get_url($course, $cm->section), $moduleinfo->modulename);
     }
 
     // This needs to happen AFTER the grademin/grademax have already been updated.
@@ -655,7 +656,8 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
                 $newgradeitem->grademax
             );
             if (!component_callback('mod_' . $moduleinfo->modulename, 'rescale_activity_grades', $params)) {
-                print_error('cannotreprocessgrades', '', course_get_url($course, $cm->section), $moduleinfo->modulename);
+                throw new \moodle_exception('cannotreprocessgrades', '', course_get_url($course, $cm->section),
+                    $moduleinfo->modulename);
             }
         }
     }

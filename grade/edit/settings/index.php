@@ -33,7 +33,7 @@ $PAGE->set_url('/grade/edit/settings/index.php', array('id'=>$courseid));
 $PAGE->set_pagelayout('admin');
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 require_login($course);
 $context = context_course::instance($course->id);

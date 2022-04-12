@@ -30,7 +30,7 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
 require('../../config.php');
 
 if (!filter_is_enabled('tex') and !filter_is_enabled('algebra')) {
-    print_error('filternotenabled');
+    throw new \moodle_exception('filternotenabled');
 }
 
 $texexp = optional_param('texexp', '', PARAM_RAW);

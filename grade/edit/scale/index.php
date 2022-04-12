@@ -34,7 +34,7 @@ $PAGE->set_url('/grade/edit/scale/index.php', array('id' => $courseid));
 /// Make sure they can even access this course
 if ($courseid) {
     if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
     require_login($course);
     $context = context_course::instance($course->id);
@@ -72,7 +72,7 @@ switch ($action) {
         if (empty($scale->courseid)) {
             require_capability('moodle/course:managescales', context_system::instance());
         } else if ($scale->courseid != $courseid) {
-            print_error('invalidcourseid');
+            throw new \moodle_exception('invalidcourseid');
         }
 
         if (!$scale->can_delete()) {

@@ -100,7 +100,7 @@ $PAGE->set_title($title);
 $PAGE->activityheader->disable();
 switch ($context->contextlevel) {
     case CONTEXT_SYSTEM:
-        print_error('cannotoverridebaserole', 'error');
+        throw new \moodle_exception('cannotoverridebaserole', 'error');
         break;
     case CONTEXT_USER:
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));

@@ -61,13 +61,13 @@ $PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $pageparams)
 $PAGE->set_pagelayout('incourse');
 
 if (!$course = $DB->get_record('course', $courseparams)) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_login($course);
 
 if (!in_array($itemtype, gradereport_singleview::valid_screens())) {
-    print_error('notvalid', 'gradereport_singleview', '', $itemtype);
+    throw new \moodle_exception('notvalid', 'gradereport_singleview', '', $itemtype);
 }
 
 $context = context_course::instance($course->id);

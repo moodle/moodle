@@ -39,15 +39,15 @@ $url = new moodle_url('/mod/data/export.php', array('d' => $d));
 $PAGE->set_url($url);
 
 if (! $data = $DB->get_record('data', array('id'=>$d))) {
-    print_error('wrongdataid', 'data');
+    throw new \moodle_exception('wrongdataid', 'data');
 }
 
 if (! $cm = get_coursemodule_from_instance('data', $data->id, $data->course)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 if(! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 // fill in missing properties needed for updating of instance
@@ -67,7 +67,7 @@ if(empty($fieldrecords)) {
     if (has_capability('mod/data:managetemplates', $context)) {
         redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);
     } else {
-        print_error('nofieldindatabase', 'data');
+        throw new \moodle_exception('nofieldindatabase', 'data');
     }
 }
 

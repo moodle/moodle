@@ -1194,7 +1194,7 @@ function assign_legacy_capabilities($capability, $legacyperms) {
         }
 
         if (!array_key_exists($type, $archetypes)) {
-            print_error('invalidlegacy', '', '', $type);
+            throw new \moodle_exception('invalidlegacy', '', '', $type);
         }
 
         if ($roles = get_archetype_roles($type)) {
@@ -2385,7 +2385,8 @@ function capabilities_cleanup($component, $newcapdef = null) {
                 if ($roles = get_roles_with_capability($cachedcap->name)) {
                     foreach ($roles as $role) {
                         if (!unassign_capability($cachedcap->name, $role->id)) {
-                            print_error('cannotunassigncap', 'error', '', (object)array('cap'=>$cachedcap->name, 'role'=>$role->name));
+                            throw new \moodle_exception('cannotunassigncap', 'error', '',
+                                (object)array('cap' => $cachedcap->name, 'role' => $role->name));
                         }
                     }
                 }

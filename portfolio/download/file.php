@@ -7,7 +7,7 @@
 require(__DIR__.'/../../config.php');
 
 if (empty($CFG->enableportfolios)) {
-    print_error('disabled', 'portfolio');
+    throw new \moodle_exception('disabled', 'portfolio');
 }
 
 require_once($CFG->libdir.'/portfoliolib.php');

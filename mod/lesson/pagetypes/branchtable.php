@@ -84,7 +84,7 @@ class lesson_page_type_branchtable extends lesson_page {
 
         if (!$firstpage) {
             if (!$apageid = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "prevpageid" => 0))) {
-                print_error('cannotfindfirstpage', 'lesson');
+                throw new \moodle_exception('cannotfindfirstpage', 'lesson');
             }
             while (true) {
                 if ($apageid) {

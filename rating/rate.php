@@ -47,7 +47,7 @@ $PAGE->set_context($context);
 $PAGE->set_url('/rating/rate.php', array('contextid' => $context->id));
 
 if (!confirm_sesskey() || !has_capability('moodle/rating:rate', $context)) {
-    print_error('ratepermissiondenied', 'rating');
+    throw new \moodle_exception('ratepermissiondenied', 'rating');
 }
 
 $rm = new rating_manager();
@@ -57,7 +57,7 @@ $rm = new rating_manager();
 $pluginpermissionsarray = $rm->get_plugin_permissions_array($context->id, $component, $ratingarea);
 
 if (!$pluginpermissionsarray['rate']) {
-    print_error('ratepermissiondenied', 'rating');
+    throw new \moodle_exception('ratepermissiondenied', 'rating');
 } else {
     $params = array(
         'context'     => $context,

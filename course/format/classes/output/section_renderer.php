@@ -906,7 +906,7 @@ abstract class section_renderer extends core_course_renderer {
         if (!($sectioninfo = $modinfo->get_section_info($displaysection)) || !$sectioninfo->uservisible) {
             // This section doesn't exist or is not available for the user.
             // We actually already check this in course/view.php but just in case exit from this function as well.
-            print_error(
+            throw new \moodle_exception(
                 'unknowncoursesection',
                 'error',
                 course_get_url($course),

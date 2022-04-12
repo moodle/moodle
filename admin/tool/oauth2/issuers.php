@@ -45,7 +45,7 @@ $mform = null;
 if ($issuerid) {
     $issuer = \core\oauth2\api::get_issuer($issuerid);
     if (!$issuer) {
-        print_error('invaliddata');
+        throw new \moodle_exception('invaliddata');
     }
 }
 

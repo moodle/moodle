@@ -42,9 +42,9 @@ if (empty($importid)) {
         $readcount = $cir->load_csv_content($content, $form1data->encoding, $form1data->delimiter_name);
         unset($content);
         if ($readcount === false) {
-            print_error('csvfileerror', 'tool_uploadcourse', $returnurl, $cir->get_error());
+            throw new \moodle_exception('csvfileerror', 'tool_uploadcourse', $returnurl, $cir->get_error());
         } else if ($readcount == 0) {
-            print_error('csvemptyfile', 'error', $returnurl, $cir->get_error());
+            throw new \moodle_exception('csvemptyfile', 'error', $returnurl, $cir->get_error());
         }
     } else {
         echo $OUTPUT->header();

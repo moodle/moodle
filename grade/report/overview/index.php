@@ -33,7 +33,7 @@ $userid   = optional_param('userid', $USER->id, PARAM_INT);
 $PAGE->set_url(new moodle_url('/grade/report/overview/index.php', array('id' => $courseid, 'userid' => $userid)));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 require_login(null, false);
 $PAGE->set_course($course);
@@ -52,7 +52,7 @@ if (empty($userid)) {
 
 } else {
     if (!$DB->get_record('user', array('id'=>$userid, 'deleted'=>0)) or isguestuser($userid)) {
-        print_error('invaliduserid');
+        throw new \moodle_exception('invaliduserid');
     }
     $personalcontext = context_user::instance($userid);
 }
@@ -75,7 +75,7 @@ $access = grade_report_overview::check_access($systemcontext, $context, $persona
 
 if (!$access) {
     // no access to grades!
-    print_error('nopermissiontoviewgrades', 'error',  $CFG->wwwroot.'/course/view.php?id='.$courseid);
+    throw new \moodle_exception('nopermissiontoviewgrades', 'error',  $CFG->wwwroot.'/course/view.php?id='.$courseid);
 }
 
 /// return tracking object

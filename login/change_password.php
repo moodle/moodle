@@ -56,7 +56,7 @@ if ($return) {
 $strparticipants = get_string('participants');
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 // require proper login; guest user can not change password
@@ -78,7 +78,7 @@ if (!get_user_preferences('auth_forcepasswordchange', false)) {
 
 // do not allow "Logged in as" users to change any passwords
 if (\core\session\manager::is_loggedinas()) {
-    print_error('cannotcallscript');
+    throw new \moodle_exception('cannotcallscript');
 }
 
 if (is_mnet_remote_user($USER)) {
@@ -86,14 +86,14 @@ if (is_mnet_remote_user($USER)) {
     if ($idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
         $message .= get_string('userchangepasswordlink', 'mnet', $idprovider);
     }
-    print_error('userchangepasswordlink', 'mnet', '', $message);
+    throw new \moodle_exception('userchangepasswordlink', 'mnet', '', $message);
 }
 
 // load the appropriate auth plugin
 $userauth = get_auth_plugin($USER->auth);
 
 if (!$userauth->can_change_password()) {
-    print_error('nopasswordchange', 'auth');
+    throw new \moodle_exception('nopasswordchange', 'auth');
 }
 
 if ($changeurl = $userauth->change_password_url()) {
@@ -112,7 +112,7 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
 
     if (!$userauth->user_update_password($USER, $data->newpassword1)) {
-        print_error('errorpasswordupdate', 'auth');
+        throw new \moodle_exception('errorpasswordupdate', 'auth');
     }
 
     user_add_password_history($USER->id, $data->newpassword1);

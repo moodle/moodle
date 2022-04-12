@@ -38,7 +38,7 @@ require_once(__DIR__ . '/../../../config.php');
 
 // The integration must be enabled for this import endpoint to be active.
 if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
-    print_error('moodlenetnotenabled', 'tool_moodlenet');
+    throw new \moodle_exception('moodlenetnotenabled', 'tool_moodlenet');
 }
 
 $resourceurl = required_param('resourceurl', PARAM_URL);
@@ -82,4 +82,4 @@ if (!empty($_POST)) {
 }
 
 // Invalid or missing POST data. Show an error to the user.
-print_error('missinginvalidpostdata', 'tool_moodlenet');
+throw new \moodle_exception('missinginvalidpostdata', 'tool_moodlenet');

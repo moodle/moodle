@@ -589,7 +589,7 @@ function required_param($parname, $type) {
     } else if (isset($_GET[$parname])) {
         $param = $_GET[$parname];
     } else {
-        print_error('missingparam', '', '', $parname);
+        throw new \moodle_exception('missingparam', '', '', $parname);
     }
 
     if (is_array($param)) {
@@ -628,10 +628,10 @@ function required_param_array($parname, $type) {
     } else if (isset($_GET[$parname])) {
         $param = $_GET[$parname];
     } else {
-        print_error('missingparam', '', '', $parname);
+        throw new \moodle_exception('missingparam', '', '', $parname);
     }
     if (!is_array($param)) {
-        print_error('missingparam', '', '', $parname);
+        throw new \moodle_exception('missingparam', '', '', $parname);
     }
 
     $result = array();
@@ -1268,7 +1268,7 @@ function clean_param($param, $type) {
 
         default:
             // Doh! throw error, switched parameters in optional_param or another serious problem.
-            print_error("unknownparamtype", '', '', $type);
+            throw new \moodle_exception("unknownparamtype", '', '', $type);
     }
 }
 
@@ -2799,7 +2799,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     if ($course->id != SITEID and \core\session\manager::is_loggedinas()) {
         if ($USER->loginascontext->contextlevel == CONTEXT_COURSE) {
             if ($USER->loginascontext->instanceid != $course->id) {
-                print_error('loginasonecourse', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
+                throw new \moodle_exception('loginasonecourse', '',
+                    $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
             }
         }
     }
@@ -3264,17 +3265,17 @@ function validate_user_key($keyvalue, $script, $instance) {
     global $DB;
 
     if (!$key = $DB->get_record('user_private_key', array('script' => $script, 'value' => $keyvalue, 'instance' => $instance))) {
-        print_error('invalidkey');
+        throw new \moodle_exception('invalidkey');
     }
 
     if (!empty($key->validuntil) and $key->validuntil < time()) {
-        print_error('expiredkey');
+        throw new \moodle_exception('expiredkey');
     }
 
     if ($key->iprestriction) {
         $remoteaddr = getremoteaddr(null);
         if (empty($remoteaddr) or !address_in_subnet($remoteaddr, $key->iprestriction)) {
-            print_error('ipmismatch');
+            throw new \moodle_exception('ipmismatch');
         }
     }
     return $key;
@@ -3294,7 +3295,7 @@ function require_user_key_login($script, $instance = null, $keyvalue = null) {
     global $DB;
 
     if (!NO_MOODLE_COOKIES) {
-        print_error('sessioncookiesdisable');
+        throw new \moodle_exception('sessioncookiesdisable');
     }
 
     // Extra safety.
@@ -3307,7 +3308,7 @@ function require_user_key_login($script, $instance = null, $keyvalue = null) {
     $key = validate_user_key($keyvalue, $script, $instance);
 
     if (!$user = $DB->get_record('user', array('id' => $key->userid))) {
-        print_error('invaliduserid');
+        throw new \moodle_exception('invaliduserid');
     }
 
     core_user::require_active_user($user, true, true);
@@ -3788,7 +3789,7 @@ function get_auth_plugin($auth) {
 
     // Check the plugin exists first.
     if (! exists_auth_plugin($auth)) {
-        print_error('authpluginnotfound', 'debug', '', $auth);
+        throw new \moodle_exception('authpluginnotfound', 'debug', '', $auth);
     }
 
     // Return auth plugin instance.
@@ -4643,7 +4644,7 @@ function complete_user_login($user) {
                 redirect($CFG->wwwroot.'/login/change_password.php');
             }
         } else {
-            print_error('nopasswordchangeforced', 'auth');
+            throw new \moodle_exception('nopasswordchangeforced', 'auth');
         }
     }
     return $USER;
@@ -6428,7 +6429,7 @@ function reset_password_and_mail($user) {
     $newpassword = generate_password();
 
     if (!$userauth->user_update_password($user, $newpassword)) {
-        print_error("cannotsetpassword");
+        throw new \moodle_exception("cannotsetpassword");
     }
 
     $a = new stdClass();

@@ -40,23 +40,23 @@ $pageid = required_param('pageid', PARAM_INT); // Page ID
 $option = optional_param('option', 0, PARAM_INT); // Option ID
 
 if (!$page = wiki_get_page($pageid)) {
-    print_error('incorrectpageid', 'wiki');
+    throw new \moodle_exception('incorrectpageid', 'wiki');
 }
 if (!$subwiki = wiki_get_subwiki($page->subwikiid)) {
-    print_error('incorrectsubwikiid', 'wiki');
+    throw new \moodle_exception('incorrectsubwikiid', 'wiki');
 }
 if (!$cm = get_coursemodule_from_instance("wiki", $subwiki->wikiid)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
-    print_error('incorrectwikiid', 'wiki');
+    throw new \moodle_exception('incorrectwikiid', 'wiki');
 }
 
 require_course_login($course, true, $cm);
 
 if (!wiki_user_can_view($subwiki, $wiki)) {
-    print_error('cannotviewpage', 'wiki');
+    throw new \moodle_exception('cannotviewpage', 'wiki');
 }
 
 $wikipage = new page_wiki_map($wiki, $subwiki, $cm, 'modulepage');

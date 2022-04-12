@@ -55,7 +55,7 @@ $PAGE->set_url('/user/index.php', array(
 if ($contextid) {
     $context = context::instance_by_id($contextid, MUST_EXIST);
     if ($context->contextlevel != CONTEXT_COURSE) {
-        print_error('invalidcontext');
+        throw new \moodle_exception('invalidcontext');
     }
     $course = $DB->get_record('course', array('id' => $context->instanceid), '*', MUST_EXIST);
 } else {

@@ -32,7 +32,7 @@ $context = context::instance_by_id($contextid, MUST_EXIST);
 
 $cb = new \core_contentbank\contentbank();
 if (!$cb->is_context_allowed($context)) {
-    print_error('contextnotallowed', 'core_contentbank');
+    throw new \moodle_exception('contextnotallowed', 'core_contentbank');
 }
 
 require_capability('moodle/contentbank:access', $context);

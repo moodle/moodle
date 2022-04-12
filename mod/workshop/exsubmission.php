@@ -38,7 +38,7 @@ $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EX
 
 require_login($course, false, $cm);
 if (isguestuser()) {
-    print_error('guestsarenotallowed');
+    throw new \moodle_exception('guestsarenotallowed');
 }
 
 $workshop = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
@@ -74,7 +74,7 @@ if ($example->id and ($canmanage or ($workshop->assessing_examples_allowed() and
 } elseif (is_null($example->id) and $canmanage) {
     // ok you can go
 } else {
-    print_error('nopermissions', 'error', $workshop->view_url(), 'view or manage example submission');
+    throw new \moodle_exception('nopermissions', 'error', $workshop->view_url(), 'view or manage example submission');
 }
 
 if ($id and $delete and $confirm and $canmanage) {

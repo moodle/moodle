@@ -43,7 +43,7 @@ $errormsg = optional_param('errormsg', '', PARAM_ALPHANUMEXT);
 $returnurl = new \moodle_url('/contentbank/index.php', ['contextid' => $context->id]);
 $plugin = core_plugin_manager::instance()->get_plugin_info($record->contenttype);
 if (!$plugin || !$plugin->is_enabled()) {
-    print_error('unsupported', 'core_contentbank', $returnurl);
+    throw new \moodle_exception('unsupported', 'core_contentbank', $returnurl);
 }
 
 $title = get_string('contentbank');
@@ -94,7 +94,7 @@ if ($errormsg !== '' && get_string_manager()->string_exists($errormsg, 'core_con
                 $visibilitymsg = get_string('unlisted', 'core_contentbank');
                 break;
             default:
-                print_error('contentvisibilitynotfound', 'error', $returnurl, $content->get_visibility());
+                throw new \moodle_exception('contentvisibilitynotfound', 'error', $returnurl, $content->get_visibility());
                 break;
         }
         $statusmsg = get_string($statusmsg, 'core_contentbank', $visibilitymsg);

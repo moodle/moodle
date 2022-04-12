@@ -59,7 +59,7 @@ if ($USER->id != $user->id and has_capability('moodle/user:viewuseractivitiesrep
 list($all, $today) = report_log_can_access_user_report($user, $course);
 
 if (!$today && !$all) {
-    print_error('nocapability', 'report_log');
+    throw new \moodle_exception('nocapability', 'report_log');
 }
 
 if ($mode === 'today') {

@@ -46,7 +46,7 @@ $PAGE->navbar->add(get_string('editlangpack', 'tool_customlang'), $PAGE->url);
 
 if (empty($lng)) {
     // PARAM_LANG validation failed
-    print_error('missingparameter');
+    throw new \moodle_exception('missingparameter');
 }
 
 // pre-output processing

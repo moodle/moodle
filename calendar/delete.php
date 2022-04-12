@@ -60,7 +60,7 @@ if (!$course) {
 $title = get_string('deleteevent', 'calendar');
 // Check the user has the required capabilities to delete an event
 if (!calendar_delete_event_allowed($event)) {
-    print_error('nopermissions', 'error', $PAGE->url, $title);
+    throw new \moodle_exception('nopermissions', 'error', $PAGE->url, $title);
 }
 
 // Count the repeats, do we need to consider the possibility of deleting repeats
@@ -75,7 +75,7 @@ $viewcalendarurl->param('time', $event->timestart, '%Y');
 if ($confirm) {
     // Confirm the session key to stop CSRF
     if (!confirm_sesskey()) {
-        print_error('confirmsesskeybad');
+        throw new \moodle_exception('confirmsesskeybad');
     }
     // Delete the event and possibly repeats
     $event->delete($repeats);

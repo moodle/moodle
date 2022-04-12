@@ -45,7 +45,7 @@ if ($userid !== 0) {
 $PAGE->set_url($url);
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 $PAGE->set_pagelayout('incourse');
@@ -62,27 +62,27 @@ $returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/report/index.php?id='.$c
 // security checks!
 if (!empty($id)) {
     if (!$grade = $DB->get_record('grade_grades', array('id' => $id))) {
-        print_error('invalidgroupid');
+        throw new \moodle_exception('invalidgroupid');
     }
 
     if (!empty($itemid) and $itemid != $grade->itemid) {
-        print_error('invaliditemid');
+        throw new \moodle_exception('invaliditemid');
     }
     $itemid = $grade->itemid;
 
     if (!empty($userid) and $userid != $grade->userid) {
-        print_error('invaliduser');
+        throw new \moodle_exception('invaliduser');
     }
     $userid = $grade->userid;
 
     unset($grade);
 
 } else if (empty($userid) or empty($itemid)) {
-    print_error('missinguseranditemid');
+    throw new \moodle_exception('missinguseranditemid');
 }
 
 if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid))) {
-    print_error('cannotfindgradeitem');
+    throw new \moodle_exception('cannotfindgradeitem');
 }
 
 // now verify grading user has access to all groups or is member of the same group when separate groups used in course
@@ -95,10 +95,10 @@ if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('
             }
         }
         if (!$ok) {
-            print_error('cannotgradeuser');
+            throw new \moodle_exception('cannotgradeuser');
         }
     } else {
-        print_error('cannotgradeuser');
+        throw new \moodle_exception('cannotgradeuser');
     }
 }
 

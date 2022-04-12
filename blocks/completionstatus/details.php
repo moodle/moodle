@@ -44,7 +44,7 @@ if ($userid) {
 require_login();
 
 if (!completion_can_view_data($user->id, $course)) {
-    print_error('cannotviewreport');
+    throw new \moodle_exception('cannotviewreport');
 }
 
 // Load completion data.
@@ -54,15 +54,15 @@ $returnurl = new moodle_url('/course/view.php', array('id' => $id));
 
 // Don't display if completion isn't enabled.
 if (!$info->is_enabled()) {
-    print_error('completionnotenabled', 'completion', $returnurl);
+    throw new \moodle_exception('completionnotenabled', 'completion', $returnurl);
 }
 
 // Check this user is enroled.
 if (!$info->is_tracked_user($user->id)) {
     if ($USER->id == $user->id) {
-        print_error('notenroled', 'completion', $returnurl);
+        throw new \moodle_exception('notenroled', 'completion', $returnurl);
     } else {
-        print_error('usernotenroled', 'completion', $returnurl);
+        throw new \moodle_exception('usernotenroled', 'completion', $returnurl);
     }
 }
 

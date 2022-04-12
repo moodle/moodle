@@ -56,7 +56,7 @@ if ($USER->id != $user->id and has_capability('moodle/user:viewuseractivitiesrep
 $PAGE->set_url('/report/outline/user.php', array('id'=>$userid, 'course'=>$courseid, 'mode'=>$mode));
 
 if (!report_outline_can_access_user_report($user, $course)) {
-    print_error('nocapability', 'report_outline');
+    throw new \moodle_exception('nocapability', 'report_outline');
 }
 
 $stractivityreport = get_string('activityreport');

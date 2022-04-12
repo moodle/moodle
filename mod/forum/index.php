@@ -39,7 +39,7 @@ $PAGE->set_secondary_active_tab('coursehome');
 
 if ($id) {
     if (!$course = $DB->get_record('course', array('id' => $id))) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
 } else {
     $course = get_site();

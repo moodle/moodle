@@ -174,15 +174,17 @@ $documentationlink = '<a href="http://docs.moodle.org/en/Installation">Installat
 // Check some PHP server settings
 
 if (ini_get_bool('session.auto_start')) {
-    print_error('phpvaroff', 'debug', '', (object)array('name'=>'session.auto_start', 'link'=>$documentationlink));
+    throw new \moodle_exception('phpvaroff', 'debug', '',
+        (object)array('name' => 'session.auto_start', 'link' => $documentationlink));
 }
 
 if (!ini_get_bool('file_uploads')) {
-    print_error('phpvaron', 'debug', '', (object)array('name'=>'file_uploads', 'link'=>$documentationlink));
+    throw new \moodle_exception('phpvaron', 'debug', '',
+        (object)array('name' => 'file_uploads', 'link' => $documentationlink));
 }
 
 if (is_float_problem()) {
-    print_error('phpfloatproblem', 'admin', '', $documentationlink);
+    throw new \moodle_exception('phpfloatproblem', 'admin', '', $documentationlink);
 }
 
 // Set some necessary variables during set-up to avoid PHP warnings later on this page
@@ -203,7 +205,7 @@ require("$CFG->dirroot/version.php");       // defines $version, $release, $bran
 $CFG->target_release = $release;            // used during installation and upgrades
 
 if (!$version or !$release) {
-    print_error('withoutversion', 'debug'); // without version, stop
+    throw new \moodle_exception('withoutversion', 'debug'); // Without version, stop.
 }
 
 if (!core_tables_exist()) {
@@ -275,7 +277,7 @@ if (!core_tables_exist()) {
     if (!$DB->setup_is_unicodedb()) {
         if (!$DB->change_db_encoding()) {
             // If could not convert successfully, throw error, and prevent installation
-            print_error('unicoderequired', 'admin');
+            throw new \moodle_exception('unicoderequired', 'admin');
         }
     }
 
@@ -297,7 +299,7 @@ $stradministration = get_string('administration');
 $PAGE->set_context(context_system::instance());
 
 if (empty($CFG->version)) {
-    print_error('missingconfigversion', 'debug');
+    throw new \moodle_exception('missingconfigversion', 'debug');
 }
 
 // Detect config cache inconsistency, this happens when you switch branches on dev servers.
@@ -748,7 +750,7 @@ if (during_initial_install()) {
             redirect("index.php?sessionstarted=1&sessionverify=1&lang=$CFG->lang");
         } else {
             if (empty($SESSION->sessionverify)) {
-                print_error('installsessionerror', 'admin', "index.php?sessionstarted=1&lang=$CFG->lang");
+                throw new \moodle_exception('installsessionerror', 'admin', "index.php?sessionstarted=1&lang=$CFG->lang");
             }
             unset($SESSION->sessionverify);
         }
@@ -765,7 +767,7 @@ if (during_initial_install()) {
     if ($adminuser->password === 'adminsetuppending') {
         // prevent installation hijacking
         if ($adminuser->lastip !== getremoteaddr()) {
-            print_error('installhijacked', 'admin');
+            throw new \moodle_exception('installhijacked', 'admin');
         }
         // login user and let him set password and admin details
         $adminuser->newadminuser = 1;

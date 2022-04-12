@@ -47,7 +47,7 @@ function booktool_exportimscp_build_package($book, $context) {
 
     // fix structure and test if chapters present
     if (!book_preload_chapters($book)) {
-        print_error('nochapters', 'booktool_exportimscp');
+        throw new \moodle_exception('nochapters', 'booktool_exportimscp');
     }
 
     // prepare temp area with package contents

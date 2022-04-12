@@ -307,7 +307,7 @@ class tool_provider extends ToolProvider {
                 $isforceembed = true;
             }
         } else {
-            print_error('invalidcontext');
+            throw new \moodle_exception('invalidcontext');
             exit();
         }
 
@@ -324,7 +324,7 @@ class tool_provider extends ToolProvider {
 
         // Display an error, if there is one.
         if ($result !== helper::ENROLMENT_SUCCESSFUL) {
-            print_error($result, 'enrol_lti');
+            throw new \moodle_exception($result, 'enrol_lti');
             exit();
         }
 

@@ -95,18 +95,18 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         global $DB;
 
         if (empty($field) && empty($data)) {
-            print_error('missingfield', 'data');
+            throw new \moodle_exception('missingfield', 'data');
         }
 
         if (!empty($field)) {
             if (is_object($field)) {
                 $this->field = $field;  // Programmer knows what they are doing, we hope
             } else if (!$this->field = $DB->get_record('data_fields', array('id'=>$field))) {
-                print_error('invalidfieldid', 'data');
+                throw new \moodle_exception('invalidfieldid', 'data');
             }
             if (empty($data)) {
                 if (!$this->data = $DB->get_record('data', array('id'=>$this->field->dataid))) {
-                    print_error('invalidid', 'data');
+                    throw new \moodle_exception('invalidid', 'data');
                 }
             }
         }
@@ -116,10 +116,10 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
                 if (is_object($data)) {
                     $this->data = $data;  // Programmer knows what they are doing, we hope
                 } else if (!$this->data = $DB->get_record('data', array('id'=>$data))) {
-                    print_error('invalidid', 'data');
+                    throw new \moodle_exception('invalidid', 'data');
                 }
             } else {                      // No way to define it!
-                print_error('missingdata', 'data');
+                throw new \moodle_exception('missingdata', 'data');
             }
         }
 
@@ -2545,7 +2545,7 @@ abstract class data_preset_importer {
             }
 
             if (empty($fileobj)) {
-                print_error('invalidpreset', 'data', '', $this->directory);
+                throw new \moodle_exception('invalidpreset', 'data', '', $this->directory);
             }
         }
 
@@ -2639,7 +2639,7 @@ abstract class data_preset_importer {
                     continue;
                 }
                 if (array_key_exists($cid, $preservedfields)){
-                    print_error('notinjectivemap', 'data');
+                    throw new \moodle_exception('notinjectivemap', 'data');
                 }
                 else $preservedfields[$cid] = true;
             }
@@ -3076,10 +3076,10 @@ function data_import_csv($cm, $data, &$csvdata, $encoding, $fielddelimiter) {
     $readcount = $cir->load_csv_content($csvdata, $encoding, $fielddelimiter);
     $csvdata = null; // Free memory.
     if (empty($readcount)) {
-        print_error('csvfailed', 'data', "{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}");
+        throw new \moodle_exception('csvfailed', 'data', "{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}");
     } else {
         if (!$fieldnames = $cir->get_columns()) {
-            print_error('cannotreadtmpfile', 'error');
+            throw new \moodle_exception('cannotreadtmpfile', 'error');
         }
 
         // Check the fieldnames are valid.
@@ -3116,7 +3116,7 @@ function data_import_csv($cm, $data, &$csvdata, $encoding, $fielddelimiter) {
         }
 
         if (!empty($errorfield)) {
-            print_error('fieldnotmatched', 'data',
+            throw new \moodle_exception('fieldnotmatched', 'data',
                 "{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}", $errorfield);
         }
 
@@ -3823,7 +3823,7 @@ function data_presets_export($course, $cm, $data, $tostorage=false) {
 
     // Check if all files have been generated
     if (! is_directory_a_preset($exportdir)) {
-        print_error('generateerror', 'data');
+        throw new \moodle_exception('generateerror', 'data');
     }
 
     $filenames = array(

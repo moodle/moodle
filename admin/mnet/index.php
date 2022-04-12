@@ -17,13 +17,13 @@
     if (!extension_loaded('openssl')) {
         echo $OUTPUT->header();
         set_config('mnet_dispatcher_mode', 'off');
-        print_error('requiresopenssl', 'mnet');
+        throw new \moodle_exception('requiresopenssl', 'mnet');
     }
 
     if (!function_exists('curl_init') ) {
         echo $OUTPUT->header();
         set_config('mnet_dispatcher_mode', 'off');
-        print_error('nocurl', 'mnet');
+        throw new \moodle_exception('nocurl', 'mnet');
     }
 
     if (!isset($CFG->mnet_dispatcher_mode)) {
@@ -37,7 +37,7 @@
                 if (set_config('mnet_dispatcher_mode', $form->mode)) {
                     redirect('index.php', get_string('changessaved'));
                 } else {
-                    print_error('invalidaction', '', 'index.php');
+                    throw new \moodle_exception('invalidaction', '', 'index.php');
                 }
             }
         } elseif (!empty($form->submit) && $form->submit == get_string('delete')) {
@@ -63,13 +63,13 @@
 
             if($time < time() - 60) {
                 // fail - you're out of time.
-                print_error ('deleteoutoftime', 'mnet', 'index.php');
+                throw new \moodle_exception ('deleteoutoftime', 'mnet', 'index.php');
                 exit;
             }
 
             if ($key != md5(sha1($mnet->keypair['keypair_PEM']))) {
                 // fail - you're being attacked?
-                print_error ('deletewrongkeyvalue', 'mnet', 'index.php');
+                throw new \moodle_exception ('deletewrongkeyvalue', 'mnet', 'index.php');
                 exit;
             }
 

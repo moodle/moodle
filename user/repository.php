@@ -66,7 +66,7 @@ $params['context'] = $coursecontext;
 $params['currentcontext'] = $PAGE->context;
 $params['userid']   = $USER->id;
 if (!$instances = repository::get_instances($params)) {
-    print_error('noinstances', 'repository', $CFG->wwwroot . '/user/view.php');
+    throw new \moodle_exception('noinstances', 'repository', $CFG->wwwroot . '/user/view.php');
 }
 
 $table = new html_table();

@@ -49,7 +49,7 @@ $PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
 
 // basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 require_login($course);
 $context = context_course::instance($course->id);

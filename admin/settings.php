@@ -23,13 +23,13 @@ if (empty($settingspage) or !($settingspage instanceof admin_settingpage)) {
     if (moodle_needs_upgrading()) {
         redirect(new moodle_url('/admin/index.php'));
     } else {
-        print_error('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
+        throw new \moodle_exception('sectionerror', 'admin', "$CFG->wwwroot/$CFG->admin/");
     }
     die;
 }
 
 if (!($settingspage->check_access())) {
-    print_error('accessdenied', 'admin');
+    throw new \moodle_exception('accessdenied', 'admin');
     die;
 }
 

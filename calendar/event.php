@@ -115,7 +115,7 @@ if ($eventid !== 0) {
     $title = get_string('editevent', 'calendar');
     $event = calendar_event::load($eventid);
     if (!calendar_edit_event_allowed($event, true)) {
-        print_error('nopermissions');
+        throw new \moodle_exception('nopermissions');
     }
     $event->action = $action;
     $event->course = $courseid;
@@ -123,7 +123,7 @@ if ($eventid !== 0) {
     $event->count_repeats();
 
     if (!calendar_add_event_allowed($event)) {
-        print_error('nopermissions');
+        throw new \moodle_exception('nopermissions');
     }
 
     // Check to see if this event is part of a subscription or import.
@@ -151,7 +151,7 @@ if ($eventid !== 0) {
     $event->timestart = $time;
     $event = new calendar_event($event);
     if (!calendar_add_event_allowed($event)) {
-        print_error('nopermissions');
+        throw new \moodle_exception('nopermissions');
     }
 }
 

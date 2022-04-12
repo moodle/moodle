@@ -32,15 +32,15 @@ $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page 
 require_sesskey();
 
 if (! $forum = $DB->get_record("forum", array("id" => $id))) {
-    print_error('invalidforumid', 'forum');
+    throw new \moodle_exception('invalidforumid', 'forum');
 }
 
 if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 require_login($course, false, $cm);
 $returnpageurl = new moodle_url('/mod/forum/' . $returnpage, array('id' => $course->id, 'f' => $forum->id));
@@ -66,7 +66,7 @@ if (forum_tp_is_tracked($forum) ) {
         $event->trigger();
         redirect($returnto, get_string("nownottracking", "forum", $info), 1);
     } else {
-        print_error('cannottrack', '', get_local_referer(false));
+        throw new \moodle_exception('cannottrack', '', get_local_referer(false));
     }
 
 } else { // subscribe
@@ -75,6 +75,6 @@ if (forum_tp_is_tracked($forum) ) {
         $event->trigger();
         redirect($returnto, get_string("nowtracking", "forum", $info), 1);
     } else {
-        print_error('cannottrack', '', get_local_referer(false));
+        throw new \moodle_exception('cannottrack', '', get_local_referer(false));
     }
 }

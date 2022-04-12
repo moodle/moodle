@@ -444,7 +444,7 @@ class administration_display_helper extends \core_cache\administration_helper {
 
         $plugin = required_param('plugin', PARAM_PLUGIN);
         if (!$storepluginsummaries[$plugin]['canaddinstance']) {
-            print_error('ex_unmetstorerequirements', 'cache');
+            throw new \moodle_exception('ex_unmetstorerequirements', 'cache');
         }
         $mform = $this->get_add_store_form($plugin);
         $title = get_string('addstore', 'cache', $storepluginsummaries[$plugin]['name']);

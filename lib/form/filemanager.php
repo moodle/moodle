@@ -254,7 +254,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element implements temp
 
         // security - never ever allow guest/not logged in user to upload anything or use this element!
         if (isguestuser() or !isloggedin()) {
-            print_error('noguest');
+            throw new \moodle_exception('noguest');
         }
 
         if ($this->_flagFrozen) {

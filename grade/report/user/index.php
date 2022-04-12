@@ -41,7 +41,7 @@ if ($userview == 0) {
 
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 require_login($course);
 $PAGE->set_pagelayout('report');
@@ -54,7 +54,7 @@ if (empty($userid)) {
 
 } else {
     if (!$DB->get_record('user', array('id'=>$userid, 'deleted'=>0)) or isguestuser($userid)) {
-        print_error('invaliduser');
+        throw new \moodle_exception('invaliduser');
     }
 }
 
@@ -74,7 +74,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
 
 if (!$access) {
     // no access to grades!
-    print_error('nopermissiontoviewgrades', 'error',  $CFG->wwwroot.'/course/view.php?id='.$courseid);
+    throw new \moodle_exception('nopermissiontoviewgrades', 'error',  $CFG->wwwroot.'/course/view.php?id='.$courseid);
 }
 
 /// return tracking object

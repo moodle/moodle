@@ -37,7 +37,7 @@ if ($contextid) {
     $context = context_system::instance();
 }
 if ($context->contextlevel != CONTEXT_COURSECAT && $context->contextlevel != CONTEXT_SYSTEM) {
-    print_error('invalidcontext');
+    throw new \moodle_exception('invalidcontext');
 }
 
 require_capability('moodle/cohort:manage', $context);

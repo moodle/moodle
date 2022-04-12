@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/completionlib.php');
 $id = required_param('course',PARAM_INT);
 $course = $DB->get_record('course',array('id'=>$id));
 if (!$course) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 $context = context_course::instance($course->id);
 

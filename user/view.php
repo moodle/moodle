@@ -55,7 +55,7 @@ $usercontext   = context_user::instance($user->id, IGNORE_MISSING);
 // Check we are not trying to view guest's profile.
 if (isguestuser($user)) {
     // Can not view profile of guest - thre is nothing to see there.
-    print_error('invaliduserid');
+    throw new \moodle_exception('invaliduserid');
 }
 
 $PAGE->set_context($coursecontext);
@@ -128,7 +128,7 @@ if ($currentuser) {
 
     // Check to see if the user can see this user's profile.
     if (!user_can_view_profile($user, $course, $usercontext) && !$isparent) {
-        print_error('cannotviewprofile');
+        throw new \moodle_exception('cannotviewprofile');
     }
 
     if (!is_enrolled($coursecontext, $user->id)) {

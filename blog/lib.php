@@ -1204,7 +1204,7 @@ function blog_validate_access($courseid, $modid, $groupid, $entryid, $userid) {
     if (!$userid && has_capability('moodle/blog:view', $sitecontext) && $CFG->bloglevel > BLOG_USER_LEVEL) {
         if ($entryid) {
             if (!$entryobject = $DB->get_record('post', array('id' => $entryid))) {
-                print_error('nosuchentry', 'blog');
+                throw new \moodle_exception('nosuchentry', 'blog');
             }
             $userid = $entryobject->userid;
         }
@@ -1214,20 +1214,20 @@ function blog_validate_access($courseid, $modid, $groupid, $entryid, $userid) {
 
     if (!empty($modid)) {
         if ($CFG->bloglevel < BLOG_SITE_LEVEL) {
-            print_error(get_string('nocourseblogs', 'blog'));
+            throw new \moodle_exception('courseblogdisable', 'blog');
         }
         if (!$mod = $DB->get_record('course_modules', array('id' => $modid))) {
-            print_error(get_string('invalidmodid', 'blog'));
+            throw new \moodle_exception('invalidmoduleid', 'error', $modid);
         }
         $courseid = $mod->course;
     }
 
     if ((empty($courseid) ? true : $courseid == SITEID) && empty($userid)) {
         if ($CFG->bloglevel < BLOG_SITE_LEVEL) {
-            print_error('siteblogdisable', 'blog');
+            throw new \moodle_exception('siteblogdisable', 'blog');
         }
         if (!has_capability('moodle/blog:view', $sitecontext)) {
-            print_error('cannotviewsiteblog', 'blog');
+            throw new \moodle_exception('cannotviewsiteblog', 'blog');
         }
 
         $COURSE = $DB->get_record('course', array('format' => 'site'));
@@ -1236,13 +1236,13 @@ function blog_validate_access($courseid, $modid, $groupid, $entryid, $userid) {
 
     if (!empty($courseid)) {
         if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-            print_error('invalidcourseid');
+            throw new \moodle_exception('invalidcourseid');
         }
 
         $courseid = $course->id;
 
         if (!has_capability('moodle/blog:view', $sitecontext)) {
-            print_error('cannotviewcourseblog', 'blog');
+            throw new \moodle_exception('cannotviewcourseblog', 'blog');
         }
     } else {
         $coursecontext = context_course::instance(SITEID);
@@ -1250,54 +1250,54 @@ function blog_validate_access($courseid, $modid, $groupid, $entryid, $userid) {
 
     if (!empty($groupid)) {
         if ($CFG->bloglevel < BLOG_SITE_LEVEL) {
-            print_error('groupblogdisable', 'blog');
+            throw new \moodle_exception('groupblogdisable', 'blog');
         }
 
         if (! $group = groups_get_group($groupid)) {
-            print_error(get_string('invalidgroupid', 'blog'));
+            throw new \moodle_exception('invalidgroupid', 'blog');
         }
 
         if (!$course = $DB->get_record('course', array('id' => $group->courseid))) {
-            print_error('invalidcourseid');
+            throw new \moodle_exception('invalidcourseid');
         }
 
         $coursecontext = context_course::instance($course->id);
         $courseid = $course->id;
 
         if (!has_capability('moodle/blog:view', $sitecontext)) {
-            print_error(get_string('cannotviewcourseorgroupblog', 'blog'));
+            throw new \moodle_exception('cannotviewcourseorgroupblog', 'blog');
         }
 
         if (groups_get_course_groupmode($course) == SEPARATEGROUPS &&
                 !has_capability('moodle/site:accessallgroups', $coursecontext)) {
 
             if (!groups_is_member($groupid)) {
-                print_error('notmemberofgroup');
+                throw new \moodle_exception('notmemberofgroup');
             }
         }
     }
 
     if (!empty($userid)) {
         if ($CFG->bloglevel < BLOG_USER_LEVEL) {
-            print_error('blogdisable', 'blog');
+            throw new \moodle_exception('blogdisable', 'blog');
         }
 
         if (!$user = $DB->get_record('user', array('id' => $userid))) {
-            print_error('invaliduserid');
+            throw new \moodle_exception('invaliduserid');
         }
 
         if ($user->deleted) {
-            print_error('userdeleted');
+            throw new \moodle_exception('userdeleted');
         }
 
         if ($USER->id == $userid) {
             if (!has_capability('moodle/blog:create', $sitecontext)
               && !has_capability('moodle/blog:view', $sitecontext)) {
-                print_error('donothaveblog', 'blog');
+                throw new \moodle_exception('donothaveblog', 'blog');
             }
         } else {
             if (!has_capability('moodle/blog:view', $sitecontext) || !blog_user_can_view_user_entry($userid)) {
-                print_error('cannotviewcourseblog', 'blog');
+                throw new \moodle_exception('cannotviewcourseblog', 'blog');
             }
         }
     }
