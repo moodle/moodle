@@ -317,6 +317,36 @@ abstract class behat_generator_base {
     }
 
     /**
+     * Gets the user id from it's username.
+     * @throws Exception
+     * @param string $username
+     * @return int
+     */
+    protected function get_userfrom_id(string $username) {
+        global $DB;
+
+        if (!$id = $DB->get_field('user', 'id', ['username' => $username])) {
+            throw new Exception('The specified user with username "' . $username . '" does not exist');
+        }
+        return $id;
+    }
+
+    /**
+     * Gets the user id from it's username.
+     * @throws Exception
+     * @param string $username
+     * @return int
+     */
+    protected function get_userto_id(string $username) {
+        global $DB;
+
+        if (!$id = $DB->get_field('user', 'id', ['username' => $username])) {
+            throw new Exception('The specified user with username "' . $username . '" does not exist');
+        }
+        return $id;
+    }
+
+    /**
      * Gets the role id from it's shortname.
      * @throws Exception
      * @param string $roleshortname
