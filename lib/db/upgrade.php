@@ -4453,5 +4453,25 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022032200.02);
     }
 
+    if ($oldversion < 2022041200.01) {
+
+        // The original default admin presets "sensible settings" (those that should be treated as sensitive).
+        $originalsensiblesettings = 'recaptchapublickey@@none, recaptchaprivatekey@@none, googlemapkey3@@none, ' .
+            'secretphrase@@url, cronremotepassword@@none, smtpuser@@none, smtppass@none, proxypassword@@none, ' .
+            'quizpassword@@quiz, allowedip@@none, blockedip@@none, dbpass@@logstore_database, messageinbound_hostpass@@none, ' .
+            'bind_pw@@auth_cas, pass@@auth_db, bind_pw@@auth_ldap, dbpass@@enrol_database, bind_pw@@enrol_ldap, ' .
+            'server_password@@search_solr, ssl_keypassword@@search_solr, alternateserver_password@@search_solr, ' .
+            'alternatessl_keypassword@@search_solr, test_password@@cachestore_redis, password@@mlbackend_python';
+
+        // Check if the current config matches the original default, upgrade to new default if so.
+        if (get_config('adminpresets', 'sensiblesettings') === $originalsensiblesettings) {
+            $newsensiblesettings = "{$originalsensiblesettings}, badges_badgesalt@@none, calendar_exportsalt@@none";
+            set_config('sensiblesettings', $newsensiblesettings, 'adminpresets');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022041200.01);
+    }
+
     return true;
 }
