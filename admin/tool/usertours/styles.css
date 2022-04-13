@@ -18,6 +18,7 @@ body div[data-flexitour="step-background-fader"],
 body div[data-flexitour="step-background"] {
     position: absolute;
     background: inherit;
+    background-image: none;
 }
 
 div[data-flexitour="step-background-fader"],
