@@ -19,7 +19,6 @@ namespace mod_quiz\question\bank;
 use core_question\local\bank\question_version_status;
 use core_question\local\bank\random_question_loader;
 use qubaid_condition;
-use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -130,7 +129,7 @@ class qbank_helper {
 
              -- This way of getting the latest version for each slot is a bit more complicated
              -- than we would like, but the simpler SQL did not work in Oracle 11.2.
-             -- (It did work find in Oracle 19.x, so once we have updated our min supported
+             -- (It did work fine in Oracle 19.x, so once we have updated our min supported
              -- version we could consider digging the old code out of git history from
              -- just before the commit that added this comment.
              -- For relevant question_bank_entries, this gets the latest non-draft slot number.
@@ -202,19 +201,29 @@ class qbank_helper {
     /**
      * Get this list of random selection tag ids from one of the slots returned by get_question_structure.
      *
-     * @param \stdClass $slotdata one of the array elements returend by get_question_structure.
+     * @param \stdClass $slotdata one of the array elements returned by get_question_structure.
      * @return array list of tag ids.
      */
     public static function get_tag_ids_for_slot(\stdClass $slotdata): array {
-        if (empty($slot->randomtags)) {
-            return [];
-        }
-
         $tagids = [];
-        foreach ($slotdata->randomtags as $tag) {
-            $tagids[] = $tag->id;
+        foreach ($slotdata->randomtags as $taginfo) {
+            [$id] = explode(',', $taginfo, 2);
+            $tagids[] = $id;
         }
         return $tagids;
+    }
+
+    /**
+     * Given a slot from the array returned by get_question_structure, describe the random question it represents.
+     *
+     * @param \stdClass $slotdata one of the array elements returned by get_question_structure.
+     * @return string that can be used to display the random slot.
+     */
+    public static function describe_random_question(\stdClass $slotdata): string {
+        global $DB;
+        $category = $DB->get_record('question_categories', ['id' => $slotdata->category]);
+        return \question_bank::get_qtype('random')->question_name(
+               $category, $slotdata->randomrecurse, $slotdata->randomtags);
     }
 
     /**
