@@ -84,7 +84,7 @@ class broker {
      * @param instance $instance
      * @param array $params
      */
-    public static function recording_ready(instance $instance, array $params): void {
+    public static function process_recording_ready(instance $instance, array $params): void {
         // Decodes the received JWT string.
         try {
             $decodedparameters = JWT::decode(
@@ -125,6 +125,44 @@ class broker {
         } catch (Exception $e) {
             $error = 'Caught exception: ' . $e->getMessage();
             header('HTTP/1.0 503 Service Unavailable. ' . $error);
+        }
+    }
+
+    /**
+     * Process meeting events for instance with provided HTTP headers.
+     *
+     * @param instance $instance
+     * @return void
+     */
+    public static function process_meeting_events(instance $instance) {
+        try {
+            // Get the HTTP headers (getallheaders is a PHP function that may only work with Apache).
+            $headers = getallheaders();
+
+            // Pull the Bearer from the headers.
+            if (!array_key_exists('Authorization', $headers)) {
+                $msg = 'Authorization failed';
+                header('HTTP/1.0 400 Bad Request. ' . $msg);
+                return;
+            }
+            $authorization = explode(" ", $headers['Authorization']);
+
+            // Verify the authenticity of the request.
+            $token = \Firebase\JWT\JWT::decode(
+                $authorization[1],
+                new Key(config::get('shared_secret'), 'HS512')
+            );
+
+            // Get JSON string from the body.
+            $jsonstr = file_get_contents('php://input');
+
+            // Convert JSON string to a JSON object.
+            $jsonobj = json_decode($jsonstr);
+            $headermsg = meeting::meeting_events($instance, $jsonobj);
+            header($headermsg);
+        } catch (Exception $e) {
+            $msg = 'Caught exception: ' . $e->getMessage();
+            header('HTTP/1.0 400 Bad Request. ' . $msg);
         }
     }
 }

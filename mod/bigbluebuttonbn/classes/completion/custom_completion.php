@@ -33,6 +33,18 @@ use stdClass;
 class custom_completion extends activity_custom_completion {
 
     /**
+     * Filters for logs
+     */
+    const FILTERS = [
+        'completionattendance' => [logger::EVENT_SUMMARY],
+        'completionengagementchats' => [logger::EVENT_SUMMARY],
+        'completionengagementtalks' => [logger::EVENT_SUMMARY],
+        'completionengagementraisehand' => [logger::EVENT_SUMMARY],
+        'completionengagementpollvotes' => [logger::EVENT_SUMMARY],
+        'completionengagementemojis' => [logger::EVENT_SUMMARY],
+    ];
+
+    /**
      * Get current state
      *
      * @param string $rule
@@ -47,23 +59,27 @@ class custom_completion extends activity_custom_completion {
         }
 
         // Default return value.
-        $value = COMPLETION_INCOMPLETE;
-        $logs = logger::get_user_completion_logs($instance, $this->userid, [logger::EVENT_SUMMARY]);
+        $returnedvalue = COMPLETION_INCOMPLETE;
+        $filters = self::FILTERS[$rule] ?? [logger::EVENT_SUMMARY];
+        $logs = logger::get_user_completion_logs($instance, $this->userid, $filters);
 
         if (method_exists($this, "get_{$rule}_value")) {
-            $valuecount = $this->count_actions($logs, self::class . "::get_{$rule}_value");
-            if ($valuecount) {
-                if (!is_null($instance->get_instance_var($rule))) {
-                    if ($instance->get_instance_var($rule) <= $valuecount) {
-                        $value = COMPLETION_COMPLETE;
+            $completionvalue = $this->aggregate_values($logs, self::class . "::get_{$rule}_value");
+            if ($completionvalue) {
+                // So in this case we check the value set in the module setting. If we go over the threshold, then
+                // this is complete.
+                $rulevalue = $instance->get_instance_var($rule);
+                if (!is_null($rulevalue)) {
+                    if ($rulevalue <= $completionvalue) {
+                        $returnedvalue = COMPLETION_COMPLETE;
                     }
                 } else {
                     // If there is at least a hit, we consider it as complete.
-                    $value = $valuecount ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
+                    $returnedvalue = $completionvalue ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
                 }
             }
         }
-        return $value;
+        return $returnedvalue;
     }
 
     /**
@@ -71,20 +87,20 @@ class custom_completion extends activity_custom_completion {
      *
      * @param array $logs
      * @param callable $logvaluegetter
-     * @return int the number of hits on this particular rule
+     * @return int the sum of all values for this particular event (it can be a duration or a number of hits)
      */
-    protected function count_actions(array $logs, callable $logvaluegetter): int {
+    protected function aggregate_values(array $logs, callable $logvaluegetter): int {
         if (empty($logs)) {
             // As completion by engagement with $rulename hand was required, the activity hasn't been completed.
             return 0;
         }
 
-        $valuecount = 0;
+        $value = 0;
         foreach ($logs as $log) {
-            $valuecount += $logvaluegetter($log);
+            $value += $logvaluegetter($log);
         }
 
-        return $valuecount;
+        return $value;
     }
 
     /**
@@ -149,34 +165,47 @@ class custom_completion extends activity_custom_completion {
     }
 
     /**
-     * Get current state in a  friendly version
+     * Get current states of completion in a human-friendly version
+     *
+     * @return string[]
+     */
+    public function get_printable_states(): array {
+        $result = [];
+        foreach ($this->get_available_custom_rules() as $rule) {
+            $result[] = $this->get_printable_state($rule);
+        }
+        return $result;
+    }
+
+    /**
+     * Get current states of completion for a rule in a human-friendly version
      *
      * @param string $rule
      * @return string
      */
-    public function get_printable_state(string $rule): string {
+    private function get_printable_state(string $rule): string {
         // Get instance details.
         $instance = instance::get_from_cmid($this->cm->id);
 
         if (empty($instance)) {
             throw new moodle_exception("Can't find bigbluebuttonbn instance {$this->cm->instance}");
         }
-
         $summary = "";
-        $logs = logger::get_user_completion_logs($instance, $this->userid, [logger::EVENT_SUMMARY]);
+        $filters = self::FILTERS[$rule] ?? [logger::EVENT_SUMMARY];
+        $logs = logger::get_user_completion_logs($instance, $this->userid, $filters);
 
         if (method_exists($this, "get_{$rule}_value")) {
             $summary = get_string(
                 $rule . '_event_desc',
                 'mod_bigbluebuttonbn',
-                $this->count_actions($logs, self::class . "::get_{$rule}_value")
+                $this->aggregate_values($logs, self::class . "::get_{$rule}_value")
             );
         }
         return $summary;
     }
 
     /**
-     * Get current state in a  friendly version
+     * Get current state in a friendly version
      *
      * @param string $rule
      * @return string
@@ -188,7 +217,7 @@ class custom_completion extends activity_custom_completion {
         if (empty($instance)) {
             throw new moodle_exception("Can't find bigbluebuttonbn instance {$this->cm->instance}");
         }
-        $filters = $rule != "completionview" ? [logger::EVENT_SUMMARY] : [logger::EVENT_JOIN, logger::EVENT_PLAYED];
+        $filters = self::FILTERS[$rule] ?? [logger::EVENT_SUMMARY];
         return logger::get_user_completion_logs_max_timestamp($instance, $this->userid, $filters);
     }
 
@@ -200,10 +229,7 @@ class custom_completion extends activity_custom_completion {
      */
     protected static function get_completionattendance_value(stdClass $log): int {
         $summary = json_decode($log->meta);
-        if ($summary && !empty($summary->data->duration)) {
-            return COMPLETION_COMPLETE;
-        }
-        return COMPLETION_INCOMPLETE;
+        return empty($summary->data->duration) ? 0 : $summary->data->duration / 60;
     }
 
     /**
@@ -243,7 +269,7 @@ class custom_completion extends activity_custom_completion {
      * @return int
      */
     protected static function get_completionengagementpollvotes_value(stdClass $log): int {
-        return self::get_completionengagement_value($log, 'pollvotes');
+        return self::get_completionengagement_value($log, 'poll_votes');
     }
 
     /**
@@ -265,9 +291,6 @@ class custom_completion extends activity_custom_completion {
      */
     protected static function get_completionengagement_value(stdClass $log, string $type): int {
         $summary = json_decode($log->meta);
-        if ($summary && !empty($summary->data->engagement->$type)) {
-            return COMPLETION_COMPLETE;
-        }
-        return COMPLETION_INCOMPLETE;
+        return intval($summary->data->engagement->$type ?? 0);
     }
 }
