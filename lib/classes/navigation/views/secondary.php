@@ -417,7 +417,7 @@ class secondary extends view {
 
         if ($courseadminnode) {
             foreach ($courseadminnode->children as $other) {
-                if (array_search($other->key, $expectedcourseadmin) === false) {
+                if (array_search($other->key, $expectedcourseadmin, true) === false) {
                     $othernode = $this->get_first_action_for_node($other);
                     $recursivenode = $othernode && !$rootnode->get($othernode->key) ? $othernode : $other;
                     // Get the first node and check whether it's been added already.
