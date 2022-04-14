@@ -2112,15 +2112,17 @@ class theme_config {
             $candidates = [$image];
 
             if ($type === 'mod') {
-                if ($image === 'icon') {
-                    debugging(
-                        "The 'icon' image for activity modules has been replaced with a new 'monologo'. " .
-                            "Please update your calling code to fetch the new icon where possible. " .
-                            "Called for component {$component}.",
-                        DEBUG_DEVELOPER
-                    );
+                if ($image === 'icon' || $image === 'monologo') {
+                    $candidates = ['monologo', 'icon'];
+                    if ($image === 'icon') {
+                        debugging(
+                            "The 'icon' image for activity modules has been replaced with a new 'monologo'. " .
+                                "Please update your calling code to fetch the new icon where possible. " .
+                                "Called for component {$component}.",
+                            DEBUG_DEVELOPER
+                        );
+                    }
                 }
-                $candidates = ['monologo', 'icon'];
             }
             foreach ($candidates as $image) {
                 if ($imagefile = $this->image_exists("$this->dir/pix_plugins/$type/$plugin/$image", $svg)) {
