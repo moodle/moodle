@@ -476,8 +476,10 @@ $string['requireallteammemberssubmit_help'] = 'If enabled, all members of the st
 $string['recordid'] = 'Identifier';
 $string['removesubmission'] = 'Remove submission';
 $string['removesubmissionforstudent'] = 'Remove submission for student: (id={$a->id}, fullname={$a->fullname}).';
-$string['removesubmissionconfirm'] = 'Are you sure you want to remove the submission data?';
-$string['removesubmissionconfirmforstudent'] = 'Are you sure you want to remove the submission data for student {$a}?';
+$string['removesubmissionconfirm'] = 'Are you sure you want to remove your submission?';
+$string['removesubmissionconfirmforstudent'] = 'Are you sure you want to remove the submission for {$a}?';
+$string['removesubmissionconfirmforstudentwithtimelimit'] = 'Are you sure you want to remove the submission for {$a}? Please note that this will not reset the student\'s time limit. You can give more time by adding a time limit user override.';
+$string['removesubmissionconfirmwithtimelimit'] = 'Are you sure you want to remove your submission? Please note that this will not reset your time limit.';
 $string['revealidentities'] = 'Reveal student identities';
 $string['revealidentitiesconfirm'] = 'Are you sure you want to reveal student identities for this assignment? This operation cannot be undone. Once the student identities have been revealed, the marks will be released to the gradebook.';
 $string['reverttodefaults'] = 'Revert to assignment defaults';

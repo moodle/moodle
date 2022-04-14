@@ -4447,14 +4447,14 @@ class assign {
      * @return string
      */
     protected function view_remove_submission_confirm() {
-        global $USER, $DB;
+        global $USER;
 
         $userid = optional_param('userid', $USER->id, PARAM_INT);
 
         if (!$this->can_edit_submission($userid, $USER->id)) {
             print_error('nopermission');
         }
-        $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+        $user = core_user::get_user($userid, '*', MUST_EXIST);
 
         $o = '';
         $header = new assign_header($this->get_instance(),
@@ -4474,10 +4474,17 @@ class assign {
         $cancelurl = new moodle_url('/mod/assign/view.php', $urlparams);
 
         if ($userid == $USER->id) {
-            $confirmstr = get_string('removesubmissionconfirm', 'assign');
+            if ($this->is_time_limit_enabled($userid)) {
+                $confirmstr = get_string('removesubmissionconfirmwithtimelimit', 'assign');
+            } else {
+                $confirmstr = get_string('removesubmissionconfirm', 'assign');
+            }
         } else {
-            $name = $this->fullname($user);
-            $confirmstr = get_string('removesubmissionconfirmforstudent', 'assign', $name);
+            if ($this->is_time_limit_enabled($userid)) {
+                $confirmstr = get_string('removesubmissionconfirmforstudentwithtimelimit', 'assign', $this->fullname($user));
+            } else {
+                $confirmstr = get_string('removesubmissionconfirmforstudent', 'assign', $this->fullname($user));
+            }
         }
         $o .= $this->get_renderer()->confirm($confirmstr,
                                              $confirmurl,
