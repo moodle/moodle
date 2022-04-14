@@ -53,6 +53,12 @@ if (!extension_loaded('xml')) {
     die();
 }
 
+// Make sure mbstring extension is available.
+if (!extension_loaded('mbstring')) {
+    echo 'Moodle requires the mbstring PHP extension. Please install or enable the mbstring extension.';
+    die();
+}
+
 define('NO_OUTPUT_BUFFERING', true);
 
 if (isset($_POST['upgradekey'])) {
