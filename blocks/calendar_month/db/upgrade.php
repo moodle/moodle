@@ -67,5 +67,10 @@ function xmldb_block_calendar_month_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2022030200, 'calendar_month', false);
     }
 
+    if ($oldversion < 2022041901) {
+        upgrade_block_set_my_user_parent_context('calendar_month', '__default', 'my-index');
+        upgrade_block_savepoint(true, 2022041901, 'calendar_month', false);
+    }
+
     return true;
 }

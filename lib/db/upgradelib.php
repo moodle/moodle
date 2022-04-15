@@ -1360,8 +1360,7 @@ function upgrade_block_set_defaultregion(
          AND mp.name = :pagename
     EOF;
 
-    $context = context_system::instance();
-    $result = $DB->execute($sql, [
+    $DB->execute($sql, [
         'selectblockname' => $blockname,
         'contextuser' => CONTEXT_USER,
         'selectpagetypepattern' => $pagetypepattern,
@@ -1511,4 +1510,90 @@ function upgrade_block_delete_instances(
     ];
 
     $deleteblockinstances($instanceselect, $params);
+}
+
+/**
+ * Update the block instance parentcontext to point to the correct user context id for the specified block on a my page.
+ *
+ * @param string $blockname
+ * @param string $pagename
+ * @param string $pagetypepattern
+ */
+function upgrade_block_set_my_user_parent_context(
+    string $blockname,
+    string $pagename,
+    string $pagetypepattern
+): void {
+    global $DB;
+
+    $subpagepattern = $DB->sql_cast_char2int('bi.subpagepattern');
+    // Look for any and all instances of the block in customised /my pages.
+    $subpageempty = $DB->sql_isnotempty('block_instances', 'bi.subpagepattern', true, false);
+
+    $dbman = $DB->get_manager();
+    $temptablename = 'block_instance_context';
+    $xmldbtable = new \xmldb_table($temptablename);
+    $xmldbtable->add_field('instanceid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
+    $xmldbtable->add_field('contextid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
+    $xmldbtable->add_key('primary', XMLDB_KEY_PRIMARY, ['instanceid']);
+    $dbman->create_temp_table($xmldbtable);
+
+    $sql = <<<EOF
+        INSERT INTO {block_instance_context} (
+            instanceid,
+            contextid
+        ) SELECT
+            bi.id as instanceid,
+            c.id as contextid
+           FROM {my_pages} mp
+           JOIN {context} c ON c.instanceid = mp.userid AND c.contextlevel = :contextuser
+           JOIN {block_instances} bi
+                ON bi.blockname = :blockname
+               AND bi.subpagepattern IS NOT NULL AND {$subpageempty}
+               AND bi.pagetypepattern = :pagetypepattern
+               AND {$subpagepattern} = mp.id
+          WHERE mp.name = :pagename AND bi.parentcontextid <> c.id
+    EOF;
+
+    $DB->execute($sql, [
+        'blockname' => $blockname,
+        'pagetypepattern' => $pagetypepattern,
+        'contextuser' => CONTEXT_USER,
+        'pagename' => $pagename,
+    ]);
+
+    $dbfamily = $DB->get_dbfamily();
+    if ($dbfamily === 'mysql') {
+        // MariaDB and MySQL.
+        $sql = <<<EOF
+            UPDATE {block_instances} bi, {block_instance_context} bic
+               SET bi.parentcontextid = bic.contextid
+             WHERE bi.id = bic.instanceid
+        EOF;
+    } else if ($dbfamily === 'oracle') {
+        $sql = <<<EOF
+            UPDATE {block_instances} bi
+            SET (bi.parentcontextid) = (
+                SELECT bic.contextid
+                  FROM {block_instance_context} bic
+                 WHERE bic.instanceid = bi.id
+            ) WHERE EXISTS (
+                SELECT 'x'
+                  FROM {block_instance_context} bic
+                 WHERE bic.instanceid = bi.id
+            )
+        EOF;
+    } else {
+        // Postgres and sqlsrv.
+        $sql = <<<EOF
+            UPDATE {block_instances}
+            SET parentcontextid = bic.contextid
+            FROM {block_instance_context} bic
+            WHERE {block_instances}.id = bic.instanceid
+        EOF;
+    }
+
+    $DB->execute($sql);
+
+    $dbman->drop_table($xmldbtable);
 }

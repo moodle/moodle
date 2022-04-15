@@ -66,5 +66,10 @@ function xmldb_block_timeline_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2022030200, 'timeline', false);
     }
 
+    if ($oldversion < 2022041901) {
+        upgrade_block_set_my_user_parent_context('timeline', '__default', 'my-index');
+        upgrade_block_savepoint(true, 2022041901, 'timeline', false);
+    }
+
     return true;
 }
