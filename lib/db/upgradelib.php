@@ -1338,7 +1338,7 @@ function upgrade_block_set_defaultregion(
             timemodified
         ) SELECT
             :selectblockname AS blockname,
-            :selectparentcontext AS parentcontextid,
+            c.id AS parentcontextid,
             0 AS showinsubcontexts,
             :selectpagetypepattern AS pagetypepattern,
             mp.id AS subpagepattern,
@@ -1347,6 +1347,7 @@ function upgrade_block_set_defaultregion(
             :selecttimecreated AS timecreated,
             :selecttimemodified AS timemodified
           FROM {my_pages} mp
+          JOIN {context} c ON c.instanceid = mp.userid AND c.contextlevel = :contextuser
          WHERE mp.id NOT IN (
             SELECT mpi.id FROM {my_pages} mpi
               JOIN {block_instances} bi
@@ -1362,7 +1363,7 @@ function upgrade_block_set_defaultregion(
     $context = context_system::instance();
     $result = $DB->execute($sql, [
         'selectblockname' => $blockname,
-        'selectparentcontext' => $context->id,
+        'contextuser' => CONTEXT_USER,
         'selectpagetypepattern' => $pagetypepattern,
         'selectdefaultregion' => $newdefaultregion,
         'selecttimecreated' => time(),

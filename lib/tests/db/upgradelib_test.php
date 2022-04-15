@@ -180,7 +180,7 @@ class upgradelib_test extends \advanced_testcase {
         // Any dashboards which are missing the block will have it created by the operation.
         upgrade_block_set_defaultregion('calendar_month', '__default', 'my-index', 'content');
 
-        // Each of the dashboards should not have a block instance of the calendar_month block in the 'content' region
+        // Each of the dashboards should now have a block instance of the calendar_month block in the 'content' region
         // on 'my-index' only.
         foreach ($dashboards as $dashboardid) {
             // Only one block should have been created.
@@ -193,6 +193,12 @@ class upgradelib_test extends \advanced_testcase {
             $this->assertEquals('calendar_month', $theblock->blockname);
             $this->assertEquals('content', $theblock->defaultregion);
             $this->assertEquals('my-index', $theblock->pagetypepattern);
+
+            // Fetch the user details.
+            $dashboard = $DB->get_record('my_pages', ['id' => $dashboardid]);
+            $usercontext = \context_user::instance($dashboard->userid);
+
+            $this->assertEquals($usercontext->id, $theblock->parentcontextid);
         }
 
         // Enusre that there are no blocks on the mycourses page.
