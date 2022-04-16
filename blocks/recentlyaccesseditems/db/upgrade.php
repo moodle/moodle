@@ -83,5 +83,10 @@ function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2022030200, 'recentlyaccesseditems', false);
     }
 
+    if ($oldversion < 2022041901) {
+        upgrade_block_set_my_user_parent_context('recentlyaccesseditems', '__default', 'my-index');
+        upgrade_block_savepoint(true, 2022041901, 'recentlyaccesseditems', false);
+    }
+
     return true;
 }

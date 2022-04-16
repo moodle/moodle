@@ -115,5 +115,10 @@ function xmldb_block_myoverview_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2021052504, 'myoverview', false);
     }
 
+    if ($oldversion < 2022041901) {
+        upgrade_block_set_my_user_parent_context('myoverview', '__default', 'my-index');
+        upgrade_block_savepoint(true, 2022041901, 'myoverview', false);
+    }
+
     return true;
 }

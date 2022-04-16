@@ -180,7 +180,7 @@ class upgradelib_test extends \advanced_testcase {
         // Any dashboards which are missing the block will have it created by the operation.
         upgrade_block_set_defaultregion('calendar_month', '__default', 'my-index', 'content');
 
-        // Each of the dashboards should not have a block instance of the calendar_month block in the 'content' region
+        // Each of the dashboards should now have a block instance of the calendar_month block in the 'content' region
         // on 'my-index' only.
         foreach ($dashboards as $dashboardid) {
             // Only one block should have been created.
@@ -193,6 +193,12 @@ class upgradelib_test extends \advanced_testcase {
             $this->assertEquals('calendar_month', $theblock->blockname);
             $this->assertEquals('content', $theblock->defaultregion);
             $this->assertEquals('my-index', $theblock->pagetypepattern);
+
+            // Fetch the user details.
+            $dashboard = $DB->get_record('my_pages', ['id' => $dashboardid]);
+            $usercontext = \context_user::instance($dashboard->userid);
+
+            $this->assertEquals($usercontext->id, $theblock->parentcontextid);
         }
 
         // Enusre that there are no blocks on the mycourses page.
@@ -232,7 +238,6 @@ class upgradelib_test extends \advanced_testcase {
         ], 'id')->id;
 
         $dashboards = [];
-        $mycourses = [];
         $unchanged = [];
         $unchangedcontexts = [];
         $unchangedpreferences = [];
@@ -303,7 +308,6 @@ class upgradelib_test extends \advanced_testcase {
                 'name' => '__courses',
                 'private' => MY_PAGE_PRIVATE,
             ]);
-            $mycourses[] = $usermycoursesid;
 
             // These are on the my-index above, but are not the block being updated.
             $userunchangedblocks[] = $this->getDataGenerator()->create_block('online_users', [
@@ -437,6 +441,102 @@ class upgradelib_test extends \advanced_testcase {
             $this->assertEquals(0, $DB->count_records('user_preferences', [
                 'name' => "docked_block_instance_{$blockid}",
             ]));
+        }
+    }
+
+    /**
+     * Ensrue that the upgrade_block_set_my_user_parent_context function performs as expected.
+     *
+     * @covers ::upgrade_block_set_my_user_parent_context
+     */
+    public function test_upgrade_block_set_my_user_parent_context(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+
+        $systemcontext = \context_system::instance();
+
+        $dashboards = [];
+        $otherblocknames = [
+            'online_users',
+            'myoverview',
+            'calendar_month',
+        ];
+        $affectedblockname = 'timeline';
+
+        // Create dashboard pages for a number of users.
+        while (count($dashboards) < 10) {
+            $user = $this->getDataGenerator()->create_user();
+            $dashboard = $DB->insert_record('my_pages', (object) [
+                'userid' => $user->id,
+                'name' => '__default',
+                'private' => MY_PAGE_PRIVATE,
+            ]);
+            $dashboards[] = $dashboard;
+
+            $mycourse = $DB->insert_record('my_pages', (object) [
+                'userid' => $user->id,
+                'name' => '__courses',
+                'private' => MY_PAGE_PRIVATE,
+            ]);
+
+            // These are on the my-index above, but are not the block being updated.
+            foreach ($otherblocknames as $blockname) {
+                $unchanged[] = $this->getDataGenerator()->create_block($blockname, [
+                    'parentcontextid' => $systemcontext->id,
+                    'pagetypepattern' => 'my-index',
+                    'subpagepattern' => $dashboard,
+                ]);
+            }
+
+            // This is on a my-index page, and is the affected block, but is on the mycourses page, not the dashboard.
+            $unchanged[] = $this->getDataGenerator()->create_block($affectedblockname, [
+                'parentcontextid' => $systemcontext->id,
+                'pagetypepattern' => 'my-index',
+                'subpagepattern' => $mycourse,
+            ]);
+
+            // This is on the default dashboard, and is the affected block, but not a my-index page.
+            $unchanged[] = $this->getDataGenerator()->create_block($affectedblockname, [
+                'parentcontextid' => $systemcontext->id,
+                'pagetypepattern' => 'not-my-index',
+                'subpagepattern' => $dashboard,
+            ]);
+
+            // This is the match which should be changed.
+            $changed[] = $this->getDataGenerator()->create_block($affectedblockname, [
+                'parentcontextid' => $systemcontext->id,
+                'pagetypepattern' => 'my-index',
+                'subpagepattern' => $dashboard,
+            ]);
+        }
+
+        // Perform the operation.
+        // Target all affected blocks matching 'my-index' and correct the context to the relevant user's contexct.
+        // Only the '__default' dashboard on the 'my-index' my_page should be affected.
+        upgrade_block_set_my_user_parent_context($affectedblockname, '__default', 'my-index');
+
+        // Ensure that the relevant blocks remain unchanged.
+        foreach ($unchanged as $original) {
+            $block = $DB->get_record('block_instances', ['id' => $original->id]);
+            $this->assertEquals($original, $block);
+        }
+
+        // Ensure that only the expected blocks were changed.
+        foreach ($changed as $original) {
+            $block = $DB->get_record('block_instances', ['id' => $original->id]);
+            $this->assertNotEquals($original, $block);
+
+            // Fetch the my page and user details.
+            $dashboard = $DB->get_record('my_pages', ['id' => $original->subpagepattern]);
+            $usercontext = \context_user::instance($dashboard->userid);
+
+            // Only the contextid should be updated to the relevant user's context.
+            // No other changes are expected.
+            $expected = (object) $original;
+            $expected->parentcontextid = $usercontext->id;
+            $this->assertEquals($expected, $block);
         }
     }
 }
