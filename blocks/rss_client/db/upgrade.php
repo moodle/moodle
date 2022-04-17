@@ -56,5 +56,8 @@ function xmldb_block_rss_client_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2021121600, 'rss_client', false);
     }
 
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
