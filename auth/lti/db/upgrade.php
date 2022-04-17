@@ -85,5 +85,8 @@ function xmldb_auth_lti_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022030900, 'auth', 'lti');
     }
 
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

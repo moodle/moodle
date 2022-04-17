@@ -72,5 +72,8 @@ function xmldb_block_calendar_month_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2022041901, 'calendar_month', false);
     }
 
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
