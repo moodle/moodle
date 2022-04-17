@@ -5,7 +5,8 @@ Feature: Language selector menu
   I need to be presented with a language selector menu
 
   Background:
-    Given the following "courses" exist:
+    Given remote langimport tests are enabled
+    And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
     And the following "users" exist:

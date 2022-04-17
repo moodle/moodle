@@ -17,7 +17,8 @@ Feature: Test if the login form provides the correct feedback
     Then I should see "Invalid login, please try again"
 
   Scenario: Test login language selector
-    Given I log in as "admin"
+    Given remote langimport tests are enabled
+    And I log in as "admin"
     And I navigate to "Language > Language packs" in site administration
     And I set the field "Available language packs" to "nl,es"
     And I press "Install selected language pack(s)"
