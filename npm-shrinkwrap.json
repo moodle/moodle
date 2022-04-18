@@ -43,6 +43,7 @@
         "jsdoc": "^3.6.10",
         "jsdoc-to-markdown": "^7.1.1",
         "jshint": "^2.13.4",
+        "jstoxml": "^3.2.3",
         "node-sass": "^7.0.1",
         "npm-run-all": "^4.1.5",
         "rollup-plugin-terser": "^7.0.2",
@@ -8565,6 +8566,12 @@
       "engines": {
         "node": ">=0.6.0"
       }
+    },
+    "node_modules/jstoxml": {
+      "version": "3.2.3",
+      "resolved": "https://registry.npmjs.org/jstoxml/-/jstoxml-3.2.3.tgz",
+      "integrity": "sha512-IxoZkdFcKm1dO4g+JcZBB7z1p/vPXEZPV3APRDd3/zcVtthg2kfTmpzKNZMl37/MrE/Uoc2p6ZnLnv3P5HVMTw==",
+      "dev": true
     },
     "node_modules/keyv": {
       "version": "3.0.0",
@@ -20631,6 +20638,12 @@
         "json-schema": "0.4.0",
         "verror": "1.10.0"
       }
+    },
+    "jstoxml": {
+      "version": "3.2.3",
+      "resolved": "https://registry.npmjs.org/jstoxml/-/jstoxml-3.2.3.tgz",
+      "integrity": "sha512-IxoZkdFcKm1dO4g+JcZBB7z1p/vPXEZPV3APRDd3/zcVtthg2kfTmpzKNZMl37/MrE/Uoc2p6ZnLnv3P5HVMTw==",
+      "dev": true
     },
     "keyv": {
       "version": "3.0.0",
