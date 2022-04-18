@@ -13137,6 +13137,14 @@ aside[id^="block-region-side-"] .block_recentlyaccesseditems .dashboard-card-dec
 #block-region-content .block_recentlyaccesseditems [data-region="more-items-button-container"] {
   display: none; }
 
+.block_recentlyaccesseditems a.dashboard-card:hover, .block_recentlyaccesseditems a.dashboard-card:focus {
+  text-decoration: none; }
+  .block_recentlyaccesseditems a.dashboard-card:hover h6, .block_recentlyaccesseditems a.dashboard-card:focus h6 {
+    text-decoration: underline; }
+
+.block_recentlyaccesseditems a.dashboard-card small {
+  color: #1d2125; }
+
 .block_myoverview .content {
   min-height: 19.35rem; }
 
