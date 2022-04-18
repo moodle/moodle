@@ -21,6 +21,43 @@
  */
 
 module.exports = grunt => {
+
+    /**
+     * Generate the PHPCS configuration.
+     *
+     * @param {Object} thirdPartyPaths
+     */
+    const phpcsIgnore = (thirdPartyPaths) => {
+        const {toXML} = require('jstoxml');
+
+        const config = {
+            _name: 'ruleset',
+            _attrs: {
+                name: "MoodleCore",
+            },
+            _content: [
+                {
+                    rule: {
+                        _attrs: {
+                            ref: 'moodle',
+                        },
+                    },
+                },
+            ],
+        };
+
+        thirdPartyPaths.forEach(library => {
+            config._content.push({
+                'exclude-pattern': library,
+            });
+        });
+
+        grunt.file.write('.phpcs.xml', toXML(config, {
+            header: true,
+            indent: '  ',
+        }) + "\n");
+    };
+
     /**
      * Generate ignore files (utilising thirdpartylibs.xml data)
      */
@@ -52,6 +89,8 @@ module.exports = grunt => {
             'jsdoc/styles/*.css',
         ].concat(thirdPartyPaths);
         grunt.file.write('.stylelintignore', stylelintIgnores.join('\n') + '\n');
+
+        phpcsIgnore(thirdPartyPaths);
     };
 
     grunt.registerTask('ignorefiles', 'Generate ignore files for linters', handler);

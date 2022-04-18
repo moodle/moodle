@@ -51,3 +51,4 @@ moodle-plugin-ci.phar
 .eslintignore
 .stylelintignore
 /jsdoc
+.phpcs.xml
