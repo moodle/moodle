@@ -270,6 +270,15 @@ abstract class base {
     }
 
     /**
+     * Returns the list of all the entities added to the report
+     *
+     * @return entity_base[]
+     */
+    final protected function get_entities(): array {
+        return $this->entities;
+    }
+
+    /**
      * Define a new entity for the report
      *
      * @param string $name
