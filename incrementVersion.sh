@@ -4,7 +4,7 @@ EXPECTED_ARGS=4
 
 if [ $# -ne $EXPECTED_ARGS ]; then
 	echo "Missing arguments!"
-	printf "Usage: \n \t$0 {existing build number} {new biuld number} {existing release number} {new release number}\n\n"
+	printf "Usage: \n \t$0 {existing build number} {new build number} {existing release number} {new release number}\n\n"
 	printf "IMPORTANT - the version number should follow these rules - YYYYMMDDII\n"
         printf "WHERE: YYYMMDD should be the release date of the major Moodle version for the current branch (e.g. for 3.10 it should be 20201109) and the II should be the build number for the plugin for that version\n"
         printf "For example, let's assume the next 3.12 release of moodle happens at 2025/12/01 and then we release a plugin compatible with that version, the version number should be set to 2025120100, and the second version of the plugin for 3.12 should have 2025120101\n"

@@ -25,9 +25,9 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-$plugin->version = 2021051702;
+$plugin->version = 2021051703;
 $plugin->component = 'local_kaltura';
-$plugin->release = 'Kaltura release 4.3.2';
+$plugin->release = 'Kaltura release 4.3.3';
 $plugin->requires = 2018120300;
 $plugin->maturity = MATURITY_STABLE;
 
@@ -53,7 +53,7 @@ else if ($kalturaPluginVersion == 2020070539 || $kalturaPluginVersion == 2020121
 }
 
 if (!empty($updatedVersion)) {
-    $pluginsRecords = $DB->get_records_select('config_plugins', "name = 'version' AND value = '$kalturaPluginVersion'");
+    $pluginsRecords = $DB->get_records_select('config_plugins', "plugin in ('local_kaltura', 'local_kalturamediagallery', 'local_mymedia', 'atto_kalturamedia','block_kalturamediagallery','filter_kaltura','tinymce_kalturamedia','mod_kalvidassign','mod_kalvidres') AND name = 'version' AND value = '$kalturaPluginVersion'");
 
     foreach ($pluginsRecords as $record) {
         $record->value = $updatedVersion;
