@@ -2462,7 +2462,15 @@ class quiz_attempt {
             if ($becomingabandoned) {
                 $this->process_abandon($timenow, true);
             } else {
-                $this->process_finish($timenow, !$toolate, $toolate ? $timeclose : $timenow);
+                if (!$toolate || $this->get_quiz()->overduehandling == 'graceperiod') {
+                    // Normally, we record the accurate finish time when the student is online.
+                    $finishtime = $timenow;
+                } else {
+                    // But, if there is no grade period, and the final responses were too
+                    // late to be processed, record the close time, to reduce confusion.
+                    $finishtime = $timeclose;
+                }
+                $this->process_finish($timenow, !$toolate, $finishtime);
             }
 
         } catch (question_out_of_sequence_exception $e) {
