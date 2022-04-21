@@ -678,6 +678,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
         core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
     }
+    $moduleinfo = edit_module_post_actions($moduleinfo, $course);
 
     // Now that module is fully updated, also update completion data if required.
     // (this will wipe all user completion data and recalculate it)
@@ -690,8 +691,6 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     }
     $cm->name = $moduleinfo->name;
     \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
-
-    $moduleinfo = edit_module_post_actions($moduleinfo, $course);
 
     return array($cm, $moduleinfo);
 }
