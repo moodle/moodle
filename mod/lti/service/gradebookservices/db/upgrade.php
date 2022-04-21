@@ -113,5 +113,20 @@ function xmldb_ltiservice_gradebookservices_upgrade($oldversion) {
     // Automatically generated Moodle v4.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2022051900) {
+        $table = new xmldb_table('ltiservice_gradebookservices');
+        $field = new xmldb_field('subreviewurl', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('subreviewparams', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lti savepoint reached.
+        upgrade_plugin_savepoint(true, 2022051900, 'ltiservice', 'gradebookservices');
+    }
+
     return true;
 }

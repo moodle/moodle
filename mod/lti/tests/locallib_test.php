@@ -67,6 +67,19 @@ require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
  */
 class locallib_test extends mod_lti_testcase {
 
+    /**
+     * @covers ::lti_split_parameters()
+     *
+     * Test the split parameters function
+     */
+    public function test_split_parameters() {
+        $this->assertEquals(lti_split_parameters(''), array());
+        $this->assertEquals(lti_split_parameters('a=1'), array('a' => '1'));
+        $this->assertEquals(lti_split_parameters("a=1\nb=2"), array('a' => '1', 'b' => '2'));
+        $this->assertEquals(lti_split_parameters("a=1\n\rb=2"), array('a' => '1', 'b' => '2'));
+        $this->assertEquals(lti_split_parameters("a=1\r\nb=2"), array('a' => '1', 'b' => '2'));
+    }
+
     public function test_split_custom_parameters() {
         $this->resetAfterTest();
 
@@ -618,6 +631,7 @@ class locallib_test extends mod_lti_testcase {
             'basic-lti-launch-request' => 'LtiResourceLinkRequest',
             'ContentItemSelectionRequest' => 'LtiDeepLinkingRequest',
             'LtiDeepLinkingResponse' => 'ContentItemSelection',
+            'LtiSubmissionReviewRequest' => 'LtiSubmissionReviewRequest'
         ];
 
         $this->assertEquals($mapping, lti_get_jwt_message_type_mapping());
@@ -1005,6 +1019,12 @@ class locallib_test extends mod_lti_testcase {
                 'claim' => 'lis_result_sourcedid',
                 'isarray' => false
             ],
+            'for_user_id' => [
+                'suffix' => '',
+                'group' => 'for_user',
+                'claim' => 'user_id',
+                'isarray' => false
+            ],
         ];
 
         $this->assertEquals($mapping, lti_get_jwt_claim_mapping());
@@ -1339,6 +1359,99 @@ MwIDAQAB
         $this->assertEquals($contentitems[0]['lineItem']['tag'], $config->lineitemtag);
         $this->assertEquals($contentitems[0]['lineItem']['resourceId'], $config->lineitemresourceid);
         $this->assertEquals($contentitems[0]['lineItem']['scoreMaximum'], $config->grade_modgrade_point);
+        $this->assertEquals('', $config->lineitemsubreviewurl);
+        $this->assertEquals('', $config->lineitemsubreviewparams);
+    }
+
+    /**
+     * @covers ::lti_tool_configuration_from_content_item()
+     *
+     * Test adding a single gradable item through content item with an empty subreview url.
+     */
+    public function test_lti_tool_configuration_from_content_item_single_gradable_subreview_default_emptyurl() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $type = new \stdClass();
+        $type->name = "Test tool";
+        $type->baseurl = "http://example.com";
+        $config = new \stdClass();
+        $config->lti_acceptgrades = LTI_SETTING_DELEGATE;
+        $typeid = lti_add_type($type, $config);
+
+        $contentitems = [];
+        $contentitems[] = [
+            'type' => 'ltiResourceLink',
+            'url' => 'http://example.com/messages/launch',
+            'title' => 'Test title',
+            'lineItem' => [
+                'resourceId' => 'r12345',
+                'tag' => 'final',
+                'scoreMaximum' => 10.0,
+                'submissionReview' => [
+                    'url' => ''
+                ]
+            ],
+            'frame' => []
+        ];
+        $contentitemsjson13 = json_encode($contentitems);
+        $json11 = lti_convert_content_items($contentitemsjson13);
+
+        $config = lti_tool_configuration_from_content_item($typeid,
+                                                           'ContentItemSelection',
+                                                           $type->ltiversion,
+                                                           'ConsumerKey',
+                                                           $json11);
+
+        $this->assertEquals('DEFAULT', $config->lineitemsubreviewurl);
+        $this->assertEquals('', $config->lineitemsubreviewparams);
+    }
+
+    /**
+     * @covers ::lti_tool_configuration_from_content_item()
+     *
+     * Test adding a single gradable item through content item.
+     */
+    public function test_lti_tool_configuration_from_content_item_single_gradable_subreview_default() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $type = new \stdClass();
+        $type->name = "Test tool";
+        $type->baseurl = "http://example.com";
+        $config = new \stdClass();
+        $config->lti_acceptgrades = LTI_SETTING_DELEGATE;
+        $typeid = lti_add_type($type, $config);
+
+        $contentitems = [];
+        $contentitems[] = [
+            'type' => 'ltiResourceLink',
+            'url' => 'http://example.com/messages/launch',
+            'title' => 'Test title',
+            'lineItem' => [
+                'resourceId' => 'r12345',
+                'tag' => 'final',
+                'scoreMaximum' => 10.0,
+                'submissionReview' => []
+            ],
+            'frame' => []
+        ];
+        $contentitemsjson13 = json_encode($contentitems);
+        $json11 = lti_convert_content_items($contentitemsjson13);
+
+        $config = lti_tool_configuration_from_content_item($typeid,
+                                                           'ContentItemSelection',
+                                                           $type->ltiversion,
+                                                           'ConsumerKey',
+                                                           $json11);
+
+        $this->assertEquals($contentitems[0]['url'], $config->toolurl);
+        $this->assertEquals(LTI_SETTING_ALWAYS, $config->instructorchoiceacceptgrades);
+        $this->assertEquals($contentitems[0]['lineItem']['tag'], $config->lineitemtag);
+        $this->assertEquals($contentitems[0]['lineItem']['resourceId'], $config->lineitemresourceid);
+        $this->assertEquals($contentitems[0]['lineItem']['scoreMaximum'], $config->grade_modgrade_point);
+        $this->assertEquals('DEFAULT', $config->lineitemsubreviewurl);
+        $this->assertEquals('', $config->lineitemsubreviewparams);
     }
 
     /**
@@ -1375,7 +1488,11 @@ MwIDAQAB
             'lineItem' => [
                 'resourceId' => 'r12345',
                 'tag' => 'final',
-                'scoreMaximum' => 10.0
+                'scoreMaximum' => 10.0,
+                'submissionReview' => [
+                    'url' => 'https://testsub.url',
+                    'custom' => ['a' => 'b']
+                ]
             ],
             'frame' => []
         ];
@@ -1397,6 +1514,8 @@ MwIDAQAB
         $this->assertEquals($contentitems[1]['lineItem']['tag'], $config->multiple[1]->lineitemtag);
         $this->assertEquals($contentitems[1]['lineItem']['resourceId'], $config->multiple[1]->lineitemresourceid);
         $this->assertEquals($contentitems[1]['lineItem']['scoreMaximum'], $config->multiple[1]->grade_modgrade_point);
+        $this->assertEquals($contentitems[1]['lineItem']['submissionReview']['url'], $config->multiple[1]->lineitemsubreviewurl);
+        $this->assertEquals("a=b", $config->multiple[1]->lineitemsubreviewparams);
     }
 
     /**
@@ -1649,14 +1768,33 @@ MwIDAQAB
         $config->typeid = 'some-type-id';
         $config->lti_toolurl = 'some-lti-tool-url';
 
-        $request = lti_build_login_request($course->id, $instance->id, $instance, $config, 'basic-lti-launch-request');
-
+        $request = lti_build_login_request($course->id, $instance->cmid, $instance, $config, 'basic-lti-launch-request');
         $this->assertEquals($CFG->wwwroot, $request['iss']);
         $this->assertEquals('http://some-lti-tool-url', $request['target_link_uri']);
         $this->assertEquals(123456789, $request['login_hint']);
-        $this->assertEquals($instance->id, $request['lti_message_hint']);
+        $this->assertTrue(strpos($request['lti_message_hint'], "\"cmid\":{$instance->cmid}") > 0);
+        $this->assertTrue(strpos($request['lti_message_hint'],  "\"launchid\":\"ltilaunch{$instance->id}_") > 0);
         $this->assertEquals('some-client-id', $request['client_id']);
         $this->assertEquals('some-type-id', $request['lti_deployment_id']);
+    }
+
+    /**
+     * @covers ::lti_get_launch_data()
+     *
+     * Test for_user is passed as parameter when specified.
+     */
+    public function test_lti_get_launch_data_with_for_user() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $config = new \stdClass();
+        $config->lti_organizationid = '';
+        $course = $this->getDataGenerator()->create_course();
+        $type = $this->create_type($config);
+        $link = $this->create_instance($type, $course);
+        $launchdata = lti_get_launch_data($link, '', '', 345);
+        $this->assertEquals($launchdata[1]['lti_message_type'], 'basic-lti-launch-request');
+        $this->assertEquals($launchdata[1]['for_user_id'], 345);
     }
 
     /**

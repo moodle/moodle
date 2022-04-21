@@ -15,16 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the ltiservice_gradebookservices service.
+ * This page is the grade hook allowing LTI launches from gradebook.
  *
- * @package    ltiservice_gradebookservices
- * @copyright  2017 Cengage Learning http://www.cengage.com
- * @author     Dirk Singels, Diego del Blanco, Claude Vervoort
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_lti
+ * @category  grade
+ * @copyright 2022 Cengage Group  {@link https://cengage.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../config.php');
 
-$plugin->version   = 2022051900;
-$plugin->requires  = 2022041200;
-$plugin->component = 'ltiservice_gradebookservices';
+$id = required_param('id', PARAM_INT);
+$userid = optional_param('userid', 0, PARAM_INT);
+
+$cm = get_coursemodule_from_id('lti', $id, 0, false, MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+require_login($course, false, $cm);
+
+redirect(new moodle_url('/mod/lti/view.php', array(
+    'id' => $cm->id, 'action' => 'gradeReport', 'user' => $userid)));

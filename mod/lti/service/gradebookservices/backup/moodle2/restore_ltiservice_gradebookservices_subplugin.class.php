@@ -115,7 +115,9 @@ class restore_ltiservice_gradebookservices_subplugin extends restore_subplugin {
                     'typeid' => $newtypeid,
                     'baseurl' => $data->baseurl,
                     'resourceid' => $resourceid,
-                    'tag' => $data->tag
+                    'tag' => $data->tag,
+                    'subreviewparams' => $data->subreviewparams ?? '',
+                    'subreviewurl' => $data->subreviewurl ?? ''
             ));
             $this->set_mapping('gbsgradeitemoldid', $newgbsid, $data->gradeitemid);
             $this->set_mapping('gbsgradeitemrestored', $data->id, $data->id);

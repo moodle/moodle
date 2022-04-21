@@ -201,6 +201,15 @@ class response {
     }
 
     /**
+     * Get the response body.
+     *
+     * @return string
+     */
+    public function get_body() {
+        return $this->body;
+    }
+
+    /**
      * Set the response body.
      *
      * @param string $body Body data

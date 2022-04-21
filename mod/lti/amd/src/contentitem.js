@@ -102,7 +102,9 @@ define(
             new FormField('launchcontainer', FormField.TYPES.SELECT, true, 0),
             new FormField('grade_modgrade_point', FormField.TYPES.TEXT, false, ''),
             new FormField('lineitemresourceid', FormField.TYPES.TEXT, true, ''),
-            new FormField('lineitemtag', FormField.TYPES.TEXT, true, '')
+            new FormField('lineitemtag', FormField.TYPES.TEXT, true, ''),
+            new FormField('lineitemsubreviewurl', FormField.TYPES.TEXT, true, ''),
+            new FormField('lineitemsubreviewparams', FormField.TYPES.TEXT, true, '')
         ];
 
         /**
@@ -160,7 +162,8 @@ define(
         var configToVariant = (config) => {
             const variant = {};
             ['name', 'toolurl', 'securetoolurl', 'instructorcustomparameters', 'icon', 'secureicon',
-                'launchcontainer', 'lineitemresourceid', 'lineitemtag'].forEach(
+                'launchcontainer', 'lineitemresourceid', 'lineitemtag', 'lineitemsubreviewurl',
+                'lineitemsubreviewparams'].forEach(
                 function(name) {
                     variant[name] = config[name] || '';
                 }

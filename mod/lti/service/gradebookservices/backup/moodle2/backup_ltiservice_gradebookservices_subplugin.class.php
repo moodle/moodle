@@ -64,7 +64,9 @@ class backup_ltiservice_gradebookservices_subplugin extends backup_subplugin {
                 'resourceid',
                 'tag',
                 'vendorcode',
-                'guid'
+                'guid',
+                'subreviewurl',
+                'subreviewparams'
                 )
         );
 
