@@ -23,7 +23,7 @@
     {}
 }}
 
-<div id="block-timeline-{{uniqid}}" class="block-timeline" data-region="timeline">
+<div id="block-timeline-{{uniqid}}-{{timelineinstanceid}}" class="block-timeline" data-region="timeline">
     <div class="p-0 px-2">
         <div class="row no-gutters">
             <div class="mr-2 mb-1">
@@ -52,7 +52,7 @@ function(
     $,
     Main
 ) {
-    var root = $('#block-timeline-{{uniqid}}');
+    var root = $('#block-timeline-{{uniqid}}-{{timelineinstanceid}}');
     Main.init(root);
 });
 {{/js}}
