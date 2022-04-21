@@ -24,6 +24,8 @@
 
 namespace core_search;
 
+use context;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -613,7 +615,10 @@ class document implements \renderable, \templatable {
      * @return array
      */
     public function export_for_template(\renderer_base $output) {
+        global $USER;
+
         list($componentname, $areaname) = \core_search\manager::extract_areaid_parts($this->get('areaid'));
+        $context = context::instance_by_id($this->get('contextid'));
 
         $searcharea = \core_search\manager::get_search_area($this->data['areaid']);
         $title = $this->is_set('title') ? $this->format_text($searcharea->get_document_display_title($this)) : '';
@@ -621,7 +626,7 @@ class document implements \renderable, \templatable {
             'componentname' => $componentname,
             'areaname' => $areaname,
             'courseurl' => course_get_url($this->get('courseid')),
-            'coursefullname' => format_string($this->get('coursefullname'), true, array('context' => $this->get('contextid'))),
+            'coursefullname' => format_string($this->get('coursefullname'), true, ['context' => $context->id]),
             'modified' => userdate($this->get('modified')),
             'title' => ($title !== '') ? $title : get_string('notitle', 'search'),
             'docurl' => $this->get_doc_url(),
@@ -635,21 +640,28 @@ class document implements \renderable, \templatable {
         $files = $this->get_files();
         if (!empty($files)) {
             if (count($files) > 1) {
-                $filenames = array();
+                $filenames = [];
                 foreach ($files as $file) {
-                    $filenames[] = format_string($file->get_filename(), true, array('context' => $this->get('contextid')));
+                    $filenames[] = format_string($file->get_filename(), true, ['context' => $context->id]);
                 }
                 $data['multiplefiles'] = true;
                 $data['filenames'] = $filenames;
             } else {
                 $file = reset($files);
-                $data['filename'] = format_string($file->get_filename(), true, array('context' => $this->get('contextid')));
+                $data['filename'] = format_string($file->get_filename(), true, ['context' => $context->id]);
             }
         }
 
         if ($this->is_set('userid')) {
-            $data['userurl'] = new \moodle_url('/user/view.php', array('id' => $this->get('userid'), 'course' => $this->get('courseid')));
-            $data['userfullname'] = format_string($this->get('userfullname'), true, array('context' => $this->get('contextid')));
+            if ($this->get('userid') == $USER->id ||
+                    (has_capability('moodle/user:viewdetails', $context) &&
+                    has_capability('moodle/course:viewparticipants', $context))) {
+                $data['userurl'] = new \moodle_url(
+                    '/user/view.php',
+                    ['id' => $this->get('userid'), 'course' => $this->get('courseid')]
+                );
+                $data['userfullname'] = format_string($this->get('userfullname'), true, ['context' => $context->id]);
+            }
         }
 
         if ($docicon = $this->get_doc_icon()) {
