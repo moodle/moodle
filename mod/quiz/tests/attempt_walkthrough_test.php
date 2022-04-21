@@ -119,6 +119,65 @@ class mod_quiz_attempt_walkthrough_testcase extends advanced_testcase {
         $this->assertEquals(100, $gradebookgrade->grade);
     }
 
+    public function test_quiz_attempt_walkthrough_submit_time_recorded_correctly_when_overdue() {
+        global $SITE;
+
+        $this->resetAfterTest();
+
+        // Make a quiz.
+        $timeclose = time() + HOURSECS;
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+
+        $quiz = $quizgenerator->create_instance(
+                ['course' => $SITE->id, 'timeclose' => $timeclose,
+                        'overduehandling' => 'graceperiod', 'graceperiod' => HOURSECS]);
+
+        // Create a question.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+
+        // Add them to the quiz.
+        quiz_add_quiz_question($saq->id, $quiz, 0, 1);
+        quiz_update_sumgrades($quiz);
+
+        // Make a user to do the quiz.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $quizobj = quiz::create($quiz->id, $user->id);
+
+        // Start the attempt.
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
+
+        // Process some responses from the student.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_submitted_actions($timeclose - 30 * MINSECS, false, [1 => ['answer' => 'frog']]);
+
+        // Attempt goes overdue (e.g. if cron ran).
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_going_overdue($timeclose + 2 * get_config('quiz', 'graceperiodmin'), false);
+
+        // Verify the attempt state.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $this->assertEquals(1, $attemptobj->get_attempt_number());
+        $this->assertEquals(false, $attemptobj->is_finished());
+        $this->assertEquals(0, $attemptobj->get_submitted_date());
+        $this->assertEquals($user->id, $attemptobj->get_userid());
+        $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+
+        // Student submits the attempt during the grace period.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_attempt($timeclose + 30 * MINSECS, true, false, 1);
+
+        // Verify the attempt state.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $this->assertEquals(1, $attemptobj->get_attempt_number());
+        $this->assertEquals(true, $attemptobj->is_finished());
+        $this->assertEquals($timeclose + 30 * MINSECS, $attemptobj->get_submitted_date());
+        $this->assertEquals($user->id, $attemptobj->get_userid());
+        $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+    }
+
     /**
      * Create a quiz with a random as well as other questions and walk through quiz attempts.
      */
