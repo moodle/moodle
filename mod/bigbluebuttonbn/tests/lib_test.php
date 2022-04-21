@@ -112,18 +112,14 @@ class lib_test extends \advanced_testcase {
         $user = $generator->create_user();
         $this->setUser($user);
 
-        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
-
+        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance($this->get_course(),
+            ['completion' => 2, 'completionview' => 1]);
         $result = bigbluebuttonbn_user_outline($this->get_course(), $user, $bbactivitycm, $bbactivity);
-        $this->assertEquals((object) [], $result);
+        $this->assertEquals((object) ['info' => '', 'time' => 0], $result);
 
-        // Now create a couple of logs.
-        $instance = instance::get_from_instanceid($bbactivity->id);
-        logger::log_meeting_joined_event($instance, 0);
-        logger::log_recording_played_event($instance, 1);
-
+        bigbluebuttonbn_view($bbactivity, $this->get_course(), $bbactivitycm, $bbactivitycontext);
         $result = bigbluebuttonbn_user_outline($this->get_course(), $user, $bbactivitycm, $bbactivity);
-        $this->assertStringContainsString(get_string('completionview_event_desc', 'mod_bigbluebuttonbn', 2), $result->info);
+        $this->assertStringContainsString(get_string('report_room_view', 'mod_bigbluebuttonbn'), $result->info);
     }
 
     /**
@@ -137,19 +133,17 @@ class lib_test extends \advanced_testcase {
 
         $generator = $this->getDataGenerator();
         $user = $generator->create_and_enrol($this->get_course());
-        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
+        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance($this->get_course(),
+            ['completion' => 2, 'completionview' => 1]);
         $this->setUser($user);
 
         // Now create a couple of logs.
-        $instance = instance::get_from_instanceid($bbactivity->id);
-        $recordings = $this->create_recordings_for_instance($instance, [['name' => "Pre-Recording 1"]]);
-        logger::log_meeting_joined_event($instance, 0);
-        logger::log_recording_played_event($instance, $recordings[0]->id);
+        bigbluebuttonbn_view($bbactivity, $this->get_course(), $bbactivitycm, $bbactivitycontext);
         ob_start();
         bigbluebuttonbn_user_complete($this->get_course(), $user, $bbactivitycm, $bbactivity);
         $output = ob_get_contents();
         ob_end_clean();
-        $this->assertStringContainsString(get_string('completionview_event_desc', 'mod_bigbluebuttonbn', 2), $output);
+        $this->assertStringContainsString(get_string('report_room_view', 'mod_bigbluebuttonbn'), $output);
     }
 
     /**
