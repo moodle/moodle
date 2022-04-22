@@ -47,11 +47,11 @@ Feature: The activity results block displays student low scores
     Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 0 |
-      | id_config_showworst | 1 |
-      | id_config_gradeformat | Percentages |
-      | id_config_nameformat | Display full names |
-      | id_config_decimalpoints | 0 |
+      | config_showbest | 0 |
+      | config_showworst | 1 |
+      | config_gradeformat | Percentages |
+      | config_nameformat | Display full names |
+      | config_decimalpoints | 0 |
     And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50%" in the "Activity results" "block"
@@ -60,10 +60,10 @@ Feature: The activity results block displays student low scores
     Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 0 |
-      | id_config_showworst | 1 |
-      | id_config_gradeformat | Fractions |
-      | id_config_nameformat | Display full names |
+      | config_showbest | 0 |
+      | config_showworst | 1 |
+      | config_gradeformat | Fractions |
+      | config_nameformat | Display full names |
     And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50.00/100.00" in the "Activity results" "block"
@@ -72,10 +72,10 @@ Feature: The activity results block displays student low scores
     Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 0 |
-      | id_config_showworst | 1 |
-      | id_config_gradeformat | Absolute numbers |
-      | id_config_nameformat | Display full names |
+      | config_showbest | 0 |
+      | config_showworst | 1 |
+      | config_gradeformat | Absolute numbers |
+      | config_nameformat | Display full names |
     And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50.00" in the "Activity results" "block"
@@ -84,11 +84,11 @@ Feature: The activity results block displays student low scores
     Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 0 |
-      | id_config_showworst | 3 |
-      | id_config_gradeformat | Percentages |
-      | id_config_nameformat | Display full names |
-      | id_config_decimalpoints | 0 |
+      | config_showbest | 0 |
+      | config_showworst | 3 |
+      | config_gradeformat | Percentages |
+      | config_nameformat | Display full names |
+      | config_decimalpoints | 0 |
     And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50%" in the "Activity results" "block"
@@ -101,10 +101,10 @@ Feature: The activity results block displays student low scores
     Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 0 |
-      | id_config_showworst | 3 |
-      | id_config_gradeformat | Fractions |
-      | id_config_nameformat | Display full names |
+      | config_showbest | 0 |
+      | config_showworst | 3 |
+      | config_gradeformat | Fractions |
+      | config_nameformat | Display full names |
     And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50.00/100.00" in the "Activity results" "block"
@@ -117,10 +117,10 @@ Feature: The activity results block displays student low scores
     Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 0 |
-      | id_config_showworst | 3 |
-      | id_config_gradeformat | Absolute numbers |
-      | id_config_nameformat | Display full names |
+      | config_showbest | 0 |
+      | config_showworst | 3 |
+      | config_gradeformat | Absolute numbers |
+      | config_nameformat | Display full names |
     And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50.00" in the "Activity results" "block"
@@ -135,10 +135,10 @@ Feature: The activity results block displays student low scores
     And I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 0 |
-      | id_config_showworst | 3 |
-      | id_config_gradeformat | Percentages |
-      | id_config_nameformat | Display only ID numbers |
+      | config_showbest | 0 |
+      | config_showworst | 3 |
+      | config_gradeformat | Percentages |
+      | config_nameformat | Display only ID numbers |
     And I press "Save changes"
     Then I should see "User S5" in the "Activity results" "block"
     And I should see "50.00%" in the "Activity results" "block"
@@ -151,10 +151,10 @@ Feature: The activity results block displays student low scores
     Given I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
-      | id_config_showbest | 0 |
-      | id_config_showworst | 3 |
-      | id_config_gradeformat | Percentages |
-      | id_config_nameformat | Anonymous results |
+      | config_showbest | 0 |
+      | config_showworst | 3 |
+      | config_gradeformat | Percentages |
+      | config_nameformat | Anonymous results |
     And I press "Save changes"
     Then I should see "User" in the "Activity results" "block"
     And I should see "50.00%" in the "Activity results" "block"

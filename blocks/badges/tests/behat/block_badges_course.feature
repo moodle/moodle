@@ -64,7 +64,7 @@ Feature: Enable Block Badges in a course
     When I add the "Latest badges" block
     And I configure the "Latest badges" block
     And I set the following fields to these values:
-      | id_config_numberofbadges | 1 |
+      | Number of latest badges to display | 1 |
     And I press "Save changes"
     Then I should see "Badge 2" in the "Latest badges" "block"
     And I should not see "Badge 1" in the "Latest badges" "block"
