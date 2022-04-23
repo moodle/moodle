@@ -15,13 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    block_iomad_approve_access
- * @copyright  2021 Derick Turner
- * @author     Derick Turner
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Definition of Trainingevent scheduled tasks.
+ *
+ * @package   mod_trainingevent
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->component  = 'block_iomad_approve_access';
-$plugin->version = 2022042300;  // YYYYMMDDHH (year, month, day, 24-hr time).
-$plugin->release  = '3.9.4 (Build: 20210118)'; // Human-friendly version name
-$plugin->requires = 2019052000; // YYYYMMDDHH (This is the release version for Moodle 2.0).
+defined('MOODLE_INTERNAL') || die();
+
+$tasks = [
+    [
+        'classname' => 'mod_trainingevent\task\send_reminder_emails',
+        'blocking' => 0,
+        'minute' => '15',
+        'hour' => '0',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ]
+];

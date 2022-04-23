@@ -121,6 +121,7 @@ $string['completion_course_user_name'] = 'User course completion';
 $string['completion_course_user_name_help'] = 'This email is sent out when a user successfully completes a course';
 $string['course_classroom_approval_name'] = 'Manager training event approval request';
 $string['course_classroom_approved_name'] = 'User training event access approved';
+$string['course_classroom_approved_teacher_name'] = 'User training event access approved - teacher email';
 $string['course_classroom_denied_name'] = 'User training event access denied';
 $string['course_classroom_manager_denied_name'] = 'Department mananager training event access denied';
 $string['course_classroom_approval_request_name'] = 'User training event request confirmation';
@@ -133,7 +134,10 @@ $string['invoice_ordercomplete_name'] = 'User invoice order created';
 $string['invoice_ordercomplete_admin_name'] = 'Admin invoice order created';
 $string['advertise_classroom_based_course_name'] = 'Advertise training event';
 $string['user_signed_up_for_event_name'] = 'User training event sign up';
+$string['user_signed_up_for_event_reminder_name'] = 'User training event reminder';
+$string['user_signed_up_for_event_teacher_name'] = 'User training event sign up - teacher';
 $string['user_removed_from_event_name'] = 'User training event cancelled';
+$string['user_removed_from_event_teacher_name'] = 'User training event cancelled - teacher';
 $string['license_allocated_name'] = 'User license allocated';
 $string['licensepoolexpiring_name'] = 'License expiry date warning';
 $string['licensepoolexpiring_name_help'] = 'This email is sent out to company managers when a license is about to expire.';
@@ -169,6 +173,7 @@ $string['approval_name_help'] = 'Template sent out to managers when a user has a
 $string['approved_name_help'] = 'Template sent out to users when they have been granted access to a course.';
 $string['course_classroom_approval_name_help'] = 'Template sent out to managers when a user has asked for approval to a training event.';
 $string['course_classroom_approved_name_help'] = 'Template sent out to users when they have been granted access to a training event.';
+$string['course_classroom_approved_teacher_name_help'] = 'Template sent out to course teachers when a user has been granted access to a training event.';
 $string['course_classroom_denied_name_help'] = 'Template sent out to users when they have been denied access to a training event.';
 $string['course_classroom_manager_denied_name_help'] = 'Template sent out to department manager when a user has been denied access to a training event.';
 $string['course_classroom_approval_request_name_help'] = 'Template sent out to user when they request access to a training event.';
@@ -179,7 +184,10 @@ $string['invoice_ordercomplete_name_help'] = 'Template sent out to a user when t
 $string['invoice_ordercomplete_admin_name_help'] = 'Template sent out to the shop admin when an invoice order is generated.';
 $string['advertise_classroom_based_course_name_help'] = 'Template sent out when a manager advertises a new training event.';
 $string['user_signed_up_for_event_name_help'] = 'Template sent out to a user when they sign up for a training event which doesn\'t require manager approval.';
+$string['user_signed_up_for_event_reminder_name_help'] = 'Template sent out to remind a user they are signed up for a training event.';
+$string['user_signed_up_for_event_teacher_name_help'] = 'Template sent out to a teachers when a user has signed up for a training event which doesn\'t require manager approval.';
 $string['user_removed_from_event_name_help'] = 'Template sent out to a user for confirmation when they have been removed from a training event.';
+$string['user_removed_from_event_teacher_name_help'] = 'Template sent out to teacher when a user has been removed from a training event.';
 $string['license_allocated_name_help'] = 'Template sent out to a user when they have been allocated a license on a course.';
 $string['license_reminder_name_help'] = 'Template sent out to a user when a manager sends them a reminder that they have not yet access a course they were given a license for.';
 $string['license_removed_name_help'] = 'Template sent out to a user when a course license has been taken off of them.';
@@ -219,6 +227,14 @@ Address : {Classroom_Address}</br>
 
 $string['course_classroom_approved_subject'] = 'Face to face training event approved';
 $string['course_classroom_approved_body'] = '<p>You have been approved access to the face to face training course {Event_Name} at the following event -</p>
+</br>
+Time : {Classroom_Time}</br>
+Location : {Classroom_Name}</br>
+Address : {Classroom_Address}</br>
+          {Classroom_City} {Classroom_Postcode}';
+
+$string['course_classroom_approved_teacher_subject'] = 'User approved to Face to face training event';
+$string['course_classroom_approved_teacher_body'] = '<p>{Approveuser_FirstName} {Approveuser_LastName} has been granted access to the face to face training course {Event_Name} at the following event -</p>
 </br>
 Time : {Classroom_Time}</br>
 Location : {Classroom_Name}</br>
@@ -297,10 +313,41 @@ Address : {Classroom_Address}</br>
           {Classroom_City} {Classroom_Postcode}</br>
 
 <p>Please ensure you have completed an pre-course tasks required before attendance</p>';
+$string['user_signed_up_for_event_reminder_subject'] = 'Attendance Reminder {Course_FullName}';
+$string['user_signed_up_for_event_reminder_body'] = '<p>Dear {User_FirstName},</p>
+
+<p>This is to remind you that you have signed up for the face to face training on {Course_FullName} at the following event -</p>
+
+<p>Time : {Classroom_Time}</br>
+Location : {Classroom_Name}</br>
+Address : {Classroom_Address}</br>
+          {Classroom_City} {Classroom_Postcode}</br>
+
+<p>Please ensure you have completed an pre-course tasks required before attendance</p>';
 $string['user_removed_from_event_subject'] = 'Cancellation Notice {Course_FullName}';
 $string['user_removed_from_event_body'] = '<p>Dear {User_FirstName},</p>
 
 <p>you have been marked as no longer attending the face to face training on {Course_FullName} at the following event -</p>
+
+<p>Time : {Classroom_Time}</br>
+Location : {Classroom_Name}</br>
+Address : {Classroom_Address}</br>
+          {Classroom_City} {Classroom_Postcode}';
+$string['user_signed_up_for_event_teacher_subject'] = 'User attending notice {Course_FullName}';
+$string['user_signed_up_for_event_teacher_body'] = '<p>Dear {User_FirstName},</p>
+
+<p>{Approveuser_FirstName} {Approveuser_LastName} has signed up for the face to face training on {Course_FullName} at the following event -</p>
+
+<p>Time : {Classroom_Time}</br>
+Location : {Classroom_Name}</br>
+Address : {Classroom_Address}</br>
+          {Classroom_City} {Classroom_Postcode}</br>
+
+<p>Please ensure you have completed an pre-course tasks required before attendance</p>';
+$string['user_removed_from_event_teacher_subject'] = 'User cancellation notice {Course_FullName}';
+$string['user_removed_from_event_teacher_body'] = '<p>Dear {User_FirstName},</p>
+
+<p>{Approveuser_FirstName} {Approveuser_LastName} is no longer attending the face to face training on {Course_FullName} at the following event -</p>
 
 <p>Time : {Classroom_Time}</br>
 Location : {Classroom_Name}</br>

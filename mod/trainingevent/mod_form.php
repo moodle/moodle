@@ -87,6 +87,28 @@ class mod_trainingevent_mod_form extends moodleform_mod {
         $mform->addHelpButton('coursecapacity', 'maxsize', 'mod_trainingevent');
         $mform->setType('coursecapacity', PARAM_INT);
 
+        $mform->addElement('checkbox', 'emailteachers',  get_string('alertteachers', 'mod_trainingevent'));
+        $mform->addHelpButton('emailteachers', 'alertteachers', 'mod_trainingevent');
+
+        $mform->addElement('checkbox', 'isexclusive',  get_string('exclusive', 'mod_trainingevent'));
+        $mform->addHelpButton('isexclusive', 'exclusive', 'mod_trainingevent');
+
+        $remindergroup = [];
+        $remindergroup[] =& $mform->createElement('text', 'sendreminder', '');
+        $remindergroup[] =& $mform->createElement('checkbox', 'setreminder', get_string('enable'));
+        $mform->setType('sendreminder', PARAM_INT);
+        $mform->addGroup($remindergroup, 'remindergroup', get_string('sendreminder', 'mod_trainingevent'), ' ', false);
+        $mform->disabledIf('remindergroup', 'setreminder');
+        $mform->addHelpButton('remindergroup', 'sendreminder', 'mod_trainingevent');
+
+        $lockedgroup = [];
+        $lockedgroup[] =& $mform->createElement('text', 'lockdays', '');
+        $lockedgroup[] =& $mform->createElement('checkbox', 'lockevent', get_string('enable'));
+        $mform->setType('lockdays', PARAM_INT);
+        $mform->addGroup($lockedgroup, 'lockedgroup', get_string('lockdays', 'mod_trainingevent'), ' ', false);
+        $mform->disabledIf('lockedgroup', 'lockevent');
+        $mform->addHelpButton('lockedgroup', 'lockdays', 'mod_trainingevent');
+
         $this->standard_grading_coursemodule_elements();
         $this->standard_coursemodule_elements();
 
@@ -112,21 +134,24 @@ class mod_trainingevent_mod_form extends moodleform_mod {
         }
 
         // Check the date against that room usage.
-        if ($roomclash = $DB->get_records_sql("SELECT * FROM {trainingevent}
-                                               WHERE classroomid = ".$data['classroomid']."$mysql
-                                               AND startdatetime < ".$data['startdatetime']."
-                                               AND enddatetime > ".$data['startdatetime'])) {
-            $errors['classroomid'] = get_string('chosenclassroomunavailable', 'trainingevent');
-        } else if ($roomclash = $DB->get_records_sql("SELECT * FROM {trainingevent}
-                                                      WHERE classroomid = ".$data['classroomid']."$mysql
-                                                      AND startdatetime > ".$data['startdatetime']."
-                                                      AND startdatetime < ".$data['enddatetime'])) {
-            $errors['classroomid'] = get_string('chosenclassroomunavailable', 'trainingevent');
-        } else if ($roomclash = $DB->get_records_sql("SELECT * FROM {trainingevent}
-                                                      WHERE classroomid = ".$data['classroomid']."$mysql
-                                                      AND startdatetime > ".$data['startdatetime']."
-                                                      AND enddatetime < ".$data['enddatetime'])) {
-            $errors['classroomid'] = get_string('chosenclassroomunavailable', 'trainingevent');
+        $classroom = $DB->get_record('classroom', ['id' => $data['classroomid']]);
+        if (empty($classroom->isvirtual)) {
+            if ($roomclash = $DB->get_records_sql("SELECT * FROM {trainingevent}
+                                                   WHERE classroomid = ".$data['classroomid']."$mysql
+                                                   AND startdatetime < ".$data['startdatetime']."
+                                                   AND enddatetime > ".$data['startdatetime'])) {
+                $errors['classroomid'] = get_string('chosenclassroomunavailable', 'trainingevent');
+            } else if ($roomclash = $DB->get_records_sql("SELECT * FROM {trainingevent}
+                                                          WHERE classroomid = ".$data['classroomid']."$mysql
+                                                          AND startdatetime > ".$data['startdatetime']."
+                                                          AND startdatetime < ".$data['enddatetime'])) {
+                $errors['classroomid'] = get_string('chosenclassroomunavailable', 'trainingevent');
+            } else if ($roomclash = $DB->get_records_sql("SELECT * FROM {trainingevent}
+                                                          WHERE classroomid = ".$data['classroomid']."$mysql
+                                                          AND startdatetime > ".$data['startdatetime']."
+                                                          AND enddatetime < ".$data['enddatetime'])) {
+                $errors['classroomid'] = get_string('chosenclassroomunavailable', 'trainingevent');
+            }
         }
         return $errors;
     }

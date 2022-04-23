@@ -142,6 +142,10 @@ if ($classrooms = $DB->get_records('classroom', array('companyid' => $companyid)
             $editbutton = "";
         }
 
+        // Is it virtual?
+        if (!empty($classroom->isvirtual)) {
+            $classroom->capacity = get_string('virtual', 'block_iomad_company_admin');
+        }
         $table->data[] = array ($classroom->name,
                             $classroom->capacity,
                             $editbutton,

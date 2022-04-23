@@ -197,16 +197,17 @@ class iomad_approve_access {
      *        $event = stdclass();
      *
      **/
-    public static function register_user($user, $event) {
+    public static function register_user($user, $event, $waitlisted=0) {
         global $DB;
 
         // Set up the trainingevent record.
         $trainingeventrecord = new stdclass();
         $trainingeventrecord->userid = $user->id;
         $trainingeventrecord->trainingeventid = $event->id;
+        $trainingeventrecord->waitlisted = $waitlisted;
 
         // Do we already have this?
-        if (!$DB->get_record('trainingevent_users', array('userid' => $user->id, 'trainingeventid' => $event->id))) {
+        if (!$currentrecord = $DB->get_record('trainingevent_users', array('userid' => $user->id, 'trainingeventid' => $event->id))) {
 
             // If not insert it.
             if (!$DB->insert_record('trainingevent_users', $trainingeventrecord)) {
@@ -215,5 +216,6 @@ class iomad_approve_access {
                 print_error(get_string('updatefailed', 'block_iomad_approve_access'));
             }
         }
+        $DB->set_field('trainingevent_users', 'waitlisted', $waitlisted, ['id' => $currentrecord->id]);
     }
 }

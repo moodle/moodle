@@ -699,6 +699,7 @@ $string['validfor'] = 'Training expires after (days)';
 $string['validfor_help'] = 'This is the number of days after which the training undertaken by the user is said to no longer be valid or must be retaken. If the course does not expire, then set this to zero.  The user\'s enrolment will be removed at the time of expiry (or the number of days to warn before this, if set) if the user still has access to the course.';
 $string['invalidgrade'] = 'Invalid grade! (Must be a value between 0 and 100)';
 $string['iomad_company_admin:viewsuspendedusers'] = 'View suspended users';
+$string['virtual'] = 'Virtual';
 $string['warncompletion'] = 'Days to email after if not complete';
 $string['warncompletion_help'] = 'If a training expiration time has been set, a reminder email will be sent after this number of days if the course has not already been successfully repeated';
 $string['warnexpire'] = 'Days to email before training expires';

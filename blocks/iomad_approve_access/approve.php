@@ -49,11 +49,15 @@ $strmanage = get_string('approveusers', 'block_iomad_approve_access');
 $PAGE->set_title($strmanage);
 $PAGE->set_heading($strmanage);
 
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+$company = new company($companyid);
+
 if (is_siteadmin($USER->id)) {
     $approvaltype = 'both';
 } else {
     // What type of manager am I?
-    if ($companyuser = $DB->get_record('company_users', array('userid' => $USER->id))) {
+    if ($companyuser = $DB->get_record('company_users', array('userid' => $USER->id, 'companyid' => $companyid))) {
         if ($companyuser->managertype == 2) {
             $approvaltype = 'manager';
         } else if ($companyuser->managertype == 1) {
@@ -136,6 +140,7 @@ if ($data = $callform->get_data()) {
                                                                                            'event' => $event,
                                                                                            'user' => $manageruser,
                                                                                            'approveuser' => $eventuser,
+                                                                                           'company' => $company,
                                                                                            'classroom' => $location));
                                 }
                             }
@@ -213,6 +218,7 @@ if ($data = $callform->get_data()) {
                                                                                                'event' => $event,
                                                                                                'user' => $USER,
                                                                                                'approveuser' => $eventuser,
+                                                                                               'company' => $company,
                                                                                                'classroom' => $location));
                                     }
                                 }
@@ -248,24 +254,62 @@ if ($data = $callform->get_data()) {
                     $approveuser = $DB->get_record('user', array('id' => $result->userid));
                     $approvecourse = $DB->get_record('course', array('id' => $result->courseid));
                     if ($sendemail) {
-                        EmailTemplate::send('course_classroom_approved', array('course' => $approvecourse,
-                                                                               'event' => $event,
-                                                                               'user' => $approveuser,
-                                                                               'classroom' => $location));
-                        //  Update the attendance at the event.
-                        iomad_approve_access::register_user($approveuser, $event);
-
-                        // Fire an event for this.
-                        $moodleevent = \block_iomad_approve_access\event\request_granted::create(array('context' => context_module::instance($cmidinfo->id),
-                                                                                                       'userid' => $USER->id,
-                                                                                                       'relateduserid' => $result->userid,
-                                                                                                       'objectid' => $event->id,
-                                                                                                       'courseid' => $event->course));
-                        $moodleevent->trigger();
+                        $cancontinue = true;
+                        if (!empty($event->coursecapacity)) {
+                            $maxcapacity = $event->coursecapacity;
+                        } else {
+                            $maxcapacity = $location->capacity;
+                        }
+                        // Get the current count.
+                        $attending = $DB->count_records('trainingevent_users', ['trainingeventid' => $event->id, 'waitlisted' => 0]);
+                        if ($location->isvirtual || $attending < $maxcapacity) {
+                           $waitlisted = 0;
+                        
+                        } else if ($event->haswaitlist) {
+                            $waitlisted = 1;
+                        } else {
+                            $cancontinue = false;
+                        }
+                        if ($cancontinue) {
+                            EmailTemplate::send('course_classroom_approved', array('course' => $approvecourse,
+                                                                                   'event' => $event,
+                                                                                   'user' => $approveuser,
+                                                                                   'company' => $company,
+                                                                                   'classroom' => $location));
+                            //  Update the attendance at the event.
+                            iomad_approve_access::register_user($approveuser, $event, $waitlisted);
+    
+                            // Fire an event for this.
+                            $moodleevent = \block_iomad_approve_access\event\request_granted::create(array('context' => context_module::instance($cmidinfo->id),
+                                                                                                           'userid' => $USER->id,
+                                                                                                           'relateduserid' => $result->userid,
+                                                                                                           'objectid' => $event->id,
+                                                                                                           'courseid' => $event->course));
+                            $moodleevent->trigger();
+    
+                            // Do we need to notify teachers?
+                            if (!empty($event->emailteachers)) {
+                                // Are we using groups?
+                                $usergroups = groups_get_user_groups($course->id, $approveuser->id);
+                                $userteachers = [];
+                                foreach ($usergroups as $usergroup => $junk) {
+                                    $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
+                                } 
+                                foreach ($userteachers as $userteacher) {
+                                    EmailTemplate::send('user_signed_up_for_event_teacher', array('course' => $course,
+                                                                                                  'approveuser' => $approveuser,
+                                                                                                  'user' => $userteacher,
+                                                                                                  'classroom' => $location,
+                                                                                                  'company' => $company,
+                                                                                                  'event' => $event));
+                                }
+                            }
+                        }
                     } else if ($senddenied) {
                         EmailTemplate::send('course_classroom_denied', array('course' => $approvecourse,
                                                                              'event' => $event,
                                                                              'user' => $approveuser,
+                                                                             'company' => $company,
                                                                              'classroom' => $location));
 
                         // Fire an event for this.

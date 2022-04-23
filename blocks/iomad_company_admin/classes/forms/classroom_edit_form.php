@@ -67,30 +67,61 @@ class classroom_edit_form extends moodleform {
         $mform->setType('name', PARAM_NOTAGS);
         $mform->addRule('name', $strrequired, 'required', null, 'client');
 
+        $mform->addElement('checkbox', 'isvirtual', get_string('virtual', 'block_iomad_company_admin'));
         $mform->addElement('text', 'address', get_string('address'), 'maxlength="70" size="50"');
-        $mform->addRule('address', $strrequired, 'required', null, 'client');
         $mform->setType('address', PARAM_NOTAGS);
 
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="50"');
-        $mform->addRule('city', $strrequired, 'required', null, 'client');
         $mform->setType('city', PARAM_NOTAGS);
 
         $mform->addElement('text', 'postcode',
                             get_string('postcode', 'block_iomad_commerce'),
                             'maxlength="20" size="20"');
-        $mform->addRule('postcode', $strrequired, 'required', null, 'client');
         $mform->setType('postcode', PARAM_NOTAGS);
 
         $choices = get_string_manager()->get_list_of_countries();
         $choices = array('' => get_string('selectacountry').'...') + $choices;
         $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
-        $mform->addRule('country', $strrequired, 'required', null, 'client');
 
         $mform->addElement('text', 'capacity',
                             get_string('classroom_capacity', 'block_iomad_company_admin'));
-        $mform->addRule('capacity', $strrequired, 'required', null, 'client');
         $mform->setType('capacity', PARAM_INTEGER);
+        $mform->hideIf('address', 'isvirtual', 'checked');
+        $mform->hideIf('city', 'isvirtual', 'checked');
+        $mform->hideIf('postcode', 'isvirtual', 'checked');
+        $mform->hideIf('country', 'isvirtual', 'checked');
+        $mform->hideIf('capacity', 'isvirtual', 'checked');
 
         $this->add_action_buttons();
+    }
+
+    public function validation($data, $files) {
+        global $CFG, $DB;
+
+        $errors = [];
+
+        if (empty($data['isvirtual'])) {
+            if (empty($data['address'])) {
+                $errors['address'] = get_string('required');
+            }
+
+            if (empty($data['city'])) {
+                $errors['city'] = get_string('required');
+            }
+
+            if (empty($data['postcode'])) {
+                $errors['postcode'] = get_string('required');
+            }
+
+            if (empty($data['country'])) {
+                $errors['country'] = get_string('required');
+            }
+
+            if (empty($data['capacity'])) {
+                $errors['capacity'] = get_string('required');
+            }
+        }
+
+        return $errors;
     }
 }

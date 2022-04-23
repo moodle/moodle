@@ -314,6 +314,17 @@ function trainingevent_event_clashes($event, $userid) {
                               AND cc.enddatetime >= ".$event->enddatetime.")",
                               array('userid' => $userid))) {
         return true;
+    } else if ($event->isexclusive &&
+               $DB->get_records_sql("SELECT cc.id FROM {trainingevent} cc
+                                     RIGHT JOIN {trainingevent_users} ccu
+                                     ON (ccu.trainingeventid = cc.id AND ccu.userid = :userid AND waitlisted=0)
+                                     WHERE cc.isexclusive = 1
+                                     AND cc.course = :courseid
+                                     and cc.id != :eventid",
+                                     array('userid' => $userid,
+                                           'courseid' => $event->course,
+                                           'eventid' => $event->id))) {
+        return true;
     } else {
         return false;
     }

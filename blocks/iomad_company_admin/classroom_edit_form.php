@@ -93,6 +93,9 @@ if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
     $data->userid = $USER->id;
+    if (empty($data->isvirtual)) {
+        $data->isvirtual = 0;
+    }
 
     if ($isadding) {
         $data->companyid = $companyid;

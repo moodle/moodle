@@ -144,5 +144,47 @@ function xmldb_trainingevent_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2020111800, 'trainingevent');
     }
 
+    if ($oldversion < 2022032400) {
+
+        // Define field sendreminder to be added to trainingevent.
+        $table = new xmldb_table('trainingevent');
+        $field = new xmldb_field('sendreminder', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'coursecapacity');
+
+        // Conditionally launch add field sendreminder.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field emailteachers to be added to trainingevent.
+        $table = new xmldb_table('trainingevent');
+        $field = new xmldb_field('emailteachers', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'sendreminder');
+
+        // Conditionally launch add field emailteachers.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field lockdays to be added to trainingevent.
+        $table = new xmldb_table('trainingevent');
+        $field = new xmldb_field('lockdays', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '0', 'emailteachers');
+
+        // Conditionally launch add field lockdays.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field exclusive to be added to trainingevent.
+        $table = new xmldb_table('trainingevent');
+        $field = new xmldb_field('isexclusive', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'lockdays');
+
+        // Conditionally launch add field exclusive.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Trainingevent savepoint reached.
+        upgrade_mod_savepoint(true, 2022032400, 'trainingevent');
+    }
+
     return $result;
 }
