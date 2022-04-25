@@ -1,9 +1,9 @@
 @report @report_log
-Feature: In a course administration page, navigate through report page, test for report log page
+Feature: In a course administration page, navigate through report page, test for first report page
   In order to navigate through report page
   As an admin
   Go to course administration -> reports
-  The reports page by default points to logs page
+  The reports page by default points to first report page
 
   Background:
     Given the following "courses" exist:
@@ -24,13 +24,13 @@ Feature: In a course administration page, navigate through report page, test for
       | student1 | C3 | student |
 
   @javascript
-  Scenario: Default page accessed for Report is log page
+  Scenario: Default page accessed for Report is competency breakdown page
     Given I log in as "admin"
     And I am on "Course 1" course homepage
     When I navigate to "Reports" in current page administration
     Then "Report" "field" should exist
-    And the "Report" select box should contain "Logs"
-    And the field "Report" matches value "Logs"
+    And the "Report" select box should contain "Competency breakdown"
+    And the field "Report" matches value "Competency breakdown"
 
   @javascript
   Scenario: Verify the session setting is saved for different courses
@@ -38,15 +38,15 @@ Feature: In a course administration page, navigate through report page, test for
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
     And "Report" "field" should exist
-    And the "Report" select box should contain "Logs"
-    And the field "Report" matches value "Logs"
+    And the "Report" select box should contain "Competency breakdown"
+    And the field "Report" matches value "Competency breakdown"
     # Now select the Live logs for Course 2
     And I am on "Course 2" course homepage
     And I navigate to "Reports > Live logs" in current page administration
     # now come back to course 1 and see if the default is logs page or not
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And the "Report" select box should contain "Logs"
+    And the "Report" select box should contain "Competency breakdown"
     # Now come back again to Course 2
     And I am on "Course 2" course homepage
     When I navigate to "Reports" in current page administration

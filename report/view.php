@@ -37,10 +37,34 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 require_login($course);
 
 // Get the last viewed Page.
-if (!isset($USER->course_last_report[$courseid])) {
-    $lasturl = new moodle_url('/report/log/index.php', ['id' => $courseid]);
-} else {
-    $lasturl = $USER->course_last_report[$courseid];
+$lasturl = null;
+$reportsnode = $PAGE->settingsnav->find('coursereports', \navigation_node::TYPE_CONTAINER);
+$reportchildrennode = $reportsnode->children;
+// If there are available course reports to the user.
+if ($reportsnode && $reportchildrennode->count() > 0) {
+    // By default, set the first valid report URL for the redirect URL.
+    $lasturl = $reportchildrennode->getIterator()[0]->action()->out(false);
+    // If exist the last viewed report page.
+    if (isset($USER->course_last_report[$courseid])) {
+        // Check if the most recently report link is existed on report navigation node.
+        foreach ($reportchildrennode as $node) {
+            if ($node->action()->get_path() === $USER->course_last_report[$courseid]->get_path()) {
+                $lasturl = $USER->course_last_report[$courseid];
+                break;
+            }
+        }
+    }
 }
+if ($lasturl) {
+    redirect($lasturl);
+}
+// Otherwise, output the page with a notification stating that there are no available course reports.
+$PAGE->set_title(get_string('reports'));
+$PAGE->set_pagelayout('incourse');
+$PAGE->set_heading($course->fullname);
+$PAGE->set_pagetype('course-view-' . $course->format);
 
-redirect($lasturl);
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('reports'));
+echo html_writer::div($OUTPUT->notification(get_string('noreports', 'debug'), 'error'), 'mt-3');
+echo $OUTPUT->footer();
