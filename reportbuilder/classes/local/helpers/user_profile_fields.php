@@ -123,6 +123,8 @@ class user_profile_fields {
         foreach ($this->userprofilefields as $profilefield) {
             $userinfotablealias = database::generate_alias();
 
+            $columntype = $this->get_user_field_type($profilefield->field->datatype);
+
             $column = (new column(
                 'profilefield_' . $profilefield->field->shortname,
                 new lang_string('customfieldcolumn', 'core_reportbuilder',
@@ -135,7 +137,8 @@ class user_profile_fields {
                     "ON {$userinfotablealias}.userid = {$this->usertablefieldalias} " .
                     "AND {$userinfotablealias}.fieldid = {$profilefield->fieldid}")
                 ->add_field("{$userinfotablealias}.data")
-                ->set_type($this->get_user_field_type($profilefield->field->datatype))
+                ->set_type($columntype)
+                ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
                 ->add_callback([$this, 'format_profile_field'], $profilefield);
 
             $columns[] = $column;
