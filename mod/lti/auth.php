@@ -118,6 +118,7 @@ if ($ok) {
         require_login($course, true, $cm);
         require_capability('mod/lti:view', $context);
         $lti = $DB->get_record('lti', array('id' => $cm->instance), '*', MUST_EXIST);
+        $lti->cmid = $cm->id;
         list($endpoint, $params) = lti_get_launch_data($lti, $nonce);
     } else {
         require_login($course);
