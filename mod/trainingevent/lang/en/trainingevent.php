@@ -86,6 +86,7 @@ $string['selectother'] = 'Book another user to this event';
 $string['sendingemails'] = 'Sending emails to advertise this event';
 $string['sendreminder'] = 'Send reminder email (days)';
 $string['sendreminder_help'] = 'If this is enabled a reminder email will be sent out to participants this number of days before the event';
+$string['sendreminderemails'] = 'Task which sends out the reminder emails';
 $string['startdatetime'] = 'Start date/time';
 $string['summary'] = 'Summary';
 $string['trainingeventintro'] = 'Description';

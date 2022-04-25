@@ -26,8 +26,6 @@ namespace mod_trainingevent\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/trainingeevent/locallib.php');
-
 /**
  * Send reminder emails Task
  *
