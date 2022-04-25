@@ -233,16 +233,17 @@ class meeting {
         // This might raise an exception if info cannot be retrieved.
         // But this might be totally fine as the meeting is maybe not yet created on BBB side.
         $participantcount = 0;
-        try {
-            $info = self::retrieve_cached_meeting_info($this->instance->get_meeting_id(), $updatecache);
+        // This is the default value for any meeting that has not been created.
+        $meetinginfo->statusrunning = false;
+        $meetinginfo->createtime = null;
+
+        $info = self::retrieve_cached_meeting_info($this->instance->get_meeting_id(), $updatecache);
+        if (!empty($info)) {
             $meetinginfo->statusrunning = $info['running'] === 'true';
             $meetinginfo->createtime = $info['createTime'] ?? null;
             $participantcount = isset($info['participantCount']) ? $info['participantCount'] : 0;
-        } catch (bigbluebutton_exception $e) {
-            // The meeting is not created on BBB side, so we have to setup a couple of values here.
-            $meetinginfo->statusrunning = false;
-            $meetinginfo->createtime = null;
         }
+
         $meetinginfo->statusclosed = $activitystatus === 'ended';
         $meetinginfo->statusopen = !$meetinginfo->statusrunning && $activitystatus === 'open';
         $meetinginfo->participantcount = $participantcount;
@@ -324,11 +325,19 @@ class meeting {
             // Use the value in the cache.
             return (array) json_decode($result['meeting_info']);
         }
-        $cache->delete($meetingid); // Make sure we purges the cache before checking info.
+        // We set the cache to an empty value so then if get_meeting_info raises an exception we still have the
+        // info about the last creation_time, so we don't ask the server again for a bit.
+        $defaultcacheinfo = ['creation_time' => time(), 'meeting_info' => '[]'];
         // Pings again and refreshes the cache.
-        $meetinginfo = bigbluebutton_proxy::get_meeting_info($meetingid);
-
-        $cache->set($meetingid, ['creation_time' => time(), 'meeting_info' => json_encode($meetinginfo)]);
+        try {
+            $meetinginfo = bigbluebutton_proxy::get_meeting_info($meetingid);
+            $cache->set($meetingid, ['creation_time' => time(), 'meeting_info' => json_encode($meetinginfo)]);
+        } catch (bigbluebutton_exception $e) {
+            // The meeting is not created on BBB side, so we set the value in the cache so we don't poll again
+            // and return an empty array.
+            $cache->set($meetingid, $defaultcacheinfo);
+            return [];
+        }
         return $meetinginfo;
     }
 

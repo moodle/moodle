@@ -173,6 +173,7 @@ trait testcase_helper_trait {
         $bbbgenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
         // Create the meetings on the mock server, so like this we can find the recordings.
         $meeting = new meeting($instance);
+        $meeting->update_cache(); // The meeting has just been created but we need to force fetch info from the server.
         if (!$meeting->is_running()) {
             $additionalmeetingdata = array_merge([
                 'instanceid' => $instance->get_instance_id(),
