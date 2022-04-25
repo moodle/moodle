@@ -33,12 +33,8 @@ Feature: Pass grade activity completion in the lesson activity
       | section                    | 1             |
       | gradepass                  | 50            |
       | completion                 | 2             |
-      | completionview             | 1             |
       | completionusegrade         | 1             |
       | completionpassgrade        | 1             |
-      | completionendreached       | 1             |
-      | completiontimespentenabled | 1             |
-      | completiontimespent        | 1             |
     And I am on "Course 1" course homepage
     And I follow "Music history"
     And I follow "Add a question page"
@@ -58,43 +54,23 @@ Feature: Pass grade activity completion in the lesson activity
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I follow "Music history"
-    Then "Music history" should have the "View" completion condition
-    And "Music history" should have the "Spend at least 1 sec on this activity" completion condition
-    And "Music history" should have the "Go through the activity to the end" completion condition
     And "Music history" should have the "Receive a grade" completion condition
     And "Music history" should have the "Receive a passing grade" completion condition
 
   Scenario: View automatic completion items as a student
     Given I am on the "Music history" "lesson activity" page logged in as student1
-    And the "View" completion condition of "Music history" is displayed as "done"
-    And the "Spend at least 1 sec on this activity" completion condition of "Music history" is displayed as "todo"
-    And the "Go through the activity to the end" completion condition of "Music history" is displayed as "todo"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
     And the "Receive a passing grade" completion condition of "Music history" is displayed as "todo"
     When I am on "Course 1" course homepage
     And I follow "Music history"
-    And I wait "2" seconds
-    And I reload the page
-    And the "View" completion condition of "Music history" is displayed as "done"
-    And the "Spend at least 1 sec on this activity" completion condition of "Music history" is displayed as "done"
-    And the "Go through the activity to the end" completion condition of "Music history" is displayed as "todo"
-    And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
-    And the "Receive a passing grade" completion condition of "Music history" is displayed as "todo"
     And I set the field "Your answer" to "3"
     And I press "Submit"
-    Then the "View" completion condition of "Music history" is displayed as "done"
-    And the "Spend at least 1 sec on this activity" completion condition of "Music history" is displayed as "done"
-    And the "Go through the activity to the end" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Music history" is displayed as "done"
     And I log out
     And I am on the "Music history" "lesson activity" page logged in as student2
-    And I wait "2" seconds
     And I set the field "Your answer" to "0"
     And I press "Submit"
-    Then the "View" completion condition of "Music history" is displayed as "done"
-    And the "Spend at least 1 sec on this activity" completion condition of "Music history" is displayed as "done"
-    And the "Go through the activity to the end" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Music history" is displayed as "failed"
     And I log out
