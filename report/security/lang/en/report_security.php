@@ -97,7 +97,7 @@ $string['check_passwordpolicy_ok'] = 'Password policy enabled.';
 $string['check_preventexecpath_name'] = 'Executable paths';
 $string['check_preventexecpath_ok'] = 'Executable paths only settable in config.php.';
 $string['check_preventexecpath_warning'] = 'Executable paths can be set in the Admin GUI.';
-$string['check_preventexecpath_details'] = '<p>Allowing executable paths to be set via the Admin GUI is a vector for privilege escalation. This must be forced in config.php:</p><p><code>$CFG->preventexecpath = true;<code></p>';
+$string['check_preventexecpath_details'] = '<p>Allowing executable paths to be set via the Admin GUI is a vector for privilege escalation. This must be forced in config.php:</p><p><code>$CFG->preventexecpath = true;</code></p>';
 $string['check_publicpaths_name'] = 'Check all public / private paths';
 $string['check_publicpaths_ok'] = 'All internal paths are not publicly accessible';
 $string['check_publicpaths_warning'] = 'Some internal paths are publicly accessible';

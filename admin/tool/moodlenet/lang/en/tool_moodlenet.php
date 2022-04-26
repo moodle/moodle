@@ -58,9 +58,8 @@ $string['mnetprofiledesc'] = '<p>Enter your MoodleNet profile details here to be
 $string['moodlenetsettings'] = 'MoodleNet settings';
 $string['moodlenetnotenabled'] = 'The MoodleNet integration must be enabled in Site administration / MoodleNet before resource imports can be processed.';
 $string['notification'] = 'You are about to import the content "{$a->name} ({$a->type})" into your site. Select the course in which it should be added, or <a href="{$a->cancellink}">cancel</a>.';
-$string['removedmnetprofilenotification'] = '<p>Due to some recent changes on the MoodleNet platform, users that have previously saved their MoodleNet profile on the site can no longer use this data to authenticate on the MoodleNet platform. The related data has now been removed as it is no longer useful.</p>
-<p>The users will need to reset this information on the site by linking their MoodleNet profile ID which can be found on their MoodleNet profile.</p>';
-$string['removedmnetprofilenotification_subject'] = 'Linked MoodleNet profiles removed.';
+$string['removedmnetprofilenotification'] = 'Due to recent changes on the MoodleNet platform, any users who previously saved their MoodleNet profile ID on the site will need to enter a MoodleNet profile ID in the new format in order to authenticate on the MoodleNet platform.';
+$string['removedmnetprofilenotification_subject'] = 'MoodleNet profile ID format change';
 $string['searchcourses'] = "Search courses";
 $string['selectpagetitle'] = 'Select page';
 $string['pluginname'] = 'MoodleNet';
