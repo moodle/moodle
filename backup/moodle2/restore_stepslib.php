@@ -4680,7 +4680,11 @@ class restore_userscompletion_structure_step extends restore_structure_step {
 
         $paths = array();
 
+        // Restore completion.
         $paths[] = new restore_path_element('completion', '/completions/completion');
+
+        // Restore completion view.
+        $paths[] = new restore_path_element('completionview', '/completions/completionviews/completionview');
 
         return $paths;
     }
@@ -4710,6 +4714,29 @@ class restore_userscompletion_structure_step extends restore_structure_step {
             // Normal entry where it doesn't exist already
             $DB->insert_record('course_modules_completion', $data);
         }
+
+        // Add viewed to course_modules_viewed.
+        if (isset($data->viewed) && $data->viewed) {
+            $dataview = clone($data);
+            unset($dataview->id);
+            unset($dataview->viewed);
+            $dataview->timecreated = $data->timemodified;
+            $DB->insert_record('course_modules_viewed', $dataview);
+        }
+    }
+
+    /**
+     * Process the completioinview data.
+     * @param array $data The data from the XML file.
+     */
+    protected function process_completionview(array $data) {
+        global $DB;
+
+        $data = (object)$data;
+        $data->coursemoduleid = $this->task->get_moduleid();
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        $DB->insert_record('course_modules_viewed', $data);
     }
 }
 

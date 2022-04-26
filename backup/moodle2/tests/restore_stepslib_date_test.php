@@ -315,6 +315,41 @@ class restore_stepslib_date_test extends \restore_date_testcase {
     }
 
     /**
+     * Checking that the user completion of an activity relating to the view field does not change
+     * when doing a course restore.
+     * @covers ::backup_and_restore
+     */
+    public function test_usercompletion_view_restore() {
+        global $DB;
+        // More completion...
+        $course = $this->getDataGenerator()->create_course(['startdate' => time(), 'enablecompletion' => 1]);
+        $student = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, 'student');
+        $assign = $this->getDataGenerator()->create_module('assign', [
+            'course' => $course->id,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC, // Show activity as complete when conditions are met.
+            'completionview' => 1
+        ]);
+        $cm = $DB->get_record('course_modules', ['course' => $course->id, 'instance' => $assign->id]);
+
+        // Mark the activity as completed.
+        $completion = new \completion_info($course);
+        $completion->set_module_viewed($cm, $student->id);
+
+        $coursemodulecompletion = $DB->get_record('course_modules_viewed', ['coursemoduleid' => $cm->id]);
+
+        // Back up and restore.
+        $newcourseid = $this->backup_and_restore($course);
+        $newcourse = get_course($newcourseid);
+
+        $assignid = $DB->get_field('assign', 'id', ['course' => $newcourseid]);
+        $cm = $DB->get_record('course_modules', ['course' => $newcourse->id, 'instance' => $assignid]);
+        $newcoursemodulecompletion = $DB->get_record('course_modules_viewed', ['coursemoduleid' => $cm->id]);
+
+        $this->assertEquals($coursemodulecompletion->timecreated, $newcoursemodulecompletion->timecreated);
+    }
+
+    /**
      * Ensuring that the timemodified field of the question attempt steps table does not change when
      * a course restore is done.
      */

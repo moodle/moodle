@@ -5208,6 +5208,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
                         // Delete cm and its context - orphaned contexts are purged in cron in case of any race condition.
                         context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
                         $DB->delete_records('course_modules_completion', ['coursemoduleid' => $cm->id]);
+                        $DB->delete_records('course_modules_viewed', ['coursemoduleid' => $cm->id]);
                         $DB->delete_records('course_modules', array('id' => $cm->id));
                         rebuild_course_cache($cm->course, true);
                     }
@@ -5231,6 +5232,8 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     // features are not enabled now, in case they were enabled previously.
     $DB->delete_records_subquery('course_modules_completion', 'coursemoduleid', 'id',
             'SELECT id from {course_modules} WHERE course = ?', [$courseid]);
+    $DB->delete_records_subquery('course_modules_viewed', 'coursemoduleid', 'id',
+        'SELECT id from {course_modules} WHERE course = ?', [$courseid]);
 
     // Remove course-module data that has not been removed in modules' _delete_instance callbacks.
     $cms = $DB->get_records('course_modules', array('course' => $course->id));

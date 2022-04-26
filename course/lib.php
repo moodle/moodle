@@ -933,6 +933,7 @@ function course_delete_module($cmid, $async = false) {
     // features are not turned on, in case they were turned on previously (these will be
     // very quick on an empty table).
     $DB->delete_records('course_modules_completion', array('coursemoduleid' => $cm->id));
+    $DB->delete_records('course_modules_viewed', ['coursemoduleid' => $cm->id]);
     $DB->delete_records('course_completion_criteria', array('moduleinstance' => $cm->id,
                                                             'course' => $cm->course,
                                                             'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY));
