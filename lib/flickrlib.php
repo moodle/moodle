@@ -78,7 +78,13 @@ class phpFlickr {
         //Find the PHP version and store it for future reference
         $this->php_version = explode("-", phpversion());
         $this->php_version = explode(".", $this->php_version[0]);
+
+        // Initialize curl helper, set custom user agent as Flickr blocks our "MoodleBot" agent string.
         $this->curl = new curl(array('cache'=>true, 'module_cache'=>'repository'));
+        $version = moodle_major_version();
+        $this->curl->setopt([
+            'CURLOPT_USERAGENT' => "MoodleSite/$version (+{$CFG->wwwroot})"
+        ]);
     }
 
     function request ($command, $args = array())
