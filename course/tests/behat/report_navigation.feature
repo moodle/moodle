@@ -16,7 +16,7 @@ Feature: Report navigation
 
   Scenario: The teacher will be redirected to the first report page if they can't access to most recently report
     Given I am on the "C1" "Course" page logged in as "teacher"
-    When I navigate to "Logs" in current page administration
+    When I navigate to "Reports > Logs" in current page administration
     Then I should see "Choose which logs you want to see"
     When I click on "Reports" "link"
     Then I should see "Choose which logs you want to see"
