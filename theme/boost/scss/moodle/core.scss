@@ -255,8 +255,11 @@ button.close,
     text-align: right;
 }
 
-a.autolink.glossary:hover {
-    cursor: help;
+a.autolink {
+    @extend .aalink;
+    &.glossary:hover {
+        cursor: help;
+    }
 }
 /* Block which is hidden if javascript enabled, prevents fickering visible when JS from footer used! */
 .collapsibleregioncaption {
