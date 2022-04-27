@@ -86,3 +86,20 @@ Feature: A teacher can put questions in categories in the question bank
     And the field "Select a category" matches value "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subcategory (1)"
     And the "Select a category" select box should contain "Used category"
     And the "Select a category" select box should not contain "Used category (1)"
+
+  @_file_upload
+  Scenario: Multi answer questions with their child questions can be moved to another category when the current category is deleted
+    When I navigate to "Question bank > Import" in current page administration
+    And I set the field "id_format_xml" to "1"
+    And I upload "question/format/xml/tests/fixtures/multianswer.xml" file to "Import" filemanager
+    And I press "id_submitbutton"
+    And I press "Continue"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank > Categories" in current page administration
+    And I click on "Delete" "link" in the "Default for Test images in backup" "list_item"
+    And I should see "The category 'Default for Test images in backup' contains 1 questions"
+    And I select "Used category" from the "Category" singleselect
+    And I press "Save in category"
+    Then I should not see "Default for Test images in backup"
+    And I follow "Add category"
+    And I should see "Used category (2)"

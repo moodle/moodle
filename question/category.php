@@ -97,7 +97,7 @@ if ($param->delete) {
     }
 
     question_remove_stale_questions_from_category($param->delete);
-    $questionstomove = $DB->count_records("question", array("category" => $param->delete));
+    $questionstomove = count($qcobject->get_real_question_ids_in_category($param->delete));
 
     // Second pass, if we still have questions to move, setup the form.
     if ($questionstomove) {

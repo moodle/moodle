@@ -435,10 +435,8 @@ class question_category_object {
     }
 
     public function move_questions($oldcat, $newcat){
-        global $DB;
-        $questionids = $DB->get_records_select_menu('question',
-                'category = ? AND (parent = 0 OR parent = id)', array($oldcat), '', 'id,1');
-        question_move_questions_to_category(array_keys($questionids), $newcat);
+        $questionids = $this->get_real_question_ids_in_category($oldcat);
+        question_move_questions_to_category($questionids, $newcat);
     }
 
     /**
@@ -605,5 +603,22 @@ class question_category_object {
         if ($redirect) {
             redirect($this->pageurl); // Always redirect after successful action.
         }
+    }
+
+    /**
+     * Returns ids of the question in the given question category.
+     *
+     * This method only returns the real question. It does not include
+     * subquestions of question types like multianswer.
+     *
+     * @param int $categoryid id of the category.
+     * @return int[] array of question ids.
+     */
+    public function get_real_question_ids_in_category(int $categoryid): array {
+        global $DB;
+        $select = 'category = :categoryid AND (parent = 0 OR parent = id)';
+        $params = ['categoryid' => $categoryid];
+        $questionids = $DB->get_records_select('question', $select, $params);
+        return array_keys($questionids);
     }
 }

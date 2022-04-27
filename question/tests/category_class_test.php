@@ -175,4 +175,68 @@ class core_question_category_class_testcase extends advanced_testcase {
         $this->assertSame('New name', $newcat->name);
         $this->assertNull($newcat->idnumber);
     }
+
+    /**
+     * Test that get_real_question_ids_in_category() returns question id
+     * of a shortanswer question in a category.
+     *
+     * @covers ::get_real_question_ids_in_category
+     */
+    public function test_get_real_question_ids_in_category_shortanswer() {
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $categoryid = $this->topcat->id;
+
+        // Short answer question is made of one question.
+        $shortanswer = $generator->create_question('shortanswer', null, ['category' => $categoryid]);
+        $questionids = $this->qcobject->get_real_question_ids_in_category($categoryid);
+        $this->assertCount(1, $questionids);
+        $this->assertContains($shortanswer->id, $questionids);
+    }
+
+    /**
+     * Test that get_real_question_ids_in_category() returns question id
+     * of a multianswer question in a category.
+     *
+     * @covers ::get_real_question_ids_in_category
+     */
+    public function test_get_real_question_ids_in_category_multianswer() {
+        global $DB;
+        $countq = $DB->count_records('question');
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $categoryid = $this->topcat->id;
+
+        // Multi answer question is made of one parent and two child questions.
+        $multianswer = $generator->create_question('multianswer', null, ['category' => $categoryid]);
+        $questionids = $this->qcobject->get_real_question_ids_in_category($categoryid);
+        $this->assertCount(1, $questionids);
+        $this->assertContains($multianswer->id, $questionids);
+        $this->assertEquals(3, $DB->count_records('question') - $countq);
+    }
+
+    /**
+     * Test that get_real_question_ids_in_category() returns question id
+     * of a multianswer question in a category even if their child questions are
+     * linked to a category that doesn't exist.
+     *
+     * @covers ::get_real_question_ids_in_category
+     */
+    public function test_get_real_question_ids_in_category_multianswer_bad_data() {
+        global $DB;
+        $countq = $DB->count_records('question');
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $categoryid = $this->topcat->id;
+
+        // Multi answer question is made of one parent and two child questions.
+        $multianswer = $generator->create_question('multianswer', null, ['category' => $categoryid]);
+
+        // Update category id for child questions to a category that doesn't exist.
+        $DB->set_field_select('question', 'category', 123456, 'id <> :id', ['id' => $multianswer->id]);
+
+        $questionids = $this->qcobject->get_real_question_ids_in_category($categoryid);
+        $this->assertCount(1, $questionids);
+        $this->assertContains($multianswer->id, $questionids);
+        $this->assertEquals(3, $DB->count_records('question') - $countq);
+    }
 }
