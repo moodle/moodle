@@ -44,5 +44,9 @@ function xmldb_atto_recordrtc_upgrade($oldversion) {
         // Recordrtc savepoint reached.
         upgrade_plugin_savepoint(true, 2021073000, 'atto', 'recordrtc');
     }
+
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

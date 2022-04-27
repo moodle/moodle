@@ -71,5 +71,8 @@ function xmldb_block_selfcompletion_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2021121600, 'selfcompletion', false);
     }
 
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
