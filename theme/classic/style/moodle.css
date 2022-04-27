@@ -25401,6 +25401,10 @@ body.h5p-embed .h5pmessages {
   margin: 0 auto;
 }
 
+#page-contentbank-edit fieldset {
+  margin-top: 1em;
+}
+
 .text-decoration-none {
   text-decoration: none !important; /* stylelint-disable-line declaration-no-important */
 }

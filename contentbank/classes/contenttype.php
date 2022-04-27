@@ -238,10 +238,17 @@ abstract class contenttype {
      * @return string           HTML code to include in view.php.
      */
     public function get_view_content(content $content): string {
+        global $PAGE;
+
         // Trigger an event for viewing this content.
         $event = contentbank_content_viewed::create_from_record($content->get_content());
         $event->trigger();
 
+        if ($content->has_custom_fields()) {
+            $renderer = $PAGE->get_renderer('core');
+            $renderable = new \core_contentbank\output\customfields($content);
+            return $renderer->render($renderable);
+        }
         return '';
     }
 

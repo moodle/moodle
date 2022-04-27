@@ -174,6 +174,10 @@ class viewcontent implements renderable, templatable {
         $contenthtml = $this->contenttype->get_view_content($this->content);
         $data->contenthtml = $contenthtml;
 
+        $handler = \core_contentbank\customfield\content_handler::create();
+        $customfields = $handler->get_instance_data($this->content->get_id());
+        $data->customfieldshtml = $handler->display_custom_fields_data($customfields);
+
         // Check if the user can edit this content type.
         if ($this->contenttype->can_edit($this->content)) {
             $data->usercanedit = true;

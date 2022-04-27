@@ -25,6 +25,7 @@
 $string['author'] = 'Author';
 $string['contentbank'] = 'Content bank';
 $string['choosecontext'] = 'Choose course or category...';
+$string['contentbankcustomfields'] = 'Content bank custom fields';
 $string['contentbankpreferences'] = 'Content bank preferences';
 $string['contentcopied'] = 'Content copied.';
 $string['contentdeleted'] = 'Content deleted.';
@@ -42,6 +43,7 @@ $string['contentupdated'] = 'Content updated.';
 $string['contextnotallowed'] = 'You are not allowed to access the content bank in this context.';
 $string['copycontent'] = 'Copy content';
 $string['copyof'] = 'Copy of {$a}';
+$string['custombankfields'] = 'Custom bank fields';
 $string['displayunlisted'] = 'Show unlisted content';
 $string['emptynamenotallowed'] = 'Empty name is not allowed';
 $string['eventcontentcreated'] = 'Content created';
