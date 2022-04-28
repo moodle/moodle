@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\output\dynamictabs;
 
 use core\output\dynamic_tabs\base;
-use core_reportbuilder\external\custom_report_menu_cards_exporter;
+use core_reportbuilder\external\custom_report_audience_cards_exporter;
 use core_reportbuilder\local\helpers\audience as audience_helper;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\output\audience_heading_editable;
@@ -43,10 +43,8 @@ class audience extends base {
      */
     public function export_for_template(renderer_base $output): array {
         // Get all the audiences types to populate the left menu.
-        $menucardexporter = new custom_report_menu_cards_exporter(null, [
-            'menucards' => audience_helper::get_all_audiences_menu_types()
-        ]);
-        $menucards = (array) $menucardexporter->export($output);
+        $menucardsexporter = new custom_report_audience_cards_exporter(null);
+        $menucards = (array) $menucardsexporter->export($output);
 
         // Get all current audiences instances for this report.
         $audienceinstances = $this->get_all_report_audiences();

@@ -29,7 +29,6 @@ use core_reportbuilder\table\custom_report_table;
 use core_reportbuilder\table\custom_report_table_filterset;
 use core_reportbuilder\table\custom_report_table_view;
 use core_reportbuilder\table\custom_report_table_view_filterset;
-use core_reportbuilder\local\helpers\report as report_helper;
 use core_table\local\filter\integer_filter;
 
 /**
@@ -91,7 +90,7 @@ class custom_report_exporter extends persistent_exporter {
     protected static function define_other_properties(): array {
         return [
             'table' => ['type' => PARAM_RAW],
-            'sidebarmenucards' => ['type' => custom_report_menu_cards_exporter::read_properties_definition()],
+            'sidebarmenucards' => ['type' => custom_report_column_cards_exporter::read_properties_definition()],
             'conditions' => ['type' => custom_report_conditions_exporter::read_properties_definition()],
             'filters' => ['type' => custom_report_filters_exporter::read_properties_definition()],
             'sorting' => ['type' => custom_report_columns_sorting_exporter::read_properties_definition()],
@@ -143,11 +142,8 @@ class custom_report_exporter extends persistent_exporter {
 
         // If we are editing we need all this information for the template.
         if ($this->editmode) {
-            $menucardexporter = new custom_report_menu_cards_exporter(null, [
-                'menucards' => report_helper::get_available_columns($report->get_report_persistent())
-            ]);
-
-            $menucards = (array) $menucardexporter->export($output);
+            $menucardsexporter = new custom_report_column_cards_exporter(null, ['report' => $report]);
+            $menucards = (array) $menucardsexporter->export($output);
             $conditionsexporter = new custom_report_conditions_exporter(null, ['report' => $report]);
             $conditions = (array) $conditionsexporter->export($output);
             $filtersexporter = new custom_report_filters_exporter(null, ['report' => $report]);
