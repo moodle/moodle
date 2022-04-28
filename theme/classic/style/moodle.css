@@ -21073,6 +21073,9 @@ div.editor_atto_toolbar button .icon {
 * Reportbuilder.
 */
 /* Table */
+.reportbuilder-table .action-menu .menubar {
+  justify-content: end; }
+
 /* Filters */
 .reportbuilder-wrapper .filters-dropdown {
   width: 27rem;
