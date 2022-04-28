@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20220510" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20220530" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2600,6 +2600,7 @@
         <INDEX NAME="contenthash" UNIQUE="false" FIELDS="contenthash"/>
         <INDEX NAME="pathnamehash" UNIQUE="true" FIELDS="pathnamehash"/>
         <INDEX NAME="license" UNIQUE="false" FIELDS="license"/>
+        <INDEX NAME="filename" UNIQUE="false" FIELDS="filename"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="files_reference" COMMENT="Store files references">
