@@ -248,8 +248,11 @@ class award_criteria_activity extends award_criteria {
             if (!empty($moduledata)) {
                 $extraon = implode(' OR ', $moduledata);
                 $join = " JOIN {course_modules_completion} cmc ON cmc.userid = u.id AND
-                          ( cmc.completionstate = :completionpass OR cmc.completionstate = :completioncomplete ) AND ({$extraon})";
+                          ( cmc.completionstate = :completionfail OR
+                          cmc.completionstate = :completionpass OR
+                          cmc.completionstate = :completioncomplete ) AND ({$extraon})";
                 $params["completionpass"] = COMPLETION_COMPLETE_PASS;
+                $params["completionfail"] = COMPLETION_COMPLETE_FAIL;
                 $params["completioncomplete"] = COMPLETION_COMPLETE;
             }
             return array($join, $where, $params);
@@ -259,10 +262,12 @@ class award_criteria_activity extends award_criteria {
                           cmc{$param['module']}.userid = u.id AND
                           cmc{$param['module']}.coursemoduleid = :completedmodule{$param['module']} AND
                           ( cmc{$param['module']}.completionstate = :completionpass{$param['module']} OR
+                            cmc{$param['module']}.completionstate = :completionfail{$param['module']} OR
                             cmc{$param['module']}.completionstate = :completioncomplete{$param['module']} )";
                 $where .= " AND cmc{$param['module']}.coursemoduleid IS NOT NULL ";
                 $params["completedmodule{$param['module']}"] = $param['module'];
                 $params["completionpass{$param['module']}"] = COMPLETION_COMPLETE_PASS;
+                $params["completionfail{$param['module']}"] = COMPLETION_COMPLETE_FAIL;
                 $params["completioncomplete{$param['module']}"] = COMPLETION_COMPLETE;
             }
             return array($join, $where, $params);
