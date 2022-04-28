@@ -110,6 +110,13 @@ class boostnavbar implements \renderable {
             // given course format or the set course layout is not 'One section per page'.
             $removesections = !isset($courseformat->coursedisplay) ||
                 $courseformat->coursedisplay != COURSE_DISPLAY_MULTIPAGE;
+            if ($removesections) {
+                // If the course sections are removed, we need to add the anchor of current section to the Course.
+                $coursenode = $this->get_item($this->page->course->id);
+                if (!is_null($coursenode) && $this->page->cm->sectionnum !== null) {
+                    $coursenode->action = course_get_format($this->page->course)->get_view_url($this->page->cm->sectionnum);
+                }
+            }
         }
 
         if ($this->page->context->contextlevel == CONTEXT_SYSTEM) {
