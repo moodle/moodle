@@ -32,6 +32,11 @@
  * @subpackage 3rd-party
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once("{$CFG->libdir}/flickrclient.php");
+
 /**
  * Flickr Class
  * @package moodlecore
@@ -81,9 +86,8 @@ class phpFlickr {
 
         // Initialize curl helper, set custom user agent as Flickr blocks our "MoodleBot" agent string.
         $this->curl = new curl(array('cache'=>true, 'module_cache'=>'repository'));
-        $version = moodle_major_version();
         $this->curl->setopt([
-            'CURLOPT_USERAGENT' => "MoodleSite/$version (+{$CFG->wwwroot})"
+            'CURLOPT_USERAGENT' => flickr_client::user_agent(),
         ]);
     }
 
