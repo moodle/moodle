@@ -161,6 +161,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop1->coursemodule = $workshop1->cmid;
         $workshop1->introformat = 1;
         $workshop1->introfiles = [];
+        $workshop1->lang = '';
         $workshop1->instructauthorsfiles = [];
         $workshop1->instructauthorsformat = 1;
         $workshop1->instructreviewersfiles = [];
@@ -173,6 +174,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop2->coursemodule = $workshop2->cmid;
         $workshop2->introformat = 1;
         $workshop2->introfiles = [];
+        $workshop2->lang = '';
         $workshop2->instructauthorsfiles = [];
         $workshop2->instructauthorsformat = 1;
         $workshop2->instructreviewersfiles = [];

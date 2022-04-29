@@ -64,6 +64,11 @@ class workshop_summary_exporter extends exporter {
                 'default' => FORMAT_MOODLE,
                 'description' => 'Workshop intro text format.',
             ),
+            'lang' => array(
+                'type' => PARAM_LANG,
+                'description' => 'Forced activity language',
+                'null' => NULL_ALLOWED,
+            ),
             'instructauthors' => array(
                 'type' => PARAM_RAW,
                 'description' => 'Instructions for the submission phase.',

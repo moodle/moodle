@@ -93,7 +93,7 @@
         <FIELD NAME="groupmode" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="groupmodeforce" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="defaultgroupingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="default grouping used in course modules, does not have key intentionally"/>
-        <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="Forced language for this course. Null or '' means 'Do not force'. Otherwise a Moodle lang pack name like 'fr' or 'en_us'."/>
         <FIELD NAME="calendartype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -309,6 +309,7 @@
         <FIELD NAME="availability" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Availability restrictions for viewing this activity, in JSON format. Null if no restrictions."/>
         <FIELD NAME="deletioninprogress" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="downloadcontent" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Whether the ability to download course module content is enabled for this activity"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" COMMENT="Forced language for this activity. Null or '' means 'Do not force'. Otherwise a Moodle lang pack name like 'fr' or 'en_us'."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -57,6 +57,7 @@ abstract class helper_for_get_mods_by_courses {
         $moddetails['coursemodule'] = $modinstance->coursemodule;
         $moddetails['course'] = $modinstance->course;
         $moddetails['name'] = $modinstance->name;
+        $moddetails['lang'] = clean_param($modinstance->lang, PARAM_LANG);
         if (!$capabilityforintro || has_capability($capabilityforintro, $context)) {
             $moddetails['intro'] = $modinstance->intro;
             $moddetails['introformat'] = $modinstance->introformat;
@@ -130,6 +131,7 @@ abstract class helper_for_get_mods_by_courses {
             'visible' => new external_value(PARAM_BOOL, 'Visible', VALUE_OPTIONAL),
             'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
             'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
+            'lang' => new external_value(PARAM_SAFEDIR, 'Forced activity language', VALUE_OPTIONAL),
         ];
     }
 }

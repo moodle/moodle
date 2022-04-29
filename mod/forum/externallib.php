@@ -97,6 +97,8 @@ class mod_forum_external extends external_api {
                 list($forum->intro, $forum->introformat) =
                     external_format_text($forum->intro, $forum->introformat, $context->id, 'mod_forum', 'intro', null, $options);
                 $forum->introfiles = external_util::get_area_files($context->id, 'mod_forum', 'intro', false, false);
+                $forum->lang = clean_param($forum->lang, PARAM_LANG);
+
                 // Discussions count. This function does static request cache.
                 $forum->numdiscussions = forum_count_discussions($forum, $cm, $course);
                 $forum->cmid = $forum->coursemodule;
@@ -134,6 +136,7 @@ class mod_forum_external extends external_api {
                     'intro' => new external_value(PARAM_RAW, 'The forum intro'),
                     'introformat' => new external_format_value('intro'),
                     'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
+                    'lang' => new external_value(PARAM_SAFEDIR, 'Forced activity language', VALUE_OPTIONAL),
                     'duedate' => new external_value(PARAM_INT, 'duedate for the user', VALUE_OPTIONAL),
                     'cutoffdate' => new external_value(PARAM_INT, 'cutoffdate for the user', VALUE_OPTIONAL),
                     'assessed' => new external_value(PARAM_INT, 'Aggregate type'),

@@ -2879,5 +2879,20 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022061500.00);
     }
 
+    if ($oldversion < 2022081200.01) {
+
+        // Define field lang to be added to course_modules.
+        $table = new xmldb_table('course_modules');
+        $field = new xmldb_field('lang', XMLDB_TYPE_CHAR, '30', null, null, null, null, 'downloadcontent');
+
+        // Conditionally launch add field lang.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022081200.01);
+    }
+
     return true;
 }

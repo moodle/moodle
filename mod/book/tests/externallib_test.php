@@ -160,7 +160,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertCount(1, $books['books']);
         $this->assertEquals('First Book', $books['books'][0]['name']);
         // We see 10 fields.
-        $this->assertCount(10, $books['books'][0]);
+        $this->assertCount(11, $books['books'][0]);
 
         // As Student you cannot see some book properties like 'section'.
         $this->assertFalse(isset($books['books'][0]['section']));
@@ -182,7 +182,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertCount(1, $books['books']);
         $this->assertEquals('Second Book', $books['books'][0]['name']);
         // We see 17 fields.
-        $this->assertCount(17, $books['books'][0]);
+        $this->assertCount(18, $books['books'][0]);
         // As an Admin you can see some book properties like 'section'.
         $this->assertEquals(0, $books['books'][0]['section']);
 

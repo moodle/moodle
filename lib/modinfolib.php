@@ -865,6 +865,7 @@ class course_modinfo {
                         $mods[$cmid]->availability = $rawmods[$cmid]->availability;
                         $mods[$cmid]->deletioninprogress = $rawmods[$cmid]->deletioninprogress;
                         $mods[$cmid]->downloadcontent = $rawmods[$cmid]->downloadcontent;
+                        $mods[$cmid]->lang = $rawmods[$cmid]->lang;
 
                         $modname = $mods[$cmid]->mod;
                         $functionname = $modname . "_get_coursemodule_info";
@@ -1110,6 +1111,7 @@ class course_modinfo {
  * @property-read string $afterediticons Extra HTML code to display after editing icons (e.g. more icons) - calculated on request
  * @property-read bool $deletioninprogress True if this course module is scheduled for deletion, false otherwise.
  * @property-read bool $downloadcontent True if content download is enabled for this course module, false otherwise.
+ * @property-read bool $lang the forced language for this activity (language pack name). Null means not forced.
  */
 class cm_info implements IteratorAggregate {
     /**
@@ -1434,11 +1436,16 @@ class cm_info implements IteratorAggregate {
     private $downloadcontent;
 
     /**
+     * @var string|null the forced language for this activity (language pack name). Null means not forced.
+     */
+    private $lang;
+
+    /**
      * List of class read-only properties and their getter methods.
      * Used by magic functions __get(), __isset(), __empty()
      * @var array
      */
-    private static $standardproperties = array(
+    private static $standardproperties = [
         'url' => 'get_url',
         'content' => 'get_content',
         'extraclasses' => 'get_extra_classes',
@@ -1488,8 +1495,9 @@ class cm_info implements IteratorAggregate {
         'visibleoncoursepage' => false,
         'visibleold' => false,
         'deletioninprogress' => false,
-        'downloadcontent' => false
-    );
+        'downloadcontent' => false,
+        'lang' => false,
+    ];
 
     /**
      * List of methods with no arguments that were public prior to Moodle 2.6.
@@ -1948,7 +1956,7 @@ class cm_info implements IteratorAggregate {
         static $cmfields = array('id', 'course', 'module', 'instance', 'section', 'idnumber', 'added',
             'score', 'indent', 'visible', 'visibleoncoursepage', 'visibleold', 'groupmode', 'groupingid',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected', 'completionpassgrade',
-            'showdescription', 'availability', 'deletioninprogress', 'downloadcontent');
+            'showdescription', 'availability', 'deletioninprogress', 'downloadcontent', 'lang');
 
         foreach ($cmfields as $key) {
             $cmrecord->$key = $this->$key;
@@ -2175,6 +2183,7 @@ class cm_info implements IteratorAggregate {
         $this->visibleold = isset($mod->visibleold) ? $mod->visibleold : 0;
         $this->deletioninprogress = isset($mod->deletioninprogress) ? $mod->deletioninprogress : 0;
         $this->downloadcontent = $mod->downloadcontent ?? null;
+        $this->lang = $mod->lang ?? null;
 
         // Note: it saves effort and database space to always include the
         // availability and completion fields, even if availability or completion

@@ -107,7 +107,6 @@ class external_test extends externallib_advanced_testcase {
      * Test test_mod_feedback_get_feedbacks_by_courses
      */
     public function test_mod_feedback_get_feedbacks_by_courses() {
-        global $DB;
 
         // Create additional course.
         $course2 = self::getDataGenerator()->create_course();
@@ -134,7 +133,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
-        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'anonymous',
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'lang', 'anonymous',
             'multiple_submit', 'autonumbering', 'page_after_submitformat', 'publish_stats', 'completionsubmit');
 
         $properties = feedback_summary_exporter::read_properties_definition();
@@ -144,10 +143,12 @@ class external_test extends externallib_advanced_testcase {
         $feedback1->coursemodule = $feedback1->cmid;
         $feedback1->introformat = 1;
         $feedback1->introfiles = [];
+        $feedback1->lang = '';
 
         $feedback2->coursemodule = $feedback2->cmid;
         $feedback2->introformat = 1;
         $feedback2->introfiles = [];
+        $feedback2->lang = '';
 
         foreach ($expectedfields as $field) {
             if (!empty($properties[$field]) && $properties[$field]['type'] == PARAM_BOOL) {

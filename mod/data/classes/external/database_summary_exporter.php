@@ -58,6 +58,11 @@ class database_summary_exporter extends exporter {
                 'type' => PARAM_INT,
                 'default' => FORMAT_MOODLE
             ),
+            'lang' => array(
+                'type' => PARAM_LANG,
+                'description' => 'Forced activity language',
+                'null' => NULL_ALLOWED,
+            ),
             'comments' => array(
                 'type' => PARAM_BOOL,
                 'description' => 'comments enabled',

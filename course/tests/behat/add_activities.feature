@@ -5,36 +5,30 @@ Feature: Add activities to courses
   I need to add activites to a course
 
   Background:
-    Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@example.com |
-      | student2 | Student | 2 | student2@example.com |
-    And the following "courses" exist:
+    Given the following "courses" exist:
       | fullname | shortname | format |
-      | Course 1 | Course 1 | topics |
-    And the following "course enrolments" exist:
-      | user | course | role |
-      | student1 | Course 1 | student |
-      | student2 | Course 1 | student |
+      | Course 1 | Course 1  | topics |
 
   @javascript
   Scenario: Add an activity to a course
     Given I am on the "Course 1" Course page logged in as admin
     And I am on "Course 1" course homepage with editing mode on
     When I add a "Database" to section "3" and I fill the form with:
-      | Name | Test name |
-      | Description | Test database description |
-      | ID number | TESTNAME |
-      | Allow comments on entries | Yes |
+      | Name                      | Test name                 |
+      | Description               | Test database description |
+      | ID number                 | TESTNAME                  |
+      | Allow comments on entries | Yes                       |
+      | Force language            | English                   |
     And I turn editing mode off
     Then I should not see "Adding a new"
     And I turn editing mode on
     And I open "Test name" actions menu
     And I click on "Edit settings" "link" in the "Test name" activity
-    And I expand all fieldsets
-    And the field "Name" matches value "Test name"
-    And the field "ID number" matches value "TESTNAME"
-    And the field "Allow comments on entries" matches value "Yes"
+    And the following fields match these values:
+      | Name                      | Test name    |
+      | ID number                 | TESTNAME     |
+      | Allow comments on entries | Yes          |
+      | Force language            | English ‎(en)‎ |
 
   @javascript
   Scenario: Add an activity supplying only the name
