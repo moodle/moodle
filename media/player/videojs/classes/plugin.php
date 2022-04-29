@@ -154,6 +154,10 @@ class media_videojs_plugin extends core_media_player_native {
             $datasetup[] = '"aspectRatio": "1:0"';
         }
 
+        // Additional setup for playback rate and user actions.
+        $datasetup[] = '"playbackRates": [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]';
+        $datasetup[] = '"userActions": {"hotkeys": true}';
+
         // Attributes for the video/audio tag.
         // We use data-setup-lazy as the attribute name for the config instead of
         // data-setup because data-setup will cause video.js to load the player as soon as the library is loaded,
