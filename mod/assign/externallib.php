@@ -2787,7 +2787,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
             'submissionstatus' => new external_value(PARAM_ALPHA, 'The submission status (new, draft, reopened or submitted).
                 Empty when not submitted.', VALUE_OPTIONAL),
             'groupid' => new external_value(PARAM_INT, 'for group assignments this is the group id', VALUE_OPTIONAL),
-            'groupname' => new external_value(PARAM_NOTAGS, 'for group assignments this is the group name', VALUE_OPTIONAL),
+            'groupname' => new external_value(PARAM_TEXT, 'for group assignments this is the group name', VALUE_OPTIONAL),
         ];
 
         // Merge keys.
@@ -2901,7 +2901,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
             'cutoffdate' => new external_value(PARAM_INT, 'cutoffdate for the user'),
             'duedatestr' => new external_value(PARAM_TEXT, 'duedate for the user'),
             'groupid' => new external_value(PARAM_INT, 'for group assignments this is the group id', VALUE_OPTIONAL),
-            'groupname' => new external_value(PARAM_NOTAGS, 'for group assignments this is the group name', VALUE_OPTIONAL),
+            'groupname' => new external_value(PARAM_TEXT, 'for group assignments this is the group name', VALUE_OPTIONAL),
             'submissionstatus' => new external_value(PARAM_ALPHA, 'The submission status (new, draft, reopened or submitted).
                 Empty when not submitted.', VALUE_OPTIONAL),
             'user' => $userdescription,
