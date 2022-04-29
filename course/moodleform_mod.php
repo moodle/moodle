@@ -630,14 +630,6 @@ abstract class moodleform_mod extends moodleform {
             $mform->addHelpButton('cmidnumber', 'idnumbermod');
         }
 
-        if ($this->_features->groups) {
-            $options = array(NOGROUPS       => get_string('groupsnone'),
-                             SEPARATEGROUPS => get_string('groupsseparate'),
-                             VISIBLEGROUPS  => get_string('groupsvisible'));
-            $mform->addElement('select', 'groupmode', get_string('groupmode', 'group'), $options, NOGROUPS);
-            $mform->addHelpButton('groupmode', 'groupmode', 'group');
-        }
-
         if ($CFG->downloadcoursecontentallowed) {
                 $choices = [
                     DOWNLOAD_COURSE_CONTENT_DISABLED => get_string('no'),
@@ -652,6 +644,14 @@ abstract class moodleform_mod extends moodleform {
                     $mform->hardFreeze('downloadcontent');
                     $mform->setConstant('downloadcontent', $downloadcontentdefault);
                 }
+        }
+
+        if ($this->_features->groups) {
+            $options = array(NOGROUPS       => get_string('groupsnone'),
+                             SEPARATEGROUPS => get_string('groupsseparate'),
+                             VISIBLEGROUPS  => get_string('groupsvisible'));
+            $mform->addElement('select', 'groupmode', get_string('groupmode', 'group'), $options, NOGROUPS);
+            $mform->addHelpButton('groupmode', 'groupmode', 'group');
         }
 
         if ($this->_features->groupings) {
