@@ -40,9 +40,6 @@ class provider implements
     // This plugin has some sitewide user preferences to export.
     \core_privacy\local\request\user_preference_provider {
 
-    /** The user preference for the navigation drawer. */
-    const DRAWER_OPEN_NAV = 'drawer-open-nav';
-
     /** The user preferences for the course index. */
     const DRAWER_OPEN_INDEX = 'drawer-open-index';
 
@@ -56,7 +53,6 @@ class provider implements
      * @return collection A listing of user data stored through this system.
      */
     public static function get_metadata(collection $items) : collection {
-        $items->add_user_preference(self::DRAWER_OPEN_NAV, 'privacy:metadata:preference:draweropennav');
         $items->add_user_preference(self::DRAWER_OPEN_INDEX, 'privacy:metadata:preference:draweropenindex');
         $items->add_user_preference(self::DRAWER_OPEN_BLOCK, 'privacy:metadata:preference:draweropenblock');
         return $items;
@@ -68,20 +64,6 @@ class provider implements
      * @param int $userid The userid of the user whose data is to be exported.
      */
     public static function export_user_preferences(int $userid) {
-        $draweropennavpref = get_user_preferences(self::DRAWER_OPEN_NAV, null, $userid);
-
-        if (isset($draweropennavpref)) {
-            $preferencestring = get_string('privacy:drawernavclosed', 'theme_boost');
-            if ($draweropennavpref == 'true') {
-                $preferencestring = get_string('privacy:drawernavopen', 'theme_boost');
-            }
-            \core_privacy\local\request\writer::export_user_preference(
-                'theme_boost',
-                self::DRAWER_OPEN_NAV,
-                $draweropennavpref,
-                $preferencestring
-            );
-        }
 
         $draweropenindexpref = get_user_preferences(self::DRAWER_OPEN_INDEX, null, $userid);
 
