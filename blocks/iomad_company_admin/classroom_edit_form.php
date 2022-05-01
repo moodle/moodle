@@ -95,6 +95,19 @@ if ($mform->is_cancelled()) {
     $data->userid = $USER->id;
     if (empty($data->isvirtual)) {
         $data->isvirtual = 0;
+    } else {
+        if (empty($data->address)) {
+            $data->address = "";
+        }
+        if (empty($data->city)) {
+            $data->city = "";
+        }
+        if (empty($data->postcode)) {
+            $data->postcode = "";
+        }
+        if (empty($data->capacity)) {
+            $data->capacity = 0;
+        }
     }
 
     if ($isadding) {
