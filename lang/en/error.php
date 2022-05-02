@@ -152,7 +152,6 @@ $string['cannotsetupblock'] = 'Blocks tables could NOT be set up successfully!';
 $string['cannotsetupcapformod'] = 'Could not set up the capabilities for {$a}';
 $string['cannotsetupcapforplugin'] = 'Could not set up the capabilities for {$a}';
 $string['cannotshowhidecoursesincategory'] = 'Cannot show/hide the courses in category {$a}.';
-$string['cannotswitcheditmodeon'] = 'Could not switch edit mode on';
 $string['cannotsignup'] = 'You cannot create a new account because you are already logged in as {$a}.';
 $string['cannotunassigncap'] = 'Could not unassign deprecated capability {$a->cap} from role {$a->role}';
 $string['cannotunassignrolefrom'] = 'Cannot unassign this user from role id: {$a}';
@@ -631,3 +630,6 @@ $string['xmldberror'] = 'XMLDB error!';
 $string['alreadyloggedin'] = 'You are already logged in as {$a}, you need to log out before logging in as different user.';
 $string['youcannotdeletecategory'] = 'You cannot delete category \'{$a}\' because you can neither delete the contents, nor move them elsewhere.';
 $string['protected_cc_not_supported'] = 'Protected cartridges not supported.';
+
+// Deprecated since Moodle 4.1.
+$string['cannotswitcheditmodeon'] = 'Could not switch edit mode on';

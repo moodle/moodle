@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * A web service to load the mapping of moodle pix names to fontawesome icon names.
- *
- * @package    core
- * @category   external
- * @copyright  2021 Bas Brands <bas@sonsbeekmedia.nl>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\external;
 
 use external_api;
@@ -54,14 +45,14 @@ class editmode extends external_api {
     }
 
     /**
-     * Save the image and return any warnings and the new image url
+     * Set the given edit mode
      *
-     * @param bool $setmode the current edit mode
+     * @param bool $setmode the new edit mode
      * @param int $contextid the current page context id
-     * @return array the new edit mode.
+     * @return array
      */
     public static function change_editmode(bool $setmode, int $contextid): array {
-        global $USER, $PAGE;
+        global $USER;
 
         $params = self::validate_parameters(
             self::change_editmode_parameters(),
@@ -73,19 +64,10 @@ class editmode extends external_api {
 
         $context = \context_helper::instance_by_id($params['context']);
         self::validate_context($context);
-        $PAGE->set_context($context);
 
-        if ($context->id === \context_user::instance($USER->id)->id) {
-            $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
-        }
+        $USER->editing = $params['setmode'];
 
-        $success = false;
-        if ($PAGE->user_allowed_editing()) {
-            $USER->editing = $setmode;
-            $success = true;
-        }
-
-        return ['success' => $success];
+        return ['success' => true];
     }
 
     /**

@@ -80,3 +80,4 @@ sendingvia,core_message
 sendingviawhen,core_message
 close,core_contentbank
 notflagged,core_question
+cannotswitcheditmodeon,core_error
