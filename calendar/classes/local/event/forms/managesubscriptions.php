@@ -139,6 +139,13 @@ class managesubscriptions extends \moodleform {
             $errors['url'] = get_string('errorrequiredurlorfile', 'calendar');
         }
 
+        // Validate course/category event types (ensure appropriate field is also filled in).
+        if ($eventtype === 'course' && empty($data['courseid'])) {
+            $errors['courseid'] = get_string('selectacourse');
+        } else if ($eventtype === 'category' && empty($data['categoryid'])) {
+            $errors['categoryid'] = get_string('required');
+        }
+
         return $errors;
     }
 
