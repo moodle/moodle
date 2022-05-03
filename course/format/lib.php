@@ -135,3 +135,67 @@ class format_site extends course_format {
         return 1;
     }
 }
+
+/**
+ * 'Converts' a value from what is stored in the database into what is used by edit forms.
+ *
+ * @param array $dest The destination array
+ * @param array $source The source array
+ * @param array $option The definition structure of the option.
+ * @param string $optionname The name of the option, as provided in the definition.
+ */
+function contract_value(array &$dest, array $source, array $option, string $optionname) : void {
+    if (substr($optionname, -7) == '_editor') { // Suffix '_editor' indicates that the element is an editor.
+        $name = substr($optionname, 0, -7);
+        if (isset($source[$name])) {
+            $dest[$optionname] = [
+                'text' => clean_param_if_not_null($source[$name], $option['type'] ?? PARAM_RAW),
+                'format' => clean_param_if_not_null($source[$name . 'format'], PARAM_INT),
+            ];
+        }
+    } else {
+        if (isset($source[$optionname])) {
+            $dest[$optionname] = clean_param_if_not_null($source[$optionname], $option['type'] ?? PARAM_RAW);
+        }
+    }
+}
+
+/**
+ * Cleans the given param, unless it is null.
+ *
+ * @param mixed $param The variable we are cleaning.
+ * @param string $type Expected format of param after cleaning.
+ * @return mixed Null if $param is null, otherwise the cleaned value.
+ * @throws coding_exception
+ */
+function clean_param_if_not_null($param, string $type = PARAM_RAW) {
+    if ($param === null) {
+        return null;
+    } else {
+        return clean_param($param, $type);
+    }
+}
+
+/**
+ * 'Converts' a value from what is used in edit forms into a value(s) to be stored in the database.
+ *
+ * @param array $dest The destination array
+ * @param array $source The source array
+ * @param array $option The definition structure of the option.
+ * @param string $optionname The name of the option, as provided in the definition.
+ */
+function expand_value(array &$dest, array $source, array $option, string $optionname) : void {
+    if (substr($optionname, -7) == '_editor') { // Suffix '_editor' indicates that the element is an editor.
+        $name = substr($optionname, 0, -7);
+        if (is_string($source[$optionname])) {
+            $dest[$name]            = clean_param($source[$optionname], $option['type'] ?? PARAM_RAW);
+            $dest[$name . 'format'] = 1;
+        } else {
+            $dest[$name]            = clean_param($source[$optionname]['text'], $option['type'] ?? PARAM_RAW);
+            $dest[$name . 'format'] = clean_param($source[$optionname]['format'], PARAM_INT);
+        }
+        unset($dest[$optionname]);
+    } else {
+        $dest[$optionname] = clean_param($source[$optionname], $option['type'] ?? PARAM_RAW);
+    }
+}
