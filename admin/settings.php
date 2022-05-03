@@ -33,8 +33,16 @@ if (!($settingspage->check_access())) {
     die;
 }
 
-$hassiteconfig = has_capability('moodle/site:config', $PAGE->context);
-if ($hassiteconfig) {
+// If the context in the admin_settingpage object is explicitly defined and it is not system, reset the current
+// page context and use that one instead. This ensures that the proper navigation is displayed and highlighted.
+if ($settingspage->context && !$settingspage->context instanceof \context_system) {
+    $PAGE->set_context($settingspage->context);
+}
+
+$hassiteconfig = has_capability('moodle/site:config', context_system::instance());
+// Display the admin search input element in the page header if the user has the capability to change the site
+// configuration and the current page context is system.
+if ($hassiteconfig && $PAGE->context instanceof \context_system) {
     $PAGE->add_header_action($OUTPUT->render_from_template('core_admin/header_search_input', [
         'action' => new moodle_url('/admin/search.php'),
     ]));
@@ -125,13 +133,6 @@ if (empty($SITE->fullname)) {
 
     $PAGE->set_title("$SITE->shortname: " . implode(": ",$visiblepathtosection));
     $PAGE->set_heading($SITE->fullname);
-    if ($section === 'frontpagesettings') {
-        $frontpagenode = $PAGE->settingsnav->find('frontpage', navigation_node::TYPE_SETTING);
-        $frontpagenode->make_active();
-        $PAGE->navbar->add(get_string('frontpage', 'admin'),
-            new moodle_url('/admin/category.php', ['category' => 'frontpage']));
-        $PAGE->navbar->add(get_string('frontpagesettings', 'admin'), $PAGE->url);
-    }
     echo $OUTPUT->header();
 
     if ($errormsg !== '') {
