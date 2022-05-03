@@ -84,6 +84,7 @@ $PAGE->requires->js_init_call('M.mod_chat_ajax.init', array($modulecfg), false, 
 
 $PAGE->set_title(get_string('modulename', 'chat').": $courseshortname: ".format_string($chat->name, true)."$groupname");
 $PAGE->add_body_class('yui-skin-sam');
+$PAGE->activityheader->disable();
 $PAGE->set_pagelayout('embedded');
 if ( $theme != 'course_theme') {
     $PAGE->requires->css('/mod/chat/gui_ajax/theme/'.$theme.'/chat.css');
