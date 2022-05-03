@@ -36,6 +36,35 @@ class base_test extends advanced_testcase {
         require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest_output_course_format_invalidoutput.php');
     }
 
+    /**
+     * Tests the save and load functionality.
+     *
+     * @author Jason den Dulk
+     * @covers \core_courseformat
+     */
+    public function test_courseformat_saveandload() {
+        $this->resetAfterTest();
+
+        $courseformatoptiondata = (object) [
+            "hideoddsections" => 1,
+            'summary_editor' => [
+                'text' => '<p>Somewhere over the rainbow</p><p>The <b>quick</b> brown fox jumpos over the lazy dog.</p>',
+                'format' => 1
+            ]
+        ];
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(array('format' => 'theunittest'));
+        $this->assertEquals('theunittest', $course1->format);
+        course_create_sections_if_missing($course1, array(0, 1));
+
+        $courseformat = course_get_format($course1);
+        $courseformat->update_course_format_options($courseformatoptiondata);
+
+        $savedcourseformatoptiondata = $courseformat->get_format_options();
+
+        $this->assertEqualsCanonicalizing($courseformatoptiondata, (object) $savedcourseformatoptiondata);
+    }
+
     public function test_available_hook() {
         global $DB;
         $this->resetAfterTest();

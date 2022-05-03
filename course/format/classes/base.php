@@ -908,15 +908,12 @@ abstract class base {
                               'format' => $this->format,
                               'sectionid' => $sectionid
                             ), '', 'id,name,value');
+                $indexedrecords = [];
                 foreach ($records as $record) {
-                    if (array_key_exists($record->name, $this->formatoptions[$sectionid])) {
-                        $value = $record->value;
-                        if ($value !== null && isset($options[$record->name]['type'])) {
-                            // This will convert string value to number if needed.
-                            $value = clean_param($value, $options[$record->name]['type']);
-                        }
-                        $this->formatoptions[$sectionid][$record->name] = $value;
-                    }
+                    $indexedrecords[$record->name] = $record->value;
+                }
+                foreach ($options as $optionname => $option) {
+                    contract_value($this->formatoptions[$sectionid], $indexedrecords, $option, $optionname);
                 }
             }
         }
@@ -1011,7 +1008,7 @@ abstract class base {
         $data = array_intersect_key($rawdata, $allformatoptions);
         foreach ($data as $key => $value) {
             $option = $allformatoptions[$key] + ['type' => PARAM_RAW, 'element_type' => null, 'element_attributes' => [[]]];
-            $data[$key] = clean_param($value, $option['type']);
+            expand_value($data, $data, $option, $key);
             if ($option['element_type'] === 'select' && !array_key_exists($data[$key], $option['element_attributes'][0])) {
                 // Value invalid for select element, skip.
                 unset($data[$key]);
@@ -1060,6 +1057,7 @@ abstract class base {
             if (array_key_exists('default', $option)) {
                 $defaultoptions[$key] = $option['default'];
             }
+            expand_value($defaultoptions, $defaultoptions, $option, $key);
             $cached[$key] = ($sectionid === 0 || !empty($option['cache']));
         }
         $records = $DB->get_records('course_format_options',
