@@ -7,6 +7,9 @@
     td {
         @extend .align-middle;
     }
+    .action-menu .menubar {
+        justify-content: end;
+    }
 }
 
 /* Filters */
