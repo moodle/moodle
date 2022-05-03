@@ -543,7 +543,7 @@ class quiz {
         $qcategories = array();
 
         foreach ($this->get_questions() as $questiondata) {
-            if ($questiondata->qtype == 'random' and $includepotential) {
+            if ($questiondata->qtype === 'random' && $includepotential) {
                 if (!isset($qcategories[$questiondata->category])) {
                     $qcategories[$questiondata->category] = false;
                 }
@@ -1648,7 +1648,7 @@ class quiz_attempt {
      * @return bool whether show all on one page should be on by default.
      */
     public function get_default_show_all($script) {
-        return $script == 'review' && count($this->questionpages) < self::MAX_SLOTS_FOR_DEFAULT_REVIEW_SHOW_ALL;
+        return $script === 'review' && count($this->questionpages) < self::MAX_SLOTS_FOR_DEFAULT_REVIEW_SHOW_ALL;
     }
 
     // Bits of content =========================================================
@@ -2409,7 +2409,7 @@ class quiz_attempt {
         $becomingoverdue = false;
         $becomingabandoned = false;
         if ($timeup) {
-            if ($this->get_quiz()->overduehandling == 'graceperiod') {
+            if ($this->get_quiz()->overduehandling === 'graceperiod') {
                 if (is_null($graceperiodmin)) {
                     $graceperiodmin = get_config('quiz', 'graceperiodmin');
                 }
@@ -2469,7 +2469,15 @@ class quiz_attempt {
             if ($becomingabandoned) {
                 $this->process_abandon($timenow, true);
             } else {
-                $this->process_finish($timenow, !$toolate, $toolate ? $timeclose : $timenow, true);
+                if (!$toolate || $this->get_quiz()->overduehandling === 'graceperiod') {
+                    // Normally, we record the accurate finish time when the student is online.
+                    $finishtime = $timenow;
+                } else {
+                    // But, if there is no grade period, and the final responses were too
+                    // late to be processed, record the close time, to reduce confusion.
+                    $finishtime = $timeclose;
+                }
+                $this->process_finish($timenow, !$toolate, $finishtime, true);
             }
 
         } catch (question_out_of_sequence_exception $e) {
@@ -2795,7 +2803,7 @@ abstract class quiz_nav_panel_base {
             $button->number      = $this->attemptobj->get_question_number($slot);
             $button->stateclass  = $qa->get_state_class($showcorrectness);
             $button->navmethod   = $this->attemptobj->get_navigation_method();
-            if (!$showcorrectness && $button->stateclass == 'notanswered') {
+            if (!$showcorrectness && $button->stateclass === 'notanswered') {
                 $button->stateclass = 'complete';
             }
             $button->statestring = $this->get_state_string($qa, $showcorrectness);
