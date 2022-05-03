@@ -2261,6 +2261,7 @@ class page_wiki_prettyview extends page_wiki {
     function __construct($wiki, $subwiki, $cm) {
         global $PAGE;
         $PAGE->set_pagelayout('embedded');
+        $PAGE->activityheader->disable();
         parent::__construct($wiki, $subwiki, $cm);
     }
 
