@@ -408,6 +408,11 @@ class backup_course_structure_step extends backup_structure_step {
           'shortname', 'type', 'value', 'valueformat'
         ));
 
+        $courseformatoptions = new backup_nested_element('courseformatoptions');
+        $courseformatoption = new backup_nested_element('courseformatoption', [], [
+            'courseid', 'format', 'sectionid', 'name', 'value'
+        ]);
+
         // attach format plugin structure to $course element, only one allowed
         $this->add_plugin_structure('format', $course, false);
 
@@ -445,16 +450,13 @@ class backup_course_structure_step extends backup_structure_step {
         $course->add_child($customfields);
         $customfields->add_child($customfield);
 
+        $course->add_child($courseformatoptions);
+        $courseformatoptions->add_child($courseformatoption);
+
         // Set the sources
 
         $courserec = $DB->get_record('course', array('id' => $this->task->get_courseid()));
         $courserec->contextid = $this->task->get_contextid();
-
-        $formatoptions = course_get_format($courserec)->get_format_options();
-        $course->add_final_elements(array_keys($formatoptions));
-        foreach ($formatoptions as $key => $value) {
-            $courserec->$key = $value;
-        }
 
         // Add 'numsections' in order to be able to restore in previous versions of Moodle.
         // Even though Moodle does not officially support restore into older verions of Moodle from the
@@ -476,6 +478,10 @@ class backup_course_structure_step extends backup_structure_step {
                                  AND ti.itemid = ?', array(
                                      backup_helper::is_sqlparam('course'),
                                      backup::VAR_PARENTID));
+
+        $courseformatoption->set_source_sql('SELECT id, format, sectionid, name, value
+                                 FROM {course_format_options}
+                                 WHERE courseid = ?', [ backup::VAR_PARENTID ]);
 
         $handler = core_course\customfield\course_handler::create();
         $fieldsforbackup = $handler->get_instance_data_for_backup($this->task->get_courseid());
