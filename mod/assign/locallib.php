@@ -4756,6 +4756,8 @@ class assign {
         // Need submit permission to submit an assignment.
         $this->require_view_grades();
 
+        $PAGE->activityheader->disable();
+
         $PAGE->set_pagelayout('embedded');
 
         $courseshortname = $this->get_context()->get_course_context()->get_context_name(false, true);
