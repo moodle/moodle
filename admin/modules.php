@@ -38,11 +38,22 @@
     }
 
     if (!empty($show) and confirm_sesskey()) {
-        $class = \core_plugin_manager::resolve_plugininfo_class('mod');
-        $class::enable_plugin($show, true);
+        $canenablemodule = true;
+        $modulename = $show;
 
-        admin_get_root(true, false);  // settings not required - only pages
-        redirect(new moodle_url('/admin/modules.php'));
+        // Invoking a callback function that enables plugins to force additional actions (e.g. displaying notifications,
+        // modals, etc.) and also specify through its returned value (bool) whether the process of enabling the plugin
+        // should continue after these actions or not.
+        if (component_callback_exists("mod_{$modulename}", 'pre_enable_plugin_actions')) {
+            $canenablemodule = component_callback("mod_{$modulename}", 'pre_enable_plugin_actions');
+        }
+
+        if ($canenablemodule) {
+            $class = \core_plugin_manager::resolve_plugininfo_class('mod');
+            $class::enable_plugin($show, true);
+            admin_get_root(true, false);  // Settings not required - only pages.
+            redirect(new moodle_url('/admin/modules.php'));
+        }
     }
 
     echo $OUTPUT->header();

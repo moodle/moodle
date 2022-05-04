@@ -1,5 +1,12 @@
 This files describes API changes in /admin/*.
 
+=== 4.0.1 ===
+
+* A new callback xxx_pre_enable_plugin_actions has been added in admin/modules.php. Plugins can use this callback to
+  force additional actions (e.g. displaying notifications, modals, etc.) before enabling the plugin. The expected
+  return value (bool) from the plugin callback method specifies whether the process of enabling the plugin should
+  continue after the added actions or not.
+
 === 3.11 ===
 
 * New admin setting admin_setting_encryptedpassword allows passwords in admin settings to be
