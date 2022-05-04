@@ -4476,5 +4476,23 @@ privatefiles,moodle|/user/files.php';
     // Automatically generated Moodle v4.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2022041900.03) {
+        // Social custom fields could had been created linked to category id = 1. Let's check category 1 exists.
+        if (!$DB->get_record('user_info_category', ['id' => 1])) {
+            // Let's check if we have any custom field linked to category id = 1.
+            $fields = $DB->get_records('user_info_field', ['categoryid' => 1]);
+            if (!empty($fields)) {
+                $categoryid = $DB->get_field_sql('SELECT min(id) from {user_info_category}');
+                foreach ($fields as $field) {
+                    $field->categoryid = $categoryid;
+                    $DB->update_record('user_info_field', $field);
+                }
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022041900.03);
+    }
+
     return true;
 }
