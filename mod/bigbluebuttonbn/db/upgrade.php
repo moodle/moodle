@@ -415,6 +415,29 @@ function xmldb_bigbluebuttonbn_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2022021601, 'bigbluebuttonbn');
     }
 
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2022041901) {
+
+        set_config('bigbluebuttonbn_default_dpa_accepted', false);
+
+        // If the default server configuration is used.
+        if (config::get('server_url') === config::DEFAULT_SERVER_URL) {
+            // Disable the BigBlueButton activity module.
+            $DB->set_field('modules', 'visible', 0, ['name' => 'bigbluebuttonbn']);
+
+            // Use an adhoc task to send a notification to inform the admin that the BigBlueButton activity module
+            // has been disabled and they are required to confirm their acceptance of the data processing agreement
+            // prior to re-enabling it.
+            $notificationtask = new mod_bigbluebuttonbn\task\send_bigbluebutton_module_disabled_notification();
+            core\task\manager::queue_adhoc_task($notificationtask);
+        }
+
+        // Bigbluebuttonbn savepoint reached.
+        upgrade_mod_savepoint(true, 2022041901, 'bigbluebuttonbn');
+    }
+
     return true;
 }
 

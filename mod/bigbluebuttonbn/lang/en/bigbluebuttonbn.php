@@ -44,6 +44,8 @@ $string['bigbluebuttonbn:unprotectrecordings'] = 'Unprotect recordings';
 $string['bigbluebuttonbn:deleterecordings'] = 'Delete recordings';
 $string['bigbluebuttonbn:importrecordings'] = 'Import recordings';
 $string['bigbluebuttonbn'] = 'BigBlueButton';
+$string['bigbluebuttondisablednotification_subject'] = 'BigBlueButton activity module disabled.';
+$string['bigbluebuttondisablednotification'] = 'The BigBlueButton activity module has been disabled and any existing BigBlueButton course activities are currently not accessible. Prior to re-enabling this plugin, please ensure that you have read and accepted the <a href="{$a}" target="_blank">data processing agreement</a> with Blindside Networks Inc.';
 $string['cannotperformaction'] = 'Cannot perform action {$a} on this recording';
 $string['enablingbigbluebutton'] = 'Enabling BigBlueButton activity';
 $string['enablingbigbluebuttondpainfo'] = 'In order to meet your data protection obligations, prior to enabling this plugin, you may need to ensure that you have read and accepted the <a href="{$a}" target="_blank">data processing agreement</a> with Blindside Networks Inc.<br/>

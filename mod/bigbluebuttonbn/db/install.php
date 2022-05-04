@@ -15,18 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version for BigBlueButtonBN Moodle Activity Module.
+ * Install script for mod_bigbluebuttonbn.
  *
- * @package   mod_bigbluebuttonbn
- * @copyright 2010 onwards, Blindside Networks Inc
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
- * @author    Fred Dixon  (ffdixon [at] blindsidenetworks [dt] com)
+ * @package    mod_bigbluebuttonbn
+ * @copyright  2022 Mihail Geshoski <mihail@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+/**
+ * Perform the post-install procedures.
+ */
+function xmldb_bigbluebuttonbn_install() {
+    global $DB;
 
-
-$plugin->version = 2022041901;
-$plugin->requires = 2022041200;
-$plugin->component = 'mod_bigbluebuttonbn';
+    // Disable the BigBlueButton activity module on new installs by default.
+    $DB->set_field('modules', 'visible', 0, ['name' => 'bigbluebuttonbn']);
+}
