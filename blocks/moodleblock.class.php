@@ -629,12 +629,10 @@ class block_base {
                        && has_capability('moodle/my:manageblocks', $page->context);
             }
         }
-        // Check if this is a block only used on 'my' or 'user' page types.
-        foreach (array_keys($mypagetypes + $userpagetypes) as $key) {
-            unset($formats[$key]);
-        }
+        // Check if this is a block only used on /my.
+        unset($formats['my']);
         if (empty($formats)) {
-            // Block can only be added to 'my' or 'user' page types - return false.
+            // Block can only be added to /my - return false.
             return false;
         }
 
