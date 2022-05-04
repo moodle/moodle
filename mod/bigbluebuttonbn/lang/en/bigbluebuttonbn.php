@@ -128,6 +128,9 @@ $string['sendnotification'] = 'Send notification';
 $string['minute'] = 'minute';
 $string['minutes'] = 'minutes';
 
+$string['config_dpa_note'] = 'Note: In order to meet your data protection obligations, prior to using a service provider for this plugin, you may need to ensure that you have read and accepted the service provider\'s data processing agreement.
+For the default free BigBlueButton service provided by Blindside Networks Inc., please read and accept the following <a href="{$a}" target="_blank">data processing agreement</a>.<br/>
+Please consult with your own privacy professionals for advice.';
 $string['config_general'] = 'General settings';
 $string['config_general_description'] = 'These settings are always used.';
 $string['config_server_url'] = 'BigBlueButton server URL';
