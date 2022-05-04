@@ -30,6 +30,7 @@ use mod_bigbluebuttonbn\local\proxy\recording_proxy;
 use mod_bigbluebuttonbn\meeting;
 use stdClass;
 use testing_data_generator;
+use core\plugininfo\mod;
 
 trait testcase_helper_trait {
     /** @var testing_data_generator|null */
@@ -47,6 +48,12 @@ trait testcase_helper_trait {
      * @return array($context, $cm, $instance) Testable wrapper around the assign class.
      */
     protected function create_instance(?stdClass $course = null, array $params = [], array $options = []): array {
+        // Prior to creating the instance, make sure that the BigBlueButton module is enabled.
+        $modules = \core_plugin_manager::instance()->get_plugins_of_type('mod');
+        if (!$modules['bigbluebuttonbn']->is_enabled()) {
+            mod::enable_plugin('bigbluebuttonbn', true);
+        }
+
         if (!$course) {
             $course = $this->get_course();
         }
