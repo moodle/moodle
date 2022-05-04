@@ -35,6 +35,9 @@ class config {
     /** @var string Default bigbluebutton server shared secret */
     public const DEFAULT_SHARED_SECRET = '0b21fcaf34673a8c3ec8ed877d76ae34';
 
+    /** @var string Default bigbluebutton data processing agreement url */
+    public const DEFAULT_DPA_URL = 'https://blindsidenetworks.com/dpa-moodle-free-tier';
+
     /**
      * Returns moodle version.
      *
@@ -108,6 +111,7 @@ class config {
             'lockonjoin_default' => true,
             'lockonjoin_editable' => false,
             'welcome_default' => '',
+            'default_dpa_accepted' => false,
         ];
     }
 

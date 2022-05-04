@@ -36,6 +36,7 @@ use mod_bigbluebuttonbn\local\helpers\reset;
 use mod_bigbluebuttonbn\logger;
 use mod_bigbluebuttonbn\meeting;
 use mod_bigbluebuttonbn\recording;
+use mod_bigbluebuttonbn\local\config;
 
 global $CFG;
 
@@ -689,5 +690,24 @@ function bigbluebuttonbn_print_recent_activity(object $course, bool $viewfullnam
 
         echo $out;
     }
+    return true;
+}
+
+/**
+ * Callback method executed prior to enabling the activity module.
+ *
+ * @return bool Whether to proceed and enable the plugin or not.
+ */
+function bigbluebuttonbn_pre_enable_plugin_actions(): bool {
+    global $PAGE;
+
+    // If the default server configuration is used and the administrator has not accepted the default data processing
+    // agreement, do not enable the plugin. Instead, display a dynamic form where the administrator can confirm that he
+    // accepts the DPA prior to enabling the plugin.
+    if (config::get('server_url') === config::DEFAULT_SERVER_URL && !config::get('default_dpa_accepted')) {
+        $PAGE->requires->js_call_amd('mod_bigbluebuttonbn/accept_dpa', 'init', []);
+        return false;
+    }
+    // Otherwise, continue and enable the plugin.
     return true;
 }
