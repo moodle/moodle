@@ -62,7 +62,7 @@
     <table class="admintable generaltable">
         <thead></thead>
         <tbody>
-        <tr>
+        <tr class="d-flex">
             <th class="col-3" id="lti_tool_endpoint_name_{{id}}">
                 <label for="lti_tool_endpoint_url_{{id}}">{{name}}</label>
             </th>
@@ -93,14 +93,14 @@
 <div id="lti_tool_endpoints">
     <table class="admintable generaltable">
         <thead>
-        <tr>
+        <tr class="d-flex">
             <th>{{#str}}name, core{{/str}}</th>
             <th>{{#str}}url, core{{/str}}</th>
         </tr>
         </thead>
         <tbody>
         {{#manual_registration_urls}}
-            <tr>
+            <tr class="d-flex">
                 <th class="col-3" id="lti_tool_endpoint_name_{{id}}">
                     <label for="lti_tool_endpoint_url_{{id}}">{{name}}</label>
                 </th>
