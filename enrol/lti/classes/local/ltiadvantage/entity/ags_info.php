@@ -86,7 +86,7 @@ class ags_info {
      * @throws \coding_exception if any of the scopes is invalid.
      */
     private function validate_scopes(array $scopes): void {
-        $validscopes = [
+        $supportedscopes = [
             self::SCOPES_LINEITEM_READONLY,
             self::SCOPES_LINEITEM_MANAGE,
             self::SCOPES_RESULT_READONLY,
@@ -96,17 +96,14 @@ class ags_info {
             if (!is_string($scope)) {
                 throw new \coding_exception('Scope must be a string value');
             }
-            $key = array_search($scope, $validscopes);
-            if ($key === false) {
-                throw new \coding_exception("Scope '{$scope}' is invalid.");
-            }
-            if ($key == 0) {
+            $key = array_search($scope, $supportedscopes);
+            if ($key === 0) {
                 $this->lineitemscopes[] = self::SCOPES_LINEITEM_READONLY;
-            } else if ($key == 1) {
+            } else if ($key === 1) {
                 $this->lineitemscopes[] = self::SCOPES_LINEITEM_MANAGE;
-            } else if ($key == 2) {
+            } else if ($key === 2) {
                 $this->resultscope = self::SCOPES_RESULT_READONLY;
-            } else if ($key == 3) {
+            } else if ($key === 3) {
                 $this->scorescope = self::SCOPES_SCORES_POST;
             }
         }
