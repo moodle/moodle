@@ -645,13 +645,14 @@ final class column {
      * Return the default column value, that being the value of it's first field
      *
      * @param array $values
+     * @param int $columntype
      * @return mixed
      */
-    private function get_default_value(array $values) {
+    public static function get_default_value(array $values, int $columntype) {
         $value = reset($values);
 
         // Ensure default value is cast to it's strict type.
-        switch ($this->get_type()) {
+        switch ($columntype) {
             case self::TYPE_INTEGER:
             case self::TYPE_TIMESTAMP:
                 $value = (int) $value;
@@ -675,11 +676,11 @@ final class column {
      */
     public function format_value(array $row) {
         $values = $this->get_values($row);
-        $value = $this->get_default_value($values);
+        $value = self::get_default_value($values, $this->type);
 
         // If column is being aggregated then defer formatting to them, otherwise loop through all column callbacks.
         if (!empty($this->aggregation)) {
-            $value = $this->aggregation::format_value($value, $values, $this->callbacks);
+            $value = $this->aggregation::format_value($value, $values, $this->callbacks, $this->type);
         } else {
             foreach ($this->callbacks as $callback) {
                 [$callable, $arguments] = $callback;

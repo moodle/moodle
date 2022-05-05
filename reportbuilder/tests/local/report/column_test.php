@@ -311,11 +311,11 @@ class column_test extends advanced_testcase {
     }
 
     /**
-     * Data provider for {@see test_format_value}
+     * Data provider for {@see test_get_default_value} and {@see test_format_value}
      *
      * @return array[]
      */
-    public function format_value_provider(): array {
+    public function column_type_provider(): array {
         return [
             [column::TYPE_INTEGER, 42],
             [column::TYPE_TEXT, 'Hello'],
@@ -327,13 +327,31 @@ class column_test extends advanced_testcase {
     }
 
     /**
-     * Test that column value is returned as correctly (value plus type)
+     * Test default value is returned from selected values, with correct type
      *
      * @param int $columntype
      * @param mixed $value
      * @param mixed|null $expected Expected value, or null to indicate it should be identical to value
      *
-     * @dataProvider format_value_provider
+     * @dataProvider column_type_provider
+     */
+    public function test_get_default_value(int $columntype, $value, $expected = null): void {
+        $defaultvalue = column::get_default_value([
+            'value' => $value,
+            'foo' => 'bar',
+        ], $columntype);
+
+        $this->assertSame($expected ?? $value, $defaultvalue);
+    }
+
+    /**
+     * Test that column value is returned correctly, with correct type
+     *
+     * @param int $columntype
+     * @param mixed $value
+     * @param mixed|null $expected Expected value, or null to indicate it should be identical to value
+     *
+     * @dataProvider column_type_provider
      */
     public function test_format_value(int $columntype, $value, $expected = null): void {
         $column = $this->create_column('test')
