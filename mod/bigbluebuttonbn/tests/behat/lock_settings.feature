@@ -6,6 +6,7 @@ Feature: Test that the meeting has the right lock setting.
 
   Background:
     Given a BigBlueButton mock server is configured
+    And I enable "bigbluebuttonbn" "mod" plugin
 
   @javascript
   Scenario Outline: Teacher should be able to set the right lock feature in a given meeting
