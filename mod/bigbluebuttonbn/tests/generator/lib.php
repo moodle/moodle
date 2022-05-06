@@ -24,6 +24,7 @@
  * @author     Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
  */
 
+use core\plugininfo\mod;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\logger;
 use mod_bigbluebuttonbn\recording;
@@ -47,6 +48,12 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
      * @return stdClass record from module-defined table with additional field cmid
      */
     public function create_instance($record = null, array $options = null) {
+        // Prior to creating the instance, make sure that the BigBlueButton module is enabled.
+        $modules = \core_plugin_manager::instance()->get_plugins_of_type('mod');
+        if (!$modules['bigbluebuttonbn']->is_enabled()) {
+            mod::enable_plugin('bigbluebuttonbn', true);
+        }
+
         $now = time();
         $defaults = [
             "type" => 0,

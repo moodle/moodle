@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['activityoverview'] = 'You have upcoming BigBlueButton sessions';
+$string['acceptdpa'] = 'I understand and accept the data processing agreement';
 $string['bbbduetimeoverstartingtime'] = 'The close time must be later than the open time.';
 $string['bbbdurationwarning'] = 'The maximum duration for this session is %duration% minutes.';
 $string['bbbrecordwarning'] = 'This session may be recorded.';
@@ -43,7 +44,12 @@ $string['bigbluebuttonbn:unprotectrecordings'] = 'Unprotect recordings';
 $string['bigbluebuttonbn:deleterecordings'] = 'Delete recordings';
 $string['bigbluebuttonbn:importrecordings'] = 'Import recordings';
 $string['bigbluebuttonbn'] = 'BigBlueButton';
+$string['bigbluebuttondisablednotification_subject'] = 'BigBlueButton activity module disabled.';
+$string['bigbluebuttondisablednotification'] = 'The BigBlueButton activity module has been disabled and any existing BigBlueButton course activities are currently not accessible. Prior to re-enabling this plugin, please ensure that you have read and accepted the <a href="{$a}" target="_blank">data processing agreement</a> with Blindside Networks Inc.';
 $string['cannotperformaction'] = 'Cannot perform action {$a} on this recording';
+$string['enablingbigbluebutton'] = 'Enabling BigBlueButton activity';
+$string['enablingbigbluebuttondpainfo'] = 'In order to meet your data protection obligations, prior to enabling this plugin, you may need to ensure that you have read and accepted the <a href="{$a}" target="_blank">data processing agreement</a> with Blindside Networks Inc.<br/>
+Please consult with your own privacy professionals for advice.';
 $string['indicator:cognitivedepth'] = 'BigBlueButton cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a BigBlueButton activity.';
 $string['indicator:socialbreadth'] = 'BigBlueButton social';
@@ -124,6 +130,9 @@ $string['sendnotification'] = 'Send notification';
 $string['minute'] = 'minute';
 $string['minutes'] = 'minutes';
 
+$string['config_dpa_note'] = 'Note: In order to meet your data protection obligations, prior to using a service provider for this plugin, you may need to ensure that you have read and accepted the service provider\'s data processing agreement.
+For the default free BigBlueButton service provided by Blindside Networks Inc., please read and accept the following <a href="{$a}" target="_blank">data processing agreement</a>.<br/>
+Please consult with your own privacy professionals for advice.';
 $string['config_general'] = 'General settings';
 $string['config_general_description'] = 'These settings are always used.';
 $string['config_server_url'] = 'BigBlueButton server URL';

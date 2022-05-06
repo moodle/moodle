@@ -4,6 +4,7 @@ Feature: The recording can be managed through the room page
 
   Background:  Make sure that import recording is enabled and course, activities and recording exists
     Given a BigBlueButton mock server is configured
+    And I enable "bigbluebuttonbn" "mod" plugin
     And the following "courses" exist:
       | fullname      | shortname | category |
       | Test Course 1 | C1        | 0        |
