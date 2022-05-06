@@ -39,7 +39,7 @@ module.exports = grunt => {
                 {
                     rule: {
                         _attrs: {
-                            ref: 'moodle',
+                            ref: './.phpcs.xml.dist',
                         },
                     },
                 },
