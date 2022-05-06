@@ -101,6 +101,8 @@ $string['norecentaccessesinfomessage'] = 'Hi {$a->userfirstname},
 <p>A number of students in {$a->coursename} have not accessed the course recently.</p>';
 $string['noteachinginfomessage'] = 'Hi {$a->userfirstname},
 <p>Courses with start dates in the next week have been identified as having no teacher or student enrolments.</p>';
+$string['participants:perpage'] = 'Number of participants per page';
+$string['participants:perpage_help'] = 'Specify the number of participants that are shown per page';
 $string['participantsnavigation'] = 'Participants tertiary navigation.';
 $string['privacy:perpage'] = 'The number of courses to show per page.';
 $string['privacy:completionpath'] = 'Course completion';
