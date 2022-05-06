@@ -132,9 +132,13 @@ class cohort extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealias}.id, {$tablealias}.contextid")
-            ->add_callback(static function(string $description, stdClass $cohort): string {
+            ->add_callback(static function(?string $description, stdClass $cohort): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
+
+                if ($description === null) {
+                    return '';
+                }
 
                 $description = file_rewrite_pluginfile_urls($description, 'pluginfile.php', $cohort->contextid, 'cohort',
                     'description', $cohort->id);
