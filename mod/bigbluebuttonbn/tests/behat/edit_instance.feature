@@ -4,6 +4,7 @@ When a bibluebutton instance has been created I can edit it
 
   Background:  Make sure that a course is created
     Given a BigBlueButton mock server is configured
+    And I enable "bigbluebuttonbn" "mod" plugin
     And the following config values are set as admin:
       | bigbluebuttonbn_voicebridge_editable | 1 |
     And the following "courses" exist:

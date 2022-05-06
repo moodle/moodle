@@ -107,6 +107,9 @@ class mod_helper_trait_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) =
             $this->create_instance(null, ['type' => instance::TYPE_RECORDING_ONLY]);
+        // Reset some static caches used by this test after enabling the plugin.
+        get_module_types_names(false, true);
+
         $bbformdata = $this->get_form_data_from_instance($bbactivity);
 
         // Enrol users in a course so he will receive the message.
@@ -137,6 +140,9 @@ class mod_helper_trait_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) =
             $this->create_instance(null, ['type' => instance::TYPE_RECORDING_ONLY]);
+        // Reset some static caches used by this test after enabling the plugin.
+        get_module_types_names(false, true);
+
         $bbformdata = $this->get_form_data_from_instance($bbactivity);
 
         $bbformdata->update = false;
@@ -168,6 +174,9 @@ class mod_helper_trait_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) =
             $this->create_instance(null, ['type' => instance::TYPE_RECORDING_ONLY]);
+        // Reset some static caches used by this test after enabling the plugin.
+        get_module_types_names(false, true);
+
         $bbformdata = $this->get_form_data_from_instance($bbactivity);
         $bbformdata->completionunlocked = 0;
         $bbformdata->completion = COMPLETION_AGGREGATION_ANY;

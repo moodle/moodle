@@ -4,6 +4,7 @@ Feature: Test the ability to run the full meeting lifecycle (start to end)
 
   Background:
     Given a BigBlueButton mock server is configured
+    And I enable "bigbluebuttonbn" "mod" plugin
 
   Scenario: Users should be able to join a meeting then end the meeting for themselves and
     return to the meeting page to join again.

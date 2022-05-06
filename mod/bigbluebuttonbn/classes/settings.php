@@ -174,6 +174,16 @@ class settings {
                 $item,
                 $settingsgeneral
             );
+            $item = new \admin_setting_description(
+                'bigbluebuttonbn_dpa_info',
+                '',
+                get_string('config_dpa_note', 'bigbluebuttonbn', config::DEFAULT_DPA_URL),
+            );
+            $this->add_conditional_element(
+                'dpa_info',
+                $item,
+                $settingsgeneral
+            );
             $settingsgeneral->add($item);
             $item = new admin_setting_heading(
                 'bigbluebuttonbn_config_default_messages',
