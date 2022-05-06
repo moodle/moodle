@@ -19914,6 +19914,12 @@ body.behat-site.path-grade-report-grader .gradeparent tr.heading {
   background-color: #99c;
   font-weight: bold; }
 
+body > .debuggingmessage {
+  margin-top: 60px; }
+
+body > .debuggingmessage ~ .debuggingmessage {
+  margin-top: .5rem; }
+
 /**
  * This file contains the styles required to make the footer sticky.
  */
