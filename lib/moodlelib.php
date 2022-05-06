@@ -978,8 +978,18 @@ function clean_param($param, $type) {
             return preg_replace('/[^a-zA-Z0-9_-]/i', '', $param);
 
         case PARAM_SAFEPATH:
-            // Remove everything not a-zA-Z0-9/_- .
-            return preg_replace('/[^a-zA-Z0-9\/_-]/i', '', $param);
+            // Replace MS \ separators.
+            $param = str_replace('\\', '/', $param);
+            // Remove any number of ../ to prevent path traversal.
+            $param = preg_replace('/\.\.+\//', '', $param);
+            // Remove everything not a-zA-Z0-9/:_- .
+            $param = preg_replace('/[^a-zA-Z0-9\/:_-]/i', '', $param);
+            // Remove leading slash.
+            $param = ltrim($param, '/');
+            if ($param === '.') {
+                $param = '';
+            }
+            return $param;
 
         case PARAM_FILE:
             // Strip all suspicious characters from filename.

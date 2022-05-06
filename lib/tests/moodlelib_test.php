@@ -839,6 +839,40 @@ class core_moodlelib_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * Provide some tested base url and expected results.
+     *
+     * @return array Array of tested base url and expected results.
+     */
+    public function clean_param_safepath_provider(): array {
+        return [
+            // MS separator test.
+            ['c:\temp', 'c:/temp'],
+
+            // Leading slash test.
+            ['/tmp/', 'tmp/'],
+
+            // Path traversal test.
+            ['../../../../../etc/', 'etc/'],
+            ['../', ''],
+            ['.../...//', ''],
+            ['.', '']
+        ];
+    }
+
+    /**
+     * Test clean_param() method with PARAM_SAFEPATH type.
+     *
+     * @dataProvider clean_param_safepath_provider
+     * @covers ::clean_param
+     * @param string $path
+     * @param string $expected
+     */
+    public function test_clean_param_safepath(string $path, string $expected) {
+        $result = clean_param($path, PARAM_SAFEPATH);
+        $this->assertSame($expected, $result);
+    }
+
     public function test_validate_param() {
         try {
             $param = validate_param('11a', PARAM_INT);
