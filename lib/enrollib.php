@@ -3440,4 +3440,38 @@ abstract class enrol_plugin {
         }
         return $errors;
     }
+
+    /**
+     * Fill custom fields data for a given enrolment plugin.
+     *
+     * @param array $enrolmentdata enrolment data.
+     * @param int $courseid Course ID.
+     * @return array Updated enrolment data with custom fields info.
+     */
+    public function fill_enrol_custom_fields(array $enrolmentdata, int $courseid) : array {
+        return $enrolmentdata;
+    }
+
+    /**
+     * Check if data is valid for a given enrolment plugin
+     *
+     * @param array $enrolmentdata enrolment data to validate.
+     * @param int|null $courseid Course ID.
+     * @return array Errors
+     */
+    public function validate_enrol_plugin_data(array $enrolmentdata, ?int $courseid = null) : array {
+        return [];
+    }
+
+    /**
+     * Check if plugin custom data is allowed in relevant context.
+     *
+     * @param array $enrolmentdata enrolment data to validate.
+     * @param int|null $courseid Course ID.
+     * @return lang_string|null Error
+     */
+    public function validate_plugin_data_context(array $enrolmentdata, ?int $courseid = null) : ?lang_string {
+        return null;
+    }
+
 }

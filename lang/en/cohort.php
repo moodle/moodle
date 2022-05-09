@@ -38,6 +38,7 @@ $string['cohorts'] = 'Cohorts';
 $string['cohortsin'] = '{$a}: available cohorts';
 $string['assigncohorts'] = 'Assign cohort members';
 $string['component'] = 'Source';
+$string['contextcohortnotallowed'] = 'Cohort <b>{$a}</b> not allowed in this context.';
 $string['contextnotfound'] = 'Context <b>{$a}</b> not found or you don\'t have permission to create a cohort there. The default context will be used.';
 $string['csvcontainserrors'] = 'Errors were found in CSV data. See details below.';
 $string['csvcontainswarnings'] = 'Warnings were found in CSV data. See details below.';

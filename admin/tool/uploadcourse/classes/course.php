@@ -956,9 +956,13 @@ class tool_uploadcourse_course {
                 }
             }
 
-            if ($courseid) {
-                $plugin = $enrolmentplugins[$method];
+            $plugin = $enrolmentplugins[$method];
+            $errors += $plugin->validate_enrol_plugin_data($options, $courseid);
+            if ($errors) {
+                break;
+            }
 
+            if ($courseid) {
                 // Find matching instances by enrolment method.
                 $methodinstances = array_filter($instances, static function (stdClass $instance) use ($method) {
                     return (strcmp($instance->enrol, $method) == 0);
@@ -1053,10 +1057,16 @@ class tool_uploadcourse_course {
                 $plugin = $enrolmentplugins[$enrolmethod];
 
                 $status = ($todisable) ? ENROL_INSTANCE_DISABLED : ENROL_INSTANCE_ENABLED;
+                $method = $plugin->fill_enrol_custom_fields($method, $course->id);
 
                 // Create a new instance if necessary.
                 if (empty($instance) && $plugin->can_add_instance($course->id)) {
-                    $instanceid = $plugin->add_default_instance($course);
+                    $error = $plugin->validate_plugin_data_context($method, $course->id);
+                    if ($error) {
+                        $this->error('contextnotallowed', $error);
+                        break;
+                    }
+                    $instanceid = $plugin->add_instance($course, $method);
                     $instance = $DB->get_record('enrol', ['id' => $instanceid]);
                     $instance->roleid = $plugin->get_config('roleid');
                     // On creation the user can decide the status.
