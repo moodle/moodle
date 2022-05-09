@@ -61,7 +61,7 @@ class custom_report_columns_sorting_exporter extends exporter {
                     'title' => ['type' => PARAM_TEXT],
                     'heading' => ['type' => PARAM_TEXT],
                     'sortdirection' => ['type' => PARAM_INT],
-                    'sortenabled' => ['type' => PARAM_INT],
+                    'sortenabled' => ['type' => PARAM_BOOL],
                     'sortorder' => ['type' => PARAM_INT],
                     'sorticon' => [
                         'type' => [
@@ -120,7 +120,7 @@ class custom_report_columns_sorting_exporter extends exporter {
                 'title' => $columntitle,
                 'heading' => $columnheading !== '' ? $columnheading : $columntitle,
                 'sortdirection' => $persistent->get('sortdirection'),
-                'sortenabled' => (int)$persistent->get('sortenabled'),
+                'sortenabled' => $persistent->get('sortenabled'),
                 'sortorder' => $persistent->get('sortorder'),
                 'sorticon' => $sorticon->export_for_pix(),
                 'movetitle' => get_string('movesorting', 'core_reportbuilder', $columntitle),
