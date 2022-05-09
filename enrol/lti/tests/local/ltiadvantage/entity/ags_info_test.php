@@ -286,6 +286,35 @@ class ags_info_test extends \advanced_testcase {
                     'exceptionmessage' => "Scope must be a string value"
                 ]
             ],
+            'Claim contains a single lineitem URL only with valid scopes' => [
+                'args' => [
+                    'lineitemsurl' => null,
+                    'lineitemurl' => new \moodle_url('https://platform.example.org/10/lineitems/4/lineitem'),
+                    'scopes' => [
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/score'
+                    ]
+                ],
+                'expectations' => [
+                    'valid' => true,
+                    'lineitemscope' => null,
+                    'scorescope' => 'https://purl.imsglobal.org/spec/lti-ags/scope/score',
+                    'resultscope' => null
+                ]
+            ],
+            'Claim contains no lineitems URL or lineitem URL' => [
+                'args' => [
+                    'lineitemsurl' => null,
+                    'lineitemurl' => null,
+                    'scopes' => [
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/score'
+                    ]
+                ],
+                'expectations' => [
+                    'valid' => false,
+                    'exception' => \coding_exception::class,
+                    'exceptionmessage' => "Missing lineitem or lineitems URL"
+                ]
+            ],
         ];
     }
 }
