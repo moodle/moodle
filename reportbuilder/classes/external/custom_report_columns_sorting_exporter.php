@@ -53,7 +53,6 @@ class custom_report_columns_sorting_exporter extends exporter {
         return [
             'hassortablecolumns' => [
                 'type' => PARAM_BOOL,
-                'optional' => true,
             ],
             'sortablecolumns' => [
                 'type' => [
@@ -73,12 +72,10 @@ class custom_report_columns_sorting_exporter extends exporter {
                     'movetitle' => ['type' => PARAM_TEXT],
                     'sortenabledtitle' => ['type' => PARAM_TEXT],
                 ],
-                'optional' => true,
                 'multiple' => true,
             ],
             'helpicon' => [
                 'type' => PARAM_RAW,
-                'optional' => true,
             ],
         ];
     }
