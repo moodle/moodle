@@ -30,8 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
 
-define('DEFAULT_QUESTIONS_PER_PAGE', 20);
-define('MAXIMUM_QUESTIONS_PER_PAGE', 1000);
+define('DEFAULT_QUESTIONS_PER_PAGE', 100);
+define('MAXIMUM_QUESTIONS_PER_PAGE', 4000);
 
 function get_module_from_cmid($cmid) {
     global $CFG, $DB;
@@ -252,10 +252,12 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
  * @param string $edittab Code for this edit tab
  * @param string $baseurl The name of the script calling this funciton. For examle 'qusetion/edit.php'.
  * @param array $params The provided parameters to construct the resources with.
+ * @param int $defaultquestionsperpage number of questions per page, if not given in the URL.
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
-function question_build_edit_resources($edittab, $baseurl, $params) {
-    global $DB, $PAGE, $CFG;
+function question_build_edit_resources($edittab, $baseurl, $params,
+        $defaultquestionsperpage = DEFAULT_QUESTIONS_PER_PAGE) {
+    global $DB;
 
     $thispageurl = new moodle_url($baseurl);
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
@@ -372,8 +374,12 @@ function question_build_edit_resources($edittab, $baseurl, $params) {
         $pagevars['qpage'] = 0;
     }
 
-    $pagevars['qperpage'] = question_set_or_get_user_preference(
-            'qperpage', $qperpage, DEFAULT_QUESTIONS_PER_PAGE, $thispageurl);
+    if ($defaultquestionsperpage == DEFAULT_QUESTIONS_PER_PAGE) {
+        $pagevars['qperpage'] = question_set_or_get_user_preference(
+                'qperpage', $qperpage, DEFAULT_QUESTIONS_PER_PAGE, $thispageurl);
+    } else {
+        $pagevars['qperpage'] = $qperpage ?? $defaultquestionsperpage;
+    }
 
     $defaultcategory = question_make_default_categories($contexts->all());
 
