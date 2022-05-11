@@ -1,6 +1,11 @@
 This files describes API changes in /backup/*,
 information provided here is intended especially for developers.
 
+=== 3.11.7 ===
+
+* The class core_backup\copy\copy in backup/util/ui/classes/copy.php has been deprecated, please use copy_helper
+  from backup/util/helper/copy_helper.class.php instead.
+
 === 3.11.6 ===
 
 * Backup UI labels now accept empty/whitespace-only contents.
