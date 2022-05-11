@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.0.2 ===
+* The core renderer `edit_button` method now accepts an optional `$method` argument (get/post) for the button
+
 === 4.0 ===
 
 * To better detect wrong floats (like, for example, unformatted, using local-dependent separators ones) a number of
