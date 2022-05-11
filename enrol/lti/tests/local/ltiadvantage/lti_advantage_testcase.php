@@ -130,11 +130,12 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
      * @param bool $nrps whether to include a mock NRPS claim or not.
      * @param array|null $migrationclaiminfo contains consumer key, secret and any fields which are sent in the claim.
      * @param array|null $customparams an array of custom params to send, or null to just use defaults.
+     * @param mixed $aud the array or string value of aud to use in the mock launch data.
      * @return LtiMessageLaunch the mock launch object with test launch data.
      */
     protected function get_mock_launch(\stdClass $resource, array $mockuser,
             ?string $resourcelinkid = null, bool $ags = true, bool $nrps = true, ?array $migrationclaiminfo = null,
-            ?array $customparams = null): LtiMessageLaunch {
+            ?array $customparams = null, $aud = '123'): LtiMessageLaunch {
 
         $mocklaunch = $this->getMockBuilder(LtiMessageLaunch::class)
             ->onlyMethods(['getLaunchData'])
@@ -144,14 +145,14 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
             ->method('getLaunchData')
             ->will($this->returnCallback(
                 function()
-                use ($resource, $mockuser, $resourcelinkid, $migrationclaiminfo, $ags, $nrps, $customparams) {
+                use ($resource, $mockuser, $resourcelinkid, $migrationclaiminfo, $ags, $nrps, $customparams, $aud) {
                     // This simulates the data in the jwt['body'] of a real resource link launch.
                     // Real launches would of course have this data and authenticity of the user verified.
                     $rltitle = $resourcelinkid ? "Resource link $resourcelinkid in platform" : "Resource link in platform";
                     $rlid = $resourcelinkid ?: '12345';
                     $data = [
                         'iss' => $this->issuer, // Must match registration in create_test_environment.
-                        'aud' => '123', // Must match registration in create_test_environment.
+                        'aud' => $aud, // Must match registration in create_test_environment.
                         'sub' => $mockuser['user_id'], // User id on the platform site.
                         'exp' => time() + 60,
                         'nonce' => 'some-nonce-value-123',
