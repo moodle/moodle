@@ -621,7 +621,7 @@ class sync_members_test extends \lti_advantage_testcase {
 
         // Launch the tool for a user.
         $mockinstructor = $this->get_mock_launch_users_with_ids([1])[0];
-        $mocklaunch = $this->get_mock_launch($resource, $mockinstructor, null, false, false);
+        $mocklaunch = $this->get_mock_launch($resource, $mockinstructor, null, null, false);
         $launchservice = $this->get_tool_launch_service();
         $instructoruser = $this->lti_advantage_user_authenticates('1');
         $launchservice->user_launches_tool($instructoruser, $mocklaunch);
@@ -708,7 +708,7 @@ class sync_members_test extends \lti_advantage_testcase {
         }
 
         // Mock the launch for the specified user.
-        $mocklaunch = $this->get_mock_launch($resource, $launchdata['user'], null, true, true,
+        $mocklaunch = $this->get_mock_launch($resource, $launchdata['user'], null, [], true,
             $launchdata['launch_migration_claim']);
 
         // Perform the launch.
