@@ -29,6 +29,7 @@
 
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/my/lib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
 redirect_if_major_upgrade_required();
 
@@ -77,6 +78,13 @@ if ($coursecat && ($category = core_course_category::get_nearest_editable_subcat
 if ($coursecat && ($category = core_course_category::get_nearest_editable_subcategory($coursecat, ['manage']))) {
     // The user has the capability to manage the course category.
     $coursemanagemenu['manageurl'] = new moodle_url('/course/management.php', ['categoryid' => $category->id]);
+}
+if ($coursecat) {
+    $category = core_course_category::get_nearest_editable_subcategory($coursecat, ['moodle/course:request']);
+    if ($category && $category->can_request_course()) {
+        $coursemanagemenu['courserequesturl'] = new moodle_url('/course/request.php', ['categoryid' => $category->id]);
+
+    }
 }
 if (!empty($coursemanagemenu)) {
     // Render the course management menu.
