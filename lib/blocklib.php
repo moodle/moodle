@@ -1688,8 +1688,12 @@ class block_manager {
      * @return \core\navigation\views\secondary
      */
     protected function get_secondarynav(block_base $block): \core\navigation\views\secondary {
-        $class = "core_block\\local\\views\\secondary";
-        if (class_exists("block_{$block->name()}\\local\\views\\secondary")) {
+        $class = "core_block\\navigation\\views\\secondary";
+        if (class_exists("block_{$block->name()}\\navigation\\views\\secondary")) {
+            $class = "block_{$block->name()}\\navigation\\views\\secondary";
+        } else if (class_exists("block_{$block->name()}\\local\\views\\secondary")) {
+            // For backwards compatibility, support the old location for this class (it was in a
+            // 'local' namespace which shouldn't be used for core APIs).
             $class = "block_{$block->name()}\\local\\views\\secondary";
         }
         $secondarynav = new $class($this->page);
