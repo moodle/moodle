@@ -135,74 +135,11 @@ class copy  {
      * @return array $copyids THe backup and restore controller ids.
      */
     public function create_copy(): array {
-        global $USER;
-        $copyids = array();
-
-        // Create the initial backupcontoller.
-        $bc = new \backup_controller(\backup::TYPE_1COURSE, $this->copydata->courseid, \backup::FORMAT_MOODLE,
-            \backup::INTERACTIVE_NO, \backup::MODE_COPY, $USER->id, \backup::RELEASESESSION_YES);
-        $copyids['backupid'] = $bc->get_backupid();
-
-        // Create the initial restore contoller.
-        list($fullname, $shortname) = \restore_dbops::calculate_course_names(
-            0, get_string('copyingcourse', 'backup'), get_string('copyingcourseshortname', 'backup'));
-        $newcourseid = \restore_dbops::create_new_course($fullname, $shortname, $this->copydata->category);
-        $rc = new \restore_controller($copyids['backupid'], $newcourseid,
-            \backup::INTERACTIVE_NO, \backup::MODE_COPY, $USER->id,
-            \backup::TARGET_NEW_COURSE);
-        $copyids['restoreid'] = $rc->get_restoreid();
-
-        // Configure the controllers based on the submitted data.
-        $copydata = $this->copydata;
-        $copydata->copyids = $copyids;
+        debugging('The method \core_backup\copy\copy::create_copy() is deprecated.
+            Please use the methods provided by copy_helper instead.', DEBUG_DEVELOPER);
+        $copydata = clone($this->copydata);
         $copydata->keptroles = $this->roles;
-        $bc->set_copy($copydata);
-        $bc->set_status(\backup::STATUS_AWAITING);
-        $bc->get_status();
-
-        $rc->set_copy($copydata);
-        $rc->save_controller();
-
-        // Create the ad-hoc task to perform the course copy.
-        $asynctask = new \core\task\asynchronous_copy_task();
-        $asynctask->set_blocking(false);
-        $asynctask->set_custom_data($copyids);
-        \core\task\manager::queue_adhoc_task($asynctask);
-
-        // Clean up the controller.
-        $bc->destroy();
-
-        return $copyids;
-    }
-
-    /**
-     * Filters an array of copy records by course ID.
-     *
-     * @param array $copyrecords
-     * @param int $courseid
-     * @return array $copies Filtered array of records.
-     */
-    static private function filter_copies_course(array $copyrecords, int $courseid): array {
-        $copies = array();
-
-        foreach ($copyrecords as $copyrecord) {
-            if ($copyrecord->operation == \backup::OPERATION_RESTORE) { // Restore records.
-                if ($copyrecord->status == \backup::STATUS_FINISHED_OK
-                    || $copyrecord->status == \backup::STATUS_FINISHED_ERR) {
-                        continue;
-                } else {
-                    $rc = \restore_controller::load_controller($copyrecord->restoreid);
-                    if ($rc->get_copy()->courseid == $courseid) {
-                        $copies[] = $copyrecord;
-                    }
-                }
-            } else { // Backup records.
-                if ($copyrecord->itemid == $courseid) {
-                    $copies[] = $copyrecord;
-                }
-            }
-        }
-        return $copies;
+        return \copy_helper::create_copy($copydata);
     }
 
     /**

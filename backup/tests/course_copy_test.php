@@ -163,15 +163,14 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
 
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $result = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $result = \copy_helper::create_copy($copydata);
 
         // Load the controllers, to extract the data we need.
         $bc = \backup_controller::load_controller($result['backupid']);
         $rc = \restore_controller::load_controller($result['restoreid']);
 
         // Check the backup controller.
-        $this->assertEquals($result, $bc->get_copy()->copyids);
         $this->assertEquals(backup::MODE_COPY, $bc->get_mode());
         $this->assertEquals($this->course->id, $bc->get_courseid());
         $this->assertEquals(backup::TYPE_1COURSE, $bc->get_type());
@@ -180,7 +179,6 @@ class course_copy_test extends \advanced_testcase {
         $newcourseid = $rc->get_courseid();
         $newcourse = get_course($newcourseid);
 
-        $this->assertEquals($result, $rc->get_copy()->copyids);
         $this->assertEquals(get_string('copyingcourse', 'backup'), $newcourse->fullname);
         $this->assertEquals(get_string('copyingcourseshortname', 'backup'), $newcourse->shortname);
         $this->assertEquals(backup::MODE_COPY, $rc->get_mode());
@@ -222,11 +220,11 @@ class course_copy_test extends \advanced_testcase {
         $formdata2->shortname = 'tree';
 
         // Create some copies.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $result = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $result = \copy_helper::create_copy($copydata);
 
         // Backup, awaiting.
-        $copies = \core_backup\copy\copy::get_copies($USER->id);
+        $copies = \copy_helper::get_copies($USER->id);
         $this->assertEquals($result['backupid'], $copies[0]->backupid);
         $this->assertEquals($result['restoreid'], $copies[0]->restoreid);
         $this->assertEquals(\backup::STATUS_AWAITING, $copies[0]->status);
@@ -236,7 +234,7 @@ class course_copy_test extends \advanced_testcase {
 
         // Backup, in progress.
         $bc->set_status(\backup::STATUS_EXECUTING);
-        $copies = \core_backup\copy\copy::get_copies($USER->id);
+        $copies = \copy_helper::get_copies($USER->id);
         $this->assertEquals($result['backupid'], $copies[0]->backupid);
         $this->assertEquals($result['restoreid'], $copies[0]->restoreid);
         $this->assertEquals(\backup::STATUS_EXECUTING, $copies[0]->status);
@@ -244,19 +242,19 @@ class course_copy_test extends \advanced_testcase {
 
         // Restore, ready to process.
         $bc->set_status(\backup::STATUS_FINISHED_OK);
-        $copies = \core_backup\copy\copy::get_copies($USER->id);
-        $this->assertEquals($result['backupid'], $copies[0]->backupid);
+        $copies = \copy_helper::get_copies($USER->id);
+        $this->assertEquals(null, $copies[0]->backupid);
         $this->assertEquals($result['restoreid'], $copies[0]->restoreid);
         $this->assertEquals(\backup::STATUS_REQUIRE_CONV, $copies[0]->status);
         $this->assertEquals(\backup::OPERATION_RESTORE, $copies[0]->operation);
 
         // No records.
         $bc->set_status(\backup::STATUS_FINISHED_ERR);
-        $copies = \core_backup\copy\copy::get_copies($USER->id);
+        $copies = \copy_helper::get_copies($USER->id);
         $this->assertEmpty($copies);
 
-        $coursecopy2 = new \core_backup\copy\copy($formdata2);
-        $result2 = $coursecopy2->create_copy();
+        $copydata2 = \copy_helper::process_formdata($formdata2);
+        $result2 = \copy_helper::create_copy($copydata2);
         // Set the second copy to be complete.
         $bc = \backup_controller::load_controller($result2['backupid']);
         $bc->set_status(\backup::STATUS_FINISHED_OK);
@@ -265,7 +263,7 @@ class course_copy_test extends \advanced_testcase {
         $rc->set_status(\backup::STATUS_FINISHED_OK);
 
         // No records.
-        $copies = \core_backup\copy\copy::get_copies($USER->id);
+        $copies = \copy_helper::get_copies($USER->id);
         $this->assertEmpty($copies);
     }
 
@@ -291,11 +289,11 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 5;
 
         // Create some copies.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        \copy_helper::create_copy($copydata);
 
         // No copies match this course id.
-        $copies = \core_backup\copy\copy::get_copies($USER->id, ($this->course->id + 1));
+        $copies = \copy_helper::get_copies($USER->id, ($this->course->id + 1));
         $this->assertEmpty($copies);
     }
 
@@ -321,13 +319,13 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 5;
 
         // Create some copies.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        \copy_helper::create_copy($copydata);
 
         delete_course($this->course->id, false);
 
         // No copies match this course id as it has been deleted.
-        $copies = \core_backup\copy\copy::get_copies($USER->id, ($this->course->id));
+        $copies = \copy_helper::get_copies($USER->id, ($this->course->id));
         $this->assertEmpty($copies);
     }
 
@@ -353,8 +351,8 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 5;
 
         // Create the course copy records and associated ad-hoc task.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $copyids = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $copyids = \copy_helper::create_copy($copydata);
 
         $courseid = $this->course->id;
 
@@ -430,8 +428,8 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 0;
 
         // Create the course copy records and associated ad-hoc task.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $copyids = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $copyids = \copy_helper::create_copy($copydata);
 
         $courseid = $this->course->id;
 
@@ -499,8 +497,8 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 5;
 
         // Create the course copy records and associated ad-hoc task.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $copyids = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $copyids = \copy_helper::create_copy($copydata);
 
         $courseid = $this->course->id;
 
@@ -568,8 +566,8 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 5;
 
         // Create the course copy records and associated ad-hoc task.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $copyids = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $copyids = \copy_helper::create_copy($copydata);
 
         $courseid = $this->course->id;
 
@@ -627,6 +625,7 @@ class course_copy_test extends \advanced_testcase {
 
         // Expect and exception as form data is incomplete.
         $this->expectException(\moodle_exception::class);
-        new \core_backup\copy\copy($formdata);
+        $copydata = \copy_helper::process_formdata($formdata);
+        \copy_helper::create_copy($copydata);
     }
 }
