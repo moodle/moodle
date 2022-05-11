@@ -72,17 +72,15 @@ class controller_test extends \advanced_testcase {
     }
 
     /**
-     * Test set copy method.
+     * Test instantiating a restore controller for a course copy without providing copy data.
+     *
+     * @covers \restore_controller::__construct
      */
-    public function test_base_controller_set_copy() {
-        $this->expectException(\backup_controller_exception::class);
-        $copy = new \stdClass();
+    public function test_restore_controller_copy_without_copydata() {
+        $this->expectException(\restore_controller_exception::class);
 
-        // Set up controller as a non-copy operation.
-        $bc = new \backup_controller(backup::TYPE_1COURSE, $this->courseid, backup::FORMAT_MOODLE,
-            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $this->userid, backup::RELEASESESSION_YES);
-
-        $bc->set_copy($copy);
+        new \restore_controller(1729, $this->courseid, backup::INTERACTIVE_NO, backup::MODE_COPY,
+                $this->userid, backup::TARGET_NEW_COURSE);
     }
 
     /*

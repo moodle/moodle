@@ -48,8 +48,12 @@ class backup_cleanup_task extends scheduled_task {
     public function execute() {
         global $DB;
 
-        $loglifetime = get_config('backup', 'loglifetime');
+        $sql = 'SELECT * FROM {backup_controllers} WHERE purpose = ? AND status <> ?';
+        $params = [\backup::MODE_COPY, \backup::STATUS_FINISHED_OK];
+        $copyrecords = $DB->get_records_sql($sql, $params);
+        \copy_helper::cleanup_orphaned_copy_controllers($copyrecords);
 
+        $loglifetime = get_config('backup', 'loglifetime');
         if (empty($loglifetime)) {
             mtrace('The \'loglifetime\' config is not set. Can\'t proceed and delete old backup records.');
             return;

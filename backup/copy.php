@@ -24,6 +24,7 @@
  */
 
 require_once('../config.php');
+require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -71,8 +72,8 @@ if ($mform->is_cancelled()) {
 } else if ($mdata = $mform->get_data()) {
 
     // Process the form and create the copy task.
-    $backupcopy = new \core_backup\copy\copy($mdata);
-    $backupcopy->create_copy();
+    $copydata = \copy_helper::process_formdata($mdata);
+    \copy_helper::create_copy($copydata);
 
     if (!empty($mdata->submitdisplay)) {
         // Redirect to the copy progress overview.

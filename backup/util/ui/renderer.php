@@ -1022,7 +1022,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $tabledata = array();
 
         // Get all in progress course copies for this user.
-        $copies = \core_backup\copy\copy::get_copies($userid, $courseid);
+        $copies = \copy_helper::get_copies($userid, $courseid);
 
         foreach ($copies as $copy) {
             $sourceurl = new \moodle_url('/course/view.php', array('id' => $copy->sourceid));
@@ -1030,7 +1030,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $tablerow = array(
                 html_writer::link($sourceurl, $copy->source),
                 $copy->destination,
-                userdate($copy->time),
+                userdate($copy->timecreated),
                 get_string($copy->operation),
                 $this->get_status_display($copy->status, $copy->backupid, $copy->restoreid, $copy->operation)
             );
