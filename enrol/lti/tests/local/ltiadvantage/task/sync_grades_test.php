@@ -394,7 +394,7 @@ class sync_grades_test extends \lti_advantage_testcase {
 
         // Launch the resource for an instructor which will create the domain objects needed for service calls.
         $teachermocklaunch = $this->get_mock_launch($resource, $this->get_mock_launch_users_with_ids(['1'], false)[0],
-            null, false);
+            null, null);
         $instructoruser = $this->getDataGenerator()->create_user();
         [$userid] = $launchservice->user_launches_tool($instructoruser, $teachermocklaunch);
 
