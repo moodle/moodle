@@ -2819,9 +2819,10 @@ EOD;
      * Returns HTML to display a "Turn editing on/off" button in a form.
      *
      * @param moodle_url $url The URL + params to send through when clicking the button
+     * @param string $method
      * @return string HTML the button
      */
-    public function edit_button(moodle_url $url) {
+    public function edit_button(moodle_url $url, string $method = 'post') {
 
         if ($this->page->theme->haseditswitch == true) {
             return;
@@ -2835,7 +2836,7 @@ EOD;
             $editstring = get_string('turneditingon');
         }
 
-        return $this->single_button($url, $editstring);
+        return $this->single_button($url, $editstring, $method);
     }
 
     /**
