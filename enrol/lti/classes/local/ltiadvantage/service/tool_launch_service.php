@@ -87,7 +87,9 @@ class tool_launch_service {
         $launchdata = $launch->getLaunchData();
         $data = [
             'platform' => $launchdata['iss'],
-            'clientid' => $launchdata['aud'], // See LTI_Message_Launch::validate_registration for details about aud.
+            // The 'aud' property may be an array with one or more values, but can be a string if there is only one value.
+            // https://www.imsglobal.org/spec/security/v1p1#id-token.
+            'clientid' => is_array($launchdata['aud']) ? $launchdata['aud'][0] : $launchdata['aud'],
             'exp' => $launchdata['exp'],
             'nonce' => $launchdata['nonce'],
             'sub' => $launchdata['sub'],
