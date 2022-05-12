@@ -22,10 +22,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace enrol_lti;
+
 use core\session\manager;
-use enrol_lti\data_connector;
-use enrol_lti\helper;
-use enrol_lti\tool_provider;
 use IMSGlobal\LTI\HTTPMessage;
 use IMSGlobal\LTI\ToolProvider\ResourceLink;
 use IMSGlobal\LTI\ToolProvider\ToolConsumer;
@@ -41,10 +40,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_provider_testcase extends advanced_testcase {
+class tool_provider_test extends \advanced_testcase {
 
     /**
-     * @var stdClass $tool The LTI tool.
+     * @var \stdClass $tool The LTI tool.
      */
     protected $tool;
 
@@ -62,7 +61,7 @@ class tool_provider_testcase extends advanced_testcase {
         // Set this user as the admin.
         $this->setAdminUser();
 
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->enrolstartdate = time();
         $data->secret = 'secret';
         $toolrecord = $this->getDataGenerator()->create_lti_tool($data);
@@ -524,7 +523,7 @@ class tool_provider_testcase extends advanced_testcase {
      * Builds a dummy tool provider object.
      *
      * @param string $secret Consumer secret.
-     * @param array|stdClass $proxy Tool proxy data.
+     * @param array|\stdClass $proxy Tool proxy data.
      * @param null $resourcelinksettings Key-value array for resource link settings.
      * @return dummy_tool_provider
      */

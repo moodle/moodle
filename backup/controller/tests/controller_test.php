@@ -16,22 +16,33 @@
 
 /**
  * @package   core_backup
- * @category  phpunit
+ * @category  test
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_backup;
+
+use backup;
+use backup_controller;
+use restore_controller;
+
 defined('MOODLE_INTERNAL') || die();
 
-// Include all the needed stuff
+// Include all the needed stuff.
 global $CFG;
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
-/*
- * controller tests (all)
+/**
+ * Tests for the backup and restore controller classes.
+ *
+ * @package   core_backup
+ * @category  test
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_controller_testcase extends advanced_testcase {
+class controller_test extends \advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing

@@ -37,7 +37,7 @@ use core_tag_tag;
 use course_capability_assignment;
 use course_request;
 use core_course_category;
-use enrol_imsenterprise_testcase;
+use enrol_imsenterprise\imsenterprise_test;
 use external_api;
 use grade_item;
 use grading_manager;
@@ -59,7 +59,7 @@ require_once($CFG->dirroot . '/course/lib.php');
  * Course related unit tests
  *
  * @package    core_course
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1882,7 +1882,7 @@ class courselib_test extends advanced_testcase {
 
         // Create the XML file we want to use.
         $course->category = (array)$course->category;
-        $imstestcase = new enrol_imsenterprise_testcase();
+        $imstestcase = new imsenterprise_test();
         $imstestcase->imsplugin = enrol_get_plugin('imsenterprise');
         $imstestcase->set_test_config();
         $imstestcase->set_xml_file(false, array($course));

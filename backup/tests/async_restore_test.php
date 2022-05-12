@@ -14,13 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Asyncronhous restore tests.
- *
- * @package    core_backup
- * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup;
+use backup_controller;
+use restore_controller;
+use restore_dbops;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,10 +31,11 @@ require_once($CFG->libdir . '/completionlib.php');
 /**
  * Asyncronhous restore tests.
  *
+ * @package    core_backup
  * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_async_restore_testcase extends \core_privacy\tests\provider_testcase {
+class async_restore_test extends \advanced_testcase {
 
     /**
      * Tests the asynchronous backup.
@@ -62,7 +62,7 @@ class core_backup_async_restore_testcase extends \core_privacy\tests\provider_te
         // We need a grade, easiest is to add an assignment.
         $assignrow = $generator->create_module('assign', array(
                 'course' => $course->id));
-        $assign = new assign(context_module::instance($assignrow->cmid), false, false);
+        $assign = new \assign(\context_module::instance($assignrow->cmid), false, false);
         $item = $assign->get_grade_item();
 
         // Make a test grouping as well.
@@ -88,7 +88,7 @@ class core_backup_async_restore_testcase extends \core_privacy\tests\provider_te
         $bc->destroy();
 
         // Get the backup file.
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $fs = get_file_storage();
         $files = $fs->get_area_files($coursecontext->id, 'backup', 'course', false, 'id ASC');
         $backupfile = reset($files);
@@ -164,7 +164,7 @@ class core_backup_async_restore_testcase extends \core_privacy\tests\provider_te
         // We need a grade, easiest is to add an assignment.
         $assignrow = $generator->create_module('assign', array(
                 'course' => $course->id));
-        $assign = new assign(context_module::instance($assignrow->cmid), false, false);
+        $assign = new \assign(\context_module::instance($assignrow->cmid), false, false);
         $item = $assign->get_grade_item();
 
         // Make a test grouping as well.
@@ -189,7 +189,7 @@ class core_backup_async_restore_testcase extends \core_privacy\tests\provider_te
         $bc->destroy();
 
         // Get the backup file.
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $fs = get_file_storage();
         $files = $fs->get_area_files($coursecontext->id, 'backup', 'course', false, 'id ASC');
         $backupfile = reset($files);

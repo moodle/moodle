@@ -14,12 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package   core_backup
- * @category  phpunit
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use base_atom_struct_exception;
+use base_attribute;
+use base_element_attribute_exception;
+use mock_base_attribute;
+use mock_base_final_element;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -28,9 +29,16 @@ require_once(__DIR__.'/fixtures/structure_fixtures.php');
 
 
 /**
- * Unit test case the base_final_element class. Note: highly imbricated with base_nested_element class
+ * Unit test case the base_final_element class.
+ *
+ * Note: highly imbricated with base_nested_element class
+ *
+ * @package   core_backup
+ * @category  test
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_base_final_element_testcase extends basic_testcase {
+class basefinalelement_test extends \basic_testcase {
 
     /**
      * Correct base_final_element tests
@@ -128,27 +136,27 @@ class backup_base_final_element_testcase extends basic_testcase {
         try {
             $instance = new mock_base_final_element('');
             $this->fail("Expecting base_atom_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_atom_struct_exception);
         }
 
         // Create instance with incorrect (object) attribute
         try {
-            $obj = new stdClass;
+            $obj = new \stdClass;
             $obj->name = 'test_attr';
             $instance = new mock_base_final_element('TEST', $obj);
             $this->fail("Expecting base_element_attribute_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_element_attribute_exception);
         }
 
         // Create instance with array containing incorrect (object) attribute
         try {
-            $obj = new stdClass;
+            $obj = new \stdClass;
             $obj->name = 'test_attr';
             $instance = new mock_base_final_element('TEST', array($obj));
             $this->fail("Expecting base_element_attribute_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_element_attribute_exception);
         }
 
@@ -156,7 +164,7 @@ class backup_base_final_element_testcase extends basic_testcase {
         try {
             $instance = new mock_base_final_element('TEST', array('ATTR1', 'ATTR2', 'ATTR1'));
             $this->fail("Expecting base_element_attribute_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_element_attribute_exception);
         }
     }

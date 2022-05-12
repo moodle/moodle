@@ -14,24 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_favourites;
+
+use core_favourites\local\entity\favourite;
+
 /**
- * Testing the service layer within core_favourites.
+ * Test class covering the component_favourite_service within the service layer of favourites.
  *
  * @package    core_favourites
  * @category   test
  * @copyright  2019 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-use \core_favourites\local\entity\favourite;
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Test class covering the component_favourite_service within the service layer of favourites.
- *
- * @copyright  2019 Jake Dallimore <jrhdallimore@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class component_favourite_service_testcase extends advanced_testcase {
+class component_favourite_service_test extends \advanced_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -45,8 +40,8 @@ class component_favourite_service_testcase extends advanced_testcase {
         $user2context = \context_user::instance($user2->id);
         $course1 = self::getDataGenerator()->create_course();
         $course2 = self::getDataGenerator()->create_course();
-        $course1context = context_course::instance($course1->id);
-        $course2context = context_course::instance($course2->id);
+        $course1context = \context_course::instance($course1->id);
+        $course2context = \context_course::instance($course2->id);
         return [$user1context, $user2context, $course1context, $course2context];
     }
 
@@ -253,10 +248,10 @@ class component_favourite_service_testcase extends advanced_testcase {
         $fav6 = $user2service->create_favourite('core_course', 'whatnow', $course1context->instanceid, $course1context);
 
         // Favourite the courses again, but this time in another context.
-        $fav7 = $user1service->create_favourite('core_course', 'course', $course1context->instanceid, context_system::instance());
-        $fav8 = $user2service->create_favourite('core_course', 'course', $course1context->instanceid, context_system::instance());
-        $fav9 = $user1service->create_favourite('core_course', 'course', $course2context->instanceid, context_system::instance());
-        $fav10 = $user2service->create_favourite('core_course', 'course', $course2context->instanceid, context_system::instance());
+        $fav7 = $user1service->create_favourite('core_course', 'course', $course1context->instanceid, \context_system::instance());
+        $fav8 = $user2service->create_favourite('core_course', 'course', $course1context->instanceid, \context_system::instance());
+        $fav9 = $user1service->create_favourite('core_course', 'course', $course2context->instanceid, \context_system::instance());
+        $fav10 = $user2service->create_favourite('core_course', 'course', $course2context->instanceid, \context_system::instance());
 
         // Get a component_favourite_service to perform the type based deletion.
         $service = new \core_favourites\local\service\component_favourite_service('core_course', $repo);

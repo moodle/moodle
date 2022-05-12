@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test for H5P content bank plugin.
- *
- * @package    contenttype_h5p
- * @category   test
- * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace contenttype_h5p;
 
 /**
  * Test for H5P content bank plugin.
@@ -32,7 +25,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \contenttype_h5p\contenttype
  */
-class contenttype_h5p_contenttype_plugin_testcase extends advanced_testcase {
+class contenttype_h5p_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of delete_content().
@@ -41,7 +34,7 @@ class contenttype_h5p_contenttype_plugin_testcase extends advanced_testcase {
         global $CFG, $USER, $DB;
 
         $this->resetAfterTest();
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
 
         // Create users.
         $roleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
@@ -115,9 +108,9 @@ class contenttype_h5p_contenttype_plugin_testcase extends advanced_testcase {
         global $CFG;
 
         $this->resetAfterTest();
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $this->setAdminUser();
-        $contenttype = new contenttype_h5p\contenttype($systemcontext);
+        $contenttype = new contenttype($systemcontext);
 
         // Add an H5P fill the blanks file to the content bank.
         $filepath = $CFG->dirroot . '/h5p/tests/fixtures/filltheblanks.h5p';
@@ -157,9 +150,9 @@ class contenttype_h5p_contenttype_plugin_testcase extends advanced_testcase {
         global $CFG;
 
         $this->resetAfterTest();
-        $systemcontext = context_system::instance();
+        $systemcontext = \context_system::instance();
         $this->setAdminUser();
-        $contenttype = new contenttype_h5p\contenttype($systemcontext);
+        $contenttype = new contenttype($systemcontext);
 
         // Add an H5P fill the blanks file to the content bank.
         $filename = 'filltheblanks.h5p';

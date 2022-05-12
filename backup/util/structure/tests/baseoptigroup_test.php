@@ -14,23 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package   core_backup
- * @category  phpunit
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use base_atom_struct_exception;
+use base_element_struct_exception;
+use mock_base_attribute;
+use mock_base_final_element;
+use mock_base_nested_element;
+use mock_base_optigroup;
 
 defined('MOODLE_INTERNAL') || die();
 
 // Include all the needed stuff
 require_once(__DIR__.'/fixtures/structure_fixtures.php');
 
-
 /**
- * Unit test case the base_optigroup class. Note: highly imbricated with nested/final base elements
+ * Unit test case the base_optigroup class.
+ *
+ * Note: highly imbricated with nested/final base elements
+ *
+ * @package   core_backup
+ * @category  test
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_base_optigroup_testcase extends basic_testcase {
+class baseoptigroup_test extends \basic_testcase {
 
     /**
      * Correct creation tests (s)
@@ -75,27 +83,27 @@ class backup_base_optigroup_testcase extends basic_testcase {
         try {
             $instance = new mock_base_nested_element('');
             $this->fail("Expecting base_atom_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_atom_struct_exception);
         }
 
         // Create instance with incorrect (object) final element
         try {
-            $obj = new stdClass;
+            $obj = new \stdClass;
             $obj->name = 'test_attr';
             $instance = new mock_base_nested_element('TEST', null, $obj);
             $this->fail("Expecting base_element_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_element_struct_exception);
         }
 
         // Create instance with array containing incorrect (object) final element
         try {
-            $obj = new stdClass;
+            $obj = new \stdClass;
             $obj->name = 'test_attr';
             $instance = new mock_base_nested_element('TEST', null, array($obj));
             $this->fail("Expecting base_element_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_element_struct_exception);
         }
 
@@ -103,7 +111,7 @@ class backup_base_optigroup_testcase extends basic_testcase {
         try {
             $instance = new mock_base_nested_element('TEST', null, array('VAL1', 'VAL2', 'VAL1'));
             $this->fail("Expecting base_element_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_element_struct_exception);
         }
 
@@ -112,7 +120,7 @@ class backup_base_optigroup_testcase extends basic_testcase {
         try {
             $instance->get_value();
             $this->fail("Expecting base_element_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_element_struct_exception);
         }
 
@@ -121,7 +129,7 @@ class backup_base_optigroup_testcase extends basic_testcase {
         try {
             $instance->set_value('some_value');
             $this->fail("Expecting base_element_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_element_struct_exception);
         }
 
@@ -130,7 +138,7 @@ class backup_base_optigroup_testcase extends basic_testcase {
         try {
             $instance->clean_value('some_value');
             $this->fail("Expecting base_element_struct_exception exception, none occurred");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof base_element_struct_exception);
         }
     }

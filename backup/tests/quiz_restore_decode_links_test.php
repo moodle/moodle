@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_backup;
+
 defined('MOODLE_INTERNAL') || die();
 
 // Include all the needed stuff.
@@ -29,7 +31,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2020 Ilya Tregubov <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_quiz_decode_testcase extends \core_privacy\tests\provider_testcase {
+class quiz_restore_decode_links_test extends \advanced_testcase {
 
     /**
      * Test restore_decode_rule class
@@ -51,16 +53,16 @@ class restore_quiz_decode_testcase extends \core_privacy\tests\provider_testcase
         // Create questions.
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $cat = $questiongenerator->create_question_category(array('contextid' => $context->id));
         $question = $questiongenerator->create_question('multichoice', null, array('category' => $cat->id));
 
         // Add to the quiz.
         quiz_add_quiz_question($question->id, $quiz);
-        mod_quiz\external\submit_question_version::execute(
+        \mod_quiz\external\submit_question_version::execute(
                 $DB->get_field('quiz_slots', 'id', ['quizid' => $quiz->id, 'slot' => 1]), 1);
 
-        $questiondata = question_bank::load_question_data($question->id);
+        $questiondata = \question_bank::load_question_data($question->id);
 
         $firstanswer = array_shift($questiondata->options->answers);
         $DB->set_field('question_answers', 'answer', $CFG->wwwroot . '/course/view.php?id=' . $course->id,
@@ -81,7 +83,7 @@ class restore_quiz_decode_testcase extends \core_privacy\tests\provider_testcase
         $newcm = duplicate_module($course, get_fast_modinfo($course)->get_cm($quiz->cmid));
 
         $quizquestions = \mod_quiz\question\bank\qbank_helper::get_question_structure(
-                $newcm->instance, context_module::instance($newcm->id));
+                $newcm->instance, \context_module::instance($newcm->id));
         $questionids = [];
         foreach ($quizquestions as $quizquestion) {
             if ($quizquestion->questionid) {

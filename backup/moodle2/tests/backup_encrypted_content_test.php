@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for the handling of encrypted contents in backup and restore.
- *
- * @package core_backup
- * @copyright 2016 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup;
+use base_element_struct_exception;
+use encrypted_final_element;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,7 +27,14 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_custom_fields.php');
 
-class core_backup_encrypted_content_testscase extends advanced_testcase {
+/**
+ * Tests for the handling of encrypted contents in backup and restore.
+ *
+ * @package core_backup
+ * @copyright 2016 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class backup_encrypted_content_test extends \advanced_testcase {
 
     public function setUp(): void {
         if (!function_exists('openssl_encrypt')) {
@@ -64,7 +69,7 @@ class core_backup_encrypted_content_testscase extends advanced_testcase {
             set_config('backup_encryptkey', base64_encode($key), 'backup');
             $efe->set_value('tiny_secret');
             $this->fail('Expecting base_element_struct_exception exception, none happened');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('base_element_struct_exception', $e);
             $this->assertEquals('encrypted_final_element incorrect key length', $e->errorcode);
 

@@ -14,12 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    core_backup
- * @category   phpunit
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup;
+use backup_factory;
+use database_logger;
+use error_log_logger;
+use file_logger;
+use output_indented_logger;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,11 +36,13 @@ require_once($CFG->dirroot . '/backup/util/loggers/database_logger.class.php');
 require_once($CFG->dirroot . '/backup/util/loggers/file_logger.class.php');
 require_once($CFG->dirroot . '/backup/util/factories/backup_factory.class.php');
 
-
 /**
- * backup_factory tests (all)
+ * @package    core_backup
+ * @category   test
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_factories_testcase extends advanced_testcase {
+class factories_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $CFG;

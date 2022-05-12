@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for role filter.
- *
- * @package    tool_usertours
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace tool_usertours;
 
 /**
  * Tests for role filter.
@@ -31,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_usertours_role_filter_testcase extends advanced_testcase {
+class role_filter_test extends \advanced_testcase {
 
     /**
      * @var $course Test course
