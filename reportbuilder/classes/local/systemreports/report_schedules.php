@@ -102,7 +102,7 @@ class report_schedules extends system_report {
      * @return string
      */
     public function get_row_class(stdClass $row): string {
-        return $row->enabled ? '' : 'dimmed_text';
+        return $row->enabled ? '' : 'text-muted';
     }
 
     /**
