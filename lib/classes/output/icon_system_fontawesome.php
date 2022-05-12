@@ -496,6 +496,12 @@ class icon_system_fontawesome extends icon_system_font {
         if (isset($icon->attributes['aria-hidden'])) {
             $data['aria-hidden'] = $icon->attributes['aria-hidden'];
         }
+
+        // Flipping help icon direction in right-to-left languages.
+        if (right_to_left() && $data['key'] == "fa-question-circle text-info") {
+            $data['extraclasses'] = "fa-flip-horizontal";
+        }
+
         return $output->render_from_template('core/pix_icon_fontawesome', $data);
     }
 
