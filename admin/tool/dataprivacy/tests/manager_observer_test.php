@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_dataprivacy;
+
+use data_privacy_testcase;
+
+defined('MOODLE_INTERNAL') || die();
+require_once('data_privacy_testcase.php');
+
 /**
  * Tests for the manager observer.
  *
@@ -21,18 +28,7 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-require_once('data_privacy_testcase.php');
-
-/**
- * API tests.
- *
- * @package    tool_dataprivacy
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class tool_dataprivacy_manager_observer_testcase extends data_privacy_testcase {
+class manager_observer_test extends data_privacy_testcase {
     /**
      * Ensure that when users are configured as DPO, they are sent an message upon failure.
      */

@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Recycle bin tests.
- *
- * @package    tool_recyclebin
- * @copyright  2015 University of Kent
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace tool_recyclebin;
 
 /**
  * Recycle bin course tests.
@@ -31,10 +23,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_recyclebin_course_bin_tests extends advanced_testcase {
+class course_bin_test extends \advanced_testcase {
 
     /**
-     * @var stdClass $course
+     * @var \stdClass $course
      */
     protected $course;
 
@@ -72,7 +64,7 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
         course_delete_module($this->quiz->cmid);
 
         // Now, run the course module deletion adhoc task.
-        phpunit_util::run_all_adhoc_tasks();
+        \phpunit_util::run_all_adhoc_tasks();
 
         // Check the course module is now in the recycle bin.
         $this->assertEquals(1, $DB->count_records('tool_recyclebin_course'));
@@ -116,7 +108,7 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
         course_delete_module($this->quiz->cmid);
 
         // Now, run the course module deletion adhoc task.
-        phpunit_util::run_all_adhoc_tasks();
+        \phpunit_util::run_all_adhoc_tasks();
 
         // Try purging.
         $recyclebin = new \tool_recyclebin\course_bin($this->course->id);
@@ -141,7 +133,7 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
         course_delete_module($this->quiz->cmid);
 
         // Now, run the course module deletion adhoc task.
-        phpunit_util::run_all_adhoc_tasks();
+        \phpunit_util::run_all_adhoc_tasks();
 
         // Set deleted date to the distant past.
         $recyclebin = new \tool_recyclebin\course_bin($this->course->id);
@@ -157,7 +149,7 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
         course_delete_module($book->cmid);
 
         // Now, run the course module deletion adhoc task.
-        phpunit_util::run_all_adhoc_tasks();
+        \phpunit_util::run_all_adhoc_tasks();
 
         // Should have 2 items now.
         $this->assertEquals(2, count($recyclebin->get_items()));
@@ -223,7 +215,7 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
         // Delete quiz.
         $cm = get_coursemodule_from_instance('quiz', $this->quiz->id);
         course_delete_module($cm->id);
-        phpunit_util::run_all_adhoc_tasks();
+        \phpunit_util::run_all_adhoc_tasks();
         $quizzes = get_coursemodules_in_course('quiz', $this->course->id);
         $this->assertEquals(0, count($quizzes));
 
@@ -240,7 +232,7 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
         $attempts = quiz_get_user_attempts($cm->instance, $student->id);
         $this->assertEquals(1, count($attempts));
         $attempt = array_pop($attempts);
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
         $this->assertEquals($student->id, $attemptobj->get_userid());
         $this->assertEquals(true, $attemptobj->is_finished());
     }
@@ -270,7 +262,7 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
         // Delete quiz.
         $cm = get_coursemodule_from_instance('quiz', $this->quiz->id);
         course_delete_module($cm->id);
-        phpunit_util::run_all_adhoc_tasks();
+        \phpunit_util::run_all_adhoc_tasks();
         $quizzes = get_coursemodules_in_course('quiz', $this->course->id);
         $this->assertEquals(0, count($quizzes));
 
@@ -303,17 +295,17 @@ class tool_recyclebin_course_bin_tests extends advanced_testcase {
         quiz_add_quiz_question($numq->id, $quiz);
 
         // Create quiz attempt.
-        $quizobj = quiz::create($quiz->id, $student->id);
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quizobj = \quiz::create($quiz->id, $student->id);
+        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $timenow = time();
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $student->id);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
         $tosubmit = array(1 => array('answer' => '0'));
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($timenow, false);
     }
 }

@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Course copy tests.
- *
- * @package    core_backup
- * @copyright  2020 onward The Moodle Users Association <https://moodleassociation.org/>
- * @author     Matt Porritt <mattp@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use backup;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -37,7 +33,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @author     Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_course_copy_testcase extends advanced_testcase {
+class course_copy_test extends \advanced_testcase {
 
     /**
      *
@@ -88,7 +84,7 @@ class core_backup_course_copy_testcase extends advanced_testcase {
         // We need a grade, easiest is to add an assignment.
         $assignrow = $generator->create_module('assign', array(
             'course' => $course->id));
-        $assign = new assign(context_module::instance($assignrow->cmid), false, false);
+        $assign = new \assign(\context_module::instance($assignrow->cmid), false, false);
         $item = $assign->get_grade_item();
 
         // Make a test grouping as well.
@@ -384,7 +380,7 @@ class core_backup_course_copy_testcase extends advanced_testcase {
         $this->assertEquals(1.0, $postrestorerec->progress);
 
         // Check the restored course itself.
-        $coursecontext = context_course::instance($postrestorerec->itemid);
+        $coursecontext = \context_course::instance($postrestorerec->itemid);
         $users = get_enrolled_users($coursecontext);
 
         $modinfo = get_fast_modinfo($postrestorerec->itemid);
@@ -452,7 +448,7 @@ class core_backup_course_copy_testcase extends advanced_testcase {
         $postrestorerec = $DB->get_record('backup_controllers', array('backupid' => $copyids['restoreid']));
 
         // Check the restored course itself.
-        $coursecontext = context_course::instance($postrestorerec->itemid);
+        $coursecontext = \context_course::instance($postrestorerec->itemid);
         $users = get_enrolled_users($coursecontext);
 
         $modinfo = get_fast_modinfo($postrestorerec->itemid);
@@ -521,7 +517,7 @@ class core_backup_course_copy_testcase extends advanced_testcase {
         $postrestorerec = $DB->get_record('backup_controllers', array('backupid' => $copyids['restoreid']));
 
         // Check the restored course itself.
-        $coursecontext = context_course::instance($postrestorerec->itemid);
+        $coursecontext = \context_course::instance($postrestorerec->itemid);
         $users = get_enrolled_users($coursecontext);
 
         $modinfo = get_fast_modinfo($postrestorerec->itemid);
@@ -590,7 +586,7 @@ class core_backup_course_copy_testcase extends advanced_testcase {
         $postrestorerec = $DB->get_record('backup_controllers', array('backupid' => $copyids['restoreid']));
 
         // Check the restored course itself.
-        $coursecontext = context_course::instance($postrestorerec->itemid);
+        $coursecontext = \context_course::instance($postrestorerec->itemid);
         $users = get_enrolled_users($coursecontext);
 
         get_fast_modinfo($postrestorerec->itemid, 0, true);

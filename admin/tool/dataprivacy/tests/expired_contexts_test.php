@@ -14,25 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Expired contexts tests.
- *
- * @package    tool_dataprivacy
- * @copyright  2018 David Monllao
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-use tool_dataprivacy\api;
-use tool_dataprivacy\data_registry;
-use tool_dataprivacy\expired_context;
-use tool_dataprivacy\purpose;
-use tool_dataprivacy\purpose_override;
-use tool_dataprivacy\category;
-use tool_dataprivacy\contextlevel;
-use tool_dataprivacy\expired_contexts_manager;
-
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
+namespace tool_dataprivacy;
 
 /**
  * Expired contexts tests.
@@ -41,7 +23,7 @@ global $CFG;
  * @copyright  2018 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_dataprivacy_expired_contexts_testcase extends advanced_testcase {
+class expired_contexts_test extends \advanced_testcase {
 
     /**
      * Setup the basics with the specified retention period.

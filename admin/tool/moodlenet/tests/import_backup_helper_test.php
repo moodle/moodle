@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_moodlenet;
+
 /**
  * Unit tests for the import_backup_helper
  *
@@ -22,15 +24,7 @@
  * @copyright  2020 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-/**
- * Class import_backup_helper tests
- */
-class tool_moodlenet_import_backup_helper_testcase extends advanced_testcase {
+class import_backup_helper_test extends \advanced_testcase {
 
     /**
      * Test that the first available context with the capability to upload backup files is returned.
@@ -47,7 +41,7 @@ class tool_moodlenet_import_backup_helper_testcase extends advanced_testcase {
         $user5 = $this->getDataGenerator()->create_user();
 
         $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
 
         $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
         $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'editingteacher');
@@ -55,12 +49,12 @@ class tool_moodlenet_import_backup_helper_testcase extends advanced_testcase {
 
         $category = $this->getDataGenerator()->create_category();
         $rolerecord = $DB->get_record('role', ['shortname' => 'manager']);
-        $categorycontext = context_coursecat::instance($category->id);
+        $categorycontext = \context_coursecat::instance($category->id);
         $this->getDataGenerator()->role_assign($rolerecord->id, $user3->id, $categorycontext->id);
         $this->getDataGenerator()->role_assign($rolerecord->id, $user5->id, $categorycontext->id);
 
         $roleid = $this->getDataGenerator()->create_role();
-        $sitecontext = context_system::instance();
+        $sitecontext = \context_system::instance();
         assign_capability('moodle/restore:uploadfile', CAP_ALLOW, $roleid, $sitecontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
         $this->getDataGenerator()->role_assign($roleid, $user4->id, $sitecontext->id);

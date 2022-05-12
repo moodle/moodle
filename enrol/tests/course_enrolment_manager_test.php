@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_enrol;
+
+use course_enrolment_manager;
+
 /**
  * Test course_enrolment_manager parts.
  *
@@ -22,19 +26,7 @@
  * @copyright  2016 Ruslan Kabalin, Lancaster University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Test course_enrolment_manager parts.
- *
- * @package    core
- * @category   test
- * @copyright  2016 Ruslan Kabalin, Lancaster University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class core_course_enrolment_manager_testcase extends advanced_testcase {
+class course_enrolment_manager_test extends \advanced_testcase {
     /**
      * The course context used in tests.
      * @var stdClass
@@ -260,7 +252,7 @@ class core_course_enrolment_manager_testcase extends advanced_testcase {
      *
      * @return stdClass Test user
      */
-    protected function setup_for_user_identity_tests(): stdClass {
+    protected function setup_for_user_identity_tests(): \stdClass {
         // Configure extra fields to include one normal user field and one profile field, and
         // set the values for a new test user.
         $generator = $this->getDataGenerator();
