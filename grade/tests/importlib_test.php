@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for grade/import/lib.php.
- *
- * @package   core_grades
- * @category  phpunit
- * @copyright 2015 Adrian Greeve <adrian@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
+namespace core_grades;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,8 +23,13 @@ require_once($CFG->dirroot . '/grade/import/lib.php');
 
 /**
  * Tests grade_import_lib functions.
+ *
+ * @package   core_grades
+ * @category  test
+ * @copyright 2015 Adrian Greeve <adrian@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class core_grade_import_lib_test extends advanced_testcase {
+class importlib_test extends \advanced_testcase {
 
     /**
      * Import grades into 'grade_import_values' table. This is done differently in the various import plugins,
@@ -42,7 +40,7 @@ class core_grade_import_lib_test extends advanced_testcase {
      */
     private function import_grades($data) {
         global $DB, $USER;
-        $graderecord = new stdClass();
+        $graderecord = new \stdClass();
         $graderecord->importcode = $data['importcode'];
         if (isset($data['itemid'])) {
             $graderecord->itemid = $data['itemid'];
@@ -86,9 +84,9 @@ class core_grade_import_lib_test extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
         $itemname = $assign->name;
-        $modulecontext = context_module::instance($assign->cmid);
+        $modulecontext = \context_module::instance($assign->cmid);
         // The generator returns a dummy object, lets get the real assign object.
-        $assign = new assign($modulecontext, false, false);
+        $assign = new \assign($modulecontext, false, false);
         $cm = $assign->get_course_module();
 
         // Enrol users in the course.
@@ -96,7 +94,7 @@ class core_grade_import_lib_test extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user2->id, $course->id);
 
         // Enter a new grade into an existing grade item.
-        $gradeitem = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod'));
+        $gradeitem = \grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod'));
 
         // Keep this value around for a test further down.
         $originalgrade = 55;
@@ -111,14 +109,14 @@ class core_grade_import_lib_test extends advanced_testcase {
         $this->assertTrue($status);
 
         // Get imported grade_grade.
-        $gradegrade = grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user1->id));
+        $gradegrade = \grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user1->id));
         $this->assertEquals($originalgrade, $gradegrade->finalgrade);
         // Overriden field will be a timestamp and will evaluate out to true.
         $this->assertTrue($gradegrade->is_overridden());
 
         // Create a new grade item and import into that.
         $importcode = get_new_importcode();
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->itemname = 'New grade item';
         $record->importcode = $importcode;
         $record->importer = $USER->id;
@@ -134,18 +132,18 @@ class core_grade_import_lib_test extends advanced_testcase {
 
         $status = grade_import_commit($course->id, $importcode, false, false);
         $this->assertTrue($status);
-        // Check that we have a new grade_item.
-        $gradeitem = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'manual'));
+        // Check that we have a new \grade_item.
+        $gradeitem = \grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'manual'));
         $this->assertEquals($record->itemname, $gradeitem->itemname);
         // Grades were imported.
-        $gradegrade = grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user1->id));
+        $gradegrade = \grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user1->id));
         $this->assertEquals($finalgrade, $gradegrade->finalgrade);
         // As this is a new item the grade has not been overridden.
         $this->assertFalse($gradegrade->is_overridden());
 
         // Import feedback only.
         $importcode = get_new_importcode();
-        $gradeitem = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod'));
+        $gradeitem = \grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod'));
 
         $originalfeedback = 'feedback can be useful';
         $this->import_grades(array(
@@ -158,14 +156,14 @@ class core_grade_import_lib_test extends advanced_testcase {
 
         $status = grade_import_commit($course->id, $importcode, true, false);
         $this->assertTrue($status);
-        $gradegrade = grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user1->id));
+        $gradegrade = \grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user1->id));
         // The final grade should be the same as the first record further up. We are only altering the feedback.
         $this->assertEquals($originalgrade, $gradegrade->finalgrade);
         $this->assertTrue($gradegrade->is_overridden());
 
         // Import grades only.
         $importcode = get_new_importcode();
-        $gradeitem = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod'));
+        $gradeitem = \grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod'));
 
         $finalgrade = 60;
         $this->import_grades(array(
@@ -178,7 +176,7 @@ class core_grade_import_lib_test extends advanced_testcase {
 
         $status = grade_import_commit($course->id, $importcode, false, false);
         $this->assertTrue($status);
-        $gradegrade = grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user1->id));
+        $gradegrade = \grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user1->id));
         $this->assertEquals($finalgrade, $gradegrade->finalgrade);
         // The final feedback should not have changed.
         $this->assertEquals($originalfeedback, $gradegrade->feedback);
@@ -186,7 +184,7 @@ class core_grade_import_lib_test extends advanced_testcase {
 
         // Check that printing of import status is correct.
         $importcode = get_new_importcode();
-        $gradeitem = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod'));
+        $gradeitem = \grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod'));
 
         $this->import_grades(array(
             'importcode' => $importcode,

@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests cleaning up the access tokens task.
- *
- * @package mod_lti
- * @category test
- * @copyright 2019 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace mod_lti\task;
 
 /**
  * Tests cleaning up the access tokens task.
@@ -33,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2019 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lti_clean_access_tokens_testcase extends advanced_testcase {
+class clean_access_tokens_test extends \advanced_testcase {
 
     /**
      * Test set up.
@@ -53,7 +44,7 @@ class mod_lti_clean_access_tokens_testcase extends advanced_testcase {
         $time = time();
 
         // Create an expired access token.
-        $token = new stdClass();
+        $token = new \stdClass();
         $token->typeid = 1;
         $token->scope = 'scope';
         $token->token = 'token';
@@ -69,7 +60,7 @@ class mod_lti_clean_access_tokens_testcase extends advanced_testcase {
         $t2id = $DB->insert_record('lti_access_tokens', $token);
 
         // Run the task.
-        $task = new \mod_lti\task\clean_access_tokens();
+        $task = new clean_access_tokens();
         $task->execute();
 
         // Check there is only one token now.

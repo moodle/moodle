@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests the migrate message data task.
- *
- * @package core_message
- * @category test
- * @copyright 2018 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_message\task;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +30,7 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @copyright 2018 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_message_migrate_message_data_task_testcase extends advanced_testcase {
+class migrate_message_data_test extends \advanced_testcase {
 
     /**
      * Test set up.
@@ -83,18 +76,18 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
         $m9 = $this->create_legacy_message_or_notification($user3->id, $user2->id, 9);
 
         // Let's delete some messages, not using API here as it does not use the legacy tables.
-        $messageupdate = new stdClass();
+        $messageupdate = new \stdClass();
         $messageupdate->id = $m1;
         $messageupdate->timeusertodeleted = $timedeleted1;
         $DB->update_record('message_read', $messageupdate);
 
-        $messageupdate = new stdClass();
+        $messageupdate = new \stdClass();
         $messageupdate->id = $m5;
         $messageupdate->timeuserfromdeleted = $timedeleted2;
         $DB->update_record('message', $messageupdate);
 
         // Now, let's execute the task for user 1.
-        $task = new \core_message\task\migrate_message_data();
+        $task = new migrate_message_data();
         $task->set_custom_data(
             [
                 'userid' => $user1->id
@@ -214,7 +207,7 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
         $this->create_legacy_message_or_notification($user3->id, $user2->id, 9, true);
 
         // Now, let's execute the task for user 1.
-        $task = new \core_message\task\migrate_message_data();
+        $task = new migrate_message_data();
         $task->set_custom_data(
             [
                 'userid' => $user1->id
@@ -281,7 +274,7 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
         $this->create_legacy_message_or_notification($user1->id, $user2->id, null, false, null, null);
 
         // Now, let's execute the task for user 1.
-        $task = new \core_message\task\migrate_message_data();
+        $task = new migrate_message_data();
         $task->set_custom_data(
             [
                 'userid' => $user1->id
@@ -309,7 +302,7 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
         $this->create_legacy_message_or_notification($user1->id, $user2->id, null, true, null, null);
 
         // Now, let's execute the task for user 1.
-        $task = new \core_message\task\migrate_message_data();
+        $task = new migrate_message_data();
         $task->set_custom_data(
             [
                 'userid' => $user1->id
@@ -336,14 +329,14 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
         $m1 = $this->create_legacy_message_or_notification($user1->id, $user1->id, null, false, null, null);
 
         // Let's delete the message for the 'user to' and 'user from' which in this case is the same user.
-        $messageupdate = new stdClass();
+        $messageupdate = new \stdClass();
         $messageupdate->id = $m1;
         $messageupdate->timeuserfromdeleted = time();
         $messageupdate->timeusertodeleted = time();
         $DB->update_record('message', $messageupdate);
 
         // Now, let's execute the task for the user.
-        $task = new \core_message\task\migrate_message_data();
+        $task = new migrate_message_data();
         $task->set_custom_data(
             [
                 'userid' => $user1->id
@@ -409,7 +402,7 @@ class core_message_migrate_message_data_task_testcase extends advanced_testcase 
 
         // Insert into the legacy 'message_popup' table if it is a notification.
         if ($notification) {
-            $mp = new stdClass();
+            $mp = new \stdClass();
             $mp->messageid = $id;
             $mp->isread = (!is_null($timeread)) ? 1 : 0;
 
