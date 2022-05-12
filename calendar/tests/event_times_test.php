@@ -14,25 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Event times tests.
- *
- * @package    core_calendar
- * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_calendar;
 
 use core_calendar\local\event\value_objects\event_times;
 
 /**
- * Event times testcase.
+ * Event times tests.
  *
+ * @package core_calendar
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_event_times_testcase extends advanced_testcase {
+class event_times_test extends \advanced_testcase {
     /**
      * Test event times class getters.
      *

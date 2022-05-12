@@ -14,19 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
-/**
- * PHPUnit tests for conversion API.
- *
- * @package    core_files
- * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-use core_files\conversion;
+namespace core_files;
 
 /**
  * PHPUnit tests for conversion persistent.
@@ -35,7 +23,7 @@ use core_files\conversion;
  * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_files_conversion_testcase extends advanced_testcase {
+class conversion_test extends \advanced_testcase {
 
     /**
      * Helper to create a stored file object with the given supplied content.
@@ -47,7 +35,7 @@ class core_files_conversion_testcase extends advanced_testcase {
      */
     protected function create_stored_file($filecontent = 'content', $filename = 'testfile.txt', $filerecord = []) {
         $filerecord = array_merge([
-                'contextid' => context_system::instance()->id,
+                'contextid' => \context_system::instance()->id,
                 'component' => 'core',
                 'filearea'  => 'unittest',
                 'itemid'    => 0,

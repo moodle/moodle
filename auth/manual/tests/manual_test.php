@@ -14,14 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Manual authentication tests.
- *
- * @package    auth_manual
- * @category   test
- * @copyright  2014 Gilles-Philippe Leblanc <gilles-philippe.leblanc@umontreal.ca>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace auth_manual;
+
+use auth_plugin_manual;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +31,7 @@ require_once($CFG->dirroot.'/auth/manual/auth.php');
  * @copyright  2014 Gilles-Philippe Leblanc <gilles-philippe.leblanc@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class auth_manual_testcase extends advanced_testcase {
+class manual_test extends \advanced_testcase {
 
     /** @var auth_plugin_manual Keeps the authentication plugin. */
     protected $authplugin;

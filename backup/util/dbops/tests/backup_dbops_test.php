@@ -16,10 +16,18 @@
 
 /**
  * @package    core_backup
- * @category   phpunit
+ * @category   test
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core_backup;
+
+use backup;
+use backup_controller;
+use backup_controller_dbops;
+use backup_controller_exception;
+use backup_dbops_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -28,9 +36,12 @@ global $CFG;
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
 /**
- * Backup dbops tests (all).
+ * @package    core_backup
+ * @category   test
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_dbops_testcase extends advanced_testcase {
+class backup_dbops_test extends \advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing
@@ -98,17 +109,17 @@ class backup_dbops_testcase extends advanced_testcase {
         try {
             $recid = backup_controller_dbops::save_controller($bc, 'lalala');
             $this->assertTrue(false, 'backup_dbops_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_dbops_exception);
             $this->assertEquals($e->errorcode, 'backup_controller_dbops_saving_checksum_mismatch');
         }
 
         // Try to save non backup_controller object
-        $bc = new stdclass();
+        $bc = new \stdClass();
         try {
             $recid = backup_controller_dbops::save_controller($bc, 'lalala');
             $this->assertTrue(false, 'backup_controller_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_controller_exception);
             $this->assertEquals($e->errorcode, 'backup_controller_expected');
         }
@@ -129,7 +140,7 @@ class backup_dbops_testcase extends advanced_testcase {
         try {
             $bc = backup_controller_dbops::load_controller('1234567890');
             $this->assertTrue(false, 'backup_dbops_exception expected');
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof backup_dbops_exception);
             $this->assertEquals($e->errorcode, 'backup_controller_dbops_nonexisting');
         }
@@ -150,7 +161,7 @@ class backup_dbops_testcase extends advanced_testcase {
 
         // Test encoding/decoding of backup_ids_temp,backup_files_temp encode/decode functions.
         // We need to handle both objects and data elements.
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->item1 = 10;
         $object->item2 = 'a String';
         $testarray = array($object, 10, null, 'string', array('a' => 'b', 1 => 1));
