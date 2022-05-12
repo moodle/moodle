@@ -72,6 +72,19 @@ class controller_test extends \advanced_testcase {
     }
 
     /**
+     * Test get_copy
+     *
+     * @covers \restore_controller::get_copy
+     */
+    public function test_restore_controller_get_copy() {
+        $copydata = (object)["some" => "copydata"];
+        $rc = new \restore_controller(1729, $this->courseid, backup::INTERACTIVE_NO, backup::MODE_COPY,
+                $this->userid, backup::TARGET_NEW_COURSE, null, backup::RELEASESESSION_NO, $copydata);
+
+        $this->assertEquals($copydata, $rc->get_copy());
+    }
+
+    /**
      * Test instantiating a restore controller for a course copy without providing copy data.
      *
      * @covers \restore_controller::__construct
