@@ -14,21 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Repository API unit tests
- *
- * @package   repository
- * @category  phpunit
- * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_repository;
+
+use repository;
+use repository_exception;
+use repository_type;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once("$CFG->dirroot/repository/lib.php");
 
-class core_repositorylib_testcase extends advanced_testcase {
+/**
+ * Repository API unit tests
+ *
+ * @package   core_repository
+ * @category  test
+ * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class repositorylib_test extends \advanced_testcase {
 
     /**
      * Installing repository tests
@@ -40,7 +45,7 @@ class core_repositorylib_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $repositorypluginname = 'dropbox';
         // override repository permission
         $capability = 'repository/' . $repositorypluginname . ':view';
@@ -68,7 +73,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         $fs = get_file_storage();
 
         $draftitemid = null;
-        $context = context_user::instance($USER->id);
+        $context = \context_user::instance($USER->id);
         file_prepare_draft_area($draftitemid, $context->id, 'phpunit', 'test_get_unused_filename', 1);
 
         $dummy = array(
@@ -122,7 +127,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         $fs = get_file_storage();
 
         $draftitemid = file_get_unused_draft_itemid();
-        $context = context_user::instance($USER->id);
+        $context = \context_user::instance($USER->id);
 
         $dummy = array(
             'contextid' => $context->id,
@@ -163,7 +168,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         $fs = get_file_storage();
 
         $draftitemid = file_get_unused_draft_itemid();
-        $context = context_user::instance($USER->id);
+        $context = \context_user::instance($USER->id);
 
         $dummy = [
             'contextid' => $context->id,
@@ -211,9 +216,9 @@ class core_repositorylib_testcase extends advanced_testcase {
     public function test_can_be_edited_by_user() {
         $this->resetAfterTest(true);
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $roleid = create_role('A role', 'arole', 'A role', '');
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
@@ -268,7 +273,7 @@ class core_repositorylib_testcase extends advanced_testcase {
 
         // Instance on a user level.
         $otheruser = $this->getDataGenerator()->create_user();
-        $otherusercontext = context_user::instance($otheruser->id);
+        $otherusercontext = \context_user::instance($otheruser->id);
         role_assign($roleid, $user->id, $syscontext->id);
         assign_capability('repository/flickr_public:view', CAP_ALLOW, $roleid, $syscontext, true);
         accesslib_clear_all_caches_for_unit_testing();
@@ -280,7 +285,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         $this->assertFalse($userrepo->can_be_edited_by_user());
 
         // Editing my own instance.
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
         $record = array('contextid' => $usercontext->id);
         $repoid = $this->getDataGenerator()->create_repository('flickr_public', $record)->id;
         $userrepo = repository::get_repository_by_id($repoid, $syscontext);
@@ -291,32 +296,32 @@ class core_repositorylib_testcase extends advanced_testcase {
     public function test_check_capability() {
         $this->resetAfterTest(true);
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $course1 = $this->getDataGenerator()->create_course();
-        $course1context = context_course::instance($course1->id);
+        $course1context = \context_course::instance($course1->id);
         $course2 = $this->getDataGenerator()->create_course();
-        $course2context = context_course::instance($course2->id);
+        $course2context = \context_course::instance($course2->id);
 
-        $forumdata = new stdClass();
+        $forumdata = new \stdClass();
         $forumdata->course = $course1->id;
         $forumc1 = $this->getDataGenerator()->create_module('forum', $forumdata);
-        $forumc1context = context_module::instance($forumc1->cmid);
+        $forumc1context = \context_module::instance($forumc1->cmid);
         $forumdata->course = $course2->id;
         $forumc2 = $this->getDataGenerator()->create_module('forum', $forumdata);
-        $forumc2context = context_module::instance($forumc2->cmid);
+        $forumc2context = \context_module::instance($forumc2->cmid);
 
-        $blockdata = new stdClass();
+        $blockdata = new \stdClass();
         $blockdata->parentcontextid = $course1context->id;
         $blockc1 = $this->getDataGenerator()->create_block('online_users', $blockdata);
-        $blockc1context = context_block::instance($blockc1->id);
+        $blockc1context = \context_block::instance($blockc1->id);
         $blockdata->parentcontextid = $course2context->id;
         $blockc2 = $this->getDataGenerator()->create_block('online_users', $blockdata);
-        $blockc2context = context_block::instance($blockc2->id);
+        $blockc2context = \context_block::instance($blockc2->id);
 
         $user1 = $this->getDataGenerator()->create_user();
-        $user1context = context_user::instance($user1->id);
+        $user1context = \context_user::instance($user1->id);
         $user2 = $this->getDataGenerator()->create_user();
-        $user2context = context_user::instance($user2->id);
+        $user2context = \context_user::instance($user2->id);
 
         // New role prohibiting Flickr Public access.
         $roleid = create_role('No Flickr Public', 'noflickrpublic', 'No Flickr Public', '');
@@ -349,7 +354,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         $this->assertTrue($caughtexception);
 
         // Instance on a course level.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->contextid = $course1context->id;
         $courserepoid = $this->getDataGenerator()->create_repository('flickr_public', $record)->id;
 
@@ -438,7 +443,7 @@ class core_repositorylib_testcase extends advanced_testcase {
 
         // Instance on a user level.
         // Instance on a course level.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->contextid = $user1context->id;
         $user1repoid = $this->getDataGenerator()->create_repository('flickr_public', $record)->id;
         $record->contextid = $user2context->id;
@@ -478,7 +483,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         // Check that a user can view SOME repositories when logged in as someone else.
-        $params = new stdClass();
+        $params = new \stdClass();
         $params->name = 'Dropbox';
         $params->dropbox_issuerid = '2';
         $privaterepoid = $this->getDataGenerator()->create_repository('dropbox')->id;
@@ -522,8 +527,8 @@ class core_repositorylib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->create_repository_type('flickr_public');
         $this->getDataGenerator()->create_repository_type('filesystem');
-        $coursecontext = context_course::instance($course->id);
-        $usercontext = context_user::instance($user->id);
+        $coursecontext = \context_course::instance($course->id);
+        $usercontext = \context_user::instance($user->id);
 
         // Creating course instances.
         $repo = $this->getDataGenerator()->create_repository('flickr_public', array('contextid' => $coursecontext->id));
@@ -561,7 +566,7 @@ class core_repositorylib_testcase extends advanced_testcase {
 
         // Checking deletion upon course context deletion.
         $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $repo = $this->getDataGenerator()->create_repository('flickr_public', array('contextid' => $coursecontext->id));
         $courserepo = repository::get_repository_by_id($repo->id, $coursecontext);
         $this->assertEquals(1, $DB->count_records('repository_instances', array('contextid' => $coursecontext->id)));
@@ -570,7 +575,7 @@ class core_repositorylib_testcase extends advanced_testcase {
 
         // Checking deletion upon user context deletion.
         $user = $this->getDataGenerator()->create_user();
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
         $repo = $this->getDataGenerator()->create_repository('flickr_public', array('contextid' => $usercontext->id));
         $userrepo = repository::get_repository_by_id($repo->id, $usercontext);
         $this->assertEquals(1, $DB->count_records('repository_instances', array('contextid' => $usercontext->id)));
@@ -579,7 +584,7 @@ class core_repositorylib_testcase extends advanced_testcase {
 
         // Checking deletion upon course deletion.
         $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $repo = $this->getDataGenerator()->create_repository('flickr_public', array('contextid' => $coursecontext->id));
         $courserepo = repository::get_repository_by_id($repo->id, $coursecontext);
         $this->assertEquals(1, $DB->count_records('repository_instances', array('contextid' => $coursecontext->id)));
@@ -588,7 +593,7 @@ class core_repositorylib_testcase extends advanced_testcase {
 
         // Checking deletion upon user deletion.
         $user = $this->getDataGenerator()->create_user();
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
         $repo = $this->getDataGenerator()->create_repository('flickr_public', array('contextid' => $usercontext->id));
         $userrepo = repository::get_repository_by_id($repo->id, $usercontext);
         $this->assertEquals(1, $DB->count_records('repository_instances', array('contextid' => $usercontext->id)));
@@ -606,7 +611,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         global $USER;
 
         $filerecord = [];
-        $filerecord['contextid'] = context_user::instance($USER->id)->id;
+        $filerecord['contextid'] = \context_user::instance($USER->id)->id;
         $filerecord['component'] = 'user';
         $filerecord['filearea'] = 'private';
         $filerecord['itemid'] = 0;
@@ -629,7 +634,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         $this->create_user_private_file('/ftexts/', 'file3.txt');
 
         // Listing without filters returns 4 records (2 files and 2 directories).
-        $repo = repository::get_repository_by_id($repoid, context_system::instance());
+        $repo = repository::get_repository_by_id($repoid, \context_system::instance());
         $this->assertCount(4,  $repo->get_listing()['list']);
 
         // Listing with filters returns 3 records (1 files and 2 directories).

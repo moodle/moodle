@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Unit tests for the privacy legacy polyfill for mod_assign.
  *
@@ -22,19 +23,23 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_assign\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/mod/assign/feedbackplugin.php');
-require_once($CFG->dirroot . '/mod/assign/feedback/comments/locallib.php');
+require_once($CFG->dirroot . '/mod/assign/submissionplugin.php');
+require_once($CFG->dirroot . '/mod/assign/submission/comments/locallib.php');
 
 /**
- * Unit tests for the assignment feedback subplugins API's privacy legacy_polyfill.
+ * Unit tests for the assignment submission subplugins API's privacy legacy_polyfill.
  *
+ * @package     mod_assign
+ * @category    test
  * @copyright   2018 Adrian Greeve <adriangreeve.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_assignfeedback_privacy_legacy_polyfill_test extends advanced_testcase {
+class submission_legacy_polyfill_test extends \advanced_testcase {
 
     /**
      * Convenience function to create an instance of an assignment.
@@ -51,17 +56,17 @@ class mod_assignfeedback_privacy_legacy_polyfill_test extends advanced_testcase 
     }
 
     /**
-     * Test the get_context_for_userid_within_feedback shim.
+     * Test the get_context_for_userid_within_submission shim.
      */
-    public function test_get_context_for_userid_within_feedback() {
+    public function test_get_context_for_userid_within_submission() {
         $userid = 21;
         $contextlist = new \core_privacy\local\request\contextlist();
-        $mock = $this->createMock(test_assignfeedback_legacy_polyfill_mock_wrapper::class);
+        $mock = $this->createMock(test_assignsubmission_legacy_polyfill_mock_wrapper::class);
         $mock->expects($this->once())
             ->method('get_return_value')
-            ->with('_get_context_for_userid_within_feedback', [$userid, $contextlist]);
-        test_legacy_polyfill_feedback_provider::$mock = $mock;
-        test_legacy_polyfill_feedback_provider::get_context_for_userid_within_feedback($userid, $contextlist);
+            ->with('_get_context_for_userid_within_submission', [$userid, $contextlist]);
+        test_legacy_polyfill_submission_provider::$mock = $mock;
+        test_legacy_polyfill_submission_provider::get_context_for_userid_within_submission($userid, $contextlist);
     }
 
     /**
@@ -71,78 +76,78 @@ class mod_assignfeedback_privacy_legacy_polyfill_test extends advanced_testcase 
         $teacherid = 107;
         $assignid = 15;
         $useridlist = new \mod_assign\privacy\useridlist($teacherid, $assignid);
-        $mock = $this->createMock(test_assignfeedback_legacy_polyfill_mock_wrapper::class);
+        $mock = $this->createMock(test_assignsubmission_legacy_polyfill_mock_wrapper::class);
         $mock->expects($this->once())
             ->method('get_return_value')
             ->with('_get_student_user_ids', [$useridlist]);
-        test_legacy_polyfill_feedback_provider::$mock = $mock;
-        test_legacy_polyfill_feedback_provider::get_student_user_ids($useridlist);
+        test_legacy_polyfill_submission_provider::$mock = $mock;
+        test_legacy_polyfill_submission_provider::get_student_user_ids($useridlist);
     }
 
     /**
-     * Test the export_feedback_user_data shim.
+     * Test the export_submission_user_data shim.
      */
-    public function test_export_feedback_user_data() {
+    public function test_export_submission_user_data() {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $assign = $this->create_instance(['course' => $course]);
-        $context = context_system::instance();
-        $subplugin = new assign_feedback_comments($assign, 'comments');
-        $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context,$assign);
-        $mock = $this->createMock(test_assignfeedback_legacy_polyfill_mock_wrapper::class);
+        $context = \context_system::instance();
+        $subplugin = new \assign_submission_comments($assign, 'comment');
+        $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign);
+        $mock = $this->createMock(test_assignsubmission_legacy_polyfill_mock_wrapper::class);
         $mock->expects($this->once())
             ->method('get_return_value')
-            ->with('_export_feedback_user_data', [$requestdata]);
-        test_legacy_polyfill_feedback_provider::$mock = $mock;
-        test_legacy_polyfill_feedback_provider::export_feedback_user_data($requestdata);
+            ->with('_export_submission_user_data', [$requestdata]);
+        test_legacy_polyfill_submission_provider::$mock = $mock;
+        test_legacy_polyfill_submission_provider::export_submission_user_data($requestdata);
     }
 
     /**
-     * Test the delete_feedback_for_context shim.
+     * Test the delete_submission_for_context shim.
      */
-    public function test_delete_feedback_for_context() {
+    public function test_delete_submission_for_context() {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $assign = $this->create_instance(['course' => $course]);
-        $context = context_system::instance();
-        $subplugin = new assign_feedback_comments($assign, 'comments');
-        $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context,$assign);
-        $mock = $this->createMock(test_assignfeedback_legacy_polyfill_mock_wrapper::class);
+        $context = \context_system::instance();
+        $subplugin = new \assign_submission_comments($assign, 'comment');
+        $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign);
+        $mock = $this->createMock(test_assignsubmission_legacy_polyfill_mock_wrapper::class);
         $mock->expects($this->once())
             ->method('get_return_value')
-            ->with('_delete_feedback_for_context', [$requestdata]);
-        test_legacy_polyfill_feedback_provider::$mock = $mock;
-        test_legacy_polyfill_feedback_provider::delete_feedback_for_context($requestdata);
+            ->with('_delete_submission_for_context', [$requestdata]);
+        test_legacy_polyfill_submission_provider::$mock = $mock;
+        test_legacy_polyfill_submission_provider::delete_submission_for_context($requestdata);
     }
 
     /**
-     * Test the delete feedback for grade shim.
+     * Test the delete submission for grade shim.
      */
-    public function test_delete_feedback_for_grade() {
+    public function test_delete_submission_for_userid() {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $assign = $this->create_instance(['course' => $course]);
-        $context = context_system::instance();
-        $subplugin = new assign_feedback_comments($assign, 'comments');
-        $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context,$assign);
-        $mock = $this->createMock(test_assignfeedback_legacy_polyfill_mock_wrapper::class);
+        $context = \context_system::instance();
+        $subplugin = new \assign_submission_comments($assign, 'comment');
+        $requestdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign);
+        $mock = $this->createMock(test_assignsubmission_legacy_polyfill_mock_wrapper::class);
         $mock->expects($this->once())
             ->method('get_return_value')
-            ->with('_delete_feedback_for_grade', [$requestdata]);
-        test_legacy_polyfill_feedback_provider::$mock = $mock;
-        test_legacy_polyfill_feedback_provider::delete_feedback_for_grade($requestdata);
+            ->with('_delete_submission_for_userid', [$requestdata]);
+        test_legacy_polyfill_submission_provider::$mock = $mock;
+        test_legacy_polyfill_submission_provider::delete_submission_for_userid($requestdata);
     }
 }
 /**
- * Legacy polyfill test class for the assignfeedback_provider.
+ * Legacy polyfill test class for the assignsubmission_provider.
  *
  * @copyright   2018 Adrian Greeve <adriangreeve.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_legacy_polyfill_feedback_provider implements \mod_assign\privacy\assignfeedback_provider {
-    use \mod_assign\privacy\feedback_legacy_polyfill;
+class test_legacy_polyfill_submission_provider implements \mod_assign\privacy\assignsubmission_provider {
+    use \mod_assign\privacy\submission_legacy_polyfill;
     /**
-     * @var test_legacy_polyfill_feedback_provider $mock.
+     * @var test_legacy_polyfill_submission_provider $mock.
      */
     public static $mock = null;
 
@@ -154,15 +159,15 @@ class test_legacy_polyfill_feedback_provider implements \mod_assign\privacy\assi
      * @param  int $userid The user ID to get context IDs for.
      * @param  contextlist $contextlist Use add_from_sql with this object to add your context IDs.
      */
-    public static function _get_context_for_userid_within_feedback(int $userid,
+    public static function _get_context_for_userid_within_submission(int $userid,
             \core_privacy\local\request\contextlist $contextlist) {
         static::$mock->get_return_value(__FUNCTION__, func_get_args());
     }
 
     /**
-     * Returns student user ids related to the provided teacher ID. If an entry must be present in the assign_grade table for
-     * your plugin to work then there is no need to fill in this method. If you filled in get_context_for_userid_within_feedback()
-     * then you probably have to fill this in as well.
+     * Returns student user ids related to the provided teacher ID. If it is possible that a student ID will not be returned by
+     * the sql query in \mod_assign\privacy\provider::find_grader_info() Then you need to provide some sql to retrive those
+     * student IDs. This is highly likely if you had to fill in get_context_for_userid_within_submission above.
      *
      * @param  useridlist $useridlist A list of user IDs of students graded by this user.
      */
@@ -171,7 +176,8 @@ class test_legacy_polyfill_feedback_provider implements \mod_assign\privacy\assi
     }
 
     /**
-     * Export feedback data with the available grade and userid information provided.
+     * This method is used to export any user data this sub-plugin has using the assign_plugin_request_data object to get the
+     * context and userid.
      * assign_plugin_request_data contains:
      * - context
      * - grade object
@@ -180,7 +186,7 @@ class test_legacy_polyfill_feedback_provider implements \mod_assign\privacy\assi
      *
      * @param  assign_plugin_request_data $exportdata Contains data to help export the user information.
      */
-    public static function _export_feedback_user_data(\mod_assign\privacy\assign_plugin_request_data $exportdata) {
+    public static function _export_submission_user_data(\mod_assign\privacy\assign_plugin_request_data $exportdata) {
         static::$mock->get_return_value(__FUNCTION__, func_get_args());
     }
 
@@ -192,12 +198,12 @@ class test_legacy_polyfill_feedback_provider implements \mod_assign\privacy\assi
      *
      * @param  assign_plugin_request_data $requestdata Data useful for deleting user data from this sub-plugin.
      */
-    public static function _delete_feedback_for_context(\mod_assign\privacy\assign_plugin_request_data $requestdata) {
+    public static function _delete_submission_for_context(\mod_assign\privacy\assign_plugin_request_data $requestdata) {
         static::$mock->get_return_value(__FUNCTION__, func_get_args());
     }
 
     /**
-     * Calling this function should delete all user data associated with this grade.
+     * A call to this method should delete user data (where practicle) from the userid and context.
      * assign_plugin_request_data contains:
      * - context
      * - grade object
@@ -206,7 +212,7 @@ class test_legacy_polyfill_feedback_provider implements \mod_assign\privacy\assi
      *
      * @param  assign_plugin_request_data $requestdata Data useful for deleting user data.
      */
-    public static function _delete_feedback_for_grade(\mod_assign\privacy\assign_plugin_request_data $requestdata) {
+    public static function _delete_submission_for_userid(\mod_assign\privacy\assign_plugin_request_data $requestdata) {
         static::$mock->get_return_value(__FUNCTION__, func_get_args());
     }
 }
@@ -216,7 +222,7 @@ class test_legacy_polyfill_feedback_provider implements \mod_assign\privacy\assi
  * @copyright   2018 Adrian Greeve <adriangreeve.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_assignfeedback_legacy_polyfill_mock_wrapper {
+class test_assignsubmission_legacy_polyfill_mock_wrapper {
     /**
      * Get the return value for the specified item.
      */

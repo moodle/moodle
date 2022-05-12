@@ -15,31 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the privacy legacy polyfill.
+ * Unit tests for the Privacy API's legacy_polyfill.
  *
  * @package     core_privacy
  * @category    test
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_privacy\local\legacy_polyfill
  */
+
+namespace core_privacy;
+
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\approved_contextlist;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\contextlist;
-use \core_privacy\local\request\approved_contextlist;
-
 /**
- * Tests for the \core_privacy API's types\user_preference functionality.
  * Unit tests for the Privacy API's legacy_polyfill.
  *
+ * @package     core_privacy
+ * @category    test
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \core_privacy\local\legacy_polyfill
  */
-class core_privacy_legacy_polyfill_test extends advanced_testcase {
+class legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test that the null_provider polyfill works and that the static _get_reason can be
      * successfully called.

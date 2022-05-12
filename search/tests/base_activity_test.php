@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Search engine base unit tests.
- *
- * @package     core_search
- * @copyright   2017 Matt Porritt <mattp@catalyst-au.net>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_search;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +29,7 @@ require_once($CFG->dirroot . '/search/tests/fixtures/mock_search_area.php');
  * @copyright   2017 Matt Porritt <mattp@catalyst-au.net>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class search_base_activity_testcase extends advanced_testcase {
+class base_activity_test extends \advanced_testcase {
     /**
      * @var \core_search::manager
      */
@@ -63,7 +57,7 @@ class search_base_activity_testcase extends advanced_testcase {
         set_config('enableglobalsearch', true);
 
         // Set \core_search::instance to the mock_search_engine as we don't require the search engine to be working to test this.
-        $search = testable_core_search::instance();
+        $search = \testable_core_search::instance();
 
         $this->generator = self::getDataGenerator()->get_plugin_generator('core_search');
         $this->generator->setup();
@@ -153,7 +147,7 @@ class search_base_activity_testcase extends advanced_testcase {
         // Construct the search document.
         $rec = new \stdClass();
         $rec->courseid = $course->id;
-        $area = new core_mocksearch\search\mock_search_area();
+        $area = new \core_mocksearch\search\mock_search_area();
         $record = $this->generator->create_record($rec);
 
         $document = $area->get_document($record);
@@ -186,7 +180,7 @@ class search_base_activity_testcase extends advanced_testcase {
         global $USER, $DB;
 
         // Get all the forums to index (no restriction).
-        $area = new mod_forum\search\activity();
+        $area = new \mod_forum\search\activity();
         $results = self::recordset_to_indexed_array($area->get_document_recordset());
 
         // Should return all forums.
@@ -211,7 +205,7 @@ class search_base_activity_testcase extends advanced_testcase {
 
         // Now use context restrictions. First, the whole site (no change).
         $results = self::recordset_to_indexed_array($area->get_document_recordset(
-                0, context_system::instance()));
+                0, \context_system::instance()));
         $this->assertEquals($allids, self::records_to_ids($results));
 
         // Course 1 only.
@@ -249,13 +243,13 @@ class search_base_activity_testcase extends advanced_testcase {
 
         // Find an arbitrary block on the system to get a block context.
         $blockid = array_values($DB->get_records('block_instances', null, 'id', 'id', 0, 1))[0]->id;
-        $blockcontext = context_block::instance($blockid);
+        $blockcontext = \context_block::instance($blockid);
 
         // Block context (cannot return anything, so always null).
         $this->assertNull($area->get_document_recordset(0, $blockcontext));
 
         // User context (cannot return anything, so always null).
-        $usercontext = context_user::instance($USER->id);
+        $usercontext = \context_user::instance($USER->id);
         $this->assertNull($area->get_document_recordset(0, $usercontext));
     }
 
@@ -265,7 +259,7 @@ class search_base_activity_testcase extends advanced_testcase {
      * @param moodle_recordset $rs Recordset to convert
      * @return array Array indexed by number (0, 1, 2, ...)
      */
-    protected static function recordset_to_indexed_array(moodle_recordset $rs) {
+    protected static function recordset_to_indexed_array(\moodle_recordset $rs) {
         $results = [];
         foreach ($rs as $rec) {
             $results[] = $rec;
@@ -292,11 +286,11 @@ class search_base_activity_testcase extends advanced_testcase {
      * Tests the get_doc_url function.
      */
     public function test_get_doc_url() {
-        $area = new mod_forum\search\activity();
+        $area = new \mod_forum\search\activity();
         $results = self::recordset_to_indexed_array($area->get_document_recordset());
 
         for ($i = 0; $i < 4; $i++) {
-            $this->assertEquals(new moodle_url('/mod/forum/view.php',
+            $this->assertEquals(new \moodle_url('/mod/forum/view.php',
                     ['id' => $this->forums[$i + 1]->cmid]),
                     $area->get_doc_url($area->get_document($results[$i])));
         }
@@ -321,7 +315,7 @@ class search_base_activity_testcase extends advanced_testcase {
         set_coursemodule_visible($this->forums[3]->cmid, 0);
 
         // Call check access on all the first three.
-        $area = new mod_forum\search\activity();
+        $area = new \mod_forum\search\activity();
         $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $area->check_access(
                 $this->forums[1]->id));
         $this->assertEquals(\core_search\manager::ACCESS_DELETED, $area->check_access(
