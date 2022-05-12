@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unknown service API called event tests
- *
- * @package    mod_lti
- * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-use mod_lti\event\unknown_service_api_called;
+namespace mod_lti\event;
 
 /**
  * Unknown service API called event tests
@@ -33,7 +23,7 @@ use mod_lti\event\unknown_service_api_called;
  * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lti_event_unknown_service_api_called_test extends advanced_testcase {
+class unknown_service_api_called_test extends \advanced_testcase {
     /*
      * Ensure create event works.
      */
@@ -47,7 +37,7 @@ class mod_lti_event_unknown_service_api_called_test extends advanced_testcase {
      */
     public function test_event_context() {
         $event = unknown_service_api_called::create();
-        $this->assertEquals(context_system::instance(), $event->get_context());
+        $this->assertEquals(\context_system::instance(), $event->get_context());
     }
 
     /*

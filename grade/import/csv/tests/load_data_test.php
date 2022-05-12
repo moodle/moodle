@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the class in load_data.php
- *
- * @package    gradeimport_csv
- * @category   phpunit
- * @copyright  2014 Adrian Greeve
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace gradeimport_csv;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,7 +31,7 @@ require_once($CFG->libdir . '/grade/tests/fixtures/lib.php');
  * @copyright  2014 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradeimport_csv_load_data_testcase extends grade_base_testcase {
+class load_data_test extends \grade_base_testcase {
 
     /** @var string $oktext Text to be imported. This data should have no issues being imported. */
     protected $oktext = '"First name",Surname,"ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Assignment: Second new grade item","Course total"
@@ -76,8 +69,8 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
      */
     protected function csv_load($content) {
         // Import the csv strings.
-        $this->iid = csv_import_reader::get_new_iid('grade');
-        $this->csvimport = new csv_import_reader($this->iid, 'grade');
+        $this->iid = \csv_import_reader::get_new_iid('grade');
+        $this->csvimport = new \csv_import_reader($this->iid, 'grade');
 
         $this->csvimport->load_csv_content($content, 'utf8', 'comma');
         $this->columns = $this->csvimport->get_columns();
@@ -97,7 +90,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $encoding = 'utf8';
         $separator = 'comma';
         $previewrows = 5;
-        $csvpreview = new phpunit_gradeimport_csv_load_data();
+        $csvpreview = new \phpunit_gradeimport_csv_load_data();
         $csvpreview->load_csv_content($this->oktext, $encoding, $separator, $previewrows);
 
         $expecteddata = array(array(
@@ -144,7 +137,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $this->assertEquals($csvpreview->get_headers(), $expectedheaders);
 
         // Check that errors are being recorded.
-        $csvpreview = new phpunit_gradeimport_csv_load_data();
+        $csvpreview = new \phpunit_gradeimport_csv_load_data();
         $csvpreview->load_csv_content($this->badtext, $encoding, $separator, $previewrows);
         // Columns shouldn't match.
         $this->assertEquals($csvpreview->get_error(), get_string('csvweirdcolumns', 'error'));
@@ -155,8 +148,8 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
      */
     public function test_fetch_grade_items() {
 
-        $gradeitemsarray = grade_item::fetch_all(array('courseid' => $this->courseid));
-        $gradeitems = phpunit_gradeimport_csv_load_data::fetch_grade_items($this->courseid);
+        $gradeitemsarray = \grade_item::fetch_all(array('courseid' => $this->courseid));
+        $gradeitems = \phpunit_gradeimport_csv_load_data::fetch_grade_items($this->courseid);
 
         // Make sure that each grade item is located in the gradeitemsarray.
         foreach ($gradeitems as $key => $gradeitem) {
@@ -187,13 +180,13 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $user = $this->getDataGenerator()->create_user();
         $this->setAdminUser();
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->itemid = 4;
         $record->newgradeitem = 25;
         $record->finalgrade = 62.00;
         $record->feedback = 'Some test feedback';
 
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
         $testobject->test_insert_grade_record($record, $user->id);
 
         $gradeimportvalues = $DB->get_records('grade_import_values');
@@ -201,7 +194,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $key = key($gradeimportvalues);
 
         $testarray = array();
-        $testarray[$key] = new stdClass();
+        $testarray[$key] = new \stdClass();
         $testarray[$key]->id = $key;
         $testarray[$key]->itemid = $record->itemid;
         $testarray[$key]->newgradeitem = $record->newgradeitem;
@@ -228,7 +221,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
 
         // The assignment is item 6.
         $key = 6;
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
 
         // Key for this assessment.
         $this->csvimport->init();
@@ -329,7 +322,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
             'label' => 'Field label: ' . $field
         ];
 
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
 
         // Check whether the user exists. If so, then the user id is returned. Otherwise, it returns null.
         $userid = $testobject->test_check_user_exists($value, $userfields);
@@ -367,7 +360,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     public function test_create_feedback() {
 
         $testarray = $this->csv_load($this->oktext);
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
 
         // Try to insert some feedback for an assessment.
         $feedback = $testobject->test_create_feedback($this->courseid, 1, $testarray[0][7]);
@@ -383,7 +376,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     public function test_update_grade_item() {
 
         $testarray = $this->csv_load($this->oktext);
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
 
         // We're not using scales so no to this option.
         $verbosescales = 0;
@@ -394,7 +387,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $newgrades = $testobject->test_update_grade_item($this->courseid, $map, $key, $verbosescales, $testarray[0][6]);
 
         $expectedresult = array();
-        $expectedresult[0] = new stdClass();
+        $expectedresult[0] = new \stdClass();
         $expectedresult[0]->itemid = 1;
         $expectedresult[0]->finalgrade = $testarray[0][6];
 
@@ -415,14 +408,14 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
      */
     public function test_map_user_data_with_value() {
         // Need to add one of the users into the system.
-        $user = new stdClass();
+        $user = new \stdClass();
         $user->firstname = 'Anne';
         $user->lastname = 'Able';
         $user->email = 'student7@example.com';
         $userdetail = $this->getDataGenerator()->create_user($user);
 
         $testarray = $this->csv_load($this->oktext);
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
 
         // We're not using scales so no to this option.
         $verbosescales = 0;
@@ -452,7 +445,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
                 $this->courseid, $map[$key], $verbosescales);
         // Expected result.
         $resultarray = array();
-        $resultarray[0] = new stdClass();
+        $resultarray[0] = new \stdClass();
         $resultarray[0]->itemid = 1;
         $resultarray[0]->feedback = $testarray[0][7];
         $this->assertEquals($feedback, $resultarray);
@@ -470,13 +463,13 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         global $DB;
 
         // Need to add one of the users into the system.
-        $user = new stdClass();
+        $user = new \stdClass();
         $user->firstname = 'Anne';
         $user->lastname = 'Able';
         $user->email = 'student7@example.com';
         // Insert user 1.
         $this->getDataGenerator()->create_user($user);
-        $user = new stdClass();
+        $user = new \stdClass();
         $user->firstname = 'Bobby';
         $user->lastname = 'Bunce';
         $user->email = 'student5@example.com';
@@ -489,7 +482,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $verbosescales = 0;
 
         // Form data object.
-        $formdata = new stdClass();
+        $formdata = new \stdClass();
         $formdata->mapfrom = 5;
         $formdata->mapto = 'useremail';
         $formdata->mapping_0 = 0;
@@ -509,7 +502,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $formdata->forceimport = false;
 
         // Blam go time.
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
         $dataloaded = $testobject->prepare_import_grade_data($this->columns, $formdata, $this->csvimport, $this->courseid, '', '',
                 $verbosescales);
         // If everything inserted properly then this should be true.
@@ -522,13 +515,13 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     public function test_force_import_option () {
 
         // Need to add users into the system.
-        $user = new stdClass();
+        $user = new \stdClass();
         $user->firstname = 'Anne';
         $user->lastname = 'Able';
         $user->email = 'student7@example.com';
         $user->id_number = 1;
         $user1 = $this->getDataGenerator()->create_user($user);
-        $user = new stdClass();
+        $user = new \stdClass();
         $user->firstname = 'Bobby';
         $user->lastname = 'Bunce';
         $user->email = 'student5@example.com';
@@ -542,14 +535,14 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
             'gradetype' => GRADE_TYPE_VALUE,
             'courseid'  => $this->courseid
         );
-        $gradeitem = new grade_item($params, false);
+        $gradeitem = new \grade_item($params, false);
         $gradeitemid = $gradeitem->insert();
 
         $importcode = 001;
         $verbosescales = 0;
 
         // Form data object.
-        $formdata = new stdClass();
+        $formdata = new \stdClass();
         $formdata->mapfrom = 5;
         $formdata->mapto = 'useremail';
         $formdata->mapping_0 = 0;
@@ -572,7 +565,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $exportdate = time();
         $newcsvdata = str_replace('{exportdate}', $exportdate, $this->csvtext);
         $this->csv_load($newcsvdata);
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
         $dataloaded = $testobject->prepare_import_grade_data($this->columns, $formdata, $this->csvimport,
                 $this->courseid, '', '', $verbosescales);
         $this->assertTrue($dataloaded);
@@ -584,7 +577,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $pastdate = strtotime('-1 day', time());
         $newcsvdata = str_replace('{exportdate}', $pastdate, $this->csvtext);
         $this->csv_load($newcsvdata);
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
         $dataloaded = $testobject->prepare_import_grade_data($this->columns, $formdata, $this->csvimport,
                 $this->courseid, '', '', $verbosescales);
         $this->assertFalse($dataloaded);
@@ -593,7 +586,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
 
         // Test using force import enabled and a date in the past.
         $formdata->forceimport = true;
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
         $dataloaded = $testobject->prepare_import_grade_data($this->columns, $formdata, $this->csvimport,
                 $this->courseid, '', '', $verbosescales);
         $this->assertTrue($dataloaded);
@@ -603,7 +596,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $twoyearsago = strtotime('-2 year', time());
         $newcsvdata = str_replace('{exportdate}', $twoyearsago, $this->csvtext);
         $this->csv_load($newcsvdata);
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
         $dataloaded = $testobject->prepare_import_grade_data($this->columns, $formdata, $this->csvimport,
                 $this->courseid, '', '', $verbosescales);
         $this->assertFalse($dataloaded);
@@ -615,7 +608,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $newcsvdata = str_replace('{exportdate}', $baddate, $this->csvtext);
         $this->csv_load($newcsvdata);
         $formdata->mapping_6 = $gradeitemid;
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
         $dataloaded = $testobject->prepare_import_grade_data($this->columns, $formdata, $this->csvimport,
                 $this->courseid, '', '', $verbosescales);
         $this->assertFalse($dataloaded);
@@ -627,7 +620,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $oldcsv = str_replace('{exportdate}', $oneyearahead, $this->csvtext);
         $this->csv_load($oldcsv);
         $formdata->mapping_6 = $gradeitemid;
-        $testobject = new phpunit_gradeimport_csv_load_data();
+        $testobject = new \phpunit_gradeimport_csv_load_data();
         $dataloaded = $testobject->prepare_import_grade_data($this->columns, $formdata, $this->csvimport,
             $this->courseid, '', '', $verbosescales);
         $this->assertFalse($dataloaded);

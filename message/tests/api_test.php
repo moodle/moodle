@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class api_test extends \core_message_messagelib_testcase {
+class api_test extends messagelib_test {
 
     public function test_mark_all_read_for_user_touser() {
         $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));

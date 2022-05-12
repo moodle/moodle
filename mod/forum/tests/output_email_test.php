@@ -14,23 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_forum;
+
+use mod_forum\output\forum_post_email;
+
 /**
- * The module forums tests
+ * Tests for the forum output/email class.
  *
  * @package    mod_forum
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Tests for the forum output/email class.
- *
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class mod_forum_output_email_testcase extends advanced_testcase {
+class output_email_test extends \advanced_testcase {
     /**
      * Data provider for the postdate function tests.
      */
@@ -174,7 +169,7 @@ class mod_forum_output_email_testcase extends advanced_testcase {
         $DB->update_record('forum_posts', $post);
 
         // Create the renderable.
-        $renderable = new mod_forum\output\forum_post_email(
+        $renderable = new forum_post_email(
                 $course,
                 $cm,
                 $forum,

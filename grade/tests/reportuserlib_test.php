@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for grade/report/user/lib.php.
- *
- * @package  core_grades
- * @category phpunit
- * @copyright 2012 Andrew Davis
- * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
+namespace core_grades;
+
+use grade_plugin_return;
+use grade_report_user;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,11 +25,15 @@ global $CFG;
 require_once($CFG->dirroot.'/grade/lib.php');
 require_once($CFG->dirroot.'/grade/report/user/lib.php');
 
-
 /**
  * Tests grade_report_user (the gradebook's user report)
+ *
+ * @package  core_grades
+ * @category test
+ * @copyright 2012 Andrew Davis
+ * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class core_grade_reportuserlib_testcase extends advanced_testcase {
+class reportuserlib_test extends \advanced_testcase {
 
     /**
      * Tests grade_report_user::inject_rowspans()
@@ -52,8 +52,8 @@ class core_grade_reportuserlib_testcase extends advanced_testcase {
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
-        $coursecategory = grade_category::fetch_course_category($course->id);
-        $coursecontext = context_course::instance($course->id);
+        $coursecategory = \grade_category::fetch_course_category($course->id);
+        $coursecontext = \context_course::instance($course->id);
 
         // Create and enrol test users.
         $student = $this->getDataGenerator()->create_user(array('username' => 'student_sam'));
@@ -87,8 +87,8 @@ class core_grade_reportuserlib_testcase extends advanced_testcase {
 
         $forum1 = $this->getDataGenerator()->create_module('forum', array('assessed' => 1, 'scale' => 100, 'course' => $course->id));
         $forum1cm = get_coursemodule_from_id('forum', $forum1->cmid);
-        // Switch the stdClass instance for a grade item instance so grade_item::set_parent() is available.
-        $forum1 = grade_item::fetch(array('itemtype' => 'mod', 'itemmodule' => 'forum', 'iteminstance' => $forum1->id, 'courseid' => $course->id));
+        // Switch the stdClass instance for a grade item instance so \grade_item::set_parent() is available.
+        $forum1 = \grade_item::fetch(array('itemtype' => 'mod', 'itemmodule' => 'forum', 'iteminstance' => $forum1->id, 'courseid' => $course->id));
 
         $report = $this->create_report($course, $student, $coursecontext);
         // Lead column + course + (2 x activity) = 4
@@ -123,11 +123,11 @@ class core_grade_reportuserlib_testcase extends advanced_testcase {
         set_coursemodule_visible($forum1cm->id, 1);
 
         // Create a category and put the forum in it.
-        $params = new stdClass();
+        $params = new \stdClass();
         $params->courseid = $course->id;
         $params->fullname = 'unittestcategory';
         $params->parent = $coursecategory->id;
-        $gradecategory = new grade_category($params, false);
+        $gradecategory = new \grade_category($params, false);
         $gradecategory->insert();
 
         $forum1->set_parent($gradecategory->id);
