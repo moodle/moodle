@@ -18,14 +18,14 @@ Feature: Settings form fields disabled if not required
       | teacher  | C1     | editingteacher |
       | student1 | C1     | student        |
       | student2 | C1     | student        |
+    And the following "activities" exist:
+      | activity | course | section | name        |
+      | quiz     | C1     | 1       | Test quiz 1 |
 
   @javascript
   Scenario: Depending on the number of attempts, different form fields are disabled.
-    When I log in as "teacher"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Quiz" to section "1"
+    When I am on the "Test quiz 1" "quiz activity editing" page logged in as teacher
     And I expand all fieldsets
-    And I set the field "Name" to "Test quiz"
     And I set the field "Attempts allowed" to "1"
     Then the "Grading method" "field" should be disabled
     And the "Each attempt builds on the last" "field" should be disabled
