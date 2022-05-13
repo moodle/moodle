@@ -32,3 +32,4 @@ defined('MOODLE_INTERNAL') || die();
 $string['language'] = 'ቋንቋ';
 $string['next'] = 'ቀፃሊ';
 $string['previous'] = 'ዝሐለፈ';
+$string['reload'] = 'እንደገና ንምፅዓን';
