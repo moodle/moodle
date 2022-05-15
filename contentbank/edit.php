@@ -29,6 +29,8 @@ require_login();
 $contextid = required_param('contextid', PARAM_INT);
 $pluginname = required_param('plugin', PARAM_PLUGIN);
 $id = optional_param('id', null, PARAM_INT);
+$library = optional_param('library', null, PARAM_RAW);
+
 $context = context::instance_by_id($contextid, MUST_EXIST);
 
 $cb = new \core_contentbank\contentbank();
@@ -79,7 +81,8 @@ $values = [
     'contextid' => $contextid,
     'plugin' => $pluginname,
     'id' => $id,
-    'heading' => $heading
+    'heading' => $heading,
+    'library' => $library
 ];
 
 $title = get_string('contentbank');
