@@ -72,6 +72,7 @@ $string['privacy:preference:single'] = 'Whether the answer is single with radio 
 $string['privacy:preference:shuffleanswers'] = 'Whether the answers should be automatically shuffled.';
 $string['privacy:preference:answernumbering'] = 'Which numbering style should be used (\'1, 2, 3, ...\', \'a, b, c, ...\' etc.).';
 $string['privacy:preference:showstandardinstruction'] = 'Whether showing standard instruction.';
+$string['regradeissuenumchoiceschanged'] = 'The number of choices in the question has changed.';
 $string['selectmulti'] = 'Select one or more:';
 $string['selectone'] = 'Select one:';
 $string['shuffleanswers'] = 'Shuffle the choices?';
