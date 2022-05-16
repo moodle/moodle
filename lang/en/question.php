@@ -58,6 +58,7 @@ $string['cannotmovequestion'] = 'You can\'t use this script to move questions th
 $string['cannotopenforwriting'] = 'Cannot open for writing: {$a}';
 $string['cannotpreview'] = 'You can\'t preview these questions!';
 $string['cannotread'] = 'Cannot read import file (or file is empty)';
+$string['cannotregradedifferentqtype'] = 'Cannot regrade with a question of a different type.';
 $string['cannotretrieveqcat'] = 'Could not retrieve question category';
 $string['cannotunhidequestion'] = 'Failed to unhide the question.';
 $string['cannotunzip'] = 'Could not unzip file.';

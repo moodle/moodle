@@ -1,16 +1,31 @@
 This files describes API changes for question type plugins.
 
+=== 4.0.2, 4.1 ===
+
+* There was one issue caused by the changes in Moodle 4.0 which requires changes in question types,
+  and that is regrading. There are two new methods which some question types will need to implement,
+   - validate_can_regrade_with_other_version
+   - update_attempt_state_data_for_new_version
+  these methods are introduced in this commit, and there are details PHPdoc comments about what they
+  must do. Then the immediately following commits implement them in the core question types where
+  they are required.
+  Generally, you will need to implement one or both of these if you question type does something
+  significant in the apply_attempt_state method. If you have not implemented that method, then
+  almost certainly you don't need to worry about this.
+
+
 === 4.0 ===
 
-1) The major question bank changes should not affect most basic question type plugins.
-   The navigation changes may affect Behat tests. If you encounter this,
-   the best way to fix it is to use the new navigation steps in MDL-74130.
+* The major question bank changes should not affect most basic question type plugins.
+  The navigation changes may affect Behat tests. If you encounter this,
+  the best way to fix it is to use the new navigation steps in MDL-74130.
 
-2) The qualification 'most' is because some question types do more complex things, which
-   will require changes related to question versionning. Some examples that come to mind:
+* The qualification 'most' is because some question types do more complex things, which
+  will require changes related to question versionning. Some examples that come to mind:
    - the way qtype_mulitanswer (or qtype_combined) aggregates several sub-questions into a parent question.
    - the way some contrib plugins (e.g. qtype_stack, qtype_pmatch) store additional data (question tests)
      linked to questions. That relationship will need to be updated.
+
 
 === 3.11 ===
 
@@ -41,6 +56,7 @@ This files describes API changes for question type plugins.
   on the method to explain what you should do, and there is an example of how to
   use it in a question type at
   https://github.com/moodleou/moodle-qtype_pmatch/commit/2aefa8b5dcc7bab768f4707a4ffb7befcf4c2540.
+
 
 === 3.8, 3.7.3, 3.6.7 ===
 

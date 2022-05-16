@@ -1397,6 +1397,16 @@ class question_attempt {
     }
 
     /**
+     * Verify if this question_attempt in can be regraded with that other question version.
+     *
+     * @param question_definition $otherversion a different version of the question to use in the regrade.
+     * @return string|null null if the regrade can proceed, else a reason why not.
+     */
+    public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
+        return $this->get_question(false)->validate_can_regrade_with_other_version($otherversion);
+    }
+
+    /**
      * Perform a regrade. This replays all the actions from $oldqa into this
      * attempt.
      * @param question_attempt $oldqa the attempt to regrade.
@@ -1412,7 +1422,8 @@ class question_attempt {
             if ($first) {
                 // First step of the attempt.
                 $first = false;
-                $this->start($oldqa->behaviour, $oldqa->get_variant(), $step->get_all_data(),
+                $this->start($oldqa->behaviour, $oldqa->get_variant(),
+                        $this->get_attempt_state_data_to_regrade_with_version($step, $oldqa->get_question()),
                         $step->get_timecreated(), $step->get_user_id(), $step->get_id());
 
             } else if ($step->has_behaviour_var('finish') && count($step->get_submitted_data()) > 1) {
@@ -1444,6 +1455,27 @@ class question_attempt {
         }
 
         $this->set_flagged($oldqa->is_flagged());
+    }
+
+    /**
+     * Helper used by regrading.
+     *
+     * Get the data from the first step of the old attempt and, if necessary,
+     * update it to be suitable for use with the other version of the question.
+     *
+     * @param question_attempt_step $oldstep First step at an attempt at $otherversion of this question.
+     * @param question_definition $otherversion Another version of the question being attempted.
+     * @return array updated data required to restart an attempt with the current version of this question.
+     */
+    protected function get_attempt_state_data_to_regrade_with_version(question_attempt_step $oldstep,
+            question_definition $otherversion): array {
+        if ($this->get_question(false) === $otherversion) {
+            return $oldstep->get_all_data();
+        } else {
+            $attemptstatedata = $this->get_question(false)->update_attempt_state_data_for_new_version(
+                    $oldstep, $otherversion);
+            return array_merge($attemptstatedata, $oldstep->get_behaviour_data());
+        }
     }
 
     /**

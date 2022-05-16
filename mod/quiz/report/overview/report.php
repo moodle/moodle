@@ -337,8 +337,9 @@ class quiz_overview_report extends quiz_attempts_report {
      * @param bool $dryrun if true, do a pretend regrade, otherwise do it for real.
      * @param array $slots if null, regrade all questions, otherwise, just regrade
      *      the questions with those slots.
+     * @return array messages array with keys slot number, and values reasons why that slot cannot be regraded.
      */
-    public function regrade_attempt($attempt, $dryrun = false, $slots = null) {
+    public function regrade_attempt($attempt, $dryrun = false, $slots = null): array {
         global $DB;
         // Need more time for a quiz with many questions.
         core_php_time_limit::raise(300);
@@ -351,11 +352,18 @@ class quiz_overview_report extends quiz_attempts_report {
             $slots = $quba->get_slots();
         }
 
+        $messages = [];
         $finished = $attempt->state == quiz_attempt::FINISHED;
         foreach ($slots as $slot) {
             $qqr = new stdClass();
             $qqr->oldfraction = $quba->get_question_fraction($slot);
             $otherquestionversion = $this->get_new_question_for_regrade($attempt, $quba, $slot);
+
+            $message = $quba->validate_can_regrade_with_other_version($slot, $otherquestionversion);
+            if ($message) {
+                $messages[$slot] = $message;
+                continue;
+            }
 
             $quba->regrade_question($slot, $finished, null, $otherquestionversion);
 
@@ -391,6 +399,7 @@ class quiz_overview_report extends quiz_attempts_report {
         $quba = null;
         $transaction = null;
         gc_collect_cycles();
+        return $messages;
     }
 
     /**
@@ -555,6 +564,7 @@ class quiz_overview_report extends quiz_attempts_report {
      */
     protected function regrade_batch_of_attempts($quiz, array $attempts,
             bool $dryrun, \core\dml\sql_join $groupstudentsjoins) {
+        global $OUTPUT;
         $this->clear_regrade_table($quiz, $groupstudentsjoins);
 
         $progressbar = new progress_bar('quiz_overview_regrade', 500, true);
@@ -572,7 +582,17 @@ class quiz_overview_report extends quiz_attempts_report {
             }
             $progressbar->update($a['done'], $a['count'],
                     get_string('regradingattemptxofywithdetails', 'quiz_overview', $a));
-            $this->regrade_attempt($attempt, $dryrun, $attempt->regradeonlyslots);
+            $messages = $this->regrade_attempt($attempt, $dryrun, $attempt->regradeonlyslots);
+            if ($messages) {
+                $items = [];
+                foreach ($messages as $slot => $message) {
+                    $items[] = get_string('regradingattemptissue', 'quiz_overview',
+                            ['slot' => $slot, 'reason' => $message]);
+                }
+                echo $OUTPUT->notification(
+                        html_writer::tag('p', get_string('regradingattemptxofyproblem', 'quiz_overview', $a)) .
+                        html_writer::alist($items), \core\output\notification::NOTIFY_WARNING);
+            }
         }
         $progressbar->update($a['done'], $a['count'],
                 get_string('regradedsuccessfullyxofy', 'quiz_overview', $a));
