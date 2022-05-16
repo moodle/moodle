@@ -69,6 +69,27 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_correct_expectation(),
                 new \question_pattern_expectation('/class="r0 correct"/'),
                 new \question_pattern_expectation('/class="r1"/'));
+
+        // Regrade with a new version of the question.
+        $newmc = \test_question_maker::make_a_multichoice_single_question();
+        $newmc->answers = [
+            23 => $newmc->answers[13],
+            24 => $newmc->answers[14],
+            25 => $newmc->answers[15],
+        ];
+        $newmc->answers[23]->fraction = 0.5;
+        $newmc->answers[23]->feedback = 'A is now only partially right';
+        $newmc->answers[24]->fraction = 1;
+        $newmc->answers[24]->answer = 'B is the new right answer';
+        $this->quba->regrade_question($this->slot, true, null, $newmc);
+
+        // Verify.
+        $this->check_current_mark(1.5);
+        $this->render();
+        $this->assertStringContainsString('A is now only partially right', $this->currentoutput);
+        $this->assertStringContainsString('B is the new right answer', $this->currentoutput);
+        $this->assertStringNotContainsString(
+                get_string('deletedchoice', 'qtype_multichoice'), $this->currentoutput);
     }
 
     public function test_deferredfeedback_feedback_multichoice_single_showstandardunstruction_yes() {
