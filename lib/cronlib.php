@@ -311,6 +311,8 @@ function cron_run_inner_adhoc_task(\core\task\adhoc_task $task) {
     \core\task\logmanager::start_logging($task);
 
     mtrace("Execute adhoc task: " . get_class($task));
+    mtrace("Adhoc task id: " . $task->get_id());
+    mtrace("Adhoc task custom data: " . $task->get_custom_data_as_string());
     cron_set_process_title('Adhoc task: ' . $task->get_id() . ' ' . get_class($task));
     cron_trace_time_and_memory();
     $predbqueries = null;
