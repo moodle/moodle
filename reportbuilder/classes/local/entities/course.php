@@ -117,6 +117,20 @@ class course extends base {
     }
 
     /**
+     * Return syntax for joining on the context table
+     *
+     * @return string
+     */
+    public function get_context_join(): string {
+        $coursealias = $this->get_table_alias('course');
+        $contextalias = $this->get_table_alias('context');
+
+        return "LEFT JOIN {context} {$contextalias}
+            ON {$contextalias}.contextlevel = " . CONTEXT_COURSE . "
+           AND {$contextalias}.instanceid = {$coursealias}.id";
+    }
+
+    /**
      * Course fields.
      *
      * @return array
@@ -258,11 +272,7 @@ class course extends base {
 
             // Join on the context table so that we can use it for formatting these columns later.
             if ($key === 'coursefullnamewithlink') {
-                $join = "LEFT JOIN {context} {$contexttablealias}
-                           ON {$contexttablealias}.contextlevel = " . CONTEXT_COURSE . "
-                          AND {$contexttablealias}.instanceid = {$tablealias}.id";
-
-                $column->add_join($join)
+                $column->add_join($this->get_context_join())
                     ->add_fields(context_helper::get_preload_record_columns_sql($contexttablealias));
             }
 
@@ -290,11 +300,7 @@ class course extends base {
 
             // Join on the context table so that we can use it for formatting these columns later.
             if ($coursefield === 'summary' || $coursefield === 'shortname' || $coursefield === 'fullname') {
-                $join = "LEFT JOIN {context} {$contexttablealias}
-                           ON {$contexttablealias}.contextlevel = " . CONTEXT_COURSE . "
-                          AND {$contexttablealias}.instanceid = {$tablealias}.id";
-
-                $column->add_join($join)
+                $column->add_join($this->get_context_join())
                     ->add_field("{$tablealias}.id", 'courseid')
                     ->add_fields(context_helper::get_preload_record_columns_sql($contexttablealias));
             }
