@@ -140,6 +140,7 @@ class custom_report_table extends base_report_table {
         $this->initialbars(false);
         $this->collapsible(false);
         $this->pageable(true);
+        $this->set_default_per_page($this->report->get_default_per_page());
 
         // Initialise table SQL properties.
         $this->set_report_editing(static::REPORT_EDITING);
