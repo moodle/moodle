@@ -56,6 +56,7 @@ $string['cardview_help'] = 'Card view allows you to define the layout of your re
 $string['cardviewfirstcolumntitle'] = 'First column title';
 $string['cardviewsettingssaved'] = 'Card view settings saved';
 $string['cardviewvisiblecolumns'] = 'Columns visible';
+$string['categoryselect'] = 'Select category';
 $string['close'] = 'Close';
 $string['closeeditor'] = 'Close \'{$a}\' editor';
 $string['columnadded'] = 'Added column \'{$a}\'';

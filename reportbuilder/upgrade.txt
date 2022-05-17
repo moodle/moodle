@@ -19,4 +19,6 @@ Information provided here is intended especially for developers.
   - `[require_]can_create_report`
 * New method `get_default_condition_values()` in base datasource class, to be overridden by sources that wish to
   define default values for conditions upon report creation.
-* New `tags` filter type for reports that contain entities with support for core_tag API
+* New report filter types:
+  - `category` for reports containing course categories
+  - `tags` for reports containing entities with support for core_tag API

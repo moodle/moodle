@@ -62,7 +62,7 @@ class custom_report_conditions_exporter_test extends advanced_testcase {
         $this->assertGreaterThanOrEqual(1, $conditionscategory['optiongroup']['values']);
         $this->assertEquals([
             'value' => 'course_category:name',
-            'visiblename' => 'Category name',
+            'visiblename' => 'Select category',
         ], $conditionscategory['optiongroup']['values'][0]);
 
         // Course conditions, assert structure of first item.
@@ -76,6 +76,7 @@ class custom_report_conditions_exporter_test extends advanced_testcase {
         // Make sure the active condition we added, isn't present in available conditions.
         $this->assertNotContains('course:shortname', array_column($conditionscourse['optiongroup']['values'], 'value'));
 
+        // The active conditions are contained inside form HTML, just assert there's something present.
         $this->assertTrue($export->hasactiveconditions);
         $this->assertNotEmpty($export->activeconditionsform);
         $this->assertNotEmpty($export->helpicon);
