@@ -64,7 +64,8 @@ class courses extends datasource {
                 ON {$coursecattablealias}.id = {$coursetablealias}.category"));
 
         // Add all columns/filters/conditions from entities to be available in custom reports.
-        $this->add_all_from_entities();
+        $this->add_all_from_entity($coursecatentity->get_entity_name());
+        $this->add_all_from_entity($courseentity->get_entity_name());
     }
 
     /**
