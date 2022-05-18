@@ -208,7 +208,7 @@ class issued_badge implements renderable {
             $data->hasrelatedbadges = true;
             $data->relatedbadges = [];
             foreach ($relatedbadges as $related) {
-                if (isloggedin() && !is_guest($context)) {
+                if (isloggedin() && ($context instanceof context_course && !is_guest($context))) {
                     $related->url = (new moodle_url('/badges/overview.php', ['id' => $related->id]))->out(false);
                 }
                 $data->relatedbadges[] = (array)$related;
