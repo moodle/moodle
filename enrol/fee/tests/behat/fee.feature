@@ -22,7 +22,7 @@ Feature: Signing up for a course with a fee enrolment method
     And I click on "Enable" "link" in the "Enrolment on payment" "table_row"
     And I log out
     And I log in as "manager1"
-     And I am on the "Course 1" "enrolment methods" page
+    And I am on the "Course 1" "enrolment methods" page
     And I select "Enrolment on payment" from the "Add method" singleselect
     And I set the following fields to these values:
       | Payment account | Account1 |
