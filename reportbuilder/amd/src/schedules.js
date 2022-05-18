@@ -99,7 +99,7 @@ export const init = reportId => {
             toggleSchedule(reportId, scheduleToggle.dataset.id, scheduleStateToggle)
                 .then(() => {
                     const tableRow = scheduleToggle.closest('tr');
-                    tableRow.classList.toggle('dimmed_text');
+                    tableRow.classList.toggle('text-muted');
 
                     scheduleToggle.dataset.state = scheduleStateToggle;
 

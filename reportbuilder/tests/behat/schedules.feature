@@ -93,7 +93,7 @@ Feature: Manage custom report schedules
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Schedules" dynamic tab
     When I click on "Disable schedule" "field" in the "My schedule" "table_row"
-    Then the "class" attribute of "My schedule" "table_row" should contain "dimmed_text"
+    Then the "class" attribute of "My schedule" "table_row" should contain "text-muted"
     And I click on "Enable schedule" "field" in the "My schedule" "table_row"
 
   Scenario: Edit report schedule
