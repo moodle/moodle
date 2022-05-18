@@ -1408,64 +1408,67 @@ function html_is_blank($string) {
  * @param string $plugin (optional) the plugin scope, default null
  * @return bool true or exception
  */
-function set_config($name, $value, $plugin=null) {
+function set_config($name, $value, $plugin = null) {
     global $CFG, $DB;
 
-    if (empty($plugin)) {
-        if (!array_key_exists($name, $CFG->config_php_settings)) {
-            // So it's defined for this invocation at least.
-            if (is_null($value)) {
-                unset($CFG->$name);
-            } else {
-                // Settings from db are always strings.
-                $CFG->$name = (string)$value;
-            }
-        }
+    // Redirect to appropriate handler when value is null.
+    if ($value === null) {
+        return unset_config($name, $plugin);
+    }
 
-        if ($DB->get_field('config', 'name', array('name' => $name))) {
-            if ($value === null) {
-                $DB->delete_records('config', array('name' => $name));
-            } else {
-                $DB->set_field('config', 'value', $value, array('name' => $name));
-            }
-        } else {
-            if ($value !== null) {
-                $config = new stdClass();
-                $config->name  = $name;
-                $config->value = $value;
-                $DB->insert_record('config', $config, false);
-            }
-            // When setting config during a Behat test (in the CLI script, not in the web browser
-            // requests), remember which ones are set so that we can clear them later.
-            if (defined('BEHAT_TEST')) {
-                if (!property_exists($CFG, 'behat_cli_added_config')) {
-                    $CFG->behat_cli_added_config = [];
-                }
-                $CFG->behat_cli_added_config[$name] = true;
-            }
-        }
-        if ($name === 'siteidentifier') {
-            cache_helper::update_site_identifier($value);
-        }
-        cache_helper::invalidate_by_definition('core', 'config', array(), 'core');
+    // Set variables determining conditions and where to store the new config.
+    // Plugin config goes to {config_plugins}, core config goes to {config}.
+    $iscore = empty($plugin);
+    if ($iscore) {
+        // If it's for core config.
+        $table = 'config';
+        $conditions = ['name' => $name];
+        $invalidatecachekey = 'core';
     } else {
-        // Plugin scope.
-        if ($id = $DB->get_field('config_plugins', 'id', array('name' => $name, 'plugin' => $plugin))) {
-            if ($value===null) {
-                $DB->delete_records('config_plugins', array('name' => $name, 'plugin' => $plugin));
-            } else {
-                $DB->set_field('config_plugins', 'value', $value, array('id' => $id));
-            }
-        } else {
-            if ($value !== null) {
-                $config = new stdClass();
-                $config->plugin = $plugin;
-                $config->name   = $name;
-                $config->value  = $value;
-                $DB->insert_record('config_plugins', $config, false);
-            }
+        // If it's a plugin.
+        $table = 'config_plugins';
+        $conditions = ['name' => $name, 'plugin' => $plugin];
+        $invalidatecachekey = $plugin;
+    }
+
+    // DB handling - checks for existing config, updating or inserting only if necessary.
+    $invalidatecache = true;
+    $inserted = false;
+    $record = $DB->get_record($table, $conditions, 'id, value');
+    if ($record === false) {
+        // Inserts a new config record.
+        $config = new stdClass();
+        $config->name  = $name;
+        $config->value = $value;
+        if (!$iscore) {
+            $config->plugin = $plugin;
         }
-        cache_helper::invalidate_by_definition('core', 'config', array(), $plugin);
+        $inserted = $DB->insert_record($table, $config, false);
+    } else if ($invalidatecache = ($record->value !== $value)) {
+        // Record exists - Check and only set new value if it has changed.
+        $DB->set_field($table, 'value', $value, ['id' => $record->id]);
+    }
+
+    if ($iscore && !isset($CFG->config_php_settings[$name])) {
+        // So it's defined for this invocation at least.
+        // Settings from db are always strings.
+        $CFG->$name = (string) $value;
+    }
+
+    // When setting config during a Behat test (in the CLI script, not in the web browser
+    // requests), remember which ones are set so that we can clear them later.
+    if ($iscore && $inserted && defined('BEHAT_TEST')) {
+        $CFG->behat_cli_added_config[$name] = true;
+    }
+
+    // Update siteidentifier cache, if required.
+    if ($iscore && $name === 'siteidentifier') {
+        cache_helper::update_site_identifier($value);
+    }
+
+    // Invalidate cache, if required.
+    if ($invalidatecache) {
+        cache_helper::invalidate_by_definition('core', 'config', [], $invalidatecachekey);
     }
 
     return true;
