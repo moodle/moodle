@@ -266,4 +266,24 @@ abstract class datasource extends base {
 
         return $conditions;
     }
+
+    /**
+     * Adds all columns/filters/conditions from the given entity to the report at once
+     *
+     * @param string $entityname
+     */
+    final protected function add_all_from_entity(string $entityname): void {
+        $this->add_columns_from_entity($entityname);
+        $this->add_filters_from_entity($entityname);
+        $this->add_conditions_from_entity($entityname);
+    }
+
+    /**
+     * Adds all columns/filters/conditions from all the entities added to the report at once
+     */
+    final protected function add_all_from_entities(): void {
+        foreach ($this->get_entities() as $entity) {
+            $this->add_all_from_entity($entity->get_entity_name());
+        }
+    }
 }

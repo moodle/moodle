@@ -56,13 +56,11 @@ class users extends datasource {
             $userparamguest => $CFG->siteguest,
         ]);
 
-        // Add all columns from entities to be available in custom reports.
         $this->add_entity($userentity);
 
+        // Add all columns/filters/conditions from entities to be available in custom reports.
         $userentityname = $userentity->get_entity_name();
-        $this->add_columns_from_entity($userentityname);
-        $this->add_filters_from_entity($userentityname);
-        $this->add_conditions_from_entity($userentityname);
+        $this->add_all_from_entity($userentityname);
     }
 
     /**

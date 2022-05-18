@@ -70,20 +70,8 @@ class cohorts extends datasource {
 
         $this->add_entity($userentity->add_joins([$cohortmemberjoin, $userjoin]));
 
-        // Add all columns from entities to be available in custom reports.
-        $this->add_columns_from_entity($cohortentity->get_entity_name());
-        $this->add_columns_from_entity($cohortmemberentity->get_entity_name());
-        $this->add_columns_from_entity($userentity->get_entity_name());
-
-        // Add all filters from entities to be available in custom reports.
-        $this->add_filters_from_entity($cohortentity->get_entity_name());
-        $this->add_filters_from_entity($cohortmemberentity->get_entity_name());
-        $this->add_filters_from_entity($userentity->get_entity_name());
-
-        // Add all conditions from entities to be available in custom reports.
-        $this->add_conditions_from_entity($cohortentity->get_entity_name());
-        $this->add_conditions_from_entity($cohortmemberentity->get_entity_name());
-        $this->add_conditions_from_entity($userentity->get_entity_name());
+        // Add all columns/filters/conditions from entities to be available in custom reports.
+        $this->add_all_from_entities();
     }
 
     /**

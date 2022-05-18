@@ -4,3 +4,6 @@ Information provided here is intended especially for developers.
 === 4.1 ===
 * 'set_default_per_page' and 'get_default_per_page' methods have been added to \local\report\base class
    to manage the default displayed rows per page.
+* Added two new methods in the datasource class:
+    - add_all_from_entity() to add all columns/filters/conditions from the given entity to the report at once
+    - add_all_from_entities() to add all columns/filters/conditions from all the entities added to the report at once
