@@ -110,7 +110,7 @@ class reports_list extends system_report {
      * @return string
      */
     public function get_row_class(stdClass $row): string {
-        return $this->report_source_valid($row->source) ? '' : 'dimmed_text';
+        return $this->report_source_valid($row->source) ? '' : 'text-muted';
     }
 
     /**
