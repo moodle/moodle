@@ -29,7 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'ቋንቋ';
-$string['next'] = 'ዝቕጽል';
-$string['previous'] = 'ዝሐለፈ';
-$string['reload'] = 'እንደገና ንምፅዓን';
+$string['clianswerno'] = 'ኖ';
+$string['cliansweryes'] = 'እ';
+$string['cliincorrectvalueretry'] = 'ዘይቅኑዕ ዋጋ፣ ዳግማይ ይሞከር\'ባ';
+$string['clitypevalue'] = 'ዓይነት ዋጋ';
