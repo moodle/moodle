@@ -7,3 +7,5 @@ Information provided here is intended especially for developers.
 * Added two new methods in the datasource class:
     - add_all_from_entity() to add all columns/filters/conditions from the given entity to the report at once
     - add_all_from_entities() to add all columns/filters/conditions from all the entities added to the report at once
+=======
+* New database helper methods for generating multiple unique values: `generate_aliases` and `generate_param_names`
