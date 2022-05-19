@@ -87,10 +87,18 @@ EOD;
      * @return void
      */
     public function reset() {
+        $this->gradecategorycounter = 0;
+        $this->gradeitemcounter = 0;
+        $this->gradeoutcomecounter = 0;
         $this->usercounter = 0;
         $this->categorycount = 0;
+        $this->cohortcount = 0;
         $this->coursecount = 0;
         $this->scalecount = 0;
+        $this->groupcount = 0;
+        $this->groupingcount = 0;
+        $this->rolecount = 0;
+        $this->tagcount = 0;
 
         foreach ($this->generators as $generator) {
             $generator->reset();
