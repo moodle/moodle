@@ -2731,5 +2731,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021051710.03);
     }
 
+    if ($oldversion < 2021051710.14) {
+        $table = new xmldb_table('h5p');
+        $indexpathnamehash = new xmldb_index('pathnamehash_idx', XMLDB_INDEX_NOTUNIQUE, ['pathnamehash']);
+
+        if (!$dbman->index_exists($table, $indexpathnamehash)) {
+            $dbman->add_index($table, $indexpathnamehash);
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021051710.14);
+    }
+
     return true;
 }
