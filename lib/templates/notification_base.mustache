@@ -15,11 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/notification_warning
+    @template core/notification_base
 
-    Moodle notification template.
+    Base Moodle notification template.
 
-    The purpose of this template is to render a warning notification.
+    The purpose of this template is to render an base template for alert notifications.
 
     Classes required for JS:
     * none
@@ -36,6 +36,14 @@
     Example context (json):
     { "message": "Your pants are on fire!", "closebutton": 1, "announce": 1, "extraclasses": "foo bar"}
 }}
-{{< core/notification_base}}
-    {{$alertclass}}alert-warning{{/alertclass}}
-{{/core/notification_base}}
+<div class="alert {{$alertclass}}alert-secondary{{/alertclass}} alert-block fade in {{ extraclasses }}" {{!
+        }}{{# announce }} role="alert" data-aria-autofocus="true"{{/ announce }}>
+    {{{ message }}}
+    {{# closebutton }}{{!
+    }}<button type="button" class="close" data-dismiss="alert" title="{{#str}}dismissnotification, core{{/str}}"{{!
+            }} data-toggle="tooltip">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">{{#str}}dismissnotification, core{{/str}}</span>
+    </button>{{!
+    }}{{/ closebutton }}
+</div>
