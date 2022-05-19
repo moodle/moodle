@@ -39,6 +39,12 @@
 <div class="alert alert-warning alert-block fade in {{ extraclasses }}" {{!
     }}{{# announce }} role="alert" data-aria-autofocus="true"{{/ announce }}{{!
     }}>
-    {{# closebutton }}<button type="button" class="close" data-dismiss="alert">&times;</button>{{/ closebutton }}
     {{{ message }}}
+    {{# closebutton }}{{!
+    }}<button type="button" class="close" data-dismiss="alert"{{!
+            }} title="{{#str}}dismissnotification, core{{/str}}" data-toggle="tooltip">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">{{#str}}dismissnotification, core{{/str}}</span>
+    </button>{{!
+    }}{{/ closebutton }}
 </div>
