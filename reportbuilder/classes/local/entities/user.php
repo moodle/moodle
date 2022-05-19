@@ -18,7 +18,9 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\entities;
 
+use context_helper;
 use context_system;
+use context_user;
 use html_writer;
 use lang_string;
 use moodle_url;
@@ -51,7 +53,10 @@ class user extends base {
      * @return array
      */
     protected function get_default_table_aliases(): array {
-        return ['user' => 'u'];
+        return [
+            'user' => 'u',
+            'context' => 'uctx',
+        ];
     }
 
     /**
@@ -109,6 +114,7 @@ class user extends base {
      */
     protected function get_all_columns(): array {
         $usertablealias = $this->get_table_alias('user');
+        $contexttablealias = $this->get_table_alias('context');
 
         $fullnameselect = self::get_name_fields_select($usertablealias);
         $fullnamesort = explode(', ', $fullnameselect);
@@ -235,6 +241,14 @@ class user extends base {
                     $countries = get_string_manager()->get_list_of_countries(true);
                     return $countries[$country] ?? '';
                 });
+            } else if ($userfield === 'description') {
+                // Select enough fields in order to format the column.
+                $column
+                    ->add_join("LEFT JOIN {context} {$contexttablealias}
+                           ON {$contexttablealias}.contextlevel = " . CONTEXT_USER . "
+                          AND {$contexttablealias}.instanceid = {$usertablealias}.id")
+                    ->add_fields("{$usertablealias}.descriptionformat, {$usertablealias}.id")
+                    ->add_fields(context_helper::get_preload_record_columns_sql($contexttablealias));
             }
 
             $columns[] = $column;
@@ -252,6 +266,7 @@ class user extends base {
     protected function is_sortable(string $fieldname): bool {
         // Some columns can't be sorted, like longtext or images.
         $nonsortable = [
+            'description',
             'picture',
         ];
 
@@ -267,12 +282,28 @@ class user extends base {
      * @return string
      */
     public function format($value, stdClass $row, string $fieldname): string {
+        global $CFG;
+
         if ($this->get_user_field_type($fieldname) === column::TYPE_BOOLEAN) {
             return format::boolean_as_text($value);
         }
 
         if ($this->get_user_field_type($fieldname) === column::TYPE_TIMESTAMP) {
             return format::userdate($value, $row);
+        }
+
+        if ($fieldname === 'description') {
+            if (empty($row->id)) {
+                return '';
+            }
+
+            require_once("{$CFG->libdir}/filelib.php");
+
+            context_helper::preload_from_record($row);
+            $context = context_user::instance($row->id);
+
+            $description = file_rewrite_pluginfile_urls($value, 'pluginfile.php', $context->id, 'user', 'profile', null);
+            return format_text($description, $row->descriptionformat, ['context' => $context->id]);
         }
 
         return s($value);
@@ -320,6 +351,7 @@ class user extends base {
             'email' => new lang_string('email'),
             'city' => new lang_string('city'),
             'country' => new lang_string('country'),
+            'description' => new lang_string('description'),
             'firstnamephonetic' => new lang_string('firstnamephonetic'),
             'lastnamephonetic' => new lang_string('lastnamephonetic'),
             'middlename' => new lang_string('middlename'),
@@ -346,6 +378,9 @@ class user extends base {
      */
     protected function get_user_field_type(string $userfield): int {
         switch ($userfield) {
+            case 'description':
+                $fieldtype = column::TYPE_LONGTEXT;
+                break;
             case 'confirmed':
             case 'suspended':
                 $fieldtype = column::TYPE_BOOLEAN;
@@ -367,6 +402,8 @@ class user extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
+        global $DB;
+
         $filters = [];
         $tablealias = $this->get_table_alias('user');
 
@@ -386,6 +423,13 @@ class user extends base {
         // User fields filters.
         $fields = $this->get_user_fields();
         foreach ($fields as $field => $name) {
+            // Filtering isn't supported for LONGTEXT fields on Oracle.
+            if ($this->get_user_field_type($field) === column::TYPE_LONGTEXT &&
+                    $DB->get_dbfamily() === 'oracle') {
+
+                continue;
+            }
+
             $optionscallback = [static::class, 'get_options_for_' . $field];
             if (is_callable($optionscallback)) {
                 $classname = select::class;
