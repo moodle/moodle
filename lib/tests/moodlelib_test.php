@@ -4646,12 +4646,16 @@ EOT;
      * @param int $time2 the time2 param.
      * @param string|null $format the format param.
      * @param string $expected the expected string.
+     * @param bool $dropzeroes the value passed for the `$dropzeros` param.
+     * @param bool $fullformat the value passed for the `$fullformat` param.
+     * @covers \get_time_interval_string
      */
-    public function test_get_time_interval_string(int $time1, int $time2, ?string $format, string $expected) {
+    public function test_get_time_interval_string(int $time1, int $time2, ?string $format, string $expected,
+            bool $dropzeroes = false, bool $fullformat = false) {
         if (is_null($format)) {
             $this->assertEquals($expected, get_time_interval_string($time1, $time2));
         } else {
-            $this->assertEquals($expected, get_time_interval_string($time1, $time2, $format));
+            $this->assertEquals($expected, get_time_interval_string($time1, $time2, $format, $dropzeroes, $fullformat));
         }
     }
 
@@ -4713,6 +4717,37 @@ EOT;
                 'time2' => 12345600,
                 'format' => '%R%adays %hhours %imins',
                 'expected' => '+0days 0hours 0mins'
+            ],
+            'Default format, time is after the reference time by 1 minute, drop zeroes, short form' => [
+                'time1' => 12345660,
+                'time2' => 12345600,
+                'format' => '',
+                'expected' => '1m',
+                'dropzeroes' => true,
+            ],
+            'Default format, time is after the reference time by 1 minute, drop zeroes, full form' => [
+                'time1' => 12345660,
+                'time2' => 12345600,
+                'format' => '',
+                'expected' => '1 minutes',
+                'dropzeroes' => true,
+                'fullformat' => true,
+            ],
+            'Default format, time is after the reference time by 1 minute, retain zeroes, full form' => [
+                'time1' => 12345660,
+                'time2' => 12345600,
+                'format' => '',
+                'expected' => '0 days 0 hours 1 minutes',
+                'dropzeroes' => false,
+                'fullformat' => true,
+            ],
+            'Empty string format, time is after the reference time by 1 minute, retain zeroes, full form' => [
+                'time1' => 12345660,
+                'time2' => 12345600,
+                'format' => '     ',
+                'expected' => '0 days 0 hours 1 minutes',
+                'dropzeroes' => false,
+                'fullformat' => true,
             ],
         ];
     }

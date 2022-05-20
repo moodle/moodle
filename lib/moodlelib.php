@@ -2441,15 +2441,50 @@ function usertime($date, $timezone=99) {
  * @param int $time1 unix timestamp
  * @param int $time2 unix timestamp
  * @param string $format string (can be lang string) containing format chars: https://www.php.net/manual/en/dateinterval.format.php.
+ * @param bool $dropzeroes If format is not provided and this is set to true, do not include zero time units.
+ *                         e.g. a duration of 3 days and 2 hours will be displayed as '3d 2h' instead of '3d 2h 0s'
+ * @param bool $fullformat If format is not provided and this is set to true, display time units in full format.
+ *                         e.g. instead of showing "3d", "3 days" will be returned.
  * @return string the formatted string describing the time difference, e.g. '10d 11h 45m'.
  */
-function get_time_interval_string(int $time1, int $time2, string $format = ''): string {
+function get_time_interval_string(int $time1, int $time2, string $format = '',
+        bool $dropzeroes = false, bool $fullformat = false): string {
     $dtdate = new DateTime();
     $dtdate->setTimeStamp($time1);
     $dtdate2 = new DateTime();
     $dtdate2->setTimeStamp($time2);
     $interval = $dtdate2->diff($dtdate);
-    $format = empty($format) ? get_string('dateintervaldayshoursmins', 'langconfig') : $format;
+
+    if (empty(trim($format))) {
+        // Default to this key.
+        $formatkey = 'dateintervaldayhrmin';
+
+        if ($dropzeroes) {
+            $units = [
+                'y' => 'yr',
+                'm' => 'mo',
+                'd' => 'day',
+                'h' => 'hr',
+                'i' => 'min',
+                's' => 'sec',
+            ];
+            $formatunits = [];
+            foreach ($units as $key => $unit) {
+                if (empty($interval->$key)) {
+                    continue;
+                }
+                $formatunits[] = $unit;
+            }
+            if (!empty($formatunits)) {
+                $formatkey = 'dateinterval' . implode("", $formatunits);
+            }
+        }
+
+        if ($fullformat) {
+            $formatkey .= 'full';
+        }
+        $format = get_string($formatkey, 'langconfig');
+    }
     return $interval->format($format);
 }
 
