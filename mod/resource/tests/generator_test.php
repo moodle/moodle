@@ -60,6 +60,21 @@ class generator_test extends \advanced_testcase {
         // Check that generated resource module contains a file.
         $fs = get_file_storage();
         $files = $fs->get_area_files($context->id, 'mod_resource', 'content', false, '', false);
-        $this->assertEquals(1, count($files));
+        $file = array_values($files)[0];
+        $this->assertCount(1, $files);
+        $this->assertEquals('resource3.txt', $file->get_filename());
+        $this->assertEquals('Test resource resource3.txt file', $file->get_content());
+
+        // Create a new resource specifying the file name.
+        $resource = $generator->create_instance(['course' => $SITE->id, 'defaultfilename' => 'myfile.pdf']);
+
+        // Check that generated resource module contains a file with the specified name.
+        $cm = get_coursemodule_from_instance('resource', $resource->id);
+        $context = \context_module::instance($cm->id);
+        $files = $fs->get_area_files($context->id, 'mod_resource', 'content', false, '', false);
+        $file = array_values($files)[0];
+        $this->assertCount(1, $files);
+        $this->assertEquals('myfile.pdf', $file->get_filename());
+        $this->assertEquals('Test resource myfile.pdf file', $file->get_content());
     }
 }
