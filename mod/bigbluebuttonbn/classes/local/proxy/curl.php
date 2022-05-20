@@ -149,7 +149,9 @@ class curl extends \curl {
             return $xml;
         }
 
-        debugging('Issue retrieving information from the server: ' . $response, DEBUG_DEVELOPER);
+        $debugabstract = html_to_text($response);
+        $debugabstract = substr($debugabstract, 0, 1024); // Limit to small amount of info so we do not overload logs.
+        debugging('Issue retrieving information from the server: ' . $debugabstract, DEBUG_DEVELOPER);
         return null;
     }
 }
