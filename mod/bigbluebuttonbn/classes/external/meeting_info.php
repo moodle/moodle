@@ -60,6 +60,8 @@ class meeting_info extends external_api {
      * @param int $groupid
      * @param bool $updatecache
      * @return array
+     * @throws \moodle_exception
+     * @throws restricted_context_exception
      */
     public static function execute(
         int $bigbluebuttonbnid,
@@ -91,7 +93,8 @@ class meeting_info extends external_api {
         // Check if the BBB server is working.
         $serverversion = bigbluebutton_proxy::get_server_version();
         if ($serverversion === null) {
-            throw new \moodle_exception('general_error_no_answer',
+            throw new \moodle_exception('general_error_no_answer', 'mod_bigbluebuttonbn',
+                bigbluebutton_proxy::get_server_not_available_url($instance),
                 bigbluebutton_proxy::get_server_not_available_message($instance));
         }
         return (array) meeting::get_meeting_info_for_instance($instance, $updatecache);
