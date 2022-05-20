@@ -39,7 +39,8 @@ class mod_resource_generator extends testing_module_generator {
      * text file.
      *
      * @param array|stdClass $record data for module being generated. Requires 'course' key
-     *     (an id or the full object). Also can have any fields from add module form.
+     *     (an id or the full object). Also can have any fields from add module form, and a
+     *     'defaultfilename' to set the name of the file created if no draft ID is supplied.
      * @param null|array $options general options for course module. Since 2.6 it is
      *     possible to omit this argument by merging options into $record
      * @return stdClass record from module-defined table with additional field
@@ -72,16 +73,17 @@ class mod_resource_generator extends testing_module_generator {
                 throw new coding_exception('resource generator requires a current user');
             }
             $usercontext = context_user::instance($USER->id);
+            $filename = $record->defaultfilename ?? 'resource' . ($this->instancecount + 1) . '.txt';
 
             // Pick a random context id for specified user.
             $record->files = file_get_unused_draft_itemid();
 
             // Add actual file there.
-            $filerecord = array('component' => 'user', 'filearea' => 'draft',
+            $filerecord = ['component' => 'user', 'filearea' => 'draft',
                     'contextid' => $usercontext->id, 'itemid' => $record->files,
-                    'filename' => 'resource' . ($this->instancecount+1) . '.txt', 'filepath' => '/');
+                    'filename' => $filename, 'filepath' => '/'];
             $fs = get_file_storage();
-            $fs->create_file_from_string($filerecord, 'Test resource ' . ($this->instancecount+1) . ' file');
+            $fs->create_file_from_string($filerecord, 'Test resource ' . $filename . ' file');
         }
 
         // Do work to actually add the instance.
