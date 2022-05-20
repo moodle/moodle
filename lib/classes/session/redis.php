@@ -65,6 +65,8 @@ class redis extends handler {
     protected $prefix = '';
     /** @var int $acquiretimeout how long to wait for session lock in seconds */
     protected $acquiretimeout = 120;
+    /** @var int $acquirewarn how long before warning when waiting for a lock in seconds */
+    protected $acquirewarn = null;
     /** @var int $lockretry how long to wait between session lock attempts in ms */
     protected $lockretry = 100;
     /** @var int $serializer The serializer to use */
@@ -117,6 +119,10 @@ class redis extends handler {
 
         if (isset($CFG->session_redis_acquire_lock_timeout)) {
             $this->acquiretimeout = (int)$CFG->session_redis_acquire_lock_timeout;
+        }
+
+        if (isset($CFG->session_redis_acquire_lock_warn)) {
+            $this->acquirewarn = (int)$CFG->session_redis_acquire_lock_warn;
         }
 
         if (isset($CFG->session_redis_acquire_lock_retry)) {
@@ -461,6 +467,8 @@ class redis extends handler {
 
         $whoami = "[pid {$pid}] {$hostname}:$uri";
 
+        $haswarned = false; // Have we logged a lock warning?
+
         while (!$haslock) {
 
             $haslock = $this->connection->setnx($lockkey, $whoami);
@@ -471,13 +479,22 @@ class redis extends handler {
                 return true;
             }
 
+            if (!empty($this->acquirewarn) && !$haswarned && $this->time() > $startlocktime + $this->acquirewarn) {
+                // This is a warning to better inform users.
+                $whohaslock = $this->connection->get($lockkey);
+                // phpcs:ignore
+                error_log("Warning: Cannot obtain session lock for sid: $id within $this->acquirewarn seconds but will keep trying. " .
+                    "It is likely another page ($whohaslock) has a long session lock, or the session lock was never released.");
+                $haswarned = true;
+            }
+
             if ($this->time() > $startlocktime + $this->acquiretimeout) {
                 // This is a fatal error, better inform users.
                 // It should not happen very often - all pages that need long time to execute
                 // should close session immediately after access control checks.
                 $whohaslock = $this->connection->get($lockkey);
                 // phpcs:ignore
-                error_log("Cannot obtain session lock for sid: $id within $this->acquiretimeout seconds. " .
+                error_log("Error: Cannot obtain session lock for sid: $id within $this->acquiretimeout seconds. " .
                     "It is likely another page ($whohaslock) has a long session lock, or the session lock was never released.");
                 throw new exception("Unable to obtain session lock");
             }
