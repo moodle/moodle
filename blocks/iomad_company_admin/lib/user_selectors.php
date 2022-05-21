@@ -126,7 +126,7 @@ abstract class company_user_selector_base extends user_selector_base {
      *      where clause the query, and an array containing any required parameters.
      *      this uses ? style placeholders.
      */
-    protected function search_sql($search, $u) {
+    protected function search_sql(string $search, string $u): array {
         global $DB;
 
         if (empty($this->profilefieldid)) {
