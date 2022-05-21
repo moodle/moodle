@@ -1,22 +1,20 @@
 $breadcrumb-divider: "▶" !default;
 $breadcrumb-divider-rtl: "◀" !default;
-// Making BS4 Stable compatible with BS4 Alpha for moodle core sass
-@import "moodle/bs4alphacompat";
 
 // Specific overrides to make Bootstrap RTL.
 @import "moodle/bootstrap-rtl";
 
 // Old Moodle stuff from base theme.
 // Massive, needs broken up.
+@import "moodle/variables";
 @import "moodle/core";
 @import "moodle/icons";
 @import "moodle/admin";
 @import "moodle/blocks";
-@import "moodle/bootswatch";
 @import "moodle/calendar";
+@import "moodle/contentbank";
 @import "moodle/course";
 @import "moodle/drawer";
-@import "moodle/dashboard";
 @import "moodle/filemanager";
 @import "moodle/message";
 @import "moodle/question";
@@ -34,11 +32,19 @@ $breadcrumb-divider-rtl: "◀" !default;
 @import "moodle/templates";
 @import "moodle/undo";
 @import "moodle/debug";
-@import "moodle/expendable";
 @import "moodle/sticky-footer";
 @import "moodle/popover-region";
 @import "moodle/tool_usertours";
-@import "moodle/bs2-compat";
 @import "moodle/print";
 @import "moodle/modal";
 @import "moodle/layout";
+@import "moodle/prefixes";
+@import "moodle/atto";
+@import "moodle/toasts";
+@import "moodle/navbar";
+@import "moodle/reportbuilder";
+@import "moodle/courseindex";
+@import "moodle/moremenu";
+@import "moodle/primarynavigation";
+@import "moodle/secondarynavigation";
+@import "moodle/tertiarynavigation";

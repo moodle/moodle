@@ -2,17 +2,17 @@
 $fixed-header-y: $navbar-height;
 
 $drawer-width: 285px !default;
+$drawer-left-width: 285px !default;
+$drawer-right-width: 315px !default;
 $drawer-padding-x: 20px !default;
 $drawer-padding-y: 20px !default;
 $drawer-offscreen-gutter: 20px !default;
+$drawer-bg-color: $gray-100 !default;
+$drawer-scroll-bg-track: $gray-100 !default;
+$drawer-shadow-color: rgba(0, 0, 0, .25) !default;
 
-:target::before {
-    content: " ";
-    display: block;
-    height: ($fixed-header-y + 10px); /* fixed header height*/
-    margin-top: -($fixed-header-y + 10px); /* negative fixed header height */
-    width: 1px;
-    pointer-events: none;
+:target {
+    scroll-margin-top: $fixed-header-y + 10px;
 }
 
 .pagelayout-embedded :target {
@@ -33,7 +33,6 @@ $drawer-bg: darken($body-bg, 5%) !default;
 
 [data-region="drawer"] {
     position: fixed;
-    padding: $drawer-padding-x $drawer-padding-y;
     width: $drawer-width;
     top: $fixed-header-y;
     height: calc(100% - #{$navbar-height});
@@ -41,9 +40,16 @@ $drawer-bg: darken($body-bg, 5%) !default;
     -webkit-overflow-scrolling: touch;
     z-index: $zindex-dropdown - 1;
     background-color: $drawer-bg;
-    -webkit-transition: right 0.5s ease, left 0.5s ease;
-    -moz-transition: right 0.5s ease, left 0.5s ease;
-    transition: right 0.5s ease, left 0.5s ease;
+    @include transition(right 0.5s ease, left 0.5s ease);
+}
+
+@include media-breakpoint-up(sm) {
+    [data-region="drawer"] {
+        padding: $drawer-padding-x $drawer-padding-y;
+    }
+    .jsenabled .btn-footer-popover {
+        @include transition(0.2s);
+    }
 }
 #nav-drawer {
     right: auto;
@@ -76,26 +82,27 @@ $drawer-bg: darken($body-bg, 5%) !default;
         }
     }
 }
-#page {
-    margin-top: $fixed-header-y;
-}
-.pagelayout-embedded #page {
-    margin-top: 0;
-}
+
 body.drawer-ease {
-    -webkit-transition: margin-left 0.5s ease, margin-right 0.5s ease;
-    -moz-transition: margin-left 0.5s ease, margin-right 0.5s ease;
-    transition: margin-left 0.5s ease, margin-right 0.5s ease;
+    @include transition(margin-left 0.5s ease, margin-right 0.5s ease);
 }
 
-body.drawer-open-left {
+body:not(.uses-drawers).drawer-open-left {
     @include media-breakpoint-up(md) {
-        margin-left: $drawer-width;
+        margin-left: $drawer-left-width;
     }
 }
+
+body.drawer-open-left #page.drawers {
+    @include media-breakpoint-up(md) {
+        margin-left: $drawer-left-width;
+        padding-left: 1rem;
+    }
+}
+
 body.drawer-open-right {
     @include media-breakpoint-up(md) {
-        margin-right: $drawer-width;
+        margin-right: $drawer-right-width;
     }
 }
 
@@ -107,13 +114,13 @@ $right-drawer-width: 320px;
     @include transition(right .2s ease-in-out);
 
     &.drawer {
-        z-index: $zindex-sticky;
+        z-index: $zindex-sticky + 1;
         position: fixed;
         top: $navbar-height;
         right: 0;
         height: calc(100% - #{$navbar-height});
         width: $right-drawer-width;
-        box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+        box-shadow: -2px 2px 4px $drawer-shadow-color;
         padding: 0;
         visibility: visible;
         opacity: 1;
@@ -130,8 +137,143 @@ $right-drawer-width: 320px;
         @include transition(right .2s ease-in-out, visibility 0s ease-in-out .2s, opacity 0s ease-in-out .2s);
     }
 }
+
+@include media-breakpoint-down(sm) {
+    [data-region=right-hand-drawer] {
+        &.drawer {
+            top: 0;
+            height: 100%;
+            z-index: $zindex-fixed + 1;
+        }
+    }
+    body.drawer-open-left,
+    body.drawer-open-right {
+        overflow: hidden;
+    }
+}
+
 .dir-rtl {
     [data-region=right-hand-drawer] {
-        box-shadow: 2px 2px 4px rgba(0, 0, 0, .08);
+        box-shadow: 2px 2px 4px $drawer-shadow-color;
     }
+}
+
+@mixin drawer() {
+    @include transition(left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease);
+    background-color: $drawer-bg-color;
+    z-index: $zindex-modal;
+    position: fixed;
+    height: 100vh;
+    top: 0;
+
+    &.not-initialized {
+        display: none;
+    }
+}
+
+@mixin drawertypes() {
+    &.drawer-right {
+        width: $drawer-right-width;
+        max-width: $drawer-right-width;
+        right: calc(-#{$drawer-right-width} + -10px);
+        visibility: hidden;
+        @include box-shadow($box-shadow-drawer-right);
+
+        &.show {
+            right: 0;
+            visibility: visible;
+        }
+
+        .drawertoggle {
+            margin-left: auto;
+            margin-right: 5px;
+        }
+    }
+    &.drawer-left {
+        width: $drawer-left-width;
+        max-width: $drawer-left-width;
+        left: calc(-#{$drawer-left-width} + -10px);
+        visibility: hidden;
+        @include box-shadow($box-shadow-drawer-left);
+
+        &.show {
+            left: 0;
+            visibility: visible;
+        }
+
+        .drawertoggle {
+            margin-right: auto;
+            margin-left: 5px;
+        }
+    }
+    &.drawer-bottom {
+        bottom: -110%;
+        &.show {
+            bottom: 0;
+        }
+    }
+}
+
+.drawer {
+    @include drawer();
+    @include drawertypes();
+}
+
+@include media-breakpoint-up(lg) {
+    .drawer {
+        z-index: inherit;
+
+        &.not-initialized {
+            display: block;
+        }
+    }
+}
+
+.drawer-md,
+.drawer-sm {
+    display: none;
+}
+
+.drawerheader {
+    padding: 0;
+    height: $navbar-height;
+    display: flex;
+    align-items: center;
+}
+.drawer.scrolled .drawerheader {
+    box-shadow: 0 8px 11px -7px $drawer-shadow-color;
+}
+
+@include media-breakpoint-down(md) {
+    .drawer-md {
+        display: block;
+        @include drawer();
+        @include drawertypes();
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .drawer-sm {
+        display: block;
+        @include drawer();
+        @include drawertypes();
+    }
+}
+
+.drawercontent {
+    position: relative;
+    z-index: -1;
+    height: calc(100% - #{$navbar-height});
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow-y: auto;
+    padding: 0.4rem;
+
+    .dropdown-menu .dropdown-item {
+        width: 220px;
+        white-space: normal;
+    }
+
+    @include thin-scrolls($drawer-scroll-bg-track);
 }

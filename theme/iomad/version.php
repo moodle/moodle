@@ -15,14 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   theme_iomad
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * IOMAD.
+ *
+ * @package    theme_iomad
+ * @copyright  2016 Frédéric Massart
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019111800;
-$plugin->requires  = 2019111200;
+$plugin->version   = 2022041900;
+$plugin->requires  = 2022041200;
 $plugin->component = 'theme_iomad';

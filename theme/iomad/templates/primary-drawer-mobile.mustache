@@ -1,0 +1,97 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+
+    @template theme_iomad/primary-drawer-mobile
+
+    This template renders the mobile version of the top navbar menu in a drawer.
+
+    Example context (json):
+    {
+        "output": {
+            "should_display_navbar_logo": true,
+            "get_compact_logo_url": "http://placekitten.com/50/50"
+        },
+        "mobileprimarynav": [
+            {
+                "text": "Dashboard",
+                "url": "/my",
+                "isactive": "true"
+            },
+            {
+                "text": "Site home",
+                "url": "/",
+                "isactive": "false"
+            },
+            {
+                "text": "My courses",
+                "url": "/course",
+                "isactive": "false"
+            }
+        ]
+    }
+}}
+
+{{< theme_iomad/drawer }}
+    {{$id}}theme_iomad-drawers-primary{{/id}}
+    {{$drawerclasses}}drawer drawer-left drawer-primary{{/drawerclasses}}
+    {{$drawercloseonresize}}1{{/drawercloseonresize}}
+    {{$drawerheading}}
+        {{# output.should_display_navbar_logo }}
+            <img src="{{output.get_compact_logo_url}}" class="logo py-1 h-100" alt="{{sitename}}">
+        {{/ output.should_display_navbar_logo }}
+        {{^ output.should_display_navbar_logo }}
+            {{{ sitename }}}
+        {{/ output.should_display_navbar_logo }}
+    {{/drawerheading}}
+    {{$drawercontent}}
+        <div class="list-group">
+            {{#mobileprimarynav}}
+                {{#haschildren}}
+                <a id="drop-down-{{sort}}" href="#" class="list-group-item list-group-item-action icons-collapse-expand collapsed d-flex" data-toggle="collapse" data-target="#drop-down-menu-{{sort}}" aria-expanded="false" aria-controls="drop-down-menu-{{sort}}">
+                    {{{text}}}
+                    <span class="ml-auto expanded-icon icon-no-margin mx-2">
+                        {{#pix}} t/expanded, core {{/pix}}
+                        <span class="sr-only">
+                            {{#str}} collapse, core {{/str}}
+                        </span>
+                    </span>
+                    <span class="ml-auto collapsed-icon icon-no-margin mx-2">
+                        {{#pix}} t/collapsed, core {{/pix}}
+                        <span class="sr-only">
+                            {{#str}} expand, core {{/str}}
+                        </span>
+                    </span>
+                </a>
+                <div class="collapse list-group-item p-0 border-0" role="menu" id="drop-down-menu-{{sort}}" aria-labelledby="drop-down-{{sort}}">
+                    {{#children}}
+                        {{^divider}}
+                             <a href="{{{url}}}" class="pl-5 bg-light list-group-item list-group-item-action">{{{text}}}</a>
+                        {{/divider}}
+                    {{/children}}
+                </div>
+                {{/haschildren}}
+                {{^haschildren}}
+                <a href="{{{url}}}" class="list-group-item list-group-item-action {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" {{#isactive}}aria-current="true"{{/isactive}}>
+                    {{{text}}}
+                </a>
+                {{/haschildren}}
+            {{/mobileprimarynav}}
+        </div>
+    {{/drawercontent}}
+    {{$drawerstate}}show-drawer-primary{{/drawerstate}}
+{{/ theme_iomad/drawer}}

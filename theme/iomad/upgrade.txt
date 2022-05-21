@@ -1,6 +1,18 @@
 This file describes API changes in /theme/iomad
 information provided here is intended especially for theme designers.
 
+=== 4.0 ===
+* Following the adopted standards, breadcrumbs have been removed for pages that reside on the 1st level within a course
+  e.g. participants, grades, settings, reports.
+* Any custom complex node structures added to the nav tree will now be displayed as a flattened structure within the corresponding
+  secondary navigation. It is dependent on what the first url for the construct.
+  Refer to secondary_test.php:test_add_external_nodes_to_secondary for examples.
+* New function addblockbutton in the renderer, which generates the new 'Add a block' button.
+  Call this and output it into your templates.
+* In order to view additional custom nodes, leverage the 'get_overflow_menu_data' which returns url_select if there are nodes available.
+* In order for existing themes to leverage the changes in the IOMAD theme, it is recommended to follow the guidelines in the 4.0 docs
+  https://docs.moodle.org/dev/Moodle_4.0_developer_update
+
 === 3.7 ===
 
 * Templates and renderers moved to core.
@@ -10,12 +22,12 @@ information provided here is intended especially for theme designers.
 Form element template
 ---------------------
 A 'wrapperid' has been added to 'templates/core_form/element-template.mustache' to restore unique ids
-on Iomad form element wrappers. This restores the same unique element ids seen on elements in BS2
-themes, which were mistakenly dropped when introducing the Iomad theme.
+on IOMAD form element wrappers. This restores the same unique element ids seen on elements in BS2
+themes, which were mistakenly dropped when introducing the IOMAD theme.
 
 === 3.5 ===
 
-The Iomad theme now uses Bootstrap 4 Stable (BS4S).
+The IOMAD theme now uses Bootstrap 4 Stable (BS4S).
 
 We are trying to use as much BS4S classes in MDL Templates to reduce the amount of Moodle CSS.
 
@@ -39,7 +51,7 @@ m-t-3 is now mt-5
 
 Grid and Flexbox
 ----------------
-The Iomadrap grid uses CSS's flexbox grid to build layouts.
+The IOMADrap grid uses CSS's flexbox grid to build layouts.
 
 New breakpoints for grids have been added:
 .col-*  <576px
@@ -54,8 +66,8 @@ All usage of '*-xs-*' have been dropped. So what used to be col-xs-6 should now 
 
 Typography
 ----------
-Iomadrap 4 uses a native font stack that selects the best font-family for each OS and device. For font sizing the browser default root font-size (typically 16px) is used. this variable can be changed using the variable '$font-size-base'.
-In the default Iomad preset we use: "0.9375rem" which computes to 15px on most browser.
+IOMADrap 4 uses a native font stack that selects the best font-family for each OS and device. For font sizing the browser default root font-size (typically 16px) is used. this variable can be changed using the variable '$font-size-base'.
+In the default IOMAD preset we use: "0.9375rem" which computes to 15px on most browser.
 
 Presets
 -------

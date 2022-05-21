@@ -15,10 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   theme_iomad
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Autoprefixer.
+ *
+ * This autoprefixer has been developed to satisfy the basic needs of the
+ * theme IOMAD when working with Bootstrap 4 alpha. We do not recommend
+ * that this tool is shared, nor used outside of this theme.
+ *
+ * @package    theme_iomad
+ * @copyright  2016 Frédéric Massart - FMCorz.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace theme_iomad;
@@ -99,6 +104,8 @@ class autoprefixer {
      * @param Document $tree The CSS tree.
      */
     public function __construct(Document $tree) {
+        debugging('theme_iomad\autoprefixer() is deprecated. Required prefixes for Bootstrap ' .
+            'are now in theme/iomad/scss/moodle/prefixes.scss', DEBUG_DEVELOPER);
         $this->tree = $tree;
 
         $pseudos = array_map(function($pseudo) {

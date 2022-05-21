@@ -13,16 +13,11 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
- * @package   theme_iomad
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 {{!
     @template theme_iomad/columns1
 
-    Iomad 1 column layout template.
+    IOMAD 1 column layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -55,6 +50,9 @@
             <div id="region-main-box" class="col-12">
                 <section id="region-main" aria-label="{{#str}}content{{/str}}">
                     {{{ output.course_content_header }}}
+                    {{#headercontent}}
+                        {{> core/activity_header }}
+                    {{/headercontent}}
                     {{{ output.main_content }}}
                     {{{ output.activity_navigation }}}
                     {{{ output.course_content_footer }}}
@@ -72,6 +70,6 @@
 {{#js}}
 M.util.js_pending('theme_iomad/loader');
 require(['theme_iomad/loader'], function() {
-  M.util.js_complete('theme_iomad/loader');
+    M.util.js_complete('theme_iomad/loader');
 });
 {{/js}}

@@ -27,12 +27,16 @@
     .custom-select {
         max-width: 100%;
     }
+    textarea.form-control {
+        width: 100%;
+    }
     .form-group {
         margin: 0.1rem 0.25rem 0.1rem 0;
     }
     br + label {
         justify-content: flex-start;
         width: 100%;
+        margin-right: 0;
     }
 }
 
@@ -49,24 +53,13 @@
     margin-bottom: $spacer / 2;
     border-bottom: $border-width solid $table-border-color;
 }
-.mform > .form-group {
-    margin-left: $spacer * 1.5;
-}
-
-.editor_atto_content.form-control {
-    width: 100%;
-}
 
 #adminsettings .form-control[size] {
     width: auto;
 }
 
-.jsenabled .mform .collapsed .fcontainer {
-    display: none;
-}
-
 #adminsettings .error {
-    color: $state-danger-text;
+    color: $danger;
 }
 
 .mform ul.file-list {
@@ -90,7 +83,7 @@ input#id_externalurl {
 
 .form-defaultinfo,
 .form-label .form-shortname {
-    @extend .text-muted;
+    color: $text-muted;
 }
 
 .form-label .form-shortname {
@@ -107,7 +100,7 @@ input#id_externalurl {
 }
 
 .formsettingheading .form-horizontal {
-    @extend .text-muted;
+    color: $text-muted;
 }
 
 // Moodle doesn't differentiate between what Bootstrap calls
@@ -115,21 +108,12 @@ input#id_externalurl {
 // uneditable looks ugly, styling both as form help is fairly
 // subtle in it's impact. Going for the latter as the best option.
 .no-felement.fstatic {
-    @extend .text-muted;
+    color: $text-muted;
     padding-top: 5px;
 }
 
 .no-fitem .fstaticlabel {
     font-weight: bold;
-}
-
-// Pale grey container for submit buttons.
-.form-buttons,
-.path-admin .buttons,
-.fp-content-center form + div,
-div.backup-section + form {
-    @extend .form-group;
-    padding-left: 0;
 }
 
 .form-item .form-setting .defaultsnext > input {
@@ -285,7 +269,7 @@ fieldset.coursesearchbox label {
     min-height: 2 * $input-padding-y-sm + 2 * $font-size-base;
 }
 
-.form-autocomplete-selection [role=listitem] {
+.form-autocomplete-selection [role=option] {
     cursor: pointer;
     white-space: inherit;
     word-break: break-word;
@@ -296,33 +280,30 @@ fieldset.coursesearchbox label {
 .form-autocomplete-suggestions {
     position: absolute;
     background-color: white;
-    border: 2px solid $gray-lighter;
-    border-radius: 3px;
+    border: $border-width solid $input-border-color;
     min-width: 206px;
     max-height: 20em;
     overflow: auto;
-    margin: 0;
-    padding: 0;
-    margin-top: 0.4em;
-    z-index: 1;
+    margin: $dropdown-spacer 0 0;
+    padding: $dropdown-padding-y 0;
+    z-index: 2;
 }
 
 .form-autocomplete-suggestions li {
     list-style-type: none;
-    padding: 0.2em;
+    padding: $dropdown-item-padding-y $dropdown-item-padding-x;
     margin: 0;
     cursor: pointer;
     color: $body-color;
-}
-
-.form-autocomplete-suggestions li:hover {
-    background-color: lighten($dropdown-link-active-bg, 15%);
-    color: $dropdown-link-active-color;
-}
-
-.form-autocomplete-suggestions li[aria-selected=true] {
-    background-color: darken($dropdown-bg, 5%);
-    color: $gray;
+    &:hover,
+    &:focus,
+    &[aria-selected="true"] {
+        background-color: $dropdown-link-active-bg;
+        color: $dropdown-link-active-color;
+    }
+    &::before {
+        content: "\200B";
+    }
 }
 
 .form-autocomplete-downarrow {
@@ -338,9 +319,6 @@ fieldset.coursesearchbox label {
     }
 }
 
-.form-autocomplete-selection:focus {
-    outline: none;
-}
 /** Undo some bootstrap things */
 .form-autocomplete-selection + input.form-control {
     width: auto;
@@ -351,6 +329,16 @@ fieldset.coursesearchbox label {
 .form-autocomplete-selection [data-active-selection=true] {
     padding: 0.5em;
     font-size: large;
+}
+
+select.form-control {
+    &[size],
+    &[multiple] {
+        padding-right: 0;
+        option {
+            width: fit-content;
+        }
+    }
 }
 
 /* Non-bootstrap selects with a size show their contents outside of the element.
@@ -376,7 +364,8 @@ textarea[data-auto-rows] {
         margin-right: 0;
         & > .col-md-3,
         & > .col-md-9 {
-            float: none;
+            flex: 0 0 100%;
+            max-width: 100%;
             width: inherit;
             padding-right: 0;
             padding-left: 0;
@@ -384,6 +373,19 @@ textarea[data-auto-rows] {
         &.femptylabel > .col-md-3 {
             display: none;
         }
+        .form-control {
+            width: 100%;
+        }
+    }
+}
+
+.mform .col-form-label .form-label-addon {
+    margin-left: 0.25rem;
+}
+
+@include media-breakpoint-up(sm) {
+    .mform:not(.full-width-labels) .col-form-label .form-label-addon {
+        margin-left: auto;
     }
 }
 
@@ -415,18 +417,6 @@ textarea[data-auto-rows] {
     max-width: 30rem;
 }
 
-/** Atto fields do not have form-control because that would break the layout of the editor.
-    So they need these extra styles to highlight the editor when there is a validation error. */
-.has-danger .editor_atto_content.form-control,
-.has-danger .editor_atto_content.form-control-danger {
-    @include form-control-validation($brand-danger);
-    background-image: $form-icon-danger;
-    padding-right: ($input-padding-x * 3);
-    background-repeat: no-repeat;
-    background-position: center right 1rem;
-    background-size: 1.5rem;
-}
-
 // Styles for the JS file types browser provided by the "filetypes" element.
 [data-filetypesbrowserbody] {
     [aria-expanded="false"] > [role="group"],
@@ -447,24 +437,13 @@ textarea[data-auto-rows] {
     flex-grow: 1;
 }
 
+@include media-breakpoint-up(md) {
+    .mform fieldset .fcontainer.collapseable .col-form-label {
+        padding-left: ($spacer * 2.5);
+    }
+}
+
 @include media-breakpoint-up(sm) {
-    .mform fieldset {
-        margin-left: $spacer * 1.5;
-    }
-    .mform fieldset.collapsible legend a.fheader {
-        padding: 0 5px 0 ($spacer * 1.5);
-        margin-left: -($spacer * 1.5);
-        background: url([[pix:t/expanded]]) 0 center no-repeat;
-    }
-
-    .mform fieldset.collapsed legend a.fheader {
-        /*rtl:raw:
-        background-image: url([[pix:t/collapsed_rtl]]);
-        */
-        /*rtl:remove*/
-        background-image: url([[pix:t/collapsed]]);
-    }
-
     .mform {
         .form-inline {
             .fdefaultcustom {
@@ -476,25 +455,45 @@ textarea[data-auto-rows] {
     }
 }
 
+.collapsemenu {
+    .collapseall {
+        display: block;
+    }
+
+    .expandall {
+        display: none;
+    }
+
+    &.collapsed {
+        .collapseall {
+            display: none;
+        }
+
+        .expandall {
+            display: block;
+        }
+    }
+}
+
 // Form inset on the left/right.
 // Used to display an icon/button within the form control.
 .input-group {
     &.form-inset {
         .form-inset-item {
-            @extend .position-absolute;
+            position: absolute;
             padding-top: calc(#{$input-padding-y} + #{$input-border-width});
             z-index: 3;
         }
 
         &.form-inset-left {
             .form-control {
-                @extend .pl-4;
+                padding-left: $spacer * 1.5;
             }
         }
 
         &.form-inset-right {
             .form-control {
-                @extend .pr-4;
+                padding-right: $spacer * 1.5;
             }
             .form-inset-item {
                 right: 0;

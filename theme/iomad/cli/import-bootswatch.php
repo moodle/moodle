@@ -15,10 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   theme_iomad
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Used to convert a bootswatch file from https://bootswatch.com/ to a Moodle preset.
+ *
+ * @package    theme_iomad
+ * @subpackage cli
+ * @copyright  2016 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('CLI_SCRIPT', true);

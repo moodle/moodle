@@ -3,6 +3,7 @@
   flex-wrap: wrap;
   padding: $breadcrumb-padding-y $breadcrumb-padding-x;
   margin-bottom: $breadcrumb-margin-bottom;
+  @include font-size($breadcrumb-font-size);
   list-style: none;
   background-color: $breadcrumb-bg;
   @include border-radius($breadcrumb-border-radius);
@@ -14,10 +15,10 @@
     padding-left: $breadcrumb-item-padding;
 
     &::before {
-      display: inline-block; // Suppress underlining of the separator in modern browsers
+      float: left; // Suppress inline spacings and underlining of the separator
       padding-right: $breadcrumb-item-padding;
       color: $breadcrumb-divider-color;
-      content: $breadcrumb-divider;
+      content: escape-svg($breadcrumb-divider);
     }
   }
 

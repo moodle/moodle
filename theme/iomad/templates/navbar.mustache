@@ -13,53 +13,92 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
- * @package   theme_iomad
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 {{!
-    Page navbar.
+
+    @template theme_iomad/navbar
+
+    This template renders the top navbar.
+
+    Example context (json):
+    {
+        "output": {
+            "should_display_navbar_logo": true,
+            "get_compact_logo_url": "http://placekitten.com/50/50",
+            "custom_menu": "<li>..</li>",
+            "page_heading_menu": "<li>..</li>",
+            "search_box": "<div><input type='text'></div>",
+            "navbar_plugin_output": "<div class='dropdown'>Messaging</div>",
+            "user_menu": "<div class='dropdown'>John Doe</div>"
+        },
+        "config": {
+            "wwwroot": "#",
+            "homeurl": "/my/"
+        },
+        "sitename": "Moodle Site",
+        "mobileprimarynav": [
+            {
+                "text": "Dashboard",
+                "url": "/my",
+                "isactive": true
+            },
+            {
+                "text": "Site home",
+                "url": "/",
+                "isactive": false
+            },
+            {
+                "text": "My courses",
+                "url": "/course",
+                "isactive": false
+            }
+        ]
+    }
 }}
-<nav class="fixed-top navbar navbar-light bg-white navbar-expand moodle-has-zindex" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+<nav class="navbar fixed-top navbar-light bg-white navbar-expand" aria-label="{{#str}}sitemenubar, admin{{/str}}">
 
-        <div data-region="drawer-toggle" class="d-inline-block mr-3">
-            <button aria-expanded="{{#navdraweropen}}true{{/navdraweropen}}{{^navdraweropen}}false{{/navdraweropen}}" aria-controls="nav-drawer" type="button" class="btn nav-link float-sm-left mr-1 btn-light bg-gray" data-action="toggle-drawer" data-side="left" data-preference="drawer-open-nav">{{#pix}}i/menubars{{/pix}}<span class="sr-only">{{#str}}sidepanel, core{{/str}}</span></button>
+    <button class="navbar-toggler aabtn d-block d-md-none px-1 my-1 border-0" data-toggler="drawers" data-action="toggle" data-target="theme_iomad-drawers-primary">
+        <span class="navbar-toggler-icon"></span>
+        <span class="sr-only">{{#str}}sidepanel, core{{/str}}</span>
+    </button>
+
+    <a href="{{{ config.homeurl }}}" class="navbar-brand d-none d-md-flex align-items-center m-0 mr-4 p-0 aabtn">
+
+        {{# output.should_display_navbar_logo }}
+            <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
+        {{/ output.should_display_navbar_logo }}
+        {{^ output.should_display_navbar_logo }}
+            {{{ sitename }}}
+        {{/ output.should_display_navbar_logo }}
+    </a>
+    {{#primarymoremenu}}
+        <div class="primary-navigation">
+            {{> core/moremenu}}
         </div>
+    {{/primarymoremenu}}
 
-        <a href="{{{ config.wwwroot }}}" class="navbar-brand {{# output.should_display_navbar_logo }}has-logo{{/ output.should_display_navbar_logo }}
-            {{^ output.should_display_navbar_logo }}
-                d-none d-sm-inline
-            {{/ output.should_display_navbar_logo }}
-                ">
-            {{# output.should_display_navbar_logo }}
-                <span class="logo d-none d-sm-inline">
-                    <img src="{{output.get_compact_logo_url}}" alt="{{sitename}}">
-                </span>
-            {{/ output.should_display_navbar_logo }}
-            <span class="site-name d-none d-md-inline">{{{ sitename }}}</span>
-        </a>
+    <ul class="navbar-nav d-none d-md-flex my-1 px-1">
+        <!-- page_heading_menu -->
+        {{{ output.page_heading_menu }}}
+    </ul>
 
-        <ul class="navbar-nav d-none d-md-flex">
-            <!-- custom_menu -->
-            {{{ output.custom_menu }}}
-            <!-- page_heading_menu -->
-            {{{ output.page_heading_menu }}}
-        </ul>
-        <ul class="nav navbar-nav ml-auto">
-            <li class="d-none d-lg-block">
-                {{{ output.search_box }}}
-            </li>
-            <!-- navbar_plugin_output -->
-            <li class="nav-item">
-                {{{ output.navbar_plugin_output }}}
-            </li>
-            <!-- user_menu -->
-            <li class="nav-item d-flex align-items-center">
-                {{{ output.user_menu }}}
-            </li>
-        </ul>
-        <!-- search_box -->
+    <div id="usernavigation" class="navbar-nav ml-auto">
+        {{# output.search_box }}
+            {{{ output.search_box }}}
+            <div class="divider border-left h-75 align-self-center mx-1"></div>
+        {{/output.search_box}}
+        {{#langmenu}}
+            {{> theme_iomad/language_menu }}
+            <div class="divider border-left h-75 align-self-center mx-1"></div>
+        {{/langmenu}}
+        {{{ output.navbar_plugin_output }}}
+        <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
+            {{#usermenu}}
+                {{> core/user_menu }}
+            {{/usermenu}}
+        </div>
+        {{{ output.edit_switch }}}
+    </div>
 </nav>
 
+{{> theme_iomad/primary-drawer-mobile }}

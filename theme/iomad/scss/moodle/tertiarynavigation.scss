@@ -1,0 +1,23 @@
+.tertiary-navigation {
+    padding-top: 10px;
+
+    .navitem {
+        display: flex;
+        margin-bottom: 25px;
+    }
+
+    & > a.btn,
+    & > div.urlselect {
+        margin-bottom: 25px;
+    }
+
+    .navitem:not(:last-child) {
+        margin-right: 20px;
+    }
+}
+
+@media print {
+    .tertiary-navigation {
+        display: none;
+    }
+}

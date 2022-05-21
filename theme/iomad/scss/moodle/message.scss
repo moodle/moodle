@@ -48,17 +48,17 @@
             }
         }
         tr {
+            th {
+                border-left: 1px solid $border-color;
+            }
             td {
                 &:not(:first-child) {
                     width: 150px;
                     text-align: center;
                 }
                 &:nth-child(even) {
-                    background-color: #f7f7f7;
+                    border: 1px solid $border-color;
                 }
-            }
-            th:nth-child(even) {
-                background-color: #f7f7f7;
             }
         }
         .preference-row {
@@ -73,61 +73,6 @@
                 text-align: center;
                 height: 30px;
                 line-height: 30px;
-            }
-            .preference-state {
-                margin: 0;
-                padding: 0;
-                display: inline-block;
-                vertical-align: middle;
-
-                input[type="checkbox"]:checked + .preference-state-status-container {
-                    background-color: #5cb85c;
-
-                    .on-text {
-                        display: inline-block;
-                    }
-                    .off-text {
-                        display: none;
-                    }
-                }
-                .preference-state-status-container {
-                    width: 30px;
-                    height: 30px;
-                    line-height: 30px;
-                    text-align: center;
-                    border-radius: 4px;
-                    background-color: #d9534f;
-                    color: #fff;
-                    cursor: pointer;
-
-                    .loading-icon {
-                        display: none;
-                    }
-                    .on-text {
-                        display: none;
-                    }
-                    .off-text {
-                        display: inline-block;
-                    }
-                }
-                &.loading {
-                    input[type="checkbox"]:checked + .preference-state-status-container {
-                        .on-text,
-                        .off-text {
-                            display: none;
-                        }
-                    }
-
-                    .preference-state-status-container {
-                        .on-text,
-                        .off-text {
-                            display: none;
-                        }
-                        .loading-icon {
-                            display: block;
-                        }
-                    }
-                }
             }
             &.loading {
                 .preference-name {
@@ -456,6 +401,22 @@ $message-day-color: color-yiq($message-app-bg) !default;
         flex-shrink: 0;
     }
 
+    .overflow-y {
+        overflow-y: auto;
+    }
+
+    @media (max-height: 320px) {
+        .header-container [data-region="view-overview"]:not(.hidden) {
+            display: flex;
+            align-items: center;
+        }
+        .footer-container [data-region="view-overview"] {
+            display: none;
+        }
+        .overflow-y {
+            overflow-y: unset;
+        }
+    }
     .body-container {
         flex: 1;
         overflow: hidden;
@@ -466,6 +427,7 @@ $message-day-color: color-yiq($message-app-bg) !default;
             left: 0;
             top: 0;
             bottom: 0;
+            overflow: auto;
         }
     }
 
@@ -475,12 +437,6 @@ $message-day-color: color-yiq($message-app-bg) !default;
         textarea {
             direction: ltr;
         }
-    }
-
-    .matchtext {
-        background-color: lighten($primary, 40%);
-        color: $body-color;
-        height: 1.5rem;
     }
 
     .contact-status {
@@ -570,6 +526,10 @@ $message-day-color: color-yiq($message-app-bg) !default;
             &.expanded {
                 display: flex;
             }
+
+            div[data-region="toggle"] {
+                padding: 0.1rem;
+            }
         }
     }
 
@@ -580,14 +540,30 @@ $message-day-color: color-yiq($message-app-bg) !default;
             }
         }
     }
-    .list-group .list-group-item {
-        border-left: 0;
-        border-right: 0;
-        &:first-child {
-            border-top: 0;
-        }
-        &:last-child {
-            border-bottom: 0;
+    .list-group {
+        border-radius: 0;
+        .list-group-item {
+            border-left: 0;
+            border-right: 0;
+            &:hover {
+                color: $white;
+                background-color: $primary;
+                .badge-primary {
+                    background-color: $white;
+                    color: $primary;
+                }
+            }
+            &:first-child {
+                border-top: 0;
+            }
+            &:last-child {
+                border-bottom: 0;
+            }
+            &.list-group-item-action {
+                margin: 0.1rem;
+                width: auto;
+                text-align: inherit;
+            }
         }
     }
     .last-message {
@@ -640,15 +616,26 @@ $message-day-color: color-yiq($message-app-bg) !default;
         overflow-y: auto;
     }
 }
-#page-message-index #region-main {
-    height: 100%;
-    div[role="main"] {
+#page-message-index {
+    #page-header {
+        display: none;
+    }
+    #region-main {
         height: 100%;
-        #maincontent {
-            margin-top: -1px;
+        margin-top: 0;
+        .conversationcontainer {
+            .section {
+                max-height: calc(100vh - 50px);
+            }
         }
-        .message-app.main {
+        div[role="main"] {
             height: 100%;
+            #maincontent {
+                margin-top: -1px;
+            }
+            .message-app.main {
+                height: 100%;
+            }
         }
     }
 }
@@ -677,6 +664,14 @@ $message-day-color: color-yiq($message-app-bg) !default;
 
         @include media-breakpoint-down(xs) {
             right: -1 * map-get($spacers, 2);
+        }
+    }
+
+    @media (max-height: 495px) {
+        .emoji-picker-container {
+            position: fixed;
+            top: 0;
+            transform: none;
         }
     }
 

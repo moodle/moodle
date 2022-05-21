@@ -1,11 +1,10 @@
-$toggle-width: 25px;
 $standard-border: 1px solid #ddd;
 $region-container-height: 500px;
 $region-container-width: 380px;
 $region-container-z-index: 1;
 $region-header-height: 25px;
 $region-footer-height: 30px;
-$content-item-hover-colour-bg: #79b5e6;
+$content-item-hover-colour-bg: $primary;
 $content-item-hover-colour-text: #fff;
 $content-item-selected-colour-bg: #4f94cd;
 $content-item-unread-colour: #f4f4f4;
@@ -72,10 +71,10 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
 .count-container {
     padding: 2px;
     border-radius: 2px;
-    background-color: red;
+    background-color: $danger;
     color: white;
-    font-size: 10px;
-    line-height: 10px;
+    font-size: 11px;
+    line-height: 11px;
     position: absolute;
     top: 5px;
     right: 0;
@@ -174,11 +173,16 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
     }
 }
 
+.navbar-nav {
+    .popover-region {
+        .icon {
+            font-weight: bolder;
+        }
+    }
+}
+
 .navbar {
     .popover-region {
-        float: left;
-        margin-right: 10px;
-
         &.collapsed {
             .popover-region-container {
                 @include invisible();
@@ -190,24 +194,20 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
         }
     }
 
-    .popover-region-toggle {
-        width: $toggle-width;
-    }
-
     .count-container {
         padding: 2px;
         border-radius: 2px;
-        background-color: red;
+        background-color: $danger;
         color: white;
-        font-size: 10px;
-        line-height: 10px;
+        font-size: 11px;
+        line-height: 11px;
         position: absolute;
-        top: 5px;
+        top: $navbar-height / 4;
         right: 0;
     }
 
     .popover-region-container {
-        top: $line-height-base * 1.4 * $font-size-base;
+        top: $navbar-height;
     }
 
 }
@@ -231,6 +231,10 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
             .timestamp {
                 color: $content-item-hover-colour-text;
             }
+        }
+
+        .view-more {
+            color: inherit;
         }
     }
 
@@ -268,12 +272,16 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
             font-size: 10px;
             line-height: 10px;
             margin: 0;
-            color: #666;
+            color: inherit;
             margin-left: 24px;
         }
     }
 
     .view-more {
+        &:hover {
+            color: inherit;
+        }
+
         position: absolute;
         bottom: 5px;
         right: 5px;

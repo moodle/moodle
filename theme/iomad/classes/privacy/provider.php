@@ -15,10 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   theme_iomad
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Privacy Subsystem implementation for theme_iomad.
+ *
+ * @package    theme_iomad
+ * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace theme_iomad\privacy;
@@ -42,6 +43,12 @@ class provider implements
     /** The user preference for the navigation drawer. */
     const DRAWER_OPEN_NAV = 'drawer-open-nav';
 
+    /** The user preferences for the course index. */
+    const DRAWER_OPEN_INDEX = 'drawer-open-index';
+
+    /** The user preferences for the blocks drawer. */
+    const DRAWER_OPEN_BLOCK = 'drawer-open-block';
+
     /**
      * Returns meta data about this system.
      *
@@ -50,6 +57,8 @@ class provider implements
      */
     public static function get_metadata(collection $items) : collection {
         $items->add_user_preference(self::DRAWER_OPEN_NAV, 'privacy:metadata:preference:draweropennav');
+        $items->add_user_preference(self::DRAWER_OPEN_INDEX, 'privacy:metadata:preference:draweropenindex');
+        $items->add_user_preference(self::DRAWER_OPEN_BLOCK, 'privacy:metadata:preference:draweropenblock');
         return $items;
     }
 
@@ -70,6 +79,36 @@ class provider implements
                 'theme_iomad',
                 self::DRAWER_OPEN_NAV,
                 $draweropennavpref,
+                $preferencestring
+            );
+        }
+
+        $draweropenindexpref = get_user_preferences(self::DRAWER_OPEN_INDEX, null, $userid);
+
+        if (isset($draweropenindexpref)) {
+            $preferencestring = get_string('privacy:drawerindexclosed', 'theme_iomad');
+            if ($draweropenindexpref == 1) {
+                $preferencestring = get_string('privacy:drawerindexopen', 'theme_iomad');
+            }
+            \core_privacy\local\request\writer::export_user_preference(
+                'theme_iomad',
+                self::DRAWER_OPEN_INDEX,
+                $draweropenindexpref,
+                $preferencestring
+            );
+        }
+
+        $draweropenblockpref = get_user_preferences(self::DRAWER_OPEN_BLOCK, null, $userid);
+
+        if (isset($draweropenblockpref)) {
+            $preferencestring = get_string('privacy:drawerblockclosed', 'theme_iomad');
+            if ($draweropenblockpref == 1) {
+                $preferencestring = get_string('privacy:drawerblockopen', 'theme_iomad');
+            }
+            \core_privacy\local\request\writer::export_user_preference(
+                'theme_iomad',
+                self::DRAWER_OPEN_BLOCK,
+                $draweropenblockpref,
                 $preferencestring
             );
         }

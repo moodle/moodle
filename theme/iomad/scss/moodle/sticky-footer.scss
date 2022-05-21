@@ -7,19 +7,38 @@ body {
     height: 100%;
 }
 
-#page-wrapper {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    #page {
-        flex: 1 0 auto;
+@include media-breakpoint-up(sm) {
+    #page-wrapper {
+        height: 100%;
         display: flex;
         flex-direction: column;
-        #page-content {
-            flex: 1 0 auto;
+        #page {
+            &:not(.drawers) {
+                flex: 1 0 auto;
+            }
+            display: flex;
+            flex-direction: column;
+            #page-content {
+                flex: 1 0 auto;
+            }
+        }
+        #page-footer {
+            flex-shrink: 0;
         }
     }
-    #page-footer {
-        flex-shrink: 0;
+}
+
+@include media-breakpoint-down(sm) {
+    #page-wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        #page {
+            &:not(.drawers) {
+                flex: 1 0 auto;
+            }
+            display: flex;
+            flex-direction: column;
+        }
     }
 }

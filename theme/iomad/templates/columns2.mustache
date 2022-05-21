@@ -13,18 +13,13 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
- * @package   theme_iomad
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 {{!
     @template theme_iomad/columns2
 
     Admin time setting template.
 
-    Iomad 2 column layout template.
+    IOMAD 2 column layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -63,16 +58,19 @@
     {{{ output.standard_top_of_body_html }}}
 
     {{> theme_iomad/navbar }}
-    {{> theme_iomad/nav-drawer }}
 
     <div id="page" class="container-fluid d-print-block">
         {{{ output.full_header }}}
-
+            {{#secondarymoremenu}}
+                <div class="secondary-navigation">
+                    {{> core/moremenu}}
+                </div>
+            {{/secondarymoremenu}}
         <div id="page-content" class="row pb-3 d-print-block">
             <div id="region-main-box" class="col-12">
                 {{#hasregionmainsettingsmenu}}
                 <div id="region-main-settings-menu" class="d-print-none {{#hasblocks}}has-blocks{{/hasblocks}}">
-                    <div> {{{ output.region_main_settings_menu }}} </div>
+                    <div> {{{ regionmainsettingsmenu }}} </div>
                 </div>
                 {{/hasregionmainsettingsmenu}}
                 <section id="region-main" {{#hasblocks}}class="has-blocks mb-3"{{/hasblocks}} aria-label="{{#str}}content{{/str}}">
@@ -81,6 +79,12 @@
                         <div class="region_main_settings_menu_proxy"></div>
                     {{/hasregionmainsettingsmenu}}
                     {{{ output.course_content_header }}}
+                    {{#headercontent}}
+                        {{> core/activity_header }}
+                    {{/headercontent}}
+                    {{#overflow}}
+                        {{> core/url_select}}
+                    {{/overflow}}
                     {{{ output.main_content }}}
                     {{{ output.activity_navigation }}}
                     {{{ output.course_content_footer }}}
@@ -88,6 +92,7 @@
                 </section>
                 {{#hasblocks}}
                 <section data-region="blocks-column" class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                    {{{ addblockbutton }}}
                     {{{ sidepreblocks }}}
                 </section>
                 {{/hasblocks}}
@@ -102,12 +107,8 @@
 </html>
 {{#js}}
 M.util.js_pending('theme_iomad/loader');
-require(['theme_iomad/loader'], function() {
-  M.util.js_complete('theme_iomad/loader');
-});
-M.util.js_pending('theme_iomad/drawer');
-require(['theme_iomad/drawer'], function(mod) {
-    mod.init();
-  M.util.js_complete('theme_iomad/drawer');
+require(['theme_iomad/loader', 'theme_iomad/drawer'], function(Loader, Drawer) {
+    Drawer.init();
+    M.util.js_complete('theme_iomad/loader');
 });
 {{/js}}

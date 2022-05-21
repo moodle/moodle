@@ -1,0 +1,106 @@
+.moremenu {
+    opacity: 0;
+    height: $moremenu-height;
+    &.observed {
+        opacity: 1;
+    }
+    .nav-link {
+        height: $moremenu-height;
+        display: flex;
+        align-items: center;
+        border-right: none;
+        border-bottom: solid 3px transparent;
+        border-left: none;
+        border-top: none;
+        @include hover-focus() {
+            @include hover-navbar();
+        }
+
+        &.active {
+            background-color: $gray-100;
+            border-color: transparent;
+            border-bottom-color: $primary;
+            &:focus,
+            &:hover {
+                background-color: $gray-100;
+                border-bottom-color: $primary;
+            }
+        }
+        &.focus,
+        &:focus {
+            position: relative;
+        }
+        &[data-toggle="tab"] {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            &::after {
+                content: attr(data-text) / "";
+                height: 0;
+                visibility: hidden;
+                overflow: hidden;
+                user-select: none;
+                pointer-events: none;
+                font-weight: bold;
+
+                @media speech {
+                    display: none;
+                }
+            }
+        }
+    }
+    .nav-tabs {
+        margin-left: 0;
+        background-color: $body-bg;
+    }
+    .show > .nav-link,
+    .active > .nav-link,
+    .nav-link.show,
+    .nav-link.active {
+        background: transparent;
+    }
+
+    // Styling for dropdown menus inside the MoreButton.
+    .dropdownmoremenu > .dropdown-menu {
+        & > .dropdown-item {
+            padding: 0;
+        }
+        .dropdown-menu {
+            position: static;
+            padding: 0;
+            border: 0;
+            &.show {
+                display: block;
+            }
+            .dropdown-item {
+                background-color: $gray-100;
+                @include hover-focus() {
+                    color: $dropdown-link-hover-color;
+                    @include gradient-bg($dropdown-link-active-bg);
+                }
+            }
+            .dropdown-divider {
+                display: none;
+            }
+        }
+    }
+
+    .dropdown-item[aria-current="true"],
+    .dropdown-item.active {
+        background-color: transparent;
+        color: $dropdown-link-color;
+        &:focus-within,
+        &:hover {
+            background-color: $dropdown-link-active-bg;
+            color: $dropdown-link-active-color;
+            a {
+                color: $dropdown-link-active-color;
+            }
+        }
+        &:before {
+            content: $fa-var-check;
+        }
+    }
+}

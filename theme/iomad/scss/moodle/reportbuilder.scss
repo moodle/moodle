@@ -1,0 +1,393 @@
+/**
+* Reportbuilder.
+*/
+
+/* Table */
+.reportbuilder-table {
+    td {
+        @extend .align-middle;
+    }
+    .action-menu .menubar {
+        justify-content: end;
+    }
+}
+
+/* Filters */
+.reportbuilder-wrapper {
+    .filters-dropdown {
+        width: 27rem;
+        padding: 0;
+        @include media-breakpoint-down(sm) {
+            width: 100%;
+        }
+    }
+    .reportbuilder-filters-wrapper,
+    .reportbuilder-conditions-list {
+        .mform {
+            &.full-width-labels {
+                .fitem.row {
+                    > .col-md-3,
+                    > .col-md-9 {
+                        flex: 0 0 100%;
+                        max-width: 100%;
+                    }
+                    .fdate_selector {
+                        flex-wrap: wrap;
+                    }
+                }
+            }
+            .form-group {
+                margin-bottom: 0;
+                max-width: 100%;
+                > span {
+                    max-width: 100%;
+                }
+            }
+        }
+        .filter {
+            .filter-header {
+                font-size: $h5-font-size;
+                .filter-name {
+                    font-size: 1rem;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    padding-right: 1rem;
+                }
+                .filter-name:hover {
+                    white-space: normal;
+                    text-overflow: clip;
+                    word-break: break-all;
+                }
+            }
+        }
+    }
+}
+
+/**
+* Styled scrollbar with left padding for webkit browsers.
+*/
+@mixin reportbuilder-scrollbar() {
+    $inner-scrollbar-thumb: $secondary;
+    $inner-scrollbar-track: lighten($secondary, 40%);
+    &::-webkit-scrollbar {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: $inner-scrollbar-thumb;
+        border-left: 5px solid $white;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: $inner-scrollbar-track;
+        border-left: 5px solid $white;
+    }
+}
+
+/**
+* Custom Reports.
+*/
+
+$rb-left-sidebar-width: 250px;
+$rb-right-sidebar-width: 350px;
+
+.reportbuilder-report-container {
+    @extend .flex-fill;
+    min-width: 0;
+}
+// Allow horizontal scroll in editor table.
+.reportbuilder-editor-table-container {
+    overflow-x: auto;
+}
+
+/* Custom table headers */
+.reportbuilder-table th {
+    button[data-action="report-remove-column"],
+    span[data-drag-type="move"] {
+        .icon {
+            width: 12px;
+            height: 12px;
+            font-size: 12px;
+            vertical-align: text-top;
+            color: $body-color;
+        }
+    }
+    button[data-action="report-remove-column"] .icon {
+        margin-right: 0;
+    }
+}
+
+/* Sidebar menu */
+.reportbuilder-sidebar-menu {
+    @include media-breakpoint-up(lg) {
+        width: $rb-left-sidebar-width;
+        flex-shrink: 0;
+    }
+    .card-body .list-group-item {
+        padding: .75rem;
+        .icon {
+            width: 12px;
+            height: 12px;
+            font-size: 12px;
+        }
+    }
+}
+.reportbuilder-sidebar-menu-cards {
+    overflow-y: auto;
+    @include reportbuilder-scrollbar;
+}
+
+/* Settings sidebar */
+.reportbuilder-sidebar-settings {
+    overflow-y: auto;
+    @include reportbuilder-scrollbar;
+    @include media-breakpoint-up(lg) {
+        width: $rb-right-sidebar-width;
+        flex-shrink: 0;
+    }
+    .list-group-item {
+        padding: .75rem;
+        .icon {
+            width: 12px;
+            height: 12px;
+            font-size: 12px;
+            color: $body-color;
+        }
+        button[data-action="report-remove-filter"],
+        button[data-action="report-remove-condition"] {
+            .icon {
+                margin-right: 0;
+                vertical-align: text-top;
+            }
+        }
+        span[data-drag-type="move"] .icon {
+            vertical-align: text-top;
+        }
+    }
+    div[data-region="settings-sorting"] .list-group-item span[data-drag-type="move"] .icon {
+        vertical-align: middle;
+    }
+    div[data-region="settings-cardview"] form {
+        .col-md-3,
+        .col-md-9 {
+            flex: 1 1;
+            max-width: initial;
+        }
+        div[data-fieldtype="submit"] {
+            flex-basis: auto;
+        }
+    }
+    .inplaceeditable.inplaceeditingon input {
+        width: 100%;
+    }
+}
+
+/* Add button styles when a toggle button is active. */
+.reportbuilder-wrapper {
+    button.btn-outline-secondary[data-toggle="collapse"]:not(.collapsed),
+    .dropdown.show button.btn-outline-secondary[data-toggle="dropdown"] {
+        color: color-yiq($gray-600);
+        background-color: $gray-600;
+        border-color: $gray-600;
+    }
+}
+
+/* Drag&drop styles. */
+.reportbuilder-sortable-list li,
+.reportbuilder-table th,
+.reportbuilder-conditions-list .condition {
+    &.sortable-list-current-position {
+        background-color: lighten($primary, 40%);
+    }
+    &.sortable-list-is-dragged {
+        background-color: $white;
+        opacity: 0.85;
+    }
+}
+
+/* Reportbuilder full page styles. */
+@include media-breakpoint-up(lg) {
+    $tabs-height: 83px;
+    $sidebar-margin-top: $navbar-height + $tabs-height + 20px;
+    .path-admin-reportbuilder.pagelayout-popup {
+        // Fix for behat-site defined in theme/iomad/scss/moodle/debug.scss:7 is not needed. Override it.
+        &.behat-site .fixed-top {
+            position: fixed;
+        }
+        #region-main {
+            border: none;
+            padding: 0;
+        }
+        #maincontent {
+            visibility: hidden;
+        }
+        .dynamictabs .nav-tabs {
+            position: fixed;
+            z-index: $zindex-fixed;
+            width: calc(100% - 35px);
+            padding-top: 1.25rem;
+            background-color: $white;
+            box-shadow: 0 1.25rem 0 $white; // Small hack to simulate padding bottom after nav-tabs border.
+        }
+        .dynamictabs .tab-content {
+            padding-top: $tabs-height;
+        }
+        .reportbuilder-sidebar-menu {
+            position: fixed;
+            .reportbuilder-sidebar-menu-cards {
+                max-height: calc(100vh - #{$sidebar-margin-top} - 52px); // 52px corresponds to "search" input size.
+            }
+        }
+        .reportbuilder-sidebar-settings {
+            position: fixed;
+            right: 30px;
+            max-height: calc(100vh - #{$sidebar-margin-top});
+        }
+        .reportbuilder-report[data-editing] .reportbuilder-report-container {
+            max-height: calc(100vh - #{$sidebar-margin-top});
+            overflow-y: auto;
+            @include reportbuilder-scrollbar;
+            margin-left: calc(#{$rb-left-sidebar-width} + 1rem);
+            margin-right: calc(#{$rb-right-sidebar-width} + 1rem);
+        }
+        .reportbuilder-audiences-container {
+            margin-left: calc(#{$rb-left-sidebar-width} + 1rem);
+        }
+    }
+}
+
+/* Toggle cards. */
+.reportbuilder-toggle-card {
+    .card-header {
+        border-bottom: none;
+    }
+    .card-body {
+        border-top: $card-border-width solid $card-border-color;
+    }
+    .toggle-card-button {
+        i.toggle-card-icon {
+            color: $gray-600;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        // Toggle icons using standard bootstrap collapse.
+        .collapsed-icon-container {
+            display: none;
+        }
+        .expanded-icon-container {
+            display: inline-block;
+        }
+        &.collapsed {
+            .collapsed-icon-container {
+                display: inline-block;
+            }
+            .expanded-icon-container {
+                display: none;
+            }
+        }
+    }
+}
+
+/**
+* Audiences.
+*/
+
+.reportbuilder-audiences-container {
+    /* 'OR' separator. */
+    .audience-separator {
+        text-transform: uppercase;
+        &::before,
+        &::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(0, 0, 0, .125);
+        }
+        &:not(:empty)::before {
+            margin-right: 1rem;
+        }
+        &:not(:empty)::after {
+            margin-left: 1rem;
+        }
+    }
+    /* Card action icons. */
+    .instance-card {
+        .card-header {
+            i.icon {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+/* Report table card view styles */
+@mixin table-cards {
+    table.reportbuilder-table {
+        thead {
+            display: none;
+        }
+        tr {
+            display: flex;
+            flex-direction: column;
+            margin: .5rem 0;
+            padding: .25rem .5rem 0 .5rem;
+            background-color: $card-bg !important; /* stylelint-disable-line declaration-no-important */
+            word-wrap: break-word;
+            background-clip: border-box;
+            border: $card-border-width solid $card-border-color;
+            @include border-radius($card-border-radius);
+            &:hover {
+                background-color: $card-bg !important; /* stylelint-disable-line declaration-no-important */
+            }
+            &.emptyrow {
+                display: none;
+            }
+            &:not(.show) {
+                td[data-cardviewhidden] {
+                    display: none;
+                }
+            }
+            td {
+                display: block;
+                min-height: 3.6rem;
+                padding: .5rem .25rem;
+                border: none;
+                &::before {
+                    content: attr(data-cardtitle);
+                    display: block;
+                    text-transform: uppercase;
+                    font-size: 70%;
+                    color: $gray-800;
+                }
+                &:not([data-cardtitle]) {
+                    min-height: 3rem;
+                }
+                &:not(:first-child):not(.card-toggle) {
+                    border-top: $card-border-width solid $card-border-color;
+                }
+                &:first-child {
+                    padding-right: 2rem;
+                }
+            }
+            td.card-toggle {
+                display: block !important; /* stylelint-disable-line declaration-no-important */
+                position: absolute;
+                right: 10px;
+                button {
+                    padding: 0 .5rem;
+                    color: $gray-600;
+                    i {
+                        font-size: 1.5em;
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Report table card view for small screens */
+.reportbuilder-report[data-report-type="0"]:not([data-editing]) {
+    @include media-breakpoint-down(xs) {
+        @include table-cards;
+    }
+}

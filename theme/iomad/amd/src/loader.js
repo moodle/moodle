@@ -14,94 +14,92 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   theme_iomad
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Template renderer for Moodle. Load and render Moodle templates with Mustache.
+ *
+ * @module     theme_iomad/loader
+ * @copyright  2015 Damyon Wiese <damyon@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      2.9
  */
 
-define(['jquery', './tether', 'core/event', 'core/custom_interaction_events'], function(jQuery, Tether, Event, customEvents) {
+import $ from 'jquery';
+import * as Aria from './aria';
+import Bootstrap from './index';
+import Pending from 'core/pending';
+import setupBootstrapPendingChecks from './pending';
 
-    window.jQuery = jQuery;
-    window.Tether = Tether;
-    M.util.js_pending('theme_iomad/loader:children');
-
-    require(['theme_iomad/aria',
-            'theme_iomad/pending',
-            'theme_iomad/util',
-            'theme_iomad/alert',
-            'theme_iomad/button',
-            'theme_iomad/carousel',
-            'theme_iomad/collapse',
-            'theme_iomad/dropdown',
-            'theme_iomad/modal',
-            'theme_iomad/scrollspy',
-            'theme_iomad/tab',
-            'theme_iomad/tooltip',
-            'theme_iomad/popover'],
-            function(Aria) {
-
-        // We do twice because: https://github.com/twbs/bootstrap/issues/10547
-        jQuery('body').popover({
-            trigger: 'focus',
-            selector: "[data-toggle=popover][data-trigger!=hover]",
-            placement: 'auto'
-        });
-
-        // Popovers must close on Escape for accessibility reasons.
-        customEvents.define(jQuery('body'), [
-            customEvents.events.escape,
-        ]);
-        jQuery('body').on(customEvents.events.escape, '[data-toggle=popover]', function() {
-            // Use "blur" instead of "popover('hide')" to prevent issue that the same tooltip can't be opened again.
-            jQuery(this).trigger('blur');
-        });
-
-        jQuery("html").popover({
-            container: "body",
-            selector: "[data-toggle=popover][data-trigger=hover]",
-            trigger: "hover",
-            delay: {
-                hide: 500
-            }
-        });
-
-        jQuery("html").tooltip({
-            selector: '[data-toggle="tooltip"]'
-        });
-
-        // Disables flipping the dropdowns up and getting hidden behind the navbar.
-        jQuery.fn.dropdown.Constructor.Default.flip = false;
-
-        jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-            var hash = jQuery(e.target).attr('href');
-            if (history.replaceState) {
-                history.replaceState(null, null, hash);
-            } else {
-                location.hash = hash;
-            }
-        });
-
-        var hash = window.location.hash;
-        if (hash) {
-           jQuery('.nav-link[href="' + hash + '"]').tab('show');
+/**
+ * Rember the last visited tabs.
+ */
+const rememberTabs = () => {
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        var hash = $(e.target).attr('href');
+        if (history.replaceState) {
+            history.replaceState(null, null, hash);
+        } else {
+            location.hash = hash;
         }
+    });
+    const hash = window.location.hash;
+    if (hash) {
+        const tab = document.querySelector('[role="tablist"] [href="' + hash + '"]');
+        if (tab) {
+            tab.click();
+        }
+    }
+};
 
-        // We need to call popover automatically if nodes are added to the page later.
-        Event.getLegacyEvents().done(function(events) {
-            jQuery(document).on(events.FILTER_CONTENT_UPDATED, function() {
-                jQuery('body').popover({
-                    selector: '[data-toggle="popover"]',
-                    trigger: 'focus'
-                });
-
-            });
-        });
-
-        Aria.init();
-        M.util.js_complete('theme_iomad/loader:children');
+/**
+ * Enable all popovers
+ *
+ */
+const enablePopovers = () => {
+    $('body').popover({
+        container: 'body',
+        selector: '[data-toggle="popover"]',
+        trigger: 'focus',
     });
 
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && e.target.closest('[data-toggle="popover"]')) {
+            $(e.target).popover('hide');
+        }
+    });
+};
 
-    return {};
-});
+/**
+ * Enable tooltips
+ *
+ */
+const enableTooltips = () => {
+    $('body').tooltip({
+        container: 'body',
+        selector: '[data-toggle="tooltip"]',
+    });
+};
+
+const pendingPromise = new Pending('theme_iomad/loader:init');
+
+// Add pending promise event listeners to relevant Bootstrap custom events.
+setupBootstrapPendingChecks();
+
+// Setup Aria helpers for Bootstrap features.
+Aria.init();
+
+// Remember the last visited tabs.
+rememberTabs();
+
+// Enable all popovers.
+enablePopovers();
+
+// Enable all tooltips.
+enableTooltips();
+
+// Disables flipping the dropdowns up and getting hidden behind the navbar.
+$.fn.dropdown.Constructor.Default.flip = false;
+
+pendingPromise.resolve();
+
+export {
+    Bootstrap,
+};
