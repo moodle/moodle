@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Step definitions related to mod_quiz overrides for the IomadBootstrap theme.
+ * Step definitions related to mod_quiz overrides for the Iomad Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
@@ -30,7 +30,7 @@ require_once(__DIR__ . '/../../../../mod/quiz/tests/behat/behat_mod_quiz.php');
 use Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
- * Step definitions related to mod_quiz overrides for the IomadBootstrap theme.
+ * Step definitions related to mod_quiz overrides for the Iomad Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test

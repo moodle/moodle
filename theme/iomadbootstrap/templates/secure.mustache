@@ -13,16 +13,11 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
- * @package   theme_iomadbootstrap
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 {{!
     @template theme_iomadbootstrap/secure
 
-    IomadBootstrap secure layout template.
+    Iomad Bootstrap secure layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -113,6 +108,6 @@
 {{#js}}
 M.util.js_pending('theme_boost/loader');
 require(['theme_boost/loader'], function() {
-  M.util.js_complete('theme_boost/loader');
+    M.util.js_complete('theme_boost/loader');
 });
 {{/js}}

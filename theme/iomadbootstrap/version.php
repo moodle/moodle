@@ -15,16 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   theme_iomadbootstrap
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Iomad Bootstrap theme.
+ *
+ * @package    theme_iomadbootstrap
+ * @copyright  2018 Bas Brands
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // This line protects the file from being accessed by a URL directly.
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2019111800;
-$plugin->requires = 2019111200;
+$plugin->version = 2021052500;
+$plugin->requires = 2021052500;
 $plugin->component = 'theme_iomadbootstrap';
-$plugin->dependencies = array('theme_boost' => 2019111200);
+$plugin->dependencies = array('theme_boost' => 2021052500);

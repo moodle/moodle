@@ -15,9 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * iomadbootstrap config.
+ *
  * @package   theme_iomadbootstrap
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
+ * @copyright 2018 Bas Brands
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -55,7 +56,7 @@ $THEME->layouts = [
     // Part of course, typical for modules - default page layout if $cm specified in require_login().
     'incourse' => array(
         'file' => 'columns.php',
-        'regions' => array('side-pre'),
+        'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
     ),
     // The site home page.
@@ -70,6 +71,11 @@ $THEME->layouts = [
         'file' => 'columns.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
+    ),
+    // My courses page.
+    'mycourses' => array(
+        'file' => 'columns.php',
+        'regions' => array()
     ),
     // My dashboard page.
     'mydashboard' => array(
@@ -95,13 +101,26 @@ $THEME->layouts = [
     'popup' => array(
         'file' => 'contentonly.php',
         'regions' => array(),
-        'options' => array('nofooter' => true, 'nonavbar' => true),
+        'options' => array(
+            'nofooter' => true,
+            'nonavbar' => true,
+            'activityheader' => [
+                'notitle' => true,
+                'nocompletion' => true,
+                'nodescription' => true
+            ]
+        ),
     ),
     // No blocks and minimal footer - used for legacy frame layouts only!
     'frametop' => array(
         'file' => 'contentonly.php',
         'regions' => array(),
-        'options' => array('nofooter' => true, 'nocoursefooter' => true),
+        'options' => array(
+            'nofooter' => true,
+            'nocoursefooter' => true,
+            'activityheader' => [
+                'nocompletion' => true
+            ]),
     ),
     // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible.
     'embedded' => array(
@@ -121,7 +140,7 @@ $THEME->layouts = [
     'print' => array(
         'file' => 'contentonly.php',
         'regions' => array(),
-        'options' => array('nofooter' => true, 'nonavbar' => false),
+        'options' => array('nofooter' => true, 'nonavbar' => false, 'noactivityheader' => true),
     ),
     // The pagelayout used when a redirection is occuring.
     'redirect' => array(
@@ -156,3 +175,4 @@ $THEME->scss = function($theme) {
 };
 $THEME->usefallback = true;
 $THEME->iconsystem = '\\theme_iomadbootstrap\\output\\icon_system_fontawesome';
+$THEME->haseditswitch = false;

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Step definitions related to blocks overrides for the IomadBootstrap theme.
+ * Step definitions related to blocks overrides for the Iomad Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
@@ -28,7 +28,7 @@
 require_once(__DIR__ . '/../../../../blocks/tests/behat/behat_blocks.php');
 
 /**
- * Blocks management step definitions for the IomadBootstrap theme.
+ * Blocks management step definitions for the Iomad Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test

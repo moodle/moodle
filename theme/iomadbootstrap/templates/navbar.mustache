@@ -13,11 +13,6 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
- * @package   theme_iomadbootstrap
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 {{!
     @template theme_iomadbootstrap/navbar
@@ -43,38 +38,27 @@
 }}
 <nav class="fixed-top navbar navbar-bootswatch navbar-expand moodle-has-zindex">
 
-        <a href="{{{ config.wwwroot }}}" class="navbar-brand {{# output.should_display_navbar_logo }}has-logo{{/ output.should_display_navbar_logo }}
-            {{^ output.should_display_navbar_logo }}
-                d-none d-sm-inline
-            {{/ output.should_display_navbar_logo }}
-                ">
-            {{# output.should_display_navbar_logo }}
-                <span class="logo d-none d-sm-inline">
-                    <img src="{{output.get_compact_logo_url}}" alt="{{sitename}}">
-                </span>
-            {{/ output.should_display_navbar_logo }}
-            <span class="site-name d-none d-md-inline">{{{ sitename }}}</span>
-        </a>
+    <a href="{{{ config.wwwroot }}}" class="navbar-brand d-flex align-items-center m-1 p-0 aabtn">
+        {{# output.should_display_navbar_logo }}
+            <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
+        {{/ output.should_display_navbar_logo }}
+        {{^ output.should_display_navbar_logo }}
+            {{{ sitename }}}
+        {{/ output.should_display_navbar_logo }}
+    </a>
 
-        <ul class="navbar-nav d-none d-md-flex">
-            <!-- custom_menu -->
-            {{{ output.custom_menu }}}
-            <!-- page_heading_menu -->
-            {{{ output.page_heading_menu }}}
-        </ul>
-        <ul class="nav navbar-nav ml-auto">
-            <li class="d-none d-lg-block">
-                {{{ output.search_box }}}
-            </li>
-            <!-- navbar_plugin_output -->
-            <li class="nav-item">
-                {{{ output.navbar_plugin_output }}}
-            </li>
-            <!-- user_menu -->
-            <li class="nav-item d-flex align-items-center">
-                {{{ output.user_menu }}}
-            </li>
-        </ul>
-        <!-- search_box -->
+    <ul class="navbar-nav d-none d-md-flex">
+        <!-- custom_menu -->
+        {{{ output.custom_menu }}}
+        <!-- page_heading_menu -->
+        {{{ output.page_heading_menu }}}
+    </ul>
+    <div id="usernavigation" class="navbar-nav my-1 ml-auto">
+        <div class="divider border-left h-50 align-self-center mx-1"></div>
+        {{{ output.search_box }}}
+        {{{ output.navbar_plugin_output }}}
+        <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
+            {{{ output.user_menu }}}
+        </div>
+    </div>
 </nav>
-

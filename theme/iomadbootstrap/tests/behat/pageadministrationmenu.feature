@@ -23,12 +23,12 @@ Feature: Page administration menu
     And I am on "Course 1" course homepage
     And I follow "Choice name"
     And I should see the page administration menu
-    And "Edit settings" "link" should exist in current page administration
-    And I navigate to "Edit settings" in current page administration
+    And "Settings" "link" should exist in current page administration
+    And I navigate to "Settings" in current page administration
     And I should see "Updating: Choice"
     And I navigate to course participants
     And I should see the page administration menu
-    And I navigate to "Users > Enrolment methods" in current page administration
+    And I am on the "Course 1" "Enrolment methods" page
     And I should see "Enrolment methods"
     And I log out
 

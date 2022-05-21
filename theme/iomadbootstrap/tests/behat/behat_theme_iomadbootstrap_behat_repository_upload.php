@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Override definitions for the upload repository type for the IomadBootstrap theme.
+ * Override definitions for the upload repository type for the Iomad Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
@@ -30,7 +30,7 @@ require_once(__DIR__ . '/../../../../repository/upload/tests/behat/behat_reposit
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
 
 /**
- * Override step definitions to deal with the upload repository in the IomadBootstrap theme.
+ * Override step definitions to deal with the upload repository in the Iomad Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
@@ -64,7 +64,7 @@ class behat_theme_iomadbootstrap_behat_repository_upload extends behat_repositor
             $filepickercontainer = $this->find(
                 'xpath',
                 "//input[./@id = substring-before(//p[normalize-space(.)=$filepickerelement]/@id, '_label')]" .
-                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' felement ')]",
+                    "//ancestor::*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']",
                 $exception
             );
         }

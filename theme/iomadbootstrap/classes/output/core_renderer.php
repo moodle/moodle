@@ -56,7 +56,7 @@ require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class core_renderer extends \theme_boost\output\core_renderer {
+class core_renderer extends \theme_classic\output\core_renderer {
 
     /**
      * The standard tags that should be included in the <head> tag

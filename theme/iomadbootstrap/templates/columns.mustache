@@ -13,18 +13,13 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
- * @package   theme_iomadbootstrap
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 {{!
     @template theme_iomadbootstrap/columns
 
     Admin time setting template.
 
-    IomadBootstrap 1-3 column layout template.
+    Iomad Bootstrap 1-3 column layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -76,6 +71,9 @@
                         <div class="region_main_settings_menu_proxy"></div>
                     {{/hasregionmainsettingsmenu}}
                     {{{ output.course_content_header }}}
+                    {{#headercontent}}
+                        {{> core/activity_header }}
+                    {{/headercontent}}
                     {{{ output.main_content }}}
                     {{{ output.activity_navigation }}}
                     {{{ output.course_content_footer }}}
@@ -95,7 +93,7 @@
         </div>
     </div>
     {{{ output.standard_after_main_region_html }}}
-    {{> theme_boost/footer }}
+    {{> theme_iomadbootstrap/footer }}
 </div>
 
 </body>
@@ -103,6 +101,6 @@
 {{#js}}
 M.util.js_pending('theme_boost/loader');
 require(['theme_boost/loader'], function() {
-  M.util.js_complete('theme_boost/loader');
+    M.util.js_complete('theme_boost/loader');
 });
 {{/js}}

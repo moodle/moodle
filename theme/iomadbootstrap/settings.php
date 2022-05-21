@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   theme_iomadbootstrap
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Iomad Bootstrap theme settings file.
+ *
+ * @package    theme_iomadbootstrap
+ * @copyright  2018 Bas Brands
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
@@ -54,7 +54,7 @@ if ($ADMIN->fulltree) {
     $choices['default.scss'] = 'default.scss';
     $choices['plain.scss'] = 'plain.scss';
 
-    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $setting = new admin_setting_configthemepreset($name, $title, $description, $default, $choices, 'iomadbootstrap');
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
@@ -72,6 +72,13 @@ if ($ADMIN->fulltree) {
     $title = get_string('backgroundimage', 'theme_boost');
     $description = get_string('backgroundimage_desc', 'theme_boost');
     $setting = new admin_setting_configstoredfile($name, $title, $description, 'backgroundimage');
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
+    $name = 'theme_iomadbootstrap/loginbackgroundimage';
+    $title = get_string('loginbackgroundimage', 'theme_boost');
+    $description = get_string('loginbackgroundimage_desc', 'theme_boost');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'loginbackgroundimage');
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 

@@ -15,10 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   theme_iomadbootstrap
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Iomad Bootstrap theme callbacks.
+ *
+ * @package    theme_iomadbootstrap
+ * @copyright  2018 Bas Brands
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // This line protects the file from being accessed by a URL directly.
@@ -100,6 +101,14 @@ function theme_iomadbootstrap_get_extra_scss($theme) {
             '/theme/iomadbootstrap/scss/iomadbootstrap/body-background.scss');
     }
 
+    // Sets the login background image.
+    $loginbackgroundimageurl = $theme->setting_file_url('loginbackgroundimage', 'loginbackgroundimage');
+    if (!empty($loginbackgroundimageurl)) {
+        $content .= 'body.pagelayout-login #page { ';
+        $content .= "background-image: url('$loginbackgroundimageurl'); background-size: cover;";
+        $content .= ' }';
+    }
+
     if (!empty($theme->settings->navbardark)) {
         $content .= file_get_contents($CFG->dirroot .
             '/theme/iomadbootstrap/scss/iomadbootstrap/navbar-dark.scss');
@@ -136,7 +145,7 @@ function theme_iomadbootstrap_get_precompiled_css() {
  * @return bool
  */
 function theme_iomadbootstrap_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'backgroundimage')) {
+    if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'backgroundimage' || $filearea === 'loginbackgroundimage')) {
         $theme = theme_config::load('iomadbootstrap');
         // By default, theme files must be cache-able by both browsers and proxies.
         if (!array_key_exists('cacheability', $options)) {

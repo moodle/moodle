@@ -14,37 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Overridden fontawesome icons.
- *
- * @package     theme_iomadbootstrap
- * @copyright   2019 Moodle
- * @author      Bas Brands <bas@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-namespace theme_iomadbootstrap\output;
+// NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../../../completion/tests/behat/behat_completion.php');
 
 /**
- * Class overriding some of the Moodle default FontAwesome icons.
+ * Step definitions related to blocks overrides for the Iomad Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
- * @copyright  2019 Moodle
- * @author     Bas Brands <bas@moodle.com>
+ * @category   test
+ * @copyright  2021 Mathew May
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class icon_system_fontawesome extends \core\output\icon_system_fontawesome {
+class behat_theme_iomadbootstrap_behat_completion extends behat_completion {
     /**
-     * Change the core icon map.
-     *
-     * @return Array replaced icons.
+     * Goes to the current course activity completion report.
      */
-    public function get_core_icon_map() {
-        $iconmap = parent::get_core_icon_map();
+    public function go_to_the_current_course_activity_completion_report() {
+        $completionnode = get_string('pluginname', 'report_progress');
+        $reportsnode = get_string('reports');
 
-        $iconmap['core:i/navigationitem'] = 'fa-square';
-
-        return $iconmap;
+        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration",
+            $reportsnode . ' > ' . $completionnode);
     }
 }

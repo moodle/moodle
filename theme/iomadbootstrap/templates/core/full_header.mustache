@@ -13,11 +13,6 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
- * @package   theme_iomadbootstrap
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 {{!
     @template theme_iomadbootstrap/header
@@ -29,7 +24,8 @@
         "contextheader": "context_header_html",
         "hasnavbar": false,
         "navbar": "navbar_if_available",
-        "courseheader": "course_header_html"
+        "courseheader": "course_header_html",
+        "welcomemessage": "welcomemessage"
     }
 }}
 <header id="page-header" class="row">
@@ -61,5 +57,6 @@
                 </div>
             </div>
         </div>
+        {{> core/welcome }}
     </div>
 </header>

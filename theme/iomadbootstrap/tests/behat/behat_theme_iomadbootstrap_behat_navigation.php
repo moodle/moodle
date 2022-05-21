@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Navigation step definition overrides for the IomadBootstrap theme.
+ * Navigation step definition overrides for the Iomad Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
@@ -31,7 +31,7 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException;
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
- * Step definitions and overrides to navigate through the navigation tree nodes in the IomadBootstrap theme.
+ * Step definitions and overrides to navigate through the navigation tree nodes in the Iomad Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
@@ -55,7 +55,17 @@ class behat_theme_iomadbootstrap_behat_navigation extends behat_navigation {
 
         array_unshift($parentnodes, $node->getText());
         $lastnode = array_pop($parentnodes);
-        $this->select_node_in_navigation($lastnode, $parentnodes);
+        try {
+            $this->select_node_in_navigation($lastnode, $parentnodes);
+        } catch (Exception $e) {
+            try {
+                $this->execute("behat_general::click_link", $lastnode);
+            } catch (Exception $e) {
+                // We must be in a weird state i.e. Add competencies to course.
+                $this->execute("behat_general::click_link", array_pop($parentnodes));
+                $this->execute('behat_forms::press_button', $lastnode);
+            }
+        }
     }
 
     /**
@@ -144,7 +154,16 @@ class behat_theme_iomadbootstrap_behat_navigation extends behat_navigation {
         }
 
         $exception = new ElementNotFoundException($this->getSession(), "\"{$element}\" \"{$selectortype}\"");
-        $this->find('xpath', $menuxpath, $exception);
+        try {
+            $this->find('xpath', $menuxpath, $exception);
+        } catch (Exception $e) {
+            // For question bank a different approach.
+            $menuxpath = $rootxpath . "//div[contains(@class, 'dropdown-menu')]";
+            if ($selectortype === 'link') {
+                $menuxpath .= "//a[contains(text(), 'Categories')]";
+            }
+            $this->find('xpath', $menuxpath, $e);
+        }
     }
 
     /**
@@ -225,5 +244,188 @@ class behat_theme_iomadbootstrap_behat_navigation extends behat_navigation {
         }
 
         return $menuxpath;
+    }
+
+    /**
+     * Turns editing mode off.
+     */
+    public function i_turn_editing_mode_off(): void {
+        $buttonnames = [get_string('turneditingoff'), get_string('updatemymoodleoff'), get_string('blockseditoff')];
+        foreach ($buttonnames as $buttonname) {
+            if ($editbutton = $this->getSession()->getPage()->findButton($buttonname)) {
+                $this->execute('behat_general::i_click_on', [$editbutton, 'NodeElement']);
+                return;
+            }
+        }
+        // Click the turneditingoff link in the Site Administration block.
+        if ($this->is_editing_on()) {
+            $this->execute('behat_general::i_click_on', [get_string('turneditingoff'), "link"]);
+        }
+    }
+
+    /**
+     * Turns editing mode on.
+     */
+    public function i_turn_editing_mode_on(): void {
+        $buttonnames = [get_string('turneditingon'), get_string('updatemymoodleon'), get_string('blocksediton')];
+        foreach ($buttonnames as $buttonname) {
+            if ($editbutton = $this->getSession()->getPage()->findButton($buttonname)) {
+                $this->execute('behat_general::i_click_on', [$editbutton, 'NodeElement']);
+                return;
+            }
+        }
+
+        if (!$this->is_editing_on()) {
+            $this->execute('behat_general::i_click_on', [get_string('turneditingon'), "link"]);
+        }
+    }
+
+    /**
+     * Finds and clicks a link on the admin page (site administration or course administration)
+     *
+     * @param array $nodelist
+     */
+    protected function select_on_administration_page($nodelist) {
+        $parentnodes = $nodelist;
+        $lastnode = array_pop($parentnodes);
+        $xpath = '//section[@id=\'region-main\']';
+
+        // Check if there is a separate tab for this submenu of the page. If found go to it.
+        if ($parentnodes) {
+            $tabname = behat_context_helper::escape($parentnodes[0]);
+            $tabxpath = '//ul[@role=\'tablist\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
+            $menubarxpath = '//ul[@role=\'menubar\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
+            $linkname = behat_context_helper::escape(get_string('moremenu'));
+            $menubarmorexpath = '//ul[@role=\'menubar\']/li/a[contains(normalize-space(.), ' . $linkname . ')]';
+            $tabnode = $this->getSession()->getPage()->find('xpath', $tabxpath);
+            $menunode = $this->getSession()->getPage()->find('xpath', $menubarxpath);
+            $menubuttons = $this->getSession()->getPage()->findAll('xpath', $menubarmorexpath);
+            if ($tabnode || $menunode) {
+                $node = is_object($tabnode) ? $tabnode : $menunode;
+                if ($this->running_javascript()) {
+                    $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
+                    // Click on the tab and add 'active' tab to the xpath.
+                    $xpath .= '//div[contains(@class,\'active\')]';
+                } else {
+                    // Add the tab content selector to the xpath.
+                    $tabid = behat_context_helper::escape(ltrim($node->getAttribute('href'), '#'));
+                    $xpath .= '//div[@id = ' . $tabid . ']';
+                }
+                array_shift($parentnodes);
+            } else if (count($menubuttons) > 0) {
+                try {
+                    $menubuttons[0]->isVisible();
+                    try {
+                        $this->execute('behat_general::i_click_on', [$menubuttons[1], 'NodeElement']);
+                    } catch (Exception $e) {
+                        $this->execute('behat_general::i_click_on', [$menubuttons[0], 'NodeElement']);
+                    }
+                    $moreitemxpath = '//ul[@data-region=\'moredropdown\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
+                    if ($morenode = $this->getSession()->getPage()->find('xpath', $moreitemxpath)) {
+                        $this->execute('behat_general::i_click_on', [$morenode, 'NodeElement']);
+                        $xpath .= '//div[contains(@class,\'active\')]';
+                        array_shift($parentnodes);
+                    }
+                } catch (Exception $e) {
+                    return;
+                }
+            }
+        }
+
+        // Find a section with the parent name in it.
+        if ($parentnodes) {
+            // Find the section on the page (links may be repeating in different sections).
+            $section = behat_context_helper::escape($parentnodes[0]);
+            $xpath .= '//div[@class=\'row\' and contains(.,'.$section.')]';
+        }
+
+        // Find a link and click on it.
+        $linkname = behat_context_helper::escape($lastnode);
+        $xpath .= '//a[contains(normalize-space(.), ' . $linkname . ')]';
+        if (!$node = $this->getSession()->getPage()->find('xpath', $xpath)) {
+            throw new ElementNotFoundException($this->getSession(), 'Link "' . join(' > ', $nodelist) . '"');
+        }
+        $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
+    }
+
+    /**
+     * Locates the administration menu in the <header> element and returns its xpath
+     *
+     * @param bool $mustexist if specified throws an exception if menu is not found
+     * @return null|string
+     */
+    protected function find_header_administration_menu($mustexist = false) {
+        $menuxpath = '//header[@id=\'page-header\']//div[contains(@class,\'moodle-actionmenu\')]';
+        if ($mustexist) {
+            $exception = new ElementNotFoundException($this->getSession(), 'Page header administration menu');
+            $this->find('xpath', $menuxpath, $exception);
+        } else if (!$this->getSession()->getPage()->find('xpath', $menuxpath)) {
+            return null;
+        }
+        return $menuxpath;
+    }
+
+    /**
+     * Toggles administration menu
+     *
+     * @param string $menuxpath (optional) xpath to the page administration menu if already known
+     */
+    protected function toggle_page_administration_menu($menuxpath = null) {
+        if (!$menuxpath) {
+            $menuxpath = $this->find_header_administration_menu() ?: $this->find_page_administration_menu();
+        }
+        if ($menuxpath && $this->running_javascript()) {
+            $node = $this->find('xpath', $menuxpath . '//a[@data-toggle=\'dropdown\']');
+            $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
+        }
+    }
+
+    /**
+     * Finds a page edit cog and select an item from it
+     *
+     * If the page edit cog is in the page header and the item is not found there, click "More..." link
+     * and find the item on the course/frontpage administration page
+     *
+     * @param array $nodelist
+     * @throws ElementNotFoundException
+     */
+    protected function select_from_administration_menu($nodelist) {
+        // Find administration menu.
+        if ($menuxpath = $this->find_header_administration_menu()) {
+            $isheader = true;
+        } else {
+            $menuxpath = $this->find_page_administration_menu(true);
+            $isheader = false;
+        }
+
+        $this->execute('behat_navigation::toggle_page_administration_menu', [$menuxpath]);
+
+        if (!$isheader || count($nodelist) == 1) {
+            $lastnode = end($nodelist);
+            $linkname = behat_context_helper::escape($lastnode);
+            $link = $this->getSession()->getPage()->find('xpath', $menuxpath . '//a[contains(normalize-space(.), ' .
+                $linkname . ')]'
+            );
+            if ($link) {
+                $this->execute('behat_general::i_click_on', [$link, 'NodeElement']);
+                return;
+            }
+        }
+
+        if ($isheader) {
+            // Course administration and Front page administration will have subnodes under "More...".
+            $linkname = behat_context_helper::escape(get_string('morenavigationlinks'));
+            $link = $this->getSession()->getPage()->find('xpath', $menuxpath . '//a[contains(normalize-space(.), ' .
+                $linkname . ')]'
+            );
+            if ($link) {
+                $this->execute('behat_general::i_click_on', [$link, 'NodeElement']);
+                $this->select_on_administration_page($nodelist);
+                return;
+            }
+        }
+
+        throw new ElementNotFoundException($this->getSession(),
+            'Link "' . join(' > ', $nodelist) . '" in the current page edit menu"');
     }
 }
