@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package   theme_iomadboost
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace theme_iomadboost;
 
 /**
  * Unit tests for scss compilation.
@@ -30,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2016 onwards Ankit Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class theme_iomadboost_scss_testcase extends advanced_testcase {
+class scss_test extends \advanced_testcase {
     /**
      * Test that iomadboost can be compiled using SassC (the defacto implemention).
      */
@@ -43,7 +36,7 @@ class theme_iomadboost_scss_testcase extends advanced_testcase {
         set_config('pathtosassc', PHPUNIT_PATH_TO_SASSC);
 
         $this->assertNotEmpty(
-            theme_config::load('iomadboost')->get_css_content_debug('scss', null, null)
+            \theme_config::load('iomadboost')->get_css_content_debug('scss', null, null)
         );
     }
 }

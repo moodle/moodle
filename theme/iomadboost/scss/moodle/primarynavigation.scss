@@ -1,0 +1,37 @@
+.primary-navigation {
+    .navigation {
+        height: $navbar-height;
+        .nav-link {
+            height: $navbar-height;
+            color: $gray-900;
+            border-top: 3px solid transparent;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .primary-navigation {
+        display: none;
+    }
+    .editmode-switch-form label {
+        @include sr-only();
+    }
+}
+
+.editmode-switch-form .custom-control-input {
+    width: 100%;
+    z-index: 1;
+}
+
+.drawer-primary .drawercontent {
+    padding: 0;
+
+    .list-group {
+        border-radius: 0;
+        margin-top: -1px;
+        .list-group-item {
+            border-left: 0;
+            border-right: 0;
+        }
+    }
+}

@@ -1,10 +1,6 @@
 /* course.less */
+
 /* COURSE CONTENT */
-.section-modchooser-link img {
-    margin-right: 0.5rem;
-    width: 16px;
-    height: 16px;
-}
 
 .section_add_menus {
     text-align: right;
@@ -13,6 +9,7 @@
 
 .section-modchooser {
     clear: both;
+    margin-top: map-get($spacers, 1);
 }
 
 .block_tree .tree_item.branch {
@@ -49,10 +46,11 @@ body:not(.editing)  .sitetopic ul.section {
     }
 }
 
-.course-content ul.section {
-    margin: $spacer;
+@include media-breakpoint-up(sm) {
+    .course-content ul.section {
+        margin: $spacer;
+    }
 }
-
 .section {
     .side {
         &.left {
@@ -72,6 +70,9 @@ body:not(.editing)  .sitetopic ul.section {
     }
 
     .activity {
+        list-style: none;
+        padding: map-get($spacers, 1) 0;
+
         .spinner {
             left: 100%;
             position: absolute;
@@ -88,14 +89,10 @@ body:not(.editing)  .sitetopic ul.section {
         .contentwithoutlink,
         .activityinstance {
             min-width: 40%;
-            display: table-cell;
-            padding-right: 4px;
-            min-height: 2em;
 
             > a {
-                display: block;
-                text-indent: -31px;
-                padding-left: 31px;
+                display: inline-flex;
+                align-items: center;
             }
 
             .dimmed {
@@ -106,7 +103,7 @@ body:not(.editing)  .sitetopic ul.section {
         }
 
         .stealth {
-            @extend .text-muted;
+            color: $text-muted;
         }
         a.stealth,
         a.stealth:hover {
@@ -121,10 +118,11 @@ body:not(.editing)  .sitetopic ul.section {
             display: block;
             height: inherit;
         }
-
-        .mod-indent-outer {
-            padding-left: 24px;
-            display: block;
+        @include media-breakpoint-up(sm) {
+            .mod-indent-outer {
+                padding-left: 24px;
+                display: block;
+            }
         }
     }
 
@@ -156,14 +154,10 @@ body:not(.editing)  .sitetopic ul.section {
     }
 }
 
-.activity img.activityicon {
-    margin-right: 6px;
-    vertical-align: text-bottom;
-}
-
-.section .activity .activityinstance,
-.section .activity .activityinstance div {
-    display: inline-block;
+.section .activity .activityinstance {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .editing {
@@ -174,12 +168,11 @@ body:not(.editing)  .sitetopic ul.section {
                 padding-right: 200px;
             }
             .editing_move {
-                /* Move the move icon to the start of the line */
                 position: absolute;
-                left: 0;
-                top: 0;
+                display: flex;
+                left: 5px;
+                top: 5px;
             }
-
             .mod-indent-outer {
                 /**
                  * Add appropriate padding such that nothing overlaps the
@@ -188,6 +181,66 @@ body:not(.editing)  .sitetopic ul.section {
                 padding-left: 2rem;
             }
         }
+    }
+    .activity .editing_move_activity {
+        position: absolute;
+        display: flex;
+        left: 5px;
+        top: 5px;
+    }
+    // Remove old spinners if the reactive state is ready.
+    .course-content .stateready .section .spinner {
+        display: none;
+    }
+    // New editing in progress spinners.
+    .editinprogress {
+        position: relative;
+
+        & > * {
+            opacity: .4;
+        }
+
+        .corelightbox,
+        .lightbox {
+            display: none;
+        }
+
+        &:after {
+            position: absolute;
+            font-family: "FontAwesome";
+            font-size: 20px;
+            color: $gray-600;
+            content: "";
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            left: calc(50% - 15px);
+            top: calc(50% - 15px);
+            animation: editinprogress-rotation 2s infinite linear;
+        }
+
+        // Prevent inner editingprogress.
+        .editinprogress {
+            &:after {
+                display: none;
+            }
+        }
+    }
+}
+
+@keyframes editinprogress-rotation {
+    0% {
+        opacity: 0;
+        transform: rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: rotate(359deg);
     }
 }
 
@@ -204,20 +257,68 @@ body:not(.editing)  .sitetopic ul.section {
 
 .section .activity.modtype_label.label {
     font-weight: normal;
-    padding: .2em;
+
+    // Remove min-height for labels so top and bottom paddings can be displayed more consistently.
+    .contentwithoutlink {
+        min-height: 0;
+    }
+
+    // When activity information is shown remove the bottom margin for the last p/i elements.
+    &.hasinfo {
+        p:last-child,
+        i:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 
-.section li.activity {
-    padding: .2em;
+// The activity-wrapper class ensures these styles are not used when the new activity styles
+// from MDL-71691 are not affected. As soons as MDL-72656 is integrated and these styles
+// are removed the core_courseformat/local/content/cm template no longer needs this class.
+.section li.activity:not(.activity-wrapper) {
+    padding: 0.2em;
     clear: both;
+
+    &.hasinfo {
+        border-bottom: $border-width solid $table-border-color;
+        padding-top: map-get($spacers, 3);
+        padding-bottom: map-get($spacers, 3);
+
+        &:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+    }
+}
+
+// Compensate for the border widths when dropzones are displayed.
+.course-content .section.dropready {
+
+    &.main.drop-down {
+        border-bottom: 1px solid $dropzone-border;
+    }
+
+    .course-section-header.dropready.drop-zone {
+        margin-top: -2px;
+    }
+
+    li.activity.dropready.drop-down {
+        border-bottom: 1px solid $dropzone-border;
+        margin-bottom: -1px;
+    }
+
+    li.activity.dropready.drop-up {
+        border-top: 1px solid $dropzone-border;
+        margin-top: -1px;
+    }
 }
 
 .section .activity .activityinstance .groupinglabel {
     padding-left: 30px;
 }
 
-.section .activity .availabilityinfo,
-.section .activity .contentafterlink {
+.section.main:not(.course-section) .activity .availabilityinfo,
+.section.main:not(.course-section) .activity .contentafterlink {
     margin-top: 0.5em;
     margin-left: 30px;
 }
@@ -226,9 +327,12 @@ body:not(.editing)  .sitetopic ul.section {
     margin: .5em 0;
 }
 
-.editing .section .activity:hover,
-.editing .section .activity.action-menu-shown {
-    background-color: $table-bg-accent;
+.editing .section.main:not(.course-section) {
+    .activity:hover,
+    .activity.action-menu-shown,
+    .sectionname:hover {
+        background-color: $table-accent-bg;
+    }
 }
 
 .course-content .current {
@@ -236,12 +340,12 @@ body:not(.editing)  .sitetopic ul.section {
 }
 
 .course-content .current::before {
-    content: "";
-    border-left: $brand-primary 2px solid;
-    position: absolute;
-    left: -$card-spacer-x;
-    top: 0;
+    border-left: $primary 3px solid;
     bottom: 0;
+    content: "";
+    left: -8px;
+    position: absolute;
+    top: 0;
 }
 
 .course-content .section-summary {
@@ -259,7 +363,7 @@ body:not(.editing)  .sitetopic ul.section {
 }
 
 .course-content .section-summary .section-summary-activities .activity-count {
-    @extend .text-muted;
+    color: $text-muted;
     font-size: $font-size-sm;
     margin: 3px;
     white-space: nowrap;
@@ -310,7 +414,7 @@ body:not(.editing)  .sitetopic ul.section {
     margin-top: 0;
 }
 
-.course-content ul li.section.main {
+.course-content ul li.section.main:not(.course-section) {
     border-bottom: $border-width solid $table-border-color;
     margin-top: 0;
 
@@ -319,11 +423,11 @@ body:not(.editing)  .sitetopic ul.section {
     }
 }
 
-.course-content ul li.section.hidden {
+.course-content ul li.section.hidden:not(.course-section) {
     .sectionname > span,
     .content > div.summary,
     .activity .activityinstance {
-        @extend .text-muted;
+        color: $text-muted;
     }
 }
 
@@ -334,12 +438,18 @@ body:not(.editing)  .sitetopic ul.section {
     list-style: none;
 
     li.section {
-        margin-top: $spacer;
+        padding-top: $spacer;
         padding-bottom: $spacer;
+        .content {
+            margin: 0;
+            padding: 0;
+        }
 
-        .summary,
-        .content > .availabilityinfo {
-            margin-left: 25px;
+        @include media-breakpoint-up(sm) {
+            .summary,
+            .content > .availabilityinfo {
+                margin-left: 25px;
+            }
         }
 
         .left,
@@ -347,6 +457,20 @@ body:not(.editing)  .sitetopic ul.section {
             padding: 0 6px 0;
             text-align: right;
             width: auto;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    body:not(.editing) {
+        .course-content ul.topics,
+        .course-content ul.weeks {
+            li.section {
+                .left,
+                .right {
+                    display: none;
+                }
+            }
         }
     }
 }
@@ -360,7 +484,12 @@ body:not(.editing)  .sitetopic ul.section {
 }
 
 .course-content li {
-    &.section {
+    &.section:not(.course-section) {
+        @include media-breakpoint-down(sm) {
+            ul {
+                padding-left: 0;
+            }
+        }
         ul {
             list-style: disc;
 
@@ -452,8 +581,8 @@ body:not(.editing)  .sitetopic ul.section {
     margin-right: 5px;
 }
 
-.path-site li.activity > div,
-.path-course-view li.activity > div {
+.path-site li.activity > div:not(.activity-item),
+.path-course-view li.activity > div:not(.activity-item) {
     position: relative;
     padding: 0 16px 0 0; /* to accommodate the floated completion icon with highlighting */
 }
@@ -515,13 +644,15 @@ span.editinstructions {
     margin-left: 30px;
     font-size: $font-size-sm;
     padding: .1em .4em;
-    background-color: $state-info-bg;
-    color: $state-info-text;
     text-decoration: none;
     z-index: 9999;
+    border: $alert-border-width solid transparent;
 
-    @include box-shadow(2px 2px 5px 1px #ccc);
-    border: 1px solid $state-info-border;
+    @include alert-variant(
+        theme-color-level('info', $alert-bg-level),
+        theme-color-level('info', $alert-border-level),
+        theme-color-level('info', $alert-color-level)
+    );
 }
 
 /* Course drag and drop upload styles */
@@ -531,22 +662,26 @@ span.editinstructions {
     width: 40%;
     margin: 0 30%;
     padding: 6px;
-    border: 1px solid $state-info-border;
     text-align: center;
-    background: $state-info-bg;
-    color: $state-info-text;
     z-index: 1; // Required in order to have this above relatively positioned course content@mixin
+    border: $alert-border-width solid transparent;
 
-    @include box-shadow(2px 2px 5px 1px #ccc);
-    @include border-radius(8px);
+    @include alert-variant(
+        theme-color-level('info', $alert-bg-level),
+        theme-color-level('info', $alert-border-level),
+        theme-color-level('info', $alert-color-level)
+    );
 }
 
 .dndupload-preview {
-    color: #909090;
-    border: 1px dashed #909090;
-    list-style: none;
-    margin-top: .2em;
-    padding: .3em;
+    padding: $modal-inner-padding;
+    background-color: $primary;
+    color: $white;
+    text-align: center;
+    font-size: $font-size-lg;
+    max-width: 600px;
+    margin: 0 auto;
+    @include border-radius();
 }
 
 .dndupload-hidden {
@@ -588,38 +723,42 @@ span.editinstructions {
 }
 
 .coursebox {
-    padding: $spacer / 2;
+    display: flex;
+    flex-direction: column;
+    .info {
+        display: flex;
+        align-items: center;
+    }
 }
 
-.coursebox > .info > .coursename a {
-    display: block;
-    background-image: url([[pix:moodle|i/course]]);
-    background-repeat: no-repeat;
-    padding-left: 21px;
-    background-position: left 0.2em;
+#frontpage-available-course-list,
+#frontpage-course-list,
+.course-search-result {
+    margin-top: $spacer / 2;
+    .coursebox {
+        padding: $spacer / 2;
+        border: $border-width solid $border-color;
+        margin-bottom: $spacer / 2;
+
+        @include border-radius();
+    }
 }
 
-.coursebox > .info > .coursename,
-.coursebox .content .teachers,
-.coursebox .content .courseimage,
-.coursebox .content .coursefile,
-.coursebox .content .customfields-container {
-    float: left;
-    clear: left;
-}
-
-.coursebox .content .teachers,
-.coursebox .content .courseimage,
-.coursebox .content .coursefile,
-.coursebox .content .customfields-container {
-    width: 40%;
-}
-
-.coursebox > .info > h3.coursename {
-    margin: 5px;
+.subcategories,
+#frontpage-category-names,
+#frontpage-category-combo {
+    .coursebox > .info > .coursename a {
+        display: block;
+        background-image: url([[pix:moodle|i/course]]);
+        background-repeat: no-repeat;
+        padding-left: 21px;
+        background-position: left 0.2em;
+    }
 }
 
 .coursebox > .info > .coursename {
+    font-size: $font-size-base;
+    font-weight: normal;
     margin: 5px;
     padding: 0;
 }
@@ -630,34 +769,9 @@ span.editinstructions {
     margin: 0;
 }
 
-.coursebox .moreinfo,
-.coursebox .enrolmenticons {
-    padding: 3px 0;
-    float: right;
-}
-
-.coursebox .moreinfo img {
-    margin: 0 .2em;
-}
-
-.coursebox .content {
-    clear: both;
-}
-
-.coursebox .content .summary,
-.coursebox .content .coursecat {
-    float: right;
-    width: 55%;
-}
-
-.coursebox .content .coursecat {
-    text-align: right;
-    clear: right;
-}
-
-.coursebox.remotecoursebox .remotecourseinfo {
-    float: left;
-    width: 40%;
+.coursebox .customfieldname,
+.coursebox .customfieldseparator {
+    font-weight: $font-weight-bold;
 }
 
 .coursebox .content .courseimage img {
@@ -676,27 +790,20 @@ span.editinstructions {
     padding: 0;
 }
 
-.coursebox.remotehost > .info > .categoryname a {
-    background-image: url([[pix:moodle|i/mnethost]]);
-}
-
-.coursebox.collapsed {
-    margin-bottom: 0;
+.category-browse {
+    .coursebox .content .coursecat,
+    .coursebox .content .summary,
+    .coursebox .content .courseimage,
+    .coursebox .content .coursefile,
+    .coursebox .content .teachers,
+    .coursebox.remotecoursebox .remotecourseinfo,
+    .coursebox .content .customfields-container {
+        margin-top: 0;
+    }
 }
 
 .coursebox.collapsed > .content {
     display: none;
-}
-
-.courses .coursebox {
-    &.collapsed {
-        padding-top: $spacer-y / 2;
-        padding-bottom: $spacer-y / 2;
-    }
-
-    &.even {
-        background-color: $table-bg-accent;
-    }
 }
 
 .courses > .paging.paging-morelink {
@@ -708,36 +815,11 @@ span.editinstructions {
     font-size: $font-size-sm;
 }
 
-.course_category_tree .controls {
-    visibility: hidden;
-}
-
-.course_category_tree .controls div {
-    display: inline;
-    cursor: pointer;
-}
-
-.jsenabled .course_category_tree .controls {
-    visibility: visible;
-}
-
-.course_category_tree .controls {
-    margin-bottom: 5px;
-    text-align: right;
-    float: right;
-}
-
-.course_category_tree .controls div {
-    padding-right: 2em;
-    font-size: 75%;
-}
-
 .course_category_tree .category > .info > .categoryname {
-    background-image: url([[pix:moodle|t/collapsed_empty]]);
-    background-repeat: no-repeat;
+    margin: 5px;
+    font-size: $font-size-base;
+    font-weight: normal;
     padding: 2px 18px;
-    margin: 3px;
-    background-position: center left;
 }
 /* rtl:raw:
 .course_category_tree .category > .info > .categoryname {
@@ -746,7 +828,8 @@ span.editinstructions {
  */
 .course_category_tree .category.with_children > .info > .categoryname {
     background-image: url([[pix:moodle|t/expanded]]);
-    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: center left;
 }
 
 .course_category_tree .category.with_children.collapsed > .info > .categoryname {
@@ -761,24 +844,11 @@ span.editinstructions {
     display: none;
 }
 
-.course_category_tree .category > .info {
-    clear: both;
-}
-
 .course_category_tree .category > .content {
     padding-left: 16px;
 }
 
-#page-course-index-category .generalbox.info {
-    margin-bottom: 15px;
-    border: 1px dotted #ddd;
-
-    @include border-radius(4px);
-    padding: 5px;
-}
-
 #page-course-index-category .categorypicker {
-    text-align: center;
     margin: 10px 0 20px;
 }
 
@@ -848,7 +918,7 @@ span.editinstructions {
     .listitem {
 
         &[data-selected='1'] {
-            border-left: calc(#{$list-group-border-width} + 5px) solid map-get($theme-colors, 'info');
+            border-left: calc(#{$list-group-border-width} + 5px) solid map-get($theme-colors, 'primary');
             padding-left: calc(#{$list-group-item-padding-x} - 5px);
         }
     }
@@ -901,11 +971,11 @@ span.editinstructions {
         }
         // The category or course is hidden.
         &[data-visible="0"] {
-            @extend .text-muted;
+            color: $text-muted;
 
             > div {
                 > a {
-                    @extend .text-muted;
+                    color: $text-muted;
                 }
 
                 .item-actions {
@@ -926,7 +996,7 @@ span.editinstructions {
             > div,
             > div:hover,
             &[data-selected='1'] > div {
-                background-color: $table-bg-hover;
+                background-color: $table-hover-bg;
             }
         }
     }
@@ -1034,7 +1104,7 @@ span.editinstructions {
         text-align: center;
 
         &.dimmed {
-            @extend .text-muted;
+            color: $text-muted;
             margin: 0.4rem 1rem 0.45rem;
         }
     }
@@ -1065,7 +1135,6 @@ span.editinstructions {
     }
 
     > div {
-        display: inline-block;
         float: right;
 
         > div {
@@ -1164,5 +1233,300 @@ span.editinstructions {
     #prev-activity-link,
     #next-activity-link {
         white-space: pre-wrap;
+    }
+}
+
+.automatic-completion-conditions {
+    .badge {
+        font-size: 100%;
+    }
+}
+
+$activity-item-background: theme-color-level('primary', -12) !default;
+$activity-item-border: theme-color-level('primary', -2) !default;
+$activity-item-color: $body-color;
+$activity-item-hover: theme-color-level('primary', -12) !default;
+$activity-add-hover: theme-color-level('primary', -10) !default;
+
+.activity-add,
+.block-add {
+    @include border-radius();
+    @include alert-variant($primary-light-background, $primary-light-border, $primary-light-border);
+    border-width: $border-width;
+    .pluscontainer {
+        border: $border-width solid $primary-light-border;
+    }
+    &:hover {
+        cursor: pointer;
+        background-color: $activity-add-hover;
+        .activity-add-text {
+            text-decoration: underline;
+        }
+    }
+    width: 100%;
+}
+
+#changenumsections {
+    border-top: $border-width solid $primary-light-border;
+}
+
+.section-collapsemenu {
+    .collapseall {
+        display: block;
+    }
+
+    .expandall {
+        display: none;
+    }
+
+    &.collapsed {
+        .collapseall {
+            display: none;
+        }
+
+        .expandall {
+            display: block;
+        }
+    }
+}
+
+// These are the new styles for the renewed course UI in isssue MDL-71691
+// once the old course renderers are removed in MDL-72656, all css related
+// to activities and sections above this commend needs to be reviewed an
+// possibly removed.
+.course-section {
+    list-style: none;
+    padding-left: 0;
+    border-bottom: $border-width solid $border-color;
+
+    &:last-child:not(.section-summary) {
+        border-bottom: 0;
+    }
+
+    .sectionbadges .badge {
+        margin-left: map-get($spacers, 2);
+    }
+
+    .course-section-header.draggable {
+        cursor: move;
+    }
+
+    .section_action_menu {
+        .dropdown-toggle::after {
+            display: none;
+        }
+    }
+
+    .inplaceeditable {
+        display: flex;
+        align-items: center;
+    }
+
+    &.section-summary {
+        padding-left: map-get($spacers, 3);
+        padding-right: map-get($spacers, 3);
+        margin-bottom: map-get($spacers, 2);
+        margin-top: map-get($spacers, 2);
+        @if $enable-rounded {
+            @include border-radius();
+        }
+    }
+
+    .section-summary-activities .activity-count {
+        color: $text-muted;
+        font-size: $font-size-sm;
+        margin: 3px;
+        white-space: nowrap;
+        display: inline-block;
+    }
+
+    &.dndupload-dropzone {
+        border: 2px dashed $primary;
+        padding-left: 2px;
+        padding-right: 2px;
+        position: relative;
+
+        .dndupload-preview-overlay {
+            background-color: $white;
+            opacity: 0.8;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .dndupload-preview-wrapper {
+            position: absolute;
+            top: 0;
+            padding: 2rem;
+            width: 100%;
+        }
+    }
+}
+
+.description .course-description-item {
+    @include font-size($small-font-size);
+
+    background-color: $gray-100;
+    padding-left: map-get($spacers, 3);
+    padding-right: map-get($spacers, 3);
+
+    .description-inner {
+        padding-bottom: map-get($spacers, 2);
+        padding-top: map-get($spacers, 2);
+        border-bottom: $border-width solid $border-color;
+
+        p:last-child {
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+    }
+
+    &:first-child {
+        margin-top: map-get($spacers, 3);
+        padding-top: map-get($spacers, 3);
+        border-top-left-radius: $border-radius;
+        border-top-right-radius: $border-radius;
+
+        .description-inner {
+            padding-top: 0;
+        }
+    }
+
+    &:last-child {
+        padding-bottom: map-get($spacers, 3);
+        border-bottom-left-radius: $border-radius;
+        border-bottom-right-radius: $border-radius;
+
+        .description-inner {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+    }
+}
+
+.activity-item {
+    position: relative;
+
+    @if $enable-rounded {
+        @include border-radius();
+    }
+
+    &:not(.activityinline) {
+        border: $border-width solid $border-color;
+        padding: map-get($spacers, 3);
+    }
+    &.activityinline {
+        padding: map-get($spacers, 3) 0;
+    }
+
+    &.hiddenactivity {
+        background-color: $gray-100;
+
+        .description .course-description-item,
+        .activityiconcontainer,
+        .badge {
+            mix-blend-mode: multiply;
+        }
+    }
+
+    .activity-actions {
+        .actions {
+            position: relative;
+        }
+        .dropdown-toggle::after {
+            display: none;
+        }
+    }
+
+    .inplaceeditable {
+        display: flex;
+        flex: 0 1 auto;
+        max-width: 100%;
+    }
+    .inplaceeditable .quickeditlink,
+    .afterlink {
+        margin: 1.5rem 0 0.2rem 0.5rem;
+    }
+
+    .action-menu-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .action-menu-item .filler {
+        display: none;
+    }
+
+    .no-overflow {
+        width: 100%;
+    }
+
+    @include media-breakpoint-down(sm) {
+        .badge {
+            white-space: normal;
+            text-align: left;
+        }
+    }
+
+    @include media-breakpoint-up(md) {
+        .automatic-completion-conditions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        &:not(.activityinline) {
+            padding: map-get($spacers, 4);
+        }
+
+        .activity-info,
+        .activity-actions {
+            margin-left: auto;
+            padding-left: map-get($spacers, 2);
+            align-self: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    }
+}
+
+.editing .activity-item {
+    cursor: move;
+
+    .a {
+        cursor: pointer;
+    }
+
+    &:hover {
+        @include alert-variant($activity-item-hover, $activity-item-border, $activity-item-color);
+
+        .description .course-description-item,
+        .activityiconcontainer,
+        .badge {
+            mix-blend-mode: multiply;
+        }
+    }
+}
+
+.section .draggable .activity-item .dragicon {
+    display: none;
+}
+
+.automatic-completion-conditions .badge {
+    font-size: 80%;
+    padding: map-get($spacers, 2);
+    margin-top: map-get($spacers, 1);
+
+    .icon {
+        width: 0.7rem;
+        height: 0.7rem;
+        font-size: 0.7rem;
+    }
+
+    &:first-child {
+        margin-top: 0;
     }
 }

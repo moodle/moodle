@@ -18,8 +18,7 @@ Feature: Context settings menu
   Scenario: Teacher can use the context settings menu
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I click on ".context-header-settings-menu [role=button]" "css_element"
-    And I choose "Edit settings" in the open action menu
+    And I navigate to "Settings" in current page administration
     And I should see "Edit course settings"
     And I log out
 

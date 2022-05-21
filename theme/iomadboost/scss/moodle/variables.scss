@@ -1,0 +1,52 @@
+/**
+ * Moodle variables
+ *
+ * Variables written for Moodle specific components
+ *
+ * Please do not override any Bootstrap variables here, custom Bootstrap variable should go in
+ * preset files instead.
+ */
+
+$state-success-bg: theme-color-level("success", -10) !default;
+$state-success-border: theme-color-level("success", -9) !default;
+
+$state-info-bg: theme-color-level("info", -10) !default;
+$state-info-border: theme-color-level("info", -9) !default;
+
+$state-warning-bg: theme-color-level("warning", -10) !default;
+$state-warning-border: theme-color-level("warning", -10) !default;
+
+$state-danger-bg: theme-color-level("danger", -10) !default;
+$state-danger-border: theme-color-level("danger", -9) !default;
+
+$primary-nav-padding-y: ($spacer / 4) !default;
+$primary-nav-padding-x: ($spacer / 2) !default;
+
+$navbar-height: 60px !default;
+$course-content-maxwidth: 830px !default;
+$h5p-content-maxwidth: 960px !default;
+
+$box-shadow-drawer-left: -0.25rem .25rem .8rem rgba($black, .025) !default;
+$box-shadow-drawer-right: 0 .25rem .8rem rgba($black, .025) !default;
+
+$moremenu-height: 60px !default;
+
+$primary-light-background: theme-color-level('primary', -12) !default;
+$primary-light-border: theme-color-level('primary', -2) !default;
+$primary-light-color: $body-color;
+$primary-light-hover: theme-color-level('primary', -10) !default;
+$activity-iconcontainer-height: 50px;
+$activity-iconcontainer-width: 50px;
+
+$activity-icon-colors: () !default;
+$activity-icon-colors: map-merge(
+    (
+        "administration": #5d63f6,
+        "assessment": #eb66a2,
+        "collaboration": #f7634d,
+        "communication": #11a676,
+        "content": #399be2,
+        "interface": #a378ff
+    ),
+    $activity-icon-colors
+);

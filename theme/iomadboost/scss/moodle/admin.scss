@@ -16,18 +16,15 @@
 
 .environmenttable {
     .warn {
-        background-color: $state-warning-bg;
-        color: $state-warning-text;
+        @extend .alert-warning;
     }
 
     .error {
-        background-color: $state-danger-bg;
-        color: $state-danger-text;
+        @extend .alert-danger;
     }
 
     .ok {
-        background-color: $state-success-bg;
-        color: $state-success-text;
+        @extend .alert-success;
     }
 }
 
@@ -61,44 +58,8 @@
     display: none;
 }
 
-.statusok {
-    @extend .tag;
-    @extend .tag-success;
-}
-
-.statuswarning {
-    @extend .tag;
-    @extend .tag-warning;
-}
-
-.statusserious,
-.statuscritical {
-    @extend .tag;
-    @extend .tag-danger;
-}
-
 #page-admin-report-capability-index #capabilitysearch {
     width: 30em;
-}
-
-#page-admin-report-backups-index .backup-error,
-#page-admin-report-backups-index .backup-unfinished {
-    @extend .tag-danger;
-}
-
-#page-admin-report-backups-index .backup-skipped,
-#page-admin-report-backups-index .backup-ok,
-#page-admin-report-backups-index .backup-notyetrun {
-    @extend .tag-success;
-}
-
-#page-admin-report-backups-index .backup-warning {
-    @extend .tag-warning;
-}
-
-#page-admin-qtypes .disabled,
-#page-admin-qbehaviours .disabled {
-    @extend .text-muted;
 }
 
 #page-admin-qtypes #qtypes div,
@@ -141,7 +102,7 @@
     text-align: left;
     margin-left: auto;
     margin-right: auto;
-    margin-top: $spacer-y;
+    margin-top: $spacer;
 }
 
 #page-admin-roles-define .topfields {
@@ -149,7 +110,7 @@
 }
 
 #page-admin-roles-define .capdefault {
-    background-color: $table-bg-hover;
+    background-color: $table-hover-bg;
 }
 
 #page-filter-manage .backlink,
@@ -183,34 +144,12 @@
     text-align: left;
 }
 
-#page-admin-index .releasenoteslink,
-#page-admin-index .adminwarning,
-#page-admin-index .adminerror {
-    @extend .alert;
-}
-
-#page-admin-index .adminwarning {
-    @extend .alert-warning;
-}
-
-#page-admin-index .adminerror {
-    @extend .alert-danger;
-}
-
-#page-admin-index .releasenoteslink {
-    @extend .alert-info;
-}
-
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo span {
     display: block;
 }
 
 #page-admin-index .updateplugin div {
     margin-bottom: 0.5em;
-}
-
-#page-admin-index .updateplugin .updatepluginconfirmexternal {
-    @extend .tag-warning;
 }
 
 #page-admin-user-user_bulk #users .fgroup {
@@ -306,6 +245,21 @@
     text-align: center;
     padding: 0.5em;
     margin: 0;
+}
+
+.path-admin,
+.format-site {
+    .header-maxwidth,
+    .secondary-navigation {
+        max-width: none;
+    }
+}
+.path-admin.path-admin-roles:not(.format-site),
+.path-admin.path-admin-tool-lp {
+    .header-maxwidth,
+    .secondary-navigation {
+        max-width: $course-content-maxwidth;
+    }
 }
 
 .plugincheckwrapper {
@@ -436,50 +390,55 @@
     display: inline;
 }
 
-.jsenabled .admin_colourpicker {
-    display: block;
-    height: 102px;
-    width: 410px;
-    margin-bottom: 10px;
-    box-sizing: content-box;
+@include media-breakpoint-up(md) {
+    .jsenabled .admin_colourpicker {
+        display: block;
+        height: 102px;
+        width: 410px;
+        margin-bottom: 10px;
+        box-sizing: content-box;
+    }
+    .admin_colourpicker .colourdialogue {
+        float: left;
+        border: 1px solid $input-border-color;
+    }
+    .admin_colourpicker .previewcolour {
+        border: 1px solid $input-border-color;
+        margin-left: 301px;
+    }
+
+    .admin_colourpicker .currentcolour {
+        border: 1px solid $input-border-color;
+        margin-left: 301px;
+        border-top-width: 0;
+    }
 }
 
+@include media-breakpoint-down(sm) {
+    .jsenabled .admin_colourpicker {
+        height: 150px;
+        margin-bottom: 10px;
+        display: block;
+        position: relative;
+    }
+    .admin_colourpicker .previewcolour {
+        display: none;
+    }
+    .admin_colourpicker .currentcolour {
+        position: absolute;
+        border: 1px solid $border-color;
+        top: 100px;
+        left: 0;
+    }
+
+}
 .admin_colourpicker .loadingicon {
     vertical-align: middle;
     margin-left: auto;
 }
 
-.admin_colourpicker .colourdialogue {
-    float: left;
-    border: 1px solid $state-info-border;
-}
-
-.admin_colourpicker .previewcolour {
-    border: 1px solid $state-info-border;
-    margin-left: 301px;
-}
-
-.admin_colourpicker .currentcolour {
-    border: 1px solid $state-info-border;
-    margin-left: 301px;
-    border-top-width: 0;
-}
-
 #page-admin-index #notice .checkforupdates {
     text-align: center;
-}
-
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release {
-    @extend .tag-info;
-}
-
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity100 .info.release,
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity150 .info.release {
-    @extend .tag-warning;
-}
-
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release {
-    @extend .tag-danger;
 }
 
 // Plugins overview page at admin/plugins.php
@@ -523,7 +482,7 @@
         .pluginname {
             .componentname {
                 font-size: $font-size-sm;
-                @extend .text-muted;
+                color: $text-muted;
                 margin-left: 22px;
             }
         }
@@ -531,13 +490,13 @@
         .version {
             .versionnumber {
                 font-size: $font-size-sm;
-                @extend .text-muted;
+                color: $text-muted;
             }
         }
 
         .uninstall {
             a {
-                color: $state-danger-text;
+                color: $danger;
             }
         }
 
@@ -548,7 +507,7 @@
 
             .requiredby {
                 font-size: $font-size-sm;
-                @extend .text-muted;
+                color: $text-muted;
             }
         }
     }
@@ -625,12 +584,6 @@
     }
 }
 
-.uninstalldeleteconfirmexternal {
-    @extend .alert-warning;
-    padding: 0.5em 1em;
-    margin: 5px 0 10px 0;
-}
-
 #page-admin-index .upgradepluginsinfo {
     text-align: center;
 }
@@ -643,12 +596,6 @@
 #page-admin-mnet-peers .box.deletedhosts {
     margin-bottom: 1em;
     font-size: $font-size-sm;
-}
-
-#page-admin-mnet-peers .mform .deletedhostinfo {
-    @extend .form-control-danger;
-    padding: 4px;
-    margin-bottom: 5px;
 }
 
 #core-cache-plugin-summaries table,
@@ -668,7 +615,7 @@
 
 #core-cache-rescan-definitions,
 #core-cache-mode-mappings .edit-link,
-#core-cache-lock-summary .new-instance {
+#core-cache-lock-additional-actions .new-instance {
     margin-top: 0.5em;
     text-align: center;
 }
@@ -679,26 +626,10 @@
     right: 0;
     overflow: hidden;
     z-index: $zindex-dropdown;
-
-    &.error {
-        @extend .form-control-danger;
-    }
-
-    &.warning {
-        @extend .form-control-warning;
-    }
-}
-
-#adminsettings .form-overridden {
-    @extend .alert-info;
 }
 
 .modal.modal-in-page {
     z-index: 0;
-}
-
-#overriderolestable .overriddenpermission {
-    @extend .table-warning;
 }
 
 #page-admin-search {
@@ -713,8 +644,6 @@
         padding: 0;
         margin: 0 0 1.5rem 0;
         li {
-            @extend .text-muted;
-            @extend .small;
             + li:before {
                 padding-right: 0.5rem;
                 padding-left: 0.5rem;
@@ -733,5 +662,19 @@
     .task-class {
         font-size: $font-size-sm;
         color: $gray-600;
+    }
+}
+
+.path-admin-tool-uploaduser {
+    .uuwarning {
+        background-color: $state-warning-bg;
+    }
+
+    .uuerror {
+        background-color: $state-danger-bg;
+    }
+
+    .uuinfo {
+        background-color: $state-success-bg;
     }
 }

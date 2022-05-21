@@ -16,8 +16,7 @@
 
 /**
  * @package   theme_iomadboost
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
+ * @copyright 2016 Ryan Wyllie
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,6 +25,14 @@ defined('MOODLE_INTERNAL') || die();
 if ($ADMIN->fulltree) {
     $settings = new theme_iomadboost_admin_settingspage_tabs('themesettingiomadboost', get_string('configtitle', 'theme_iomadboost'));
     $page = new admin_settingpage('theme_iomadboost_general', get_string('generalsettings', 'theme_iomadboost'));
+
+    // Unaddable blocks.
+    // Blocks to be excluded when this theme is enabled in the "Add a block" list: Administration, Navigation, Courses and
+    // Section links.
+    $default = 'navigation,settings,course_list,section_links';
+    $setting = new admin_setting_configtext('theme_iomadboost/unaddableblocks',
+        get_string('unaddableblocks', 'theme_iomadboost'), get_string('unaddableblocks_desc', 'theme_iomadboost'), $default, PARAM_TEXT);
+    $page->add($setting);
 
     // Preset.
     $name = 'theme_iomadboost/preset';
@@ -45,7 +52,7 @@ if ($ADMIN->fulltree) {
     $choices['default.scss'] = 'default.scss';
     $choices['plain.scss'] = 'plain.scss';
 
-    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $setting = new admin_setting_configthemepreset($name, $title, $description, $default, $choices, 'iomadboost');
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
@@ -63,6 +70,14 @@ if ($ADMIN->fulltree) {
     $title = get_string('backgroundimage', 'theme_iomadboost');
     $description = get_string('backgroundimage_desc', 'theme_iomadboost');
     $setting = new admin_setting_configstoredfile($name, $title, $description, 'backgroundimage');
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
+    // Login Background image setting.
+    $name = 'theme_iomadboost/loginbackgroundimage';
+    $title = get_string('loginbackgroundimage', 'theme_iomadboost');
+    $description = get_string('loginbackgroundimage_desc', 'theme_iomadboost');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'loginbackgroundimage');
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 

@@ -13,7 +13,6 @@ li.activity.label,
     color: inherit;
     border: inherit;
     text-shadow: none;
-    padding: 8px;
     white-space: normal;
     display: block;
     font-size: inherit;
@@ -24,6 +23,7 @@ li.activity.label,
 .file-picker td.label {
     display: table-cell;
     text-align: right;
+    padding: 8px;
 }
 
 // Some of this dialog is sized in ems so a different font size

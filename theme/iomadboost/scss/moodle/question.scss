@@ -147,11 +147,20 @@
     td,
     th {
         padding: 0 0.2em;
+        max-width: 40vw;
     }
 
     th {
         text-align: left;
         font-weight: normal;
+    }
+
+    & > tbody > tr.r1 {
+        background-color: $table-accent-bg;
+    }
+
+    & > tbody > tr.highlight {
+        border: $border-width solid $info;
     }
 
     .checkbox {
@@ -172,10 +181,6 @@
             width: 12px;
             height: 12px;
         }
-    }
-
-    .highlight {
-        @extend .text-dark;
     }
 
     label {
@@ -225,7 +230,7 @@
 
 body.path-question-type {
     /* Hacks to display the labels within a form group. */
-    .form-group .sr-only:not(legend) {
+    .form-group .col-form-label.sr-only:not(legend):not([for="id_category"]) {
         position: static;
         width: auto;
         height: auto;
@@ -249,8 +254,8 @@ body.path-question-type {
     width: 7em;
     padding: 0.5em;
     margin-bottom: 1.8em;
-    background-color: $gray-lighter;
-    border: 1px solid darken($gray-lighter, 7%);
+    background-color: $gray-100;
+    border: 1px solid darken($gray-300, 7%);
 
     @include border-radius(2px);
 }
@@ -288,15 +293,23 @@ body.path-question-type {
 .que .formulation,
 .que .outcome,
 .que .comment {
-    @extend .alert;
+    position: relative;
+    padding: $alert-padding-y $alert-padding-x;
+    margin-bottom: $alert-margin-bottom;
+    border: $alert-border-width solid transparent;
+    @include border-radius($alert-border-radius);
 }
 .que .outcome,
 .que .comment {
-    @extend .alert-warning;
+    @include alert-variant(theme-color-level('warning', $alert-bg-level), theme-color-level('warning', $alert-border-level), theme-color-level('warning', $alert-color-level - 0.9)); /* stylelint-disable-line max-line-length */
+    // Darken link colour inside comments for better colour contrast against regular text.
+    a {
+        color: darken($link-color, 30%);
+    }
 }
 
 .que .formulation {
-    @extend .alert-info;
+    @include alert-variant(theme-color-level('info', $alert-bg-level - 1.30), theme-color-level('info', $alert-border-level), theme-color-level('info', $alert-color-level + 4)); /* stylelint-disable-line max-line-length */
 }
 
 .que.multichoice .answer div.r0 .icon.fa-check,
@@ -304,14 +317,6 @@ body.path-question-type {
 .que.multichoice .answer div.r0 .icon.fa-remove,
 .que.multichoice .answer div.r1 .icon.fa-remove {
     text-indent: 0;
-}
-.qtype_multichoice_clearchoice {
-    padding-top: 10px;
-    a {
-        cursor: pointer;
-        text-decoration: underline;
-        padding-left: 30px;
-    }
 }
 
 .formulation input[type="text"],
@@ -334,11 +339,7 @@ body.path-question-type {
 }
 
 .que .comment {
-    @extend .alert-success;
-}
-
-.que .history {
-    @extend .card;
+    @include alert-variant(theme-color-level('success', $alert-bg-level), theme-color-level('success', $alert-border-level), theme-color-level('success', $alert-color-level)); /* stylelint-disable-line max-line-length */
 }
 
 .que .ablock {
@@ -361,16 +362,15 @@ body.path-question-type {
 }
 
 .que .correctness {
-    @extend .tag;
     &.correct {
-        background-color: $state-success-text;
+        @include badge-variant($success);
     }
     &.partiallycorrect {
-        background-color: $state-warning-text;
+        @include badge-variant($warning);
     }
     &.notanswered,
     &.incorrect {
-        background-color: $state-danger-text;
+        @include badge-variant($danger);
     }
 }
 
@@ -379,7 +379,7 @@ body.path-question-type {
 }
 
 .que .validationerror {
-    @extend .text-danger;
+    color: map-get($theme-colors, 'danger');
 }
 // copied from .formFieldState in mixin.less
 // and made more specific
@@ -432,11 +432,20 @@ body.jsenabled .questionflag input[type=checkbox] {
     margin: 1em 0;
 }
 
+#page-question-preview .collapsibleregion {
+    .collapsibleregioncaption,
+    .collapsibleregionextracontent {
+        display: inline-block;
+    }
+}
+
 // imported from quiz.css
 
 #page-mod-quiz-edit ul.slots .activityinstance {
     > a {
-        display: inline;
+        display: flex;
+        max-width: 100%;
+        align-items: center;
         text-indent: 0;
         padding-left: 0;
     }
@@ -470,14 +479,6 @@ body.jsenabled .questionflag input[type=checkbox] {
 
 #page-mod-quiz-edit div.questionbank .categoryquestionscontainer {
     background: transparent;
-}
-
-#page-mod-quiz-edit #categoryquestions > thead {
-    background: #fff;
-}
-
-#page-mod-quiz-edit #categoryquestions > tbody > tr:nth-of-type(even) {
-    background: #e4e4e4;
 }
 
 #page-mod-quiz-edit .questionbankwindow div.header {
@@ -585,35 +586,6 @@ body.jsenabled .questionflag input[type=checkbox] {
     padding: 0.3em 0;
 }
 
-#page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer {
-    padding: 0;
-
-    strong {
-        display: block;
-    }
-
-    hr,
-    br {
-        display: none;
-    }
-
-    strong {
-        margin-left: -0.3em;
-    }
-
-    strong label {
-        margin-left: 0.3em;
-    }
-
-    input {
-        margin-left: 0;
-    }
-
-    input + input {
-        margin-left: 5px;
-    }
-}
-
 .questionbankwindow .module {
     width: auto;
 }
@@ -656,6 +628,10 @@ a#hidebankcmd {
     display: inline;
 }
 
+.que .content .answer div[data-region="answer-label"] .mediaplugin {
+    width: 400px;
+}
+
 body.path-question-type .mform fieldset.hidden {
     padding: 0;
     margin: 0.7em 0 0;
@@ -678,5 +654,14 @@ body.path-question-type .mform fieldset.hidden {
     }
     .que .content {
         margin: 0;
+    }
+}
+
+@include media-breakpoint-down(md) {
+    #categoryquestions {
+        td,
+        th {
+            max-width: 75vw;
+        }
     }
 }

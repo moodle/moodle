@@ -14,118 +14,120 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   theme_iomadboost
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Add Pending JS checks to stock Bootstrap transitions.
+ *
+ * @module     theme_iomadboost/pending
+ * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery'], function($) {
-    var moduleTransitions = {
-        alert: [
-            // Alert.
-            {
-                start: 'close',
-                end: 'closed',
-            },
-        ],
+import jQuery from 'jquery';
+const moduleTransitions = {
+    alert: [
+        // Alert.
+        {
+            start: 'close',
+            end: 'closed',
+        },
+    ],
 
-        carousel: [
-            {
-                start: 'slide',
-                end: 'slid',
-            },
-        ],
+    carousel: [
+        {
+            start: 'slide',
+            end: 'slid',
+        },
+    ],
 
-        collapse: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    collapse: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-        dropdown: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    dropdown: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-        modal: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    modal: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-        popover: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    popover: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-        tab: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    tab: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-        toast: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
+    toast: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
 
-        tooltip: [
-            {
-                start: 'hide',
-                end: 'hidden',
-            },
-            {
-                start: 'show',
-                end: 'shown',
-            },
-        ],
-    };
+    tooltip: [
+        {
+            start: 'hide',
+            end: 'hidden',
+        },
+        {
+            start: 'show',
+            end: 'shown',
+        },
+    ],
+};
 
-    Object.keys(moduleTransitions).forEach(function(key) {
-        moduleTransitions[key].forEach(function(pair) {
-            var eventStart = pair.start + '.bs.' + key;
-            var eventEnd = pair.end + '.bs.' + key;
-            $(document.body).on(eventStart, function() {
+export default () => {
+    Object.entries(moduleTransitions).forEach(([key, pairs]) => {
+        pairs.forEach(pair => {
+            const eventStart = `${pair.start}.bs.${key}`;
+            const eventEnd = `${pair.end}.bs.${key}`;
+            jQuery(document.body).on(eventStart, e => {
                 M.util.js_pending(eventEnd);
+                jQuery(e.target).one(eventEnd, () => {
+                    M.util.js_complete(eventEnd);
+                });
             });
 
-            $(document.body).on(eventEnd, function() {
-                M.util.js_complete(eventEnd);
-            });
         });
     });
-});
+};

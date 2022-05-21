@@ -13,16 +13,11 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
- * @package   theme_iomadboost
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 {{!
     @template theme_iomadboost/maintenance
 
-    IomadBoost maintenance layout template.
+    IOMAD Boost maintenance layout template.
 
     Context variables required for this template:
     * output - The core renderer for the page
@@ -68,12 +63,7 @@
         </div>
 
     </div>
-    <footer id="page-footer" class="py-3 bg-dark text-light">
-        <div class="container">
-            {{{ output.standard_footer_html }}}
-            {{{ output.standard_end_of_body_html }}}
-        </div>
-    </footer>
+    {{> theme_iomadboost/footer }}
 </div>
 
 </body>

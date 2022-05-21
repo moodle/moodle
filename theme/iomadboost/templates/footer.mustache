@@ -13,34 +13,75 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
- * @package   theme_iomadboost
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 {{!
+    @template theme_iomadboost/footer
+
     Page footer.
+
+    Example context (json):
+    {
+        "output": {
+            "page_doc_link": "Help and documentation",
+            "supportemail": "<a href=\"#\">Contact site support</a>",
+            "has_popover_links": true,
+            "services_support": "Services and support",
+            "login_info": "You are logged in as cute kitten",
+            "moodle_release": "90210"
+        }
+    }
 }}
-<footer id="page-footer" class="py-3 bg-dark text-light">
-    <div class="container">
-        <div id="course-footer">{{{ output.course_footer }}}</div>
 
-        {{# output.page_doc_link }}
-            <p class="helplink">{{{ output.page_doc_link }}}</p>
-        {{/ output.page_doc_link }}
+<footer id="page-footer" class="footer-popover bg-white">
+    <div data-region="footer-container-popover">
+        <button class="btn btn-icon bg-secondary icon-no-margin btn-footer-popover" data-action="footer-popover" aria-label="{{#str}}showfooter, theme_iomadboost{{/str}}">
+            {{#pix}}e/question, core{{/pix}}
+        </button>
+    </div>
+    <div class="footer-content-popover container" data-region="footer-content-popover">
+        {{# output.has_popover_links }}
+            <div class="footer-section p-3 border-bottom">
+                {{# output.page_doc_link }}
+                    <div>{{{ output.page_doc_link }}}</div>
+                {{/ output.page_doc_link }}
 
-        {{{ output.login_info }}}
-        <div class="tool_usertours-resettourcontainer"></div>
-        {{{ output.home_link }}}
-        <nav class="nav navbar-nav d-md-none" aria-label="{{#str}}custommenu, admin{{/str}}">
-            {{# output.custom_menu_flat }}
-                <ul class="list-unstyled pt-3">
-                    {{> theme_iomadboost/custom_menu_footer }}
-                </ul>
-            {{/ output.custom_menu_flat }}
-        </nav>
-        {{{ output.standard_footer_html }}}
-        {{{ output.standard_end_of_body_html }}}
+                {{# output.services_support_link }}
+                    <div>{{{ output.services_support_link }}}</div>
+                {{/ output.services_support_link }}
+
+                {{# output.supportemail }}
+                    <div>{{{ output.supportemail }}}</div>
+                {{/ output.supportemail }}
+            </div>
+        {{/ output.has_popover_links }}
+        <div class="footer-section p-3 border-bottom">
+            <div class="logininfo">
+                {{{ output.login_info }}}
+            </div>
+            <div class="tool_usertours-resettourcontainer">
+            </div>
+
+            {{{ output.standard_footer_html }}}
+            {{{ output.standard_end_of_body_html }}}
+        </div>
+        <div class="footer-section p-3">
+            <div>{{#str}}poweredbymoodle, core{{/str}}</div>
+            {{#output.moodle_release}}
+                <div>
+                    {{#str}}version, core{{/str}} {{{ output.moodle_release }}}
+                </div>
+            {{/output.moodle_release}}
+        </div>
+    </div>
+
+    <div class="footer-content-debugging footer-dark bg-dark text-light">
+        <div class="container-fluid footer-dark-inner">
+            {{{ output.debug_footer_html }}}
+        </div>
     </div>
 </footer>
+{{#js}}
+require(['theme_iomadboost/footer-popover'], function(FooterPopover) {
+    FooterPopover.init();
+});
+{{/js}}

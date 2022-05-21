@@ -13,16 +13,11 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
- * @package   theme_iomadboost
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 {{!
     @template theme_iomadboost/secure
 
-    IomadBoost secure layout template.
+    IOMAD Boost secure layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -80,10 +75,9 @@
             </div>
         </div>
     </div>
-    <footer id="page-footer" class="py-3 bg-dark text-light">
+    <footer id="page-footer" class="py-3">
         <div class="container">
             <div id="course-footer">{{{ output.course_footer }}}</div>
-
             {{{ output.standard_end_of_body_html }}}
         </div>
     </footer>
@@ -95,6 +89,6 @@
 {{#js}}
 M.util.js_pending('theme_iomadboost/loader');
 require(['theme_iomadboost/loader'], function() {
-  M.util.js_complete('theme_iomadboost/loader');
+    M.util.js_complete('theme_iomadboost/loader');
 });
 {{/js}}

@@ -16,7 +16,9 @@ $iconsizes: map-merge((
   2: ($icon-width * .5),
   3: $icon-width,
   4: ($icon-width * 1.5),
-  5: ($icon-width * 3)
+  5: ($icon-width * 2),
+  6: ($icon-width * 2.5),
+  7: ($icon-width * 3)
 ), $iconsizes);
 // stylelint-enable
 
@@ -24,7 +26,6 @@ $iconsizes: map-merge((
     font-size: $icon-height;
     width: $icon-width;
     height: $icon-height;
-    // vertical-align: middle;
     margin: 0;
     padding: 0;
     box-sizing: content-box;
@@ -38,10 +39,6 @@ $iconsizes: map-merge((
         width: $icon-big-width;
         height: $icon-big-height;
         font-size: $icon-big-height;
-    }
-
-    &.movetarget {
-        width: 80px;
     }
 }
 
@@ -101,4 +98,67 @@ $iconsizes: map-merge((
 
 .helplink .icon {
     margin-left: 0.5rem;
+}
+
+.icons-collapse-expand {
+    display: flex;
+    align-items: center;
+    .expanded-icon {
+        display: flex;
+        align-items: center;
+    }
+
+    .collapsed-icon {
+        display: none;
+    }
+
+    &.collapsed {
+        .expanded-icon {
+            display: none;
+        }
+
+        .collapsed-icon {
+            display: flex;
+            align-items: center;
+        }
+    }
+}
+
+
+.activityiconcontainer {
+    width: $activity-iconcontainer-width;
+    height: $activity-iconcontainer-height;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $gray-100;
+    border-radius: 4px;
+    padding: 0.7rem;
+    .activityicon,
+    .icon {
+        margin: 0;
+        height: 24px;
+        width: 24px;
+    }
+    &.small {
+        width: $activity-iconcontainer-width - 10px;
+        height: $activity-iconcontainer-height - 10px;
+    }
+}
+
+@each $type, $value in $activity-icon-colors {
+    .activityiconcontainer.#{$type} {
+        background-color: $value;
+        .activityicon,
+        .icon {
+            filter: brightness(0) invert(1);
+        }
+    }
+}
+
+// Make activtity colours available for custom modules.
+:root {
+    @each $type, $value in $activity-icon-colors {
+        --activity#{$type}: #{$value};
+    }
 }

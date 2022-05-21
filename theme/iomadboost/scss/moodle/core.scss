@@ -5,25 +5,42 @@
 // want white default colour.
 $bg-inverse-link-color: #fff !default;
 
+$dropzone-border: $gray-900 !default;
+
+$collapse-list-item-padding-y: 0.5rem !default;
+$collapse-list-item-padding-x: 1rem !default;
+$collapse-list-item-hover-bg: theme-color-level('info', -11) !default;
+$collapse-list-item-hover-border: theme-color-level('info', -9) !default;
+
+$thin-scroll-bg-thumb: $gray-600 !default;
+$thin-scroll-bg-hover: $gray-700 !default;
+
+$font-size-xs: ($font-size-base * .75) !default;
+
 #region-main {
     overflow-x: auto;
     overflow-y: visible;
-    border: $card-border-width solid $card-border-color;
-    @if $enable-rounded {
-        @include border-radius($card-border-radius);
-    }
-    padding: $card-spacer-x;
     background-color: $body-bg;
 }
 
-.context-header-settings-menu,
-.region-main-settings-menu {
-    float: right;
-    width: auto;
-    max-width: 4em;
-    height: 2em;
-    display: block;
-    margin-top: 4px;
+@include media-breakpoint-up(sm) {
+    .context-header-settings-menu,
+    .region-main-settings-menu {
+        float: right;
+        width: auto;
+        max-width: 4em;
+        height: 2em;
+        display: block;
+        margin-top: 4px;
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .context-header-settings-menu,
+    .region-main-settings-menu {
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 
 .context-header-settings-menu .dropdown-toggle > .icon,
@@ -85,7 +102,96 @@ a.dimmed_text:visited,
 .usersuspended a:visited,
 .dimmed_category,
 .dimmed_category a {
-    @extend .text-muted;
+    color: $text-muted;
+}
+
+// Accessible focus styling for links, add .aalink to links with custom css classes to get
+// accessible focus styles.
+.aalink,
+#page-footer a:not([class]),
+.arrow_link,
+a:not([class]),
+.activityinstance > a {
+    &.focus,
+    &:focus {
+        outline: $btn-focus-width solid transparent;
+        color: $gray-900;
+        background-color: lighten($primary, 50%);
+        box-shadow: 0 -#{$btn-focus-width} lighten($primary, 50%), 0 $btn-focus-width $gray-800;
+    }
+    &:focus:hover {
+        text-decoration: none;
+    }
+}
+
+// Accessible focus styling for buttons like elements that do not use the .btn class. Add
+// .aabtn to you element if you need the same focus styles.
+.aabtn,
+.btn-link,
+.nav-link,
+.editor_atto_toolbar button,
+.editor_atto_toolbar .atto_toolbar_row,
+[role="button"],
+.list-group-item-action,
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"],
+input[type="image"],
+.sr-only-focusable,
+a.dropdown-toggle,
+.modal-dialog[tabindex="0"],
+.moodle-dialogue-base .closebutton,
+button.close,
+.form-autocomplete-selection,
+[role="treeitem"]:not([aria-expanded="true"]) {
+    &.focus,
+    &:focus {
+        outline: 0;
+        box-shadow: $input-btn-focus-box-shadow;
+    }
+    &:focus:hover {
+        text-decoration: none;
+    }
+}
+
+// Modal dialogs border should be rounded too.
+.modal-dialog[tabindex="0"] {
+    &.focus,
+    &:focus {
+        @include border-radius($modal-content-border-radius);
+    }
+}
+
+// We don't want to highlight the whole li when it's expanded. Only the first child is highlighted.
+[role="treeitem"][aria-expanded="true"] {
+    outline: 0;
+    &.focus,
+    &:focus {
+        > *:first-child {
+            outline: 0;
+            box-shadow: $input-btn-focus-box-shadow;
+        }
+    }
+    &:focus:hover {
+        text-decoration: none;
+    }
+}
+
+// Accessible focus styling for autocomplete elements.
+.form-autocomplete-suggestions li[aria-selected=true] {
+    outline: 0;
+    box-shadow: $input-btn-focus-box-shadow;
+}
+
+// Safari does not allow custom styling of checkboxes.
+.safari {
+    input[type="checkbox"],
+    input[type="radio"] {
+        &.focus,
+        &:focus {
+            outline: auto;
+        }
+    }
 }
 
 .unlist,
@@ -94,12 +200,23 @@ a.dimmed_text:visited,
 .inline-list li,
 .block .list,
 .block .list li,
-.section li.activity,
 .section li.movehere,
 .tabtree li {
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+.section li.movehere a {
+    display: block;
+    width: 100%;
+    height: 2rem;
+    border: 2px dashed $gray-800;
+}
+
+.editing .course-content .hidden.sectionname {
+    visibility: hidden;
+    display: initial;
 }
 
 .inline,
@@ -118,16 +235,16 @@ a.dimmed_text:visited,
 
 .red,
 .notifyproblem {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 .green,
 .notifysuccess {
-    @extend .text-success;
+    color: map-get($theme-colors, 'success');
 }
 
 .highlight {
-    @extend .text-info;
+    color: map-get($theme-colors, 'info');
 }
 
 .fitem.advanced .text-info {
@@ -156,6 +273,16 @@ a.autolink.glossary:hover {
     padding: 0;
     background-color: transparent;
     margin-top: -1px;
+}
+
+@include media-breakpoint-down(sm) {
+    .pagelayout-mydashboard,
+    .pagelayout-login {
+        #region-main-box {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
 }
 
 .collapsibleregioncaption img {
@@ -192,19 +319,6 @@ a.autolink.glossary:hover {
     display: block;
 }
 
-.collapsible-actions .collapseexpand {
-    padding-left: 20px;
-    background: url([[pix:t/collapsed]]) 2px center no-repeat;
-}
-/*rtl:raw:
-.collapsible-actions .collapseexpand {
-    background: url([[pix:t/collapsed_rtl]]) right center no-repeat;
-}
-*/
-.collapsible-actions .collapse-all {
-    background-image: url([[pix:t/expanded]]);
-}
-
 .yui-overlay .yui-widget-bd {
     background-color: #ffee69;
     border: 1px solid #a6982b;
@@ -235,10 +349,6 @@ a.autolink.glossary:hover {
     font-weight: bold;
 }
 
-img.userpicture {
-    margin-right: 0.5rem;
-}
-
 img.resize {
     height: 1em;
     width: 1em;
@@ -246,10 +356,12 @@ img.resize {
 
 .action-menu .dropdown-toggle {
     text-decoration: none;
+    display: inline-block;
 }
 
 .action-menu {
     white-space: nowrap;
+    display: inline;
 }
 
 .block img.resize {
@@ -298,12 +410,10 @@ form.popupform div {
     overflow: auto;
 }
 
-// Minimum height required for a menu in a table inside a scrollable div.
 // Position required for table sizing inside a flex container.
 .no-overflow > .generaltable {
     position: relative;
     margin-bottom: 0;
-    min-height: 10em;
 }
 // Accessibility features
 
@@ -389,6 +499,7 @@ a.skip:active {
     width: auto;
     min-width: 80%;
     margin: 0 auto;
+    display: block;
 }
 
 .groupmanagementtable #removeselect_wrapper,
@@ -415,21 +526,6 @@ a.skip:active {
     display: inline-block;
 }
 
-// Login
-.login-page {
-    [name="username"] {
-        margin-bottom: -1px;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-
-    [type="password"] {
-        margin-bottom: 10px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    }
-}
-
 // Notes
 .notepost {
     margin-bottom: 1em;
@@ -451,7 +547,7 @@ a.skip:active {
 
 // My Moodle
 .path-my .coursebox {
-    margin: $spacer-y 0;
+    margin: $spacer 0;
     padding: 0;
 
     .overview {
@@ -548,8 +644,8 @@ table.mod_index {
 }
 
 .comment-message .picture {
-    width: 20px;
     float: left;
+    margin-right: 0.25rem;
 }
 
 .comment-message .text {
@@ -592,7 +688,7 @@ table.mod_index {
 * Completion progress report
 */
 .completion-expired {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 .completion-expected {
@@ -689,7 +785,7 @@ span.flagged-tag,
 tr.flagged-tag,
 span.flagged-tag a,
 tr.flagged-tag a {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 .tag-management-table td,
@@ -766,7 +862,7 @@ tr.flagged-tag a {
 }
 
 .tag_feed .media .muted a {
-    @extend .text-muted;
+    color: $text-muted;
 }
 
 .tag_cloud {
@@ -988,20 +1084,12 @@ tr.flagged-tag a {
     margin-left: 3px;
 }
 
-#page-enrol-users {
-    .enrol_user_buttons {
-        text-align: right;
-
+#page-enrol-otherusers .userenrolment .col_role {
+    .role {
+        float: none;
+        margin: 3px 3px 3px 0;
+        padding: 3px 3px 3px 0;
     }
-
-    #filterform {
-        @extend .card;
-        @extend .card-block;
-    }
-}
-
-#page-enrol-users .enrol-users-page-action input {
-    margin-left: 0;
 }
 
 .corelightbox {
@@ -1032,19 +1120,22 @@ tr.flagged-tag a {
     float: left;
     padding-top: 20px;
 }
-$mod-indent-size: 30px;
-/* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
 
-@for $i from 1 through 16 {
-    $width: ($i * $mod-indent-size);
+@include media-breakpoint-up(sm) {
+    $mod-indent-size: 30px;
+    /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
 
-    .mod-indent-#{$i} {
-        width: $width;
+    @for $i from 1 through 16 {
+        $width: ($i * $mod-indent-size);
+
+        .mod-indent-#{$i} {
+            width: $width;
+        }
     }
-}
 
-.mod-indent-huge {
-    width: (16 * $mod-indent-size);
+    .mod-indent-huge {
+        width: (16 * $mod-indent-size);
+    }
 }
 
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
@@ -1102,7 +1193,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
-    background-color: $gray;
+    background-color: $gray-700;
 }
 
 // Prevent adding backdrops to popups in popups.
@@ -1138,12 +1229,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     overflow: auto;
 }
 
-.moodle-dialogue-base .moodle-dialogue-fullscreen .closebutton {
-    width: 28px;
-    height: 16px;
-    background-size: 100%;
-}
-
 .moodle-dialogue-base .moodle-dialogue-wrap {
     background-color: #fff;
     border: 1px solid #ccc;
@@ -1155,12 +1240,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     display: block;
 }
 
-.moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content {
-    @extend .modal-content;
-}
-
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
-    @extend .modal-header;
+    display: flex;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid #dee2e6;
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
@@ -1172,9 +1255,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     line-height: 1.5;
 }
 
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
-    @extend .modal-title;
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h5 {
     font-size: 1.5rem;
+    font-weight: $font-weight-base;
+    margin-bottom: 0;
+    line-height: 1.5;
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
@@ -1182,12 +1267,24 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         left: 0;
         right: auto;
     */
-    padding: $spacer;
+    padding: 0;
+    position: relative;
+    margin-left: auto;
 }
 
 .moodle-dialogue-base .closebutton {
-    @extend .close;
+    padding: $modal-header-padding;
+    margin: (-$modal-header-padding-y) (-$modal-header-padding-x) (-$modal-header-padding-y) auto;
+    position: relative;
+    background-color: transparent;
+    border: 0;
+    background-image: none;
     box-shadow: none;
+    opacity: 0.7;
+    &:hover,
+    &:active {
+        opacity: 1;
+    }
     &::after {
         content: "×";
     }
@@ -1195,6 +1292,9 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
     padding: 0.5rem;
+    body {
+        background-color: $body-bg;
+    }
 }
 
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
@@ -1229,7 +1329,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .moodle-dialogue-exception .param-stacktrace .stacktrace-line {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
     font-size: $font-size-sm;
 }
 
@@ -1237,10 +1337,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     color: #333;
     font-size: 90%;
     border-bottom: 1px solid #eee;
-}
-
-.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
-    @extend .modal-footer;
 }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft:empty {
@@ -1469,11 +1565,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     padding-top: 1px;
 }
 
-.chooserdialogue-course-modchooser .modicon .icon {
-    width: 24px;
-    height: 24px;
-    font-size: 24px;
-}
 
 @include media-breakpoint-down(xs) {
     .jsenabled .choosercontainer #chooseform .alloptions {
@@ -1483,6 +1574,154 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     .jsenabled .choosercontainer #chooseform .instruction,
     .jsenabled .choosercontainer #chooseform .typesummary {
         position: static;
+    }
+}
+
+/**
+ * Module chooser dialogue (moodle-core-chooserdialogue)
+ *
+ * This CSS belong to the chooser dialogue which should work both with, and
+ * without javascript enabled
+ */
+.modchooser .modal-body {
+    padding: 0;
+    overflow-y: auto;
+    min-height: 640px;
+    display: flex;
+    flex-direction: column;
+
+    .searchresultitemscontainer-wrapper {
+        min-height: 495px;
+    }
+
+    .carousel-item.active {
+        display: flex;
+    }
+    .chooser-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+    }
+
+    .loading-icon {
+        opacity: 1;
+        .icon {
+            display: block;
+            font-size: 3em;
+            height: 1em;
+            width: 1em;
+        }
+    }
+    .carousel-item .loading-icon .icon {
+        margin: 1em auto;
+    }
+    .searchbar {
+        width: 100%;
+    }
+}
+
+.modchooser .modal-footer {
+    height: 70px;
+    background: $modal-content-bg;
+    .moodlenet-logo {
+        .icon {
+            height: 2.5rem;
+            width: 6rem;
+            margin-bottom: .6rem;
+        }
+    }
+}
+
+.modchoosercontainer.noscroll {
+    overflow-y: hidden;
+}
+
+.modchoosercontainer .optionscontainer,
+.modchoosercontainer .searchresultitemscontainer {
+    overflow-x: hidden;
+    .option {
+        // 2 items per line.
+        flex-basis: calc(50% - 0.5rem);
+        .optionactions {
+            .optionaction {
+                cursor: pointer;
+                color: $gray-600;
+                i {
+                    margin: 0;
+                }
+            }
+        }
+        .optioninfo {
+            a {
+                color: $gray-700;
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+}
+
+.modchooser .modal-body .optionsummary {
+    background-color: $white;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 640px;
+
+    .content {
+        overflow-y: auto;
+        .heading {
+            .icon {
+                height: 32px;
+                width: 32px;
+                font-size: 32px;
+                padding: 0;
+            }
+        }
+    }
+
+    .actions {
+        border-top: 1px solid $gray-300;
+        background: $white;
+    }
+}
+
+@include media-breakpoint-down(xs) {
+    .path-course-view .modal-dialog.modal-lg,
+    .path-course-view .modal-content,
+    .modchooser .modal-body,
+    .modchooser .modal-body .carousel,
+    .modchooser .modal-body .carousel-inner,
+    .modchooser .modal-body .carousel-item,
+    .modchooser .modal-body .optionsummary,
+    .modchoosercontainer,
+    .optionscontainer,
+    .searchresultitemscontainer {
+        min-height: auto;
+        height: 100%;
+        overflow-y: auto;
+    }
+    .path-course-view .modal-dialog.modal-lg {
+        margin: 0;
+    }
+    .modchooser .modal-body .searchresultitemscontainer-wrapper {
+        min-height: auto;
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .modchoosercontainer .optionscontainer .option,
+    .modchoosercontainer .searchresultitemscontainer .option {
+        // Three items per line.
+        flex-basis: calc(33.33% - 0.5rem);
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .modchoosercontainer .optionscontainer .option,
+    .modchoosercontainer .searchresultitemscontainer .option {
+        // Six items per line.
+        flex-basis: calc(16.66% - 0.5rem);
     }
 }
 
@@ -1557,13 +1796,6 @@ body.jsenabled .formlisting {
     display: block;
 }
 
-/* Badges styles */
-table.collection {
-    @extend .table;
-    @extend .table-bordered;
-    @extend .table-striped;
-}
-
 a.criteria-action {
     padding: 0 3px;
     float: right;
@@ -1612,10 +1844,13 @@ ul.badges {
 }
 
 .badges li .expireimage {
+    background-image: url([[pix:i/expired]]);
+    background-repeat: no-repeat;
+    background-size: 100px 100px;
     width: 100px;
     height: 100px;
     left: 25px;
-    top: 0;
+    top: 15px;
     position: absolute;
     z-index: 10;
     opacity: 0.85;
@@ -1633,6 +1868,9 @@ ul.badges {
     margin-bottom: 20px;
 
     .expireimage {
+        background-image: url([[pix:i/expired]]);
+        background-repeat: no-repeat;
+        background-size: 100px 100px;
         width: 100px;
         height: 100px;
         left: 0;
@@ -1681,20 +1919,28 @@ ul.badges {
     }
 }
 
+#badge-criteria li li {
+    list-style-type: none;
+}
+
+#badge-image-col {
+    flex: 0 0 400px;
+}
+
 .badge-profile {
     vertical-align: top;
 }
 
 .connected {
-    @extend .text-success;
+    color: map-get($theme-colors, 'success');
 }
 
 .notconnected {
-    @extend .text-danger;
+    color: map-get($theme-colors, 'danger');
 }
 
 .connecting {
-    @extend .text-warning;
+    color: map-get($theme-colors, 'warning');
 }
 
 #page-badges-award .recipienttable tr td {
@@ -1760,6 +2006,9 @@ img#persona_signin {
 
 /** Page header */
 #page-header {
+    h1.h2 {
+        font-weight: bold;
+    }
     .logo {
         margin: $spacer 0;
         img {
@@ -1773,6 +2022,15 @@ nav.navbar .logo img {
     max-height: 35px;
 }
 
+.nav.usernav {
+    .nav-item {
+        display: flex;
+    }
+    .usermenu .dropdown-toggle {
+        padding: 0 0.5rem;
+    }
+}
+
 /** Header-bar styles **/
 .page-context-header {
     // We need to be explicit about the height of the header.
@@ -1780,17 +2038,14 @@ nav.navbar .logo img {
 
     // Do not remove these rules.
     overflow: hidden;
+    padding: 0.25rem 0;
 
-    .page-header-image,
-    .page-header-headings {
-        float: left;
-        display: block;
-        position: relative;
-    }
+    display: flex;
 
     .page-header-image {
-        margin-right: 1em;
-        margin-bottom: 1em;
+        & > a {
+            display: inline-block;
+        }
     }
 
     .page-header-headings,
@@ -1803,13 +2058,6 @@ nav.navbar .logo img {
     .header-button-group {
         display: block;
         float: left;
-
-        a {
-            position: relative;
-
-            // Don't touch it unless you know exactly what you are doing.
-            top: -0.4em;
-        }
     }
 }
 
@@ -1871,11 +2119,12 @@ dd:after {
             right: auto;
             white-space: nowrap;
         }
-
-        input {
-            width: 330px;
-            vertical-align: text-bottom;
-            margin-bottom: 0;
+        @include media-breakpoint-up(sm) {
+            input {
+                width: 330px;
+                vertical-align: text-bottom;
+                margin-bottom: 0;
+            }
         }
 
         select {
@@ -1936,6 +2185,7 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 // Reset for ul.
 ul {
     padding-left: 1rem;
+    -webkit-margin-start: 0.2rem;  /* stylelint-disable-line */
 }
 
 /* YUI 2 Tree View */
@@ -2035,11 +2285,55 @@ ul {
 // but really in bootstrap we want the colour of links on .bg-inverse to be changed
 // rather than being specific to the footer. This is kept for backwards compatibility.
 $footer-link-color: $bg-inverse-link-color !default;
-#page-footer a {
-    color: $footer-link-color;
-    text-decoration: underline;
-    .icon {
+
+.footer-dark {
+    a {
         color: $footer-link-color;
+        text-decoration: underline;
+
+        .icon {
+            color: $footer-link-color;
+        }
+
+        &:focus .icon {
+            color: $body-color;
+        }
+    }
+}
+
+.btn-footer-popover {
+    display: none;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    @include box-shadow($popover-box-shadow);
+}
+
+.popover.footer {
+    .popover-body {
+        padding: 0;
+        .footer-section {
+            a {
+                color: $body-color;
+                text-decoration: underline;
+                .icon {
+                    color: $body-color;
+                }
+                &:focus {
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .jsenabled #page-footer .footer-content-popover {
+        display: none;
+    }
+    .jsenabled .btn-footer-popover {
+        display: block;
+        z-index: $zindex-dropdown;
     }
 }
 
@@ -2058,13 +2352,35 @@ $footer-link-color: $bg-inverse-link-color !default;
 }
 
 // Make links in a menu clickable anywhere in the row.
-.dropdown-item a {
-    display: block;
-    width: 100%;
-    color: $body-color;
-}
-.dropdown-item:active a {
-    color: $dropdown-link-active-color;
+.dropdown-item {
+    a {
+        display: block;
+        width: 100%;
+        color: $body-color;
+    }
+    &:active,
+    &:hover,
+    &:focus,
+    &:focus-within {
+        outline: 0;
+        background-color: $dropdown-link-active-bg;
+        color: $dropdown-link-active-color;
+        a {
+            color: $dropdown-link-active-color;
+        }
+    }
+    &[aria-current="true"] {
+        position: relative;
+        display: flex;
+        align-items: center;
+        &:before {
+            @include fa-icon();
+            content: $fa-var-circle;
+            position: absolute;
+            left: 0.4rem;
+            font-size: 0.7rem;
+        }
+    }
 }
 
 .competency-tree {
@@ -2076,7 +2392,7 @@ $footer-link-color: $bg-inverse-link-color !default;
 .sr-only-focusable {
     &:active,
     &:focus {
-        z-index: $zindex-navbar-fixed + 1;
+        z-index: 1031;
         position: fixed;
         background: #fff;
         padding: 7px;
@@ -2116,12 +2432,6 @@ $footer-link-color: $bg-inverse-link-color !default;
     }
 }
 
-.open.atto_menu > .dropdown-menu {
-    display: block;
-}
-div.editor_atto_toolbar button .icon {
-    color: $gray-700;
-}
 .w-auto {
     width: auto;
 }
@@ -2160,125 +2470,6 @@ div.editor_atto_toolbar button .icon {
     }
 }
 
-$switch-height: 1.25rem !default;
-$switch-height-half: ($switch-height / 2) !default;
-$switch-width: ($switch-height * 2) !default;
-$switch-border-radius: $switch-height !default;
-$switch-bg: $gray-300 !default;
-$switch-bg-height: 1rem !default;
-$switch-bg-height-half: ($switch-bg-height / 2) !default;
-$switch-checked-bg: rgba(map-get($theme-colors, 'primary'), .4) !default;
-$switch-checked-thumb-bg: map-get($theme-colors, 'primary') !default;
-$switch-disabled-bg: $gray-200 !default;
-$switch-disabled-color: $gray-600 !default;
-$switch-disabled-thumb-bg: $gray-600 !default;
-$switch-thumb-bg: $white !default;
-$switch-thumb-border-radius: 50% !default;
-$switch-thumb-size: $switch-height !default;
-$switch-thumb-size-half: $switch-height-half !default;
-$switch-focus-box-shadow: 0 0 0 ($input-btn-focus-width * 2) rgba(map-get($theme-colors, 'primary'), .25);
-$switch-transition: .2s all !default;
-
-body:not(.behat-site) .switch {
-    position: relative;
-    display: inline-block;
-
-    input {
-        float: left;
-        width: 1px;
-        transform: translateX(1px);
-        padding: 0;
-        margin: 0;
-        opacity: 0;
-        line-height: $switch-height;
-
-        + label {
-            position: relative;
-            min-height: $switch-height;
-            min-width: $switch-width;
-            line-height: $switch-height;
-            border-radius: $switch-border-radius;
-            display: inline-block;
-            cursor: pointer;
-            outline: none;
-            user-select: none;
-            padding-left: ($switch-width + .5rem);
-        }
-
-        + label::before,
-        + label::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            display: block;
-        }
-
-        + label::before {
-            right: 0;
-            height: $switch-bg-height;
-            width: $switch-width;
-            top: calc(50% - #{$switch-bg-height-half});
-            background-color: $switch-bg;
-            border-radius: $switch-border-radius;
-            transition: $switch-transition;
-        }
-
-        + label::after {
-            left: 0;
-            width: $switch-thumb-size;
-            height: $switch-thumb-size;
-            top: calc(50% - #{$switch-thumb-size-half});
-            border-radius: $switch-thumb-border-radius;
-            background-color: $switch-thumb-bg;
-            transition: $switch-transition;
-            box-shadow:
-                0 1px 3px 0 rgba(0, 0, 0, 0.2),
-                0 1px 1px 0 rgba(0, 0, 0, 0.14),
-                0 2px 1px -1px rgba(0, 0, 0, 0.12);
-        }
-
-        &:checked + label::before {
-            background-color: $switch-checked-bg;
-        }
-
-        &:checked + label::after {
-            margin-left: $switch-height;
-            background-color: $switch-checked-thumb-bg;
-        }
-
-        &:focus + label::before {
-            outline: none;
-        }
-
-        &:focus + label::after {
-            outline: none;
-            box-shadow: $switch-focus-box-shadow;
-        }
-
-        &:disabled + label {
-            color: $switch-disabled-color;
-            cursor: not-allowed;
-        }
-
-        &:disabled + label::before {
-            background-color: $switch-disabled-bg;
-        }
-
-        &:disabled + label::after {
-            background-color: $switch-disabled-thumb-bg;
-        }
-    }
-
-    &.sr-only-label {
-        input + label {
-            text-indent: -9999px;
-            margin-bottom: 0;
-            padding-left: 0;
-        }
-    }
-}
-
 .paged-content-page-container {
     min-height: 3.125rem;
 }
@@ -2292,6 +2483,19 @@ body.h5p-embed {
     }
     .h5pmessages {
         min-height: 230px; // This should be the same height as default core_h5p iframes.
+    }
+}
+
+#h5pcontenttypes td {
+    vertical-align: middle;
+}
+
+#page.drawers {
+    form#h5peditor,
+    form#coolh5peditor,
+    .core_contentbank_viewcontent {
+        max-width: $h5p-content-maxwidth;
+        margin: 0 auto;
     }
 }
 
@@ -2315,6 +2519,14 @@ body.h5p-embed {
     overflow-wrap: break-word !important; /* stylelint-disable-line declaration-no-important */
 }
 
+.word-break {
+    word-break: break-word !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.z-index-0 {
+    z-index: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+
 .z-index-1 {
     z-index: 1 !important; /* stylelint-disable-line declaration-no-important */
 }
@@ -2323,8 +2535,48 @@ body.h5p-embed {
 .float-left {
     float: left !important; /* stylelint-disable-line declaration-no-important */
 }
+
 .float-right {
     float: right !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.img-responsive {
+    @include img-fluid();
+}
+
+input[disabled] {
+    cursor: not-allowed;
+}
+
+.custom-select {
+    width: auto;
+}
+
+.fade.in {
+    opacity: 1;
+}
+
+.clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.word-break-all {
+    word-break: break-all;
+}
+
+.matchtext {
+    background-color: lighten($primary, 40%);
+    color: $body-color;
+    height: 1.5rem;
+}
+
+.border-radius {
+    @if $enable-rounded {
+        @include border-radius($card-border-radius);
+    }
 }
 
 // Emoji picker.
@@ -2426,4 +2678,250 @@ $picker-emojis-per-row: 7 !default;
     .alert-#{$color} a {
         color: darken(theme-color-level($color, $alert-color-level), 10%);
     }
+}
+.alert a {
+    font-weight: $font-weight-bold;
+}
+
+.breadcrumb:empty {
+    padding: 0;
+}
+
+@include media-breakpoint-down(sm) {
+    #page-navbar {
+        width: 100%;
+    }
+
+    .breadcrumb:not(:empty) {
+        width: 100%;
+        flex-wrap: nowrap;
+        margin-bottom: $spacer / 2;
+        .breadcrumb-item {
+            padding-top: $spacer / 3;
+            padding-bottom: $spacer / 3;
+            display: inline-flex;
+            overflow: hidden;
+            flex-grow: 1;
+        }
+        .breadcrumb-item a,
+        .breadcrumb-item span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .mform {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .custom-select {
+        max-width: 100%;
+    }
+    .card .card-body {
+        padding: $card-spacer-x / 2;
+    }
+    #page-header {
+        .card {
+            border: 0;
+            .card-body {
+                padding: 0;
+            }
+        }
+    }
+    .nav-tabs:not(.more-nav),
+    .nav-pills {
+        margin: 0;
+        border: 0;
+        padding: $spacer / 8;
+        background-color: $gray-200;
+        .nav-item {
+            flex: 1 1 auto;
+            text-align: center;
+        }
+        .nav-link {
+            background: $white;
+            border: 0;
+            margin: $spacer / 8;
+            &.active {
+                @include button-outline-variant($gray-600);
+                border-color: $gray-600;
+            }
+        }
+    }
+}
+
+@media (max-width: map-get($grid-breakpoints, "sm")) and (max-height: 320px) {
+    div#page {
+        margin-top: 0;
+    }
+    .navbar.fixed-top {
+        position: relative;
+        z-index: inherit;
+    }
+}
+
+.link-underline {
+    text-decoration: underline;
+    &:focus {
+        text-decoration: none;
+    }
+}
+
+.alert.cta {
+    .cta-icon {
+        .icon {
+            padding: 0.3rem;
+            &.fa {
+                border-radius: 50%;
+                border-style: solid;
+                border-width: 0.125rem;
+            }
+        }
+    }
+}
+.core_payment_gateways_modal .custom-control-label::before,
+.core_payment_gateways_modal .custom-control-label::after {
+    top: 45%;
+}
+
+$scrollbar-thumb: $primary;
+$scrollbar-track: lighten($primary, 40%);
+// simple scrollbars
+.visual-scroll-x {
+    scrollbar-width: thin;
+    scrollbar-color: $scrollbar-thumb $scrollbar-track;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    &::-webkit-scrollbar {
+        height: 8px; // for horizontal scrollbars
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: $scrollbar-thumb;
+        border-right: $border-width solid $white;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: $scrollbar-track;
+        border-right: $border-width solid $white;
+    }
+}
+
+// Thin scrollbars.
+@mixin thin-scrolls($bg-track) {
+
+    // Firefox.
+    scrollbar-width: thin;
+    scrollbar-color: $thin-scroll-bg-thumb $bg-track;
+
+    // Chrome, Edge and Safari.
+    &::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $bg-track;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: $thin-scroll-bg-thumb;
+        border-radius: 20px;
+        border: 3px solid $bg-track;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: $thin-scroll-bg-hover;
+    }
+}
+
+// Generic dropzones and dragging styles.
+
+body.dragging {
+
+    .drop-zone {
+        border: 1px dashed $dropzone-border;
+    }
+
+    .drop-up {
+        border-top: 1px solid $dropzone-border;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+    .drop-down {
+        border-bottom: 1px solid $dropzone-border;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .dragging {
+        opacity: .6;
+    }
+}
+
+.dragicon {
+    visibility: hidden;
+}
+
+.draggable:hover .dragicon {
+    visibility: visible;
+    cursor: move;
+}
+
+// Generic classes reactive components can use.
+
+.waitstate {
+    display: none;
+}
+
+.stateready {
+    .waitstate {
+        display: inherit;
+    }
+    .whilenostate {
+        display: none;
+    }
+}
+
+// Collapsible list.
+
+.collapse-list {
+    .collapse-list-item {
+        padding: $collapse-list-item-padding-y $collapse-list-item-padding-x;
+        @include hover-focus() {
+            background-color: $collapse-list-item-hover-bg;
+            border-color: $collapse-list-item-hover-border;
+        }
+    }
+    .collapse-list-item-content {
+        .collapse-list-item {
+            padding-left: calc(#{$collapse-list-item-padding-x} * 3);
+        }
+    }
+}
+
+.drawers {
+    .block_myoverview {
+        border: 0;
+        & > .card-body {
+            padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
+            padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+            padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
+        }
+    }
+}
+
+.dropdown-toggle::after {
+    content: $fa-var-chevron-down;
+    margin-right: 0;
+    margin-left: 4px;
+    @include fa-icon();
+    font-size: 9px;
+    width: 9px;
+    border: 0;
 }

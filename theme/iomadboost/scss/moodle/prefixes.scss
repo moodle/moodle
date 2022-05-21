@@ -1,0 +1,65 @@
+.form-control:-ms-input-placeholder {
+    color: $input-placeholder-color;
+}
+
+.custom-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.custom-range {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    &::-webkit-slider-thumb,
+    &::-moz-range-thumb,
+    &::-ms-thumb {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+}
+
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="month"] {
+    &.form-control {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+}
+
+.card-columns {
+    @include media-breakpoint-up(sm) {
+        -webkit-column-gap: $card-columns-gap;
+        -moz-column-gap: $card-columns-gap;
+    }
+}
+
+.carousel-item {
+    -webkit-backface-visibility: hidden;
+}
+
+.card {
+    -webkit-background-clip: border-box;
+}
+
+.carousel-indicators li,
+.dropdown-menu,
+.form-control,
+.modal-content,
+.popover,
+.toast {
+    -webkit-background-clip: padding-box;
+}
+
+.btn {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+@each $value in $user-selects {
+    .user-select-#{$value} {
+        -webkit-user-select: $value !important; /* stylelint-disable-line declaration-no-important */
+        -ms-user-select: none;
+    }
+}

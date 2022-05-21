@@ -15,10 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   theme_iomadboost
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Theme functions.
+ *
+ * @package    theme_iomadboost
+ * @copyright  2016 Frédéric Massart - FMCorz.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -30,6 +31,8 @@ defined('MOODLE_INTERNAL') || die();
  * @param theme_config $theme The theme config object.
  */
 function theme_iomadboost_css_tree_post_processor($tree, $theme) {
+    error_log('theme_iomadboost_css_tree_post_processor() is deprecated. Required' .
+        'prefixes for Bootstrap are now in theme/iomadboost/scss/moodle/prefixes.scss');
     $prefixer = new theme_iomadboost\autoprefixer($tree);
     $prefixer->prefix();
 }
@@ -46,8 +49,17 @@ function theme_iomadboost_get_extra_scss($theme) {
 
     // Sets the background image, and its settings.
     if (!empty($imageurl)) {
+        $content .= '@media (min-width: 768px) {';
         $content .= 'body { ';
         $content .= "background-image: url('$imageurl'); background-size: cover;";
+        $content .= ' } }';
+    }
+
+    // Sets the login background image.
+    $loginbackgroundimageurl = $theme->setting_file_url('loginbackgroundimage', 'loginbackgroundimage');
+    if (!empty($loginbackgroundimageurl)) {
+        $content .= 'body.pagelayout-login #page { ';
+        $content .= "background-image: url('$loginbackgroundimageurl'); background-size: cover;";
         $content .= ' }';
     }
 
@@ -68,22 +80,17 @@ function theme_iomadboost_get_extra_scss($theme) {
  * @return bool
  */
 function theme_iomadboost_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-
-    $fs = get_file_storage();
-    $relativepath = implode('/', $args);
-    $filename = array_pop($args);
-    $filepath = $args ? '/'.implode('/', $args).'/' : '/';
-
-    $itemid = $args[0];
-    if ($filearea == 'logo') {
-        $itemid = 0;
-    }
-
-    if (!$file = $fs->get_file($context->id, 'theme_iomadboost', $filearea, $itemid, $filepath, $filename) or $file->is_directory()) {
+    if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'logo' || $filearea === 'backgroundimage' ||
+        $filearea === 'loginbackgroundimage')) {
+        $theme = theme_config::load('iomadboost');
+        // By default, theme files must be cache-able by both browsers and proxies.
+        if (!array_key_exists('cacheability', $options)) {
+            $options['cacheability'] = 'public';
+        }
+        return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
+    } else {
         send_file_not_found();
     }
-
-    send_stored_file($file, 0, 0, $forcedownload);
 }
 
 /**
@@ -153,10 +160,6 @@ function theme_iomadboost_get_pre_scss($theme) {
     // Prepend pre-scss.
     if (!empty($theme->settings->scsspre)) {
         $scss .= $theme->settings->scsspre;
-    }
-
-    if (!empty($theme->settings->fontsize)) {
-        $scss .= '$font-size-base: ' . (1 / 100 * $theme->settings->fontsize) . "rem !default;\n";
     }
 
     return $scss;

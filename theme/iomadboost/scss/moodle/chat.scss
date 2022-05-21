@@ -24,7 +24,7 @@
     }
     // Override the default padding added by function $OUTPUT->box();
     #chat-input-area.py-3 {
-        @extend .p-0;
+        padding: 0 !important; /* stylelint-disable-line declaration-no-important */
     }
     #chat-input-area table.generaltable,
     #chat-input-area table.generaltable td.cell {
@@ -88,5 +88,3 @@
         }
     }
 }
-
-

@@ -15,17 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * An embedded layout for the iomadboost theme.
+ *
  * @package   theme_iomadboost
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
+ * @copyright 2016 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+$fakeblockshtml = $OUTPUT->blocks('side-pre', array(), 'aside', true);
+$hasfakeblocks = strpos($fakeblockshtml, 'data-block="_fake"') !== false;
+$renderer = $PAGE->get_renderer('core');
+
 $templatecontext = [
-    'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
-    'output' => $OUTPUT
+    'output' => $OUTPUT,
+    'headercontent' => $PAGE->activityheader->export_for_template($renderer),
+    'hasfakeblocks' => $hasfakeblocks,
+    'fakeblocks' => $fakeblockshtml,
 ];
 
 echo $OUTPUT->render_from_template('theme_iomadboost/embedded', $templatecontext);
