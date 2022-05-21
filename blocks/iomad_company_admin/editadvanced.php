@@ -56,7 +56,7 @@ $linkurl = $url;
 // Print the page header.
 $PAGE->set_context($systemcontext);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('standard');
 $PAGE->set_title($linktext);
 
 // Set the page heading.

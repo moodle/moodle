@@ -56,7 +56,7 @@ $linkurl = new moodle_url('/blocks/iomad_microlearning/groups.php');
 
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('standard');
 $PAGE->set_title($linktext);
 
 // get output renderer

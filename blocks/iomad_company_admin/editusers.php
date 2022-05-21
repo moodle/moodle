@@ -112,7 +112,7 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
 // Print the page header.
 $PAGE->set_context($systemcontext);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('standard');
 $PAGE->set_title($linktext);
 
 // Get output renderer.

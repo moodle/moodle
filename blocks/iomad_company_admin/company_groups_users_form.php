@@ -63,7 +63,7 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/company_groups_users_form
 
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('standard');
 $PAGE->set_title($linktext);
 
 // get output renderer

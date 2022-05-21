@@ -43,7 +43,7 @@ $linkurl = new moodle_url('/blocks/iomad_commerce/orderlist.php');
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('standard');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
