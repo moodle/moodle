@@ -9,7 +9,7 @@ on:
       - v[0-9]+.[0-9]+.[0-9]+*
 
 env:
-  php: 8.0
+  php: 8.1
 
 jobs:
   Grunt:
@@ -59,7 +59,7 @@ jobs:
             extensions:
             db: mysqli
           - os: ubuntu-22.04
-            php: 8.0
+            php: 8.1
             db: pgsql
 
     steps:

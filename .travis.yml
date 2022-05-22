@@ -50,20 +50,20 @@ jobs:
           php: 7.4
           env: DB=mysqli   TASK=PHPUNIT
 
-        # Then, conditionally, all the highest php ones (8.0)
+        # Then, conditionally, all the highest php ones (8.1)
         - if: env(MOODLE_PHP) = "all"
-          php: 8.0
+          php: 8.1
           env: DB=none     TASK=CITEST
         - if: env(MOODLE_PHP) = "all"
-          php: 8.0
+          php: 8.1
           env: DB=none     TASK=GRUNT
 
         - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present)
-          php: 8.0
+          php: 8.1
           env: DB=pgsql    TASK=PHPUNIT
 
         - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all")
-          php: 8.0
+          php: 8.1
           env: DB=mysqli   TASK=PHPUNIT
 
 cache:
