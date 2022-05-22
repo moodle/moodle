@@ -109,6 +109,22 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
         );
         $this->info['background-position'] = new HTMLPurifier_AttrDef_CSS_BackgroundPosition();
 
+        $this->info['background-size'] = new HTMLPurifier_AttrDef_CSS_Composite(
+            array(
+                new HTMLPurifier_AttrDef_Enum(
+                    array(
+                        'auto',
+                        'cover',
+                        'contain',
+                        'initial',
+                        'inherit',
+                    )
+                ),
+                new HTMLPurifier_AttrDef_CSS_Percentage(),
+                new HTMLPurifier_AttrDef_CSS_Length()
+            )
+        );
+
         $border_color =
             $this->info['border-top-color'] =
             $this->info['border-bottom-color'] =
