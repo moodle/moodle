@@ -73,7 +73,7 @@
     <location>htmlpurifier</location>
     <name>HTML Purifier</name>
     <description>Filters HTML.</description>
-    <version>4.13.0</version>
+    <version>4.14.0</version>
     <license>LGPL</license>
     <licenseversion>2.1+</licenseversion>
     <repository>https://github.com/ezyang/htmlpurifier</repository>

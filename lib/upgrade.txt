@@ -2,10 +2,11 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 === 4.1 ===
 
-*   A process to deprecate capabilities by flagging them in the access.php by adding a $deprecatedcapabilities variable (an array).
-This array will list the deprecated capabilities and a possible replacement. Once we declare the capability as deprecated, a debugging
-message will be displayed (in DEBUG_DEVELOPPER mode only) when using the deprecated capability.
-Declaration is as follow:
+* HTMLPurifier has been upgraded to the latest version - 4.14.0
+* A process to deprecate capabilities by flagging them in the access.php by adding a $deprecatedcapabilities variable (an array).
+  This array will list the deprecated capabilities and a possible replacement. Once we declare the capability as deprecated, a debugging
+  message will be displayed (in DEBUG_DEVELOPPER mode only) when using the deprecated capability.
+  Declaration is as follow:
     $deprecatedcapabilities = [
         'fake/access:fakecapability' => ['replacement' => '', 'message' => 'This capability should not be used anymore.']
     ];
