@@ -36,7 +36,7 @@ jobs:
         - php: 7.2
           env: DB=none     TASK=CITEST
         - php: 7.2
-          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/gallium'
 
         - if: env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present
           php: 7.2
@@ -52,7 +52,7 @@ jobs:
           env: DB=none     TASK=CITEST
         - if: env(MOODLE_PHP) = "all"
           php: 7.4
-          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/gallium'
 
         - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present)
           php: 7.4
