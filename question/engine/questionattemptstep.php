@@ -643,7 +643,7 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
      * Constructor.
      * @param question_attempt_step $realqas the step to wrap. (Can be null if you
      *      just want to call add/remove.prefix.)
-     * @param unknown_type $extraprefix the extra prefix that is used for date fields.
+     * @param string $extraprefix the extra prefix that is used for date fields.
      */
     public function __construct($realqas, $extraprefix) {
         $this->realqas = $realqas;
@@ -656,7 +656,7 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
      * @return string the field name with the extra bit of prefix added.
      */
     public function add_prefix($field) {
-        if (substr($field, 0, 2) === '!_') {
+        if (substr($field, 0, 2) === '-_') {
             return '-_' . $this->extraprefix . substr($field, 2);
         } else if (substr($field, 0, 1) === '-') {
             return '-' . $this->extraprefix . substr($field, 1);
@@ -714,7 +714,7 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
     }
 
     public function get_user_id() {
-        return $this->realqas->get_user_id;
+        return $this->realqas->get_user_id();
     }
 
     public function get_timecreated() {
@@ -730,7 +730,7 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
     }
 
     public function set_qt_var($name, $value) {
-        return $this->realqas->set_qt_var($this->add_prefix($name), $value);
+        $this->realqas->set_qt_var($this->add_prefix($name), $value);
     }
 
     public function get_qt_data() {
@@ -738,15 +738,15 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
     }
 
     public function has_behaviour_var($name) {
-        return $this->realqas->has_im_var($this->add_prefix($name));
+        return $this->realqas->has_behaviour_var($this->add_prefix($name));
     }
 
     public function get_behaviour_var($name) {
-        return $this->realqas->get_im_var($this->add_prefix($name));
+        return $this->realqas->get_behaviour_var($this->add_prefix($name));
     }
 
     public function set_behaviour_var($name, $value) {
-        return $this->realqas->set_im_var($this->add_prefix($name), $value);
+        return $this->realqas->set_behaviour_var($this->add_prefix($name), $value);
     }
 
     public function get_behaviour_data() {
