@@ -67,6 +67,7 @@ $string['questionsaveasedited'] = 'The question will be saved as edited';
 $string['questiontypechanged'] = 'Question type changed';
 $string['questiontypechangedcomment'] = 'At least one question type has been changed.<br />Did you add, delete or move a question?<br />Look ahead.';
 $string['questionusedinquiz'] = 'This question is used in {$a->nb_of_quiz} quiz(s), total attempt(s) : {$a->nb_of_attempts} ';
+$string['regradeissuenumsubquestionschanged'] = 'The number embedded sub-questions in the question has changed.';
 $string['storedqtype'] = 'Stored question type {$a}';
 $string['subqresponse'] = 'part {$a->i}: {$a->response}';
 $string['unknownquestiontypeofsubquestion'] = 'Unknown question type: {$a->type} of question part # {$a->sub}';
