@@ -317,20 +317,22 @@ $CFG->admin = 'admin';
 //   Redis session handler (requires redis server and redis extension):
 //      $CFG->session_handler_class = '\core\session\redis';
 //      $CFG->session_redis_host = '127.0.0.1';
-//      $CFG->session_redis_port = 6379;  // Optional.
-//      $CFG->session_redis_database = 0;  // Optional, default is db 0.
-//      $CFG->session_redis_auth = ''; // Optional, default is don't set one.
-//      $CFG->session_redis_prefix = ''; // Optional, default is don't set one.
-//      $CFG->session_redis_acquire_lock_timeout = 120;
-//      $CFG->session_redis_lock_expire = 7200;
-//      $CFG->session_redis_lock_retry = 100; // Optional wait between lock attempts in ms, default is 100.
-//                                            // After 5 seconds it will throttle down to once per second.
+//      $CFG->session_redis_port = 6379;                     // Optional.
+//      $CFG->session_redis_database = 0;                    // Optional, default is db 0.
+//      $CFG->session_redis_auth = '';                       // Optional, default is don't set one.
+//      $CFG->session_redis_prefix = '';                     // Optional, default is don't set one.
+//      $CFG->session_redis_acquire_lock_timeout = 120;      // Default is 2 minutes.
+//      $CFG->session_redis_acquire_lock_warn = 0;           // If set logs early warning if a lock has not been acquried.
+//      $CFG->session_redis_lock_expire = 7200;              // Optional, defaults to session timeout.
+//      $CFG->session_redis_lock_retry = 100;                // Optional wait between lock attempts in ms, default is 100.
+//                                                           // After 5 seconds it will throttle down to once per second.
+//
 //      Use the igbinary serializer instead of the php default one. Note that phpredis must be compiled with
 //      igbinary support to make the setting to work. Also, if you change the serializer you have to flush the database!
 //      $CFG->session_redis_serializer_use_igbinary = false; // Optional, default is PHP builtin serializer.
-//      $CFG->session_redis_compressor = 'none'; // Optional, possible values are:
-//                                               // 'gzip' - PHP GZip compression
-//                                               // 'zstd' - PHP Zstandard compression
+//      $CFG->session_redis_compressor = 'none';             // Optional, possible values are:
+//                                                           // 'gzip' - PHP GZip compression
+//                                                           // 'zstd' - PHP Zstandard compression
 //
 // Please be aware that when selecting Memcached for sessions that it is advised to use a dedicated
 // memcache server. The memcached extension does not provide isolated environments for individual uses.
