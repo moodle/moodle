@@ -112,6 +112,25 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
         }
     }
 
+    public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
+        $basemessage = parent::validate_can_regrade_with_other_version($otherversion);
+        if ($basemessage) {
+            return $basemessage;
+        }
+
+        if (count($this->choices) != count($otherversion->choices)) {
+            return get_string('regradeissuenumgroupsschanged', 'qtype_gapselect');
+        }
+
+        foreach ($this->choices as $group => $choices) {
+            if (count($this->choices[$group]) != count($otherversion->choices[$group])) {
+                return get_string('regradeissuenumchoiceschanged', 'qtype_gapselect', $group);
+            }
+        }
+
+        return null;
+    }
+
     public function get_question_summary() {
         $question = $this->html_to_text($this->questiontext, $this->questiontextformat);
         $groups = array();
