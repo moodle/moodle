@@ -431,7 +431,7 @@ function resource_print_intro($resource, $cm, $course, $ignoresettings=false) {
     }
 
     if ($ignoresettings || !empty($options['printintro']) || $extraintro) {
-        $gotintro = trim(strip_tags($resource->intro));
+        $gotintro = !html_is_blank($resource->intro);
         if ($gotintro || $extraintro) {
             echo $OUTPUT->box_start('mod_introbox', 'resourceintro');
             if ($gotintro) {
