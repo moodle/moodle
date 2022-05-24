@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/chat/lib.php');
 
+use core_course\external\helper_for_get_mods_by_courses;
 use mod_chat\external\chat_message_exporter;
 
 /**
@@ -541,18 +542,8 @@ class mod_chat_external extends external_api {
             $chats = get_all_instances_in_courses("chat", $courses);
             foreach ($chats as $chat) {
                 $chatcontext = context_module::instance($chat->coursemodule);
-                // Entry to return.
-                $chatdetails = array();
-                // First, we return information that any user can see in the web interface.
-                $chatdetails['id'] = $chat->id;
-                $chatdetails['coursemodule']      = $chat->coursemodule;
-                $chatdetails['course']            = $chat->course;
-                $chatdetails['name']              = external_format_string($chat->name, $chatcontext->id);
-                // Format intro.
-                $options = array('noclean' => true);
-                list($chatdetails['intro'], $chatdetails['introformat']) =
-                    external_format_text($chat->intro, $chat->introformat, $chatcontext->id, 'mod_chat', 'intro', null, $options);
-                $chatdetails['introfiles'] = external_util::get_area_files($chatcontext->id, 'mod_chat', 'intro', false, false);
+
+                $chatdetails = helper_for_get_mods_by_courses::standard_coursemodule_element_values($chat, 'mod_chat');
 
                 if (has_capability('mod/chat:chat', $chatcontext)) {
                     $chatdetails['chatmethod']    = $CFG->chat_method;
@@ -564,10 +555,6 @@ class mod_chat_external extends external_api {
 
                 if (has_capability('moodle/course:manageactivities', $chatcontext)) {
                     $chatdetails['timemodified']  = $chat->timemodified;
-                    $chatdetails['section']       = $chat->section;
-                    $chatdetails['visible']       = $chat->visible;
-                    $chatdetails['groupmode']     = $chat->groupmode;
-                    $chatdetails['groupingid']    = $chat->groupingid;
                 }
                 $returnedchats[] = $chatdetails;
             }
@@ -588,15 +575,9 @@ class mod_chat_external extends external_api {
         return new external_single_structure(
             array(
                 'chats' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Chat id'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_RAW, 'Chat name'),
-                            'intro' => new external_value(PARAM_RAW, 'The Chat intro'),
-                            'introformat' => new external_format_value('intro'),
-                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
+                    new external_single_structure(array_merge(
+                        helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(),
+                        [
                             'chatmethod' => new external_value(PARAM_PLUGIN, 'chat method (sockets, ajax, header_js)',
                                 VALUE_OPTIONAL),
                             'keepdays' => new external_value(PARAM_INT, 'keep days', VALUE_OPTIONAL),
@@ -604,12 +585,8 @@ class mod_chat_external extends external_api {
                             'chattime' => new external_value(PARAM_INT, 'chat time', VALUE_OPTIONAL),
                             'schedule' => new external_value(PARAM_INT, 'schedule type', VALUE_OPTIONAL),
                             'timemodified' => new external_value(PARAM_INT, 'time of last modification', VALUE_OPTIONAL),
-                            'section' => new external_value(PARAM_INT, 'course section id', VALUE_OPTIONAL),
-                            'visible' => new external_value(PARAM_BOOL, 'visible', VALUE_OPTIONAL),
-                            'groupmode' => new external_value(PARAM_INT, 'group mode', VALUE_OPTIONAL),
-                            'groupingid' => new external_value(PARAM_INT, 'group id', VALUE_OPTIONAL),
-                        ), 'Chats'
-                    )
+                        ]
+                    ), 'Chats')
                 ),
                 'warnings' => new external_warnings(),
             )

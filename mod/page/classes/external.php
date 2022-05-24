@@ -24,6 +24,8 @@
  * @since      Moodle 3.0
  */
 
+use core_course\external\helper_for_get_mods_by_courses;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
@@ -153,18 +155,12 @@ class mod_page_external extends external_api {
             // We can avoid then additional validate_context calls.
             $pages = get_all_instances_in_courses("page", $courses);
             foreach ($pages as $page) {
+                helper_for_get_mods_by_courses::format_name_and_intro($page, 'mod_page');
+
                 $context = context_module::instance($page->coursemodule);
-                // Entry to return.
-                $page->name = external_format_string($page->name, $context->id);
-
-                $options = array('noclean' => true);
-                list($page->intro, $page->introformat) =
-                    external_format_text($page->intro, $page->introformat, $context->id, 'mod_page', 'intro', null, $options);
-                $page->introfiles = external_util::get_area_files($context->id, 'mod_page', 'intro', false, false);
-
-                $options = array('noclean' => true);
-                list($page->content, $page->contentformat) = external_format_text($page->content, $page->contentformat,
-                                                                $context->id, 'mod_page', 'content', $page->revision, $options);
+                list($page->content, $page->contentformat) = external_format_text(
+                        $page->content, $page->contentformat,
+                        $context->id, 'mod_page', 'content', $page->revision, ['noclean' => true]);
                 $page->contentfiles = external_util::get_area_files($context->id, 'mod_page', 'content');
 
                 $returnedpages[] = $page;
@@ -188,15 +184,9 @@ class mod_page_external extends external_api {
         return new external_single_structure(
             array(
                 'pages' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Module id'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_RAW, 'Page name'),
-                            'intro' => new external_value(PARAM_RAW, 'Summary'),
-                            'introformat' => new external_format_value('intro', 'Summary format'),
-                            'introfiles' => new external_files('Files in the introduction text'),
+                    new external_single_structure(array_merge(
+                        helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(),
+                        [
                             'content' => new external_value(PARAM_RAW, 'Page content'),
                             'contentformat' => new external_format_value('content', 'Content format'),
                             'contentfiles' => new external_files('Files in the content'),
@@ -206,12 +196,8 @@ class mod_page_external extends external_api {
                             'displayoptions' => new external_value(PARAM_RAW, 'Display options (width, height)'),
                             'revision' => new external_value(PARAM_INT, 'Incremented when after each file changes, to avoid cache'),
                             'timemodified' => new external_value(PARAM_INT, 'Last time the page was modified'),
-                            'section' => new external_value(PARAM_INT, 'Course section id'),
-                            'visible' => new external_value(PARAM_INT, 'Module visibility'),
-                            'groupmode' => new external_value(PARAM_INT, 'Group mode'),
-                            'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
-                        )
-                    )
+                        ]
+                    ))
                 ),
                 'warnings' => new external_warnings(),
             )
