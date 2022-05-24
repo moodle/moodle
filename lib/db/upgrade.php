@@ -3235,8 +3235,13 @@ privatefiles,moodle|/user/files.php';
             set_config('customusermenuitems', $newcustomusermenuitems);
         } else {
             // If the site is not using the old defaults, only add necessary entries.
-            $lines = explode("\n", $currentcustomusermenuitems);
-            $lines = array_map('trim', $lines);
+            $lines = preg_split('/\n/', $currentcustomusermenuitems, -1, PREG_SPLIT_NO_EMPTY);
+            $lines = array_map(static function(string $line): string {
+                // Previous format was "<langstring>|<url>[|<pixicon>]" - pix icon is no longer supported.
+                $lineparts = explode('|', trim($line), 3);
+                // Return first two parts of line.
+                return implode('|', array_slice($lineparts, 0, 2));
+            }, $lines);
 
             // Remove the Preference entry from the menu to prevent duplication
             // since it will be added again in user_get_user_navigation_info().
@@ -4563,6 +4568,23 @@ privatefiles,moodle|/user/files.php';
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2022060300.01);
+    }
+
+    if ($oldversion < 2022061000.01) {
+        // Iterate over custom user menu items configuration, removing pix icon references.
+        $customusermenuitems = str_replace(["\r\n", "\r"], "\n", $CFG->customusermenuitems);
+
+        $lines = preg_split('/\n/', $customusermenuitems, -1, PREG_SPLIT_NO_EMPTY);
+        $lines = array_map(static function(string $line): string {
+            // Previous format was "<langstring>|<url>[|<pixicon>]" - pix icon is no longer supported.
+            $lineparts = explode('|', trim($line), 3);
+            // Return first two parts of line.
+            return implode('|', array_slice($lineparts, 0, 2));
+        }, $lines);
+
+        set_config('customusermenuitems', implode("\n", $lines));
+
+        upgrade_main_savepoint(true, 2022061000.01);
     }
 
     return true;
