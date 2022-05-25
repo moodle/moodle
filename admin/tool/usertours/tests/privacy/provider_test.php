@@ -145,8 +145,8 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $writer = writer::with_context(\context_system::instance());
         $this->assertTrue($writer->has_any_data());
 
-        $prefs = $writer->get_user_preferences('tool_usertours');
-        $this->assertCount(1, (array) $prefs);
+        $prefs = (array)$writer->get_user_preferences('tool_usertours');
+        $this->assertCount(1, $prefs);
 
         // We should have received back the "completed tour" preference of the test user.
         $this->assertStringStartsWith('You last marked the "' . $tour->get_name() . '" user tour as completed on',
@@ -180,8 +180,8 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->assertTrue($writer->has_any_data());
 
         // We should have one preference.
-        $prefs = $writer->get_user_preferences('tool_usertours');
-        $this->assertCount(1, (array) $prefs);
+        $prefs = (array)$writer->get_user_preferences('tool_usertours');
+        $this->assertCount(1, $prefs);
 
         // The preference should be related to the first tour.
         $this->assertStringContainsString($tour1->get_name(), reset($prefs)->description);

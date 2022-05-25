@@ -127,14 +127,14 @@ class provider_test extends provider_testcase {
         $data = $writer->get_data([]);
         $this->assertEquals('SCORM1', $data->name);
 
-        $data = $writer->get_data($subcontextattempt1);
-        $this->assertCount(1, (array) $data);
+        $data = (array)$writer->get_data($subcontextattempt1);
+        $this->assertCount(1, $data);
         $this->assertCount(2, (array) reset($data));
         $subcontextattempt2 = [
             get_string('myattempts', 'scorm'),
             get_string('attempt', 'scorm'). " 2"
         ];
-        $data = $writer->get_data($subcontextattempt2);
+        $data = (array)$writer->get_data($subcontextattempt2);
         $this->assertCount(2, (array) reset($data));
         // The student1 has only 2 scoes_track attempts.
         $subcontextattempt3 = [

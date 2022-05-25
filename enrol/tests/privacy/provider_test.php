@@ -98,7 +98,7 @@ class provider_test extends provider_testcase {
         writer::reset();
         $writer = writer::with_context($coursecontext2);
         $this->export_context_data_for_user($user1->id, $coursecontext2, 'core_enrol');
-        $data = $writer->get_related_data($subcontexts, 'manual');
+        $data = (array)$writer->get_related_data($subcontexts, 'manual');
         $this->assertEquals($enrolmentcouse2->status, reset($data)->status);
         $this->assertEquals(transform::datetime($enrolmentcouse2->timestart), reset($data)->timestart);
         $this->assertEquals(transform::datetime($enrolmentcouse2->timeend), reset($data)->timeend);
