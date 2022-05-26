@@ -367,6 +367,7 @@ class user extends base {
             'confirmed' => new lang_string('confirmed', 'admin'),
             'username' => new lang_string('username'),
             'moodlenetprofile' => new lang_string('moodlenetprofile', 'user'),
+            'timecreated' => new lang_string('timecreated', 'core_reportbuilder'),
         ];
     }
 
@@ -386,6 +387,7 @@ class user extends base {
                 $fieldtype = column::TYPE_BOOLEAN;
                 break;
             case 'lastaccess':
+            case 'timecreated':
                 $fieldtype = column::TYPE_TIMESTAMP;
                 break;
             default:
