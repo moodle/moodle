@@ -1900,8 +1900,7 @@ class quiz_attempt {
         $bc = new block_contents();
         $bc->attributes['id'] = 'mod_quiz_navblock';
         $bc->attributes['role'] = 'navigation';
-        $bc->attributes['aria-labelledby'] = 'mod_quiz_navblock_title';
-        $bc->title = html_writer::span(get_string('quiznavigation', 'quiz'), '', array('id' => 'mod_quiz_navblock_title'));
+        $bc->title = get_string('quiznavigation', 'quiz');
         $bc->content = $output->navigation_panel($panel);
         return $bc;
     }
