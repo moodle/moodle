@@ -106,7 +106,7 @@ if ($courseid != SITEID && !empty($courseid)) {
             new moodle_url('/calendar/view.php', ['view' => 'month', 'category' => $categoryid])
         );
     } else {
-        navigation_node::override_active_url(new moodle_url('/calendar/view.php', ['view' => 'month']));
+        $PAGE->navbar->add(get_string('calendar', 'calendar'), new moodle_url('/calendar/view.php', ['view' => 'month']));
     }
 }
 require_login($course, false);
