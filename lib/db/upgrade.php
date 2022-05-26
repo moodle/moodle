@@ -4506,5 +4506,14 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022051000.00);
     }
 
+    if ($oldversion < 2022052500.00) {
+        // Start an adhoc task to fix the file timestamps of restored files.
+        $task = new core\task\fix_file_timestamps_task();
+        \core\task\manager::queue_adhoc_task($task);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022052500.00);
+    }
+
     return true;
 }

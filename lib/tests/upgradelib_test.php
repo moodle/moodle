@@ -1671,4 +1671,56 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
         $this->assertEquals($expectedmenu, $newcustomusermenu);
     }
+
+    /**
+     * Test that file timestamps are corrected for copied files.
+     */
+    public function test_upgrade_fix_file_timestamps() {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Add 2 files for testing, one with edited old timestamps.
+        $origtime = time();
+        $new = [
+            'contextid' => 123,
+            'component' => 'mod_label',
+            'filearea' => 'intro',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'file.txt',
+        ];
+        $old = [
+            'contextid' => 321,
+            'component' => 'mod_label',
+            'filearea' => 'intro',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'file.txt',
+        ];
+
+        // Create the file records. This will create a directory listing with the current time.
+        $fs = get_file_storage();
+        $newfile = $fs->create_file_from_string($new, 'new');
+        $oldfile = $fs->create_file_from_string($old, 'old');
+
+        // Manually set the timestamps to use on files.
+        $DB->set_field('files', 'timecreated', $origtime, ['id' => $newfile->get_id()]);
+        $DB->set_field('files', 'timemodified', $origtime, ['id' => $newfile->get_id()]);
+        $DB->set_field('files', 'timecreated', 1, ['id' => $oldfile->get_id()]);
+        $DB->set_field('files', 'timemodified', 1, ['id' => $oldfile->get_id()]);
+
+        upgrade_fix_file_timestamps();
+
+        // Check nothing changed on the new file.
+        $updatednew = $DB->get_record('files', ['id' => $newfile->get_id()]);
+        $this->assertEquals($origtime, $updatednew->timecreated);
+        $this->assertEquals($origtime, $updatednew->timemodified);
+
+        // Confirm that the file with old timestamps has been fixed.
+        $updatedold = $DB->get_record('files', ['id' => $oldfile->get_id()]);
+        $this->assertNotEquals(1, $updatedold->timecreated);
+        $this->assertNotEquals(1, $updatedold->timemodified);
+        $this->assertTrue($updatedold->timecreated >= $origtime);
+        $this->assertTrue($updatedold->timemodified >= $origtime);
+    }
 }
