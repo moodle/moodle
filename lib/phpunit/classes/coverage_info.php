@@ -97,11 +97,11 @@ class phpunit_coverage_info {
             }
         }
 
-        foreach ($includelistfolders as $folder) {
+        foreach (array_unique($includelistfolders) as $folder) {
             $coverages[] = html_writer::tag('directory', "{$plugindir}{$folder}", ['suffix' => '.php']);
         }
 
-        foreach ($includelistfiles as $file) {
+        foreach (array_unique($includelistfiles) as $file) {
             $coverages[] = html_writer::tag('file', "{$plugindir}{$file}");
         }
 
