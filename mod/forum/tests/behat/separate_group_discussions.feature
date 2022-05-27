@@ -42,15 +42,36 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber     | groupmode |
       | forum      | Standard forum name    | Standard forum description    | C1     | sepgroups    | 1         |
+    And the following "mod_forum > discussions" exist:
+      | forum     | name             | subject          | message          | group            |
+      | sepgroups | Initial Disc ALL | Initial Disc ALL | Disc ALL content | All participants |
+      | sepgroups | Initial Disc G1  | Initial Disc G1  | Disc G1 content  | G1               |
+      | sepgroups | Initial Disc G2  | Initial Disc G2  | Disc G2 content  | G2               |
+      | sepgroups | Initial Disc G3  | Initial Disc G3  | Disc G3 content  | G3               |
 
   Scenario: Teacher with accessallgroups can view all groups
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
     When I follow "Standard forum name"
     Then the "Separate groups" select box should contain "All participants"
-    Then the "Separate groups" select box should contain "Group A"
-    Then the "Separate groups" select box should contain "Group B"
-    Then the "Separate groups" select box should contain "Group C"
+    And the "Separate groups" select box should contain "Group A"
+    And the "Separate groups" select box should contain "Group B"
+    And the "Separate groups" select box should contain "Group C"
+    And I select "All participants" from the "Separate groups" singleselect
+    And I should see "Initial Disc ALL"
+    And I should see "Initial Disc G1"
+    And I should see "Initial Disc G2"
+    And I should see "Initial Disc G2"
+    And I select "Group A" from the "Separate groups" singleselect
+    And I should see "Initial Disc ALL"
+    And I should see "Initial Disc G1"
+    But I should not see "Initial Disc G2"
+    And I should not see "Initial Disc G3"
+    And I select "Group B" from the "Separate groups" singleselect
+    And I should see "Initial Disc ALL"
+    And I should see "Initial Disc G2"
+    But I should not see "Initial Disc G1"
+    And I should not see "Initial Disc G3"
 
   Scenario: Teacher with accessallgroups can select any group when posting
     Given I log in as "teacher1"
@@ -249,14 +270,7 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     And I should see "Post a copy to all groups"
 
   Scenario: Students can view all participants discussions in separate groups mode
-    Given I log in as "teacher1"
+    Given I log in as "student1"
     And I am on "Course 1" course homepage
-    When I add a new discussion to "Standard forum name" forum with:
-      | Subject | Forum post to all participants |
-      | Message | This is the body |
-      | Group   | All participants |
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Standard forum name"
-    Then I should see "Forum post to all participants"
+    When I follow "Standard forum name"
+    Then I should see "Initial Disc ALL"
