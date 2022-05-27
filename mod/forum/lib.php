@@ -184,6 +184,10 @@ function forum_update_instance($forum, $mform) {
         $forum->assesstimefinish = 0;
     }
 
+    if (empty($forum->usecoursefullname)) {
+        $forum->usecoursefullname = 0;
+    }
+
     $oldforum = $DB->get_record('forum', array('id'=>$forum->id));
 
     // MDL-3942 - if the aggregation type or scale (i.e. max grade) changes then recalculate the grades for the entire forum
@@ -592,7 +596,7 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
                                               f.scale, f.grade_forum, f.maxbytes, f.maxattachments, f.forcesubscribe,
                                               f.trackingtype, f.rsstype, f.rssarticles, f.timemodified, f.warnafter, f.blockafter,
                                               f.blockperiod, f.completiondiscussions, f.completionreplies, f.completionposts,
-                                              f.displaywordcount, f.lockdiscussionafter, f.grade_forum_notify,
+                                              f.displaywordcount, f.lockdiscussionafter, f.grade_forum_notify, f.usecoursefullname,
                                               d.name AS discussionname, d.firstpost, d.userid AS discussionstarter,
                                               d.assessed AS discussionassessed, d.timemodified, d.usermodified, d.forum, d.groupid,
                                               d.timestart, d.timeend, d.pinned, d.timelocked,
@@ -684,7 +688,8 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
                 'completionposts' => $post->completionposts,
                 'displaywordcount' => $post->displaywordcount,
                 'lockdiscussionafter' => $post->lockdiscussionafter,
-                'grade_forum_notify' => $post->grade_forum_notify
+                'grade_forum_notify' => $post->grade_forum_notify,
+                'usecoursefullname' => $post->usecoursefullname
             ];
             // Build the forum entity from the factory.
             $forumentity = $entityfactory->get_forum_from_stdclass($forumrecord, $context, $coursemodule, $course);

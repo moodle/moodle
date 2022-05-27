@@ -327,8 +327,7 @@ class send_user_notifications extends \core\task\adhoc_task {
             'sitefullname' => format_string($site->fullname),
             'siteshortname' => format_string($site->shortname),
             'courseidnumber' => $data->get_courseidnumber(),
-            'coursefullname' => $data->get_coursefullname(),
-            'courseshortname' => $data->get_coursename(),
+            'coursename' => $data->get_forum_coursename(),
         ];
         $postsubject = html_to_text(get_string('postmailsubject', 'forum', $a), 0);
 

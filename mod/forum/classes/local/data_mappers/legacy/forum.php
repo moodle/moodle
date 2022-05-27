@@ -73,7 +73,8 @@ class forum {
                 'displaywordcount' => $forum->should_display_word_count(),
                 'lockdiscussionafter' => $forum->get_lock_discussions_after(),
                 'duedate' => $forum->get_due_date(),
-                'cutoffdate' => $forum->get_cutoff_date()
+                'cutoffdate' => $forum->get_cutoff_date(),
+                'usecoursefullname' => $forum->use_course_fullname()
             ];
         }, $forums);
     }
