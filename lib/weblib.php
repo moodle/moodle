@@ -2242,7 +2242,7 @@ function get_html_lang($dir = false) {
         }
     }
     // Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
-    $language = str_replace('_', '-', current_language());
+    $language = get_html_lang_attribute_value(current_language());
     @header('Content-Language: '.$language);
     return ($direction.' lang="'.$language.'" xml:lang="'.$language.'"');
 }
