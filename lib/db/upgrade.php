@@ -4515,5 +4515,20 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022052500.00);
     }
 
+    if ($oldversion < 2022052700.01) {
+
+        // Define index timestarted_idx (not unique) to be added to task_adhoc.
+        $table = new xmldb_table('task_adhoc');
+        $index = new xmldb_index('timestarted_idx', XMLDB_INDEX_NOTUNIQUE, ['timestarted']);
+
+        // Conditionally launch add index timestarted_idx.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022052700.01);
+    }
+
     return true;
 }
