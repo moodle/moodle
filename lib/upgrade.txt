@@ -87,6 +87,16 @@ information provided here is intended especially for developers.
 to ensure in some test that the block drawer is closed. This helps with random failures due to the block drawer
 being forced open in all behat tests.
 * The core_useragent::get_device_type_list() function has been deprecated. Use core_useragent::devicetypes instead as a replacement.
+* Final deprecation and removal of legacy cron. This includes the functions:
+  - cron_execute_plugin_type()
+  - cron_bc_hack_plugin_functions()
+  Please, use the Task API instead: https://moodledev.io/docs/apis/subsystems/task
+* Final deprecation and removal of the following classes:
+  - \core\task\legacy_plugin_cron_task
+  - \mod_quiz\task\legacy_quiz_reports_cron
+  - \mod_quiz\task\legacy_quiz_accessrules_cron
+  - \mod_workshop\task\legacy_workshop_allocation_cron
+  Please, use the Task API instead: https://moodledev.io/docs/apis/subsystems/task
 
 === 4.2 ===
 
