@@ -35,7 +35,7 @@ class behat_mod_forum_generator extends behat_generator_base {
                 'singular' => 'discussion',
                 'datagenerator' => 'discussion',
                 'required' => ['forum'],
-                'switchids' => ['forum' => 'forumid', 'user' => 'userid'],
+                'switchids' => ['forum' => 'forumid', 'user' => 'userid', 'group' => 'groupid'],
             ],
             'posts' => [
                 'singular' => 'post',
@@ -60,6 +60,21 @@ class behat_mod_forum_generator extends behat_generator_base {
         }
 
         return $id;
+    }
+
+    /**
+     * Gets the group id from it's idnumber. It allows using 'All participants' as idnumber.
+     *
+     * @throws Exception
+     * @param string $idnumber
+     * @return int
+     */
+    protected function get_group_id($idnumber): int {
+        if ($idnumber === 'All participants') {
+            return -1;
+        }
+
+        return parent::get_group_id($idnumber);
     }
 
     /**
