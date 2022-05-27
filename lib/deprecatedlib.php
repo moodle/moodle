@@ -2869,22 +2869,12 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
 }
 
 /**
- * Runs a single cron task. This function assumes it is displaying output in pseudo-CLI mode.
- *
- * The function will fail if the task is disabled.
- *
- * Warning: Because this function closes the browser session, it may not be safe to continue
- * with other processing (other than displaying the rest of the page) after using this function!
- *
  * @deprecated since Moodle 3.9 MDL-63580. Please use the \core\task\manager::run_from_cli($task).
- * @todo final deprecation. To be removed in Moodle 4.1 MDL-63594.
- * @param \core\task\scheduled_task $task Task to run
- * @return bool True if cron run successful
  */
 function cron_run_single_task(\core\task\scheduled_task $task) {
-    debugging('cron_run_single_task() is deprecated. Please use \\core\task\manager::run_from_cli() instead.',
-        DEBUG_DEVELOPER);
-    return \core\task\manager::run_from_cli($task);
+    throw new coding_exception(
+        'cron_run_single_task() has been removed. Please use \\core\task\manager::run_from_cli() instead.'
+    );
 }
 
 /**
