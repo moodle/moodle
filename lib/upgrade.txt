@@ -3,6 +3,11 @@ information provided here is intended especially for developers.
 
 === 4.1 ===
 
+* Final deprecation and removal of the following class, please use \core\task\manager.
+    - \tool_task\run_from_cli
+* Final deprecation and removal of the following CLI scripts:
+  - admin/tool/task/cli/schedule_task.php please use admin/cli/scheduled_task.php
+  - admin/tool/task/cli/adhoc_task.php please use admin/cli/adhoc_task.php
 * Final deprecation and removal of cron_run_single_task(), please use \core\task\manager::run_from_cli().
 * The method ensure_adhoc_task_qos() in lib/classes/task/manager.php has been deprecated, please use get_next_adhoc_task()
   instead.
