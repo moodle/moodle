@@ -405,10 +405,6 @@ function edit_module_post_actions($moduleinfo, $course) {
         }
     }
 
-    // To be removed (deprecated) with MDL-67526 (both lines).
-    require_once($CFG->libdir.'/plagiarismlib.php');
-    plagiarism_save_form_elements($moduleinfo);
-
     // Allow plugins to extend the course module form.
     $moduleinfo = plugin_extend_coursemodule_edit_post_actions($moduleinfo, $course);
 

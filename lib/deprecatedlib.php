@@ -3188,6 +3188,27 @@ function user_get_participants($courseid, $groupid, $accesssince, $roleid, $enro
 }
 
 /**
+ * @deprecated Since Moodle 3.9. MDL-65835
+ */
+function plagiarism_save_form_elements() {
+    throw new coding_exception(
+        'Function plagiarism_save_form_elements() has been removed. ' .
+        'Please use {plugin name}_coursemodule_edit_post_actions() instead.'
+    );
+}
+
+/**
+ * @deprecated Since Moodle 3.9. MDL-65835
+ */
+function plagiarism_get_form_elements_module() {
+    throw new coding_exception(
+        'Function plagiarism_get_form_elements_module() has been removed. ' .
+        'Please use {plugin name}_coursemodule_standard_elements() instead.'
+    );
+}
+
+
+/**
  * Returns the list of full course categories to be used in html_writer::select()
  *
  * Calls {@see core_course_category::make_categories_list()} to build the list.
