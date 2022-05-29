@@ -58,7 +58,6 @@ $searchrenderer = $PAGE->get_renderer('core_search');
 if (\core_search\manager::is_global_search_enabled() === false) {
     $PAGE->set_url(new moodle_url('/search/index.php'));
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($pagetitle);
     echo $searchrenderer->render_search_disabled();
     echo $OUTPUT->footer();
     exit;
@@ -169,7 +168,6 @@ $PAGE->set_url($url);
 
 // We are ready to render.
 echo $OUTPUT->header();
-echo $OUTPUT->heading($pagetitle);
 
 // Get the results.
 if ($data) {
