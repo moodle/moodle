@@ -2353,6 +2353,21 @@ function date_format_string($date, $format, $tz = 99) {
     }
 
     date_default_timezone_set(core_date::get_user_timezone($tz));
+
+    $datearray = getdate($date);
+
+    if (nl_langinfo(AM_STR) == nl_langinfo(PM_STR)) {
+
+        $format = str_replace([
+            '%P',
+            '%p',
+        ], [
+            $datearray['hours'] < 12 ? get_string('am', 'langconfig') : get_string('pm', 'langconfig'),
+            $datearray['hours'] < 12 ? get_string('amcaps', 'langconfig') : get_string('pmcaps', 'langconfig'),
+            ],
+        $format);
+    }
+
     $datestring = strftime($format, $date);
     core_date::set_default_server_timezone();
 
