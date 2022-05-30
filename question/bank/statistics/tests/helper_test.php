@@ -16,13 +16,11 @@
 
 namespace qbank_statistics;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 use quiz;
 use question_engine;
 use quiz_attempt;
+
 /**
  * Tests for question statistics.
  *
@@ -36,103 +34,84 @@ class helper_test extends \advanced_testcase {
     /**
      * Test quizzes that contain a specified question.
      *
+     * @covers ::get_all_places_where_questions_were_attempted
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function test_get_quizziess(): void {
-        global $DB;
+    public function test_get_all_places_where_questions_were_attempted(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
+
+        $rcm = new \ReflectionMethod(helper::class, 'get_all_places_where_questions_were_attempted');
+        $rcm->setAccessible(true);
+
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
-        // Create quizzes.
+        // Create three quizzes.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $quiz1 = $quizgenerator->create_instance([
             'course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2,
             'layout' => '1,2,0'
         ]);
+        $quiz1context = \context_module::instance($quiz1->cmid);
+
         $quiz2 = $quizgenerator->create_instance([
             'course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2,
             'layout' => '1,2,0'
         ]);
+        $quiz2context = \context_module::instance($quiz2->cmid);
+
         $quiz3 = $quizgenerator->create_instance([
             'course' => $course->id,
             'grade' => 100.0, 'sumgrades' => 2,
             'layout' => '1,2,0'
         ]);
-        $this->assertEquals(3, $DB->count_records('quiz'));
+        $quiz3context = \context_module::instance($quiz3->cmid);
 
         // Create questions.
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
         $question1 = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
         $question2 = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
 
-        // Add question 1 to quiz 1, 2.
+        // Add question 1 to quiz 1 and make an attempt.
         quiz_add_quiz_question($question1->id, $quiz1);
-        quiz_add_quiz_question($question1->id, $quiz2);
         // Quiz 1 attempt.
-        $attempt = ['answer' => 'frog', 'answer' => 10];
-        $this->submit_quiz($quiz1, $attempt);
+        $this->submit_quiz($quiz1, [1 => ['answer' => 'frog']]);
 
-        // Add question 2 to quiz 2.
+        // Add questions 1 and 2 to quiz 2.
+        quiz_add_quiz_question($question1->id, $quiz2);
         quiz_add_quiz_question($question2->id, $quiz2);
-        $this->submit_quiz($quiz2, $attempt);
+        $this->submit_quiz($quiz2, [1 => ['answer' => 'frog'], 2 => ['answer' => 10]]);
 
         // Checking quizzes that use question 1.
-        $question1quizzes = helper::get_quizzes($question1->id);
-        $this->assertCount(2, $question1quizzes);
-        $this->assertContains($quiz1->id, $question1quizzes);
-        $this->assertContains($quiz2->id, $question1quizzes);
+        $q1places = $rcm->invoke(null, [$question1->id]);
+        $this->assertCount(2, $q1places);
+        $this->assertEquals((object) ['component' => 'mod_quiz', 'contextid' => $quiz1context->id], $q1places[0]);
+        $this->assertEquals((object) ['component' => 'mod_quiz', 'contextid' => $quiz2context->id], $q1places[1]);
 
         // Checking quizzes that contain question 2.
-        $question2quizzes = helper::get_quizzes($question2->id);
-        $this->assertCount(1, $question2quizzes);
-        $this->assertContains($quiz2->id, $question2quizzes);
+        $q2places = $rcm->invoke(null, [$question2->id]);
+        $this->assertCount(1, $q2places);
+        $this->assertEquals((object) ['component' => 'mod_quiz', 'contextid' => $quiz2context->id], $q2places[0]);
 
-        // Add random question to quiz3.
+        // Add a random question to quiz3.
         quiz_add_random_questions($quiz3, 0, $cat->id, 1, false);
-        $this->submit_quiz($quiz3, $attempt);
-        // Quiz 3 will be in one of these arrays.
-        $question1quizzes = helper::get_quizzes($question1->id);
-        $question2quizzes = helper::get_quizzes($question2->id);
-        $this->assertContains($quiz3->id, array_merge($question1quizzes, $question2quizzes));
-    }
+        $this->submit_quiz($quiz3, [1 => ['answer' => 'willbewrong']]);
 
-    /**
-     * Load facility for a question
-     *
-     * @param object $quiz quiz object
-     * @param int $questionid question id
-     * @return float|int
-     */
-    private function load_question_facility(object $quiz, int $questionid): ?float {
-        return helper::load_question_stats_item($quiz->id, $questionid, 'facility');
-    }
-
-    /**
-     * Load discriminative efficiency for a question
-     *
-     * @param object $quiz quiz object
-     * @param int $questionid question id
-     * @return float|int
-     */
-    private function load_question_discriminative_efficiency(object $quiz, int $questionid): ?float {
-        return helper::load_question_stats_item($quiz->id, $questionid, 'discriminativeefficiency');
-    }
-
-    /**
-     * Load discrimination index for a question
-     *
-     * @param object $quiz quiz object
-     * @param int $questionid question id
-     * @return float|int
-     */
-    private function load_question_discrimination_index(object $quiz, int $questionid): ?float {
-        return helper::load_question_stats_item($quiz->id, $questionid, 'discriminationindex');
+        // Quiz 3 will now be in one of these arrays.
+        $q1places = $rcm->invoke(null, [$question1->id]);
+        $q2places = $rcm->invoke(null, [$question2->id]);
+        if (count($q1places) == 3) {
+            $newplace = end($q1places);
+        } else {
+            $newplace = end($q2places);
+        }
+        $this->assertEquals((object) ['component' => 'mod_quiz', 'contextid' => $quiz3context->id], $newplace);
     }
 
     /**
@@ -160,6 +139,7 @@ class helper_test extends \advanced_testcase {
             'layout' => $layout
         ]);
 
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
 
@@ -195,7 +175,7 @@ class helper_test extends \advanced_testcase {
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $timenow = time();
-        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user->id);
+        $attempt = quiz_create_attempt($quizobj, 1, null, $timenow, false, $user->id);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
         // Submit attempt.
@@ -246,6 +226,33 @@ class helper_test extends \advanced_testcase {
             $this->submit_quiz($quiz2, $attempt);
         }
         return [$quiz1, $quiz2, $questions];
+    }
+
+    /**
+     * To use private helper::extract_item_value function.
+     *
+     * @param all_calculated_for_qubaid_condition $statistics the batch of statistics.
+     * @param int $questionid a question id.
+     * @param string $item ane of the field names in all_calculated_for_qubaid_condition, e.g. 'facility'.
+     * @return float|null the required value.
+     */
+    private function extract_item_value(all_calculated_for_qubaid_condition $statistics,
+                                        int $questionid, string $item): ?float {
+        $rcm = new \ReflectionMethod(helper::class, 'extract_item_value');
+        $rcm->setAccessible(true);
+        return $rcm->invoke(null, $statistics, $questionid, $item);
+    }
+
+    /**
+     * To use private helper::load_statistics_for_place function (with mod_quiz component).
+     *
+     * @param \context $context the context to load the statistics for.
+     * @return all_calculated_for_qubaid_condition|null question statistics.
+     */
+    private function load_quiz_statistics_for_place(\context $context): ?all_calculated_for_qubaid_condition {
+        $rcm = new \ReflectionMethod(helper::class, 'load_statistics_for_place');
+        $rcm->setAccessible(true);
+        return $rcm->invoke(null, 'mod_quiz', $context);
     }
 
     /**
@@ -307,10 +314,11 @@ class helper_test extends \advanced_testcase {
         list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
 
         // Quiz 1 facilities.
-        $quiz1facility1 = $this->load_question_facility($quiz1, $questions[1]->id);
-        $quiz1facility2 = $this->load_question_facility($quiz1, $questions[2]->id);
-        $quiz1facility3 = $this->load_question_facility($quiz1, $questions[3]->id);
-        $quiz1facility4 = $this->load_question_facility($quiz1, $questions[4]->id);
+        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz1->cmid));
+        $quiz1facility1 = $this->extract_item_value($stats, $questions[1]->id, 'facility');
+        $quiz1facility2 = $this->extract_item_value($stats, $questions[2]->id, 'facility');
+        $quiz1facility3 = $this->extract_item_value($stats, $questions[3]->id, 'facility');
+        $quiz1facility4 = $this->extract_item_value($stats, $questions[4]->id, 'facility');
 
         $this->assertEquals($expectedquiz1facilities[0], helper::format_percentage($quiz1facility1));
         $this->assertEquals($expectedquiz1facilities[1], helper::format_percentage($quiz1facility2));
@@ -318,10 +326,11 @@ class helper_test extends \advanced_testcase {
         $this->assertEquals($expectedquiz1facilities[3], helper::format_percentage($quiz1facility4));
 
         // Quiz 2 facilities.
-        $quiz2facility1 = $this->load_question_facility($quiz2, $questions[1]->id);
-        $quiz2facility2 = $this->load_question_facility($quiz2, $questions[2]->id);
-        $quiz2facility3 = $this->load_question_facility($quiz2, $questions[3]->id);
-        $quiz2facility4 = $this->load_question_facility($quiz2, $questions[4]->id);
+        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz2->cmid));
+        $quiz2facility1 = $this->extract_item_value($stats, $questions[1]->id, 'facility');
+        $quiz2facility2 = $this->extract_item_value($stats, $questions[2]->id, 'facility');
+        $quiz2facility3 = $this->extract_item_value($stats, $questions[3]->id, 'facility');
+        $quiz2facility4 = $this->extract_item_value($stats, $questions[4]->id, 'facility');
 
         $this->assertEquals($expectedquiz2facilities[0], helper::format_percentage($quiz2facility1));
         $this->assertEquals($expectedquiz2facilities[1], helper::format_percentage($quiz2facility2));
@@ -344,7 +353,7 @@ class helper_test extends \advanced_testcase {
      * Data provider for {@see test_load_question_discriminative_efficiency()}.
      * @return \Generator
      */
-    public function load_question_discriminative_efficiency_provider() {
+    public function load_question_discriminative_efficiency_provider(): \Generator {
         yield 'Discriminative efficiency' => [
             'Quiz 1 attempts' => [
                 $this->generate_attempt_answers([1, 0, 0, 0]),
@@ -387,10 +396,11 @@ class helper_test extends \advanced_testcase {
         list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
 
         // Quiz 1 discriminative efficiency.
-        $discriminativeefficiency1 = $this->load_question_discriminative_efficiency($quiz1, $questions[1]->id);
-        $discriminativeefficiency2 = $this->load_question_discriminative_efficiency($quiz1, $questions[2]->id);
-        $discriminativeefficiency3 = $this->load_question_discriminative_efficiency($quiz1, $questions[3]->id);
-        $discriminativeefficiency4 = $this->load_question_discriminative_efficiency($quiz1, $questions[4]->id);
+        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz1->cmid));
+        $discriminativeefficiency1 = $this->extract_item_value($stats, $questions[1]->id, 'discriminativeefficiency');
+        $discriminativeefficiency2 = $this->extract_item_value($stats, $questions[2]->id, 'discriminativeefficiency');
+        $discriminativeefficiency3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminativeefficiency');
+        $discriminativeefficiency4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminativeefficiency');
 
         $this->assertEquals($expectedquiz1discriminativeefficiency[0],
             helper::format_percentage($discriminativeefficiency1, false),
@@ -406,10 +416,11 @@ class helper_test extends \advanced_testcase {
             "Failure in quiz 1 - question 4 discriminative efficiency");
 
         // Quiz 2 discriminative efficiency.
-        $discriminativeefficiency1 = $this->load_question_discriminative_efficiency($quiz2, $questions[1]->id);
-        $discriminativeefficiency2 = $this->load_question_discriminative_efficiency($quiz2, $questions[2]->id);
-        $discriminativeefficiency3 = $this->load_question_discriminative_efficiency($quiz2, $questions[3]->id);
-        $discriminativeefficiency4 = $this->load_question_discriminative_efficiency($quiz2, $questions[4]->id);
+        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz2->cmid));
+        $discriminativeefficiency1 = $this->extract_item_value($stats, $questions[1]->id, 'discriminativeefficiency');
+        $discriminativeefficiency2 = $this->extract_item_value($stats, $questions[2]->id, 'discriminativeefficiency');
+        $discriminativeefficiency3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminativeefficiency');
+        $discriminativeefficiency4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminativeefficiency');
 
         $this->assertEquals($expectedquiz2discriminativeefficiency[0],
             helper::format_percentage($discriminativeefficiency1, false),
@@ -448,7 +459,7 @@ class helper_test extends \advanced_testcase {
      * Data provider for {@see test_load_question_discrimination_index()}.
      * @return \Generator
      */
-    public function load_question_discrimination_index_provider() {
+    public function load_question_discrimination_index_provider(): \Generator {
         yield 'Discrimination Index' => [
             'Quiz 1 attempts' => [
                 $this->generate_attempt_answers([1, 0, 0, 0]),
@@ -491,10 +502,11 @@ class helper_test extends \advanced_testcase {
         list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);
 
         // Quiz 1 discrimination index.
-        $discriminationindex1 = $this->load_question_discrimination_index($quiz1, $questions[1]->id);
-        $discriminationindex2 = $this->load_question_discrimination_index($quiz1, $questions[2]->id);
-        $discriminationindex3 = $this->load_question_discrimination_index($quiz1, $questions[3]->id);
-        $discriminationindex4 = $this->load_question_discrimination_index($quiz1, $questions[4]->id);
+        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz1->cmid));
+        $discriminationindex1 = $this->extract_item_value($stats, $questions[1]->id, 'discriminationindex');
+        $discriminationindex2 = $this->extract_item_value($stats, $questions[2]->id, 'discriminationindex');
+        $discriminationindex3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminationindex');
+        $discriminationindex4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminationindex');
 
         $this->assertEquals($expectedquiz1discriminationindex[0],
             helper::format_percentage($discriminationindex1, false),
@@ -510,10 +522,11 @@ class helper_test extends \advanced_testcase {
             "Failure in quiz 1 - question 4 discrimination index");
 
         // Quiz 2 discrimination index.
-        $discriminationindex1 = $this->load_question_discrimination_index($quiz2, $questions[1]->id);
-        $discriminationindex2 = $this->load_question_discrimination_index($quiz2, $questions[2]->id);
-        $discriminationindex3 = $this->load_question_discrimination_index($quiz2, $questions[3]->id);
-        $discriminationindex4 = $this->load_question_discrimination_index($quiz2, $questions[4]->id);
+        $stats = $this->load_quiz_statistics_for_place(\context_module::instance($quiz2->cmid));
+        $discriminationindex1 = $this->extract_item_value($stats, $questions[1]->id, 'discriminationindex');
+        $discriminationindex2 = $this->extract_item_value($stats, $questions[2]->id, 'discriminationindex');
+        $discriminationindex3 = $this->extract_item_value($stats, $questions[3]->id, 'discriminationindex');
+        $discriminationindex4 = $this->extract_item_value($stats, $questions[4]->id, 'discriminationindex');
 
         $this->assertEquals($expectedquiz2discriminationindex[0],
             helper::format_percentage($discriminationindex1, false),
