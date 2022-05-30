@@ -25,6 +25,8 @@ require_once("../../config.php");
 require_once($CFG->dirroot."/local/email/lib.php");
 require_once($CFG->libdir."/gradelib.php");
 require_once('lib.php');
+require_once($CFG->dirroot.'/calendar/lib.php');
+require_once($CFG->libdir.'/bennu/bennu.inc.php');
 
 $id = required_param('id', PARAM_INT);    // Course Module ID, or.
 $attending = optional_param('attending', null, PARAM_ALPHA);
@@ -32,6 +34,7 @@ $view = optional_param('view', 0, PARAM_INTEGER);
 $waitingoption = optional_param('waiting', 0, PARAM_INTEGER);
 $publish = optional_param('publish', 0, PARAM_INTEGER);
 $dodownload = optional_param('dodownload', 0, PARAM_INTEGER);
+$exportcalendar = optional_param('exportcalendar', null, PARAM_CLEAN);
 $userid = optional_param('userid', 0, PARAM_INTEGER);
 $usergrade = optional_param('usergrade', 0, PARAM_INTEGER);
 $current = optional_param('current', 0, PARAM_INTEGER);
@@ -107,6 +110,80 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             $myapprovallevel = "none";
         }
 
+        if (!empty($exportcalendar)) {
+            if ($calendareventrec = $DB->get_record('event',['userid' => $USER->id,
+                                                                         'courseid' => $event->course,
+                                                                         'modulename' => 'trainingevent',
+                                                                         'instance' => $event->id])) {
+                $calendarevent = calendar_event::load($calendareventrec->id);
+                $ical = new iCalendar;
+                $ical->add_property('method', 'PUBLISH');
+                $ical->add_property('prodid', '-//Moodle Pty Ltd//NONSGML Moodle Version ' . $CFG->version . '//EN');
+                $ev = new iCalendar_event; // To export in ical format.
+                $hostaddress = str_replace('http://', '', $CFG->wwwroot);
+                $hostaddress = str_replace('https://', '', $hostaddress);
+
+                $ev->add_property('uid', $calendarevent->id.'@'.$hostaddress);
+
+                // Set iCal event summary from event name.
+                $ev->add_property('summary', format_string($calendarevent->name, true, ['context' => $calendarevent->context]));
+
+                // Format the description text.
+                $description = format_text($calendarevent->description, $calendarevent->format, ['context' => $calendarevent->context]);
+                // Then convert it to plain text, since it's the only format allowed for the event description property.
+                // We use html_to_text in order to convert <br> and <p> tags to new line characters for descriptions in HTML format.
+                $description = html_to_text($description, 0);
+                $ev->add_property('description', $description);
+
+                $ev->add_property('class', 'PUBLIC'); // PUBLIC / PRIVATE / CONFIDENTIAL
+                $ev->add_property('last-modified', Bennu::timestamp_to_datetime($calendarevent->timemodified));
+
+                if (!empty($calendarevent->location)) {
+                    $ev->add_property('location', $calendarevent->location);
+                }
+
+                $ev->add_property('dtstamp', Bennu::timestamp_to_datetime()); // now
+                if ($calendarevent->timeduration > 0) {
+                    //dtend is better than duration, because it works in Microsoft Outlook and works better in Korganizer
+                    $ev->add_property('dtstart', Bennu::timestamp_to_datetime($calendarevent->timestart)); // when event starts.
+                    $ev->add_property('dtend', Bennu::timestamp_to_datetime($calendarevent->timestart + $calendarevent->timeduration));
+                } else if ($calendarevent->timeduration == 0) {
+                    // When no duration is present, the event is instantaneous event, ex - Due date of a module.
+                    // Moodle doesn't support all day events yet. See MDL-56227.
+                    $ev->add_property('dtstart', Bennu::timestamp_to_datetime($calendarevent->timestart));
+                    $ev->add_property('dtend', Bennu::timestamp_to_datetime($calendarevent->timestart));
+                } else {
+                    // This can be used to represent all day events in future.
+                    throw new coding_exception("Negative duration is not supported yet.");
+                }
+                if ($calendarevent->courseid != 0) {
+                    $coursecontext = context_course::instance($calendarevent->courseid);
+                    $ev->add_property('categories', format_string($course->shortname));
+                }
+                $ical->add_component($ev);
+
+                $serialized = $ical->serialize();
+                if(empty($serialized)) {
+                    // TODO
+                    die('bad serialization');
+                }
+
+                $filename = 'icalexport.ics';
+
+                header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+                header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
+                header('Expires: '. gmdate('D, d M Y H:i:s', 0) .'GMT');
+                header('Pragma: no-cache');
+                header('Accept-Ranges: none'); // Comment out if PDFs do not work...
+                header('Content-disposition: attachment; filename='.$filename);
+                header('Content-length: '.strlen($serialized));
+                header('Content-type: text/calendar; charset=utf-8');
+
+                echo $serialized;
+                die;            
+            }
+        }
+
         if (!empty($attending)) {
             $companyid = iomad::get_my_companyid(context_system::instance());
             $usercompany = new company($companyid);
@@ -156,6 +233,38 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                              'courseid' => $event->course));
                         $moodleevent->trigger();
 
+                        // Add to the users calendar.
+                        $calendarevent = new stdClass();
+                        $calendarevent->eventtype = TRAININGEVENT_EVENT_TYPE; // Constant defined somewhere in your code - this can be any string value you want. It is a way to identify the event.
+                        $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
+                        $calendarevent->name = get_string('calendarstart', 'trainingevent', $event->name);
+                        $calendarevent->description = format_module_intro('trainingevent', $event, $cmidinfo->id, false);
+                        $calendarevent->format = FORMAT_HTML;
+                        $eventlocation = format_string($location->name);
+                        if (!empty($location->address)) {
+                            $eventlocation .= ", " . format_string($location->address);
+                        }
+                        if (!empty($location->city)) {
+                            $eventlocation .= ", " . format_string($location->city);
+                        }
+                        if (!empty($location->country)) {
+                            $eventlocation .= ", " . format_string($location->country);
+                        }
+                        if (!empty($location->postcode)) {
+                            $eventlocation .= ", " . format_string($location->postcode);
+                        }
+                        $calendarevent->location = $eventlocation; 
+                        $calendarevent->courseid = $event->course;
+                        $calendarevent->groupid = 0;
+                        $calendarevent->userid = $USER->id;
+                        $calendarevent->modulename = 'trainingevent';
+                        $calendarevent->instance = $event->id;
+                        $calendarevent->timestart = $event->startdatetime;
+                        $calendarevent->visible = instance_is_visible('trainingevent', $event);
+                        $calendarevent->timeduration = $event->enddatetime - $event->startdatetime;
+
+                        calendar_event::create($calendarevent);
+
                         // Do we need to notify teachers?
                         if (!empty($event->emailteachers)) {
                             // Are we using groups?
@@ -195,6 +304,15 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                            'objectid' => $event->id,
                                                                                            'courseid' => $event->course));
                         $moodleevent->trigger();
+
+                        // Remove from the users calendar.
+                        if ($calendareventrec = $DB->get_record('event',['userid' => $USER->id,
+                                                                         'courseid' => $event->course,
+                                                                         'modulename' => 'trainingevent',
+                                                                         'instance' => $event->id])) {
+                            $calendarevent = calendar_event::load($calendareventrec->id);
+                            $calendarevent->delete(true);
+                        }
 
                         // Do we need to notify teachers?
                         if (!empty($event->emailteachers)) {
@@ -353,7 +471,39 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                   'company' => $usercompany,
                                                                                   'classroom' => $location,
                                                                                   'event' => $chosenevent));
- 
+
+                            // Add to the users calendar.
+                            $calendarevent = new stdClass();
+                            $calendarevent->eventtype = TRAININGEVENT_EVENT_TYPE; // Constant defined somewhere in your code - this can be any string value you want. It is a way to identify the event.
+                            $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
+                            $calendarevent->name = get_string('calendarstart', 'trainingevent', $event->name);
+                            $calendarevent->description = format_module_intro('trainingevent', $event, $cmidinfo->id, false);
+                            $calendarevent->format = FORMAT_HTML;
+                            $eventlocation = format_string($location->name);
+                            if (!empty($location->address)) {
+                                $eventlocation .= ", " . format_string($location->address);
+                            }
+                            if (!empty($location->city)) {
+                                $eventlocation .= ", " . format_string($location->city);
+                            }
+                            if (!empty($location->country)) {
+                                $eventlocation .= ", " . format_string($location->country);
+                            }
+                            if (!empty($location->postcode)) {
+                                $eventlocation .= ", " . format_string($location->postcode);
+                            }
+                            $calendarevent->location = $eventlocation; 
+                            $calendarevent->courseid = $event->course;
+                            $calendarevent->groupid = 0;
+                            $calendarevent->userid = $user->id;
+                            $calendarevent->modulename = 'trainingevent';
+                            $calendarevent->instance = $event->id;
+                            $calendarevent->timestart = $event->startdatetime;
+                            $calendarevent->visible = instance_is_visible('trainingevent', $event);
+                            $calendarevent->timeduration = $event->enddatetime - $event->startdatetime;
+
+                            calendar_event::create($calendarevent);
+
                             // Do we need to notify teachers?
                             if (!empty($event->emailteachers)) {
                                 // Are we using groups?
@@ -384,6 +534,15 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                              'company' => $usercompany,
                                                                              'classroom' => $location,
                                                                              'event' => $event));
+                        // Remove from the users calendar.
+                        if ($calendareventrec = $DB->get_record('event', ['userid' => $user->id,
+                                                                         'courseid' => $event->course,
+                                                                         'modulename' => 'trainingevent',
+                                                                         'instance' => $event->id])) {
+                            $calendarevent = calendar_event::load($calendareventrec->id);
+                            $calendarevent->delete(true);
+                        }
+
                         // Fire an event for this.
                         $moodleevent = \mod_trainingevent\event\attendance_changed::create(array('context' => context_module::instance($id),
                                                                                                  'userid' => $USER->id,
@@ -543,6 +702,15 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                    'courseid' => $event->course));
                 $moodleevent->trigger();
 
+                // Remove from the users calendar.
+                if ($calendareventrec = $DB->get_record('event',['userid' => $user->id,
+                                                                 'courseid' => $event->course,
+                                                                 'modulename' => 'trainingevent',
+                                                                 'instance' => $event->id])) {
+                    $calendarevent = calendar_event::load($calendareventrec->id);
+                    $calendarevent->delete(true);
+                }
+
                 // Do we need to notify teachers?
                 if (!empty($event->emailteachers)) {
                     // Are we using groups?
@@ -603,6 +771,38 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                          'objectid' => $event->id,
                                                                                          'courseid' => $event->course));
                         $moodleevent->trigger();
+
+                        // Add to the users calendar.
+                        $calendarevent = new stdClass();
+                        $calendarevent->eventtype = TRAININGEVENT_EVENT_TYPE; // Constant defined somewhere in your code - this can be any string value you want. It is a way to identify the event.
+                        $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
+                        $calendarevent->name = get_string('calendarstart', 'trainingevent', $event->name);
+                        $calendarevent->description = format_module_intro('trainingevent', $event, $cmid, false);
+                        $calendarevent->format = FORMAT_HTML;
+                        $eventlocation = format_string($location->name);
+                        if (!empty($location->address)) {
+                            $eventlocation .= ", " . format_string($location->address);
+                        }
+                        if (!empty($location->city)) {
+                            $eventlocation .= ", " . format_string($location->city);
+                        }
+                        if (!empty($location->country)) {
+                            $eventlocation .= ", " . format_string($location->country);
+                        }
+                        if (!empty($location->postcode)) {
+                            $eventlocation .= ", " . format_string($location->postcode);
+                        }
+                        $calendarevent->location = $eventlocation; 
+                        $calendarevent->courseid = $event->course;
+                        $calendarevent->groupid = 0;
+                        $calendarevent->userid = $user->id;
+                        $calendarevent->modulename = 'trainingevent';
+                        $calendarevent->instance = $event->id;
+                        $calendarevent->timestart = $event->startdatetime;
+                        $calendarevent->visible = instance_is_visible('trainingevent', $event);
+                        $calendarevent->timeduration = $event->enddatetime - $event->startdatetime;
+
+                        calendar_event::create($calendarevent);
                     }
 
                     // Do we need to notify teachers?
@@ -809,6 +1009,14 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         date($dateformat, $event->startdatetime) . "</td></tr>";
         $eventtable .= "<tr><th>" . get_string('enddatetime', 'trainingevent') . "</th><td>" .
                         date($dateformat, $event->enddatetime) . "</td></tr>";
+        if ($attending) {
+            $eventtable .= "<tr><th>" . get_string('exportcalendar', 'trainingevent') . "</th><td>";
+            $icalpic =  $OUTPUT->image_url('i/ical');
+            $exportlink = new moodle_url('/mod/trainingevent/view.php',
+                                         array('id' => $id, 'exportcalendar' => 'yes'));
+            $eventtable .=   "<a href='" . $exportlink . "'><img src='" . $icalpic . "'></a>";
+            $eventtable .=   "</td></tr>";
+        }
         if (empty($location->isvirtual) || !empty($event->coursecapacity)) {
             $eventtable .= "<tr><th>" . get_string('capacity', 'trainingevent') . "</th><td>" .
                             $attendancecount .get_string('of', 'trainingevent') . $maxcapacity . "</td></tr>";

@@ -24,6 +24,7 @@
 require_once($CFG->dirroot.'/local/iomad/lib/company.php');
 require_once($CFG->dirroot.'/local/iomad/lib/user.php');
 require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
+require_once($CFG->dirroot.'/calendar/lib.php');
 
 class iomad_approve_access {
     /**
@@ -217,5 +218,46 @@ class iomad_approve_access {
             }
         }
         $DB->set_field('trainingevent_users', 'waitlisted', $waitlisted, ['id' => $currentrecord->id]);
+
+        // Get the CMID.
+        $cmidinfo = $DB->get_record_sql("SELECT * FROM {course_modules}
+                                         WHERE instance = :eventid
+                                         AND module = ( SELECT id FROM {modules}
+                                           WHERE name = 'trainingevent')", array('eventid' => $event->id));
+
+        if (empty($waitlisted)) {
+
+            // Add to the users calendar.
+            $calendarevent = new stdClass();
+            $calendarevent->eventtype = TRAININGEVENT_EVENT_TYPE; // Constant defined somewhere in your code - this can be any string value you want. It is a way to identify the event.
+            $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
+            $calendarevent->name = get_string('calendarstart', 'trainingevent', $event->name);
+            $calendarevent->description = format_module_intro('trainingevent', $event, $cmidinfo->id, false);
+            $calendarevent->format = FORMAT_HTML;
+            $eventlocation = format_string($location->name);
+            if (!empty($location->address)) {
+                $eventlocation .= ", " . format_string($location->address);
+            }
+            if (!empty($location->city)) {
+                $eventlocation .= ", " . format_string($location->city);
+            }
+            if (!empty($location->country)) {
+                $eventlocation .= ", " . format_string($location->country);
+            }
+            if (!empty($location->postcode)) {
+                $eventlocation .= ", " . format_string($location->postcode);
+            }
+            $calendarevent->location = $eventlocation; 
+            $calendarevent->courseid = $event->course;
+            $calendarevent->groupid = 0;
+            $calendarevent->userid = $user->id;
+            $calendarevent->modulename = 'trainingevent';
+            $calendarevent->instance = $event->id;
+            $calendarevent->timestart = $event->startdatetime;
+            $calendarevent->visible = instance_is_visible('trainingevent', $event);
+            $calendarevent->timeduration = $event->enddatetime - $event->startdatetime;
+
+            calendar_event::create($calendarevent);
+        }
     }
 }
