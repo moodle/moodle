@@ -1,4 +1,4 @@
-<?php
+//trainingevent_not_selected<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -153,7 +153,7 @@ $string['expiry_warn_user_name'] = 'User training expiry warning';
 $string['expiry_warn_manager_name'] = 'Manager training expiry warning';
 $string['expire_name'] = 'User training expired';
 $string['expire_manager_name'] = 'Manager training expired report';
-$string['trainingevent_not_selected'] = 'Training event not selected';
+$string['trainingevent_not_selected_name'] = 'Training event not selected';
 $string['trainingevent_not_selected_help'] = 'This email is sent out to a user if they have been enrolled on a course with a training event and have not yet signed up for one. It uses the "Warn not started" field for control.';
 $string['user_reset_name'] = 'User account reset';
 $string['user_create_name'] = 'User account created';
