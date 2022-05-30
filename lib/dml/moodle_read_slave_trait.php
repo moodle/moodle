@@ -275,6 +275,25 @@ trait moodle_read_slave_trait {
     }
 
     /**
+     * This should be called immediately after each db query. It does a clean up of resources.
+     *
+     * @param mixed $result The db specific result obtained from running a query.
+     * @return void
+     */
+    protected function query_end($result) {
+        if ($this->written) {
+            // Adjust the written time.
+            array_walk($this->written, function (&$val) {
+                if ($val === true) {
+                    $val = microtime(true);
+                }
+            });
+        }
+
+        parent::query_end($result);
+    }
+
+    /**
      * Select appropriate db handle - readwrite or readonly
      * @param int $type type of query
      * @param string $sql
@@ -339,10 +358,8 @@ trait moodle_read_slave_trait {
                 return true;
             case SQL_QUERY_INSERT:
             case SQL_QUERY_UPDATE:
-                // If we are in transaction we cannot set the written time yet.
-                $now = $this->slavelatency && !$this->transactions ? microtime(true) : true;
                 foreach ($this->table_names($sql) as $tablename) {
-                    $this->written[$tablename] = $now;
+                    $this->written[$tablename] = true;
                 }
                 return false;
             case SQL_QUERY_STRUCTURE:
@@ -370,16 +387,10 @@ trait moodle_read_slave_trait {
             return;
         }
 
-        if (!$this->slavelatency) {
-            return;
-        }
-
         $now = null;
         foreach ($this->written as $tablename => $when) {
-            if ($when === true) {
-                $now = $now ?: microtime(true);
-                $this->written[$tablename] = $now;
-            }
+            $now = $now ?: microtime(true);
+            $this->written[$tablename] = $now;
         }
     }
 
