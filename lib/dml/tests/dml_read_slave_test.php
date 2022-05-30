@@ -21,7 +21,6 @@
  * @category   dml
  * @copyright  2018 Srdjan Janković, Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \moodle_temptables
  */
 
 namespace core;
@@ -39,13 +38,12 @@ require_once(__DIR__.'/../../tests/fixtures/event_fixtures.php');
  * @category   dml
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \moodle_read_slave_trait
  */
 class dml_read_slave_test extends \base_testcase {
 
     /** @var float */
     static private $dbreadonlylatency = 0.8;
-    /** @var float */
-    static private $defaultlatency = 1;
 
     /**
      * Instantiates a test database interface object.
@@ -316,6 +314,50 @@ class dml_read_slave_test extends \base_testcase {
         // This condition should always evaluate true, however we need to
         // safeguard from an unaccounted delay that can break this test.
         if (microtime(true) - $now < 1 + self::$dbreadonlylatency) {
+            // Not enough time passed, use rw handle.
+            $handle = $DB->get_records_sql("SELECT * FROM {table}");
+            $this->assertEquals('test_rw::test:test', $handle);
+
+            // Make sure enough time passes.
+            sleep(1);
+        } else {
+            $skip = true;
+        }
+
+        // Exceeded latency time, use ro handle.
+        $handle = $DB->get_records_sql("SELECT * FROM {table}");
+        $this->assert_readonly_handle($handle);
+
+        if ($skip) {
+            $this->markTestSkipped("Delay too long to test write handle immediately after transaction");
+        }
+    }
+
+    /**
+     * Test readonly handle is not used immediately after update
+     * Test last written time is adjusted post-write,
+     * so the latency parameter is applied properly.
+     *
+     * @return void
+     * @covers ::can_use_readonly
+     * @covers ::query_end
+     */
+    public function test_long_update(): void {
+        $DB = $this->new_db(true);
+
+        $this->assertNull($DB->get_dbhwrite());
+
+        $skip = false;
+
+        list($sql, $params, $ptype) = $DB->fix_sql_params("UPDATE {table} SET a = 1 WHERE id = 1");
+        $DB->with_query_start_end($sql, $params, SQL_QUERY_UPDATE, function ($dbh) use (&$now) {
+            sleep(1);
+            $now = microtime(true);
+        });
+
+        // This condition should always evaluate true, however we need to
+        // safeguard from an unaccounted delay that can break this test.
+        if (microtime(true) - $now < self::$dbreadonlylatency) {
             // Not enough time passed, use rw handle.
             $handle = $DB->get_records_sql("SELECT * FROM {table}");
             $this->assertEquals('test_rw::test:test', $handle);
