@@ -125,6 +125,7 @@ class local_email {
                             'microlearning_nugget_reminder1',
                             'microlearning_nugget_reminder2',
                             'password_update',
+                            'trainingevent_not_selected',
                             'user_added_to_course',
                             'user_create',
                             'user_deleted',

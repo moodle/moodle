@@ -26,6 +26,10 @@
  */
 
 $string['blocktitle'] = 'Email Reports';
-$string['crontask'] = 'Email reports cron task';
 $string['pluginname'] = 'Email reports';
 $string['privacy:metadata'] = 'The Iomad Local email reports plugin only shows data stored in other locations.';
+$string['course_not_completed_task'] = 'Email reports - Course not completed task';
+$string['course_not_started_task'] = 'Email reports - Course not started task';
+$string['course_expiry_warning_task'] = 'Email reports - Course expiry warning task';
+$string['manager_digest_task'] = 'Email reports - Manager digest task';
+$string['trainingevent_not_selected_task'] = 'Email reports - Training event not selected task';

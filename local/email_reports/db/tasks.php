@@ -19,21 +19,57 @@
  *
  * @package   local_email_reports
  * @category  task
- * @copyright 2015 E-Learn Design
+ * @copyright 2022 Derick Turner
  * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$tasks = array(
-    array(
-        'classname' => 'local_email_reports\task\cron_task',
+$tasks = [
+    [
+        'classname' => 'local_email_reports\task\course_not_started_task',
         'blocking' => 0,
         'minute' => '0',
         'hour' => '0',
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*'
-    )
-);
+    ],
+    [
+        'classname' => 'local_email_reports\task\course_not_completed_task',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '0',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    ],
+    [
+        'classname' => 'local_email_reports\task\course_expiry_warning_task',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '0',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    ],
+    [
+        'classname' => 'local_email_reports\task\manager_digest_task',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '0',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    ],
+    [
+        'classname' => 'local_email_reports\task\trainingevent_not_selected_task',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '0',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    ]
+];
