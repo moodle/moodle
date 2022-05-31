@@ -8,6 +8,9 @@ information provided here is intended especially for developers.
 * New setting $CFG->enrolments_sync_interval controls the minimum time in seconds between re-synchronization of enrollment via enrol_check_plugins.
   This only applies to web requests without a session such as webservice calls, tokenpluginfile.php and rss links Function
   enrol_check_plugins now has $ignoreintervalcheck flag to bypass checking for that setting.
+* For performance reasons, sql_reader interface has a new function get_events_select_exists() which determines whether
+  an event exists with the given criteria (see MDL-72723 for details).
+   - Breaking: 3rd party log readers implementing interface sql_reader will need to implement get_events_select_exists()
 
 === 4.0 ===
 

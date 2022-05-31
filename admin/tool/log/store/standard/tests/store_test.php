@@ -80,6 +80,8 @@ class store_test extends \advanced_testcase {
 
         $logs = $DB->get_records('logstore_standard_log', array(), 'id ASC');
         $this->assertCount(0, $logs);
+        $exists = $store->get_events_select_exists('', array(), 'timecreated ASC', 0, 0);
+        $this->assertFalse($exists);
 
         $this->setCurrentTimeStart();
 
@@ -147,6 +149,8 @@ class store_test extends \advanced_testcase {
         $this->assertSame(3, $store->get_events_select_count('', array()));
         $events = $store->get_events_select('', array(), 'timecreated ASC', 0, 0); // Is actually sorted by "timecreated ASC, id ASC".
         $this->assertCount(3, $events);
+        $exists = $store->get_events_select_exists('', array(), 'timecreated ASC', 0, 0);
+        $this->assertTrue($exists);
         $resev1 = array_shift($events);
         array_shift($events);
         $resev2 = array_shift($events);

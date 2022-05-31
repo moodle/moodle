@@ -790,7 +790,7 @@ abstract class backup_cron_automated_helper {
                 $where .= " and target <> 'course_backup'";
             }
 
-            if ($reader->get_events_select_count($where, $params)) {
+            if ($reader->get_events_select_exists($where, $params)) {
                 return true;
             }
         }
