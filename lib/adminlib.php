@@ -4010,7 +4010,9 @@ class admin_setting_configduration extends admin_setting {
             return '';
         }
 
-        $seconds = (int)($data['v']*$data['u']);
+        $unit = (int)$data['u'];
+        $value = (int)$data['v'];
+        $seconds = $value * $unit;
 
         // Validate the new setting.
         $error = $this->validate_setting($seconds);
