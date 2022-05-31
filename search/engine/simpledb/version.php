@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2022041900;
+$plugin->version = 2022050400;
 $plugin->requires = 2022041200;
 $plugin->component = 'search_simpledb';

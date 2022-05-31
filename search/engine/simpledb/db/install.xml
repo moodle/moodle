@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="search/engine/simpledb/db" VERSION="20160408" COMMENT="XMLDB file for Moodle search/engine/simpledb"
+<XMLDB PATH="search/engine/simpledb/db" VERSION="20220504" COMMENT="XMLDB file for Moodle search/engine/simpledb"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -27,6 +27,9 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="owneruserid-contextid" UNIQUE="false" FIELDS="owneruserid, contextid" COMMENT="Query filters if no extra search filters are applied"/>
+        <INDEX NAME="contextid" UNIQUE="false" FIELDS="contextid"/>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="areaid" UNIQUE="false" FIELDS="areaid"/>
       </INDEXES>
     </TABLE>
   </TABLES>
