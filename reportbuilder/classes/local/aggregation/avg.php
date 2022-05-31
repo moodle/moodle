@@ -70,9 +70,10 @@ class avg extends base {
      * @param mixed $value
      * @param array $values
      * @param array $callbacks
-     * @return mixed
+     * @param int $columntype
+     * @return string
      */
-    public static function format_value($value, array $values, array $callbacks) {
+    public static function format_value($value, array $values, array $callbacks, int $columntype): string {
         return format_float((float) reset($values), 1);
     }
 }

@@ -126,9 +126,10 @@ abstract class base {
      * @param mixed $value
      * @param array $values
      * @param array $callbacks Array of column callbacks, {@see column::add_callback} for definition
+     * @param int $columntype The original type of the column, to ensure it is preserved for callbacks
      * @return mixed
      */
-    public static function format_value($value, array $values, array $callbacks) {
+    public static function format_value($value, array $values, array $callbacks, int $columntype) {
         foreach ($callbacks as $callback) {
             [$callable, $arguments] = $callback;
             $value = ($callable)($value, (object) $values, $arguments);
