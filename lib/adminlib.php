@@ -8785,6 +8785,7 @@ class admin_setting_managecontentbankcontenttypes extends admin_setting {
  *      page (e.g. admin/roles/allow.php, instead of admin/roles/manage.php, you can pass the alternate URL here.
  * @param array $options Additional options that can be specified for page setup.
  *      pagelayout - This option can be used to set a specific pagelyaout, admin is default.
+ *      nosearch - Do not display search bar
  */
 function admin_externalpage_setup($section, $extrabutton = '', array $extraurlparams = null, $actualurl = '', array $options = array()) {
     global $CFG, $PAGE, $USER, $SITE, $OUTPUT;
@@ -8881,7 +8882,7 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
     $PAGE->set_title("$SITE->shortname: " . implode(": ", $visiblepathtosection));
     $PAGE->set_heading($SITE->fullname);
 
-    if ($hassiteconfig) {
+    if ($hassiteconfig && empty($options['nosearch'])) {
         $PAGE->add_header_action($OUTPUT->render_from_template('core_admin/header_search_input', [
             'action' => new moodle_url('/admin/search.php'),
             'query' => $PAGE->url->get_param('query'),
