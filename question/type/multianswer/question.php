@@ -78,6 +78,43 @@ class qtype_multianswer_question extends question_graded_automatically_with_coun
         }
     }
 
+    public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
+        $basemessage = parent::validate_can_regrade_with_other_version($otherversion);
+        if ($basemessage) {
+            return $basemessage;
+        }
+
+        if (count($this->subquestions) != count($otherversion->subquestions)) {
+            return get_string('regradeissuenumsubquestionschanged', 'qtype_multianswer');
+        }
+
+        foreach ($this->subquestions as $i => $subq) {
+            $subqmessage = $subq->validate_can_regrade_with_other_version($otherversion->subquestions[$i]);
+            if ($subqmessage) {
+                return $subqmessage;
+            }
+        }
+
+        return null;
+    }
+
+    public function update_attempt_state_data_for_new_version(
+            question_attempt_step $oldstep, question_definition $oldquestion) {
+        parent::update_attempt_state_data_for_new_version($oldstep, $oldquestion);
+
+        $result = [];
+        foreach ($this->subquestions as $i => $subq) {
+            $substep = $this->get_substep($oldstep, $i);
+            $statedata = $subq->update_attempt_state_data_for_new_version(
+                    $substep, $oldquestion->subquestions[$i]);
+            foreach ($statedata as $name => $value) {
+                $result[$substep->add_prefix($name)] = $value;
+            }
+        }
+
+        return $result;
+    }
+
     public function get_question_summary() {
         $summary = $this->html_to_text($this->questiontext, $this->questiontextformat);
         foreach ($this->subquestions as $i => $subq) {

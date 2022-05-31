@@ -33,6 +33,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @package   qtype_match
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qtype_match_question
  */
 class question_test extends \advanced_testcase {
 
@@ -243,5 +244,33 @@ class question_test extends \advanced_testcase {
 
         $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
         $this->assertEquals(1, $options['shufflestems']);
+    }
+
+    public function test_validate_can_regrade_with_other_version_ok() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+
+        $this->assertNull($newm->validate_can_regrade_with_other_version($m));
+    }
+
+    public function test_validate_can_regrade_with_other_version_bad_stems() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+        unset($newm->stems[4]);
+
+        $this->assertEquals(get_string('regradeissuenumstemschanged', 'qtype_match'),
+                $newm->validate_can_regrade_with_other_version($m));
+    }
+
+    public function test_validate_can_regrade_with_other_version_bad_choices() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+        unset($newm->choices[3]);
+
+        $this->assertEquals(get_string('regradeissuenumchoiceschanged', 'qtype_match'),
+                $newm->validate_can_regrade_with_other_version($m));
     }
 }
