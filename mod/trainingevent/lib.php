@@ -169,7 +169,7 @@ function trainingevent_get_participants($trainingeventid) {
  * @return object|null
  */
 function trainingevent_get_coursemodule_info($coursemodule) {
-    global $DB, $CFG;
+    global $DB, $CFG, $USER;
 
     if ($trainingevent = $DB->get_record('trainingevent', array('id' => $coursemodule->instance), '*')) {
         if (empty($trainingevent->name)) {
@@ -197,7 +197,16 @@ function trainingevent_get_coursemodule_info($coursemodule) {
         $trainingevent->intro = "<div>" . $extra . "</div>";
 
         $info->content = format_module_intro('trainingevent', $trainingevent, $coursemodule->id, false);
-        $info->name  = $trainingevent->name;
+        
+        // Check if the user is attending or on the waitlist
+        if ($status = $DB->get_record('trainingevent_users', ['userid' => $USER->id, 'trainingeventid' => $trainingevent->id])) {
+            if (!empty($status->waitlisted)) {
+                $trainingevent->name .= " - " . get_string('onwaitlist', 'mod_trainingevent');
+            } else {
+                $trainingevent->name .= " - " . get_string('attending', 'mod_trainingevent');
+            }
+        }
+        $info->name  = format_string($trainingevent->name);
 
         return $info;
 
