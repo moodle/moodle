@@ -10,3 +10,4 @@ Information provided here is intended especially for developers.
 * New database helper methods for generating multiple unique values: `generate_aliases` and `generate_param_names`
 * The base aggregation `format_value` method has a `$columntype` argument in order to preserve type during aggregation. When
   defining column callbacks, strict typing will now be preserved in your callback methods when the column is being aggregated
+* The method `get_joins()` in the base entity class is now public, allowing for easier joins within reports
