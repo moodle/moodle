@@ -1,5 +1,13 @@
 This files describes API changes in the quiz code.
 
+=== 4.0.2, 4.1 ===
+
+* No external code should be calling quiz_overview_report::regrade_attempt because it is an
+  internal method of the quiz_overview plugin. But if you are incorrectly using it, be aware
+  that the API changed slightly. It now returns an array listing any questions which could
+  not be regraded.
+
+
 === 4.0 ===
 
 * The following API methods have a new parameter, $studentisonline, to define whether the student is currently interacting:

@@ -52,8 +52,8 @@ Feature: Regrading quiz attempts using the Grades report
     # Also, nothing has changed in the quiz, so the regrade won't alter any scores,
     # but this is still a useful test that the regrade process completes without errors.
     Then I should see "Quiz for testing regrading"
-    And I should see "Successfully regraded (2/2)"
-    And I should see "Regrade completed successfully"
+    And I should see "Finished regrading (2/2)"
+    And I should see "Regrade completed"
     And I press "Continue"
 
     # These next tests just serve to check we got back to the report.
@@ -67,8 +67,8 @@ Feature: Regrading quiz attempts using the Grades report
 
     And I press "Regrade selected attempts"
     Then I should see "Quiz for testing regrading"
-    And I should see "Successfully regraded (1/1)"
-    And I should see "Regrade completed successfully"
+    And I should see "Finished regrading (1/1)"
+    And I should see "Regrade completed"
     And I press "Continue"
 
     # These next tests just serve to check we got back to the report.
@@ -88,8 +88,8 @@ Feature: Regrading quiz attempts using the Grades report
 
     # Note, the order is not defined, so we can only check part of the message.
     Then I should see "Quiz for testing regrading"
-    And I should see "Successfully regraded (2/2)"
-    And I should see "Regrade completed successfully"
+    And I should see "Finished regrading (2/2)"
+    And I should see "Regrade completed"
     And I press "Continue"
 
     And "Student One" row "Regrade" column of "attempts" table should not contain "Needed"
@@ -100,8 +100,8 @@ Feature: Regrading quiz attempts using the Grades report
     And "Student TwoReview attempt" row "Grade/100.00Sort by Grade/100.00 Ascending" column of "attempts" table should contain "90.00/75.00"
     And I press "Regrade attempts marked as needing regrading (1)"
     And I should see "Quiz for testing regrading"
-    And I should see "Successfully regraded (1/1)"
-    And I should see "Regrade completed successfully"
+    And I should see "Finished regrading (1/1)"
+    And I should see "Regrade completed"
     And I press "Continue"
 
     # These next tests just serve to check we got back to the report.
@@ -117,8 +117,8 @@ Feature: Regrading quiz attempts using the Grades report
     And I navigate to "Results" in current page administration
     When I press "Dry run a full regrade"
     Then I should see "Quiz for testing regrading"
-    And I should see "Successfully regraded (2/2)"
-    And I should see "Regrade completed successfully"
+    And I should see "Finished regrading (2/2)"
+    And I should see "Regrade completed"
     And I press "Continue"
     And I should see "Quiz for testing regrading"
     And I should see "Overall number of students achieving grade ranges"
@@ -132,12 +132,12 @@ Feature: Regrading quiz attempts using the Grades report
     And I click on "v2 (latest)" "option"
     And I navigate to "Results" in current page administration
     And I press "Dry run a full regrade"
-    And I should see "Regrade completed successfully"
+    And I should see "Regrade completed"
     And I press "Continue"
     And "student1@example.com" row "Regrade" column of "attempts" table should contain "Needed"
     And "Correct" "icon" should appear before "50.00/0.00" "text"
     And I press "Regrade all"
-    And I should see "Regrade completed successfully"
+    And I should see "Regrade completed"
     And I press "Continue"
     Then "student1@example.com" row "Regrade" column of "attempts" table should contain "Done"
     And "Student OneReview attempt" row "Q. 1/50.00Sort by Q. 1/50.00 Ascending" column of "attempts" table should contain "50.00/0.00"
@@ -177,8 +177,8 @@ Feature: Regrading quiz attempts using the Grades report
     And I click on "Always latest" "option"
     And I navigate to "Results" in current page administration
     And I press "Regrade all"
-    And I should see "Successfully regraded (1/1)"
-    And I should see "Regrade completed successfully"
+    And I should see "Finished regrading (1/1)"
+    And I should see "Regrade completed"
     And I press "Continue"
     Then "student3@example.com" row "Q. 1/50.00Sort by Q. 1/50.00 Ascending" column of "attempts" table should contain "50.00/0.00"
     And "Incorrect" "icon" should appear before "50.00/0.00" "text"
@@ -218,8 +218,8 @@ Feature: Regrading quiz attempts using the Grades report
     And "student3@example.com" row "Q. 1/100.00Sort by Q. 1/100.00 Ascending" column of "attempts" table should contain "100.00"
     And "Correct" "icon" should be visible
     And I press "Regrade all"
-    And I should see "Successfully regraded (1/1)"
-    And I should see "Regrade completed successfully"
+    And I should see "Finished regrading (1/1)"
+    And I should see "Regrade completed"
     And I press "Continue"
     Then "student3@example.com" row "Q. 1/100.00Sort by Q. 1/100.00 Ascending" column of "attempts" table should contain "100.00/0.00"
     And "Incorrect" "icon" should be visible

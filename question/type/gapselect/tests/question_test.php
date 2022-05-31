@@ -34,6 +34,8 @@ require_once($CFG->dirroot . '/question/type/gapselect/tests/helper.php');
  * @package   qtype_gapselect
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qtype_gapselect_question_base
+ * @covers \qtype_gapselect_question
  */
 class question_test extends \basic_testcase {
 
@@ -257,5 +259,33 @@ class question_test extends \basic_testcase {
 
         $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
         $this->assertEquals(1, $options['shufflechoices']);
+    }
+
+    public function test_validate_can_regrade_with_other_version_ok() {
+        $question = \test_question_maker::make_question('gapselect');
+
+        $newquestion = clone($question);
+
+        $this->assertNull($newquestion->validate_can_regrade_with_other_version($question));
+    }
+
+    public function test_validate_can_regrade_with_other_version_bad_groups() {
+        $question = \test_question_maker::make_question('gapselect');
+
+        $newquestion = clone($question);
+        unset($newquestion->choices[3]);
+
+        $this->assertEquals(get_string('regradeissuenumgroupsschanged', 'qtype_gapselect'),
+                $newquestion->validate_can_regrade_with_other_version($question));
+    }
+
+    public function test_validate_can_regrade_with_other_version_bad_choices() {
+        $question = \test_question_maker::make_question('gapselect');
+
+        $newquestion = clone($question);
+        unset($newquestion->choices[2][2]);
+
+        $this->assertEquals(get_string('regradeissuenumchoiceschanged', 'qtype_gapselect', 2),
+                $newquestion->validate_can_regrade_with_other_version($question));
     }
 }

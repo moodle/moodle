@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @package    qtype_multianswer
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qtype_multianswer_question
  */
 class question_test extends \advanced_testcase {
     public function test_get_expected_data() {
@@ -252,4 +253,100 @@ class question_test extends \advanced_testcase {
         $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
         $this->assertNull($options);
     }
+
+    /**
+     * Helper method to make a simulated second version of the standard multianswer test question.
+     *
+     * The key think is that all the answer ids are changed (increased by 20).
+     *
+     * @param \qtype_multianswer_question $question
+     * @return \qtype_multianswer_question
+     */
+    protected function make_second_version(
+            \qtype_multianswer_question $question): \qtype_multianswer_question {
+        $newquestion = fullclone($question);
+
+        $newquestion->subquestions[1]->answers = [
+            36 => new \question_answer(16, 'Apple', 0.3333333,
+                                      'Good', FORMAT_HTML),
+            37 => new \question_answer(17, 'Burger', -0.5,
+                                      '', FORMAT_HTML),
+            38 => new \question_answer(18, 'Hot dog', -0.5,
+                                      'Not a fruit', FORMAT_HTML),
+            39 => new \question_answer(19, 'Pizza', -0.5,
+                                      '', FORMAT_HTML),
+            40 => new \question_answer(20, 'Orange', 0.3333333,
+                                      'Correct', FORMAT_HTML),
+            41 => new \question_answer(21, 'Banana', 0.3333333,
+                                      '', FORMAT_HTML),
+        ];
+
+        $newquestion->subquestions[2]->answers = [
+            42 => new \question_answer(22, 'Raddish', 0.5,
+                                      'Good', FORMAT_HTML),
+            43 => new \question_answer(23, 'Chocolate', -0.5,
+                                      '', FORMAT_HTML),
+            44 => new \question_answer(24, 'Biscuit', -0.5,
+                                      'Not a vegetable', FORMAT_HTML),
+            45 => new \question_answer(25, 'Cheese', -0.5,
+                                      '', FORMAT_HTML),
+            46 => new \question_answer(26, 'Carrot', 0.5,
+                                      'Correct', FORMAT_HTML),
+        ];
+
+        return $newquestion;
+    }
+
+    public function test_validate_can_regrade_with_other_version_ok() {
+        /** @var \qtype_multianswer_question $question */
+        $question = \test_question_maker::make_question('multianswer', 'multiple');
+
+        $newquestion = $this->make_second_version($question);
+
+        $this->assertNull($newquestion->validate_can_regrade_with_other_version($question));
+    }
+
+    public function test_validate_can_regrade_with_other_version_wrong_subquestions() {
+        /** @var \qtype_multianswer_question $question */
+        $question = \test_question_maker::make_question('multianswer', 'multiple');
+
+        $newquestion = $this->make_second_version($question);
+        unset($newquestion->subquestions[2]);
+
+        $this->assertEquals(
+                get_string('regradeissuenumsubquestionschanged', 'qtype_multianswer'),
+                $newquestion->validate_can_regrade_with_other_version($question));
+    }
+
+    public function test_validate_can_regrade_with_other_version_one_wrong_subquestion() {
+        /** @var \qtype_multianswer_question $question */
+        $question = \test_question_maker::make_question('multianswer', 'multiple');
+
+        $newquestion = $this->make_second_version($question);
+        unset($newquestion->subquestions[1]->answers[41]);
+
+        $this->assertEquals(
+                get_string('regradeissuenumchoiceschanged', 'qtype_multichoice'),
+                $newquestion->validate_can_regrade_with_other_version($question));
+    }
+
+    public function test_update_attempt_state_date_from_old_version_ok() {
+        /** @var \qtype_multianswer_question $question */
+        $question = \test_question_maker::make_question('multianswer', 'multiple');
+
+        $newquestion = $this->make_second_version($question);
+
+        $oldstep = new question_attempt_step();
+        $oldstep->set_qt_var('_sub1_order', '16,17,18,19,20,21');
+        $oldstep->set_qt_var('_sub2_order', '22,23,24,25,26');
+
+        $expected = [
+            '_sub1_order' => '36,37,38,39,40,41',
+            '_sub2_order' => '42,43,44,45,46',
+        ];
+
+        $this->assertEquals($expected,
+                $newquestion->update_attempt_state_data_for_new_version($oldstep, $question));
+    }
+
 }
