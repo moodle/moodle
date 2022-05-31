@@ -358,6 +358,17 @@ class core_admintree_testcase extends advanced_testcase {
     }
 
     /**
+     * Test setting an empty duration displays the correct validation message.
+     */
+    public function test_emptydurationvalue() {
+        $this->resetAfterTest();
+        $adminsetting = new admin_setting_configduration('abc_cde/duration', 'some desc', '', '');
+
+        // A value that isn't a number is treated as a zero, so we expect to see no error message.
+        $this->assertEmpty($adminsetting->write_setting(['u' => '3600', 'v' => 'abc']));
+    }
+
+    /**
      * Test setting for blocked hosts
      *
      * For testing the admin settings element only. Test for blocked hosts functionality can be found
