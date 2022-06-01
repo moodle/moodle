@@ -43,6 +43,7 @@ $string['privacy:metadata:replyto'] = 'The email address to reply to.';
 $string['privacy:metadata:replytoname'] = 'Name of reply to recipient.';
 $string['privacy:metadata:subject'] = 'The subject line of the message.';
 $string['privacy:metadata:userfrom'] = 'The user sending the message.';
+$string['privacy:preference:email'] = 'Preferred email notification address';
 $string['tasksendemail'] = 'Messages digest mailings';
 
 // Deprecated since Moodle 3.9.
