@@ -200,6 +200,25 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[2], false),
                 $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[2], false),
                 $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[1], false));
+
+        // Regrade with a new version of the question.
+        /** @var \qtype_match_question $oldm */
+        $oldm = \test_question_maker::make_question('match');
+        $oldm->stems = [11 => 'Dog', 12 => 'Frog', 13 => 'Toad', 14 => 'Cat'];
+        $oldm->stemformat = [11 => FORMAT_HTML, 12 => FORMAT_HTML, 13 => FORMAT_HTML, 14 => FORMAT_HTML];
+        $oldm->choices = [11 => 'Mammal', 12 => 'Amphibian', 13 => 'Insect'];
+        $oldm->right = [11 => 11, 12 => 12, 13 => 12, 14 => 11];
+        $this->quba->regrade_question($this->slot, true, null, $oldm);
+
+        // Verify.
+        $this->check_current_mark(4);
+        $this->render();
+        $this->assertStringContainsString('Cat', $this->currentoutput);
+        $this->assertStringContainsString('Insect', $this->currentoutput);
+        $this->assertStringNotContainsString(
+                get_string('deletedsubquestion', 'qtype_match'), $this->currentoutput);
+        $this->assertStringNotContainsString(
+                get_string('deletedchoice', 'qtype_match'), $this->currentoutput);
     }
 
     public function test_interactive_partial_no_submit() {
