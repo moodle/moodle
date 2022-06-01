@@ -27,6 +27,9 @@ namespace tool_uploaduser;
 defined('MOODLE_INTERNAL') || die();
 
 use context_system;
+use context_coursecat;
+use core_course_category;
+
 use tool_uploaduser\local\field_value_validators;
 
 require_once($CFG->dirroot.'/user/profile/lib.php');
@@ -1107,6 +1110,48 @@ class process {
 
                 continue;
             }
+
+            if (preg_match('/^categoryrole(?<roleid>\d+)$/', $column, $rolematches)) {
+                $categoryrolecache = [];
+                $categorycache  = []; // Category cache - do not fetch all categories here, we will not probably use them all.
+
+                $categoryfield = "category{$rolematches['roleid']}";
+                $categoryrolefield = "categoryrole{$rolematches['roleid']}";
+
+                if (empty($user->{$categoryfield})) {
+                    continue;
+                }
+
+                $categoryidnumber = $user->{$categoryfield};
+
+                if (!array_key_exists($categoryidnumber, $categorycache)) {
+                    $category = $DB->get_record('course_categories', ['idnumber' => $categoryidnumber], 'id, idnumber');
+                    if (empty($category)) {
+                        $this->upt->track('enrolments', get_string('unknowncategory', 'error', s($categoryidnumber)), 'error');
+                        continue;
+                    }
+                    $categoryrolecache[$categoryidnumber] = uu_allowed_roles_cache($category->id);
+                    $categoryobj = core_course_category::get($category->id);
+                    $context = context_coursecat::instance($categoryobj->id);
+                    $categorycache[$categoryidnumber] = $context;
+                }
+                // Check the user's category role.
+                if (!empty($user->{$categoryrolefield})) {
+                    $rolename = $user->{$categoryrolefield};
+                    if (array_key_exists($rolename, $categoryrolecache[$categoryidnumber])) {
+                        $roleid = $categoryrolecache[$categoryidnumber][$rolename]->id;
+                        // Assign a role to user with category context.
+                        role_assign($roleid, $user->id, $categorycache[$categoryidnumber]->id);
+                    } else {
+                        $this->upt->track('enrolments', get_string('unknownrole', 'error', s($rolename)), 'error');
+                        continue;
+                    }
+                } else {
+                    $this->upt->track('enrolments', get_string('missingcategoryrole', 'error', s($categoryidnumber)), 'error');
+                    continue;
+                }
+            }
+
             if (!preg_match('/^course\d+$/', $column)) {
                 continue;
             }
