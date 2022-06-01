@@ -71,17 +71,17 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 new \question_pattern_expectation('/class="r1"/'));
 
         // Regrade with a new version of the question.
-        $newmc = \test_question_maker::make_a_multichoice_single_question();
-        $newmc->answers = [
-            23 => $newmc->answers[13],
-            24 => $newmc->answers[14],
-            25 => $newmc->answers[15],
+        $oldmc = \test_question_maker::make_a_multichoice_single_question();
+        $oldmc->answers = [
+            23 => $oldmc->answers[13],
+            24 => $oldmc->answers[14],
+            25 => $oldmc->answers[15],
         ];
-        $newmc->answers[23]->fraction = 0.5;
-        $newmc->answers[23]->feedback = 'A is now only partially right';
-        $newmc->answers[24]->fraction = 1;
-        $newmc->answers[24]->answer = 'B is the new right answer';
-        $this->quba->regrade_question($this->slot, true, null, $newmc);
+        $oldmc->answers[23]->fraction = 0.5;
+        $oldmc->answers[23]->feedback = 'A is now only partially right';
+        $oldmc->answers[24]->fraction = 1;
+        $oldmc->answers[24]->answer = 'B is the new right answer';
+        $this->quba->regrade_question($this->slot, true, null, $oldmc);
 
         // Verify.
         $this->check_current_mark(1.5);
