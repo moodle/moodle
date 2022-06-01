@@ -231,6 +231,57 @@ class core_myprofilelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_core_myprofile_navigation_contact_timezone}
+     *
+     * @return array[]
+     */
+    public function core_myprofile_navigation_contact_timezone_provider(): array {
+        return [
+            'Hidden field' => ['timezone', '99', '99', null],
+            'Forced timezone' => ['', 'Europe/London', 'Pacific/Tahiti', 'Europe/London'],
+            'User timezone (default)' => ['', '99', '99', 'Australia/Perth'],
+            'User timezone (selected)' => ['', '99', 'Pacific/Tahiti', 'Pacific/Tahiti'],
+        ];
+    }
+
+    /**
+     * Test timezone node added to user profile navigation
+     *
+     * @param string $hiddenuserfields
+     * @param string $forcetimezone Timezone identifier or '99' (User can choose their own)
+     * @param string $usertimezone Timezone identifier or '99' (Use server default)
+     * @param string|null $expectresult
+     * @return bool
+     *
+     * @dataProvider core_myprofile_navigation_contact_timezone_provider
+     */
+    public function test_core_myprofile_navigation_contact_timezone(string $hiddenuserfields, string $forcetimezone,
+            string $usertimezone, ?string $expectresult = null): void {
+
+        set_config('hiddenuserfields', $hiddenuserfields);
+        set_config('forcetimezone', $forcetimezone);
+
+        // Set the timezone of our test user, and load their navigation tree.
+        $this->user->timezone = $usertimezone;
+        $this->setUser($this->user);
+
+        core_myprofile_navigation($this->tree, $this->user, true, null);
+
+        $reflector = new ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes->setAccessible(true);
+
+        /** @var \core_user\output\myprofile\node[] $tree */
+        $tree = $nodes->getValue($this->tree);
+        if ($expectresult !== null) {
+            $this->assertArrayHasKey('timezone', $tree);
+            $this->assertEquals($expectresult, $tree['timezone']->content);
+        } else {
+            $this->assertArrayNotHasKey('timezone', $tree);
+        }
+    }
+
+    /**
      * Tests the core_myprofile_navigation() function as an admin viewing another user's
      * profile ensuring the login activity links are shown.
      */
