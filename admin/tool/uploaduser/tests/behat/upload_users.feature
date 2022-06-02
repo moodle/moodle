@@ -235,18 +235,15 @@ Feature: Upload users
     And I should see "Tom Jones"
     And I should see "Trent Reznor"
     And I should see "reznor@example.com"
-    And I am on "management1" course homepage
-    And I should see "Participants"
-    And I follow "Participants"
+    And I am on the "management1" "enrolled users" page
     And I should see "Tom Jones"
     And I should see "Trent Reznor"
     And I should see "Aurora Jiang"
     And I should see "Student"
-    And I am on "film1" course homepage
-    And I should see "Participants"
-    And I follow "Participants"
+    And I am on the "film1" "enrolled users" page
     And I should see "Federico Fellini"
     And I should see "Student"
+    And I am on site homepage
     And I navigate to "Courses > Manage courses and categories" in site administration
     And I click on "permissions" action for "MGMT" in management category listing
     And I select "Assign roles" from the "jump" singleselect
@@ -255,6 +252,7 @@ Feature: Upload users
     And I should see "Trent Reznor"
     And I should see "Course creator"
     And I should see "Aurora Jiang"
+    And I am on site homepage
     And I navigate to "Courses > Manage courses and categories" in site administration
     And I click on "permissions" action for "Film" in management category listing
     And I select "Assign roles" from the "jump" singleselect
