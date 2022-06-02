@@ -3731,20 +3731,20 @@
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
-  <MOODLE version="4.1" requires="3.6">
+  <MOODLE version="4.1" requires="3.9">
     <UNICODE level="required">
       <FEEDBACK>
         <ON_ERROR message="unicoderequired" />
       </FEEDBACK>
     </UNICODE>
     <DATABASE level="required">
-      <VENDOR name="mariadb" version="10.2.29" />
+      <VENDOR name="mariadb" version="10.4" />
       <VENDOR name="mysql" version="5.7" />
-      <VENDOR name="postgres" version="10" />
+      <VENDOR name="postgres" version="12" />
       <VENDOR name="mssql" version="14.0" />
-      <VENDOR name="oracle" version="11.2" />
+      <VENDOR name="oracle" version="19" />
     </DATABASE>
-    <PHP version="7.3.0" level="required">
+    <PHP version="7.4.0" level="required">
     </PHP>
     <PCREUNICODE level="optional">
       <FEEDBACK>
