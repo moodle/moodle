@@ -404,6 +404,7 @@ $string['messageundeliveredbynotificationsettings'] = 'The message could not be 
 $string['messagingdisable'] = 'Messaging is disabled on this site';
 $string['mimetexisnotexist'] = 'Your system is not configured to run mimeTeX. You need to obtain the C source from <a href="https://www.forkosh.com/mimetex.zip">https://www.forkosh.com/mimetex.zip</a>, compile it and put the executable into your moodle/filter/tex/ directory.';
 $string['mimetexnotexecutable'] = 'Custom mimetex is not executable!';
+$string['missingcategoryrole'] = 'Could not assign role to user: missing role for category.';
 $string['missingfield'] = 'Field "{$a}" is missing';
 $string['missingkeyinsql'] = 'ERROR: missing param "{$a}" in query';
 $string['missingparam'] = 'A required parameter ({$a}) was missing';
@@ -566,6 +567,7 @@ $string['unknowcontext'] = 'This is an unknown context ({$a}) in get_child_conte
 $string['unknowformat'] = 'Format not known ({$a})';
 $string['unknownbackupexporterror'] = 'Unknown error preparing information for import';
 $string['unknownblockregion'] = 'The block region \'{$a}\' is not recognised on this page.';
+$string['unknowncategory'] = 'Unknown category with category ID number "{$a}"';
 $string['unknowncontext'] = 'This is an unknown context.';
 $string['unknowncourse'] = 'Unknown course named "{$a}"';
 $string['unknowncourseidnumber'] = 'Unknown course ID "{$a}"';
