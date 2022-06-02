@@ -90,3 +90,14 @@ body.behat-site {
     background-color: #99c;
     font-weight: bold;
 }
+
+// PHP debug messages.
+
+body > .debuggingmessage {
+    margin-top: $navbar-height;
+}
+
+body > .debuggingmessage ~ .debuggingmessage {
+    margin-top: .5rem;
+}
+
