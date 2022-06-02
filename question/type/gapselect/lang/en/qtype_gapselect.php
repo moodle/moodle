@@ -24,6 +24,7 @@
 
 $string['addmorechoiceblanks'] = 'Blanks for {no} more choices';
 $string['answer'] = 'Answer';
+$string['blanknumber'] = 'Blank {$a}';
 $string['choices'] = 'Choices';
 $string['choicex'] = 'Choice [[{no}]]';
 $string['combinedcontrolnamegapselect'] = 'drop-down menu';
