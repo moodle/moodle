@@ -520,4 +520,92 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         $launchservice->user_launches_tool($learneruser, $mocklearnerlaunch);
         $this->assertEquals('embedded', $SESSION->forcepagelayout);
     }
+
+    /**
+     * Test launching the tool with different 'aud' values, confirming the service handles all variations appropriately.
+     *
+     * @param mixed $aud the aud value to test
+     * @param array $expected the array of expectations to check
+     * @dataProvider aud_data_provider
+     * @covers ::user_launches_tool
+     */
+    public function test_user_launches_tool_aud_variations($aud, array $expected) {
+        $this->resetAfterTest();
+        [$course, $modresource] = $this->create_test_environment();
+        $instructoruser = $this->getDataGenerator()->create_user();
+        $mockinstructoruser = $this->get_mock_launch_users_with_ids(['1'])[0];
+        $mockinstructorlaunch = $this->get_mock_launch($modresource, $mockinstructoruser, null, false, false, null, [
+            'id' => $modresource->uuid,
+        ], $aud);
+
+        $launchservice = $this->get_tool_launch_service();
+        if (isset($expected['exception'])) {
+            $this->expectException($expected['exception']);
+            $this->expectExceptionMessage($expected['exceptionmessage']);
+        }
+        [$userid, $resource] = $launchservice->user_launches_tool($instructoruser, $mockinstructorlaunch);
+
+        $this->assertNotEmpty($userid);
+        $this->assertNotEmpty($resource);
+    }
+
+    /**
+     * Data provider for testing variations of the 'aud' JWT property.
+     *
+     * @return array the test case data
+     */
+    public function aud_data_provider(): array {
+        return [
+            'valid, array having multiple entries with the first one being clientid' => [
+                'aud' => ['123', 'something else', 'blah'],
+                'expected' => [
+                    'valid' => true
+                ]
+            ],
+            'valid, array having a single entry being clientid' => [
+                'aud' => ['123'],
+                'expected' => [
+                    'valid' => true
+                ]
+            ],
+            'valid, string containing the single clientid' => [
+                'aud' => '123',
+                'expected' => [
+                    'valid' => true
+                ]
+            ],
+            'invalid, array having multiple values where the first item is not clientid' => [
+                'aud' => ['cat', 'dog', '123'],
+                'expected' => [
+                    'valid' => false,
+                    'exception' => \moodle_exception::class,
+                    'exceptionmessage' => get_string('ltiadvlauncherror:invalidregistration', 'enrol_lti')
+                ]
+            ],
+            'invalid, array containing a single item which is not clientid' => [
+                'aud' => ['cat'],
+                'expected' => [
+                    'valid' => false,
+                    'exception' => \moodle_exception::class,
+                    'exceptionmessage' => get_string('ltiadvlauncherror:invalidregistration', 'enrol_lti')
+                ]
+            ],
+            'invalid, string contains the item and it is not the clientid' => [
+                'aud' => 'cat',
+                'expected' => [
+                    'valid' => false,
+                    'exception' => \moodle_exception::class,
+                    'exceptionmessage' => get_string('ltiadvlauncherror:invalidregistration', 'enrol_lti')
+                ]
+            ],
+            'invalid, empty string' => [
+                'aud' => '',
+                'expected' => [
+                    'valid' => false,
+                    'exception' => \moodle_exception::class,
+                    'exceptionmessage' => get_string('ltiadvlauncherror:invalidregistration', 'enrol_lti')
+                ]
+            ],
+        ];
+    }
 }
