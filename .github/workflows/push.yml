@@ -55,7 +55,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
-            php: 7.3
+            php: 7.4
             extensions:
             db: mysqli
           - os: ubuntu-20.04
@@ -79,7 +79,7 @@ jobs:
         if: ${{ matrix.db == 'pgsql' }}
         uses: m4nu56/postgresql-action@v1
         with:
-          postgresql version: 10
+          postgresql version: 12
           postgresql db: test
           postgresql user: test
           postgresql password: test
