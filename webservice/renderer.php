@@ -658,16 +658,21 @@ EOF;
         //(opened if printableformat = true)
         foreach ($functions as $functionname => $description) {
 
+            $tags = '';
+            if (!empty($description->deprecated)) {
+                $tags .= ' ' . html_writer::span(get_string('deprecated', 'core_webservice'), 'badge badge-warning');
+            }
+
             if (empty($printableformat)) {
                 $documentationhtml .= print_collapsible_region_start('',
                                 'aera_' . $functionname,
                                 html_writer::start_tag('strong', array())
-                                . $functionname . html_writer::end_tag('strong'),
+                                . $functionname . html_writer::end_tag('strong') . $tags,
                                 false,
                                 !$printableformat,
                                 true);
             } else {
-                $documentationhtml .= html_writer::tag('strong', $functionname);
+                $documentationhtml .= html_writer::tag('strong', $functionname) . $tags;
                 $documentationhtml .= $br;
             }
 
