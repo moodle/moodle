@@ -121,6 +121,7 @@ class task_logs extends system_report {
     protected function add_filters(): void {
         $filters = [
             'task_log:name',
+            'task_log:type',
             'task_log:output',
             'task_log:result',
             'task_log:timestart',
