@@ -121,7 +121,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
     public function test_queue_adhoc_task_for_component(): void {
         $this->resetAfterTest();
 
-        $task = new \mod_forum\task\refresh_forum_post_counts();
+        $task = new \mod_forum\task\send_user_digests();
         $task->set_component('mod_test');
 
         \core\task\manager::queue_adhoc_task($task);
@@ -135,7 +135,7 @@ class core_adhoc_task_testcase extends advanced_testcase {
     public function test_queue_task_for_component_without_set_component(): void {
         $this->resetAfterTest();
 
-        $task = new \mod_forum\task\refresh_forum_post_counts();
+        $task = new \mod_forum\task\send_user_digests();
 
         \core\task\manager::queue_adhoc_task($task);
         $this->assertDebuggingNotCalled();

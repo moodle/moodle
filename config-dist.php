@@ -689,16 +689,6 @@ $CFG->admin = 'admin';
 //
 //      $CFG->uninstallclionly = true;
 //
-//
-// Forum summary report
-//
-// In order for the forum summary report to calculate word count and character count data, those details are now stored
-// for each post in the database when posts are created or updated. For posts that existed prior to a Moodle 3.8 upgrade,
-// these are calculated by the refresh_forum_post_counts ad-hoc task in chunks of 5000 posts per batch by default.
-// That default can be overridden by setting an integer value for $CFG->forumpostcountchunksize.
-//
-//      $CFG->forumpostcountchunksize = 5000;
-//
 // Course and category sorting
 //
 // If the number of courses in a category exceeds $CFG->maxcoursesincategory (10000 by default), it may lead to duplicate
