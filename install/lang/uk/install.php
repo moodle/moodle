@@ -36,7 +36,7 @@ $string['chooselanguagesub'] = 'Виберіть мову ТІЛЬКИ для п
 $string['clialreadyconfigured'] = 'Файл config.php вже створено, будь ласка, використовуйте admin/cli/install_database.php, якщо ви хочете встановити цей сайт.';
 $string['clialreadyinstalled'] = 'Файл config.php вже створено, будь ласка, використовуйте admin/cli/upgrade.php, якщо ви хочете оновити ваш сайт.';
 $string['cliinstallheader'] = 'Moodle {$a} командний рядок програми установки';
-$string['clitablesexist'] = 'Таблиці бази даних вже існують, CLI установка не може продовжуватися.';
+$string['clitablesexist'] = 'Вже наявні таблиці бази даних; Неможливо продовжити встановлення CLI.';
 $string['databasehost'] = 'Сервер бази даних';
 $string['databasename'] = 'Ім’я бази даних';
 $string['databasetypehead'] = 'Виберіть драйвер бази даних';
@@ -75,7 +75,8 @@ $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Ви бачите цю сторінку, тому що ви успішно встановили та запустили  пакет <strong>{$a->packname} {$a->packversion}</strong> на вашому комп’ютері. Вітаємо!';
 $string['welcomep30'] = 'Цей випуск <strong>{$a->installername}</strong> включає в себе програми для створення середовища, в якому <strong>Moodle</strong> працюватиме, а саме:';
 $string['welcomep40'] = 'Цей пакет також включає <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Використання всіх частин цього пакету регламентується їх ліцензіями. Повний пакет <strong>{$a->installername}</strong> є <a href="http://www.opensource.org/docs/definition_plain.html">відкритим програмним забезпеченням</a> і розповсюджується під ліценцією <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
+$string['welcomep50'] = 'Використання всіх програм у цьому пакеті регулюється відповідними ліцензіями. Повний
+<strong>{$a->installername}</strong> є <a href="http://www.opensource.org/docs/definition_plain.html">відкритим програмним забезпеченням</a> і розповсюджується під ліценцією <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'Наступні сторінки будуть проводити вас через процедуру встановлення та налаштування <strong>Moodle</strong> на вашому комп’ютері. Ви можете прийняти автоматичне налаштування, а потім змінити параметри під себе.';
 $string['welcomep70'] = 'Натисніть кнопку "Далі" для продовження встановлення <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Веб-адреса';
