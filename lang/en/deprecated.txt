@@ -82,3 +82,4 @@ close,core_contentbank
 notflagged,core_question
 cannotswitcheditmodeon,core_error
 multilangforceold,core_admin
+nopermissionmove,core_question
