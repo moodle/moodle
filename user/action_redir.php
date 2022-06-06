@@ -101,7 +101,7 @@ if ($formaction == 'bulkchange.php') {
 
                     // Retrieve all identity fields required for users.
                     $userfieldsapi = \core_user\fields::for_identity($context);
-                    $userfields = $userfieldsapi->get_sql('u', true, '', '', false);
+                    $userfields = $userfieldsapi->get_sql('u', true);
 
                     $identityfields = array_keys($userfields->mappings);
                     foreach ($identityfields as $field) {
@@ -141,7 +141,7 @@ if ($formaction == 'bulkchange.php') {
                         $groupconcatjoin = '';
                     }
 
-                    $sql = "SELECT u.firstname, u.lastname, {$userfields->selects}
+                    $sql = "SELECT u.firstname, u.lastname {$userfields->selects}
                               FROM {user} u
                                    {$userfields->joins}
                               JOIN ({$enrolledsql}) je ON je.id = u.id
