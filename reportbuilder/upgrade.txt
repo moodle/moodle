@@ -11,3 +11,6 @@ Information provided here is intended especially for developers.
 * The base aggregation `format_value` method has a `$columntype` argument in order to preserve type during aggregation. When
   defining column callbacks, strict typing will now be preserved in your callback methods when the column is being aggregated
 * The method `get_joins()` in the base entity class is now public, allowing for easier joins within reports
+* The following local helper methods have been deprecated, their implementation moved to exporters:
+  - `audience::get_all_audiences_menu_types` -> `custom_report_audience_cards_exporter`
+  - `report::get_available_columns` -> `custom_report_column_cards_exporter`

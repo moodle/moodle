@@ -208,8 +208,13 @@ class audience {
      * Get all the audiences types the current user can add to, organised by categories.
      *
      * @return array
+     *
+     * @deprecated since Moodle 4.1 - please do not use this function any more, {@see custom_report_audience_cards_exporter}
      */
     public static function get_all_audiences_menu_types(): array {
+        debugging('The function ' . __FUNCTION__ . '() is deprecated, please do not use it any more. ' .
+            'See \'custom_report_audience_cards_exporter\' class for replacement', DEBUG_DEVELOPER);
+
         $menucardsarray = [];
         $notavailablestr = get_string('notavailable', 'moodle');
 

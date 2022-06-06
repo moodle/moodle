@@ -97,6 +97,22 @@ Feature: Configure access to reports based on intended audience
     Then "Add audience 'All users'" "link" should exist
     # This audience type should be disabled because there are no cohorts available.
     And "Add audience 'Member of cohort'" "link" should not exist
+    And the "title" attribute of "//div[@data-region='sidebar-menu']/descendant::div[normalize-space(.)='Member of cohort']" "xpath_element" should contain "Not available"
+
+  Scenario: Configure report audience as user who cannot use specific audience
+    Given the following "users" exist:
+      | username  | firstname | lastname |
+      | manager1  | Manager   | 1        |
+    And the following "role assigns" exist:
+      | user     | role    | contextlevel   | reference |
+      | manager1 | manager | System         |           |
+    And the following "permission overrides" exist:
+      | capability                   | permission | role    | contextlevel | reference |
+      | moodle/reportbuilder:editall | Allow      | manager | System       |           |
+      | moodle/cohort:view           | Prohibit   | manager | System       |           |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "manager1"
+    When I click on the "Audience" dynamic tab
+    Then I should not see "Member of cohort" in the "[data-region='sidebar-menu']" "css_element"
 
   Scenario: Search for and add audience to report
     Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
