@@ -18,10 +18,10 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\external\filters;
 
-use context_system;
 use external_api;
 use external_function_parameters;
 use external_value;
+use core_reportbuilder\manager;
 use core_reportbuilder\local\helpers\user_filter_manager;
 
 defined('MOODLE_INTERNAL') || die();
@@ -62,8 +62,8 @@ class reset extends external_api {
             'reportid' => $reportid,
         ]);
 
-        $context = context_system::instance();
-        self::validate_context($context);
+        $report = manager::get_report_from_id($reportid);
+        self::validate_context($report->get_context());
 
         return user_filter_manager::reset_all($reportid);
     }

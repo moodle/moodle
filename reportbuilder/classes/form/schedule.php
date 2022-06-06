@@ -19,7 +19,6 @@ declare(strict_types=1);
 namespace core_reportbuilder\form;
 
 use context;
-use context_system;
 use core_user;
 use html_writer;
 use moodle_url;

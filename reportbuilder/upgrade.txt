@@ -14,3 +14,6 @@ Information provided here is intended especially for developers.
 * The following local helper methods have been deprecated, their implementation moved to exporters:
   - `audience::get_all_audiences_menu_types` -> `custom_report_audience_cards_exporter`
   - `report::get_available_columns` -> `custom_report_column_cards_exporter`
+* The following permission methods now accept an optional `$context` parameter (default system context):
+  - `[require_]can_view_reports_list`
+  - `[require_]can_create_report`

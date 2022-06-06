@@ -18,9 +18,11 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\external\filters;
 
+use core_reportbuilder_generator;
 use external_api;
 use externallib_advanced_testcase;
 use core_reportbuilder\local\helpers\user_filter_manager;
+use core_user\reportbuilder\datasource\users;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,18 +46,23 @@ class reset_test extends externallib_advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        user_filter_manager::set(5, [
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+
+        user_filter_manager::set($report->get('id'), [
             'entity:filter_name' => 'something',
         ]);
 
-        $this->assertCount(1, user_filter_manager::get(5));
+        // Sanity check that we get back the filter we just set.
+        $this->assertCount(1, user_filter_manager::get($report->get('id')));
 
-        $result = reset::execute(5);
+        $result = reset::execute($report->get('id'));
         $result = external_api::clean_returnvalue(reset::execute_returns(), $result);
 
         $this->assertTrue($result);
 
         // We should get an empty array back.
-        $this->assertEquals([], user_filter_manager::get(5));
+        $this->assertEquals([], user_filter_manager::get($report->get('id')));
     }
 }
