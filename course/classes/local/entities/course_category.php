@@ -141,9 +141,13 @@ class course_category extends base {
                  AND {$tablealiascontext}.contextlevel = " . CONTEXT_COURSECAT)
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealiascontext}.id AS contextid")
-            ->add_callback(static function(string $description, stdClass $category): string {
+            ->add_callback(static function(?string $description, stdClass $category): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
+
+                if ($description === null) {
+                    return '';
+                }
 
                 $description = file_rewrite_pluginfile_urls($description, 'pluginfile.php', $category->contextid, 'coursecat',
                     'description', null);
