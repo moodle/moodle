@@ -41,7 +41,7 @@ if ($userid) {
 }
 
 // Check permissions.
-require_login();
+require_login($course);
 
 if (!completion_can_view_data($user->id, $course)) {
     print_error('cannotviewreport');
@@ -65,10 +65,6 @@ if (!$info->is_tracked_user($user->id)) {
         print_error('usernotenroled', 'completion', $returnurl);
     }
 }
-
-// Display page.
-
-$PAGE->set_context(context_course::instance($course->id));
 
 // Print header.
 $page = get_string('completionprogressdetails', 'block_completionstatus');
@@ -256,8 +252,5 @@ if (empty($completions)) {
     echo html_writer::end_tag('tbody');
     echo html_writer::end_tag('table');
 }
-$courseurl = new moodle_url("/course/view.php", array('id' => $course->id));
-echo html_writer::start_tag('div', array('class' => 'buttons'));
-echo $OUTPUT->single_button($courseurl, get_string('returntocourse', 'block_completionstatus'), 'get');
-echo html_writer::end_tag('div');
+
 echo $OUTPUT->footer();
