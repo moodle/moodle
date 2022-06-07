@@ -203,6 +203,7 @@ class externallib_test extends mod_lti_testcase {
         $lti1->visible = true;
         $lti1->groupmode = 0;
         $lti1->groupingid = 0;
+        $lti1->section = 0;
         $lti1->introfiles = [];
 
         $lti2->coursemodule = $lti2->cmid;
@@ -211,6 +212,7 @@ class externallib_test extends mod_lti_testcase {
         $lti2->visible = true;
         $lti2->groupmode = 0;
         $lti2->groupingid = 0;
+        $lti2->section = 0;
         $lti2->introfiles = [];
 
         foreach ($expectedfields as $field) {
@@ -255,7 +257,7 @@ class externallib_test extends mod_lti_testcase {
         $additionalfields = array('timecreated', 'timemodified', 'typeid', 'toolurl', 'securetoolurl',
             'instructorchoicesendname', 'instructorchoicesendemailaddr', 'instructorchoiceallowroster',
             'instructorchoiceallowsetting', 'instructorcustomparameters', 'instructorchoiceacceptgrades', 'grade',
-            'resourcekey', 'password', 'debuglaunch', 'servicesalt', 'visible', 'groupmode', 'groupingid');
+            'resourcekey', 'password', 'debuglaunch', 'servicesalt', 'visible', 'groupmode', 'groupingid', 'section');
 
         foreach ($additionalfields as $field) {
             $expectedltis[0][$field] = $lti1->{$field};

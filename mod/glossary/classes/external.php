@@ -24,6 +24,8 @@
  * @since      Moodle 3.1
  */
 
+use core_course\external\helper_for_get_mods_by_courses;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
@@ -198,6 +200,7 @@ class mod_glossary_external extends external_api {
      * @since Moodle 3.1
      */
     public static function get_glossaries_by_courses($courseids = array()) {
+        global $CFG;
         $params = self::validate_parameters(self::get_glossaries_by_courses_parameters(), array('courseids' => $courseids));
 
         $warnings = array();
@@ -221,12 +224,7 @@ class mod_glossary_external extends external_api {
             $glossaries = get_all_instances_in_courses('glossary', $courses);
             foreach ($glossaries as $glossary) {
                 $context = context_module::instance($glossary->coursemodule);
-                $glossary->name = external_format_string($glossary->name, $context->id);
-                $options = array('noclean' => true);
-                list($glossary->intro, $glossary->introformat) =
-                    external_format_text($glossary->intro, $glossary->introformat, $context->id, 'mod_glossary', 'intro', null,
-                        $options);
-                $glossary->introfiles = external_util::get_area_files($context->id, 'mod_glossary', 'intro', false, false);
+                helper_for_get_mods_by_courses::format_name_and_intro($glossary, 'mod_glossary');
 
                 // Make sure we have a number of entries per page.
                 if (!$glossary->entbypage) {
@@ -257,14 +255,9 @@ class mod_glossary_external extends external_api {
     public static function get_glossaries_by_courses_returns() {
         return new external_single_structure(array(
             'glossaries' => new external_multiple_structure(
-                new external_single_structure(array(
-                    'id' => new external_value(PARAM_INT, 'Glossary id'),
-                    'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                    'course' => new external_value(PARAM_INT, 'Course id'),
-                    'name' => new external_value(PARAM_RAW, 'Glossary name'),
-                    'intro' => new external_value(PARAM_RAW, 'The Glossary intro'),
-                    'introformat' => new external_format_value('intro'),
-                    'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
+                new external_single_structure(array_merge(
+                    helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(),
+                    [
                     'allowduplicatedentries' => new external_value(PARAM_INT, 'If enabled, multiple entries can have the' .
                         ' same concept name'),
                     'displayformat' => new external_value(PARAM_TEXT, 'Display format type'),
@@ -299,14 +292,11 @@ class mod_glossary_external extends external_api {
                     'timecreated' => new external_value(PARAM_INT, 'Time created'),
                     'timemodified' => new external_value(PARAM_INT, 'Time modified'),
                     'completionentries' => new external_value(PARAM_INT, 'Number of entries to complete'),
-                    'section' => new external_value(PARAM_INT, 'Section'),
-                    'visible' => new external_value(PARAM_INT, 'Visible'),
-                    'groupmode' => new external_value(PARAM_INT, 'Group mode'),
-                    'groupingid' => new external_value(PARAM_INT, 'Grouping ID'),
                     'browsemodes' => new external_multiple_structure(
                         new external_value(PARAM_ALPHA, 'Modes of browsing allowed')
                     ),
                     'canaddentry' => new external_value(PARAM_INT, 'Whether the user can add a new entry', VALUE_OPTIONAL),
+                    ]
                 ), 'Glossaries')
             ),
             'warnings' => new external_warnings())

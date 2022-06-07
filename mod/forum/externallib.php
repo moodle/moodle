@@ -121,6 +121,9 @@ class mod_forum_external extends external_api {
      * @since Moodle 2.5
      */
     public static function get_forums_by_courses_returns() {
+        // This should be using helper_for_get_mods_by_courses::standard_coursemodule_elements_returns, but it is so horribly
+        // inconsistent with all similar web serviecs in other modules that we just can't.
+        // Also, the return type declaration is wrong, but I am not changing it now because I don't want ot break things.
         return new external_multiple_structure(
             new external_single_structure(
                 array(

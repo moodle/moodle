@@ -24,6 +24,8 @@
  * @since      Moodle 3.0
  */
 
+use core_course\external\helper_for_get_mods_by_courses;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
@@ -153,15 +155,7 @@ class mod_url_external extends external_api {
             // We can avoid then additional validate_context calls.
             $urls = get_all_instances_in_courses("url", $courses);
             foreach ($urls as $url) {
-                $context = context_module::instance($url->coursemodule);
-                // Entry to return.
-                $url->name = external_format_string($url->name, $context->id);
-
-                $options = array('noclean' => true);
-                list($url->intro, $url->introformat) =
-                    external_format_text($url->intro, $url->introformat, $context->id, 'mod_url', 'intro', null, $options);
-                $url->introfiles = external_util::get_area_files($context->id, 'mod_url', 'intro', false, false);
-
+                helper_for_get_mods_by_courses::format_name_and_intro($url, 'mod_url');
                 $returnedurls[] = $url;
             }
         }
@@ -183,26 +177,16 @@ class mod_url_external extends external_api {
         return new external_single_structure(
             array(
                 'urls' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Module id'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_RAW, 'URL name'),
-                            'intro' => new external_value(PARAM_RAW, 'Summary'),
-                            'introformat' => new external_format_value('intro', 'Summary format'),
-                            'introfiles' => new external_files('Files in the introduction text'),
+                    new external_single_structure(array_merge(
+                        helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(),
+                        [
                             'externalurl' => new external_value(PARAM_RAW_TRIMMED, 'External URL'),
                             'display' => new external_value(PARAM_INT, 'How to display the url'),
                             'displayoptions' => new external_value(PARAM_RAW, 'Display options (width, height)'),
                             'parameters' => new external_value(PARAM_RAW, 'Parameters to append to the URL'),
                             'timemodified' => new external_value(PARAM_INT, 'Last time the url was modified'),
-                            'section' => new external_value(PARAM_INT, 'Course section id'),
-                            'visible' => new external_value(PARAM_INT, 'Module visibility'),
-                            'groupmode' => new external_value(PARAM_INT, 'Group mode'),
-                            'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
-                        )
-                    )
+                        ]
+                    ))
                 ),
                 'warnings' => new external_warnings(),
             )
