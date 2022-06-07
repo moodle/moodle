@@ -418,6 +418,8 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
     if ($DB->sql_regex_supported()) {
         $REGEXP    = $DB->sql_regex(true);
         $NOTREGEXP = $DB->sql_regex(false);
+        $regexwordbegin = $DB->sql_regex_get_word_beginning_boundary_marker();
+        $regexwordend = $DB->sql_regex_get_word_end_boundary_marker();
     }
 
     $params = array();
@@ -456,8 +458,8 @@ function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $
                 break;
             case TOKEN_EXACT:
                 $SQLString .= "(($datafield $REGEXP :$name1) OR ($metafield $REGEXP :$name2))";
-                $params[$name1] =  "[[:<:]]".$value."[[:>:]]";
-                $params[$name2] =  "[[:<:]]".$value."[[:>:]]";
+                $params[$name1] =  $regexwordbegin.$value.$regexwordend;
+                $params[$name2] =  $regexwordbegin.$value.$regexwordend;
                 break;
             case TOKEN_META:
                 if ($metafield != '') {
