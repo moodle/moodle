@@ -177,3 +177,18 @@ Feature: Manage custom reports
     And I navigate to "Reports > Report builder > Custom reports" in site administration
     And I press "Edit report content" action in the "My fish & chips report" report row
     Then I should see "My fish & chips report" in the "#region-main .navbar" "css_element"
+
+  Scenario: Site report limit is observed when creating new reports
+    Given the following config values are set as admin:
+      | customreportslimit     | 0 |
+    And the following "core_reportbuilder > Reports" exist:
+      | name           | source                                       |
+      | Report users   | core_user\reportbuilder\datasource\users     |
+      | Report courses | core_course\reportbuilder\datasource\courses |
+    When I log in as "admin"
+    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    Then "New report" "button" should exist
+    And the following config values are set as admin:
+      | customreportslimit     | 2 |
+    And I reload the page
+    And "New report" "button" should not exist

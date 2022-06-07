@@ -329,4 +329,42 @@ class permission_test extends advanced_testcase {
         $this->expectExceptionMessage('You cannot create a new report');
         permission::require_can_create_report();
     }
+
+    /**
+     * Data provider for {@see test_can_create_report_limit_reached}
+     *
+     * @return array
+     */
+    public function can_create_report_limit_reached_provider(): array {
+        return [
+            [0, 1, true],
+            [1, 1, false],
+            [2, 1, true],
+            [1, 2, false],
+        ];
+    }
+
+    /**
+     * Test whether user can create report when limit report are reache
+     * @param int $customreportslimit
+     * @param int $existingreports
+     * @param bool $expected
+     * @dataProvider can_create_report_limit_reached_provider
+     */
+    public function test_can_create_report_limit_reached(int $customreportslimit, int $existingreports, bool $expected): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        for ($i = 1; $i <= $existingreports; $i++) {
+            $generator->create_report(['name' => 'Report limited '.$i, 'source' => users::class]);
+        }
+
+        // Set current custom report limit, and check whether user can create reports.
+        $CFG->customreportslimit = $customreportslimit;
+        $this->assertEquals($expected, permission::can_create_report());
+    }
 }

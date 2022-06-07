@@ -162,7 +162,7 @@ class permission {
         return !empty($CFG->enablecustomreports) && has_any_capability([
             'moodle/reportbuilder:edit',
             'moodle/reportbuilder:editall',
-        ], $context, $userid);
+        ], $context, $userid) && !manager::report_limit_reached();
     }
 
     /**
