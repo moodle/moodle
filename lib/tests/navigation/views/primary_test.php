@@ -62,8 +62,8 @@ class primary_test extends \advanced_testcase {
     public function test_setting_initialise_provider() {
         return [
             'Testing as a guest user' => ['guest', ['home']],
-            'Testing as an admin' => ['admin', ['home', 'myhome', 'courses', 'siteadminnode']],
-            'Testing as a regular user' => ['user', ['home', 'myhome', 'courses']]
+            'Testing as an admin' => ['admin', ['home', 'myhome', 'mycourses', 'siteadminnode']],
+            'Testing as a regular user' => ['user', ['home', 'myhome', 'mycourses']]
         ];
     }
 
