@@ -45,6 +45,9 @@ var $database = '';
 			$s = "$dbms error: [$errno: $errmsg] in $fn($p1, '$user', '****', $p2)";
 			break;
 		default:
+			//Prevent PHP warning if $p1 or $p2 are arrays.
+			$p1 = ( is_array($p1) ) ? 'Array' : $p1;
+			$p2 = ( is_array($p2) ) ? 'Array' : $p2;
 			$s = "$dbms error: [$errno: $errmsg] in $fn($p1, $p2)";
 			break;
 		}

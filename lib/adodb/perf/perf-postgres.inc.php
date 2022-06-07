@@ -102,7 +102,7 @@ class perf_postgres extends adodb_perf{
 	var $optimizeTableHigh = 'VACUUM ANALYZE %s';
 
 /**
- * @see adodb_perf#optimizeTable
+ * @see adodb_perf::optimizeTable()
  */
 
 	function optimizeTable($table, $mode = ADODB_OPT_LOW)
@@ -131,7 +131,7 @@ class perf_postgres extends adodb_perf{
 
 		if ($partial) {
 			$sqlq = $this->conn->qstr($sql.'%');
-			$arr = $this->conn->GetArray("select distinct distinct sql1 from adodb_logsql where sql1 like $sqlq");
+			$arr = $this->conn->getArray("select distinct sql1 from adodb_logsql where sql1 like $sqlq");
 			if ($arr) {
 				foreach($arr as $row) {
 					$sql = reset($row);

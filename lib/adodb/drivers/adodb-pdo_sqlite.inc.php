@@ -34,7 +34,7 @@ class ADODB_pdo_sqlite extends ADODB_pdo {
 	var $_genSeq2SQL     = 'INSERT INTO %s VALUES(%s)';
 	var $_dropSeqSQL     = 'DROP TABLE %s';
 	var $concat_operator = '||';
-    var $pdoDriver       = false;
+	var $pdoDriver       = false;
 	var $random='abs(random())';
 
 	function _init($parentDriver)
@@ -156,40 +156,48 @@ class ADODB_pdo_sqlite extends ADODB_pdo {
     // mark newnham
 	function MetaColumns($tab,$normalize=true)
 	{
-	  global $ADODB_FETCH_MODE;
+		global $ADODB_FETCH_MODE;
 
-	  $parent = $this->pdoDriver;
-	  $false = false;
-	  $save = $ADODB_FETCH_MODE;
-	  $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
-	  if ($parent->fetchMode !== false) $savem = $parent->SetFetchMode(false);
-	  $rs = $parent->Execute("PRAGMA table_info('$tab')");
-	  if (isset($savem)) $parent->SetFetchMode($savem);
-	  if (!$rs) {
-	    $ADODB_FETCH_MODE = $save;
-	    return $false;
-	  }
-	  $arr = array();
-	  while ($r = $rs->FetchRow()) {
-	    $type = explode('(',$r['type']);
-	    $size = '';
-	    if (sizeof($type)==2)
-	    $size = trim($type[1],')');
-	    $fn = strtoupper($r['name']);
-	    $fld = new ADOFieldObject;
-	    $fld->name = $r['name'];
-	    $fld->type = $type[0];
-	    $fld->max_length = $size;
-	    $fld->not_null = $r['notnull'];
-	    $fld->primary_key = $r['pk'];
-	    $fld->default_value = $r['dflt_value'];
-	    $fld->scale = 0;
-	    if ($save == ADODB_FETCH_NUM) $arr[] = $fld;
-	    else $arr[strtoupper($fld->name)] = $fld;
-	  }
-	  $rs->Close();
-	  $ADODB_FETCH_MODE = $save;
-	  return $arr;
+		$parent = $this->pdoDriver;
+		$false = false;
+		$save = $ADODB_FETCH_MODE;
+		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
+		if ($parent->fetchMode !== false) {
+			$savem = $parent->SetFetchMode(false);
+		}
+		$rs = $parent->Execute("PRAGMA table_info('$tab')");
+		if (isset($savem)) {
+			$parent->SetFetchMode($savem);
+		}
+		if (!$rs) {
+			$ADODB_FETCH_MODE = $save;
+			return $false;
+		}
+		$arr = array();
+		while ($r = $rs->FetchRow()) {
+			$type = explode('(', $r['type']);
+			$size = '';
+			if (sizeof($type) == 2) {
+				$size = trim($type[1], ')');
+			}
+			$fn = strtoupper($r['name']);
+			$fld = new ADOFieldObject;
+			$fld->name = $r['name'];
+			$fld->type = $type[0];
+			$fld->max_length = $size;
+			$fld->not_null = $r['notnull'];
+			$fld->primary_key = $r['pk'];
+			$fld->default_value = $r['dflt_value'];
+			$fld->scale = 0;
+			if ($save == ADODB_FETCH_NUM) {
+				$arr[] = $fld;
+			} else {
+				$arr[strtoupper($fld->name)] = $fld;
+			}
+		}
+		$rs->Close();
+		$ADODB_FETCH_MODE = $save;
+		return $arr;
 	}
 
 	function MetaTables($ttype=false,$showSchema=false,$mask=false)
@@ -208,5 +216,18 @@ class ADODB_pdo_sqlite extends ADODB_pdo {
 			$this->metaTablesSQL = $save;
 		}
 		return $ret;
-   }
+	}
+
+	/**
+	 * Returns a driver-specific format for a bind parameter
+	 *
+	 * @param string $name
+	 * @param string $type (ignored in driver)
+	 *
+	 * @return string
+	 */
+	public function param($name,$type='C')
+	{
+		return sprintf(':%s', $name);
+	}
 }
