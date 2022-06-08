@@ -27,7 +27,8 @@
         "edit": 1,
         "adminedit": true,
         "checked": "",
-        "string": "Edit on"
+        "string": "Edit on",
+        "legacyseturl": "/editmode.php"
     }
 }}
 <div class="divider border-left h-75 align-self-center ml-1 mr-3"></div>
@@ -40,10 +41,7 @@
             <input type="checkbox"{{!
                 }} name="setmode"{{!
                 }}{{#checked}}{{!
-                    }} aria-checked="true" checked{{!
-                }}{{/checked}}{{!
-                }}{{^checked}}{{!
-                    }} aria-checked="false"{{!
+                    }} checked{{!
                 }}{{/checked}}{{!
                 }} class="custom-control-input"{{!
                 }} id="{{uniqid}}-editingswitch"{{!
