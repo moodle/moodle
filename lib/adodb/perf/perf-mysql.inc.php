@@ -125,7 +125,7 @@ class perf_mysql extends adodb_perf{
 
 	/**
 	 * Returns a list of table statuses.
-	 * 
+	 *
 	 * @param  string  $orderby  Unused (compatibility with parent method)
 	 * @return string A formatted set of recordsets
 	 */
@@ -299,7 +299,7 @@ class perf_mysql extends adodb_perf{
     var $optimizeTableHigh = 'OPTIMIZE TABLE %s';
 
     /**
-     * @see adodb_perf#optimizeTable
+     * @see adodb_perf::optimizeTable()
      */
      function optimizeTable( $table, $mode = ADODB_OPT_LOW)
      {

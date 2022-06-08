@@ -4,7 +4,7 @@
     <location>adodb</location>
     <name>AdoDB</name>
     <license>BSD/LGPL</license>
-    <version>5.21.4</version>
+    <version>5.22.2</version>
     <licenseversion>3-Clause/2.1+</licenseversion>
   </library>
   <library>

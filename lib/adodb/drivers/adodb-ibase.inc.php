@@ -860,7 +860,14 @@ class ADORecordset_ibase extends ADORecordSet
 			$t = $fieldobj->type;
 			$len = $fieldobj->max_length;
 		}
-		switch (strtoupper($t)) {
+		
+		$t = strtoupper($t);
+		
+		if (array_key_exists($t,$this->connection->customActualTypes))
+			return  $this->connection->customActualTypes[$t];
+
+		switch ($t) {
+			
 		case 'CHAR':
 			return 'C';
 

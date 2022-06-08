@@ -1,4 +1,4 @@
-Description of ADOdb v5.21.4 library import into Moodle 4.0 and up
+Description of ADOdb library import into Moodle
 
 Source: https://github.com/ADOdb/ADOdb
 
@@ -16,13 +16,10 @@ Removed:
  * pear/
  * replicate/ (if present)
  * scripts/ (if present)
- * server.php
+ * server.php (if present)
  * session/
  * tests/ (if present)
 
 Added:
  * index.html - prevent directory browsing on misconfigured servers
  * readme_moodle.txt - this file ;-)
-
-Our changes (to be checked on next update if they are already applied upstream):
- * https://github.com/ADOdb/ADOdb/issues/791
