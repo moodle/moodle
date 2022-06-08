@@ -22,8 +22,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core;
+
+use advanced_testcase;
+use coding_exception;
+use dml_missing_record_exception;
+use lang_string;
+use xmldb_table;
+
 defined('MOODLE_INTERNAL') || die();
-global $CFG;
 
 /**
  * Persistent testcase.
@@ -31,8 +38,9 @@ global $CFG;
  * @package    core
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \core\persistent
  */
-class core_persistent_testcase extends advanced_testcase {
+class persistent_test extends advanced_testcase {
 
     public function setUp(): void {
         $this->make_persistent_table();
@@ -163,6 +171,29 @@ class core_persistent_testcase extends advanced_testcase {
             ),
         );
         $this->assertEquals($expected, core_testable_persistent::properties_definition());
+    }
+
+    /**
+     * Test creating persistent instance by specifying record ID in constructor
+     */
+    public function test_constructor() : void {
+        $persistent = (new core_testable_persistent(0, (object) [
+            'idnumber' => '123',
+            'sortorder' => 1,
+        ]))->create();
+
+        // Now create a new instance, passing the original instance ID in the constructor.
+        $another = new core_testable_persistent($persistent->get('id'));
+        $this->assertEquals($another->to_record(), $persistent->to_record());
+    }
+
+    /**
+     * Test creating persistent instance by specifying non-existing record ID in constructor throws appropriate exception
+     */
+    public function test_constructor_invalid(): void {
+        $this->expectException(dml_missing_record_exception::class);
+        $this->expectExceptionMessage('Can\'t find data record in database table phpunit_persistent.');
+        new core_testable_persistent(42);
     }
 
     public function test_to_record() {
@@ -547,6 +578,39 @@ class core_persistent_testcase extends advanced_testcase {
         $this->assertEquals($json, $record->path);
     }
 
+    /**
+     * Test get_record method for creating persistent instance
+     */
+    public function test_get_record(): void {
+        $persistent = (new core_testable_persistent(0, (object) [
+            'idnumber' => '123',
+            'sortorder' => 1,
+        ]))->create();
+
+        $another = core_testable_persistent::get_record(['id' => $persistent->get('id')]);
+
+        // Assert we got back a persistent instance, and it matches original.
+        $this->assertInstanceOf(core_testable_persistent::class, $another);
+        $this->assertEquals($another->to_record(), $persistent->to_record());
+    }
+
+    /**
+     * Test get_record method for creating persistent instance, ignoring a non-existing record
+     */
+    public function test_get_record_ignore_missing(): void {
+        $persistent = core_testable_persistent::get_record(['id' => 42]);
+        $this->assertFalse($persistent);
+    }
+
+    /**
+     * Test get_record method for creating persistent instance, throws appropriate exception for non-existing record
+     */
+    public function test_get_record_must_exist(): void {
+        $this->expectException(dml_missing_record_exception::class);
+        $this->expectExceptionMessage('Can\'t find data record in database table phpunit_persistent.');
+        core_testable_persistent::get_record(['id' => 42], MUST_EXIST);
+    }
+
     public function test_record_exists() {
         global $DB;
         $this->assertFalse($DB->record_exists(core_testable_persistent::TABLE, array('idnumber' => 'abc')));
@@ -625,7 +689,7 @@ class core_persistent_testcase extends advanced_testcase {
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_testable_persistent extends \core\persistent {
+class core_testable_persistent extends persistent {
 
     const TABLE = 'phpunit_persistent';
 
@@ -726,7 +790,7 @@ class core_testable_persistent extends \core\persistent {
  * @copyright  2021 David Matamoros <davidmc@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_testable_second_persistent extends \core\persistent {
+class core_testable_second_persistent extends persistent {
 
     /** Table name for the persistent. */
     const TABLE = 'phpunit_second_persistent';
