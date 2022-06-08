@@ -14,34 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_glossary\local\views;
-
-use core\navigation\views\secondary as core_secondary;
+namespace core_block\navigation\views;
 
 /**
- * Class secondary_navigation_view.
+ * Class secondary
  *
- * Custom implementation for a plugin.
- *
- * @package     mod_glossary
- * @category    navigation
- * @copyright   2021 onwards Peter Dias
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core_block
+ * @category navigation
  */
-class secondary extends core_secondary {
+class secondary extends \core\navigation\views\secondary {
     /**
-     * Define a custom secondary nav order/view
-     *
-     * @return array
+     * Blocks don't require secondary navs as they can be accessed from multiple places and in different contexts.
      */
-    protected function get_default_module_mapping(): array {
-        return [
-            self::TYPE_SETTING => [
-                'modedit' => 1,
-            ],
-            self::TYPE_CUSTOM => [
-                'pendingapproval' => 2,
-            ],
-        ];
+    public function initialise(): void {
+
     }
 }

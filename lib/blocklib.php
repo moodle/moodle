@@ -1684,12 +1684,20 @@ class block_manager {
      * Convenience function to check whether a block is implementing a secondary nav class and return it
      * initialised to the calling function
      *
+     * @todo MDL-74939 Remove support for old 'local\views\secondary' class location
      * @param block_base $block
      * @return \core\navigation\views\secondary
      */
     protected function get_secondarynav(block_base $block): \core\navigation\views\secondary {
-        $class = "core_block\\local\\views\\secondary";
-        if (class_exists("block_{$block->name()}\\local\\views\\secondary")) {
+        $class = "core_block\\navigation\\views\\secondary";
+        if (class_exists("block_{$block->name()}\\navigation\\views\\secondary")) {
+            $class = "block_{$block->name()}\\navigation\\views\\secondary";
+        } else if (class_exists("block_{$block->name()}\\local\\views\\secondary")) {
+            // For backwards compatibility, support the old location for this class (it was in a
+            // 'local' namespace which shouldn't be used for core APIs).
+            debugging("The class block_{$block->name()}\\local\\views\\secondary uses a deprecated " .
+                    "namespace. Please move it to block_{$block->name()}\\navigation\\views\\secondary.",
+                    DEBUG_DEVELOPER);
             $class = "block_{$block->name()}\\local\\views\\secondary";
         }
         $secondarynav = new $class($this->page);
