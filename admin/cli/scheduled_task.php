@@ -69,11 +69,11 @@ if ($options['help'] or (!$options['list'] and !$options['execute'])) {
     die;
 }
 
-if ($options['showdebugging']) {
+if ($options['showdebugging'] || !empty($CFG->showcrondebugging)) {
     set_debugging(DEBUG_DEVELOPER, true);
 }
 
-if ($options['showsql']) {
+if ($options['showsql'] || !empty($CFG->showcronsql)) {
     $DB->set_debug(true);
 }
 if ($options['list']) {
