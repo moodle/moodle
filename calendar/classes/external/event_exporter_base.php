@@ -262,6 +262,9 @@ class event_exporter_base extends exporter {
             'formattedtime' => [
                 'type' => PARAM_RAW,
             ],
+            'formattedlocation' => [
+                'type' => PARAM_RAW,
+            ],
             'isactionevent' => [
                 'type' => PARAM_BOOL
             ],
@@ -371,6 +374,7 @@ class event_exporter_base extends exporter {
         $values['viewurl'] = $viewurl->out(false);
         $values['formattedtime'] = calendar_format_event_time($legacyevent, time(), null, false,
                 $timesort);
+        $values['formattedlocation'] = calendar_format_event_location($legacyevent);
 
         if ($group = $event->get_group()) {
             $values['groupname'] = format_string($group->get('name'), true,
