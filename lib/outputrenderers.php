@@ -1147,21 +1147,19 @@ class core_renderer extends renderer_base {
 
         if (isset($SESSION->justloggedin)) {
             unset($SESSION->justloggedin);
-            if (!empty($CFG->displayloginfailures)) {
-                if (!isguestuser()) {
-                    // Include this file only when required.
-                    require_once($CFG->dirroot . '/user/lib.php');
-                    if ($count = user_count_login_failures($USER)) {
-                        $loggedinas .= '<div class="loginfailures">';
-                        $a = new stdClass();
-                        $a->attempts = $count;
-                        $loggedinas .= get_string('failedloginattempts', '', $a);
-                        if (file_exists("$CFG->dirroot/report/log/index.php") and has_capability('report/log:view', context_system::instance())) {
-                            $loggedinas .= ' ('.html_writer::link(new moodle_url('/report/log/index.php', array('chooselog' => 1,
-                                    'id' => 0 , 'modid' => 'site_errors')), get_string('logs')).')';
-                        }
-                        $loggedinas .= '</div>';
+            if (!isguestuser()) {
+                // Include this file only when required.
+                require_once($CFG->dirroot . '/user/lib.php');
+                if (($count = user_count_login_failures($USER)) && !empty($CFG->displayloginfailures)) {
+                    $loggedinas .= '<div class="loginfailures">';
+                    $a = new stdClass();
+                    $a->attempts = $count;
+                    $loggedinas .= get_string('failedloginattempts', '', $a);
+                    if (file_exists("$CFG->dirroot/report/log/index.php") and has_capability('report/log:view', context_system::instance())) {
+                        $loggedinas .= ' ('.html_writer::link(new moodle_url('/report/log/index.php', array('chooselog' => 1,
+                                'id' => 0 , 'modid' => 'site_errors')), get_string('logs')).')';
                     }
+                    $loggedinas .= '</div>';
                 }
             }
         }
