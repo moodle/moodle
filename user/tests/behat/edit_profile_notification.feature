@@ -25,7 +25,7 @@ Feature: Notification shown when user edit profile or preferences
     Then I set the field "Surname" to "Lil"
     And I click on "Update profile" "button"
     And I should see "Changes saved"
-    And I click on ".close" "css_element" in the "div.alert-block" "css_element"
+    And I press "Dismiss this notification"
     And I should not see "Changes saved"
     And I follow "Preferences" in the user menu
     And I follow "Preferred language"
