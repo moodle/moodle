@@ -1848,7 +1848,7 @@ class quiz_attempt {
      */
     public function render_question_for_commenting($slot) {
         $options = $this->get_display_options(true);
-        $options->hide_all_feedback();
+        $options->generalfeedback = question_display_options::HIDDEN;
         $options->manualcomment = question_display_options::EDITABLE;
         return $this->quba->render_question($slot, $options,
                 $this->get_question_number($slot));
