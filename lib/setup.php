@@ -828,6 +828,35 @@ if (empty($CFG->sessiontimeoutwarning)) {
 }
 \core\session\manager::start();
 
+if (!empty($CFG->proxylogunsafe) || !empty($CFG->proxyfixunsafe)) {
+    if (!empty($CFG->proxyfixunsafe)) {
+        require_once($CFG->libdir.'/filelib.php');
+
+        $proxyurl = get_moodle_proxy_url();
+        // This fixes stream handlers inside php.
+        $defaults = stream_context_set_default([
+            'http' => [
+                'user_agent' => \core_useragent::get_moodlebot_useragent(),
+                'proxy' => $proxyurl
+            ],
+        ]);
+
+        // Attempt to tell other web clients to use the proxy too. This only
+        // works for clients written in php in the same process, it will not
+        // work for with requests done in another process from an exec call.
+        putenv('http_proxy=' . $proxyurl);
+        putenv('https_proxy=' . $proxyurl);
+        putenv('HTTPS_PROXY=' . $proxyurl);
+    } else {
+        $defaults = stream_context_get_default();
+    }
+
+    if (!empty($CFG->proxylogunsafe)) {
+        stream_context_set_params($defaults, ['notification' => 'proxy_log_callback']);
+    }
+
+}
+
 // Set default content type and encoding, developers are still required to use
 // echo $OUTPUT->header() everywhere, anything that gets set later should override these headers.
 // This is intended to mitigate some security problems.

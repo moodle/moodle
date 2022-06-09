@@ -3053,6 +3053,38 @@ function file_is_svg_image_from_mimetype(string $mimetype): bool {
 }
 
 /**
+ * Returns the moodle proxy configuration as a formatted url
+ *
+ * @return string the string to use for proxy settings.
+ */
+function get_moodle_proxy_url() {
+    global $CFG;
+    $proxy = '';
+    if (empty($CFG->proxytype)) {
+        return $proxy;
+    }
+    if (empty($CFG->proxyhost)) {
+        return $proxy;
+    }
+    if ($CFG->proxytype === 'SOCKS5') {
+        // If it is a SOCKS proxy, append the protocol info.
+        $protocol = 'socks5://';
+    } else {
+        $protocol = '';
+    }
+    $proxy = $CFG->proxyhost;
+    if (!empty($CFG->proxyport)) {
+        $proxy .= ':'. $CFG->proxyport;
+    }
+    if (!empty($CFG->proxyuser) && !empty($CFG->proxypassword)) {
+        $proxy = $protocol . $CFG->proxyuser . ':' . $CFG->proxypassword . '@' . $proxy;
+    }
+    return $proxy;
+}
+
+
+
+/**
  * RESTful cURL class
  *
  * This is a wrapper class for curl, it is quite easy to use:

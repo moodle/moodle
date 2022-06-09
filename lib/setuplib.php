@@ -2172,3 +2172,21 @@ class bootstrap_renderer {
         return $html;
     }
 }
+
+/**
+ * Add http stream instrumentation
+ *
+ * This detects which any reads or writes to a php stream which uses
+ * the 'http' handler. Ideally 100% of traffic uses the Moodle curl
+ * libraries which do not use php streams.
+ *
+ * @param array $code stream callback code
+ */
+function proxy_log_callback($code) {
+    if ($code == STREAM_NOTIFY_CONNECT) {
+        $trace = debug_backtrace();
+        $function = $trace[count($trace) - 1];
+        $error = "Unsafe internet IO detected: {$function['function']} with arguments " . join(', ', $function['args']) . "\n";
+        error_log($error . format_backtrace($trace, true)); // phpcs:ignore
+    }
+}
