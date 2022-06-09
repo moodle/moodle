@@ -79,7 +79,7 @@ if ($mform->is_cancelled()) {
             $line = array();
             $line[] = $item['component'];
             $line[] = $item['item'];
-            $line[] = ($item['error']===false) ? get_string('ok') : '<div class="notifyproblem">'.$item['error'].'</div>';
+            $line[] = ($item['error'] === false) ? get_string('statusok') : '<div class="notifyproblem">'.$item['error'].'</div>';
             $data[] = $line;
         }
 

@@ -202,7 +202,7 @@ abstract class backup_cron_automated_helper {
         $message .= get_string('summary') . "\n";
         $message .= "==================================================\n";
         $message .= '  ' . get_string('courses') . ': ' . array_sum($count) . "\n";
-        $message .= '  ' . get_string('ok') . ': ' . $count[self::BACKUP_STATUS_OK] . "\n";
+        $message .= '  ' . get_string('statusok') . ': ' . $count[self::BACKUP_STATUS_OK] . "\n";
         $message .= '  ' . get_string('skipped') . ': ' . $count[self::BACKUP_STATUS_SKIPPED] . "\n";
         $message .= '  ' . get_string('error') . ': ' . $count[self::BACKUP_STATUS_ERROR] . "\n";
         $message .= '  ' . get_string('unfinished') . ': ' . $count[self::BACKUP_STATUS_UNFINISHED] . "\n";
