@@ -204,7 +204,7 @@ define(
                 submitAndCourse.onclick = (e) => {
                     e.preventDefault();
                     submitAndCourse.disabled = true;
-                    const fd = new FormData(document.querySelector('form.mform'));
+                    const fd = new FormData(document.querySelector('#region-main-box form'));
                     const postVariant = (promise, variant) => {
                         Object.entries(variant).forEach((entry) => fd.set(entry[0], entry[1]));
                         const body = new URLSearchParams(fd);
