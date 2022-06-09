@@ -239,6 +239,9 @@ abstract class datasource extends base {
         foreach ($conditionidentifiers as $uniqueidentifier) {
             report::add_report_condition($reportid, $uniqueidentifier);
         }
+
+        // Set the default condition values if they have been set in the datasource.
+        $this->set_condition_values($this->get_default_condition_values());
     }
 
     /**
@@ -247,6 +250,18 @@ abstract class datasource extends base {
      * @return string[]
      */
     abstract public function get_default_conditions(): array;
+
+    /**
+     * Return the default condition values that will be added to the report once is created
+     *
+     * For any of the default conditions returned by the method {@see get_default_conditions} is
+     * possible to set the initial values.
+     *
+     * @return array
+     */
+    public function get_default_condition_values(): array {
+        return [];
+    }
 
     /**
      * Return all configured report conditions

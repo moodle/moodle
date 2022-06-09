@@ -17,3 +17,5 @@ Information provided here is intended especially for developers.
 * The following permission methods now accept an optional `$context` parameter (default system context):
   - `[require_]can_view_reports_list`
   - `[require_]can_create_report`
+* New method `get_default_condition_values()` in base datasource class, to be overridden by sources that wish to
+  define default values for conditions upon report creation.
