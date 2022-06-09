@@ -4584,7 +4584,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             // Retrieve file from storage, and serve.
             $filename = array_pop($args);
             $filepath = $args ? '/' . implode('/', $args) .'/' : '/';
-            $file = $fs->get_file($context->id, $component, $filearea, $eventid, $filepath, $filename)''
+            $file = $fs->get_file($context->id, $component, $filearea, $eventid, $filepath, $filename);
             if (!$file || $file->is_directory()) {
                 send_file_not_found();
             }
