@@ -4556,7 +4556,6 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             send_stored_file($file, 0, 0, true, $sendfileoptions);
 
         } else if ($filearea === 'event_description' and $context->contextlevel == CONTEXT_COURSECAT) {
-
             if ($CFG->forcelogin) {
                 require_login();
             }
@@ -4579,16 +4578,14 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             // Retrieve file from storage, and serve.
             $filename = array_pop($args);
             $filepath = $args ? '/' . implode('/', $args) .'/' : '/';
-            if (!$file = $fs->get_file($context->id, $component, $filearea, $eventid, $filepath, $filename) or
-                    $file->is_directory()) {
-
+            $file = $fs->get_file($context->id, $component, $filearea, $eventid, $filepath, $filename)''
+            if (!$file || $file->is_directory()) {
                 send_file_not_found();
             }
 
             // Unlock session during file serving.
             \core\session\manager::write_close();
             send_stored_file($file, HOURSECS, 0, $forcedownload, $sendfileoptions);
-
         } else if ($filearea === 'event_description' and $context->contextlevel == CONTEXT_COURSE) {
 
             // Respect forcelogin and require login unless this is the site.... it probably
