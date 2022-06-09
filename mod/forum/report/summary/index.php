@@ -57,7 +57,7 @@ $forumselectoptions = [0 => get_string('forumselectcourseoption', 'forumreport_s
 foreach ($courseforums as $courseforumid => $courseforum) {
     if ($courseforum->uservisible) {
         $forumsvisibletouser[$courseforumid] = $courseforum;
-        $forumselectoptions[$courseforumid] = $courseforum->name;
+        $forumselectoptions[$courseforumid] = $courseforum->get_formatted_name();
     }
 }
 
@@ -67,7 +67,7 @@ if ($forumid) {
     }
 
     $filters['forums'] = [$forumid];
-    $title = $forumsvisibletouser[$forumid]->name;
+    $title = $forumsvisibletouser[$forumid]->get_formatted_name();
     $forumcm = $forumsvisibletouser[$forumid];
     $cms[] = $forumcm;
 
