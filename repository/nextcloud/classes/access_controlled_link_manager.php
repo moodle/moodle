@@ -207,7 +207,7 @@ class access_controlled_link_manager{
             }
         }
         $this->systemwebdavclient->close();
-        if (!($result == 201 || $result == 412)) {
+        if (!($result == 201 || $result == 204 || $result == 412)) {
             $details = get_string('contactadminwith', 'repository_nextcloud',
                 'A webdav request to ' . $operation . ' a file failed.');
             throw new request_exception(array('instance' => $this->repositoryname, 'errormessage' => $details));
