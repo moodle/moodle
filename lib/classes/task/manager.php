@@ -1207,6 +1207,71 @@ class manager {
     }
 
     /**
+     * Cleanup stale task metadata.
+     */
+    public static function cleanup_metadata() {
+        global $DB;
+
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        $runningtasks = self::get_running_tasks();
+
+        foreach ($runningtasks as $taskrecord) {
+            if ($taskrecord->timestarted > time() - HOURSECS) {
+                continue;
+            }
+
+            if ($taskrecord->type == 'adhoc') {
+                $lock = $cronlockfactory->get_lock('adhoc_' . $taskrecord->id, 0);
+            }
+
+            if ($taskrecord->type == 'scheduled') {
+                $lock = $cronlockfactory->get_lock($taskrecord->classname, 0);
+            }
+
+            // If we got this lock it means one of three things:
+            //
+            // 1. The task was stopped abnormally and the metadata was not cleaned up
+            // 2. This is the process running the cleanup task
+            // 3. We took so long getting to it in this loop that it did finish, and we now have the lock
+            //
+            // In the case of 1. we need to make the task as failed, in the case of 2. and 3. we do nothing.
+            if (!empty($lock)) {
+                if ($taskrecord->classname == "\\" . \core\task\task_lock_cleanup_task::class) {
+                    $lock->release();
+                    continue;
+                }
+
+                // We need to get the record again to verify whether or not we are dealing with case 3.
+                $taskrecord = $DB->get_record('task_' . $taskrecord->type, ['id' => $taskrecord->id]);
+
+                if ($taskrecord->type == 'scheduled') {
+                    // Empty timestarted indicates that this task finished (case 3) and was properly cleaned up.
+                    if (empty($taskrecord->timestarted)) {
+                        $lock->release();
+                        continue;
+                    }
+
+                    $task = self::scheduled_task_from_record($taskrecord);
+                    $task->set_lock($lock);
+                    self::scheduled_task_failed($task);
+                } else if ($taskrecord->type == 'adhoc') {
+                    // Ad hoc tasks are removed from the DB if they finish successfully.
+                    // If we can't re-get this task, that means it finished and was properly
+                    // cleaned up.
+                    if (!$taskrecord) {
+                        $lock->release();
+                        continue;
+                    }
+
+                    $task = self::adhoc_task_from_record($taskrecord);
+                    $task->set_lock($lock);
+                    self::adhoc_task_failed($task);
+                }
+            }
+        }
+    }
+
+    /**
      * This function is used to indicate that any long running cron processes should exit at the
      * next opportunity and restart. This is because something (e.g. DB changes) has changed and
      * the static caches may be stale.
