@@ -684,7 +684,7 @@ class tree extends tree_node {
             } else {
                 unset($this->children[$index]);
                 unset($this->showchildren[$index]);
-                $this->showchildren = array_values($this->showchildren);
+                $this->showchildren = !is_null($this->showchildren) ? array_values($this->showchildren) : null;
                 $changed = true;
             }
         }
