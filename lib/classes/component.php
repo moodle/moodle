@@ -112,6 +112,7 @@ class core_component {
         'Psr\\Http\\Client' => 'lib/psr/http-client/src',
         'Psr\\Http\\Factory' => 'lib/psr/http-factory/src',
         'Psr\\Http\\Message' => 'lib/psr/http-message/src',
+        'Psr\\EventDispatcher' => 'lib/psr/event-dispatcher/src',
         'GuzzleHttp\\Psr7' => 'lib/guzzlehttp/psr7/src',
         'GuzzleHttp\\Promise' => 'lib/guzzlehttp/promises/src',
         'GuzzleHttp' => 'lib/guzzlehttp/guzzle/src',

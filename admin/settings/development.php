@@ -121,4 +121,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
             "$CFG->wwwroot/$CFG->admin/purgecaches.php"));
 
     $ADMIN->add('development', new admin_externalpage('thirdpartylibs', new lang_string('thirdpartylibs','admin'), "$CFG->wwwroot/$CFG->admin/thirdpartylibs.php"));
+
+    $ADMIN->add('development', new admin_externalpage('hooksoverview',
+        new lang_string('hooksoverview', 'admin'), "$CFG->wwwroot/$CFG->admin/hooks.php"));
 } // end of speedup

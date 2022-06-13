@@ -630,6 +630,14 @@ All rights reserved.</copyright>
     <repository>https://github.com/php-fig/http-message</repository>
   </library>
   <library>
+    <location>psr/event-dispatcher</location>
+    <name>event-dispatcher</name>
+    <description>Provides interfaces that descirbe an event dispatching mechanism.</description>
+    <version>1.0.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/php-fig/event-dispatcher</repository>
+  </library>
+  <library>
     <location>phpxmlrpc</location>
     <name>phpxmlrpc</name>
     <description>A php library for building xml-rpc clients and servers</description>
