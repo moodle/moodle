@@ -18058,8 +18058,6 @@ select {
 .filter-dates-popover {
   width: 100%;
   max-width: 41.5em; }
-  .filter-dates-popover .mform {
-    margin-left: -3em; }
 
 /* stylelint-disable-line max-line-length */
 @keyframes expandSearchButton {
