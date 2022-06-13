@@ -9621,6 +9621,15 @@ function get_performance_info() {
         $info['txt'] .= $si['txt'];
     }
 
+    // Display time waiting for session if applicable.
+    if (!empty($PERF->sessionlock['wait'])) {
+        $sessionwait = number_format($PERF->sessionlock['wait'], 3) . ' secs';
+        $info['html'] .= html_writer::tag('li', 'Session wait: ' . $sessionwait, [
+            'class' => 'sessionwait col-sm-4'
+        ]);
+        $info['txt'] .= 'sessionwait: ' . $sessionwait . ' ';
+    }
+
     $info['html'] .= '</ul>';
     $html = '';
     if ($stats = cache_helper::get_stats()) {
@@ -9851,6 +9860,53 @@ function get_performance_info() {
         $info['cachesused'] = '0 / 0 / 0';
         $info['html'] .= '<div class="cachesused">Caches used (hits/misses/sets): 0/0/0</div>';
         $info['txt'] .= 'Caches used (hits/misses/sets): 0/0/0 ';
+    }
+
+    // Display lock information if any.
+    if (!empty($PERF->locks)) {
+        $table = new html_table();
+        $table->attributes['class'] = 'locktimings table table-dark table-sm w-auto table-bordered';
+        $table->head = ['Lock', 'Waited (s)', 'Obtained', 'Held for (s)'];
+        $table->align = ['left', 'right', 'center', 'right'];
+        $table->data = [];
+        $text = 'Locks (waited/obtained/held):';
+        foreach ($PERF->locks as $locktiming) {
+            $row = [];
+            $row[] = s($locktiming->type . '/' . $locktiming->resource);
+            $text .= ' ' . $locktiming->type . '/' . $locktiming->resource . ' (';
+
+            // The time we had to wait to get the lock.
+            $roundedtime = number_format($locktiming->wait, 1);
+            $cell = new html_table_cell($roundedtime);
+            if ($locktiming->wait > 0.5) {
+                $cell->attributes = ['class' => 'bg-warning text-dark'];
+            }
+            $row[] = $cell;
+            $text .= $roundedtime . '/';
+
+            // Show a tick or cross for success.
+            $row[] = $locktiming->success ? '&#x2713;' : '&#x274c;';
+            $text .= ($locktiming->success ? 'y' : 'n') . '/';
+
+            // If applicable, show how long we held the lock before releasing it.
+            if (property_exists($locktiming, 'held')) {
+                $roundedtime = number_format($locktiming->held, 1);
+                $cell = new html_table_cell($roundedtime);
+                if ($locktiming->held > 0.5) {
+                    $cell->attributes = ['class' => 'bg-warning text-dark'];
+                }
+                $row[] = $cell;
+                $text .= $roundedtime;
+            } else {
+                $row[] = '-';
+                $text .= '-';
+            }
+            $text .= ')';
+
+            $table->data[] = $row;
+        }
+        $info['html'] .= html_writer::table($table);
+        $info['txt'] .= $text . '. ';
     }
 
     $info['html'] = '<div class="performanceinfo siteinfo container-fluid px-md-0 overflow-auto pt-3">'.$info['html'].'</div>';
