@@ -307,6 +307,30 @@ XML;
         $this->assertEquals(201, $result);
     }
     /**
+     * Test whether the webdav client gets the right params and whether function handles overwrite.
+     *
+     * @covers \repository_nextcloud\access_controlled_link_manager::transfer_file_to_path
+     */
+    public function test_transfer_file_to_path_overwritefile() {
+        // Initialize params.
+        $parsedwebdavurl = parse_url($this->issuer->get_endpoint_url('webdav'));
+        $webdavprefix = $parsedwebdavurl['path'];
+        $srcpath = 'sourcepath';
+        $dstpath = "destinationpath/another/path";
+
+        // Mock the Webdavclient and set expected methods.
+        $systemwebdavclientmock = $this->createMock(\webdav_client::class);
+        $systemwebdavclientmock->expects($this->once())->method('open')->willReturn(true);
+        $systemwebdavclientmock->expects($this->once())->method('copy_file')->with($webdavprefix . $srcpath,
+            $webdavprefix . $dstpath . '/' . $srcpath, true)->willReturn(204);
+        $this->set_private_property($systemwebdavclientmock, 'systemwebdavclient', $this->linkmanager);
+
+        // Call of function.
+        $result = $this->linkmanager->transfer_file_to_path($srcpath, $dstpath, 'copy');
+
+        $this->assertEquals(204, $result);
+    }
+    /**
      * This function tests whether the function transfer_file_to_path() moves or copies a given file to a given path
      * It tests whether the webdav_client gets the right parameter and whether function distinguishes between move and copy.
      *
