@@ -1561,7 +1561,7 @@ EOD;
                             $chunk_size = ($mod == $max_chunk_size ? $max_chunk_size : $matches[1] - strlen($chunk));
                             $chunk .= fread($this->sock, $chunk_size);
                             $this->_error_log('mod: ' . $mod . ' chunk: ' . $chunk_size . ' total: ' . strlen($chunk));
-                        } while ($mod == $max_chunk_size);
+                        } while (strlen($chunk) < $matches[1]);
                     }
                     self::update_file_or_buffer($chunk, $fp, $buffer);
                     break;
@@ -1586,11 +1586,7 @@ EOD;
                 self::update_file_or_buffer($chunk, $fp, $buffer);
                 $loadsize += strlen($chunk);
                 $this->_error_log('mod: ' . $mod . ' chunk: ' . $chunk_size . ' total: ' . $loadsize);
-            } while ($mod == $max_chunk_size);
-            if ($loadsize < $matches[1]) {
-                $chunk = fread($this->sock, $matches[1] - $loadsize);
-                self::update_file_or_buffer($chunk, $fp, $buffer);
-            }
+            } while ($matches[1] > $loadsize);
             break;
 
             // check for 204 No Content
