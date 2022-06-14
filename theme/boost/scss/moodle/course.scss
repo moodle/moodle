@@ -821,11 +821,7 @@ span.editinstructions {
     font-weight: normal;
     padding: 2px 18px;
 }
-/* rtl:raw:
-.course_category_tree .category > .info > .categoryname {
-    background-image:url([[pix:moodle|t/collapsed_empty_rtl]]);
-}
- */
+
 .course_category_tree .category.with_children > .info > .categoryname {
     background-image: url([[pix:moodle|t/expanded]]);
     background-repeat: no-repeat;
