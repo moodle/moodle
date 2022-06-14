@@ -419,6 +419,8 @@ class sync_grades_test extends \lti_advantage_testcase {
      */
     public function test_sync_grades_deleted_context() {
         $this->resetAfterTest();
+        global $DB;
+
         [$course, $resource] = $this->create_test_environment();
         $launchservice = $this->get_tool_launch_service();
 
@@ -427,10 +429,11 @@ class sync_grades_test extends \lti_advantage_testcase {
         $instructoruser = $this->getDataGenerator()->create_user();
         [$userid] = $launchservice->user_launches_tool($instructoruser, $teachermocklaunch);
 
-        global $CFG;
-        require_once($CFG->dirroot . '/course/lib.php');
+        // Delete the activity, then enable the enrolment method (it is disabled during activity deletion).
         $modcontext = \context::instance_by_id($resource->contextid);
         course_delete_module($modcontext->instanceid);
+        $enrol = ['id' => $resource->enrolid, 'status' => ENROL_INSTANCE_ENABLED];
+        $DB->update_record('enrol', $enrol);
 
         $task = $this->get_task_with_mocked_grade_service();
         $this->expectOutputRegex(

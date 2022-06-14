@@ -479,3 +479,18 @@ function enrol_lti_get_fontawesome_icon_map() {
         'enrol_lti:enrolinstancewarning' => 'fa-exclamation-circle text-danger',
     ];
 }
+
+/**
+ * Pre-delete course module hook which disables any methods referring to the deleted module, preventing launches and allowing remap.
+ *
+ * @param stdClass $cm The deleted course module record.
+ */
+function enrol_lti_pre_course_module_delete(stdClass $cm) {
+    global $DB;
+    $sql = "id IN (SELECT t.enrolid
+                     FROM {enrol_lti_tools} t
+                     JOIN {context} c ON (t.contextid = c.id)
+                    WHERE c.contextlevel = :contextlevel
+                      AND c.instanceid = :cmid)";
+    $DB->set_field_select('enrol', 'status', ENROL_INSTANCE_DISABLED, $sql, ['contextlevel' => CONTEXT_MODULE, 'cmid' => $cm->id]);
+}

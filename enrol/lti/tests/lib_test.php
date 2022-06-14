@@ -216,4 +216,36 @@ class lib_test extends \lti_advantage_testcase {
         // LTI enrolment has 1 enrol actions for active users -- unenrol.
         $this->assertCount(1, $actions);
     }
+
+    /**
+     * Test the behaviour of an enrolment method when the activity to which it provides access is deleted.
+     *
+     * @covers \enrol_lti_pre_course_module_delete
+     */
+    public function test_course_module_deletion() {
+        // Create two modules and publish them.
+        $course = $this->getDataGenerator()->create_course();
+        $mod = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+        $mod2 = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+        $tooldata = [
+            'cmid' => $mod->cmid,
+            'courseid' => $course->id,
+        ];
+        $tool = $this->getDataGenerator()->create_lti_tool((object)$tooldata);
+        $tooldata['cmid'] = $mod2->cmid;
+        $tool2 = $this->getDataGenerator()->create_lti_tool((object)$tooldata);
+
+        // Verify the instances are both enabled.
+        $modinstance = helper::get_lti_tool($tool->id);
+        $mod2instance = helper::get_lti_tool($tool2->id);
+        $this->assertEquals(ENROL_INSTANCE_ENABLED, $modinstance->status);
+        $this->assertEquals(ENROL_INSTANCE_ENABLED, $mod2instance->status);
+
+        // Delete a module and verify the associated instance is disabled.
+        course_delete_module($mod->cmid);
+        $modinstance = helper::get_lti_tool($tool->id);
+        $mod2instance = helper::get_lti_tool($tool2->id);
+        $this->assertEquals(ENROL_INSTANCE_DISABLED, $modinstance->status);
+        $this->assertEquals(ENROL_INSTANCE_ENABLED, $mod2instance->status);
+    }
 }
