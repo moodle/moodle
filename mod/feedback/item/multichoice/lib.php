@@ -209,14 +209,14 @@ class feedback_item_multichoice extends feedback_item_base {
         if ($analysed_item) {
             $itemname = $analysed_item[1];
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
-            echo '<tr><th colspan="2" align="left">';
+            echo '<tr><th class="text-left">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
                 echo '('. format_string($item->label).') ';
             }
             echo format_string($itemname);
             echo '</th></tr>';
-            echo "</table>";
+
             $analysed_vals = $analysed_item[2];
             $count = 0;
             $data = [];
@@ -241,7 +241,8 @@ class feedback_item_multichoice extends feedback_item_base {
             $chart->add_series($series);
             $chart->set_labels($data['labels']);
 
-            echo $OUTPUT->render($chart);
+            echo '<tr><td>'. $OUTPUT->render($chart) . '</td></tr>';
+            echo "</table>";
         }
     }
 
