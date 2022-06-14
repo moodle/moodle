@@ -196,6 +196,11 @@ class core_grade_grade_testcase extends grade_base_testcase {
         $this->assertTrue($grade->is_hidden());
     }
 
+    /**
+     * Test grade_grade::flatten_dependencies_array()
+     *
+     * @covers \grade_grade::flatten_dependencies_array()
+     */
     public function test_flatten_dependencies() {
         // First test a simple normal case.
         $a = array(1 => array(2, 3), 2 => array(), 3 => array(4), 4 => array());
@@ -231,6 +236,66 @@ class core_grade_grade_testcase extends grade_base_testcase {
 
         test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
         $this->assertSame($expecteda, $a);
+
+        // Missing first level dependency.
+        $a = array(1 => array(2, 3), 3 => array(4), 4 => array());
+        $b = array();
+        $expecteda = array(1 => array(2, 3, 4), 3 => array(4), 4 => array());
+        $expectedb = array(1 => 1);
+
+        test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
+        $this->assertSame($expecteda, $a);
+        $this->assertSame($expectedb, $b);
+
+        // Missing 2nd level dependency.
+        $a = array(1 => array(2, 3), 2 => array(), 3 => array(4));
+        $b = array();
+        $expecteda = array(1 => array(2, 3, 4), 2 => array(), 3 => array(4));
+        $expectedb = array(1 => 1);
+
+        test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
+        $this->assertSame($expecteda, $a);
+        $this->assertSame($expectedb, $b);
+
+        // Null first level dependency.
+        $a = array(1 => array(2, null), 2 => array(3), 3 => array(4), 4 => array());
+        $b = array();
+        $expecteda = array(1 => array(2, 3, 4), 2 => array(3, 4), 3 => array(4), 4 => array());
+        $expectedb = array(1 => 2, 2 => 1);
+
+        test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
+        $this->assertSame($expecteda, $a);
+        $this->assertSame($expectedb, $b);
+
+        // Null 2nd level dependency.
+        $a = array(1 => array(2, 3), 2 => array(), 3 => array(4), 4 => array(null));
+        $b = array();
+        $expecteda = array(1 => array(2, 3, 4), 2 => array(), 3 => array(4), 4 => array());
+        $expectedb = array(1 => 1);
+
+        test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
+        $this->assertSame($expecteda, $a);
+        $this->assertSame($expectedb, $b);
+
+        // Straight null dependency.
+        $a = array(1 => array(2, 3), 2 => array(), 3 => array(4), 4 => null);
+        $b = array();
+        $expecteda = array(1 => array(2, 3, 4), 2 => array(), 3 => array(4), 4 => array());
+        $expectedb = array(1 => 1);
+
+        test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
+        $this->assertSame($expecteda, $a);
+        $this->assertSame($expectedb, $b);
+
+        // Also incorrect non-array dependency.
+        $a = array(1 => array(2, 3), 2 => array(), 3 => array(4), 4 => 23);
+        $b = array();
+        $expecteda = array(1 => array(2, 3, 4), 2 => array(), 3 => array(4), 4 => array());
+        $expectedb = array(1 => 1);
+
+        test_grade_grade_flatten_dependencies_array::test_flatten_dependencies_array($a, $b);
+        $this->assertSame($expecteda, $a);
+        $this->assertSame($expectedb, $b);
     }
 
     public function test_grade_grade_min_max() {
