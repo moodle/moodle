@@ -245,6 +245,9 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
                 $html = call_user_func($this->valuehtmlcallback, $value);
                 if ($html !== false) {
                     $option['html'] = $html;
+                    if ($this->isFrozen()) {
+                        $option['text'] = $html;
+                    }
                 }
             }
         }
