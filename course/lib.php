@@ -3663,7 +3663,7 @@ function course_get_tagged_courses($tag, $exclusivemode = false, $fromctx = 0, $
  */
 function core_course_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'activityname') {
-        return \core_courseformat\output\local\content\cm\cmname::update($itemid, $newvalue);
+        return \core_courseformat\output\local\content\cm\title::update($itemid, $newvalue);
     }
 }
 

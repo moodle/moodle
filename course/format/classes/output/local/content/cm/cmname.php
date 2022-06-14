@@ -25,13 +25,9 @@
 namespace core_courseformat\output\local\content\cm;
 
 use cm_info;
-use context_module;
-use core\output\inplace_editable;
 use core\output\named_templatable;
 use core_courseformat\base as course_format;
 use core_courseformat\output\local\courseformat_named_templatable;
-use external_api;
-use lang_string;
 use renderable;
 use section_info;
 use stdClass;
@@ -43,7 +39,7 @@ use stdClass;
  * @copyright 2020 Ferran Recio <ferran@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cmname extends inplace_editable implements named_templatable, renderable {
+class cmname implements named_templatable, renderable {
 
     use courseformat_named_templatable;
 
@@ -55,9 +51,6 @@ class cmname extends inplace_editable implements named_templatable, renderable {
 
     /** @var cm_info the course module instance */
     protected $mod;
-
-    /** @var editable if the title is editable */
-    protected $editable;
 
     /** @var array optional display options */
     protected $displayoptions;
@@ -71,14 +64,14 @@ class cmname extends inplace_editable implements named_templatable, renderable {
      * @param course_format $format the course format
      * @param section_info $section the section info
      * @param cm_info $mod the course module ionfo
-     * @param bool $editable if it is editable
+     * @param bool|null $editable if it is editable (not used)
      * @param array $displayoptions optional extra display options
      */
     public function __construct(
         course_format $format,
         section_info $section,
         cm_info $mod,
-        bool $editable,
+        ?bool $editable = null,
         array $displayoptions = []
     ) {
         $this->format = $format;
@@ -86,25 +79,8 @@ class cmname extends inplace_editable implements named_templatable, renderable {
         $this->mod = $mod;
         $this->displayoptions = $displayoptions;
 
-        $this->editable = $editable && has_capability(
-            'moodle/course:manageactivities',
-            $mod->context
-        );
-
         // Get the necessary classes.
         $this->titleclass = $format->get_output_classname('content\\cm\\title');
-
-        // Setup inplace editable.
-        parent::__construct(
-            'core_course',
-            'activityname',
-            $mod->id,
-            $this->editable,
-            $mod->name,
-            $mod->name,
-            new lang_string('edittitle'),
-            new lang_string('newactivityname', '', $mod->get_formatted_name())
-        );
     }
 
     /**
@@ -114,51 +90,49 @@ class cmname extends inplace_editable implements named_templatable, renderable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): array {
-        global $PAGE;
+        $mod = $this->mod;
+        $displayoptions = $this->displayoptions;
 
-        // Inplace editable uses core renderer by default. However, course elements require
-        // the format specific renderer.
-        $courseoutput = $this->format->get_renderer($PAGE);
+        if (!$this->has_name()) {
+            // Nothing to be displayed to the user.
+            return [];
+        }
 
-        // Inplace editable uses pre-rendered elements and does not allow line beaks in the UI value.
+        $data = [
+            'url' => $mod->url,
+            'icon' => $mod->get_icon_url(),
+            'modname' => $mod->modname,
+            'pluginname' => get_string('pluginname', 'mod_' . $mod->modname),
+            'textclasses' => $displayoptions['textclasses'] ?? '',
+            'purpose' => plugin_supports('mod', $mod->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER),
+            'activityname' => $this->get_title_data($output),
+        ];
+
+        return $data;
+    }
+
+    /**
+     * Get the title data.
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return array data context for a mustache template
+     */
+    protected function get_title_data(\renderer_base $output): array {
         $title = new $this->titleclass(
             $this->format,
             $this->section,
             $this->mod,
             $this->displayoptions
         );
-        $this->displayvalue = str_replace("\n", "", $courseoutput->render($title));
-
-        if (trim($this->displayvalue) == '') {
-            $this->editable = false;
-        }
-        $data = parent::export_for_template($output);
-
-        return $data;
+        return (array) $title->export_for_template($output);
     }
 
     /**
-     * Updates course module name
+     * Return if the activity has a visible name.
      *
-     * @param int $itemid course module id
-     * @param string $newvalue new name
-     * @return static
+     * @return bool if the title is visible.
      */
-    public static function update($itemid, $newvalue) {
-        $context = context_module::instance($itemid);
-        // Check access.
-        external_api::validate_context($context);
-        require_capability('moodle/course:manageactivities', $context);
-
-        // Trim module name and Update value.
-        set_coursemodule_name($itemid, trim($newvalue));
-        $coursemodulerecord = get_coursemodule_from_id('', $itemid, 0, false, MUST_EXIST);
-        // Return instance.
-        $modinfo = get_fast_modinfo($coursemodulerecord->course);
-        $cm = $modinfo->get_cm($itemid);
-        $section = $modinfo->get_section_info($cm->sectionnum);
-
-        $format = course_get_format($cm->course);
-        return new static($format, $section, $cm, true);
+    public function has_name(): bool {
+        return $this->mod->is_visible_on_course_page() && $this->mod->url;
     }
 }
