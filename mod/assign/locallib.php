@@ -2638,6 +2638,17 @@ class assign {
     }
 
     /**
+     * Is user id filtered by user filters and table preferences.
+     *
+     * @param int $userid User id that needs to be checked.
+     * @return bool
+     */
+    public function is_userid_filtered($userid) {
+        $users = $this->get_grading_userid_list();
+        return in_array($userid, $users);
+    }
+
+    /**
      * Finds all assignment notifications that have yet to be mailed out, and mails them.
      *
      * Cron function to be run periodically according to the moodle cron.
@@ -4777,6 +4788,10 @@ class assign {
         if (!$userid && $blindid) {
             $userid = $this->get_user_id_for_uniqueid($blindid);
         }
+
+        // Instantiate table object to apply table preferences.
+        $gradingtable = new assign_grading_table($this, 10, '', 0, false);
+        $gradingtable->setup();
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
         $framegrader = new grading_app($userid, $currentgroup, $this);

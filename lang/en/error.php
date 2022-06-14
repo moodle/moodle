@@ -599,6 +599,7 @@ $string['useradminodelete'] = 'Administrator accounts cannot be deleted.';
 $string['userautherror'] = 'Unknown auth plugin';
 $string['userauthunsupported'] = 'Auth plugin not supported here';
 $string['useremailduplicate'] = 'Duplicate address';
+$string['userisfilteredout'] = 'This user does not match filters and table preferences!';
 $string['usermustbemnet'] = 'Users in the MNET access control list must be remote MNET users';
 $string['usernamelowercase'] = 'The username must be in lower case';
 $string['usernotaddederror'] = 'User not added - error';
