@@ -28,16 +28,16 @@
         "helpbutton": "Help"
     }
 }}
-{{#collapseable}}
-    <legend class="d-flex align-items-center">
-        <div class="position-relative d-flex ftoggler align-items-center position-relative mr-1">
+<legend class="d-flex align-items-center">
+    <div class="position-relative d-flex ftoggler align-items-center position-relative mr-1">
+        {{#collapseable}}
             <a data-toggle="collapse"
-                href="#{{id}}container"
-                role="button"
-                aria-expanded="{{#collapsed}}false{{/collapsed}}{{^collapsed}}true{{/collapsed}}"
-                aria-controls="{{id}}container"
-                class="btn btn-icon mr-1 icons-collapse-expand stretched-link fheader {{#collapsed}}collapsed{{/collapsed}}"
-                >
+               href="#{{id}}container"
+               role="button"
+               aria-expanded="{{#collapsed}}false{{/collapsed}}{{^collapsed}}true{{/collapsed}}"
+               aria-controls="{{id}}container"
+               class="btn btn-icon mr-1 icons-collapse-expand stretched-link fheader {{#collapsed}}collapsed{{/collapsed}}"
+            >
                 <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, core {{/str}}">
                     {{#pix}} t/expandedchevron, core {{/pix}}
                 </span>
@@ -47,14 +47,11 @@
                 </span>
                 <span class="sr-only">{{{header}}}</span>
             </a>
-            <h3 class="d-flex align-self-stretch align-items-center mb-0" aria-hidden="true">
-                {{{header}}}
-            </h3>
-        </div>
-        {{{helpbutton}}}
-    </legend>
-{{/collapseable}}
-{{^collapseable}}
-    <legend>{{{header}}}</legend>
-{{/collapseable}}
+        {{/collapseable}}
+        <h3 class="d-flex align-self-stretch align-items-center mb-0" aria-hidden="true">
+            {{{header}}}
+        </h3>
+    </div>
+    {{{helpbutton}}}
+</legend>
 <div id="{{id}}container" class="fcontainer {{#collapseable}}collapseable collapse {{/collapseable}} {{^collapsed}}show{{/collapsed}}">
