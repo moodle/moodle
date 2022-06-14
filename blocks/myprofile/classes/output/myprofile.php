@@ -100,6 +100,10 @@ class myprofile implements renderable, templatable {
             $data->useraddress = format_string($USER->address);
         }
 
+        if (!empty($this->config->display_idnumber) && !empty($USER->idnumber)) {
+            $data->useridnumber = s($USER->idnumber);
+        }
+
         if (!empty($this->config->display_firstaccess) && !empty($USER->firstaccess)) {
             $data->userfirstaccess = userdate($USER->firstaccess);
         }
