@@ -149,8 +149,8 @@ class behat_mod_feedback extends behat_base {
      */
     public function i_show_chart_data_for_the_feedback($feedbackname) {
 
-        $feedbackxpath = "//th[contains(normalize-space(string(.)), \"" . $feedbackname . "\")]/ancestor::table/" .
-            "following-sibling::div[contains(concat(' ', normalize-space(@class), ' '), ' chart-area ')][1]" .
+        $feedbackxpath = "//th[contains(normalize-space(string(.)), \"" . $feedbackname . "\")]/ancestor::table//" .
+            "div[contains(concat(' ', normalize-space(@class), ' '), ' chart-table ')]" .
             "//p[contains(concat(' ', normalize-space(@class), ' '), ' chart-table-expand ') and ".
             "//a[contains(normalize-space(string(.)), '".get_string('showchartdata')."')]]";
 
