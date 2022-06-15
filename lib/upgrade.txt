@@ -12,6 +12,7 @@ information provided here is intended especially for developers.
   an event exists with the given criteria (see MDL-72723 for details).
    - Breaking: 3rd party log readers implementing interface sql_reader will need to implement get_events_select_exists()
 * Added $strictness parameter to persistent `get_record` method, optionally allowing caller to ensure record exists
+* New DML driver method `$DB->sql_cast_to_char` for casting given field/expression to char
 * For plugins that override secondary navigation, the namespace for the custom secondary navigation class has
   changed. It was (for example) mod_mymodule\local\views\secondary but is now
   mod_mymodule\navigation\views\secondary. The old location will continue to work, but is deprecated.

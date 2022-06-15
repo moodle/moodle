@@ -69,11 +69,12 @@ class groupconcatdistinct extends groupconcat {
         // DB limitations mean we only support MySQL and Postgres, and each handle it differently.
         $fieldsort = database::sql_group_concat_sort($field);
         if ($DB->get_dbfamily() === 'postgres') {
+            $field = $DB->sql_cast_to_char($field);
             if ($fieldsort !== '') {
                 $fieldsort = "ORDER BY {$fieldsort}";
             }
 
-            return "STRING_AGG(DISTINCT CAST({$field} AS VARCHAR), '" . self::FIELD_VALUE_DELIMETER . "' {$fieldsort})";
+            return "STRING_AGG(DISTINCT {$field}, '" . self::FIELD_VALUE_DELIMETER . "' {$fieldsort})";
         } else {
             return $DB->sql_group_concat("DISTINCT {$field}", self::FIELD_VALUE_DELIMETER, $fieldsort);
         }

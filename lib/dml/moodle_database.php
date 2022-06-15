@@ -2163,6 +2163,17 @@ abstract class moodle_database {
     }
 
     /**
+     * Return SQL for casting to char of given field/expression. Default implementation performs implicit cast using
+     * concatenation with an empty string
+     *
+     * @param string $field Table field or SQL expression to be cast
+     * @return string
+     */
+    public function sql_cast_to_char(string $field): string {
+        return $this->sql_concat("''", $field);
+    }
+
+    /**
      * Returns the SQL to be used in order to CAST one CHAR column to INTEGER.
      *
      * Be aware that the CHAR column you're trying to cast contains really
