@@ -576,10 +576,6 @@ $string['warnexpired'] = ' (This badge has expired!)';
 $string['year'] = 'Year(s)';
 $string['includeauthdetails'] = "Include authentication details with the backpack";
 
-// Deprecated since Moodle 3.9.
-$string['editsettings'] = 'Edit settings';
-$string['sitebackpackverify'] = 'Backpack connection';
-
 // Deprecated since Moodle 3.10.
 $string['backpackneedsupdate'] = 'The backpack connected to this profile does not match the backpack for the site. You need to disconnect and reconnect the backpack.';
 
