@@ -4587,5 +4587,13 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022061000.01);
     }
 
+    if ($oldversion < 2022061500.00) {
+        // Remove drawer-open-nav user preference for every user.
+        $DB->delete_records('user_preferences', ['name' => 'drawer-open-nav']);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022061500.00);
+    }
+
     return true;
 }
