@@ -196,3 +196,21 @@ function company_admin_fix_breadcrumb(&$PAGE, $linktext, $linkurl) {
     $PAGE->navbar->add(get_string('myhome'), new moodle_url('/my'));
     $PAGE->navbar->add($linktext, $linkurl);
 }
+
+/**
+ * Callback for inplace editable API.
+ *
+ * @param string $itemtype - Only user_roles is supported.
+ * @param string $itemid - Courseid and userid separated by a :
+ * @param string $newvalue - json encoded list of roleids.
+ * @return \core\output\inplace_editable
+ */
+function block_iomad_company_admin_inplace_editable($itemtype, $itemid, $newvalue) {
+    if ($itemtype === 'user_departments') {
+        return \block_iomad_company_admin\output\user_departments_editable::update($itemid, $newvalue);
+    }
+    if ($itemtype === 'user_roles') {
+        return \block_iomad_company_admin\output\user_roles_editable::update($itemid, $newvalue);
+    }
+}
+

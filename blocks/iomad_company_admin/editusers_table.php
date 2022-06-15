@@ -246,7 +246,7 @@ class block_iomad_company_admin_editusers_table extends table_sql {
 
         $menu = new action_menu();
         $menu->set_owner_selector('.iomad_editusers-actionmenu');
-        $menu->set_alignment(action_menu::TL, action_menu::BL);
+        $menu->set_alignment_left();
         $menu->set_menu_trigger(get_string('usercontrols', 'block_iomad_company_admin'));
         foreach ($actions as $action) {
             $menu->add($action);

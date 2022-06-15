@@ -112,7 +112,7 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
 // Print the page header.
 $PAGE->set_context($systemcontext);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Get output renderer.
@@ -128,19 +128,6 @@ if (empty($CFG->defaulthomepage)) {
     $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
 }
 $PAGE->navbar->add($linktext, $linkurl);
-
-if (iomad::has_capability('block/iomad_company_admin:company_manager', context_system::instance())) {
-    $url = clone($PAGE->url);
-    if (!empty($SESSION->iomadeditingreports)) {
-        $caption = get_string('turneditingoff');
-        $url->param('adminedit', 'off');
-    } else {
-        $caption = get_string('turneditingon');
-        $url->param('adminedit', 'on');
-    }
-    $buttons = $OUTPUT->single_button($url, $caption, 'get');
-    $PAGE->set_button($buttons);
-}
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);
@@ -583,7 +570,7 @@ if (!empty($showall)) {
     }
 }
 
-$selectsql = "DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", "c.id")) . " AS cindex, u.*, c.id AS companyid, c.name AS companyname, u.suspended";
+$selectsql = "DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", "c.id")) . " AS cindex, u.*, c.id AS companyid, c.name AS companyname, u.suspended, cu.managertype, cu.educator";
 $fromsql = "{user} u JOIN {company_users} cu ON (u.id = cu.userid) JOIN {department} d ON (cu.departmentid = d.id AND cu.companyid = d.company) JOIN {company} c ON (cu.companyid = c.id AND d.company = c.id)";
 $wheresql = $searchinfo->sqlsearch . " $sqlsearch $companysql $managertypesql";
 $sqlparams = $searchinfo->searchparams + $params + array('companyid' => $companyid);
@@ -593,18 +580,22 @@ $countsql = "SELECT COUNT(DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("
 if (!$showall) {
     $headers = array(get_string('fullname'),
                      get_string('email'),
+                     get_string('role'),
                      get_string('department'));
     $columns = array("fullname",
                      "email",
+                     'managertype',
                      "department");
 } else {
     $headers = array(get_string('company', 'block_iomad_company_admin'),
                      get_string('fullname'),
                      get_string('email'),
+                     get_string('role'),
                      get_string('department'));
     $columns = array('companyname',
                      "fullname",
                      "email",
+                     'managertype',
                      "department");
 }
 

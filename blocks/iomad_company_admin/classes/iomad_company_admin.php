@@ -152,4 +152,37 @@ class iomad_company_admin {
 
         return $newlist;
     }
+
+    /**
+     * Serve the new group form as a fragment.
+     *
+     * @param array $args List of named arguments for the fragment loader.
+     * @return string
+     */
+    function output_fragment_new_submit_user_department_form($args) {
+        global $CFG;
+
+        $args = (object) $args;
+        $context = $args->context;
+
+        $formdata = [];
+        $error = new stdClass();
+
+        list($ignored, $course) = get_context_info_array($context->id);
+
+        //require_capability('block/report_error:reporterror', $context);
+
+        $mform = new \block_iomad_company_admin\forms\submit_user_department_form(null, [], 'post', '', null, true, $formdata);
+
+        // Used to set the courseid.
+        //$mform->set_data(['courseid' => $course->id]);
+
+        if (!empty($args->jsonformdata)) {
+            // If we were passed non-empty form data we want the mform to call validation functions and show errors.
+            $mform->is_validated();
+        }
+
+        return $mform->render();
+    }
+
 }

@@ -30,12 +30,19 @@ use \moodle_url;
 use \action_menu_link_secondary;
 use \action_menu;
 use \iomad;
+use \html_writer;
+use \company;
+use \context_system;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tablelib.php');
 
 class editusers_table extends table_sql {
+
+    protected $departments;
+    protected $assignabledepartments;
+    protected $usertypes;
 
     /**
      * Generate the display of the user's| fullname
@@ -53,36 +60,84 @@ class editusers_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_department($row) {
-        global $DB;
+        global $DB, $USER, $company, $OUTPUT;
 
-        $departments = $DB->get_records_sql("SELECT d.name FROM {department} d
-                                             JOIN {company_users} cu
-                                             ON (d.id = cu.departmentid)
-                                             WHERE cu.userid = :userid
-                                             AND cu.companyid = :companyid
-                                             ORDER BY d.name",
-                                             array('userid' => $row->id,
-                                                   'companyid' => $row->companyid));
-        $returnstr = "";
-        $count = count($departments);
-        $current = 1;
-        if ($count > 5) {
-            $returnstr = "<details><summary>" . get_string('show') . "</summary>";
-        }
-
-        foreach($departments as $department) {
-            $returnstr .= format_string($department->name);
-            if ($current < $count) {
-                $returnstr .= ",</br>";
+        $userdepartments = isset($this->alldepartments[$row->id]) ? $this->alldepartments[$row->id] : [];
+        if (empty($USER->editing) || $row->managertype == 1) {
+            $count = count($userdepartments);
+            $current = 1;
+            $returnstr = "";
+            if ($count > 5) {
+                $returnstr = "<details><summary>" . get_string('show') . "</summary>";
             }
-            $current++;
+
+            $first = true;
+            foreach($userdepartments as $department) {
+                //$returnstr .= format_string($department->name);
+                $returnstr .= format_string($this->departmentsmenu[$department]);
+
+                if ($current < $count) {
+                    $returnstr .= ",</br>";
+                }
+                $current++;
+            }
+
+            if ($count > 5) {
+                $returnstr .= "</details>";
+            }
+
+            return $returnstr;
+
+        } else {
+            $editable = new \block_iomad_company_admin\output\user_departments_editable($company,
+                                                          \context_system::instance(),
+                                                          $row,
+                                                          $userdepartments,
+                                                          $this->departments,
+                                                          $this->assignabledepartments);
+
+            return $OUTPUT->render_from_template('core/inplace_editable', $editable->export_for_template($OUTPUT));
+        }
+    }
+
+    /**
+     * Generate the display of the user's company roles
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_managertype($row) {
+        global $DB, $USER, $company, $OUTPUT;
+
+        $returnstr = "";
+
+        if (empty($USER->editing)) {
+            $returnstr .= $this->usertypes[$row->managertype];
+            if (!empty($row->educator)) {
+                $returnstr .= ",</br>" . $this->usertypes[3];
+            }
+    
+            return $returnstr;
+        } else {
+            // Can't be a company manager if you are in more than one department or the department you are in is not the top level department.
+            $userdepartments = isset($this->alldepartments[$row->id]) ? $this->alldepartments[$row->id] : [];
+            $usertypeselect = $this->usertypeselect;
+            if (count($userdepartments) > 1 ||
+                $userdepartments[0] != $this->parentlevel->id) {
+                unset($usertypeselect[1]);
+                unset($usertypeselect[11]);
+            }
+
+            // Set up the current value for the inplace form and display it.
+            $currentvalue = $row->managertype + 10 * $row->educator;
+            $editable = new \block_iomad_company_admin\output\user_roles_editable($company,
+                                                          \context_system::instance(),
+                                                          $row,
+                                                          $currentvalue,
+                                                          $usertypeselect);
+
+            return $OUTPUT->render_from_template('core/inplace_editable', $editable->export_for_template($OUTPUT));
         }
 
-        if ($count > 5) {
-            $returnstr .= "</details>";
-        }
-
-        return $returnstr;
 
     }
 
@@ -140,7 +195,10 @@ class editusers_table extends table_sql {
         if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
              or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
              or $row->id == $USER->id and !is_mnet_remote_user($row)) {
-            if ($row->id != $USER->id && $DB->get_records_select('company_users', 'companyid =:company AND managertype IN (1,2) AND userid = :userid', array('company' => $row->companyid, 'userid' => $row->id))
+            if ($row->id != $USER->id &&
+                $DB->get_records_select('company_users',
+                                        'companyid =:company AND managertype IN (1,2) AND userid = :userid',
+                                        array('company' => $row->companyid, 'userid' => $row->id))
                 && !iomad::has_capability('block/iomad_company_admin:editmanagers', $systemcontext)) {
                // This manager can't edit manager users.
             } else {
@@ -253,7 +311,7 @@ class editusers_table extends table_sql {
 
         $menu = new action_menu();
         $menu->set_owner_selector('.iomad_editusers-actionmenu');
-        $menu->set_alignment(action_menu::TL, action_menu::BL);
+        $menu->set_menu_left();
         $menu->set_menu_trigger(get_string('usercontrols', 'block_iomad_company_admin'));
         foreach ($actions as $action) {
             $menu->add($action);
@@ -285,5 +343,88 @@ class editusers_table extends table_sql {
         // Add the button to add a user.
         echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/company_user_create_form.php'),
                                     get_string('createuser', 'block_iomad_company_admin'));
+    }
+
+    /**
+     * Constructor
+     * @param string $uniqueid all tables have to have a unique id, this is used
+     *      as a key when storing table properties like sort order in the session.
+     */
+    function __construct($uniqueid) {
+        global $DB, $companyid, $CFG;
+
+        $context = context_system::instance();
+        $this->uniqueid = $uniqueid;
+        $this->request  = array(
+            TABLE_VAR_SORT   => 'tsort',
+            TABLE_VAR_HIDE   => 'thide',
+            TABLE_VAR_SHOW   => 'tshow',
+            TABLE_VAR_IFIRST => 'tifirst',
+            TABLE_VAR_ILAST  => 'tilast',
+            TABLE_VAR_PAGE   => 'page',
+            TABLE_VAR_RESET  => 'treset',
+            TABLE_VAR_DIR    => 'tdir',
+        );
+
+        $this->companyid = $companyid;
+
+        $this->usertypes = ['0' => get_string('user', 'block_iomad_company_admin'),
+                            '1' => get_string('companymanager', 'block_iomad_company_admin'),
+                            '2' => get_string('departmentmanager', 'block_iomad_company_admin'),
+                            '3' => get_string('educator', 'block_iomad_company_admin'),
+                            '4' => get_string('companyreporter', 'block_iomad_company_admin')];
+
+        $this->departments = $DB->get_records('department', ['company' => $companyid], 'name', 'id,name');
+
+        $parentlevel = company::get_company_parentnode($companyid);
+        $this->parentlevel = $parentlevel;
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $context)) {
+            $userlevels = array($parentlevel->id => $parentlevel->id);
+        } else {
+            $userlevels = $company->get_userlevel($USER);
+        }
+
+        $departmenttree = [];
+        foreach ($userlevels as $userlevelid => $userlevel) {
+            $departmenttree[] = company::get_all_subdepartments_raw($userlevelid);
+        }
+
+        $this->assignabledepartments = company::array_flatten(company::get_department_list($departmenttree[0]));
+
+        $this->departmentsmenu = $DB->get_records_menu('department', ['company' => $companyid], 'name', 'id,name');
+        $users = $DB->get_records_sql("SELECT DISTINCT userid 
+                                       FROM {company_users}
+                                       WHERE companyid = :companyid",
+                                       ['companyid' => $companyid]);
+        $alldepartments = [];
+        foreach($users as $user) {
+            $userdepartments = $DB->get_records('company_users', ['companyid' => $companyid, 'userid' => $user->userid], 'departmentid', 'departmentid');
+            $alldepartments[$user->userid] = array_keys($userdepartments);
+        }
+        $this->alldepartments = $alldepartments;
+
+        // Deal with role selector.
+        $this->usertypeselect = ['0' => get_string('user', 'block_iomad_company_admin')];
+        if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $context)) {
+            $this->usertypeselect[1] = get_string('companymanager', 'block_iomad_company_admin');
+        }
+        if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $context)) {
+            $this->usertypeselect[2] = get_string('departmentmanager', 'block_iomad_company_admin');
+        }
+        if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $context)) {
+            $this->usertypeselect[4] = get_string('companyreporter', 'block_iomad_company_admin');
+        }
+        if (!$CFG->iomad_autoenrol_managers && iomad::has_capability('block/iomad_company_admin:assign_educator', $context)) {
+            $this->usertypeselect[10] = get_string('educator', 'block_iomad_company_admin');
+            if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $context)) {
+                $this->usertypeselect[11] = get_string('educator', 'block_iomad_company_admin') . ' + ' . get_string('companymanager', 'block_iomad_company_admin');
+            }
+            if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $context)) {
+                $this->usertypeselect[12] = get_string('educator', 'block_iomad_company_admin') . ' + ' . get_string('departmentmanager', 'block_iomad_company_admin');
+            }
+            if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $context)) {
+                $this->usertypeselect[14] = get_string('educator', 'block_iomad_company_admin') . ' + ' . get_string('companyreporter', 'block_iomad_company_admin');
+            }
+        }
     }
 }

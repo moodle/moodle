@@ -734,3 +734,5 @@ $string['clientreporter'] = 'Client report only';
 $string['archetypecompanyreporter_role'] = 'Company report only';
 $string['companyreporter_role'] = 'Company report only';
 $string['companyreporter'] = 'Company report only';
+$string['xdepartmentassignments'] = '{$a}\'s departments';
+$string['xrolesassignments'] = '{$a}\'s roles';
