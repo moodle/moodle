@@ -1215,17 +1215,17 @@ class manager {
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
         $runningtasks = self::get_running_tasks();
 
-        foreach ($runningtasks as $taskrecord) {
-            if ($taskrecord->timestarted > time() - HOURSECS) {
+        foreach ($runningtasks as $runningtask) {
+            if ($runningtask->timestarted > time() - HOURSECS) {
                 continue;
             }
 
-            if ($taskrecord->type == 'adhoc') {
-                $lock = $cronlockfactory->get_lock('adhoc_' . $taskrecord->id, 0);
+            if ($runningtask->type == 'adhoc') {
+                $lock = $cronlockfactory->get_lock('adhoc_' . $runningtask->id, 0);
             }
 
-            if ($taskrecord->type == 'scheduled') {
-                $lock = $cronlockfactory->get_lock($taskrecord->classname, 0);
+            if ($runningtask->type == 'scheduled') {
+                $lock = $cronlockfactory->get_lock($runningtask->classname, 0);
             }
 
             // If we got this lock it means one of three things:
@@ -1236,15 +1236,15 @@ class manager {
             //
             // In the case of 1. we need to make the task as failed, in the case of 2. and 3. we do nothing.
             if (!empty($lock)) {
-                if ($taskrecord->classname == "\\" . \core\task\task_lock_cleanup_task::class) {
+                if ($runningtask->classname == "\\" . \core\task\task_lock_cleanup_task::class) {
                     $lock->release();
                     continue;
                 }
 
                 // We need to get the record again to verify whether or not we are dealing with case 3.
-                $taskrecord = $DB->get_record('task_' . $taskrecord->type, ['id' => $taskrecord->id]);
+                $taskrecord = $DB->get_record('task_' . $runningtask->type, ['id' => $runningtask->id]);
 
-                if ($taskrecord->type == 'scheduled') {
+                if ($runningtask->type == 'scheduled') {
                     // Empty timestarted indicates that this task finished (case 3) and was properly cleaned up.
                     if (empty($taskrecord->timestarted)) {
                         $lock->release();
@@ -1254,7 +1254,7 @@ class manager {
                     $task = self::scheduled_task_from_record($taskrecord);
                     $task->set_lock($lock);
                     self::scheduled_task_failed($task);
-                } else if ($taskrecord->type == 'adhoc') {
+                } else if ($runningtask->type == 'adhoc') {
                     // Ad hoc tasks are removed from the DB if they finish successfully.
                     // If we can't re-get this task, that means it finished and was properly
                     // cleaned up.
