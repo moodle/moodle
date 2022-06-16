@@ -12252,6 +12252,39 @@ body.dragging .dragging {
   width: 9px;
   border: 0; }
 
+.initialbargroups ul {
+  -webkit-margin-start: 0;
+  /* stylelint-disable-line */
+  margin-right: -1px; }
+
+.initialbargroups .page-item:first-child .page-link {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0; }
+
+.initialbargroups .pagination-lg:first-child .page-item:first-child .page-link {
+  border-top-left-radius: 0.6rem;
+  border-bottom-left-radius: 0.6rem; }
+
+.initialbargroups .pagination-sm:first-child .page-item:first-child .page-link {
+  border-top-left-radius: 0.2rem;
+  border-bottom-left-radius: 0.2rem; }
+
+.initialbargroups .page-item:last-child .page-link {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0; }
+
+.initialbargroups .pagination-lg:last-child .page-item:last-child .page-link {
+  border-top-right-radius: 0.6rem;
+  border-bottom-right-radius: 0.6rem; }
+
+.initialbargroups .pagination-sm:last-child .page-item:last-child .page-link {
+  border-top-right-radius: 0.2rem;
+  border-bottom-right-radius: 0.2rem; }
+
 .icon {
   font-size: 16px;
   width: 16px;
