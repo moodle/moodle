@@ -206,6 +206,33 @@ function company_admin_fix_breadcrumb(&$PAGE, $linktext, $linkurl) {
  * @return \core\output\inplace_editable
  */
 function block_iomad_company_admin_inplace_editable($itemtype, $itemid, $newvalue) {
+    if ($itemtype === 'courses_license') {
+        return \block_iomad_company_admin\output\courses_license_editable::update($itemid, $newvalue);
+    }
+    if ($itemtype === 'courses_hasgrade') {
+        return \block_iomad_company_admin\output\courses_hasgrade_editable::update($itemid, $newvalue);
+    }
+    if ($itemtype === 'courses_notifyperiod') {
+        return \block_iomad_company_admin\output\courses_notifyperiod_editable::update($itemid, $newvalue);
+    }
+    if ($itemtype === 'courses_shared') {
+        return \block_iomad_company_admin\output\courses_shared_editable::update($itemid, $newvalue);
+    }
+    if ($itemtype === 'courses_validlength') {
+        return \block_iomad_company_admin\output\courses_validlength_editable::update($itemid, $newvalue);
+    }
+    if ($itemtype === 'courses_warncompletion') {
+        return \block_iomad_company_admin\output\courses_warncompletion_editable::update($itemid, $newvalue);
+    }
+    if ($itemtype === 'courses_warnexpire') {
+        return \block_iomad_company_admin\output\courses_warnexpire_editable::update($itemid, $newvalue);
+    }
+    if ($itemtype === 'courses_warnnotstarted') {
+        return \block_iomad_company_admin\output\courses_warnnotstarted_editable::update($itemid, $newvalue);
+    }
+    if ($itemtype === 'enrolment_expireafter') {
+        return \block_iomad_company_admin\output\enrolment_expireafter_editable::update($itemid, $newvalue);
+    }
     if ($itemtype === 'user_departments') {
         return \block_iomad_company_admin\output\user_departments_editable::update($itemid, $newvalue);
     }

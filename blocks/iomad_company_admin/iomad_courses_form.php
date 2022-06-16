@@ -76,7 +76,7 @@ $linktext = get_string('iomad_courses_title', 'block_iomad_company_admin');
 // Print the page header.
 $PAGE->set_context($systemcontext);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
@@ -95,182 +95,9 @@ if (empty($companyid) && !empty($mycompanyid)) {
     $params['companyid'] = $mycompanyid;
 }
 
-if (!empty($update)) {
-    // Need to change something.
-    if (!$coursedetails = (array) $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
-        print_error(get_string('invaliddetails', 'block_iomad_company_admin'));
-    } else {
-        // Keep the original details for the event.
-        $originaldetails = $coursedetails;
-        if ('license' == $update) {
-            if ($license == 3) {
-                $coursedetails['licensed'] = 0;
-            } else {
-                $coursedetails['licensed'] = $license;
-            }
-            $DB->update_record('iomad_courses', $coursedetails);
-            if (empty($license) || $license == 3) {
-                // Changing to manual enrolment type only.
-                if ($instances = $DB->get_records('enrol', array('courseid' => $courseid))) {
-                    foreach ($instances as $instance) {
-                        $updateinstance = (array) $instance;
-                        if ($license == 0) {
-                            if ($instance->enrol != 'manual') {
-                                $updateinstance['status'] = 1;
-                            } else {
-                                $updateinstance['status'] = 0;
-                            }
-                        } else if ($license == 3) {
-                            if ($instance->enrol == 'manual' || $instance->enrol == 'self') {
-                                $updateinstance['status'] = 0;
-                            } else {
-                                $updateinstance['status'] = 1;
-                            }
-                        }
-                        $DB->update_record('enrol', $updateinstance);
-                    }
-                }
-            } else {
-                // Changing to license enrolment type only.
-                if ($instances = $DB->get_records('enrol', array('courseid' => $courseid))) {
-                    $gotlicense = false;
-                    foreach ($instances as $instance) {
-                        $updateinstance = (array) $instance;
-                        if ($instance->enrol != 'license') {
-                            $updateinstance['status'] = 1;
-                        } else {
-                            $updateinstance['status'] = 0;
-                            $gotlicense = true;
-                        }
-                        $DB->update_record('enrol', $updateinstance);
-                    }
-                    if (!$gotlicense) {
-                        $courserecord = $DB->get_record('course', array('id' => $courseid));
-                        $plugin = enrol_get_plugin('license');
-                        $plugin->add_instance($courserecord, array('status' => 0,
-                                                                   'name' => '',
-                                                                   'password' => null,
-                                                                   'customint1' => 0,
-                                                                   'customint2' => 0,
-                        'customint3' => 0, 'customint4' => 0, 'customtext1' => '',
-                        'roleid' => 5, 'enrolperiod' => 0, 'enrolstartdate' => 0, 'enrolenddate' => 0));
-                    }
-                }
-            }
-        } else if ('shared' == $update) {
-            $previousshared = $coursedetails['shared'];
-            // Check if we are sharing a course for the first time.
-            if ($previousshared == 0 && $shared != 0) { // Turning sharing on.
-                $courseinfo = $DB->get_record('course', array('id' => $courseid));
-                // Set the shared options on.
-                $courseinfo->groupmode = 1;
-                $courseinfo->groupmodeforce = 1;
-                $DB->update_record('course', $courseinfo);
-                $coursedetails['shared'] = $shared;
-                $DB->update_record('iomad_courses', $coursedetails);
-                // Deal with any current enrolments.
-                if ($companycourse = $DB->get_record('company_course', array('courseid' => $courseid))) {
-                    if ($shared == 2) {
-                        $sharingrecord = new stdclass();
-                        $sharingrecord->courseid = $courseid;
-                        $sharingrecord->companyid = $companycourse->companyid;
-                        $DB->insert_record('company_shared_courses', $sharingrecord);
-                    }
-                    company::company_users_to_company_course_group($companycourse->companyid, $courseid);
-                }
-            } else if ($shared == 0 and $previousshared != 0) { // Turning sharing off.
-                $courseinfo = $DB->get_record('course', array('id' => $courseid));
-                // Set the shared options on.
-                $courseinfo->groupmode = 0;
-                $courseinfo->groupmodeforce = 0;
-                $DB->update_record('course', $courseinfo);
-                $coursedetails['shared'] = $shared;
-                $DB->update_record('iomad_courses', $coursedetails);
-                // Deal with enrolments.
-                if ($companygroups = $DB->get_records('company_course_groups', array('courseid' => $courseid))) {
-                    // Got companies using it.
-                    $count = 1;
-                    // Skip the first company, it was the one who had it before anyone else so is
-                    // assumed to be the owning company.
-                    foreach ($companygroups as $companygroup) {
-                        if ($count == 1) {
-                            continue;
-                        }
-                        $count ++;
-                        company::unenrol_company_from_course($companygroup->companyid, $courseid);
-                    }
-                }
-            } else {  // Changing from open sharing to closed sharing.
-                $coursedetails['shared'] = $shared;
-                $DB->update_record('iomad_courses', $coursedetails);
-                if ($companygroups = $DB->get_records('company_course_groups', array('courseid' => $courseid))) {
-                    // Got companies using it.
-                    foreach ($companygroups as $companygroup) {
-                        $sharingrecord = new stdclass();
-                        $sharingrecord->courseid = $courseid;
-                        $sharingrecord->companyid = $companygroup->companyid;
-                        $DB->insert_record('company_shared_courses', $sharingrecord);
-                    }
-                }
-            }
+$company = new company($companyid);
 
-        } else if ('validfor' == $update) {
-            // Work out the time in seconds....
-            if ($validfor < 0) {
-                $validfor = 0;
-            }
-            $coursedetails['validlength'] = $validfor;
-            $DB->update_record('iomad_courses', $coursedetails);
-        } else if ('expireafter' == $update) {
-            // Work out the time in seconds....
-            if ($expireafter < 0) {
-                $expireafter = 0;
-            }
-            $coursedetails['expireafter'] = $expireafter;
-            $DB->update_record('iomad_courses', $coursedetails);
-        } else if ('warnexpire' == $update) {
-            // Work out the time in seconds....
-            if ($warnexpire < 0) {
-                $warnexpire = 0;
-            }
-            $coursedetails['warnexpire'] = $warnexpire;
-            $DB->update_record('iomad_courses', $coursedetails);
-        } else if ('warnnotstarted' == $update) {
-            // Work out the time in seconds....
-            if ($warnnotstarted < 0) {
-                $warnnotstarted = 0;
-            }
-            $coursedetails['warnnotstarted'] = $warnnotstarted;
-            $DB->update_record('iomad_courses', $coursedetails);
-        } else if ('warncompletion' == $update) {
-            // Work out the time in seconds....
-            if ($warncompletion < 0) {
-                $warncompletion = 0;
-            }
-            $coursedetails['warncompletion'] = $warncompletion;
-            $DB->update_record('iomad_courses', $coursedetails);
-        } else if ('notifyperiod' == $update) {
-            // Work out the time in seconds....
-            if ($notifyperiod < 0) {
-                $notifyperiod = 0;
-            }
-            $coursedetails['notifyperiod'] = $notifyperiod;
-            $DB->update_record('iomad_courses', $coursedetails);
-        } else if ('hasgrade' == $update) {
-            $coursedetails['hasgrade'] = $hasgrade;
-            $DB->update_record('iomad_courses', $coursedetails);
-        }
-        // Fire an event for this.
-        $eventother = array('iomadcourse' => $originaldetails);
-        $event = \block_iomad_company_admin\event\company_course_updated::create(array('context' => context_system::instance(),
-                                                                                       'objectid' => $courseid,
-                                                                                       'userid' => $USER->id,
-                                                                                       'other' => $eventother));
-        $event->trigger();
-    }
-}
-
-// Delete any valid departments.
+// Delete any valid courses.
 if (!empty($deleteid)) {
     if (!$course = $DB->get_record('course', array('id' => $deleteid))) {
         print_error('invalidcourse');
@@ -407,7 +234,7 @@ $sqlparams = $params;
 // Can we manage the courses or just see them?
 if ($canedit) {
     // Set up the headers for the table.
-    $tableheaders = array(
+    $tableheaders = [
         get_string('company', 'block_iomad_company_admin'),
         get_string('course'),
         get_string('licensed', 'block_iomad_company_admin') . $OUTPUT->help_icon('licensed', 'block_iomad_company_admin'),
@@ -418,9 +245,8 @@ if ($canedit) {
         get_string('warnnotstarted', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnnotstarted', 'block_iomad_company_admin'),
         get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
         get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'),
-        get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin'),
-        get_string('actions'));
-    $tablecolumns = array('company',
+        get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin')];
+    $tablecolumns = ['company',
                           'coursename',
                           'licensed',
                           'shared',
@@ -430,8 +256,14 @@ if ($canedit) {
                           'warnnotstarted',
                           'warncompletion',
                           'notifyperiod',
-                          'hasgrade',
-                          'actions');
+                          'hasgrade'];
+
+    // Do we show the action columns?
+    if (!empty($USER->editing)) {    
+        $tableheaders[] = '';
+        $tablecolumns[] = 'actions';
+    }
+
 } else {
 // Set up the headers for the table.
 $tableheaders = array(
