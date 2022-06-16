@@ -1264,7 +1264,7 @@ class company {
             }
             if (($user->managertype == 1 ||
                  $user->managertype == 2 ||
-                 $user->managertype == 3)
+                 $user->managertype == 4)
                  && $managertype == 0) {
                 // Demoting a manager to a user.
                 // Deal with company course roles.
@@ -1325,6 +1325,8 @@ class company {
                                              'user' => $userrec));
                     }
                 }
+                // Make sure all department records in the company match this.
+                $DB->set_field('company_users', 'managertype', 0, ['companyid' => $companyid, 'userid' => $userid]);
             }
             if ($educator && $user->educator != 1 &&
                  !$CFG->iomad_autoenrol_managers &&
