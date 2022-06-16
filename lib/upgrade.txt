@@ -3,6 +3,10 @@ information provided here is intended especially for developers.
 
 === 4.0.2 ===
 * The core renderer `edit_button` method now accepts an optional `$method` argument (get/post) for the button
+* The check for $plugin->incompatible was found to be incorrect. The $plugin->incompatible attribute is meant to define the minimum
+  Moodle version the plugin is incompatible with but the implemented logic for the check was the opposite. Plugins declaring this
+  attribute may encounter different behaviours between older Moodle versions (<v3.11.8, <v4.0.2) and the later ones. We recommend
+  plugin developers to not use this attribute for Moodle versions 4.0 and below in order to avoid this problem.
 
 === 4.0 ===
 
