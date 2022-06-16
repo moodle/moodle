@@ -17,14 +17,19 @@
         <div class="row m-t-1 border-bottom">
             <div class="col-7"><b>{{ name }}</b></div>
             <div class="col-2">
-                <a class="btn btn-success" href="{{{ editlink }}}">{{# str }}edit{{/ str }}</a>
+                <a href="{{{ editlink }}}">
+                    <i class="icon fa fa-cog fa-fw" title="{{# str }}edit{{/ str }}" role="img" aria-label="{{# str }}edit{{/ str }}"></i>
+                </a>
                 &nbsp;
-                <a class="btn btn-danger template-delete" href="#" data-templateid="{{ id }}" data-name="{{ name }}">{{# str }}delete{{/ str }}</a>
+                <a class="template-delete" href="#" data-templateid="{{ id }}" data-name="{{ name }}">
+                    <i class="icon fa fa-trash fa-fw" title="{{# str }}delete{{/ str }}" role="img" aria-label="{{# str }}delete{{/ str }}"></i>
+                </a>
             </div>
         </div>
     {{/ templates }}
 {{/ istemplates }}
 
+</br>
 <div class="m-t-1">
-    <a href="{{{ linkurl }}}" class="btn btn-success">{{# str }}back{{/ str}}</a>
+        <a href="{{{ linkurl }}}" class="btn btn-success">{{# str }}back{{/ str}}</a>
 </div>

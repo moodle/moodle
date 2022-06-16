@@ -13,13 +13,13 @@
 {{# capabilities }}
     <div class="row m-t-1 border-bottom">
         <div class="col-6">
-            <a href="{{{ doclink }}}"><b>{{ name }}</b><a><br />
+            <a href="{{{ doclink }}}"><b>{{ name }}</b></a><br />
             <small>{{ capability }}</small>
         </div>
         <div class="col-6 checkbox">
-            <label class="checkbox-inline checkbox-bootstrap checkbox-lg">
+            <label class="switch" style="float:right;">
                 <input class="capabilities-checkbox" type="checkbox" {{# checked }}checked="checked"{{/ checked }} data-capability="{{ capability }}" >
-                <span class="checkbox-placeholder"></span>
+                <span class="slider round"></span>
             </label>    
         </div>
     </div>
