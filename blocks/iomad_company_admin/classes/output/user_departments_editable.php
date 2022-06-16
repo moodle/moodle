@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class core_user\output\user_departments_editable
- *
- * @package   core_user
- * @copyright 2017 Damyon Wiese
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -34,10 +33,9 @@ use iomad;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class to display list of user departments.
- *
- * @package   core_user
- * @copyright 2017 Damyon Wiese
+ * @package   block_iomad_company_admin
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_departments_editable extends \core\output\inplace_editable {
