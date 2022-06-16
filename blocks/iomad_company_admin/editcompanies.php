@@ -74,7 +74,7 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/editcompanies.php', $para
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
