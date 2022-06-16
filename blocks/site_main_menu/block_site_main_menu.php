@@ -237,9 +237,10 @@ class block_site_main_menu extends block_list {
             $this->content->icons[] = '';
         }
 
-        $this->content->footer = $courserenderer->course_section_add_cm_control($course,
+        if ($this->page->course->id === SITEID) {
+            $this->content->footer = $courserenderer->course_section_add_cm_control($course,
                 0, null, array('inblock' => true));
-
+        }
         return $this->content;
     }
 }
