@@ -198,14 +198,6 @@ function trainingevent_get_coursemodule_info($coursemodule) {
 
         $info->content = format_module_intro('trainingevent', $trainingevent, $coursemodule->id, false);
         
-        // Check if the user is attending or on the waitlist
-        if ($status = $DB->get_record('trainingevent_users', ['userid' => $USER->id, 'trainingeventid' => $trainingevent->id])) {
-            if (!empty($status->waitlisted)) {
-                $trainingevent->name .= " - " . get_string('onwaitlist', 'mod_trainingevent');
-            } else {
-                $trainingevent->name .= " - " . get_string('attending', 'mod_trainingevent');
-            }
-        }
         $info->name  = format_string($trainingevent->name);
 
         return $info;
