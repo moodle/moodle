@@ -37,6 +37,7 @@ information provided here is intended especially for developers.
 * Added $CFG->proxylogunsafe and proxyfixunsafe to detect code which doesn't honor the proxy config
 * Function admin_externalpage_setup() now has additional option 'nosearch' allowing to remove Site administration search form.
 * The function print_error has been deprecated. Kindly use moodle_exception.
+* The function get_module_metadata() has been finally deprecated and can not be used anymore.
 
 === 4.0 ===
 
