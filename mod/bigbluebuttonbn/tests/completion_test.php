@@ -54,7 +54,7 @@ class completion_test extends \advanced_testcase {
         $completion = new custom_completion($bbactivitycm, $user->id);
         $result = $completion->get_overall_completion_state();
         // No custom rules so complete by default.
-        $this->assertEquals(COMPLETION_INCOMPLETE, $result);
+        $this->assertEquals(COMPLETION_COMPLETE, $result);
     }
 
     /**
@@ -213,6 +213,7 @@ class completion_test extends \advanced_testcase {
         $completion = new completion_info($this->get_course());
         $completiondata = $completion->get_data($bbactivitycm);
         $this->assertEquals(1, $completiondata->viewed);
-        $this->assertEquals(COMPLETION_INCOMPLETE, $completiondata->completionstate);
+        // A view means COMPLETE.
+        $this->assertEquals(COMPLETION_COMPLETE, $completiondata->completionstate);
     }
 }

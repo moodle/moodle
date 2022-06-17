@@ -211,24 +211,11 @@ function bigbluebuttonbn_delete_instance($id) {
  * @return stdClass with info and time (timestamp of the last log)
  */
 function bigbluebuttonbn_user_outline(stdClass $course, stdClass $user, cm_info $mod, stdClass $bigbluebuttonbn): stdClass {
-    $customcompletion = new custom_completion($mod, $user->id);
-    $completed = $customcompletion->get_overall_completion_state();
-    $result = new stdClass();
-    if ($completed) {
-        $results = [];
-        $lastlog = 0;
-        foreach ($customcompletion->get_available_custom_rules() as $rule) {
-            $results[] = $customcompletion->get_printable_state($rule);
-            $lastlogrule = $customcompletion->get_last_log_timestamp($rule);
-            if ($lastlogrule > $lastlog) {
-                $lastlog = $lastlogrule;
-            }
-        }
-        $result = new stdClass();
-        $result->info = join(', ', $results);
-        $result->time = $lastlog;
-    }
-    return $result;
+    [$infos, $logtimestamps] = \mod_bigbluebuttonbn\local\helpers\user_info::get_user_info_outline($course, $user, $mod);
+    return (object) [
+        'info' => join(',', $infos),
+        'time' => !empty($logtimestamps) ? max($logtimestamps) : 0
+    ];
 }
 
 /**
@@ -242,12 +229,8 @@ function bigbluebuttonbn_user_outline(stdClass $course, stdClass $user, cm_info 
  *
  */
 function bigbluebuttonbn_user_complete(stdClass $course, stdClass $user, cm_info $mod, stdClass $bigbluebuttonbn) {
-    $customcompletion = new custom_completion($mod, $user->id);
-    $result = [];
-    foreach ($customcompletion->get_available_custom_rules() as $rule) {
-        $result[] = $customcompletion->get_printable_state($rule);
-    }
-    echo join(', ', $result);
+    [$infos] = \mod_bigbluebuttonbn\local\helpers\user_info::get_user_info_outline($course, $user, $mod);
+    echo join(', ', $infos);
 }
 
 /**
