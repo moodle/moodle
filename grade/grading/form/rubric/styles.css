@@ -135,42 +135,11 @@
     color: #aaa;
 }
 
-.gradingform_rubric.editor .criterion .levels .level .delete {
-    position: absolute;
-    right: 0;
-}
-
-.gradingform_rubric .criterion .levels .level .score {
-    font-style: italic;
-    color: #575;
-    font-weight: bold;
-    margin-top: 5px;
-    white-space: nowrap;
-}
-
-.gradingform_rubric .criterion .levels .level .score .scorevalue {
-    padding-right: 5px;
-}
-
 /* Make invisible the buttons 'Move up' for the first criterion and
    'Move down' for the last, because those buttons will make no change */
 .gradingform_rubric.editor .criterion.first .controls .moveup input,
 .gradingform_rubric.editor .criterion.last .controls .movedown input {
     display: none;
-}
-
-/* evaluation */
-.gradingform_rubric .criterion .levels .level.currentchecked {
-    background: #fff0f0;
-}
-
-.gradingform_rubric .criterion .levels .level.checked {
-    background: #d0ffd0;
-    border: 1px solid #555;
-}
-
-.gradingform_rubric.evaluate .criterion .levels .level:hover {
-    background: #30ff30;
 }
 
 /* replace buttons with images */
