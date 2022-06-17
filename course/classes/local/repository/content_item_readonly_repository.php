@@ -62,63 +62,6 @@ class content_item_readonly_repository implements content_item_readonly_reposito
     }
 
     /**
-     * Create a content_item object based on legacy data returned from the get_shortcuts hook implementations.
-     *
-     * @param \stdClass $item the stdClass of legacy data.
-     * @return content_item a content item object.
-     */
-    private function content_item_from_legacy_data(\stdClass $item): content_item {
-        global $OUTPUT;
-
-        // Make sure the legacy data results in a content_item with id = 0.
-        // Even with an id, we can't uniquely identify the item, because we can't guarantee what component it came from.
-        // An id of -1, signifies this.
-        $item->id = -1;
-
-        // If the module provides the helplink property, append it to the help text to match the look and feel
-        // of the default course modules.
-        if (isset($item->help) && isset($item->helplink)) {
-            $linktext = get_string('morehelp');
-            $item->help .= \html_writer::tag('div',
-                $OUTPUT->doc_link($item->helplink, $linktext, true), ['class' => 'helpdoclink']);
-        }
-
-        if (is_string($item->title)) {
-            $item->title = new string_title($item->title);
-        } else if ($item->title instanceof \lang_string) {
-            $item->title = new lang_string_title($item->title->get_identifier(), $item->title->get_component());
-        }
-
-        // Legacy items had names which are in one of 2 forms:
-        // modname, i.e. 'assign' or
-        // modname:link, i.e. lti:http://etc...
-        // We need to grab the module name out to create the componentname.
-        $modname = (strpos($item->name, ':') !== false) ? explode(':', $item->name)[0] : $item->name;
-        $purpose = plugin_supports('mod', $modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
-        return new content_item($item->id, $item->name, $item->title, $item->link, $item->icon, $item->help ?? '',
-            $item->archetype, 'mod_' . $modname, $purpose);
-    }
-
-    /**
-     * Create a stdClass type object based on a content_item instance.
-     *
-     * @param content_item $contentitem
-     * @return \stdClass the legacy data.
-     */
-    private function content_item_to_legacy_data(content_item $contentitem): \stdClass {
-        $item = new \stdClass();
-        $item->id = $contentitem->get_id();
-        $item->name = $contentitem->get_name();
-        $item->title = $contentitem->get_title();
-        $item->link = $contentitem->get_link();
-        $item->icon = $contentitem->get_icon();
-        $item->help = $contentitem->get_help();
-        $item->archetype = $contentitem->get_archetype();
-        $item->componentname = $contentitem->get_component_name();
-        return $item;
-    }
-
-    /**
      * Helper to get the contentitems from all subplugin hooks for a given module plugin.
      *
      * @param string $parentpluginname the name of the module plugin to check subplugins for.
@@ -163,20 +106,6 @@ class content_item_readonly_repository implements content_item_readonly_reposito
             }
         }
         return $contentitems;
-    }
-
-    /**
-     * Helper to make sure any legacy items have certain properties, which, if missing are inherited from the parent module item.
-     *
-     * @param \stdClass $legacyitem the legacy information, a stdClass coming from get_shortcuts() hook.
-     * @param content_item $modulecontentitem The module's content item information, to inherit if needed.
-     * @return \stdClass the updated legacy item stdClass
-     */
-    private function legacy_item_inherit_missing(\stdClass $legacyitem, content_item $modulecontentitem): \stdClass {
-        // Fall back to the plugin parent value if the subtype didn't provide anything.
-        $legacyitem->archetype = $legacyitem->archetype ?? $modulecontentitem->get_archetype();
-        $legacyitem->icon = $legacyitem->icon ?? $modulecontentitem->get_icon();
-        return $legacyitem;
     }
 
     /**
@@ -254,9 +183,6 @@ class content_item_readonly_repository implements content_item_readonly_reposito
         $modules = $DB->get_records('modules', ['visible' => 1]);
         $return = [];
 
-        // A moodle_url is expected and required by modules in their implementation of the hook 'get_shortcuts'.
-        $urlbase = new \moodle_url('/course/mod.php', ['id' => $course->id]);
-
         // Now, generate the content_items.
         foreach ($modules as $modid => $mod) {
             // Exclude modules if the code doesn't exist.
@@ -273,7 +199,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                 $mod->id,
                 $mod->name,
                 new lang_string_title("modulename", $mod->name),
-                new \moodle_url($urlbase, ['add' => $mod->name]),
+                new \moodle_url('/course/mod.php', ['id' => $course->id, 'add' => $mod->name]),
                 $OUTPUT->pix_icon('monologo', '', $mod->name, ['class' => 'icon activityicon']),
                 $help,
                 $archetype,
@@ -281,10 +207,6 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                 $purpose,
             );
 
-            // Legacy vs new hooks.
-            // If the new hook is found for a module plugin, use that path (calling mod plugins and their subplugins directly)
-            // If not, check the legacy hook. This won't provide us with enough information to identify items uniquely within their
-            // component (lti + lti source being an example), but we can still list these items.
             $modcontentitemreference = clone($contentitem);
 
             if (component_callback_exists('mod_' . $mod->name, 'get_course_content_items')) {
@@ -301,37 +223,8 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                     array_push($return, ...$subpluginitems);
                 }
 
-            } else if (component_callback_exists('mod_' . $mod->name, 'get_shortcuts')) {
-                // TODO: MDL-68011 this block needs to be removed in 4.1.
-                debugging('The callback get_shortcuts has been deprecated. Please use get_course_content_items and
-                    get_all_content_items instead. Some features of the activity chooser, such as favourites and recommendations
-                    are not supported when providing content items via the deprecated callback.');
-
-                // If get_shortcuts() callback is defined, the default module action is not added.
-                // It is a responsibility of the callback to add it to the return value unless it is not needed.
-                // The legacy hook, get_shortcuts, expects a stdClass representation of the core module content_item entry.
-                $modcontentitemreference = $this->content_item_to_legacy_data($contentitem);
-
-                $legacyitems = component_callback($mod->name, 'get_shortcuts', [$modcontentitemreference], null);
-                if (!is_null($legacyitems)) {
-                    foreach ($legacyitems as $legacyitem) {
-
-                        $legacyitem = $this->legacy_item_inherit_missing($legacyitem, $contentitem);
-
-                        // All items must have different links, use them as a key in the return array.
-                        // If plugin returned the only one item with the same link as default item - keep $modname,
-                        // otherwise append the link url to the module name.
-                        $legacyitem->name = (count($legacyitems) == 1 &&
-                            $legacyitem->link->out() === $contentitem->get_link()->out()) ? $mod->name : $mod->name . ':' .
-                                $legacyitem->link;
-
-                        $plugincontentitem = $this->content_item_from_legacy_data($legacyitem);
-
-                        $return[] = $plugincontentitem;
-                    }
-                }
             } else {
-                // Neither callback was found, so just use the default module content item.
+                // Callback was not found, so just use the default module content item.
                 $return[] = $contentitem;
             }
         }
