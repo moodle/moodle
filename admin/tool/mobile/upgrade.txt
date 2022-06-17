@@ -1,6 +1,10 @@
 This files describes changes in tool_mobile code.
 Information provided here is intended especially for developers.
 
+=== 4.1 ===
+
+* External function tool_mobile::get_config now returns the customusermenuitems setting.
+
 === 4.0 ===
 
 * The function tool_mobile\api::get_qrlogin_key() now requires as parameter an object with all the mobile plugin settings.

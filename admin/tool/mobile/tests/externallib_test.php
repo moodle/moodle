@@ -234,6 +234,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expected[] = ['name' => 'coursegraceperiodbefore', 'value' => $CFG->coursegraceperiodbefore];
 
         $expected[] = ['name' => 'enabledashboard', 'value' => $CFG->enabledashboard];
+        $expected[] = ['name' => 'customusermenuitems', 'value' => $CFG->customusermenuitems];
 
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
