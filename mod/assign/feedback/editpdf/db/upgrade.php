@@ -95,5 +95,29 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
     // Automatically generated Moodle v4.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2022061000) {
+        $table = new xmldb_table('assignfeedback_editpdf_queue');
+        if ($dbman->table_exists($table)) {
+            // Convert not yet converted submissions into adhoc tasks.
+            $rs = $DB->get_recordset('assignfeedback_editpdf_queue');
+            foreach ($rs as $record) {
+                $data = [
+                    'submissionid' => $record->submissionid,
+                    'submissionattempt' => $record->submissionattempt,
+                ];
+                $task = new assignfeedback_editpdf\task\convert_submission;
+                $task->set_custom_data($data);
+                \core\task\manager::queue_adhoc_task($task, true);
+            }
+            $rs->close();
+
+            // Drop the table.
+            $dbman->drop_table($table);
+        }
+
+        // Editpdf savepoint reached.
+        upgrade_plugin_savepoint(true, 2022061000, 'assignfeedback', 'editpdf');
+    }
+
     return true;
 }

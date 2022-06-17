@@ -329,13 +329,15 @@ class feedback_test extends \advanced_testcase {
         $this->assertEmpty($file3);
     }
 
+    /**
+     * Test Convert submission ad-hoc task.
+     *
+     * @covers \assignfeedback_editpdf\task\convert_submission
+     */
     public function test_conversion_task() {
-        global $DB;
         $this->require_ghostscript();
         $this->resetAfterTest();
         cron_setup_user();
-
-        $task = new \assignfeedback_editpdf\task\convert_submissions;
 
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
@@ -351,39 +353,35 @@ class feedback_test extends \advanced_testcase {
         $this->add_file_submission($student, $assign);
 
         // Run the conversion task.
+        $task = \core\task\manager::get_next_adhoc_task(time());
         ob_start();
         $task->execute();
+        \core\task\manager::adhoc_task_complete($task);
         $output = ob_get_clean();
 
-        // Verify it acted on both submissions in the queue.
-        $this->assertStringContainsString("Convert 1 submission attempt(s) for assignment {$assign->get_instance()->id}", $output);
-        $this->assertEquals(0, $DB->count_records('assignfeedback_editpdf_queue'));
-
-        // Set a known limit.
-        set_config('conversionattemptlimit', 3);
+        // Confirm, that submission has been converted and the task queue is now empty.
+        $this->assertStringContainsString('Converting submission for user id ' . $student->id, $output);
+        $this->assertStringContainsString('The document has been successfully converted', $output);
+        $this->assertNull(\core\task\manager::get_next_adhoc_task(time()));
 
         // Trigger a re-queue by 'updating' a submission.
         $submission = $assign->get_user_submission($student->id, true);
         $plugin = $assign->get_submission_plugin_by_type('file');
         $plugin->save($submission, (new \stdClass));
 
+        $task = \core\task\manager::get_next_adhoc_task(time());
         // Verify that queued a conversion task.
-        $this->assertEquals(1, $DB->count_records('assignfeedback_editpdf_queue'));
-
-        // Fake some failed attempts for it.
-        $queuerecord = $DB->get_record('assignfeedback_editpdf_queue', ['submissionid' => $submission->id]);
-        $queuerecord->attemptedconversions = 3;
-        $DB->update_record('assignfeedback_editpdf_queue', $queuerecord);
+        $this->assertNotNull($task);
 
         ob_start();
         $task->execute();
+        \core\task\manager::adhoc_task_complete($task);
         $output = ob_get_clean();
 
-        // Verify that the cron task skipped the submission.
-        $this->assertStringNotContainsString("Convert 1 submission attempt(s) for assignment {$assign->get_instance()->id}", $output);
-        // And it removed it from the queue.
-        $this->assertEquals(0, $DB->count_records('assignfeedback_editpdf_queue'));
-
+        // Confirm, that submission has been converted and the task queue is now empty.
+        $this->assertStringContainsString('Converting submission for user id ' . $student->id, $output);
+        $this->assertStringContainsString('The document has been successfully converted', $output);
+        $this->assertNull(\core\task\manager::get_next_adhoc_task(time()));
     }
 
     /**
@@ -516,42 +514,5 @@ class feedback_test extends \advanced_testcase {
         $this->assertCount(2, page_editor::get_comments($grade->id, 0, true));
         // No modification.
         $this->assertFalse($plugin->is_feedback_modified($grade, $data));
-    }
-
-    /**
-     * Test Convert submissions scheduled task limit.
-     *
-     * @covers \assignfeedback_editpdf\task\convert_submissions
-     */
-    public function test_conversion_task_limit() {
-        global $DB;
-        $this->require_ghostscript();
-        $this->resetAfterTest();
-        cron_setup_user();
-
-        $course = $this->getDataGenerator()->create_course();
-        $assignopts = [
-            'assignsubmission_file_enabled' => 1,
-            'assignsubmission_file_maxfiles' => 1,
-            'assignfeedback_editpdf_enabled' => 1,
-            'assignsubmission_file_maxsizebytes' => 1000000,
-        ];
-        $assign = $this->create_instance($course, $assignopts);
-
-        // Generate 110 submissions.
-        for ($i = 0; $i < 110; $i++) {
-            $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
-            $this->add_file_submission($student, $assign);
-        }
-        $this->assertEquals(110, $DB->count_records('assignfeedback_editpdf_queue'));
-
-        // Run the conversion task.
-        $task = new \assignfeedback_editpdf\task\convert_submissions;
-        ob_start();
-        $task->execute();
-        ob_end_clean();
-
-        // Confirm, that 100 records were processed and 10 were left for the next task run.
-        $this->assertEquals(10, $DB->count_records('assignfeedback_editpdf_queue'));
     }
 }
