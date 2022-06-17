@@ -17,16 +17,14 @@ Feature: View fill the blanks attempt report
     And the following config values are set as admin:
       # No HTML should appear even with formatstringstriptags disabled.
       | formatstringstriptags | 0 |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "H5P" to section "1"
-    And I set the following fields to these values:
-      | Name           | Awesome H5P package |
-      | Description    | Description         |
-      | Grading method | Average grade       |
-    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    And I log out
+    And the following "activity" exists:
+      | activity        | h5pactivity                          |
+      | course          | C1                                   |
+      | section         | 1                                    |
+      | name            | Awesome H5P package                  |
+      | intro           | Description                          |
+      | grademethod     | 2                                    |
+      | packagefilepath | h5p/tests/fixtures/filltheblanks.h5p |
 
   Scenario: View attempt in a fill the blanks content
     Given I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
