@@ -48,8 +48,7 @@ class custom_completion extends activity_custom_completion {
 
         // Default return value.
         $value = COMPLETION_INCOMPLETE;
-        $filters = $rule != "completionview" ? [logger::EVENT_SUMMARY] : [logger::EVENT_JOIN, logger::EVENT_PLAYED];
-        $logs = logger::get_user_completion_logs($instance, $this->userid, $filters);
+        $logs = logger::get_user_completion_logs($instance, $this->userid, [logger::EVENT_SUMMARY]);
 
         if (method_exists($this, "get_{$rule}_value")) {
             $valuecount = $this->count_actions($logs, self::class . "::get_{$rule}_value");
@@ -101,8 +100,6 @@ class custom_completion extends activity_custom_completion {
             'completionengagementraisehand',
             'completionengagementpollvotes',
             'completionengagementemojis',
-            'completionview' // Completion view is now a customrule as it depends on the logs and not
-            // the view action itself.
         ];
     }
 
@@ -141,7 +138,6 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_sort_order(): array {
         return [
-            'completionview',
             'completionengagementchats',
             'completionengagementtalks',
             'completionengagementraisehand',
@@ -166,8 +162,7 @@ class custom_completion extends activity_custom_completion {
         }
 
         $summary = "";
-        $filters = $rule != "completionview" ? [logger::EVENT_SUMMARY] : [logger::EVENT_JOIN, logger::EVENT_PLAYED];
-        $logs = logger::get_user_completion_logs($instance, $this->userid, $filters);
+        $logs = logger::get_user_completion_logs($instance, $this->userid, [logger::EVENT_SUMMARY]);
 
         if (method_exists($this, "get_{$rule}_value")) {
             $summary = get_string(
@@ -194,29 +189,6 @@ class custom_completion extends activity_custom_completion {
         }
         $filters = $rule != "completionview" ? [logger::EVENT_SUMMARY] : [logger::EVENT_JOIN, logger::EVENT_PLAYED];
         return logger::get_user_completion_logs_max_timestamp($instance, $this->userid, $filters);
-    }
-
-    /**
-     * Fetches the list of custom completion rules that are being used by this activity module instance.
-     *
-     * @return array
-     */
-    public function get_available_custom_rules(): array {
-        $availablerules = parent::get_available_custom_rules();
-        $availablerules[] = 'completionview'; // Completion view is now a customrule.
-        return $availablerules;
-    }
-
-    /**
-     * Get completion view value
-     *
-     * This will override the usual completion value (see COMPLETION_CUSTOM_MODULE_FLOW)
-     *
-     * @param stdClass $log
-     * @return int
-     */
-    protected static function get_completionview_value(stdClass $log): int {
-        return $log->log == logger::EVENT_PLAYED || $log->log == logger::EVENT_JOIN;
     }
 
     /**
