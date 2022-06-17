@@ -97,11 +97,8 @@ class custom_report_exporter extends persistent_exporter {
             'cardview' => ['type' => custom_report_card_view_exporter::read_properties_definition()],
             'filtersapplied' => ['type' => PARAM_INT],
             'filterspresent' => ['type' => PARAM_BOOL],
-            'filtersform' => [
-                'type' => PARAM_RAW,
-                'optional' => true,
-            ],
-            'editmode' => ['type' => PARAM_INT],
+            'filtersform' => ['type' => PARAM_RAW],
+            'editmode' => ['type' => PARAM_BOOL],
             'javascript' => ['type' => PARAM_RAW],
         ];
     }
@@ -164,7 +161,7 @@ class custom_report_exporter extends persistent_exporter {
             'filtersapplied' => $report->get_applied_filter_count(),
             'filterspresent' => $filterspresent,
             'filtersform' => $filtersform,
-            'editmode' => (int)$this->editmode,
+            'editmode' => $this->editmode,
             'javascript' => '',
         ];
     }
