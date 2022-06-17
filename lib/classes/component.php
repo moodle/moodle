@@ -1203,18 +1203,20 @@ $cache = '.var_export($cache, true).';
      * and the value is the new class name.
      * It is only included when we are populating the component cache. After that is not needed.
      *
-     * @param string $fulldir
+     * @param string|null $fulldir The directory to the renamed classes.
      */
-    protected static function load_renamed_classes($fulldir) {
-        if (isset($fulldir)) {
-            $file = $fulldir . '/db/renamedclasses.php';
-            if (is_readable($file)) {
-                $renamedclasses = null;
-                require($file);
-                if (is_array($renamedclasses)) {
-                    foreach ($renamedclasses as $oldclass => $newclass) {
-                        self::$classmaprenames[(string)$oldclass] = (string)$newclass;
-                    }
+    protected static function load_renamed_classes(?string $fulldir) {
+        if (is_null($fulldir)) {
+            return;
+        }
+
+        $file = $fulldir . '/db/renamedclasses.php';
+        if (is_readable($file)) {
+            $renamedclasses = null;
+            require($file);
+            if (is_array($renamedclasses)) {
+                foreach ($renamedclasses as $oldclass => $newclass) {
+                    self::$classmaprenames[(string)$oldclass] = (string)$newclass;
                 }
             }
         }
