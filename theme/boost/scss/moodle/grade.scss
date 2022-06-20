@@ -141,14 +141,11 @@
         }
 
         .score {
-            position: relative;
-            float: left;
             margin-top: 5px;
             margin-right: 28px;
             font-style: italic;
             font-weight: bold;
             color: #{theme-color-level('success', 2)};
-            white-space: nowrap;
 
             input {
                 margin-bottom: 0;
@@ -193,7 +190,6 @@
         }
 
         .scorevalue {
-            padding-right: 5px;
             input {
                 // Should handle at least three chars with room to spare.
                 float: none;

@@ -225,7 +225,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         // Template for one level within one criterion
         $tdattributes = array(
             'id' => '{NAME}-criteria-{CRITERION-id}-levels-{LEVEL-id}',
-            'class' => 'level' . $level['class']
+            'class' => 'text-break level' . $level['class']
         );
         if (isset($level['tdwidth'])) {
             $tdattributes['style'] = "width: " . round($level['tdwidth']).'%;';
@@ -319,7 +319,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
             $displayscore = false;
         }
         if ($displayscore) {
-            $scoreclass = 'score';
+            $scoreclass = 'score d-inline';
             if (isset($level['error_score'])) {
                 $scoreclass .= ' error';
             }
