@@ -19387,14 +19387,11 @@ p.arrow_button {
     width: 80%;
     margin-bottom: 0; }
   .gradingform_rubric .criterion .score {
-    position: relative;
-    float: left;
     margin-top: 5px;
     margin-right: 28px;
     font-style: italic;
     font-weight: bold;
-    color: #2d662a;
-    white-space: nowrap; }
+    color: #2d662a; }
     .gradingform_rubric .criterion .score input {
       margin-bottom: 0; }
   .gradingform_rubric .criterion .level {
@@ -19422,13 +19419,11 @@ p.arrow_button {
         margin: 0; }
         .gradingform_rubric .criterion .level .delete input:hover {
           background-color: #ddd; }
-  .gradingform_rubric .criterion .scorevalue {
-    padding-right: 5px; }
-    .gradingform_rubric .criterion .scorevalue input {
-      float: none;
-      width: 2em; }
-      .gradingform_rubric .criterion .scorevalue input.hiddenelement, .gradingform_rubric .criterion .scorevalue input.pseudotablink {
-        width: 0; }
+  .gradingform_rubric .criterion .scorevalue input {
+    float: none;
+    width: 2em; }
+    .gradingform_rubric .criterion .scorevalue input.hiddenelement, .gradingform_rubric .criterion .scorevalue input.pseudotablink {
+      width: 0; }
   .gradingform_rubric .criterion .addlevel {
     vertical-align: top;
     padding-top: 6px; }
