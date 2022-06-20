@@ -257,7 +257,7 @@ class iomad_approve_access {
             $calendarevent->visible = instance_is_visible('trainingevent', $event);
             $calendarevent->timeduration = $event->enddatetime - $event->startdatetime;
 
-            calendar_event::create($calendarevent);
+            calendar_event::create($calendarevent, false);
         }
     }
 }

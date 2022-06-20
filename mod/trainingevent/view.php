@@ -263,7 +263,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         $calendarevent->visible = instance_is_visible('trainingevent', $event);
                         $calendarevent->timeduration = $event->enddatetime - $event->startdatetime;
 
-                        calendar_event::create($calendarevent);
+                        calendar_event::create($calendarevent, false);
 
                         // Do we need to notify teachers?
                         if (!empty($event->emailteachers)) {
@@ -502,7 +502,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $calendarevent->visible = instance_is_visible('trainingevent', $event);
                             $calendarevent->timeduration = $event->enddatetime - $event->startdatetime;
 
-                            calendar_event::create($calendarevent);
+                            calendar_event::create($calendarevent, false);
 
                             // Do we need to notify teachers?
                             if (!empty($event->emailteachers)) {
@@ -802,7 +802,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         $calendarevent->visible = instance_is_visible('trainingevent', $event);
                         $calendarevent->timeduration = $event->enddatetime - $event->startdatetime;
 
-                        calendar_event::create($calendarevent);
+                        calendar_event::create($calendarevent, false);
                     }
 
                     // Do we need to notify teachers?
