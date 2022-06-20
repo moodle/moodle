@@ -681,7 +681,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         if ($action == 'delete' && !empty($userid)) {
 
             // Get the user's company.
-            $usercompany = company::get_company_byuserid($user->id);
+            $usercompany = company::get_company_byuserid($userid);
 
             // Remove the userid from the event.
             if ($DB->delete_records('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id))) {
@@ -749,7 +749,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     ($event->approvaltype == 1 && $myapprovallevel == "department")) {
                     // Add to the chosen event.
                     if (!($record && $record->waitlisted == 0)) {
-                        if ($record->waitlisted) {
+                        if (!empty($record->waitlisted)) {
                             $DB->set_field('trainingevent_users', 'waitlisted', 0, array('id' => $record->id));
                         }
                         else {
@@ -777,7 +777,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         $calendarevent->eventtype = TRAININGEVENT_EVENT_TYPE; // Constant defined somewhere in your code - this can be any string value you want. It is a way to identify the event.
                         $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
                         $calendarevent->name = get_string('calendarstart', 'trainingevent', $event->name);
-                        $calendarevent->description = format_module_intro('trainingevent', $event, $cmid, false);
+                        $calendarevent->description = format_module_intro('trainingevent', $event, $cmidinfo->id, false);
                         $calendarevent->format = FORMAT_HTML;
                         $eventlocation = format_string($location->name);
                         if (!empty($location->address)) {
