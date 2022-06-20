@@ -24,6 +24,7 @@
 "use strict";
 
 import $ from 'jquery';
+import CustomEvents from 'core/custom_interaction_events';
 import {dispatchEvent} from 'core/event_dispatcher';
 import 'core/inplace_editable';
 import Notification from 'core/notification';
@@ -52,10 +53,13 @@ const reloadSettingsConditionsRegion = (reportElement, templateContext) => {
     return Templates.renderForPromise('core_reportbuilder/local/settings/conditions', {conditions: templateContext})
         .then(({html, js}) => {
             Templates.replaceNode(settingsConditionsRegion, html, js + templateContext.javascript);
+
+            initConditionsForm();
+
             // Re-focus the add condition element after reloading the region.
             const reportAddCondition = reportElement.querySelector(reportSelectors.actions.reportAddCondition);
             reportAddCondition?.focus();
-            initConditionsForm(reportElement);
+
             return pendingPromise.resolve();
         });
 };
@@ -64,6 +68,8 @@ const reloadSettingsConditionsRegion = (reportElement, templateContext) => {
  * Initialise conditions form, must be called on each init because the form container is re-created when switching editor modes
  */
 const initConditionsForm = () => {
+    CustomEvents.define(reportSelectors.actions.reportAddCondition, [CustomEvents.events.accessibleChange]);
+
     // Handle dynamic conditions form.
     const reportElement = document.querySelector(reportSelectors.regions.report);
     const conditionFormContainer = reportElement.querySelector(reportSelectors.regions.settingsConditions);
@@ -138,20 +144,18 @@ export const init = initialized => {
         return;
     }
 
-    document.addEventListener('click', event => {
-
-        // Add condition to report.
+    // Add condition to report. Use custom events helper to ensure consistency across platforms.
+    $(document).on(CustomEvents.events.accessibleChange, reportSelectors.actions.reportAddCondition, event => {
         const reportAddCondition = event.target.closest(reportSelectors.actions.reportAddCondition);
         if (reportAddCondition) {
             event.preventDefault();
 
-            const reportElement = reportAddCondition.closest(reportSelectors.regions.report);
-
             // Check if dropdown is closed with no condition selected.
-            if (reportAddCondition.value === '0') {
+            if (reportAddCondition.selectedIndex === 0) {
                 return;
             }
 
+            const reportElement = reportAddCondition.closest(reportSelectors.regions.report);
             const pendingPromise = new Pending('core_reportbuilder/conditions:add');
 
             addCondition(reportElement.dataset.reportId, reportAddCondition.value)
@@ -165,6 +169,9 @@ export const init = initialized => {
                 })
                 .catch(Notification.exception);
         }
+    });
+
+    document.addEventListener('click', event => {
 
         // Remove condition from report.
         const reportRemoveCondition = event.target.closest(reportSelectors.actions.reportRemoveCondition);
