@@ -228,7 +228,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
             'class' => 'level' . $level['class']
         );
         if (isset($level['tdwidth'])) {
-            $tdattributes['width'] = round($level['tdwidth']).'%';
+            $tdattributes['style'] = "width: " . round($level['tdwidth']).'%;';
         }
 
         $leveltemplate = html_writer::start_tag('div', array('class' => 'level-wrapper'));
