@@ -45,7 +45,7 @@ $title = get_string('contentbank');
 if ($PAGE->course) {
     require_login($PAGE->course->id);
 }
-$PAGE->set_url('/contentbank/index.php');
+$PAGE->set_url('/contentbank/index.php', ['contextid' => $contextid]);
 $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
