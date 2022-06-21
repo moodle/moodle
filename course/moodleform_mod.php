@@ -492,8 +492,16 @@ abstract class moodleform_mod extends moodleform {
                     $validategradepass = true;
                 }
 
-                // Confirm gradepass is a valid non-zero value.
-                if ($validategradepass && (!isset($data[$gradepassfieldname]) || grade_floatval($data[$gradepassfieldname]) == 0)) {
+                // We need to make all the validations related with $gradepassfieldname
+                // with them being correct floats, keeping the originals unmodified for
+                // later validations / showing the form back...
+                // TODO: Note that once MDL-73994 is fixed we'll have to re-visit this and
+                // adapt the code below to the new values arriving here, without forgetting
+                // the special case of empties and nulls.
+                $gradepass = isset($data[$gradepassfieldname]) ? unformat_float($data[$gradepassfieldname]) : null;
+
+                // Confirm gradepass is a valid non-empty (null or zero) value.
+                if ($validategradepass && (is_null($gradepass) || $gradepass == 0)) {
                     $errors['completionpassgrade'] = get_string(
                         'activitygradetopassnotset',
                         'completion'
@@ -959,10 +967,9 @@ abstract class moodleform_mod extends moodleform {
         }
 
         // Grade to pass.
-        $mform->addElement('text', $gradepassfieldname, get_string('gradepass', 'grades'));
+        $mform->addElement('float', $gradepassfieldname, get_string('gradepass', 'grades'));
         $mform->addHelpButton($gradepassfieldname, 'gradepass', 'grades');
         $mform->setDefault($gradepassfieldname, '');
-        $mform->setType($gradepassfieldname, PARAM_RAW);
         $mform->hideIf($gradepassfieldname, $assessedfieldname, 'eq', '0');
         $mform->hideIf($gradepassfieldname, "{$scalefieldname}[modgrade_type]", 'eq', 'none');
     }
@@ -1136,10 +1143,9 @@ abstract class moodleform_mod extends moodleform {
             }
 
             // Grade to pass.
-            $mform->addElement('text', $gradepassfieldname, get_string($gradepassfieldname, 'grades'));
+            $mform->addElement('float', $gradepassfieldname, get_string($gradepassfieldname, 'grades'));
             $mform->addHelpButton($gradepassfieldname, $gradepassfieldname, 'grades');
             $mform->setDefault($gradepassfieldname, '');
-            $mform->setType($gradepassfieldname, PARAM_RAW);
             $mform->hideIf($gradepassfieldname, "{$gradefieldname}[modgrade_type]", 'eq', 'none');
         }
     }
