@@ -120,7 +120,14 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
 
         // Levels table.
         $levelsrowparams = array('id' => '{NAME}-criteria-{CRITERION-id}-levels');
-        if ($mode != gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
+        // Add radiogroup role only when not previewing or editing.
+        $isradiogroup = !in_array($mode, [
+            gradingform_rubric_controller::DISPLAY_EDIT_FULL,
+            gradingform_rubric_controller::DISPLAY_EDIT_FROZEN,
+            gradingform_rubric_controller::DISPLAY_PREVIEW,
+            gradingform_rubric_controller::DISPLAY_PREVIEW_GRADED,
+        ]);
+        if ($isradiogroup) {
             $levelsrowparams['role'] = 'radiogroup';
         }
         $levelsrow = html_writer::tag('tr', $levelsstr, $levelsrowparams);
