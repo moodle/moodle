@@ -1725,7 +1725,7 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
 
     $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     $sql = "SELECT $postdata, $discussionfields,
-                   $allnames, u.email, u.picture, u.imagealt $umfields
+                   $allnames, u.email, u.picture, u.imagealt, u.deleted AS userdeleted $umfields
               FROM {forum_discussions} d
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON p.userid = u.id
