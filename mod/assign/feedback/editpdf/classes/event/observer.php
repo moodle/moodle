@@ -51,20 +51,12 @@ class observer {
      * @param \mod_assign\event\base $event The submission created/updated event.
      */
     protected static function queue_conversion($event) {
-        global $DB;
-
-        $submissionid = $event->other['submissionid'];
-        $submissionattempt = $event->other['submissionattempt'];
-        $fields = array( 'submissionid' => $submissionid, 'submissionattempt' => $submissionattempt);
-        $record = (object) $fields;
-
-        $exists = $DB->get_record('assignfeedback_editpdf_queue', $fields);
-        if (!$exists) {
-            $DB->insert_record('assignfeedback_editpdf_queue', $record);
-        } else {
-            // This submission attempt was already queued, so just reset the existing failure counter to ensure it gets processed.
-            $exists->attemptedconversions = 0;
-            $DB->update_record('assignfeedback_editpdf_queue', $exists);
-        }
+        $data = [
+            'submissionid' => $event->other['submissionid'],
+            'submissionattempt' => $event->other['submissionattempt'],
+        ];
+        $task = new \assignfeedback_editpdf\task\convert_submission;
+        $task->set_custom_data($data);
+        \core\task\manager::queue_adhoc_task($task, true);
     }
 }

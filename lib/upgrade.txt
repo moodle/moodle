@@ -250,6 +250,8 @@ defined or can't be applied.
   user_can_edit_blocks() to return false where necessary. This makes it possible to remove block editing on a page
   from ALL users, including admins, where required on pages with multi region layouts exist, such as "My courses".
 * Add an early $CFG->session_redis_acquire_lock_warn option
+* Removed $CFG->conversionattemptlimit setting from config.php. assignfeedback_editpdf\task\convert_submissions task
+  is now replaced with adhoc tasks with standard fail delay approach.
 
 === 3.11.4 ===
 * A new option dontforcesvgdownload has been added to the $options parameter of the send_file() function.
