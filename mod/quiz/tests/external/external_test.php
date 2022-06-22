@@ -1960,4 +1960,55 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals($expected, $result);
 
     }
+
+    /**
+     * Test get_quiz_required_qtypes for quiz with random questions
+     */
+    public function test_get_quiz_required_qtypes_random() {
+        $this->setAdminUser();
+
+        // Create a new quiz.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $this->course->id]);
+
+        // Create some questions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $questiongenerator->create_question_category();
+        $anothercat = $questiongenerator->create_question_category();
+
+        $question = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('truefalse', null, ['category' => $cat->id]);
+        // Question in a different category.
+        $question = $questiongenerator->create_question('essay', null, ['category' => $anothercat->id]);
+
+        // Add a couple of random questions from the same category.
+        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
+        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
+
+        $this->setUser($this->student);
+
+        $result = mod_quiz_external::get_quiz_required_qtypes($quiz->id);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_required_qtypes_returns(), $result);
+
+        $expected = ['numerical', 'shortanswer', 'truefalse'];
+        ksort($result['questiontypes']);
+
+        $this->assertEquals($expected, $result['questiontypes']);
+
+        // Add more questions to the quiz, this time from the other category.
+        $this->setAdminUser();
+        quiz_add_random_questions($quiz, 0, $anothercat->id, 1, false);
+
+        $this->setUser($this->student);
+        $result = mod_quiz_external::get_quiz_required_qtypes($quiz->id);
+        $result = \external_api::clean_returnvalue(mod_quiz_external::get_quiz_required_qtypes_returns(), $result);
+
+        // The new question from the new category is returned as a potential random question for the quiz.
+        $expected = ['essay', 'numerical', 'shortanswer', 'truefalse'];
+        ksort($result['questiontypes']);
+
+        $this->assertEquals($expected, $result['questiontypes']);
+    }
 }
