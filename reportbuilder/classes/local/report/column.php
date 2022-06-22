@@ -478,9 +478,8 @@ final class column {
      * The callback should implement the following signature (where $value is the first column field, $row is all column
      * fields, and $additionalarguments are those passed on from this method):
      *
-     * The type of the $value parameter passed to the callback is determined by calling {@see set_type}, however note that
-     * if the column is part of a report source and can be aggregated using one of the "Group concatenation" methods then the
-     * type should be omitted if it's not string
+     * The type of the $value parameter passed to the callback is determined by calling {@see set_type}, this type is preserved
+     * if the column is part of a report source and is aggregated using one of the "Group concatenation" methods
      *
      * function($value, stdClass $row[, $additionalarguments]): string
      *
