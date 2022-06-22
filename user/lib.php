@@ -583,10 +583,18 @@ function user_get_user_details($user, $course = null, array $userfields = array(
  * Tries to obtain user details, either recurring directly to the user's system profile
  * or through one of the user's course enrollments (course profile).
  *
+ * You can use the $userfields parameter to reduce the amount of a user record that is required by the method.
+ * The minimum user fields are:
+ *  * id
+ *  * deleted
+ *  * all potential fullname fields
+ *
  * @param stdClass $user The user.
+ * @param array $userfields An array of userfields to be returned, the values must be a
+ *                          subset of user_get_default_fields (optional)
  * @return array if unsuccessful or the allowed user details.
  */
-function user_get_user_details_courses($user) {
+function user_get_user_details_courses($user, array $userfields = []) {
     global $USER;
     $userdetails = null;
 
@@ -597,14 +605,14 @@ function user_get_user_details_courses($user) {
 
     // Try using system profile.
     if ($systemprofile) {
-        $userdetails = user_get_user_details($user, null);
+        $userdetails = user_get_user_details($user, null, $userfields);
     } else {
         // Try through course profile.
         // Get the courses that the user is enrolled in (only active).
         $courses = enrol_get_users_courses($user->id, true);
         foreach ($courses as $course) {
             if (user_can_view_profile($user, $course)) {
-                $userdetails = user_get_user_details($user, $course);
+                $userdetails = user_get_user_details($user, $course, $userfields);
             }
         }
     }

@@ -653,21 +653,29 @@ class helper {
      * If disabled, visibility requires that the user be sharing a course with the searching user, and have a visible profile there.
      * The current user is always returned.
      *
+     * You can use the $userfields parameter to reduce the amount of a user record that is required by the method.
+     * The minimum user fields are:
+     *  * id
+     *  * deleted
+     *  * all potential fullname fields
+     *
      * @param \stdClass $user
+     * @param array $userfields An array of userfields to be returned, the values must be a
+     *                          subset of user_get_default_fields (optional)
      * @return array the array of userdetails, if visible, or an empty array otherwise.
      */
-    public static function search_get_user_details(\stdClass $user) : array {
+    public static function search_get_user_details(\stdClass $user, array $userfields = []) : array {
         global $CFG, $USER;
         require_once($CFG->dirroot . '/user/lib.php');
 
         if ($CFG->messagingallusers || $user->id == $USER->id) {
-            return \user_get_user_details_courses($user) ?? []; // This checks visibility of site and course profiles.
+            return \user_get_user_details_courses($user, $userfields) ?? []; // This checks visibility of site and course profiles.
         } else {
             // Messaging specific: user must share a course with the searching user AND have a visible profile there.
             $sharedcourses = enrol_get_shared_courses($USER, $user);
             foreach ($sharedcourses as $course) {
                 if (user_can_view_profile($user, $course)) {
-                    $userdetails = user_get_user_details($user, $course);
+                    $userdetails = user_get_user_details($user, $course, $userfields);
                     if (!is_null($userdetails)) {
                         return $userdetails;
                     }
