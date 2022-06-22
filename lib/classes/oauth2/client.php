@@ -292,10 +292,13 @@ class client extends \oauth2_client {
                     return false;
                 }
 
-                // Otherwise, save the access token and, if provided, the new refresh token.
+                // Otherwise, save the access token and, if provided, the new refresh token and id token.
                 $this->store_token($tokensreceived['access_token']);
                 if (!empty($tokensreceived['refresh_token'])) {
                     $this->store_user_refresh_token($tokensreceived['refresh_token']);
+                }
+                if (!empty($tokensreceived['id_token'])) {
+                    $this->store_idtoken($tokensreceived['id_token']);
                 }
                 return true;
             } catch (\moodle_exception $e) {
@@ -477,6 +480,9 @@ class client extends \oauth2_client {
         if (isset($receivedtokens['refresh_token'])) {
             $systemaccount->set('refreshtoken', $receivedtokens['refresh_token']->token);
             $systemaccount->update();
+        }
+        if (!empty($tokensreceived['id_token'])) {
+            $this->store_idtoken($tokensreceived['id_token']);
         }
 
         return true;

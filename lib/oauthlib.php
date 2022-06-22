@@ -401,6 +401,8 @@ abstract class oauth2_client extends curl {
     protected $scope = '';
     /** @var stdClass $accesstoken access token object */
     protected $accesstoken = null;
+    /** @var string $idtoken ID token string */
+    protected $idtoken = null;
     /** @var string $refreshtoken refresh token string */
     protected $refreshtoken = '';
     /** @var string $mocknextresponse string */
@@ -437,6 +439,7 @@ abstract class oauth2_client extends curl {
         $this->returnurl = $returnurl;
         $this->scope = $scope;
         $this->accesstoken = $this->get_stored_token();
+        $this->idtoken = $this->get_stored_idtoken();
     }
 
     /**
@@ -610,6 +613,10 @@ abstract class oauth2_client extends curl {
         self::$upgradedcodes[] = $code;
         $this->store_token($accesstoken);
 
+        if (isset($r->id_token)) {
+            $this->store_idtoken($r->id_token);
+        }
+
         return true;
     }
 
@@ -618,6 +625,7 @@ abstract class oauth2_client extends curl {
      */
     public function log_out() {
         $this->store_token(null);
+        $this->store_idtoken(null);
     }
 
     /**
@@ -670,7 +678,7 @@ abstract class oauth2_client extends curl {
      * Returns the tokenname for the access_token to be stored
      * through multiple requests.
      *
-     * The default implentation is to use the classname combiend
+     * The default implentation is to use the classname combined
      * with the scope.
      *
      * @return string tokenname for prefernce storage
@@ -709,7 +717,7 @@ abstract class oauth2_client extends curl {
     }
 
     /**
-     * Retrieve a token stored.
+     * Retrieve a stored access token.
      *
      * @return stdClass|null token object
      */
@@ -734,6 +742,53 @@ abstract class oauth2_client extends curl {
      */
     public function get_accesstoken() {
         return $this->accesstoken;
+    }
+
+    /**
+     * Store an ID token between requests. Currently uses
+     * session named by get_tokenname, prefixed with "idt-"
+     *
+     * @param string|null $token ID token string to store or null to clear
+     */
+    protected function store_idtoken($token) {
+        global $SESSION;
+
+        $this->idtoken = $token;
+        $name = 'idt-' . $this->get_tokenname();
+
+        if ($token !== null) {
+            $SESSION->{$name} = $token;
+        } else {
+            unset($SESSION->{$name});
+        }
+    }
+
+    /**
+     * Retrieve a stored ID token.
+     *
+     * @return string|null ID token string
+     */
+    protected function get_stored_idtoken() {
+        global $SESSION;
+
+        $name = 'idt-' . $this->get_tokenname();
+
+        if (isset($SESSION->{$name})) {
+            return $SESSION->{$name};
+        }
+
+        return null;
+    }
+
+    /**
+     * Get ID token.
+     *
+     * This is just a getter to read the private property.
+     *
+     * @return string
+     */
+    public function get_idtoken() {
+        return $this->idtoken;
     }
 
     /**
