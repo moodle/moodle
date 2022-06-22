@@ -78,9 +78,13 @@ class editquestion_helper {
         if ($canadd) {
             $params['category'] = $categoryid;
             $url = new \moodle_url('/question/bank/editquestion/addquestion.php', $params);
+            $buttonparams = ['disabled' => $disabled];
+            if (!empty($tooltip)) {
+                $buttonparams['title'] = $tooltip;
+            }
             $addquestiondisplay['buttonhtml'] = $OUTPUT->single_button($url,
                     get_string('createnewquestion', 'question'),
-                    'get', array('disabled' => $disabled, 'title' => $tooltip));
+                    'get', $buttonparams);
             $addquestiondisplay['qtypeform'] = self::print_choose_qtype_to_add_form(array());
         }
         return $PAGE->get_renderer('qbank_editquestion')->render_create_new_question_button($addquestiondisplay);
