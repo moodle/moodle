@@ -41,6 +41,7 @@ information provided here is intended especially for developers.
   implemented by adhoc tasks. For backwards compatibility, a default implementation has been added to `\core\task\adhoc_task` to
   return the class name.
 * The function get_module_metadata() has been finally deprecated and can not be used anymore.
+* Allow plugins to callback on all pages just prior to the session start.
 
 === 4.0 ===
 
