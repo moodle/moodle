@@ -80,6 +80,7 @@ if ($action == 'movegroupoverride') {
 
 // Display a list of overrides.
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_title(get_string('overrides', 'assign'));
 $PAGE->set_heading($course->fullname);
 $activityheader = $PAGE->activityheader;
