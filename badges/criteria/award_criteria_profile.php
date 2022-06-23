@@ -117,7 +117,8 @@ class award_criteria_profile extends award_criteria {
                 if (in_array($field->id, $existing)) {
                     $checked = true;
                 }
-                $this->config_options($mform, array('id' => $field->id, 'checked' => $checked, 'name' => $field->name, 'error' => false));
+                $this->config_options($mform, array('id' => $field->id, 'checked' => $checked,
+                    'name' => format_string($field->name), 'error' => false));
                 $none = false;
             }
         }
