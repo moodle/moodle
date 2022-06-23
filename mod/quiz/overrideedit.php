@@ -239,6 +239,7 @@ if ($mform->is_cancelled()) {
 $pagetitle = get_string('editoverride', 'quiz');
 $PAGE->navbar->add($pagetitle);
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 $PAGE->activityheader->set_attrs([
