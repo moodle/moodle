@@ -107,6 +107,8 @@ class forum {
     private $duedate;
     /** @var int $cutoffdate Timestamp after which forum posts will no longer be accepted */
     private $cutoffdate;
+    /** @var bool $usecoursefullname Whether to use course full name instead of short name in notifications */
+    private $usecoursefullname;
 
     /**
      * Constructor
@@ -144,6 +146,7 @@ class forum {
      * @param int $lockdiscussionafter Timestamp after which discussions should be locked
      * @param int $duedate Timestamp that represents the due date for forum posts
      * @param int $cutoffdate Timestamp after which forum posts will no longer be accepted
+     * @param bool $usecoursefullname Whether to use course full name instead of short name in notifications
      */
     public function __construct(
         context $context,
@@ -178,7 +181,8 @@ class forum {
         bool $displaywordcount,
         int $lockdiscussionafter,
         int $duedate,
-        int $cutoffdate
+        int $cutoffdate,
+        bool $usecoursefullname = false
     ) {
         $this->context = $context;
         $this->coursemodule = $coursemodule;
@@ -213,6 +217,7 @@ class forum {
         $this->lockdiscussionafter = $lockdiscussionafter;
         $this->duedate = $duedate;
         $this->cutoffdate = $cutoffdate;
+        $this->usecoursefullname = $usecoursefullname;
     }
 
     /**
@@ -668,5 +673,14 @@ class forum {
         }
 
         return $this->is_discussion_time_locked($discussion);
+    }
+
+    /**
+     * Should use course full name instead of short name in notifications?
+     *
+     * @return bool
+     */
+    public function use_course_fullname(): bool {
+        return $this->usecoursefullname;
     }
 }
