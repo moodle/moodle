@@ -30,7 +30,7 @@ $functions = [
         'classpath'     => '',
         'description'   => 'get language.',
         'type'          => 'read',
-        'ajax'          => 'true',
+        'ajax'          => true,
         'capabilities'  => '',
         'loginrequired' => false,
     ]

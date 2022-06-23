@@ -2669,7 +2669,7 @@ $functions = array(
         'classpath'   => 'customfield/externallib.php',
         'description' => 'Deletes an entry',
         'type'        => 'write',
-        'ajax'        => 'true'
+        'ajax'        => true,
     ),
     'core_customfield_reload_template' => array(
         'classname'   => 'core_customfield_external',
@@ -2677,7 +2677,7 @@ $functions = array(
         'classpath'   => 'customfield/externallib.php',
         'description' => 'Reloads template',
         'type'        => 'read',
-        'ajax'        => 'true'
+        'ajax'        => true,
     ),
     'core_customfield_create_category' => array(
         'classname'   => 'core_customfield_external',
@@ -2685,7 +2685,7 @@ $functions = array(
         'classpath'   => 'customfield/externallib.php',
         'description' => 'Creates a new category',
         'type'        => 'write',
-        'ajax'        => 'true'
+        'ajax'        => true,
     ),
     'core_customfield_delete_category' => array(
         'classname'   => 'core_customfield_external',
@@ -2693,7 +2693,7 @@ $functions = array(
         'classpath'   => 'customfield/externallib.php',
         'description' => 'Deletes a category',
         'type'        => 'write',
-        'ajax'        => 'true'
+        'ajax'        => true,
     ),
     'core_customfield_move_field'   => array(
         'classname'   => 'core_customfield_external',
@@ -2701,7 +2701,7 @@ $functions = array(
         'classpath'   => 'customfield/externallib.php',
         'description' => 'Drag and drop',
         'type'        => 'write',
-        'ajax'        => 'true'
+        'ajax'        => true,
     ),
     'core_customfield_move_category' => array(
         'classname'   => 'core_customfield_external',
@@ -2709,7 +2709,7 @@ $functions = array(
         'classpath'   => 'customfield/externallib.php',
         'description' => 'Drag and drop categories',
         'type'        => 'write',
-        'ajax'        => 'true'
+        'ajax'        => true,
     ),
     'core_h5p_get_trusted_h5p_file' => [
         'classname'     => 'core_h5p\external',
@@ -2717,7 +2717,7 @@ $functions = array(
         'classpath'     => '',
         'description'   => 'Get the H5P file cleaned for Mobile App.',
         'type'          => 'read',
-        'ajax'          => 'true',
+        'ajax'          => true,
         'capabilities'  => '',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
@@ -2733,7 +2733,7 @@ $functions = array(
         'classpath'     => '',
         'description'   => 'Post an xAPI statement.',
         'type'          => 'write',
-        'ajax'          => 'true',
+        'ajax'          => true,
         'capabilities'  => '',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
@@ -2742,7 +2742,7 @@ $functions = array(
         'classpath'     => '',
         'description'   => 'Delete a content from the content bank.',
         'type'          => 'write',
-        'ajax'          => 'true',
+        'ajax'          => true,
         'capabilities'  => 'moodle/contentbank:deleteanycontent',
     ],
     'core_contentbank_rename_content' => [
@@ -2750,7 +2750,7 @@ $functions = array(
         'classpath'     => '',
         'description'   => 'Rename a content in the content bank.',
         'type'          => 'write',
-        'ajax'          => 'true',
+        'ajax'          => true,
         'capabilities'  => 'moodle/contentbank:manageowncontent',
     ],
     'core_contentbank_set_content_visibility' => [
@@ -2758,7 +2758,7 @@ $functions = array(
         'classpath'     => '',
         'description'   => 'Set the visibility of a content in the content bank.',
         'type'          => 'write',
-        'ajax'          => 'true',
+        'ajax'          => true,
         'capabilities'  => 'moodle/contentbank:manageowncontent',
     ],
     'core_create_userfeedback_action_record' => [
@@ -2766,7 +2766,7 @@ $functions = array(
         'classpath'     => '',
         'description'   => 'Record the action that the user takes in the user feedback notification for future use.',
         'type'          => 'write',
-        'ajax'          => 'true',
+        'ajax'          => true,
         'capabilities'  => '',
     ],
     'core_payment_get_available_gateways' => [
