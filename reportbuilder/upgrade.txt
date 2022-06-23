@@ -7,6 +7,8 @@ Information provided here is intended especially for developers.
   export for calling from Javascript modules)
 * New method `set_filter_form_default` in base system report class, to override whether the default filters form
   should be shown for a report
+* New external methods for retrieving custom report data:
+  - `core_reportbuilder_view_report`
 * 'set_default_per_page' and 'get_default_per_page' methods have been added to \local\report\base class
   to manage the default displayed rows per page.
 * Added two new methods in the datasource class:
