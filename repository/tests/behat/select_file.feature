@@ -11,18 +11,17 @@ Feature: Select file feature
     And the following "blocks" exist:
       | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
       | private_files | System       | 1         | my-index        | side-post     |
-    And I log in as "admin"
+    And the following "activities" exist:
+      | activity | course | name        |
+      | folder   | C1     | Test folder |
+    And I am on the "Test folder" "folder activity" page logged in as admin
+    And I press "Edit"
+    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
+    And I press "Save changes"
 
   @javascript
   Scenario: Select a file from the "Recent files" repository using "icons" view
-    Given I am on "Course 1" course homepage with editing mode on
-    And I add a "Folder" to section "1"
-    And I set the following fields to these values:
-      | Name        | Test folder             |
-      | Description | Test folder description |
-    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
-    And I click on "Save and display" "button"
-    And I follow "Dashboard"
+    Given I follow "Dashboard"
     And I follow "Manage private files"
     And I click on "Add..." "button" in the "Files" "form_row"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
@@ -35,14 +34,7 @@ Feature: Select file feature
 
   @javascript
   Scenario: Select a file from the "Recent files" repository using "list" view
-    Given I am on "Course 1" course homepage with editing mode on
-    And I add a "Folder" to section "1"
-    And I set the following fields to these values:
-      | Name        | Test folder             |
-      | Description | Test folder description |
-    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
-    And I click on "Save and display" "button"
-    And I follow "Dashboard"
+    Given I follow "Dashboard"
     And I follow "Manage private files"
     And I click on "Add..." "button" in the "Files" "form_row"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
@@ -55,14 +47,7 @@ Feature: Select file feature
 
   @javascript
   Scenario: Select a file from the "Recent files" repository using "tree" view
-    Given I am on "Course 1" course homepage with editing mode on
-    And I add a "Folder" to section "1"
-    And I set the following fields to these values:
-      | Name        | Test folder             |
-      | Description | Test folder description |
-    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
-    And I click on "Save and display" "button"
-    And I follow "Dashboard"
+    Given I follow "Dashboard"
     And I follow "Manage private files"
     And I click on "Add..." "button" in the "Files" "form_row"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
