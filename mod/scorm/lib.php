@@ -499,7 +499,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                             $report .= html_writer::start_tag('li').html_writer::start_tag('ul', array('class' => $liststyle));
                             foreach ($usertrack as $element => $value) {
                                 if (substr($element, 0, 3) == 'cmi') {
-                                    $report .= html_writer::tag('li', $element.' => '.s($value));
+                                    $report .= html_writer::tag('li', s($element) . ' => ' . s($value));
                                 }
                             }
                             $report .= html_writer::end_tag('ul').html_writer::end_tag('li');

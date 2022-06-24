@@ -152,9 +152,9 @@ foreach ($trackdata as $element => $value) {
         }
 
         if (empty($string) || $table->is_downloading()) {
-            $row[] = $element;
+            $row[] = s($element);
         } else {
-            $row[] = $element.$OUTPUT->help_icon($string, 'scorm');
+            $row[] = s($element) . $OUTPUT->help_icon($string, 'scorm');
         }
         if (strpos($element, '_time') === false) {
             $row[] = s($value);
