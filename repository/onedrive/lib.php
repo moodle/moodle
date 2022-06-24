@@ -75,25 +75,29 @@ class repository_onedrive extends repository {
     }
 
     /**
+     * Returns the default URL at which the user will be redirected after a successful login.
+     *
+     * @return moodle_url The URL
+     */
+    private function get_oauth_callback_url() {
+        $returnurl = new moodle_url('/repository/repository_callback.php');
+        $returnurl->param('callback', 'yes');
+        $returnurl->param('repo_id', $this->id);
+        $returnurl->param('sesskey', sesskey());
+        return $returnurl;
+    }
+
+    /**
      * Get a cached user authenticated oauth client.
      *
-     * @param moodle_url $overrideurl - Use this url instead of the repo callback.
      * @return \core\oauth2\client
      */
-    protected function get_user_oauth_client($overrideurl = false) {
+    protected function get_user_oauth_client() {
         if ($this->client) {
             return $this->client;
         }
-        if ($overrideurl) {
-            $returnurl = $overrideurl;
-        } else {
-            $returnurl = new moodle_url('/repository/repository_callback.php');
-            $returnurl->param('callback', 'yes');
-            $returnurl->param('repo_id', $this->id);
-            $returnurl->param('sesskey', sesskey());
-        }
 
-        $this->client = \core\oauth2\api::get_user_oauth_client($this->issuer, $returnurl, self::SCOPES, true);
+        $this->client = \core\oauth2\api::get_user_oauth_client($this->issuer, self::SCOPES, true);
 
         return $this->client;
     }
@@ -115,7 +119,7 @@ class repository_onedrive extends repository {
      */
     public function print_login() {
         $client = $this->get_user_oauth_client();
-        $url = $client->get_login_url();
+        $url = $client->get_login_url($this->get_oauth_callback_url());
 
         if ($this->options['ajax']) {
             $popup = new stdClass();
@@ -135,8 +139,8 @@ class repository_onedrive extends repository {
     public function print_login_popup($attr = null) {
         global $OUTPUT, $PAGE;
 
-        $client = $this->get_user_oauth_client(false);
-        $url = new moodle_url($client->get_login_url());
+        $client = $this->get_user_oauth_client();
+        $url = $client->get_login_url($this->get_oauth_callback_url());
         $state = $url->get_param('state') . '&reloadparent=true';
         $url->param('state', $state);
 
@@ -591,8 +595,7 @@ class repository_onedrive extends repository {
                                                    $storedfile->get_filename(),
                                                    $forcedownload);
             $url->param('sesskey', sesskey());
-            $param = ($options['embed'] == true) ? false : $url;
-            $userauth = $this->get_user_oauth_client($param);
+            $userauth = $this->get_user_oauth_client();
 
             if (!$userauth->is_logged_in()) {
                 if ($options['embed'] == true) {
@@ -601,7 +604,8 @@ class repository_onedrive extends repository {
                     $this->print_login_popup(['style' => 'margin-top: 250px']);
                     exit;
                 }
-                redirect($userauth->get_login_url());
+                $callbackurl = ($options['embed'] == true) ? $this->get_oauth_callback_url() : $url;
+                redirect($userauth->get_login_url($callbackurl));
             }
             if ($userauth === false) {
                 $details = 'Cannot connect as current user';

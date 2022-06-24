@@ -395,8 +395,6 @@ abstract class oauth2_client extends curl {
     private $clientid = '';
     /** @var string $clientsecret The client secret. */
     private $clientsecret = '';
-    /** @var moodle_url $returnurl URL to return to after authenticating */
-    private $returnurl = null;
     /** @var string $scope of the authentication request */
     protected $scope = '';
     /** @var stdClass $accesstoken access token object */
@@ -429,14 +427,12 @@ abstract class oauth2_client extends curl {
      *
      * @param string $clientid
      * @param string $clientsecret
-     * @param moodle_url $returnurl
      * @param string $scope
      */
-    public function __construct($clientid, $clientsecret, moodle_url $returnurl, $scope) {
+    public function __construct($clientid, $clientsecret, $scope) {
         parent::__construct();
         $this->clientid = $clientid;
         $this->clientsecret = $clientsecret;
-        $this->returnurl = $returnurl;
         $this->scope = $scope;
         $this->accesstoken = $this->get_stored_token();
         $this->idtoken = $this->get_stored_idtoken();
@@ -492,8 +488,6 @@ abstract class oauth2_client extends curl {
      * @return moodle_url url of callback
      */
     public static function callback_url() {
-        global $CFG;
-
         return new moodle_url('/admin/oauth2callback.php');
     }
 
@@ -509,16 +503,17 @@ abstract class oauth2_client extends curl {
     /**
      * Returns the login link for this oauth request
      *
+     * @param moodle_url $returnurl The URL to which to redirect the user after a successful OAuth login
      * @return moodle_url login url
      */
-    public function get_login_url() {
+    public function get_login_url(moodle_url $returnurl) {
 
         $callbackurl = self::callback_url();
         $defaultparams = [
             'client_id' => $this->clientid,
             'response_type' => 'code',
             'redirect_uri' => $callbackurl->out(false),
-            'state' => $this->returnurl->out_as_local_url(false),
+            'state' => $returnurl->out_as_local_url(false),
 
         ];
         if (!empty($this->scope)) {

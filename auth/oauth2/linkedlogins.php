@@ -50,16 +50,16 @@ if ($action == 'new') {
     }
 
     // We do a login dance with this issuer.
-    $addparams = ['action' => 'new', 'issuerid' => $issuerid, 'sesskey' => sesskey()];
-    $addurl = new moodle_url('/auth/oauth2/linkedlogins.php', $addparams);
-    $client = \core\oauth2\api::get_user_oauth_client($issuer, $addurl);
+    $client = \core\oauth2\api::get_user_oauth_client($issuer);
 
     if (optional_param('logout', false, PARAM_BOOL)) {
         $client->log_out();
     }
 
     if (!$client->is_logged_in()) {
-        redirect($client->get_login_url());
+        $addparams = ['action' => 'new', 'issuerid' => $issuerid, 'sesskey' => sesskey()];
+        $addurl = new moodle_url('/auth/oauth2/linkedlogins.php', $addparams);
+        redirect($client->get_login_url($addurl));
     }
 
     $userinfo = $client->get_userinfo();

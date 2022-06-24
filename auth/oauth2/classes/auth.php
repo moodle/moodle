@@ -648,7 +648,7 @@ class auth extends \auth_plugin_base {
                 // - post_logout_redirect_uri : The URI at which the IdP will redirect the user after logout.
                 // - id_token_hint : The ID token.
                 $endsessionurl = new moodle_url($endsession, [ 'post_logout_redirect_uri' => $redirect ]);
-                $client = \core\oauth2\api::get_user_oauth_client($issuer, new moodle_url($redirect));
+                $client = \core\oauth2\api::get_user_oauth_client($issuer);
                 $idtoken = $client->get_idtoken();
                 if ($idtoken !== null) {
                     $endsessionurl->param('id_token_hint', $idtoken);

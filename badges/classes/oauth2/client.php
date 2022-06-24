@@ -76,32 +76,31 @@ class client extends \core\oauth2\client {
      * client constructor.
      *
      * @param issuer $issuer oauth2 service.
-     * @param string $returnurl return url after login
      * @param string $additionalscopes the scopes has been granted
      * @param null $backpack backpack object.
      * @throws \coding_exception error message.
      */
-    public function __construct(\core\oauth2\issuer $issuer, $returnurl = '', $additionalscopes = '',
+    public function __construct(\core\oauth2\issuer $issuer, $additionalscopes = '',
                                 $backpack = null) {
         $this->issuer = $issuer;
         $this->clientid = $issuer->get('clientid');
-        $this->returnurl = $returnurl;
         $this->clientsecret = $issuer->get('clientsecret');
         $this->backpack = $backpack;
         $this->grantscope = $additionalscopes;
         $this->scope = $additionalscopes;
-        parent::__construct($issuer, $returnurl, $additionalscopes, false);
+        parent::__construct($issuer, $additionalscopes, false);
     }
 
     /**
      * Get login url.
      *
+     * @param moodle_url $returnurl The URL to which to redirect the user after a successful OAuth login
      * @return moodle_url
      * @throws \coding_exception
      * @throws moodle_exception
      */
-    public function get_login_url() {
-        $callbackurl = self::callback_url();
+    public function get_login_url(moodle_url $returnurl) {
+        $callbackurl = parent::callback_url();
         $scopes = $this->issuer->get('scopessupported');
 
         // Removed the scopes does not support in authorization.
@@ -120,7 +119,7 @@ class client extends \core\oauth2\client {
                 'client_id' => $this->clientid,
                 'response_type' => 'code',
                 'redirect_uri' => $callbackurl->out(false),
-                'state' => $this->returnurl->out_as_local_url(false),
+                'state' => $returnurl->out_as_local_url(false),
                 'scope' => $scopes,
                 'code_challenge' => $this->code_challenge(),
                 'code_challenge_method' => BACKPACK_CHALLENGE_METHOD,
@@ -168,15 +167,6 @@ class client extends \core\oauth2\client {
     }
 
     /**
-     * Callback url where the request is returned to.
-     *
-     * @return moodle_url url of callback
-     */
-    public static function callback_url() {
-        return new moodle_url('/admin/oauth2callback.php');
-    }
-
-    /**
      * Check and refresh token to keep login on backpack site.
      *
      * @return bool
@@ -219,7 +209,7 @@ class client extends \core\oauth2\client {
      * @throws moodle_exception
      */
     public function upgrade_token($code, $granttype = 'authorization_code') {
-        $callbackurl = self::callback_url();
+        $callbackurl = parent::callback_url();
 
         if ($granttype == 'authorization_code') {
             $this->basicauth = true;

@@ -213,7 +213,7 @@ class backpack_api2p1 {
         }
 
         $issuer = new \core\oauth2\issuer($this->externalbackpack->oauth2_issuerid);
-        $client = new client($issuer, new moodle_url('/badges/mybadges.php'), '', $this->externalbackpack);
+        $client = new client($issuer, '', $this->externalbackpack);
         if (!$client->is_logged_in()) {
             $redirecturl = new moodle_url('/badges/mybadges.php', ['error' => 'backpackexporterror']);
             redirect($redirecturl);

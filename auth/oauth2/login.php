@@ -41,14 +41,14 @@ if (!$issuer->is_available_for_login()) {
     throw new \moodle_exception('issuernologin', 'auth_oauth2');
 }
 
-$returnparams = ['wantsurl' => $wantsurl, 'sesskey' => sesskey(), 'id' => $issuerid];
-$returnurl = new moodle_url('/auth/oauth2/login.php', $returnparams);
-
-$client = \core\oauth2\api::get_user_oauth_client($issuer, $returnurl);
+$client = \core\oauth2\api::get_user_oauth_client($issuer);
 
 if ($client) {
     if (!$client->is_logged_in()) {
-        redirect($client->get_login_url());
+        $returnparams = ['wantsurl' => $wantsurl, 'sesskey' => sesskey(), 'id' => $issuerid];
+        $returnurl = new moodle_url('/auth/oauth2/login.php', $returnparams);
+
+        redirect($client->get_login_url($returnurl));
     }
 
     $auth = new \auth_oauth2\auth();

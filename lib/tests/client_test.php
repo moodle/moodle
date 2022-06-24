@@ -114,7 +114,7 @@ class client_test extends advanced_testcase {
         $issuer = new \core\oauth2\issuer(0);
         $mockbuilder = $this->getMockBuilder('core\oauth2\client');
         $mockbuilder->onlyMethods(['get_userinfo_mapping']);
-        $mockbuilder->setConstructorArgs([$issuer, "", ""]);
+        $mockbuilder->setConstructorArgs([$issuer, ""]);
 
         $mock = $mockbuilder->getMock();
         $mock->expects($this->once())

@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/oauthlib.php');
 require_once($CFG->libdir . '/filelib.php');
 
-use moodle_url;
 use moodle_exception;
 use stdClass;
 
@@ -53,12 +52,11 @@ class client extends \oauth2_client {
      * Constructor.
      *
      * @param issuer $issuer
-     * @param moodle_url|null $returnurl
      * @param string $scopesrequired
      * @param boolean $system
      * @param boolean $autorefresh whether refresh_token grants are used to allow continued access across sessions.
      */
-    public function __construct(issuer $issuer, $returnurl, $scopesrequired, $system = false, $autorefresh = false) {
+    public function __construct(issuer $issuer, $scopesrequired, $system = false, $autorefresh = false) {
         $this->issuer = $issuer;
         $this->system = $system;
         $this->autorefresh = $autorefresh;
@@ -72,11 +70,8 @@ class client extends \oauth2_client {
                 }
             }
         }
-        if (empty($returnurl)) {
-            $returnurl = new moodle_url('/');
-        }
         $this->basicauth = $issuer->get('basicauth');
-        parent::__construct($issuer->get('clientid'), $issuer->get('clientsecret'), $returnurl, $scopes);
+        parent::__construct($issuer->get('clientid'), $issuer->get('clientsecret'), $scopes);
     }
 
     /**

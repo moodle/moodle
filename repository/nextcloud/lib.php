@@ -578,24 +578,30 @@ class repository_nextcloud extends repository {
     }
 
     /**
+     * Returns the default URL at which the user will be redirected after a successful login.
+     *
+     * @return moodle_url The URL
+     */
+    private function get_oauth_callback_url() {
+        $returnurl = new moodle_url('/repository/repository_callback.php');
+        $returnurl->param('callback', 'yes');
+        $returnurl->param('repo_id', $this->id);
+        $returnurl->param('sesskey', sesskey());
+        return $returnurl;
+    }
+
+    /**
      * Get a cached user authenticated oauth client.
      *
-     * @param bool|moodle_url $overrideurl Use this url instead of the repo callback.
      * @return \core\oauth2\client
      */
-    protected function get_user_oauth_client($overrideurl = false) {
+    protected function get_user_oauth_client() {
         if ($this->client) {
             return $this->client;
         }
-        if ($overrideurl) {
-            $returnurl = $overrideurl;
-        } else {
-            $returnurl = new moodle_url('/repository/repository_callback.php');
-            $returnurl->param('callback', 'yes');
-            $returnurl->param('repo_id', $this->id);
-            $returnurl->param('sesskey', sesskey());
-        }
-        $this->client = \core\oauth2\api::get_user_oauth_client($this->issuer, $returnurl, self::SCOPES, true);
+
+        $this->client = \core\oauth2\api::get_user_oauth_client($this->issuer, self::SCOPES, true);
+
         return $this->client;
     }
 
@@ -607,7 +613,7 @@ class repository_nextcloud extends repository {
      */
     public function print_login() {
         $client = $this->get_user_oauth_client();
-        $loginurl = $client->get_login_url();
+        $loginurl = $client->get_login_url($this->get_oauth_callback_url());
         if ($this->options['ajax']) {
             $ret = array();
             $btn = new \stdClass();
@@ -850,7 +856,7 @@ class repository_nextcloud extends repository {
         }
 
         $this->client = $this->get_user_oauth_client();
-        $url = new moodle_url($this->client->get_login_url());
+        $url = $this->client->get_login_url($this->get_oauth_callback_url());
         $state = $url->get_param('state') . '&reloadparent=true';
         $url->param('state', $state);
 

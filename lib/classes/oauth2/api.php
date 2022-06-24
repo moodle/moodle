@@ -215,7 +215,7 @@ class api {
         // Get all the scopes!
         $scopes = self::get_system_scopes_for_issuer($issuer);
         $class = self::get_client_classname($issuer->get('servicetype'));
-        $client = new $class($issuer, null, $scopes, true);
+        $client = new $class($issuer, $scopes, true);
 
         if (!$client->is_logged_in()) {
             if (!$client->upgrade_refresh_token($systemaccount)) {
@@ -230,15 +230,14 @@ class api {
      * This call does the redirect dance back to the current page after authentication.
      *
      * @param \core\oauth2\issuer $issuer The desired OAuth issuer
-     * @param moodle_url $currenturl The url to the current page.
      * @param string $additionalscopes The additional scopes required for authorization.
      * @param bool $autorefresh Should the client support the use of refresh tokens to persist access across sessions.
      * @return \core\oauth2\client
      */
-    public static function get_user_oauth_client(issuer $issuer, moodle_url $currenturl, $additionalscopes = '',
+    public static function get_user_oauth_client(issuer $issuer, $additionalscopes = '',
             $autorefresh = false) {
         $class = self::get_client_classname($issuer->get('servicetype'));
-        $client = new $class($issuer, $currenturl, $additionalscopes, false, $autorefresh);
+        $client = new $class($issuer, $additionalscopes, false, $autorefresh);
 
         return $client;
     }
@@ -607,7 +606,7 @@ class api {
 
         // Allow callbacks to inject non-standard scopes to the auth request.
         $class = self::get_client_classname($issuer->get('servicetype'));
-        $client = new $class($issuer, $returnurl, $scopes, true);
+        $client = new $class($issuer, $scopes, true);
 
         if (!optional_param('response', false, PARAM_BOOL)) {
             $client->log_out();
@@ -618,7 +617,7 @@ class api {
         }
 
         if (!$client->is_logged_in()) {
-            redirect($client->get_login_url());
+            redirect($client->get_login_url($returnurl));
         }
 
         $refreshtoken = $client->get_refresh_token();

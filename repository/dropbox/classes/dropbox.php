@@ -50,10 +50,9 @@ class dropbox extends \oauth2_client {
      *
      * @param   string      $key        The API key
      * @param   string      $secret     The API secret
-     * @param   string      $callback   The callback URL
      */
-    public function __construct($key, $secret, $callback) {
-        parent::__construct($key, $secret, $callback, '');
+    public function __construct($key, $secret) {
+        parent::__construct($key, $secret, '');
     }
 
     /**

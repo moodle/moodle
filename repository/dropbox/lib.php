@@ -44,6 +44,11 @@ class repository_dropbox extends repository {
     public $cachelimit = null;
 
     /**
+     * @var moodle_url  The URL at which to redirect the user after logging in
+     */
+    private $returnurl;
+
+    /**
      * Constructor of dropbox plugin.
      *
      * @inheritDocs
@@ -52,7 +57,7 @@ class repository_dropbox extends repository {
         $options['page'] = optional_param('p', 1, PARAM_INT);
         parent::__construct($repositoryid, $context, $options);
 
-        $returnurl = new moodle_url('/repository/repository_callback.php', [
+        $this->returnurl = new moodle_url('/repository/repository_callback.php', [
                 'callback'  => 'yes',
                 'repo_id'   => $repositoryid,
                 'sesskey'   => sesskey(),
@@ -63,8 +68,7 @@ class repository_dropbox extends repository {
         $secret = get_config('dropbox', 'dropbox_secret');
         $this->dropbox = new repository_dropbox\dropbox(
                 $key,
-                $secret,
-                $returnurl
+                $secret
             );
     }
 
@@ -450,7 +454,7 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function print_login() {
-        $url = $this->dropbox->get_login_url();
+        $url = $this->dropbox->get_login_url($this->returnurl);
         if ($this->options['ajax']) {
             $ret = array();
             $btn = new \stdClass();

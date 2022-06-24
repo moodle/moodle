@@ -40,17 +40,17 @@ $externalbackpack = badges_get_site_backpack($backpackid);
 $persistedissuer = \core\oauth2\issuer::get_record(['id' => $externalbackpack->oauth2_issuerid]);
 if ($persistedissuer) {
     $issuer = new \core\oauth2\issuer($externalbackpack->oauth2_issuerid);
-    $returnurl = new moodle_url('/badges/backpack-connect.php',
-        ['action' => 'authorization', 'sesskey' => sesskey(), 'backpackid' => $backpackid]);
 
     // If scope is not passed as parameter, use the issuer supported scopes.
     if (empty($scope)) {
         $scope = $issuer->get('scopessupported');
     }
-    $client = new core_badges\oauth2\client($issuer, $returnurl, $scope, $externalbackpack);
+    $client = new core_badges\oauth2\client($issuer, $scope, $externalbackpack);
     if ($client) {
         if (!$client->is_logged_in()) {
-            redirect($client->get_login_url());
+            $returnurl = new moodle_url('/badges/backpack-connect.php',
+                ['action' => 'authorization', 'sesskey' => sesskey(), 'backpackid' => $backpackid]);
+            redirect($client->get_login_url($returnurl));
         }
         $wantsurl = new moodle_url('/badges/mybadges.php');
         $auth = new \core_badges\oauth2\auth();
