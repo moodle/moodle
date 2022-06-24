@@ -507,13 +507,13 @@ abstract class oauth2_client extends curl {
      * @return moodle_url login url
      */
     public function get_login_url(moodle_url $returnurl) {
-
+        global $SESSION;
         $callbackurl = self::callback_url();
         $defaultparams = [
             'client_id' => $this->clientid,
             'response_type' => 'code',
             'redirect_uri' => $callbackurl->out(false),
-            'state' => $returnurl->out_as_local_url(false),
+            'state' => sesskey(),
 
         ];
         if (!empty($this->scope)) {
@@ -528,6 +528,7 @@ abstract class oauth2_client extends curl {
             $this->get_additional_login_parameters()
         );
 
+        $SESSION->oauth_post_login_redirect = $returnurl->out_as_local_url(false);
         return new moodle_url($this->auth_url(), $params);
     }
 

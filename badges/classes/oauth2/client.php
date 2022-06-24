@@ -100,6 +100,8 @@ class client extends \core\oauth2\client {
      * @throws moodle_exception
      */
     public function get_login_url(moodle_url $returnurl) {
+        global $SESSION;
+
         $callbackurl = parent::callback_url();
         $scopes = $this->issuer->get('scopessupported');
 
@@ -119,12 +121,14 @@ class client extends \core\oauth2\client {
                 'client_id' => $this->clientid,
                 'response_type' => 'code',
                 'redirect_uri' => $callbackurl->out(false),
-                'state' => $returnurl->out_as_local_url(false),
+                'state' => sesskey(),
                 'scope' => $scopes,
                 'code_challenge' => $this->code_challenge(),
                 'code_challenge_method' => BACKPACK_CHALLENGE_METHOD,
             ]
         );
+
+        $SESSION->oauth_post_login_redirect = $returnurl->out_as_local_url(false);
         return new moodle_url($this->auth_url(), $params);
     }
 
