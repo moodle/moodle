@@ -63,14 +63,14 @@ $string['pathsunsecuredataroot'] = 'Šakninio duomenų katalogo kelias nesaugus'
 $string['pathswrongadmindir'] = 'Nėra administratoriaus katalogo';
 $string['phpextension'] = '{$a} PHP plėtinys';
 $string['phpversion'] = 'PHP versija';
-$string['phpversionhelp'] = '<p>„Moodle“ reikalauja, kad PHP versija būtų ne žemesnė 5.6.5 arba 7.1 (7.0.x versijoje yra tam tikrų trūkumų).</p>
-<p>Dabar naudojate versiją {$a}</p>
-<p>Turite atnaujinti PHP versiją arba perkelti į pagrindinį kompiuterį, kuriame veikia naujesnė PHP versija.</p>';
+$string['phpversionhelp'] = '<p>Moodle reikalinga bent 5.6.5 arba 7.1 PHP versija (7.0.x turi tam tikrų variklio apribojimų).</p>
+<p>Šiuo metu naudojate {$a} versiją.</p>
+<p>Turite atnaujinti PHP arba perkelti į prieglobą su naujesne PHP versija.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Matote šį puslapį, nes į kompiuterį sėkmingai įdiegėte ir paleidote <strong>{$a->packname} {$a->packversion}</strong> paketą. Sveikiname!';
 $string['welcomep30'] = 'Šiame <strong>{$a->installername}</strong> leidime yra taikomosios programos, skirtos aplinkai, kurioje veiks <strong>Moodle</strong>, sukurti:';
 $string['welcomep40'] = 'Pakete taip pat yra <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Visoms šio paketo taikomosioms programoms taikomos atitinkamos licencijos. Visas <strong>{$a->installername}</strong> paketas yra <a href="http://www.opensource.org/docs/definition_plain.html">atvirojo kodo</a> ir platinamas pagal <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licenciją.';
+$string['welcomep50'] = 'Visų šiame pakete esančių programų naudojimą reglamentuoja atitinkamos jų licencijos. Visas paketas <strong>{$a->installername}</strong> yra <a href="https://www.opensource.org/docs/definition_plain.html">atvirojo kodo</a> ir platinamas pagal <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a> licencija.';
 $string['welcomep60'] = 'Šiuose puslapiuose bus pateikta keletas paprastų veiksmų, kad būtų galima sukonfigūruoti ir nustatyti <strong>Moodle</strong> kompiuteryje. Galite priimti numatytuosius parametrus arba pasirinktinai juos pakeisti, kad atitiktų jūsų poreikius.';
 $string['welcomep70'] = 'Norėdami tęsti <strong>Moodle</strong> sąranką, spustelėkite žemiau esantį mygtuką Kitas.';
 $string['wwwroot'] = 'Žiniatinklio adresas';
