@@ -14,13 +14,10 @@ Feature: View subfolders in a course in-line
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Folder" to section "2" and I fill the form with:
-      | Name | Test folder |
-      | Display folder contents | On a separate page |
-      | Show subfolders expanded | |
-    And I am on the "Test folder" "folder activity" page
+    And the following "activities" exist:
+      | activity | course | name        | display | showexpanded |
+      | folder   | C1     | Test folder | 0       | 0            |
+    And I am on the "Test folder" "folder activity" page logged in as "teacher1"
     And I press "Edit"
     And I press "Create folder"
     And I set the field "New folder name" to "Test subfolder 1"
