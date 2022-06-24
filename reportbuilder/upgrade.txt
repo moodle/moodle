@@ -10,6 +10,7 @@ Information provided here is intended especially for developers.
 * The external `core_reportbuilder_filters_reset` method now accepts an optional `parameters` argument, required by
   some system reports
 * New external methods for retrieving custom report data:
+  - `core_reportbuilder_list_reports`
   - `core_reportbuilder_view_report`
 * 'set_default_per_page' and 'get_default_per_page' methods have been added to \local\report\base class
   to manage the default displayed rows per page.
