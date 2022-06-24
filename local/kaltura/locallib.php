@@ -265,7 +265,17 @@ function local_kaltura_format_lti_instance_object($ltirequest) {
     $lti->instructorchoiceacceptgrades = LTI_SETTING_NEVER;
     $lti->instructorchoiceallowroster = LTI_SETTING_NEVER;
     $lti->resourcekey  = $configsettings->partner_id;
-    $lti->password = $configsettings->adminsecret;
+	$lti->lti_version = $configsettings->lti_version;
+
+    if ($configsettings->adminsecret)
+	{
+		$lti->password = $configsettings->adminsecret;
+	}
+	if ($configsettings->client_id)
+	{
+		$lti->client_id = $configsettings->client_id;
+	}
+
     $lti->introformat = FORMAT_MOODLE;
     // The Kaltura tool URL includes the account partner id.
     $newuri = $configsettings->kaf_uri;
@@ -277,6 +287,8 @@ function local_kaltura_format_lti_instance_object($ltirequest) {
     // Do not force SSL. At the module level.
     $lti->forcessl = 0;
     $lti->cmid = $ltirequest['cmid'];
+
+
 
     // Check if a source URL was passed.  This means that a plug-in has requested to view a media entry and not a KAF interface.
     if (!isset($ltirequest['source']) || empty($ltirequest['source'])) {
@@ -307,6 +319,7 @@ function local_kaltura_format_typeconfig($lti, $withblocks = true) {
     $typeconfig['acceptgrades'] = $lti->instructorchoiceacceptgrades;
     $typeconfig['allowroster'] = $lti->instructorchoiceallowroster;
     $typeconfig['launchcontainer'] = local_kaltura_get_lti_launch_container($withblocks);
+
     return $typeconfig;
 }
 
@@ -338,6 +351,12 @@ function local_kaltura_strip_querystring($endpoint, $params) {
  * @return string Returns HTML required to initiate an LTI launch.
  */
 function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $editor = null) {
+	$ltiVersion = get_config(KALTURA_PLUGIN_NAME, 'lti_version');
+	if($ltiVersion == LTI_VERSION_1P3)
+	{
+		return local_kaltura_request_lti1p3_launch($ltirequest, $withblocks, $editor);
+	}
+
     global $CFG, $USER;
 
     if(is_null($editor))
@@ -410,6 +429,202 @@ function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $edit
     }
 
     return $content;
+}
+
+function local_kaltura_request_lti1p3_launch($ltirequest, $withblocks = true, $editor = null) {
+	global $SESSION;
+
+	$configsettings = local_kaltura_get_config();
+	$config = local_kaltura_lti_get_type_type_config($ltirequest, $configsettings);
+
+	$config->lti_launchcontainer = local_kaltura_get_lti_launch_container($withblocks);
+
+	if(is_null($editor))
+	{
+		$editor = 'tinymce';
+	}
+
+	$SESSION->editor = $editor;
+	return lti_initiate_login($ltirequest['course']->id, $ltirequest['module'], null, $config);
+}
+/**
+ * Generates some of the tool configuration based on the admin configuration details
+ *
+ * @param array $ltirequest
+ * @param stdClass $kaltura_config
+ *
+ * @return stdClass Configuration details
+ */
+function local_kaltura_lti_get_type_type_config($ltirequest, $kaltura_config) {
+
+	$type = new \stdClass();
+
+	$type->typeid = $ltirequest['module'];
+
+	$type->lti_toolurl = $kaltura_config->kaf_uri;
+	// The Kaltura tool URL includes the account partner id.
+	if (!preg_match('/\/$/',$type->lti_toolurl)) {
+		$type->lti_toolurl .= '/';
+	}
+	$type->lti_toolurl .= local_kaltura_get_endpoint($ltirequest['module']);
+
+	$type->lti_ltiversion = $kaltura_config->lti_version;
+
+	$type->lti_clientid = $kaltura_config->client_id;
+
+	if (isset($kaltura_config->public_keyset_url)) {
+		$type->lti_publickeyset = $kaltura_config->public_keyset_url;
+	}
+	$type->lti_keytype = LTI_JWK_KEYSET;
+
+	if (isset($kaltura_config->launch_url)) {
+		$type->lti_initiatelogin = $kaltura_config->launch_url;
+	}
+	if (isset($kaltura_config->redirection_uris)) {
+		$type->lti_redirectionuris = $kaltura_config->redirection_uris;
+	}
+
+	$type->lti_instructorchoicesendname = LTI_SETTING_ALWAYS;
+	$type->lti_instructorchoicesendemailaddr = LTI_SETTING_ALWAYS;
+
+	$type->lti_instructorchoiceacceptgrades = LTI_SETTING_NEVER;
+
+	$type->lti_instructorchoiceallowroster = LTI_SETTING_NEVER;
+
+	$type->lti_forcessl = false;
+
+	return $type;
+}
+
+
+/**
+ * Re-write of the lti_get_launch_data lti method, necessitated by the original's reliance on the lti tool DB table
+ * The Kaltura plugin will only use this method when authorizing through LTI1.3
+ *
+ * @param  array $module context info
+ * @param  string $nonce  the nonce value to use (applies to LTI 1.3 only)
+ * @return array the endpoint URL and parameters (including the signature)
+ * @since  Moodle 3.0
+ */
+function local_kaltura_lti1p3_get_launch_data($module, $withblocks, $editor = null, $nonce = '') {
+	global $PAGE;
+
+	$instance = local_kaltura_format_lti_instance_object($module);
+
+	$typeconfig = local_kaltura_format_typeconfig($instance, $withblocks);
+
+	$toolproxy = null;
+	if ($instance->lti_version === LTI_VERSION_1P3) {
+		$key = $instance->client_id;
+		$secret = '';
+	}
+
+	$endpoint = $instance->kaf_uri;
+	$endpoint = trim($endpoint);
+
+	$ltiversion = $instance->lti_version;
+
+	$course = $PAGE->course;
+	$allparams = lti_build_request($instance, $typeconfig, $course);
+	$requestparams = $allparams;
+	$requestparams = array_merge($requestparams, lti_build_standard_message($instance, null, LTI_VERSION_1P3));
+	$customstr = '';
+	if (isset($typeconfig['customparameters'])) {
+		$customstr = $typeconfig['customparameters'];
+	}
+	$requestparams = array_merge($requestparams, lti_build_custom_parameters(null, $instance, (object)$module, $allparams, $customstr,
+		$module->instructorcustomparameters, null));
+
+	$launchcontainer = lti_get_launch_container($instance, $typeconfig);
+	$returnurlparams = array('course' => $course->id,
+		'launch_container' => $launchcontainer,
+		'instanceid' => $instance->id,
+		'editor' => $editor,
+		'sesskey' => sesskey());
+
+	// Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
+	$url = new \moodle_url('/local/kaltura/service.php', $returnurlparams);
+	$returnurl = $url->out(false);
+
+	if (isset($typeconfig['forcessl']) && ($typeconfig['forcessl'] == '1')) {
+		$returnurl = lti_ensure_url_is_https($returnurl);
+	}
+
+	$target = '';
+	switch($launchcontainer) {
+		case LTI_LAUNCH_CONTAINER_EMBED:
+		case LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS:
+			$target = 'iframe';
+			break;
+		case LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW:
+			$target = 'frame';
+			break;
+		case LTI_LAUNCH_CONTAINER_WINDOW:
+			$target = 'window';
+			break;
+	}
+	if (!empty($target)) {
+		$requestparams['launch_presentation_document_target'] = $target;
+	}
+
+	$requestparams['launch_presentation_return_url'] = $returnurl;
+
+	$serviceurl = new moodle_url('/local/kaltura/service.php');
+	$requestparams['lis_outcome_service_url'] = $serviceurl->out(false);
+
+	// Add the parameters configured by the LTI services.
+
+	//TODO: verify whether this section is relevant for Kaltura
+	/*if ($typeid && !$islti2) {
+		$services = lti_get_services();
+		foreach ($services as $service) {
+			$serviceparameters = $service->get_launch_parameters('basic-lti-launch-request',
+				$course->id, $USER->id , $typeid, $instance->id);
+			foreach ($serviceparameters as $paramkey => $paramvalue) {
+				$requestparams['custom_' . $paramkey] = lti_parse_custom_parameter($toolproxy, $tool, $requestparams, $paramvalue,
+					$islti2);
+			}
+		}
+	}*/
+
+	// Allow request params to be updated by sub-plugins.
+	//TODO: verify whether this section is relevant for Kaltura
+	/*$plugins = core_component::get_plugin_list('ltisource');
+	foreach (array_keys($plugins) as $plugin) {
+		$pluginparams = component_callback('ltisource_'.$plugin, 'before_launch',
+			array($instance, $endpoint, $requestparams), array());
+
+		if (!empty($pluginparams) && is_array($pluginparams)) {
+			$requestparams = array_merge($requestparams, $pluginparams);
+		}
+	}*/
+
+	if ((!empty($key) && !empty($secret)) || ($ltiversion === LTI_VERSION_1P3)) {
+		if ($ltiversion !== LTI_VERSION_1P3) {
+			$parms = lti_sign_parameters($requestparams, $endpoint, 'POST', $key, $secret);
+		} else {
+			$parms = lti_sign_jwt($requestparams, $endpoint, $key, $instance->partner_id, $nonce);
+		}
+
+		$endpointurl = new \moodle_url($endpoint);
+		$endpointparams = $endpointurl->params();
+
+		// Strip querystring params in endpoint url from $parms to avoid duplication.
+		if (!empty($endpointparams) && !empty($parms)) {
+			foreach (array_keys($endpointparams) as $paramname) {
+				if (isset($parms[$paramname])) {
+					unset($parms[$paramname]);
+				}
+			}
+		}
+
+	} else {
+		// If no key and secret, do the launch unsigned.
+		$returnurlparams['unsigned'] = '1';
+		$parms = $requestparams;
+	}
+
+	return array($endpoint, $parms);
 }
 
 /**
