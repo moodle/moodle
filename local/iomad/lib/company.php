@@ -1007,6 +1007,19 @@ class company {
         $parentcompanies = $company->get_parent_companies_recursive();
         $companytree[$topcompanyid] = $topcompanyid;
 
+
+        // Get the list of company courses.
+        $companyassignedcourses = $DB->get_records('company_course', ['companyid' => $companyid]);
+        $sharedcourses = $DB->get_records('iomad_courses', ['shared' => 1]);
+        $companycourses = [];
+        foreach ($companyassignedcourses as $companyassignedcourse) {
+            $companycourses[$companyassignedcourse->courseid] = $companyassignedcourse;
+        }
+        foreach ($sharedcourses as $sharedcourse) {
+            $sharedcourse->companyid = $companyid;
+            $companycourses[$sharedcourse->courseid] = $sharedcourse;
+        }
+
         if (!$user=$DB->get_record('company_users', $assign)) {
             if (($managertype == 1 || $managertype == 2) && $CFG->iomad_autoenrol_managers) {
                 $assign['educator'] = 1;
@@ -1026,8 +1039,7 @@ class company {
                                                               'companyid' => $companyid))) {
                 // We have a company manager from another company.
                 // Deal with company courses.
-                if ($CFG->iomad_autoenrol_managers && $companycourses = $DB->get_records('company_course',
-                                                        array('companyid' => $companyid))) {
+                if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
                     foreach ($companycourses as $companycourse) {
                         if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                             if ($DB->record_exists('company_created_courses',
@@ -1054,8 +1066,7 @@ class company {
                 role_assign($companymanagerrole->id, $userid, $systemcontext->id);
 
                 // Deal with course permissions.
-                if ($CFG->iomad_autoenrol_managers && $companycourses = $DB->get_records('company_course',
-                                                        array('companyid' => $companyid))) {
+                if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
                     foreach ($companycourses as $companycourse) {
                         if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                             // If its a company created course then assign the editor role to the user.
@@ -1093,8 +1104,7 @@ class company {
                 role_assign($departmentmanagerrole->id, $userid, $systemcontext->id);
 
                 // Deal with company course roles.
-                if ($CFG->iomad_autoenrol_managers && $companycourses = $DB->get_records('company_course',
-                     array('companyid' => $companyid))) {
+                if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
                     foreach ($companycourses as $companycourse) {
                         if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                             company_user::unenrol($userid, array($companycourse->courseid),
@@ -1153,8 +1163,7 @@ class company {
                     role_assign($companymanagerrole->id, $userid, $systemcontext->id);
 
                     // Deal with course permissions.
-                    if ($CFG->iomad_autoenrol_managers && $companycourses = $DB->get_records('company_course',
-                                                            array('companyid' => $companyid))) {
+                    if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
                         foreach ($companycourses as $companycourse) {
                             if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                                 // If its a company created course then assign the editor role to the user.
@@ -1194,8 +1203,7 @@ class company {
                     role_assign($departmentmanagerrole->id, $userid, $systemcontext->id);
 
                     // Deal with company course roles.
-                    if ($CFG->iomad_autoenrol_managers && $companycourses = $DB->get_records('company_course',
-                         array('companyid' => $companyid))) {
+                    if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
                         foreach ($companycourses as $companycourse) {
                             if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                                 company_user::unenrol($userid, array($companycourse->courseid),
@@ -1214,8 +1222,7 @@ class company {
                     }   
                 } else if ($managertype == 3 && !$CFG->iomad_autoenrol_managers) {
                     // Deal with company course roles.
-                    if ($CFG->iomad_autoenrol_managers && $companycourses = $DB->get_records('company_course',
-                         array('companyid' => $companyid))) {
+                    if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
                         foreach ($companycourses as $companycourse) {
                             if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                                 if ($educator) {
@@ -1269,7 +1276,7 @@ class company {
                 // Demoting a manager to a user.
                 // Deal with company course roles.
                 if ($CFG->iomad_autoenrol_managers &&
-                    $companycourses = $DB->get_records('company_course', array('companyid' => $companyid))) {
+                    !empty($companycourses)) {
                     foreach ($companycourses as $companycourse) {
                         if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                             company_user::unenrol($userid, array($companycourse->courseid),
@@ -1330,7 +1337,7 @@ class company {
             }
             if ($educator && $user->educator != 1 &&
                  !$CFG->iomad_autoenrol_managers &&
-                 $companycourses = $DB->get_records('company_course', array('companyid' => $companyid))) {
+                 !empty($companycourses)) {
                 foreach ($companycourses as $companycourse) {
                     if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                         // If its a company created course then assign the editor role to the user.
@@ -1355,7 +1362,7 @@ class company {
 
             if (!$educator && $user->educator == 1 &&
                  !$CFG->iomad_autoenrol_managers &&
-                 $companycourses = $DB->get_records('company_course', array('companyid' => $companyid))) {
+                 !empty($companycourses)) {
                 foreach ($companycourses as $companycourse) {
                     if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
                         company_user::unenrol($userid,
