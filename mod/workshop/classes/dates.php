@@ -53,6 +53,7 @@ class dates extends activity_dates {
         if ($submissionstart) {
             $openlabelid = $submissionstart > $now ? 'activitydate:submissionsopen' : 'activitydate:submissionsopened';
             $dates[] = [
+                'dataid' => 'submissionstart',
                 'label' => get_string($openlabelid, 'mod_workshop'),
                 'timestamp' => (int) $submissionstart,
             ];
@@ -61,6 +62,7 @@ class dates extends activity_dates {
         if ($submissionend) {
             $closelabelid = $submissionend > $now ? 'activitydate:submissionsclose' : 'activitydate:submissionsclosed';
             $dates[] = [
+                'dataid' => 'submissionend',
                 'label' => get_string($closelabelid, 'mod_workshop'),
                 'timestamp' => (int) $submissionend,
             ];
@@ -69,6 +71,7 @@ class dates extends activity_dates {
         if ($assessmentstart) {
             $openlabelid = $assessmentstart > $now ? 'activitydate:assessmentsopen' : 'activitydate:assessmentsopened';
             $dates[] = [
+                'dataid' => 'assessmentstart',
                 'label' => get_string($openlabelid, 'mod_workshop'),
                 'timestamp' => (int) $assessmentstart,
             ];
@@ -77,6 +80,7 @@ class dates extends activity_dates {
         if ($assessmentend) {
             $closelabelid = $assessmentend > $now ? 'activitydate:assessmentsclose' : 'activitydate:assessmentsclosed';
             $dates[] = [
+                'dataid' => 'assessmentend',
                 'label' => get_string($closelabelid, 'mod_workshop'),
                 'timestamp' => (int) $assessmentend,
             ];
