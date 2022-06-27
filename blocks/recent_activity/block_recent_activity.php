@@ -143,7 +143,7 @@ class block_recent_activity extends block_base {
                 FROM {block_recent_activity}
                 WHERE timecreated > ? AND courseid = ?
                 GROUP BY cmid
-                ORDER BY MAX(timecreated) ASC";
+                ORDER BY MAX(timecreated) DESC";
         $params = array($timestart, $course->id);
         $logs = $DB->get_records_sql($sql, $params);
         if (isset($logs[0])) {
