@@ -338,5 +338,22 @@ function xmldb_forum_upgrade($oldversion) {
     // Automatically generated Moodle v4.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2022062700) {
+        // Unset $CFG->forum_usecoursefullname.
+        unset_config('forum_usecoursefullname');
+
+        // Define field usecoursefullname to be dropped from forum.
+        $table = new xmldb_table('forum');
+        $field = new xmldb_field('usecoursefullname');
+
+        // Conditionally launch drop field usecoursefullname.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2022062700, 'forum');
+    }
+
     return true;
 }
