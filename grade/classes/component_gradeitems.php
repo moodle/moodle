@@ -132,13 +132,20 @@ class component_gradeitems {
      * @return string The translated field name
      */
     public static function get_field_name_for_itemnumber(string $component, int $itemnumber, string $fieldname): string {
-        $itemname = static::get_itemname_from_itemnumber($component, $itemnumber);
 
-        if ($itemname) {
-            return "{$fieldname}_{$itemname}";
+        $classname = "{$component}\grades\gradeitems";
+
+        if (class_exists($classname) && is_subclass_of($classname, 'core_grades\local\gradeitem\fieldname_mapping')) {
+            $fieldname = $classname::get_field_name_for_itemnumber($component, $itemnumber, $fieldname);
+        } else {
+            $itemname = static::get_itemname_from_itemnumber($component, $itemnumber);
+
+            if ($itemname) {
+                $fieldname .= '_' . $itemname;
+            }
         }
-
         return $fieldname;
+
     }
 
     /**
