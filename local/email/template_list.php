@@ -128,7 +128,7 @@ $manageurl = new moodle_url('/local/email/template_list.php', array('manage' => 
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 $PAGE->requires->jquery();
 

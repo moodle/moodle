@@ -5,7 +5,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-#region-main {
+#region-main, #page-content, #region-main-box {
     height: 100%;
 }
 
