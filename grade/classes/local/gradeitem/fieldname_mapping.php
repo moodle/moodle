@@ -15,40 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Grade item mappings for the activity.
+ * Grade item, fieldname mapping.
  *
- * @package   mod_workshop
- * @copyright Andrew Nicols <andrew@nicols.co.uk>
+ * @package   core_grades
+ * @copyright Ilya Tregubov <ilya.a.tregubov@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 declare(strict_types = 1);
 
-namespace mod_workshop\grades;
-
-use core_grades\component_gradeitems;
-use core_grades\local\gradeitem\fieldname_mapping;
-use \core_grades\local\gradeitem\itemnumber_mapping;
+namespace core_grades\local\gradeitem;
 
 /**
- * Grade item mappings for the activity.
+ * Grade item, fieldname mapping.
  *
- * @package   mod_workshop
- * @copyright Andrew Nicols <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_grades
+ * @copyright Ilya Tregubov <ilya.a.tregubov@gmail.com>
  */
-class gradeitems implements itemnumber_mapping, fieldname_mapping {
-    /**
-     * Return the list of grade item mappings for the workshop.
-     *
-     * @return array
-     */
-    public static function get_itemname_mapping_for_component(): array {
-        return [
-            0 => 'submission',
-            1 => 'grading',
-        ];
-    }
+interface fieldname_mapping {
 
     /**
      * Get the suffixed field name for an activity field mapped from its itemnumber.
@@ -60,13 +44,5 @@ class gradeitems implements itemnumber_mapping, fieldname_mapping {
      * @param string $fieldname The name of the field to be rewritten
      * @return string The translated field name
      */
-    public static function get_field_name_for_itemnumber(string $component, int $itemnumber, string $fieldname): string {
-        $itemname = component_gradeitems::get_itemname_from_itemnumber($component, $itemnumber);
-
-        if ($itemname) {
-            return "{$itemname}{$fieldname}";
-        }
-
-        return $fieldname;
-    }
+    public static function get_field_name_for_itemnumber(string $component, int $itemnumber, string $fieldname): string;
 }
