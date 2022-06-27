@@ -163,12 +163,12 @@ class tool_launch_service {
                 $context ? $context->get_id() : null
             );
         }
-        // AGS. If the lineitemsurl is missing, it means the tool has no access to the endpoint.
+        // Add the AGS configuration for the resource link.
         // See: http://www.imsglobal.org/spec/lti-ags/v2p0#assignment-and-grade-service-claim.
-        if ($launchdata->ags && $launchdata->ags['lineitems']) {
+        if ($launchdata->ags && (!empty($launchdata->ags['lineitems']) || !empty($launchdata->ags['lineitem']))) {
             $resourcelink->add_grade_service(
-                new \moodle_url($launchdata->ags['lineitems']),
-                isset($launchdata->ags['lineitem']) ? new \moodle_url($launchdata->ags['lineitem']) : null,
+                !empty($launchdata->ags['lineitems']) ? new \moodle_url($launchdata->ags['lineitems']) : null,
+                !empty($launchdata->ags['lineitem']) ? new \moodle_url($launchdata->ags['lineitem']) : null,
                 $launchdata->ags['scope']
             );
         }
