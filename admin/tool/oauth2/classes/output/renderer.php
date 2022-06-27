@@ -91,7 +91,7 @@ class renderer extends plugin_renderer_base {
                 $logindisplayas = '';
             } else {
                 $logindisplayas = s($issuer->get_display_name());
-                if ($issuer->get('id') && $issuer->is_configured() && !empty($issuer->get_endpoint_url('userinfo'))) {
+                if ($issuer->get('id') && $issuer->is_configured()) {
                     $loginissuer = $this->pix_icon('yes', get_string('loginissuer', 'tool_oauth2'), 'tool_oauth2');
                 } else {
                     $loginissuer = $this->pix_icon('notconfigured', get_string('notconfigured', 'tool_oauth2'), 'tool_oauth2');

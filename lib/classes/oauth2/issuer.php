@@ -187,7 +187,7 @@ class issuer extends persistent {
     public function is_authentication_supported() {
         debugging('Method is_authentication_supported() is deprecated, please use is_available_for_login()',
             DEBUG_DEVELOPER);
-        return (!empty($this->get_endpoint_url('userinfo')));
+        return true;
     }
 
     /**
@@ -200,8 +200,7 @@ class issuer extends persistent {
         return $this->get('id') &&
             $this->is_configured() &&
             $this->get('showonloginpage') != self::SERVICEONLY &&
-            $this->get('enabled') &&
-            !empty($this->get_endpoint_url('userinfo'));
+            $this->get('enabled');
     }
 
     /**
