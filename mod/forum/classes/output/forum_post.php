@@ -155,7 +155,7 @@ class forum_post implements \renderable, \templatable {
         $data = $this->export_for_template_shared($renderer);
         return $data + array(
             'id'                            => html_entity_decode($this->post->id),
-            'coursename'                    => html_entity_decode($this->get_forum_coursename()),
+            'coursename'                    => html_entity_decode($this->get_coursename()),
             'courselink'                    => html_entity_decode($this->get_courselink()),
             'forumname'                     => html_entity_decode($this->get_forumname()),
             'showdiscussionname'            => html_entity_decode($this->get_showdiscussionname()),
@@ -197,7 +197,7 @@ class forum_post implements \renderable, \templatable {
         $data = $this->export_for_template_shared($renderer);
         return $data + array(
             'id'                            => $this->post->id,
-            'coursename'                    => $this->get_forum_coursename(),
+            'coursename'                    => $this->get_coursename(),
             'courselink'                    => $this->get_courselink(),
             'forumname'                     => $this->get_forumname(),
             'showdiscussionname'            => $this->get_showdiscussionname(),
@@ -483,19 +483,6 @@ class forum_post implements \renderable, \templatable {
         return format_string($this->course->shortname, true, array(
             'context' => \context_course::instance($this->course->id),
         ));
-    }
-
-    /**
-     * The name of the course that the forum is in, based on forum setting.
-     *
-     * @return string
-     */
-    public function get_forum_coursename() {
-        if ($this->forum->usecoursefullname) {
-            return $this->get_coursefullname();
-        } else {
-            return $this->get_coursename();
-        }
     }
 
     /**

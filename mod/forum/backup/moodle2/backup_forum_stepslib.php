@@ -44,7 +44,7 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
             'maxbytes', 'maxattachments', 'forcesubscribe', 'trackingtype',
             'rsstype', 'rssarticles', 'timemodified', 'warnafter',
             'blockafter', 'blockperiod', 'completiondiscussions', 'completionreplies',
-            'completionposts', 'displaywordcount', 'lockdiscussionafter', 'grade_forum', 'usecoursefullname'));
+            'completionposts', 'displaywordcount', 'lockdiscussionafter', 'grade_forum'));
 
         $discussions = new backup_nested_element('discussions');
 

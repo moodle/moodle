@@ -95,10 +95,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('digestmailtime', get_string('digestmailtime', 'forum'),
                        get_string('configdigestmailtime', 'forum'), 17, $options));
 
-    // Use full course name for notification.
-    $settings->add(new admin_setting_configcheckbox('forum_usecoursefullname', get_string('usecoursefullname', 'forum'),
-        get_string('configusecoursefullname', 'forum'), 0));
-
     if (empty($CFG->enablerssfeeds)) {
         $options = array(0 => get_string('rssglobaldisabled', 'admin'));
         $str = get_string('configenablerssfeeds', 'forum').'<br />'.get_string('configenablerssfeedsdisabled2', 'admin');

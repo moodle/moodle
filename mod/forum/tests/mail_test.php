@@ -910,7 +910,7 @@ class mail_test extends \advanced_testcase {
 
         // Post a discussion to the forum.
         $subject = 'This is the very long forum post subject that somebody was very kind of leaving, it is intended to check if long subject comes in mail correctly. Thank you.';
-        $a = (object)array('coursename' => $course->shortname, 'forumname' => $forum->name, 'subject' => $subject);
+        $a = (object)array('courseshortname' => $course->shortname, 'forumname' => $forum->name, 'subject' => $subject);
         $expectedsubject = get_string('postmailsubject', 'forum', $a);
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author, array('name' => $subject));
 
@@ -928,50 +928,6 @@ class mail_test extends \advanced_testcase {
         $message = reset($messages);
         $this->assertEquals($author->id, $message->useridfrom);
         $this->assertEquals($expectedsubject, $message->subject);
-    }
-
-    /**
-     * Test usecoursefullname option for notification.
-     *
-     * @covers \mod_forum\task\send_user_notifications
-     */
-    public function test_usecoursefullname() {
-        $this->resetAfterTest();
-
-        $record = [];
-        $record['fullname'] = 'Test Course Full Name';
-        $record['shortname'] = 'Shortname';
-
-        // Create a course, with a forum.
-        $course = $this->getDataGenerator()->create_course($record);
-
-        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE, 'usecoursefullname' => true);
-        $forum = $this->getDataGenerator()->create_module('forum', $options);
-
-        // Create a user enrolled in the course as student.
-        list($author) = $this->helper_create_users($course, 1);
-
-        // Post a discussion to the forum.
-        $subject = 'This is the forum post subject.';
-        // Expect coursefullname instead of shortname.
-        $a = (object)array('coursename' => $course->fullname, 'subject' => $subject);
-        $expectedsubject = get_string('postmailsubject', 'forum', $a);
-        list($discussion, $post) = $this->helper_post_to_forum($forum, $author, array('name' => $subject));
-
-        // Run cron and check that the expected number of users received the notification.
-        $expect = [
-            'author' => (object) [
-                'userid' => $author->id,
-                'messages' => 1,
-            ],
-        ];
-        $this->queue_tasks_and_assert($expect);
-
-        $this->send_notifications_and_assert($author, [$post]);
-        $messages = $this->messagesink->get_messages();
-        $this->assertEquals($expectedsubject, $messages[0]->subject);
-        $this->assertStringContainsString($course->fullname, $messages[0]->fullmessage);
-        $this->assertStringContainsString($course->fullname, $messages[0]->fullmessagehtml);
     }
 
     /**
