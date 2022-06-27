@@ -15,19 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Definition of login flow selector admin setting control.
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-namespace auth_iomadoidc\form\adminsetting;
+namespace auth_iomadoidc\adminsetting;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Displays the redirect URI for easier config.
  */
-class loginflow extends \admin_setting {
+class auth_iomadoidc_admin_setting_loginflow extends \admin_setting {
     /** @var array Array of valid login flow types. */
     protected $flowtypes = ['authcode', 'rocreds'];
 

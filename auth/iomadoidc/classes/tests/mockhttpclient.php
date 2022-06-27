@@ -15,14 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Mock http client used in unit test.
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
 namespace auth_iomadoidc\tests;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * A mock HTTP client allowing set responses.

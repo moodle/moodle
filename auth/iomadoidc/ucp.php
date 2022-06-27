@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * User control panel page.
+ *
  * @package auth_iomadoidc
  * @copyright 2021 Derick Turner
  * @author    Derick Turner
@@ -44,12 +46,13 @@ $iomadoidcconnected = (!empty($iomadoidctoken)) ? true : false;
 
 $iomadoidcloginconnected = ($USER->auth === 'iomadoidc') ? true : false;
 
+if (!is_enabled_auth('iomadoidc')) {
+    throw new \moodle_exception('erroriomadoidcnotenabled', 'auth_iomadoidc');
+}
+
 if (!empty($action)) {
     if ($action === 'connectlogin' && $iomadoidcloginconnected === false) {
         // Use authorization request login flow to connect existing users.
-        if (!is_enabled_auth('iomadoidc')) {
-            throw new \moodle_exception('erroriomadoidcnotenabled', 'auth_iomadoidc');
-        }
         auth_iomadoidc_connectioncapability($USER->id, 'connect', true);
         $auth = new \auth_iomadoidc\loginflow\authcode;
         $auth->set_httpclient(new \auth_iomadoidc\httpclient());

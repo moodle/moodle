@@ -15,17 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Plugin version information.
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2020020301;
-$plugin->requires = 2019111800;
-$plugin->release = '3.8.0.1';
+$plugin->version = 2022041900;
+$plugin->requires = 2022041900;
+$plugin->release = '4.0.0';
 $plugin->component = 'auth_iomadoidc';
 $plugin->maturity = MATURITY_STABLE;

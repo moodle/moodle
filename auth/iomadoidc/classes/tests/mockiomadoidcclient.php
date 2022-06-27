@@ -15,14 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Mock IOMADoIDC client used in unit test.
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
 namespace auth_iomadoidc\tests;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * A mock iomadoidcclient class providing access to all inaccessible properties/methods.
@@ -36,17 +39,10 @@ class mockiomadoidcclient extends \auth_iomadoidc\iomadoidcclient {
 
     /**
      * Stub method to access protected parent method.
-     */
-    public function getnewstate($nonce, array $stateparams = array()) {
-        return parent::getnewstate($nonce, $stateparams);
-    }
-
-    /**
-     * Stub method to access protected parent method.
      *
      * @param bool $promptlogin Whether to prompt for login or use existing session.
      * @param array $stateparams Parameters to store as state.
-     * @param array $extraparams Additional parameters to send with the OIDC request.
+     * @param array $extraparams Additional parameters to send with the IOMADoIDC request.
      * @return array Array of request parameters.
      */
     public function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {

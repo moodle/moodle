@@ -15,28 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Definition of a redirect URL admin setting control.
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-namespace auth_iomadoidc\form\adminsetting;
+namespace auth_iomadoidc\adminsetting;
+
+use auth_iomadoidc\utils;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Displays the redirect URI for easier config.
  */
-class redirecturi extends \admin_setting {
-
+class auth_iomadoidc_admin_setting_redirecturi extends \admin_setting {
     /**
      * Constructor.
      *
-     * @param string $name Name of the setting.
-     * @param string $visiblename Visible name of the setting.
-     * @param string $description Description of the setting.
-     * @param array $defaultsetting Default value.
-     * @param array $choices Array of icon choices.
+     * @param $name
+     * @param $heading
+     * @param $description
      */
     public function __construct($name, $heading, $description) {
         $this->nosave = true;
@@ -64,6 +66,7 @@ class redirecturi extends \admin_setting {
     /**
      * Never write settings.
      *
+     * @param mixed $data
      * @return string Always returns an empty string.
      */
     public function write_setting($data) {
@@ -73,11 +76,12 @@ class redirecturi extends \admin_setting {
     /**
      * Returns an HTML string for the redirect uri display.
      *
+     * @param mixed $data
+     * @param string $query
      * @return string Returns an HTML string.
      */
     public function output_html($data, $query = '') {
-        global $CFG;
-        $redirecturl = \auth_iomadoidc\utils::get_redirecturl();
+        $redirecturl = utils::get_redirecturl();
         $html = \html_writer::tag('h5', $redirecturl);
         return format_admin_setting($this, $this->visiblename, $html, $this->description, true, '', null, $query);
     }

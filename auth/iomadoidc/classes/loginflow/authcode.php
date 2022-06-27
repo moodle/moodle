@@ -15,19 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Authorization Code login flow.
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
+ * @author Lai Wei <lai.wei@enovation.ie>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
 namespace auth_iomadoidc\loginflow;
 
+use auth_iomadoidc\utils;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/auth/iomadoidc/lib.php');
+
 /**
  * Login flow for the oauth2 authorization code grant.
  */
-class authcode extends \auth_iomadoidc\loginflow\base {
+class authcode extends base {
     /**
      * Returns a list of potential IdPs that this authentication plugin supports. Used to provide links on the login page.
      *
@@ -48,7 +56,7 @@ class authcode extends \auth_iomadoidc\loginflow\base {
             $icon = (!empty($this->config->icon)) ? $this->config->icon : 'auth_iomadoidc:o365';
             $icon = explode(':', $icon);
             if (isset($icon[1])) {
-                list($iconcomponent, $iconkey) = $icon;
+                [$iconcomponent, $iconkey] = $icon;
             } else {
                 $iconcomponent = 'auth_iomadoidc';
                 $iconkey = 'o365';
@@ -66,7 +74,7 @@ class authcode extends \auth_iomadoidc\loginflow\base {
     }
 
     /**
-     * Get an OIDC parameter.
+     * Get an IOMADoIDC parameter.
      *
      * This is a modification to PARAM_ALPHANUMEXT to add a few additional characters from Base64-variants.
      *
@@ -79,7 +87,7 @@ class authcode extends \auth_iomadoidc\loginflow\base {
         $val = trim($val);
         $valclean = preg_replace('/[^A-Za-z0-9\_\-\.\+\/\=]/i', '', $val);
         if ($valclean !== $val) {
-            \auth_iomadoidc\utils::debug('Authorization error.', 'authcode::cleaniomadoidcparam', $name);
+            utils::debug('Authorization error.', 'authcode::cleaniomadoidcparam', $name);
             throw new \moodle_exception('errorauthgeneral', 'auth_iomadoidc');
         }
         return $valclean;
@@ -156,7 +164,7 @@ class authcode extends \auth_iomadoidc\loginflow\base {
      *
      * @param bool $promptlogin Whether to prompt for login or use existing session.
      * @param array $stateparams Parameters to store as state.
-     * @param array $extraparams Additional parameters to send with the OIDC request.
+     * @param array $extraparams Additional parameters to send with the IOMADoIDC request.
      */
     public function initiateauthrequest($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
         $client = $this->get_iomadoidcclient();
@@ -169,20 +177,20 @@ class authcode extends \auth_iomadoidc\loginflow\base {
      * @param array $authparams Received parameters.
      */
     protected function handleauthresponse(array $authparams) {
-        global $DB, $CFG, $STATEADDITIONALDATA, $USER;
+        global $DB, $SESSION, $USER, $CFG;
 
         if (!empty($authparams['error_description'])) {
-            \auth_iomadoidc\utils::debug('Authorization error.', 'authcode::handleauthresponse', $authparams);
-            throw new \moodle_exception('errorauthgeneral', 'auth_iomadoidc');
+            utils::debug('Authorization error.', 'authcode::handleauthresponse', $authparams);
+            redirect($CFG->wwwroot, get_string('errorauthgeneral', 'auth_iomadoidc'), null, \core\output\notification::NOTIFY_ERROR);
         }
 
         if (!isset($authparams['code'])) {
-            \auth_iomadoidc\utils::debug('No auth code received.', 'authcode::handleauthresponse', $authparams);
+            utils::debug('No auth code received.', 'authcode::handleauthresponse', $authparams);
             throw new \moodle_exception('errorauthnoauthcode', 'auth_iomadoidc');
         }
 
         if (!isset($authparams['state'])) {
-            \auth_iomadoidc\utils::debug('No state received.', 'authcode::handleauthresponse', $authparams);
+            utils::debug('No state received.', 'authcode::handleauthresponse', $authparams);
             throw new \moodle_exception('errorauthunknownstate', 'auth_iomadoidc');
         }
 
@@ -199,7 +207,7 @@ class authcode extends \auth_iomadoidc\loginflow\base {
                 $additionaldata = [];
             }
         }
-        $STATEADDITIONALDATA = $additionaldata;
+        $SESSION->stateadditionaldata = $additionaldata;
         $DB->delete_records('auth_iomadoidc_state', ['id' => $staterec->id]);
 
         // Get token from auth code.
@@ -210,13 +218,13 @@ class authcode extends \auth_iomadoidc\loginflow\base {
         }
 
         // Decode and verify idtoken.
-        list($iomadoidcuniqid, $idtoken) = $this->process_idtoken($tokenparams['id_token'], $orignonce);
+        [$iomadoidcuniqid, $idtoken] = $this->process_idtoken($tokenparams['id_token'], $orignonce);
 
         // Check restrictions.
         $passed = $this->checkrestrictions($idtoken);
         if ($passed !== true && empty($additionaldata['ignorerestrictions'])) {
             $errstr = 'User prevented from logging in due to restrictions.';
-            \auth_iomadoidc\utils::debug($errstr, 'handleauthresponse', $idtoken);
+            utils::debug($errstr, 'handleauthresponse', $idtoken);
             throw new \moodle_exception('errorrestricted', 'auth_iomadoidc');
         }
 
@@ -234,12 +242,12 @@ class authcode extends \auth_iomadoidc\loginflow\base {
             return true;
         }
 
-        // Check if OIDC user is already migrated.
+        // Check if IOMADoIDC user is already migrated.
         $tokenrec = $DB->get_record('auth_iomadoidc_token', ['iomadoidcuniqid' => $iomadoidcuniqid]);
         if (isloggedin() && !isguestuser() && (empty($tokenrec) || (isset($USER->auth) && $USER->auth !== 'iomadoidc'))) {
 
-            // If user is already logged in and trying to link Office 365 account or use it for OIDC.
-            // Check if that Office 365 account already exists in moodle.
+            // If user is already logged in and trying to link Microsoft 365 account or use it for IOMADoIDC.
+            // Check if that Microsoft 365 account already exists in moodle.
             $userrec = $DB->count_records_sql('SELECT COUNT(*)
                                                  FROM {user}
                                                 WHERE username = ?
@@ -257,7 +265,7 @@ class authcode extends \auth_iomadoidc\loginflow\base {
                 redirect(new \moodle_url($redirect));
             }
 
-            // If the user is already logged in we can treat this as a "migration" - a user switching to OIDC.
+            // If the user is already logged in we can treat this as a "migration" - a user switching to IOMADoIDC.
             $connectiononly = false;
             if (isset($additionaldata['connectiononly']) && $additionaldata['connectiononly'] === true) {
                 $connectiononly = true;
@@ -266,7 +274,7 @@ class authcode extends \auth_iomadoidc\loginflow\base {
             $redirect = (!empty($additionaldata['redirect'])) ? $additionaldata['redirect'] : '/auth/iomadoidc/ucp.php';
             redirect(new \moodle_url($redirect));
         } else {
-            // Otherwise it's a user logging in normally with OIDC.
+            // Otherwise it's a user logging in normally with IOMADoIDC.
             $this->handlelogin($iomadoidcuniqid, $authparams, $tokenparams, $idtoken);
             redirect(core_login_get_return_url());
         }
@@ -284,7 +292,7 @@ class authcode extends \auth_iomadoidc\loginflow\base {
     protected function handlemigration($iomadoidcuniqid, $authparams, $tokenparams, $idtoken, $connectiononly = false) {
         global $USER, $DB, $CFG;
 
-        // Check if OIDC user is already connected to a Moodle user.
+        // Check if IOMADoIDC user is already connected to a Moodle user.
         $tokenrec = $DB->get_record('auth_iomadoidc_token', ['iomadoidcuniqid' => $iomadoidcuniqid]);
         if (!empty($tokenrec)) {
             $existinguserparams = ['username' => $tokenrec->username, 'mnethostid' => $CFG->mnet_localhost_id];
@@ -303,13 +311,13 @@ class authcode extends \auth_iomadoidc\loginflow\base {
                     $this->updatetoken($tokenrec->id, $authparams, $tokenparams);
                     return true;
                 } else {
-                    // OIDC user connected to user that is not us. Can't continue.
+                    // IOMADoIDC user connected to user that is not us. Can't continue.
                     throw new \moodle_exception('errorauthuserconnectedtodifferent', 'auth_iomadoidc');
                 }
             }
         }
 
-        // Check if Moodle user is already connected to an OIDC user.
+        // Check if Moodle user is already connected to an IOMADoIDC user.
         $tokenrec = $DB->get_record('auth_iomadoidc_token', ['userid' => $USER->id]);
         if (!empty($tokenrec)) {
             if ($tokenrec->iomadoidcuniqid === $iomadoidcuniqid) {
@@ -367,17 +375,19 @@ class authcode extends \auth_iomadoidc\loginflow\base {
     /**
      * Determines whether the given Azure AD UPN is already matched to a Moodle user (and has not been completed).
      *
+     * @param $aadupn
      * @return false|stdClass Either the matched Moodle user record, or false if not matched.
      */
     protected function check_for_matched($aadupn) {
         global $DB;
-        $dbman = $DB->get_manager();
-        if ($dbman->table_exists('local_o365_connections')) {
+
+        if (auth_iomadoidc_is_local_365_installed()) {
             $match = $DB->get_record('local_o365_connections', ['aadupn' => $aadupn]);
             if (!empty($match) && \local_o365\utils::is_o365_connected($match->muserid) !== true) {
                 return $DB->get_record('user', ['id' => $match->muserid]);
             }
         }
+
         return false;
     }
 
@@ -390,9 +400,9 @@ class authcode extends \auth_iomadoidc\loginflow\base {
      */
     protected function check_objects($iomadoidcuniqid, $username) {
         global $DB;
+
         $user = null;
-        $o365installed = $DB->get_record('config_plugins', ['plugin' => 'local_o365', 'name' => 'version']);
-        if (!empty($o365installed)) {
+        if (auth_iomadoidc_is_local_365_installed()) {
             $sql = 'SELECT u.username
                       FROM {local_o365_objects} obj
                       JOIN {user} u ON u.id = obj.moodleid
@@ -400,6 +410,7 @@ class authcode extends \auth_iomadoidc\loginflow\base {
             $params = [$iomadoidcuniqid, 'user'];
             $user = $DB->get_record_sql($sql, $params);
         }
+
         return (!empty($user)) ? $user->username : $username;
     }
 
@@ -415,49 +426,86 @@ class authcode extends \auth_iomadoidc\loginflow\base {
         global $DB, $CFG;
 
         $tokenrec = $DB->get_record('auth_iomadoidc_token', ['iomadoidcuniqid' => $iomadoidcuniqid]);
+
+        // Do not continue if auth plugin is not enabled.
+        if (!is_enabled_auth('iomadoidc')) {
+            throw new \moodle_exception('erroriomadoidcnotenabled', 'auth_iomadoidc', null, null, '1');
+        }
+
         if (!empty($tokenrec)) {
             // Already connected user.
             if (empty($tokenrec->userid)) {
-                // ERROR1
-                throw new \moodle_exception('exception_tokenemptyuserid', 'auth_iomadoidc');
-            }
-            $user = $DB->get_record('user', ['id' => $tokenrec->userid]);
-            if (empty($user)) {
-                // ERROR2
-                $failurereason = AUTH_LOGIN_NOUSER;
-                $eventdata = ['other' => ['username' => $username, 'reason' => $failurereason]];
-                $event = \core\event\user_login_failed::create($eventdata);
-                $event->trigger();
-                throw new \moodle_exception('errorauthloginfailednouser', 'auth_iomadoidc', null, null, '1');
+                // Existing token record, but missing the user ID.
+                $user = $DB->get_record('user', ['username' => $tokenrec->username]);
+                if (empty($user)) {
+                    // Token exists, but it doesn't have a valid username.
+                    // In this case, delete the token, and try to process login again.
+                    $DB->delete_records('auth_iomadoidc_token', ['id' => $tokenrec->id]);
+                    return $this->handlelogin($iomadoidcuniqid, $authparams, $tokenparams, $idtoken);
+                }
+                $tokenrec->userid = $user->id;
+                $DB->update_record('auth_iomadoidc_token', $tokenrec);
+            } else {
+                // Existing token with a user ID.
+                $user = $DB->get_record('user', ['id' => $tokenrec->userid]);
+                if (empty($user)) {
+                    $failurereason = AUTH_LOGIN_NOUSER;
+                    $eventdata = ['other' => ['username' => $tokenrec->username, 'reason' => $failurereason]];
+                    $event = \core\event\user_login_failed::create($eventdata);
+                    $event->trigger();
+                    // Token is invalid, delete it.
+                    $DB->delete_records('auth_iomadoidc_token', ['id' => $tokenrec->id]);
+                    return $this->handlelogin($iomadoidcuniqid, $authparams, $tokenparams, $idtoken);
+                }
             }
             $username = $user->username;
             $this->updatetoken($tokenrec->id, $authparams, $tokenparams);
             $user = authenticate_user_login($username, null, true);
-            complete_user_login($user);
+
+            if (!empty($user)) {
+                complete_user_login($user);
+            } else {
+                // There was a problem in authenticate_user_login.
+                throw new \moodle_exception('errorauthgeneral', 'auth_iomadoidc', null, null, '2');
+            }
+
             return true;
         } else {
-            // No existing token, user not connected.
-            //
-            // Possibilities:
-            //     - Matched user.
-            //     - New user (maybe create).
+            /* No existing token, user not connected. Possibilities:
+                - Matched user.
+                - New user (maybe create).
+            */
 
             // Generate a Moodle username.
             // Use 'upn' if available for username (Azure-specific), or fall back to lower-case iomadoidcuniqid.
             $username = $idtoken->claim('upn');
+            $originalupn = null;
             if (empty($username)) {
                 $username = $iomadoidcuniqid;
+
+                // If upn claim is missing, it can mean either the IdP is not Azure AD, or it's a guest user.
+                if (auth_iomadoidc_is_local_365_installed()) {
+                    $apiclient = \local_o365\utils::get_api();
+                    $userdetails = $apiclient->get_user($iomadoidcuniqid, true);
+                    if (!is_null($userdetails) && isset($userdetails['userPrincipalName']) &&
+                        stripos($userdetails['userPrincipalName'], '#EXT#') !== false && $idtoken->claim('unique_name')) {
+                        $originalupn = $userdetails['userPrincipalName'];
+                        $username = $idtoken->claim('unique_name');
+                    }
+                }
             }
 
             // See if we have an object listing.
             $username = $this->check_objects($iomadoidcuniqid, $username);
             $matchedwith = $this->check_for_matched($username);
             if (!empty($matchedwith)) {
-                $matchedwith->aadupn = $username;
-                throw new \moodle_exception('errorusermatched', 'local_o365', null, $matchedwith);
+                if ($matchedwith->auth != 'iomadoidc') {
+                    $matchedwith->aadupn = $username;
+                    throw new \moodle_exception('errorusermatched', 'auth_iomadoidc', null, $matchedwith);
+                }
             }
             $username = trim(\core_text::strtolower($username));
-            $tokenrec = $this->createtoken($iomadoidcuniqid, $username, $authparams, $tokenparams, $idtoken);
+            $tokenrec = $this->createtoken($iomadoidcuniqid, $username, $authparams, $tokenparams, $idtoken, 0, $originalupn);
 
             $existinguserparams = ['username' => $username, 'mnethostid' => $CFG->mnet_localhost_id];
             if ($DB->record_exists('user', $existinguserparams) !== true) {
@@ -486,13 +534,13 @@ class authcode extends \auth_iomadoidc\loginflow\base {
                     $DB->update_record('auth_iomadoidc_token', $updatedtokenrec);
                 }
                 complete_user_login($user);
-                return true;
             } else {
                 // There was a problem in authenticate_user_login. Clean up incomplete token record.
                 if (!empty($tokenrec)) {
                     $DB->delete_records('auth_iomadoidc_token', ['id' => $tokenrec->id]);
                 }
-                throw new \moodle_exception('errorauthgeneral', 'auth_iomadoidc', null, null, '2');
+
+                redirect($CFG->wwwroot, get_string('errorauthgeneral', 'auth_iomadoidc'), null, \core\output\notification::NOTIFY_ERROR);
             }
 
             return true;

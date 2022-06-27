@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Privacy test for auth_iomadoidc
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author Remote-Learner.net Inc
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2019 Remote Learner.net Inc http://www.remote-learner.net
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -38,7 +39,7 @@ class auth_iomadoidc_privacy_testcase extends \core_privacy\tests\provider_testc
     /**
      * Tests set up.
      */
-    public function setUp() {
+    public function setUp():void {
         global $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -261,7 +262,7 @@ class auth_iomadoidc_privacy_testcase extends \core_privacy\tests\provider_testc
      * @return stdClass
      * @throws dml_exception
      */
-    static private function create_token(int $userid): \stdClass {
+    static private function create_token(int $userid) : \stdClass {
         global $DB;
         $record = new stdClass();
         $record->iomadoidcuniqid = "user@example.com";
@@ -269,7 +270,7 @@ class auth_iomadoidc_privacy_testcase extends \core_privacy\tests\provider_testc
         $record->userid = $userid;
         $record->iomadoidcusername = "user@example.com";
         $record->scope = "All";
-        $record->resource = "https://graph.microsoft.com";
+        $record->tokenresource = "https://graph.microsoft.com";
         $record->authcode = "authcode123";
         $record->token = "token123";
         $record->expiry = 12345;
@@ -286,7 +287,7 @@ class auth_iomadoidc_privacy_testcase extends \core_privacy\tests\provider_testc
      * @return stdClass
      * @throws dml_exception
      */
-    static private function create_prevlogin(int $userid): \stdClass {
+    static private function create_prevlogin(int $userid) : \stdClass {
         global $DB;
         $record = new stdClass();
         $record->userid = $userid;

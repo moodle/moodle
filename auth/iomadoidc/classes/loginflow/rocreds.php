@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Resource Owner Password Credentials Grant login flow.
+ *
  * @package auth_iomadoidc
  * @copyright 2021 Derick Turner
  * @author    Derick Turner
@@ -24,22 +26,27 @@
 
 namespace auth_iomadoidc\loginflow;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/auth/iomadoidc/lib.php');
+
 /**
  * Login flow for the oauth2 resource owner credentials grant.
  */
-class rocreds extends \auth_iomadoidc\loginflow\base {
+class rocreds extends base {
     /**
      * Check for an existing user object.
-     * @param string $iomadoidcuniqid The user object ID to look up.
-     * @param string $username The original username.
+     *
+     * @param string $o356username
+     *
      * @return string If there is an existing user object, return the username associated with it.
      *                If there is no existing user object, return the original username.
      */
     protected function check_objects($o356username) {
         global $DB;
+
         $user = null;
-        $o365installed = $DB->get_record('config_plugins', ['plugin' => 'local_o365', 'name' => 'version']);
-        if (!empty($o365installed)) {
+        if (auth_iomadoidc_is_local_365_installed()) {
             $sql = 'SELECT u.username
                       FROM {local_o365_objects} obj
                       JOIN {user} u ON u.id = obj.moodleid
@@ -47,6 +54,7 @@ class rocreds extends \auth_iomadoidc\loginflow\base {
             $params = [$o356username, 'user'];
             $user = $DB->get_record_sql($sql, $params);
         }
+
         return (!empty($user)) ? $user->username : $o356username;
     }
 
@@ -55,6 +63,7 @@ class rocreds extends \auth_iomadoidc\loginflow\base {
      *
      * @param object &$frm Form object.
      * @param object &$user User object.
+     * @return bool
      */
     public function loginpage_hook(&$frm, &$user) {
         global $DB, $CFG;
@@ -125,8 +134,9 @@ class rocreds extends \auth_iomadoidc\loginflow\base {
                     'reason' => $failurereason)));
             $event->trigger();
 
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Unknown user, can not create new accounts:  $username  ".
-                    $_SERVER['HTTP_USER_AGENT']);
+            debugging('[client '.getremoteaddr()."]  $CFG->wwwroot  Unknown user, can not create new accounts:  $username  ".
+                $_SERVER['HTTP_USER_AGENT']);
+
             return false;
         }
 
@@ -142,7 +152,7 @@ class rocreds extends \auth_iomadoidc\loginflow\base {
      * @return bool Authentication success or failure.
      */
     public function user_login($username, $password = null) {
-        global $CFG, $DB;
+        global $DB;
 
         $client = $this->get_iomadoidcclient();
         $authparams = ['code' => ''];
@@ -173,7 +183,16 @@ class rocreds extends \auth_iomadoidc\loginflow\base {
             if (!empty($tokenrec)) {
                 $this->updatetoken($tokenrec->id, $authparams, $tokenparams);
             } else {
-                $tokenrec = $this->createtoken($iomadoidcuniqid, $username, $authparams, $tokenparams, $idtoken);
+                $originalupn = null;
+                if (auth_iomadoidc_is_local_365_installed()) {
+                    $apiclient = \local_o365\utils::get_api();
+                    $userdetails = $apiclient->get_user($iomadoidcuniqid, true);
+                    if (!is_null($userdetails) && isset($userdetails['userPrincipalName']) &&
+                        stripos($userdetails['userPrincipalName'], '#EXT#') !== false) {
+                        $originalupn = $userdetails['userPrincipalName'];
+                    }
+                }
+                $this->createtoken($iomadoidcuniqid, $username, $authparams, $tokenparams, $idtoken, 0, $originalupn);
             }
             return true;
         }

@@ -1,10 +1,10 @@
-# Office 365 and Azure Active Directory Plugins for Moodle
+# Microsoft 365 and Azure Active Directory Plugins for Moodle
 
 ## OpenID Connect Authentication Plugin.
 
 The OpenID Connect plugin provides single-sign-on functionality using configurable identity providers.
 
-This is part of the suite of Office 365 plugins for Moodle.
+This is part of the suite of Microsoft 365 plugins for Moodle.
 
 This repository is updated with stable releases. To follow active development, see: https://github.com/Microsoft/o365-moodle
 

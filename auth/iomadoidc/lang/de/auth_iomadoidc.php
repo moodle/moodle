@@ -15,16 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * German language strings.
+ *
  * @package auth_iomadoidc
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
+ * @author Lai Wei <lai.wei@enovation.ie>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-$string['pluginname'] = 'IOMAD OpenID Connect';
-$string['auth_iomadoidcdescription'] = 'Das Plugin IOMAD OpenID Connect bietet eine Single-Sign-On-Funktion mit konfigurierbaren Identitätsprovidern.';
+$string['pluginname'] = 'OpenID Connect';
+$string['auth_iomadoidcdescription'] = 'Das Plugin OpenID Connect bietet eine Single-Sign-On-Funktion mit konfigurierbaren Identitätsprovidern.';
 $string['cfg_authendpoint_key'] = 'Autorisierungsendpunkt';
 $string['cfg_authendpoint_desc'] = 'Die URI des Autorisierungsendpunktes, dessen Verwendung Ihr Identitätsprovider vorschreibt.';
 $string['cfg_autoappend_key'] = 'Autom. anhängen';
-$string['cfg_autoappend_desc'] = 'Diese Zeichenfolge wird automatisch angehängt, wenn sich Benutzer mit dem Fluss für die Anmeldung mit Benutzernamen/Kennwort anmelden. Dies ist hilfreich, wenn Ihr Identitätsprovider eine allgemeine Domäne fordert, aber die Benutzer diese bei der Anmeldung nicht eingeben müssen. Wenn der vollständige IOMAD OpenID Connect-Benutzer z. B. "james@example.com" ist und Sie geben hier "@example.com" ein, muss der Benutzer hier nicht "james" als Benutzernamen eingeben. <br /><b>Hinweis:</b> Wenn Konflikte zwischen Benutzernamen vorliegen, d. h., ein Moodle-Benutzer mit demselben Namen vorhanden ist, wird anhand der Priorität des Authentifizierungs-Plugins festgelegt, welcher Benutzer Vorrang hat.';
+$string['cfg_autoappend_desc'] = 'Diese Zeichenfolge wird automatisch angehängt, wenn sich Benutzer mit dem Fluss für die Anmeldung mit Benutzernamen/Kennwort anmelden. Dies ist hilfreich, wenn Ihr Identitätsprovider eine allgemeine Domäne fordert, aber die Benutzer diese bei der Anmeldung nicht eingeben müssen. Wenn der vollständige OpenID Connect-Benutzer z. B. "james@example.com" ist und Sie geben hier "@example.com" ein, muss der Benutzer hier nicht "james" als Benutzernamen eingeben. <br /><b>Hinweis:</b> Wenn Konflikte zwischen Benutzernamen vorliegen, d. h., ein Moodle-Benutzer mit demselben Namen vorhanden ist, wird anhand der Priorität des Authentifizierungs-Plugins festgelegt, welcher Benutzer Vorrang hat.';
 $string['cfg_clientid_key'] = 'Kunden-ID';
 $string['cfg_clientid_desc'] = 'Ihre registrierte Kunden-ID beim Identitätsprovider.';
 $string['cfg_clientsecret_key'] = 'Kundengeheimnis';
@@ -35,7 +40,7 @@ $string['cfg_err_invalidclientid'] = 'Ungültige Kunden-ID';
 $string['cfg_err_invalidclientsecret'] = 'Ungültiges Kundengeheimnis';
 $string['cfg_icon_key'] = 'Symbol';
 $string['cfg_icon_desc'] = 'Ein Symbol zur Anzeige des nächsten Providernamens auf der Anmeldeseite.';
-$string['cfg_iconalt_o365'] = 'Symbol "Office 365"';
+$string['cfg_iconalt_o365'] = 'Symbol "Microsoft 365"';
 $string['cfg_iconalt_locked'] = 'Symbol "Gesperrt"';
 $string['cfg_iconalt_lock'] = 'Symbol "Sperren"';
 $string['cfg_iconalt_go'] = 'Grüner Kreis';
@@ -60,13 +65,13 @@ $string['cfg_loginflow_authcode_desc'] = 'Mit diesem Fluss klickt der Benutzer a
 $string['cfg_loginflow_rocreds'] = 'Authentifizierung mit Benutzername/Kennwort';
 $string['cfg_loginflow_rocreds_desc'] = 'Mit diesem Fluss gibt der Benutzer wie bei einer manuellen Anmeldung seinen Benutzernamen und sein Kennwort im Moodle-Anmeldeformular ein. Die Anmeldedaten werden dann im Hintergrund zur Authentifizierung an den Identitätsprovider übermittelt. Dieser Fluss ist für den Benutzer am transparentesten, da er keine direkte Interaktion mit dem Identitätsprovider hat. Alle Identitätsprovider unterstützen diesen Fluss.';
 $string['cfg_iomadoidcresource_key'] = 'Ressource';
-$string['cfg_iomadoidcresource_desc'] = 'Die IOMAD OpenID Connect-Ressource, für die die Anfrage gesendet wird.';
+$string['cfg_iomadoidcresource_desc'] = 'Die OpenID Connect-Ressource, für die die Anfrage gesendet wird.';
 $string['cfg_iomadoidcscope_key'] = 'Umfang';
-$string['cfg_iomadoidcscope_desc'] = 'Der zu verwendende OIDC-Bereich.';
+$string['cfg_iomadoidcscope_desc'] = 'Der zu verwendende IOMADoIDC-Bereich.';
 $string['cfg_opname_key'] = 'Providername';
 $string['cfg_opname_desc'] = 'Hierbei handelt es sich um eine Bezeichnung für den Endbenutzer, die den Typ der Anmeldedaten kennzeichnet, die der Benutzer für die Anmeldung verwenden muss. Diese Bezeichnung wird in allen benutzerorientierten Teilen dieses Plugins zur Identifizierung Ihres Providers verwendet.';
 $string['cfg_redirecturi_key'] = 'Weiterleitungs-URI';
-$string['cfg_redirecturi_desc'] = 'Dies ist die URI, die als "Weiterleitungs-URI" registriert werden soll. Ihr IOMAD OpenID Connect-Identitätsprovider muss nach dieser URI fragen, wenn Sie sich in Moodle als Kunde anmelden. <br /><b>HINWEIS:</b> Sie müssen diese Zeichenfolge *genau* wie hier angezeigt bei Ihrem IOMAD OpenID Connect-Provider angeben. Jede Abweichung führt dazu, dass keine Anmeldungen mit IOMAD OpenID Connect möglich sind.';
+$string['cfg_redirecturi_desc'] = 'Dies ist die URI, die als "Weiterleitungs-URI" registriert werden soll. Ihr OpenID Connect-Identitätsprovider muss nach dieser URI fragen, wenn Sie sich in Moodle als Kunde anmelden. <br /><b>HINWEIS:</b> Sie müssen diese Zeichenfolge *genau* wie hier angezeigt bei Ihrem OpenID Connect-Provider angeben. Jede Abweichung führt dazu, dass keine Anmeldungen mit OpenID Connect möglich sind.';
 $string['cfg_tokenendpoint_key'] = 'Token-Endpunkt';
 $string['cfg_tokenendpoint_desc'] = 'Die URI des Token-Endpunktes, dessen Verwendung Ihr Identitätsprovider vorschreibt.';
 $string['event_debug'] = 'Debug-Meldung';
@@ -79,13 +84,13 @@ $string['errorauthdisconnectifmanual'] = 'Wenn Sie die manuelle Anmeldemethode v
 $string['errorauthinvalididtoken'] = 'Ungültigen id_token empfangen.';
 $string['errorauthloginfailednouser'] = 'Ungültige Anmeldung: Benutzer wurde nicht in Moodle gefunden.';
 $string['errorauthnoauthcode'] = 'Auth.-Code nicht empfangen.';
-$string['errorauthnocreds'] = 'Konfigurieren Sie die Anmeldedaten für den IOMAD OpenID Connect-Client.';
-$string['errorauthnoendpoints'] = 'Konfigurieren Sie den Endpunkte für den IOMAD OpenID Connect-Server.';
+$string['errorauthnocreds'] = 'Konfigurieren Sie die Anmeldedaten für den OpenID Connect-Client.';
+$string['errorauthnoendpoints'] = 'Konfigurieren Sie den Endpunkte für den OpenID Connect-Server.';
 $string['errorauthnohttpclient'] = 'Legen Sie einen HTTP-Client fest.';
-$string['errorauthnoidtoken'] = 'IOMAD OpenID Connect-id_token wurde nicht empfangen.';
+$string['errorauthnoidtoken'] = 'OpenID Connect-id_token wurde nicht empfangen.';
 $string['errorauthunknownstate'] = 'Unbekannter Status.';
-$string['errorauthuseralreadyconnected'] = 'Sie sind bereits mit einem anderen IOMAD OpenID Connect-Benutzer verbunden.';
-$string['errorauthuserconnectedtodifferent'] = 'Der authentifizierte IOMAD OpenID Connect-Benutzer ist bereits mit einem Moodle-Benutzer verbunden.';
+$string['errorauthuseralreadyconnected'] = 'Sie sind bereits mit einem anderen OpenID Connect-Benutzer verbunden.';
+$string['errorauthuserconnectedtodifferent'] = 'Der authentifizierte OpenID Connect-Benutzer ist bereits mit einem Moodle-Benutzer verbunden.';
 $string['errorbadloginflow'] = 'Ungültiger Anmeldefluss angegeben. Hinweis: Wenn Sie diese Meldung kurz nach einer Installation oder einem Upgrades erhalten, löschen Sie den Moodle-Cache.';
 $string['errorjwtbadpayload'] = 'JWT-Last konnte nicht gelesen werden.';
 $string['errorjwtcouldnotreadheader'] = 'JWT-Kopf konnte nicht gelesen werden.';
@@ -93,7 +98,7 @@ $string['errorjwtempty'] = 'Empfangener JWT ist leer oder enthält keine Zeichen
 $string['errorjwtinvalidheader'] = 'Ungültiger JWT-Kopf';
 $string['errorjwtmalformed'] = 'Empfangener JWT ist nicht wohlgeformt.';
 $string['errorjwtunsupportedalg'] = 'JWS-Alg. oder JWE wird nicht unterstützt.';
-$string['erroriomadoidcnotenabled'] = 'Das IOMAD OpenID Connect-Authentifizierungs-Plugin ist nicht aktiviert.';
+$string['erroriomadoidcnotenabled'] = 'Das OpenID Connect-Authentifizierungs-Plugin ist nicht aktiviert.';
 $string['errornodisconnectionauthmethod'] = 'Es kann keine Verbindung hergestellt werden, da es kein aktiviertes Authentifizierungs-Plugin gibt, auf das zurückgegriffen werden kann (entweder vorherige Nutzeranmeldemethode oder manuelle Anmeldemethode).';
 $string['erroriomadoidcclientinvalidendpoint'] = 'Empfangene Endpunkt-URI ist ungültig.';
 $string['erroriomadoidcclientnocreds'] = 'Legen Sie die Client-Anmeldedaten mit setcreds fest.';
@@ -101,14 +106,14 @@ $string['erroriomadoidcclientnoauthendpoint'] = 'Kein Autorisierungsendpunkt fes
 $string['erroriomadoidcclientnotokenendpoint'] = 'Kein Token-Endpunkt festgelegt. Legen Sie ihn mit $this->setendpoints fest.';
 $string['erroriomadoidcclientinsecuretokenendpoint'] = 'Der Token-Endpunkt muss dazu SSL/TLS verwenden.';
 $string['errorucpinvalidaction'] = 'Empfangene Aktion ist ungültig.';
-$string['erroriomadoidccall'] = 'Fehler in IOMAD OpenID Connect. Weitere Informationen finden Sie in den Protokollen.';
-$string['erroriomadoidccall_message'] = 'Fehler in IOMAD OpenID Connect: {$a}';
-$string['eventuserauthed'] = 'Benutzer wurde mit IOMAD OpenID Connect autorisiert.';
-$string['eventusercreated'] = 'Benutzer wurde mit IOMAD OpenID Connect erstellt.';
-$string['eventuserconnected'] = 'Benutzer ist mit IOMAD OpenID Connect verbunden.';
-$string['eventuserloggedin'] = 'Benutzer wurde mit IOMAD OpenID Connect angemeldet.';
-$string['eventuserdisconnected'] = 'Benutzer ist von IOMAD OpenID Connect getrennt.';
-$string['iomadoidc:manageconnection'] = 'IOMAD OpenID Connect-Verbindung verwalten';
+$string['erroriomadoidccall'] = 'Fehler in OpenID Connect. Weitere Informationen finden Sie in den Protokollen.';
+$string['erroriomadoidccall_message'] = 'Fehler in OpenID Connect: {$a}';
+$string['eventuserauthed'] = 'Benutzer wurde mit OpenID Connect autorisiert.';
+$string['eventusercreated'] = 'Benutzer wurde mit OpenID Connect erstellt.';
+$string['eventuserconnected'] = 'Benutzer ist mit OpenID Connect verbunden.';
+$string['eventuserloggedin'] = 'Benutzer wurde mit OpenID Connect angemeldet.';
+$string['eventuserdisconnected'] = 'Benutzer ist von OpenID Connect getrennt.';
+$string['iomadoidc:manageconnection'] = 'OpenID Connect-Verbindung verwalten';
 $string['ucp_general_intro'] = 'Hier können Sie Ihre Verbindung mit {$a} verwalten. Ist die Option deaktiviert, können Sie sich mit Ihrem {$a}-Konto bei Moodle anmelden und müssen keinen Benutzernamen und kein Kennwort eingeben. Sobald die Verbindung besteht, müssen Sie nicht mehr Ihren Benutzernamen und das Kennwort für Moodle behalten. Die gesamte Anmeldung wird von {$a} durchgeführt.';
 $string['ucp_login_start'] = 'Mit {$a} bei Moodle anmelden';
 $string['ucp_login_start_desc'] = 'Damit wird Ihr Konto umgeschaltet und es wird {$a} für die Anmeldung in Moodle verwendet. Sobald diese Option aktiviert ist, melden Sie sich mit Ihren {$a}-Anmeldedaten an. Ihr aktueller Benutzername und das Kennwort von Moodle funktionieren nicht mehr. Sie können Ihr Konto jederzeit trennen und zur normalen Anmeldung zurückkehren.';

@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * OpenID Connect authentication plugin declaration.
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -42,6 +43,8 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
 
     /**
      * Constructor.
+     *
+     * @param null $forceloginflow
      */
     public function __construct($forceloginflow = null) {
         global $STATEADDITIONALDATA, $CFG;
@@ -57,8 +60,9 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
 
         $loginflow = 'authcode';
 
-        if (!empty($STATEADDITIONALDATA) && isset($STATEADDITIONALDATA['forceflow'])) {
-            $loginflow = $STATEADDITIONALDATA['forceflow'];
+        if (isset($SESSION->stateadditionaldata) && !empty($SESSION->stateadditionaldata) &&
+            isset($SESSION->stateadditoinaldata['forceflow'])) {
+            $loginflow = $SESSION->stateadditoinaldata['forceflow'];
         } else {
             if (!empty($forceloginflow) && is_string($forceloginflow)) {
                 $loginflow = $forceloginflow;
@@ -91,7 +95,8 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
     /**
      * Set an HTTP client to use.
      *
-     * @param auth_iomadoidchttpclientinterface $httpclient [description]
+     * @param \auth_iomadoidc\httpclientinterface $httpclient
+     * @return mixed
      */
     public function set_httpclient(\auth_iomadoidc\httpclientinterface $httpclient) {
         return $this->loginflow->set_httpclient($httpclient);
@@ -100,13 +105,10 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
     /**
      * Hook for overriding behaviour of login page.
      * This method is called from login/index.php page for all enabled auth plugins.
-     *
-     * @global object
-     * @global object
      */
     public function loginpage_hook() {
-        global $frm;  // can be used to override submitted login form
-        global $user; // can be used to replace authenticate_user_login()
+        global $frm;  // Can be used to override submitted login form.
+        global $user; // Can be used to replace authenticate_user_login().
         if ($this->should_login_redirect()) {
             $this->loginflow->handleredirect();
         }
@@ -114,10 +116,10 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
     }
 
     /**
-      * Determines if we will redirect to the redirecturi
-      *
-      * @return bool If this returns true then redirect
-      * @throws \coding_exception
+     * Determines if we will redirect to the redirecturi.
+     *
+     * @return bool If this returns true then redirect
+     * @throws \coding_exception
      */
     public function should_login_redirect() {
         global $SESSION;
@@ -127,8 +129,8 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
         if (!empty($noredirect)) {
             $iomadoidc = 0;
         }
-        if (empty($this->config->forceredirect)) {
-            return false; // Never redirect if we haven't enabled the forceredirect setting
+        if (!isset($this->config->forceredirect) || !$this->config->forceredirect) {
+            return false; // Never redirect if we haven't enabled the forceredirect setting.
         }
         // Never redirect on POST.
         if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST')) {
@@ -151,7 +153,7 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
             $SESSION->iomadoidc = $iomadoidc;
             return false;
         }
-        // We are off to OIDC land so reset the force in SESSION.
+        // We are off to IOMADoIDC land so reset the force in SESSION.
         if (isset($SESSION->iomadoidc)) {
             unset($SESSION->iomadoidc);
         }
@@ -177,13 +179,15 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
     }
 
     /**
-     * Handle OIDC disconnection from Moodle account.
+     * Handle IOMADoIDC disconnection from Moodle account.
      *
-     * @param bool $justremovetokens If true, just remove the stored OIDC tokens for the user, otherwise revert login methods.
+     * @param bool $justremovetokens If true, just remove the stored IOMADoIDC tokens for the user, otherwise revert login methods.
      * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
      *                                "linked" account.
-     * @param \moodle_url $redirect Where to redirect if successful.
-     * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
+     * @param moodle_url|null $redirect Where to redirect if successful.
+     * @param moodle_url|null $selfurl The page this is accessed from. Used for some redirects.
+     * @param null $userid
+     * @return mixed
      */
     public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
                                \moodle_url $selfurl = null, $userid = null) {
@@ -283,11 +287,53 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
     }
 
     /**
-     * Cron function.
+     * Log out user from Microsoft 365 if single sign off integration is enabled.
+     *
+     * @param stdClass $user
+     *
+     * @return bool
      */
-    public function cron() {
-        global $DB;
-        $params = [time() - (5 * 60)];
-        $DB->delete_records_select('auth_iomadoidc_state', 'timecreated < ?', $params);
+    public function postlogout_hook($user) {
+        global $CFG, $DB;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
+        $singlesignoutsetting = get_config('auth_iomadoidc' . $postfix, 'single_sign_off');
+
+        if ($singlesignoutsetting) {
+            $redirect = false;
+
+            if ($user->auth == 'iomadoidc') {
+                $redirect = true;
+            } else if (auth_iomadoidc_is_local_365_installed()) {
+                if ($DB->record_exists('local_o365_objects', ['type' => 'user', 'moodleid' => $user->id])) {
+                    $redirect = true;
+                }
+            }
+
+            if ($redirect) {
+                $logouturl = get_config('auth_iomadoidc' . $postfix, 'logouturi');
+                if (!$logouturl) {
+                    $logouturl = 'https://login.microsoftonline.com/common/oauth2/logout?post_logout_redirect_uri=' .
+                        urlencode($CFG->wwwroot);
+                } else {
+                    if (preg_match("/^https:\/\/login.microsoftonline.com\//", $logouturl) &&
+                        preg_match("/\/oauth2\/logout$/", $logouturl)) {
+                        $logouturl .= '?post_logout_redirect_uri=' . urlencode($CFG->wwwroot);
+                    }
+                }
+
+                redirect($logouturl);
+            }
+        }
+
+        return true;
     }
 }

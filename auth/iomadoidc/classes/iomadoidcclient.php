@@ -15,20 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * IOMADoIDC client.
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
 namespace auth_iomadoidc;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/auth/iomadoidc/lib.php');
 
 /**
  * OpenID Connect Client
  */
 class iomadoidcclient {
-    /** @var \auth_iomadoidc\httpclientinterface An HTTP client to use. */
+    /** @var httpclientinterface An HTTP client to use. */
     protected $httpclient;
 
     /** @var string The client ID. */
@@ -43,12 +48,15 @@ class iomadoidcclient {
     /** @var array Array of endpoints. */
     protected $endpoints = [];
 
+    /** @var string The resource of the token. */
+    protected $tokenresource;
+
     /**
      * Constructor.
      *
-     * @param \auth_iomadoidc\httpclientinterface $httpclient An HTTP client to use for background communication.
+     * @param httpclientinterface $httpclient An HTTP client to use for background communication.
      */
-    public function __construct(\auth_iomadoidc\httpclientinterface $httpclient) {
+    public function __construct(httpclientinterface $httpclient) {
         $this->httpclient = $httpclient;
     }
 
@@ -57,17 +65,27 @@ class iomadoidcclient {
      *
      * @param string $id The registered client ID.
      * @param string $secret The registered client secret.
-     * @param string $scope The requested OID scope.
      * @param string $redirecturi The registered client redirect URI.
+     * @param string $tokenresource The API URL
+     * @param string $scope The requested OID scope.
      */
-    public function setcreds($id, $secret, $redirecturi, $resource, $scope) {
+    public function setcreds($id, $secret, $redirecturi, $tokenresource = '', $scope = '') {
         $this->clientid = $id;
         $this->clientsecret = $secret;
         $this->redirecturi = $redirecturi;
-        if (!empty($resource)) {
-            $this->resource = $resource;
+        if (!empty($tokenresource)) {
+            $this->tokenresource = $tokenresource;
         } else {
-            $this->resource = (static::use_chinese_api() === true) ? 'https://microsoftgraph.chinacloudapi.cn' : 'https://graph.microsoft.com';
+            if (auth_iomadoidc_is_local_365_installed()) {
+                if (\local_o365\rest\o365api::use_chinese_api() === true) {
+                    $this->tokenresource = 'https://microsoftgraph.chinacloudapi.cn';
+                } else {
+                    $this->tokenresource = 'https://graph.microsoft.com';
+                }
+            } else {
+                $this->tokenresource = 'https://graph.microsoft.com';
+            }
+
         }
         $this->scope = (!empty($scope)) ? $scope : 'openid profile email';
     }
@@ -100,12 +118,12 @@ class iomadoidcclient {
     }
 
     /**
-     * Get the set resource.
+     * Get the set token resource.
      *
-     * @return string The set resource.
+     * @return string The set token resource.
      */
-    public function get_resource() {
-        return (isset($this->resource)) ? $this->resource : null;
+    public function get_tokenresource() {
+        return (isset($this->tokenresource)) ? $this->tokenresource : null;
     }
 
     /**
@@ -118,7 +136,7 @@ class iomadoidcclient {
     }
 
     /**
-     * Set OIDC endpoints.
+     * Set IOMADoIDC endpoints.
      *
      * @param array $endpoints Array of endpoints. Can have keys 'auth', and 'token'.
      */
@@ -131,6 +149,11 @@ class iomadoidcclient {
         }
     }
 
+    /**
+     * Validate the return the endpoint.
+     * @param $endpoint
+     * @return mixed|null
+     */
     public function get_endpoint($endpoint) {
         return (isset($this->endpoints[$endpoint])) ? $this->endpoints[$endpoint] : null;
     }
@@ -140,7 +163,7 @@ class iomadoidcclient {
      *
      * @param bool $promptlogin Whether to prompt for login or use existing session.
      * @param array $stateparams Parameters to store as state.
-     * @param array $extraparams Additional parameters to send with the OIDC request.
+     * @param array $extraparams Additional parameters to send with the IOMADoIDC request.
      * @return array Array of request parameters.
      */
     protected function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
@@ -150,10 +173,10 @@ class iomadoidcclient {
         $params = [
             'response_type' => 'code',
             'client_id' => $this->clientid,
-            'scope' =>  $this->scope,
+            'scope' => $this->scope,
             'nonce' => $nonce,
             'response_mode' => 'form_post',
-            'resource' => $this->resource,
+            'resource' => $this->tokenresource,
             'state' => $this->getnewstate($nonce, $stateparams),
             'redirect_uri' => $this->redirecturi
         ];
@@ -175,6 +198,7 @@ class iomadoidcclient {
      * Generate a new state parameter.
      *
      * @param string $nonce The generated nonce value.
+     * @param array $stateparams
      * @return string The new state value.
      */
     protected function getnewstate($nonce, array $stateparams = array()) {
@@ -194,7 +218,7 @@ class iomadoidcclient {
      *
      * @param bool $promptlogin Whether to prompt for login or use existing session.
      * @param array $stateparams Parameters to store as state.
-     * @param array $extraparams Additional parameters to send with the OIDC request.
+     * @param array $extraparams Additional parameters to send with the IOMADoIDC request.
      */
     public function authrequest($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
         global $DB;
@@ -232,16 +256,16 @@ class iomadoidcclient {
             'username' => $username,
             'password' => $password,
             'scope' => 'openid profile email',
-            'resource' => $this->resource,
+            'resource' => $this->tokenresource,
             'client_id' => $this->clientid,
             'client_secret' => $this->clientsecret,
         ];
 
         try {
             $returned = $this->httpclient->post($this->endpoints['token'], $params);
-            return \auth_iomadoidc\utils::process_json_response($returned, ['token_type' => null, 'id_token' => null]);
+            return utils::process_json_response($returned, ['token_type' => null, 'id_token' => null]);
         } catch (\Exception $e) {
-            \auth_iomadoidc\utils::debug('Error in rocredsrequest request', 'iomadoidcclient::rocredsrequest', $e->getMessage());
+            utils::debug('Error in rocredsrequest request', 'iomadoidcclient::rocredsrequest', $e->getMessage());
             return false;
         }
     }
@@ -249,7 +273,6 @@ class iomadoidcclient {
     /**
      * Exchange an authorization code for an access token.
      *
-     * @param string $tokenendpoint The token endpoint URI.
      * @param string $code An authorization code.
      * @return array Received parameters.
      */
@@ -267,6 +290,6 @@ class iomadoidcclient {
         ];
 
         $returned = $this->httpclient->post($this->endpoints['token'], $params);
-        return \auth_iomadoidc\utils::process_json_response($returned, ['id_token' => null]);
+        return utils::process_json_response($returned, ['id_token' => null]);
     }
 }

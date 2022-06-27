@@ -15,16 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Czech language strings.
+ *
  * @package auth_iomadoidc
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
+ * @author Lai Wei <lai.wei@enovation.ie>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-$string['pluginname'] = 'IOMAD OpenID Connect';
-$string['auth_iomadoidcdescription'] = 'Plugin IOMAD OpenID Connect poskytuje funkci jednotného přihlašování pomocí konfigurovatelných poskytovatelů identity.';
+$string['pluginname'] = 'OpenID Connect';
+$string['auth_iomadoidcdescription'] = 'Plugin OpenID Connect poskytuje funkci jednotného přihlašování pomocí konfigurovatelných poskytovatelů identity.';
 $string['cfg_authendpoint_key'] = 'Koncový bod autorizace';
 $string['cfg_authendpoint_desc'] = 'Identifikátor URI koncového bodu autorizace od vašeho poskytovatele identity, který se má použít.';
 $string['cfg_autoappend_key'] = 'Automaticky připojit';
-$string['cfg_autoappend_desc'] = 'Automaticky připojit tento řetězec při přihlašování uživatelů pomocí postupu přihlášení uživatelské_jméno/heslo. To je užitečné, když váš poskytovatel identity požaduje společnou doménu, ale po uživatelích nechcete požadovat její psaní při přihlašování. Pokud například uživatel IOMAD OpenID Connect má celé uživatelské jméno „jankovar@example.com“ a zde zadáte „@example.com“, bude uživatel jako své uživatelské jméno zadávat jen „jankovar“. <br /><b>Poznámka:</b> V případě, že existují konfliktní uživatelská jména – například že existuje uživatel v Moodlu se stejným uživatelským jménem, k určení „vítězného“ uživatele se použije priorita pluginu ověření.';
+$string['cfg_autoappend_desc'] = 'Automaticky připojit tento řetězec při přihlašování uživatelů pomocí postupu přihlášení uživatelské_jméno/heslo. To je užitečné, když váš poskytovatel identity požaduje společnou doménu, ale po uživatelích nechcete požadovat její psaní při přihlašování. Pokud například uživatel OpenID Connect má celé uživatelské jméno „jankovar@example.com“ a zde zadáte „@example.com“, bude uživatel jako své uživatelské jméno zadávat jen „jankovar“. <br /><b>Poznámka:</b> V případě, že existují konfliktní uživatelská jména – například že existuje uživatel v Moodlu se stejným uživatelským jménem, k určení „vítězného“ uživatele se použije priorita pluginu ověření.';
 $string['cfg_clientid_key'] = 'ID klienta';
 $string['cfg_clientid_desc'] = 'Vaše registrované ID klienta u poskytovatele identity.';
 $string['cfg_clientsecret_key'] = 'Tajný klíč klienta';
@@ -35,7 +40,7 @@ $string['cfg_err_invalidclientid'] = 'Neplatné ID klienta';
 $string['cfg_err_invalidclientsecret'] = 'Neplatný tajný klíč klienta';
 $string['cfg_icon_key'] = 'Ikona';
 $string['cfg_icon_desc'] = 'Ikona, která se bude zobrazovat na přihlašovací stránce vedle názvu poskytovatele.';
-$string['cfg_iconalt_o365'] = 'Ikona Office 365';
+$string['cfg_iconalt_o365'] = 'Ikona Microsoft 365';
 $string['cfg_iconalt_locked'] = 'Ikona uzamčení';
 $string['cfg_iconalt_lock'] = 'Ikona zámku';
 $string['cfg_iconalt_go'] = 'Zelené kolečko';
@@ -60,13 +65,13 @@ $string['cfg_loginflow_authcode_desc'] = 'Při použití tohoto postupu uživate
 $string['cfg_loginflow_rocreds'] = 'Ověřování uživatelské_jméno/heslo';
 $string['cfg_loginflow_rocreds_desc'] = 'Při použití tohoto postupu uživatel zadá své uživatelské jméno a heslo do přihlašovacího formuláře Moodlu, obdobně jako při ručním přihlášení. Jeho přihlašovací údaje  jsou pak na pozadí předány poskytovateli identity, aby bylo získáno ověření. Tento postup je pro uživatele nejtransparentnější, protože nemá žádný přímý kontakt s poskytovatelem identity. Ne všichni poskytovatelé identity ale tento postup podporují.';
 $string['cfg_iomadoidcresource_key'] = 'Zdroj';
-$string['cfg_iomadoidcresource_desc'] = 'Zdroj IOMAD OpenID Connect, pro který se odesílá požadavek.';
+$string['cfg_iomadoidcresource_desc'] = 'Zdroj OpenID Connect, pro který se odesílá požadavek.';
 $string['cfg_iomadoidcscope_key'] = 'Scope';
-$string['cfg_iomadoidcscope_desc'] = 'Rozsah OIDC, který se má použít.';
+$string['cfg_iomadoidcscope_desc'] = 'Rozsah IOMADoIDC, který se má použít.';
 $string['cfg_opname_key'] = 'Název poskytovatele';
 $string['cfg_opname_desc'] = 'Toto je údaj zobrazovaný koncovému uživateli, který identifikuje, jaký typ přihlašovacích údajů potřebuje uživatel použít k přihlášení. Tento údaj se používá na více místech rozhraní pro koncového uživatele v tomto pluginu k identifikaci vašeho poskytovatele.';
 $string['cfg_redirecturi_key'] = 'URI pro přesměrování';
-$string['cfg_redirecturi_desc'] = 'Toto je identifikátor URI, který se registruje jako „URI pro přesměrování“. Váš poskytovatel identity IOMAD OpenID Connect by vás měl o tento identifikátor požádat při registraci Moodlu jako klienta.<br /><b>Poznámka:</b> Tento identifikátor musíte ve svém poskytovateli identity IOMAD OpenID Connect zadat *přesně* tak, jak je zde uveden. Jakákoli odchylka znemožní přihlášení s použitím IOMAD OpenID Connect.';
+$string['cfg_redirecturi_desc'] = 'Toto je identifikátor URI, který se registruje jako „URI pro přesměrování“. Váš poskytovatel identity OpenID Connect by vás měl o tento identifikátor požádat při registraci Moodlu jako klienta.<br /><b>Poznámka:</b> Tento identifikátor musíte ve svém poskytovateli identity OpenID Connect zadat *přesně* tak, jak je zde uveden. Jakákoli odchylka znemožní přihlášení s použitím OpenID Connect.';
 $string['cfg_tokenendpoint_key'] = 'Koncový bod tokenu';
 $string['cfg_tokenendpoint_desc'] = 'URI koncového bodu tokenu od vašeho poskytovatele identity, který se má použít.';
 $string['event_debug'] = 'Zpráva ladění';
@@ -79,13 +84,13 @@ $string['errorauthdisconnectifmanual'] = 'Pokud používáte metodu ručního p�
 $string['errorauthinvalididtoken'] = 'Přijato neplatné id_token.';
 $string['errorauthloginfailednouser'] = 'Neplatné přihlášení: Uživatel nebyl v Moodlu nalezen.';
 $string['errorauthnoauthcode'] = 'Nebyl přijat kód ověření.';
-$string['errorauthnocreds'] = 'Nakonfigurujte přihlašovací údaje klienta IOMAD OpenID Connect.';
-$string['errorauthnoendpoints'] = 'Nakonfigurujte koncové body serveru IOMAD OpenID Connect.';
+$string['errorauthnocreds'] = 'Nakonfigurujte přihlašovací údaje klienta OpenID Connect.';
+$string['errorauthnoendpoints'] = 'Nakonfigurujte koncové body serveru OpenID Connect.';
 $string['errorauthnohttpclient'] = 'Nastavte klienta HTTP.';
-$string['errorauthnoidtoken'] = 'Nebylo přijato id_token IOMAD OpenID Connect.';
+$string['errorauthnoidtoken'] = 'Nebylo přijato id_token OpenID Connect.';
 $string['errorauthunknownstate'] = 'Neznámý stav.';
-$string['errorauthuseralreadyconnected'] = 'Jste již připojeni k jinému uživateli IOMAD OpenID Connect.';
-$string['errorauthuserconnectedtodifferent'] = 'Uživatel IOMAD OpenID Connect, který byl ověřen, je již připojen k uživateli Moodle.';
+$string['errorauthuseralreadyconnected'] = 'Jste již připojeni k jinému uživateli OpenID Connect.';
+$string['errorauthuserconnectedtodifferent'] = 'Uživatel OpenID Connect, který byl ověřen, je již připojen k uživateli Moodle.';
 $string['errorbadloginflow'] = 'Byl zadán neplatný postup přihlášení. Poznámka: Pokud se vám tato zpráva zobrazuje poté, co jste provedli instalaci nebo upgrade, vymažte mezipaměť Moodlu.';
 $string['errorjwtbadpayload'] = 'Nejde přečíst datovou část JWT.';
 $string['errorjwtcouldnotreadheader'] = 'Nelze číst hlavičku JWT.';
@@ -93,7 +98,7 @@ $string['errorjwtempty'] = 'Přijato prázdné nebo ne-řetězec JWT.';
 $string['errorjwtinvalidheader'] = 'Neplatná hlavička JWT';
 $string['errorjwtmalformed'] = 'Přijato poškozené JWT.';
 $string['errorjwtunsupportedalg'] = 'JWS Alg nebo JWE není podporováno';
-$string['erroriomadoidcnotenabled'] = 'Plugin ověření IOMAD OpenID Connect není povolen.';
+$string['erroriomadoidcnotenabled'] = 'Plugin ověření OpenID Connect není povolen.';
 $string['errornodisconnectionauthmethod'] = 'Nelze se odpojit, protože není povolen žádný plugin ověření, který by mohl převzít funkci. (buď uživatelova předchozí metoda přihlášení, nebo metoda ručního přihlášení).';
 $string['erroriomadoidcclientinvalidendpoint'] = 'Přijato neplatné URI koncového bodu.';
 $string['erroriomadoidcclientnocreds'] = 'Nastavte přihlašovací údaje klienta s tajnými klíči.';
@@ -101,14 +106,14 @@ $string['erroriomadoidcclientnoauthendpoint'] = 'Není nastaven žádný koncov�
 $string['erroriomadoidcclientnotokenendpoint'] = 'Není nastaven žádný koncový bod tokenu. Nastavte pomocí $this->setendpoints';
 $string['erroriomadoidcclientinsecuretokenendpoint'] = 'Koncový bod tokenu musí pro toto používat SSL/TLS.';
 $string['errorucpinvalidaction'] = 'Přijata neplatná akce.';
-$string['erroriomadoidccall'] = 'Chyba v IOMAD OpenID Connect. Další informace naleznete v protokolech.';
-$string['erroriomadoidccall_message'] = 'Chyba v IOMAD OpenID Connect: {$a}';
-$string['eventuserauthed'] = 'Uživatel autorizován s IOMAD OpenID Connect';
-$string['eventusercreated'] = 'Uživatel vytvořen s IOMAD OpenID Connect';
-$string['eventuserconnected'] = 'Uživatel připojen k IOMAD OpenID Connect';
-$string['eventuserloggedin'] = 'Uživatel přihlášen s IOMAD OpenID Connect';
-$string['eventuserdisconnected'] = 'Uživatel odpojen od IOMAD OpenID Connect';
-$string['iomadoidc:manageconnection'] = 'Spravovat připojení IOMAD OpenID Connect';
+$string['erroriomadoidccall'] = 'Chyba v OpenID Connect. Další informace naleznete v protokolech.';
+$string['erroriomadoidccall_message'] = 'Chyba v OpenID Connect: {$a}';
+$string['eventuserauthed'] = 'Uživatel autorizován s OpenID Connect';
+$string['eventusercreated'] = 'Uživatel vytvořen s OpenID Connect';
+$string['eventuserconnected'] = 'Uživatel připojen k OpenID Connect';
+$string['eventuserloggedin'] = 'Uživatel přihlášen s OpenID Connect';
+$string['eventuserdisconnected'] = 'Uživatel odpojen od OpenID Connect';
+$string['iomadoidc:manageconnection'] = 'Spravovat připojení OpenID Connect';
 $string['ucp_general_intro'] = 'Zde můžete spravovat své připojení k {$a}. Pokud je nastavení povoleno, budete moci použít svůj účet {$a} k přihlášení do Moodlu namísto používání samostatného uživatelského jména a hesla. Jakmile se připojíte, nebudete si muset nadále pamatovat svoje uživatelské jméno a heslo pro Moodle, veškerá přihlášení budou probíhat přes {$a}.';
 $string['ucp_login_start'] = 'Začít používat {$a} k přihlašování do Moodlu';
 $string['ucp_login_start_desc'] = 'Toto přepne váš účet, aby k přihlašování do Moodlu používal {$a}. Jakmile nastavení povolíte, budete se přihlašovat se svými přihlašovacími údaji {$a} – vaše aktuální uživatelské jméno a heslo pro Moodle nebudou fungovat. Kdykoli můžete svůj účet odpojit a vrátit se k normálnímu přihlašování.';

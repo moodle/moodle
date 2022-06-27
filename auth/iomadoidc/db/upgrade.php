@@ -15,12 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Plugin upgrade script.
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
+ * @author Lai Wei <lai.wei@enovation.ie>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/auth/iomadoidc/lib.php');
 
 /**
  * Update plugin.
@@ -32,37 +38,36 @@ function xmldb_auth_iomadoidc_upgrade($oldversion) {
     global $DB;
 
     $dbman = $DB->get_manager();
-    $result = true;
 
-    if ($result && $oldversion < 2014111703) {
+    if ($oldversion < 2014111703) {
         // Lengthen field.
         $table = new xmldb_table('auth_iomadoidc_token');
         $field = new xmldb_field('scope', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'username');
         $dbman->change_field_type($table, $field);
 
-        upgrade_plugin_savepoint($result, '2014111703', 'auth', 'iomadoidc');
+        upgrade_plugin_savepoint(true, 2014111703, 'auth', 'iomadoidc');
     }
 
-    if ($result && $oldversion < 2015012702) {
+    if ($oldversion < 2015012702) {
         $table = new xmldb_table('auth_iomadoidc_state');
         $field = new xmldb_field('additionaldata', XMLDB_TYPE_TEXT, null, null, null, null, null, 'timecreated');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_plugin_savepoint($result, '2015012702', 'auth', 'iomadoidc');
+        upgrade_plugin_savepoint(true, 2015012702, 'auth', 'iomadoidc');
     }
 
-    if ($result && $oldversion < 2015012703) {
+    if ($oldversion < 2015012703) {
         $table = new xmldb_table('auth_iomadoidc_token');
         $field = new xmldb_field('iomadoidcusername', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'username');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_plugin_savepoint($result, '2015012703', 'auth', 'iomadoidc');
+        upgrade_plugin_savepoint(true, 2015012703, 'auth', 'iomadoidc');
     }
 
-    if ($result && $oldversion < 2015012704) {
-        // Update OIDC users.
+    if ($oldversion < 2015012704) {
+        // Update IOMADoIDC users.
         $sql = 'SELECT u.id as userid,
                        u.username as username,
                        tok.id as tokenid,
@@ -115,25 +120,25 @@ function xmldb_auth_iomadoidc_upgrade($oldversion) {
                 continue;
             }
         }
-        upgrade_plugin_savepoint($result, '2015012704', 'auth', 'iomadoidc');
+        upgrade_plugin_savepoint(true, 2015012704, 'auth', 'iomadoidc');
     }
 
-    if ($result && $oldversion < 2015012707) {
+    if ($oldversion < 2015012707) {
         if (!$dbman->table_exists('auth_iomadoidc_prevlogin')) {
             $dbman->install_one_table_from_xmldb_file(__DIR__.'/install.xml', 'auth_iomadoidc_prevlogin');
         }
-        upgrade_plugin_savepoint($result, '2015012707', 'auth', 'iomadoidc');
+        upgrade_plugin_savepoint(true, 2015012707, 'auth', 'iomadoidc');
     }
 
-    if ($result && $oldversion < 2015012710) {
+    if ($oldversion < 2015012710) {
         // Lengthen field.
         $table = new xmldb_table('auth_iomadoidc_token');
         $field = new xmldb_field('scope', XMLDB_TYPE_TEXT, null, null, null, null, null, 'iomadoidcusername');
         $dbman->change_field_type($table, $field);
-        upgrade_plugin_savepoint($result, '2015012710', 'auth', 'iomadoidc');
+        upgrade_plugin_savepoint(true, 2015012710, 'auth', 'iomadoidc');
     }
 
-    if ($result && $oldversion < 2015111904.01) {
+    if ($oldversion < 2015111904.01) {
         // Ensure the username field in auth_iomadoidc_token is lowercase.
         $authtokensrs = $DB->get_recordset('auth_iomadoidc_token');
         foreach ($authtokensrs as $authtokenrec) {
@@ -145,10 +150,10 @@ function xmldb_auth_iomadoidc_upgrade($oldversion) {
                 $DB->update_record('auth_iomadoidc_token', $updatedrec);
             }
         }
-        upgrade_plugin_savepoint($result, '2015111904.01', 'auth', 'iomadoidc');
+        upgrade_plugin_savepoint(true, 2015111904.01, 'auth', 'iomadoidc');
     }
 
-    if ($result && $oldversion < 2015111905.01) {
+    if ($oldversion < 2015111905.01) {
         // Update old endpoints.
         $config = get_config('auth_iomadoidc');
         if ($config->authendpoint === 'https://login.windows.net/common/oauth2/authorize') {
@@ -159,10 +164,10 @@ function xmldb_auth_iomadoidc_upgrade($oldversion) {
             set_config('tokenendpoint', 'https://login.microsoftonline.com/common/oauth2/token', 'auth_iomadoidc');
         }
 
-        upgrade_plugin_savepoint($result, '2015111905.01', 'auth', 'iomadoidc');
+        upgrade_plugin_savepoint(true, 2015111905.01, 'auth', 'iomadoidc');
     }
 
-    if ($result && $oldversion < 2018051700.01) {
+    if ($oldversion < 2018051700.01) {
         $table = new xmldb_table('auth_iomadoidc_token');
         $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'username');
         if (!$dbman->field_exists($table, $field)) {
@@ -178,7 +183,134 @@ function xmldb_auth_iomadoidc_upgrade($oldversion) {
                 $DB->update_record('auth_iomadoidc_token', $newrec);
             }
         }
-        upgrade_plugin_savepoint($result, '2018051700.01', 'auth', 'iomadoidc');
+        upgrade_plugin_savepoint(true, 2018051700.01, 'auth', 'iomadoidc');
     }
-    return $result;
+
+    if ($oldversion < 2020020301) {
+        $oldgraphtokens = $DB->get_records('auth_iomadoidc_token', ['resource' => 'https://graph.windows.net']);
+        foreach ($oldgraphtokens as $graphtoken) {
+            $graphtoken->resource = 'https://graph.microsoft.com';
+            $DB->update_record('auth_iomadoidc_token', $graphtoken);
+        }
+
+        $iomadoidcresource = get_config('auth_iomadoidc', 'iomadoidcresource');
+        if ($iomadoidcresource !== false && strpos($iomadoidcresource, 'windows') !== false) {
+            set_config('iomadoidcresource', 'https://graph.microsoft.com', 'auth_iomadoidc');
+        }
+
+        upgrade_plugin_savepoint(true, 2020020301, 'auth', 'iomadoidc');
+    }
+
+    if ($oldversion < 2020071503) {
+        $localo365singlesignoffsetting = get_config('local_o365', 'single_sign_off');
+        if ($localo365singlesignoffsetting !== false) {
+            set_config('single_sign_off', true, 'auth_iomadoidc');
+            unset_config('single_sign_off', 'local_o365');
+        }
+
+        upgrade_plugin_savepoint(true, 2020071503, 'auth', 'iomadoidc');
+    }
+
+    if ($oldversion < 2020110901) {
+        if ($dbman->field_exists('auth_iomadoidc_token', 'resource')) {
+            // Rename field resource on table auth_iomadoidc_token to tokenresource.
+            $table = new xmldb_table('auth_iomadoidc_token');
+
+            $field = new xmldb_field('resource', XMLDB_TYPE_CHAR, '127', null, XMLDB_NOTNULL, null, null, 'scope');
+
+            // Launch rename field resource.
+            $dbman->rename_field($table, $field, 'tokenresource');
+        }
+
+        // Oidc savepoint reached.
+        upgrade_plugin_savepoint(true, 2020110901, 'auth', 'iomadoidc');
+    }
+
+    if ($oldversion < 2020110903) {
+        // Part 1: add index to auth_iomadoidc_token table.
+        $table = new xmldb_table('auth_iomadoidc_token');
+
+        // Define index userid (not unique) to be added to auth_iomadoidc_token.
+        $useridindex = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
+
+        // Conditionally launch add index userid.
+        if (!$dbman->index_exists($table, $useridindex)) {
+            $dbman->add_index($table, $useridindex);
+        }
+
+        // Define index username (not unique) to be added to auth_iomadoidc_token.
+        $usernameindex = new xmldb_index('username', XMLDB_INDEX_NOTUNIQUE, ['username']);
+
+        // Conditionally launch add index username.
+        if (!$dbman->index_exists($table, $usernameindex)) {
+            $dbman->add_index($table, $usernameindex);
+        }
+
+        // Part 2: update Authorization and token end point URL.
+        $aadtenant = get_config('local_o365', 'aadtenant');
+
+        if ($aadtenant) {
+            $authorizationendpoint = get_config('auth_iomadoidc', 'authendpoint');
+            if ($authorizationendpoint == 'https://login.microsoftonline.com/common/oauth2/authorize') {
+                $authorizationendpoint = str_replace('common', $aadtenant, $authorizationendpoint);
+                set_config('authendpoint', $authorizationendpoint, 'auth_iomadoidc');
+            }
+
+            $tokenendpoint = get_config('auth_iomadoidc', 'tokenendpoint');
+            if ($tokenendpoint == 'https://login.microsoftonline.com/common/oauth2/token') {
+                $tokenendpoint = str_replace('common', $aadtenant, $tokenendpoint);
+                set_config('tokenendpoint', $tokenendpoint, 'auth_iomadoidc');
+            }
+        }
+
+        // Oidc savepoint reached.
+        upgrade_plugin_savepoint(true, 2020110903, 'auth', 'iomadoidc');
+    }
+
+    if ($oldversion < 2021051701) {
+        // Migrate field mapping settings from local_o365.
+        $existingfieldmappingsettings = get_config('local_o365', 'fieldmap');
+        if ($existingfieldmappingsettings !== false) {
+            $userfields = auth_iomadoidc_get_all_user_fields();
+
+            $existingfieldmappingsettings = @unserialize($existingfieldmappingsettings);
+            if (is_array($existingfieldmappingsettings)) {
+                foreach ($existingfieldmappingsettings as $existingfieldmappingsetting) {
+                    $fieldmap = explode('/', $existingfieldmappingsetting);
+
+                    if (count($fieldmap) !== 3) {
+                        // Invalid settings, ignore.
+                        continue;
+                    }
+
+                    list($remotefield, $localfield, $behaviour) = $fieldmap;
+
+                    if ($remotefield == 'facsimileTelephoneNumber') {
+                        $remotefield = 'faxNumber';
+                    }
+
+                    set_config('field_map_' . $localfield, $remotefield, 'auth_iomadoidc');
+                    set_config('field_lock_' . $localfield, 'unlocked', 'auth_iomadoidc');
+                    set_config('field_updatelocal_' . $localfield, $behaviour, 'auth_iomadoidc');
+
+                    if (($key = array_search($localfield, $userfields)) !== false) {
+                        unset($userfields[$key]);
+                    }
+                }
+
+                foreach ($userfields as $userfield) {
+                    set_config('field_map_' . $userfield, '', 'auth_iomadoidc');
+                    set_config('field_lock_' . $userfield, 'unlocked', 'auth_iomadoidc');
+                    set_config('field_updatelocal_' . $userfield, 'always', 'auth_iomadoidc');
+                }
+            }
+
+            unset_config('fieldmap', 'local_o365');
+        }
+
+        // Oidc savepoint reached.
+        upgrade_plugin_savepoint(true, 2021051701, 'auth', 'iomadoidc');
+    }
+
+    return true;
 }

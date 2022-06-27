@@ -15,14 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * JWT token.
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
 namespace auth_iomadoidc;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class for working with JWTs.
@@ -61,7 +64,7 @@ class jwt {
             throw new \moodle_exception('errorjwtinvalidheader', 'auth_iomadoidc');
         }
 
-        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'none'];
+        $jwsalgs = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'PS256', 'none'];
         if (in_array($header['alg'], $jwsalgs, true) === true) {
             $body = static::decode_jws($jwtparts);
         } else {

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Definition of base login flow class.
+ *
  * @package auth_iomadoidc
  * @copyright 2021 Derick Turner
  * @author    Derick Turner
@@ -24,6 +26,16 @@
 
 namespace auth_iomadoidc\loginflow;
 
+use auth_iomadoidc\jwt;
+use stdClass;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/auth/iomadoidc/lib.php');
+
+/**
+ * A base loginflow class.
+ */
 class base {
     /** @var object Plugin config. */
     public $config;
@@ -31,6 +43,9 @@ class base {
     /** @var \auth_iomadoidc\httpclientinterface An HTTP client to use. */
     protected $httpclient;
 
+    /**
+     * Constructor.
+     */
     public function __construct() {
         global $SESSION;
 
@@ -64,23 +79,19 @@ class base {
         foreach ( $configitems as $configitem) {
             if (!empty($siteconfig[$configitem . "_$companyid"])) {
                 $storedconfig[$configitem] = $siteconfig[$configitem . "_$companyid"];
+            } else {
+                $storedconfig[$configitem] = $siteconfig[$configitem];
             }
         }
 
-        $forcedconfig = [
-            'field_updatelocal_idnumber' => 'oncreate',
-            'field_lock_idnumber' => 'locked',
-            'field_updatelocal_lang' => 'oncreate',
-            'field_lock_lang' => 'locked',
-            'field_updatelocal_firstname' => 'onlogin',
-            'field_lock_firstname' => 'unlocked',
-            'field_updatelocal_lastname' => 'onlogin',
-            'field_lock_lastname' => 'unlocked',
-            'field_updatelocal_email' => 'onlogin',
-            'field_lock_email' => 'unlocked',
-        ];
 
-        $this->config = (object)array_merge($default, $storedconfig, $forcedconfig);
+        foreach ($storedconfig as $configname => $configvalue) {
+            if (strpos($configname, 'field_updatelocal_') === 0 && $configvalue == 'always') {
+                $storedconfig[$configname] = 'onlogin';
+            }
+        }
+
+        $this->config = (object)array_merge($default, $storedconfig);
     }
 
     /**
@@ -109,6 +120,7 @@ class base {
      *
      * @param object &$frm Form object.
      * @param object &$user User object.
+     * @return bool
      */
     public function loginpage_hook(&$frm, &$user) {
         return true;
@@ -128,64 +140,170 @@ class base {
             return false;
         }
 
-        $idtoken = \auth_iomadoidc\jwt::instance_from_encoded($tokenrec->idtoken);
-
-        // O365 provides custom field mapping, skip OIDC mapping if O365 is present.
-        $o365installed = $DB->get_record('config_plugins', ['plugin' => 'local_o365', 'name' => 'version']);
-        if (!empty($o365installed)) {
-            return [];
+        if ($DB->record_exists('user', ['username' => $username])) {
+            $eventtype = 'login';
+        } else {
+            $eventtype = 'create';
         }
 
-        $userinfo = [
-            'lang' => 'en',
-            'idnumber' => $username,
-        ];
+        $fieldmappingfromtoken = true;
 
-        $firstname = $idtoken->claim('given_name');
-        if (!empty($firstname)) {
-            $userinfo['firstname'] = $firstname;
+        if (auth_iomadoidc_is_local_365_installed()) {
+            // Check if multi tenants is enabled. User from additional tenants can only sync fields from token.
+            $userfromadditionaltenant = false;
+            $hostingtenantid = get_config('local_o365', 'aadtenantid');
+            $token = jwt::instance_from_encoded($tokenrec->token);
+            if ($token->claim('tid') != $hostingtenantid) {
+                $userfromadditionaltenant = true;
+            }
+
+            if (!$userfromadditionaltenant) {
+                if (\local_o365\feature\usersync\main::fieldmap_require_graph_api_call($eventtype)) {
+                    // If local_o365 is installed, and field mapping uses fields not covered by token,
+                    // then call Graph API function to get user details.
+                    $apiclient = \local_o365\utils::get_api($tokenrec->userid);
+                    if ($apiclient) {
+                        $fieldmappingfromtoken = false;
+                        $userdata = $apiclient->get_user($tokenrec->iomadoidcuniqid, true);
+                    }
+                } else {
+                    // If local_o365 is installed, but all field mapping fields are in token, then use token.
+                    $fieldmappingfromtoken = false;
+                    $idtoken = jwt::instance_from_encoded($tokenrec->idtoken);
+
+                    $oid = $idtoken->claim('oid');
+                    if (!empty($oid)) {
+                        $userdata['objectId'] = $oid;
+                    }
+
+                    $upn = $idtoken->claim('upn');
+                    if (!empty($upn)) {
+                        $userdata['userPrincipalName'] = $upn;
+                    } else if (isset($tokenrec->iomadoidcusername) && $tokenrec->iomadoidcusername) {
+                        $userdata['userPrincipalName'] = $tokenrec->iomadoidcusername;
+                    }
+
+                    $firstname = $idtoken->claim('given_name');
+                    if (!empty($firstname)) {
+                        $userdata['givenName'] = $firstname;
+                    }
+
+                    $lastname = $idtoken->claim('family_name');
+                    if (!empty($lastname)) {
+                        $userdata['surname'] = $lastname;
+                    }
+
+                    $email = $idtoken->claim('email');
+                    if (!empty($email)) {
+                        $userdata['mail'] = $email;
+                    } else {
+                        if (!empty($upn)) {
+                            $aademailvalidateresult = filter_var($upn, FILTER_VALIDATE_EMAIL);
+                            if (!empty($aademailvalidateresult)) {
+                                $userdata['mail'] = $aademailvalidateresult;
+                            }
+                        }
+                    }
+                }
+
+                // Call the function in local_o365 to map fields.
+                $updateduser = \local_o365\feature\usersync\main::apply_configured_fieldmap($userdata, new stdClass(), 'login');
+                $userinfo = (array)$updateduser;
+            }
         }
 
-        $lastname = $idtoken->claim('family_name');
-        if (!empty($lastname)) {
-            $userinfo['lastname'] = $lastname;
-        }
+        if ($fieldmappingfromtoken) {
+            // If local_o365 is not installed, use information from user token.
+            $userdata = [];
 
-        $email = $idtoken->claim('email');
-        if (!empty($email)) {
-            $userinfo['email'] = $email;
-        }
+            $idtoken = jwt::instance_from_encoded($tokenrec->idtoken);
 
-        if (empty($userinfo['email'])) {
-            $aademail = $idtoken->claim('upn');
-            if (!empty($aademail)) {
-                $aademailvalidateresult = filter_var($aademail, FILTER_VALIDATE_EMAIL);
-                if (!empty($aademailvalidateresult)) {
-                    $userinfo['email'] = $aademail;
+            $objectid = $idtoken->claim('oid');
+            if (!$objectid) {
+                $userdata['objectId'] = $objectid;
+            }
+
+            $upn = $idtoken->claim('upn');
+            if (!empty($upn)) {
+                $userdata['userPrincipalName'] = $upn;
+            }
+
+            $firstname = $idtoken->claim('given_name');
+            if (!empty($firstname)) {
+                $userdata['givenName'] = $firstname;
+            }
+
+            $lastname = $idtoken->claim('family_name');
+            if (!empty($lastname)) {
+                $userdata['surname'] = $lastname;
+            }
+
+            $email = $idtoken->claim('email');
+            if (!empty($email)) {
+                $userdata['mail'] = $email;
+            } else {
+                if (!empty($upn)) {
+                    $aademailvalidateresult = filter_var($upn, FILTER_VALIDATE_EMAIL);
+                    if (!empty($aademailvalidateresult)) {
+                        $userdata['mail'] = $aademailvalidateresult;
+                    }
                 }
             }
+
+            $updateduser = static::apply_configured_fieldmap_from_token($userdata, 'login');
+            $userinfo = (array)$updateduser;
         }
 
         return $userinfo;
     }
 
     /**
+     * Apply configured field mapping from token information to an empty user object.
+     *
+     * @param array $userdata
+     * @param string $eventtype
+     * @return stdClass
+     */
+    public static function apply_configured_fieldmap_from_token(array $userdata, string $eventtype) {
+        $user = new stdClass();
+
+        $fieldmappings = auth_iomadoidc_get_field_mappings();
+
+        foreach ($fieldmappings as $localfield => $fieldmapping) {
+            $remotefield = $fieldmapping['field_map'];
+            $behavior = $fieldmapping['update_local'];
+
+            if ($behavior !== 'on' . $eventtype && $behavior !== 'always') {
+                // Field mapping doesn't apply to this event type.
+                continue;
+            }
+
+            if (isset($userdata[$remotefield])) {
+                $user->$localfield = $userdata[$remotefield];
+            }
+        }
+
+        return $user;
+    }
+
+    /**
      * Set an HTTP client to use.
      *
-     * @param auth_iomadoidchttpclientinterface $httpclient [description]
+     * @param \auth_iomadoidc\httpclientinterface $httpclient
      */
     public function set_httpclient(\auth_iomadoidc\httpclientinterface $httpclient) {
         $this->httpclient = $httpclient;
     }
 
     /**
-     * Handle OIDC disconnection from Moodle account.
+     * Handle IOMADoIDC disconnection from Moodle account.
      *
-     * @param bool $justremovetokens If true, just remove the stored OIDC tokens for the user, otherwise revert login methods.
+     * @param bool $justremovetokens If true, just remove the stored IOMADoIDC tokens for the user, otherwise revert login methods.
      * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
      *                                "linked" account.
-     * @param \moodle_url $redirect Where to redirect if successful.
-     * @param \moodle_url $selfurl The page this is accessed from. Used for some redirects.
+     * @param \moodle_url|null $redirect Where to redirect if successful.
+     * @param \moodle_url|null $selfurl The page this is accessed from. Used for some redirects.
+     * @param  $userid
      */
     public function disconnect($justremovetokens = false, $donotremovetokens = false, \moodle_url $redirect = null,
                                \moodle_url $selfurl = null, $userid = null) {
@@ -228,7 +346,10 @@ class base {
 
             // Check if we have recorded the user's previous login method.
             $prevmethodrec = $DB->get_record('auth_iomadoidc_prevlogin', ['userid' => $userrec->id]);
-            $prevauthmethod = (!empty($prevmethodrec) && is_enabled_auth($prevmethodrec->method) === true) ? $prevmethodrec->method : null;
+            $prevauthmethod = null;
+            if (!empty($prevmethodrec) && is_enabled_auth($prevmethodrec->method) === true) {
+                $prevauthmethod = $prevmethodrec->method;
+            }
             // Manual is always available, we don't need it twice.
             if ($prevauthmethod === 'manual') {
                 $prevauthmethod = null;
@@ -239,8 +360,8 @@ class base {
                 throw new \moodle_exception('errornodisconnectionauthmethod', 'auth_iomadoidc');
             }
 
-            // Check to see if the user has a username created by OIDC, or a self-created username.
-            // OIDC-created usernames are usually very verbose, so we'll allow them to choose a sensible one.
+            // Check to see if the user has a username created by IOMADoIDC, or a self-created username.
+            // IOMADoIDC-created usernames are usually very verbose, so we'll allow them to choose a sensible one.
             // Otherwise, keep their existing username.
             $iomadoidctoken = $DB->get_record('auth_iomadoidc_token', ['userid' => $userrec->id]);
             $ccun = (isset($iomadoidctoken->iomadoidcuniqid) && strtolower($iomadoidctoken->iomadoidcuniqid) === $userrec->username) ? true : false;
@@ -257,14 +378,12 @@ class base {
             if ($mform->is_cancelled()) {
                 redirect($redirect);
             } else if ($fromform = $mform->get_data()) {
-
-                $origusername = $userrec->username;
-
-                if (empty($fromform->newmethod) || ($fromform->newmethod !== $prevauthmethod && $fromform->newmethod !== 'manual')) {
+                if (empty($fromform->newmethod) || ($fromform->newmethod !== $prevauthmethod &&
+                        $fromform->newmethod !== 'manual')) {
                     throw new \moodle_exception('errorauthdisconnectinvalidmethod', 'auth_iomadoidc');
                 }
 
-                $updateduser = new \stdClass;
+                $updateduser = new stdClass;
 
                 if ($fromform->newmethod === 'manual') {
                     if (empty($fromform->password)) {
@@ -291,7 +410,7 @@ class base {
                     $updateduser->auth = $prevauthmethod;
                     // We can't use user_update_user as it will rehash the value.
                     if (!empty($prevmethodrec->password)) {
-                        $manualuserupdate = new \stdClass;
+                        $manualuserupdate = new stdClass;
                         $manualuserupdate->id = $userrec->id;
                         $manualuserupdate->password = $prevmethodrec->password;
                         $DB->update_record('user', $manualuserupdate);
@@ -363,13 +482,14 @@ class base {
         $clientsecret = (isset($this->config->clientsecret)) ? $this->config->clientsecret : null;
         $redirecturi = (!empty($CFG->loginhttps)) ? str_replace('http://', 'https://', $CFG->wwwroot) : $CFG->wwwroot;
         $redirecturi .= '/auth/iomadoidc/';
-        $resource = (isset($this->config->iomadoidcresource)) ? $this->config->iomadoidcresource : null;
+        $tokenresource = (isset($this->config->iomadoidcresource)) ? $this->config->iomadoidcresource : null;
         $scope = (isset($this->config->iomadoidcscope)) ? $this->config->iomadoidcscope : null;
 
         $client = new \auth_iomadoidc\iomadoidcclient($this->httpclient);
-        $client->setcreds($clientid, $clientsecret, $redirecturi, $resource, $scope);
+        $client->setcreds($clientid, $clientsecret, $redirecturi, $tokenresource, $scope);
 
         $client->setendpoints(['auth' => $this->config->authendpoint, 'token' => $this->config->tokenendpoint]);
+
         return $client;
     }
 
@@ -382,7 +502,7 @@ class base {
      */
     protected function process_idtoken($idtoken, $orignonce = '') {
         // Decode and verify idtoken.
-        $idtoken = \auth_iomadoidc\jwt::instance_from_encoded($idtoken);
+        $idtoken = jwt::instance_from_encoded($idtoken);
         $sub = $idtoken->claim('sub');
         if (empty($sub)) {
             \auth_iomadoidc\utils::debug('Invalid idtoken', 'base::process_idtoken', $idtoken);
@@ -408,10 +528,10 @@ class base {
      * This check will return false if there are restrictions in place that the user did not meet, otherwise it will return
      * true. If there are no restrictions in place, this will return true.
      *
-     * @param \auth_iomadoidc\jwt $idtoken The ID token of the user who is trying to log in.
+     * @param jwt $idtoken The ID token of the user who is trying to log in.
      * @return bool Whether the restriction check passed.
      */
-    protected function checkrestrictions(\auth_iomadoidc\jwt $idtoken) {
+    protected function checkrestrictions(jwt $idtoken) {
         $restrictions = (isset($this->config->userrestrictions)) ? trim($this->config->userrestrictions) : '';
         $hasrestrictions = false;
         $userpassed = false;
@@ -428,7 +548,11 @@ class base {
                     $hasrestrictions = true;
                     ob_start();
                     try {
-                        $count = @preg_match('/'.$restriction.'/', $tomatch, $matches);
+                        $pattern = '/'.$restriction.'/';
+                        if (isset($this->config->userrestrictionscasesensitive) && !$this->config->userrestrictionscasesensitive) {
+                            $pattern .= 'i';
+                        }
+                        $count = @preg_match($pattern, $tomatch, $matches);
                         if (!empty($count)) {
                             $userpassed = true;
                             break;
@@ -457,7 +581,6 @@ class base {
         return ($hasrestrictions === true && $userpassed !== true) ? false : true;
     }
 
-
     /**
      * Create a token for a user, thus linking a Moodle user to an OpenID Connect user.
      *
@@ -465,16 +588,23 @@ class base {
      * @param array $username The username of the Moodle user to link to.
      * @param array $authparams Parameters receieved from the auth request.
      * @param array $tokenparams Parameters received from the token request.
-     * @param \auth_iomadoidc\jwt $idtoken A JWT object representing the received id_token.
-     * @return \stdClass The created token database record.
+     * @param jwt $idtoken A JWT object representing the received id_token.
+     * @param int $userid
+     * @param null|string $originalupn
+     * @return stdClass The created token database record.
      */
-    protected function createtoken($iomadoidcuniqid, $username, $authparams, $tokenparams, \auth_iomadoidc\jwt $idtoken, $userid = 0) {
+    protected function createtoken($iomadoidcuniqid, $username, $authparams, $tokenparams, jwt $idtoken, $userid = 0,
+        $originalupn = null) {
         global $DB;
 
-        // Determine remote username. Use 'upn' if available (Azure-specific), or fall back to standard 'sub'.
-        $iomadoidcusername = $idtoken->claim('upn');
-        if (empty($iomadoidcusername)) {
-            $iomadoidcusername = $idtoken->claim('sub');
+        if (!is_null($originalupn)) {
+            $iomadoidcusername = $originalupn;
+        } else {
+            // Determine remote username. Use 'upn' if available (Azure-specific), or fall back to standard 'sub'.
+            $iomadoidcusername = $idtoken->claim('upn');
+            if (empty($iomadoidcusername)) {
+                $iomadoidcusername = $idtoken->claim('sub');
+            }
         }
 
         // We should not fail here (idtoken was verified earlier to at least contain 'sub', but just in case...).
@@ -482,13 +612,24 @@ class base {
             throw new \moodle_exception('errorauthinvalididtoken', 'auth_iomadoidc');
         }
 
-        $tokenrec = new \stdClass;
+        // Cleanup old invalid token with the same iomadoidcusername.
+        $DB->delete_records('auth_iomadoidc_token', ['iomadoidcusername' => $iomadoidcusername]);
+
+        // Handle "The existing token for this user does not contain a valid user ID" error.
+        if ($userid == 0) {
+            $userrec = $DB->get_record('user', ['username' => $username]);
+            if ($userrec) {
+                $userid = $userrec->id;
+            }
+        }
+
+        $tokenrec = new stdClass;
         $tokenrec->iomadoidcuniqid = $iomadoidcuniqid;
         $tokenrec->username = $username;
         $tokenrec->userid = $userid;
         $tokenrec->iomadoidcusername = $iomadoidcusername;
         $tokenrec->scope = !empty($tokenparams['scope']) ? $tokenparams['scope'] : 'openid profile email';
-        $tokenrec->resource = !empty($tokenparams['resource']) ? $tokenparams['resource'] : $this->config->iomadoidcresource;
+        $tokenrec->tokenresource = !empty($tokenparams['resource']) ? $tokenparams['resource'] : $this->config->iomadoidcresource;
         $tokenrec->scope = !empty($tokenparams['scope']) ? $tokenparams['scope'] : $this->config->iomadoidcscope;
         $tokenrec->authcode = $authparams['code'];
         $tokenrec->token = $tokenparams['access_token'];
@@ -514,7 +655,7 @@ class base {
      */
     protected function updatetoken($tokenid, $authparams, $tokenparams) {
         global $DB;
-        $tokenrec = new \stdClass;
+        $tokenrec = new stdClass;
         $tokenrec->id = $tokenid;
         $tokenrec->authcode = $authparams['code'];
         $tokenrec->token = $tokenparams['access_token'];

@@ -15,17 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Authentication landing page.
+ * Plugin tasks.
  *
  * @package auth_iomadoidc
- * @author James McQuillan <james.mcquillan@remote-learner.net>
+ * @author Lai Wei <lai.wei@enovation.ie>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
+ * @copyright (C) 2021 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-require_once(__DIR__.'/../../config.php');
-require_once(__DIR__.'/auth.php');
+defined('MOODLE_INTERNAL') || die();
 
-$auth = new \auth_plugin_iomadoidc('authcode');
-$auth->set_httpclient(new \auth_iomadoidc\httpclient());
-$auth->handleredirect();
+$tasks = [
+    [
+        'classname' => 'auth_iomadoidc\task\cleanup_iomadoidc_state_and_token',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+    ],
+];

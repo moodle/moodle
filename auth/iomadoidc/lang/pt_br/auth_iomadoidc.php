@@ -15,16 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Portuguese - Brazil language strings.
+ *
  * @package auth_iomadoidc
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
+ * @author Lai Wei <lai.wei@enovation.ie>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-$string['pluginname'] = 'IOMAD OpenID Connect';
-$string['auth_iomadoidcdescription'] = 'O plugin IOMAD OpenID Connect oferece o recurso de logon único usando provedores de identidade que podem ser configurados.';
+$string['pluginname'] = 'OpenID Connect';
+$string['auth_iomadoidcdescription'] = 'O plugin OpenID Connect oferece o recurso de logon único usando provedores de identidade que podem ser configurados.';
 $string['cfg_authendpoint_key'] = 'Ponto de extremidade de autorização';
 $string['cfg_authendpoint_desc'] = 'O URI do ponto de extremidade de autorização do seu provedor de identidade a ser usado.';
 $string['cfg_autoappend_key'] = 'Acrescentar automaticamente';
-$string['cfg_autoappend_desc'] = 'Acrescente essa cadeia de caracteres automaticamente ao efetuar o login de usuários utilizando o fluxo de login com nome de usuário e senha. Isso é útil quando seu provedor de identidade exige um domínio comum, mas não quer exigir que os usuários o digitem ao fazer login. Por exemplo, se o usuário completo do IOMAD OpenID Connect for "joao@exemplo.com" e você inserir "@exemplo.com" aqui, o usuário só precisará inserir "joao" como nome de usuário. <br /><b>Observação:</b> caso exista conflito entre nomes de usuários, ou seja, exista um usuário do Moodle com o mesmo nome, a prioridade do plugin de autenticação é usada para determinar qual usuário prevalecerá.';
+$string['cfg_autoappend_desc'] = 'Acrescente essa cadeia de caracteres automaticamente ao efetuar o login de usuários utilizando o fluxo de login com nome de usuário e senha. Isso é útil quando seu provedor de identidade exige um domínio comum, mas não quer exigir que os usuários o digitem ao fazer login. Por exemplo, se o usuário completo do OpenID Connect for "joao@exemplo.com" e você inserir "@exemplo.com" aqui, o usuário só precisará inserir "joao" como nome de usuário. <br /><b>Observação:</b> caso exista conflito entre nomes de usuários, ou seja, exista um usuário do Moodle com o mesmo nome, a prioridade do plugin de autenticação é usada para determinar qual usuário prevalecerá.';
 $string['cfg_clientid_key'] = 'ID do cliente';
 $string['cfg_clientid_desc'] = 'Seu ID do cliente registrado no provedor de identidade.';
 $string['cfg_clientsecret_key'] = 'Segredo do cliente';
@@ -35,7 +40,7 @@ $string['cfg_err_invalidclientid'] = 'ID do cliente inválido';
 $string['cfg_err_invalidclientsecret'] = 'Segredo do cliente inválido';
 $string['cfg_icon_key'] = 'Ícone';
 $string['cfg_icon_desc'] = 'Um ícone a ser exibido ao lado do nome do provedor na página de login.';
-$string['cfg_iconalt_o365'] = 'Ícone do Office 365';
+$string['cfg_iconalt_o365'] = 'Ícone do Microsoft 365';
 $string['cfg_iconalt_locked'] = 'Ícone de bloqueado';
 $string['cfg_iconalt_lock'] = 'Ícone de bloqueio';
 $string['cfg_iconalt_go'] = 'Círculo verde';
@@ -60,13 +65,13 @@ $string['cfg_loginflow_authcode_desc'] = 'Ao usar esse fluxo, o usuário clicar�
 $string['cfg_loginflow_rocreds'] = 'Autenticação de nome de usuário e senha';
 $string['cfg_loginflow_rocreds_desc'] = 'Ao usar esse fluxo, o usuário informará seu nome de usuário e sua senha no formulário de login do Moodle da mesma forma que faria em um login manual. As credenciais serão, então, transmitidas em segundo plano para o provedor de identidade no intuito de obter a autenticação. Esse fluxo é o mais simples para o usuário, pois ele não interage diretamente com o provedor de identidade. Tenha em mente que nem todos os provedores de identidade aceitam a utilização desse fluxo.';
 $string['cfg_iomadoidcresource_key'] = 'Recurso';
-$string['cfg_iomadoidcresource_desc'] = 'O recurso do IOMAD OpenID Connect para o qual a solicitação deverá ser enviada.';
+$string['cfg_iomadoidcresource_desc'] = 'O recurso do OpenID Connect para o qual a solicitação deverá ser enviada.';
 $string['cfg_iomadoidcscope_key'] = 'Escopo';
-$string['cfg_iomadoidcscope_desc'] = 'O escopo do OIDC a ser usado.';
+$string['cfg_iomadoidcscope_desc'] = 'O escopo do IOMADoIDC a ser usado.';
 $string['cfg_opname_key'] = 'Nome do provedor';
 $string['cfg_opname_desc'] = 'Esse é um rótulo visível para o usuário que identifica o tipo de credenciais que devem ser utilizadas pelo usuário no login. Esse rótulo é usado em todas as partes visíveis para o usuário deste plugin para a identificação do seu provedor.';
 $string['cfg_redirecturi_key'] = 'URI de redirecionamento';
-$string['cfg_redirecturi_desc'] = 'Esse é o URI a ser registrado como o "URI de redirecionamento". Seu provedor de identidade do IOMAD OpenID Connect deve solicitá-lo ao registrar o Moodle como cliente. <br /><b>OBSERVAÇÃO:</b> é necessário inserir essa informação no seu provedor do IOMAD OpenID Connect EXATAMENTE como ela é exibida aqui. Qualquer diferença impedirá que logins sejam efetuados usando o IOMAD OpenID Connect.';
+$string['cfg_redirecturi_desc'] = 'Esse é o URI a ser registrado como o "URI de redirecionamento". Seu provedor de identidade do OpenID Connect deve solicitá-lo ao registrar o Moodle como cliente. <br /><b>OBSERVAÇÃO:</b> é necessário inserir essa informação no seu provedor do OpenID Connect EXATAMENTE como ela é exibida aqui. Qualquer diferença impedirá que logins sejam efetuados usando o OpenID Connect.';
 $string['cfg_tokenendpoint_key'] = 'Ponto de extremidade de token';
 $string['cfg_tokenendpoint_desc'] = 'O URI do ponto de extremidade de token do seu provedor de identidade a ser usado.';
 $string['event_debug'] = 'Mensagem de depuração';
@@ -79,13 +84,13 @@ $string['errorauthdisconnectifmanual'] = 'Se estiver usando o método de login m
 $string['errorauthinvalididtoken'] = 'id_token inválido recebido.';
 $string['errorauthloginfailednouser'] = 'Login inválido: usuário não encontrado no Moodle.';
 $string['errorauthnoauthcode'] = 'Código de autorização não recebido.';
-$string['errorauthnocreds'] = 'Configure as credenciais de cliente do IOMAD OpenID Connect.';
-$string['errorauthnoendpoints'] = 'Configure os pontos de extremidade de servidor do IOMAD OpenID Connect.';
+$string['errorauthnocreds'] = 'Configure as credenciais de cliente do OpenID Connect.';
+$string['errorauthnoendpoints'] = 'Configure os pontos de extremidade de servidor do OpenID Connect.';
 $string['errorauthnohttpclient'] = 'Defina um cliente de HTTP.';
-$string['errorauthnoidtoken'] = 'O id_token do IOMAD OpenID Connect não foi recebido.';
+$string['errorauthnoidtoken'] = 'O id_token do OpenID Connect não foi recebido.';
 $string['errorauthunknownstate'] = 'Estado desconhecido.';
-$string['errorauthuseralreadyconnected'] = 'Você já está conectado a um usuário diferente do IOMAD OpenID Connect.';
-$string['errorauthuserconnectedtodifferent'] = 'O usuário do IOMAD OpenID Connect que realizou a autenticação já está conectado a um usuário do Moodle.';
+$string['errorauthuseralreadyconnected'] = 'Você já está conectado a um usuário diferente do OpenID Connect.';
+$string['errorauthuserconnectedtodifferent'] = 'O usuário do OpenID Connect que realizou a autenticação já está conectado a um usuário do Moodle.';
 $string['errorbadloginflow'] = 'Fluxo de login inválido especificado. Observação: se você recebeu esta mensagem após uma instalação ou atualização recente, limpe seu cache do Moodle.';
 $string['errorjwtbadpayload'] = 'Não foi possível ler o conteúdo de JWT.';
 $string['errorjwtcouldnotreadheader'] = 'Não foi possível ler o cabeçalho de JWT.';
@@ -93,7 +98,7 @@ $string['errorjwtempty'] = 'Cadeia de caracteres vazia ou inválida de JWT receb
 $string['errorjwtinvalidheader'] = 'Cabeçalho de JWT inválido';
 $string['errorjwtmalformed'] = 'JWT malformado recebido.';
 $string['errorjwtunsupportedalg'] = 'JWS Alg ou JWE não compatível';
-$string['erroriomadoidcnotenabled'] = 'O plugin de autenticação do IOMAD OpenID Connect não está ativado.';
+$string['erroriomadoidcnotenabled'] = 'O plugin de autenticação do OpenID Connect não está ativado.';
 $string['errornodisconnectionauthmethod'] = 'Não é possível se desconectar, pois não há plugin de autenticação ativado ao qual retornar (o método de login anterior do usuário ou o método de login manual).';
 $string['erroriomadoidcclientinvalidendpoint'] = 'URI de ponto de extremidade inválido recebido.';
 $string['erroriomadoidcclientnocreds'] = 'Defina as credenciais de cliente com setcreds';
@@ -101,14 +106,14 @@ $string['erroriomadoidcclientnoauthendpoint'] = 'Nenhum ponto de extremidade de 
 $string['erroriomadoidcclientnotokenendpoint'] = 'Nenhum ponto de extremidade de token definido. Defina-o com $this->setendpoints';
 $string['erroriomadoidcclientinsecuretokenendpoint'] = 'Para isso, é necessário que o ponto de extremidade de token esteja usando SSL/TLS.';
 $string['errorucpinvalidaction'] = 'Ação inválida recebida.';
-$string['erroriomadoidccall'] = 'Erro no IOMAD OpenID Connect. Verifique os logs para obter mais informações.';
-$string['erroriomadoidccall_message'] = 'Erro no IOMAD OpenID Connect: {$a}';
-$string['eventuserauthed'] = 'Usuário autorizado com o IOMAD OpenID Connect';
-$string['eventusercreated'] = 'Usuário criado com o IOMAD OpenID Connect';
-$string['eventuserconnected'] = 'Usuário conectado ao IOMAD OpenID Connect';
-$string['eventuserloggedin'] = 'Usuário com login efetuado no IOMAD OpenID Connect';
-$string['eventuserdisconnected'] = 'Usuário desconectado do IOMAD OpenID Connect';
-$string['iomadoidc:manageconnection'] = 'Gerenciar conexão ao IOMAD OpenID Connect';
+$string['erroriomadoidccall'] = 'Erro no OpenID Connect. Verifique os logs para obter mais informações.';
+$string['erroriomadoidccall_message'] = 'Erro no OpenID Connect: {$a}';
+$string['eventuserauthed'] = 'Usuário autorizado com o OpenID Connect';
+$string['eventusercreated'] = 'Usuário criado com o OpenID Connect';
+$string['eventuserconnected'] = 'Usuário conectado ao OpenID Connect';
+$string['eventuserloggedin'] = 'Usuário com login efetuado no OpenID Connect';
+$string['eventuserdisconnected'] = 'Usuário desconectado do OpenID Connect';
+$string['iomadoidc:manageconnection'] = 'Gerenciar conexão ao OpenID Connect';
 $string['ucp_general_intro'] = 'Aqui você pode gerenciar sua conexão ao {$a}. Se essa configuração estiver ativada, você poderá usar sua conta do {$a} para fazer login no Moodle em vez de precisar de nome de usuário e senha separados. Depois que estiver conectado, você não precisará mais se lembrar de um nome de usuário e uma senha para o Moodle, pois todos os logins serão administrados pelo {$a}.';
 $string['ucp_login_start'] = 'Começar a usar o {$a} para fazer login no Moodle';
 $string['ucp_login_start_desc'] = 'Essa configuração fará uma alteração na sua conta, que passará a usar o {$a} para fazer login no Moodle. Depois de ativada, você fará login usando suas credenciais do {$a}; seu nome de usuário e sua senha do Moodle não serão aceitos. Você pode desconectar sua conta quando quiser e voltar a fazer login como antes.';

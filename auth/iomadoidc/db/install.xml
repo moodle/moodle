@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="auth/iomadoidc/db" VERSION="20141030" COMMENT="XMLDB file for Moodle auth/iomadoidc plugin"
+<XMLDB PATH="auth/iomadoidc/db" VERSION="20210602" COMMENT="XMLDB file for Moodle auth/iomadoidc plugin"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -40,10 +40,10 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="iomadoidcuniqid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="iomadoidc uniqid"/>
         <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="username"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" DEFAULT="0" COMMENT="moodle userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="moodle userid"/>
         <FIELD NAME="iomadoidcusername" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="iomadoidc username"/>
         <FIELD NAME="scope" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="token scope"/>
-        <FIELD NAME="resource" TYPE="char" LENGTH="127" NOTNULL="true" SEQUENCE="false" COMMENT="token resource"/>
+        <FIELD NAME="tokenresource" TYPE="char" LENGTH="127" NOTNULL="true" SEQUENCE="false" COMMENT="token resource"/>
         <FIELD NAME="authcode" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="auth code"/>
         <FIELD NAME="token" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="token"/>
         <FIELD NAME="expiry" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="token expiry"/>
@@ -55,6 +55,8 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="iomadoidcuniqid" UNIQUE="false" FIELDS="iomadoidcuniqid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="username" UNIQUE="false" FIELDS="username"/>
       </INDEXES>
     </TABLE>
   </TABLES>

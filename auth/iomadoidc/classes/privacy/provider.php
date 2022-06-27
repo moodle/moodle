@@ -15,27 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Privacy subsystem implementation.
+ *
  * @package auth_iomadoidc
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @basedon   auth_oidc by James McQuillan <james.mcquillan@remote-learner.net>
+ * @author James McQuillan <james.mcquillan@remote-learner.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
 namespace auth_iomadoidc\privacy;
+
+defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\contextlist;
 use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\writer;
-use \context_user;
 
-if (interface_exists('\core_privacy\local\request\core_userlist_provider')) {
-    interface auth_iomadoidc_userlist extends \core_privacy\local\request\core_userlist_provider {}
-} else {
-    interface auth_iomadoidc_userlist {};
-}
+interface auth_iomadoidc_userlist extends \core_privacy\local\request\core_userlist_provider {
+};
 
+/**
+ * Privacy provider for auth_iomadoidc.
+ */
 class provider implements
     \core_privacy\local\request\plugin\provider,
     \core_privacy\local\metadata\provider,
@@ -47,7 +49,7 @@ class provider implements
      * @param   collection     $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection): collection {
+    public static function get_metadata(collection $collection) : collection {
 
         $tables = [
             'auth_iomadoidc_prevlogin' => [
@@ -61,7 +63,7 @@ class provider implements
                 'userid',
                 'iomadoidcusername',
                 'scope',
-                'resource',
+                'tokenresource',
                 'authcode',
                 'token',
                 'expiry',
@@ -119,7 +121,7 @@ class provider implements
     public static function get_users_in_context(\core_privacy\local\request\userlist $userlist) {
         $context = $userlist->get_context();
 
-        if (!$context instanceof context_user) {
+        if (!$context instanceof \context_user) {
             return;
         }
 
@@ -153,7 +155,7 @@ class provider implements
     public static function export_user_data(approved_contextlist $contextlist) {
         global $DB;
         $user = $contextlist->get_user();
-        $context = context_user::instance($contextlist->get_user()->id);
+        $context = \context_user::instance($contextlist->get_user()->id);
         $tables = static::get_table_user_map($user);
         foreach ($tables as $table => $filterparams) {
             $records = $DB->get_recordset($table, $filterparams);
@@ -172,7 +174,7 @@ class provider implements
      * @param \stdClass $user The user to get the map for.
      * @return array The table user map.
      */
-    protected static function get_table_user_map(\stdClass $user): array {
+    protected static function get_table_user_map(\stdClass $user) : array {
         $tables = [
             'auth_iomadoidc_prevlogin' => ['userid' => $user->id],
             'auth_iomadoidc_token' => ['userid' => $user->id],
@@ -227,7 +229,7 @@ class provider implements
     public static function delete_data_for_users(\core_privacy\local\request\approved_userlist $userlist) {
         $context = $userlist->get_context();
         // Because we only use user contexts the instance ID is the user ID.
-        if ($context instanceof context_user) {
+        if ($context instanceof \context_user) {
             self::delete_user_data($context->instanceid);
         }
     }
