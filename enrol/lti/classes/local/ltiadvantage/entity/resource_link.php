@@ -163,11 +163,11 @@ class resource_link {
     /**
      * Add grade service information to this resource_link instance.
      *
-     * @param \moodle_url $lineitemsurl the service URL for get/put of line items.
+     * @param \moodle_url|null $lineitemsurl the service URL for get/put of line items, if supported.
      * @param \moodle_url|null $lineitemurl the service URL if only a single line item is present in the platform.
      * @param string[] $scopes the string array of grade service scopes which may be used by the service.
      */
-    public function add_grade_service(\moodle_url $lineitemsurl, ?\moodle_url $lineitemurl = null, array $scopes = []) {
+    public function add_grade_service(?\moodle_url $lineitemsurl = null, ?\moodle_url $lineitemurl = null, array $scopes = []) {
         $this->gradeservice = ags_info::create($lineitemsurl, $lineitemurl, $scopes);
     }
 

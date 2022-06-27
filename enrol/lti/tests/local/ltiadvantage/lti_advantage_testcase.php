@@ -126,7 +126,7 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
      * @param \stdClass $resource the resource record, allowing the mock to generate a link to this.
      * @param array $mockuser the user on the platform who is performing the launch.
      * @param string|null $resourcelinkid the id of resource link in the platform, if desired.
-     * @param bool $ags whether to include a mock AGS claim or not.
+     * @param array|null $ags array representing the lti-ags claim info. Pass null to omit, empty array to use a default.
      * @param bool $nrps whether to include a mock NRPS claim or not.
      * @param array|null $migrationclaiminfo contains consumer key, secret and any fields which are sent in the claim.
      * @param array|null $customparams an array of custom params to send, or null to just use defaults.
@@ -134,7 +134,7 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
      * @return LtiMessageLaunch the mock launch object with test launch data.
      */
     protected function get_mock_launch(\stdClass $resource, array $mockuser,
-            ?string $resourcelinkid = null, bool $ags = true, bool $nrps = true, ?array $migrationclaiminfo = null,
+            ?string $resourcelinkid = null, ?array $ags = [], bool $nrps = true, ?array $migrationclaiminfo = null,
             ?array $customparams = null, $aud = '123'): LtiMessageLaunch {
 
         $mocklaunch = $this->getMockBuilder(LtiMessageLaunch::class)
@@ -184,16 +184,21 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
                         ];
                     }
 
-                    if ($ags) {
-                        $data["https://purl.imsglobal.org/spec/lti-ags/claim/endpoint"] = [
-                            "scope" => [
-                                "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
-                                "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
-                                "https://purl.imsglobal.org/spec/lti-ags/scope/score"
-                            ],
-                            "lineitems" => "https://platform.example.com/10/lineitems/",
-                            "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
-                        ];
+                    if (is_array($ags)) {
+                        if (empty($ags)) {
+                            $agsclaim = [
+                                "scope" => [
+                                    "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+                                    "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+                                    "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                                ],
+                                "lineitems" => "https://platform.example.com/10/lineitems/",
+                                "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                            ];
+                        } else {
+                            $agsclaim = $ags;
+                        }
+                        $data["https://purl.imsglobal.org/spec/lti-ags/claim/endpoint"] = $agsclaim;
                     }
 
                     if ($nrps) {
