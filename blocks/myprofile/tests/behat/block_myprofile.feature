@@ -231,3 +231,22 @@ Feature: The logged in user block allows users to view their profile information
       | Display ID number | Yes |
     And I press "Save changes"
     And I should see "ID number:" in the "Logged in user" "block"
+
+  Scenario: Configure the logged in user block to show / hide the users last login
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | One      | teacher1@example.com |
+    And I log in as "teacher1"
+    And I press "Customise this page"
+    When I add the "Logged in user" block
+    And I configure the "Logged in user" block
+    And I set the following fields to these values:
+      | Display last login | No |
+    And I press "Save changes"
+    Then I should see "Teacher One" in the "Logged in user" "block"
+    And I should not see "Last login:" in the "Logged in user" "block"
+    And I configure the "Logged in user" block
+    And I set the following fields to these values:
+      | Display last login | Yes |
+    And I press "Save changes"
+    And I should see "Last login:" in the "Logged in user" "block"

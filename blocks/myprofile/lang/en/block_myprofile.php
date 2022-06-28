@@ -36,6 +36,7 @@ $string['display_address'] = 'Display address';
 $string['display_firstaccess'] = 'Display first access';
 $string['display_lastaccess'] = 'Display last access';
 $string['display_currentlogin'] = 'Display current login';
+$string['display_lastlogin'] = 'Display last login';
 $string['display_lastip'] = 'Display last IP';
 $string['myprofile:addinstance'] = 'Add a new logged in user block';
 $string['myprofile:myaddinstance'] = 'Add a new logged in user block to Dashboard';
