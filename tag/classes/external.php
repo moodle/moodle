@@ -247,7 +247,7 @@ class core_tag_external extends external_api {
                         'name' => new external_value(PARAM_TAG, 'name'),
                         'rawname' => new external_value(PARAM_RAW, 'tag raw name (may contain capital letters)'),
                         'description' => new external_value(PARAM_RAW, 'tag description'),
-                        'descriptionformat' => new external_format_value(PARAM_INT, 'tag description format'),
+                        'descriptionformat' => new external_format_value(PARAM_INT, VALUE_REQUIRED, 'tag description format'),
                         'flag' => new external_value(PARAM_INT, 'flag', VALUE_OPTIONAL),
                         'official' => new external_value(PARAM_INT,
                             'whether this flag is standard (deprecated, use isstandard)', VALUE_OPTIONAL),

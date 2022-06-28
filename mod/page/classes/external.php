@@ -188,7 +188,7 @@ class mod_page_external extends external_api {
                         helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(),
                         [
                             'content' => new external_value(PARAM_RAW, 'Page content'),
-                            'contentformat' => new external_format_value('content', 'Content format'),
+                            'contentformat' => new external_format_value('content', VALUE_REQUIRED, 'Content format'),
                             'contentfiles' => new external_files('Files in the content'),
                             'legacyfiles' => new external_value(PARAM_INT, 'Legacy files flag'),
                             'legacyfileslast' => new external_value(PARAM_INT, 'Legacy files last control flag'),
