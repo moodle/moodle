@@ -1,0 +1,92 @@
+{{!
+  This file is part of Moodle - http://moodle.org/
+
+  Moodle is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moodle is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+  @template mod_moodleoverflow/comment
+
+  Moodleoverflow comment template.
+  The purpose of this template is to render a comment in the discussion.
+
+   Example context (json):
+   {
+   }
+}}
+
+{{! Print an anchor if the post is the first unread post of the discussion. }}
+{{# isfirstunread}}
+    <a id="unread"></a>
+{{/ isfirstunread}}
+
+{{! Print the anchor to the post. }}
+<a id="p{{ postid }}"></a>
+
+{{! Start the post. Mark it read or unread. }}
+<div class="moodleoverflowpost moodleoverflowcomment border clearfix bg-light {{ postclass }}{{# isfirstpost}} firstpost starter{{/isfirstpost}}" role="region" aria-label="{{ discussionby }}">
+    {{#showvotes}}
+        <div class="votecell">
+            <div class="votes">
+                {{> mod_moodleoverflow/postvoting }}
+            </div>
+        </div>
+    {{/showvotes}}
+    {{^showvotes}}
+        <div class="novotecell"></div>
+    {{/showvotes}}
+    <div class="commentcell">
+        <div class="comment-text">
+            {{{ postcontent }}}
+        </div>
+        <div class="attachments">
+            {{#attachments}}
+                {{#image}}
+                    <img src="{{filepath}}" alt=""/>
+                    <br>
+                {{/image}}
+                {{^image}}
+                    <a href="{{filepath}}">
+                        {{{icon}}}
+                    </a>
+                    <a href="{{filepath}}">
+                        {{filename}}
+                    </a>
+                {{/image}}
+                <br>
+            {{/attachments}}
+        </div>
+        {{! The displayed text. }}
+        {{#statusstarter}}
+            {{^statusteacher}}
+                {{#pix}} status/b_outline, moodleoverflow, {{#str}}starterrating, moodleoverflow{{/str}} {{/pix}}
+                {{#str}} helpfulanswer, moodleoverflow {{/str}}
+            {{/statusteacher}}
+            {{#statusteacher}}
+                {{#pix}} status/c_circle, moodleoverflow, {{#str}}teacherrating, moodleoverflow{{/str}} {{/pix}}
+                {{#pix}} status/b_box, moodleoverflow, {{#str}}starterrating, moodleoverflow{{/str}} {{/pix}}
+                {{#str}} bestanswer, moodleoverflow {{/str}}
+            {{/statusteacher}}
+        {{/statusstarter}}
+        {{^statusstarter}}
+            {{#statusteacher}}
+                {{#pix}} status/c_outline, moodleoverflow, {{#str}}teacherrating, moodleoverflow{{/str}} {{/pix}}
+                {{#str}} solvedanswer, moodleoverflow {{/str}}
+            {{/statusteacher}}
+        {{/statusstarter}}
+        <div class="post-info">
+            <div class="leftbox {{questioner}}"><span class="text-muted">{{{ byname }}} - {{ byshortdate }}</span></div>
+            <div class="rightbox">{{{ commands }}}</div>
+        </div>
+    </div>
+</div>

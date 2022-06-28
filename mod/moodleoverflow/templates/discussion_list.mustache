@@ -1,0 +1,215 @@
+{{!
+  This file is part of Moodle - http://moodle.org/
+
+  Moodle is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moodle is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+  @template mod_moodleoverflow/discussion_list
+
+  Moodleoverflow discussion_list template.
+  The purpose of this template is to render a list of discussions for the view.php.
+
+  Example context (json):
+  {
+  }
+}}
+
+{{! There are no discussions. Print the string that specifies it. }}
+{{^hasdiscussions}}
+    <div class="moodleoverflowdiscussions">
+        ( {{#str}} nodiscussions, moodleoverflow {{/str}} )
+    </div>
+{{/hasdiscussions}}
+
+{{! There are discussions. Start to print the table. }}
+{{#hasdiscussions}}
+
+    <table cellspacing="0" class="moodleoverflowheaderlist generaltable">
+
+        {{! Print the heading row of the table. }}
+        <thead>
+            <tr>
+
+                <th class="header replies" scope="col">
+                    {{#str}} headerstatus, moodleoverflow {{/str}}
+                </th>
+
+                <th class="header replies" scope="col">
+                    {{#str}} headervotes, moodleoverflow {{/str}}
+                </th>
+
+                {{! Check if the user is allowed to view the discussions. }}
+                {{#canviewdiscussions}}
+                    <th class="header replies" scope="col">
+                        {{#str}} headerreplies, moodleoverflow {{/str}}
+                    </th>
+
+                    {{! Display the unread column if the moodleoverflow can be tracked. }}
+                    {{#cantrack}}
+                        <th class="header replies" scope="col">
+                            {{#str}} headerunread, moodleoverflow {{/str}}
+
+                            {{! Display a symbol to mark all messages read if the forum is tracked by the user. }}
+                            {{#istracked}}
+                                <a href="{{ markallread }}">{{# pix}} t/markasread, core, {{#str}}markallread, moodleoverflow{{/str}} {{/ pix}}</a>
+                            {{/istracked}}
+
+                        </th>
+                    {{/cantrack}}
+                {{/canviewdiscussions}}
+
+                <th class="header topic" scope="col">
+                    {{#str}} headerdiscussion, moodleoverflow {{/str}}
+                </th>
+                <th class="header author" colspan="2" scope="col">
+                    {{#str}} headerstartedby, moodleoverflow {{/str}}
+                </th>
+
+                <th class="header lastpost" scope="col">
+                    {{#str}} headerlastpost, moodleoverflow {{/str}}
+                </th>
+
+                {{#cansubtodiscussion}}
+                <th class="header discussionsubscription" scope="col">
+                    <span class="preload-subscribe">&nbsp;</span>
+                    <span class="preload-unsubscribe">&nbsp;</span>
+                </th>
+                {{/cansubtodiscussion}}
+
+            </tr>
+        </thead>
+
+        {{! Print the body of the discussion. }}
+        <tbody>
+
+        {{! Loop through all discussions. }}
+        {{#discussions}}
+            <tr class="discussion">
+
+                {{! The status of the discussion. }}
+                <td class="topic replies">
+                    {{#statusboth}}
+                        <a href="{{starterlink}}">
+                            {{# pix}} status/c_circle, moodleoverflow, {{#str}}teacherrating, moodleoverflow{{/str}}{{/ pix}}
+                            {{# pix}} status/b_box, moodleoverflow, {{#str}}starterrating, moodleoverflow{{/str}}{{/ pix}}
+                        </a>
+                    {{/statusboth}}
+                    {{^statusboth}}
+                        {{^statusstarter}}
+                            {{^statusteacher}}
+                                {{# pix}} status/c_blank, moodleoverflow, {{#str}}marknotsolved, moodleoverflow{{/str}}{{/ pix}}
+                            {{/statusteacher}}
+                            {{#statusteacher}}
+                                <a href="{{teacherlink}}">
+                                    {{# pix}} status/c_outline, moodleoverflow, {{#str}}teacherrating, moodleoverflow{{/str}} {{/ pix}}
+                                </a>
+                            {{/statusteacher}}
+                            {{# pix}} status/b_blank, moodleoverflow, {{#str}}marknothelpful, moodleoverflow{{/str}} {{/ pix}}
+                        {{/statusstarter}}
+                        {{#statusstarter}}
+                            {{^statusteacher}}
+                                {{# pix}} status/c_blank, moodleoverflow, {{#str}}marknotsolved, moodleoverflow{{/str}} {{/ pix}}
+                                <a href="{{starterlink}}">
+                                    {{# pix}} status/b_outline, moodleoverflow, {{#str}}starterrating, moodleoverflow{{/str}} {{/ pix}}
+                                </a>
+                            {{/statusteacher}}
+                            {{#statusteacher}}
+                                <a href="{{teacherlink}}">
+                                    {{# pix}} status/c_outline, moodleoverflow, {{#str}}teacherrating, moodleoverflow{{/str}}{{/ pix}}
+                                </a>
+                                <a href="{{starterlink}}">
+                                    {{# pix}} status/b_outline, moodleoverflow, {{#str}}starterrating, moodleoverflow{{/str}} {{/ pix}}
+                                </a>
+                            {{/statusteacher}}
+                        {{/statusstarter}}
+                    {{/statusboth}}
+                </td>
+
+                {{! The votes of the discussion. }}
+                <td class="topic replies">
+                    <a href="{{ subjectlink }}">{{ votes }}</a>
+                </td>
+
+                {{! Show the reply-columns only if the user has the capability to do so. }}
+                {{#canviewdiscussions}}
+
+                    <td class="replies">
+                        <a href="{{ subjectlink }}">{{ replyamount }}</a>
+                    </td>
+
+                    {{#cantrack}}
+
+                        <td class="replies">
+
+                            {{! This moodleoverflow instance is not tracked. }}
+                            {{^istracked}}
+                                <span class="read">-</span>
+                            {{/istracked}}
+
+                            {{! This moodleoverflow instance is tracked. }}
+                            {{#istracked}}
+
+                            {{! There are unread messages }}
+                                {{#unread}}
+                                    <span class="unread">
+                                        <a href="{{ unreadlink }}">{{ unreadamount }}</a>
+                                        <a href="{{ markreadlink }}">
+                                            {{# pix}} t/markasread, core, {{#str}}markread, moodleoverflow{{/str}} {{/ pix}}
+                                        </a>
+                                    </span>
+                                {{/unread}}
+
+                                {{^unread}}
+                                    <span class="read">{{ unreadamount }}</span>
+                                {{/unread}}
+
+                            {{/istracked}}
+
+                        </td>
+
+                    {{/cantrack}}
+
+                {{/canviewdiscussions}}
+
+                <td class="topic starter">
+                    <a href="{{ subjectlink }}">{{{ subjecttext }}}</a>
+                </td>
+
+                <td class="picture">
+                    {{{ picture }}}
+                </td>
+
+                <td class="author">
+                    {{# userlink }}<a href="{{ userlink }}">{{ username }}</a>{{/userlink}} {{^userlink}}{{username}}{{/userlink}}
+                </td>
+
+                <td class="lastpost">
+                    {{# lastpostusername }}<a href="{{ lastpostuserlink }}">{{ lastpostusername }}</a>{{/ lastpostusername }}
+                    {{^ lastpostusername }}-{{/ lastpostusername }}<br />
+                    <a href="{{ lastpostlink }}">{{ lastpostdate }}</a>
+                </td>
+
+                {{#cansubtodiscussion}}
+                    <td class="discussionsubscription">{{{discussionsubicon}}}</td>
+                {{/cansubtodiscussion}}
+
+            </tr>
+
+        {{/discussions}}
+
+        </tbody>
+
+    </table>
+
+{{/hasdiscussions}}
