@@ -8,6 +8,10 @@ Feature: Delete a blog entry
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | testuser | Test | User | moodle@example.com |
+    And the following "core_blog > entries" exist:
+      | subject       | body                     | user     |
+      | Blog post one | User 1 blog post content | testuser |
+      | Blog post two | User 1 blog post content | testuser |
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
@@ -21,17 +25,6 @@ Feature: Delete a blog entry
     And I press "Save changes"
     And I log out
     And I log in as "testuser"
-    And I click on "Site blogs" "link" in the "Navigation" "block"
-    And I follow "Add a new entry"
-    And I set the following fields to these values:
-      | Entry title | Blog post one |
-      | Blog entry body | User 1 blog post content |
-    And I press "Save changes"
-    And I follow "Add a new entry"
-    And I set the following fields to these values:
-      | Entry title | Blog post two |
-      | Blog entry body | User 1 blog post content |
-    And I press "Save changes"
     And I am on site homepage
     And I click on "Site blogs" "link" in the "Navigation" "block"
 
