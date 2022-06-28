@@ -1,0 +1,122 @@
+{{!
+  This file is part of Moodle - http://moodle.org/
+
+  Moodle is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moodle is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+  @template mod_moodleoverflow/answer
+
+  Moodleoverflow answer template.
+  The purpose of this template is to render an answer in the discussion.
+
+   Example context (json):
+   {
+   }
+}}
+
+{{! Print an anchor if the post is the first unread post of the discussion. }}
+{{# isfirstunread}}
+    <a id="unread"></a>
+{{/ isfirstunread}}
+
+{{! Print the anchor to the post. }}
+<a id="p{{ postid }}"></a>
+
+{{! Start the post. Mark it read or unread. }}
+<div class="moodleoverflowpost border clearfix{{ postclass }}{{# isfirstpost}} firstpost starter{{/isfirstpost}}" role="region" aria-label="{{ discussionby }}">
+    {{#showvotes}}
+        <div class="votecell">
+            <div class="votes">
+                {{> mod_moodleoverflow/postvoting }}
+            </div>
+        </div>
+    {{/showvotes}}
+    {{^showvotes}}
+        <div class="novotecell"></div>
+    {{/showvotes}}
+    <div class="answercell">
+        <div class="post-text">
+            {{{ postcontent }}}
+        </div>
+        <div class="attachments">
+            {{#attachments}}
+                {{#image}}
+                    <img src="{{filepath}}" alt=""/>
+                    <br>
+                {{/image}}
+                {{^image}}
+                    <a href="{{filepath}}">
+                        {{{icon}}}
+                    </a>
+                    <a href="{{filepath}}">
+                        {{filename}}
+                    </a>
+                {{/image}}
+                <br>
+            {{/attachments}}
+        </div>
+        <div class="post-info">
+            <div class="leftbox {{questioner}}">
+                <div class="user-info">
+                    {{# picture }}
+                    <div class="user-avatar">
+                        {{{ picture }}}
+                    </div>
+                    {{/picture}}
+                    <div class="user-details">
+                        {{{ byname }}} {{#showreputation}}{{#showrating}}({{#pix}}star, moodleoverflow, {{#str}}reputation, moodleoverflow{{/str}}{{/pix}}<span>{{ byrating }}</span>){{/showrating}}{{/showreputation}}
+                        <div class="user-action-time">
+                            {{ bydate }}
+                        </div>
+                        <div class="user-action-shorttime">
+                            {{byshortdate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rightbox">
+                <div class="status">
+
+                    {{! The displayed text. }}
+                    {{#statusstarter}}
+                        {{^statusteacher}}
+                            {{#pix}} status/b_outline, moodleoverflow, {{#str}}starterrating, moodleoverflow{{/str}} {{/pix}}
+                            <span class="hide-600">
+                                {{#str}} helpfulanswer, moodleoverflow {{/str}}
+                            </span>
+                        {{/statusteacher}}
+                        {{#statusteacher}}
+                            {{#pix}} status/c_circle, moodleoverflow, {{#str}}teacherrating, moodleoverflow{{/str}} {{/pix}}
+                            {{#pix}} status/b_box, moodleoverflow, {{#str}}starterrating, moodleoverflow{{/str}} {{/pix}}
+                            <span class="hide-600">
+                                {{#str}} bestanswer, moodleoverflow {{/str}}
+                            </span>
+                        {{/statusteacher}}
+                    {{/statusstarter}}
+                    {{^statusstarter}}
+                        {{#statusteacher}}
+                            {{#pix}} status/c_outline, moodleoverflow, {{#str}}teacherrating, moodleoverflow{{/str}} {{/pix}}
+                            <span class="hide-600">
+                                {{#str}} solvedanswer, moodleoverflow {{/str}}
+                            </span>
+                        {{/statusteacher}}
+                    {{/statusstarter}}
+                </div>
+                <div class="post-menu">
+                    {{{ commands }}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

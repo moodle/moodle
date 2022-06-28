@@ -1,0 +1,77 @@
+{{!
+  This file is part of Moodle - http://moodle.org/
+
+  Moodle is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moodle is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+  @template mod_moodleoverflow/post_dummy_cantsee
+
+  Moodleoverflow post_dummy_cantsee template.
+  The purpose of this template is to render a list of discussions for the view.php.
+
+   Example context (json):
+   {
+   }
+}}
+
+<a id="p{{ postid }}"></a>
+
+<div class="moodleoverflowpost border clearfix" role="region" aria-label="{{# str}} hiddenmoodleoverflowpost, moodleoverflow {{/str}}">
+
+    {{! The heading row. }}
+    <div class="row header">
+
+        <div class="left picture">
+        </div>
+
+        <div class="topic{{^ parent }} starter{{/parent}}">
+
+            <div class="subject">
+                {{# str }} moodleoverflowsubjecthidden, moodleoverflow {{/str}}
+            </div>
+            <div class="author">
+                {{# str }} moodleoverflowauthorhidden, moodleoverflow {{/str}}
+            </div>
+        </div>
+    </div>
+
+    {{! The body row. }}
+    <div class="row">
+        <div class="left side">&nbsp;</div>
+        <div class="content">
+            {{# str}} moodleoverflowbodyhidden, moodleoverflow {{/str}}
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
