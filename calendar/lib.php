@@ -2158,11 +2158,7 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false, s
             } else if ($isvaliduser) {
                 $groupids = array();
                 foreach ($courseeventsfrom as $courseid => $course) {
-                    // If the user is an editing teacher in there.
-                    if (!empty($user->groupmember[$course->id])) {
-                        // We've already cached the users groups for this course so we can just use that.
-                        $groupids = array_merge($groupids, $user->groupmember[$course->id]);
-                    } else if ($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
+                    if ($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
                         // If this course has groups, show events from all of those related to the current user.
                         $coursegroups = groups_get_user_groups($course->id, $user->id);
                         $groupids = array_merge($groupids, $coursegroups['0']);
