@@ -628,6 +628,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($user);
 
         $mobilesettings = get_config('tool_mobile');
+        $mobilesettings->qrsameipcheck = 1;
         $qrloginkey = api::get_qrlogin_key($mobilesettings);
 
         // Generate new tokens, the ones we expect to receive.
@@ -649,6 +650,76 @@ class externallib_test extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage(get_string('invalidkey', 'error'));
         $result = external::get_tokens_for_qr_login(random_string('64'), $user->id);
+    }
+
+    /*
+     * Test get_tokens_for_qr_login ignore ip check.
+     */
+    public function test_get_tokens_for_qr_login_ignore_ip_check() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $mobilesettings = get_config('tool_mobile');
+        $mobilesettings->qrsameipcheck = 0;
+        $qrloginkey = api::get_qrlogin_key($mobilesettings);
+
+        $key = $DB->get_record('user_private_key', ['value' => $qrloginkey]);
+        $this->assertNull($key->iprestriction);
+
+        // Generate new tokens, the ones we expect to receive.
+        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
+        $token = external_generate_token_for_current_user($service);
+
+        // Fake the app.
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+                'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
+        $result = external::get_tokens_for_qr_login($qrloginkey, $USER->id);
+        $result = \external_api::clean_returnvalue(external::get_tokens_for_qr_login_returns(), $result);
+
+        $this->assertEmpty($result['warnings']);
+        $this->assertEquals($token->token, $result['token']);
+        $this->assertEquals($token->privatetoken, $result['privatetoken']);
+
+        // Now, try with an invalid key.
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('invalidkey', 'error'));
+        $result = external::get_tokens_for_qr_login(random_string('64'), $user->id);
+    }
+
+    /*
+     * Test get_tokens_for_qr_login ip check fails.
+     */
+    public function test_get_tokens_for_qr_login_ip_check_mismatch() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $mobilesettings = get_config('tool_mobile');
+        $mobilesettings->qrsameipcheck = 1;
+        $qrloginkey = api::get_qrlogin_key($mobilesettings);
+
+        // Alter expected ip.
+        $DB->set_field('user_private_key', 'iprestriction', '6.6.6.6', ['value' => $qrloginkey]);
+
+        // Generate new tokens, the ones we expect to receive.
+        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
+        $token = external_generate_token_for_current_user($service);
+
+        // Fake the app.
+        \core_useragent::instance(true, 'Mozilla/5.0 (Linux; Android 7.1.1; Moto G Play Build/NPIS26.48-43-2; wv) ' .
+                'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.99 Mobile Safari/537.36 MoodleMobile');
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('ipmismatch', 'error'));
+        $result = external::get_tokens_for_qr_login($qrloginkey, $USER->id);
     }
 
     /**
