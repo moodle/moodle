@@ -4883,23 +4883,6 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
         }
     }
 
-    $sql = "SELECT g.id, g.courseid
-              FROM {groups} g, {groups_members} gm
-             WHERE gm.groupid=g.id AND gm.userid=?";
-
-    // This is a special hack to speedup calendar display.
-    $user->groupmember = array();
-    if (!isguestuser($user)) {
-        if ($groups = $DB->get_records_sql($sql, array($user->id))) {
-            foreach ($groups as $group) {
-                if (!array_key_exists($group->courseid, $user->groupmember)) {
-                    $user->groupmember[$group->courseid] = array();
-                }
-                $user->groupmember[$group->courseid][$group->id] = $group->id;
-            }
-        }
-    }
-
     // Add cohort theme.
     if (!empty($CFG->allowcohortthemes)) {
         require_once($CFG->dirroot . '/cohort/lib.php');

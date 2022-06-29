@@ -287,11 +287,6 @@ class course_modinfo {
      */
     private function get_groups_all() {
         if (is_null($this->groups)) {
-            // NOTE: Performance could be improved here. The system caches user groups
-            // in $USER->groupmember[$courseid] => array of groupid=>groupid. Unfortunately this
-            // structure does not include grouping information. It probably could be changed to
-            // do so, without a significant performance hit on login, thus saving this one query
-            // each request.
             $this->groups = groups_get_user_groups($this->course->id, $this->userid);
         }
         return $this->groups;
