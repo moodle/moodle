@@ -14666,7 +14666,7 @@ span.editinstructions {
 .activity-add,
 .block-add {
   border-radius: 0.25rem;
-  color: #3584c9;
+  color: #0f6cbf;
   background-color: #f5f9fc;
   border-color: #3584c9;
   border-width: 1px;
@@ -14676,7 +14676,7 @@ span.editinstructions {
     border-top-color: #3077b5; }
   .activity-add .alert-link,
   .block-add .alert-link {
-    color: #2a69a1; }
+    color: #0b5190; }
   .activity-add .pluscontainer,
   .block-add .pluscontainer {
     border: 1px solid #3584c9; }

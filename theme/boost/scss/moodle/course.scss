@@ -1247,7 +1247,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 .activity-add,
 .block-add {
     @include border-radius();
-    @include alert-variant($primary-light-background, $primary-light-border, $primary-light-border);
+    @include alert-variant($primary-light-background, $primary-light-border, $primary);
     border-width: $border-width;
     .pluscontainer {
         border: $border-width solid $primary-light-border;
