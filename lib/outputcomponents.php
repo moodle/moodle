@@ -3487,6 +3487,9 @@ class custom_menu_item implements renderable, templatable {
      */
     protected $lastsort = 0;
 
+    /** @var array Array of other HTML attributes for the custom menu item. */
+    protected $attributes = [];
+
     /**
      * Constructs the new custom menu item
      *
@@ -3496,13 +3499,16 @@ class custom_menu_item implements renderable, templatable {
      * @param int $sort A sort or to use if we need to sort differently [Optional]
      * @param custom_menu_item $parent A reference to the parent custom_menu_item this child
      *        belongs to, only if the child has a parent. [Optional]
+     * @param array $attributes Array of other HTML attributes for the custom menu item.
      */
-    public function __construct($text, moodle_url $url=null, $title=null, $sort = null, custom_menu_item $parent = null) {
+    public function __construct($text, moodle_url $url = null, $title = null, $sort = null, custom_menu_item $parent = null,
+                                array $attributes = []) {
         $this->text = $text;
         $this->url = $url;
         $this->title = $title;
         $this->sort = (int)$sort;
         $this->parent = $parent;
+        $this->attributes = $attributes;
     }
 
     /**
@@ -3512,14 +3518,15 @@ class custom_menu_item implements renderable, templatable {
      * @param moodle_url $url
      * @param string $title
      * @param int $sort
+     * @param array $attributes Array of other HTML attributes for the custom menu item.
      * @return custom_menu_item
      */
-    public function add($text, moodle_url $url = null, $title = null, $sort = null) {
+    public function add($text, moodle_url $url = null, $title = null, $sort = null, $attributes = []) {
         $key = count($this->children);
         if (empty($sort)) {
             $sort = $this->lastsort + 1;
         }
-        $this->children[$key] = new custom_menu_item($text, $url, $title, $sort, $this);
+        $this->children[$key] = new custom_menu_item($text, $url, $title, $sort, $this, $attributes);
         $this->lastsort = (int)$sort;
         return $this->children[$key];
     }
@@ -3652,8 +3659,15 @@ class custom_menu_item implements renderable, templatable {
         $context = new stdClass();
         $context->text = external_format_string($this->text, $syscontext->id);
         $context->url = $this->url ? $this->url->out() : null;
-        $context->title = external_format_string($this->title, $syscontext->id);
+        // No need for the title if it's the same with text.
+        if ($this->text !== $this->title) {
+            // Show the title attribute only if it's different from the text.
+            $context->title = external_format_string($this->title, $syscontext->id);
+        }
         $context->sort = $this->sort;
+        if (!empty($this->attributes)) {
+            $context->attributes = $this->attributes;
+        }
         $context->children = array();
         if (preg_match("/^#+$/", $this->text)) {
             $context->divider = true;

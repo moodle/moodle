@@ -53,7 +53,8 @@
         <div role="menu" aria-labelledby="lang-menu-toggle" id="lang-action-menu" class="dropdown-menu dropdown-menu-right">
             {{#items}}
                 {{#link}}
-                    <a href="{{{url}}}" class="dropdown-item pl-5" role="menuitem" {{#isactive}}aria-current="true"{{/isactive}}>
+                    <a href="{{{url}}}" class="dropdown-item pl-5" role="menuitem" {{#isactive}}aria-current="true"{{/isactive}}
+                            {{#attributes}}{{key}}="{{value}}" {{/attributes}}>
                         {{text}}
                     </a>
                 {{/link}}

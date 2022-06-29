@@ -3823,13 +3823,21 @@ EOD;
             $strlang = get_string('language');
             $currentlang = current_language();
             if (isset($langs[$currentlang])) {
-                $currentlang = $langs[$currentlang];
+                $currentlangstr = $langs[$currentlang];
             } else {
-                $currentlang = $strlang;
+                $currentlangstr = $strlang;
             }
-            $this->language = $menu->add($currentlang, new moodle_url('#'), $strlang, 10000);
+            $this->language = $menu->add($currentlangstr, new moodle_url('#'), $strlang, 10000);
             foreach ($langs as $langtype => $langname) {
-                $this->language->add($langname, new moodle_url($this->page->url, array('lang' => $langtype)), $langname);
+                $attributes = [];
+                // Set the lang attribute for languages different from the page's current language.
+                if ($langtype !== $currentlang) {
+                    $attributes[] = [
+                        'key' => 'lang',
+                        'value' => get_html_lang_attribute_value($langtype),
+                    ];
+                }
+                $this->language->add($langname, new moodle_url($this->page->url, ['lang' => $langtype]), null, null, $attributes);
             }
         }
 

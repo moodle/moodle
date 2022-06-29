@@ -2207,6 +2207,24 @@ function highlightfast($needle, $haystack) {
 }
 
 /**
+ * Converts a language code to hyphen-separated format in accordance to the
+ * {@link https://datatracker.ietf.org/doc/html/rfc5646#section-2.1 BCP47 syntax}.
+ *
+ * For additional information, check out
+ * {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang MDN web docs - lang}.
+ *
+ * @param string $langcode The language code to convert.
+ * @return string
+ */
+function get_html_lang_attribute_value(string $langcode): string {
+    if (empty(trim($langcode))) {
+        // If the language code passed is an empty string, return 'unknown'.
+        return 'unknown';
+    }
+    return str_replace('_', '-', $langcode);
+}
+
+/**
  * Return a string containing 'lang', xml:lang and optionally 'dir' HTML attributes.
  *
  * Internationalisation, for print_header and backup/restorelib.
@@ -2224,7 +2242,7 @@ function get_html_lang($dir = false) {
         }
     }
     // Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
-    $language = str_replace('_', '-', current_language());
+    $language = get_html_lang_attribute_value(current_language());
     @header('Content-Language: '.$language);
     return ($direction.' lang="'.$language.'" xml:lang="'.$language.'"');
 }

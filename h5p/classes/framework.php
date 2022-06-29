@@ -1610,7 +1610,7 @@ class framework implements H5PFrameworkInterface {
         }
 
         // Get current language in Moodle.
-        $language = str_replace('_', '-', strtolower(\current_language()));
+        $language = get_html_lang_attribute_value(strtolower(\current_language()));
 
         // Try to map.
         return $map[$language] ?? $language;
