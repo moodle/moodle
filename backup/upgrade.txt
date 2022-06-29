@@ -1,6 +1,15 @@
 This files describes API changes in /backup/*,
 information provided here is intended especially for developers.
 
+=== 4.1 ===
+
+* The class core_backup\copy\copy in backup/util/ui/classes/copy.php has been deprecated, please use copy_helper
+  from backup/util/helper/copy_helper.class.php instead.
+* The method set_copy() in backup/controller/base_controller.class.php has been deprecated, please use a restore
+  controller for storing copy information instead.
+* The method get_copy() in backup/controller/base_controller.class.php has been deprecated, please use get_copy()
+  from backup/controller/restore_controller.class.php instead.
+
 === 4.0 ===
 
 * Backup UI labels now accept empty/whitespace-only contents.

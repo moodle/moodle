@@ -24,6 +24,7 @@
  * @copyright  2020 onward The Moodle Users Association <https://moodleassociation.org/>
  * @author     Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 4.1. Use copy_helper instead
  */
 
 namespace core_backup\copy;
@@ -44,8 +45,11 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2020 onward The Moodle Users Association <https://moodleassociation.org/>
  * @author     Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 4.1 MDL-74548 - please use copy_helper instead
+ * @todo MDL-75022 This class will be deleted in Moodle 4.5
+ * @see copy_helper
  */
-class copy  {
+class copy {
 
     /**
      * The fields required for copy operations.
@@ -84,6 +88,7 @@ class copy  {
      * @param \stdClass $formdata Data from the validated course copy form.
      */
     public function __construct(\stdClass $formdata) {
+        debugging('Class \course_backup\copy\copy is deprecated. Please use the copy_helper class instead.');
         $this->copydata = $this->get_copy_data($formdata);
         $this->roles = $this->get_enrollment_roles($formdata);
     }
@@ -133,76 +138,17 @@ class copy  {
      * Sets up relevant controllers and adhoc task.
      *
      * @return array $copyids THe backup and restore controller ids.
+     * @deprecated since Moodle 4.1 MDL-74548 - please use copy_helper instead.
+     * @todo MDL-75023 This method will be deleted in Moodle 4.5
+     * @see copy_helper::process_formdata()
+     * @see copy_helper::create_copy()
      */
     public function create_copy(): array {
-        global $USER;
-        $copyids = array();
-
-        // Create the initial backupcontoller.
-        $bc = new \backup_controller(\backup::TYPE_1COURSE, $this->copydata->courseid, \backup::FORMAT_MOODLE,
-            \backup::INTERACTIVE_NO, \backup::MODE_COPY, $USER->id, \backup::RELEASESESSION_YES);
-        $copyids['backupid'] = $bc->get_backupid();
-
-        // Create the initial restore contoller.
-        list($fullname, $shortname) = \restore_dbops::calculate_course_names(
-            0, get_string('copyingcourse', 'backup'), get_string('copyingcourseshortname', 'backup'));
-        $newcourseid = \restore_dbops::create_new_course($fullname, $shortname, $this->copydata->category);
-        $rc = new \restore_controller($copyids['backupid'], $newcourseid,
-            \backup::INTERACTIVE_NO, \backup::MODE_COPY, $USER->id,
-            \backup::TARGET_NEW_COURSE);
-        $copyids['restoreid'] = $rc->get_restoreid();
-
-        // Configure the controllers based on the submitted data.
-        $copydata = $this->copydata;
-        $copydata->copyids = $copyids;
+        debugging('The method \core_backup\copy\copy::create_copy() is deprecated.
+            Please use the methods provided by copy_helper instead.', DEBUG_DEVELOPER);
+        $copydata = clone($this->copydata);
         $copydata->keptroles = $this->roles;
-        $bc->set_copy($copydata);
-        $bc->set_status(\backup::STATUS_AWAITING);
-        $bc->get_status();
-
-        $rc->set_copy($copydata);
-        $rc->save_controller();
-
-        // Create the ad-hoc task to perform the course copy.
-        $asynctask = new \core\task\asynchronous_copy_task();
-        $asynctask->set_blocking(false);
-        $asynctask->set_custom_data($copyids);
-        \core\task\manager::queue_adhoc_task($asynctask);
-
-        // Clean up the controller.
-        $bc->destroy();
-
-        return $copyids;
-    }
-
-    /**
-     * Filters an array of copy records by course ID.
-     *
-     * @param array $copyrecords
-     * @param int $courseid
-     * @return array $copies Filtered array of records.
-     */
-    static private function filter_copies_course(array $copyrecords, int $courseid): array {
-        $copies = array();
-
-        foreach ($copyrecords as $copyrecord) {
-            if ($copyrecord->operation == \backup::OPERATION_RESTORE) { // Restore records.
-                if ($copyrecord->status == \backup::STATUS_FINISHED_OK
-                    || $copyrecord->status == \backup::STATUS_FINISHED_ERR) {
-                        continue;
-                } else {
-                    $rc = \restore_controller::load_controller($copyrecord->restoreid);
-                    if ($rc->get_copy()->courseid == $courseid) {
-                        $copies[] = $copyrecord;
-                    }
-                }
-            } else { // Backup records.
-                if ($copyrecord->itemid == $courseid) {
-                    $copies[] = $copyrecord;
-                }
-            }
-        }
-        return $copies;
+        return \copy_helper::create_copy($copydata);
     }
 
     /**
@@ -211,99 +157,14 @@ class copy  {
      * @param int $userid User id to get the course copies for.
      * @param int $courseid The optional source course id to get copies for.
      * @return array $copies Details of the inprogress copies.
+     * @deprecated since Moodle 4.1 MDL-74548 - please use copy_helper::get_copies() instead.
+     * @todo MDL-75024 This method will be deleted in Moodle 4.5
+     * @see copy_helper::get_copies()
      */
-    static public function get_copies(int $userid, int $courseid=0): array {
-        global $DB;
-        $copies = array();
-        $params = array($userid, \backup::EXECUTION_DELAYED, \backup::MODE_COPY);
-        $sql = 'SELECT bc.backupid, bc.itemid, bc.operation, bc.status, bc.timecreated
-                  FROM {backup_controllers} bc
-            INNER JOIN {course} c ON bc.itemid = c.id
-                 WHERE bc.userid = ?
-                       AND bc.execution = ?
-                       AND bc.purpose = ?
-              ORDER BY bc.timecreated DESC';
+    public static function get_copies(int $userid, int $courseid=0): array {
+        debugging('The method \core_backup\copy\copy::get_copies() is deprecated.
+            Please use copy_helper::get_copies() instead.', DEBUG_DEVELOPER);
 
-        $copyrecords = $DB->get_records_sql($sql, $params);
-
-        foreach ($copyrecords as $copyrecord) {
-            $copy = new \stdClass();
-            $copy->itemid = $copyrecord->itemid;
-            $copy->time = $copyrecord->timecreated;
-            $copy->operation = $copyrecord->operation;
-            $copy->status = $copyrecord->status;
-            $copy->backupid = null;
-            $copy->restoreid = null;
-
-            if ($copyrecord->operation == \backup::OPERATION_RESTORE) {
-                $copy->restoreid = $copyrecord->backupid;
-                // If record is complete or complete with errors, it means the backup also completed.
-                // It also means there are no controllers. In this case just skip and move on.
-                if ($copyrecord->status == \backup::STATUS_FINISHED_OK
-                    || $copyrecord->status == \backup::STATUS_FINISHED_ERR) {
-                        continue;
-                } else if ($copyrecord->status > \backup::STATUS_REQUIRE_CONV) {
-                    // If record is a restore and it's in progress (>200), it means the backup is finished.
-                    // In this case return the restore.
-                    $rc = \restore_controller::load_controller($copyrecord->backupid);
-                    $course = get_course($rc->get_copy()->courseid);
-
-                    $copy->source = $course->shortname;
-                    $copy->sourceid = $course->id;
-                    $copy->destination = $rc->get_copy()->shortname;
-                    $copy->backupid = $rc->get_copy()->copyids['backupid'];
-                    $rc->destroy();
-
-                } else if ($copyrecord->status == \backup::STATUS_REQUIRE_CONV) {
-                    // If record is a restore and it is waiting (=200), load the controller
-                    // and check the status of the backup.
-                    // If the backup has finished successfully we have and edge case. Process as per in progress restore.
-                    // If the backup has any other code it will be handled by backup processing.
-                    $rc = \restore_controller::load_controller($copyrecord->backupid);
-                    $bcid = $rc->get_copy()->copyids['backupid'];
-                    if (empty($copyrecords[$bcid])) {
-                        continue;
-                    }
-                    $backuprecord = $copyrecords[$bcid];
-                    $backupstatus = $backuprecord->status;
-                    if ($backupstatus == \backup::STATUS_FINISHED_OK) {
-                        $course = get_course($rc->get_copy()->courseid);
-
-                        $copy->source = $course->shortname;
-                        $copy->sourceid = $course->id;
-                        $copy->destination = $rc->get_copy()->shortname;
-                        $copy->backupid = $rc->get_copy()->copyids['backupid'];
-                    } else {
-                        continue;
-                    }
-                }
-            } else { // Record is a backup.
-                $copy->backupid = $copyrecord->backupid;
-                if ($copyrecord->status == \backup::STATUS_FINISHED_OK
-                    || $copyrecord->status == \backup::STATUS_FINISHED_ERR) {
-                        // If successfully finished then skip it. Restore procesing will look after it.
-                        // If it has errored then we can't go any further.
-                        continue;
-                } else {
-                    // If is in progress then process it.
-                    $bc = \backup_controller::load_controller($copyrecord->backupid);
-                    $course = get_course($bc->get_courseid());
-
-                    $copy->source = $course->shortname;
-                    $copy->sourceid = $course->id;
-                    $copy->destination = $bc->get_copy()->shortname;
-                    $copy->restoreid = $bc->get_copy()->copyids['restoreid'];
-                }
-            }
-
-            $copies[] = $copy;
-        }
-
-        // Extra processing to filter records for a given course.
-        if ($courseid != 0 ) {
-            $copies = self::filter_copies_course($copies, $courseid);
-        }
-
-        return $copies;
+        return \copy_helper::get_copies($userid, $coursied);
     }
 }
