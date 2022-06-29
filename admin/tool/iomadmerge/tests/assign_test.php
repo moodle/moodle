@@ -45,7 +45,7 @@ class tool_iomadmerge_assign_testcase extends mod_assign_base_testcase {
      */
     public function setUp(): void {
         global $CFG;
-        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/mergeusertool.php");
+        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/iomadmergetool.php");
         parent::setUp();
     }
 

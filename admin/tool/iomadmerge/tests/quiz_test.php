@@ -39,7 +39,7 @@ class tool_iomadmerge_quiz_testcase extends advanced_testcase {
      */
     public function setUp(): void {
         global $CFG, $DB;
-        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/mergeusertool.php");
+        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/iomadmergetool.php");
         $this->resetAfterTest(true);
 
         // Setup two users to merge.

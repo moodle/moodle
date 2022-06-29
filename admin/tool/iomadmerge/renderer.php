@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/iomadmerge/lib.php');
  * Renderer for the merge user plugin.
  *
  * @package    tool
- * @subpackage mergeuser
+ * @subpackage iomadmerge
  * @copyright  2013 Jordi Pujol-Ahulló, SREd, Universitat Rovira i Virgili
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -36,7 +36,7 @@ class tool_iomadmerge_enrolments_testcase extends advanced_testcase {
      */
     public function setUp(): void {
         global $CFG;
-        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/mergeusertool.php");
+        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/iomadmergetool.php");
         $this->resetAfterTest(true);
     }
 

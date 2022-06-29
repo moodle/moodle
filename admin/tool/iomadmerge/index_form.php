@@ -36,7 +36,7 @@ require_once($CFG->libdir.'/formslib.php'); /// forms library
 /**
  * Define form snippet for getting the userids of the two users to merge
  */
-class mergeuserform extends moodleform {
+class iomadmergeform extends moodleform {
 
     /**
      * Form definition

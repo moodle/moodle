@@ -65,10 +65,10 @@ if (!$option) {
 }
 
 // Define the form
-$mergeuserform = new mergeuserform();
+$iomadmergeform = new iomadmergeform();
 $renderer = $PAGE->get_renderer('tool_iomadmerge');
 
-$data = $mergeuserform->get_data();
+$data = $iomadmergeform->get_data();
 
 //may abort execution if database not supported, for security
 $mut = new IomadMergeTool();
@@ -110,7 +110,7 @@ if (!empty($option)) {
                     $renderer::INDEX_PAGE_CONFIRMATION_STEP :
                     $renderer::INDEX_PAGE_SEARCH_STEP;
 
-            echo $renderer->index_page($mergeuserform, $step);
+            echo $renderer->index_page($iomadmergeform, $step);
             break;
 
         // remove any of the selected users to merge, and search for them again.
@@ -146,13 +146,13 @@ if (!empty($option)) {
 
         // we have both users to merge selected, but we want to change any of them.
         case 'searchusers':
-            echo $renderer->index_page($mergeuserform, $renderer::INDEX_PAGE_SEARCH_STEP);
+            echo $renderer->index_page($iomadmergeform, $renderer::INDEX_PAGE_SEARCH_STEP);
             break;
 
         // we have both users to merge selected, and in the search step, we
         // want to proceed with the merging of the currently selected users.
         case 'continueselection':
-            echo $renderer->index_page($mergeuserform, $renderer::INDEX_PAGE_CONFIRMATION_STEP);
+            echo $renderer->index_page($iomadmergeform, $renderer::INDEX_PAGE_CONFIRMATION_STEP);
             break;
 
         // ops!
@@ -168,7 +168,7 @@ if (!empty($option)) {
         $search_users = $mus->search_users($data->searchgroup['searcharg'], $data->searchgroup['searchfield']);
         $user_select_table = new UserSelectTable($search_users, $renderer);
 
-        echo $renderer->index_page($mergeuserform, $renderer::INDEX_PAGE_SEARCH_AND_SELECT_STEP, $user_select_table);
+        echo $renderer->index_page($iomadmergeform, $renderer::INDEX_PAGE_SEARCH_AND_SELECT_STEP, $user_select_table);
 
         // only run this step if there are both a new and old userids
     } else if (!empty($data->oldusergroup['olduserid']) && !empty($data->newusergroup['newuserid'])) {
@@ -187,12 +187,12 @@ if (!empty($option)) {
         $SESSION->mut->olduser = $olduser;
         $SESSION->mut->newuser = $newuser;
 
-        echo $renderer->index_page($mergeuserform, $renderer::INDEX_PAGE_SEARCH_AND_SELECT_STEP);
+        echo $renderer->index_page($iomadmergeform, $renderer::INDEX_PAGE_SEARCH_AND_SELECT_STEP);
     } else {
         // simply show search form.
-        echo $renderer->index_page($mergeuserform, $renderer::INDEX_PAGE_SEARCH_STEP);
+        echo $renderer->index_page($iomadmergeform, $renderer::INDEX_PAGE_SEARCH_STEP);
     }
 } else {
     // no form submitted data
-    echo $renderer->index_page($mergeuserform, $renderer::INDEX_PAGE_SEARCH_STEP);
+    echo $renderer->index_page($iomadmergeform, $renderer::INDEX_PAGE_SEARCH_STEP);
 }
