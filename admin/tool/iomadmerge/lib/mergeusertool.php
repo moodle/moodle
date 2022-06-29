@@ -16,6 +16,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Utility file.
+ *
+ * The effort of all given authors below gives you this current version of the file.
+ *
  * Version information
  *
  * @package    tool
@@ -31,7 +35,6 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once dirname(dirname(dirname(dirname(__DIR__)))) . '/config.php';
@@ -57,12 +60,6 @@ require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/iomadmerge/lib.php');
  */
 class IomadMergeTool
 {
-
-    /**
-     * @var bool true if current database is supported; false otherwise.
-     */
-    protected $supportedDatabase;
-
     /**
      * @var array associative array showing the user-related fields per database table,
      * without the $CFG->prefix on each.
@@ -114,6 +111,16 @@ class IomadMergeTool
     protected $tablesProcessedByTableMergers;
 
     /**
+     * @var bool if true then never commit the transaction, used for testing.
+     */
+    protected $alwaysRollback;
+
+    /**
+     * @var bool if true then write out all sql, used for testing.
+     */
+    protected $debugdb;
+
+    /**
      * Initializes
      * @global object $CFG
      * @param tool_iomadmerge_config $config local configuration.
@@ -121,35 +128,13 @@ class IomadMergeTool
      */
     public function __construct(tool_iomadmerge_config $config = null, tool_iomadmerge_logger $logger = null)
     {
-        global $CFG;
-
         $this->logger = (is_null($logger)) ? new tool_iomadmerge_logger() : $logger;
         $config = (is_null($config)) ? tool_iomadmerge_config::instance() : $config;
-        $this->supportedDatabase = true;
 
         $this->checkTransactionSupport();
 
-        switch ($CFG->dbtype) {
-            case 'sqlsrv':
-            case 'mssql':
-                $this->sqlListTables = "SELECT name FROM sys.Tables WHERE name LIKE '" .
-                    $CFG->prefix . "%' AND type = 'U' ORDER BY name";
-                break;
-            case 'mysqli':
-            case 'mariadb':
-                $this->sqlListTables = 'SHOW TABLES like "' . $CFG->prefix . '%"';
-                break;
-            case 'pgsql':
-                $this->sqlListTables = "SELECT table_name FROM information_schema.tables WHERE table_name LIKE '" .
-                    $CFG->prefix . "%' AND table_schema = 'public'";
-                break;
-            default:
-                $this->supportedDatabase = false;
-                $this->sqlListTables = "";
-        }
-
-        // these are tables we don't want to modify due to logging or security reasons.
-        // we flip key<-->value to accelerate lookups.
+        // These are tables we don't want to modify due to logging or security reasons.
+        // We flip key<-->value to accelerate lookups.
         $this->tablesToSkip = array_flip($config->exceptions);
         $excluded = explode(',', get_config('tool_iomadmerge', 'excluded_exceptions'));
         $excluded = array_flip($excluded);
@@ -159,16 +144,11 @@ class IomadMergeTool
             }
         }
 
-        // these are special cases, corresponding to tables with compound indexes that
-        // need a special treatment.
+        // These are special cases, corresponding to tables with compound indexes that need a special treatment.
         $this->tablesWithCompoundIndex = $config->compoundindexes;
 
         // Initializes user-related field names.
-        $userFieldNames = array();
-        foreach ($config->userfieldnames as $tablename => $fields) {
-            $userFieldNames[$tablename] = "'" . implode("','", $fields) . "'";
-        }
-        $this->userFieldNames = $userFieldNames;
+        $this->userFieldNames = $config->userfieldnames;
 
         // Load available TableMerger tools.
         $tableMergers = array();
@@ -186,18 +166,17 @@ class IomadMergeTool
                             new moodle_url('/admin/tool/iomadmerge/index.php'), $class);
                 }
             }
-            // append any additional table to skip.
+            // Append any additional table to skip.
             $tablesProcessedByTableMergers = array_merge($tablesProcessedByTableMergers, $tm->getTablesToSkip());
             $tableMergers[$tableName] = $tm;
         }
         $this->tableMergers = $tableMergers;
         $this->tablesProcessedByTableMergers = array_flip($tablesProcessedByTableMergers);
 
-        // this will abort execution if local database is not supported.
-        $this->checkDatabaseSupport();
+        $this->alwaysRollback = !empty($config->alwaysRollback);
+        $this->debugdb = !empty($config->debugdb);
 
-        // initializes the list of fields and tables to check in the current database,
-        // given the local configuration.
+        // Initializes the list of fields and tables to check in the current database, given the local configuration.
         $this->init();
     }
 
@@ -247,14 +226,9 @@ class IomadMergeTool
      */
     private function _merge($toid, $fromid)
     {
-        global $CFG, $DB;
+        global $DB;
 
         // initial checks.
-        // database type is supported?
-        if (!$this->supportedDatabase) {
-            return array(false, array(get_string('errordatabase', 'tool_iomadmerge', $CFG->dbtype)));
-        }
-
         // are they the same?
         if ($fromid == $toid) {
             // yes. do nothing.
@@ -265,6 +239,15 @@ class IomadMergeTool
         // first of all... initialization!
         $errorMessages = array();
         $actionLog = array();
+
+        if ($this->debugdb) {
+            $DB->set_debug(true);
+        }
+
+        $startTime = time();
+        $startTimeString = get_string('starttime', 'tool_iomadmerge', userdate($startTime));
+        $actionLog[] = $startTimeString;
+
         $transaction = $DB->start_delegated_transaction();
 
         try {
@@ -291,11 +274,20 @@ class IomadMergeTool
             }
 
             $this->updateGrades($toid, $fromid);
+            $this->reaggregateCompletions($toid);
         } catch (Exception $e) {
             $errorMessages[] = nl2br("Exception thrown when merging: '" . $e->getMessage() . '".' .
                     html_writer::empty_tag('br') . $DB->get_last_error() . html_writer::empty_tag('br') .
                     'Trace:' . html_writer::empty_tag('br') .
                     $e->getTraceAsString() . html_writer::empty_tag('br'));
+        }
+
+        if ($this->debugdb) {
+            $DB->set_debug(false);
+        }
+
+        if ($this->alwaysRollback) {
+            $transaction->rollback(new Exception('alwaysRollback option is set so rolling back transaction'));
         }
 
         // concludes with true if no error
@@ -308,6 +300,10 @@ class IomadMergeTool
                 $skippedTables[] = get_string('tableskipped', 'tool_iomadmerge', implode(", ", $this->tablesSkipped));
             }
 
+            $finishTime = time();
+            $actionLog[] = get_string('finishtime', 'tool_iomadmerge', userdate($finishTime));
+            $actionLog[] = get_string('timetaken', 'tool_iomadmerge', $finishTime - $startTime);
+
             return array(true, array_merge($skippedTables, $actionLog));
         } else {
             try {
@@ -316,6 +312,10 @@ class IomadMergeTool
             } catch (Exception $e) { /* do nothing, just for correctness */
             }
         }
+
+        $finishTime = time();
+        $errorMessages[] = $startTimeString;
+        $errorMessages[] = get_string('timetaken', 'tool_iomadmerge', $finishTime - $startTime);
 
         // concludes with an array of error messages otherwise.
         return array(false, $errorMessages);
@@ -330,27 +330,26 @@ class IomadMergeTool
      */
     private function init()
     {
-        global $CFG, $DB;
+        global $DB;
 
         $userFieldsPerTable = array();
 
-        $tableNames = $DB->get_records_sql($this->sqlListTables);
-        $prefixLength = strlen($CFG->prefix);
+        // Name of tables comes without db prefix.
+        $tableNames = $DB->get_tables(false);
 
-        foreach ($tableNames as $fullTableName => $toIgnore) {
+        foreach ($tableNames as $tableName) {
 
-            if (!trim($fullTableName)) {
-                //This section should never be executed due to the way Moodle returns its resultsets
-                // Skipping due to blank table name
+            if (!trim($tableName)) {
+                // This section should never be executed due to the way Moodle returns its resultsets.
+                // Skipping due to blank table name.
                 continue;
             } else {
-                $tableName = substr($fullTableName, $prefixLength);
-                // table specified to be excluded.
+                // Table specified to be excluded.
                 if (isset($this->tablesToSkip[$tableName])) {
-                    $this->tablesSkipped[$tableName] = $fullTableName;
+                    $this->tablesSkipped[$tableName] = $tableName;
                     continue;
                 }
-                // table specified to be processed additionally by a TableMerger.
+                // Table specified to be processed additionally by a TableMerger.
                 if (isset($this->tablesProcessedByTableMergers[$tableName])) {
                     continue;
                 }
@@ -361,10 +360,11 @@ class IomadMergeTool
                     $this->userFieldNames[$tableName] :
                     $this->userFieldNames['default'];
 
-            $currentFields = $this->getCurrentUserFieldNames($fullTableName, $userFields);
+            $arrayUserFields = array_flip($userFields);
+            $currentFields = $this->getCurrentUserFieldNames($tableName, $arrayUserFields);
 
             if ($currentFields !== false) {
-                $userFieldsPerTable[$tableName] = array_values($currentFields);
+                $userFieldsPerTable[$tableName] = $currentFields;
             }
         }
 
@@ -398,25 +398,6 @@ class IomadMergeTool
 
         // update the attribute with the current existing compound indexes per table.
         $this->tablesWithCompoundIndex = $existingCompoundIndexes;
-    }
-
-    /**
-     * Check whether current Moodle's database type is supported.
-     * If it is not supported, it aborts the execution with an error message, checking whether
-     * it is on a CLI script or on web.
-     */
-    private function checkDatabaseSupport()
-    {
-        global $CFG;
-
-        if (!$this->supportedDatabase) {
-            if (CLI_SCRIPT) {
-                cli_error('Error: ' . __METHOD__ . ':: ' . get_string('errordatabase', 'tool_iomadmerge', $CFG->dbtype));
-            } else {
-                print_error('errordatabase', 'tool_iomadmerge', new moodle_url('/admin/tool/iomadmerge/index.php'),
-                        $CFG->dbtype);
-            }
-        }
     }
 
     /**
@@ -456,16 +437,15 @@ class IomadMergeTool
      */
     private function getCurrentUserFieldNames($tableName, $userFields)
     {
-        global $CFG, $DB;
-        return $DB->get_fieldset_sql("
-            SELECT DISTINCT column_name
-            FROM
-                INFORMATION_SCHEMA.Columns
-            WHERE
-                TABLE_NAME = ? AND
-                (TABLE_SCHEMA = ? OR TABLE_CATALOG=?) AND
-                COLUMN_NAME IN (" . $userFields . ")",
-            array($tableName, $CFG->dbname, $CFG->dbname));
+        global $DB;
+        $columns = $DB->get_columns($tableName,false);
+        $usercolumns = [];
+        foreach($columns as $column) {
+            if (isset($userFields[$column->name])) {
+                $usercolumns[$column->name] = $column->name;
+            }
+        }
+        return $usercolumns;
     }
 
     /**
@@ -476,7 +456,7 @@ class IomadMergeTool
         global $DB, $CFG;
         require_once($CFG->libdir.'/gradelib.php');
 
-        $sql = "SELECT iteminstance, itemmodule, courseid
+        $sql = "SELECT DISTINCT gi.id, gi.iteminstance, gi.itemmodule, gi.courseid
                 FROM {grade_grades} gg
                 INNER JOIN {grade_items} gi on gg.itemid = gi.id
                 WHERE itemtype = 'mod' AND (gg.userid = :toid OR gg.userid = :fromid)";
@@ -496,5 +476,15 @@ class IomadMergeTool
 
             grade_update_mod_grades($activity, $toid);
         }
+    }
+
+    private function reaggregateCompletions($toid) {
+        global $DB;
+
+        $now = time();
+        $DB->execute(
+                'UPDATE {course_completions} set reaggregate = :now where userid = :toid and (timecompleted is null or timecompleted = 0)',
+                ['now' => $now, 'toid' => $toid]
+        );
     }
 }

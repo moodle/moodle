@@ -1,0 +1,3 @@
+.idea
+/config/config.local.php
+phpunit.xml

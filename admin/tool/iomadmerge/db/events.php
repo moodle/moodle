@@ -39,8 +39,12 @@
 $observers = array(
     array(
         'eventname'     => 'tool_iomadmerge\event\user_merged_success',
-        'callback'      => 'tool_iomadmerge_old_user_suspend',
-        'includefile'   => '/admin/tool/iomadmerge/lib/events/olduser.php',
+        'callback'      => '\tool_iomadmerge\local\observer\olduser::old_user_suspend',
         'internal'      => 1
-    )
+    ),
+    array(
+        'eventname'     => 'tool_iomadmerge\event\user_merged_success',
+        'callback'      => '\tool_iomadmerge\local\observer\keptuser::make_kept_user_as_not_suspended',
+        'internal'      => 1
+    ),
 );

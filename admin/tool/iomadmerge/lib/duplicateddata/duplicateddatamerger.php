@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// Define the Iomad menu items that are defined by this plugin
-
 /**
  * Version information
  *
@@ -33,18 +31,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function tool_iomadmerge_menu() {
-    return array(
-        'ToolIomadMerge' => array(
-            'category' => 'UserAdmin',
-            'tab' => 2,
-            'name' => get_string('pluginname', 'tool_iomadmerge'),
-            'url' => '/admin/tool/iomadmerge/index.php',
-            'cap' => 'tool/iomadmerge:iomadmerge',
-            'icondefault' => 'groupsassign',
-            'style' => 'user',
-            'icon' => 'fa-group',
-            'iconsmall' => 'fa-plus-square'
-        ),
-    );
+defined('MOODLE_INTERNAL') || die();
+
+interface DuplicatedDataMerger
+{
+    public function merge($olddata, $newdata): DuplicatedData;
 }

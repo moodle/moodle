@@ -15,6 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * The user_merged event.
+ *
+ * The base class for merge user accounts related actions.
+ *
  * Version information
  *
  * @package    tool
@@ -54,6 +58,7 @@ defined('MOODLE_INTERNAL') || die();
 abstract class user_merged extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';      // Usually we perform update db queries so 'u' its ok!
+        $this->data['level'] = self::LEVEL_OTHER; // fixing backwards compatibility
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 

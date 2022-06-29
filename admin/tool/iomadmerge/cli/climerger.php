@@ -43,8 +43,40 @@ global $CFG;
 require_once $CFG->dirroot . '/lib/clilib.php';
 require_once __DIR__ . '/../lib/autoload.php';
 
+// Now get cli options.
+list($options, $unrecognized) = cli_get_params(
+    array(
+        'debugdb'    => false,
+        'alwaysRollback' => false,
+        'help'    => false,
+    )
+);
+
+if ($unrecognized) {
+    $unrecognized = implode("\n  ", $unrecognized);
+    cli_error(get_string('cliunknowoption', 'admin', $unrecognized), 2);
+}
+
+if ($options['help']) {
+    $help =
+        "Command Line user merger. These are the available options:
+
+Options:
+--help            Print out this help
+--debugdb         Output all db statements used to do the merge
+--alwaysRollback  Do the full merge but rollback the transaction at the last opportunity
+";
+
+    echo $help;
+    exit(0);
+}
+
 // loads current configuration
 $config = tool_iomadmerge_config::instance();
+
+$config->debugdb = !empty($options['debugdb']);
+$config->alwaysRollback = !empty($options['alwaysRollback']);
+
 // initializes merger tool
 $mut = new IomadMergeTool($config); //may abort execution if database is not supported
 $merger = new Merger($mut);

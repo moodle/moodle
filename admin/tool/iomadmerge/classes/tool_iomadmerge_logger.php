@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
- *
  * @package    tool
  * @subpackage iomadmerge
  * @copyright  Derick Turner
@@ -84,7 +82,7 @@ class tool_iomadmerge_logger {
      */
     public function get($filter = null, $limitfrom=0, $limitnum=0, $sort = "timemodified DESC") {
         global $DB, $USER;
-        
+
         if (!iomad::has_capability('block/iomad_company_admin:editallusers', context_system::instance())) {
             // Get the user id's which the user can see.
             $companyid = iomad::get_my_companyid(context_system::instance());

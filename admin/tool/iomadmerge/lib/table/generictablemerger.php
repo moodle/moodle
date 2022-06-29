@@ -16,6 +16,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Generic implementation of the TableMerger.
+ *
  * Version information
  *
  * @package    tool
@@ -31,7 +33,6 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -41,6 +42,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class GenericTableMerger implements TableMerger
 {
+    const CHUNK_SIZE = 500;
+
     /**
      * Sets that in case of conflict, data related to new user is kept.
      * Otherwise (when false), data related to old user is kept.
@@ -50,7 +53,7 @@ class GenericTableMerger implements TableMerger
 
     public function __construct()
     {
-        $this->newidtomaintain = get_config('uniquekeynewidtomaintain', 'tool_iomadmerge');
+        $this->newidtomaintain = get_config('tool_iomadmerge', 'uniquekeynewidtomaintain');
     }
 
     /**
@@ -76,12 +79,8 @@ class GenericTableMerger implements TableMerger
      */
     public function merge($data, &$actionLog, &$errorMessages)
     {
-        global $CFG, $DB;
-
         foreach ($data['userFields'] as $fieldName) {
-            $recordsToUpdate = $DB->get_records_sql("SELECT " . self::PRIMARY_KEY .
-                    " FROM " . $CFG->prefix . $data['tableName'] . " WHERE " .
-                    $fieldName . " = '" . $data['fromid'] . "'");
+            $recordsToUpdate = $this->get_records_to_be_updated($data, $fieldName);
             if (count($recordsToUpdate) == 0) {
                 //this userid is not present in these table and field names
                 continue;
@@ -96,7 +95,7 @@ class GenericTableMerger implements TableMerger
                         $actionLog, $errorMessages);
             }
 
-            $this->updateRecords($data, $recordsToModify, $fieldName, $actionLog, $errorMessages);
+            $this->updateAllRecords($data, $recordsToModify, $fieldName, $actionLog, $errorMessages);
         }
     }
 
@@ -132,13 +131,13 @@ class GenericTableMerger implements TableMerger
     protected function mergeCompoundIndex($data, $userfield, $otherfields, &$recordsToModify, &$actionLog,
             &$errorMessages)
     {
-        global $CFG, $DB;
+        global $DB;
 
         $otherfieldsstr = implode(', ', $otherfields);
         $sql = 'SELECT id, ' . $userfield . ', ' . $otherfieldsstr .
-                ' FROM ' . $CFG->prefix . $data['tableName'] .
-                ' WHERE ' . $userfield . ' in (' . $data['fromid'] . ', ' . $data['toid'] . ')';
-        $result = $DB->get_records_sql($sql);
+                ' FROM {' . $data['tableName'] . '} ' .
+                ' WHERE ' . $userfield . ' IN ( ?, ?)';
+        $result = $DB->get_records_sql($sql, array($data['fromid'], $data['toid']));
 
         $itemArr = array();
         $idsToRemove = array();
@@ -195,20 +194,33 @@ class GenericTableMerger implements TableMerger
      */
     protected function cleanRecordsOnCompoundIndex($data, $idsToRemove, &$actionLog, &$errorMessages)
     {
+        if (empty($idsToRemove)) {
+            return;
+        }
+
+        $chunks = array_chunk($idsToRemove, self::CHUNK_SIZE);
+        foreach ($chunks as $someIdsToRemove) {
+            $this->cleanRecords($data, $someIdsToRemove, $actionLog, $errorMessages);
+        }
+    }
+
+    protected function cleanRecords($data, $idsToRemove, &$actionLog, &$errorMessages) {
         global $CFG, $DB;
 
+        if (empty($idsToRemove)) {
+            return;
+        }
+
+        $tableName = $CFG->prefix . $data['tableName'];
         $idsGoByebye = implode(', ', $idsToRemove);
+        $sql = 'DELETE FROM ' . $tableName . ' WHERE id IN (' . $idsGoByebye . ')';
 
-        if ($idsGoByebye) {
-            $sql = 'DELETE FROM ' . $CFG->prefix . $data['tableName'] . ' WHERE id IN (' . $idsGoByebye . ')';
-
-            if ($DB->execute($sql)) {
-                $actionLog[] = $sql;
-            } else {
-                // an error occured during DB query
-                $errorMessages[] = get_string('tableko', 'tool_iomadmerge', $data['tableName']) . ': ' .
-                        $DB->get_last_error();
-            }
+        if ($DB->execute($sql)) {
+            $actionLog[] = $sql;
+        } else {
+            // an error occured during DB query
+            $errorMessages[] = get_string('tableko', 'tool_iomadmerge', $data['tableName']) . ': ' .
+                $DB->get_last_error();
         }
         unset($idsGoByebye); //free memory
     }
@@ -217,32 +229,36 @@ class GenericTableMerger implements TableMerger
      * Updates the table, replacing the user.id for the $data['toid'] on all
      * records specified by the ids on $recordsToModify.
      *
-     * @global object $CFG
-     * @global moodle_database $DB
-     *
      * @param array $data array with details of merging.
      * @param array $recordsToModify list of record ids to update with $toid.
      * @param string $fieldName field name of the table to update.
      * @param array $actionLog list of performed actions.
      * @param array $errorMessages list of error messages.
      */
-    protected function updateRecords($data, $recordsToModify, $fieldName, &$actionLog, &$errorMessages)
+    protected function updateAllRecords($data, $recordsToModify, $fieldName, &$actionLog, &$errorMessages)
     {
-        global $CFG, $DB;
-
         if (count($recordsToModify) == 0) {
             // if no records, do nothing ;-)
             return;
         }
 
+        $chunks = array_chunk($recordsToModify, self::CHUNK_SIZE);
+        foreach ($chunks as $chunk) {
+            $this->updateRecords($data, $chunk, $fieldName, $actionLog, $errorMessages);
+        }
+    }
+
+    protected function updateRecords(array $data, array $recordsToModify, string $fieldName, array &$actionLog, array &$errorMessages) {
+        global $CFG, $DB;
+        $tableName = $CFG->prefix . $data['tableName'];
         $idString = implode(', ', $recordsToModify);
-        $updateRecords = "UPDATE " . $CFG->prefix . $data['tableName'] .
+        $updateRecords = "UPDATE " . $tableName . ' ' .
                 " SET " . $fieldName . " = '" . $data['toid'] .
                 "' WHERE " . self::PRIMARY_KEY . " IN (" . $idString . ")";
 
         try {
             if (!$DB->execute($updateRecords)) {
-                $errorMessages[] = get_string('tableko', 'tool_iomadmerge', $this->tableName) .
+                $errorMessages[] = get_string('tableko', 'tool_iomadmerge', $data['tableName']) .
                         ': ' . $DB->get_last_error();
             }
             $actionLog[] = $updateRecords;
@@ -250,11 +266,11 @@ class GenericTableMerger implements TableMerger
             // if we get here, we have found a unique index on a user-id related column.
             // therefore, there will be only a single record from one or other user.
             $useridtoclean = ($this->newidtomaintain) ? $data['fromid'] : $data['toid'];
-            $deleteRecord = "DELETE FROM " . $CFG->prefix . $data['tableName'] .
+            $deleteRecord = "DELETE FROM " . $tableName .
                     " WHERE " . $fieldName . " = '" . $useridtoclean . "'";
 
             if (!$DB->execute($deleteRecord)) {
-                $errorMessages[] = get_string('tableko', 'tool_iomadmerge', $this->tableName) .
+                $errorMessages[] = get_string('tableko', 'tool_iomadmerge', $data['tableName']) .
                         ': ' . $DB->get_last_error();
             }
             $actionLog[] = $deleteRecord;
@@ -282,6 +298,13 @@ class GenericTableMerger implements TableMerger
         }
         // default behavior
         return $compoundIndex['otherfields'];
+    }
+
+    protected function get_records_to_be_updated($data, $fieldName) {
+        global $DB;
+        return $DB->get_records_sql("SELECT " . self::PRIMARY_KEY .
+            " FROM {" . $data['tableName'] . "} WHERE " .
+            $fieldName . " = '" . $data['fromid'] . "'");
     }
 
 }

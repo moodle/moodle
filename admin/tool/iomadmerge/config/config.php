@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
- *
  * @package    tool
  * @subpackage iomadmerge
  * @copyright  Derick Turner
@@ -124,6 +122,26 @@ return array(
             'userfield' => array('userid'),
             'otherfields' => array('assignment', 'groupid', 'attemptnumber'),
         ),
+        'wiki_pages' => array( //unique key mdl_wikipage_subtituse_uix
+            'userfield' => array('userid'),
+            'otherfields' => array('subwikiid', 'title'),
+        ),
+        'wiki_subwikis' => array( //unique key mdl_wikisubw_wikgrouse_uix
+            'userfield' => array('userid'),
+            'otherfields' => array('wikiid', 'groupid'),
+        ),
+        'user_enrolments' => array(
+            'userfield' => array('userid'),
+            'otherfields' => array('enrolid'),
+        ),
+        'assign_user_flags' => array( // They are actually a unique key, but not in DDL.
+            'userfield' => array('userid'),
+            'otherfields' => array('assignment'),
+        ),
+        'assign_user_mapping' => array( // They are actually a unique key, but not in DDL.
+            'userfield' => array('userid'),
+            'otherfields' => array('assignment'),
+        ),
     ),
 
     // List of column names per table, where their content is a user.id.
@@ -131,6 +149,7 @@ return array(
     // In other words, only column names given below will be search for matching user ids.
     // The key 'default' will be applied for any non matching table name.
     'userfieldnames' => array(
+        'logstore_standard_log' => array('userid', 'relateduserid'),
         'message_contacts' => array('userid', 'contactid'), //compound index
         'message' => array('useridfrom', 'useridto'),
         'message_read' => array('useridfrom', 'useridto'),
@@ -142,7 +161,10 @@ return array(
     // 'default' is applied when no specific TableMerger is specified.
     'tablemergers' => array(
         'default' => 'GenericTableMerger',
-        'user_enrolments' => 'UserEnrolmentsMerger',
         'quiz_attempts' => 'QuizAttemptsMerger',
+        'assign_submission' => 'AssignSubmissionTableMerger',
     ),
+
+    'alwaysRollback' => false,
+    'debugdb' => false,
 );

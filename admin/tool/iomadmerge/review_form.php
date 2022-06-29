@@ -31,7 +31,6 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 require_once($CFG->libdir . '/formslib.php'); /// forms library
 
 /**

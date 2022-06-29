@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,24 +30,25 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-spl_autoload_register(function ($class) {
 
-    $fileName = strtolower($class) . '.php';
-    $fileDirname = dirname(__FILE__);
-    $dirs = array(
-        $fileDirname,
-        $fileDirname . '/table',
-        $fileDirname . '/local',
-        $fileDirname.'/../classes',
-    );
+defined('MOODLE_INTERNAL') || die();
 
-    foreach ($dirs as $dir) {
-        if (is_file($dir . '/' . $fileName)) {
-            require_once $dir . '/' . $fileName;
-            if (class_exists($class)) {
-                return true;
-            }
-        }
+require_once(__DIR__ . '/duplicateddatamerger.php');
+require_once(__DIR__ . '/duplicateddata.php');
+
+class GenericDuplicatedDataMerger implements DuplicatedDataMerger
+{
+    private $duplicateddata;
+
+    public function __construct() {
+        $this->duplicateddata = DuplicatedData::from_empty();
     }
-    return false;
-});
+
+    public function merge($data, $fromuserid, $touserid): DuplicatedData {
+        if (isset($data[$touserid]) && isset($data[$fromuserid])) {
+            return DuplicatedData::from_remove($data[$fromuserid]);
+        }
+
+        return $this->duplicateddata;
+    }
+}

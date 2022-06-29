@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * iomadmerge functions.
+ *
  * Version information
  *
  * @package    tool
@@ -46,4 +48,48 @@ function tool_iomadmerge_transactionssupported() {
     $method = new ReflectionMethod($DB, 'transactions_supported');
     $method->setAccessible(true); //method is protected; make it accessible.
     return $method->invoke($DB);
+}
+
+function tool_iomadmerge_build_exceptions_options() {
+    require_once(__DIR__ . '/classes/tool_iomadmerge_config.php');
+
+    $config = tool_iomadmerge_config::instance();
+    $none = get_string('none');
+    $options = array('none' => $none);
+    foreach ($config->exceptions as $exception) {
+        $options[$exception] = $exception;
+    }
+    unset($options['my_pages']); //duplicated records make MyMoodle does not work.
+
+    $result = new stdClass();
+    $result->defaultkey = 'none';
+    $result->defaultvalue = $none;
+    $result->options = $options;
+
+    return $result;
+}
+
+function tool_iomadmerge_build_quiz_options() {
+    require_once(__DIR__ . '/lib/table/quizattemptsmerger.php');
+
+    // quiz attempts
+    $quizStrings = new stdClass();
+    $quizStrings->{QuizAttemptsMerger::ACTION_RENUMBER} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_RENUMBER, 'tool_iomadmerge');
+    $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE, 'tool_iomadmerge');
+    $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET, 'tool_iomadmerge');
+    $quizStrings->{QuizAttemptsMerger::ACTION_REMAIN} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_REMAIN, 'tool_iomadmerge');
+
+    $quizOptions = array(
+        QuizAttemptsMerger::ACTION_RENUMBER => $quizStrings->{QuizAttemptsMerger::ACTION_RENUMBER},
+        QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE => $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE},
+        QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET => $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET},
+        QuizAttemptsMerger::ACTION_REMAIN => $quizStrings->{QuizAttemptsMerger::ACTION_REMAIN},
+    );
+
+    $result = new stdClass();
+    $result->allstrings = $quizStrings;
+    $result->defaultkey = QuizAttemptsMerger::ACTION_REMAIN;
+    $result->options = $quizOptions;
+
+    return $result;
 }

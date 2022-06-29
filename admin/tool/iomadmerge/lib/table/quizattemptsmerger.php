@@ -15,23 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Version information
- *
- * @package    tool
- * @subpackage iomadmerge
- * @copyright  Derick Turner
- * @author     Derick Turner
- * @basedon    admin tool merge by:
- * @author     Nicolas Dunand <Nicolas.Dunand@unil.ch>
- * @author     Mike Holzer
- * @author     Forrest Gaston
- * @author     Juan Pablo Torres Herrera
- * @author     Jordi Pujol-Ahulló, SREd, Universitat Rovira i Virgili
- * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -66,11 +49,20 @@ require_once $CFG->dirroot . '/mod/quiz/locallib.php';
  *        This means that the old user's attempts are leaved, and removed those from the new user
  *        as if the new user was cheating. Behaviour suggested by Nicolas Dunand.
  *
- * @package     tool
- * @subpackage  iomadmerge
- * @author      John Hoopes <hoopes@wisc.edu>, 2014 University of Wisconsin - Madison
- * @author      Jordi Pujol-Ahulló <jordi.pujol@urv.cat>,  SREd, Universitat Rovira i Virgili
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Version information
+ *
+ * @package    tool
+ * @subpackage iomadmerge
+ * @copyright  Derick Turner
+ * @author     Derick Turner
+ * @basedon    admin tool merge by:
+ * @author     Nicolas Dunand <Nicolas.Dunand@unil.ch>
+ * @author     Mike Holzer
+ * @author     Forrest Gaston
+ * @author     Juan Pablo Torres Herrera
+ * @author     Jordi Pujol-Ahulló, SREd, Universitat Rovira i Virgili
+ * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class QuizAttemptsMerger extends GenericTableMerger
 {
@@ -157,11 +149,13 @@ class QuizAttemptsMerger extends GenericTableMerger
     {
         global $CFG, $DB;
 
+        $tableName = $CFG->prefix . $data['tableName'];
+
         // we want to find all quiz attempts made from both users if any.
         $sql = "
             SELECT *
             FROM
-                {" . $data['tableName'] . "} 
+                " . $tableName . "
             WHERE
                 userid IN (?, ?)
             ORDER BY quiz ASC, timestart ASC
@@ -174,7 +168,7 @@ class QuizAttemptsMerger extends GenericTableMerger
 
             $toid = $data['toid'];
             $update = array(
-                'UPDATE ' . $CFG->prefix . $data['tableName'] . ' SET ',
+                'UPDATE ' . $tableName . ' SET ',
                 ' WHERE id = ',
             );
 
@@ -234,32 +228,33 @@ class QuizAttemptsMerger extends GenericTableMerger
                     $sets[] = 'attempt = ' . ($max + $nattempt);
 
                     $updateSql = $update[0] . implode(', ', $sets) . $update[1] . $attempt->id;
-                    if (!$DB->execute($updateSql)) {
+                    if ($DB->execute($updateSql)) {
+                        $actionLog[] = $updateSql;
+                    } else {
                         $errorMessages[] = get_string('tableko', 'tool_iomadmerge', $data['tableName']) .
                                 ': ' . $DB->get_last_error();
                     }
 
-                    $actionLog[] = $updateSql;
                     $nattempt++;
                     unset($sets); // free mem
                 }
 
                 // Remove the offset of $max from their attempt column to make
                 // them start by 1 as expected.
-                $updateAll = "UPDATE {$CFG->prefix}{$data['tableName']} " .
-                        "SET attempt = attempt - $max " .
-                        "WHERE quiz = $quiz AND userid = $toid";
+                $updateAll = "UPDATE " . $tableName .
+                    " SET attempt = attempt - $max " .
+                    " WHERE quiz = $quiz AND userid = $toid";
 
-                if (!$DB->execute($updateAll)) {
+                if ($DB->execute($updateAll)) {
+                    $actionLog[] = $updateAll;
+                } else {
                     $errorMessages[] = get_string('tableko', 'tool_iomadmerge', $data['tableName']) .
                             ': ' . $DB->get_last_error();
                 }
-
-                $actionLog[] = $updateAll;
             }
 
             // recalculate grades for updated quizzes.
-            $this->updateQuizzes($data, $quizzes, $actionLog);
+            $this->updateAllQuizzes($data, $quizzes, $actionLog);
         }
     }
 
@@ -272,10 +267,10 @@ class QuizAttemptsMerger extends GenericTableMerger
      * @param array $actionLog list of performed actions.
      * @param array $errorMessages list of error messages.
      */
-    protected function updateRecords($data, $recordsToModify, $fieldName, &$actionLog, &$errorMessages)
+    protected function updateAllRecords($data, $recordsToModify, $fieldName, &$actionLog, &$errorMessages)
     {
-        parent::updateRecords($data, $recordsToModify, $fieldName, $actionLog, $errorMessages);
-        $this->updateQuizzes($data, $recordsToModify, $actionLog);
+        parent::updateAllRecords($data, $recordsToModify, $fieldName, $actionLog, $errorMessages);
+        $this->updateAllQuizzes($data, $recordsToModify, $actionLog);
     }
 
     /**
@@ -284,12 +279,21 @@ class QuizAttemptsMerger extends GenericTableMerger
      * @param array $data array with attributes, like 'tableName'
      * @param array $ids ids of the table to be updated, and so, to update quiz grades.
      */
-    protected function updateQuizzes($data, $ids, &$actionLog)
+    protected function updateAllQuizzes($data, $ids, &$actionLog)
     {
         if (empty($ids)) {
             // if no ids... do nothing.
             return;
         }
+
+        $chunks = array_chunk($ids, static::CHUNK_SIZE);
+        foreach ($chunks as $chunk) {
+            $this->updateQuizzes($chunk, $actionLog);
+        }
+    }
+
+    protected function updateQuizzes(array $ids, array &$actionLog)
+    {
         global $DB;
 
         $idsstr = "'" . implode("', '", $ids) . "'";
@@ -310,5 +314,4 @@ class QuizAttemptsMerger extends GenericTableMerger
             }
         }
     }
-
 }

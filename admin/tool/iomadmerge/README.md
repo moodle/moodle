@@ -1,11 +1,21 @@
-Merge users script for Moodle
+Merge users plugin for Moodle
 ===============================
 
-
-This script will merge two Moodle user accounts, "user A" and "user B".
-The intent of the script is to assign all activity & records from user A to
+This admin tool will merge two Moodle user accounts, "user A" and "user B".
+The intent of the plugin is to assign all activity & records from user A to
 user B. This will give the effect of user B seeming to have done everything
-both users have ever done in Moodle. The basic function of the script is to
+both users have ever done in Moodle. 
+
+Moodle requirements and release notes
+=====================================
+
+Check the CHANGES.md file for Moodle version requirements, system requirements
+and any news related to the current release of this plugin.
+
+How merge users plugin works
+============================
+
+The basic function of the plugin is to
 loop through the tables and update the userid of every record from user A to
 user B. This works well for most tables. We do however, have a few special
 cases:
@@ -88,7 +98,7 @@ cases:
 
 
 Command-line script
----
+===================
 
 A cli/climerger.php script is added. You can now perform user mergings by command line having
 their user ids.
@@ -114,7 +124,7 @@ return array(
 
 
 Events and event management
----
+===========================
 
 Once the merging action is completed, an event 'merging_success' is triggered if it was ok,
 or an event 'merging_failed' otherwise. The available data on the event are as follows:
@@ -135,7 +145,7 @@ This plugin also manages the 'merging_success' event is trigered, what includes:
 
 
 Correct way of testing this plugin
----
+==================================
 
 First of all, check `admin/settings.php?section=iomadmerge_settings` for the
 description of the setting `tool_iomadmerge | transactions_only`
@@ -159,7 +169,7 @@ and share both the error and the patch to solve it ;-)
 
 
 Common sense
----
+============
 
 Before running this plugin, it is highly recommended to back up your database.
 That will help you to restore the state before any merging action was done.
@@ -177,37 +187,52 @@ problem when merging users A and B, do not panic. Merging will be successfully
 completed when a solution for your problem is included into this plugin, and
 you rerun merging users A and B.
 
+Development
+===========
 
-Minimum requirements
----
+Developing and testing phase
+============================
 
-- MySQL v5.x or MSSQL or Postgres
-- Moodle v2.2
+We recommend to use the [moodlehq/moodle-docker](https://github.com/moodlehq/moodle-docker)
+project to run your own Moodle instances for developing and testing.
 
+PHPUnit testing
+===============
+
+To quickly setup your own development, we suggest to run the command:
+
+```
+php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
+```
+
+as documented at https://docs.moodle.org/dev/PHPUnit to have the `phpunit.xml`
+file under `admin/tool/iomadmerge/phpunit.xml`.
+
+Then, you can run all plugin's tests as follows:
+
+```
+vendor/bin/phpunit -c admin/tool/iomadmerge
+```
+
+or also like this, without the need of running the `buildcomponentconfigs`:
+
+```
+vendor/bin/phpunit --group tool_iomadmerge
+```
+
+There are also other PHPUnit groups created to help testing only the part
+of the plugin of your choice. Take a look at the tests code for other group names.
 
 License
----
+=======
 
 GNU GPL v3 or later. http://www.gnu.org/copyleft/gpl.html
 
-
 Contributors
----
+============
 
-* Based on the iomadmerge_v2.php script written by Nicolas Dunand.
-* Updated for Moodle 2.0 by Mike Holzer [m.e.holzer AT gmail DOT com]
-* Moodle 2.x report by Forrest Gaston
-* Updated by Jordi Pujol-Ahulló (at SREd, Universitat Rovira i Virgili) with:
-    * several compound index on database tables,
-    * selector for the type of user identification (username, id, idnumber),
-    * more Moodle-like web and code, including web renderer,
-    * config.php with current configuration settings, used for merging,
-    * config.local.php to include local settings on your Moodle instance,
-    * log of any merging action in database for further reference,
-    * revisited web interface for the new wizard when merging users manually,
-    * TableMerger entities to process Moodle tables accordingly,
-    * quiz attempts are processed as suggested in
-      https://moodle.org/mod/forum/discuss.php?d=258979, adding 4 different options
-      for their processing.
-* Web wizard for merging users by John Hoopes, University of Wisconsin - Madison
-* Plugin maintained by Nicolas Dunand [nicolas.dunand AT unil DOT ch]
+Maintained by:
+* Nicolas Dunand.
+* Jordi Pujol-Ahulló (at SREd, Universitat Rovira i Virgili).
+
+[See all Github contributors](https://github.com/ndunand/moodle-tool_iomadmerge/graphs/contributors)

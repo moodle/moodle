@@ -39,19 +39,21 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
 /**
  * Class assign_test
  */
-class assign_test extends mod_assign_base_testcase {
+class tool_iomadmerge_assign_testcase extends mod_assign_base_testcase {
     /**
      *
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
-        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/iomadmergetool.php");
+        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/mergeusertool.php");
         parent::setUp();
     }
 
     /**
      * Test merging two users where one has submitted an assignment and the other
      * has no.
+     * @group tool_iomadmerge
+     * @group tool_iomadmerge_assign
      */
     public function test_mergenonconflictingassigngrades() {
         global $DB;

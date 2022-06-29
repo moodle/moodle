@@ -49,7 +49,13 @@ class Merger {
 
         // to catch Ctrl+C interruptions, we need this stuff.
         declare(ticks = 1);
-        pcntl_signal(SIGINT, array($this, 'aborting'));
+
+        if (extension_loaded('pcntl')) {
+            pcntl_signal(SIGINT, array(
+                $this,
+                'aborting'
+            ));
+        }
     }
 
     /**

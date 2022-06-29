@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Privacy Subsystem implementation for tool_iomadmerge.
+ *
  * Version information
  *
  * @package    tool
@@ -31,24 +32,20 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-spl_autoload_register(function ($class) {
 
-    $fileName = strtolower($class) . '.php';
-    $fileDirname = dirname(__FILE__);
-    $dirs = array(
-        $fileDirname,
-        $fileDirname . '/table',
-        $fileDirname . '/local',
-        $fileDirname.'/../classes',
-    );
+namespace tool_iomadmerge\privacy;
 
-    foreach ($dirs as $dir) {
-        if (is_file($dir . '/' . $fileName)) {
-            require_once $dir . '/' . $fileName;
-            if (class_exists($class)) {
-                return true;
-            }
-        }
+defined('MOODLE_INTERNAL') || die();
+
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
     }
-    return false;
-});
+}

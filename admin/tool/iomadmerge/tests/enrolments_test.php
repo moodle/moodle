@@ -30,20 +30,21 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-class enrolments_test extends advanced_testcase {
+class tool_iomadmerge_enrolments_testcase extends advanced_testcase {
     /**
      * Setup the test.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
-        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/iomadmergetool.php");
+        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/mergeusertool.php");
         $this->resetAfterTest(true);
     }
 
     /**
      * Enrol two users on one unique course each and one shared course
      * then merge them.
+     * @group tool_iomadmerge
+     * @group tool_iomadmerge_enrolments
      */
     public function test_mergeenrolments() {
         global $DB;

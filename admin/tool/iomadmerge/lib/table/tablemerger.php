@@ -16,6 +16,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Tool for merging users in a database table.
+ *
  * Version information
  *
  * @package    tool

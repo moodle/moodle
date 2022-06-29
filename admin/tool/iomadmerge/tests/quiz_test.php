@@ -30,17 +30,16 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-class quiz_test extends advanced_testcase {
+class tool_iomadmerge_quiz_testcase extends advanced_testcase {
     /**
      * Configure the test.
      * Create two courses with a quiz in each.
      * Create two users.
      * Enrol the users onto the courses.
      */
-    public function setUp() {
+    public function setUp(): void {
         global $CFG, $DB;
-        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/iomadmergetool.php");
+        require_once("$CFG->dirroot/admin/tool/iomadmerge/lib/mergeusertool.php");
         $this->resetAfterTest(true);
 
         // Setup two users to merge.
@@ -171,6 +170,8 @@ class quiz_test extends advanced_testcase {
 
     /**
      * Have two users attempt the same quiz and then merge them.
+     * @group tool_iomadmerge
+     * @group tool_iomadmerge_quiz
      */
     public function test_mergeconflictingquizattempts() {
         global $DB;
@@ -196,6 +197,8 @@ class quiz_test extends advanced_testcase {
 
     /**
      * Have two users attempt different quizes and then merge them.
+     * @group tool_iomadmerge
+     * @group tool_iomadmerge_quiz
      */
     public function test_mergenonconflictingquizattempts() {
         global $DB;

@@ -41,7 +41,7 @@ class selectuserform extends moodleform {
     /** @var UserSelectTable Table to select users. */
     protected $ust;
 
-    public function __construct(UserSelectTable $ust = NULL)
+    public function __construct(UserSelectTable $ust = null)
     {
         //just before parent's construct
         $this->ust = $ust;
@@ -67,11 +67,11 @@ class selectuserform extends moodleform {
 
         // hidden elements
         $mform->addElement('hidden', 'option', 'saveselection');
-	$mform->setType('option', PARAM_RAW);
-	$mform->addElement('hidden', 'selectedolduser', '');
-	$mform->setType('selectedolduser', PARAM_RAW);
+        $mform->setType('option', PARAM_RAW);
+        $mform->addElement('hidden', 'selectedolduser', '');
+        $mform->setType('selectedolduser', PARAM_RAW);
         $mform->addElement('hidden', 'selectednewuser', '');
-	$mform->setType('selectednewuser', PARAM_RAW);
+        $mform->setType('selectednewuser', PARAM_RAW);
 
         // buttons
         $this->add_action_buttons(false, get_string('saveselection_submit', 'tool_iomadmerge'));

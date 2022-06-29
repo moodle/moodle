@@ -1,0 +1,71 @@
+language: php
+
+sudo: true
+
+addons:
+  firefox: "47.0.1"
+  apt:
+    packages:
+      - openjdk-8-jre-headless
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.npm
+
+# Alternate tests - 3.4 -> master on mysql/postgres and php.
+matrix:
+  include:
+    - php: 7.0
+      env: DB=pgsql  MOODLE_BRANCH=MOODLE_34_STABLE
+      services: postgresql
+      addons:
+        - postgresql: "9.4"
+    - php: 7.0
+      env: DB=mysqli  MOODLE_BRANCH=MOODLE_35_STABLE
+      services: mysql
+      addons:
+        - mysql: "5.7"
+    - php: 7.2
+      env: DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
+      services: postgresql
+      addons:
+        - postgresql: "9.4"
+    - php: 7.2
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
+      services: mysql
+      addons:
+        - mysql: "5.7"
+    - php: 7.3
+      env: DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
+      services: postgresql
+      addons:
+        - postgresql: "9.4"
+    - php: 7.3
+      env: DB=pgsql  MOODLE_BRANCH=master
+      services: postgresql
+      addons:
+        - postgresql: "9.5"
+
+before_install:
+  - phpenv config-rm xdebug.ini
+  - nvm install 8.9
+  - nvm use 8.9
+  - cd ../..
+  - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+
+install:
+  - moodle-plugin-ci install
+
+script:
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+#  - moodle-plugin-ci codechecker
+  - moodle-plugin-ci validate
+  - moodle-plugin-ci savepoints
+  - moodle-plugin-ci mustache
+#  - moodle-plugin-ci grunt
+  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci behat

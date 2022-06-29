@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,24 +30,36 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-spl_autoload_register(function ($class) {
 
-    $fileName = strtolower($class) . '.php';
-    $fileDirname = dirname(__FILE__);
-    $dirs = array(
-        $fileDirname,
-        $fileDirname . '/table',
-        $fileDirname . '/local',
-        $fileDirname.'/../classes',
-    );
+defined('MOODLE_INTERNAL') || die();
 
-    foreach ($dirs as $dir) {
-        if (is_file($dir . '/' . $fileName)) {
-            require_once $dir . '/' . $fileName;
-            if (class_exists($class)) {
-                return true;
-            }
-        }
+class DuplicatedData {
+    private $toremove;
+
+    private $tomodify;
+
+    public static function from_empty() {
+        return new static([], []);
     }
-    return false;
-});
+
+    public static function from_remove_and_modify($toremove, $tomodify) {
+        return new static(array_combine($toremove, $toremove), array_combine($tomodify, $tomodify));
+    }
+
+    public static function from_remove($toremove) {
+        return new static(array_combine($toremove, $toremove), []);
+    }
+
+    private function __construct($toremove, $tomodify) {
+        $this->toremove = $toremove;
+        $this->tomodify = $tomodify;
+    }
+
+    public function to_remove() {
+        return $this->toremove;
+    }
+
+    public function to_modify() {
+        return $this->tomodify;
+    }
+}

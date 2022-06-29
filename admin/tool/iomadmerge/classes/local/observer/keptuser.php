@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,24 +30,27 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-spl_autoload_register(function ($class) {
 
-    $fileName = strtolower($class) . '.php';
-    $fileDirname = dirname(__FILE__);
-    $dirs = array(
-        $fileDirname,
-        $fileDirname . '/table',
-        $fileDirname . '/local',
-        $fileDirname.'/../classes',
-    );
+namespace tool_iomadmerge\local\observer;
 
-    foreach ($dirs as $dir) {
-        if (is_file($dir . '/' . $fileName)) {
-            require_once $dir . '/' . $fileName;
-            if (class_exists($class)) {
-                return true;
-            }
-        }
+use tool_iomadmerge\event\user_merged_success;
+
+class keptuser {
+
+    /**
+     * Ensure kept user is not suspended.
+     *
+     * @param user_merged_success $event Event data.
+     */
+    public static function make_kept_user_as_not_suspended(user_merged_success $event): void {
+        global $DB;
+
+        $userid = $event->other['usersinvolved']['toid'];
+
+        $userkept = new \stdClass();
+        $userkept->id = $userid;
+        $userkept->suspended = 0;
+        $userkept->timemodified = time();
+        $DB->update_record('user', $userkept);
     }
-    return false;
-});
+}

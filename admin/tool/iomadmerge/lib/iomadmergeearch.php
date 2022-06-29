@@ -16,7 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Utility file.
+ *
+ * The effort of all given authors below gives you this current version of the file.
  *
  * @package    tool
  * @subpackage iomadmerge
@@ -31,7 +33,6 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once dirname(dirname(dirname(dirname(__DIR__)))) . '/config.php';
@@ -90,9 +91,9 @@ class IomadMergeSearch{
             case 'id': // search on id field
 
                 $params = array(
-                    'userid' => '%' . $input . '%',
+                    'userid' => $input,
                 );
-                $sql = 'SELECT * FROM {user} WHERE id LIKE :userid';
+                $sql = 'SELECT * FROM {user} WHERE id = :userid';
 
                 break;
             case 'username': // search on username
@@ -138,7 +139,7 @@ class IomadMergeSearch{
             default: // search on all fields by default
 
                 $params = array(
-                    'userid'     => '%' . $input . '%',
+                    'userid'     =>  $input,
                     'username'   => '%' . $input . '%',
                     'firstname'  => '%' . $input . '%',
                     'lastname'   => '%' . $input . '%',
@@ -150,7 +151,7 @@ class IomadMergeSearch{
                    'SELECT *
                     FROM {user}
                     WHERE
-                        id LIKE :userid OR
+                        id = :userid OR
                         username LIKE :username OR
                         firstname LIKE :firstname OR
                         lastname LIKE :lastname OR
@@ -160,10 +161,9 @@ class IomadMergeSearch{
                 break;
         }
 
-        $ordering = " $departmentsql ORDER BY lastname, firstname";
+        $ordering = ' $departmentsql ORDER BY lastname, firstname';
 
         $results = $DB->get_records_sql($sql . $ordering, $params);
-
         return $results;
     }
 
@@ -187,7 +187,7 @@ class IomadMergeSearch{
             $user = $DB->get_record('user', array($column => $uinfo), '*', MUST_EXIST);
         } catch (Exception $e) {
             $message = get_string('invaliduser', 'tool_iomadmerge'). '('.$column . '=>' . $uinfo .'): ' . $e->getMessage();
-            $user = NULL;
+            $user = null;
         }
 
         return array($user, $message);

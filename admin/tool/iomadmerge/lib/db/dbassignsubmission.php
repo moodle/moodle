@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,24 +30,26 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-spl_autoload_register(function ($class) {
 
-    $fileName = strtolower($class) . '.php';
-    $fileDirname = dirname(__FILE__);
-    $dirs = array(
-        $fileDirname,
-        $fileDirname . '/table',
-        $fileDirname . '/local',
-        $fileDirname.'/../classes',
-    );
+defined('MOODLE_INTERNAL') || die();
 
-    foreach ($dirs as $dir) {
-        if (is_file($dir . '/' . $fileName)) {
-            require_once $dir . '/' . $fileName;
-            if (class_exists($class)) {
-                return true;
-            }
-        }
+require_once(__DIR__ . '/assignsubmissionquery.php');
+
+class db_assign_submission implements assign_submission_query {
+    private $db;
+
+    public function __construct() {
+        global $DB;
+        $this->db = $DB;
     }
-    return false;
-});
+
+    public function latest_from_assign_and_user($assignid, $userid) {
+        return $this->db->get_record('assign_submission',
+                ['assignment' => $assignid, 'latest' => 1, 'userid' => $userid]);
+    }
+
+    public function all_from_assign_and_user($assignid, $userid) {
+        return $this->db->get_records('assign_submission',
+                ['assignment' => $assignid, 'userid' => $userid]);
+    }
+}

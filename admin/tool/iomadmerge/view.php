@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * View merging logs.
+ *
  * Version information
  *
  * @package    tool

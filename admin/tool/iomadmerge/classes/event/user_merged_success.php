@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * The user_merged_success event.
+ *
  * Version information
  *
  * @package    tool

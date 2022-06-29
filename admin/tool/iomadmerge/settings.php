@@ -34,26 +34,28 @@
 defined('MOODLE_INTERNAL') || die;
 
 if (has_capability('tool/iomadmerge:iomadmerge', context_system::instance())) {
-    require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/iomadmerge/lib/autoload.php');
-    require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/iomadmerge/lib.php');
-
-    $ADMIN->add('accounts',
+    /**
+     * @var \part_of_admin_tree $ADMIN
+     */
+    if (!$ADMIN->locate('tool_iomadmerge')) {
+        $ADMIN->add('accounts',
             new admin_category('tool_iomadmerge', get_string('pluginname', 'tool_iomadmerge')));
-    $ADMIN->add('tool_iomadmerge',
+        $ADMIN->add('tool_iomadmerge',
             new admin_externalpage('tool_iomadmerge_merge', get_string('pluginname', 'tool_iomadmerge'),
-            $CFG->wwwroot.'/'.$CFG->admin.'/tool/iomadmerge/index.php',
-            'tool/iomadmerge:iomadmerge'));
-    $ADMIN->add('tool_iomadmerge',
+                $CFG->wwwroot . '/' . $CFG->admin . '/tool/iomadmerge/index.php',
+                'tool/iomadmerge:iomadmerge'));
+        $ADMIN->add('tool_iomadmerge',
             new admin_externalpage('tool_iomadmerge_viewlog', get_string('viewlog', 'tool_iomadmerge'),
-            $CFG->wwwroot.'/'.$CFG->admin.'/tool/iomadmerge/view.php',
-            'tool/iomadmerge:iomadmerge'));
+                $CFG->wwwroot . '/' . $CFG->admin . '/tool/iomadmerge/view.php',
+                'tool/iomadmerge:iomadmerge'));
+    }
 }
 
 if ($hassiteconfig) {
-    require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/iomadmerge/lib/autoload.php');
-    require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/iomadmerge/lib.php');
+    require_once(__DIR__ . '/lib/autoload.php');
+    require_once(__DIR__ . '/lib.php');
 
-    // Add configuration for making user suspension optional
+    // Add configuration for making user suspension optional.
     $settings = new admin_settingpage('iomadmerge_settings',
         get_string('pluginname', 'tool_iomadmerge'));
 
@@ -70,38 +72,20 @@ if ($hassiteconfig) {
             get_string($supporting_lang, 'tool_iomadmerge'),
         1));
 
-    $config = tool_iomadmerge_config::instance();
-    $none = get_string('none');
-    $options = array('none' => $none);
-    foreach ($config->exceptions as $exception) {
-        $options[$exception] = $exception;
-    }
-    unset($options['my_pages']); //duplicated records make MyMoodle does not work.
+    $exceptionoptions = tool_iomadmerge_build_exceptions_options();
     $settings->add(new admin_setting_configmultiselect('tool_iomadmerge/excluded_exceptions',
         get_string('excluded_exceptions', 'tool_iomadmerge'),
-        get_string('excluded_exceptions_desc', 'tool_iomadmerge', $none),
-        array('none'), //default value: empty => apply all exceptions.
-        $options));
+        get_string('excluded_exceptions_desc', 'tool_iomadmerge', $exceptionoptions->defaultvalue),
+        array($exceptionoptions->defaultkey), //default value: empty => apply all exceptions.
+        $exceptionoptions->options));
 
-    // quiz attempts
-    $quizStrings = new stdClass();
-    $quizStrings->{QuizAttemptsMerger::ACTION_RENUMBER} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_RENUMBER, 'tool_iomadmerge');
-    $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE, 'tool_iomadmerge');
-    $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET, 'tool_iomadmerge');
-    $quizStrings->{QuizAttemptsMerger::ACTION_REMAIN} = get_string('qa_action_' . QuizAttemptsMerger::ACTION_REMAIN, 'tool_iomadmerge');
-
-    $quizOptions = array(
-    QuizAttemptsMerger::ACTION_RENUMBER => $quizStrings->{QuizAttemptsMerger::ACTION_RENUMBER},
-        QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE => $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_SOURCE},
-        QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET => $quizStrings->{QuizAttemptsMerger::ACTION_DELETE_FROM_TARGET},
-        QuizAttemptsMerger::ACTION_REMAIN => $quizStrings->{QuizAttemptsMerger::ACTION_REMAIN},
-    );
-
+    // Quiz attempts.
+    $quizoptions = tool_iomadmerge_build_quiz_options();
     $settings->add(new admin_setting_configselect('tool_iomadmerge/quizattemptsaction',
         get_string('quizattemptsaction', 'tool_iomadmerge'),
-        get_string('quizattemptsaction_desc', 'tool_iomadmerge', $quizStrings),
-        QuizAttemptsMerger::ACTION_REMAIN,
-        $quizOptions)
+        get_string('quizattemptsaction_desc', 'tool_iomadmerge', $quizoptions->allstrings),
+        $quizoptions->defaultkey,
+        $quizoptions->options)
     );
 
     $settings->add(new admin_setting_configcheckbox('tool_iomadmerge/uniquekeynewidtomaintain',

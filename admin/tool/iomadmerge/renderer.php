@@ -31,7 +31,6 @@
  * @author     John Hoopes <hoopes@wisc.edu>, University of Wisconsin - Madison
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once __DIR__ . '/select_form.php';
@@ -42,7 +41,7 @@ require_once($CFG->dirroot . '/'.$CFG->admin.'/tool/iomadmerge/lib.php');
  * Renderer for the merge user plugin.
  *
  * @package    tool
- * @subpackage iomadmerge
+ * @subpackage mergeuser
  * @copyright  2013 Jordi Pujol-Ahulló, SREd, Universitat Rovira i Virgili
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -113,7 +112,7 @@ class tool_iomadmerge_renderer extends plugin_renderer_base
      * @param UserSelectTable $ust table for users to merge after searching
      * @return string html to show on index page.
      */
-    public function index_page(moodleform $mform, $step, UserSelectTable $ust = NULL)
+    public function index_page(moodleform $mform, $step, UserSelectTable $ust = null)
     {
         $output = $this->header();
         $output .= $this->heading_with_help(get_string('iomadmerge', 'tool_iomadmerge'), 'header', 'tool_iomadmerge');
@@ -127,7 +126,7 @@ class tool_iomadmerge_renderer extends plugin_renderer_base
             case self::INDEX_PAGE_SEARCH_AND_SELECT_STEP:
                 $output .= $this->moodleform($mform);
                 // Render user select table if available
-                if ($ust !== NULL) {
+                if ($ust !== null) {
                     $this->page->requires->js_init_call('M.tool_iomadmerge.init_select_table', array());
                     $output .= $this->render_user_select_table($ust);
                 }
