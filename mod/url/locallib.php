@@ -555,9 +555,10 @@ function url_guess_icon($fullurl, $size = null) {
     $icon = file_extension_icon($fullurl, $size);
     $htmlicon = file_extension_icon('.htm', $size);
     $unknownicon = file_extension_icon('', $size);
+    $phpicon = file_extension_icon('.php', $size); // Exception for php files.
 
     // We do not want to return those icon types, the module icon is more appropriate.
-    if ($icon === $unknownicon || $icon === $htmlicon) {
+    if ($icon === $unknownicon || $icon === $htmlicon || $icon === $phpicon) {
         return null;
     }
 
