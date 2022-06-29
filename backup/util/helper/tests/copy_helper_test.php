@@ -32,8 +32,9 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright  2020 onward The Moodle Users Association <https://moodleassociation.org/>
  * @author     Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \copy_helper
  */
-class course_copy_test extends \advanced_testcase {
+class copy_helper_test extends \advanced_testcase {
 
     /**
      *
@@ -144,7 +145,149 @@ class course_copy_test extends \advanced_testcase {
     }
 
     /**
+     * Test process form data with invalid data.
+     *
+     * @covers ::process_formdata
+     */
+    public function test_process_formdata_missing_fields() {
+        $this->expectException(\moodle_exception::class);
+        \copy_helper::process_formdata(new \stdClass);
+    }
+
+    /**
+     * Test processing form data.
+     *
+     * @covers ::process_formdata
+     */
+    public function test_process_formdata() {
+        $validformdata = [
+            'courseid' => 1729,
+            'fullname' => 'Taxicab Numbers',
+            'shortname' => 'Taxi101',
+            'category' => 2,
+            'visible' => 1,
+            'startdate' => 87539319,
+            'enddate' => 6963472309248,
+            'idnumber' => 1730,
+            'userdata' => 1
+        ];
+
+        $roles = [
+            'role_one' => 1,
+            'role_two' => 2,
+            'role_three' => 0
+        ];
+
+        $expected = (object)array_merge($validformdata, ['keptroles' => []]);
+        $expected->keptroles = [1, 2];
+        $processed = \copy_helper::process_formdata(
+            (object)array_merge(
+                $validformdata,
+                $roles,
+                ['extra' => 'stuff', 'remove' => 'this'])
+        );
+
+        $this->assertEquals($expected, $processed);
+    }
+
+    /**
+     * Test orphaned controller cleanup.
+     *
+     * @covers ::cleanup_orphaned_copy_controllers
+     */
+    public function test_cleanup_orphaned_copy_controllers() {
+        global $DB;
+
+        // Mock up the form data.
+        $formdata = new \stdClass;
+        $formdata->courseid = $this->course->id;
+        $formdata->fullname = 'foo';
+        $formdata->shortname = 'data1';
+        $formdata->category = 1;
+        $formdata->visible = 1;
+        $formdata->startdate = 1582376400;
+        $formdata->enddate = 0;
+        $formdata->idnumber = 123;
+        $formdata->userdata = 1;
+        $formdata->role_1 = 1;
+        $formdata->role_3 = 3;
+        $formdata->role_5 = 5;
+
+        $copies = [];
+        for ($i = 0; $i < 5; $i++) {
+            $formdata->shortname = 'data' . $i;
+            $copies[] = \copy_helper::create_copy($formdata);
+        }
+
+        // Delete one of the restore controllers. Simulates a situation where copy creation
+        // interrupted and the restore controller never gets created.
+        $DB->delete_records('backup_controllers', ['backupid' => $copies[0]['restoreid']]);
+
+        // Set a backup/restore controller pair to be in an intermediate state.
+        \backup_controller::load_controller($copies[2]['backupid'])->set_status(backup::STATUS_FINISHED_OK);
+
+        // Set a backup/restore controller pair to completed.
+        \backup_controller::load_controller($copies[3]['backupid'])->set_status(backup::STATUS_FINISHED_OK);
+        \restore_controller::load_controller($copies[3]['restoreid'])->set_status(backup::STATUS_FINISHED_OK);
+
+        // Set a backup/restore controller pair to have a failed backup.
+        \backup_controller::load_controller($copies[4]['backupid'])->set_status(backup::STATUS_FINISHED_ERR);
+
+        // Create some backup/restore controllers that are unrelated to course copies.
+        $bc = new \backup_controller(backup::TYPE_1COURSE, 1, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_ASYNC,
+                2, backup::RELEASESESSION_YES);
+        $rc = new \restore_controller('restore-test-1729', 1, backup::INTERACTIVE_NO, backup::MODE_ASYNC, 1, 2);
+        $rc->save_controller();
+        $unrelatedvanillacontrollers = ['backupid' => $bc->get_backupid(), 'restoreid' => $rc->get_restoreid()];
+
+        $bc = new \backup_controller(backup::TYPE_1COURSE, 1, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_ASYNC,
+                2, backup::RELEASESESSION_YES);
+        $rc = new \restore_controller('restore-test-1729', 1, backup::INTERACTIVE_NO, backup::MODE_ASYNC, 1, 2);
+        $bc->set_status(backup::STATUS_FINISHED_OK);
+        $rc->set_status(backup::STATUS_FINISHED_OK);
+        $unrelatedfinishedcontrollers = ['backupid' => $bc->get_backupid(), 'restoreid' => $rc->get_restoreid()];
+
+        $bc = new \backup_controller(backup::TYPE_1COURSE, 1, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_ASYNC,
+                2, backup::RELEASESESSION_YES);
+        $rc = new \restore_controller('restore-test-1729', 1, backup::INTERACTIVE_NO, backup::MODE_ASYNC, 1, 2);
+        $bc->set_status(backup::STATUS_FINISHED_ERR);
+        $rc->set_status(backup::STATUS_FINISHED_ERR);
+        $unrelatedfailedcontrollers = ['backupid' => $bc->get_backupid(), 'restoreid' => $rc->get_restoreid()];
+
+        // Clean up the backup_controllers table.
+        $records = $DB->get_records('backup_controllers', null, '', 'id, backupid, status, operation, purpose, timecreated');
+        \copy_helper::cleanup_orphaned_copy_controllers($records, 0);
+
+        // Retrieve them again and check.
+        $records = $DB->get_records('backup_controllers', null, '', 'backupid, status');
+
+        // Verify the backup associated with the deleted restore is marked as failed.
+        $this->assertEquals(backup::STATUS_FINISHED_ERR, $records[$copies[0]['backupid']]->status);
+
+        // Verify other controllers remain untouched.
+        $this->assertEquals(backup::STATUS_AWAITING, $records[$copies[1]['backupid']]->status);
+        $this->assertEquals(backup::STATUS_REQUIRE_CONV, $records[$copies[1]['restoreid']]->status);
+        $this->assertEquals(backup::STATUS_FINISHED_OK, $records[$copies[2]['backupid']]->status);
+        $this->assertEquals(backup::STATUS_REQUIRE_CONV, $records[$copies[2]['restoreid']]->status);
+        $this->assertEquals(backup::STATUS_FINISHED_OK, $records[$copies[3]['restoreid']]->status);
+        $this->assertEquals(backup::STATUS_FINISHED_OK, $records[$copies[3]['backupid']]->status);
+
+        // Verify that the restore associated with the failed backup is also marked as failed.
+        $this->assertEquals(backup::STATUS_FINISHED_ERR, $records[$copies[4]['restoreid']]->status);
+
+        // Verify that the unrelated controllers remain unchanged.
+        $this->assertEquals(backup::STATUS_AWAITING, $records[$unrelatedvanillacontrollers['backupid']]->status);
+        $this->assertEquals(backup::STATUS_REQUIRE_CONV, $records[$unrelatedvanillacontrollers['restoreid']]->status);
+        $this->assertEquals(backup::STATUS_FINISHED_OK, $records[$unrelatedfinishedcontrollers['backupid']]->status);
+        $this->assertEquals(backup::STATUS_FINISHED_OK, $records[$unrelatedfinishedcontrollers['restoreid']]->status);
+        $this->assertEquals(backup::STATUS_FINISHED_ERR, $records[$unrelatedfailedcontrollers['backupid']]->status);
+        $this->assertEquals(backup::STATUS_FINISHED_ERR, $records[$unrelatedfailedcontrollers['restoreid']]->status);
+    }
+
+    /**
      * Test creating a course copy.
+     *
+     * @covers ::create_copy
      */
     public function test_create_copy() {
 
@@ -163,15 +306,14 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
 
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $result = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $result = \copy_helper::create_copy($copydata);
 
         // Load the controllers, to extract the data we need.
         $bc = \backup_controller::load_controller($result['backupid']);
         $rc = \restore_controller::load_controller($result['restoreid']);
 
         // Check the backup controller.
-        $this->assertEquals($result, $bc->get_copy()->copyids);
         $this->assertEquals(backup::MODE_COPY, $bc->get_mode());
         $this->assertEquals($this->course->id, $bc->get_courseid());
         $this->assertEquals(backup::TYPE_1COURSE, $bc->get_type());
@@ -180,7 +322,6 @@ class course_copy_test extends \advanced_testcase {
         $newcourseid = $rc->get_courseid();
         $newcourse = get_course($newcourseid);
 
-        $this->assertEquals($result, $rc->get_copy()->copyids);
         $this->assertEquals(get_string('copyingcourse', 'backup'), $newcourse->fullname);
         $this->assertEquals(get_string('copyingcourseshortname', 'backup'), $newcourse->shortname);
         $this->assertEquals(backup::MODE_COPY, $rc->get_mode());
@@ -199,6 +340,8 @@ class course_copy_test extends \advanced_testcase {
 
     /**
      * Test getting the current copies.
+     *
+     * @covers ::get_copies
      */
     public function test_get_copies() {
         global $USER;
@@ -222,11 +365,11 @@ class course_copy_test extends \advanced_testcase {
         $formdata2->shortname = 'tree';
 
         // Create some copies.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $result = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $result = \copy_helper::create_copy($copydata);
 
         // Backup, awaiting.
-        $copies = \core_backup\copy\copy::get_copies($USER->id);
+        $copies = \copy_helper::get_copies($USER->id);
         $this->assertEquals($result['backupid'], $copies[0]->backupid);
         $this->assertEquals($result['restoreid'], $copies[0]->restoreid);
         $this->assertEquals(\backup::STATUS_AWAITING, $copies[0]->status);
@@ -236,7 +379,7 @@ class course_copy_test extends \advanced_testcase {
 
         // Backup, in progress.
         $bc->set_status(\backup::STATUS_EXECUTING);
-        $copies = \core_backup\copy\copy::get_copies($USER->id);
+        $copies = \copy_helper::get_copies($USER->id);
         $this->assertEquals($result['backupid'], $copies[0]->backupid);
         $this->assertEquals($result['restoreid'], $copies[0]->restoreid);
         $this->assertEquals(\backup::STATUS_EXECUTING, $copies[0]->status);
@@ -244,19 +387,19 @@ class course_copy_test extends \advanced_testcase {
 
         // Restore, ready to process.
         $bc->set_status(\backup::STATUS_FINISHED_OK);
-        $copies = \core_backup\copy\copy::get_copies($USER->id);
-        $this->assertEquals($result['backupid'], $copies[0]->backupid);
+        $copies = \copy_helper::get_copies($USER->id);
+        $this->assertEquals(null, $copies[0]->backupid);
         $this->assertEquals($result['restoreid'], $copies[0]->restoreid);
         $this->assertEquals(\backup::STATUS_REQUIRE_CONV, $copies[0]->status);
         $this->assertEquals(\backup::OPERATION_RESTORE, $copies[0]->operation);
 
         // No records.
         $bc->set_status(\backup::STATUS_FINISHED_ERR);
-        $copies = \core_backup\copy\copy::get_copies($USER->id);
+        $copies = \copy_helper::get_copies($USER->id);
         $this->assertEmpty($copies);
 
-        $coursecopy2 = new \core_backup\copy\copy($formdata2);
-        $result2 = $coursecopy2->create_copy();
+        $copydata2 = \copy_helper::process_formdata($formdata2);
+        $result2 = \copy_helper::create_copy($copydata2);
         // Set the second copy to be complete.
         $bc = \backup_controller::load_controller($result2['backupid']);
         $bc->set_status(\backup::STATUS_FINISHED_OK);
@@ -265,12 +408,73 @@ class course_copy_test extends \advanced_testcase {
         $rc->set_status(\backup::STATUS_FINISHED_OK);
 
         // No records.
-        $copies = \core_backup\copy\copy::get_copies($USER->id);
+        $copies = \copy_helper::get_copies($USER->id);
         $this->assertEmpty($copies);
     }
 
     /**
+     * Test getting the current copies when they are in an invalid state.
+     *
+     * @covers ::get_copies
+     */
+    public function test_get_copies_invalid_state() {
+        global $DB, $USER;
+
+        // Mock up the form data.
+        $formdata = new \stdClass;
+        $formdata->courseid = $this->course->id;
+        $formdata->fullname = 'foo';
+        $formdata->shortname = 'bar';
+        $formdata->category = 1;
+        $formdata->visible = 1;
+        $formdata->startdate = 1582376400;
+        $formdata->enddate = 0;
+        $formdata->idnumber = '';
+        $formdata->userdata = 1;
+        $formdata->role_1 = 1;
+        $formdata->role_3 = 3;
+        $formdata->role_5 = 5;
+
+        $formdata2 = clone ($formdata);
+        $formdata2->shortname = 'tree';
+
+        // Create some copies.
+        $copydata = \copy_helper::process_formdata($formdata);
+        $result = \copy_helper::create_copy($copydata);
+        $copydata2 = \copy_helper::process_formdata($formdata2);
+        $result2 = \copy_helper::create_copy($copydata2);
+
+        $copies = \copy_helper::get_copies($USER->id);
+
+        // Verify get_copies gives back both backup controllers.
+        $this->assertEqualsCanonicalizing([$result['backupid'], $result2['backupid']], array_column($copies, 'backupid'));
+
+        // Set one of the backup controllers to failed, this should cause it to not be present.
+        \backup_controller::load_controller($result['backupid'])->set_status(backup::STATUS_FINISHED_ERR);
+        $copies = \copy_helper::get_copies($USER->id);
+
+        // Verify there is only one backup listed, and that it is not the failed one.
+        $this->assertEqualsCanonicalizing([$result2['backupid']], array_column($copies, 'backupid'));
+
+        // Set the controller back to awaiting.
+        \backup_controller::load_controller($result['backupid'])->set_status(backup::STATUS_AWAITING);
+        $copies = \copy_helper::get_copies($USER->id);
+
+        // Verify both backup controllers are back.
+        $this->assertEqualsCanonicalizing([$result['backupid'], $result2['backupid']], array_column($copies, 'backupid'));
+
+        // Delete the restore controller for one of the copies, this should cause it to not be present.
+        $DB->delete_records('backup_controllers', ['backupid' => $result['restoreid']]);
+        $copies = \copy_helper::get_copies($USER->id);
+
+        // Verify there is only one backup listed, and that it is not the failed one.
+        $this->assertEqualsCanonicalizing([$result2['backupid']], array_column($copies, 'backupid'));
+    }
+
+    /**
      * Test getting the current copies for specific course.
+     *
+     * @covers ::get_copies
      */
     public function test_get_copies_course() {
         global $USER;
@@ -291,16 +495,18 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 5;
 
         // Create some copies.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        \copy_helper::create_copy($copydata);
 
         // No copies match this course id.
-        $copies = \core_backup\copy\copy::get_copies($USER->id, ($this->course->id + 1));
+        $copies = \copy_helper::get_copies($USER->id, ($this->course->id + 1));
         $this->assertEmpty($copies);
     }
 
     /**
      * Test getting the current copies if course has been deleted.
+     *
+     * @covers ::get_copies
      */
     public function test_get_copies_course_deleted() {
         global $USER;
@@ -321,17 +527,17 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 5;
 
         // Create some copies.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        \copy_helper::create_copy($copydata);
 
         delete_course($this->course->id, false);
 
         // No copies match this course id as it has been deleted.
-        $copies = \core_backup\copy\copy::get_copies($USER->id, ($this->course->id));
+        $copies = \copy_helper::get_copies($USER->id, ($this->course->id));
         $this->assertEmpty($copies);
     }
 
-    /*
+    /**
      * Test course copy.
      */
     public function test_course_copy() {
@@ -353,8 +559,8 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 5;
 
         // Create the course copy records and associated ad-hoc task.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $copyids = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $copyids = \copy_helper::create_copy($copydata);
 
         $courseid = $this->course->id;
 
@@ -408,7 +614,7 @@ class course_copy_test extends \advanced_testcase {
         $this->assertEquals(2, count($discussions));
     }
 
-    /*
+    /**
      * Test course copy, not including any users (or data).
      */
     public function test_course_copy_no_users() {
@@ -430,8 +636,8 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 0;
 
         // Create the course copy records and associated ad-hoc task.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $copyids = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $copyids = \copy_helper::create_copy($copydata);
 
         $courseid = $this->course->id;
 
@@ -477,7 +683,7 @@ class course_copy_test extends \advanced_testcase {
 
     }
 
-    /*
+    /**
      * Test course copy, including students and their data.
      */
     public function test_course_copy_students_data() {
@@ -499,8 +705,8 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 5;
 
         // Create the course copy records and associated ad-hoc task.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $copyids = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $copyids = \copy_helper::create_copy($copydata);
 
         $courseid = $this->course->id;
 
@@ -546,7 +752,7 @@ class course_copy_test extends \advanced_testcase {
         $this->assertEquals($this->courseusers[0], $users[$this->courseusers[0]]->id);
     }
 
-    /*
+    /**
      * Test course copy, not including any users (or data).
      */
     public function test_course_copy_no_data() {
@@ -568,8 +774,8 @@ class course_copy_test extends \advanced_testcase {
         $formdata->role_5 = 5;
 
         // Create the course copy records and associated ad-hoc task.
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $copyids = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $copyids = \copy_helper::create_copy($copydata);
 
         $courseid = $this->course->id;
 
@@ -614,7 +820,7 @@ class course_copy_test extends \advanced_testcase {
         $this->assertEquals(count($this->courseusers), count($users));
     }
 
-    /*
+    /**
      * Test instantiation with incomplete formdata.
      */
     public function test_malformed_instantiation() {
@@ -627,6 +833,7 @@ class course_copy_test extends \advanced_testcase {
 
         // Expect and exception as form data is incomplete.
         $this->expectException(\moodle_exception::class);
-        new \core_backup\copy\copy($formdata);
+        $copydata = \copy_helper::process_formdata($formdata);
+        \copy_helper::create_copy($copydata);
     }
 }

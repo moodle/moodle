@@ -388,8 +388,8 @@ class core_backup_external extends external_api {
 
         if ($mdata) {
             // Create the copy task.
-            $backupcopy = new \core_backup\copy\copy($mdata);
-            $copyids = $backupcopy->create_copy();
+            $copydata = \copy_helper::process_formdata($mdata);
+            $copyids = \copy_helper::create_copy($copydata);
         } else {
             throw new moodle_exception('copyformfail', 'backup');
         }
