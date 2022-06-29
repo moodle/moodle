@@ -54,12 +54,14 @@ function local_mymedia_extend_navigation($navigation) {
         return;
     }
 
-    if (strpos($CFG->custommenuitems,'My Media') !== false)
+    $menuHeaderStr = get_string('nav_mymedia', 'local_mymedia');
+
+    if (strpos($CFG->custommenuitems,$menuHeaderStr) !== false)
 	{
 		//My Media is already part of the config, no need to add it again.
 		return;
 	}
 
-	$myMediaStr = "\nMy Media|/local/mymedia/mymedia.php";
+	$myMediaStr = "\n$menuHeaderStr|/local/mymedia/mymedia.php";
 	$CFG->custommenuitems .= $myMediaStr;
 }
