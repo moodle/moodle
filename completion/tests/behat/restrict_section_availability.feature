@@ -34,9 +34,9 @@ Feature: Restrict sections availability through completion or grade conditions
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
-    And I add a "Label" to section "1" and I fill the form with:
-      | Label text | Test label |
-      | Completion tracking | Students can manually mark the activity as completed |
+    And the following "activities" exist:
+      | activity | course | section | intro      | completion | idnumber |
+      | label    | C1     | 1       | Test label | 1          | 1        |
     And I add a "Page" to section "2" and I fill the form with:
       | Name | Test page name |
       | Description | Test page description |
