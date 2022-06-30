@@ -547,8 +547,9 @@ class quiz {
                 if (!isset($qcategories[$questiondata->category])) {
                     $qcategories[$questiondata->category] = false;
                 }
-                if ($questiondata->includingsubcategories) {
-                    $qcategories[$questiondata->category] = true;
+                if (!empty($questiondata->filtercondition)) {
+                    $filtercondition = json_decode($questiondata->filtercondition);
+                    $qcategories[$questiondata->category] = !empty($filtercondition->includingsubcategories);
                 }
             } else {
                 if (!in_array($questiondata->qtype, $questiontypes)) {
