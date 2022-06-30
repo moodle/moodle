@@ -15018,6 +15018,10 @@ body.drawer-ease {
 @media (min-width: 992px) {
   .drawer {
     z-index: inherit; }
+    .drawer#theme_boost-drawers-blocks:focus-within {
+      position: absolute; }
+      .drawer#theme_boost-drawers-blocks:focus-within .drawercontent {
+        z-index: auto; }
     .drawer.not-initialized {
       display: block; } }
 

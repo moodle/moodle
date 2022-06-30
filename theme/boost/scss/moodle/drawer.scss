@@ -223,6 +223,15 @@ $right-drawer-width: 320px;
     .drawer {
         z-index: inherit;
 
+        // Workaround to display the skip link elements from the blocks drawer infront of the navbar.
+        &#theme_boost-drawers-blocks:focus-within {
+            position: absolute;
+
+            .drawercontent {
+                z-index: auto;
+            }
+        }
+
         &.not-initialized {
             display: block;
         }
