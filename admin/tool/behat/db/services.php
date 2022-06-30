@@ -15,15 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * tool_behat version info
+ * Define web service functions for tool_behat
  *
- * @package    tool_behat
- * @copyright  2012 David Monllaó
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   tool_behat
+ * @copyright 2022 onwards Catalyst IT EU {@link https://catalyst-eu.net}
+ * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020061501;   // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2020060900;   // Requires this Moodle version
-$plugin->component = 'tool_behat'; // Full name of the plugin (used for diagnostics)
+$functions = [
+    'tool_behat_get_entity_generator' => [
+        'classname' => 'tool_behat\\external\\get_entity_generator',
+        'methodname' => 'execute',
+        'description' => 'Get the generator details for an entity',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities' => 'moodle/site:config'
+    ]
+];
