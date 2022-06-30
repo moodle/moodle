@@ -59,7 +59,7 @@ Feature: Activity completion in the quiz activity with unlocked and re-grading.
     When I am on the "Test quiz name" "quiz activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And I press "Unlock completion options"
+    And I press "Unlock completion settings"
     And I set the following fields to these values:
       | gradepass | 8 |
     And I press "Save and return to course"
