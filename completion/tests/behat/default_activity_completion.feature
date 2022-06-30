@@ -35,7 +35,7 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And I click on "Edit" "button"
     And I should see "Completion tracking"
     And I should see "The changes will affect the following 1 activities or resources:"
-    And I should see "Student must submit to this activity to complete it"
+    And I should see "Student must make a submission"
     And I set the following fields to these values:
       | completion | Show activity as complete when conditions are met|
       | completionview | 1 |
@@ -46,5 +46,5 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And I should see "With conditions" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
     And I should see "Student must view this activity to complete it" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
     And I should see "Student must receive a grade to complete this activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
-    And I should see "Student must submit to this activity to complete it" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
+    And I should see "Student must make a submission" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
     And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
