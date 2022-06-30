@@ -12037,26 +12037,58 @@ input[disabled] {
 .alert-primary a {
   color: #041d34; }
 
+.alert-primary .close {
+  color: #000305;
+  opacity: 0.6; }
+
 .alert-secondary a {
   color: #525557; }
+
+.alert-secondary .close {
+  color: #393b3d;
+  opacity: 0.6; }
 
 .alert-success a, .environmenttable .ok a {
   color: #0c1b0b; }
 
+.alert-success .close, .environmenttable .ok .close {
+  color: black;
+  opacity: 0.6; }
+
 .alert-info a {
   color: #00171b; }
+
+.alert-info .close {
+  color: black;
+  opacity: 0.6; }
 
 .alert-warning a, .environmenttable .warn a {
   color: #573e1c; }
 
+.alert-warning .close, .environmenttable .warn .close {
+  color: #302310;
+  opacity: 0.6; }
+
 .alert-danger a, .environmenttable .error a {
   color: #3d0f0a; }
+
+.alert-danger .close, .environmenttable .error .close {
+  color: #110403;
+  opacity: 0.6; }
 
 .alert-light a {
   color: #686868; }
 
+.alert-light .close {
+  color: #4e4e4f;
+  opacity: 0.6; }
+
 .alert-dark a {
   color: #040505; }
+
+.alert-dark .close {
+  color: black;
+  opacity: 0.6; }
 
 .alert a {
   font-weight: 700; }
