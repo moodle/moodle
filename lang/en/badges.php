@@ -154,10 +154,10 @@ Note: For recipient verification purposes, please avoid changing this setting on
 $string['badgesdisabled'] = 'Badges are not enabled on this site.';
 $string['badgesearned'] = 'Number of badges earned: {$a}';
 $string['badgesettings'] = 'Badges settings';
-$string['badgestatus_0'] = 'Not available to users';
-$string['badgestatus_1'] = 'Available to users';
-$string['badgestatus_2'] = 'Not available to users';
-$string['badgestatus_3'] = 'Available to users';
+$string['badgestatus_0'] = 'Not available';
+$string['badgestatus_1'] = 'Available';
+$string['badgestatus_2'] = 'Not available (criteria locked)';
+$string['badgestatus_3'] = 'Available (criteria locked)';
 $string['badgestatus_4'] = 'Archived';
 $string['badgestoearn'] = 'Number of badges available: {$a}';
 $string['badgesview'] = 'Course badges';
