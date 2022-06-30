@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/behat/classes/behat_generator_base.php');
+
 /**
  * Renderer for behat tool web features
  *
@@ -103,6 +105,32 @@ class tool_behat_renderer extends plugin_renderer_base {
 
                     $output = html_writer::tag('a', 'FIELD_VALUE_STRING', $attributes);
                     return html_writer::tag('span', $output, array('class' => 'helptooltip'));
+                },
+                $stepsdefinitions
+            );
+
+            $elementstrings = [];
+            $count = 1;
+            $stepsdefinitions = preg_replace_callback('/(the following ")ELEMENT\d?_STRING(" exist:)/',
+                function($matches) use (&$elementstrings, &$count) {
+                    // Replace element type arguments with a user-friendly select.
+                    if (empty($elementstrings)) {
+                        $behatgenerators = new behat_data_generators();
+                        $componententities = $behatgenerators->get_all_entities();
+                        ksort($componententities);
+                        $elementstrings = [];
+                        foreach ($componententities as $component => $entities) {
+                            asort($entities);
+                            foreach ($entities as $entity) {
+                                $string = ($component === 'core') ? $entity : $component . ' > ' . $entity;
+                                $elementstrings[$string] = $string;
+                            }
+                        }
+                    }
+                    $select = html_writer::select($elementstrings, 'entities' . $count, '', ['' => 'choosedots'],
+                            ['class' => 'entities']);
+                    $count++;
+                    return $matches[1] . $select . $matches[2];
                 },
                 $stepsdefinitions
             );
