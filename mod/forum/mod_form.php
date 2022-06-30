@@ -126,10 +126,6 @@ class mod_forum_mod_form extends moodleform_mod {
         }
         $mform->setDefault('trackingtype', $default);
 
-        $mform->addElement('checkbox', 'usecoursefullname', get_string('usecoursefullname', 'forum'), null);
-        $mform->addHelpButton('usecoursefullname', 'usecoursefullname', 'forum');
-        $mform->setDefault('usecoursefullname', $CFG->forum_usecoursefullname);
-
         if ($CFG->enablerssfeeds && isset($CFG->forum_enablerssfeeds) && $CFG->forum_enablerssfeeds) {
 //-------------------------------------------------------------------------------
             $mform->addElement('header', 'rssheader', get_string('rss'));

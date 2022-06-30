@@ -90,7 +90,6 @@ class entities_forum_test extends \advanced_testcase {
         $lockdiscussionafter = 0;
         $duedate = 0;
         $cutoffdate = 0;
-        $usecoursefullname = 0;
         $sendnotification = false;
         $forum = new forum_entity(
             $context,
@@ -125,8 +124,7 @@ class entities_forum_test extends \advanced_testcase {
             $displaywordcount,
             $lockdiscussionafter,
             $duedate,
-            $cutoffdate,
-            $usecoursefullname
+            $cutoffdate
         );
 
         $this->assertEquals($context, $forum->get_context());
@@ -169,6 +167,5 @@ class entities_forum_test extends \advanced_testcase {
         $this->assertEquals(false, $forum->is_due_date_reached());
         $this->assertEquals(false, $forum->has_cutoff_date());
         $this->assertEquals(false, $forum->is_cutoff_date_reached());
-        $this->assertEquals(false, $forum->use_course_fullname());
     }
 }

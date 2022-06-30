@@ -104,8 +104,7 @@ class entity {
             $record->displaywordcount,
             $record->lockdiscussionafter,
             $record->duedate,
-            $record->cutoffdate,
-            $record->usecoursefullname ?? false
+            $record->cutoffdate
         );
     }
 
