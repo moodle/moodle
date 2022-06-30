@@ -29,3 +29,9 @@
 #page-admin-tool-behat-index .steps-definitions .stepregex {
     color: #060;
 }
+
+#page-admin-tool-behat-index .steprequiredfields {
+    font-weight: bold;
+    font-size: 1em;
+    margin-top: 1em;
+}
