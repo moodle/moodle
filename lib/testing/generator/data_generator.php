@@ -1011,6 +1011,57 @@ EOD;
     }
 
     /**
+     * Create a grade_grade.
+     *
+     * @param array $record
+     * @return grade_grade the grade record
+     */
+    public function create_grade_grade(?array $record = null): grade_grade {
+        global $DB, $USER;
+
+        $item = $DB->get_record('grade_items', ['id' => $record['itemid']]);
+        $userid = $record['userid'] ?? $USER->id;
+
+        unset($record['itemid']);
+        unset($record['userid']);
+
+        if ($item->itemtype === 'mod') {
+            $cm = get_coursemodule_from_instance($item->itemmodule, $item->iteminstance);
+            $module = new $item->itemmodule(context_module::instance($cm->id), $cm, false);
+            $record['attemptnumber'] = $record['attemptnumber'] ?? 0;
+
+            $module->save_grade($userid, (object) $record);
+
+            $grade = grade_grade::fetch(['userid' => $userid, 'itemid' => $item->id]);
+        } else {
+            $grade = grade_grade::fetch(['userid' => $userid, 'itemid' => $item->id]);
+            $record['rawgrade'] = $record['rawgrade'] ?? $record['grade'] ?? null;
+            $record['finalgrade'] = $record['finalgrade'] ?? $record['grade'] ?? null;
+
+            unset($record['grade']);
+
+            if ($grade) {
+                $fields = $grade->required_fields + array_keys($grade->optional_fields);
+
+                foreach ($fields as $field) {
+                    $grade->{$field} = $record[$field] ?? $grade->{$field};
+                }
+
+                $grade->update();
+            } else {
+                $record['userid'] = $userid;
+                $record['itemid'] = $item->id;
+
+                $grade = new grade_grade($record, false);
+
+                $grade->insert();
+            }
+        }
+
+        return $grade;
+    }
+
+    /**
      * Create a grade_item.
      *
      * @param array|stdClass $record
