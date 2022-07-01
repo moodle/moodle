@@ -14,13 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for /lib/filestorage/zip_archive.php.
- *
- * @package   core_files
- * @copyright 2020 Université Rennes 2 {@link https://www.univ-rennes2.fr}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
+
+use zip_archive;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,11 +27,11 @@ require_once($CFG->libdir . '/filestorage/zip_archive.php');
 /**
  * Unit tests for /lib/filestorage/zip_archive.php.
  *
- * @package   core_files
+ * @package   core
  * @copyright 2020 Université Rennes 2 {@link https://www.univ-rennes2.fr}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filestorage_zip_archive_testcase extends advanced_testcase {
+class filestorage_zip_archive_test extends \advanced_testcase {
     /**
      * Test mangle_pathname() method.
      *
@@ -47,7 +43,7 @@ class filestorage_zip_archive_testcase extends advanced_testcase {
     public function test_mangle_pathname($string, $expected) {
         $ziparchive = new zip_archive();
 
-        $method = new ReflectionMethod('zip_archive', 'mangle_pathname');
+        $method = new \ReflectionMethod('zip_archive', 'mangle_pathname');
         $method->setAccessible(true);
 
         $result = $method->invoke($ziparchive, $string);

@@ -14,33 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains the unittests for scheduled tasks.
- *
- * @package   core
- * @category  phpunit
- * @copyright 2013 Damyon Wiese
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core\task;
 
 defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__ . '/fixtures/task_fixtures.php');
+require_once(__DIR__ . '/../fixtures/task_fixtures.php');
 
 /**
  * Test class for scheduled task.
  *
  * @package core
- * @category task
+ * @category test
  * @copyright 2013 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_scheduled_task_testcase extends advanced_testcase {
+class scheduled_task_test extends \advanced_testcase {
 
     /**
      * Test the cron scheduling method
      */
     public function test_eval_cron_field() {
-        $testclass = new \core\task\scheduled_test_task();
+        $testclass = new scheduled_test_task();
 
         $this->assertEquals(20, count($testclass->eval_cron_field('*/3', 0, 59)));
         $this->assertEquals(31, count($testclass->eval_cron_field('1,*/2', 0, 59)));
@@ -62,7 +55,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $testhour = 1;
 
         // Test job run at 1 am.
-        $testclass = new \core\task\scheduled_test_task();
+        $testclass = new scheduled_test_task();
 
         // All fields default to '*'.
         $testclass->set_hour($testhour);
@@ -70,7 +63,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Next valid time should be 1am of the next day.
         $nexttime = $testclass->get_next_scheduled_time();
 
-        $oneamdate = new DateTime('now', new DateTimeZone('Europe/London'));
+        $oneamdate = new \DateTime('now', new \DateTimeZone('Europe/London'));
         $oneamdate->setTime($testhour, 0, 0);
 
         // Once a year (currently last Sunday of March), when changing to Daylight Saving Time,
@@ -85,10 +78,10 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         // Make it 1 am tomorrow if the time is after 1am.
         if ($oneamdate->getTimestamp() < time()) {
-            $oneamdate->add(new DateInterval('P1D'));
+            $oneamdate->add(new \DateInterval('P1D'));
             if ($isdaylightsaving) {
                 // If today is Europe/London Daylight Saving Time Begins, expectation is 1 less hour.
-                $oneamdate->sub(new DateInterval('PT1H'));
+                $oneamdate->sub(new \DateInterval('PT1H'));
             }
         }
         $oneam = $oneamdate->getTimestamp();
@@ -101,7 +94,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->assertEquals($oneam, $nexttime, 'Next scheduled time is 1am.');
 
         // Now test for job run every 10 minutes.
-        $testclass = new \core\task\scheduled_test_task();
+        $testclass = new scheduled_test_task();
 
         // All fields default to '*'.
         $testclass->set_minute('*/10');
@@ -119,7 +112,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->assertEquals($nexttenminutes, $nexttime, 'Next scheduled time is in 10 minutes.');
 
         // Test hourly job executed on Sundays only.
-        $testclass = new \core\task\scheduled_test_task();
+        $testclass = new scheduled_test_task();
         $testclass->set_minute('0');
         $testclass->set_day_of_week('7');
 
@@ -128,8 +121,8 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->assertEquals(7, date('N', $nexttime));
         $this->assertEquals(0, date('i', $nexttime));
 
-        // Test monthly job
-        $testclass = new \core\task\scheduled_test_task();
+        // Test monthly job.
+        $testclass = new scheduled_test_task();
         $testclass->set_minute('32');
         $testclass->set_hour('0');
         $testclass->set_day('1');
@@ -149,7 +142,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         $this->setTimezone('Asia/Kabul');
 
-        $testclass = new \core\task\scheduled_test_task();
+        $testclass = new scheduled_test_task();
 
         // Scheduled tasks should always use servertime - so this is 03:30 GMT.
         $testclass->set_hour('1');
@@ -165,13 +158,13 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Should be displayed in user timezone.
         // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20160502T01&p1=113
         // setting my location to Kathmandu to verify this time.
-        $this->assertStringContainsString('2:15 AM', core_text::strtoupper($userdate));
+        $this->assertStringContainsString('2:15 AM', \core_text::strtoupper($userdate));
     }
 
     public function test_reset_scheduled_tasks_for_component_customised(): void {
         $this->resetAfterTest(true);
 
-        $tasks = \core\task\manager::load_scheduled_tasks_for_component('moodle');
+        $tasks = manager::load_scheduled_tasks_for_component('moodle');
 
         // Customise a task.
         $task = reset($tasks);
@@ -181,13 +174,13 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $task->set_month('4');
         $task->set_day_of_week('5');
         $task->set_customised('1');
-        \core\task\manager::configure_scheduled_task($task);
+        manager::configure_scheduled_task($task);
 
         // Now call reset.
-        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+        manager::reset_scheduled_tasks_for_component('moodle');
 
         // Fetch the task again.
-        $taskafterreset = \core\task\manager::get_scheduled_task(get_class($task));
+        $taskafterreset = manager::get_scheduled_task(get_class($task));
 
         // The task should still be the same as the customised.
         $this->assertTaskEquals($task, $taskafterreset);
@@ -198,23 +191,23 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         // Delete a task to simulate the fact that its new.
-        $tasklist = \core\task\manager::load_scheduled_tasks_for_component('moodle');
+        $tasklist = manager::load_scheduled_tasks_for_component('moodle');
 
         // Note: This test must use a task which does not use any random values.
-        $task = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+        $task = manager::get_scheduled_task(session_cleanup_task::class);
 
         $DB->delete_records('task_scheduled', array('classname' => '\\' . trim(get_class($task), '\\')));
-        $this->assertFalse(\core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class));
+        $this->assertFalse(manager::get_scheduled_task(session_cleanup_task::class));
 
         // Now call reset on all the tasks.
-        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+        manager::reset_scheduled_tasks_for_component('moodle');
 
         // Assert that the second task was added back.
-        $taskafterreset = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+        $taskafterreset = manager::get_scheduled_task(session_cleanup_task::class);
         $this->assertNotFalse($taskafterreset);
 
         $this->assertTaskEquals($task, $taskafterreset);
-        $this->assertCount(count($tasklist), \core\task\manager::load_scheduled_tasks_for_component('moodle'));
+        $this->assertCount(count($tasklist), manager::load_scheduled_tasks_for_component('moodle'));
     }
 
     public function test_reset_scheduled_tasks_for_component_changed_in_source(): void {
@@ -222,10 +215,10 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         // Delete a task to simulate the fact that its new.
         // Note: This test must use a task which does not use any random values.
-        $task = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+        $task = manager::get_scheduled_task(session_cleanup_task::class);
 
         // Get a copy of the task before maing changes for later comparison.
-        $taskbeforechange = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+        $taskbeforechange = manager::get_scheduled_task(session_cleanup_task::class);
 
         // Edit a task to simulate a change in its definition (as if it was not customised).
         $task->set_minute('1');
@@ -233,19 +226,19 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $task->set_day('3');
         $task->set_month('4');
         $task->set_day_of_week('5');
-        \core\task\manager::configure_scheduled_task($task);
+        manager::configure_scheduled_task($task);
 
         // Fetch the task out for comparison.
-        $taskafterchange = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+        $taskafterchange = manager::get_scheduled_task(session_cleanup_task::class);
 
         // The task should now be different to the original.
         $this->assertTaskNotEquals($taskbeforechange, $taskafterchange);
 
         // Now call reset.
-        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+        manager::reset_scheduled_tasks_for_component('moodle');
 
         // Fetch the task again.
-        $taskafterreset = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+        $taskafterreset = manager::get_scheduled_task(session_cleanup_task::class);
 
         // The task should now be the same as the original.
         $this->assertTaskEquals($taskbeforechange, $taskafterreset);
@@ -261,16 +254,16 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $count = $DB->count_records('task_scheduled', array('component' => 'moodle'));
         $allcount = $DB->count_records('task_scheduled');
 
-        $task = new \core\task\scheduled_test_task();
+        $task = new scheduled_test_task();
         $task->set_component('moodle');
-        $record = \core\task\manager::record_from_scheduled_task($task);
+        $record = manager::record_from_scheduled_task($task);
         $DB->insert_record('task_scheduled', $record);
         $this->assertTrue($DB->record_exists('task_scheduled', array('classname' => '\core\task\scheduled_test_task',
             'component' => 'moodle')));
 
-        $task = new \core\task\scheduled_test2_task();
+        $task = new scheduled_test2_task();
         $task->set_component('moodle');
-        $record = \core\task\manager::record_from_scheduled_task($task);
+        $record = manager::record_from_scheduled_task($task);
         $DB->insert_record('task_scheduled', $record);
         $this->assertTrue($DB->record_exists('task_scheduled', array('classname' => '\core\task\scheduled_test2_task',
             'component' => 'moodle')));
@@ -282,7 +275,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->assertEquals($allcount + 2, $afterallcount);
 
         // Now check that the right things were deleted.
-        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+        manager::reset_scheduled_tasks_for_component('moodle');
 
         $this->assertEquals($count, $DB->count_records('task_scheduled', array('component' => 'moodle')));
         $this->assertEquals($allcount, $DB->count_records('task_scheduled'));
@@ -301,7 +294,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Add a scheduled task.
 
         // A task that runs once per hour.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->blocking = true;
         $record->minute = '0';
         $record->hour = '0';
@@ -323,30 +316,30 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $now = time();
 
         // Should get handed the first task.
-        $task = \core\task\manager::get_next_scheduled_task($now);
+        $task = manager::get_next_scheduled_task($now);
         $this->assertInstanceOf('\core\task\scheduled_test_task', $task);
         $task->execute();
 
-        \core\task\manager::scheduled_task_complete($task);
+        manager::scheduled_task_complete($task);
         // Should get handed the second task.
-        $task = \core\task\manager::get_next_scheduled_task($now);
+        $task = manager::get_next_scheduled_task($now);
         $this->assertInstanceOf('\core\task\scheduled_test2_task', $task);
         $task->execute();
 
-        \core\task\manager::scheduled_task_failed($task);
+        manager::scheduled_task_failed($task);
         // Should not get any task.
-        $task = \core\task\manager::get_next_scheduled_task($now);
+        $task = manager::get_next_scheduled_task($now);
         $this->assertNull($task);
 
         // Should get the second task (retry after delay).
-        $task = \core\task\manager::get_next_scheduled_task($now + 120);
+        $task = manager::get_next_scheduled_task($now + 120);
         $this->assertInstanceOf('\core\task\scheduled_test2_task', $task);
         $task->execute();
 
-        \core\task\manager::scheduled_task_complete($task);
+        manager::scheduled_task_complete($task);
 
         // Should not get any task.
-        $task = \core\task\manager::get_next_scheduled_task($now);
+        $task = manager::get_next_scheduled_task($now);
         $this->assertNull($task);
 
         // Check ordering.
@@ -361,19 +354,19 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $DB->insert_record('task_scheduled', $record);
 
         // Should get handed the second task.
-        $task = \core\task\manager::get_next_scheduled_task($now);
+        $task = manager::get_next_scheduled_task($now);
         $this->assertInstanceOf('\core\task\scheduled_test2_task', $task);
         $task->execute();
-        \core\task\manager::scheduled_task_complete($task);
+        manager::scheduled_task_complete($task);
 
         // Should get handed the first task.
-        $task = \core\task\manager::get_next_scheduled_task($now);
+        $task = manager::get_next_scheduled_task($now);
         $this->assertInstanceOf('\core\task\scheduled_test_task', $task);
         $task->execute();
-        \core\task\manager::scheduled_task_complete($task);
+        manager::scheduled_task_complete($task);
 
         // Should not get any task.
-        $task = \core\task\manager::get_next_scheduled_task($now);
+        $task = manager::get_next_scheduled_task($now);
         $this->assertNull($task);
     }
 
@@ -386,7 +379,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Add a scheduled task.
 
         // A broken task that runs all the time.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->blocking = true;
         $record->minute = '*';
         $record->hour = '*';
@@ -400,7 +393,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         $now = time();
         // Should not get any task.
-        $task = \core\task\manager::get_next_scheduled_task($now);
+        $task = manager::get_next_scheduled_task($now);
         $this->assertDebuggingCalled();
         $this->assertNull($task);
     }
@@ -413,7 +406,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         // Testing non-deterministic things in a unit test is not really
         // wise, so we just test the values have changed within allowed bounds.
-        $testclass = new \core\task\scheduled_test_task();
+        $testclass = new scheduled_test_task();
 
         // The test task defaults to '*'.
         $this->assertIsString($testclass->get_minute());
@@ -463,7 +456,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Change the time modified for the first file, to a time that will be deleted by the task (greater than seven days).
         touch($file01, time() - (8 * 24 * 3600));
 
-        $task = \core\task\manager::get_scheduled_task('\\core\\task\\file_temp_cleanup_task');
+        $task = manager::get_scheduled_task('\\core\\task\\file_temp_cleanup_task');
         $this->assertInstanceOf('\core\task\file_temp_cleanup_task', $task);
         $task->execute();
 
@@ -517,20 +510,20 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $before = time();
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
         for ($i = 0; $i < 3; $i ++) {
-            $task = \core\task\manager::get_scheduled_task($taskname);
+            $task = manager::get_scheduled_task($taskname);
             $lock = $cronlockfactory->get_lock('\\' . get_class($task), 10);
             $task->set_lock($lock);
-            \core\task\manager::scheduled_task_failed($task);
+            manager::scheduled_task_failed($task);
         }
 
         // Confirm task is now delayed by several minutes.
-        $task = \core\task\manager::get_scheduled_task($taskname);
+        $task = manager::get_scheduled_task($taskname);
         $this->assertEquals(240, $task->get_fail_delay());
         $this->assertGreaterThan($before + 230, $task->get_next_run_time());
 
         // Clear the fail delay and re-get the task.
-        \core\task\manager::clear_fail_delay($task);
-        $task = \core\task\manager::get_scheduled_task($taskname);
+        manager::clear_fail_delay($task);
+        $task = manager::get_scheduled_task($taskname);
 
         // There should be no delay and it should run within the next minute.
         $this->assertEquals(0, $task->get_fail_delay());
@@ -627,14 +620,14 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $CFG->scheduled_tasks = $overrides;
 
         // Set up test scheduled task record.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->component = 'test_scheduled_task';
 
         foreach ($tasks as $task) {
             $record->classname = $task;
             $DB->insert_record('task_scheduled', $record);
 
-            $scheduledtask = \core\task\manager::get_scheduled_task($task);
+            $scheduledtask = manager::get_scheduled_task($task);
             $expectedresults = $expected[$task];
 
             // Check that the task is actually overridden.
@@ -682,7 +675,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         ];
 
         // A task that runs once per hour.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->component = 'test_scheduled_task';
         $record->classname = '\core\task\scheduled_test_task';
         $record->disabled = 0;
@@ -695,10 +688,10 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         $now = time();
 
-        $scheduledtask = \core\task\manager::get_next_scheduled_task($now);
+        $scheduledtask = manager::get_next_scheduled_task($now);
         $this->assertInstanceOf('\core\task\scheduled_test2_task', $scheduledtask);
         $scheduledtask->execute();
-        \core\task\manager::scheduled_task_complete($scheduledtask);
+        manager::scheduled_task_complete($scheduledtask);
     }
 
     /**
@@ -707,10 +700,10 @@ class core_scheduled_task_testcase extends advanced_testcase {
      * @param   \core\task\task_base $task
      * @param   \core\task\task_base $comparisontask
      */
-    public function assertTaskEquals(\core\task\task_base $task, \core\task\task_base $comparisontask): void {
+    public function assertTaskEquals(task_base $task, task_base $comparisontask): void {
         // Convert both to an object.
-        $task = \core\task\manager::record_from_scheduled_task($task);
-        $comparisontask = \core\task\manager::record_from_scheduled_task($comparisontask);
+        $task = manager::record_from_scheduled_task($task);
+        $comparisontask = manager::record_from_scheduled_task($comparisontask);
 
         // Reset the nextruntime field as it is intentionally dynamic.
         $task->nextruntime = null;
@@ -733,10 +726,10 @@ class core_scheduled_task_testcase extends advanced_testcase {
      * @param   \core\task\task_base $task
      * @param   \core\task\task_base $comparisontask
      */
-    public function assertTaskNotEquals(\core\task\task_base $task, \core\task\task_base $comparisontask): void {
+    public function assertTaskNotEquals(task_base $task, task_base $comparisontask): void {
         // Convert both to an object.
-        $task = \core\task\manager::record_from_scheduled_task($task);
-        $comparisontask = \core\task\manager::record_from_scheduled_task($comparisontask);
+        $task = manager::record_from_scheduled_task($task);
+        $comparisontask = manager::record_from_scheduled_task($comparisontask);
 
         // Reset the nextruntime field as it is intentionally dynamic.
         $task->nextruntime = null;
@@ -764,10 +757,10 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $DB->set_field('task_scheduled', 'lastruntime', 123456789, ['classname' => '\core\task\session_cleanup_task']);
 
         // Reset the task.
-        \core\task\manager::reset_scheduled_tasks_for_component('moodle');
+        manager::reset_scheduled_tasks_for_component('moodle');
 
         // Fetch the task again.
-        $taskafterreset = \core\task\manager::get_scheduled_task(core\task\session_cleanup_task::class);
+        $taskafterreset = manager::get_scheduled_task(session_cleanup_task::class);
 
         // Confirm, that lastruntime is still in place.
         $this->assertEquals(123456789, $taskafterreset->get_last_run_time());

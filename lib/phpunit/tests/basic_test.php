@@ -14,27 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * PHPUnit integration tests
- *
- * @package    core
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
+namespace core;
 
 /**
  * Test basic_testcase extra features and PHPUnit Moodle integration.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_phpunit_basic_testcase extends basic_testcase {
+class basic_test extends \basic_testcase {
     protected $testassertexecuted = false;
 
     protected function setUp(): void {
@@ -75,14 +65,14 @@ class core_phpunit_basic_testcase extends basic_testcase {
         $this->assertEqualsCanonicalizing($a, $b);
 
         // Objects.
-        $a = new stdClass();
+        $a = new \stdClass();
         $a->x = 'x';
         $a->y = 'y';
-        $b = new stdClass(); // Switched order.
+        $b = new \stdClass(); // Switched order.
         $b->y = 'y';
         $b->x = 'x';
         $c = $a;
-        $d = new stdClass();
+        $d = new \stdClass();
         $d->x = 'x';
         $d->y = 'y';
         $d->z = 'z';
@@ -121,7 +111,7 @@ class core_phpunit_basic_testcase extends basic_testcase {
         $this->assertNotEmpty('0 ');
         $this->assertNotEmpty(true);
         $this->assertNotEmpty(array(null));
-        $this->assertNotEmpty(new stdClass());
+        $this->assertNotEmpty(new \stdClass());
     }
 
     /**

@@ -23,6 +23,10 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core;
+
+use core_string_manager_standard;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -31,10 +35,14 @@ require_once($CFG->libdir.'/moodlelib.php');
 /**
  * Tests for the API of the string_manager.
  *
+ * Unit tests for localization support in lib/moodlelib.php
+ *
+ * @package   core
+ * @category  test
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_string_manager_standard_testcase extends advanced_testcase {
+class string_manager_standard_test extends \advanced_testcase {
 
     public function test_string_manager_instance() {
         $this->resetAfterTest();
@@ -116,7 +124,7 @@ class core_string_manager_standard_testcase extends advanced_testcase {
         $this->assertEquals($matches[2], clean_param($matches[2], PARAM_COMPONENT),
             "Component name {$string} appearing in one of the lang/en/deprecated.txt files does not have correct syntax");
 
-        list($pluginttype, $pluginname) = core_component::normalize_component($matches[2]);
+        list($pluginttype, $pluginname) = \core_component::normalize_component($matches[2]);
         $normcomponent = $pluginname ? ($pluginttype . '_' . $pluginname) : $pluginttype;
         $this->assertEquals($normcomponent, $matches[2],
             'String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not have normalised component name');

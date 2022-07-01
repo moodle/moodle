@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests the \core\event\user_graded event.
- *
- * @package    core
- * @category   phpunit
- * @copyright  2014 Petr Skoda
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,8 +23,6 @@ global $CFG;
 require_once($CFG->libdir . '/mathslib.php');
 
 /**
- * Class core_event_user_graded_testcase
- *
  * Tests for event \core\event\user_graded
  *
  * @package    core
@@ -39,7 +30,7 @@ require_once($CFG->libdir . '/mathslib.php');
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_event_user_graded_testcase extends advanced_testcase {
+class user_graded_test extends \advanced_testcase {
 
     /**
      * Tests set up.
@@ -59,13 +50,13 @@ class core_event_user_graded_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
 
-        $grade_category = grade_category::fetch_course_category($course->id);
+        $grade_category = \grade_category::fetch_course_category($course->id);
         $grade_category->load_grade_item();
         $grade_item = $grade_category->grade_item;
 
         $grade_item->update_final_grade($user->id, 10, 'gradebook');
 
-        $grade_grade = new grade_grade(array('userid' => $user->id, 'itemid' => $grade_item->id), true);
+        $grade_grade = new \grade_grade(array('userid' => $user->id, 'itemid' => $grade_item->id), true);
         $grade_grade->grade_item = $grade_item;
 
         $event = \core\event\user_graded::create_from_grade($grade_grade);
@@ -74,7 +65,7 @@ class core_event_user_graded_testcase extends advanced_testcase {
             array($course->id, 'grade', 'update', '/report/grader/index.php?id=' . $course->id, $grade_item->itemname . ': ' . fullname($user)),
             $event
         );
-        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals(\context_course::instance($course->id), $event->get_context());
         $this->assertSame($event->objecttable, 'grade_grades');
         $this->assertEquals($event->objectid, $grade_grade->id);
         $this->assertEquals($event->other['itemid'], $grade_item->id);
@@ -110,8 +101,8 @@ class core_event_user_graded_testcase extends advanced_testcase {
         $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
         $quizitemparams = array('itemtype' => 'mod', 'itemmodule' => 'quiz', 'iteminstance' => $quiz->id,
             'courseid' => $course->id);
-        $gradeitem = grade_item::fetch($quizitemparams);
-        $courseitem = grade_item::fetch_course_item($course->id);
+        $gradeitem = \grade_item::fetch($quizitemparams);
+        $courseitem = \grade_item::fetch_course_item($course->id);
 
         // Now mark the quiz using grade_update as this is the function that modules use.
         $grade = array();
@@ -134,9 +125,9 @@ class core_event_user_graded_testcase extends advanced_testcase {
         // will be set as needing an update when the grades are deleted.
         $gradeitem->delete_all_grades();
         grade_regrade_final_grades($course->id);
-        $gradeitem = grade_item::fetch($quizitemparams);
+        $gradeitem = \grade_item::fetch($quizitemparams);
 
-        // Now, create a grade using grade_item::update_final_grade().
+        // Now, create a grade using \grade_item::update_final_grade().
         $sink = $this->redirectEvents();
         $gradeitem->update_raw_grade($user->id, 10);
         $events = $sink->get_events();
@@ -149,7 +140,7 @@ class core_event_user_graded_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\user_graded', $events[1]);
         $this->assertEquals($courseitem->id, $events[1]->other['itemid']);
 
-        // Now, update this grade using grade_item::update_raw_grade().
+        // Now, update this grade using \grade_item::update_raw_grade().
         $sink = $this->redirectEvents();
         $gradeitem->update_raw_grade($user->id, 20);
         $events = $sink->get_events();
@@ -166,9 +157,9 @@ class core_event_user_graded_testcase extends advanced_testcase {
         // will be set as needing an update when the grades are deleted.
         $gradeitem->delete_all_grades();
         grade_regrade_final_grades($course->id);
-        $gradeitem = grade_item::fetch($quizitemparams);
+        $gradeitem = \grade_item::fetch($quizitemparams);
 
-        // Now, create a grade using grade_item::update_final_grade().
+        // Now, create a grade using \grade_item::update_final_grade().
         $sink = $this->redirectEvents();
         $gradeitem->update_final_grade($user->id, 30);
         $events = $sink->get_events();
@@ -181,7 +172,7 @@ class core_event_user_graded_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\user_graded', $events[1]);
         $this->assertEquals($courseitem->id, $events[1]->other['itemid']);
 
-        // Now, update this grade using grade_item::update_final_grade().
+        // Now, update this grade using \grade_item::update_final_grade().
         $sink = $this->redirectEvents();
         $gradeitem->update_final_grade($user->id, 40);
         $events = $sink->get_events();
@@ -194,12 +185,12 @@ class core_event_user_graded_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\user_graded', $events[1]);
         $this->assertEquals($courseitem->id, $events[1]->other['itemid']);
 
-        // Remove the overridden flag from the grade, this was set by grade_item::update_final_grade().
-        $gradegrade = grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user->id));
+        // Remove the overridden flag from the grade, this was set by \grade_item::update_final_grade().
+        $gradegrade = \grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user->id));
         $gradegrade->set_overridden(false, false);
 
         // Let's change the calculation to anything that won't cause an error.
-        $calculation = calc_formula::unlocalize("=3");
+        $calculation = \calc_formula::unlocalize("=3");
         $gradeitem->set_calculation($calculation);
 
         // Now force the computation of the grade.
@@ -216,10 +207,10 @@ class core_event_user_graded_testcase extends advanced_testcase {
         $this->assertEquals($courseitem->id, $events[1]->other['itemid']);
 
         // Now, let's trick the gradebook, we manually update a grade, and flag the grade item as
-        // needing a regrading, so we can trigger the event in grade_item::regrade_final_grades().
-        $gradeitem = grade_item::fetch($quizitemparams);
+        // needing a regrading, so we can trigger the event in \grade_item::regrade_final_grades().
+        $gradeitem = \grade_item::fetch($quizitemparams);
         $gradeitem->set_calculation('');
-        $gradegrade = grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user->id));
+        $gradegrade = \grade_grade::fetch(array('itemid' => $gradeitem->id, 'userid' => $user->id));
         $gradegrade->rawgrade = 50;
         $gradegrade->update();
 

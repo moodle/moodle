@@ -15,27 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Test script for message class.
+ *
  * Test classes for \core\message\inbound.
  *
- * @package core_message
+ * @package core
  * @category test
  * @copyright 2015 Andrew Nicols <andrew@nicols.co.uk>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace core;
 
-global $CFG;
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Test script for message class.
  *
- * @package core_message
+ * Test classes for \core\message\inbound.
+ *
+ * @package core
  * @category test
  * @copyright 2015 Andrew Nicols <andrew@nicols.co.uk>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_messageinbound_testcase extends advanced_testcase {
+class messageinbound_test extends \advanced_testcase {
 
     /**
      * @dataProvider message_inbound_handler_trim_testprovider
@@ -43,9 +47,9 @@ class core_messageinbound_testcase extends advanced_testcase {
     public function test_messageinbound_handler_trim($file, $source, $expectedplain, $expectedhtml) {
         $this->resetAfterTest();
 
-        $mime = Horde_Mime_Part::parseMessage($source);
+        $mime = \Horde_Mime_Part::parseMessage($source);
         if ($plainpartid = $mime->findBody('plain')) {
-            $messagedata = new stdClass();
+            $messagedata = new \stdClass();
             $messagedata->plain = $mime->getPart($plainpartid)->getContents();
             $messagedata->html = '';
 
@@ -58,7 +62,7 @@ class core_messageinbound_testcase extends advanced_testcase {
         }
 
         if ($htmlpartid = $mime->findBody('html')) {
-            $messagedata = new stdClass();
+            $messagedata = new \stdClass();
             $messagedata->plain = '';
             $messagedata->html = $mime->getPart($htmlpartid)->getContents();
 
@@ -128,7 +132,7 @@ class core_messageinbound_testcase extends advanced_testcase {
             }
             if (null === $section) {
                 if (!isset($sections[$token])) {
-                    throw new coding_exception(sprintf(
+                    throw new \coding_exception(sprintf(
                         'The test file "%s" should not contain a section named "%s".',
                         basename($file),
                         $token
@@ -143,7 +147,7 @@ class core_messageinbound_testcase extends advanced_testcase {
         }
         foreach ($sections as $section => $required) {
             if ($required && !isset($data[$section])) {
-                throw new coding_exception(sprintf(
+                throw new \coding_exception(sprintf(
                     'The test file "%s" must have a section named "%s".',
                     str_replace($fixturesdir.'/', '', $file),
                     $section
@@ -167,5 +171,5 @@ class test_handler extends \core\message\inbound\handler {
 
     public function get_description() {}
 
-    public function process_message(stdClass $record, stdClass $messagedata) {}
+    public function process_message(\stdClass $record, \stdClass $messagedata) {}
 }
