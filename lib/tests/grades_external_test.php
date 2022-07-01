@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the grade API at /lib/classes/grades_external.php
- *
- * @package    core_grades
- * @category   external
- * @copyright  2012 Andrew Davis
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.7
- */
+namespace core;
+
+use core_grades_external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,12 +27,14 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 /**
  * Grades functions unit tests
  *
- * @package core_grades
- * @category external
+ * Unit tests for the grade API at /lib/classes/grades_external.php
+ *
+ * @package core
+ * @category test
  * @copyright 2012 Andrew Davis
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_grades_external_testcase extends externallib_advanced_testcase {
+class grades_external_test extends \externallib_advanced_testcase {
 
     /**
      * Load initial test information
@@ -53,7 +49,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
 
         // Adds a course, a teacher, 2 students, an assignment and grades for the students.
         $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
 
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
 
@@ -69,7 +65,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
 
         $parent = $this->getDataGenerator()->create_user();
         $this->setUser($parent);
-        $student1context = context_user::instance($student1->id);
+        $student1context = \context_user::instance($student1->id);
         // Creates a new role, gives it the capability and gives $USER that role.
         $parentroleid = $this->assignUserCapability('moodle/grade:viewall', $student1context->id);
         // Enrol the user in the course using the new role.
@@ -85,7 +81,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
         assign_grade_item_update($assignment, $studentgrades);
 
         // Insert a custom grade scale to be used by an outcome.
-        $gradescale = new grade_scale();
+        $gradescale = new \grade_scale();
         $gradescale->name        = 'unittestscale3';
         $gradescale->courseid    = $course->id;
         $gradescale->userid      = 0;
@@ -94,15 +90,15 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
         $gradescale->insert();
 
         // Insert an outcome.
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->courseid = $course->id;
         $data->fullname = 'Team work';
         $data->shortname = 'Team work';
         $data->scaleid = $gradescale->id;
-        $outcome = new grade_outcome($data, false);
+        $outcome = new \grade_outcome($data, false);
         $outcome->insert();
 
-        $outcomegradeitem = new grade_item();
+        $outcomegradeitem = new \grade_item();
         $outcomegradeitem->itemname = $outcome->shortname;
         $outcomegradeitem->itemtype = 'mod';
         $outcomegradeitem->itemmodule = 'assign';
@@ -119,7 +115,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
         $outcomegradeitem->hidden = '';
         $outcomegradeitem->insert();
 
-        $assignmentgradeitem = grade_item::fetch(
+        $assignmentgradeitem = \grade_item::fetch(
             array(
                 'itemtype' => 'mod',
                 'itemmodule' => 'assign',
@@ -162,7 +158,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
             array(),
             array('grademax' => $changedmax)
         );
-        $result = external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
         $this->assertTrue($result == GRADE_UPDATE_OK);
         $grades = grade_get_grades($course->id, 'mod', 'assign', $assignment->id);
         $this->assertTrue($grades->items[0]->grademax == $changedmax);
@@ -177,7 +173,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
             0,
             array(array('studentid' => $student1->id, 'grade' => $student1grade))
         );
-        $result = external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
         $this->assertTrue($result == GRADE_UPDATE_OK);
         $grades = grade_get_grades($course->id, 'mod', 'assign', $assignment->id, array($student1->id));
         $this->assertTrue($grades->items[0]->grades[$student1->id]->grade == $student1grade);
@@ -196,7 +192,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
                 array('studentid' => $student2->id, 'grade' => $student2grade)
             )
         );
-        $result = external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
         $this->assertTrue($result == GRADE_UPDATE_OK);
         $grades = grade_get_grades($course->id, 'mod', 'assign', $assignment->id, array($student1->id, $student2->id));
         $this->assertTrue($grades->items[0]->grades[$student1->id]->grade == $student1grade);
@@ -215,7 +211,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
                 array( array('studentid' => $student1->id, 'grade' => $student1grade))
             );
             $this->fail('moodle_exception expected');
-        } catch (moodle_exception $ex) {
+        } catch (\moodle_exception $ex) {
             $this->assertTrue(true);
         }
 
@@ -232,7 +228,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
                 array( array('studentid' => $student1->id, 'grade' => $student1grade))
             );
             $this->fail('moodle_exception expected');
-        } catch (moodle_exception $ex) {
+        } catch (\moodle_exception $ex) {
             $this->assertTrue(true);
         }
 
@@ -249,13 +245,13 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
                 array('hidden' => 1)
             );
             $this->fail('moodle_exception expected');
-        } catch (moodle_exception $ex) {
+        } catch (\moodle_exception $ex) {
             $this->assertTrue(true);
         }
 
         // Give the student role 'moodle/grade:hide' and they should now be able to hide the grade item.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         assign_capability('moodle/grade:hide', CAP_ALLOW, $studentrole->id, $coursecontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
@@ -272,7 +268,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
             array(),
             array('hidden' => 1)
         );
-        $result = external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grades_external::update_grades_returns(), $result);
         $this->assertTrue($result == GRADE_UPDATE_OK);
         $grades = grade_get_grades($course->id, 'mod', 'assign', $assignment->id);
         $this->assertTrue($grades->items[0]->hidden == 1);
@@ -292,7 +288,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
         // Test the most basic gradecategory creation.
         $status1 = core_grades_external::create_gradecategory($course->id, 'Test Category 1', []);
 
-        $courseparentcat = new grade_category(['courseid' => $course->id, 'depth' => 1], true);
+        $courseparentcat = new \grade_category(['courseid' => $course->id, 'depth' => 1], true);
         $record1 = $DB->get_record('grade_categories', ['id' => $status1['categoryid']]);
         $this->assertEquals('Test Category 1', $record1->fullname);
         // Confirm that the parent category for this category is the top level category for the course.
@@ -331,7 +327,7 @@ class core_grades_external_testcase extends externallib_advanced_testcase {
         ];
 
         $status3 = core_grades_external::create_gradecategory($course->id, 'Test Category 3', $customopts);
-        $cat3 = new grade_category(['courseid' => $course->id, 'id' => $status3['categoryid']], true);
+        $cat3 = new \grade_category(['courseid' => $course->id, 'id' => $status3['categoryid']], true);
         $cat3->load_grade_item();
 
         // Lets check all of the data is in the right shape.

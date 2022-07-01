@@ -14,8 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+use Redis;
+use RedisException;
+
 /**
- * Redis session tests.
+ * Unit tests for classes/session/redis.php.
  *
  * NOTE: in order to execute this test you need to set up
  *       Redis server and add configuration a constant
@@ -26,21 +31,10 @@
  * @package   core
  * @author    Russell Smith <mr-russ@smith2001.net>
  * @copyright 2016 Russell Smith
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Unit tests for classes/session/redis.php.
- *
- * @package   core
- * @author    Russell Smith <mr-russ@smith2001.net>
- * @copyright 2016 Russell Smith
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @runClassInSeparateProcess
  */
-class core_session_redis_testcase extends advanced_testcase {
+class session_redis_test extends \advanced_testcase {
 
     /** @var $keyprefix This key prefix used when testing Redis */
     protected $keyprefix = null;

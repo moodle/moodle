@@ -15,15 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for datetimeselector form element
+ * Unit tests for MoodleQuickForm_date_time_selector
  *
- * This file contains unit test related to datetimeselector form element
+ * Contains test cases for testing MoodleQuickForm_date_time_selector
  *
  * @package    core_form
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Rajesh Taneja
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core_form;
+
+use moodleform;
+use MoodleQuickForm_date_time_selector;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,11 +42,11 @@ require_once($CFG->libdir.'/formslib.php');
  * Contains test cases for testing MoodleQuickForm_date_time_selector
  *
  * @package    core_form
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Rajesh Taneja
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_form_datetimeselector_testcase extends advanced_testcase {
+class datetimeselector_test extends \advanced_testcase {
     /** @var MoodleQuickForm Keeps reference of dummy form object */
     private $mform;
     /** @var array test fixtures */

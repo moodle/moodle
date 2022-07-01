@@ -14,18 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the calculation info cache.
- *
- * @package   core_analytics
- * @copyright 2019 David Monllaó {@link http://www.davidmonllao.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/fixtures/test_indicator_max.php');
-require_once(__DIR__ . '/fixtures/test_indicator_min.php');
+namespace core_analytics;
 
 /**
  * Unit tests for the calculation info cache.
@@ -34,7 +23,7 @@ require_once(__DIR__ . '/fixtures/test_indicator_min.php');
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class analytics_calculation_info_testcase extends advanced_testcase {
+class calculation_info_test extends \advanced_testcase {
 
     /**
      * test_calculation_info description
@@ -47,12 +36,14 @@ class analytics_calculation_info_testcase extends advanced_testcase {
      * @return null
      */
     public function test_calculation_info_add_pull($info1, $info2, $info3, $info4) {
+        require_once(__DIR__ . '/fixtures/test_indicator_max.php');
+        require_once(__DIR__ . '/fixtures/test_indicator_min.php');
         $this->resetAfterTest();
 
         $atimesplitting = new \core\analytics\time_splitting\quarters();
 
-        $indicator1 = new test_indicator_min();
-        $indicator2 = new test_indicator_max();
+        $indicator1 = new \test_indicator_min();
+        $indicator2 = new \test_indicator_max();
 
         $calculationinfo = new \core_analytics\calculation_info();
         $calculationinfo->add_shared(111, [111 => $info1]);

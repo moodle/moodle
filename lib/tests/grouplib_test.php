@@ -14,23 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
 /**
- * Tests groups subsystems.
+ * Unit tests for lib/grouplib.php
  *
- * @package    core_group
- * @category   phpunit
+ * @package    core
  * @copyright  2007 onwards Martin Dougiamas (http://dougiamas.com)
  * @author     Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Unit tests for lib/grouplib.php
- * @group core_group
- */
-class core_grouplib_testcase extends advanced_testcase {
+class grouplib_test extends \advanced_testcase {
 
     public function test_groups_get_group_by_idnumber() {
         $this->resetAfterTest(true);
@@ -184,7 +178,7 @@ class core_grouplib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
 
         $course = $generator->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $student1 = $generator->create_user();
         $student2 = $generator->create_user();
         $plugin = enrol_get_plugin('manual');
@@ -376,7 +370,7 @@ class core_grouplib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
 
         $course = $generator->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $student1 = $generator->create_user();
         $student2 = $generator->create_user();
         $plugin = enrol_get_plugin('manual');
@@ -411,7 +405,7 @@ class core_grouplib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
 
         $course = $generator->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $student1 = $generator->create_user();
         $student2 = $generator->create_user();
         $plugin = enrol_get_plugin('manual');
@@ -444,7 +438,7 @@ class core_grouplib_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
 
         $course = $generator->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $student1 = $generator->create_user();
         $student2 = $generator->create_user();
         $plugin = enrol_get_plugin('manual');
@@ -465,7 +459,7 @@ class core_grouplib_testcase extends advanced_testcase {
         groups_add_member($group->id, $student1->id);
 
         // Test with members at any group and with an invalid $context.
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $this->expectException('coding_exception');
         list($sql, $params) = groups_get_members_ids_sql(USERSWITHOUTGROUP, $syscontext);
     }
@@ -759,7 +753,7 @@ class core_grouplib_testcase extends advanced_testcase {
         // Create a course category, course and groups.
         $cat = $generator->create_category(array('parent' => 0));
         $course = $generator->create_course(array('category' => $cat->id));
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $group1 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 1'));
         $group2 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 2'));
         $group3 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 3'));
@@ -1011,7 +1005,7 @@ class core_grouplib_testcase extends advanced_testcase {
 
         // Generate data.
         $course = $this->getDataGenerator()->create_course();
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->courseid = $course->id;
         $group1 = $this->getDataGenerator()->create_group($record);
         $group2 = $this->getDataGenerator()->create_group($record);
@@ -1245,7 +1239,7 @@ class core_grouplib_testcase extends advanced_testcase {
     protected function make_group_list($number) {
         $testgroups = array();
         for ($a = 0; $a < $number; $a++) {
-            $grp = new stdClass();
+            $grp = new \stdClass();
             $grp->id = 100 + $a;
             $grp->name = 'test group ' . $grp->id;
             $testgroups[$grp->id] = $grp;
@@ -1319,7 +1313,7 @@ class core_grouplib_testcase extends advanced_testcase {
         // Create a course category, course and groups.
         $cat = $generator->create_category(array('parent' => 0));
         $course = $generator->create_course(array('category' => $cat->id));
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $group1 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 1'));
         $group2 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 2'));
         $group3 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 3'));

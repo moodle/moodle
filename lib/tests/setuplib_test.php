@@ -14,24 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
 /**
  * Unit tests for setuplib.php
  *
  * @package   core
- * @category  phpunit
+ * @category  test
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Unit tests for setuplib.php
- *
- * @copyright 2012 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class core_setuplib_testcase extends advanced_testcase {
+class setuplib_test extends \advanced_testcase {
 
     /**
      * Test get_docs_url_standard in the normal case when we should link to Moodle docs.
@@ -91,7 +84,7 @@ class core_setuplib_testcase extends advanced_testcase {
                 $expected .= "[$cfgname] ";
             }
         }
-        $exception     = new moodle_exception('generalexceptionmessage', 'error', '', $fixture, $fixture);
+        $exception     = new \moodle_exception('generalexceptionmessage', 'error', '', $fixture, $fixture);
         $exceptioninfo = get_exception_info($exception);
 
         $this->assertStringContainsString($expected, $exceptioninfo->message,
@@ -371,45 +364,45 @@ class core_setuplib_testcase extends advanced_testcase {
 
         // Simple local URL.
         $url = $CFG->wwwroot . '/something/here?really=yes';
-        $exception = new moodle_exception('none', 'error', $url);
+        $exception = new \moodle_exception('none', 'error', $url);
         $infos = $this->get_exception_info($exception);
         $this->assertSame($url, $infos->link);
 
         // Relative local URL.
         $url = '/something/here?really=yes';
-        $exception = new moodle_exception('none', 'error', $url);
+        $exception = new \moodle_exception('none', 'error', $url);
         $infos = $this->get_exception_info($exception);
         $this->assertSame($CFG->wwwroot . '/', $infos->link);
 
         // HTTPS URL when login HTTPS is not enabled (default) and site is HTTP.
         $CFG->wwwroot = str_replace('https:', 'http:', $CFG->wwwroot);
         $url = $httpswwwroot . '/something/here?really=yes';
-        $exception = new moodle_exception('none', 'error', $url);
+        $exception = new \moodle_exception('none', 'error', $url);
         $infos = $this->get_exception_info($exception);
         $this->assertSame($CFG->wwwroot . '/', $infos->link);
 
         // HTTPS URL when login HTTPS is not enabled and site is HTTPS.
         $CFG->wwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
         $url = $httpswwwroot . '/something/here?really=yes';
-        $exception = new moodle_exception('none', 'error', $url);
+        $exception = new \moodle_exception('none', 'error', $url);
         $infos = $this->get_exception_info($exception);
         $this->assertSame($url, $infos->link);
 
         // External HTTP URL.
         $url = 'http://moodle.org/something/here?really=yes';
-        $exception = new moodle_exception('none', 'error', $url);
+        $exception = new \moodle_exception('none', 'error', $url);
         $infos = $this->get_exception_info($exception);
         $this->assertSame($CFG->wwwroot . '/', $infos->link);
 
         // External HTTPS URL.
         $url = 'https://moodle.org/something/here?really=yes';
-        $exception = new moodle_exception('none', 'error', $url);
+        $exception = new \moodle_exception('none', 'error', $url);
         $infos = $this->get_exception_info($exception);
         $this->assertSame($CFG->wwwroot . '/', $infos->link);
 
         // External URL containing local URL.
         $url = 'http://moodle.org/something/here?' . $CFG->wwwroot;
-        $exception = new moodle_exception('none', 'error', $url);
+        $exception = new \moodle_exception('none', 'error', $url);
         $infos = $this->get_exception_info($exception);
         $this->assertSame($CFG->wwwroot . '/', $infos->link);
     }
@@ -423,7 +416,7 @@ class core_setuplib_testcase extends advanced_testcase {
     public function get_exception_info($ex) {
         try {
             throw $ex;
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             return get_exception_info($e);
         }
     }
@@ -497,7 +490,7 @@ class core_setuplib_testcase extends advanced_testcase {
         }
 
         // The \core\uuid::generate_uuid_via_pecl_uuid_extension static method is protected. Use Reflection to call the method.
-        $method = new ReflectionMethod('\core\uuid', 'generate_uuid_via_pecl_uuid_extension');
+        $method = new \ReflectionMethod('\core\uuid', 'generate_uuid_via_pecl_uuid_extension');
         $method->setAccessible(true);
         $uuid = $method->invoke(null);
         $this->assertTrue(self::is_valid_uuid_v4($uuid), "Invalid v4 uuid: '$uuid'");
@@ -509,12 +502,12 @@ class core_setuplib_testcase extends advanced_testcase {
     public function test_core_uuid_generate_uuid_via_random_bytes() {
         try {
             random_bytes(1);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->markTestSkipped('No source of entropy for random_bytes. ' . $e->getMessage());
         }
 
         // The \core\uuid::generate_uuid_via_random_bytes static method is protected. Use Reflection to call the method.
-        $method = new ReflectionMethod('\core\uuid', 'generate_uuid_via_random_bytes');
+        $method = new \ReflectionMethod('\core\uuid', 'generate_uuid_via_random_bytes');
         $method->setAccessible(true);
         $uuid = $method->invoke(null);
         $this->assertTrue(self::is_valid_uuid_v4($uuid), "Invalid v4 uuid: '$uuid'");

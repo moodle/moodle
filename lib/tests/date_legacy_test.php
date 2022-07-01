@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests legacy Moodle date/time functions.
- *
- * @package   core
- * @copyright 2015 Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author    Petr Skoda <petr.skoda@totaralms.com>
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core;
 
 /**
  * Tests legacy Moodle date/time functions.
@@ -33,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Petr Skoda <petr.skoda@totaralms.com>
  */
-class core_date_legacy_testcase extends advanced_testcase {
+class date_legacy_test extends \advanced_testcase {
     public function test_settings() {
         global $CFG;
         $this->resetAfterTest();
@@ -156,7 +147,7 @@ class core_date_legacy_testcase extends advanced_testcase {
             foreach ($years as $year) {
                 foreach ($dates as $date) {
                     $result = make_timestamp($year, $date[0], $date[1], $date[2], $date[3], $date[4], $tz, true);
-                    $expected = new DateTime('now', new DateTimeZone(($tz == 99 ? 'Pacific/Auckland' : $tz)));
+                    $expected = new \DateTime('now', new \DateTimeZone(($tz == 99 ? 'Pacific/Auckland' : $tz)));
                     $expected->setDate($year, $date[0], $date[1]);
                     $expected->setTime($date[2], $date[3], $date[4]);
                     $this->assertSame($expected->getTimestamp(), $result,
@@ -170,7 +161,7 @@ class core_date_legacy_testcase extends advanced_testcase {
             foreach ($years as $year) {
                 foreach ($dates as $date) {
                     $result = make_timestamp($year, $date[0], $date[1], $date[2], $date[3], $date[4], $tz, true);
-                    $expected = new DateTime('now', new DateTimeZone(($tz == 99 ? 'Pacific/Auckland' : $tz)));
+                    $expected = new \DateTime('now', new \DateTimeZone(($tz == 99 ? 'Pacific/Auckland' : $tz)));
                     $expected->setDate($year, $date[0], $date[1]);
                     $expected->setTime($date[2], $date[3], $date[4]);
                     $this->assertSame($expected->getTimestamp(), $result,
@@ -200,7 +191,7 @@ class core_date_legacy_testcase extends advanced_testcase {
         foreach ($timezones as $tz) {
             foreach ($years as $year) {
                 foreach ($dates as $date) {
-                    $expected = new DateTime('now', new DateTimeZone(($tz == 99 ? 'Pacific/Auckland' : $tz)));
+                    $expected = new \DateTime('now', new \DateTimeZone(($tz == 99 ? 'Pacific/Auckland' : $tz)));
                     $expected->setDate($year, $date[0], $date[1]);
                     $expected->setTime($date[2], $date[3], $date[4]);
                     $result = usergetdate($expected->getTimestamp(), $tz);
@@ -227,7 +218,7 @@ class core_date_legacy_testcase extends advanced_testcase {
         foreach ($timezones as $tz) {
             foreach ($years as $year) {
                 foreach ($dates as $date) {
-                    $expected = new DateTime('now', new DateTimeZone(($tz == 99 ? 'Pacific/Auckland' : $tz)));
+                    $expected = new \DateTime('now', new \DateTimeZone(($tz == 99 ? 'Pacific/Auckland' : $tz)));
                     $expected->setDate($year, $date[0], $date[1]);
                     $expected->setTime($date[2], $date[3], $date[4]);
                     $result = usergetdate($expected->getTimestamp(), $tz);
@@ -276,13 +267,13 @@ class core_date_legacy_testcase extends advanced_testcase {
         $this->setTimezone('Pacific/Auckland', 'Pacific/Auckland');
         foreach ($years as $year) {
             foreach ($dates as $date) {
-                $expected = new DateTime('now', new DateTimeZone('UTC'));
+                $expected = new \DateTime('now', new \DateTimeZone('UTC'));
                 $expected->setDate($year, $date[0], $date[1]);
                 $expected->setTime($date[2], $date[3], $date[4]);
 
                 foreach ($users as $user) {
                     $this->setUser($user);
-                    $expected->setTimezone(new DateTimeZone(($user->timezone == 99 ? 'Pacific/Auckland' : $user->timezone)));
+                    $expected->setTimezone(new \DateTimeZone(($user->timezone == 99 ? 'Pacific/Auckland' : $user->timezone)));
                     $result = userdate($expected->getTimestamp(), '', 99, false, false);
                     date_default_timezone_set($expected->getTimezone()->getName());
                     $ex = strftime($format, $expected->getTimestamp());

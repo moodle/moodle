@@ -14,26 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for password changes event.
- *
- * @package    core
- * @category   phpunit
- * @copyright  2014 Petr Skoda
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core\event;
 
 /**
  * Tests for event \core\event\user_password_updated
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_event_user_password_updated_testcase extends advanced_testcase {
+class user_password_updated_test extends \advanced_testcase {
     /**
      * Test the event.
      */
@@ -41,9 +32,9 @@ class core_event_user_password_updated_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
-        $context1 = context_user::instance($user1->id);
+        $context1 = \context_user::instance($user1->id);
         $user2 = $this->getDataGenerator()->create_user();
-        $context2 = context_user::instance($user2->id);
+        $context2 = \context_user::instance($user2->id);
 
         $this->setUser($user1);
 

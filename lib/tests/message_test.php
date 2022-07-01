@@ -14,28 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test classes for \core\message\message.
- *
- * @package core_message
- * @category test
- * @copyright 2015 onwards Ankit Agarwal
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
+namespace core;
 
 /**
  * Test script for message class.
  *
- * @package core_message
+ * Test classes for \core\message\message.
+ *
+ * @package core
  * @category test
  * @copyright 2015 onwards Ankit Agarwal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_message_testcase extends advanced_testcase {
+class message_test extends \advanced_testcase {
 
     /**
      * Test the method get_eventobject_for_processor().
@@ -68,8 +59,8 @@ class core_message_testcase extends advanced_testcase {
         $message->set_additional_content('test', $content);
 
         // Create a file instance.
-        $usercontext = context_user::instance($user->id);
-        $file = new stdClass;
+        $usercontext = \context_user::instance($user->id);
+        $file = new \stdClass;
         $file->contextid = $usercontext->id;
         $file->component = 'user';
         $file->filearea  = 'private';
@@ -82,49 +73,49 @@ class core_message_testcase extends advanced_testcase {
         $file = $fs->create_file_from_string($file, 'file1 content');
         $message->attachment = $file;
 
-        $stdclass = $message->get_eventobject_for_processor('test');
+        $stdClass = $message->get_eventobject_for_processor('test');
 
-        $this->assertSame($message->courseid, $stdclass->courseid);
-        $this->assertSame($message->component, $stdclass->component);
-        $this->assertSame($message->name, $stdclass->name);
-        $this->assertSame($message->userfrom, $stdclass->userfrom);
-        $this->assertSame($message->userto, $stdclass->userto);
-        $this->assertSame($message->subject, $stdclass->subject);
-        $this->assertSame(' test ' . $message->fullmessage . ' test ', $stdclass->fullmessage);
-        $this->assertSame(' test ' . $message->fullmessagehtml . ' test ', $stdclass->fullmessagehtml);
-        $this->assertSame(' test ' . $message->smallmessage . ' test ', $stdclass->smallmessage);
-        $this->assertSame($message->notification, $stdclass->notification);
-        $this->assertSame($message->contexturl, $stdclass->contexturl);
-        $this->assertSame($message->contexturlname, $stdclass->contexturlname);
-        $this->assertSame($message->replyto, $stdclass->replyto);
-        $this->assertSame($message->replytoname, $stdclass->replytoname);
-        $this->assertSame($message->attachname, $stdclass->attachname);
+        $this->assertSame($message->courseid, $stdClass->courseid);
+        $this->assertSame($message->component, $stdClass->component);
+        $this->assertSame($message->name, $stdClass->name);
+        $this->assertSame($message->userfrom, $stdClass->userfrom);
+        $this->assertSame($message->userto, $stdClass->userto);
+        $this->assertSame($message->subject, $stdClass->subject);
+        $this->assertSame(' test ' . $message->fullmessage . ' test ', $stdClass->fullmessage);
+        $this->assertSame(' test ' . $message->fullmessagehtml . ' test ', $stdClass->fullmessagehtml);
+        $this->assertSame(' test ' . $message->smallmessage . ' test ', $stdClass->smallmessage);
+        $this->assertSame($message->notification, $stdClass->notification);
+        $this->assertSame($message->contexturl, $stdClass->contexturl);
+        $this->assertSame($message->contexturlname, $stdClass->contexturlname);
+        $this->assertSame($message->replyto, $stdClass->replyto);
+        $this->assertSame($message->replytoname, $stdClass->replytoname);
+        $this->assertSame($message->attachname, $stdClass->attachname);
 
         // Extra content for fullmessage only.
         $content = array('fullmessage' => array('header' => ' test ', 'footer' => ' test '));
         $message->set_additional_content('test', $content);
-        $stdclass = $message->get_eventobject_for_processor('test');
-        $this->assertSame(' test ' . $message->fullmessage . ' test ', $stdclass->fullmessage);
-        $this->assertSame($message->fullmessagehtml, $stdclass->fullmessagehtml);
-        $this->assertSame($message->smallmessage, $stdclass->smallmessage);
+        $stdClass = $message->get_eventobject_for_processor('test');
+        $this->assertSame(' test ' . $message->fullmessage . ' test ', $stdClass->fullmessage);
+        $this->assertSame($message->fullmessagehtml, $stdClass->fullmessagehtml);
+        $this->assertSame($message->smallmessage, $stdClass->smallmessage);
 
         // Extra content for fullmessagehtml and smallmessage only.
         $content = array('fullmessagehtml' => array('header' => ' test ', 'footer' => ' test '),
                          'smallmessage' => array('header' => ' testsmall ', 'footer' => ' testsmall '));
         $message->set_additional_content('test', $content);
-        $stdclass = $message->get_eventobject_for_processor('test');
-        $this->assertSame($message->fullmessage, $stdclass->fullmessage);
-        $this->assertSame(' test ' . $message->fullmessagehtml . ' test ', $stdclass->fullmessagehtml);
-        $this->assertSame(' testsmall ' . $message->smallmessage . ' testsmall ', $stdclass->smallmessage);
+        $stdClass = $message->get_eventobject_for_processor('test');
+        $this->assertSame($message->fullmessage, $stdClass->fullmessage);
+        $this->assertSame(' test ' . $message->fullmessagehtml . ' test ', $stdClass->fullmessagehtml);
+        $this->assertSame(' testsmall ' . $message->smallmessage . ' testsmall ', $stdClass->smallmessage);
 
         // Extra content for * and smallmessage.
         $content = array('*' => array('header' => ' test ', 'footer' => ' test '),
                          'smallmessage' => array('header' => ' testsmall ', 'footer' => ' testsmall '));
         $message->set_additional_content('test', $content);
-        $stdclass = $message->get_eventobject_for_processor('test');
-        $this->assertSame(' test ' . $message->fullmessage . ' test ', $stdclass->fullmessage);
-        $this->assertSame(' test ' . $message->fullmessagehtml . ' test ', $stdclass->fullmessagehtml);
-        $this->assertSame(' testsmall ' . ' test ' .  $message->smallmessage . ' test ' . ' testsmall ', $stdclass->smallmessage);
+        $stdClass = $message->get_eventobject_for_processor('test');
+        $this->assertSame(' test ' . $message->fullmessage . ' test ', $stdClass->fullmessage);
+        $this->assertSame(' test ' . $message->fullmessagehtml . ' test ', $stdClass->fullmessagehtml);
+        $this->assertSame(' testsmall ' . ' test ' .  $message->smallmessage . ' test ' . ' testsmall ', $stdClass->smallmessage);
     }
 
     /**
