@@ -14,21 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for evaluation, training and prediction.
- *
- * NOTE: in order to execute this test using a separate server for the
- *       python ML backend you need to define these variables in your config.php file:
- *
- * define('TEST_MLBACKEND_PYTHON_HOST', '127.0.0.1');
- * define('TEST_MLBACKEND_PYTHON_PORT', 5000);
- * define('TEST_MLBACKEND_PYTHON_USERNAME', 'default');
- * define('TEST_MLBACKEND_PYTHON_PASSWORD', 'sshhhh');
- *
- * @package   core_analytics
- * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_analytics;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -48,11 +34,19 @@ require_once(__DIR__ . '/../../course/lib.php');
 /**
  * Unit tests for evaluation, training and prediction.
  *
+ * NOTE: in order to execute this test using a separate server for the
+ *       python ML backend you need to define these variables in your config.php file:
+ *
+ * define('TEST_MLBACKEND_PYTHON_HOST', '127.0.0.1');
+ * define('TEST_MLBACKEND_PYTHON_PORT', 5000);
+ * define('TEST_MLBACKEND_PYTHON_USERNAME', 'default');
+ * define('TEST_MLBACKEND_PYTHON_PASSWORD', 'sshhhh');
+ *
  * @package   core_analytics
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_analytics_prediction_testcase extends advanced_testcase {
+class prediction_test extends \advanced_testcase {
 
     /**
      * Purge all the mlbackend outputs.
@@ -746,7 +740,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             $samples,
             $ranges
         );
-        $dataset = phpunit_util::call_internal_method($analysis, 'calculate_indicators', $params,
+        $dataset = \phpunit_util::call_internal_method($analysis, 'calculate_indicators', $params,
             '\core_analytics\analysis');
         $this->assertArrayHasKey('123-0', $dataset);
         $this->assertArrayHasKey('123-1', $dataset);
@@ -770,7 +764,7 @@ class core_analytics_prediction_testcase extends advanced_testcase {
             $samples,
             $ranges
         );
-        $dataset = phpunit_util::call_internal_method($analysis, 'calculate_indicators', $params,
+        $dataset = \phpunit_util::call_internal_method($analysis, 'calculate_indicators', $params,
             '\core_analytics\analysis');
         $this->assertArrayNotHasKey('123-0', $dataset);
         $this->assertArrayNotHasKey('123-1', $dataset);

@@ -14,26 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
 /**
+ * Unit tests for the Mustache source loader class.
+ *
  * Unit tests for lib/classes/output/mustache_template_source_loader.php
  *
  * @package   core
  * @copyright 2018 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-use core\output\mustache_template_source_loader;
-
-/**
- * Unit tests for the Mustache source loader class.
- *
- * @package   core
- * @copyright 2018 Ryan Wyllie <ryan@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class core_output_mustache_template_source_loader_testcase extends advanced_testcase {
+class mustache_template_source_loader_test extends \advanced_testcase {
     /**
      * Ensure that stripping comments from templates does not mutilate the template body.
      */
@@ -130,7 +122,7 @@ TBD;
 TBC;
 
         $loader = new mustache_template_source_loader();
-        $actual = phpunit_util::call_internal_method(
+        $actual = \phpunit_util::call_internal_method(
             $loader,
             'strip_template_comments',
             [$templatewithcomment],
@@ -502,7 +494,7 @@ TEMPLATE;
      * @param string $expected The expected output
      */
     public function test_scan_template_source_for_dependencies($loader, $source, $expected) {
-        $actual = phpunit_util::call_internal_method(
+        $actual = \phpunit_util::call_internal_method(
             $loader,
             'scan_template_source_for_dependencies',
             [$source],

@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+use core_grading_external;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -23,12 +27,12 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 /**
  * Unit tests for the grading API defined in core_grading_external class.
  *
- * @package core_grading
- * @category external
+ * @package core
+ * @category test
  * @copyright 2013 Paul Charsley
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_grading_externallib_testcase extends externallib_advanced_testcase {
+class grading_external_test extends \externallib_advanced_testcase {
 
     /**
      * Test get_definitions
@@ -56,9 +60,9 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         $enrolid = $DB->insert_record('enrol', $manualenroldata);
 
         // Create a teacher and give them capabilities.
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $coursecontext->id, 3);
-        $modulecontext = context_module::instance($cm->cmid);
+        $modulecontext = \context_module::instance($cm->cmid);
         $this->assignUserCapability('mod/assign:grade', $modulecontext->id, $roleid);
 
         // Create the teacher's enrolment record.
@@ -141,7 +145,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         $cmids = array ($cm->cmid);
         $areaname = 'submissions';
         $result = core_grading_external::get_definitions($cmids, $areaname);
-        $result = external_api::clean_returnvalue(core_grading_external::get_definitions_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grading_external::get_definitions_returns(), $result);
 
         $this->assertEquals(1, count($result['areas']));
         $this->assertEquals(1, count($result['areas'][0]['definitions']));
@@ -200,9 +204,9 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         $enrolid = $DB->insert_record('enrol', $manualenroldata);
 
         // Create a teacher and give them capabilities.
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $coursecontext->id, 3);
-        $modulecontext = context_module::instance($assign->cmid);
+        $modulecontext = \context_module::instance($assign->cmid);
         $this->assignUserCapability('mod/assign:grade', $modulecontext->id, $roleid);
 
         // Create the teacher's enrolment record.
@@ -213,7 +217,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
 
         // Create a student with an assignment grade.
         $student = self::getDataGenerator()->create_user();
-        $assigngrade = new stdClass();
+        $assigngrade = new \stdClass();
         $assigngrade->assignment = $assign->id;
         $assigngrade->userid = $student->id;
         $assigngrade->timecreated = time();
@@ -286,7 +290,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
 
         // Call the external function.
         $result = core_grading_external::get_gradingform_instances($definitionid, 0);
-        $result = external_api::clean_returnvalue(core_grading_external::get_gradingform_instances_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grading_external::get_gradingform_instances_returns(), $result);
 
         $this->assertEquals(1, count($result['instances']));
         $this->assertEquals($USER->id, $result['instances'][0]['raterid']);
@@ -315,8 +319,8 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         $params['course'] = $course->id;
         $instance = $generator->create_instance($params);
         $cm = get_coursemodule_from_instance('assign', $instance->id);
-        $context = context_module::instance($cm->id);
-        $coursecontext = context_course::instance($course->id);
+        $context = \context_module::instance($cm->id);
+        $coursecontext = \context_course::instance($course->id);
 
         // Create the teacher.
         $teacher = self::getDataGenerator()->create_user();
@@ -554,8 +558,8 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         $params['course'] = $course->id;
         $instance = $generator->create_instance($params);
         $cm = get_coursemodule_from_instance('assign', $instance->id);
-        $context = context_module::instance($cm->id);
-        $coursecontext = context_course::instance($course->id);
+        $context = \context_module::instance($cm->id);
+        $coursecontext = \context_course::instance($course->id);
 
         // Create the teacher.
         $teacher = self::getDataGenerator()->create_user();
