@@ -649,7 +649,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         ];
         $this->queue_tasks_and_assert($expect);
 
-        $tasks = $DB->get_records('task_adhoc');
+        $tasks = $DB->get_records('task_adhoc', ['component' => 'mod_forum']);
         $task = reset($tasks);
         $this->assertGreaterThanOrEqual(time(), $task->nextruntime);
     }
@@ -689,7 +689,7 @@ class mod_forum_maildigest_testcase extends advanced_testcase {
         ];
         $this->queue_tasks_and_assert($expect);
 
-        $tasks = $DB->get_records('task_adhoc');
+        $tasks = $DB->get_records('task_adhoc', ['component' => 'mod_forum']);
         $task = reset($tasks);
         $digesttime = usergetmidnight(time(), \core_date::get_server_timezone()) + ($CFG->digestmailtime * 3600);
         $this->assertLessThanOrEqual($digesttime, $task->nextruntime);
