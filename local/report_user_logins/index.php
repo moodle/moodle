@@ -292,22 +292,20 @@ $showdepartments[$departmentid] = $departmentid;
 $departmentsql = " AND d.id IN (" . implode(',', array_keys($showdepartments)) . ")";
 
 // Set up the initial SQL for the form.
-$selectsql = "DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", "d.id")) . " AS dindex,u.id,u.firstname,u.lastname,cu.companyid,u.email,url.created,url.firstlogin,url.lastlogin,url.logincount";
+$selectsql = "DISTINCT u.*,cu.companyid,u.email,url.created,url.firstlogin,url.lastlogin,url.logincount";
 $fromsql = "{user} u JOIN {local_report_user_logins} url ON (u.id = url.userid) JOIN {company_users} cu ON (u.id = cu.userid) JOIN {department} d ON (cu.departmentid = d.id)";
 $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql";
 $countsql = "SELECT COUNT( DISTINCT u.id ) FROM $fromsql WHERE $wheresql";
 $sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;
 
 // Set up the headers for the form.
-$headers = array(get_string('firstname'),
-                 get_string('lastname'),
+$headers = array(get_string('fullname'),
                  get_string('department', 'block_iomad_company_admin'),
                  get_string('email'));
 
-$columns = array('firstname',
-                    'lastname',
-                    'department',
-                    'email');
+$columns = array('fullname',
+                 'department',
+                 'email');
 
 // Deal with optional report fields.
 if (!empty($extrafields)) {

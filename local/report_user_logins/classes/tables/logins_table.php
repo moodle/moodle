@@ -37,38 +37,22 @@ require_once($CFG->libdir.'/tablelib.php');
 class logins_table extends table_sql {
 
     /**
-     * Generate the display of the user's firstname
+     * Generate the display of the user's| fullname
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_firstname($row) {
-        global $CFG;
+    public function col_fullname($row) {
+        global $params;
 
+        $name = fullname($row, has_capability('moodle/site:viewfullnames', $this->get_context()));
         $userurl = '/local/report_users/userdisplay.php';
+
         if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
             return "<a href='".
-                    new moodle_url($userurl, array('userid' => $row->id)) .
-                    "'>$row->firstname</a>";
+                    new moodle_url($userurl, ['userid' => $row->id]).
+                    "'>$name</a>";
         } else {
-            return $row->firstname;
-        }
-    }
-
-    /**
-     * Generate the display of the user's lastname
-     * @param object $user the table row being output.
-     * @return string HTML content to go inside the td.
-     */
-    public function col_lastname($row) {
-        global $CFG;
-
-        $userurl = '/local/report_users/userdisplay.php';
-        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
-            return "<a href='".
-                    new moodle_url($userurl, array('userid' => $row->id)).
-                    "'>$row->lastname</a>";
-        } else {
-            return $row->lastname;
+            return $name;
         }
     }
 
