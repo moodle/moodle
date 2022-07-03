@@ -38,9 +38,8 @@ $redocertificate = optional_param('redocertificate', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_CLEAN);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 $validonly = optional_param('validonly', $CFG->iomad_hidevalidcourses, PARAM_BOOL);
-$adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 
-if (!empty($SESSION->iomadeditingreports)) {
+if (!empty($USER->editing)) {
     $download = 0;
 }
 
@@ -240,24 +239,6 @@ if (!empty($data)) {
     }
 }
 
-// Deal with edit buttons.
-if ($adminediting != -1) {
-    $SESSION->iomadeditingreports = $adminediting;
-}
-
-if (iomad::has_capability('local/report_users:updateentries', context_system::instance())) {
-    $url = clone($PAGE->url);
-    if (!empty($SESSION->iomadeditingreports)) {
-        $caption = get_string('turneditingoff');
-        $url->param('adminedit', 'off');
-    } else {
-        $caption = get_string('turneditingon');
-        $url->param('adminedit', 'on');
-    }
-    $buttons = $OUTPUT->single_button($url, $caption, 'get');
-    $PAGE->set_button($buttons);
-}
-
 // Get the renderer.
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
@@ -392,7 +373,7 @@ if (!$table->is_downloading()) {
         echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
         echo $output->single_button($url, $validstring);
         echo html_writer::end_tag('div');
-        if (!empty($SESSION->iomadeditingreports)) {
+        if (!empty($USER->editing)) {
             echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
             $url = new moodle_url($CFG->wwwroot . '/local/report_users/newentry.php',
                                   array('userid' => $userid,
@@ -433,7 +414,7 @@ $columns = array('coursename',
                  'timecompleted');
 
 // Do we show the time expires column?
-if (empty($SESSION->iomadeditingreports) && 
+if (empty($USER->editing) && 
     $DB->get_records_sql("SELECT lit.id FROM {iomad_courses} ic
                           JOIN {local_iomad_track} lit
                           ON ic.courseid = lit.courseid
@@ -452,7 +433,7 @@ if ($DB->get_records_sql("SELECT lit.id FROM {iomad_courses} ic
                           AND lit.userid = :userid",
                           array('userid' => $userid))) {
     $columns[] = 'finalscore';
-    $headers[] = get_string('grade');
+    $headers[] = get_string('grade', 'grades');
 }
 
 if (!$table->is_downloading()){
@@ -462,7 +443,7 @@ if (!$table->is_downloading()){
     $columns[] = 'actions';
 
     // Set up the form.
-    if (!empty($SESSION->iomadeditingreports) && !$table->is_downloading()) {
+    if (!empty($USER->editing) && !$table->is_downloading()) {
         echo html_writer::start_tag('form', array('action' => $baseurl,
                                                   'enctype' => 'application/x-www-form-urlencoded',
                                                   'method' => 'post',
@@ -494,7 +475,7 @@ $table->no_sorting('certificate');
 $table->no_sorting('actions');
 $table->sort_default_column='coursename';
 
-if (!empty($SESSION->iomadeditingreports)) {
+if (!empty($USER->editing)) {
     $table->downloadable = false;
 }
 
@@ -504,7 +485,7 @@ if (!$table->is_downloading()) {
 $table->out($CFG->iomad_max_list_courses, true);
 
 if (!$table->is_downloading()) {
-    if (!empty($SESSION->iomadeditingreports)) {
+    if (!empty($USER->editing)) {
         // Set up the form.
         echo html_writer::end_tag('div');
         echo html_writer::start_tag('div', array('class' => 'iomadclear'));

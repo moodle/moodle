@@ -277,21 +277,19 @@ if ($parentslist = $company->get_parent_companies_recursive()) {
 }
 
 // Set up the initial SQL for the form.
-$selectsql = "u.id,u.firstname,u.lastname,d.name as department,u.email,u.timecreated as created, u.currentlogin as lastlogin";
+$selectsql = "DISTINCT u.*,u.timecreated as created, u.currentlogin as lastlogin, cu.companyid";
 $fromsql = "{user} u JOIN {company_users} cu ON (u.id = cu.userid) JOIN {department} d ON (cu.departmentid = d.id)";
 $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql";
 $sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;
 
 // Set up the headers for the form.
-$headers = array(get_string('firstname'),
-                 get_string('lastname'),
+$headers = array(get_string('fullname'),
                  get_string('department', 'block_iomad_company_admin'),
                  get_string('email'));
 
-$columns = array('firstname',
-                    'lastname',
-                    'department',
-                    'email');
+$columns = array('fullname',
+                 'department',
+                 'email');
 
 // Deal with optional report fields.
 if (!empty($extrafields)) {
@@ -323,6 +321,8 @@ $columns[] = 'created';
 $columns[] = 'lastlogin';
 
 $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
+$countsql = "SELECT count(DISTINCT u.id) FROM $fromsql WHERE $wheresql";
+$table->set_count_sql($countsql, $sqlparams);
 $table->define_baseurl($linkurl);
 $table->define_columns($columns);
 $table->define_headers($headers);

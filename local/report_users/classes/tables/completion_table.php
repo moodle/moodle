@@ -65,9 +65,9 @@ class completion_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_licenseallocated($row) {
-        global $CFG, $SESSION, $output;
+        global $CFG, $USSER, $output;
 
-        if ($this->is_downloading() || empty($SESSION->iomadeditingreports)) {
+        if ($this->is_downloading() || empty($USER->editing)) {
             if (!empty($row->licenseallocated)) {
                 return format_string(date($CFG->iomad_date_format, $row->licenseallocated) . " (" . $row->licensename . ")");
             } else {
@@ -87,9 +87,9 @@ class completion_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_timeenrolled($row) {
-        global $CFG, $SESSION, $output;
+        global $CFG, $USER, $output;
 
-        if ($this->is_downloading() || empty($SESSION->iomadeditingreports)) {
+        if ($this->is_downloading() || empty($USER->editing)) {
             if (!empty($row->timeenrolled)) {
                 return date($CFG->iomad_date_format, $row->timeenrolled);
             } else {
@@ -109,9 +109,9 @@ class completion_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_timecompleted($row) {
-        global $CFG, $SESSION, $output;
+        global $CFG, $USER, $output;
 
-        if ($this->is_downloading() || empty($SESSION->iomadeditingreports)) {
+        if ($this->is_downloading() || empty($USER->editing)) {
             if (!empty($row->timecompleted)) {
                 return date($CFG->iomad_date_format, $row->timecompleted);
             } else {
@@ -131,7 +131,7 @@ class completion_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_timeexpires($row) {
-        global $CFG, $SESSION, $output;
+        global $CFG, $output;
 
         if (!empty($row->timecompleted) && empty($row->timeexpires)) {
             return get_string('notapplicable', 'local_report_completion');
@@ -148,10 +148,10 @@ class completion_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_finalscore($row) {
-        global $CFG, $DB, $SESSION;
+        global $CFG, $DB, $USER;
 
         if ($icourserec = $DB->get_record_sql("SELECT * FROM {iomad_courses} WHERE courseid = :courseid AND hasgrade = 1", array('courseid' => $row->courseid))) {
-            if ($this->is_downloading() || empty($SESSION->iomadeditingreports)) {
+            if ($this->is_downloading() || empty($USER->editing)) {
                 if (!empty($row->finalscore) && !empty($row->timeenrolled)) {
                     return round($row->finalscore, $CFG->iomad_report_grade_places)."%";
                 } else {
@@ -189,7 +189,7 @@ class completion_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_actions($row) {
-        global $DB, $SESSION;
+        global $DB, $USER;
 
         // Do nothing if downloading.
         if ($this->is_downloading()) {
@@ -231,7 +231,7 @@ class completion_table extends table_sql {
         if (has_capability('local/report_users:deleteentries', context_system::instance())) {
             // Its from the course_completions table.  Check the license type.
             if (empty($row->coursecleared)) {
-                if (empty($SESSION->iomadeditingreports)) {
+                if (empty($USER->editing)) {
                     if (!empty($row->licenseid) &&
                         $DB->get_record('companylicense',
                                          array('id' => $row->licenseid,
@@ -260,7 +260,7 @@ class completion_table extends table_sql {
                     }
                 }
             } else {
-                if (!empty($SESSION->iomadeditingreports) && iomad::has_capability('local/report_users:deleteentriesfull', context_system::instance())) {
+                if (!empty($USER->editing) && iomad::has_capability('local/report_users:deleteentriesfull', context_system::instance())) {
                     $checkboxhtml = "<input type='checkbox' name='purge_entries[]' value=$row->id class='enableentries'>&nbsp";
                     $delaction .= $checkboxhtml . '<a class="btn btn-danger" href="'.$trackonlylink.'">' . get_string('purgerecord', 'local_report_users') . '</a>';
                 }
@@ -276,7 +276,7 @@ class completion_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_certificate($row) {
-        global $DB, $output, $SESSION, $CFG;
+        global $DB, $output, $USER, $CFG;
 
         if ($this->is_downloading()) {
             return;
@@ -284,7 +284,7 @@ class completion_table extends table_sql {
 
         if (!empty($row->timecompleted) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
             if ($traccertrecs = $DB->get_records('local_iomad_track_certs', array('trackid' => $row->certsource))) {
-                if (empty($SESSION->iomadeditingreports) || !iomad::has_capability('local/report_users:redocertificates', context_system::instance())) {
+                if (empty($USER->editing) || !iomad::has_capability('local/report_users:redocertificates', context_system::instance())) {
                     $coursecontext = context_course::instance($row->courseid);
                     $returntext = "";
                     foreach ($traccertrecs as $traccertrec) {
@@ -418,7 +418,7 @@ class completion_table extends table_sql {
      * This function is not part of the public api.
      */
     function print_headers() {
-        global $CFG, $OUTPUT, $PAGE, $SESSION;
+        global $CFG, $OUTPUT, $PAGE, $USER;
 
         echo html_writer::start_tag('thead');
         echo html_writer::start_tag('tr');
@@ -475,13 +475,13 @@ class completion_table extends table_sql {
                 break;
 
                 case 'certificate':
-                    if (!empty($SESSION->iomadeditingreports) && iomad::has_capability('local/report_users:redocertificates', context_system::instance())) {
+                    if (!empty($USER->editing) && iomad::has_capability('local/report_users:redocertificates', context_system::instance())) {
                         $this->headers[$index] = "<input type='checkbox' name='allthecertificates' id='check_allthecertificates' class='checkbox enableallcertificates'>&nbsp" . $this->headers[$index];
                     }
                 break;
 
                 case 'actions':
-                    if (!empty($SESSION->iomadeditingreports) && iomad::has_capability('local/report_users:deleteentriesfull', context_system::instance())) {
+                    if (!empty($USER->editing) && iomad::has_capability('local/report_users:deleteentriesfull', context_system::instance())) {
                         $this->headers[$index] = "&nbsp<input type='checkbox' name='alltheentries' id='check_alltheentries' class='checkbox enableallentries'>&nbsp" . $this->headers[$index];
                     }
                 break;

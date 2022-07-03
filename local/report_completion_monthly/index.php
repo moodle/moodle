@@ -305,30 +305,10 @@ if (!empty($compto)) {
 }
 
 // Set up the initial SQL for the form.
-$selectsql = "lit.id,lit.timecompleted";
+$selectsql = "DISTINCT lit.id,lit.timecompleted";
 $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.userid = cu.userid AND lit.companyid = cu.companyid)";
 $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid AND lit.timecompleted IS NOT NULL $departmentsql $companysql $coursesql $timesql";
 $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid) + $searchinfo->searchparams;
-
-// Deal with optional report fields.
-if (!empty($extrafields)) {
-    foreach ($extrafields as $extrafield) {
-        if (!empty($extrafield->fieldid)) {
-            // Its a profile field.
-            // Skip it this time as these may not have data.
-        } else {
-            $selectsql .= ", u." . $extrafield->name;
-        }
-    }
-    foreach ($extrafields as $extrafield) {
-        if (!empty($extrafield->fieldid)) {
-            // Its a profile field.
-            $selectsql .= ", P" . $extrafield->fieldid . ".data AS " . $extrafield->name;
-            $fromsql .= " LEFT JOIN {user_info_data} P" . $extrafield->fieldid . " ON (u.id = P" . $extrafield->fieldid . ".userid AND P".$extrafield->fieldid . ".fieldid = :p" . $extrafield->fieldid . "fieldid )";
-            $sqlparams["p".$extrafield->fieldid."fieldid"] = $extrafield->fieldid;
-        }
-    }
-}
 
 // Get the full list of completions.
 $results = $DB->get_records_sql("SELECT $selectsql FROM $fromsql WHERE $wheresql", $sqlparams);

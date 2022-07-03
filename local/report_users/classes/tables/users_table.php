@@ -27,6 +27,8 @@ namespace local_report_users\tables;
 
 use \table_sql;
 use \moodle_url;
+use \iomad;
+use \context_system;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,38 +37,22 @@ require_once($CFG->libdir.'/tablelib.php');
 class users_table extends table_sql {
 
     /**
-     * Generate the display of the user's firstname
+     * Generate the display of the user's| fullname
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_firstname($row) {
-        global $CFG;
+    public function col_fullname($row) {
+        global $params;
 
+        $name = fullname($row, has_capability('moodle/site:viewfullnames', $this->get_context()));
         $userurl = '/local/report_users/userdisplay.php';
-        if (!$this->is_downloading()) {
-            return "<a href='".
-                    new moodle_url($userurl, array('userid' => $row->id)).
-                    "'>$row->firstname</a>";
-        } else {
-            return $row->firstname;
-        }
-    }
 
-    /**
-     * Generate the display of the user's lastname
-     * @param object $user the table row being output.
-     * @return string HTML content to go inside the td.
-     */
-    public function col_lastname($row) {
-        global $CFG;
-
-        $userurl = '/local/report_users/userdisplay.php';
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
             return "<a href='".
-                    new moodle_url($userurl, array('userid' => $row->id)).
-                    "'>$row->lastname</a>";
+                    new moodle_url($userurl, ['userid' => $row->id]).
+                    "'>$name</a>";
         } else {
-            return $row->lastname;
+            return $name;
         }
     }
 
@@ -150,4 +136,42 @@ class users_table extends table_sql {
         }
     }
 
+    /**
+     * Generate the display of the user's departments
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_department($row) {
+        global $DB;
+
+        $departments = $DB->get_records_sql("SELECT d.name FROM {department} d
+                                             JOIN {company_users} cu
+                                             ON (d.id = cu.departmentid)
+                                             WHERE cu.userid = :userid
+                                             AND cu.companyid = :companyid
+                                             ORDER BY d.name",
+                                             array('userid' => $row->id,
+                                                   'companyid' => $row->companyid));
+        $returnstr = "";
+        $count = count($departments);
+        $current = 1;
+        if ($count > 5) {
+            $returnstr = "<details><summary>" . get_string('show') . "</summary>";
+        }
+
+        foreach($departments as $department) {
+            $returnstr .= format_string($department->name);
+            if ($current < $count) {
+                $returnstr .= ",</br>";
+            }
+            $current++;
+        }
+
+        if ($count > 5) {
+            $returnstr .= "</details>";
+        }
+
+        return $returnstr;
+
+    }
 }
