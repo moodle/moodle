@@ -1,0 +1,111 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_iomadpolicy/page_viewalldoc
+
+    Template for viewing all iomadpolicy versions, one under another.
+
+    Classes required for JS:
+    -
+
+    Data attributes required for JS:
+    -
+
+    Context variables required for this template:
+    * returnurl - url to the previous page
+    * policies - iomadpolicy array
+
+    Example context (json):
+    {
+        "returnurl": "#",
+        "policies": [
+            {
+                "id": "2",
+                "name": "Terms &amp; conditions",
+                "summary": "Policy <u>summary</u>",
+                "content": "Policy <em>content</em>",
+                "iomadpolicytypestr": "Site iomadpolicy",
+                "iomadpolicyaudiencestr": "All users"
+            },
+            {
+                "id": "5",
+                "name": "Privacy",
+                "summary": "We keep your information private",
+                "content": "Very private",
+                "iomadpolicytypestr": "Privacy iomadpolicy",
+                "iomadpolicyaudiencestr": "Authenticated users"
+            }
+        ]
+    }
+}}
+
+{{#returnurl}}
+<div class="text-right mb-1">
+    <a href="{{returnurl}}">{{# str }} backtoprevious, tool_iomadpolicy {{/ str }}</a>
+</div>
+{{/returnurl}}
+
+<a id="top"></a>
+<div id="policies_index">
+<h1>{{# str }} listactivepolicies, tool_iomadpolicy {{/ str }}</h1>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">{{# str }}iomadpolicydocname, tool_iomadpolicy {{/ str }}</th>
+        <th scope="col">{{# str }}iomadpolicydoctype, tool_iomadpolicy {{/ str }}</th>
+        <th scope="col">{{# str }}iomadpolicydocaudience, tool_iomadpolicy {{/ str }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#policies }}
+        <tr>
+            <td><a href="#iomadpolicy-{{id}}">{{{name}}}</a></td>
+            <td>{{{ iomadpolicytypestr }}}</td>
+            <td>{{{ iomadpolicyaudiencestr }}}</td>
+        </tr>
+    {{/policies }}
+    </tbody>
+</table>
+</div>
+
+{{^policies }}
+    {{# str }} noactivepolicies, tool_iomadpolicy {{/ str }}
+{{/policies }}
+
+{{#policies }}
+        <hr>
+    <div class="iomadpolicy_version mb-3">
+        <div class="clearfix mt-2">
+            <h2><a id="iomadpolicy-{{id}}">{{{name}}}</a></h2>
+        </div>
+        <div class="iomadpolicy_document_summary clearfix mb-1">
+            <h3>{{# str }} iomadpolicydocsummary, tool_iomadpolicy {{/ str }}</h3>
+            {{{summary}}}
+        </div>
+        <div class="iomadpolicy_document_content mt-2">
+            <h3>{{# str }} iomadpolicydoccontent, tool_iomadpolicy {{/ str }}</h3>
+            {{{content}}}
+        </div>
+        <div class="float-right">
+            <a href="#top">
+                {{# str }} backtotop, tool_iomadpolicy {{/ str }}
+                <i class="icon text-primary fa fa-caret-up" title="{{# str }} backtotop, tool_iomadpolicy {{/ str }}" ></i>
+            </a>
+        </div>
+    </div>
+
+{{/policies }}

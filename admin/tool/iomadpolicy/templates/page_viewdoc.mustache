@@ -1,0 +1,105 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_iomadpolicy/page_viewdoc
+
+    Template for viewing a iomadpolicy version document.
+
+    Classes required for JS:
+    -
+
+    Data attributes required for JS:
+    -
+
+    Context variables required for this template:
+    * iomadpolicy - version document object.
+
+    Example context (json):
+    {
+        "numiomadpolicy": 1,
+        "totalpolicies": 2,
+        "iomadpolicy": {
+            "name": "Terms &amp; conditions",
+            "summary": "Policy <u>summary</u>",
+            "content": "Policy <em>content</em>"
+        },
+        "returnurl": "#",
+        "editurl": "#",
+        "accepturl": "#"
+    }
+}}
+
+<a id="top"></a>
+<div class="clearfix">
+    <div class="float-left">
+        <h2>{{{iomadpolicy.name}}}</h2>
+    </div>
+    {{# numiomadpolicy }}
+        <div class="float-right">
+            {{# str }} steppolicies, tool_iomadpolicy,
+                { "numiomadpolicy": {{# quote }}{{numiomadpolicy}}{{/quote }}, "totalpolicies": {{# quote }}{{totalpolicies}}{{/ quote }} }
+            {{/ str }}
+        </div>
+    {{/ numiomadpolicy }}
+</div>
+
+
+{{# numiomadpolicy }}
+    <div class="clearfix mt-2">
+        <h3>{{# str }}readiomadpolicy, tool_iomadpolicy, {{{iomadpolicy.name}}} {{/ str }}</h3>
+    </div>
+{{/ numiomadpolicy }}
+
+<hr>
+
+<div class="iomadpolicy_document mt-1">
+    <div class="iomadpolicy_document_summary clearfix mb-1">
+        {{{iomadpolicy.summary}}}
+    </div>
+    <div class="iomadpolicy_document_content mt-2">
+        {{{iomadpolicy.content}}}
+    </div>
+</div>
+
+<hr>
+
+<div class="iomadpolicy_buttons">
+    {{#returnurl}}
+        {{# numiomadpolicy }}
+            <a role="button" href="{{returnurl}}" class="btn btn-primary">{{#str}} next {{/str}}</a>
+        {{/ numiomadpolicy }}
+        {{^ numiomadpolicy }}
+            <a role="button" href="{{returnurl}}" class="btn btn-primary">{{#str}} back {{/str}}</a>
+        {{/ numiomadpolicy }}
+    {{/returnurl}}
+    {{#editurl}}
+        <a role="button" href="{{editurl}}" class="btn">{{#str}} edit {{/str}}</a>
+    {{/editurl}}
+    {{#accepturl}}
+        <a role="button" href="{{accepturl}}" class="btn btn-primary">{{#str}} iagree, tool_iomadpolicy, {{{iomadpolicy.name}}} {{/str}}</a>
+    {{/accepturl}}
+    {{#declineurl}}
+        <a role="button" href="{{declineurl}}" class="btn btn-link">{{#str}} idontagree, tool_iomadpolicy, {{{iomadpolicy.name}}} {{/str}}</a>
+    {{/declineurl}}
+
+    <div class="float-right">
+        <a href="#top">
+            {{# str }} backtotop, tool_iomadpolicy {{/ str }}
+            <i class="icon text-primary fa fa-caret-up" title="{{# str }} backtotop, tool_iomadpolicy {{/ str }}" ></i>
+        </a>
+    </div>
+</div>
