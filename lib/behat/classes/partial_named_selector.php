@@ -108,6 +108,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'link' => 'link',
         'link_or_button' => 'link_or_button',
         'list_item' => 'list_item',
+        'menuitem' => 'menuitem',
         'optgroup' => 'optgroup',
         'option' => 'option',
         'question' => 'question',
@@ -201,6 +202,9 @@ XPATH
 XPATH
         , 'list_item' => <<<XPATH
 .//li[contains(normalize-space(.), %locator%) and not(.//li[contains(normalize-space(.), %locator%)])]
+XPATH
+        , 'menuitem' => <<<XPATH
+.//*[@role='menuitem'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]]
 XPATH
         , 'question' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), ' que ')]
