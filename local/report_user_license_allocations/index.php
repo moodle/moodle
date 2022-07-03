@@ -371,22 +371,20 @@ if (!empty($licenseid) && $licenseid != 1) {
 }
 
 // Set up the initial SQL for the form.
-$selectsql = "DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", $DB->sql_concat("urla.licenseid", $DB->sql_concat("'-'", "urla.courseid")))) . " AS cindex,u.id,u.firstname,u.lastname,cu.companyid,u.email, c.id AS courseid, c.fullname AS coursename, urla.licenseid, cl.name as licensename";
+$selectsql = "DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", $DB->sql_concat("urla.licenseid", $DB->sql_concat("'-'", "urla.courseid")))) . " AS cindex,u.*,cu.companyid,u.email, c.id AS courseid, c.fullname AS coursename, urla.licenseid, cl.name as licensename";
 $fromsql = " {local_report_user_lic_allocs} urla JOIN {user} u ON (urla.userid = u.id) JOIN {company_users} cu ON (u.id = cu.userid) JOIN {department} d ON (cu.departmentid = d.id and cu.companyid = d.company) JOIN {course} c ON (urla.courseid = c.id) LEFT JOIN {companylicense} cl ON (urla.licenseid = cl.id)";
 $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql $licensesql $coursesql";
 $countsql = "SELECT COUNT(DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", $DB->sql_concat("urla.licenseid", $DB->sql_concat("'-'", "urla.courseid")))) . ") FROM $fromsql WHERE $wheresql";
 $sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;
 
 // Set up the headers for the form.
-$headers = array(get_string('firstname'),
-                 get_string('lastname'),
+$headers = array(get_string('fullname'),
                  get_string('department', 'block_iomad_company_admin'),
                  get_string('email'));
 
-$columns = array('firstname',
-                    'lastname',
-                    'department',
-                    'email');
+$columns = array('fullname',
+                 'department',
+                 'email');
 
 // Deal with optional report fields.
 if (!empty($extrafields)) {

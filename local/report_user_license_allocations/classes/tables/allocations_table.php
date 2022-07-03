@@ -36,40 +36,23 @@ require_once($CFG->libdir.'/tablelib.php');
 class allocations_table extends table_sql {
 
     /**
-     * Generate the display of the user's firstname
+     * Generate the display of the user's| fullname
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_firstname($row) {
-        global $CFG;
+    public function col_fullname($row) {
+        global $params;
 
+        $name = fullname($row, has_capability('moodle/site:viewfullnames', $this->get_context()));
         $userurl = '/local/report_users/userdisplay.php';
+
         if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
             return "<a href='".
                     new moodle_url($userurl, array('userid' => $row->id,
                                                    'courseid' => $row->courseid)).
-                    "'>$row->firstname</a>";
+                    "'>$name</a>";
         } else {
-            return $row->firstname;
-        }
-    }
-
-    /**
-     * Generate the display of the user's lastname
-     * @param object $user the table row being output.
-     * @return string HTML content to go inside the td.
-     */
-    public function col_lastname($row) {
-        global $CFG;
-
-        $userurl = '/local/report_users/userdisplay.php';
-        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
-            return "<a href='".
-                    new moodle_url($userurl, array('userid' => $row->id,
-                                                   'courseid' => $row->courseid)).
-                    "'>$row->lastname</a>";
-        } else {
-            return $row->lastname;
+            return $name;
         }
     }
 
@@ -110,14 +93,23 @@ class allocations_table extends table_sql {
                                               'licenseid' => $row->licenseid,
                                               'courseid' => $row->courseid,
                                               'action' => 1));
-        $returnstring = "";
+        $count = count($allocations);
+        $current = 1;
+        $returnstr = "";
+        if ($count > 5) {
+            $returnstr = "<details><summary>" . get_string('show') . "</summary>";
+        }
 
         // Process them.
         foreach ($allocations as $allocation) {
-            $returnstring .= date($CFG->iomad_date_format, $allocation->issuedate) . "</br>";
+            $returnstr .= date($CFG->iomad_date_format, $allocation->issuedate) . "</br>";
         }
 
-        return $returnstring;
+        if ($count > 5) {
+            $returnstr .= "</details>";
+        }
+
+        return $returnstr;
     }
 
     /**
@@ -133,14 +125,23 @@ class allocations_table extends table_sql {
                                                 'licenseid' => $row->licenseid,
                                                 'courseid' => $row->courseid,
                                                 'action' => 0));
-        $returnstring = "";
+        $count = count($unallocations);
+        $current = 1;
+        $returnstr = "";
+        if ($count > 5) {
+            $returnstr = "<details><summary>" . get_string('show') . "</summary>";
+        }
 
         // Process them.
         foreach ($unallocations as $unallocation) {
-            $returnstring .= date($CFG->iomad_date_format, $unallocation->issuedate) . "</br>";
+            $returnstr .= date($CFG->iomad_date_format, $unallocation->issuedate) . "</br>";
         }
 
-        return $returnstring;
+        if ($count > 5) {
+            $returnstr .= "</details>";
+        }
+
+        return $returnstr;
     }
 
     /**
@@ -229,7 +230,7 @@ class allocations_table extends table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar. Bar
      * will only be used if there is a fullname column defined for the table.
      */
-    function query_db($pagesize, $useinitialsbar=true) {
+    function dt_query_db($pagesize, $useinitialsbar=true) {
         global $DB;
         if (!$this->is_downloading()) {
             if ($this->countsql === NULL) {
