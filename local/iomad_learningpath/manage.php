@@ -34,7 +34,7 @@ iomad::require_capability('local/iomad_learningpath:manage', $context);
 $url = new moodle_url('/local/iomad_learningpath/manage.php');
 $PAGE->set_context($context);
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('managetitle', 'local_iomad_learningpath'));
 $PAGE->set_heading(get_string('learningpathmanage', 'local_iomad_learningpath'));
 $PAGE->requires->js_call_amd('local_iomad_learningpath/manage', 'init');

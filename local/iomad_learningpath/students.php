@@ -37,7 +37,7 @@ $id = required_param('id', PARAM_INT);
 $url = new moodle_url('/local/iomad_learningpath/students.php', ['id' => $id]);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('managetitle', 'local_iomad_learningpath'));
 $PAGE->set_heading(get_string('managestudents', 'local_iomad_learningpath'));
 $output = $PAGE->get_renderer('local_iomad_learningpath');

@@ -40,7 +40,7 @@ $url = new moodle_url('/local/iomad_learningpath/editgroup.php', ['id' => $id, '
 $exiturl = new moodle_url('/local/iomad_learningpath/courselist.php', ['id' => $learningpath]);
 $PAGE->set_context($context);
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('grouptitle', 'local_iomad_learningpath'));
 $PAGE->set_heading(get_string('grouptitle', 'local_iomad_learningpath'));
 $output = $PAGE->get_renderer('local_iomad_learningpath');
