@@ -129,7 +129,7 @@ if ($courses = $DB->get_recordset_sql('SELECT css.*, c.fullname
                                        FROM {course_shopsettings} css
                                             INNER JOIN {course} c ON c.id = css.courseid
                                        ORDER BY c.fullname', null, $page * $perpage, $perpage)) {
-    if (count($courses)) {
+    if (!empty($courses)) {
         $stredit   = get_string('edit');
         $strdelete = get_string('delete');
         $strhide = get_string('hide', 'block_iomad_commerce');
