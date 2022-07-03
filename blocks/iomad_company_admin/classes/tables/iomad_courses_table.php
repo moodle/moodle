@@ -91,6 +91,7 @@ class iomad_courses_table extends table_sql {
         // Deal with self enrol.
         if ($DB->get_record('enrol', array('courseid' => $row->courseid, 'enrol' => 'self', 'status' => 0))) {
             $row->licensed = 3;
+            $licenseselectoutput = get_string('pluginname', 'enrol_self');
         }
 
         if (!empty($USER->editing) &&
@@ -106,9 +107,6 @@ class iomad_courses_table extends table_sql {
         } else {
             if ($row->licensed == 0) {
                 $licenseselectoutput = get_string('no');
-                if ($DB->get_record('enrol', array('courseid' => $row->courseid, 'enrol' => 'self', 'status' => 0))) {
-                    $licenseselectoutput = get_string('pluginname', 'enrol_self');
-                }
             } else if ($row->licensed == 1) {
                 $licenseselectoutput = get_string('yes');
             }

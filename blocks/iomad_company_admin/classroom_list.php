@@ -122,22 +122,25 @@ if ($classrooms = $DB->get_records('classroom', array('companyid' => $companyid)
     $strdelete = get_string('delete');
 
     $table = new html_table();
-    $table->head = array ("Name", "Capacity",  "", "");
-    $table->align = array ("left", "left", "center", "center");
+    $table->head = array ("Name", "Capacity",  "");
+    $table->align = array ("left", "left", "center");
     $table->width = "95%";
+    $sesskey = sesskey();
 
     foreach ($classrooms as $classroom) {
         if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $context)) {
-            $deletebutton = "<a href=\"classroom_list.php?delete=$classroom->id&amp;sesskey=".
-                             sesskey()."\">$strdelete</a>";
+            $deleteurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/classroom_list.php',
+                                        ['delete' => $classroom->id,
+                                        'sesskeyy' => $sesskey]);
+            $deletebutton = "<a href='" . $deleteurl . "'><i class='icon fa fa-trash fa-fw' title='" . get_string('delete') . "' role='img' aria-label='" . get_string('delete') . "'></i></a>";
         } else {
             $deletebutton = "";
         }
 
         if (iomad::has_capability('block/iomad_company_admin:classrooms_edit', $context)) {
-            $editbutton = "<a href='".
-                           new moodle_url('classroom_edit_form.php', array("id" => $classroom->id)).
-                           "'>$stredit</a>";
+            $editurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/classroom_edit_form.php',
+                                      ['id' => $classroom->id]);
+            $editbutton = "<a href='" . $editurl . "'><i class='icon fa fa-cog fa-fw' title='" . get_string('edit') . "' role='img' aria-label='" . get_string('edit') . "'></i></a>";
         } else {
             $editbutton = "";
         }
@@ -148,8 +151,7 @@ if ($classrooms = $DB->get_records('classroom', array('companyid' => $companyid)
         }
         $table->data[] = array ($classroom->name,
                             $classroom->capacity,
-                            $editbutton,
-                            $deletebutton);
+                            $editbutton . "&nbsp" . $deletebutton);
     }
 
     if (!empty($table)) {
