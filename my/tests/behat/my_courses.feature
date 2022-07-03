@@ -101,13 +101,13 @@ Feature: Run tests over my courses.
       | Default region   | Right                              |
     And I press "Save changes"
     And I should see "This is visible on all pages"
-    And "Move Text on all pages block" "button" should exist in the "Text on all pages" "block"
+    And "Move Text on all pages block" "menuitem" should exist in the "Text on all pages" "block"
     When I am on the "My courses" page
     # Check blocks visible but are "locked" in place.
     Then "Course overview" "text" should exist in the "region-main" "region"
     And I should not see "Add a block"
     And I should see "This is visible on all pages"
-    And "Move Text on all pages block" "button" should not exist in the "Text on all pages" "block"
-    And "Move Course overview block" "button" should not exist in the "Course overview" "block"
+    And "Move Text on all pages block" "menuitem" should not exist in the "Text on all pages" "block"
+    And "Move Course overview block" "menuitem" should not exist in the "Course overview" "block"
     And I click on "Actions menu" "icon" in the "Course overview" "block"
     And I should not see "Delete Course overview block"
