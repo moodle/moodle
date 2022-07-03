@@ -115,7 +115,7 @@ class companyrep{
 
             // Department managers
             $company->departmentmanagers = $DB->get_records_sql(
-                "SELECT u.* from {company_users} cu
+                "SELECT DISTINCT u.* from {company_users} cu
                 JOIN {user} u ON u.id = cu.userid
                 WHERE companyid = :companyid
                 AND managertype = 2", ['companyid' => $company->id]);
