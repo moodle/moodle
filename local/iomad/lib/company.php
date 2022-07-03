@@ -3375,7 +3375,7 @@ class company {
                 $companysql = "";
             }
 
-            $usercount = $DB->count_records_sql("SELECT COUNT(u.id) FROM
+            $usercount = $DB->count_records_sql("SELECT COUNT(DISTINCT u.id) FROM
                                                  {company_users} cu
                                                  JOIN {user} u ON (cu.userid = u.id)
                                                  WHERE cu.companyid = :companyid
