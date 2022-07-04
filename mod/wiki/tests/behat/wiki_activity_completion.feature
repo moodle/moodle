@@ -51,7 +51,7 @@ Feature: View activity completion information in the Wiki activity
     Given I am on the "Music history" "wiki activity" page logged in as teacher1
     And I am on the "Music history" "wiki activity editing" page
     And I expand all fieldsets
-    And I press "Unlock completion options"
+    And I press "Unlock completion settings"
     And I expand all fieldsets
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and display"

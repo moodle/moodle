@@ -134,7 +134,7 @@ $string['collapsegradepanel'] = 'Collapse grade panel';
 $string['collapsereviewpanel'] = 'Collapse review panel';
 $string['comment'] = 'Comment';
 $string['completiondetail:submit'] = 'Make a submission';
-$string['completionsubmit'] = 'Student must submit to this activity to complete it';
+$string['completionsubmit'] = 'Student must make a submission';
 $string['conversionexception'] = 'Could not convert assignment. Exception was: {$a}.';
 $string['configshowrecentsubmissions'] = 'Everyone can see notifications of submissions in recent activity reports.';
 $string['confirmsubmission'] = 'Are you sure you want to submit your work for grading? You will not be able to make any more changes.';
@@ -520,7 +520,7 @@ $string['status'] = 'Status';
 $string['studentnotificationworkflowstateerror'] = 'Marking workflow state must be \'Released\' to notify students.';
 $string['submissionattachments'] = 'Only show files during submission';
 $string['submissionattachments_help'] = 'Tick the box to only show files on the submission page. Otherwise, files will be shown on both the assignment and submission pages.';
-$string['confirmstart'] = 'Your submission will have a time limit of {$a}. When you start, the timer will begin to count down and cannot be paused. You must finish your submission before it expires. Are you sure you wish to start now? ';
+$string['confirmstart'] = 'You have {$a} to complete this assignment. When you begin, the timer will start to count down and can\'t be paused.';
 $string['submissioncopiedtext'] = 'You have made a copy of your previous
 assignment submission for \'{$a->assignment}\'
 

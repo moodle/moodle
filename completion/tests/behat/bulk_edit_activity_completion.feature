@@ -43,7 +43,7 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     And I click on "Edit" "button"
     And I should see "Completion tracking"
     And I should see "The changes will affect the following 2 activities or resources:"
-    And I should see "Student must submit to this activity to complete it"
+    And I should see "Student must make a submission"
     And I select "Show activity as complete when conditions are met" from the "completion" singleselect
     And I click on "completionview" "checkbox"
     And I click on "completionusegrade" "checkbox"
@@ -53,12 +53,12 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     And I should see "With conditions" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
     And I should see "Student must view this activity to complete it" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
     And I should see "Student must receive a grade to complete this activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
-    And I should see "Student must submit to this activity to complete it" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
+    And I should see "Student must make a submission" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
     And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment one']]" "xpath_element"
     And I should see "With conditions" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
     And I should see "Student must view this activity to complete it" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
     And I should see "Student must receive a grade to complete this activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
-    And I should see "Student must submit to this activity to complete it" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
+    And I should see "Student must make a submission" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
     And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
 
   # Same conditions as above,
@@ -74,7 +74,7 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     And I click on "Edit" "button"
     And I should see "Completion tracking"
     And I should see "The changes will affect the following 2 activities or resources:"
-    And I should see "Student must submit to this activity to complete it"
+    And I should see "Student must make a submission"
     And I select "Show activity as complete when conditions are met" from the "completion" singleselect
     And I click on "completionusegrade" "checkbox"
     And I click on "completionpassgrade" "checkbox"
