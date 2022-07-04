@@ -33,7 +33,7 @@ Feature: Teachers see correct answers when overriding marks
     And I set the field "Answer" to "lion"
     And I follow "Finish attempt ..."
     And I press "Submit all and finish"
-    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+    And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
     And I log out
 
   @javascript @_switch_window @_bug_phantomjs

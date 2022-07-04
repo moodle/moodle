@@ -16,10 +16,10 @@
 /**
  * A javascript module to handle submission confirmation for quiz.
  *
- * @module mod_quiz/submission_confirmation
+ * @module    mod_quiz/submission_confirmation
  * @copyright 2022 Huong Nguyen <huongnv13@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since 4.1
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     4.1
  */
 
 import Notification from 'core/notification';
@@ -43,7 +43,7 @@ const registerEventListeners = () => {
             e.preventDefault();
             Modal.create({
                 type: Modal.types.SAVE_CANCEL,
-                title: getString('confirmation', 'admin'),
+                title: getString('submission_confirmation', 'quiz'),
                 body: getString('confirmclose', 'quiz'),
                 buttons: {
                     save: getString('submitallandfinish', 'quiz')
@@ -67,6 +67,6 @@ const registerEventListeners = () => {
  */
 export const init = () => {
     Prefetch.prefetchStrings('core_admin', ['confirmation']);
-    Prefetch.prefetchStrings('quiz', ['confirmclose', 'submitallandfinish']);
+    Prefetch.prefetchStrings('quiz', ['submitallandfinish', 'submission_confirmation', 'confirmclose']);
     registerEventListeners();
 };
