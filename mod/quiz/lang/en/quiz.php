@@ -988,6 +988,7 @@ $string['stateoverduedetails'] = 'Must be submitted by {$a}';
 $string['status'] = 'Status';
 $string['stoponerror'] = 'Stop on error';
 $string['submission_confirmation'] = 'Submit all your answers and finish?';
+$string['submission_confirmation_unanswered'] = 'Questions without a response: {$a}';
 $string['submitallandfinish'] = 'Submit all and finish';
 $string['subneterror'] = 'Sorry, this quiz has been locked so that it is only accessible from certain locations.  Currently your computer is not one of those allowed to use this quiz.';
 $string['subnetnotice'] = 'This quiz has been locked so that it is only accessible from certain locations. Your computer is not on an allowed subnet. As teacher you are allowed to preview anyway.';

@@ -24,6 +24,7 @@
 
 import Notification from 'core/notification';
 import Prefetch from 'core/prefetch';
+import Templates from 'core/templates';
 import {get_string as getString} from 'core/str';
 import * as Modal from 'core/modal_factory';
 import * as ModalEvents from 'core/modal_events';
@@ -33,10 +34,15 @@ const SELECTOR = {
     attemptSubmitForm: 'form#frm-finishattempt',
 };
 
+const TEMPLATES = {
+    submissionConfirmation: 'mod_quiz/submission_confirmation',
+};
+
 /**
  * Register events for attempt submit button.
+ * @param {int} unAnsweredQuestions Total number of un-answered questions
  */
-const registerEventListeners = () => {
+const registerEventListeners = (unAnsweredQuestions) => {
     const submitAction = document.querySelector(SELECTOR.attemptSubmitButton);
     if (submitAction) {
         submitAction.addEventListener('click', e => {
@@ -44,7 +50,10 @@ const registerEventListeners = () => {
             Modal.create({
                 type: Modal.types.SAVE_CANCEL,
                 title: getString('submission_confirmation', 'quiz'),
-                body: getString('confirmclose', 'quiz'),
+                body: Templates.render(TEMPLATES.submissionConfirmation, {
+                    hasunanswered: unAnsweredQuestions > 0,
+                    totalunanswered: unAnsweredQuestions
+                }),
                 buttons: {
                     save: getString('submitallandfinish', 'quiz')
                 },
@@ -64,9 +73,12 @@ const registerEventListeners = () => {
 
 /**
  * Initialises.
+ * @param {int} unAnsweredQuestions Total number of unanswered questions
  */
-export const init = () => {
+export const init = (unAnsweredQuestions) => {
+    Prefetch.prefetchStrings('core', ['submit']);
     Prefetch.prefetchStrings('core_admin', ['confirmation']);
-    Prefetch.prefetchStrings('quiz', ['submitallandfinish', 'submission_confirmation', 'confirmclose']);
-    registerEventListeners();
+    Prefetch.prefetchStrings('quiz', ['submitallandfinish', 'submission_confirmation']);
+    Prefetch.prefetchTemplate(TEMPLATES.submissionConfirmation);
+    registerEventListeners(unAnsweredQuestions);
 };

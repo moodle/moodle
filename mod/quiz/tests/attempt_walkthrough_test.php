@@ -50,7 +50,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
         $quiz = $quizgenerator->create_instance(array('course'=>$SITE->id, 'questionsperpage' => 0, 'grade' => 100.0,
-                                                      'sumgrades' => 2));
+                                                      'sumgrades' => 3));
 
         // Create a couple of questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -58,10 +58,12 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $cat = $questiongenerator->create_question_category();
         $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
         $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        $matchq = $questiongenerator->create_question('match', null, ['category' => $cat->id]);
 
         // Add them to the quiz.
         quiz_add_quiz_question($saq->id, $quiz);
         quiz_add_quiz_question($numq->id, $quiz);
+        quiz_add_quiz_question($matchq->id, $quiz);
 
         // Make a user to do the quiz.
         $user1 = $this->getDataGenerator()->create_user();
@@ -76,18 +78,46 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user1->id);
 
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
-        $this->assertEquals('1,2,0', $attempt->layout);
+        $this->assertEquals('1,2,3,0', $attempt->layout);
 
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Process some responses from the student.
         $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertFalse($attemptobj->has_response_to_at_least_one_graded_question());
+        // The student has not answered any questions.
+        $this->assertEquals(3, $attemptobj->get_number_of_unanswered_questions());
 
         $tosubmit = array(1 => array('answer' => 'frog'),
                           2 => array('answer' => '3.14'));
 
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
+        // The student has answered two questions, and only one remaining.
+        $this->assertEquals(1, $attemptobj->get_number_of_unanswered_questions());
+
+        $tosubmit = [
+            3 => [
+                'frog' => 'amphibian',
+                'cat' => 'mammal',
+                'newt' => ''
+            ]
+        ];
+
+        $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
+        // The student has answered three questions but one is invalid, so there is still one remaining.
+        $this->assertEquals(1, $attemptobj->get_number_of_unanswered_questions());
+
+        $tosubmit = [
+            3 => [
+                'frog' => 'amphibian',
+                'cat' => 'mammal',
+                'newt' => 'amphibian'
+            ]
+        ];
+
+        $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
+        // The student has answered three questions, so there are no remaining.
+        $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
 
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
@@ -99,11 +129,12 @@ class attempt_walkthrough_test extends \advanced_testcase {
 
         // Check that results are stored as expected.
         $this->assertEquals(1, $attemptobj->get_attempt_number());
-        $this->assertEquals(2, $attemptobj->get_sum_marks());
+        $this->assertEquals(3, $attemptobj->get_sum_marks());
         $this->assertEquals(true, $attemptobj->is_finished());
         $this->assertEquals($timenow, $attemptobj->get_submitted_date());
         $this->assertEquals($user1->id, $attemptobj->get_userid());
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+        $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
 
         // Check quiz grades.
         $grades = quiz_get_user_grades($quiz, $user1->id);
@@ -165,6 +196,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
 
         // Process some responses from the student.
         $attemptobj = quiz_attempt::create($attempt->id);
+        $this->assertEquals(1, $attemptobj->get_number_of_unanswered_questions());
         $attemptobj->process_submitted_actions($quiz->timeclose - 30 * MINSECS, false, [1 => ['answer' => 'frog']]);
 
         // Attempt goes overdue (e.g. if cron ran).
@@ -178,6 +210,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $this->assertEquals(0, $attemptobj->get_submitted_date());
         $this->assertEquals($user->id, $attemptobj->get_userid());
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+        $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
 
         // Student submits the attempt during the grace period.
         $attemptobj = quiz_attempt::create($attempt->id);
@@ -190,6 +223,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $this->assertEquals($quiz->timeclose + 30 * MINSECS, $attemptobj->get_submitted_date());
         $this->assertEquals($user->id, $attemptobj->get_userid());
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+        $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
     }
 
     public function test_quiz_attempt_walkthrough_close_time_extended_at_last_minute() {
@@ -291,6 +325,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
             // Process some responses from the student.
             $attemptobj = quiz_attempt::create($attempt->id);
             $this->assertFalse($attemptobj->has_response_to_at_least_one_graded_question());
+            $this->assertEquals(4, $attemptobj->get_number_of_unanswered_questions());
 
             $tosubmit = array();
             $selectedquestionid = $quba->get_question_attempt(1)->get_question_id();
@@ -307,6 +342,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
             // Finish the attempt.
             $attemptobj = quiz_attempt::create($attempt->id);
             $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+            $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
             $attemptobj->process_finish($timenow, false);
 
             // Re-load quiz attempt data.
@@ -319,6 +355,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
             $this->assertEquals($timenow, $attemptobj->get_submitted_date());
             $this->assertEquals($user1->id, $attemptobj->get_userid());
             $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+            $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
 
             // Check quiz grades.
             $grades = quiz_get_user_grades($quiz, $user1->id);
@@ -389,6 +426,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         // Process some responses from the student.
         $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertFalse($attemptobj->has_response_to_at_least_one_graded_question());
+        $this->assertEquals(1, $attemptobj->get_number_of_unanswered_questions());
 
         $tosubmit = array(1 => array('answer' => $correctresponse));
         $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
@@ -396,6 +434,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+        $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
 
         $attemptobj->process_finish($timenow, false);
 
@@ -409,6 +448,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $this->assertEquals($timenow, $attemptobj->get_submitted_date());
         $this->assertEquals($user1->id, $attemptobj->get_userid());
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+        $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
 
         // Check quiz grades.
         $grades = quiz_get_user_grades($this->quizwithvariants, $user1->id);
