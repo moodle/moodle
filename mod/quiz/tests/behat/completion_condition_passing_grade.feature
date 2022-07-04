@@ -54,3 +54,36 @@ Feature: Set a quiz to be marked complete when the student passes
     And I navigate to "Reports" in current page administration
     And I click on "Activity completion" "link"
     And "Completed" "icon" should exist in the "Student 1" "table_row"
+
+  Scenario Outline: Verify that gradepass, together with completionpassgrade are validated correctly
+    Given the following "language customisations" exist:
+      | component       | stringid | value    |
+      | core_langconfig | decsep   | <decsep> |
+    And the following "activity" exist:
+      | activity | name                             | course | idnumber | gradepass  | completion | completionpassgrade   |
+      | quiz     | Oh, grades, passgrades and floats| C1     | ohgrades | <gradepass>| 2          | <completionpassgrade> |
+    When  I am on the "ohgrades" "quiz activity editing" page logged in as "teacher1"
+    And I expand all fieldsets
+    And I set the field "Grade to pass" to "<gradepass>"
+    And I set the field "completionusegrade" to "1"
+    And I set the field "completionpassgrade" to "<completionpassgrade>"
+    And I press "Save and display"
+    Then I should see "<seen>"
+    And I should not see "<notseen>"
+
+    Examples:
+      | gradepass | completionpassgrade | decsep | seen                  | notseen          | outcome        |
+      |           | 0                   | .      | method: Highest       | Save and display | ok             |
+      |           | 1                   | .      | does not have a valid | method: Highest  | completion-err |
+      | 0         | 0                   | .      | method: Highest       | Save and display | ok             |
+      | 0         | 1                   | .      | does not have a valid | method: Highest  | completion-err |
+      | aaa       | 0                   | .      | must enter a number   | method: Highest  | number-err     |
+      | aaa       | 1                   | .      | must enter a number   | method: Highest  | number-err     |
+      | 200       | 0                   | .      | can not be greater    | method: Highest  | grade-big-err  |
+      | 200       | 1                   | .      | can not be greater    | method: Highest  | grade-big-err  |
+      | 5.55      | 0                   | .      | 5.55 out of 100       | Save and display | ok             |
+      | 5.55      | 1                   | .      | 5.55 out of 100       | Save and display | ok             |
+      | 5#55      | 0                   | .      | must enter a number   | method: Highest  | number-err     |
+      | 5#55      | 1                   | .      | must enter a number   | method: Highest  | number-err     |
+      | 5#55      | 0                   | #      | 5#55 out of 100       | Save and display | ok             |
+      | 5#55      | 1                   | #      | 5#55 out of 100       | Save and display | ok             |
