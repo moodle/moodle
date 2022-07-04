@@ -29,7 +29,7 @@ Feature: Edit completion settings of an activity
     Given I am on the TestPage "Page Activity" page logged in as admin
     When I am on the TestPage "Page Activity editing" page
     And I expand all fieldsets
-    And I press "Unlock completion options"
+    And I press "Unlock completion settings"
     And I expand all fieldsets
     Then I should see "Completion options unlocked"
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"

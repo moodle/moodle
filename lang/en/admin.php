@@ -151,7 +151,7 @@ $string['condifmodeditdefaults'] = 'Default values are used in the settings form
 $string['confeditorhidebuttons'] = 'Select the buttons that should be hidden in the HTML editor.';
 $string['configallowattachments'] = 'If enabled, emails sent from the site can have attachments, such as badges.';
 $string['configallcountrycodes'] = 'This is the list of countries that may be selected in various places, for example in a user\'s profile. If blank (the default) the list in countries.php in the standard English language pack is used. That is the list from ISO 3166-1. Otherwise, you can specify a comma-separated list of codes, for example \'GB,FR,ES\'. If you add new, non-standard codes here, you will need to add them to countries.php in \'en\' and your language pack.';
-$string['configallowassign'] = 'You can allow people who have the roles on the left side to assign some of the column roles to other people';
+$string['configallowassign'] = 'For each role in the left column, select which roles that they can assign to others.';
 $string['configallowcategorythemes'] = 'If you enable this, then themes can be set at the category level. This will affect all child categories and courses unless they have specifically set their own theme. WARNING: Enabling category themes may affect performance.';
 $string['configallowcohortthemes'] = 'If you enable this, then themes can be set at the cohort level. This will affect all users with only one cohort or more than one but with the same theme.';
 $string['configallowcoursethemes'] = 'If enabled, then courses will be allowed to set their own themes.  Course themes override all other theme choices (site, user, category, cohort or URL-defined themes).';
@@ -162,15 +162,15 @@ $string['configallowemojipickerincompatible'] = 'Your current database configura
 $string['configallowguestmymoodle'] = 'If enabled, guests can access the Dashboard. Otherwise guests are redirected to the site home.';
 $string['configallowobjectembed'] = 'As a default security measure, normal users are not allowed to embed multimedia (like Flash) within texts using explicit EMBED and OBJECT tags in their HTML (although it can still be done safely using the mediaplugins filter).  If you wish to allow these tags then enable this option.';
 $string['configallowoverride'] = 'You can allow people with the roles on the left side to override some of the column roles';
-$string['configallowoverride2'] = 'Select which role(s) can be overridden by each role in the left column.<br />Note that these settings only apply to users who have either the capability moodle/role:override or the capability moodle/role:safeoverride allowed.';
-$string['configallowswitch'] = 'Select which roles a user may switch to, based on which roles they already have. In addition to an entry in this table, a user must also have the moodle/role:switchroles capability to be able to switch.<br />Note that it is only possible to switch to roles that have the moodle/course:view capability, and that do not have the moodle/site:doanything capability, so some columns in this table are disabled.';
+$string['configallowoverride2'] = 'For each role in the left column, select which roles that they can set overrides for.<br />Users must also have either the capability moodle/role:override or moodle/role:safeoverride.';
+$string['configallowswitch'] = 'For each role in the left column, select which roles they can switch to.<br />Users must also have the capability moodle/role:switchroles.';
 $string['configallowthemechangeonurl'] = 'If enabled, the theme can be changed by adding either:<br />?theme=themename to any Moodle URL (eg: mymoodlesite.com/?theme=afterburner ) or <br />&theme=themename to any internal Moodle URL (eg: mymoodlesite.com/course/view.php?id=2&theme=afterburner ).';
 $string['configallowuserblockhiding'] = 'Do you want to allow users to hide/show side blocks throughout this site?  This feature uses Javascript and cookies to remember the state of each collapsible block, and only affects the user\'s own view.';
 $string['configallowusermailcharset'] = 'If enabled, users can choose an email charset in their messaging preferences.';
 $string['configallowuserswitchrolestheycantassign'] = 'By default, moodle/role:assign is required for users to switch roles. Enabling this setting removes this requirement, and results in the roles available in the "Switch role to" dropdown menu being determined by settings in the "Allow role assignments" table only.
 It is recommended that the settings in the "Allow role assignments" table do not allow users to switch to a role with more capabilities than their existing role.';
 $string['configallowuserthemes'] = 'If you enable this, then users will be allowed to set their own themes.  User themes override site themes (but not course themes)';
-$string['configallowview'] = 'Select which roles a user will see, be able to filter by etc. based on which roles they already have.';
+$string['configallowview'] = 'For each role in the left column, select which roles that they can view, search and filter by.';
 $string['configallusersaresitestudents'] = 'For activities on the site home, should ALL users be considered as students?  If yes, then anyone with an account will be allowed to participate as a student in these activities.  If no, then only users who are already a participant in at least one course will be able to take part in these activities. Only admins and specially assigned teachers can act as teachers for site home activities.';
 $string['configauthenticationplugins'] = 'Please choose the authentication plugins you wish to use and arrange them in order of failthrough.';
 $string['configautolang'] = 'Detect default language from browser setting, if disabled site default is used.';
@@ -199,9 +199,9 @@ Courses
 -All courses|/course/
 -Course search|/course/search.php
 -###
--FAQ|https://someurl.xyz/faq
--Preguntas más frecuentes|https://someurl.xyz/pmf||es
-Mobile app|https://someurl.xyz/app|Download our app
+-FAQ|https://example.org/faq
+-Preguntas más frecuentes|https://example.org/pmf||es
+Mobile app|https://example.org/app|Download our app
 </pre>';
 $string['configcustomusermenuitems'] = 'You can configure the contents of the user menu (with the exception of the log out link, which is automatically added). Each line is separated by pipe characters and consists of 1) a string in "langstringname, componentname" form or as plain text, and 2) a URL. Dividers can be used by adding a line of one or more # characters where desired.';
 $string['configdbsessions'] = 'If enabled, this setting will use the database to store information about current sessions. Note that changing this setting now will log out all current users (including you). If you are using MySQL please make sure that \'max_allowed_packet\' in my.cnf (or my.ini) is at least 4M. Other session drivers can be configured directly in config.php, see config-dist.php for more information. This option disappears if you specify session driver in config.php file.';
