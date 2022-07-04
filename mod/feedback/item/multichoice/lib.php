@@ -437,14 +437,20 @@ class feedback_item_multichoice extends feedback_item_base {
         $info->horizontal = false;
 
         $parts = explode(FEEDBACK_MULTICHOICE_TYPE_SEP, $item->presentation);
-        @list($info->subtype, $info->presentation) = $parts;
+        $info->subtype = $parts[0];
+        if (count($parts) > 1) {
+            $info->presentation = $parts[1];
+        }
         if (!isset($info->subtype)) {
             $info->subtype = 'r';
         }
 
         if ($info->subtype != 'd') {
             $parts = explode(FEEDBACK_MULTICHOICE_ADJUST_SEP, $info->presentation);
-            @list($info->presentation, $info->horizontal) = $parts;
+            $info->presentation = $parts[0];
+            if (count($parts) > 1) {
+                $info->horizontal = $parts[1];
+            }
             if (isset($info->horizontal) AND $info->horizontal == 1) {
                 $info->horizontal = true;
             } else {

@@ -377,7 +377,10 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $info->horizontal = false;
 
         $parts = explode(FEEDBACK_MULTICHOICERATED_TYPE_SEP, $item->presentation);
-        @list($info->subtype, $info->presentation) = $parts;
+        $info->subtype = $parts[0];
+        if (count($parts) > 1) {
+            $info->presentation = $parts[1];
+        }
 
         if (!isset($info->subtype)) {
             $info->subtype = 'r';
@@ -385,7 +388,10 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
         if ($info->subtype != 'd') {
             $parts = explode(FEEDBACK_MULTICHOICERATED_ADJUST_SEP, $info->presentation);
-            @list($info->presentation, $info->horizontal) = $parts;
+            $info->presentation = $parts[0];
+            if (count($parts) > 1) {
+                $info->horizontal = $parts[1];
+            }
 
             if (isset($info->horizontal) AND $info->horizontal == 1) {
                 $info->horizontal = true;
