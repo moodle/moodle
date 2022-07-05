@@ -248,6 +248,7 @@ $string['needtochoosecat'] = 'You need to choose a category to move this questio
 $string['nocate'] = 'No such category {$a}!';
 $string['nopermissionadd'] = 'You don\'t have permission to add questions here.';
 $string['nopermissionmove'] = 'You don\'t have permission to move questions from here. You must save the question in this category or save it as a new question.';
+$string['nopermissionedit'] = 'You don\'t have permission to edit questions from here.';
 $string['noprobs'] = 'No problems found in your question database.';
 $string['noquestions'] = 'No questions were found that could be exported. Make sure that you have selected a category to export that contains questions.';
 $string['noquestionsinfile'] = 'There are no questions in the import file';
