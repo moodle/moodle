@@ -21,8 +21,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$plugin->release  = '4.0.1+ (Build: 20220519)'; // Human-friendly version name
 $plugin->version  = 2019012100;
 $plugin->requires = 2019052000;
-$plugin->release  = '3.8.4 (Build: 20200713)'; // Human-friendly version name
 $plugin->dependencies = array('local_report_user_license_allocations' => 2019012100);
 $plugin->component  = 'local_report_completion_monthly';

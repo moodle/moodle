@@ -24,8 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$plugin->release  = '4.0.1+ (Build: 20220519)'; // Human-friendly version name
 $plugin->version   = 2016091800;
 $plugin->requires  = 2019052000;
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release  = '3.8.4 (Build: 20200713)'; // Human-friendly version name
 $plugin->component = 'block_iomad_progress';
