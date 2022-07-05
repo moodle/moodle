@@ -144,7 +144,7 @@ class feedback_item_numeric extends feedback_item_base {
 
         if (isset($values->data) AND is_array($values->data)) {
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
-            echo '<tr><th colspan="2" align="left">';
+            echo '<tr><th class="text-left">';
             echo $itemnr . ' ';
             if (strval($item->label) !== '') {
                 echo '('. format_string($item->label).') ';
@@ -153,7 +153,7 @@ class feedback_item_numeric extends feedback_item_base {
             echo '</th></tr>';
 
             foreach ($values->data as $value) {
-                echo '<tr><td colspan="2" class="singlevalue">';
+                echo '<tr><td class="singlevalue">';
                 echo $this->format_float($value);
                 echo '</td></tr>';
             }
@@ -163,7 +163,7 @@ class feedback_item_numeric extends feedback_item_base {
             } else {
                 $avg = '-';
             }
-            echo '<tr><td colspan="2"><b>';
+            echo '<tr><td><b>';
             echo get_string('average', 'feedback').': '.$avg;
             echo '</b></td></tr>';
             echo '</table>';
