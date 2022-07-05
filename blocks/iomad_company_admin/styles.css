@@ -108,6 +108,14 @@ border-radius: 10px;
     left: 3px;
 }
 
+.reporttablecontrolscontrol > #iomad_company_selector {
+    padding-top: 31px;
+}
+
+.reporttablecontrolscontrol > .searchcourseform {
+    padding-left: 25px;
+}
+
 .fitem .singleselect label {
     font-weight: normal;
     float: left;

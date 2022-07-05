@@ -189,11 +189,13 @@ if ($caneditall) {
 
 $companyselect = new single_select($linkurl, 'companyid', $companyids, $companyid);
 $companyselect->label = get_string('filtercompany', 'block_iomad_company_admin');
-    echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
+echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
 if ($canedit) {
     echo html_writer::tag('div', $OUTPUT->render($companyselect), array('id' => 'iomad_company_selector')).'</br>';
 }
+echo html_writer::start_tag('div', array('class' => 'searchcourseform'));
 $mform->display();
+echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 echo html_writer::start_tag('div', array('class' => 'iomadclear'));
 
