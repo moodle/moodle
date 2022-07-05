@@ -74,8 +74,6 @@ if ($ok) {
 	$module['cmid'] = 0;
 	$module['module'] = $ltimessagehint;
 
-	var_dump($typeid);
-	die;
 	$ok = ($id !== $ltimessagehint);
 	if (!$ok) {
 		$error = 'invalid_request';
