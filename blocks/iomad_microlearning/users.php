@@ -64,7 +64,7 @@ $threadlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");

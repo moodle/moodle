@@ -56,7 +56,7 @@ $formurl = new moodle_url('/blocks/iomad_company_admin/company_users_course_form
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('company_users_course_title', 'block_iomad_company_admin'));
 if (empty($CFG->defaulthomepage)) {

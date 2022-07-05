@@ -74,7 +74,7 @@ $linktext = get_string('iomad_frameworks_title', 'block_iomad_company_admin');
 // Print the page header.
 $PAGE->set_context($systemcontext);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.

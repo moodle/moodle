@@ -44,7 +44,7 @@ $linkurl = new moodle_url('/blocks/iomad_microlearning/thread_schedule.php');
 
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // get output renderer

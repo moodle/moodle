@@ -44,7 +44,7 @@ $linkurl = new moodle_url('/blocks/iomad_commerce/shop.php');
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('confirmation', 'block_iomad_commerce'));
 

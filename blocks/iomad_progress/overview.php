@@ -52,7 +52,7 @@ $title = get_string('overview', 'block_iomad_progress');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->navbar->add($title);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 
 // Check user is logged in and capable of grading.
 require_login($course, false);

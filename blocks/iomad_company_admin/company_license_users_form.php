@@ -48,7 +48,7 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/company_license_users_for
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.

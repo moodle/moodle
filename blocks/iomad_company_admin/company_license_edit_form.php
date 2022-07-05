@@ -71,7 +71,7 @@ $listurl = new moodle_url('/blocks/iomad_company_admin/company_license_list.php'
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('edit_licenses_title', 'block_iomad_company_admin'));
 if (empty($CFG->defaulthomepage)) {

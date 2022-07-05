@@ -128,7 +128,7 @@ $linkurl = new moodle_url('/blocks/iomad_commerce/orderlist.php');
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('edit_invoice', 'block_iomad_commerce'));
 $PAGE->navbar->add($linktext, $linkurl);

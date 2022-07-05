@@ -61,7 +61,7 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/company_groups_create_for
 
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // get output renderer

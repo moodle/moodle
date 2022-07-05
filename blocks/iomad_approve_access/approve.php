@@ -41,7 +41,7 @@ if (empty($CFG->defaulthomepage)) {
     $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
 }
 $PAGE->navbar->add(get_string('blocks'));
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 
 // Set up some strings.
 $strmanage = get_string('approveusers', 'block_iomad_approve_access');

@@ -45,7 +45,7 @@ $linkurl = new moodle_url('/blocks/iomad_microlearning/company_list.php');
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 $PAGE->set_heading($linktext);
 if (empty($CFG->defaulthomepage)) {

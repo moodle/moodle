@@ -57,7 +57,7 @@ $dashboardurl = new moodle_url('/my');
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
