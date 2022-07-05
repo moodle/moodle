@@ -340,13 +340,9 @@ class course_test extends advanced_testcase {
     /**
      * Test entity table alias
      */
-    public function test_table_alias(): void {
+    public function test_get_table_alias(): void {
         $courseentity = new course();
-
         $this->assertEquals('c', $courseentity->get_table_alias('course'));
-
-        $courseentity->set_table_alias('course', 'newalias');
-        $this->assertEquals('newalias', $courseentity->get_table_alias('course'));
     }
 
     /**
@@ -362,6 +358,16 @@ class course_test extends advanced_testcase {
     }
 
     /**
+     * Test setting table alias
+     */
+    public function test_set_table_alias(): void {
+        $courseentity = new course();
+
+        $courseentity->set_table_alias('course', 'newalias');
+        $this->assertEquals('newalias', $courseentity->get_table_alias('course'));
+    }
+
+    /**
      * Test invalid entity set table alias
      */
     public function test_set_table_alias_invalid(): void {
@@ -370,6 +376,34 @@ class course_test extends advanced_testcase {
         $this->expectException(coding_exception::class);
         $this->expectExceptionMessage('Coding error detected, it must be fixed by a programmer: Invalid table name (nonexistent)');
         $courseentity->set_table_alias('nonexistent', 'newalias');
+    }
+
+    /**
+     * Test setting multiple table aliases
+     */
+    public function test_set_table_aliases(): void {
+        $courseentity = new course();
+
+        $courseentity->set_table_aliases([
+            'course' => 'newalias',
+            'context' => 'newalias2',
+        ]);
+        $this->assertEquals('newalias', $courseentity->get_table_alias('course'));
+        $this->assertEquals('newalias2', $courseentity->get_table_alias('context'));
+    }
+
+    /**
+     * Test setting multiple table aliases, containing an invalid table
+     */
+    public function test_set_table_aliases_invalid(): void {
+        $courseentity = new course();
+
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Coding error detected, it must be fixed by a programmer: Invalid table name (nonexistent)');
+        $courseentity->set_table_aliases([
+            'course' => 'newalias',
+            'nonexistent' => 'newalias2',
+        ]);
     }
 
     /**
