@@ -3408,6 +3408,22 @@ EOF;
                 ),
                 true,
             ),
+            'alsodivertsblankline' => array(
+                'divertallemailsto' => 'somewhere@elsewhere.com',
+                'divertallemailsexcept' => "@dev.com\n",
+                [
+                    'lionel@example.com',
+                ],
+                true,
+            ),
+            'divertsexceptionblankline' => array(
+                'divertallemailsto' => 'somewhere@elsewhere.com',
+                'divertallemailsexcept' => "@example.com\n",
+                [
+                    'lionel@example.com',
+                ],
+                false,
+            ),
         );
     }
 
