@@ -20,7 +20,9 @@ namespace core_course\local\entities;
 
 use context_coursecat;
 use context_helper;
+use html_writer;
 use lang_string;
+use moodle_url;
 use stdClass;
 use core_course_category;
 use core_reportbuilder\local\entities\base;
@@ -103,6 +105,26 @@ class course_category extends base {
             })
             ->set_is_sortable(true);
 
+        // Category name with link column.
+        $columns[] = (new column(
+            'namewithlink',
+            new lang_string('namewithlink', 'core_course'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->add_join($this->get_context_join())
+            ->set_type(column::TYPE_TEXT)
+            ->add_fields("{$tablealias}.name, {$tablealias}.id")
+            ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
+            ->add_callback(static function(string $name, stdClass $category): string {
+                context_helper::preload_from_record($category);
+                $context = context_coursecat::instance($category->id);
+                $url = new moodle_url('/course/management.php', ['categoryid' => $category->id]);
+                return html_writer::link($url,
+                    format_string($category->name, true, ['context' => $context]));
+            })
+            ->set_is_sortable(true);
+
         // Path column.
         $columns[] = (new column(
             'path',
@@ -136,9 +158,7 @@ class course_category extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->add_join("LEFT JOIN {context} {$tablealiascontext}
-                    ON {$tablealiascontext}.contextlevel = " . CONTEXT_COURSECAT . "
-                   AND {$tablealiascontext}.instanceid = {$tablealias}.id")
+            ->add_join($this->get_context_join())
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
@@ -204,5 +224,17 @@ class course_category extends base {
             ->add_joins($this->get_joins());
 
         return $filters;
+    }
+
+    /**
+     * Return context join used by columns
+     *
+     * @return string
+     */
+    private function get_context_join(): string {
+        $coursecategories = $this->get_table_alias('course_categories');
+        $context = $this->get_table_alias('context');
+        return "LEFT JOIN {context} {$context} ON {$context}.instanceid = {$coursecategories}.id
+            AND {$context}.contextlevel = " . CONTEXT_COURSECAT;
     }
 }
