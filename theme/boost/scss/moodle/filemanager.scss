@@ -844,11 +844,11 @@ a.ygtvspacer:hover {
 }
 
 .dndupload-arrow {
-    background: url([[pix:theme|fp/dnd_arrow]]) center no-repeat;
     width: 100%;
     height: 80px;
     position: absolute;
     top: 5px;
+    color: $gray-500;
 }
 
 .fitem.disabled .filepicker-container,
