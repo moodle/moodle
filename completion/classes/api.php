@@ -151,7 +151,6 @@ class api {
                        AND (
                             mc.completionstate = :completionstate
                             OR mc.completionstate = :completionstatepass
-                            OR mc.completionstate = :completionstatefail
                             )";
 
         $params = [
@@ -159,7 +158,6 @@ class api {
             'contextlevel' => CONTEXT_COURSE,
             'completionstate' => COMPLETION_COMPLETE,
             'completionstatepass' => COMPLETION_COMPLETE_PASS,
-            'completionstatefail' => COMPLETION_COMPLETE_FAIL
         ];
 
         if ($userdata) {
