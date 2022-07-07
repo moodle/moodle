@@ -28,21 +28,27 @@
  * @package mod_data
  */
 
+use mod_data\manager;
+
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/data/lib.php');
 require_once($CFG->dirroot.'/mod/data/preset_form.php');
 
-$id = optional_param('id', 0, PARAM_INT); // The course module id.
+// The course module id.
+$id = optional_param('id', 0, PARAM_INT);
 
+$manager = null;
 if ($id) {
-    $cm = get_coursemodule_from_id('data', $id, null, null, MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
+    list($course, $cm) = get_course_and_cm_from_cmid($id, manager::MODULE);
+    $manager = manager::create_from_coursemodule($cm);
+    $data = $manager->get_instance();
 } else {
-    $d = required_param('d', PARAM_INT);     // database activity id
-    $data = $DB->get_record('data', array('id' => $d), '*', MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $data->course), '*', MUST_EXIST);
-    $cm = get_coursemodule_from_instance('data', $data->id, $course->id, null, MUST_EXIST);
+    // We must have the database activity id.
+    $d = required_param('d', PARAM_INT);
+    $data = $DB->get_record('data', ['id' => $d], '*', MUST_EXIST);
+    $manager = manager::create_from_instance($data);
+    $cm = $manager->get_coursemodule();
+    $course = get_course($cm->course);
 }
 
 $action = optional_param('action', 'view', PARAM_ALPHA); // The page action.
@@ -52,7 +58,8 @@ if (!in_array($action, $allowedactions)) {
     throw new moodle_exception('invalidaccess');
 }
 
-$context = context_module::instance($cm->id, MUST_EXIST);
+$context = $manager->get_context();
+
 require_login($course, false, $cm);
 require_capability('mod/data:managetemplates', $context);
 
@@ -70,7 +77,7 @@ $data->cmidnumber = $cm->idnumber;
 $data->instance   = $cm->instance;
 
 $renderer = $PAGE->get_renderer('mod_data');
-$presets = data_get_available_presets($context);
+$presets = $manager->get_available_presets();
 
 if ($action === 'export') {
     if (headers_sent()) {

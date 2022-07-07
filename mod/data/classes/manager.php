@@ -23,6 +23,7 @@ use data_field_base;
 use mod_data\event\course_module_viewed;
 use mod_data\event\template_viewed;
 use mod_data\event\template_updated;
+use core_component;
 use stdClass;
 
 /**
@@ -299,5 +300,82 @@ class manager {
         $event->trigger();
 
         return true;
+    }
+
+    /**
+     * Returns an array of all the available presets.
+     *
+     * @return array A list with the datapreset plugins and the presets saved by users.
+     */
+    public function get_available_presets(): array {
+        // First load the datapreset plugins that exist within the modules preset dir.
+        $pluginpresets = static::get_available_plugin_presets();
+
+        // Then find the presets that people have saved.
+        $savedpresets = static::get_available_saved_presets();
+
+        return array_merge($pluginpresets, $savedpresets);
+    }
+
+    /**
+     * Returns an array of all the presets that users have saved to the site.
+     *
+     * @return array A list with the preset saved by the users.
+     */
+    public function get_available_saved_presets(): array {
+        global $USER;
+
+        $presets = [];
+
+        $fs = get_file_storage();
+        $files = $fs->get_area_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA);
+        if (empty($files)) {
+            return $presets;
+        }
+        $canviewall = has_capability('mod/data:viewalluserpresets', $this->get_context());
+        foreach ($files as $file) {
+            $isnotdirectory = ($file->is_directory() && $file->get_filepath() == '/') || !$file->is_directory();
+            $userid = $file->get_userid();
+            $cannotviewfile = !$canviewall && $userid != $USER->id;
+            if ($isnotdirectory || $cannotviewfile) {
+                continue;
+            }
+
+            $preset = new stdClass();
+            $preset->isplugin = false;
+            $preset->path = $file->get_filepath();
+            $preset->name = trim($preset->path, '/');
+            $preset->shortname = $preset->name;
+            $preset->userid = $userid;
+            $preset->id = $file->get_id();
+            $preset->storedfile = $file;
+            $presets[] = $preset;
+        }
+
+        return $presets;
+    }
+
+    /**
+     * Returns an array of all the available plugin presets.
+     *
+     * @return array A list with the datapreset plugins.
+     */
+    public static function get_available_plugin_presets(): array {
+        $presets = [];
+
+        $dirs = core_component::get_plugin_list('datapreset');
+        foreach ($dirs as $dir => $fulldir) {
+            if (preset::is_directory_a_preset($fulldir)) {
+                $preset = new stdClass();
+                $preset->isplugin = true;
+                $preset->path = $fulldir;
+                $preset->userid = 0;
+                $preset->shortname = $dir;
+                $preset->name = preset::get_name_from_plugin($dir);
+                $presets[] = $preset;
+            }
+        }
+
+        return $presets;
     }
 }

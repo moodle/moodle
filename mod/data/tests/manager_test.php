@@ -18,6 +18,7 @@ namespace mod_data;
 
 use context_module;
 use moodle_url;
+use core_component;
 
 /**
  * Manager tests class for mod_data.
@@ -160,5 +161,216 @@ class manager_test extends \advanced_testcase {
         $this->assertEquals($moodleurl, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
+    }
+
+    /**
+     * Test for get_available_presets().
+     *
+     * @covers ::get_available_presets
+     */
+    public function test_get_available_presets() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->setUser($user);
+
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $cm = get_coursemodule_from_id(manager::MODULE, $activity->cmid, 0, false, MUST_EXIST);
+
+        // Check available presets meet the datapreset plugins when there are no any preset saved by users.
+        $datapresetplugins = core_component::get_plugin_list('datapreset');
+        $manager = manager::create_from_coursemodule($cm);
+        $presets = $manager->get_available_presets();
+        $this->assertCount(count($datapresetplugins), $presets);
+        // Confirm that, at least, the "Image gallery" is one of them.
+        $namepresets = array_map(function($preset) {
+            return $preset->name;
+        }, $presets);
+        $this->assertContains('Image gallery', $namepresets);
+
+        // Login as admin and create some presets saved manually by users.
+        $this->setAdminUser();
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $savedpresets = [];
+        for ($i = 1; $i <= 3; $i++) {
+            $preset = (object) [
+                'name' => 'Preset name ' . $i,
+            ];
+            $plugingenerator->create_preset($activity, $preset);
+            $savedpresets[] = $preset;
+        }
+        $savedpresetsnames = array_map(function($preset) {
+            return $preset->name;
+        }, $savedpresets);
+        $this->setUser($user);
+
+        // Check available presets meet the datapreset plugins + presets saved manually by users.
+        $presets = $manager->get_available_presets();
+        $this->assertCount(count($datapresetplugins) + count($savedpresets), $presets);
+        // Confirm that, apart from the "Image gallery" preset, the ones created manually have been also returned.
+        $namepresets = array_map(function($preset) {
+            return $preset->name;
+        }, $presets);
+        $this->assertContains('Image gallery', $namepresets);
+        foreach ($savedpresets as $savedpreset) {
+            $this->assertContains($savedpreset->name, $namepresets);
+        }
+        // Check all the presets have the proper value for the isplugin attribute.
+        foreach ($presets as $preset) {
+            if (in_array($preset->name, $savedpresetsnames)) {
+                $this->assertFalse($preset->isplugin);
+            } else {
+                $this->assertTrue($preset->isplugin);
+            }
+        }
+
+        // Unassign the capability to the teacher role and check that only plugin presets are returned (because the saved presets
+        // have been created by admin).
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+        unassign_capability('mod/data:viewalluserpresets', $teacherrole->id);
+        $presets = $manager->get_available_presets();
+        $this->assertCount(count($datapresetplugins), $presets);
+        // Confirm that, at least, the "Image gallery" is one of them.
+        $namepresets = array_map(function($preset) {
+            return $preset->name;
+        }, $presets);
+        $this->assertContains('Image gallery', $namepresets);
+        foreach ($savedpresets as $savedpreset) {
+            $this->assertNotContains($savedpreset->name, $namepresets);
+        }
+
+        // Create a preset with the current user and check that, although the viewalluserpresets is not assigned to the teacher
+        // role, the preset is returned because the teacher is the owner.
+        $savedpreset = (object) [
+            'name' => 'Preset created by teacher',
+        ];
+        $plugingenerator->create_preset($activity, $savedpreset);
+        $presets = $manager->get_available_presets();
+        // The presets total is all the plugin presets plus the preset created by the teacher.
+        $this->assertCount(count($datapresetplugins) + 1, $presets);
+        // Confirm that, at least, the "Image gallery" is one of them.
+        $namepresets = array_map(function($preset) {
+            return $preset->name;
+        }, $presets);
+        $this->assertContains('Image gallery', $namepresets);
+        // Confirm that savedpresets are still not returned.
+        foreach ($savedpresets as $savedpreset) {
+            $this->assertNotContains($savedpreset->name, $namepresets);
+        }
+        // Confirm the new preset created by the teacher is returned too.
+        $this->assertContains('Preset created by teacher', $namepresets);
+    }
+
+    /**
+     * Test for get_available_plugin_presets().
+     *
+     * @covers ::get_available_plugin_presets
+     */
+    public function test_get_available_plugin_presets() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+
+        // Check available plugin presets meet the datapreset plugins.
+        $datapresetplugins = core_component::get_plugin_list('datapreset');
+        $manager = manager::create_from_instance($activity);
+        $presets = $manager->get_available_plugin_presets();
+        $this->assertCount(count($datapresetplugins), $presets);
+        // Confirm that, at least, the "Image gallery" is one of them.
+        $namepresets = array_map(function($preset) {
+            return $preset->name;
+        }, $presets);
+        $this->assertContains('Image gallery', $namepresets);
+
+        // Create a preset saved manually by users.
+        $savedpreset = (object) [
+            'name' => 'Preset name 1',
+        ];
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $plugingenerator->create_preset($activity, $savedpreset);
+
+        // Check available plugin presets don't contain the preset saved manually.
+        $presets = $manager->get_available_plugin_presets();
+        $this->assertCount(count($datapresetplugins), $presets);
+        // Confirm that, at least, the "Image gallery" is one of them.
+        $namepresets = array_map(function($preset) {
+            return $preset->name;
+        }, $presets);
+        $this->assertContains('Image gallery', $namepresets);
+        // Confirm that the preset saved manually hasn't been returned.
+        $this->assertNotContains($savedpreset->name, $namepresets);
+        // Check all the presets have the proper value for the isplugin attribute.
+        foreach ($presets as $preset) {
+            $this->assertTrue($preset->isplugin);
+        }
+    }
+
+    /**
+     * Test for get_available_saved_presets().
+     *
+     * @covers ::get_available_saved_presets
+     */
+    public function test_get_available_saved_presets() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->setUser($user);
+
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $cm = get_coursemodule_from_id(manager::MODULE, $activity->cmid, 0, false, MUST_EXIST);
+
+        // Check available saved presets is empty (because, for now, no user preset has been created).
+        $manager = manager::create_from_coursemodule($cm);
+        $presets = $manager->get_available_saved_presets();
+        $this->assertCount(0, $presets);
+
+        // Create some presets saved manually by the admin user.
+        $this->setAdminUser();
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $savedpresets = [];
+        for ($i = 1; $i <= 3; $i++) {
+            $preset = (object) [
+                'name' => 'Preset name ' . $i,
+            ];
+            $plugingenerator->create_preset($activity, $preset);
+            $savedpresets[] = $preset;
+        }
+        // Create one more preset saved manually by the teacher user.
+        $this->setUser($user);
+        $teacherpreset = (object) [
+            'name' => 'Preset created by teacher',
+        ];
+        $plugingenerator->create_preset($activity, $teacherpreset);
+        $savedpresets[] = $teacherpreset;
+
+        $savedpresetsnames = array_map(function($preset) {
+            return $preset->name;
+        }, $savedpresets);
+
+        // Check available saved presets only contain presets saved manually by users.
+        $presets = $manager->get_available_saved_presets();
+        $this->assertCount(count($savedpresets), $presets);
+        // Confirm that it contains only the presets created manually.
+        foreach ($presets as $preset) {
+            $this->assertContains($preset->name, $savedpresetsnames);
+            $this->assertFalse($preset->isplugin);
+        }
+
+        // Unassign the mod/data:viewalluserpresets capability to the teacher role and check that saved presets are not returned.
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+        unassign_capability('mod/data:viewalluserpresets', $teacherrole->id);
+
+        $presets = $manager->get_available_saved_presets();
+        $this->assertCount(1, $presets);
+        $preset = reset($presets);
+        $this->assertEquals($teacherpreset->name, $preset->name);
     }
 }

@@ -23,6 +23,8 @@
  * @package mod_data
  */
 
+use mod_data\manager;
+
 require_once('../../config.php');
 require_once('lib.php');
 require_once($CFG->dirroot.'/mod/data/preset_form.php');
@@ -94,7 +96,8 @@ if ($id) {
 
 require_login($course, true, $cm);
 
-$context = context_module::instance($cm->id);
+$manager = manager::create_from_coursemodule($cm);
+$context = $manager->get_context();
 require_capability('mod/data:managetemplates', $context);
 
 $formimportzip = new data_import_preset_zip_form();
@@ -315,10 +318,10 @@ switch ($mode) {
             }
         } else {
             echo $OUTPUT->heading(get_string('presets', 'data'), 2, 'mb-4');
-            $presets = data_get_available_presets($context);
-            $presetstable = new \mod_data\output\presets($data->id, $presets,
+            $presets = $manager->get_available_presets();
+            $presetsdata = new \mod_data\output\presets($data->id, $presets,
                 new \moodle_url('/mod/data/field.php'));
-            echo $renderer->render_presets($presetstable, false);
+            echo $renderer->render_presets($presetsdata);
         }
         echo $OUTPUT->footer();
         exit;
@@ -463,4 +466,3 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
 
 /// Finish the page
 echo $OUTPUT->footer();
-

@@ -5,6 +5,11 @@ information provided here is intended especially for developers.
 * The method data_view is now deprecated. Use $maganer->set_module_viewed instead.
 * The data_print_template function is now deprecated and replaced by mod_data\template class.
 * The data_print_ratings function now has an extra $print to get the ratings output instead of printing it directly.
+* The following functions have been deprecated because they have been moved to the manager class:
+  - data_get_available_presets
+  - data_get_available_site_presets
+  - data_preset_name
+  - is_directory_a_preset
 
 === 3.7 ===
 * External functions get_entries, get_entry and search_entries now return an additional field "tags" containing the entry tags.
