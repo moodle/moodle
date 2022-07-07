@@ -50,6 +50,7 @@ class dates extends activity_dates {
         if ($timeopen) {
             $openlabelid = $timeopen > $now ? 'activitydate:opens' : 'activitydate:opened';
             $dates[] = [
+                'dataid' => 'timeavailablefrom',
                 'label' => get_string($openlabelid, 'course'),
                 'timestamp' => (int) $timeopen,
             ];
@@ -58,6 +59,7 @@ class dates extends activity_dates {
         if ($timeclose) {
             $closelabelid = $timeclose > $now ? 'activitydate:closes' : 'activitydate:closed';
             $dates[] = [
+                'dataid' => 'timeavailableto',
                 'label' => get_string($closelabelid, 'course'),
                 'timestamp' => (int) $timeclose,
             ];

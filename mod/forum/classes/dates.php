@@ -47,6 +47,7 @@ class dates extends activity_dates {
 
         if ($duedate) {
             $dates[] = [
+                'dataid' => 'duedate',
                 'label' => get_string('activitydate:due', 'mod_forum'),
                 'timestamp' => (int) $duedate,
             ];

@@ -58,46 +58,46 @@ class dates_test extends advanced_testcase {
             ],
             'only with start time for submissions' => [
                 $after, null, null, null, [
-                    ['label' => 'Submissions open:', 'timestamp' => $after],
+                    ['label' => 'Submissions open:', 'timestamp' => $after, 'dataid' => 'submissionstart'],
                 ]
             ],
             'only with end time for submissions' => [
                 null, $after, null, null, [
-                    ['label' => 'Submissions close:', 'timestamp' => $after],
+                    ['label' => 'Submissions close:', 'timestamp' => $after, 'dataid' => 'submissionend'],
                 ]
             ],
             'only with start time for assessments' => [
                 null, null, $after, null, [
-                    ['label' => 'Assessments open:', 'timestamp' => $after],
+                    ['label' => 'Assessments open:', 'timestamp' => $after, 'dataid' => 'assessmentstart'],
                 ]
             ],
             'only with end time for assessments' => [
                 null, null, null, $after, [
-                    ['label' => 'Assessments close:', 'timestamp' => $after],
+                    ['label' => 'Assessments close:', 'timestamp' => $after, 'dataid' => 'assessmentend'],
                 ]
             ],
             'all times in future' => [
                 $after, $later, $latest, $latest + DAYSECS, [
-                    ['label' => 'Submissions open:', 'timestamp' => $after],
-                    ['label' => 'Submissions close:', 'timestamp' => $later],
-                    ['label' => 'Assessments open:', 'timestamp' => $latest],
-                    ['label' => 'Assessments close:', 'timestamp' => $latest + DAYSECS],
+                    ['label' => 'Submissions open:', 'timestamp' => $after, 'dataid' => 'submissionstart'],
+                    ['label' => 'Submissions close:', 'timestamp' => $later, 'dataid' => 'submissionend'],
+                    ['label' => 'Assessments open:', 'timestamp' => $latest, 'dataid' => 'assessmentstart'],
+                    ['label' => 'Assessments close:', 'timestamp' => $latest + DAYSECS, 'dataid' => 'assessmentend'],
                 ]
             ],
             'all times in the past' => [
                 $earliest - DAYSECS, $earliest, $earlier, $before, [
-                    ['label' => 'Submissions opened:', 'timestamp' => $earliest - DAYSECS],
-                    ['label' => 'Submissions closed:', 'timestamp' => $earliest],
-                    ['label' => 'Assessments opened:', 'timestamp' => $earlier],
-                    ['label' => 'Assessments closed:', 'timestamp' => $before],
+                    ['label' => 'Submissions opened:', 'timestamp' => $earliest - DAYSECS, 'dataid' => 'submissionstart'],
+                    ['label' => 'Submissions closed:', 'timestamp' => $earliest, 'dataid' => 'submissionend'],
+                    ['label' => 'Assessments opened:', 'timestamp' => $earlier, 'dataid' => 'assessmentstart'],
+                    ['label' => 'Assessments closed:', 'timestamp' => $before, 'dataid' => 'assessmentend'],
                 ]
             ],
             'between submission and assessment' => [
                 $earlier, $before, $after, $later, [
-                    ['label' => 'Submissions opened:', 'timestamp' => $earlier],
-                    ['label' => 'Submissions closed:', 'timestamp' => $before],
-                    ['label' => 'Assessments open:', 'timestamp' => $after],
-                    ['label' => 'Assessments close:', 'timestamp' => $later],
+                    ['label' => 'Submissions opened:', 'timestamp' => $earlier, 'dataid' => 'submissionstart'],
+                    ['label' => 'Submissions closed:', 'timestamp' => $before, 'dataid' => 'submissionend'],
+                    ['label' => 'Assessments open:', 'timestamp' => $after, 'dataid' => 'assessmentstart'],
+                    ['label' => 'Assessments close:', 'timestamp' => $later, 'dataid' => 'assessmentend'],
                 ]
             ],
         ];

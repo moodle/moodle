@@ -62,7 +62,8 @@ class dates_test extends advanced_testcase {
                 $future, CHAT_SCHEDULE_SINGLE, [
                     [
                         'label' => $label,
-                        'timestamp' => $future
+                        'timestamp' => $future,
+                        'dataid' => 'chattime',
                     ],
                 ]
             ],
@@ -70,7 +71,8 @@ class dates_test extends advanced_testcase {
                 $future, CHAT_SCHEDULE_WEEKLY, [
                     [
                         'label' => $label,
-                        'timestamp' => $future
+                        'timestamp' => $future,
+                        'dataid' => 'chattime',
                     ]
                 ]
             ],
@@ -78,7 +80,8 @@ class dates_test extends advanced_testcase {
                 $future, CHAT_SCHEDULE_DAILY, [
                     [
                         'label' => $label,
-                        'timestamp' => $future
+                        'timestamp' => $future,
+                        'dataid' => 'chattime',
                     ]
                 ]
             ],
@@ -86,7 +89,8 @@ class dates_test extends advanced_testcase {
                 $past, CHAT_SCHEDULE_DAILY, [
                     [
                         'label' => $label,
-                        'timestamp' => $dailynextchattime
+                        'timestamp' => $dailynextchattime,
+                        'dataid' => 'chattime',
                     ],
                 ]
             ],
@@ -94,7 +98,8 @@ class dates_test extends advanced_testcase {
                 $past, CHAT_SCHEDULE_WEEKLY, [
                     [
                         'label' => $label,
-                        'timestamp' => $weeklynextchattime
+                        'timestamp' => $weeklynextchattime,
+                        'dataid' => 'chattime',
                     ],
                 ]
             ],
