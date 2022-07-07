@@ -16,6 +16,8 @@
 
 namespace mod_data\output;
 
+use action_menu;
+use action_menu_link_secondary;
 use moodle_url;
 use templatable;
 use renderable;
@@ -64,54 +66,69 @@ class presets implements templatable, renderable {
      */
     public function export_for_template(\renderer_base $output): array {
 
+        $presets = $this->get_presets();
         return [
             'd' => $this->id,
             'formactionul' => $this->formactionurl->out(),
-            'presetstable' => $this->get_presets_table(),
+            'showmanage' => $this->manage,
+            'presets' => $presets,
         ];
     }
 
     /**
-     * Generates and returns the HTML for the presets table.
+     * Returns the presets list with the information required to display them.
      *
-     * @return string
+     * @return array Presets list.
      */
-    private function get_presets_table(): string {
-        global $OUTPUT, $PAGE, $DB;
+    private function get_presets(): array {
+        global $OUTPUT, $PAGE;
 
-        $presetstable = new \html_table();
-        $presetstable->align = ['center', 'left', 'left'];
-        $presetstable->size = ['1%', '90%', '1%'];
-
+        $presets = [];
         foreach ($this->presets as $preset) {
             $presetname = $preset->name;
             if (!empty($preset->userid)) {
+                // If the preset has the userid field, the full name of creator it will be added to the end of the name.
                 $userfieldsapi = \core_user\fields::for_name();
                 $namefields = $userfieldsapi->get_sql('', false, '', '', false)->selects;
-                $presetuser = $DB->get_record('user', array('id' => $preset->userid), 'id, ' . $namefields, MUST_EXIST);
+                $fields = 'id, ' . $namefields;
+                $presetuser = \core_user::get_user($preset->userid, $fields, MUST_EXIST);
                 $username = fullname($presetuser, true);
                 $presetname = "{$presetname} ({$username})";
             }
 
-            $deleteaction = '';
+            $actions = [];
             if ($this->manage) {
-                if (data_user_can_delete_preset($PAGE->context, $preset) && $preset->name != 'Image gallery') {
+                // Only presets saved by users can be removed (so the datapreset plugins shouldn't display the delete button).
+                if (!$preset->isplugin && data_user_can_delete_preset($PAGE->context, $preset)) {
                     $deleteactionurl = new moodle_url('/mod/data/preset.php',
                         ['d' => $this->id, 'fullname' => "{$preset->userid}/{$preset->shortname}",
                         'action' => 'confirmdelete']);
-                    $deleteaction = $OUTPUT->action_icon($deleteactionurl,
-                        new \pix_icon('t/delete', get_string('delete')));
+
+                    $actionmenu = new action_menu();
+                    $icon = $OUTPUT->pix_icon('i/menu', get_string('actions'));
+                    $actionmenu->set_menu_trigger($icon, 'btn btn-icon d-flex align-items-center justify-content-center');
+                    $actionmenu->set_action_label(get_string('actions'));
+                    $actionmenu->attributes['class'] .= ' presets-actions';
+
+                    $actionmenu->add(new action_menu_link_secondary(
+                        $deleteactionurl,
+                        null,
+                        get_string('delete'),
+                    ));
+                    $actions = $actionmenu->export_for_template($OUTPUT);
                 }
             }
 
-            $presetstable->data[] = [
-                \html_writer::tag('input', '', array('type' => 'radio', 'name' => 'fullname',
-                    'value' => "{$preset->userid}/{$preset->shortname}")),
-                $presetname,
-                $deleteaction,
+            $presets[] = [
+                'id' => $this->id,
+                'name' => $preset->name,
+                'shortname' => $preset->shortname,
+                'fullname' => $presetname,
+                'userid' => $preset->userid,
+                'actions' => $actions,
             ];
         }
 
-        return \html_writer::table($presetstable);
+        return $presets;
     }
 }

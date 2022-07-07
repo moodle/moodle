@@ -148,3 +148,7 @@
 #page-mod-data-edit .datatagcontrol {
     padding-left: 10px;
 }
+
+.preset_action_menu .dropdown-toggle::after {
+    display: none;
+}

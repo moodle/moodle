@@ -320,6 +320,7 @@ $string['portfolionotfile'] = 'Export to a portfolio rather than a file (csv and
 $string['presetinfo'] = 'Saving as a preset will publish this template. Other users may be able to use it in their databases.';
 $string['presetnotselected'] = 'No preset has been selected.';
 $string['presets'] = 'Presets';
+$string['presetshelp'] = 'Choose a preset to use as a starting point.';
 $string['privacy:metadata:commentpurpose'] = 'Comments on database records';
 $string['privacy:metadata:data_content'] = 'Represents one answer to one field in database activity module';
 $string['privacy:metadata:data_content:fieldid'] = 'Field definition ID';
