@@ -23,6 +23,8 @@
  * @package mod_data
  */
 
+use mod_data\manager;
+
 require_once('../../config.php');
 require_once('lib.php');
 
@@ -35,35 +37,24 @@ $url = new moodle_url('/mod/data/templates.php');
 
 if ($id) {
     $url->param('id', $id);
-    if (! $cm = get_coursemodule_from_id('data', $id)) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-        throw new \moodle_exception('coursemisconf');
-    }
-    if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-
-} else {
+    list($course, $cm) = get_course_and_cm_from_cmid($id, manager::MODULE);
+    $manager = manager::create_from_coursemodule($cm);
+} else {   // We must have $d.
     $url->param('d', $d);
-    if (! $data = $DB->get_record('data', array('id'=>$d))) {
-        throw new \moodle_exception('invalidid', 'data');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        throw new \moodle_exception('coursemisconf');
-    }
-    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
+    $data = $DB->get_record('data', ['id' => $d], '*', MUST_EXIST);
+    $manager = manager::create_from_instance($data);
 }
+
+$data = $manager->get_instance();
+$cm = $manager->get_coursemodule();
+$context = $manager->get_context();
+$course = get_course($cm->course);
 
 $url->param('mode', $mode);
 $PAGE->set_url($url);
 
 require_login($course, false, $cm);
 
-$context = context_module::instance($cm->id);
 require_capability('mod/data:managetemplates', $context);
 
 if ($useeditor !== null) {
@@ -75,16 +66,7 @@ if (!$DB->count_records('data_fields', array('dataid'=>$data->id))) {      // Br
     redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
 }
 
-// Trigger an event for viewing templates.
-$event = \mod_data\event\template_viewed::create(array(
-    'context' => $context,
-    'courseid' => $course->id,
-    'other' => array(
-        'dataid' => $data->id
-    )
-));
-$event->add_record_snapshot('data', $data);
-$event->trigger();
+$manager->set_template_viewed();
 
 /// Print the page header
 

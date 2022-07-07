@@ -33,6 +33,7 @@ use mod_data\external\database_summary_exporter;
 use mod_data\external\record_exporter;
 use mod_data\external\content_exporter;
 use mod_data\external\field_exporter;
+use mod_data\manager;
 
 /**
  * Database module external functions
@@ -206,11 +207,13 @@ class mod_data_external extends external_api {
         list($database, $course, $cm, $context) = self::validate_database($params['databaseid']);
 
         // Call the data/lib API.
-        data_view($database, $course, $cm, $context);
+        $manager = manager::create_from_coursemodule($cm);
+        $manager->set_module_viewed($course);
 
-        $result = array();
-        $result['status'] = true;
-        $result['warnings'] = $warnings;
+        $result = [
+            'status' => true,
+            'warnings' => $warnings,
+        ];
         return $result;
     }
 

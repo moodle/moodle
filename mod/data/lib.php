@@ -4479,6 +4479,8 @@ function data_update_completion_state($data, $course, $cm) {
 /**
  * Mark the activity completed (if required) and trigger the course_module_viewed event.
  *
+ * @deprecated since Moodle 4.1 MDL-75146 - please do not use this function any more.
+ * @todo MDL-75189 Final deprecation in Moodle 4.5.
  * @param  stdClass $data       data object
  * @param  stdClass $course     course object
  * @param  stdClass $cm         course module object
@@ -4487,6 +4489,7 @@ function data_update_completion_state($data, $course, $cm) {
  */
 function data_view($data, $course, $cm, $context) {
     global $CFG;
+    debugging('data_view is deprecated. Use mod_data\\manager::set_module_viewed instead', DEBUG_DEVELOPER);
     require_once($CFG->libdir . '/completionlib.php');
 
     // Trigger course_module_viewed event.
