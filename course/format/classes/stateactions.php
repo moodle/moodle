@@ -247,11 +247,11 @@ class stateactions {
             if (!empty($modinfo->sections[$section->section])) {
                 foreach ($modinfo->sections[$section->section] as $modnumber) {
                     $cm = $modinfo->cms[$modnumber];
-                    $updates->add_cm_delete($cm->id);
+                    $updates->add_cm_remove($cm->id);
                 }
             }
             course_delete_section($course, $section, true, true);
-            $updates->add_section_delete($sectionid);
+            $updates->add_section_remove($sectionid);
         }
 
         // Removing a section affects the full course structure.

@@ -143,7 +143,7 @@ class stateactions_test extends \advanced_testcase {
                 'cm' => [],
                 'count' => 0,
             ],
-            'delete' => [
+            'remove' => [
                 'course' => [],
                 'section' => [],
                 'cm' => [],
@@ -236,10 +236,10 @@ class stateactions_test extends \advanced_testcase {
         // Format results in a way we can compare easily.
         $results = $this->summarize_updates($updates);
 
-        // The state actions does not use create or delete actions because they are designed
+        // The state actions does not use create or remove actions because they are designed
         // to refresh parts of the state.
         $this->assertEquals(0, $results['create']['count']);
-        $this->assertEquals(0, $results['delete']['count']);
+        $this->assertEquals(0, $results['remove']['count']);
 
         // Validate we have all the expected entries.
         $expectedtotal = count($expectedresults['course']) + count($expectedresults['section']) + count($expectedresults['cm']);
