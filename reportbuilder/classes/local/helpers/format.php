@@ -58,6 +58,6 @@ class format {
      * @return string
      */
     public static function percent(float $value): string {
-        return format_float($value, 1) . '%';
+        return get_string('percents', 'moodle', format_float($value));
     }
 }
