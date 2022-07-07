@@ -67,13 +67,20 @@ class sum extends base {
     /**
      * Return formatted value for column when applying aggregation
      *
+     * For boolean columns we return the sum of the true values, numeric columns execute original callbacks if present
+     *
      * @param mixed $value
      * @param array $values
      * @param array $callbacks
      * @param int $columntype
-     * @return int
+     * @return mixed
      */
-    public static function format_value($value, array $values, array $callbacks, int $columntype): int {
-        return (int) reset($values);
+    public static function format_value($value, array $values, array $callbacks, int $columntype) {
+        if ($columntype === column::TYPE_BOOLEAN || empty($callbacks)) {
+            $decimalpoints = (int) ($columntype === column::TYPE_FLOAT);
+            return format_float((float) reset($values), $decimalpoints);
+        }
+
+        return parent::format_value($value, $values, $callbacks, $columntype);
     }
 }

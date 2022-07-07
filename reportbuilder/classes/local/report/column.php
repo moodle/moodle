@@ -479,7 +479,7 @@ final class column {
      * fields, and $additionalarguments are those passed on from this method):
      *
      * The type of the $value parameter passed to the callback is determined by calling {@see set_type}, this type is preserved
-     * if the column is part of a report source and is aggregated using one of the "Group concatenation" methods
+     * if the column is part of a report source and is being aggregated
      *
      * function($value, stdClass $row[, $additionalarguments]): string
      *
