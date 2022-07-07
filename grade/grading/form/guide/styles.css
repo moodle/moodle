@@ -135,7 +135,7 @@
 
 .gradingform_guide.editor .addcriterion input,
 .gradingform_guide.editor .addcomment input {
-    background-position: 5px 8px;
+    background-position: left 5px top 8px;
     height: 30px;
     line-height: 29px;
     margin-bottom: 14px;
