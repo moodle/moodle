@@ -16,11 +16,13 @@
 
 namespace mod_data;
 
-use context_module;
 use cm_info;
+use context_module;
 use completion_info;
+use data_field_base;
 use mod_data\event\course_module_viewed;
 use mod_data\event\template_viewed;
+use mod_data\event\template_updated;
 use stdClass;
 
 /**
@@ -38,6 +40,23 @@ class manager {
     /** Pluginname name. */
     const PLUGIN = 'mod_data';
 
+    /** Template list with their files required to save the information of a preset. */
+    const TEMPLATES_LIST = [
+        'listtemplate' => 'listtemplate.html',
+        'singletemplate' => 'singletemplate.html',
+        'asearchtemplate' => 'asearchtemplate.html',
+        'addtemplate' => 'addtemplate.html',
+        'rsstemplate' => 'rsstemplate.html',
+        'csstemplate' => 'csstemplate.css',
+        'jstemplate' => 'jstemplate.js',
+        'listtemplateheader' => 'listtemplateheader.html',
+        'listtemplatefooter' => 'listtemplatefooter.html',
+        'rsstitletemplate' => 'rsstitletemplate.html',
+    ];
+
+    /** @var string plugin path. */
+    private $path;
+
     /** @var stdClass course_module record. */
     private $instance;
 
@@ -47,6 +66,11 @@ class manager {
     /** @var cm_info course_modules record. */
     private $cm;
 
+    /** @var array the current data_fields records.
+     * Do not acces this attribute directly, use $this->get_field_records instead
+     */
+    private $_fieldrecords = null;
+
     /**
      * Class contructor.
      *
@@ -54,10 +78,12 @@ class manager {
      * @param stdClass $instance activity instance object.
      */
     public function __construct(cm_info $cm, stdClass $instance) {
+        global $CFG;
         $this->cm = $cm;
         $this->instance = $instance;
         $this->context = context_module::instance($cm->id);
         $this->instance->cmidnumber = $cm->idnumber;
+        $this->path = $CFG->dirroot . '/mod/' . self::MODULE;
     }
 
     /**
@@ -166,5 +192,115 @@ class manager {
         ]);
         $event->add_record_snapshot(self::MODULE, $this->instance);
         $event->trigger();
+    }
+
+    /**
+     * Return the database fields.
+     *
+     * @return data_field_base[] the field instances.
+     */
+    public function get_fields(): array {
+        $result = [];
+        $fieldrecords = $this->get_field_records();
+        foreach ($fieldrecords as $fieldrecord) {
+            $result[$fieldrecord->id] = $this->get_field($fieldrecord);
+        }
+        return $result;
+    }
+
+    /**
+     * Return the field records (the current data_fields records).
+     *
+     * @return stdClass[] an array of records
+     */
+    public function get_field_records() {
+        global $DB;
+        if ($this->_fieldrecords === null) {
+            $this->_fieldrecords = $DB->get_records('data_fields', ['dataid' => $this->instance->id]);
+        }
+        return $this->_fieldrecords;
+    }
+
+    /**
+     * Return a specific field instance from a field record.
+     *
+     * @param stdClass $fieldrecord the fieldrecord to convert
+     * @return data_field_base the data field class instance
+     */
+    public function get_field(stdClass $fieldrecord): data_field_base {
+        $filepath = "{$this->path}/field/{$fieldrecord->type}/field.class.php";
+        $classname = "data_field_{$fieldrecord->type}";
+        if (!file_exists($filepath) || !class_exists($classname)) {
+            return new data_field_base($fieldrecord, $this->instance, $this->cm);
+        }
+        require_once($filepath);
+        $newfield = new $classname($fieldrecord, $this->instance, $this->cm);
+        return $newfield;
+    }
+
+    /**
+     * Return a specific template.
+     *
+     * NOTE: this method returns a default template if the module template is empty.
+     * However, it won't update the template database field.
+     *
+     * @param string $templatename
+     * @param array $options extra display options array
+     * @return template the template instance
+     */
+    public function get_template(string $templatename, array $options = []): template {
+        if ($templatename == 'single') {
+            $templatename == 'singletemplate';
+        }
+        $instance = $this->instance;
+        $templatestr = $instance->{$templatename} ?? '';
+        if (empty($templatestr)) {
+            $templatestr = data_generate_default_template($instance, $templatename, 0, false, false);
+        }
+        // Some templates have extra options.
+        if ($templatename == 'singletemplate') {
+            $options['comments'] = true;
+            $options['ratings'] = true;
+        }
+        return new template($this, $templatestr, $options);
+    }
+
+    /**
+     * Update the database templates.
+     *
+     * @param stdClass $newtemplates an object with all the new templates
+     * @return bool if updated successfully.
+     */
+    public function update_templates(stdClass $newtemplates) {
+        global $DB;
+        $record = (object)[
+            'id' => $this->instance->id,
+        ];
+        foreach (self::TEMPLATES_LIST as $templatename => $templatefile) {
+            if (!isset($newtemplates->{$templatename})) {
+                continue;
+            }
+            $record->{$templatename} = $newtemplates->{$templatename};
+        }
+
+        // The add entry form cannot repeat tags.
+        if (isset($record->addtemplate) && !data_tags_check($this->instance->id, $record->addtemplate)) {
+                return false;
+        }
+
+        $DB->update_record(self::MODULE, $record);
+        $this->instance = $DB->get_record(self::MODULE, ['id' => $this->cm->instance], '*', MUST_EXIST);
+
+        // Trigger an event for saving the templates.
+        $event = template_updated::create(array(
+            'context' => $this->context,
+            'courseid' => $this->cm->course,
+            'other' => array(
+                'dataid' => $this->instance->id,
+            )
+        ));
+        $event->trigger();
+
+        return true;
     }
 }

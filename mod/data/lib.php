@@ -21,6 +21,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_data\manager;
+
 defined('MOODLE_INTERNAL') || die();
 
 // Some constants
@@ -134,6 +136,15 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         }
 
         $this->context = context_module::instance($this->cm->id);
+    }
+
+    /**
+     * Return the field type name.
+     *
+     * @return string the filed type.
+     */
+    public function get_name(): string {
+        return $this->field->name;
     }
 
 
@@ -898,7 +909,7 @@ function data_get_field_new($type, $data) {
  * @param object $field
  * @param object $data
  * @param object $cm
- * @return object
+ * @return data_field_base
  */
 function data_get_field($field, $data, $cm=null) {
     global $CFG;
