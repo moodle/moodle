@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder;
 
+use core_collator;
 use core_component;
 use core_plugin_manager;
 use stdClass;
@@ -131,8 +132,9 @@ class manager {
         $datasources = core_component::get_component_classes_in_namespace(null, 'reportbuilder\\datasource');
         foreach ($datasources as $class => $path) {
             if (self::report_source_exists($class, datasource::class) && self::report_source_available($class)) {
-                [$component] = explode('\\', $class);
 
+                // Group each report source by the component that it belongs to.
+                [$component] = explode('\\', $class);
                 if ($plugininfo = core_plugin_manager::instance()->get_plugin_info($component)) {
                     $componentname = $plugininfo->displayname;
                 } else {
@@ -142,6 +144,11 @@ class manager {
                 $sources[$componentname][$class] = call_user_func([$class, 'get_name']);
             }
         }
+
+        // Order source for each component alphabetically.
+        array_walk($sources, static function(array &$componentsources): void {
+            core_collator::asort($componentsources);
+        });
 
         return $sources;
     }
