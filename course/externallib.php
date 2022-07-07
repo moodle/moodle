@@ -478,6 +478,9 @@ class core_course_external extends external_api {
                                             array(
                                                 'label' => new external_value(PARAM_TEXT, 'date label'),
                                                 'timestamp' => new external_value(PARAM_INT, 'date timestamp'),
+                                                'relativeto' => new external_value(PARAM_INT, 'relative date timestamp',
+                                                    VALUE_OPTIONAL),
+                                                'dataid' => new external_value(PARAM_NOTAGS, 'cm data id', VALUE_OPTIONAL),
                                             )
                                         ),
                                         VALUE_DEFAULT,
