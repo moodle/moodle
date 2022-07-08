@@ -57,12 +57,17 @@ $formurl = new moodle_url('/blocks/iomad_company_admin/company_users_course_form
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
+
+// Deal with the link back to the user edit page.
+$buttoncaption = get_string('edit_users_title', 'block_iomad_company_admin');
+$buttonlink = new moodle_url('/blocks/iomad_company_admin/editusers.php');
+$buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+$PAGE->set_button($buttons);
+
+$user = $DB->get_record('user', ['id' => $userid]);
+$linktext = get_string('user_courses_for', 'block_iomad_company_admin', fullname($user));
 $PAGE->set_title($linktext);
-$PAGE->set_heading(get_string('company_users_course_title', 'block_iomad_company_admin'));
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->set_heading($linktext);
 
 $coursesform = new \block_iomad_company_admin\forms\company_users_course_form($formurl, $context, $companyid, $departmentid, $userid);
 

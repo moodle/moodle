@@ -45,14 +45,14 @@ $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
-$companylist = new moodle_url('/my', $urlparams);
+$companylist = new moodle_url('/blocks/iomad_company_admin/index.php', $urlparams);
 
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('createuser', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_user_create_form.php');
-$dashboardurl = new moodle_url('/my');
+$dashboardurl = new moodle_url('/blocks/iomad_company_admin/index.php');
 
 // Print the page header.
 $PAGE->set_context($context);
@@ -61,19 +61,11 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-
-$PAGE->requires->js_call_amd('block_iomad_company_admin/company_user', 'init', []);;
-
+$PAGE->set_heading($linktext);
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.
-// Parameter is name of proper select form element.
-$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', '', $departmentid));
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->requires->js_call_amd('block_iomad_company_admin/company_user', 'init', []);;
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);

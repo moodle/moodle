@@ -46,10 +46,6 @@ $output = $PAGE->get_renderer('local_iomad_learningpath');
 $companyid = iomad::get_my_companyid($context);
 $companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
 $path = $companypaths->get_path($id);
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add(get_string('managecourses', 'local_iomad_learningpath'), $url);
 $courses = $companypaths->get_courselist($id);
 $categories = $companypaths->get_categories($id);
 $companypaths->check_group($id);

@@ -123,18 +123,16 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
 
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->set_heading($linktext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);
 
 require_login(null, false); // Adds to $PAGE, creates $output.
 
-$baseurl = new moodle_url(basename(__FILE__), $params);
+$baseurl = new moodle_url(basename(__FILE__), $params);// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+
 $returnurl = $baseurl;
 
 // Check the department is valid.

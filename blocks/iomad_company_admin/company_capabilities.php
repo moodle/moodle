@@ -40,13 +40,19 @@ $templatesaved = optional_param('templatesaved', 0, PARAM_INT);
 // (before output in case it redirects)
 $context = context_system::instance();
 $companyid = iomad::get_my_companyid($context);
+$company = new company($companyid);
 
 // access stuff
 require_login();
 iomad::require_capability('block/iomad_company_admin:restrict_capabilities', $context);
 
 // Set the name for the page.
-$linktext = get_string('restrictcapabilities', 'block_iomad_company_admin');
+if (empty($templateid)) {
+    $linktext = get_string('restrictcapabilitiesfor', 'block_iomad_company_admin', $company->get_name());
+} else {
+    $template = $DB->get_record('company_role_templates', ['id' => $templateid], '*', MUST_EXIST);
+    $linktext = get_string('roletemplate', 'block_iomad_company_admin') . ' ' . $template->name;
+}
 
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php', array('templateid' => $templateid));
@@ -57,13 +63,7 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-
-$PAGE->requires->jquery();
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->set_heading($linktext);
 
 // Require javascript
 $PAGE->requires->js_call_amd('block_iomad_company_admin/company_capabilities', 'init', [$companyid, $templateid, $roleid]);

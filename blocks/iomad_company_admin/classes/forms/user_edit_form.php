@@ -92,9 +92,6 @@ class user_edit_form extends \moodleform {
 
         $mform =& $this->_form;
 
-        // Then show the fields about where this block appears.
-        $mform->addElement('header', 'header', get_string('companyuser', 'block_iomad_company_admin', $this->companyname));
-
         $mform->addElement('hidden', 'companyid', $this->selectedcompany);
         $mform->setType('companyid', PARAM_INT);
 

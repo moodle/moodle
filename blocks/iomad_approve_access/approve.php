@@ -37,10 +37,6 @@ $context = context_system::instance();
 $PAGE->set_context($context);
 $baseurl = new moodle_url('/blocks/iomad_approve_access/approve.php');
 $PAGE->set_url($baseurl);
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add(get_string('blocks'));
 $PAGE->set_pagelayout('base');
 
 // Set up some strings.

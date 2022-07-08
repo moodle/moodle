@@ -47,11 +47,7 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->set_heading($linktext);
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $returnurl = $baseurl;
@@ -74,7 +70,7 @@ if ($orders = $DB->get_recordset_sql("SELECT
                                       FROM {invoice} i
                                       WHERE i.Status != '" . INVOICESTATUS_BASKET . "'
                                       ORDER BY i.Status DESC, i.id DESC", null, $page, $perpage)) {
-    if (count($orders)) {
+    if (!empty($orders)) {
         $stredit   = get_string('edit');
         $strhide = get_string('hide', 'block_iomad_commerce');
         $strshow = get_string('show', 'block_iomad_commerce');

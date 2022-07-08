@@ -53,11 +53,7 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->set_heading($linktext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -66,7 +62,7 @@ $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
-$companylist = new moodle_url('/my', $urlparams);
+$dashboardurl = new moodle_url('/blocks/iomad_company_admin/index.php', $urlparams);
 
 /* next line copied from /course/edit.php */
 $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES,
@@ -77,7 +73,7 @@ $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES,
 $mform = new block_iomad_company_admin\forms\course_edit_form($PAGE->url, $companyid, $editoroptions);
 
 if ($mform->is_cancelled()) {
-    redirect($companylist);
+    redirect($dashboardurl);
 
 } else if ($data = $mform->get_data()) {
 
@@ -166,7 +162,7 @@ if ($mform->is_cancelled()) {
         // We are going to the course instead.
         redirect(new moodle_url('/course/view.php', array('id' => $course->id)), get_string('coursecreatedok', 'block_iomad_company_admin'), null, \core\output\notification::NOTIFY_SUCCESS);
     } else {
-        redirect($companylist, get_string('coursecreatedok', 'block_iomad_company_admin'), null, \core\output\notification::NOTIFY_SUCCESS);
+        redirect($dashboardurl, get_string('coursecreatedok', 'block_iomad_company_admin'), null, \core\output\notification::NOTIFY_SUCCESS);
     }
 } else {
 

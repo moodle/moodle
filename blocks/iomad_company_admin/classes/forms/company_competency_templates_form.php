@@ -73,9 +73,6 @@ class company_competency_templates_form extends moodleform {
         // definition function  so that when the currenttemplates or potentialtemplates get changed
         // in the process function, the changes get displayed, rather than the lists as they
         // are before processing.
-        $mform->addElement('header', 'header', get_string('company_templates_for',
-                                                          'block_iomad_company_admin',
-                                                          $this->company->get_name() ));
 
         $mform->addElement('html', '<table summary="" class="companytemplatetable addremovetable'.
                                    ' generaltable generalbox boxaligncenter" cellspacing="0">

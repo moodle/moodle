@@ -47,7 +47,6 @@ $urlparams = array();
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
-$companylist = new moodle_url('/my', $urlparams);
 
 $linktext = get_string('editdepartment', 'block_iomad_company_admin');
 
@@ -62,15 +61,12 @@ $PAGE->set_title($linktext);
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
-// Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
-
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
+$company = new company($companyid);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('companydepartment', 'block_iomad_company_admin'). $company->get_name());
 
 // Set up the initial forms.
 $mform = new \block_iomad_company_admin\forms\department_display_form($PAGE->url, $companyid, $departmentid, $output);
@@ -90,7 +86,7 @@ if ($deleteid && confirm_sesskey() && $confirm == md5($deleteid)) {
 }
 $noticestring = '';
 if ($mform->is_cancelled()) {
-    redirect($companylist);
+    redirect($dashboardurl);
 
 } else if ($data = $mform->get_data()) {
     if (!empty($data->create) ) {

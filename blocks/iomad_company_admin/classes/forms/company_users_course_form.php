@@ -122,7 +122,6 @@ class company_users_course_form extends moodleform {
         }
 
         $company = new company($this->selectedcompany);
-        $mform->addElement('header', 'header', get_string('user_courses_for', 'block_iomad_company_admin', fullname($this->user)));
         $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
         $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
 

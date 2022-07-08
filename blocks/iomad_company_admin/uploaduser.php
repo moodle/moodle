@@ -75,7 +75,7 @@ iomad::require_capability('block/iomad_company_admin:user_upload', context_syste
 
 // Correct the navbar .
 // Set the name for the page.
-$linktext = get_string('user_upload_title', 'block_iomad_company_admin');
+$linktext = get_string('uploadusers', 'tool_uploaduser');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/uploaduser.php');
 
@@ -85,7 +85,7 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
+$PAGE->set_heading($linktext);
 
 $PAGE->requires->jquery();
 
@@ -95,10 +95,6 @@ $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'ini
 
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -224,9 +220,8 @@ if (empty($iid)) {
         // Continue to form2.
 
     } else {
+        $PAGE->set_heading($linktext);
         echo $output->header();
-
-        echo $output->heading_with_help(get_string('uploadusers', 'tool_uploaduser'), 'uploadusers', 'tool_uploaduser');
 
         $mform->display();
         echo $output->footer();
@@ -278,8 +273,8 @@ if ($mform->is_cancelled()) {
         }
 
         // Print the header.
+        $PAGE->set_heading(get_string('uploadusersresult', 'tool_uploaduser'));
         echo $output->header();
-        echo $output->heading(get_string('uploadusersresult', 'tool_uploaduser'));
 
         $optype = $formdata->uutype;
 
@@ -1223,12 +1218,10 @@ if ($mform->is_cancelled()) {
 }
 
 // Print the header.
+$PAGE->set_heading(get_string('uploaduserspreview', 'tool_uploaduser'));
 echo $output->header();
 
 // Print the form.
-
-echo $output->heading(get_string('uploaduserspreview', 'tool_uploaduser'));
-
 $cir->init();
 $availableauths = get_plugin_list('auth');
 $availableauths = array_keys($availableauths);

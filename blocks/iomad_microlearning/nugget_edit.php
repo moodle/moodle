@@ -50,12 +50,7 @@ $PAGE->set_title($linktext);
 $output = $PAGE->get_renderer('block_iomad_microlearning');
 
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add(get_string('nuggets', 'block_iomad_microlearning'), $nuggetlist);
-$PAGE->navbar->add($linktext);
+$PAGE->set_heading($linktext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);

@@ -129,15 +129,7 @@ $manageurl = new moodle_url('/local/email/template_list.php', array('manage' => 
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
-$PAGE->set_title($linktext);
 $PAGE->requires->jquery();
-
-// Set the page heading.
-$PAGE->set_heading($linktext);
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
 
 // get output renderer
 $output = $PAGE->get_renderer('local_email');
@@ -153,6 +145,30 @@ if (!empty($SESSION->currenteditingcompany)) {
     redirect(new moodle_url('/local/iomad_dashboard/index.php'),
                             'Please select a company from the dropdown first');
 }
+$company = new company($companyid);
+
+// Set the page heading.
+if (empty($templatesetid)) {
+    if (empty($manage)) {
+        $linktext = get_string('email_templates_for', 'local_email', $company->get_name());
+    } else {
+            $linktext = get_string('emailtemplatesets', 'local_email');
+    }
+} else {
+    if (empty($action)) {
+        if ($templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
+            $linktext = get_string('email_templates_for', 'local_email', $templatesetinfo->templatesetname);
+        } else {
+            $linktext = get_string('email_templates_for', 'local_email', $company->get_name());
+        }
+    } else {
+        if ($templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
+            $linktext = get_string('deletetemplateset', 'local_email'). " " . $templatesetinfo->templatesetname;
+        }
+    }
+}
+$PAGE->set_title($linktext);
+$PAGE->set_heading($linktext);
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir,
                                                     'perpage' => $perpage,
@@ -463,7 +479,6 @@ if ($action == 'delete' && confirm_sesskey()) {
             print_error('templatesetnotfound', 'local_email');
         }
 
-        echo $OUTPUT->heading(get_string('deletetemplateset', 'local_email'). " " . $templatesetinfo->templatesetname);
         $optionsyes = array('templatesetid' => $templatesetid, 'confirm' => md5($templatesetid), 'sesskey' => sesskey(), 'action' => 'delete');
         echo $OUTPUT->confirm(get_string('deletetemplatesetfull', 'local_email', "'" . $templatesetinfo->templatesetname ."'"),
                               new moodle_url('/local/email/template_list.php', $optionsyes),
@@ -517,16 +532,6 @@ if (empty($templatesetid)) {
 }
 
 if (empty($manage)) {
-    if (empty($templatesetid)) {
-        echo '<h3>' . get_string('email_templates_for', $block, $company->get_name()) . '</h3>';
-    } else {
-        if ($templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
-            echo '<h3>' . get_string('email_templates_for', $block, $templatesetinfo->templatesetname) . '</h3>';
-        } else {
-            echo '<h3>' . get_string('email_templates_for', $block, $company->get_name()) . '</h3>';
-        }
-    }
-
     // output the save button.
     $saveurl = new moodle_url('/local/email/template_list.php',
                                 array('savetemplateset' => 1,
@@ -543,7 +548,7 @@ if (empty($manage)) {
         $backurl = '';
     }
     if (empty($templatesetid)) {
-        if(iomad::has_capability('local/email:templateset_list', $context)) {
+        if (iomad::has_capability('local/email:templateset_list', $context)) {
             echo $output->templateset_buttons($saveurl, $manageurl, $backurl);
         }
     } else {

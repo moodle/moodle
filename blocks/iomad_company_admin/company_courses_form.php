@@ -49,12 +49,6 @@ $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
-// Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -62,6 +56,9 @@ $parentlevel = company::get_company_parentnode($companyid);
 $companydepartment = $parentlevel->id;
 $syscontext = context_system::instance();
 $company = new company($companyid);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('company_courses_for', 'block_iomad_company_admin', $company->get_name()));
 
 if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
     $userhierarchylevel = $parentlevel->id;
@@ -95,12 +92,6 @@ if ($mform->is_cancelled()) {
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
     }
-
-    echo html_writer::tag('h3', get_string('company_courses_for',
-                                                          'block_iomad_company_admin',
-                                                          $company->get_name()));
-
-    echo $OUTPUT->render($departmentselect);
 
     $mform->display();
 

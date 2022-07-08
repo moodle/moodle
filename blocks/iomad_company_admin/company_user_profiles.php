@@ -43,7 +43,7 @@ require_login();
 
 // Correct the navbar.
 // Set the name for the page.
-$linktext = get_string('userprofiles', 'block_iomad_company_admin');
+$linktext = get_string('companyprofilefields', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_user_profiles.php');
 
@@ -53,11 +53,7 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->set_heading($linktext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -119,8 +115,6 @@ $context = $PAGE->context;
 echo $OUTPUT->header();
 
 iomad::require_capability('block/iomad_company_admin:company_user_profiles', $context);
-
-echo $OUTPUT->heading(get_string('companyprofilefields', 'block_iomad_company_admin'));
 
 // Check that we have at least one category defined.
 if ($DB->count_records('user_info_category') == 0) {

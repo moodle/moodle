@@ -71,7 +71,7 @@ $userid = optional_param('userid', 0, PARAM_INT);
 $delete = optional_param('delete', 0, PARAM_INT);
 
 
-require_login($SITE);
+require_login();
 $context = context_system::instance();
 iomad::require_capability('local/report_completion:view', $context);
 
@@ -159,30 +159,31 @@ $dashboardurl = new moodle_url('/my');
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_completion');
+$PAGE->set_context($context);
 $PAGE->set_url($url, $params);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
 $PAGE->requires->css("/local/report_completion/styles.css");
 $PAGE->requires->jquery();
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($strcompletion, $url);
-if (!empty($courseid)) {
-    if ($courseid == 1) {
-        $PAGE->navbar->add(get_string("allusers", 'local_report_completion'));
-    } else {
-        $course = $DB->get_record('course', array('id' => $courseid));
-            $PAGE->navbar->add(format_string($course->fullname, true, 1));
-    }
-}
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
 
 // Set the page heading.
-$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
+if (empty($courseid)) {
+    $PAGE->set_heading($strcompletion);
+} else {
+    $course = $DB->get_record('course', ['id' => $courseid]);
+    $PAGE->set_heading(get_string('completion_course_title', 'local_report_completion', format_string($course->fullname)));
+}
+
+if (!empty($courseid)) {
+    $buttoncaption = get_string('pluginname', 'local_report_completion');
+    $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php");
+    $buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+    $PAGE->set_button($buttons);
+}
 
 // Deal with the adhoc form.
 $data = data_submitted();
@@ -476,27 +477,6 @@ if (empty($courseid)) {
 
         // Display the header.
         echo $output->header();
-
-        // What heading are we displaying?
-        if (empty($courseid)) {
-            if (empty($to) && empty($from)) {
-                echo "<h3>".get_string('coursesummary', 'local_report_completion')."</h3>";
-            } else {
-                $fromstring = get_string('beginningoftime', 'local_report_completion');
-                $tostring = get_string('now');
-                if (!empty($from)) {
-                    $fromstring = date($CFG->iomad_date_format,$from);
-                }
-                if (!empty($to)) {
-                    $tostring= date($CFG->iomad_date_format,$to);
-                }
-                echo "<h3>".get_string('coursesummarywithdate', 'local_report_completion', array('from' => $fromstring, 'to' => $tostring))."</h3>";
-            }
-        } else if ($courseid == 1) {
-            echo "<h3>".get_string('reportallusers', 'local_report_completion')."</h3>";
-        } else {
-            echo "<h3>".get_string('courseusers', 'local_report_completion').format_string($courseinfo[$courseid]->coursename, true, 1)."</h3>";
-        }
 
         // Display the department selector.
         echo $output->display_tree_selector($company, $parentlevel, $selecturl, $selectparams, $departmentid);

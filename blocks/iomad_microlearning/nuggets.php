@@ -49,7 +49,7 @@ if (!empty($action) && !empty($nuggetid)) {
 }
 
 $urlparams = array('threadid' => $threadid, 'nuggetid' => $nuggetid, 'page' => $page);
-$companylist = new moodle_url('/my', $urlparams);
+$companylist = new moodle_url('/blocks/iomad_company_admin/index.php', $urlparams);
 
 $linktext = get_string('nuggets', 'block_iomad_microlearning');
 $threadlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
@@ -66,12 +66,14 @@ $PAGE->set_title($linktext);
 $output = $PAGE->get_renderer('block_iomad_microlearning');
 
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add(get_string('threads', 'block_iomad_microlearning'), $threadlink);
-$PAGE->navbar->add($linktext);
+$PAGE->set_heading($linktext);
+
+// Deal with the link back to the main microlearning page.
+$buttoncaption = get_string('threads', 'block_iomad_microlearning');
+$buttonlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
+$buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+$PAGE->set_button($buttons);
+
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);

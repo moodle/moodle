@@ -62,8 +62,12 @@ $url = new moodle_url('/blocks/iomad_microlearning/index.php');
 $title = get_string('pluginname', 'block_iomad_microlearning');
 
 $PAGE->set_heading($linktext);
-$PAGE->navbar->add($title, $url);
-$PAGE->navbar->add($linktext, $linkurl);
+
+// Deal with the link back to the main microlearning page.
+$buttoncaption = get_string('threads', 'block_iomad_microlearning');
+$buttonlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
+$buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+$PAGE->set_button($buttons);
 
 $companyid = iomad::get_my_companyid($context);
 

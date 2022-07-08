@@ -38,8 +38,6 @@ if ($returnurl) {
 }
 
 // Correct the navbar.
-// Set the name for the page.
-$linktext = get_string('assigncompetencyframeworks', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_competency_frameworks_form.php');
 
@@ -47,17 +45,17 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/company_competency_framew
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
-$PAGE->set_title($linktext);
-
-// Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
+$company = new company($companyid);
+
+// Set the name for the page.
+$linktext = get_string('company_frameworks_for', 'block_iomad_company_admin', $company->get_name());
+
+// Set the page heading.
+$PAGE->set_title($linktext);
+$PAGE->set_heading($linktext);
 
 $mform = new \block_iomad_company_admin\forms\company_frameworks_form($PAGE->url, $context, $companyid);
 

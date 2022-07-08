@@ -39,8 +39,6 @@ $context = context_system::instance();
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 
 // Correct the navbar.
-// Set the name for the page.
-$linktext = get_string('company_license_list_title', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_license_list.php');
 
@@ -48,18 +46,17 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/company_license_list.php'
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
-$PAGE->set_title($linktext);
-
-// Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 $company = new company($companyid);
+
+// Set the name for the page.
+$linktext = get_string('company_license_list_title', 'block_iomad_company_admin', $company->get_name());
+
+// Set the page heading.
+$PAGE->set_title($linktext);
+$PAGE->set_heading($linktext);
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage, 'showexpired' => $showexpired));
 $returnurl = $baseurl;
@@ -121,9 +118,6 @@ echo $OUTPUT->header();
 
 // Check we can actually do anything on this page.
 iomad::require_capability('block/iomad_company_admin:view_licenses', $context);
-
-$company = new company($companyid);
-echo "<h3>".$company->get_name()."</h3>";
 
 flush();
 

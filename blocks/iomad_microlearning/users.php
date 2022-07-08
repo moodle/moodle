@@ -54,9 +54,6 @@ if ($threadid) {
     $urlparams['threadid'] = $threadid;
 }
 
-// Correct the navbar.
-// Set the name for the page.
-$linktext = get_string('learningusers', 'block_iomad_microlearning');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_microlearning/users.php');
 $threadlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
@@ -65,9 +62,6 @@ $threadlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
-$PAGE->set_title($linktext);
-// Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
 
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
@@ -75,11 +69,6 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add(get_string('threads', 'block_iomad_microlearning'), $threadlink);
-$PAGE->navbar->add($linktext);
 
 require_login(null, false); // Adds to $PAGE, creates $output.
 iomad::require_capability('block/iomad_microlearning:assign_threads', $context);
@@ -89,6 +78,19 @@ $parentlevel = company::get_company_parentnode($companyid);
 $companydepartment = $parentlevel->id;
 $syscontext = context_system::instance();
 $company = new company($companyid);
+
+// Set the name for the page.
+$linktext = get_string('company_threads_for', 'block_iomad_microlearning', $company->get_name());
+
+// Set the page heading.
+$PAGE->set_title($linktext);
+$PAGE->set_heading($linktext);
+
+// Deal with the link back to the main microlearning page.
+$buttoncaption = get_string('threads', 'block_iomad_microlearning');
+$buttonlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
+$buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+$PAGE->set_button($buttons);
 
 if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
     $userhierarchylevel = $parentlevel->id;
@@ -115,7 +117,6 @@ if ($threadsform->is_cancelled() || $usersform->is_cancelled() ||
         redirect(new moodle_url('/my'));
     }
 } else {
-    echo html_writer::tag('h3', get_string('company_threads_for', 'block_iomad_microlearning', $company->get_name()));
     echo $output->display_tree_selector($company, $parentlevel, $linkurl, $params, $departmentid);
     echo html_writer::start_tag('div', array('class' => 'iomadclear'));
     if ($companyid > 0) {

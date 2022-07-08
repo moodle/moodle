@@ -76,17 +76,6 @@ class company_edit_form extends \company_moodleform {
         $mform->setType('companyterminated', PARAM_INT);
         $mform->setDefault('companyterminated', 0);
 
-        // Then show the fields about where this block appears.
-        if ($this->isadding) {
-            if ($this->child) {
-                $mform->addElement('header', 'header', get_string('addnewchildcompany', 'block_iomad_company_admin'));
-            } else {
-                $mform->addElement('header', 'header', get_string('addnewcompany', 'block_iomad_company_admin'));
-            }
-        } else {
-            $mform->addElement('header', 'header', get_string('editcompany', 'block_iomad_company_admin'));
-        }
-
         // If this is the first company then some extra help is displayed.
         if ($this->firstcompany) {
             $mform->addElement('html', '<div class="alert alert-info">' . get_string('firstcompany', 'block_iomad_company_admin') . '</div>');

@@ -55,6 +55,7 @@ iomad::require_capability('local/report_users:view', $context);
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 $company = new company($companyid);
+$userinfo = $DB->get_record('user', array('id' => $userid));
 
 $linktext = get_string('user_detail_title', 'local_report_users');
 
@@ -71,13 +72,14 @@ $PAGE->set_title($linktext);
 $PAGE->requires->jquery();
 
 // Set the page heading.
-$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
+$PAGE->set_heading(get_string('userdetails', 'local_report_users').
+          $userinfo->firstname." ".
+          $userinfo->lastname. " (".$userinfo->email.")");
 if (iomad::has_capability('local/report_completion:view', $context)) {
-    $PAGE->navbar->add(get_string('pluginname', 'local_report_completion'),
-                       new moodle_url($CFG->wwwroot . "/local/report_completion/index.php", array('validonly' => $validonly)));
+    $buttoncaption = get_string('pluginname', 'local_report_completion');
+    $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php");
+    $buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+    $PAGE->set_button($buttons);
 }
 $PAGE->navbar->add($linktext, $reporturl);
 
@@ -323,7 +325,6 @@ if (!empty($action)) {
 }
 
 // Set up the table.
-$userinfo = $DB->get_record('user', array('id' => $userid));
 $table = new \local_report_users\tables\completion_table('user_report_completion');
 $table->is_downloading($download, format_string($company->get('name')) . ' course completion report ' . fullname($userinfo), 'user_report_completion123');
 
@@ -332,9 +333,6 @@ if (!$table->is_downloading()) {
 
     echo $output->header();
 
-    echo "<h2>".get_string('userdetails', 'local_report_users').
-          $userinfo->firstname." ".
-          $userinfo->lastname. " (".$userinfo->email.")";
     if (!empty($userinfo->suspended)) {
         echo " - Suspended</h2>";
     } else {

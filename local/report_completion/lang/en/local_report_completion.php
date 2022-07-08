@@ -25,6 +25,7 @@ $string['companies'] = 'Companies';
 $string['completed'] = 'Completed';
 $string['course'] = 'Course';
 $string['report_completion:view'] = 'View course iomad progress report';
+$string['completion_course_title'] = 'Completion report for {$a}';
 $string['completiondate'] = 'Completion date';
 $string['completionnotenabled'] = 'Completion tracking is not enabled for this course (no report data available)';
 $string['coursechart'] = 'Draw overview chart for course';

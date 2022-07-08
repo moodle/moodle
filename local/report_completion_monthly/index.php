@@ -139,13 +139,12 @@ $PAGE->set_pagelayout('report');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
+$PAGE->set_heading($linktext);
 if (iomad::has_capability('local/report_completion:view', $systemcontext)) {
-    $PAGE->navbar->add(get_string('pluginname', 'local_report_completion'),
-                       new moodle_url($CFG->wwwroot . "/local/report_completion/index.php"));
+    $buttoncaption = get_string('pluginname', 'local_report_completion');
+    $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php");
+    $buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+    $PAGE->set_button($buttons);
 }
 $PAGE->navbar->add($linktext, $linkurl);
 

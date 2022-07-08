@@ -35,8 +35,6 @@ class admin_uploaduser_form1 extends company_moodleform {
 
         $mform =& $this->_form;
 
-        $mform->addElement('header', 'settingsheader', get_string('upload'));
-
         $mform->addElement('filepicker', 'userfile', get_string('file'), null, array('accepted_types' => array('.csv')));
         $mform->addRule('userfile', null, 'required');
 

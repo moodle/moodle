@@ -62,7 +62,14 @@ if ($courseid) {
 
 // Correct the navbar .
 // Set the name for the page.
-$linktext = get_string('managelicenses', 'block_iomad_company_admin');
+if (!empty($licenseid)) {
+    $linktext = get_string('edit_licenses_title', 'block_iomad_company_admin');
+} else {
+    $linktext = get_string('add_licenses_title', 'block_iomad_company_admin');
+}
+if (!empty($parentid)) {
+    $linktext = get_string('split_licenses', 'block_iomad_company_admin');
+}
 $listtext = get_string('company_license_list_title', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_license_edit_form.php');
@@ -73,12 +80,7 @@ $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
-$PAGE->set_heading(get_string('edit_licenses_title', 'block_iomad_company_admin'));
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($listtext, $listurl);
-$PAGE->navbar->add($linktext);
+$PAGE->set_heading($linktext);
 
 // If we are editing a license, check that the parent id is set.
 if (!empty($licenseid)) {
@@ -232,8 +234,6 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
         print_error('invalidlicense', 'block_iomad_company_admin');
     }
 
-    $company = new company($companyid);
-    echo "<h3>".$company->get_name()."</h3>";
     $mform->display();
     echo $OUTPUT->footer();
 }

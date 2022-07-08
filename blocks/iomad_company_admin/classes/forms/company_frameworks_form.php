@@ -71,9 +71,6 @@ class company_frameworks_form extends moodleform {
         // are before processing.
 
         $context = context_system::instance();
-        $mform->addElement('header', 'header', get_string('company_frameworks_for',
-                                                          'block_iomad_company_admin',
-                                                          $this->company->get_name() ));
 
         $mform->addElement('html', '<table summary="" class="companyframeworktable addremovetable'.
                                    ' generaltable generalbox boxaligncenter" cellspacing="0">

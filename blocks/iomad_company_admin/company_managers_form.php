@@ -50,11 +50,7 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->set_heading($linktext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -134,7 +130,6 @@ if ($managersform->is_cancelled()) {
     }
 
     // Display the department tree.
-    echo html_writer::tag('h3', get_string('company_managers_for', 'block_iomad_company_admin', $company->get_name()));
     echo $output->display_tree_selector($company, $parentlevel, $linkurl, $urlparams, $departmentid);
 
     echo html_writer::start_tag('div', array('class' => 'iomadclear'));

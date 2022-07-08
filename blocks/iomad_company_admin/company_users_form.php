@@ -46,16 +46,10 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
-// Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
-
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 $company = new company($companyid);
+$PAGE->set_heading(get_string('company_users_for', 'block_iomad_company_admin', $company->get_name()));
 
 $usersform = new \block_iomad_company_admin\forms\company_users_form($PAGE->url, $context, $companyid);
 
@@ -63,7 +57,7 @@ if ($usersform->is_cancelled()) {
     if ($returnurl) {
         redirect($returnurl);
     } else {
-        redirect(new moodle_url('/my'));
+        redirect(new moodle_url('/blocks/iomad_company_admin/index.php'));
     }
 } else {
     $usersform->process();

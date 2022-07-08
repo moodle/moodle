@@ -42,7 +42,7 @@ $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $loginfromraw = optional_param_array('loginfromraw', null, PARAM_INT);
 $logintoraw = optional_param_array('logintoraw', null, PARAM_INT);
 
-require_login($SITE);
+require_login();
 $systemcontext = context_system::instance();
 iomad::require_capability('local/report_user_logins:view', $systemcontext);
 
@@ -172,6 +172,7 @@ $dashboardurl = new moodle_url('/my');
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_user_logins');
+$PAGE->set_context($systemcontext);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
@@ -218,9 +219,7 @@ $foundobj = iomad::add_user_filter_params($params, $companyid);
 $idlist = $foundobj->idlist;
 $foundfields = $foundobj->foundfields;
 
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
+    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/index.php'));
 $PAGE->navbar->add($strcompletion, $url);
 
 $url = new moodle_url('/local/report_user_logins/index.php', $params);

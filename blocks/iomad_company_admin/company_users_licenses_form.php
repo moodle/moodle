@@ -50,7 +50,9 @@ if ($userid) {
 
 // Correct the navbar.
 // Set the name for the page.
-$linktext = get_string('edit_users_title', 'block_iomad_company_admin');
+$user = $DB->get_record('user', ['id' => $userid]);
+$linktext = get_string('company_license_users_for', 'block_iomad_company_admin', fullname($user));
+
 // Set the url.
 $returnurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_users_licenses_form.php');
@@ -60,11 +62,13 @@ $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
-$PAGE->set_heading(get_string('company_users_course_title', 'block_iomad_company_admin'));
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $returnurl);
+$PAGE->set_heading($linktext);
+
+// Deal with the link back to the user edit page.
+$buttoncaption = get_string('edit_users_title', 'block_iomad_company_admin');
+$buttonlink = new moodle_url('/blocks/iomad_company_admin/editusers.php');
+$buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+$PAGE->set_button($buttons);
 
 $coursesform = new \block_iomad_company_admin\forms\company_users_licenses_form($PAGE->url, $context, $companyid, $departmentid, $userid, $licenseid);
 
@@ -103,7 +107,7 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
             $userhierarchylevel = $parentlevel->id;
             // Get all the licenses.
             // Are we an educator?
-            if (!empty($userid) && $DB->get_record('company_users', array('userid' => $userid, 'educator' => 1))) {
+            if (!empty($userid) && $DB->get_records('company_users', array('userid' => $userid, 'educator' => 1))) {
                 $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), 'expirydate DESC', 'id,type,name,startdate,expirydate');
             } else {
                 $licenses = $DB->get_records_sql("SELECT id,type,name,startdate,expirydate FROM {companylicense}
@@ -169,15 +173,11 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
             echo '<p>' . get_string('licensehelp', 'block_iomad_company_admin') . '</p>';
             echo '<b>' . get_string('nolicenses', 'block_iomad_company_admin') . '</b>';
         } else {
-            echo '<h3>' . get_string('editlicensestitle', 'block_iomad_company_admin') . '</h3>';
-            echo '<p>' . get_string('licensehelp', 'block_iomad_company_admin') . '</p>';
-            echo '<div id="licenseSelector">';
             $selecturl = new moodle_url('/blocks/iomad_company_admin/company_users_licenses_form.php', $urlparams);
             $licenseselect = new single_select($selecturl, 'licenseid', $licenselist, $licenseid);
             $licenseselect->label = get_string('select_license', 'block_iomad_company_admin');
             $licenseselect->formid = 'chooselicense';
             echo html_writer::tag('div', $OUTPUT->render($licenseselect), array('id' => 'iomad_license_selector'));
-            echo '</div>';
 
             if (!empty($availablewarning)) {
                 echo html_writer::start_tag('div', array('class' => "alert alert-success"));
@@ -190,8 +190,6 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
 
         }
     }
-
-    echo "<a class='btn btn-primary' href='$returnurl'>" . get_string('back') . "</a>";
 
     echo $OUTPUT->footer();
 }

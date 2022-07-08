@@ -60,10 +60,7 @@ class company_users_form extends moodleform {
         // so that when the currentusers or potentialusers get changed in the process function, the
         // changes get displayed, rather than the lists as they are before processing.
 
-        $company = new company($this->selectedcompany);
-        $mform->addElement('header', 'header', get_string('company_users_for', 'block_iomad_company_admin', $company->get_name()));
-
-        if (count($this->potentialusers->find_users('')) || count($this->currentusers->find_users(''))) {
+//        if (count($this->potentialusers->find_users('')) || count($this->currentusers->find_users(''))) {
 
             $mform->addElement('html', '<table summary=""
                                         class="companyuserstable addremovetable generaltable generalbox boxaligncenter"
@@ -91,12 +88,12 @@ class company_users_form extends moodleform {
                   </td>
                 </tr>
               </table>');
-        } else {
+/*        } else {
             $mform->addElement('html', get_string('nousers', 'block_iomad_company_admin').
             ' <a href="'.
             new moodle_url('/blocks/iomad_company_admin/company_user_create_form.php?companyid='.
             $this->selectedcompany). '">Create one now</a>');
-        }
+        } */
     }
 
     public function process() {

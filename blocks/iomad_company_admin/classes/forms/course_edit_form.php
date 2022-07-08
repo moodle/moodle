@@ -56,10 +56,6 @@ class course_edit_form extends moodleform {
 
         $mform =& $this->_form;
 
-        // Then show the fields about where this block appears.
-        $mform->addElement('header', 'header',
-                            get_string('companycourse', 'block_iomad_company_admin'));
-
         $mform->addElement('text', 'fullname', get_string('fullnamecourse'),
                             'maxlength="254" size="50"');
         $mform->addHelpButton('fullname', 'fullnamecourse');

@@ -77,20 +77,10 @@ class capabilities implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $DB;
 
-        // Get company info for heading.
-        if (empty($this->templateid)) {
-            $company = $DB->get_record('company', ['id' => $this->companyid], '*', MUST_EXIST);
-            $title = $company->name;
-        } else {
-            $template = $DB->get_record('company_role_templates', ['id' => $this->templateid], '*', MUST_EXIST);
-            $title = get_string('roletemplate', 'block_iomad_company_admin') . ' ' . $template->name;
-        }
-
         // Role info
         $role = $DB->get_record('role', array('id' => $this->roleid), '*', MUST_EXIST);
 
         return [
-            'title' => $title,
             'role' => $role,
             'capabilities' => array_values($this->capabilities),
             'companyid' => $this->companyid,

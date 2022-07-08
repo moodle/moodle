@@ -86,20 +86,6 @@ class template_edit_form extends moodleform {
         $mform->setType('templatesetid', PARAM_INT);
         $mform->setType('templatename', PARAM_CLEAN);
 
-        // Then show the fields about where this block appears.
-        if (empty($this->templatesetid)) {
-            $mform->addElement('header', 'header', get_string('email_template', 'local_email', array(
-                'name' => $this->templaterecord->name,
-                'companyname' => $company->get_name()
-            )));
-        } else {
-            $templatesetrec = $DB->get_record('email_templateset', array('id' => $this->templatesetid));
-            $mform->addElement('header', 'header', get_string('email_template', 'local_email', array(
-                'name' => $this->templaterecord->name,
-                'companyname' => $templatesetrec->templatesetname
-            )));
-        }
-
         if (empty($this->isadding)) {
             $mform->addElement('hidden', 'lang', $this->templaterecord->lang);
             $mform->setType('lang', PARAM_LANG);
@@ -313,17 +299,9 @@ if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
 
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (!empty($USER->company)) {
-    $companyid = company_user::companyid();
-} else if (!iomad::has_capability('local/email:edit', context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'),
-             'Please select a company from the dropdown first');
-}
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+$company = new company($companyid);
 
 if ($templatename && empty($add)) {
     if (empty($templatesetid)) {
@@ -385,8 +363,6 @@ if ($templatename && empty($add)) {
 }
 
 // Correct the navbar.
-// Set the name for the page.
-$linktext = get_string('edit_template', 'local_email');
 // Set the url.
 $linkurl = new moodle_url('/local/email/template_edit_form.php');
 
@@ -399,18 +375,25 @@ if (!empty($isadding)) {
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('admin');
-$PAGE->set_title($linktext);
+$PAGE->set_pagelayout('base');
 $PAGE->requires->jquery();
 $PAGE->requires->js('/local/email/module.js');
 
-// Set the page heading.
-$PAGE->set_heading($linktext);
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
+// Set the name for the page.
+if (!empty($templatesetid)) {
+    $templatesetrec = $DB->get_record('email_templateset', array('id' => $templatesetid));
+    $linktext = get_string('email_template', 'local_email',
+                           ['name' => $templatename,
+                            'companyname' => $templatesetrec->templatesetname]);
+} else {
+    $linktext = get_string('email_template', 'local_email',
+                           ['name' => $templatename,
+                            'companyname' => $company->get_name()]);
 }
-$PAGE->navbar->add(get_string('template_list_title', 'local_email'), new moodle_url('/local/email/template_list.php'));
-$PAGE->navbar->add($linktext);
+
+// Set the page heading.
+$PAGE->set_title($linktext);
+$PAGE->set_heading($linktext);
 
 $templatelist = new moodle_url('/local/email/template_list.php', $urlparams);
 

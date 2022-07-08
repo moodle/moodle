@@ -127,11 +127,6 @@ class company_license_form extends \company_moodleform {
 
         $company = new company($this->selectedcompany);
         if (empty($this->parentid)) {
-            if (!empty($this->licenseid)) {
-                $mform->addElement('header', 'header', get_string('edit_licenses', 'block_iomad_company_admin'));
-            } else {
-                $mform->addElement('header', 'header', get_string('createlicense', 'block_iomad_company_admin'));
-            }
             $mform->addElement('hidden', 'designatedcompany', 0);
             $mform->setType('designatedcompany', PARAM_INT);
         } else {
@@ -148,7 +143,6 @@ class company_license_form extends \company_moodleform {
 
             $company = new company($licenseinfo->companyid);
             $companylist = $company->get_child_companies_select(false);
-            $mform->addElement('header', 'header', get_string('split_licenses', 'block_iomad_company_admin'));
             $this->free = $licenseinfo->allocation - $licenseinfo->used;
             $mform->addElement('static', 'parentlicensename', get_string('parentlicensename', 'block_iomad_company_admin') . ': ' . $licenseinfo->name);
             $mform->addElement('static', 'parentlicenseused', get_string('parentlicenseused', 'block_iomad_company_admin') . ': ' . $used);

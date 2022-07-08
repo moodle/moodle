@@ -53,11 +53,7 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
+$PAGE->set_heading($linktext);
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $returnurl = $baseurl;
@@ -190,7 +186,7 @@ if (iomad::has_capability('block/iomad_commerce:add_course', $context)) {
 
     echo $OUTPUT->single_button(new moodle_url('edit_course_shopsettings_form.php?createnew=1'),
                                                 get_string('addnewcourse', 'block_iomad_commerce'), 'get');
-    echo $OUTPUT->single_button(new moodle_url('/my'), get_string('cancel'), 'get');
+    echo $OUTPUT->single_button(new moodle_url('/blocks/iomad_company_admin/index.php'), get_string('cancel'), 'get');
 
     echo '</div>';
 }

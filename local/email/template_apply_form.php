@@ -67,13 +67,13 @@ class template_apply_form extends moodleform {
 }
 
 $templatesetid = required_param('templatesetid', PARAM_INTEGER);
-
 $context = context_system::instance();
 require_login();
+$templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid));
 
 // Correct the navbar.
 // Set the name for the page.
-$linktext = get_string('applytemplateset', 'local_email');
+$linktext = get_string('applytemplateset', 'local_email', $templatesetinfo ->templatesetname);
 
 // Set the url.
 $linkurl = new moodle_url('/local/email/template_apply_form.php');
@@ -81,14 +81,11 @@ $linkurl = new moodle_url('/local/email/template_apply_form.php');
 // Print the page header.
 $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
-$PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-$PAGE->navbar->add(get_string('template_list_title', 'local_email'), new moodle_url('/local/email/template_list.php'));
-$PAGE->navbar->add($linktext);
 
 // Only display if you have the correct capability, or you are not in more than one company.
 // Just display name of current company if no choice.

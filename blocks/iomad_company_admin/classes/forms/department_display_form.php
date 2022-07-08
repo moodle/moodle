@@ -91,8 +91,7 @@ class department_display_form extends company_moodleform {
         $subdepartmenthtml = "";
 
         if (!empty($subdepartmentslist)) {
-            $subdepartmenthtml = "<p>".get_string('subdepartments', 'block_iomad_company_admin').
-                               "</p>";
+            $subdepartmenthtml = "";
             foreach ($subdepartmentslist as $key => $value) {
 
                 $subdepartmenthtml .= '<input type = "checkbox" name = "departmentids[]" value="'.
@@ -100,16 +99,13 @@ class department_display_form extends company_moodleform {
             }
         }
 
-        // Then show the fields about where this block appears.
-        $mform->addElement('header', 'header',
-                            get_string('companydepartment', 'block_iomad_company_admin').
-                           $this->company->get_name());
-
         if (count($departmentslist) == 1) {
             $mform->addElement('html', "<h3>" . get_string('nodepartments', 'block_iomad_company_admin') . "</h3></br>");
         }
 
-        $mform->addElement('html', '<p>' . get_string('parentdepartment', 'block_iomad_company_admin') . '</p>');
+        if (!empty($this->action)) {
+            $mform->addElement('html', '<p>' . get_string('parentdepartment', 'block_iomad_company_admin') . '</p>');
+        }
 
         if (!empty($this->notice)) {
             $mform->addElement('html', '<div class="alert alert-warning">');

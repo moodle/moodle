@@ -232,10 +232,7 @@ class local_email_renderer extends plugin_renderer_base {
     public function email_templatesets($templates, $backlink) {
         global $DB;
 
-        // get heading
-        $out = '<h3>' . get_string('emailtemplatesets', 'local_email') . '</h3>';
-
-        $out .= '<a class="btn btn-primary" href="'.$backlink.'">' .
+        $out = '<a class="btn btn-primary" href="'.$backlink.'">' .
                                            get_string('back') . '</a>';
         $table = new html_table();
         foreach ($templates as $template) {

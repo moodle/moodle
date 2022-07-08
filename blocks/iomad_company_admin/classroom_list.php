@@ -52,15 +52,13 @@ $PAGE->set_context($context);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
-// Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
+$company = new company($companyid);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('classrooms_for', $block, $company->get_name()));
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort,
                                                     'dir' => $dir,
@@ -103,9 +101,6 @@ if ($delete and confirm_sesskey()) {
 
 }
 echo $OUTPUT->header();
-
-$company = new company($companyid);
-echo '<h4>' . get_string('classrooms_for', $block, $company->get_name() ) . '</h4>';
 
 // Check we can actually do anything on this page.
 iomad::require_capability('block/iomad_company_admin:classrooms', $context);

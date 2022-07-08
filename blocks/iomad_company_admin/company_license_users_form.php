@@ -52,10 +52,7 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
-$PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
+$PAGE->set_heading($linktext);
 
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
@@ -63,14 +60,6 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Javascript for fancy select.
 // Parameter is name of proper select form element.
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 'mform1', $departmentid));
-
-// Add in the manage license page if we are allowed.
-if (iomad::has_capability('block/iomad_company_admin:view_licenses', $context)) {
-    $PAGE->navbar->add(get_string('company_license_list_title', 'block_iomad_company_admin'),
-                       new moodle_url('/blocks/iomad_company_admin/company_license_list.php'));
-}
-
-$PAGE->navbar->add($linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);

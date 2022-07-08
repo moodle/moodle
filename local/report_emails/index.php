@@ -177,6 +177,7 @@ $dashboardurl = new moodle_url('/my');
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_emails');
+$PAGE->set_context($systemcontext);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
@@ -184,7 +185,7 @@ $PAGE->requires->css("/local/report_emails/styles.css");
 $PAGE->requires->jquery();
 
 // Set the page heading.
-$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
+$PAGE->set_heading($strcompletion);
 
 // Get the renderer.
 $output = $PAGE->get_renderer('block_iomad_company_admin');
@@ -223,11 +224,6 @@ if ($departmentid == 0 ) {
 $foundobj = iomad::add_user_filter_params($params, $companyid);
 $idlist = $foundobj->idlist;
 $foundfields = $foundobj->foundfields;
-
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($strcompletion, $url);
 
 $url = new moodle_url('/local/report_emails/index.php', $params);
 

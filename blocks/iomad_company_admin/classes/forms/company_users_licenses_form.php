@@ -174,8 +174,6 @@ class company_users_licenses_form extends moodleform {
                                         ((intval($licensestring3, 0)) - (intval($licensestring2, 0))) .
                                         "$licenseleft2</br>$programstr</b></p>");
 
-            $mform->addElement('html', '<h4>' . get_string('user_courses_for', 'block_iomad_company_admin', fullname($this->user)) . '</h4>');
-
             $mform->addElement('date_time_selector', 'due', get_string('senddate', 'block_iomad_company_admin'));
             $mform->addHelpButton('due', 'senddate', 'block_iomad_company_admin');
             if ($this->license->startdate > time()) {

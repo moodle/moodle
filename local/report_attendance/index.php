@@ -35,23 +35,24 @@ $dodownload = optional_param('dodownload', 0, PARAM_INT);
 $departmentid = optional_param('departmentid', 0, PARAM_INT);
 
 // Check permissions.
-require_login($SITE);
+require_login();
 $context = context_system::instance();
 iomad::require_capability('local/report_attendance:view', $context);
 
 // Url stuff.
 $url = new moodle_url('/local/report_attendance/index.php');
-$dashboardurl = new moodle_url('/my');
+$dashboardurl = new moodle_url('/blocks/iomad_company_admin/index.php');
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_attendance');
+$PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
 $PAGE->requires->css("/local/report_attendance/styles.css");
 
 // Set the page heading.
-$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
+$PAGE->set_heading($strcompletion);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -67,11 +68,6 @@ $userhierarchylevel = key($userlevel);
 if ($departmentid == 0 ) {
     $departmentid = $userhierarchylevel;
 }
-
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($strcompletion, $url);
 
 // Create data for form.
 $customdata = null;
