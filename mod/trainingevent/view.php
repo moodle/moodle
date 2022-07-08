@@ -1173,7 +1173,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     $attendancetable->align[] = "center";
                 }
                 if (has_capability('mod/trainingevent:grade', $context) && $waitingoption == 0) {
-                    $attendancetable->head[] = get_string('grade');
+                    $attendancetable->head[] = get_string('grade', 'grades');
                     $attendancetable->align[] = "center";
                 }
 
@@ -1227,7 +1227,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                          <input type="hidden" name="view" value="1" />
                                          <input type="text" name="usergrade" id="id_usergrade"
                                                 value="'.$usergradeentry->items[0]->grades[$user->id]->str_grade.'" />
-                                         <input type="submit" value="' . get_string('grade') . '" />
+                                         <input type="submit" value="' . get_string('grade', 'grades') . '" />
                                          </form>';
 
                             $userrow[] = $gradehtml;
@@ -1250,7 +1250,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                 echo html_writer::end_tag('div');
             }
             if (has_capability('mod/trainingevent:grade', $context)) {
-                echo '<input type="submit" value="' . get_string('grade') . '" />';
+                echo '<input type="submit" value="' . get_string('grade', 'grades') . '" />';
             }
             echo $OUTPUT->footer();
         } else {
@@ -1284,7 +1284,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
             header("Pragma: public");
             echo "\"$event->name, $location->name, $location->address, $location->city, $location->country, $location->postcode\"\n";
-            echo "\"".get_string('fullname')."\",\"". get_string('email')."\",\"".get_string('grade')."\"\n";
+            echo "\"".get_string('fullname')."\",\"". get_string('email')."\",\"".get_string('grade', 'grades')."\"\n";
             if ($users = $DB->get_records_sql('SELECT userid AS id
                                                FROM {trainingevent_users}
                                                WHERE trainingeventid='.$event->id.'
