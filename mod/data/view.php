@@ -286,7 +286,8 @@ if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, 
                         $deletebutton, 'view.php?d='.$data->id);
 
                 $records[] = $deleterecord;
-                echo data_print_template('singletemplate', $records, $data, '', 0, true);
+                $parser = $manager->get_template('singletemplate');
+                echo $parser->parse_entries($records);
 
                 echo $OUTPUT->footer();
                 exit;
@@ -329,7 +330,8 @@ if ($multidelete && confirm_sesskey() && $canmanageentries) {
         $cancelurl = new moodle_url('/mod/data/view.php', array('d' => $data->id));
         $deletebutton = new single_button($action, get_string('delete'));
         echo $OUTPUT->confirm(get_string('confirmdeleterecords', 'data'), $deletebutton, $cancelurl);
-        echo data_print_template('listtemplate', $validrecords, $data, '', 0, false);
+        $parser = $manager->get_template('listtemplate');
+        echo $parser->parse_entries($validrecords);
         echo $OUTPUT->footer();
         exit;
     }
@@ -459,7 +461,13 @@ if ($showactivity) {
                     $records = $rm->get_ratings($ratingoptions);
                 }
 
-                data_print_template('singletemplate', $records, $data, $search, $page, false, new moodle_url($baseurl));
+                $options = [
+                    'search' => $search,
+                    'page' => $page,
+                    'baseurl' => new moodle_url($baseurl),
+                ];
+                $parser = $manager->get_template('singletemplate', $options);
+                echo $parser->parse_entries($records);
 
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
@@ -480,7 +488,14 @@ if ($showactivity) {
                     data_generate_default_template($data, 'listtemplate', 0, false, false);
                 }
                 echo $data->listtemplateheader;
-                data_print_template('listtemplate', $records, $data, $search, $page, false, new moodle_url($baseurl));
+                $options = [
+                    'search' => $search,
+                    'page' => $page,
+                    'baseurl' => new moodle_url($baseurl),
+                ];
+                $parser = $manager->get_template('listtemplate', $options);
+                echo $parser->parse_entries($records);
+
                 echo $data->listtemplatefooter;
 
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);

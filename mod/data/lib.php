@@ -600,21 +600,25 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 /**
  * Given a template and a dataid, generate a default case template
  *
- * @global object
- * @param object $data
- * @param string template [addtemplate, singletemplate, listtempalte, rsstemplate]
- * @param int $recordid
- * @param bool $form
- * @param bool $update
- * @return bool|string
+ * @param stdClass $data the mod_data record.
+ * @param string $template the template name
+ * @param int $recordid the entry record
+ * @param bool $form print a form instead of data
+ * @param bool $update if the function update the $data object or not
+ * @return bool|string the template content.
  */
-function data_generate_default_template(&$data, $template, $recordid=0, $form=false, $update=true) {
+function data_generate_default_template(&$data, $template, $recordid = 0, $form = false, $update = true) {
     global $DB;
 
     if (!$data && !$template) {
         return false;
     }
-    if ($template == 'csstemplate' or $template == 'jstemplate' ) {
+    if ($template == 'csstemplate'
+        || $template == 'jstemplate'
+        || $template == 'listtemplateheader'
+        || $template == 'listtemplatefooter'
+        || $template == 'rsstitletemplate'
+    ) {
         return '';
     }
 
@@ -1255,9 +1259,15 @@ function data_user_complete($course, $user, $mod, $data) {
             echo $OUTPUT->container(get_string('gradenoun') . ': ' . get_string('hidden', 'grades'));
         }
     }
-
-    if ($records = $DB->get_records('data_records', array('dataid'=>$data->id,'userid'=>$user->id), 'timemodified DESC')) {
-        data_print_template('singletemplate', $records, $data);
+    $records = $DB->get_records(
+        'data_records',
+        ['dataid' => $data->id, 'userid' => $user->id],
+        'timemodified DESC'
+    );
+    if ($records) {
+        $manager = manager::create_from_instance($data);
+        $parser = $manager->get_template('singletemplate');
+        echo $parser->parse_entries($records);
     }
 }
 
@@ -1373,239 +1383,37 @@ function data_grade_item_delete($data) {
  * takes a list of records, the current data, a search string,
  * and mode to display prints the translated template
  *
- * @global object
- * @global object
- * @param string $template
- * @param array $records
- * @param object $data
- * @param string $search
- * @param int $page
- * @param bool $return
- * @param object $jumpurl a moodle_url by which to jump back to the record list (can be null)
- * @return mixed
+ * @deprecated since Moodle 4.1 MDL-75146 - please do not use this function any more.
+ * @todo MDL-75189 Final deprecation in Moodle 4.5.
+ * @param string $templatename the template name
+ * @param array $records the entries records
+ * @param stdClass $data the database instance object
+ * @param string $search the current search term
+ * @param int $page page number for pagination
+ * @param bool $return if the result should be returned (true) or printed (false)
+ * @param moodle_url|null $jumpurl a moodle_url by which to jump back to the record list (can be null)
+ * @return mixed string with all parsed entries or nothing if $return is false
  */
-function data_print_template($template, $records, $data, $search='', $page=0, $return=false, moodle_url $jumpurl=null) {
-    global $CFG, $DB, $OUTPUT;
+function data_print_template($templatename, $records, $data, $search='', $page=0, $return=false, moodle_url $jumpurl=null) {
+    debugging(
+        'data_print_template is deprecated. Use mod_data\\manager::get_template and mod_data\\template::parse_entries instead',
+        DEBUG_DEVELOPER
+    );
 
-    $cm = get_coursemodule_from_instance('data', $data->id);
-    $context = context_module::instance($cm->id);
-
-    static $fields = array();
-    static $dataid = null;
-
-    if (empty($dataid)) {
-        $dataid = $data->id;
-    } else if ($dataid != $data->id) {
-        $fields = array();
+    $options = [
+        'search' => $search,
+        'page' => $page,
+    ];
+    if ($jumpurl) {
+        $options['baseurl'] = $jumpurl;
     }
-
-    if (empty($fields)) {
-        $fieldrecords = $DB->get_records('data_fields', array('dataid'=>$data->id));
-        foreach ($fieldrecords as $fieldrecord) {
-            $fields[]= data_get_field($fieldrecord, $data);
-        }
+    $manager = manager::create_from_instance($data);
+    $parser = $manager->get_template($templatename, $options);
+    $content = $parser->parse_entries($records);
+    if ($return) {
+        return $content;
     }
-
-    if (empty($records)) {
-        return;
-    }
-
-    if (!$jumpurl) {
-        $jumpurl = new moodle_url('/mod/data/view.php', array('d' => $data->id));
-    }
-    $jumpurl = new moodle_url($jumpurl, array('page' => $page, 'sesskey' => sesskey()));
-
-    foreach ($records as $record) {   // Might be just one for the single template
-
-    // Replacing tags
-        $patterns = array();
-        $replacement = array();
-
-    // Then we generate strings to replace for normal tags
-        foreach ($fields as $field) {
-            $patterns[]='[['.$field->field->name.']]';
-            $replacement[] = highlight($search, $field->display_browse_field($record->id, $template));
-        }
-
-        $canmanageentries = has_capability('mod/data:manageentries', $context);
-
-    // Replacing special tags (##Edit##, ##Delete##, ##More##)
-        $patterns[]='##edit##';
-        $patterns[]='##delete##';
-        if (data_user_can_manage_entry($record, $data, $context)) {
-            $backtourlparams = [
-                'd' => $data->id,
-            ];
-            if ($template === 'singletemplate') {
-                $backtourlparams['mode'] = 'single';
-            }
-            $backtourl = new \moodle_url('/mod/data/view.php', $backtourlparams);
-            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
-                             .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'&amp;backto='
-                             . urlencode($backtourl->out(false)) .'">' .
-                             $OUTPUT->pix_icon('t/edit', get_string('edit')) . '</a>';
-            $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
-                             .$data->id.'&amp;delete='.$record->id.'&amp;sesskey='.sesskey().'">' .
-                             $OUTPUT->pix_icon('t/delete', get_string('delete')) . '</a>';
-        } else {
-            $replacement[] = '';
-            $replacement[] = '';
-        }
-
-        $moreurl = $CFG->wwwroot . '/mod/data/view.php?d=' . $data->id . '&amp;rid=' . $record->id;
-        if ($search) {
-            $moreurl .= '&amp;filter=1';
-        }
-        $patterns[]='##more##';
-        $replacement[] = '<a href="'.$moreurl.'">' . $OUTPUT->pix_icon('t/preview', get_string('more', 'data')) . '</a>';
-
-        $patterns[]='##moreurl##';
-        $replacement[] = $moreurl;
-
-        $patterns[]='##delcheck##';
-        if ($canmanageentries) {
-            $checkbox = new \core\output\checkbox_toggleall('listview-entries', false, [
-                'id' => "entry_{$record->id}",
-                'name' => 'delcheck[]',
-                'classes' => 'recordcheckbox',
-                'value' => $record->id,
-            ]);
-            $replacement[] = $OUTPUT->render($checkbox);
-        } else {
-            $replacement[] = '';
-        }
-
-        $patterns[]='##user##';
-        $replacement[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$record->userid.
-                               '&amp;course='.$data->course.'">'.fullname($record).'</a>';
-
-        $patterns[] = '##userpicture##';
-        $ruser = user_picture::unalias($record, null, 'userid');
-        // If the record didn't come with user data, retrieve the user from database.
-        if (!isset($ruser->picture)) {
-            $ruser = core_user::get_user($record->userid);
-        }
-        $replacement[] = $OUTPUT->user_picture($ruser, array('courseid' => $data->course));
-
-        $patterns[]='##export##';
-
-        if (!empty($CFG->enableportfolios) && ($template == 'singletemplate' || $template == 'listtemplate')
-            && ((has_capability('mod/data:exportentry', $context)
-                || (data_isowner($record->id) && has_capability('mod/data:exportownentry', $context))))) {
-            require_once($CFG->libdir . '/portfoliolib.php');
-            $button = new portfolio_add_button();
-            $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id, 'recordid' => $record->id), 'mod_data');
-            list($formats, $files) = data_portfolio_caller::formats($fields, $record);
-            $button->set_formats($formats);
-            $replacement[] = $button->to_html(PORTFOLIO_ADD_ICON_LINK);
-        } else {
-            $replacement[] = '';
-        }
-
-        $patterns[] = '##timeadded##';
-        $replacement[] = userdate($record->timecreated);
-
-        $patterns[] = '##timemodified##';
-        $replacement [] = userdate($record->timemodified);
-
-        $patterns[]='##approve##';
-        if (has_capability('mod/data:approve', $context) && ($data->approval) && (!$record->approved)) {
-            $approveurl = new moodle_url($jumpurl, array('approve' => $record->id));
-            $approveicon = new pix_icon('t/approve', get_string('approve', 'data'), '', array('class' => 'iconsmall'));
-            $replacement[] = html_writer::tag('span', $OUTPUT->action_icon($approveurl, $approveicon),
-                    array('class' => 'approve'));
-        } else {
-            $replacement[] = '';
-        }
-
-        $patterns[]='##disapprove##';
-        if (has_capability('mod/data:approve', $context) && ($data->approval) && ($record->approved)) {
-            $disapproveurl = new moodle_url($jumpurl, array('disapprove' => $record->id));
-            $disapproveicon = new pix_icon('t/block', get_string('disapprove', 'data'), '', array('class' => 'iconsmall'));
-            $replacement[] = html_writer::tag('span', $OUTPUT->action_icon($disapproveurl, $disapproveicon),
-                    array('class' => 'disapprove'));
-        } else {
-            $replacement[] = '';
-        }
-
-        $patterns[] = '##approvalstatus##';
-        $patterns[] = '##approvalstatusclass##';
-        if (!$data->approval) {
-            $replacement[] = '';
-            $replacement[] = '';
-        } else if ($record->approved) {
-            $replacement[] = get_string('approved', 'data');
-            $replacement[] = 'approved';
-        } else {
-            $replacement[] = get_string('notapproved', 'data');
-            $replacement[] = 'notapproved';
-        }
-
-        $patterns[]='##comments##';
-        if (($template == 'listtemplate') && ($data->comments)) {
-
-            if (!empty($CFG->usecomments)) {
-                require_once($CFG->dirroot  . '/comment/lib.php');
-                list($context, $course, $cm) = get_context_info_array($context->id);
-                $cmt = new stdClass();
-                $cmt->context = $context;
-                $cmt->course  = $course;
-                $cmt->cm      = $cm;
-                $cmt->area    = 'database_entry';
-                $cmt->itemid  = $record->id;
-                $cmt->showcount = true;
-                $cmt->component = 'mod_data';
-                $comment = new comment($cmt);
-                $replacement[] = $comment->output(true);
-            }
-        } else {
-            $replacement[] = '';
-        }
-
-        if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
-            $patterns[] = "##tags##";
-            $replacement[] = $OUTPUT->tag_list(
-                core_tag_tag::get_item_tags('mod_data', 'data_records', $record->id), '', 'data-tags');
-        }
-
-        // actual replacement of the tags
-        $newtext = str_ireplace($patterns, $replacement, $data->{$template});
-
-        // no more html formatting and filtering - see MDL-6635
-        if ($return) {
-            return $newtext;
-        } else {
-            echo $newtext;
-
-            // hack alert - return is always false in singletemplate anyway ;-)
-            /**********************************
-             *    Printing Ratings Form       *
-             *********************************/
-            if ($template == 'singletemplate') {    //prints ratings options
-                data_print_ratings($data, $record);
-            }
-
-            /**********************************
-             *    Printing Comments Form       *
-             *********************************/
-            if (($template == 'singletemplate') && ($data->comments)) {
-                if (!empty($CFG->usecomments)) {
-                    require_once($CFG->dirroot . '/comment/lib.php');
-                    list($context, $course, $cm) = get_context_info_array($context->id);
-                    $cmt = new stdClass();
-                    $cmt->context = $context;
-                    $cmt->course  = $course;
-                    $cmt->cm      = $cm;
-                    $cmt->area    = 'database_entry';
-                    $cmt->itemid  = $record->id;
-                    $cmt->showcount = true;
-                    $cmt->component = 'mod_data';
-                    $comment = new comment($cmt);
-                    $comment->output(false);
-                }
-            }
-        }
-    }
+    echo $content;
 }
 
 /**
@@ -1981,13 +1789,19 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
  * @global object
  * @param object $data
  * @param object $record
+ * @param bool $print if the result must be printed or returner.
  * @return void Output echo'd
  */
-function data_print_ratings($data, $record) {
+function data_print_ratings($data, $record, bool $print = true) {
     global $OUTPUT;
+    $result = '';
     if (!empty($record->rating)){
-        echo $OUTPUT->render($record->rating);
+        $result = $OUTPUT->render($record->rating);
     }
+    if (!$print) {
+        return $result;
+    }
+    echo $result;
 }
 
 /**

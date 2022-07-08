@@ -253,16 +253,16 @@ class manager {
             $templatename == 'singletemplate';
         }
         $instance = $this->instance;
-        $templatestr = $instance->{$templatename} ?? '';
-        if (empty($templatestr)) {
-            $templatestr = data_generate_default_template($instance, $templatename, 0, false, false);
+        $templatecontent = $instance->{$templatename} ?? '';
+        if (empty($templatecontent)) {
+            $templatecontent = data_generate_default_template($instance, $templatename, 0, false, false);
         }
         // Some templates have extra options.
         if ($templatename == 'singletemplate') {
             $options['comments'] = true;
             $options['ratings'] = true;
         }
-        return new template($this, $templatestr, $options);
+        return new template($this, $templatecontent, $options);
     }
 
     /**
