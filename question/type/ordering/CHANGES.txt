@@ -2,6 +2,9 @@
 Change log for qtype_ordering
 ========================================
 
+2022-07-08 (06)
+ - optimize code to ensure that recorded responses are no longer than 100 bytes.
+
 2021-09-14 (04)
  - modify markdown syntax for long help messages (for compatability with Moodle 3.11)
 

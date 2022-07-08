@@ -259,8 +259,19 @@ class qtype_ordering extends question_type {
                         get_string('positionx', 'qtype_ordering', $i),
                         ($i === $position) / $itemcount);
             }
-            $responseclasses[question_utils::to_plain_text(
-                    $answer->answer, $answer->answerformat)] = $classes;
+
+            $subqid = question_utils::to_plain_text($answer->answer, $answer->answerformat);
+
+            // make sure $subqid is no more than 100 bytes
+            $maxbytes = 100;
+            if (strlen($subqid) > $maxbytes) {
+                $subqid = substr($subqid, 0, $maxbytes);
+                if (preg_match('/^(.|\n)*/u', '', $subqid, $match)) {
+                    $subqid = $match[0]; // incomplete UTF-8 chars will be removed
+                }
+            }
+
+            $responseclasses[$subqid] = $classes;
         }
 
         return $responseclasses;

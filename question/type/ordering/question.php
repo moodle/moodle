@@ -262,11 +262,27 @@ class qtype_ordering_question extends question_graded_automatically {
             if (in_array($answerid, $this->currentresponse)) {
                 $currentposition = array_search($answerid, $this->currentresponse);
             }
+
             $answer = $this->answers[$answerid];
-            $classifiedresponse[question_utils::to_plain_text($answer->answer, $answer->answerformat)] =
-                    new question_classified_response($currentposition + 1,
-                            get_string('positionx', 'qtype_ordering', $currentposition + 1),
-                    ($position == $currentposition) * $fraction);
+            $subqid = question_utils::to_plain_text($answer->answer, $answer->answerformat);
+
+            // Truncate responses longer than 100 bytes because they cannot be stored in the database.
+            // CAUTION: This will mess up answers which are not unique within the first 100 chars !!
+            $maxbytes = 100;
+            if (strlen($subqid) > $maxbytes) {
+                // If the truncation point is in the middle of a multi-byte unicode char,
+                // we remove the incomplete part with a preg_match() that is unicode aware.
+                $subqid = substr($subqid, 0, $maxbytes);
+                if (preg_match('/^(.|\n)*/u', '', $subqid, $match)) {
+                    $subqid = $match[0];
+                }
+            }
+
+            $classifiedresponse[$subqid] = new question_classified_response(
+                $currentposition + 1,
+                get_string('positionx', 'qtype_ordering', $currentposition + 1), 
+                ($currentposition == $position) * $fraction
+            );
         }
 
         return $classifiedresponse;
@@ -792,7 +808,7 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     /**
-     * Returns availibe values and descriptions for field "layouttype"
+     * Returns available values and descriptions for field "layouttype"
      *
      * @param int $type
      * @return array|string array if $type is not specified and single string if $type is specified
@@ -807,7 +823,7 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     /**
-     * Returns availibe values and descriptions for field "gradingtype"
+     * Returns available values and descriptions for field "gradingtype"
      *
      * @param int $type
      * @return array|string array if $type is not specified and single string if $type is specified
