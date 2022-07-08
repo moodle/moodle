@@ -110,7 +110,36 @@ $params = array(
 );
 $ccompletion = new completion_completion($params);
 
-if ($coursecomplete) {
+// Save row data.
+$rows = array();
+
+// Flag to set if current completion data is inconsistent with what is stored in the database.
+$pendingupdate = false;
+
+// Load criteria to display.
+$completions = $info->get_completions($user->id);
+
+// Loop through course criteria.
+foreach ($completions as $completion) {
+    $criteria = $completion->get_criteria();
+
+    if (!$pendingupdate && $criteria->is_pending($completion)) {
+        $pendingupdate = true;
+    }
+
+    $row = array();
+    $row['type'] = $criteria->criteriatype;
+    $row['title'] = $criteria->get_title();
+    $row['status'] = $completion->get_status();
+    $row['complete'] = $completion->is_complete();
+    $row['timecompleted'] = $completion->timecompleted;
+    $row['details'] = $criteria->get_details($completion);
+    $rows[] = $row;
+}
+
+if ($pendingupdate) {
+    echo html_writer::tag('i', get_string('pending', 'completion'));
+} else if ($coursecomplete) {
     echo get_string('complete');
 } else if (!$criteriacomplete && !$ccompletion->timestarted) {
     echo html_writer::tag('i', get_string('notyetstarted', 'completion'));
@@ -120,9 +149,6 @@ if ($coursecomplete) {
 
 echo html_writer::end_tag('td');
 echo html_writer::end_tag('tr');
-
-// Load criteria to display.
-$completions = $info->get_completions($user->id);
 
 // Check if this course has any criteria.
 if (empty($completions)) {
@@ -165,23 +191,6 @@ if (empty($completions)) {
     echo html_writer::tag('th', get_string('complete'), array('class' => 'c4 header', 'scope' => 'col'));
     echo html_writer::tag('th', get_string('completiondate', 'report_completion'), array('class' => 'c5 header', 'scope' => 'col'));
     echo html_writer::end_tag('tr');
-
-    // Save row data.
-    $rows = array();
-
-    // Loop through course criteria.
-    foreach ($completions as $completion) {
-        $criteria = $completion->get_criteria();
-
-        $row = array();
-        $row['type'] = $criteria->criteriatype;
-        $row['title'] = $criteria->get_title();
-        $row['status'] = $completion->get_status();
-        $row['complete'] = $completion->is_complete();
-        $row['timecompleted'] = $completion->timecompleted;
-        $row['details'] = $criteria->get_details($completion);
-        $rows[] = $row;
-    }
 
     // Print table.
     $last_type = '';
