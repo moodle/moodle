@@ -1,4 +1,4 @@
-name: Push-to-ECS
+name: Push-to-ECS-Prod
 
 # Trigger deployment only on push to master branch
 on:
