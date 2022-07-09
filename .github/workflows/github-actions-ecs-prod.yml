@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to EC2 on master branch push
+    name: Deploy to ECS on master branch push
     runs-on: ubuntu-latest
 
     steps:
@@ -18,7 +18,7 @@ jobs:
       - name: Deploy to Master Server
         uses: easingthemes/ssh-deploy@main
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.HOST_DNS }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
+          SSH_PRIVATE_KEY: ${{ secrets.ECS_PROD_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.ECS_PROD_HOST_DNS }}
+          REMOTE_USER: ${{ secrets.ECS_PROD_USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
