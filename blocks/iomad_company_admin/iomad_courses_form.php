@@ -43,6 +43,7 @@ $expireafter = optional_param('expireafter', 0, PARAM_INTEGER);
 $hasgrade = optional_param('hasgrade', 1, PARAM_INTEGER);
 $deleteid = optional_param('deleteid', 0, PARAM_INT);
 $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
+$edit = optional_param('edit', -1, PARAM_BOOL);
 
 $params = array();
 
@@ -50,6 +51,11 @@ $params['companyid'] = $companyid;
 $params['coursesearch'] = $coursesearch;
 if ($courseid) {
     $params['courseid'] = $courseid;
+}
+
+// Deal with edit buttons.
+if ($edit != -1) {
+    $USER->editing = $edit;
 }
 
 $systemcontext = context_system::instance();
@@ -81,6 +87,12 @@ $PAGE->set_title($linktext);
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
+
+// Non boost theme edit buttons.
+if ($canedit && $PAGE->user_allowed_editing()) {
+    $buttons = $OUTPUT->edit_button($PAGE->url);
+    $PAGE->set_button($buttons);
+}
 
 // Set the companyid
 $mycompanyid = iomad::get_my_companyid($systemcontext, false);

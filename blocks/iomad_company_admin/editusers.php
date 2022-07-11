@@ -45,8 +45,7 @@ $lastname      = optional_param('lastname', '', PARAM_CLEAN);   // Md5 confirmat
 $email  = optional_param('email', 0, PARAM_CLEAN);
 $showall = optional_param('showall', false, PARAM_BOOL);
 $usertype = optional_param('usertype', 'a', PARAM_ALPHANUM);
-$adminediting = optional_param('adminedit', -1, PARAM_BOOL);
-
+$edit = optional_param('edit', -1, PARAM_BOOL);
 
 $params = array();
 
@@ -100,12 +99,12 @@ if ($showall) {
 }
 
 // Deal with edit buttons.
-if ($adminediting != -1) {
-    $SESSION->iomadeditingreports = $adminediting;
+if ($edit != -1) {
+    $USER->editing = $edit;
 }
 
 // Set the name for the page.
-$linktext = get_string('edit_users_title', 'block_iomad_company_admin');
+$linktext = get_string('edit_users_title', 'block_iomad_company_admin');    
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
 
@@ -117,6 +116,12 @@ $PAGE->set_title($linktext);
 
 // Get output renderer.
 $output = $PAGE->get_renderer('block_iomad_company_admin');
+
+// Non boost theme edit buttons.
+if ($PAGE->user_allowed_editing()) {
+    $buttons = $OUTPUT->edit_button($PAGE->url);
+    $PAGE->set_button($buttons);
+}
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
@@ -599,7 +604,7 @@ if (!$showall) {
 
 
 // Deal with optional report fields.
-if (!empty($extrafields) && $adminediting != 1) {
+if (!empty($extrafields) && $edit != 1) {
     foreach ($extrafields as $extrafield) {
         $headers[] = $extrafield->title;
         $columns[] = $extrafield->name;
@@ -620,7 +625,7 @@ if (!empty($extrafields) && $adminediting != 1) {
     }
 }
 
-if ($adminediting != 1) {
+if ($edit != 1) {
     // Deal with final columns.
     $headers[] = get_string('lastaccess');
     $columns[] = "lastaccess";
@@ -629,16 +634,8 @@ if ($adminediting != 1) {
 // Can we see the controls?
 if (iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
              || iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
-    if ($adminediting != 1) {
         $headers[] = '';
         $columns[] = 'actions';
-    } else {
-        $headers[] = get_string('delete');
-        $columns[] = 'delete';
-        $headers[] = get_string('suspend');
-        $columns[] = 'suspend';
-    }
-
 }
 
 // Display the totals found.

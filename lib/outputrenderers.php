@@ -3760,11 +3760,42 @@ EOD;
      * @return string
      */
     public function custom_menu($custommenuitems = '') {
-        global $CFG;
+        global $CFG, $DB;
 
         if (empty($custommenuitems) && !empty($CFG->custommenuitems)) {
             $custommenuitems = $CFG->custommenuitems;
         }
+
+        // IOAMD
+        $systemcontext = \context_system::instance();
+        if (\iomad::has_capability('block/iomad_company_admin:companymanagement_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_company_admin:usermanagement_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_commerce:admin_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_microlearning:view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_reports:view', $systemcontext)) {
+            $iomadlink = "-" . get_string('dashboard', 'block_iomad_company_admin') . "|" .
+                         '/blocks/iomad_company_admin/index.php' . "\n\r";
+        } else {
+            $iomadlink = "";
+        }
+
+        // Deal with company custom menu items.
+        if ($companyid = \iomad::get_my_companyid(\context_system::instance(), false)) {
+            if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
+                if (!empty($companyrec->custommenuitems)) {
+                    $custommenuitems = $companyrec->custommenuitems;
+                }
+            }
+        }
+
+        $custommenuitems = $iomadlink . $custommenuitems;
+
+        $custommenu = new custom_menu($custommenuitems, current_language());
+        return $this->render_custom_menu($custommenu);
+
         $custommenu = new custom_menu($custommenuitems, current_language());
         return $this->render_custom_menu($custommenu);
     }

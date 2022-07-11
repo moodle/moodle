@@ -62,7 +62,7 @@ $yearto = optional_param_array('toarray', null, PARAM_INT);
 $showpercentage = optional_param('showpercentage', 0, PARAM_INT);
 $submitbutton = optional_param('submitbutton', '', PARAM_CLEAN);
 $validonly = optional_param('validonly', 0, PARAM_BOOL);
-$adminediting = optional_param('adminedit', -1, PARAM_BOOL);
+$edit = optional_param('edit', -1, PARAM_BOOL);
 $action = optional_param('action', '', PARAM_CLEAN);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 $rowid = optional_param('rowid', 0, PARAM_INT);
@@ -153,6 +153,11 @@ $params['showpercentage'] = $showpercentage;
 $params['validonly'] = $validonly;
 $params['userid'] = $userid;
 
+// Deal with edit buttons.
+if ($edit != -1) {
+    $USER->editing = $edit;
+}
+
 // Url stuff.
 $url = new moodle_url('/local/report_completion/index.php', array('validonly' => $validonly));
 $dashboardurl = new moodle_url('/my');
@@ -181,7 +186,11 @@ if (empty($courseid)) {
 if (!empty($courseid)) {
     $buttoncaption = get_string('pluginname', 'local_report_completion');
     $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php");
-    $buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+    $buttons .= $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+    // Non boost theme edit buttons.
+    if ($PAGE->user_allowed_editing()) {
+        $buttons .=  "&nbsp" . $OUTPUT->edit_button($PAGE->url);
+    }
     $PAGE->set_button($buttons);
 }
 

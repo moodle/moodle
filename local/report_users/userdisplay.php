@@ -38,6 +38,7 @@ $redocertificate = optional_param('redocertificate', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_CLEAN);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 $validonly = optional_param('validonly', $CFG->iomad_hidevalidcourses, PARAM_BOOL);
+$edit = optional_param('edit', -1, PARAM_BOOL);
 
 if (!empty($USER->editing)) {
     $download = 0;
@@ -46,6 +47,11 @@ if (!empty($USER->editing)) {
 $params = array();
 $params['userid'] = $userid;
 $params['validonly'] = $validonly;
+
+// Deal with edit buttons.
+if ($edit != -1) {
+    $USER->editing = $edit;
+}
 
 // Check permissions.
 require_login();
@@ -79,9 +85,12 @@ if (iomad::has_capability('local/report_completion:view', $context)) {
     $buttoncaption = get_string('pluginname', 'local_report_completion');
     $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php");
     $buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
+    // Non boost theme edit buttons.
+    if ($PAGE->user_allowed_editing()) {
+        $buttons .= "&nbsp" . $OUTPUT->edit_button($PAGE->url);
+    }
     $PAGE->set_button($buttons);
 }
-$PAGE->navbar->add($linktext, $reporturl);
 
 // Deal with the adhoc form.
 $data = data_submitted();
