@@ -116,6 +116,16 @@
     }
 }
 
+.path-grade-report-grader .gradeparent {
+    tr.heading {
+        top: $navbar-height;
+    }
+
+    th.header {
+        left: 0;
+    }
+}
+
 // The block column needs some padding on small devices.
 @include media-breakpoint-down(sm) {
     .blockcolumn,

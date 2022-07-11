@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Behat course-related step definition overrides for the Iomad Bootstrap theme.
+ * Behat course-related step definition overrides for the Classic theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
@@ -28,7 +28,7 @@
 require_once(__DIR__ . '/../../../../course/tests/behat/behat_course.php');
 
 /**
- * Course-related step definition overrides for the Iomad Bootstrap theme.
+ * Course-related step definition overrides for the Classic theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test

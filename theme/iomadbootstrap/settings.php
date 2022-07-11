@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Iomad Bootstrap theme settings file.
+ * Classic theme settings file.
  *
  * @package    theme_iomadbootstrap
  * @copyright  2018 Bas Brands
@@ -33,6 +33,11 @@ if ($ADMIN->fulltree) {
     $description = get_string('navbardarkdesc', 'theme_iomadbootstrap');
     $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
     $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
+    // Unaddable blocks.
+    $setting = new admin_setting_configtext('theme_iomadbootstrap/unaddableblocks',
+        get_string('unaddableblocks', 'theme_boost'), get_string('unaddableblocks_desc', 'theme_boost'), '', PARAM_TEXT);
     $page->add($setting);
 
     // Preset.

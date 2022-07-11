@@ -19,7 +19,7 @@
 require_once(__DIR__ . '/../../../../completion/tests/behat/behat_completion.php');
 
 /**
- * Step definitions related to blocks overrides for the Iomad Bootstrap theme.
+ * Step definitions related to blocks overrides for the Classic theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test

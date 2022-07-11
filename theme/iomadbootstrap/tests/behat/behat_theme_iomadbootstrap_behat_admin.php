@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Step definitions related to administration overrides for the Iomad Bootstrap theme.
+ * Step definitions related to administration overrides for the Classic theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
@@ -32,7 +32,7 @@ use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
- * Site administration level steps definitions overrides for the Iomad Bootstrap theme.
+ * Site administration level steps definitions overrides for the Classic theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test

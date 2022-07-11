@@ -30,7 +30,7 @@ $blockspost = $OUTPUT->blocks('side-post');
 
 $hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
 $hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
-$PAGE->has_secondary_navigation_setter(false);
+$PAGE->set_secondary_navigation(false);
 $renderer = $PAGE->get_renderer('core');
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);

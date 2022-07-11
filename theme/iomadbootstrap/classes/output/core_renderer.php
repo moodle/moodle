@@ -56,7 +56,7 @@ require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class core_renderer extends \theme_classic\output\core_renderer {
+class core_renderer extends \theme_boost\output\core_renderer {
 
     /**
      * The standard tags that should be included in the <head> tag
@@ -98,6 +98,48 @@ class core_renderer extends \theme_classic\output\core_renderer {
         }
 
         return $output;
+    }
+
+    /**
+     * We want to show the custom menus as a list of links in the footer on small screens.
+     * Just return the menu object exported so we can render it differently.
+     */
+    public function custom_menu_flat() {
+        global $CFG, $DB;
+        $custommenuitems = '';
+
+        if (empty($custommenuitems) && !empty($CFG->custommenuitems)) {
+            $custommenuitems = $CFG->custommenuitems;
+        }
+
+        // Deal with company custom menu items.
+        if ($companyid = \iomad::get_my_companyid(\context_system::instance(), false)) {
+            if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
+                if (!empty($companyrec->custommenuitems)) {
+                    $custommenuitems = $companyrec->custommenuitems;
+                }
+            }
+        }
+
+        $custommenu = new custom_menu($custommenuitems, current_language());
+        $langs = get_string_manager()->get_list_of_translations();
+        $haslangmenu = $this->lang_menu() != '';
+
+        if ($haslangmenu) {
+            $strlang = get_string('language');
+            $currentlang = current_language();
+            if (isset($langs[$currentlang])) {
+                $currentlang = $langs[$currentlang];
+            } else {
+                $currentlang = $strlang;
+            }
+            $this->language = $custommenu->add($currentlang, new moodle_url('#'), $strlang, 10000);
+            foreach ($langs as $langtype => $langname) {
+                $this->language->add($langname, new moodle_url($this->page->url, array('lang' => $langtype)), $langname);
+            }
+        }
+
+        return $custommenu->export_for_template($this);
     }
 
     /**

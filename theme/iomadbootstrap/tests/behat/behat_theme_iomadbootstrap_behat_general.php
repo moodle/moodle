@@ -19,7 +19,7 @@ use Behat\Mink\Exception\ElementNotFoundException;
 require_once(__DIR__ . '/../../../../lib/tests/behat/behat_general.php');
 
 /**
- * Behat grade related step definition overrides for the Iomad Bootstrap theme.
+ * Behat grade related step definition overrides for the Classic theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test

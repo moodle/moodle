@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Behat grade related step definition overrides for the Iomad Bootstrap theme.
+ * Behat grade related step definition overrides for the Classic theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
@@ -30,7 +30,7 @@ require_once(__DIR__ . '/../../../../grade/tests/behat/behat_grade.php');
 use Behat\Gherkin\Node\TableNode as TableNode;
 
 /**
- * Behat grade overrides for the Iomad Bootstrap theme.
+ * Behat grade overrides for the Classic theme.
  *
  * @package    theme_iomadbootstrap
  * @category   test
