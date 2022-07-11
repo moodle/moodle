@@ -230,27 +230,23 @@ Feature: Perform basic calendar functionality
     And "Course 3" "autocomplete_suggestions" should exist
 
   @javascript
-  Scenario: Students can only see user event type by default.
+  Scenario: Students can not see event type by default.
     Given I log in as "student1"
     And I am viewing site calendar
     When I click on "New event" "button"
-    Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
-    And I am on "Course 1" course homepage
-    And I follow "Full calendar"
-    When I click on "New event" "button"
-    Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
+    Then "Type of event" "select" should not exist
     And I click on "Close" "button" in the "New event" "dialogue"
     And I log out
-    Given I log in as "admin"
+    # Login as admin to set the adminseesall = 1.
+    And I log in as "admin"
     And I navigate to "Appearance > Calendar" in site administration
     And I set the field "Admins see all" to "1"
-    And I press "Save changes"
     And I log out
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Full calendar"
-    When I click on "New event" "button"
-    Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
+    # Login back as student.
+    And I log in as "student1"
+    And I am viewing site calendar
+    And I click on "New event" "button"
+    And "Type of event" "select" should not exist
 
   @javascript @accessibility
   Scenario: The calendar page must be accessible
