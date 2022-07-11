@@ -17,19 +17,19 @@ Feature: We can view the logs for any changes to grade letters.
     And I navigate to "More > Grade letters" in the course gradebook
     And I click on "Edit" "button"
     And I set the following fields to these values:
-      | id_override | 1 |
-      | id_gradeboundary10 | 57 |
+      | Override site defaults   | 1  |
+      | Letter grade boundary 10 | 57 |
     And I press "Save changes"
     And I click on "Edit" "button"
     And I set the following fields to these values:
-      | id_override | 1 |
-      | id_gradeboundary10 | 50 |
+      | Override site defaults   | 1  |
+      | Letter grade boundary 10 | 50 |
     And I press "Save changes"
     And I click on "Edit" "button"
     And I set the following fields to these values:
-      | id_override | 1 |
-      | id_gradeletter11 | |
-      | id_gradeboundary11 | |
+      | Override site defaults   | 1  |
+      | Grade letter 11          |    |
+      | Letter grade boundary 11 |    |
     And I press "Save changes"
     When I navigate to "Reports > Live logs" in site administration
     Then I should see "Grade letter created"
