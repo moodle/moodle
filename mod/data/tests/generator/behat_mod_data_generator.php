@@ -49,6 +49,12 @@ class behat_mod_data_generator extends behat_generator_base {
                 'required' => ['database', 'name'],
                 'switchids' => ['database' => 'databaseid'],
             ],
+            'presets' => [
+                'singular' => 'preset',
+                'datagenerator' => 'preset',
+                'required' => ['database', 'name'],
+                'switchids' => ['database' => 'databaseid'],
+            ],
         ];
     }
 
@@ -122,6 +128,19 @@ class behat_mod_data_generator extends behat_generator_base {
             $newdata->{$data['name']} = $data['content'];
             $DB->update_record('data', $newdata);
         }
+    }
+
+    /**
+     * Saves a preset.
+     *
+     * @param array $data Preset data.
+     */
+    protected function process_preset(array $data): void {
+        global $DB;
+
+        $instance = $DB->get_record('data', ['id' => $data['databaseid']], '*', MUST_EXIST);
+
+        $this->get_data_generator()->create_preset($instance, (object) $data);
     }
 
     /**
