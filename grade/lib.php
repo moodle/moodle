@@ -2921,7 +2921,7 @@ abstract class grade_helper {
      * @return array
      */
     public static function get_plugins_reports($courseid) {
-        global $SITE;
+        global $SITE, $CFG;
 
         if (self::$gradereports !== null) {
             return self::$gradereports;
@@ -2932,6 +2932,11 @@ abstract class grade_helper {
         foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
             //some reports make no sense if we're not within a course
             if ($courseid==$SITE->id && ($plugin=='grader' || $plugin=='user')) {
+                continue;
+            }
+
+            // Remove outcomes report if outcomes not enabled.
+            if ($plugin === 'outcomes' && empty($CFG->enableoutcomes)) {
                 continue;
             }
 

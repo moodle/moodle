@@ -101,7 +101,6 @@ class general_action_bar_test extends advanced_testcase {
                     'View' => [
                         'Grader report',
                         'Grade history',
-                        'Outcomes report',
                         'Overview report',
                         'Single view',
                         'User report',
@@ -152,7 +151,6 @@ class general_action_bar_test extends advanced_testcase {
                     'View' => [
                         'Grader report',
                         'Grade history',
-                        'Outcomes report',
                         'Overview report',
                         'Single view',
                         'User report',
