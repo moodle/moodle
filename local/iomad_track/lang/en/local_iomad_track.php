@@ -21,9 +21,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Iomad completion tracking';
-$string['privacy:metadata'] = 'The Local Iomad completion tracking plugin only shows data stored in other locations.';
-$string['privacy:metadata:local_iomad_track:id'] = 'Local iomad track id';
+$string['pluginname'] = 'IOMAD completion tracking';
+$string['privacy:metadata'] = 'The Local IOMAD completion tracking plugin only shows data stored in other locations.';
+$string['privacy:metadata:local_iomad_track:id'] = 'Local IOMAD track id';
 $string['privacy:metadata:local_iomad_track:courseid'] = 'Course id';
 $string['privacy:metadata:local_iomad_track:coursename'] = 'Course name.';
 $string['privacy:metadata:local_iomad_track:userid'] = 'User id';
@@ -41,10 +41,10 @@ $string['privacy:metadata:local_iomad_track_certs:id'] = 'Local iomad track cert
 $string['privacy:metadata:local_iomad_track_certs:trackid'] = 'Certificate track id';
 $string['privacy:metadata:local_iomad_track_certs:filename'] = 'Certificate filename';
 $string['privacy:metadata:local_iomad_track_certs'] = 'Local iomad track certificate info';
-$string['fixtracklicensetask'] = 'Iomad track fix license tracking details adhoc task';
+$string['fixtracklicensetask'] = 'IOMAD track fix license tracking details adhoc task';
 $string['local/iomad_track:importfrommoodle'] = 'Import completion information from Moodle tables';
 $string['importcompletionsfrommoodle'] = 'Import stored completion information from Moodle tables';
-$string['importcompletionsfrommoodlefull'] = 'This will run an AdHoc task to import all of the completion information from Moodle to the Iomad reporting tables';
+$string['importcompletionsfrommoodlefull'] = 'This will run an AdHoc task to import all of the completion information from Moodle to the IOMAD reporting tables';
 $string['importmoodlecompletioninformation'] = 'Adhoc task to import completion information from Moodle tables';
 $string['fixenrolleddatetask'] = 'Adhoc task to update the stored completion information to use the enrolment timecreated timestamp where this is not already set.';
 $string['fixcourseclearedtask'] = 'Adhoc task to update the coursecleared field in the stored completion records';

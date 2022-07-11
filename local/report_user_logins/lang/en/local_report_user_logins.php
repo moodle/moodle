@@ -24,7 +24,7 @@
 $string['companies'] = 'Companies';
 $string['completed'] = 'Completed';
 $string['course'] = 'Course';
-$string['report_user_logins:view'] = 'View the Iomad user login report';
+$string['report_user_logins:view'] = 'View the IOMAD user login report';
 $string['completiondate'] = 'Completion date';
 $string['completionnotenabled'] = 'Completion tracking is not enabled for this course (no report data available)';
 $string['coursechart'] = 'Draw overview chart for course';

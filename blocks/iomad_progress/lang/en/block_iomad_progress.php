@@ -167,7 +167,7 @@ $string['no_events_message'] = 'No activities or resources are being monitored. 
 $string['no_visible_events_message'] = 'None of the monitored events are currently visible.';
 $string['now_indicator'] = 'NOW';
 $string['pluginname'] = 'Progress Bar';
-$string['privacy:metadata'] = 'The Iomad progress bar block only shows data stored in other locations.';
+$string['privacy:metadata'] = 'The IOMAD progress bar block only shows data stored in other locations.';
 $string['selectitemstobeadded'] = 'Select activities/resources';
 $string['time_expected'] = 'Expected';
 

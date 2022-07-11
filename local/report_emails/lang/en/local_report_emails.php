@@ -21,10 +21,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['report_emails:view'] = 'View the Iomad email report';
-$string['report_emails:resend'] = 'Resend Iomad emails';
+$string['report_emails:view'] = 'View the IOMAD email report';
+$string['report_emails:resend'] = 'Resend IOMAD emails';
 $string['pluginname'] = 'Outgoing email report';
-$string['privacy:metadata'] = 'The Local Iomad email report only shows data stored in other locations.';
+$string['privacy:metadata'] = 'The Local IOMAD email report only shows data stored in other locations.';
 $string['sender'] = 'Sender';
 $string['created'] = 'Date created';
 $string['due'] = 'Date due';

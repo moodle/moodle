@@ -41,5 +41,5 @@ $string['nomatchingframeworks'] = 'No frameworks match \'{$a}\'';
 $string['none'] = 'None';
 $string['pluginname'] = 'Framework selectors';
 $string['previouslyselectedframeworks'] = 'Previously selected frameworks not matching \'{$a}\'';
-$string['privacy:metadata'] = 'The Iomad Local framework selector plugin only shows data stored in other locations.';
+$string['privacy:metadata'] = 'The IOMAD Local framework selector plugin only shows data stored in other locations.';
 $string['search'] = 'Search';

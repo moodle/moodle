@@ -1,6 +1,6 @@
 <?php
 
-// This file is part of the Iomad Certificate module for Moodle - http://moodle.org/
+// This file is part of the IOMAD Certificate module for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -131,10 +131,10 @@ $string['landscape'] = 'Landscape';
 $string['lastviewed'] = 'You last received this certificate on:';
 $string['letter'] = 'Letter';
 $string['lockingoptions'] = 'Locking Options';
-$string['modulename'] = 'Iomad Certificate';
+$string['modulename'] = 'IOMAD Certificate';
 $string['modulename_help'] = 'This module allows for the dynamic generation of certificates based on predefined conditions set by the teacher.';
 $string['modulename_link'] = 'Certificate_module';
-$string['modulenameplural'] = 'Iomad Certificates';
+$string['modulenameplural'] = 'IOMAD Certificates';
 $string['myiomadcertificates'] = 'My Certificates';
 $string['noiomadcertificates'] = 'There are no certificates';
 $string['noiomadcertificatesissued'] = 'There are no certificates that have been issued';
@@ -153,8 +153,8 @@ $string['openwindow'] = 'Click the button below to open your certificate in a ne
 $string['or'] = 'Or';
 $string['orientation'] = 'Orientation';
 $string['orientation_help'] = 'Choose whether you want your certificate orientation to be portrait or landscape.';
-$string['pluginadministration'] = 'Iomad Certificate administration';
-$string['pluginname'] = 'Iomad Certificate';
+$string['pluginadministration'] = 'IOMAD Certificate administration';
+$string['pluginname'] = 'IOMAD Certificate';
 $string['portrait'] = 'Portrait';
 $string['printdate'] = 'Print Date';
 $string['printdate_help'] = 'This is the date that will be printed, if a print date is selected. If the course completion date is selected but the student has not completed the course, the date received will be printed. You can also choose to print the date based on when an activity was graded. If a certificate is issued before that activity is graded, the date received will be printed.';

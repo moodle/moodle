@@ -22,11 +22,11 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['explanation'] = 'Tool generates fake data for an Iomad site. It can only be run by the administrator in Debugging mode. This 
+$string['explanation'] = 'Tool generates fake data for an IOMAD site. It can only be run by the administrator in Debugging mode. This 
     is only for test sites. It will completely destroy an existing site.';
 $string['doit'] = 'Ok. Go ahead!';
 $string['makesite'] = 'Make IOMAD fake development site';
 $string['notdebugging'] = 'Developer debugging mode is required to run this tool';
-$string['pluginname'] = 'Iomad development data generator';
-$string['privacy:metadata'] = 'The Iomad site generator admin tool only shows data stored in other locations.';
+$string['pluginname'] = 'IOMAD development data generator';
+$string['privacy:metadata'] = 'The IOMAD site generator admin tool only shows data stored in other locations.';
 

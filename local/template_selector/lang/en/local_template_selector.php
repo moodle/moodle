@@ -41,5 +41,5 @@ $string['nomatchingtemplates'] = 'No templates match \'{$a}\'';
 $string['none'] = 'None';
 $string['pluginname'] = 'Template selectors';
 $string['previouslyselectedtemplates'] = 'Previously selected templates not matching \'{$a}\'';
-$string['privacy:metadata'] = 'The Locatio Iomad Template selectors plugin only shows data stored in other locations.';
+$string['privacy:metadata'] = 'The Locatio IOMAD Template selectors plugin only shows data stored in other locations.';
 $string['search'] = 'Search';
