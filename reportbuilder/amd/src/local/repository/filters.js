@@ -28,12 +28,13 @@ import Ajax from 'core/ajax';
  *
  * @method
  * @param {Number} reportId
+ * @param {String} reportParameters
  * @return {Promise}
  */
-export const resetFilters = reportId => {
+export const resetFilters = (reportId, reportParameters) => {
     const request = {
         methodname: 'core_reportbuilder_filters_reset',
-        args: {reportid: reportId}
+        args: {reportid: reportId, parameters: reportParameters}
     };
 
     return Ajax.call([request])[0];
