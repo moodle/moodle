@@ -48,9 +48,9 @@ class block_iomad_link extends block_base {
 
         $strlink = get_string('link', 'block_iomad_link');
         $this->content = new stdClass;
-        $this->content->text = "<center><a href=\"{$CFG->wwwroot}/my/index.php\">
+        $this->content->text = "<center><a href=\"{$CFG->wwwroot}/blocks/iomad_company_admin/index.php\">
                                 <img src='" . $OUTPUT->image_url('iomad_logo', 'block_iomad_link') ."' /></a></center>";
-        $this->content->text .= "<center><b><a href=\"{$CFG->wwwroot}/my/index.php\">$strlink</a></b></center>";
+        $this->content->text .= "<center><b><a href=\"{$CFG->wwwroot}/blocks/iomad_company_admin/index.php\">$strlink</a></b></center>";
         $this->content->footer = '';
 
         return $this->content;
