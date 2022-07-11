@@ -31,7 +31,6 @@ require_login();
 global $PAGE;
 
 
-//TODO: split this out - this way of reading the params is relevant to LTI 1.1, LTI 1.3 will send this data as a JWT object that needs to be parsed
 $url = required_param('url', PARAM_URL);
 $width = required_param('width', PARAM_INT);
 $height = required_param('height', PARAM_INT);

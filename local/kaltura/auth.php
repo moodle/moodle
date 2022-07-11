@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file responds to a login authentication request
+ * This file is a re-write of the mod/lti/auth.php file, which uses too many references to the Moodle LTI external tool objects.
+ * The re-write serves as the initiation of the LTI 1.3 handshake between the Kaltura Moodle Plugin and the customer's KAF instance.
  *
- * @package    mod_lti
- * @copyright  2019 Stephen Vickers
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    local_kaltura
  */
 
 require_once(__DIR__ . '/../../config.php');

@@ -267,12 +267,11 @@ function local_kaltura_format_lti_instance_object($ltirequest) {
     $lti->resourcekey  = $configsettings->partner_id;
 	$lti->lti_version = $configsettings->lti_version;
 
-    if ($configsettings->adminsecret)
-	{
+    if ($configsettings->adminsecret) {
 		$lti->password = $configsettings->adminsecret;
 	}
-	if ($configsettings->client_id)
-	{
+
+	if ($configsettings->client_id) {
 		$lti->client_id = $configsettings->client_id;
 	}
 
@@ -352,8 +351,7 @@ function local_kaltura_strip_querystring($endpoint, $params) {
  */
 function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $editor = null) {
 	$ltiVersion = get_config(KALTURA_PLUGIN_NAME, 'lti_version');
-	if($ltiVersion == LTI_VERSION_1P3)
-	{
+	if($ltiVersion == LTI_VERSION_1P3) {
 		return local_kaltura_request_lti1p3_launch($ltirequest, $withblocks, $editor);
 	}
 
@@ -439,8 +437,7 @@ function local_kaltura_request_lti1p3_launch($ltirequest, $withblocks = true, $e
 
 	$config->lti_launchcontainer = local_kaltura_get_lti_launch_container($withblocks);
 
-	if(is_null($editor))
-	{
+	if(is_null($editor)) {
 		$editor = 'tinymce';
 	}
 
@@ -571,33 +568,6 @@ function local_kaltura_lti1p3_get_launch_data($module, $withblocks, $editor = nu
 
 	$serviceurl = new moodle_url('/local/kaltura/service.php');
 	$requestparams['lis_outcome_service_url'] = $serviceurl->out(false);
-
-	// Add the parameters configured by the LTI services.
-
-	//TODO: verify whether this section is relevant for Kaltura
-	/*if ($typeid && !$islti2) {
-		$services = lti_get_services();
-		foreach ($services as $service) {
-			$serviceparameters = $service->get_launch_parameters('basic-lti-launch-request',
-				$course->id, $USER->id , $typeid, $instance->id);
-			foreach ($serviceparameters as $paramkey => $paramvalue) {
-				$requestparams['custom_' . $paramkey] = lti_parse_custom_parameter($toolproxy, $tool, $requestparams, $paramvalue,
-					$islti2);
-			}
-		}
-	}*/
-
-	// Allow request params to be updated by sub-plugins.
-	//TODO: verify whether this section is relevant for Kaltura
-	/*$plugins = core_component::get_plugin_list('ltisource');
-	foreach (array_keys($plugins) as $plugin) {
-		$pluginparams = component_callback('ltisource_'.$plugin, 'before_launch',
-			array($instance, $endpoint, $requestparams), array());
-
-		if (!empty($pluginparams) && is_array($pluginparams)) {
-			$requestparams = array_merge($requestparams, $pluginparams);
-		}
-	}*/
 
 	if ((!empty($key) && !empty($secret)) || ($ltiversion === LTI_VERSION_1P3)) {
 		if ($ltiversion !== LTI_VERSION_1P3) {
