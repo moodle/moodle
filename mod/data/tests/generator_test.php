@@ -23,6 +23,7 @@ namespace mod_data;
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \mod_data_generator
  */
 class generator_test extends \advanced_testcase {
     public function test_generator() {
@@ -228,5 +229,47 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals($contents[$contentstartid]->content1, 'sampleurl');
         $this->assertEquals(array('Cats', 'mice'),
             array_values(\core_tag_tag::get_item_tags_array('mod_data', 'data_records', $datarecordid)));
+    }
+
+    /**
+     * Test for create_preset().
+     *
+     * @covers ::create_preset
+     */
+    public function test_create_preset() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $cm = get_coursemodule_from_id(manager::MODULE, $activity->cmid, 0, false, MUST_EXIST);
+
+        // Check initially there are no saved presets.
+        $manager = manager::create_from_coursemodule($cm);
+        $savedpresets = $manager->get_available_saved_presets();
+        $this->assertEmpty($savedpresets);
+
+        // Create one preset with the default configuration.
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $result = $plugingenerator->create_preset($activity);
+        $this->assertTrue($result);
+        $savedpresets = $manager->get_available_saved_presets();
+        $this->assertCount(1, $savedpresets);
+        $preset = reset($savedpresets);
+        $this->assertStringStartsWith('New preset', $preset->name);
+
+        // Create another preset with a specific name.
+        $record = (object) [
+            'name' => 'World recipes preset',
+        ];
+        $result = $plugingenerator->create_preset($activity, $record);
+        $this->assertTrue($result);
+        $savedpresets = $manager->get_available_saved_presets();
+        $this->assertCount(2, $savedpresets);
+        foreach ($savedpresets as $preset) {
+            if (!str_starts_with($preset->name, 'New preset')) {
+                $this->assertEquals('World recipes preset', $preset->name);
+            }
+        }
     }
 }
