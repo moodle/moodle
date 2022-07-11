@@ -103,6 +103,7 @@ if ($mform->is_cancelled()) {
 
     // Save custom profile fields data.
     profile_save_data($data);
+    \core\event\user_updated::create_from_userid($userid)->trigger();
 
     $systemcontext = context_system::instance();
 
