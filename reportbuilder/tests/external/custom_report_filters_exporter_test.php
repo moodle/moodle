@@ -74,8 +74,8 @@ class custom_report_filters_exporter_test extends advanced_testcase {
         $this->assertEquals('Course category', $filterscategory['optiongroup']['text']);
         $this->assertGreaterThanOrEqual(1, $filterscategory['optiongroup']['values']);
         $this->assertEquals([
-            'value' => 'course_category:idnumber',
-            'visiblename' => 'Category ID number',
+            'value' => 'course_category:text',
+            'visiblename' => 'Category name',
         ], $filterscategory['optiongroup']['values'][0]);
 
         // Course filters, assert structure of first item.
@@ -104,7 +104,7 @@ class custom_report_filters_exporter_test extends advanced_testcase {
         // Course category filter.
         $this->assertEquals($filtercategoryname->get('id'), $activefiltercategoryname['id']);
         $this->assertEquals('Course category', $activefiltercategoryname['entityname']);
-        $this->assertEquals('Category name', $activefiltercategoryname['heading']);
+        $this->assertEquals('Select category', $activefiltercategoryname['heading']);
         $this->assertEquals(2, $activefiltercategoryname['sortorder']);
 
         $this->assertNotEmpty($export->helpicon);
