@@ -3913,6 +3913,8 @@ EOD;
 
         // Deal with company custom and shop menu items.
         $shoplink = "";
+
+        // Deal with company custom menu items.
         if ($companyid = \iomad::get_my_companyid(\context_system::instance(), false)) {
             if ($companyrec = $DB->get_record('company', array('id' => $companyid))) {
                 if (!empty($companyrec->custommenuitems)) {

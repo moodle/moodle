@@ -48,6 +48,11 @@ $params = array();
 $params['userid'] = $userid;
 $params['validonly'] = $validonly;
 
+// Deal with edit buttons.
+if ($edit != -1) {
+    $USER->editing = $edit;
+}
+
 // Check permissions.
 require_login();
 $context = context_system::instance();

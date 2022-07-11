@@ -197,9 +197,13 @@ if (empty($courseid)) {
 
 if (!empty($courseid)) {
     $buttoncaption = get_string('pluginname', 'local_report_completion');
+<<<<<<< HEAD
     $buttonparams = $params;
     unset($buttonparams['courseid']);
     $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php", $buttonparams);
+=======
+    $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php");
+>>>>>>> 8d3cfea41a8 (IOMAD: made changes to the navigation in the IOMAD pages for Bootstrap 3 themes / themes without the edit switch so there is now a link to the IOMAD dahboard or other top sections when you are in menu items below them)
     $buttons .= $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
     // Non boost theme edit buttons.
     if ($PAGE->user_allowed_editing()) {
