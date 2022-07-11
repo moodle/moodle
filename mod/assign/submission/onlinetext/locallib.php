@@ -455,6 +455,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
     public function view(stdClass $submission) {
         global $CFG;
         $result = '';
+        $plagiarismlinks = '';
 
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
 
@@ -466,8 +467,6 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                                                                 $this->get_type(),
                                                                 'onlinetext',
                                                                 'assignsubmission_onlinetext');
-
-            $plagiarismlinks = '';
 
             if (!empty($CFG->enableplagiarism)) {
                 require_once($CFG->libdir . '/plagiarismlib.php');
