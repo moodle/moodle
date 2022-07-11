@@ -1771,7 +1771,7 @@ class page_wiki_map extends page_wiki {
             $strdataux = '';
             foreach ($pages as $page) {
                 $user = wiki_get_user_info($page->userid);
-                $strdata = strftime('%d %b %Y', $page->timemodified);
+                $strdata = date('d M Y', $page->timemodified);
                 if ($strdata != $strdataux) {
                     $table->data[] = array($OUTPUT->heading($strdata, 4));
                     $strdataux = $strdata;
