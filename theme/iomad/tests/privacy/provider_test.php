@@ -19,7 +19,9 @@
  *
  * @package    theme_iomad
  * @category   test
- * @copyright  2018 Adrian Greeve <adriangreeve.com>
+ * @copyright  2022 Derick Turner
+ * @author    Derick Turner
+ * @based on theme_boost by Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace theme_iomad\privacy;

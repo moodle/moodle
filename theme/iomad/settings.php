@@ -16,7 +16,9 @@
 
 /**
  * @package   theme_iomad
- * @copyright 2016 Ryan Wyllie
+ * @copyright 2022 Derick Turner
+ * @author    Derick Turner
+ * @based on theme_boost by Ryan Wyllie
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

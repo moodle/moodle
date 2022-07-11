@@ -18,7 +18,9 @@
  * Classic theme callbacks.
  *
  * @package    theme_iomadbootstrap
- * @copyright  2018 Bas Brands
+ * @copyright  2022 Derick Turner
+ * @author    Derick Turner
+ * @based on theme_clean by Bas Brands
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

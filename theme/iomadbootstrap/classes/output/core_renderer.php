@@ -16,7 +16,9 @@
 
 /**
  * @package   theme_iomadbootstrap
- * @copyright 2021 Derick Turner
+ * @copyright 2022 Derick Turner
+ * @author    Derick Turner
+ * @based on theme_clean by Derick Turner
  * @author    Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
