@@ -22,3 +22,4 @@ Information provided here is intended especially for developers.
 * New report filter types:
   - `category` for reports containing course categories
   - `tags` for reports containing entities with support for core_tag API
+  - `autocomplete` for reports that contain pre-defined values for selection.
