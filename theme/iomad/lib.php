@@ -82,17 +82,21 @@ function theme_iomad_get_extra_scss($theme) {
  * @return bool
  */
 function theme_iomad_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'logo' || $filearea === 'backgroundimage' ||
-        $filearea === 'loginbackgroundimage')) {
-        $theme = theme_config::load('iomad');
-        // By default, theme files must be cache-able by both browsers and proxies.
-        if (!array_key_exists('cacheability', $options)) {
-            $options['cacheability'] = 'public';
-        }
-        return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
-    } else {
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $filename = array_pop($args);
+    $itemid = array_pop($args);
+    if ($filearea == 'logo') {
+        $itemid = 0;
+    }
+
+    if (!$file = $fs->get_file($context->id, 'theme_iomad', $filearea, $itemid, '/', $filename) or $file->is_directory()) {
         send_file_not_found();
     }
+
+    send_stored_file($file, 0, 0, $forcedownload);
+
 }
 
 /**
