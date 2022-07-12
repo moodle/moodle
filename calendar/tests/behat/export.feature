@@ -19,7 +19,12 @@ Feature: Export calendar events
   Scenario: Viewing calendar export options
     Given I follow "Full calendar"
     When I click on "Import or export calendars" "link"
+    And "Calendar" "link" should exist in the ".breadcrumb" "css_element"
+    And "Import or export calendars" "text" should exist in the ".breadcrumb" "css_element"
     And I click on "Export calendar" "button"
+    And "Calendar" "link" should exist in the ".breadcrumb" "css_element"
+    And "Import or export calendars" "link" should exist in the ".breadcrumb" "css_element"
+    And "Export calendar" "text" should exist in the ".breadcrumb" "css_element"
     Then I should see "All events"
     And I should see "Events related to courses"
     And I should see "Events related to groups"
