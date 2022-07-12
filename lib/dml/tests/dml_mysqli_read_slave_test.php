@@ -21,7 +21,6 @@
  * @category   dml
  * @copyright  2018 Srdjan Janković, Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mysqli_native_moodle_database
  */
 
 namespace core;
@@ -37,6 +36,7 @@ require_once(__DIR__.'/fixtures/read_slave_moodle_database_mock_mysqli.php');
  * @category   dml
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \mysqli_native_moodle_database
  */
 class dml_mysqli_read_slave_test extends \base_testcase {
     /**
