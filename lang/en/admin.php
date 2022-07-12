@@ -1453,6 +1453,9 @@ $string['warningiconvbuggy'] = 'Your version of the iconv library does not suppo
 $string['webproxy'] = 'Web proxy';
 $string['webproxyinfo'] = 'Fill in the following options if your Moodle server cannot access the internet directly. Internet access is required for the download of environment data, language packs, RSS feeds, timezones, etc.<br /><em>The PHP cURL extension is highly recommended.</em>';
 $string['xmlrpcrecommended'] = 'The XMLRPC extension is useful for web services and Moodle networking.';
+$string['xmlrpcmaharaenabled'] = 'It has been detected that the Mahara ePortfolio is enabled on your site. This feature relies on the PHP XML-RPC extension which is no longer maintained by PHP.';
+$string['xmlrpcmnetenabled'] = 'It has been detected that the Moodle Networking is enabled on your site. This feature relies on the PHP XML-RPC extension which is no longer maintained by PHP.';
+$string['xmlrpcwebserviceenabled'] = 'It has been detected that the XML-RPC Web Service protocol is enabled on your site. This feature relies on the PHP XML-RPC extension which is no longer maintained by PHP.';
 $string['yuicomboloading'] = 'YUI combo loading';
 $string['ziprequired'] = 'The Zip PHP extension is now required by Moodle, info-ZIP binaries or PclZip library are not used anymore.';
 
