@@ -584,7 +584,11 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                     $this->log_line("Created user record ('.$id.') for user '$person->username' (ID number $person->idnumber).");
                 }
             } else if ($createnewusers) {
-                $this->log_line("User record already exists for user '$person->username' (ID number $person->idnumber).");
+
+                $username = $person->username ?? "[unknown username]";
+                $personnumber = $person->idnumber ?? "[unknown ID number]";
+
+                $this->log_line("User record already exists for user '" . $username . "' (ID number " . $personnumber . ").");
 
                 // It is totally wrong to mess with deleted users flag directly in database!!!
                 // There is no official way to undelete user, sorry..
@@ -683,10 +687,12 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
 
                     // Decide the "real" role (i.e. the Moodle role) that this user should be assigned to.
                     // Zero means this roletype is supposed to be skipped.
-                    $moodleroleid = $this->rolemappings[$member->roletype];
+                    $moodleroleid = (isset($member->roletype) && isset($this->rolemappings[$member->roletype]))
+                        ? $this->rolemappings[$member->roletype] : null;
                     if (!$moodleroleid) {
-                        $this->log_line("SKIPPING role $member->roletype for $memberstoreobj->userid "
-                            ."($member->idnumber) in course $memberstoreobj->course");
+                        $this->log_line("SKIPPING role " .
+                            ($member->roletype ?? "[]") . " for $memberstoreobj->userid " .
+                            "($member->idnumber) in course $memberstoreobj->course");
                         continue;
                     }
 
@@ -741,25 +747,80 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
 
                     } else if ($this->get_config('imsunenrol')) {
                         // Unenrol member.
+                        $unenrolsetting = $this->get_config('unenrolaction');
 
                         $einstances = $DB->get_records('enrol',
                             array('enrol' => $memberstoreobj->enrol, 'courseid' => $courseobj->id));
-                        foreach ($einstances as $einstance) {
-                            // Unenrol the user from all imsenterprise enrolment instances.
-                            $this->unenrol_user($einstance, $memberstoreobj->userid);
+
+                        switch ($unenrolsetting) {
+                            case ENROL_EXT_REMOVED_SUSPEND:
+                            case ENROL_EXT_REMOVED_SUSPENDNOROLES: {
+                                foreach ($einstances as $einstance) {
+                                    $this->update_user_enrol($einstance, $memberstoreobj->userid,
+                                    ENROL_USER_SUSPENDED, $timeframe->begin, $timeframe->end);
+
+                                    $this->log_line("Suspending user enrolment for $member->idnumber in " .
+                                    " course $ship->coursecode ");
+
+                                    if (intval($unenrolsetting) === intval(ENROL_EXT_REMOVED_SUSPENDNOROLES)) {
+                                        if (!$context =
+                                            context_course::instance($courseobj->id, IGNORE_MISSING)) {
+
+                                            $this->log_line("Unable to process IMS unenrolment request " .
+                                                " because course context not found. User: " .
+                                                "#$memberstoreobj->userid ($member->idnumber) , " .
+                                                " course: $memberstoreobj->course");
+                                        } else {
+
+                                            role_unassign_all([
+                                                'contextid' => $context->id,
+                                                'userid' => $memberstoreobj->userid,
+                                                'component' => 'enrol_imsenterprise',
+                                                'itemid' => $einstance->id
+                                            ]);
+
+                                            $this->log_line("Removing role assignments for user " .
+                                                "$member->idnumber from role $moodleroleid in course " .
+                                                "$ship->coursecode ");
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+
+                            case ENROL_EXT_REMOVED_UNENROL: {
+                                foreach ($einstances as $einstance) {
+                                    $this->unenrol_user($einstance, $memberstoreobj->userid);
+                                    $this->log_line("Removing user enrolment record for $member->idnumber " .
+                                        " in course $ship->coursecode ");
+                                }
+                            }
+                            break;
+
+                            case ENROL_EXT_REMOVED_KEEP: {
+                                $this->log_line("Processed KEEP IMS unenrol instruction (i.e. do nothing)");
+                            }
+                            break;
+
+                            default:
+                                $this->log_line("Unable to process IMS unenrolment request because " .
+                                    " the value set for plugin parameter, unenrol action, is not recognised. " .
+                                    " User: #$memberstoreobj->userid ($member->idnumber) " .
+                                    " , course: $memberstoreobj->course");
+                                break;
                         }
 
                         $membersuntally++;
-                        $this->log_line("Unenrolled $member->idnumber from role $moodleroleid in course");
                     }
 
                 }
             }
             $this->log_line("Added $memberstally users to course $ship->coursecode");
             if ($membersuntally > 0) {
-                $this->log_line("Removed $membersuntally users from course $ship->coursecode");
+                $this->log_line("Processed $membersuntally unenrol instructions for course $ship->coursecode");
             }
         }
+
     } // End process_membership_tag().
 
     /**
