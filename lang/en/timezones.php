@@ -452,22 +452,3 @@ $string['pacific/wake'] = 'Pacific/Wake';
 $string['pacific/wallis'] = 'Pacific/Wallis';
 $string['utc'] = 'UTC';
 // The following identifiers have been previous removed from TimeDateZone::listIdentifiers and are no longer used.
-// Deprecated since Moodle 3.9.
-$string['africa/asmera'] = 'Africa/Asmera';
-$string['africa/timbuktu'] = 'Africa/Timbuktu';
-$string['america/argentina/comodrivadavia'] = 'America/Argentina/ComodRivadavia';
-$string['america/indianapolis'] = 'America/Indianapolis';
-$string['america/louisville'] = 'America/Louisville';
-$string['america/montreal'] = 'America/Montreal';
-$string['asia/calcutta'] = 'Asia/Calcutta';
-$string['asia/chongqing'] = 'Asia/Chongqing';
-$string['asia/harbin'] = 'Asia/Harbin';
-$string['asia/kashgar'] = 'Asia/Kashgar';
-$string['asia/katmandu'] = 'Asia/Katmandu';
-$string['asia/rangoon'] = 'Asia/Rangoon';
-$string['asia/saigon'] = 'Asia/Saigon';
-$string['atlantic/faeroe'] = 'Atlantic/Faeroe';
-$string['europe/belfast'] = 'Europe/Belfast';
-$string['pacific/ponape'] = 'Pacific/Ponape';
-$string['pacific/truk'] = 'Pacific/Truk';
-$string['pacific/yap'] = 'Pacific/Yap';

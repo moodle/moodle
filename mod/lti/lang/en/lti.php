@@ -602,12 +602,6 @@ $string['using_tool_configuration'] = 'Using tool configuration: ';
 $string['validurl'] = 'A valid URL must start with http(s)://';
 $string['viewsubmissions'] = 'View submissions and grading screen';
 
-// Deprecated since Moodle 3.9.
-$string['organizationid'] = 'Organisation ID';
-$string['organizationid_help'] = 'A unique identifier for this Moodle instance. Typically, the DNS name of the organisation is used.
-
-If this field is left blank, the host name of this Moodle site will be used as the default value.';
-
 // Deprecated since Moodle 3.10.
 $string['contentitem'] = 'Content-Item Message';
 $string['contentitem_help'] = 'If ticked, the option \'Select content\' will be available when adding an external tool.';

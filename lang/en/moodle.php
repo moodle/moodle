@@ -2368,10 +2368,6 @@ $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
 $string['deprecatedeventname'] = '{$a} (no longer in use)';
 
-// Deprecated since Moodle 3.9.
-$string['participantscount'] = 'Number of participants: {$a}';
-$string['userfilterplaceholder'] = 'Search keyword or select filter';
-
 // Deprecated since Moodle 3.11.
 $string['hidepicture'] = 'Hide picture';
 $string['grade'] = 'Grade';
