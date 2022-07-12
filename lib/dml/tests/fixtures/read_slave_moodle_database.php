@@ -93,11 +93,15 @@ class read_slave_moodle_database extends test_moodle_database {
      * @param string $sql
      * @param array $params
      * @param int $querytype
+     * @param ?callable $callback
      * @return string $handle handle property
      */
-    private function with_query_start_end($sql, array $params = null, $querytype) {
+    public function with_query_start_end($sql, array $params = null, $querytype, $callback = null) {
         $this->query_start($sql, $params, $querytype);
         $ret = $this->handle;
+        if ($callback) {
+            call_user_func($callback, $ret);
+        }
         $this->query_end(null);
         return $ret;
     }
