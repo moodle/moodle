@@ -35,19 +35,6 @@ require_once($CFG->dirroot . '/lib/upgradelib.php');
 function xmldb_tool_mobile_upgrade($oldversion) {
     global $CFG;
 
-    if ($oldversion < 2019021100) {
-        $disabledfeatures = get_config('tool_mobile', 'disabledfeatures');
-        $disabledfeatures = str_replace('remoteAddOn_', 'sitePlugin_', $disabledfeatures);
-        set_config('disabledfeatures', $disabledfeatures, 'tool_mobile');
-        upgrade_plugin_savepoint(true, 2019021100, 'tool', 'mobile');
-    }
-
-    // Automatically generated Moodle v3.7.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
