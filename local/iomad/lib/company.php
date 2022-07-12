@@ -1385,6 +1385,7 @@ class company {
         // Create an event for this.
         $eventother = array('companyname' => $company->get_name(),
                             'companyid' => $company->id,
+                            'departmentid' => $departmentid,
                             'usertype' => $managertype,
                             'usertypename' => $managertypes[$managertype]);
         $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => $systemcontext,
