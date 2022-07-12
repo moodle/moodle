@@ -108,7 +108,7 @@ function block_iomad_company_admin_menu() {
                 'tab' => 2,
                 'name' => get_string('edituser', 'block_iomad_company_admin'),
                 'url' => 'editusers.php',
-                'cap' => 'block/iomad_company_admin:user_create',
+                'cap' => 'block/iomad_company_admin:editusers',
                 'icondefault' => 'useredit',
                 'style' => 'user',
                 'icon' => 'fa-user',
