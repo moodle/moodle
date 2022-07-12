@@ -60,8 +60,7 @@ $report = system_report_factory::create(task_logs::class, context_system::instan
 
 if (!empty($filter)) {
     $report->set_filter_values([
-        'task_log:name_operator' => \core_reportbuilder\local\filters\text::IS_EQUAL_TO,
-        'task_log:name_value' => $filter,
+        'task_log:name_values' => $filter,
     ]);
 }
 

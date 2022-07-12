@@ -20,12 +20,14 @@ use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\duration;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
+use core_reportbuilder\local\filters\autocomplete;
 use core_reportbuilder\local\helpers\format;
 use lang_string;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
 use stdClass;
+use core_collator;
 
 /**
  * Task log entity class implementation
@@ -241,13 +243,28 @@ class task_log extends base {
 
         // Name filter (Filter by classname).
         $filters[] = (new filter(
-            text::class,
+            autocomplete::class,
             'name',
             new lang_string('classname', 'tool_task'),
             $this->get_entity_name(),
             "{$tablealias}.classname"
         ))
-            ->add_joins($this->get_joins());
+            ->add_joins($this->get_joins())
+            ->set_options_callback(static function(): array {
+                global $DB;
+                $classnames = $DB->get_fieldset_sql('SELECT DISTINCT classname FROM {task_log} ORDER BY classname ASC');
+
+                $options = [];
+                foreach ($classnames as $classname) {
+                    if (class_exists($classname)) {
+                        $task = new $classname;
+                        $options[$classname] = $task->get_name();
+                    }
+                }
+
+                core_collator::asort($options);
+                return $options;
+            });
 
         // Type filter.
         $filters[] = (new filter(
