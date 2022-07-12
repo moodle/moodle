@@ -116,6 +116,105 @@ class date_test extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see test_get_sql_filter_current_week}
+     *
+     * @return array
+     */
+    public function get_sql_filter_current_week_provider(): array {
+        return array_map(static function(int $day): array {
+            return [$day];
+        }, range(0, 6));
+    }
+
+    /**
+     * Test getting filter SQL for the current week. Note that relative dates are hard to test, here we are asserting that
+     * the current time is always within the current week regardless of calendar configuration/preferences
+     *
+     * @param int $startweekday
+     *
+     * @dataProvider get_sql_filter_current_week_provider
+     */
+    public function test_get_sql_filter_current_week(int $startweekday): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        set_config('calendar_startwday', $startweekday);
+
+        $user = $this->getDataGenerator()->create_user(['timecreated' => time()]);
+
+        $filter = new filter(
+            date::class,
+            'test',
+            new lang_string('yes'),
+            'testentity',
+            'timecreated'
+        );
+
+        [$select, $params] = date::create($filter)->get_sql_filter([
+            $filter->get_unique_identifier() . '_operator' => date::DATE_CURRENT,
+            $filter->get_unique_identifier() . '_unit' => date::DATE_UNIT_WEEK,
+        ]);
+
+        $matchingusers = $DB->get_fieldset_select('user', 'username', $select, $params);
+        $this->assertContains($user->username, $matchingusers);
+    }
+
+    /**
+     * Data provider for {@see test_get_sql_filter_current_week_no_match}
+     *
+     * @return array
+     */
+    public function get_sql_filter_current_week_no_match_provider(): array {
+        $data = [];
+
+        // For each day, create provider data for -/+ 8 days.
+        foreach (range(0, 6) as $day) {
+            $data = array_merge($data, [
+                [$day, '-8 day'],
+                [$day, '+8 day'],
+            ]);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Test getting filter SQL for the current week excludes dates that don't match (outside week time range)
+     *
+     * @param int $startweekday
+     * @param string $timecreated Relative time suitable for passing to {@see strtotime}
+     *
+     * @dataProvider get_sql_filter_current_week_no_match_provider
+     */
+    public function test_get_sql_filter_current_week_no_match(int $startweekday, string $timecreated): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        set_config('calendar_startwday', $startweekday);
+
+        $usertimecreated = strtotime($timecreated);
+        $user = $this->getDataGenerator()->create_user(['timecreated' => $usertimecreated]);
+
+        $filter = new filter(
+            date::class,
+            'test',
+            new lang_string('yes'),
+            'testentity',
+            'timecreated'
+        );
+
+        [$select, $params] = date::create($filter)->get_sql_filter([
+            $filter->get_unique_identifier() . '_operator' => date::DATE_CURRENT,
+            $filter->get_unique_identifier() . '_unit' => date::DATE_UNIT_WEEK,
+        ]);
+
+        $matchingusers = $DB->get_fieldset_select('user', 'username', $select, $params);
+        $this->assertNotContains($user->username, $matchingusers);
+    }
+
+    /**
      * Data provider for {@see test_get_sql_filter_relative}
      *
      * @return array
@@ -131,8 +230,8 @@ class date_test extends advanced_testcase {
             'Last two months' => [date::DATE_LAST, 2, date::DATE_UNIT_MONTH, '-7 week'],
             'Last two years' => [date::DATE_LAST, 2, date::DATE_UNIT_YEAR, '-15 month'],
 
+            // Current week is tested separately.
             'Current day' => [date::DATE_CURRENT, null, date::DATE_UNIT_DAY],
-            'Current week' => [date::DATE_CURRENT, null, date::DATE_UNIT_WEEK],
             'Current month' => [date::DATE_CURRENT, null, date::DATE_UNIT_MONTH],
             'Current year' => [date::DATE_CURRENT, null, date::DATE_UNIT_YEAR],
 
