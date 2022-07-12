@@ -34,8 +34,9 @@ require_once(__DIR__.'/fixtures/read_slave_moodle_database_mock_pgsql.php');
  * @category   dml
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \pgsql_native_moodle_database
  */
-class core_dml_pgsql_read_slave_testcase extends base_testcase {
+class dml_pgsql_read_slave_test extends base_testcase {
     /**
      * Test correct database handles are used for cursors
      *
