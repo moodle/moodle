@@ -73,7 +73,7 @@ Feature: Users can add entries to database activities
     And I press "Select all"
     And I press "Delete selected"
     And I press "Delete"
-    And I should see "No entries in database"
+    And I should see "No entries yet"
 
   @javascript @editor @editor_atto @atto @atto_h5p
   Scenario: If a new text area entry is added, the filepicker is displayed in the H5P Atto button
@@ -128,3 +128,21 @@ Feature: Users can add entries to database activities
     And I log out
     When I am on the "Test database name" "data activity" page logged in as "guest"
     Then I should not see "Add entry"
+
+  @javascript
+  Scenario Outline: Users see the Add entry button in the view page when some field has been created only.
+    Given I am on the "Test database name" "data activity" page logged in as <user>
+    And I should not see "Add entry"
+    When I log out
+    And I am on the "Test database name" "data activity" page logged in as teacher1
+    And I add a "Text input" field to "Test database name" database and I fill the form with:
+      | Field name | Test field name |
+      | Field description | Test field description |
+    And I log out
+    And I am on the "Test database name" "data activity" page logged in as <user>
+    Then I should see "Add entry"
+
+    Examples:
+      | user     |
+      | teacher1 |
+      | student1 |

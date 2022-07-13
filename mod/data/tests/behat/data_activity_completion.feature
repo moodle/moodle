@@ -42,6 +42,10 @@ Feature: View activity completion in the database activity
 
   Scenario: View automatic completion items as a teacher
     Given I am on the "Music history" "data activity" page logged in as teacher1
+#   We add an entry to let the user change to a different view.
+    When I add an entry to "Music history" database with:
+      | Instrument types | Drums |
+    And I press "Save"
     Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
