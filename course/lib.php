@@ -2477,9 +2477,7 @@ function update_course($data, $editoroptions = NULL) {
 function average_number_of_participants(bool $onlyactive = false, int $lastloginsince = null): float {
     global $DB;
 
-    $params = [
-        'siteid' => SITEID,
-    ];
+    $params = [];
 
     $sql = "SELECT DISTINCT ue.userid, e.courseid
               FROM {user_enrolments} ue
@@ -2490,8 +2488,7 @@ function average_number_of_participants(bool $onlyactive = false, int $lastlogin
         $sql .= "JOIN {user} u ON u.id = ue.userid ";
     }
 
-    $sql .= "WHERE e.courseid <> :siteid
-               AND c.visible = 1 ";
+    $sql .= "WHERE e.courseid <> " . SITEID . " AND c.visible = 1 ";
 
     if ($onlyactive) {
         $sql .= "AND ue.status = :active
