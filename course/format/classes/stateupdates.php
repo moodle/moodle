@@ -128,9 +128,12 @@ class stateupdates implements JsonSerializable {
     /**
      * Add track about a section deleted.
      *
+     * @deprecated since Moodle 4.1 MDL-74925 - please call add_section_remove() instead.
      * @param int $sectionid The affected section id.
      */
     public function add_section_delete(int $sectionid): void {
+        debugging('add_section_delete() is deprecated. Please use add_section_remove() instead.', DEBUG_DEVELOPER);
+
         $this->add_update('section', 'remove', (object)['id' => $sectionid]);
     }
 
@@ -187,9 +190,12 @@ class stateupdates implements JsonSerializable {
     /**
      * Add track about a course module deleted.
      *
+     * @deprecated since Moodle 4.1 MDL-74925 - please call add_cm_remove() instead.
      * @param int $cmid the affected course module id
      */
     public function add_cm_delete(int $cmid): void {
+        debugging('add_cm_delete() is deprecated. Please use add_cm_remove() instead.', DEBUG_DEVELOPER);
+
         $this->add_update('cm', 'remove', (object)['id' => $cmid]);
     }
 
