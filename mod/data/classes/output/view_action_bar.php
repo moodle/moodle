@@ -64,16 +64,8 @@ class view_action_bar implements templatable, renderable {
             'urlselect' => $this->urlselect->export_for_template($output),
         ];
 
-        $database = $DB->get_record('data', ['id' => $this->id]);
-        $cm = get_coursemodule_from_instance('data', $this->id);
-        $currentgroup = groups_get_activity_group($cm);
-        $groupmode = groups_get_activity_groupmode($cm);
-
-        if (data_user_can_add_entry($database, $currentgroup, $groupmode, $PAGE->context)) {
-            $addentrylink = new moodle_url('/mod/data/edit.php', ['d' => $this->id, 'backto' => $PAGE->url->out(false)]);
-            $addentrybutton = new \single_button($addentrylink, get_string('add', 'mod_data'), 'get', true);
-            $data['addentrybutton'] = $addentrybutton->export_for_template($output);
-        }
+        $addentrybutton = new add_entries_action($this->id);
+        $data['addentrybutton'] = $addentrybutton->export_for_template($output);
 
         if (has_capability('mod/data:manageentries', $PAGE->context)) {
             $importentrieslink = new moodle_url('/mod/data/import.php',
