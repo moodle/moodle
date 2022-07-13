@@ -60,8 +60,8 @@ class course extends base {
         return [
             'course' => 'c',
             'context' => 'cctx',
-            'tag_instance' => 'ti',
-            'tag' => 't',
+            'tag_instance' => 'cti',
+            'tag' => 'ct',
         ];
     }
 

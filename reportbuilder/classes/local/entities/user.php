@@ -59,8 +59,8 @@ class user extends base {
         return [
             'user' => 'u',
             'context' => 'uctx',
-            'tag_instance' => 'ti',
-            'tag' => 't',
+            'tag_instance' => 'uti',
+            'tag' => 'ut',
         ];
     }
 
