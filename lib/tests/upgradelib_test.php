@@ -1496,8 +1496,19 @@ calendar,core_calendar|/calendar/view.php?view=month',
         $oldfile = $fs->create_file_from_string($old, 'old');
 
         // Manually set the timestamps to use on files.
-        $DB->set_field('files', 'timecreated', $origtime, ['id' => $newfile->get_id()]);
-        $DB->set_field('files', 'timemodified', $origtime, ['id' => $newfile->get_id()]);
+        $DB->set_field('files', 'timecreated', $origtime, [
+            'contextid' => $newfile->get_contextid(),
+            'component' => $newfile->get_component(),
+            'filearea' => $newfile->get_filearea(),
+            'itemid' => $newfile->get_itemid(),
+        ]);
+        $DB->set_field('files', 'timemodified', $origtime, [
+            'contextid' => $newfile->get_contextid(),
+            'component' => $newfile->get_component(),
+            'filearea' => $newfile->get_filearea(),
+            'itemid' => $newfile->get_itemid(),
+        ]);
+
         $DB->set_field('files', 'timecreated', 1, ['id' => $oldfile->get_id()]);
         $DB->set_field('files', 'timemodified', 1, ['id' => $oldfile->get_id()]);
 
