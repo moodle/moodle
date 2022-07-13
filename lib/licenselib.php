@@ -323,7 +323,7 @@ class license_manager {
         global $CFG;
         // Site default license cannot be disabled!
         if ($license == $CFG->sitedefaultlicense) {
-            print_error('error');
+            throw new \moodle_exception('error');
         }
         if ($license = self::get_license_by_shortname($license)) {
             $license->enabled = self::LICENSE_DISABLED;

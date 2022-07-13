@@ -280,7 +280,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
                             case 'subquestion_replacement':
                                 continue 2;
                             default:
-                                print_error('unknownquestiontype', 'question', '',
+                                throw new \moodle_exception('unknownquestiontype', 'question', '',
                                         $wrapped->qtype);
                         }
                         $separator = '';

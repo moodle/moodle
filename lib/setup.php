@@ -569,7 +569,7 @@ init_performance_info();
 // Put $OUTPUT in place, so errors can be displayed.
 $OUTPUT = new bootstrap_renderer();
 
-// set handler for uncaught exceptions - equivalent to print_error() call
+// Set handler for uncaught exceptions - equivalent to throw new \moodle_exception() call.
 if (!PHPUNIT_TEST or PHPUNIT_UTIL) {
     set_exception_handler('default_exception_handler');
     set_error_handler('default_error_handler', E_ALL | E_STRICT);
@@ -722,7 +722,7 @@ if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {
     if ($CFG->upgraderunning < time()) {
         unset_config('upgraderunning');
     } else {
-        print_error('upgraderunning');
+        throw new \moodle_exception('upgraderunning');
     }
 }
 
@@ -734,7 +734,7 @@ if (function_exists('gc_enable')) {
 
 // detect unsupported upgrade jump as soon as possible - do not change anything, do not use system functions
 if (!empty($CFG->version) and $CFG->version < 2007101509) {
-    print_error('upgraderequires19', 'error');
+    throw new \moodle_exception('upgraderequires19', 'error');
     die;
 }
 

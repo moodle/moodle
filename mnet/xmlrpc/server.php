@@ -27,7 +27,7 @@ require_once $CFG->dirroot.'/mnet/xmlrpc/serverlib.php';
 
 
 if ($CFG->mnet_dispatcher_mode === 'off') {
-    print_error('mnetdisabled', 'mnet');
+    throw new \moodle_exception('mnetdisabled', 'mnet');
 }
 
 // Content type for output is not html:

@@ -80,7 +80,7 @@ class model_config {
         $exporttmpdir = make_request_directory();
         $jsonfilepath = $exporttmpdir . DIRECTORY_SEPARATOR . 'model-config.json';
         if (!file_put_contents($jsonfilepath, json_encode($modeldata))) {
-            print_error('errornoexportconfig', 'analytics');
+            throw new \moodle_exception('errornoexportconfig', 'analytics');
         }
         $zipfiles[self::CONFIG_FILE_NAME] = $jsonfilepath;
 

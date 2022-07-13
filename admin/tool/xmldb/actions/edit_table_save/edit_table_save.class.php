@@ -67,7 +67,7 @@ class edit_table_save extends XMLDBAction {
         // Do the job, setting result as needed
 
         if (!data_submitted()) { // Basic prevention
-            print_error('wrongcall', 'error');
+            throw new \moodle_exception('wrongcall', 'error');
         }
 
         // Get parameters

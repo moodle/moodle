@@ -39,7 +39,7 @@ $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid;
 $rooturl   = $CFG->wwwroot.'/group/overview.php?id='.$courseid;
 
 if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-    print_error('invalidcourse');
+    throw new \moodle_exception('invalidcourse');
 }
 
 $url = new moodle_url('/group/overview.php', array('id'=>$courseid));

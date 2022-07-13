@@ -69,15 +69,15 @@ if ($options['showdebugging']) {
 }
 
 if (!$admin = get_admin()) {
-    print_error('noadmins');
+    throw new \moodle_exception('noadmins');
 }
 
 if (!file_exists($options['file'])) {
-    print_error('filenotfound');
+    throw new \moodle_exception('filenotfound');
 }
 
 if (!$category = $DB->get_record('course_categories', ['id' => $options['categoryid']], 'id')) {
-    print_error('invalidcategoryid');
+    throw new \moodle_exception('invalidcategoryid');
 }
 
 $backupdir = "restore_" . uniqid();
@@ -102,7 +102,7 @@ try {
 } catch (Exception $e) {
     cli_heading(get_string('cleaningtempdata'));
     fulldelete($path);
-    print_error('generalexceptionmessage', 'error', '', $e->getMessage());
+    throw new \moodle_exception('generalexceptionmessage', 'error', '', $e->getMessage());
 }
 
 cli_heading(get_string('restoredcourseid', 'backup', $courseid));

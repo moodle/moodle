@@ -113,7 +113,7 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
     } else {
         // Build on last attempt.
         if (empty($lastattempt)) {
-            print_error('cannotfindprevattempt', 'quiz');
+            throw new \moodle_exception('cannotfindprevattempt', 'quiz');
         }
         $attempt = $lastattempt;
     }

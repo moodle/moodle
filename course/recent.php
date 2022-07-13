@@ -33,7 +33,7 @@ $PAGE->set_url('/course/recent.php', array('id'=>$id));
 $PAGE->set_pagelayout('report');
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error("That's an invalid course id");
+    throw new \moodle_exception("That's an invalid course id");
 }
 
 require_login($course);
@@ -67,7 +67,7 @@ $dateinfo = get_string('alldays');
 
 if (!empty($param->user)) {
     if (!$u = $DB->get_record('user', array('id'=>$param->user))) {
-        print_error("That's an invalid user!");
+        throw new \moodle_exception("That's an invalid user!");
     }
     $userinfo = fullname($u);
 }

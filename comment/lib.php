@@ -135,7 +135,7 @@ class comment {
             $this->contextid = $options->contextid;
             $this->context = context::instance_by_id($this->contextid);
         } else {
-            print_error('invalidcontext');
+            throw new \moodle_exception('invalidcontext');
         }
 
         if (!empty($options->component)) {

@@ -66,7 +66,7 @@ if (!empty($add)) {
     $courseformat = course_get_format($course);
     $maxsections = $courseformat->get_max_sections();
     if ($section > $maxsections) {
-        print_error('maxsectionslimit', 'moodle', '', $maxsections);
+        throw new \moodle_exception('maxsectionslimit', 'moodle', '', $maxsections);
     }
 
     list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($course, $add, $section);
@@ -127,7 +127,7 @@ if (!empty($add)) {
 
 } else {
     require_login();
-    print_error('invalidaction');
+    throw new \moodle_exception('invalidaction');
 }
 
 $pagepath = 'mod-' . $module->name . '-';
@@ -145,7 +145,7 @@ $modmoodleform = "$CFG->dirroot/mod/$module->name/mod_form.php";
 if (file_exists($modmoodleform)) {
     require_once($modmoodleform);
 } else {
-    print_error('noformdesc');
+    throw new \moodle_exception('noformdesc');
 }
 
 $mformclassname = 'mod_'.$module->name.'_mod_form';
@@ -169,7 +169,7 @@ if ($mform->is_cancelled()) {
     } else if (!empty($fromform->add)) {
         $fromform = add_moduleinfo($fromform, $course, $mform);
     } else {
-        print_error('invaliddata');
+        throw new \moodle_exception('invaliddata');
     }
 
     if (isset($fromform->submitbutton)) {

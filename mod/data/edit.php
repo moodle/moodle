@@ -48,26 +48,26 @@ if ($id) {
     $url->param('id', $id);
     $PAGE->set_url($url);
     if (! $cm = get_coursemodule_from_id('data', $id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 
 } else {
     $url->param('d', $d);
     $PAGE->set_url($url);
     if (! $data = $DB->get_record('data', array('id'=>$d))) {
-        print_error('invalidid', 'data');
+        throw new \moodle_exception('invalidid', 'data');
     }
     if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 }
 
@@ -111,11 +111,11 @@ if (!has_capability('mod/data:manageentries', $context)) {
     if ($rid) {
         // User is editing an existing record
         if (!data_user_can_manage_entry($record, $data, $context)) {
-            print_error('noaccess','data');
+            throw new \moodle_exception('noaccess', 'data');
         }
     } else if (!data_user_can_add_entry($data, $currentgroup, $groupmode, $context)) {
         // User is trying to create a new record
-        print_error('noaccess','data');
+        throw new \moodle_exception('noaccess', 'data');
     }
 }
 
@@ -318,7 +318,7 @@ echo '</div></form>';
 
 // Print the stuff that need to come after the form fields.
 if (!$fields = $DB->get_records('data_fields', array('dataid'=>$data->id))) {
-    print_error('nofieldindatabase', 'data');
+    throw new \moodle_exception('nofieldindatabase', 'data');
 }
 foreach ($fields as $eachfield) {
     $field = data_get_field($eachfield, $data);

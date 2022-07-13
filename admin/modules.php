@@ -62,7 +62,7 @@
 /// Get and sort the existing modules
 
     if (!$modules = $DB->get_records('modules', array(), 'name ASC')) {
-        print_error('moduledoesnotexist', 'error');
+        throw new \moodle_exception('moduledoesnotexist', 'error');
     }
 
 /// Print the table of all modules

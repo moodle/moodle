@@ -460,7 +460,7 @@ class zip_archive extends file_archive {
             $this->close();
             $res = $this->open($this->archivepathname, file_archive::OPEN, $this->encoding);
             if ($res !== true) {
-                print_error('cannotopenzip');
+                throw new \moodle_exception('cannotopenzip');
             }
         }
         $this->usedmem += strlen($contents);

@@ -59,7 +59,7 @@ if (!isset($config->course)) {
 require_login($config->course, false);
 require_capability('moodle/course:manageactivities', context_course::instance($config->course));
 if (!get_config('tool_moodlenet', 'enablemoodlenet')) {
-    print_error('moodlenetnotenabled', 'tool_moodlenet');
+    throw new \moodle_exception('moodlenetnotenabled', 'tool_moodlenet');
 }
 
 // If the user cancelled, break early.

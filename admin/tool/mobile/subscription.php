@@ -30,11 +30,11 @@ admin_externalpage_setup('mobileappsubscription', '', null, '');
 
 // Check Mobile web services enabled. This page should not be linked in that case, but avoid just in case.
 if (!$CFG->enablemobilewebservice) {
-    print_error('enablewsdescription', 'webservice');
+    throw new \moodle_exception('enablewsdescription', 'webservice');
 }
 // Check is this feature is globaly disabled.
 if (!empty($CFG->disablemobileappsubscription)) {
-    print_error('disabled', 'admin');
+    throw new \moodle_exception('disabled', 'admin');
 }
 
 $subscriptiondata = \tool_mobile\api::get_subscription_information();

@@ -40,7 +40,7 @@ if ($contextid) {
 }
 
 if ($context->contextlevel != CONTEXT_COURSECAT and $context->contextlevel != CONTEXT_SYSTEM) {
-    print_error('invalidcontext');
+    throw new \moodle_exception('invalidcontext');
 }
 
 $category = null;

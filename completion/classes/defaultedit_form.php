@@ -73,7 +73,7 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
         if (file_exists($modmoodleform)) {
             require_once($modmoodleform);
         } else {
-            print_error('noformdesc');
+            throw new \moodle_exception('noformdesc');
         }
 
         list($module, $context, $cw, $cmrec, $data) = prepare_new_moduleinfo_data($course, $modname, 0);

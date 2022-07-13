@@ -57,7 +57,7 @@ if ($filter !== '') {
 admin_externalpage_setup('managetags', '', $params, '', array('pagelayout' => 'report'));
 
 if (empty($CFG->usetags)) {
-    print_error('tagsaredisabled', 'tag');
+    throw new \moodle_exception('tagsaredisabled', 'tag');
 }
 
 $tagobject = null;

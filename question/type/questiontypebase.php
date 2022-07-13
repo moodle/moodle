@@ -538,7 +538,7 @@ class question_type {
         $result = $this->save_question_options($form);
 
         if (!empty($result->error)) {
-            print_error($result->error);
+            throw new \moodle_exception($result->error);
         }
 
         if (!empty($result->notice)) {

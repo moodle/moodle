@@ -75,7 +75,7 @@ if ($roleid && !isset($assignableroles[$roleid])) {
     $a = new stdClass;
     $a->roleid = $roleid;
     $a->context = $contextname;
-    print_error('cannotassignrolehere', '', $context->get_url(), $a);
+    throw new \moodle_exception('cannotassignrolehere', '', $context->get_url(), $a);
 }
 
 // Work out an appropriate page title.

@@ -18,7 +18,7 @@ $PAGE->set_url($url);
 admin_externalpage_setup('managemodules'); // this is hacky, tehre should be a special hidden page for it
 
 if ( !$displayformat = $DB->get_record("glossary_formats", array("id"=>$id))) {
-    print_error('invalidglossaryformat', 'glossary');
+    throw new \moodle_exception('invalidglossaryformat', 'glossary');
 }
 
 $form = data_submitted();

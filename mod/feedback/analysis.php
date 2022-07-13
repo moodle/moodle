@@ -41,7 +41,7 @@ $feedbackstructure = new mod_feedback_structure($feedback, $cm);
 $context = context_module::instance($cm->id);
 
 if (!$feedbackstructure->can_view_analysis()) {
-    print_error('error');
+    throw new \moodle_exception('error');
 }
 
 /// Print the page header

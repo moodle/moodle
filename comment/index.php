@@ -77,7 +77,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('comments'));
 echo $OUTPUT->box_start('generalbox commentsreport');
 if (!empty($err)) {
-    print_error($err, 'error', $CFG->wwwroot.'/comment/');
+    throw new \moodle_exception($err, 'error', $CFG->wwwroot.'/comment/');
 }
 if (empty($action)) {
     echo '<form method="post">';

@@ -44,7 +44,7 @@ class managesubscriptions extends \moodleform {
         $mform = $this->_form;
         $eventtypes = calendar_get_allowed_event_types();
         if (in_array(true, $eventtypes, true) === false) {
-            print_error('nopermissiontoupdatecalendar');
+            throw new \moodle_exception('nopermissiontoupdatecalendar');
         }
 
         // Name.

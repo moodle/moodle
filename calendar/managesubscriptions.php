@@ -66,7 +66,7 @@ if ($courseid != SITEID && !empty($courseid)) {
 require_login($course, false);
 
 if (!calendar_user_can_add_event($course)) {
-    print_error('errorcannotimport', 'calendar');
+    throw new \moodle_exception('errorcannotimport', 'calendar');
 }
 $PAGE->navbar->add(get_string('managesubscriptions', 'calendar'), $PAGE->url);
 

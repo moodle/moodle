@@ -38,7 +38,7 @@ $override = null;
 if ($overrideid) {
 
     if (! $override = $DB->get_record('lesson_overrides', array('id' => $overrideid))) {
-        print_error('invalidoverrideid', 'lesson');
+        throw new \moodle_exception('invalidoverrideid', 'lesson');
     }
 
     $lesson = new lesson($DB->get_record('lesson', array('id' => $override->lessonid), '*',  MUST_EXIST));
@@ -50,7 +50,7 @@ if ($overrideid) {
     $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
 
 } else {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
@@ -79,11 +79,11 @@ if ($overrideid) {
 
     if ($override->groupid) {
         if (!groups_group_visible($override->groupid, $course, $cm)) {
-            print_error('invalidoverrideid', 'lesson');
+            throw new \moodle_exception('invalidoverrideid', 'lesson');
         }
     } else {
         if (!groups_user_groups_visible($course, $override->userid, $cm)) {
-            print_error('invalidoverrideid', 'lesson');
+            throw new \moodle_exception('invalidoverrideid', 'lesson');
         }
     }
 } else {

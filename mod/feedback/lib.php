@@ -2800,7 +2800,7 @@ function feedback_encode_target_url($url) {
 function feedback_extend_settings_navigation(settings_navigation $settings, navigation_node $feedbacknode) {
     $hassecondary = $settings->get_page()->has_secondary_navigation();
     if (!$context = context_module::instance($settings->get_page()->cm->id, IGNORE_MISSING)) {
-        print_error('badcontext');
+        throw new \moodle_exception('badcontext');
     }
 
     if (has_capability('mod/feedback:edititems', $context)) {

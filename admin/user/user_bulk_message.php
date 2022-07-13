@@ -17,7 +17,7 @@ if (empty($SESSION->bulk_users)) {
 }
 
 if (empty($CFG->messaging)) {
-    print_error('messagingdisable', 'error');
+    throw new \moodle_exception('messagingdisable', 'error');
 }
 
 $PAGE->set_primary_active_tab('siteadminnode');

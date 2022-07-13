@@ -36,25 +36,25 @@ $url = new moodle_url('/mod/data/templates.php');
 if ($id) {
     $url->param('id', $id);
     if (! $cm = get_coursemodule_from_id('data', $id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 
 } else {
     $url->param('d', $d);
     if (! $data = $DB->get_record('data', array('id'=>$d))) {
-        print_error('invalidid', 'data');
+        throw new \moodle_exception('invalidid', 'data');
     }
     if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 }
 

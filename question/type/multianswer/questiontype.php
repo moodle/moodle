@@ -501,7 +501,7 @@ function qtype_multianswer_extract_question($text) {
             $wrapped->shuffleanswers = 1;
             $wrapped->layout = qtype_multichoice_base::LAYOUT_HORIZONTAL;
         } else {
-            print_error('unknownquestiontype', 'question', '', $answerregs[2]);
+            throw new \moodle_exception('unknownquestiontype', 'question', '', $answerregs[2]);
             return false;
         }
 

@@ -53,7 +53,7 @@ if ($USER->id != $user->id and has_capability('moodle/user:viewuseractivitiesrep
 
 if (!report_stats_can_access_user_report($user, $course)) {
     // this should never happen
-    print_error('nocapability', 'report_stats');
+    throw new \moodle_exception('nocapability', 'report_stats');
 }
 
 $stractivityreport = get_string('activityreport');
@@ -90,7 +90,7 @@ $event = \report_stats\event\user_report_viewed::create(array('context' => $cour
 $event->trigger();
 
 if (empty($CFG->enablestats)) {
-    print_error('statsdisable', 'error');
+    throw new \moodle_exception('statsdisable', 'error');
 }
 
 $statsstatus = stats_check_uptodate($course->id);
@@ -119,7 +119,8 @@ $lastmonthend = stats_get_base_monthly();
 $timeoptions = stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$earliestweek,$earliestmonth);
 
 if (empty($timeoptions)) {
-    print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
+    throw new \moodle_exception('nostatstodisplay', '',
+        $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
 }
 
 // use the earliest.
@@ -159,7 +160,8 @@ $sql = "
 $stats = $DB->get_records_sql($sql, $params);
 
 if (empty($stats)) {
-    print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
+    throw new \moodle_exception('nostatstodisplay', '',
+        $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
 }
 
 report_stats_print_chart($course->id, STATS_REPORT_USER_VIEW, $time, STATS_MODE_DETAILED, $user->id);

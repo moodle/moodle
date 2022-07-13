@@ -70,7 +70,7 @@ if (!$singlegroup) {
         case 'showgroupsettingsform':
         case 'showaddmembersform':
         case 'updatemembers':
-            print_error('errorselectone', 'group', $returnurl);
+            throw new \moodle_exception('errorselectone', 'group', $returnurl);
     }
 }
 
@@ -120,7 +120,7 @@ switch ($action) {
 
     case 'deletegroup':
         if (count($groupids) == 0) {
-            print_error('errorselectsome','group',$returnurl);
+            throw new \moodle_exception('errorselectsome', 'group', $returnurl);
         }
         $groupidlist = implode(',', $groupids);
         redirect(new moodle_url('/group/delete.php', array('courseid'=>$courseid, 'groups'=>$groupidlist)));
@@ -156,7 +156,7 @@ switch ($action) {
         break;
 
     default: //ERROR.
-        print_error('unknowaction', '', $returnurl);
+        throw new \moodle_exception('unknowaction', '', $returnurl);
         break;
 }
 
@@ -278,7 +278,7 @@ function groups_param_action($prefix = 'act_') {
     }
     if ($action && !preg_match('/^\w+$/', $action)) {
         $action = false;
-        print_error('unknowaction');
+        throw new \moodle_exception('unknowaction');
     }
     ///if (debugging()) echo 'Debug: '.$action;
     return $action;

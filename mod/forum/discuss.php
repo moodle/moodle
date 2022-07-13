@@ -107,31 +107,31 @@ if ($move > 0 && confirm_sesskey()) {
     $return = $discussionviewurl->out(false);
 
     if (!$forumto = $DB->get_record('forum', ['id' => $move])) {
-        print_error('cannotmovetonotexist', 'forum', $return);
+        throw new \moodle_exception('cannotmovetonotexist', 'forum', $return);
     }
 
     if (!$capabilitymanager->can_move_discussions($USER)) {
         if ($forum->get_type() == 'single') {
-            print_error('cannotmovefromsingleforum', 'forum', $return);
+            throw new \moodle_exception('cannotmovefromsingleforum', 'forum', $return);
         } else {
-            print_error('nopermissions', 'error', $return, get_capability_string('mod/forum:movediscussions'));
+            throw new \moodle_exception('nopermissions', 'error', $return, get_capability_string('mod/forum:movediscussions'));
         }
     }
 
     if ($forumto->type == 'single') {
-        print_error('cannotmovetosingleforum', 'forum', $return);
+        throw new \moodle_exception('cannotmovetosingleforum', 'forum', $return);
     }
 
     // Get target forum cm and check it is visible to current user.
     $modinfo = get_fast_modinfo($course);
     $forums = $modinfo->get_instances_of('forum');
     if (!array_key_exists($forumto->id, $forums)) {
-        print_error('cannotmovetonotfound', 'forum', $return);
+        throw new \moodle_exception('cannotmovetonotfound', 'forum', $return);
     }
 
     $cmto = $forums[$forumto->id];
     if (!$cmto->uservisible) {
-        print_error('cannotmovenotvisible', 'forum', $return);
+        throw new \moodle_exception('cannotmovenotvisible', 'forum', $return);
     }
 
     $destinationctx = context_module::instance($cmto->id);
@@ -216,7 +216,7 @@ if ($move > 0 && confirm_sesskey()) {
 // Pin or unpin discussion if requested.
 if ($pin !== -1 && confirm_sesskey()) {
     if (!$capabilitymanager->can_pin_discussions($USER)) {
-        print_error('nopermissions', 'error', $return, get_capability_string('mod/forum:pindiscussions'));
+        throw new \moodle_exception('nopermissions', 'error', $return, get_capability_string('mod/forum:pindiscussions'));
     }
 
     $params = ['context' => $modcontext, 'objectid' => $discussion->get_id(), 'other' => ['forumid' => $forum->get_id()]];
@@ -276,11 +276,11 @@ if ($parent) {
 
 $postvault = $vaultfactory->get_post_vault();
 if (!$post = $postvault->get_from_id($parent)) {
-    print_error("notexists", 'forum', "$CFG->wwwroot/mod/forum/view.php?f={$forum->get_id()}");
+    throw new \moodle_exception("notexists", 'forum', "$CFG->wwwroot/mod/forum/view.php?f={$forum->get_id()}");
 }
 
 if (!$capabilitymanager->can_view_post($USER, $discussion, $post)) {
-    print_error('noviewdiscussionspermission', 'forum', "$CFG->wwwroot/mod/forum/view.php?id={$forum->get_id()}");
+    throw new \moodle_exception('noviewdiscussionspermission', 'forum', "$CFG->wwwroot/mod/forum/view.php?id={$forum->get_id()}");
 }
 
 $istracked = forum_tp_is_tracked($forumrecord, $USER);

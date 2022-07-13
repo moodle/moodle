@@ -117,7 +117,7 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     if (isset($coursecat)) {
         if ((int)$data->parent !== (int)$coursecat->parent && !$coursecat->can_change_parent($data->parent)) {
-            print_error('cannotmovecategory');
+            throw new \moodle_exception('cannotmovecategory');
         }
         $coursecat->update($data, $mform->get_description_editor_options());
     } else {

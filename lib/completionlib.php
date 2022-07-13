@@ -360,7 +360,7 @@ class completion_info {
         if (empty($completions)) {
             return false;
         } elseif (count($completions) > 1) {
-            print_error('multipleselfcompletioncriteria', 'completion');
+            throw new \moodle_exception('multipleselfcompletioncriteria', 'completion');
         }
 
         return $completions[0];

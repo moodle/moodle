@@ -25,7 +25,7 @@ $PAGE->set_url(new moodle_url('/grade/import/xml/index.php', array('id'=>$id)));
 $PAGE->set_pagelayout('admin');
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_login($course);

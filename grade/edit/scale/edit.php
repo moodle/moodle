@@ -41,12 +41,12 @@ $systemcontext = context_system::instance();
 if ($id) {
     /// editing existing scale
     if (!$scale_rec = $DB->get_record('scale', array('id' => $id))) {
-        print_error('invalidscaleid');
+        throw new \moodle_exception('invalidscaleid');
     }
     if ($scale_rec->courseid) {
         $scale_rec->standard = 0;
         if (!$course = $DB->get_record('course', array('id' => $scale_rec->courseid))) {
-            print_error('invalidcourseid');
+            throw new \moodle_exception('invalidcourseid');
         }
         require_login($course);
         $context = context_course::instance($course->id);
@@ -55,7 +55,7 @@ if ($id) {
     } else {
         if ($courseid) {
             if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-                print_error('invalidcourseid');
+                throw new \moodle_exception('invalidcourseid');
             }
         }
         $scale_rec->standard = 1;
@@ -67,7 +67,7 @@ if ($id) {
 } else if ($courseid){
     /// adding new scale from course
     if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
     $scale_rec = new stdClass();
     $scale_rec->standard = 0;

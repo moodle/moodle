@@ -42,13 +42,13 @@ if ($confirmdelete !== 0) {
 $PAGE->set_url($url);
 
 if (! $cm = get_coursemodule_from_id('chat', $id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 if (! $chat = $DB->get_record('chat', array('id' => $cm->instance))) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 if (! $course = $DB->get_record('course', array('id' => $chat->course))) {
-    print_error('coursemisconf');
+    throw new \moodle_exception('coursemisconf');
 }
 
 $context = context_module::instance($cm->id);

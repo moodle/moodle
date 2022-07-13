@@ -29,7 +29,7 @@
     require_once("../../config.php");
 
     if (!filter_is_enabled('tex')) {
-        print_error('filternotenabled');
+        throw new \moodle_exception('filternotenabled');
     }
 
     require_once($CFG->libdir.'/filelib.php');

@@ -37,7 +37,7 @@ if ($section = optional_param('section', '', PARAM_SAFEPATH) and confirm_sesskey
         $bookmarks = explode(',', get_user_preferences('admin_bookmarks'));
 
         if (in_array($section, $bookmarks)) {
-            print_error('bookmarkalreadyexists','admin');
+            throw new \moodle_exception('bookmarkalreadyexists', 'admin');
             die;
         }
 
@@ -53,7 +53,7 @@ if ($section = optional_param('section', '', PARAM_SAFEPATH) and confirm_sesskey
         set_user_preference('admin_bookmarks', $bookmarks);
 
     } else {
-        print_error('invalidsection','admin');
+        throw new \moodle_exception('invalidsection', 'admin');
         die;
     }
 
@@ -69,7 +69,7 @@ if ($section = optional_param('section', '', PARAM_SAFEPATH) and confirm_sesskey
     }
 
 } else {
-    print_error('invalidsection','admin');
+    throw new \moodle_exception('invalidsection', 'admin');
     die;
 }
 

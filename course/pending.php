@@ -67,7 +67,7 @@ if (!empty($approve) and confirm_sesskey()) {
             redirect(new moodle_url('/course/view.php', ['id' => $courseid]));
         }
     } else {
-        print_error('courseapprovedfailed');
+        throw new \moodle_exception('courseapprovedfailed');
     }
 }
 

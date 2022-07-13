@@ -30,7 +30,7 @@ require_once($CFG->libdir . '/badgeslib.php');
 require_login();
 
 if (empty($CFG->enablebadges)) {
-    print_error('badgesdisabled', 'badges');
+    throw new \moodle_exception('badgesdisabled', 'badges');
 }
 
 $context = context_user::instance($USER->id);
@@ -145,7 +145,7 @@ if ($backpack) {
                         get_string('backpackemailverifypending', 'badges', $data->backpackemail),
                         null, \core\output\notification::NOTIFY_INFO);
                 } else {
-                    print_error ('backpackcannotsendverification', 'badges');
+                    throw new \moodle_exception('backpackcannotsendverification', 'badges');
                 }
             }
         }

@@ -74,7 +74,7 @@ if ($resetall && confirm_sesskey()) {
 
 // Get the My Moodle page info.  Should always return something unless the database is broken.
 if (!$currentpage = my_get_page(null, MY_PAGE_PRIVATE)) {
-    print_error('mymoodlesetup');
+    throw new \moodle_exception('mymoodlesetup');
 }
 $PAGE->set_subpage($currentpage->id);
 

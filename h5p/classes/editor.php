@@ -104,7 +104,7 @@ class editor {
         // Load the present content.
         $this->oldcontent = $this->core->loadContent($id);
         if ($this->oldcontent === null) {
-            print_error('invalidelementid');
+            throw new \moodle_exception('invalidelementid');
         }
 
         // Identify the content type library.
@@ -115,7 +115,7 @@ class editor {
         $fs = get_file_storage();
         $oldfile = $fs->get_file_by_hash($pathnamehash);
         if (!$oldfile) {
-            print_error('invalidelementid');
+            throw new \moodle_exception('invalidelementid');
         }
         $this->set_filearea(
             $oldfile->get_contextid(),

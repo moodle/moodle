@@ -30,7 +30,7 @@ feedback_init_feedback_session();
 $id = required_param('id', PARAM_INT);
 
 if (($formdata = data_submitted()) AND !confirm_sesskey()) {
-    print_error('invalidsesskey');
+    throw new \moodle_exception('invalidsesskey');
 }
 
 $switchitemrequired = optional_param('switchitemrequired', false, PARAM_INT);

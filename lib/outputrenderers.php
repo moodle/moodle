@@ -2902,9 +2902,8 @@ EOD;
     /**
      * Do not call this function directly.
      *
-     * To terminate the current script with a fatal error, call the {@link print_error}
-     * function, or throw an exception. Doing either of those things will then call this
-     * function to display the error, before terminating the execution.
+     * To terminate the current script with a fatal error, throw an exception.
+     * Doing this will then call this function to display the error, before terminating the execution.
      *
      * @param string $message The message to output
      * @param string $moreinfourl URL where more info can be found about the error

@@ -49,7 +49,7 @@ if ($returnto !== null) {
 
 // This is a policy decision, rather than something that would be impossible to implement.
 if (!in_array($context->contextlevel, array(CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_MODULE))) {
-    print_error('cannotcustomisefiltersblockuser', 'error');
+    throw new \moodle_exception('cannotcustomisefiltersblockuser', 'error');
 }
 
 $isfrontpage = ($context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID);
@@ -74,13 +74,13 @@ $PAGE->set_context($context);
 /// Get the list of available filters.
 $availablefilters = filter_get_available_in_context($context);
 if (!$isfrontpage && empty($availablefilters)) {
-    print_error('nofiltersenabled', 'error');
+    throw new \moodle_exception('nofiltersenabled', 'error');
 }
 
 // If we are handling local settings for a particular filter, start processing.
 if ($forfilter) {
     if (!filter_has_local_settings($forfilter)) {
-        print_error('filterdoesnothavelocalconfig', 'error', $forfilter);
+        throw new \moodle_exception('filterdoesnothavelocalconfig', 'error', $forfilter);
     }
     require_once($CFG->dirroot . '/filter/local_settings_form.php');
     require_once($CFG->dirroot . '/filter/' . $forfilter . '/filterlocalsettings.php');

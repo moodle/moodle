@@ -42,7 +42,7 @@ $plugins = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
 $sortorder = array_flip(array_keys($plugins));
 
 if (!isset($plugins[$name])) {
-    print_error('courseformatnotfound', 'error', $return, $name);
+    throw new \moodle_exception('courseformatnotfound', 'error', $return, $name);
 }
 
 switch ($action) {

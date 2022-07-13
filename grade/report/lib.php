@@ -165,7 +165,7 @@ abstract class grade_report {
         global $CFG, $COURSE, $DB;
 
         if (empty($CFG->gradebookroles)) {
-            print_error('norolesdefined', 'grades');
+            throw new \moodle_exception('norolesdefined', 'grades');
         }
 
         $this->courseid  = $courseid;

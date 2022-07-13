@@ -38,7 +38,7 @@ $mform = null;
 if ($taskname) {
     $task = \core\task\manager::get_scheduled_task($taskname);
     if (!$task) {
-        print_error('invaliddata');
+        throw new \moodle_exception('invaliddata');
     }
 }
 

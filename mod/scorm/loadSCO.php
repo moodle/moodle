@@ -25,26 +25,26 @@ $delayseconds = 2;  // Delay time before sco launch, used to give time to browse
 
 if (!empty($id)) {
     if (! $cm = get_coursemodule_from_id('scorm', $id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $scorm = $DB->get_record('scorm', array('id' => $cm->instance))) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 } else if (!empty($a)) {
     if (! $scorm = $DB->get_record('scorm', array('id' => $a))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $course = $DB->get_record('course', array('id' => $scorm->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 } else {
-    print_error('missingparameter');
+    throw new \moodle_exception('missingparameter');
 }
 
 $PAGE->set_url('/mod/scorm/loadSCO.php', array('scoid' => $scoid, 'id' => $cm->id));

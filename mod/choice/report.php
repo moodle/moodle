@@ -19,11 +19,11 @@
     $PAGE->set_url($url);
 
     if (! $cm = get_coursemodule_from_id('choice', $id)) {
-        print_error("invalidcoursemodule");
+        throw new \moodle_exception("invalidcoursemodule");
     }
 
     if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
-        print_error("coursemisconf");
+        throw new \moodle_exception("coursemisconf");
     }
 
     require_login($course, false, $cm);
@@ -33,7 +33,7 @@
     require_capability('mod/choice:readresponses', $context);
 
     if (!$choice = choice_get_choice($cm->instance)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 
     $strchoice = get_string("modulename", "choice");

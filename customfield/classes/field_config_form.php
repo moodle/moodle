@@ -158,7 +158,7 @@ class field_config_form extends \core_form\dynamic_form {
         $field = $this->get_field();
         $handler = $field->get_handler();
         if (!$handler->can_configure()) {
-            print_error('nopermissionconfigure', 'core_customfield');
+            throw new \moodle_exception('nopermissionconfigure', 'core_customfield');
         }
     }
 

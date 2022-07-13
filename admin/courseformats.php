@@ -41,7 +41,7 @@ $formatplugins = core_plugin_manager::instance()->get_plugins_of_type('format');
 $sortorder = array_flip(array_keys($formatplugins));
 
 if (!isset($formatplugins[$formatname])) {
-    print_error('courseformatnotfound', 'error', $return, $formatname);
+    throw new \moodle_exception('courseformatnotfound', 'error', $return, $formatname);
 }
 
 switch ($action) {

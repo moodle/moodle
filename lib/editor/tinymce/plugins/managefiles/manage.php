@@ -50,7 +50,7 @@ if ($context->contextlevel == CONTEXT_MODULE) {
 }
 if (isguestuser()) {
     // Guests can never manage files.
-    print_error('noguest');
+    throw new \moodle_exception('noguest');
 }
 
 $title = get_string('manageareafiles', 'tinymce_managefiles');

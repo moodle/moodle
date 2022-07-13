@@ -41,7 +41,7 @@ if ($section = optional_param('section', '', PARAM_SAFEPATH) and confirm_sesskey
         $key = array_search($section, $bookmarks);
 
         if ($key === false) {
-            print_error('nonexistentbookmark','admin');
+            throw new \moodle_exception('nonexistentbookmark', 'admin');
             die;
         }
 
@@ -65,11 +65,11 @@ if ($section = optional_param('section', '', PARAM_SAFEPATH) and confirm_sesskey
 
     }
 
-    print_error('nobookmarksforuser','admin');
+    throw new \moodle_exception('nobookmarksforuser', 'admin');
     die;
 
 } else {
-    print_error('invalidsection', 'admin');
+    throw new \moodle_exception('invalidsection', 'admin');
     die;
 }
 

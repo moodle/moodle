@@ -26,30 +26,30 @@ $edit = optional_param('edit', -1, PARAM_BOOL);
 
 if ($id) {
     if (! $cm = get_coursemodule_from_id('chat', $id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 
     if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
 
     chat_update_chat_times($cm->instance);
 
     if (! $chat = $DB->get_record('chat', array('id' => $cm->instance))) {
-        print_error('invalidid', 'chat');
+        throw new \moodle_exception('invalidid', 'chat');
     }
 
 } else {
     chat_update_chat_times($c);
 
     if (! $chat = $DB->get_record('chat', array('id' => $c))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $course = $DB->get_record('course', array('id' => $chat->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 }
 
