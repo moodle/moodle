@@ -688,8 +688,8 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
         $orderby = "ORDER BY $sort";
     }
 
-    $wheres = array("c.id <> :siteid");
-    $params = array('siteid'=>SITEID);
+    $wheres = ['c.id <> ' . SITEID];
+    $params = [];
 
     if (isset($USER->loginascontext) and $USER->loginascontext->contextlevel == CONTEXT_COURSE) {
         // list _only_ this course - anything else is asking for trouble...
@@ -1093,7 +1093,7 @@ function enrol_get_all_users_courses($userid, $onlyactive = false, $fields = nul
         $orderby = "ORDER BY $sort";
     }
 
-    $params = array('siteid'=>SITEID);
+    $params = [];
 
     if ($onlyactive) {
         $subwhere = "WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
@@ -1119,7 +1119,7 @@ function enrol_get_all_users_courses($userid, $onlyactive = false, $fields = nul
                  $subwhere
                    ) en ON (en.courseid = c.id)
            $ccjoin
-             WHERE c.id <> :siteid
+             WHERE c.id <> " . SITEID . "
           $orderby";
     $params['userid']  = $userid;
 
