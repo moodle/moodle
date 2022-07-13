@@ -57,6 +57,26 @@ class checkbox_column extends column_base {
         return get_string('selectquestionsforbulk', 'question');
     }
 
+    public function display_header(array $columnactions = [], string $width = ''): void {
+        global $PAGE;
+        $renderer = $PAGE->get_renderer('core_question', 'bank');
+
+        $data = [];
+        $data['sortable'] = false;
+        $data['extraclasses'] = $this->get_classes();
+        $name = get_class($this);
+        $data['sorttip'] = true;
+        $data['tiptitle'] = $this->get_title();
+        $data['tip'] = $this->get_title_tip();
+
+        $data['colname'] = $this->get_column_name();
+        $data['name'] = get_string('selectall');
+        $data['class'] = $name;
+        $data['width'] = $width;
+
+        echo $renderer->render_column_header($data);
+    }
+
     protected function display_content($question, $rowclasses): void {
         global $OUTPUT;
 

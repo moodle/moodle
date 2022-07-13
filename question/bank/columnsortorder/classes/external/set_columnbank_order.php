@@ -42,7 +42,9 @@ class set_columnbank_order extends external_api {
         return new external_function_parameters([
             'columns' => new external_multiple_structure(
                 new external_value(PARAM_TEXT, 'Plugin name for the column', VALUE_REQUIRED)
-            )
+            ),
+            'global' => new external_value(PARAM_BOOL, 'Set global config setting, rather than user preference',
+                    VALUE_DEFAULT, false),
         ]);
     }
 
@@ -54,16 +56,28 @@ class set_columnbank_order extends external_api {
     }
 
     /**
-     * Returns the columns plugin order.
+     * Set columns order.
      *
-     * @param array $columns json string representing new column order.
+     * @param array $columns List of column names in the desired order.
+     * @param bool $global Set global config setting, rather than user preference
      */
-    public static function execute(array $columns): void {
-        ['columns' => $columns] = self::validate_parameters(self::execute_parameters(), ['columns' => $columns]);
+    public static function execute(array $columns, bool $global = false): void {
+        [
+            'columns' => $columns,
+            'global' => $global,
+        ]
+            = self::validate_parameters(self::execute_parameters(),
+        [
+            'columns' => $columns,
+            'global' => $global,
+        ]);
+
         $context = context_system::instance();
         self::validate_context($context);
-        require_capability('moodle/category:manage', $context);
+        if ($global) {
+            require_capability('moodle/site:config', $context);
+        }
 
-        column_manager::set_column_order($columns);
+        column_manager::set_column_order($columns, $global);
     }
 }

@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * qbank_columnsortorder external functions and service definitions.
+ *
  * @package    qbank_columnsortorder
  * @category   webservice
  * @copyright  2021 Catalyst IT Australia Pty Ltd
@@ -28,9 +28,21 @@ defined('MOODLE_INTERNAL') || die();
 
 $functions = [
     'qbank_columnsortorder_set_columnbank_order' => [
-        'classname'   => 'qbank_columnsortorder\external\set_columnbank_order',
+        'classname' => 'qbank_columnsortorder\external\set_columnbank_order',
         'description' => 'Sets question columns order in database',
-        'type'        => 'write',
-        'ajax'        => true,
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'qbank_columnsortorder_set_hidden_columns' => [
+        'classname' => 'qbank_columnsortorder\external\set_hidden_columns',
+        'description' => 'Hidden Columns',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'qbank_columnsortorder_set_column_size' => [
+        'classname' => 'qbank_columnsortorder\external\set_column_size',
+        'description' => 'Column size',
+        'type' => 'write',
+        'ajax' => true,
     ],
 ];

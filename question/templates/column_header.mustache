@@ -43,31 +43,37 @@
     Example context (json):
     {
         "sortable": false,
-        "extraclasses": "checkbox pr-3",
-        "tiptitle": "<input id=\"qbheadercheckbox\" name=\"qbheadercheckbox\" type=\"checkbox\"  value=\"1\"\n       data-action=\"toggle\"\n       data-toggle=\"master\"\n       data-togglegroup=\"qbank\"\n       data-toggle-selectall=\"Select all\"\n       data-toggle-deselectall=\"Deselect all\"\n       \n\/>\n    <label for=\"qbheadercheckbox\" class=\"accesshide\">Select all<\/label>",
+        "extraclasses": "checkbox pr-1",
+        "tiptitle": "<input id=\"qbheadercheckbox\" name=\"qbheadercheckbox\" type=\"checkbox\"  value=\"1\" data-action=\"toggle\" data-toggle=\"master\" data-togglegroup=\"qbank\" data-toggle-selectall=\"Select all\" data-toggle-deselectall=\"Deselect all\"><label for=\"qbheadercheckbox\" class=\"accesshide\">Select all<\/label>",
         "sorttip": true,
-        "tip": "Select questions for bulk actions"
+        "tip": "Select questions for bulk actions",
+        "class": "plugin_class",
+        "name": "plugin_name"
     }
 }}
-<th class="header {{extraclasses}}" scope="col">
-    {{#title}}
-        <div class="title">{{title}}</div>
-    {{/title}}
-    {{^sortable}}
-        {{^sorttip}}
-            {{tiptitle}}
-        {{/sorttip}}
-        {{#sorttip}}
-            <span title="{{tip}}">{{{tiptitle}}}</span>
-        {{/sorttip}}
-    {{/sortable}}
+<th class="header align-top {{extraclasses}}" scope="col" data-pluginname="{{class}}" data-name="{{name}}" {{#width}}style="width: {{width}};"{{/width}}>
+    <div class="header-container">
+        <div class="header-text">
+        {{#title}}
+            <div class="title mr-1">{{title}}</div>
+        {{/title}}
+        {{^sortable}}
+            {{^sorttip}}
+                <span class="mr-1">{{tiptitle}}</span>
+            {{/sorttip}}
+            {{#sorttip}}
+                <span class="mr-1" title="{{tip}}">{{{tiptitle}}}</span>
+            {{/sorttip}}
+        {{/sortable}}
+        {{#help}}
+            {{>core/help_icon}}
+        {{/help}}
+        {{#actionmenu}}{{>core/action_menu}}{{/actionmenu}}
+        </div>
+    </div>
     {{#sortable}}
         <div class="sorters">
             {{{sortlinks}}}
         </div>
     {{/sortable}}
-    {{#help}}
-        {{>core/help_icon}}
-    {{/help}}
 </th>
-

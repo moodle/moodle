@@ -41,6 +41,9 @@ abstract class column_base extends view_component {
     /** @var bool determine whether the column is td or th. */
     protected $isheading = false;
 
+    /** @var bool determine whether the column is visible */
+    public $isvisible = true;
+
     /**
      * Set the column as heading
      */
@@ -78,8 +81,10 @@ abstract class column_base extends view_component {
 
     /**
      * Output the column header cell.
+     *
+     * @params column_action_base[] A list of column actions to include in the header.
      */
-    public function display_header(): void {
+    public function display_header(array $columnactions = [], string $width = ''): void {
         global $PAGE;
         $renderer = $PAGE->get_renderer('core_question', 'bank');
 
@@ -113,6 +118,16 @@ abstract class column_base extends view_component {
         $help = $this->help_icon();
         if ($help) {
             $data['help'] = $help->export_for_template($renderer);
+        }
+
+        $data['colname'] = $this->get_column_name();
+        $data['name'] = $title;
+        $data['class'] = $name;
+        $data['width'] = $width;
+        if (!empty($columnactions)) {
+            $actions = array_map(fn($columnaction) => $columnaction->get_action_menu_link($this), $columnactions);
+            $actionmenu = new \action_menu($actions);
+            $data['actionmenu'] = $actionmenu->export_for_template($renderer);
         }
 
         echo $renderer->render_column_header($data);
@@ -216,7 +231,10 @@ abstract class column_base extends view_component {
      */
     protected function display_start($question, $rowclasses): void {
         $tag = 'td';
-        $attr = ['class' => $this->get_classes()];
+        $attr = [
+            'class' => $this->get_classes(),
+            'data-pluginname' => get_class($this),
+        ];
         if ($this->isheading) {
             $tag = 'th';
             $attr['scope'] = 'row';
@@ -395,4 +413,16 @@ abstract class column_base extends view_component {
         }
     }
 
+    /**
+     * Output the column with an example value.
+     *
+     * By default, this will call $this->display() using whatever dummy data is passed in. Columns can override this
+     * to provide example output without requiring valid data.
+     *
+     * @param \stdClass $question the row from the $question table, augmented with extra information.
+     * @param string $rowclasses CSS class names that should be applied to this row of output.
+     */
+    public function display_preview(\stdClass $question, string $rowclasses): void {
+        $this->display($question, $rowclasses);
+    }
 }

@@ -21,8 +21,14 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/questionlib.php');
 
 use context_system;
+use core_question\local\bank\column_action_base;
+use core_question\local\bank\column_base;
+use core_question\local\bank\column_manager_base;
 use core_question\local\bank\question_edit_contexts;
 use core_question\local\bank\view;
+use qbank_columnsortorder\local\bank\column_action_move;
+use qbank_columnsortorder\local\bank\column_action_remove;
+use qbank_columnsortorder\local\bank\column_action_resize;
 use moodle_url;
 
 /**
@@ -33,40 +39,113 @@ use moodle_url;
  * @author     Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class column_manager {
+class column_manager extends column_manager_base {
     /**
-     * @var array|bool Column order as set in config_plugins 'class' => 'position', ie: question_type_column => 3.
+     * @var array Column order as set in config_plugins 'class' => 'position', ie: question_type_column => 3.
      */
     public $columnorder;
 
     /**
-     * @var array|bool Disabled columns in config_plugins table.
+     * @var array hidden columns.
+     */
+    public $hiddencolumns;
+
+    /**
+     * @var array columns with size.
+     */
+    public $colsize;
+
+    /**
+     * @var array Disabled columns in config_plugins table.
      */
     public $disabledcolumns;
 
     /**
      * Constructor for column_manager class.
      *
+     * @param bool $globalsettings Only use the global default settings, ignoring user preferences?
      */
-    public function __construct() {
-        $this->columnorder = get_config('qbank_columnsortorder', 'enabledcol');
-        $this->disabledcolumns = get_config('qbank_columnsortorder', 'disabledcol');
+    public function __construct(bool $globalsettings = false) {
+        $this->columnorder = $this->setup_property('enabledcol', $globalsettings);
+        $this->hiddencolumns = $this->setup_property('hiddencols', $globalsettings);
+        $this->colsize = $this->setup_property('colsize', $globalsettings, 'json');
+        $this->disabledcolumns = $this->setup_property('disabledcol', $globalsettings);
+
         if ($this->columnorder) {
-            $this->columnorder = array_flip(explode(',', $this->columnorder));
+            $this->columnorder = array_flip($this->columnorder);
         }
         if ($this->disabledcolumns) {
-            $this->disabledcolumns = array_flip(explode(',', $this->disabledcolumns));
+            $this->disabledcolumns = array_flip($this->disabledcolumns);
         }
+    }
+
+    /**
+     * Return the value for the given property, based the saved user preference or config setting.
+     *
+     * If no value is currently stored, returns an empty array.
+     *
+     * @param string $setting The identifier used for the saved config and user preference settings.
+     * @param bool $global Only get the global default, ignoring the user preference?
+     * @param string $encoding The encoding used to store the property - csv or json
+     * @return array
+     */
+    private function setup_property(string $setting, bool $global = false, $encoding = 'csv'): array {
+        $value = get_config('qbank_columnsortorder', $setting);
+        if (!$global) {
+            $value = get_user_preferences("qbank_columnsortorder_{$setting}", $value);
+        }
+        if (empty($value)) {
+            return [];
+        }
+        return $encoding == 'csv' ? explode(',', $value) : json_decode($value);
     }
 
     /**
      * Sets column order in the qbank_columnsortorder plugin config.
      *
      * @param array $columns Column order to set.
+     * @param bool $global save this as a global default, rather than a user preference?
      */
-    public static function set_column_order(array $columns) : void {
+    public static function set_column_order(array $columns, bool $global = false) : void {
         $columns = implode(',', $columns);
-        set_config('enabledcol', $columns, 'qbank_columnsortorder');
+        self::save_preference('enabledcol', $columns, $global);
+    }
+
+    /**
+     * Hidden Columns.
+     *
+     * @param array $columns hidden columns
+     * @param bool $global save this as a global default, rather than a user preference?
+     */
+    public static function set_hidden_columns(array $columns, bool $global = false) : void {
+        $columns = implode(',', $columns);
+        self::save_preference('hiddencols', $columns, $global);
+    }
+
+    /**
+     * Column size.
+     *
+     * @param string $sizes columns with width
+     * @param bool $global save this as a global default, rather than a user preference?
+     */
+    public static function set_column_size(string $sizes, bool $global = false) : void {
+        self::save_preference('colsize', $sizes, $global);
+    }
+
+    /**
+     * Save Preferences.
+     *
+     * @param string $name name of a configuration
+     * @param string $value value of a configuration
+     * @param bool $global save this as a global default, rather than a user preference?
+     */
+    private static function save_preference(string $name, string $value, bool $global = false): void {
+        if ($global) {
+            require_capability('moodle/site:config', context_system::instance());
+            set_config($name, $value, 'qbank_columnsortorder');
+        } else {
+            set_user_preference("qbank_columnsortorder_{$name}", $value);
+        }
     }
 
     /**
@@ -74,12 +153,12 @@ class column_manager {
      *
      * @return view
      */
-    protected function get_questionbank(): view {
+    public function get_questionbank(): view {
         $course = (object) ['id' => 0];
         $context = context_system::instance();
         $contexts = new question_edit_contexts($context);
         // Dummy call to get the objects without error.
-        $questionbank = new view($contexts, new moodle_url('/question/dummyurl.php'), $course, null);
+        $questionbank = new view($contexts, new moodle_url('/question/bank/columnsortorder/sortcolumns.php'), $course, null);
         return $questionbank;
     }
 
@@ -249,5 +328,63 @@ class column_manager {
             return $properorder;
         }
         return $ordertosort;
+    }
+
+    /**
+     * Given an array of columns, set the isvisible attribute according to $this->hiddencolumns.
+     *
+     * @param column_base[] $columns
+     * @return array
+     */
+    public function set_columns_visibility(array $columns): array {
+        foreach ($columns as $column) {
+            if (!is_object($column)) {
+                continue;
+            }
+            $column->isvisible = !in_array(get_class($column), $this->hiddencolumns);
+        }
+        return $columns;
+    }
+
+    /**
+     * Return $this->colsize mapped as an array of column name => width, excluding empty sizes.
+     *
+     * @return array
+     */
+    public function get_colsize_map(): array {
+        $sizes = array_reduce($this->colsize, function($result, $colsize) {
+            $result[$colsize->column] = $colsize->width;
+            return $result;
+        }, []);
+        return array_filter($sizes);
+    }
+
+    /**
+     * Return an array of hidden columns as an array of class => column name
+     *
+     * @return array
+     */
+    public function get_hidden_columns(): array {
+        return array_reduce($this->hiddencolumns, function($result, $hiddencolumn) {
+            $result[$hiddencolumn] = (new $hiddencolumn($this->get_questionbank()))->get_title();
+            return $result;
+        }, []);
+    }
+
+    public function get_column_width(column_base $column): string {
+        $colsizemap = $this->get_colsize_map();
+        $columnclass = get_class($column);
+        if (array_key_exists($columnclass, $colsizemap)) {
+            return $colsizemap[$columnclass];
+        }
+        return parent::get_column_width($column);
+    }
+
+    public function get_column_actions(view $qbank): array {
+        return [
+            new column_action_move($qbank),
+            new column_action_remove($qbank),
+            new column_action_resize($qbank),
+        ];
     }
 }

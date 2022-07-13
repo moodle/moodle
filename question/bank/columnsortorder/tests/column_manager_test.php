@@ -23,7 +23,6 @@ use context_course;
 use core_question\local\bank\question_edit_contexts;
 use core_question\local\bank\view;
 use moodle_url;
-use qbank_columnsortorder\external\set_columnbank_order;
 
 global $CFG;
 require_once($CFG->dirroot . '/question/tests/fixtures/testable_core_question_column.php');
@@ -36,10 +35,9 @@ require_once($CFG->dirroot . '/question/classes/external.php');
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \qbank_columnsortorder\column_manager
+ * @covers \qbank_columnsortorder\column_manager
  */
 class column_manager_test extends advanced_testcase {
-
 
     /** @var \stdClass course record. */
     protected $course;
@@ -52,6 +50,9 @@ class column_manager_test extends advanced_testcase {
 
     /** @var \qbank_columnsortorder\column_manager  */
     protected $columnmanager;
+
+    /** @var string */
+    protected $randomstring;
 
     /**
      * Setup testcase.
@@ -69,10 +70,74 @@ class column_manager_test extends advanced_testcase {
 
         // Get current view columns.
         $this->columns = [];
-        foreach ($this->questionbank->get_visiblecolumns() as $columnn) {
-            $this->columns[] = get_class($columnn);
+        foreach ($this->questionbank->get_visiblecolumns() as $column) {
+            $this->columns[] = get_class($column);
         }
         $this->columnmanager = new column_manager();
+        $this->randomstring = random_string();
+    }
+
+    public function test_settings_provider(): array {
+        return [
+            'Test set_column_order' => [
+                'setting' => 'enabledcol',
+                'function' => 'set_column_order',
+                'dataproperty' => 'columns',
+                'csv' => true
+            ],
+            'Test set_hidden_columns' => [
+                'setting' => 'hiddencols',
+                'function' => 'set_hidden_columns',
+                'dataproperty' => 'columns',
+                'csv' => true
+            ],
+            'Test set_column_size' => [
+                'setting' => 'colsize',
+                'function' => 'set_column_size',
+                'dataproperty' => 'randomstring',
+                'csv' => false
+            ]
+        ];
+    }
+
+    /**
+     * Test setting config settings
+     *
+     * @dataProvider test_settings_provider
+     * @param string $setting The name of the setting being saved
+     * @param string $function The name of the function being called
+     * @param string $dataproperty The property of the test class to pass to the function.
+     * @param bool $csv True of the data is stored as a comma-separated list.
+     * @return void
+     */
+    public function test_settings(string $setting, string $function, string $dataproperty, bool $csv): void {
+        $data = $this->{$dataproperty};
+        $this->assertFalse(get_config('qbank_columnsortorder', $setting));
+        $this->assertEmpty(get_user_preferences('qbank_columnsortorder_' . $setting));
+        column_manager::{$function}($data);
+        $expected = $csv ? implode(',', $data) : $data;
+        $this->assertEquals($expected, get_config('qbank_columnsortorder', $setting));
+        $this->assertEmpty(get_user_preferences('qbank_columnsortorder_' . $setting));
+    }
+
+    /**
+     * Test setting user preferences
+     *
+     * @dataProvider test_settings_provider
+     * @param string $setting The name of the setting being saved
+     * @param string $function The name of the function being called
+     * @param string $dataproperty The property of the test class to pass to the function.
+     * @param bool $csv True of the data is stored as a comma-separated list.
+     * @return void
+     */
+    public function test_settings_user(string $setting, string $function, string $dataproperty, bool $csv): void {
+        $data = $this->{$dataproperty};
+        $this->assertFalse(get_config('qbank_columnsortorder', $setting));
+        $this->assertEmpty(get_user_preferences('qbank_columnsortorder_' . $setting));
+        column_manager::{$function}($data, 'qbank_columnsortorder');
+        $expected = $csv ? implode(',', $data) : $data;
+        $this->assertFalse(get_config('qbank_columnsortorder', $setting));
+        $this->assertEquals($expected, get_user_preferences('qbank_columnsortorder_' . $setting));
     }
 
     /**
@@ -91,45 +156,59 @@ class column_manager_test extends advanced_testcase {
     }
 
     /**
-     * Test function sort columns method.
+     * The get_sorted_columns method should return the provided columns sorted according to enabledcol setting.
      *
-     * @covers ::get_sorted_columns
+     * @return void
      */
     public function test_get_sorted_columns(): void {
-        $neworder = $this->columnmanager->get_sorted_columns($this->columns);
+        $neworder = $this->columns;
         shuffle($neworder);
-        set_columnbank_order::execute($neworder);
-        $currentconfig = get_config('qbank_columnsortorder', 'enabledcol');
-        $currentconfig = explode(',', $currentconfig);
-        ksort($currentconfig);
-        $this->assertSame($neworder, $currentconfig);
+        set_config('enabledcol', implode(',', $neworder), 'qbank_columnsortorder');
+
+        $this->columnmanager = new column_manager();
+        $columnstosort = [];
+        foreach ($this->columns as $key => $column) {
+            $colname = explode('\\', $column);
+            $columnstosort[end($colname)] = $column;
+        }
+
+        $sortedcolumns = $this->columnmanager->get_sorted_columns($columnstosort);
+
+        $expectedorder = ['checkbox_column' => 0];
+        foreach ($neworder as $key => $column) {
+            $colname = explode('\\', $column);
+            $expectedorder[end($colname)] = $column;
+        }
+        $this->assertSame($expectedorder, $sortedcolumns);
     }
 
     /**
-     * Test function enabing and disablingcolumns.
+     * Test disabled columns are removed from enabledcol setting and added to disabledcol setting.
      *
-     * @covers ::enable_columns
-     * @covers ::disable_columns
+     * @return void
      */
-    public function test_enable_disable_columns(): void {
-        $neworder = $this->columnmanager->get_sorted_columns($this->columns);
-        shuffle($neworder);
-        set_columnbank_order::execute($neworder);
-        $currentconfig = get_config('qbank_columnsortorder', 'enabledcol');
-        $currentconfig = explode(',', $currentconfig);
-        $class = $currentconfig[array_rand($currentconfig, 1)];
-        $randomplugintodisable = explode('\\', $class)[0];
-        $olddisabledconfig = get_config('qbank_columnsortorder', 'disabledcol');
-        $this->columnmanager->disable_columns($randomplugintodisable);
-        $newdisabledconfig = get_config('qbank_columnsortorder', 'disabledcol');
-        $this->assertNotEquals($olddisabledconfig, $newdisabledconfig);
-        $this->columnmanager->enable_columns($randomplugintodisable);
-        $newdisabledconfig = get_config('qbank_columnsortorder', 'disabledcol');
-        $this->assertEmpty($newdisabledconfig);
-        $enabledconfig = get_config('qbank_columnsortorder', 'enabledcol');
-        $contains = strpos($enabledconfig, $randomplugintodisable);
-        $this->assertNotFalse($contains);
-        $this->assertIsInt($contains);
+    public function test_disable_columns(): void {
+        // Set up enabledcol with all plugins.
+        set_config('enabledcol', implode(',', $this->columns), 'qbank_columnsortorder');
+        $this->columnmanager = new column_manager();
+        $this->assertFalse(get_config('qbank_columnsortorder', 'disabledcol'));
+
+        // Disable a random plugin.
+        $plugincolumns = array_filter($this->columns, fn($column) => str_starts_with($column, 'qbank_'));
+        $randomcolumn = $plugincolumns[array_rand($plugincolumns, 1)];
+        $randomplugin = explode('\\', $randomcolumn)[0];
+        $this->columnmanager->disable_columns($randomplugin);
+
+        // The enabledcol setting should now contain all columns except the disabled plugin.
+        $expectedconfig = array_filter($this->columns, fn($column) => !str_starts_with($column, $randomplugin));
+        sort($expectedconfig);
+        $newconfig = explode(',', get_config('qbank_columnsortorder', 'enabledcol'));
+        sort($newconfig);
+        $this->assertEquals($expectedconfig, $newconfig);
+        $this->assertNotContains($randomcolumn, $newconfig);
+        // The disabledcol setting should only contain columns from the disabled plugin.
+        $disabledconfig = explode(',', get_config('qbank_columnsortorder', 'disabledcol'));
+        array_walk($disabledconfig, fn($column) => $this->assertStringStartsWith($randomplugin, $column));
     }
 
     /**
@@ -158,5 +237,69 @@ class column_manager_test extends advanced_testcase {
         $contains = strpos($enabledconfig, $randomplugintodisable);
         $this->assertNotFalse($contains);
         $this->assertIsInt($contains);
+    }
+
+    /**
+     * Test enabled columns are removed from disabledcol setting and added to enabledcol setting.
+     *
+     * @return void
+     */
+    public function test_enable_columns() {
+        // Set up disablecol with columns from 2 random plugins, and enabledcol with all other columns.
+        $plugincolumns = array_filter($this->columns, fn($column) => str_starts_with($column, 'qbank_'));
+        $plugins = array_unique(array_map(fn($column) => explode('\\', $column)[0], $plugincolumns));
+        $randomplugins = array_rand($plugins, 2);
+        $randomplugin1 = $plugins[$randomplugins[0]];
+        $randomplugin2 = $plugins[$randomplugins[1]];
+
+        $disabledcols = array_filter($this->columns,
+                fn($column) => str_starts_with($column, $randomplugin1) || str_starts_with($column, $randomplugin2));
+        $enabledcols = array_diff($this->columns, $disabledcols);
+
+        set_config('enabledcol', implode(',', $enabledcols), 'qbank_columnsortorder');
+        set_config('disabledcol', implode(',', $disabledcols), 'qbank_columnsortorder');
+
+        // Enable one of the disabled plugins.
+        $this->columnmanager = new column_manager();
+        $this->columnmanager->enable_columns($randomplugin1);
+        // The enabledcol setting should now contain all columns except the remaining disabled plugin.
+        $expectedenabled = array_filter($this->columns, fn($column) => !str_starts_with($column, $randomplugin2));
+        $expecteddisabled = array_filter($disabledcols, fn($column) => str_starts_with($column, $randomplugin2));
+        sort($expectedenabled);
+        sort($expecteddisabled);
+        $newenabled = explode(',', get_config('qbank_columnsortorder', 'enabledcol'));
+        sort($newenabled);
+        $this->assertEquals($expectedenabled, $newenabled);
+        $this->assertNotContains(reset($expecteddisabled), $newenabled);
+        // The disabledcol setting should only contain columns from the remaining disabled plugin.
+        $newdisabled = explode(',', get_config('qbank_columnsortorder', 'disabledcol'));
+        array_walk($newdisabled, fn($column) => $this->assertStringStartsWith($randomplugin2, $column));
+    }
+
+    /**
+     * Test that get_disabled_columns returns names of all the columns in the disabledcol setting
+     *
+     * @return void
+     */
+    public function test_get_disabled_columns(): void {
+        // Set up disablecol with columns from 2 random plugins, and enabledcol with all other columns.
+        $plugincolumns = array_filter($this->columns, fn($column) => str_starts_with($column, 'qbank_'));
+        $randomcolumn = $plugincolumns[array_rand($plugincolumns, 1)];
+        $randomplugin = explode('\\', $randomcolumn)[0];
+
+        $disabledcols = array_filter($this->columns, fn($column) => str_starts_with($column, $randomplugin));
+
+        set_config('disabledcol', implode(',', $disabledcols), 'qbank_columnsortorder');
+
+        $this->columnmanager = new column_manager();
+        $expecteddisablednames = [];
+        foreach ($disabledcols as $disabledcol) {
+            $columnobject = new $disabledcol($this->questionbank);
+            $expecteddisablednames[] = (object) [
+                'disabledname' => $columnobject->get_title(),
+            ];
+        }
+        $disablednames = $this->columnmanager->get_disabled_columns();
+        $this->assertEquals($expecteddisablednames, $disablednames);
     }
 }
