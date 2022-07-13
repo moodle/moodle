@@ -529,6 +529,12 @@ function local_kaltura_lti1p3_get_launch_data($module, $withblocks, $editor = nu
 	if (isset($typeconfig['customparameters'])) {
 		$customstr = $typeconfig['customparameters'];
 	}
+
+    // Add custom parameters
+    $requestparams['custom_publishdata'] = local_kaltura_get_kaf_publishing_data();
+    $requestparams['custom_publishdata_encoded'] = '1';
+    $requestparams['custom_moodle_plugin_version'] = local_kaltura_get_config()->version;
+
 	$requestparams = array_merge($requestparams, lti_build_custom_parameters(null, $instance, (object)$module, $allparams, $customstr,
 		$module->instructorcustomparameters, null));
 
