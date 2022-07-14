@@ -458,12 +458,17 @@ function local_kaltura_lti_get_type_type_config($ltirequest, $kaltura_config) {
 
 	$type->typeid = $ltirequest['module'];
 
-	$type->lti_toolurl = $kaltura_config->kaf_uri;
-	// The Kaltura tool URL includes the account partner id.
-	if (!preg_match('/\/$/',$type->lti_toolurl)) {
-		$type->lti_toolurl .= '/';
-	}
-	$type->lti_toolurl .= local_kaltura_get_endpoint($ltirequest['module']);
+	if (empty($ltirequest['source'])) {
+        $type->lti_toolurl = $kaltura_config->kaf_uri;
+        // The Kaltura tool URL includes the account partner id.
+        if (!preg_match('/\/$/',$type->lti_toolurl)) {
+            $type->lti_toolurl .= '/';
+        }
+        $type->lti_toolurl .= local_kaltura_get_endpoint($ltirequest['module']);
+    } else {
+        $type->lti_toolurl = $ltirequest['source'];
+    }
+
 
 	$type->lti_ltiversion = $kaltura_config->lti_version;
 
