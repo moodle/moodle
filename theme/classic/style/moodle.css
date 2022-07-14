@@ -11727,6 +11727,9 @@ ul {
   bottom: 2rem;
   right: 2rem; }
 
+.hasstickyfooter .btn-footer-popover {
+  bottom: calc(2rem + 50px); }
+
 .popover.footer .popover-body {
   padding: 0; }
   .popover.footer .popover-body .footer-section a {
@@ -19869,6 +19872,11 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
 body.behat-site .fixed-top {
   position: absolute; }
 
+body.behat-site.hasstickyfooter .stickyfooter,
+body.behat-site .stickyfooter {
+  position: inherit;
+  z-index: inherit; }
+
 body.behat-site .dropdown-item {
   margin-top: 4px !important;
   /* stylelint-disable declaration-no-important */ }
@@ -19947,6 +19955,24 @@ html,
 body {
   height: 100%; }
 
+.stickyfooter {
+  position: fixed;
+  right: 0;
+  left: 0;
+  height: 51px;
+  bottom: -50px;
+  transition: bottom .5s;
+  z-index: 1000;
+  overflow: hidden; }
+
+.hasstickyfooter .stickyfooter {
+  bottom: 0; }
+
+/* Standard components fixes for sticky footer. */
+.stickyfooter ul.pagination {
+  margin-bottom: 0.25rem; }
+
+/* Breakpoints fixes. */
 @media (min-width: 576px) {
   #page-wrapper {
     height: 100%;
@@ -20570,6 +20596,10 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   .drawer-right {
     top: 50px;
     height: calc(100vh - 50px); }
+  .hasstickyfooter .drawer-left,
+  .hasstickyfooter .drawer-right {
+    top: 50px;
+    height: calc(100vh - 50px - 50px); }
   #page.drawers {
     position: relative;
     overflow-y: auto;
@@ -20594,7 +20624,9 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
         right: calc(315px + 2rem); }
     #page.drawers.show-drawer-left.show-drawer-right {
       margin-left: 285px;
-      margin-right: 315px; } }
+      margin-right: 315px; }
+    #page.drawers.hasstickyfooter {
+      height: calc(100vh - 50px - 50px); } }
 
 .drawercontrolbuttons {
   margin-top: 92px; }
@@ -22075,3 +22107,10 @@ body {
 .block.block_settings #settingsnav {
   padding-top: 0 !important;
   /* stylelint-disable-line declaration-no-important */ }
+
+#page-footer {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem; }
+
+body.hasstickyfooter #page-footer {
+  padding-bottom: calc(1rem * .5 + 50px); }

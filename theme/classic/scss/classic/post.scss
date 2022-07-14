@@ -263,3 +263,12 @@
         padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
     }
 }
+
+#page-footer {
+    padding-top: $spacer * .5;
+    padding-bottom: $spacer * .5;
+}
+
+body.hasstickyfooter #page-footer {
+    padding-bottom: calc(#{$spacer} * .5 + #{$navbar-height});
+}
