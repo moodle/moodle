@@ -782,6 +782,13 @@ function local_kaltura_get_config() {
     if (!empty($configsettings->kaf_uri) && !preg_match('#^https?://#', $configsettings->kaf_uri)) {
         $configsettings->kaf_uri = 'http://'.$configsettings->kaf_uri;
     }
+
+    if (!empty($configsettings->kaf_uri) && $configsettings->lti_version == LTI_VERSION_1P3) {
+        $configsettings->public_keyset_url = $configsettings->kaf_uri . '/hosted/index/lti-advantage-key-set';
+        $configsettings->launch_url = $configsettings->kaf_uri . '/hosted/index/oidc-init';
+        $configsettings->redirection_uris = $configsettings->kaf_uri . '/hosted/index/oauth2-launch';
+    }
+
     return $configsettings;
 }
 
