@@ -105,19 +105,8 @@ if ($hassiteconfig) {
 		set_config(KALTURA_PLUGIN_NAME, 'client_id', $clientid);
 
 	}
+
 	$adminsetting = new admin_setting_description('client_id', 'Client ID', '<input type="text" class="form-control" size="30" value="'.$clientid.'" disabled/><p>Should be used in the KAF hosted module</p>');
-	$adminsetting->plugin = KALTURA_PLUGIN_NAME;
-	$settings->add($adminsetting);
-
-	$adminsetting = new admin_setting_configtext('public_keyset_url', get_string('public_keyset_url', 'local_kaltura'), get_string('public_keyset_desc', 'local_kaltura'), '', PARAM_URL);
-	$adminsetting->plugin = KALTURA_PLUGIN_NAME;
-	$settings->add($adminsetting);
-
-	$adminsetting = new admin_setting_configtext('launch_url', get_string('launch_url', 'local_kaltura'), get_string('launch_url_desc', 'local_kaltura'), '', PARAM_URL);
-	$adminsetting->plugin = KALTURA_PLUGIN_NAME;
-	$settings->add($adminsetting);
-
-	$adminsetting = new admin_setting_configtextarea('redirection_uris', get_string('redirection_uris', 'local_kaltura'), get_string('redirection_uris_desc', 'local_kaltura'), '', PARAM_URL);
 	$adminsetting->plugin = KALTURA_PLUGIN_NAME;
 	$settings->add($adminsetting);
 
@@ -132,9 +121,6 @@ if ($hassiteconfig) {
 
 	$settings->hide_if(KALTURA_PLUGIN_NAME.'/adminsecret', KALTURA_PLUGIN_NAME .'/lti_version', 'eq', LTI_VERSION_1P3);
 	$settings->hide_if(KALTURA_PLUGIN_NAME.'/client_id', KALTURA_PLUGIN_NAME. '/lti_version', 'eq', LTI_VERSION_1);
-	$settings->hide_if(KALTURA_PLUGIN_NAME.'/public_keyset_url', KALTURA_PLUGIN_NAME. '/lti_version', 'eq', LTI_VERSION_1);
-	$settings->hide_if(KALTURA_PLUGIN_NAME.'/launch_url', KALTURA_PLUGIN_NAME . '/lti_version', 'eq', LTI_VERSION_1);
-	$settings->hide_if(KALTURA_PLUGIN_NAME.'/redirection_uris', KALTURA_PLUGIN_NAME . '/lti_version', 'eq', LTI_VERSION_1);
 
     if (isset($configsettings->migration_yes) && $configsettings->migration_yes == 1) {
         $url = new moodle_url('/local/kaltura/migration.php');
