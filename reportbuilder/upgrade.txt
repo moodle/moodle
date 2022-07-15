@@ -2,6 +2,9 @@ This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
 === 4.1 ===
+
+* New method `set_filter_form_default` in base system report class, to override whether the default filters form
+  should be shown for a report
 * 'set_default_per_page' and 'get_default_per_page' methods have been added to \local\report\base class
   to manage the default displayed rows per page.
 * Added two new methods in the datasource class:
