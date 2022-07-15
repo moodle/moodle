@@ -866,11 +866,8 @@ class auth_plugin_ldap extends auth_plugin_base {
             if (!empty($users)) {
                 print_string('userentriestoupdate', 'auth_ldap', count($users));
 
-                $transaction = $DB->start_delegated_transaction();
-                $xcount = 0;
-                $maxxcount = 100;
-
                 foreach ($users as $user) {
+                    $transaction = $DB->start_delegated_transaction();
                     echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id));
                     $userinfo = $this->get_userinfo($user->username);
                     if (!$this->update_user_record($user->username, $updatekeys, true,
@@ -878,12 +875,11 @@ class auth_plugin_ldap extends auth_plugin_base {
                         echo ' - '.get_string('skipped');
                     }
                     echo "\n";
-                    $xcount++;
 
                     // Update system roles, if needed.
                     $this->sync_roles($user);
+                    $transaction->allow_commit();
                 }
-                $transaction->allow_commit();
                 unset($users); // free mem
             }
         } else { // end do updates
@@ -904,8 +900,8 @@ class auth_plugin_ldap extends auth_plugin_base {
             print_string('userentriestoadd', 'auth_ldap', count($add_users));
             $errors = 0;
 
-            $transaction = $DB->start_delegated_transaction();
             foreach ($add_users as $user) {
+                $transaction = $DB->start_delegated_transaction();
                 $user = $this->get_userinfo_asobj($user->username);
 
                 // Prep a few params
@@ -947,7 +943,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                 // Add roles if needed.
                 $this->sync_roles($euser);
-
+                $transaction->allow_commit();
             }
 
             // Display number of user creation errors, if any.
@@ -955,7 +951,6 @@ class auth_plugin_ldap extends auth_plugin_base {
                 print_string('invalidusererrors', 'auth_ldap', $errors);
             }
 
-            $transaction->allow_commit();
             unset($add_users); // free mem
         } else {
             print_string('nouserstobeadded', 'auth_ldap');
