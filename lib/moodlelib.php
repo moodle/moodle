@@ -206,7 +206,10 @@ define('PARAM_RAW_TRIMMED', 'raw_trimmed');
 define('PARAM_SAFEDIR',  'safedir');
 
 /**
- * PARAM_SAFEPATH - several PARAM_SAFEDIR joined by "/", suitable for include() and require(), plugin paths, etc.
+ * PARAM_SAFEPATH - several PARAM_SAFEDIR joined by "/", suitable for include() and require(), plugin paths
+ * and other references to Moodle code files.
+ *
+ * This is NOT intended to be used for absolute paths or any user uploaded files.
  */
 define('PARAM_SAFEPATH',  'safepath');
 
