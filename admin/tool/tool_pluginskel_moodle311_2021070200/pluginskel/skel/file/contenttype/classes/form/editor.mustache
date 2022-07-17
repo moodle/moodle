@@ -1,0 +1,162 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template file/contenttype/classes/form/editor
+
+    Contenttype content manager class.
+
+    Context variables required for this template:
+    * component
+    * copyright
+
+    Example context (json):
+    {
+        "component": "local_test",
+        "copyright": "2021 David Mudrák <david@moodle.com>"
+    }
+}}
+{{< common/boilerplate_php }}
+{{$ description }}Defines the form for editing an {{ component_name }} content.
+
+ * This file is the integration between a content type editor and the content
+ * bank creation form.{{/ description }}
+{{$ package }}{{ component }}{{/ package }}
+{{$ copyright }}{{ copyright }}{{/ copyright }}
+{{$ namespace }}
+namespace {{ component }}\form;
+{{/ namespace }}
+{{$ use }}
+use {{ component }}\content;
+use {{ component }}\contenttype;
+use core_contentbank\form\edit_content;
+use context_user;
+use context;
+use stdClass;
+{{/ use }}
+{{/ common/boilerplate_php }}
+class editor extends edit_content {
+
+    /**
+     * Defines the form fields.
+     */
+    protected function definition() {
+        global $DB, $OUTPUT;
+
+        $mform = $this->_form;
+
+        // This method adds the save and cancel buttons.
+        $this->add_action_buttons();
+
+        // Id of the content to edit (null if it's creation).
+        $id = $this->_customdata['id'] ?? null;
+        $contextid = $this->_customdata['contextid'];
+
+        $name = '';
+
+        if ($id) {
+            $record = $DB->get_record('contentbank_content', ['id' => $id]);
+            $content = new content($record);
+
+            $file = $content->get_file();
+            // LOAD CONTENTS FROM THE PUBLIC FILE IF NECESSARY.
+
+            $configdata = $content->get_configdata();
+
+            $name = $content->get_name();
+        }
+
+        // Content name.
+        $mform->addElement('text', 'name', get_string('name'));
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required');
+        $mform->setDefault('name', $name);
+
+        // ADD ANY EXTRA FIELD HERE.
+
+        $this->add_action_buttons();
+    }
+
+    /**
+     * Modify or create an html content from the form data.
+     *
+     * @param stdClass $data Form data to create or modify an html content.
+     *
+     * @return int The id of the edited or created content.
+     */
+    public function save_content(stdClass $data): int {
+        global $DB, $USER;
+
+        if (empty($data->id)) {
+            // Create a new content.
+            $context = context::instance_by_id($data->contextid, MUST_EXIST);
+            $contenttype = new contenttype($context);
+            $record = new stdClass();
+            $content = $contenttype->create_content($record);
+        } else {
+            // Update current content.
+            $record = $DB->get_record('contentbank_content', ['id' => $data->id]);
+            $content = new content($record);
+        }
+
+        // Update content.
+        $content->set_name($data->name);
+
+        // In case the plugin is compatible with the Content bank repository it needs to generate a pubñic file.
+        $fs = get_file_storage();
+        $originalfile = $content->get_file();
+        if ($originalfile) {
+            // If we have an original file we need to replace it with another stored_file.
+
+            // GENERATE THE FINAL FINAL AND REPLACE THE ORIGINAL ONE
+            // Example code:
+            // $filerecord = [
+            //     'contextid' => context_user::instance($USER->id)->id,
+            //     'component' => 'user',
+            //     'filearea' => 'draft',
+            //     'itemid' => file_get_unused_draft_itemid(),
+            //     'filepath' => '/',
+            //     'filename' => clean_param($data->name, PARAM_FILE).'.html',
+            //     'timecreated' => time(),
+            // ];
+            // $file = $fs->create_file_from_string($filerecord, $data->fullcontent);
+            // $originalfile->replace_file_with($file);
+        } else {
+            // If it is a new content we need to create the public file
+
+            // CREATE THE FINAL PUBLIC FILE
+            // Example code:
+            // $filerecord = [
+            //     'contextid' => $content->get_contextid(),
+            //     'component' => 'contentbank',
+            //     'filearea' => 'public',
+            //     'itemid' => $content->get_id(),
+            //     'filepath' => '/',
+            //     'filename' => clean_param($data->name, PARAM_FILE).'.html',
+            //     'timecreated' => time(),
+            // ];
+            // $fs->create_file_from_string($filerecord, $data->fullcontent);
+        }
+
+        // UPADTE configdata IF NECESSARY.
+        // Example code:
+        // $content->set_configdata('Some Data');
+
+        $content->update_content();
+
+        return $content->get_id();
+    }
+}

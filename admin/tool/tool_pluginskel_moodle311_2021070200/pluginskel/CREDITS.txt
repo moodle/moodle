@@ -1,0 +1,8 @@
+
+CREDITS
+
+
+- David Mudrak (https://github.com/moodlehq/moodle-mod_newmodule)
+- Justin Hunt (https://github.com/justinhunt/moodle-mod_newmodule/blob/master/lib.php)
+
+for their activity modules templates.

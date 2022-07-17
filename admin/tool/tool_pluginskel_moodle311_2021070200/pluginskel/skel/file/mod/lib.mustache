@@ -1,0 +1,449 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template file/mod/lib
+
+    Activity lib.php file.
+
+    Context variables required for this template:
+    * component
+    * copyright
+
+    Example context (json):
+    {
+        "component": "local_test",
+        "copyright": "2021 David Mudrák <david@moodle.com>"
+    }
+}}
+{{< common/lib }}
+{{/ common/lib }}
+
+/**
+ * Return if the plugin supports $feature.
+ *
+ * @param string $feature Constant representing the feature.
+ * @return true | null True if the feature is supported, null otherwise.
+ */
+function {{ component_name }}_supports($feature) {
+    switch ($feature) {
+        {{# self.supports }}
+        case {{ . }}:
+            return true;
+        {{/ self.supports }}
+        default:
+            return null;
+    }
+}
+
+/**
+ * Saves a new instance of the {{ component }} into the database.
+ *
+ * Given an object containing all the necessary data, (defined by the form
+ * in mod_form.php) this function will create a new instance and return the id
+ * number of the instance.
+ *
+ * @param object $moduleinstance An object from the form.
+ * @param mod_{{ component_name }}_mod_form $mform The form.
+ * @return int The id of the newly inserted record.
+ */
+function {{ component_name }}_add_instance($moduleinstance, $mform = null) {
+    global $DB;
+
+    $moduleinstance->timecreated = time();
+
+    $id = $DB->insert_record('{{ component_name }}', $moduleinstance);
+
+    return $id;
+}
+
+/**
+ * Updates an instance of the {{ component }} in the database.
+ *
+ * Given an object containing all the necessary data (defined in mod_form.php),
+ * this function will update an existing instance with new data.
+ *
+ * @param object $moduleinstance An object from the form in mod_form.php.
+ * @param mod_{{ component_name }}_mod_form $mform The form.
+ * @return bool True if successful, false otherwise.
+ */
+function {{ component_name }}_update_instance($moduleinstance, $mform = null) {
+    global $DB;
+
+    $moduleinstance->timemodified = time();
+    $moduleinstance->id = $moduleinstance->instance;
+
+    return $DB->update_record('{{ component_name }}', $moduleinstance);
+}
+
+/**
+ * Removes an instance of the {{ component }} from the database.
+ *
+ * @param int $id Id of the module instance.
+ * @return bool True if successful, false on failure.
+ */
+function {{ component_name }}_delete_instance($id) {
+    global $DB;
+
+    $exists = $DB->get_record('{{ component_name }}', array('id' => $id));
+    if (!$exists) {
+        return false;
+    }
+
+    $DB->delete_records('{{ component_name }}', array('id' => $id));
+
+    return true;
+}
+{{# self.has_user_outline }}
+
+/**
+ * Returns a small object with summary information about what a user has done
+ * with a given particular instance of this module. Used for user activity
+ * reports.
+
+ * @param stdClass $course The course record.
+ * @param stdClas $user The user record.
+ * @param cm_info | stdClass $mod The course module info object or record.
+ * @param stdClass $moduleinstance The {{ component }} instance record.
+ * @return stdClass | null.
+ */
+function {{ component_name }}_user_outline($course, $user, $mod, $moduleinstance) {
+    $return = new stdClass();
+
+    // The time they did it.
+    $return->time = 0;
+
+    // A short text description;
+    $return->info = '';
+
+    return $return;
+}
+{{/ self.has_user_outline }}
+{{# self.has_user_complete }}
+
+/**
+ * Prints a detailed representation of what a user has done with a given
+ * particular instance of this module, for user activity reports.
+ *
+ * @param stdClass $course The current course record.
+ * @param stdClass $user The user record.
+ * @param cm_info $mod Course module info.
+ * @param stdClass $moduleinstance The {{ component }} instance record.
+ */
+function {{ component_name }}_user_complete($course, $user, $mod, $moduleinstance) {
+    return;
+}
+{{/ self.has_user_complete }}
+{{# self.has_print_recent_activity }}
+
+/**
+ * Given a course and a time, this module should find recent activity that has
+ * occurred in {{ component }} activities and print it out.
+ *
+ * @param stdClass $course The course record.
+ * @param bool $viewfullnames Should we display full names.
+ * @param int $timestart Print activity since this timestamp.
+ * @return bool True if anything was printed, false otherwiese.
+ */
+function {{ component_name }}_print_recent_activity($course, $viewfullnames, $timestart) {
+    return false;
+}
+{{/ self.has_print_recent_activity}}
+{{# self.has_get_recent_mod_activity }}
+
+/**
+ * Prepares the recent activity data.
+ *
+ * This callback function is supposed to populate the passed array with custom
+ * activity records. These records are then rendered into HTML via
+ * {@see newmodule_print_recent_mod_activity()}.
+ *
+ * @param array $activities Numerically indexed array of objects with added 'cmid' property.
+ * @param int $index The index in the $activities to use for the next record.
+ * @param int $timestart Append activity since this time.
+ * @param int $courseid The id of the course the report is for.
+ * @param int $cmid Course module id.
+ * @param int $userid Check for a particular user's activity only, defaults to 0 (all users).
+ * @param int $groupid Check for a particular group's activity only, defaults to 0 (all groups).
+ */
+function {{ component_name }}_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
+    return;
+}
+{{/ self.has_get_recent_mod_activity }}
+{{# self.has_print_recent_mod_activity }}
+
+/**
+ * Prints single activity item prepared by {@see {{ component }}_get_recent_mod_activity()}.
+ *
+ * @param stdClass $activity Activity record with added 'cmid' property.
+ * @param int $courseid The id of the course the report is for.
+ * @param bool $detail Print detailed report.
+ * @param array $modnames As returned by {@see get_module_types_names()}.
+ * @param bool $viewfullnames Display users' full names.
+ */
+function {{ component_name }}_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
+    return;
+}
+{{/ self.has_print_recent_mod_activity }}
+{{# self.has_get_extra_capabilities }}
+
+/**
+ * Returns all other capabilities used in the module.
+ *
+ * For example, this could be array('moodle/site:accessallgroups') if the
+ * module uses that capability.
+ *
+ * @return string[].
+ */
+function {{ component_name }}_get_extra_capabilities() {
+    return array();
+}
+{{/ self.has_get_extra_capabilities }}
+{{!
+
+    Start of gradebook feature.
+
+}}
+{{# self.has_scale_used }}
+
+/**
+ * Is a given scale used by the instance of {{ component }}?
+ *
+ * This function returns if a scale is being used by one {{ component }}
+ * if it has support for grading and scales.
+ *
+ * @param int $moduleinstanceid ID of an instance of this module.
+ * @param int $scaleid ID of the scale.
+ * @return bool True if the scale is used by the given {{ component }} instance.
+ */
+function {{ component_name }}_scale_used($moduleinstanceid, $scaleid) {
+    global $DB;
+
+    if ($scaleid && $DB->record_exists('{{ component_name }}', array('id' => $moduleinstanceid, 'grade' => -$scaleid))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+{{/ self.has_scale_used }}
+{{# self.has_scale_used_anywhere }}
+
+/**
+ * Checks if scale is being used by any instance of {{ component }}.
+ *
+ * This is used to find out if scale used anywhere.
+ *
+ * @param int $scaleid ID of the scale.
+ * @return bool True if the scale is used by any {{ component }} instance.
+ */
+function {{ component_name }}_scale_used_anywhere($scaleid) {
+    global $DB;
+
+    if ($scaleid and $DB->record_exists('{{ component_name }}', array('grade' => -$scaleid))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+{{/ self.has_scale_used_anywhere }}
+{{# self.has_grade_item_update }}
+
+/**
+ * Creates or updates grade item for the given {{ component }} instance.
+ *
+ * Needed by {@see grade_update_mod_grades()}.
+ *
+ * @param stdClass $moduleinstance Instance object with extra cmidnumber and modname property.
+ * @param bool $reset Reset grades in the gradebook.
+ * @return void.
+ */
+function {{ component_name }}_grade_item_update($moduleinstance, $reset=false) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    $item = array();
+    $item['itemname'] = clean_param($moduleinstance->name, PARAM_NOTAGS);
+    $item['gradetype'] = GRADE_TYPE_VALUE;
+
+    if ($moduleinstance->grade > 0) {
+        $item['gradetype'] = GRADE_TYPE_VALUE;
+        $item['grademax']  = $moduleinstance->grade;
+        $item['grademin']  = 0;
+    } else if ($moduleinstance->grade < 0) {
+        $item['gradetype'] = GRADE_TYPE_SCALE;
+        $item['scaleid']   = -$moduleinstance->grade;
+    } else {
+        $item['gradetype'] = GRADE_TYPE_NONE;
+    }
+    if ($reset) {
+        $item['reset'] = true;
+    }
+
+    grade_update('{{ component_root }}/{{ component_name }}', $moduleinstance->course, 'mod', '{{ component }}', $moduleinstance->id, 0, null, $item);
+}
+{{/ self.has_grade_item_update }}
+{{# self.has_grade_item_delete }}
+
+/**
+ * Delete grade item for given {{ component }} instance.
+ *
+ * @param stdClass $moduleinstance Instance object.
+ * @return grade_item.
+ */
+function {{ component_name }}_grade_item_delete($moduleinstance) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    return grade_update('{{ component_root }}/{{ component_name }}', $moduleinstance->course, 'mod', '{{ component_name }}',
+                        $moduleinstance->id, 0, null, array('deleted' => 1));
+}
+{{/ self.has_grade_item_delete }}
+{{# self.has_update_grades }}
+
+/**
+ * Update {{ component }} grades in the gradebook.
+ *
+ * Needed by {@see grade_update_mod_grades()}.
+ *
+ * @param stdClass $moduleinstance Instance object with extra cmidnumber and modname property.
+ * @param int $userid Update grade of specific user only, 0 means all participants.
+ */
+function {{ component_name }}_update_grades($moduleinstance, $userid = 0) {
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    // Populate array of grade objects indexed by userid.
+    $grades = array();
+    grade_update('{{ component_root }}/{{ component_name }}', $moduleinstance->course, 'mod', '{{ component }}', $moduleinstance->id, 0, $grades);
+}
+{{/ self.has_update_grades }}
+{{!
+
+    End of gradebook feature.
+
+}}
+{{!
+
+    Start of file_area feature.
+
+}}
+{{# self.has_get_file_areas }}
+
+/**
+ * Returns the lists of all browsable file areas within the given module context.
+ *
+ * The file area 'intro' for the activity introduction field is added automatically
+ * by {@see file_browser::get_file_info_context_module()}.
+ *
+ * @package     {{ component }}
+ * @category    files
+ *
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $context
+ * @return string[].
+ */
+function {{ component_name }}_get_file_areas($course, $cm, $context) {
+    return array();
+}
+{{/ self.has_get_file_areas }}
+{{# self.has_get_file_info }}
+
+/**
+ * File browsing support for {{ component }} file areas.
+ *
+ * @package     {{ component }}
+ * @category    files
+ *
+ * @param file_browser $browser
+ * @param array $areas
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return file_info Instance or null if not found.
+ */
+function {{ component_name }}_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    return null;
+}
+{{/ self.has_get_file_info }}
+{{# self.has_pluginfile }}
+
+/**
+ * Serves the files from the {{ component }} file areas.
+ *
+ * @package     {{ component }}
+ * @category    files
+ *
+ * @param stdClass $course The course object.
+ * @param stdClass $cm The course module object.
+ * @param stdClass $context The {{ component }}'s context.
+ * @param string $filearea The name of the file area.
+ * @param array $args Extra arguments (itemid, path).
+ * @param bool $forcedownload Whether or not force download.
+ * @param array $options Additional options affecting the file serving.
+ */
+function {{ component_name }}_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, $options = array()) {
+    global $DB, $CFG;
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        send_file_not_found();
+    }
+
+    require_login($course, true, $cm);
+    send_file_not_found();
+}
+{{/ self.has_pluginfile }}
+{{!
+
+    End of file_area specific functions.
+
+}}
+{{!
+
+    Start of navigation specific functions.
+
+}}
+{{# self.has_navigation }}
+
+/**
+ * Extends the global navigation tree by adding {{ component }} nodes if there is a relevant content.
+ *
+ * This can be called by an AJAX request so do not rely on $PAGE as it might not be set up properly.
+ *
+ * @param navigation_node ${{ component_name}}node An object representing the navigation tree node.
+ * @param stdClass $course
+ * @param stdClass $module
+ * @param cm_info $cm
+ */
+function {{ component_name }}_extend_navigation(${{ component_name }}node, $course, $module, $cm) {
+}
+
+/**
+ * Extends the settings navigation with the {{ component }} settings.
+ *
+ * This function is called when the context for the page is a {{ component }} module.
+ * This is not called by AJAX so it is safe to rely on the $PAGE.
+ *
+ * @param settings_navigation $settingsnav {@see settings_navigation}
+ * @param navigation_node ${{ component_name }}node {@see navigation_node}
+ */
+function {{ component_name }}_extend_settings_navigation($settingsnav, ${{ component_name }}node = null) {
+}
+{{/ self.has_navigation }}

@@ -1,0 +1,29 @@
+{
+    "name": "moodlehq/moodle-local_codechecker",
+    "type": "phpcodesniffer-standard",
+    "description": "The Moodle coding standard",
+    "keywords": [
+      "phpcs",
+      "standards",
+      "code review",
+      "moodle"
+    ],
+    "license": "GPL-2.0-or-later",
+    "config": {
+      "allow-plugins": {
+        "dealerdirect/phpcodesniffer-composer-installer": true
+      },
+      "sort-packages": true
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2"
+    },
+    "scripts": {
+        "install-codestandards": [
+            "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
+        ]
+    },
+    "require": {
+        "squizlabs/php_codesniffer": "^3.6.2"
+    }
+}

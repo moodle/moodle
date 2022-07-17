@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ruleset name="PHPCompatibility">
+    <description>Coding Standard that checks for PHP version compatibility.</description>
+
+    <autoload>./../PHPCSAliases.php</autoload>
+
+</ruleset>

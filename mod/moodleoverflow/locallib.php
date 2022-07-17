@@ -690,6 +690,7 @@ function moodleoverflow_add_discussion($discussion, $modulecontext, $userid = nu
     $discussionobject->moodleoverflow = $discussion->moodleoverflow;
     $discussionobject->name = $discussion->name;
     $discussionobject->firstpost = $post->id;
+    $discussionobject->tags = $discussion->tags;
     $discussionobject->userid = $post->userid;
     $discussionobject->timemodified = $timenow;
     $discussionobject->timestart = $timenow;

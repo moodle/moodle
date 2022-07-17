@@ -1,0 +1,101 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template file/mod/backup/moodle2/restore_activity_task_class
+
+    Activity backup/moodle2/restore_<modname>_activity_task.class.php file.
+
+    Context variables required for this template:
+    * component
+    * copyright
+
+    Example context (json):
+    {
+        "component": "local_test",
+        "copyright": "2021 David Mudrák <david@moodle.com>"
+    }
+}}
+{{< common/restore_php }}
+{{$ description }}The task that provides a complete restore of {{ component }} is defined here.{{/ description }}
+{{$ package }}{{ component }}{{/ package }}
+{{$ copyright }}{{ copyright }}{{/ copyright }}
+{{/ common/restore_php }}
+
+require_once($CFG->dirroot.'/{{ component_root }}/{{ component_name }}/backup/moodle2/restore_{{ component_name }}_stepslib.php');
+
+/**
+ * Restore task for {{ component }}.
+ */
+class restore_{{ component_name }}_activity_task extends restore_activity_task {
+
+    /**
+     * Defines particular settings that this activity can have.
+     */
+    protected function define_my_settings() {
+        return;
+    }
+
+    /**
+     * Defines particular steps that this activity can have.
+     *
+     * @return base_step.
+     */
+    protected function define_my_steps() {
+        $this->add_step(new restore_{{ component_name }}_activity_structure_step('{{ component_name }}_structure', '{{ component_name }}.xml'));
+    }
+
+    /**
+     * Defines the contents in the activity that must be processed by the link decoder.
+     *
+     * @return array.
+     */
+    public static function define_decode_contents() {
+        $contents = array();
+
+        // Define the contents.
+
+        return $contents;
+    }
+
+    /**
+     * Defines the decoding rules for links belonging to the activity to be executed by the link decoder.
+     *
+     * @return array.
+     */
+    public static function define_decode_rules() {
+        $rules = array();
+
+        // Define the rules.
+
+        return $rules;
+    }
+
+    /**
+     * Defines the restore log rules that will be applied by the
+     * {@see restore_logs_processor} when restoring {{ component }} logs. It
+     * must return one array of {@see restore_log_rule} objects.
+     *
+     * @return array.
+     */
+    public static function define_restore_log_rules() {
+        $rules = array();
+
+        // Define the rules.
+
+        return $rules;
+    }
+}

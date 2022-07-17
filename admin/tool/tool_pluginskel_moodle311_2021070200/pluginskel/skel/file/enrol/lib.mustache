@@ -1,0 +1,173 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template file/enrol/lib
+
+    Enrol plugin lib.php file.
+
+    Context variables required for this template:
+    * component
+    * copyright
+
+    Example context (json):
+    {
+        "component": "local_test",
+        "copyright": "2021 David Mudrák <david@moodle.com>"
+    }
+}}
+{{< common/lib }}
+{{$ description }}The enrol plugin {{ component_name }} is defined here.{{/ description }}
+{{/ common/lib }}
+
+// The base class 'enrol_plugin' can be found at lib/enrollib.php. Override
+// methods as necessary.
+
+/**
+ * Class {{ component }}_plugin.
+ */
+class {{ component }}_plugin extends enrol_plugin {
+{{# self.has_allow_enrol }}
+
+    /**
+     * Does this plugin allow manual enrolments?
+     *
+     * All plugins allowing this must implement 'enrol/{{ component_name }}:enrol' capability.
+     *
+     * @param stdClass $instance Course enrol instance.
+     * @return bool True means user with 'enrol/{{ component_name }}:enrol' may enrol others freely, false means nobody may add more enrolments manually.
+     */
+    public function allow_enrol($instance) {
+        {{# enrol_features.allow_enrol }}
+        return true;
+        {{/ enrol_features.allow_enrol }}
+        {{^ enrol_features.allow_enrol }}
+        return false;
+        {{/ enrol_features.allow_enrol }}
+    }
+{{/ self.has_allow_enrol }}
+{{# self.has_allow_unenrol }}
+
+    /**
+     * Does this plugin allow manual unenrolment of all users?
+     *
+     * All plugins allowing this must implement 'enrol/{{ component_name }}:unenrol' capability.
+     *
+     * @param stdClass $instance Course enrol instance.
+     * @return bool True means user with 'enrol/{{ component_name }}:unenrol' may unenrol others freely, false means nobody may touch user_enrolments.
+     */
+    public function allow_unenrol($instance) {
+        {{# enrol_features.allow_unenrol }}
+        return true;
+        {{/ enrol_features.allow_unenrol }}
+        {{^ enrol_features.allow_unenrol }}
+        return false;
+        {{/ enrol_features.allow_unenrol }}
+    }
+{{/ self.has_allow_unenrol }}
+{{# self.has_allow_manage }}
+
+    /**
+     * Does this plugin allow manual changes in user_enrolments table?
+     *
+     * All plugins allowing this must implement 'enrol/{{ component_name }}:manage' capability.
+     *
+     * @param stdClass $instance Course enrol instance.
+     * @return bool True means it is possible to change enrol period and status in user_enrolments table.
+     */
+    public function allow_manage($instance) {
+        {{# enrol_features.allow_manage }}
+        return true;
+        {{/ enrol_features.allow_manage }}
+        {{^ enrol_features.allow_manage }}
+        return false;
+        {{/ enrol_features.allow_manage }}
+    }
+{{/ self.has_allow_manage }}
+{{# self.has_allow_unenrol_user }}
+
+    /**
+     * Does this plugin allow manual unenrolment of a specific user?
+     *
+     * All plugins allowing this must implement 'enrol/{{ component_name }}:unenrol' capability.
+     *
+     * This is useful especially for synchronisation plugins that
+     * do suspend instead of full unenrolment.
+     *
+     * @param stdClass $instance Course enrol instance.
+     * @param stdClass $ue Record from user_enrolments table, specifies user.
+     * @return bool True means user with 'enrol/{{ component_name }}:unenrol' may unenrol this user, false means nobody may touch this user enrolment.
+     */
+    public function allow_unenrol_user($instance, $ue) {
+        {{# enrol_features.allow_unenrol_user }}
+        return true;
+        {{/ enrol_features.allow_unenrol_user }}
+        {{^ enrol_features.allow_unenrol_user }}
+        return false;
+        {{/ enrol_features.allow_unenrol_user }}
+    }
+{{/ self.has_allow_unenrol_user }}
+
+    /**
+     * Use the standard interface for adding/editing the form.
+     *
+     * @since Moodle 3.1.
+     * @return bool.
+     */
+    public function use_standard_editing_ui() {
+        return true;
+    }
+
+    /**
+     * Adds form elements to add/edit instance form.
+     *
+     * @since Moodle 3.1.
+     * @param object $instance Enrol instance or null if does not exist yet.
+     * @param MoodleQuickForm $mform.
+     * @param context $context.
+     * @return void
+     */
+    public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
+        // Do nothing by default.
+    }
+
+    /**
+     * Perform custom validation of the data used to edit the instance.
+     *
+     * @since Moodle 3.1.
+     * @param array $data Array of ("fieldname"=>value) of submitted data.
+     * @param array $files Array of uploaded files "element_name"=>tmp_file_path.
+     * @param object $instance The instance data loaded from the DB.
+     * @param context $context The context of the instance we are editing.
+     * @return array Array of "element_name"=>"error_description" if there are errors, empty otherwise.
+     */
+    public function edit_instance_validation($data, $files, $instance, $context) {
+        // No errors by default.
+        debugging('enrol_plugin::edit_instance_validation() is missing. This plugin has no validation!', DEBUG_DEVELOPER);
+        return array();
+    }
+
+    /**
+     * Return whether or not, given the current state, it is possible to add a new instance
+     * of this enrolment plugin to the course.
+     *
+     * @param int $courseid.
+     * @return bool.
+     */
+    public function can_add_instance($courseid) {
+        return true;
+    }
+}

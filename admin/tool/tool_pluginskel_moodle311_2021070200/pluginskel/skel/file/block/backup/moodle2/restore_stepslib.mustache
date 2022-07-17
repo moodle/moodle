@@ -1,0 +1,77 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template file/block/backup/moodle2/restore_stepslib
+
+    Backup API backup/moodle2/restore_<blockname>_stepslib.php file.
+
+    Context variables required for this template:
+    * component
+    * copyright
+
+    Example context (json):
+    {
+        "component": "local_test",
+        "copyright": "2021 David Mudrák <david@moodle.com>"
+    }
+}}
+{{< common/restore_php }}
+{{$ description }}All the steps to restore {{ component }} are defined here.{{/ description }}
+{{$ package }}{{ component }}{{/ package }}
+{{$ copyright }}{{ copyright }}{{/ copyright }}
+{{/ common/restore_php }}
+
+/**
+ * Defines the structure step to restore one {{ component_name }} block.
+ */
+class restore_{{ component_name }}_block_structure_step extends restore_structure_step {
+
+    /**
+     * Defines the structure to be restored.
+     */
+    protected function define_structure() {
+
+        $paths = array();
+
+        {{# block_features.backup_moodle2.restore_elements }}
+        $paths[] = new restore_path_element('{{ .name }}', '{{ .path }}');
+        {{/ block_features.backup_moodle2.restore_elements}}
+
+        return $paths;
+    }
+    {{# block_features.backup_moodle2.restore_elements}}
+
+    /**
+     * Processes the {{ .name }} restore data.
+     *
+     * @param array $data Parsed element data.
+     */
+    protected function process_{{ .name }}($data) {
+        global $DB;
+
+        return $data;
+    }
+    {{/ block_features.backup_moodle2.restore_elements}}
+
+    /**
+     * Defines post-execution actions.
+     */
+    protected function after_execute() {
+
+        return;
+    }
+}

@@ -1,0 +1,2 @@
+# Exclude all the templates here from HTML validity checks.
+*.mustache

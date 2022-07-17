@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template file/db_upgrade
+
+    Upgrade API db/upgrade.php file.
+
+    Context variables required for this template:
+    * component
+    * component_type
+    * component_type_is_mod
+    * component_name
+    * copyright
+
+    Example context (json):
+    {
+        "component": "local_test",
+        "component_type": "local",
+        "component_type_is_mod": false,
+        "component_name": "test",
+        "copyright": "2021 David Mudrák <david@moodle.com>"
+    }
+}}
+{{< common/boilerplate_php }}
+{{$ description }}Plugin upgrade steps are defined here.{{/ description }}
+{{$ package }}{{ component }}{{/ package }}
+{{$ extratags }}
+ * @category    upgrade
+{{/ extratags }}
+{{$ copyright }}{{ copyright }}{{/ copyright }}
+{{/ common/boilerplate_php }}
+{{# self.has_upgradelib}}
+
+require_once(__DIR__.'/upgradelib.php');
+{{/ self.has_upgradelib}}
+
+/**
+ * Execute {{ component }} upgrade from the given old version.
+ *
+ * @param int $oldversion
+ * @return bool
+ */
+function xmldb_{{^ component_type_is_mod }}{{ component_type }}_{{/ component_type_is_mod }}{{ component_name }}_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    // For further information please read {@link https://docs.moodle.org/dev/Upgrade_API}.
+    //
+    // You will also have to create the db/install.xml file by using the XMLDB Editor.
+    // Documentation for the XMLDB Editor can be found at {@link https://docs.moodle.org/dev/XMLDB_editor}.
+
+    return true;
+}

@@ -1,0 +1,200 @@
+component: mod_skeltest
+name: Skeleton test
+release: "0.1.0"
+requires: "3.9"
+maturity: MATURITY_BETA
+copyright: 2021 Your Name <your@email.com>
+
+features:
+  readme: true
+  license: true
+  settings: true
+  upgrade: true
+  upgradelib: true
+  install: true
+  uninstall: true
+
+privacy:
+  haspersonaldata: true
+  uselegacypolyfill: false
+  meta:
+    dbfields:
+      skeltest_sometable:
+        - username
+        - timecreated
+        - timemodified
+    userpreferences:
+      - skeltest_anotherpreference
+    subsystems:
+      - comment
+      - files
+      - portfolio:
+        - firstname
+        - lastname
+    external:
+      - customexternalsystem
+      - mahara:
+        - firstname
+        - lastname
+
+phpunit_tests:
+  - classname: firstclass
+  - classname: secondclass
+  - classname: skeltest_thirdclass_testcase
+  - classname: mod_skeltest_forthclass_testcase
+
+mod_features:
+  gradebook: true
+  file_area: true
+  navigation: true
+  backup_moodle2:
+    settingslib: true
+    backup_elements:
+      - name: elt
+    restore_elements:
+      - name: elt
+        path: /path/to/file
+
+dependencies:
+  - plugin: mod_forum
+    version: ANY_VERSION
+  - plugin: tool_another
+    version: 2016121200
+
+capabilities:
+  - name: view
+    title: View test
+    captype: view
+    contextlevel: CONTEXT_MODULE
+    archetypes:
+      - role: student
+        permission: CAP_ALLOW
+      - role: editingteacher
+        permission: CAP_ALLOW
+    clonepermissionsfrom: moodle/course:view
+  - name: addinstance
+    title: Add instance
+    riskbitmask: RISK_XSS
+    captype: write
+    contextlevel: CONTEXT_COURSE
+    archetypes:
+      - role: manager
+        permission: CAP_ALLOW
+      - role: editingteacher
+        permission: CAP_ALLOW
+    clonepermissionsfrom: moodle/course:manageactivities
+
+message_providers:
+  - name: submission
+    title: Submission message
+    capability: mod/quiz:emailnotifysubmission
+  - name: expiry
+    title: Expiry message
+
+cli_scripts:
+  - filename: firstfilename
+  - filename: secondfilename
+
+observers:
+  - eventname: \core\event\something_happened
+    callback: \local_test\another\observer_one::something_happened
+    includefile: "/path/to/file/relative/to/moodle/dir/root"
+    priority: 200
+    internal: true
+
+  - eventname: \core\event\something_else_happened
+    callback: local_test_locallib_function
+    internal: false
+
+  - eventname: \core\event\something_else_happened
+    callback: local_test_observer_two::do_something
+
+events:
+  - eventname: course_module_viewed
+    extends: \core\event\course_module_viewed
+  - eventname: course_module_instance_list_viewed
+    extends: \core\event\course_module_instance_list_viewed
+
+mobile_addons:
+  - name: 'my_first_addon'
+    dependencies:
+      - name: dependency_one
+      - name: dependency_two
+  - name: 'my_second_addon'
+
+lang_strings:
+  - id: mycustomstring
+    text: You can add 'extra' strings via the recipe file.
+  - id: mycustomstring2
+    text: Another string with {$a->some} placeholder.
+  - id: modulenameplural
+    text: Skeleton test
+  - id: modulename_help
+    text: Use the Skeleton test module for...
+  - id: skeltestfieldset
+    text: Custom example fieldset.
+  - id: skeltestname
+    text: Skeleton test name
+  - id: skeltestname_help
+    text: This is the content of the help tooltip associated with the Skeleton test name field
+  - id: modulename
+    text: skeltest
+  - id: pluginadministration
+    text: Skeleton test administration
+  - id: skeltestsettings
+    text: Settings
+  - id: missingidandcmid
+    text: Missing id and cmid
+  - id: noskeltestinstances
+    text: No Skeleton test instances
+  - id: view
+    text: View
+
+external:
+  - name: create_thing
+    desc: Create a new thing record in the database
+    testclientpath: /dev/null
+    type: write
+    ajax: 'true'
+    loginrequired: 'true'
+    readonlysession: 'false'
+    parameters:
+      - name: title
+        type: PARAM_TEXT
+        desc: Title of the thing
+    returns:
+      - type: PARAM_INT
+        desc: Identifier of the newly created thing
+  - name: search_things
+    desc: Search for things matching the given query
+    type: read
+    ajax: 'true'
+    loginrequired: 'false'
+    readonlysession: 'true'
+    parameters:
+      - name: query
+        type: PARAM_RAW
+        desc: Search query
+    returns:
+      - multiple:
+        - single:
+          - name: id
+            type: PARAM_INT
+            desc: Identifier of the thing
+          - name: title
+            type: PARAM_TEXT
+            desc: Title of the thing
+
+services:
+  - name: Things store
+    shortname: things_store
+    functions:
+      - mod_skeltest_create_thing
+      - mod_skeltest_search_things
+    requiredcapability: mod/skeltest:managethings
+    enabled: 'true'
+    downloadfiles: 'false'
+    uploadfiles: 'false'
+
+templates:
+  - widget_name

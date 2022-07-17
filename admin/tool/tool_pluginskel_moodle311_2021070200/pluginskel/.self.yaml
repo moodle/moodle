@@ -1,0 +1,32 @@
+# This is a recipe describing the tool_pluginskel plugin itself.
+# It can be used when adding new files / features to it, e.g.
+#
+#     php cli/generate.php .self.yaml --file=version.php
+#
+# Please run
+#
+#     php cli/generate.php -h
+#
+# for more options.
+---
+component: tool_pluginskel
+name: Moodle plugin skeleton generator
+release: "1.5.1"
+requires: "3.9"
+maturity: MATURITY_STABLE
+copyright: 2021 David Mudrák <david@moodle.com>
+
+features:
+  readme: true
+  license: true
+  settings: true
+  upgrade: false
+  upgradelib: false
+  install: false
+  uninstall: false
+
+privacy:
+  haspersonaldata: false
+
+phpunit_tests:
+  - classname: feature

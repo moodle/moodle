@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="client-nojs">
+<head>
+<meta charset="UTF-8"/><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={licenseKey:"05ab6e1949",applicationID:"84455028"};window.NREUM||(NREUM={}),__nr_require=function(e,n,t){function r(t){if(!n[t]){var i=n[t]={exports:{}};e[t][0].call(i.exports,function(n){var i=e[t][1][n];return r(i||n)},i,i.exports)}return n[t].exports}if("function"==typeof __nr_require)return __nr_require;for(var i=0;i<t.length;i++)r(t[i]);return r}({1:[function(e,n,t){function r(){}function i(e,n,t){return function(){return o(e,[u.now()].concat(c(arguments)),n?null:this,t),n?void 0:this}}var o=e("handle"),a=e(5),c=e(6),f=e("ee").get("tracer"),u=e("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var d=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],p="api-",l=p+"ixn-";a(d,function(e,n){s[n]=i(p+n,!0,"api")}),s.addPageAction=i(p+"addPageAction",!0),s.setCurrentRouteName=i(p+"routeName",!0),n.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(e,n){var t={},r=this,i="function"==typeof n;return o(l+"tracer",[u.now(),e,t],r),function(){if(f.emit((i?"":"no-")+"fn-start",[u.now(),r,i],t),i)try{return n.apply(this,arguments)}catch(e){throw f.emit("fn-err",[arguments,this,e],t),e}finally{f.emit("fn-end",[u.now()],t)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,n){m[n]=i(l+n)}),newrelic.noticeError=function(e,n){"string"==typeof e&&(e=new Error(e)),o("err",[e,u.now(),!1,n])}},{}],2:[function(e,n,t){function r(e,n){var t=e.getEntries();t.forEach(function(e){"first-paint"===e.name?d("timing",["fp",Math.floor(e.startTime)]):"first-contentful-paint"===e.name&&d("timing",["fcp",Math.floor(e.startTime)])})}function i(e,n){var t=e.getEntries();t.length>0&&d("lcp",[t[t.length-1]])}function o(e){e.getEntries().forEach(function(e){e.hadRecentInput||d("cls",[e])})}function a(e){if(e instanceof m&&!g){var n=Math.round(e.timeStamp),t={type:e.type};n<=p.now()?t.fid=p.now()-n:n>p.offset&&n<=Date.now()?(n-=p.offset,t.fid=p.now()-n):n=p.now(),g=!0,d("timing",["fi",n,t])}}function c(e){d("pageHide",[p.now(),e])}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var f,u,s,d=e("handle"),p=e("loader"),l=e(4),m=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){f=new PerformanceObserver(r);try{f.observe({entryTypes:["paint"]})}catch(v){}u=new PerformanceObserver(i);try{u.observe({entryTypes:["largest-contentful-paint"]})}catch(v){}s=new PerformanceObserver(o);try{s.observe({type:"layout-shift",buffered:!0})}catch(v){}}if("addEventListener"in document){var g=!1,y=["click","keydown","mousedown","pointerdown","touchstart"];y.forEach(function(e){document.addEventListener(e,a,!1)})}l(c)}},{}],3:[function(e,n,t){function r(e,n){if(!i)return!1;if(e!==i)return!1;if(!n)return!0;if(!o)return!1;for(var t=o.split("."),r=n.split("."),a=0;a<r.length;a++)if(r[a]!==t[a])return!1;return!0}var i=null,o=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var c=navigator.userAgent,f=c.match(a);f&&c.indexOf("Chrome")===-1&&c.indexOf("Chromium")===-1&&(i="Safari",o=f[1])}n.exports={agent:i,version:o,match:r}},{}],4:[function(e,n,t){function r(e){function n(){e(a&&document[a]?document[a]:document[i]?"hidden":"visible")}"addEventListener"in document&&o&&document.addEventListener(o,n,!1)}n.exports=r;var i,o,a;"undefined"!=typeof document.hidden?(i="hidden",o="visibilitychange",a="visibilityState"):"undefined"!=typeof document.msHidden?(i="msHidden",o="msvisibilitychange"):"undefined"!=typeof document.webkitHidden&&(i="webkitHidden",o="webkitvisibilitychange",a="webkitVisibilityState")},{}],5:[function(e,n,t){function r(e,n){var t=[],r="",o=0;for(r in e)i.call(e,r)&&(t[o]=n(r,e[r]),o+=1);return t}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],6:[function(e,n,t){function r(e,n,t){n||(n=0),"undefined"==typeof t&&(t=e?e.length:0);for(var r=-1,i=t-n||0,o=Array(i<0?0:i);++r<i;)o[r]=e[n+r];return o}n.exports=r},{}],7:[function(e,n,t){n.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,n,t){function r(){}function i(e){function n(e){return e&&e instanceof r?e:e?f(e,c,o):o()}function t(t,r,i,o){if(!p.aborted||o){e&&e(t,r,i);for(var a=n(i),c=v(t),f=c.length,u=0;u<f;u++)c[u].apply(a,r);var d=s[w[t]];return d&&d.push([b,t,r,a]),a}}function l(e,n){h[e]=v(e).concat(n)}function m(e,n){var t=h[e];if(t)for(var r=0;r<t.length;r++)t[r]===n&&t.splice(r,1)}function v(e){return h[e]||[]}function g(e){return d[e]=d[e]||i(t)}function y(e,n){u(e,function(e,t){n=n||"feature",w[t]=n,n in s||(s[n]=[])})}var h={},w={},b={on:l,addEventListener:l,removeEventListener:m,emit:t,get:g,listeners:v,context:n,buffer:y,abort:a,aborted:!1};return b}function o(){return new r}function a(){(s.api||s.feature)&&(p.aborted=!0,s=p.backlog={})}var c="nr@context",f=e("gos"),u=e(5),s={},d={},p=n.exports=i();p.backlog=s},{}],gos:[function(e,n,t){function r(e,n,t){if(i.call(e,n))return e[n];var r=t();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,n,{value:r,writable:!0,enumerable:!1}),r}catch(o){}return e[n]=r,r}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],handle:[function(e,n,t){function r(e,n,t,r){i.buffer([e],r),i.emit(e,n,t)}var i=e("ee").get("handle");n.exports=r,r.ee=i},{}],id:[function(e,n,t){function r(e){var n=typeof e;return!e||"object"!==n&&"function"!==n?-1:e===window?0:a(e,o,function(){return i++})}var i=1,o="nr@id",a=e("gos");n.exports=r},{}],loader:[function(e,n,t){function r(){if(!x++){var e=E.info=NREUM.info,n=l.getElementsByTagName("script")[0];if(setTimeout(s.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&n))return s.abort();u(w,function(n,t){e[n]||(e[n]=t)});var t=a();f("mark",["onload",t+E.offset],null,"api"),f("timing",["load",t]);var r=l.createElement("script");r.src="https://"+e.agent,n.parentNode.insertBefore(r,n)}}function i(){"complete"===l.readyState&&o()}function o(){f("mark",["domContent",a()+E.offset],null,"api")}function a(){return O.exists&&performance.now?Math.round(performance.now()):(c=Math.max((new Date).getTime(),c))-E.offset}var c=(new Date).getTime(),f=e("handle"),u=e(5),s=e("ee"),d=e(3),p=window,l=p.document,m="addEventListener",v="attachEvent",g=p.XMLHttpRequest,y=g&&g.prototype;NREUM.o={ST:setTimeout,SI:p.setImmediate,CT:clearTimeout,XHR:g,REQ:p.Request,EV:p.Event,PR:p.Promise,MO:p.MutationObserver};var h=""+location,w={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1177.min.js"},b=g&&y&&y[m]&&!/CriOS/.test(navigator.userAgent),E=n.exports={offset:c,now:a,origin:h,features:{},xhrWrappable:b,userAgent:d};e(1),e(2),l[m]?(l[m]("DOMContentLoaded",o,!1),p[m]("load",r,!1)):(l[v]("onreadystatechange",i),p[v]("onload",r)),f("mark",["firstbyte",c],null,"api");var x=0,O=e(7)},{}],"wrap-function":[function(e,n,t){function r(e){return!(e&&e instanceof Function&&e.apply&&!e[a])}var i=e("ee"),o=e(6),a="nr@original",c=Object.prototype.hasOwnProperty,f=!1;n.exports=function(e,n){function t(e,n,t,i){function nrWrapper(){var r,a,c,f;try{a=this,r=o(arguments),c="function"==typeof t?t(r,a):t||{}}catch(u){p([u,"",[r,a,i],c])}s(n+"start",[r,a,i],c);try{return f=e.apply(a,r)}catch(d){throw s(n+"err",[r,a,d],c),d}finally{s(n+"end",[r,a,f],c)}}return r(e)?e:(n||(n=""),nrWrapper[a]=e,d(e,nrWrapper),nrWrapper)}function u(e,n,i,o){i||(i="");var a,c,f,u="-"===i.charAt(0);for(f=0;f<n.length;f++)c=n[f],a=e[c],r(a)||(e[c]=t(a,u?c+i:i,o,c))}function s(t,r,i){if(!f||n){var o=f;f=!0;try{e.emit(t,r,i,n)}catch(a){p([a,t,r,i])}f=o}}function d(e,n){if(Object.defineProperty&&Object.keys)try{var t=Object.keys(e);return t.forEach(function(t){Object.defineProperty(n,t,{get:function(){return e[t]},set:function(n){return e[t]=n,n}})}),n}catch(r){p([r])}for(var i in e)c.call(e,i)&&(n[i]=e[i]);return n}function p(n){try{e.emit("internal-error",n)}catch(t){}}return e||(e=i),t.inPlace=u,t.flag=a,t}},{}]},{},["loader"]);</script>
+<title>Core APIs - MoodleDocs</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"Core_APIs","wgTitle":"Core APIs","wgCurRevisionId":57824,"wgRevisionId":57824,"wgArticleId":3684,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":[],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"Core_APIs","wgRelevantArticleId":3684,"wgRequestId":"527246c6114ced3ab41c7308","wgIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[],"wgWikiEditorEnabledModules":{"toolbar":true,"dialogs":false,"preview":false,"publish":false}});mw.loader.implement("user.options",function($,jQuery,require,module){mw.user.options.set({"variant":"en"});});mw.loader.implement("user.tokens",function ( $, jQuery, require, module ) {
+mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});/*@nomin*/;
+
+});mw.loader.load(["mediawiki.page.startup"]);});</script>
+<link rel="stylesheet" href="/dev/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor&amp;only=styles&amp;skin=moodledocs"/>
+<link rel="stylesheet" href="/dev/skins/moodledocs/devdocs.css?305" media="screen"/><link rel="stylesheet" href="/dev/skins/moodledocs/sitebar/sitebar-dev.css?305" media="screen"/><link rel="stylesheet" href="/dev/skins/moodledocs/bootstrap-responsive.min.css?305"/><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300&amp;amp;subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic"/>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<script async="" src="/dev/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=moodledocs"></script>
+<meta name="generator" content="MediaWiki 1.27.4"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="shortcut icon" href="/favicon-dev.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="/dev/opensearch_desc.php" title="MoodleDocs dev (Development)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://docs.moodle.org/dev/api.php?action=rsd"/>
+<link rel="copyright" href="https://docs.moodle.org/dev/License"/>
+<link rel="alternate" type="application/atom+xml" title="MoodleDocs Atom feed" href="/dev/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+</head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-Core_APIs rootpage-Core_APIs skin-moodledocs action-view">
+<div id="moodlesitestopnavbar">
+    <div class="navbar-container">
+        <a class="sitelogo" href="https://moodle.org/">
+            <img alt="Moodle.org" width="96" height="25" src="/dev/skins/moodledocs/sitebar/pix/logo.png" />
+        </a>
+        <ul>
+            <li class="home">
+            <a href="https://moodle.org"><span>Home</span><span class="placeholder"></span></a>
+            </li>
+            <li class="documentation">
+            <a href="https://docs.moodle.org"><span>Documentation</span><span class="placeholder"></span></a>
+            </li>
+            <li class="download">
+            <a href="https://download.moodle.org"><span>Downloads</span><span class="placeholder"></span></a>
+            </li>
+            <li class="demo">
+            <a href="https://moodle.org/demo"><span>Demo</span><span class="placeholder"></span></a>
+            </li>
+            <li class="tracker">
+            <a href="https://tracker.moodle.org"><span>Tracker</span><span class="placeholder"></span></a>
+            </li>
+            <li class="development">
+            <a href="https://docs.moodle.org/dev/Main_Page"><span>Development</span><span class="placeholder"></span></a>
+            </li>
+            <li class="translation">
+            <a href="https://lang.moodle.org"><span>Translation</span><span class="placeholder"></span></a>
+            </li>
+            <li class="moodlenet">
+            <a href="https://moodle.net"><span>Moodle.net</span><span class="placeholder"></span></a>
+            </li>
+            <li class="search">
+            <a href="https://moodle.org/public/search/"><span>Search</span><span class="placeholder"></span></a>
+            </li>
+        </ul>
+    </div>
+    <div style="clear:both"></div>
+</div>
+<div id="page">
+<!-- header start -->
+<div id="moodlelogo"></div>
+<!-- header end -->
+
+
+<!-- navbar start -->
+<div id="moodlenavbar" class="navbar clearfix" dir="LTR"><div class="breadcrumb"><h2 class="accesshide">You are here</h2><ul><li class="first"><a href="/dev/">Main Page</a></li><li>&nbsp;&#x25BA; Core APIs</li></ul></div></div>
+<!-- navbar end -->
+
+<div id="globalWrapper" class="container-fluid">
+<div id="column-content" >
+<div id="content">
+	<a id="top"></a>
+
+	<h1 id="firstHeading" class="firstHeading">Core APIs</h1>
+	<div id="bodyContent">
+		<div id="contentSub"></div>
+		<div id="jump-to-nav">Jump to: <a href="#column-one">navigation</a>, <a href="#searchInput">search</a></div>
+		<!-- start content -->
+<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><p>Moodle has a number of core APIs that provide tools for Moodle scripts.
+</p><p>They are essential when writing <a href="/dev/Plugins" title="Plugins" class="mw-redirect">Moodle plugins</a>.
+</p><p><br />
+</p>
+<div id="toc" class="toc"><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Most-used_General_APIs"><span class="tocnumber">1</span> <span class="toctext">Most-used General APIs</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Access_API_.28access.29"><span class="tocnumber">1.1</span> <span class="toctext">Access API (access)</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#Data_manipulation_API_.28dml.29"><span class="tocnumber">1.2</span> <span class="toctext">Data manipulation API (dml)</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#File_API_.28files.29"><span class="tocnumber">1.3</span> <span class="toctext">File API (files)</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Form_API_.28form.29"><span class="tocnumber">1.4</span> <span class="toctext">Form API (form)</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Logging_API_.28log.29"><span class="tocnumber">1.5</span> <span class="toctext">Logging API (log)</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#Navigation_API_.28navigation.29"><span class="tocnumber">1.6</span> <span class="toctext">Navigation API (navigation)</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Page_API_.28page.29"><span class="tocnumber">1.7</span> <span class="toctext">Page API (page)</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#Output_API_.28output.29"><span class="tocnumber">1.8</span> <span class="toctext">Output API (output)</span></a></li>
+<li class="toclevel-2 tocsection-10"><a href="#String_API_.28string.29"><span class="tocnumber">1.9</span> <span class="toctext">String API (string)</span></a></li>
+<li class="toclevel-2 tocsection-11"><a href="#Upgrade_API_.28upgrade.29"><span class="tocnumber">1.10</span> <span class="toctext">Upgrade API (upgrade)</span></a></li>
+<li class="toclevel-2 tocsection-12"><a href="#Moodlelib_API_.28core.29"><span class="tocnumber">1.11</span> <span class="toctext">Moodlelib API (core)</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-13"><a href="#Other_General_APIs"><span class="tocnumber">2</span> <span class="toctext">Other General APIs</span></a>
+<ul>
+<li class="toclevel-2 tocsection-14"><a href="#Admin_settings_API_.28admin.29"><span class="tocnumber">2.1</span> <span class="toctext">Admin settings API (admin)</span></a></li>
+<li class="toclevel-2 tocsection-15"><a href="#Analytics_API_.28analytics.29"><span class="tocnumber">2.2</span> <span class="toctext">Analytics API (analytics)</span></a></li>
+<li class="toclevel-2 tocsection-16"><a href="#Availability_API_.28availability.29"><span class="tocnumber">2.3</span> <span class="toctext">Availability API (availability)</span></a></li>
+<li class="toclevel-2 tocsection-17"><a href="#Backup_API_.28backup.29"><span class="tocnumber">2.4</span> <span class="toctext">Backup API (backup)</span></a></li>
+<li class="toclevel-2 tocsection-18"><a href="#Cache_API_.28cache.29"><span class="tocnumber">2.5</span> <span class="toctext">Cache API (cache)</span></a></li>
+<li class="toclevel-2 tocsection-19"><a href="#Calendar_API_.28calendar.29"><span class="tocnumber">2.6</span> <span class="toctext">Calendar API (calendar)</span></a></li>
+<li class="toclevel-2 tocsection-20"><a href="#Check_API_.28check.29"><span class="tocnumber">2.7</span> <span class="toctext">Check API (check)</span></a></li>
+<li class="toclevel-2 tocsection-21"><a href="#Comment_API_.28comment.29"><span class="tocnumber">2.8</span> <span class="toctext">Comment API (comment)</span></a></li>
+<li class="toclevel-2 tocsection-22"><a href="#Competency_API_.28competency.29"><span class="tocnumber">2.9</span> <span class="toctext">Competency API (competency)</span></a></li>
+<li class="toclevel-2 tocsection-23"><a href="#Data_definition_API_.28ddl.29"><span class="tocnumber">2.10</span> <span class="toctext">Data definition API (ddl)</span></a></li>
+<li class="toclevel-2 tocsection-24"><a href="#Editor_API"><span class="tocnumber">2.11</span> <span class="toctext">Editor API</span></a></li>
+<li class="toclevel-2 tocsection-25"><a href="#Enrolment_API_.28enrol.29"><span class="tocnumber">2.12</span> <span class="toctext">Enrolment API (enrol)</span></a></li>
+<li class="toclevel-2 tocsection-26"><a href="#Events_API_.28event.29"><span class="tocnumber">2.13</span> <span class="toctext">Events API (event)</span></a></li>
+<li class="toclevel-2 tocsection-27"><a href="#Experience_API_.28xAPI.29"><span class="tocnumber">2.14</span> <span class="toctext">Experience API (xAPI)</span></a></li>
+<li class="toclevel-2 tocsection-28"><a href="#External_functions_API_.28external.29"><span class="tocnumber">2.15</span> <span class="toctext">External functions API (external)</span></a></li>
+<li class="toclevel-2 tocsection-29"><a href="#Favourites_API"><span class="tocnumber">2.16</span> <span class="toctext">Favourites API</span></a></li>
+<li class="toclevel-2 tocsection-30"><a href="#Lock_API_.28lock.29"><span class="tocnumber">2.17</span> <span class="toctext">Lock API (lock)</span></a></li>
+<li class="toclevel-2 tocsection-31"><a href="#Message_API_.28message.29"><span class="tocnumber">2.18</span> <span class="toctext">Message API (message)</span></a></li>
+<li class="toclevel-2 tocsection-32"><a href="#Media_API_.28media.29"><span class="tocnumber">2.19</span> <span class="toctext">Media API (media)</span></a></li>
+<li class="toclevel-2 tocsection-33"><a href="#My_profile_API"><span class="tocnumber">2.20</span> <span class="toctext">My profile API</span></a></li>
+<li class="toclevel-2 tocsection-34"><a href="#OAuth_2_API_.28oauth2.29"><span class="tocnumber">2.21</span> <span class="toctext">OAuth 2 API (oauth2)</span></a></li>
+<li class="toclevel-2 tocsection-35"><a href="#Preference_API_.28preference.29"><span class="tocnumber">2.22</span> <span class="toctext">Preference API (preference)</span></a></li>
+<li class="toclevel-2 tocsection-36"><a href="#Portfolio_API_.28portfolio.29"><span class="tocnumber">2.23</span> <span class="toctext">Portfolio API (portfolio)</span></a></li>
+<li class="toclevel-2 tocsection-37"><a href="#Privacy_API_.28privacy.29"><span class="tocnumber">2.24</span> <span class="toctext">Privacy API (privacy)</span></a></li>
+<li class="toclevel-2 tocsection-38"><a href="#Rating_API_.28rating.29"><span class="tocnumber">2.25</span> <span class="toctext">Rating API (rating)</span></a></li>
+<li class="toclevel-2 tocsection-39"><a href="#RSS_API_.28rss.29"><span class="tocnumber">2.26</span> <span class="toctext">RSS API (rss)</span></a></li>
+<li class="toclevel-2 tocsection-40"><a href="#Search_API_.28search.29"><span class="tocnumber">2.27</span> <span class="toctext">Search API (search)</span></a></li>
+<li class="toclevel-2 tocsection-41"><a href="#Tag_API_.28tag.29"><span class="tocnumber">2.28</span> <span class="toctext">Tag API (tag)</span></a></li>
+<li class="toclevel-2 tocsection-42"><a href="#Task_API_.28task.29"><span class="tocnumber">2.29</span> <span class="toctext">Task API (task)</span></a></li>
+<li class="toclevel-2 tocsection-43"><a href="#Time_API_.28time.29"><span class="tocnumber">2.30</span> <span class="toctext">Time API (time)</span></a></li>
+<li class="toclevel-2 tocsection-44"><a href="#Testing_API_.28test.29"><span class="tocnumber">2.31</span> <span class="toctext">Testing API (test)</span></a></li>
+<li class="toclevel-2 tocsection-45"><a href="#User-related_APIs_.28user.29"><span class="tocnumber">2.32</span> <span class="toctext">User-related APIs (user)</span></a></li>
+<li class="toclevel-2 tocsection-46"><a href="#Web_services_API_.28webservice.29"><span class="tocnumber">2.33</span> <span class="toctext">Web services API (webservice)</span></a></li>
+<li class="toclevel-2 tocsection-47"><a href="#Badges_API_.28badges.29"><span class="tocnumber">2.34</span> <span class="toctext">Badges API (badges)</span></a></li>
+<li class="toclevel-2 tocsection-48"><a href="#Custom_fields_API"><span class="tocnumber">2.35</span> <span class="toctext">Custom fields API</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-49"><a href="#Activity_module_APIs"><span class="tocnumber">3</span> <span class="toctext">Activity module APIs</span></a>
+<ul>
+<li class="toclevel-2 tocsection-50"><a href="#Activity_completion_API_.28completion.29"><span class="tocnumber">3.1</span> <span class="toctext">Activity completion API (completion)</span></a></li>
+<li class="toclevel-2 tocsection-51"><a href="#Advanced_grading_API_.28grading.29"><span class="tocnumber">3.2</span> <span class="toctext">Advanced grading API (grading)</span></a></li>
+<li class="toclevel-2 tocsection-52"><a href="#Conditional_activities_API_.28condition.29_-_deprecated_in_2.7"><span class="tocnumber">3.3</span> <span class="toctext">Conditional activities API (condition) - deprecated in 2.7</span></a></li>
+<li class="toclevel-2 tocsection-53"><a href="#Groups_API_.28group.29"><span class="tocnumber">3.4</span> <span class="toctext">Groups API (group)</span></a></li>
+<li class="toclevel-2 tocsection-54"><a href="#Gradebook_API_.28grade.29"><span class="tocnumber">3.5</span> <span class="toctext">Gradebook API (grade)</span></a></li>
+<li class="toclevel-2 tocsection-55"><a href="#Plagiarism_API_.28plagiarism.29"><span class="tocnumber">3.6</span> <span class="toctext">Plagiarism API (plagiarism)</span></a></li>
+<li class="toclevel-2 tocsection-56"><a href="#Question_API_.28question.29"><span class="tocnumber">3.7</span> <span class="toctext">Question API (question)</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-57"><a href="#See_also"><span class="tocnumber">4</span> <span class="toctext">See also</span></a></li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="Most-used_General_APIs">Most-used General APIs</span></h2>
+<p>These APIs are critical and will be used by nearly every Moodle plugin.
+</p>
+<h3><span class="mw-headline" id="Access_API_.28access.29">Access API (access)</span></h3>
+<p>The <a href="/dev/Access_API" title="Access API">Access API</a> gives you functions so you can determine what the current user is allowed to do, and it allows modules to extend Moodle with new capabilities.
+</p>
+<h3><span class="mw-headline" id="Data_manipulation_API_.28dml.29">Data manipulation API (dml)</span></h3>
+<p>The <a href="/dev/Data_manipulation_API" title="Data manipulation API">Data manipulation API</a> allows you to read/write to databases in a consistent and safe way.
+</p>
+<h3><span class="mw-headline" id="File_API_.28files.29">File API (files)</span></h3>
+<p>The <a href="/dev/File_API" title="File API">File API</a> controls the storage of files in connection to various plugins.
+</p>
+<h3><span class="mw-headline" id="Form_API_.28form.29">Form API (form)</span></h3>
+<p>The <a href="/dev/Form_API" title="Form API">Form API</a> defines and handles user data via web forms.
+</p>
+<h3><span class="mw-headline" id="Logging_API_.28log.29">Logging API (log)</span></h3>
+<p>The <a href="/dev/Events_API" title="Events API">Events API</a> allows you to log events in Moodle, while <a href="/dev/Logging_2" title="Logging 2">Logging 2</a> describes how logs are stored and retrieved.
+</p>
+<h3><span class="mw-headline" id="Navigation_API_.28navigation.29">Navigation API (navigation)</span></h3>
+<p>The <a href="/dev/Navigation_API" title="Navigation API">Navigation API</a> allows you to manipulate the navigation tree to add and remove items as you wish.
+</p>
+<h3><span class="mw-headline" id="Page_API_.28page.29">Page API (page)</span></h3>
+<p>The <a href="/dev/Page_API" title="Page API">Page API</a> is used to set up the current page, add JavaScript, and configure how things will be displayed to the user.
+</p>
+<h3><span class="mw-headline" id="Output_API_.28output.29">Output API (output)</span></h3>
+<p>The <a href="/dev/Output_API" title="Output API">Output API</a> is used to render the HTML for all parts of the page.
+</p>
+<h3><span class="mw-headline" id="String_API_.28string.29">String API (string)</span></h3>
+<p>The <a href="/dev/String_API" title="String API">String API</a> is how you get language text strings to use in the user interface.   It handles any language translations that might be available.
+</p>
+<h3><span class="mw-headline" id="Upgrade_API_.28upgrade.29">Upgrade API (upgrade)</span></h3>
+<p>The <a href="/dev/Upgrade_API" title="Upgrade API">Upgrade API</a> is how your module installs and upgrades itself, by keeping track of its own version.
+</p>
+<h3><span class="mw-headline" id="Moodlelib_API_.28core.29">Moodlelib API (core)</span></h3>
+<p>The <a href="/dev/index.php?title=Moodlelib_API&amp;action=edit&amp;redlink=1" class="new" title="Moodlelib API (page does not exist)">Moodlelib API</a> is the central library file of miscellaneous general-purpose Moodle functions. Functions can over the handling of request parameters, configs, user preferences, time, login, mnet, plugins, strings and others. There are plenty of defined constants too.
+</p>
+<h2><span class="mw-headline" id="Other_General_APIs">Other General APIs</span></h2>
+<h3><span class="mw-headline" id="Admin_settings_API_.28admin.29">Admin settings API (admin)</span></h3>
+<p>The <a href="/dev/Admin_settings" title="Admin settings">Admin settings</a> API deals with providing configuration options for each plugin and Moodle core.
+</p>
+<h3><span class="mw-headline" id="Analytics_API_.28analytics.29">Analytics API (analytics)</span></h3>
+<p>The <a href="/dev/Analytics_API" title="Analytics API">Analytics API</a> allow you to create prediction models and generate insights.
+</p>
+<h3><span class="mw-headline" id="Availability_API_.28availability.29">Availability API (availability)</span></h3>
+<p>The <a href="/dev/Availability_API" title="Availability API">Availability API</a> controls access to activities and sections.
+</p>
+<h3><span class="mw-headline" id="Backup_API_.28backup.29">Backup API (backup)</span></h3>
+<p>The <a href="/dev/Backup_API" title="Backup API">Backup API</a> defines exactly how to convert course data into XML for backup purposes, and the <a href="/dev/Restore_API" title="Restore API">Restore API</a> describes how to convert it back the other way.
+</p>
+<h3><span class="mw-headline" id="Cache_API_.28cache.29">Cache API (cache)</span></h3>
+<p>The <a href="/dev/The_Moodle_Universal_Cache_(MUC)" title="The Moodle Universal Cache (MUC)">The Moodle Universal Cache (MUC)</a> is the structure for storing cache data within Moodle. <a href="/dev/Cache_API" title="Cache API">Cache_API</a> explains some of what is needed to use a cache in your code.
+</p>
+<h3><span class="mw-headline" id="Calendar_API_.28calendar.29">Calendar API (calendar)</span></h3>
+<p>The <a href="/dev/Calendar_API" title="Calendar API">Calendar API</a> allows you to add and modify events in the calendar for user, groups, courses, or the whole site.
+</p>
+<h3><span class="mw-headline" id="Check_API_.28check.29">Check API (check)</span></h3>
+<p>The <a href="/dev/Check_API" title="Check API">Check API</a> allows you to add security, performance or health checks to your site.
+</p>
+<h3><span class="mw-headline" id="Comment_API_.28comment.29">Comment API (comment)</span></h3>
+<p>The <a href="/dev/Comment_API" title="Comment API">Comment API</a> allows you to save and retrieve user comments, so that you can easily add commenting to any of your code.
+</p>
+<h3><span class="mw-headline" id="Competency_API_.28competency.29">Competency API (competency)</span></h3>
+<p>The <a href="/dev/Competency_API" title="Competency API">Competency API</a> allows you to list and add evidence of competencies to learning plans, learning plan templates, frameworks, courses and activities.
+</p>
+<h3><span class="mw-headline" id="Data_definition_API_.28ddl.29">Data definition API (ddl)</span></h3>
+<p>The <a href="/dev/Data_definition_API" title="Data definition API">Data definition API</a> is what you use to create, change and delete tables and fields in the database during upgrades.
+</p>
+<h3><span class="mw-headline" id="Editor_API">Editor API</span></h3>
+<p>The <a href="/dev/Editor_API" title="Editor API">Editor API</a> is used to control HTML text editors.
+</p>
+<h3><span class="mw-headline" id="Enrolment_API_.28enrol.29">Enrolment API (enrol)</span></h3>
+<p>The <a href="/dev/Enrolment_API" title="Enrolment API">Enrolment API</a> deals with course participants.
+</p>
+<h3><span class="mw-headline" id="Events_API_.28event.29">Events API (event)</span></h3>
+<p>The <a href="/dev/Events_API" title="Events API">Events API</a> allows to define "events" with payload data to be fired whenever you like, and it also allows you to define handlers to react to these events when they happen.  This is the recommended form of inter-plugin communication. This also forms the basis for logging in Moodle.
+</p>
+<h3><span class="mw-headline" id="Experience_API_.28xAPI.29">Experience API (xAPI)</span></h3>
+<p>The Experience API (xAPI) is an e-learning standard that allows learning content and learning systems to speak to each other. The <a href="/dev/Experience_API_(xAPI)" title="Experience API (xAPI)">Experience API (xAPI)</a>
+allows any plugin to generate and handle xAPI standard statements.
+</p>
+<h3><span class="mw-headline" id="External_functions_API_.28external.29">External functions API (external)</span></h3>
+<p>The <a href="/dev/External_functions_API" title="External functions API">External functions API</a> allows you to create fully parametrised methods that can be accessed by external programs (such as <a href="/dev/Web_services" title="Web services">Web services</a>).
+</p>
+<h3><span class="mw-headline" id="Favourites_API">Favourites API</span></h3>
+<p>The <a href="/dev/Favourites_API" title="Favourites API">Favourites API</a> allows you to mark items as favourites for a user and manage these favourites. This is often referred to as 'Starred'.
+</p>
+<h3><span class="mw-headline" id="Lock_API_.28lock.29">Lock API (lock)</span></h3>
+<p>The <a href="/dev/Lock_API" title="Lock API">Lock API</a> lets you synchronise processing between multiple requests, even for separate nodes in a cluster.
+</p>
+<h3><span class="mw-headline" id="Message_API_.28message.29">Message API (message)</span></h3>
+<p>The <a href="/dev/Message_API" title="Message API">Message API</a> lets you post messages to users.  They decide how they want to receive them.
+</p>
+<h3><span class="mw-headline" id="Media_API_.28media.29">Media API (media)</span></h3>
+<p>The <a href="/dev/Media_players#Using_media_players" title="Media players">Media</a> API can be used to embed media items such as audio, video, and Flash.
+</p>
+<h3><span class="mw-headline" id="My_profile_API">My profile API</span></h3>
+<p>The <a href="/dev/My_profile_API" title="My profile API">My profile API</a> is used to add things to the profile page.
+</p>
+<h3><span class="mw-headline" id="OAuth_2_API_.28oauth2.29">OAuth 2 API (oauth2)</span></h3>
+<p>The <a href="/dev/OAuth_2_API" title="OAuth 2 API">OAuth 2 API</a> is used to provide a common place to configure and manage external systems using OAuth 2.
+</p>
+<h3><span class="mw-headline" id="Preference_API_.28preference.29">Preference API (preference)</span></h3>
+<p>The <a href="/dev/Preference_API" title="Preference API">Preference API</a> is a simple way to store and retrieve preferences for individual users.
+</p>
+<h3><span class="mw-headline" id="Portfolio_API_.28portfolio.29">Portfolio API (portfolio)</span></h3>
+<p>The <a href="/dev/Portfolio_API" title="Portfolio API">Portfolio API</a> allows you to add portfolio interfaces on your pages and allows users to package up data to send to their portfolios.
+</p>
+<h3><span class="mw-headline" id="Privacy_API_.28privacy.29">Privacy API (privacy)</span></h3>
+<p>The <a href="/dev/Privacy_API" title="Privacy API">Privacy API</a> allows you to describe the personal data that you store, and provides the means for that data to be discovered, exported, and deleted on a per-user basis.
+This allows compliance with regulation such as the General Data Protection Regulation (GDPR) in Europe.
+</p>
+<h3><span class="mw-headline" id="Rating_API_.28rating.29">Rating API (rating)</span></h3>
+<p>The <a href="/dev/Rating_API" title="Rating API">Rating API</a> lets you create AJAX rating interfaces so that users can rate items in your plugin.  In an activity module, you may choose to aggregate ratings to form grades.
+</p>
+<h3><span class="mw-headline" id="RSS_API_.28rss.29">RSS API (rss)</span></h3>
+<p>The <a href="/dev/RSS_API" title="RSS API">RSS API</a> allows you to create secure RSS feeds of data in your module.
+</p>
+<h3><span class="mw-headline" id="Search_API_.28search.29">Search API (search)</span></h3>
+<p>The <a href="/dev/Search_API" title="Search API">Search API</a> allows you to index contents in a search engine and query the search engine for results.
+</p>
+<h3><span class="mw-headline" id="Tag_API_.28tag.29">Tag API (tag)</span></h3>
+<p>The <a href="/dev/Tag_API" title="Tag API">Tag API</a> allows you to store tags (and a tag cloud) to items in your module.
+</p>
+<h3><span class="mw-headline" id="Task_API_.28task.29">Task API (task)</span></h3>
+<p>The <a href="/dev/Task_API" title="Task API">Task API</a> lets you run jobs in the background. Either once off, or on a regular schedule.
+</p>
+<h3><span class="mw-headline" id="Time_API_.28time.29">Time API (time)</span></h3>
+<p>The <a href="/dev/Time_API" title="Time API">Time API</a> takes care of translating and displaying times between users in the site.
+</p>
+<h3><span class="mw-headline" id="Testing_API_.28test.29">Testing API (test)</span></h3>
+<p>The testing API contains the Unit test API (<a href="/dev/PHPUnit" title="PHPUnit">PHPUnit</a>) and Acceptance test API (<a href="/dev/Acceptance_testing" title="Acceptance testing">Acceptance testing</a>). Ideally all new code should have unit tests written FIRST.
+</p>
+<h3><span class="mw-headline" id="User-related_APIs_.28user.29">User-related APIs (user)</span></h3>
+<p>This is a rather informal grouping of miscellaneous <a href="/dev/User-related_APIs" title="User-related APIs">User-related APIs</a> relating to sorting and searching lists of users.
+</p>
+<h3><span class="mw-headline" id="Web_services_API_.28webservice.29">Web services API (webservice)</span></h3>
+<p>The <a href="/dev/Web_services_API" title="Web services API">Web services API</a> allows you to expose particular functions (usually external functions) as web services.
+</p>
+<h3><span class="mw-headline" id="Badges_API_.28badges.29">Badges API (badges)</span></h3>
+<p>The <a rel="nofollow" class="external text" href="https://docs.moodle.org/dev/OpenBadges_User_Documentation">Badges</a> user documentation (is a temp page until we compile a proper page with all the classes and APIs that allows you to manage particular badges and OpenBadges Backpack).
+</p>
+<h3><span class="mw-headline" id="Custom_fields_API">Custom fields API</span></h3>
+<p>The <a href="/dev/Custom_fields_API" title="Custom fields API">Custom fields API</a> allows you to configure and add custom fields for different entities
+</p>
+<h2><span class="mw-headline" id="Activity_module_APIs">Activity module APIs</span></h2>
+<p>Activity modules are the most important plugin in Moodle.  There are several core APIs that service only Activity modules.
+</p>
+<h3><span class="mw-headline" id="Activity_completion_API_.28completion.29">Activity completion API (completion)</span></h3>
+<p>The <a href="/dev/Activity_completion_API" title="Activity completion API">Activity completion API</a> is to indicate to the system how activities are completed.
+</p>
+<h3><span class="mw-headline" id="Advanced_grading_API_.28grading.29">Advanced grading API (grading)</span></h3>
+<p>The <a href="/dev/Advanced_grading_API" title="Advanced grading API">Advanced grading API</a> allows you to add more advanced grading interfaces (such as rubrics) that can produce simple grades for the gradebook.
+</p>
+<h3><span class="mw-headline" id="Conditional_activities_API_.28condition.29_-_deprecated_in_2.7">Conditional activities API (condition) - deprecated in 2.7</span></h3>
+<p>The deprecated <a href="/dev/Conditional_activities_API" title="Conditional activities API">Conditional activities API</a> used to provide conditional access to modules and sections in Moodle 2.6 and below. It has been replaced by the <a href="/dev/Availability_API" title="Availability API">Availability API</a>.
+</p>
+<h3><span class="mw-headline" id="Groups_API_.28group.29">Groups API (group)</span></h3>
+<p>The <a href="/dev/Groups_API" title="Groups API">Groups API</a> allows you to check the current activity group mode and set the current group.
+</p>
+<h3><span class="mw-headline" id="Gradebook_API_.28grade.29">Gradebook API (grade)</span></h3>
+<p>The <a href="/dev/Gradebook_API" title="Gradebook API">Gradebook API</a> allows you to read and write from the gradebook.  It also allows you to provide an interface for detailed grading information.
+</p>
+<h3><span class="mw-headline" id="Plagiarism_API_.28plagiarism.29">Plagiarism API (plagiarism)</span></h3>
+<p>The <a href="/dev/Plagiarism_API" title="Plagiarism API">Plagiarism API</a> allows your activity module to send files and data to external services to have them checked for plagiarism.
+</p>
+<h3><span class="mw-headline" id="Question_API_.28question.29">Question API (question)</span></h3>
+<p>The <a href="/dev/Question_API" title="Question API">Question API</a> (which can be divided into the Question bank API and the Question engine API), can be used by activities that want to use questions from the question bank.
+</p>
+<h2><span class="mw-headline" id="See_also">See also</span></h2>
+<ul><li> <a href="/dev/Plugins" title="Plugins" class="mw-redirect">Plugins</a> - plugin types also have their own APIs</li>
+<li> <a href="/dev/Callbacks" title="Callbacks">Callbacks</a> - list of all callbacks in Moodle</li>
+<li> <a href="/dev/Coding_style" title="Coding style">Coding style</a> - general information about writing PHP code for Moodle</li></ul>
+
+<!-- 
+NewPP limit report
+Cached time: 20200906145321
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.020 seconds
+Real time usage: 0.064 seconds
+Preprocessor visited node count: 227/1000000
+Preprocessor generated node count: 232/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+-->
+
+<!-- 
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 - -total
+-->
+
+<!-- Saved in parser cache with key docs_development:pcache:idhash:3684-0!*!0!!en!*!* and timestamp 20200906145321 and revision id 57824
+ -->
+</div><div class="printfooter">
+Retrieved from "<a dir="ltr" href="https://docs.moodle.org/dev/index.php?title=Core_APIs&amp;oldid=57824">https://docs.moodle.org/dev/index.php?title=Core_APIs&amp;oldid=57824</a>"</div>
+		<div id="catlinks" class="catlinks catlinks-allhidden" data-mw="interface"></div>		<!-- end content -->
+				<div class="visualClear"></div>
+	</div>
+</div></div>
+<div id="column-one" class="row-fluid" >
+	<div id="p-cactions" class="portlet">
+				<h5>Views</h5>
+		<div class="pBody">
+			<ul><li id="ca-nstab-main" class="selected"><a href="/dev/Core_APIs" title="View the content page [c]" accesskey="c">Page</a></li><li id="ca-talk"><a href="/dev/Talk:Core_APIs" title="Discussion about the content page [t]" accesskey="t">Discussion</a></li><li id="ca-viewsource"><a href="/dev/index.php?title=Core_APIs&amp;action=edit" title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></li><li id="ca-history"><a href="/dev/index.php?title=Core_APIs&amp;action=history" title="Past revisions of this page [h]" accesskey="h">History</a></li></ul>		</div>
+	</div>
+	<div class="portlet" id="p-personal">
+		<h5>Personal tools</h5>
+		<div class="pBody">
+			<ul><li><a href="/dev/index.php?title=Special:UserLogin&amp;returnto=Core+APIs">Log in</a></li></ul>		</div>
+	</div>
+	<div class='portlet bottom-portlet span6' id='p-navigation'>
+		<h5>Navigation</h5>
+		<div class='pBody'>
+				<ul>
+							<li id="n-mainpage-description"><a href="/dev/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li>
+							<li id="n-recentchanges"><a href="/dev/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li>
+							<li id="n-Moodle-Docs-3.9"><a href="https://docs.moodle.org/39/en">Moodle Docs 3.9</a></li>
+							<li id="n-Docs-overview"><a href="https://docs.moodle.org/overview/">Docs overview</a></li>
+						</ul>
+				</div>
+	</div>
+	<div class='portlet bottom-portlet span6' id='p-tb'>
+		<h5>Tools</h5>
+		<div class='pBody'>
+				<ul>
+				<li id="t-whatlinkshere"><a href="/dev/Special:WhatLinksHere/Core_APIs" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li>
+				<li id="t-recentchangeslinked"><a href="/dev/Special:RecentChangesLinked/Core_APIs" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li>
+<li id="t-specialpages"><a href="/dev/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li>
+				<li id="t-print"><a href="/dev/index.php?title=Core_APIs&amp;printable=yes" rel="alternate" title="Printable version of this page [p]" accesskey="p">Printable version</a></li>				<li id="t-permalink"><a href="/dev/index.php?title=Core_APIs&amp;oldid=57824" title="Permanent link to this revision of the page">Permanent link</a></li>			</ul>
+		</div>
+	</div>
+<div id="p-search" role="search">
+	<h3><label for="searchInput">Search</label></h3>
+	<form action="/dev/index.php" id="searchform">
+		<div id="simpleSearch">
+						<input name="search" placeholder="Search" title="Search MoodleDocs [f]" accesskey="f" id="searchInput"/>						<button type="submit" name="button" title="Search the pages for this text" id="searchButton"><img src="/dev/skins/moodledocs/images/search-ltr.png?305" alt="Search" width="12" height="13"/></button>						<input type='hidden' name="title" value="Special:Search"/>
+		</div>
+	</form>
+</div>
+</div><!-- end of the left (by default at least) column -->
+<div class="visualClear"></div>
+<div id="footer">
+	<div id="f-poweredbyico">
+		<a href="//www.mediawiki.org/"><img src="/dev/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/dev/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /dev/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a>
+	</div>
+	<ul id="f-list">
+		<li id="lastmod"> This page was last modified on 4 September 2020, at 10:09.</li>
+		<li id="copyright">Content is available under <a class="external" rel="nofollow" href="https://docs.moodle.org/dev/License">GNU General Public License</a> unless otherwise noted.</li>
+		<li id="privacy"><a href="/dev/MoodleDocs:Privacy_policy" title="MoodleDocs:Privacy policy">Privacy</a></li>
+		<li id="about"><a href="/dev/MoodleDocs:About" title="MoodleDocs:About">About the Dev docs</a></li>
+		<li id="disclaimer"><a href="/dev/MoodleDocs:General_disclaimer" title="MoodleDocs:General disclaimer">Disclaimers</a></li>
+	</ul>
+</div>
+</div>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.loader.state({"user":"ready","user.groups":"ready"});mw.loader.load(["mediawiki.toc","mediawiki.action.view.postEdit","site","mediawiki.user","mediawiki.hidpi","mediawiki.page.ready","mediawiki.searchSuggest","custom.editortoolbar","ext.moderation.notify","ext.moderation.notify.desktop","skins.moodledocs.bootstrap"]);});</script><script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgBackendResponseTime":251});});</script>
+<!-- final footer start -->
+<div id="moodlesitelink"></div>
+<!-- final footer end -->
+
+</div><!-- #page -->
+<!-- google analytics start -->
+<script type="text/javascript">var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));</script><script type="text/javascript">try {var pageTracker = _gat._getTracker("UA-72764-4");pageTracker._trackPageview();} catch(err) {}</script>
+<!-- google analytics end -->
+
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"05ab6e1949","applicationID":"84455028","transactionName":"YwBabBRSCEFYAkVaWlpKeVsSWglcFgBSR1xbCxdOD1YR","queueTime":0,"applicationTime":252,"atts":"T0dZGlxIG08=","errorBeacon":"bam.nr-data.net","agent":""}</script></body></html>

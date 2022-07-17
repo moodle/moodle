@@ -1,0 +1,38 @@
+.path-local-moodlecheck .filename,
+.path-local-moodlecheck .dirname {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #547c22;
+}
+
+.path-local-moodlecheck .dirname {
+    color: #408;
+}
+
+.path-local-moodlecheck ul.directory,
+.path-local-moodlecheck ul.file {
+    margin: 0.5em;
+    margin-left: 2em;
+}
+
+.path-local-moodlecheck ul.file {
+    margin-top: 0;
+}
+
+.path-local-moodlecheck .fail {
+    color: #600;
+}
+
+.path-local-moodlecheck .good {
+    color: #060;
+}
+
+.path-local-moodlecheck form .fcheckbox label {
+    margin-left: 1em;
+}
+.path-local-moodlecheck form .fcheckbox > span {
+    margin-left: 2em;
+}
+.path-local-moodlecheck form .fradio label {
+    margin-left: 1em;
+}

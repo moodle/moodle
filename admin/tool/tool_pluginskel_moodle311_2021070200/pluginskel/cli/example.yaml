@@ -1,0 +1,504 @@
+## This is an example recipe file that you can use as a template for your own plugins.
+## See the list of all files it would generate:
+##
+##     php generate.php example.yaml --list-files
+##
+## View a particular file contents without actually writing it to the disk:
+##
+##     php generate.php example.yaml --file=version.php
+##
+## To see the full list of options, run:
+##
+##     php generate.php --help
+##
+---
+## Frankenstyle component name.
+component: auth_test
+
+## Human readable name of the plugin.
+name: Example plugin
+
+## Human readable release number.
+release: "0.1.0"
+
+## Plugin version number, e.g. 2016062100. Will be set to current date if left empty.
+#version: 2016121200
+
+## Required Moodle version, e.g. 2015051100 or "2.9".
+requires: "2.9"
+
+## Plugin maturity level. Possible options are MATURIY_ALPHA, MATURITY_BETA,
+## MATURITY_RC or MATURIY_STABLE.
+maturity: MATURITY_BETA
+
+## Copyright holder(s) of the generated files and classes.
+copyright: 2016 Alexandru Elisei <alexandru.elisei@gmail.com>, David Mudrák <david@moodle.com>
+
+## Features flags can control generation of optional files/code fragments.
+features:
+  readme: true
+  license: true
+  settings: true
+  ## Should db/upgrade.php file be generated? Upgrade steps are defined in this file.
+  upgrade: true
+  ## Should db/upgradelib.php be also generated? Implies upgrade feature enabled.
+  upgradelib: true
+  install: true
+  uninstall: true
+
+  ## Privacy API implementation
+privacy:
+  haspersonaldata: true
+  uselegacypolyfill: false
+  meta:
+    dbfields:
+      auth_test_sometable:
+        - username
+        - timecreated
+        - timemodified
+      auth_test_another:
+        - email
+    userpreferences:
+      - preferencename
+      - auth_test_anotherpreference
+    subsystems:
+      - comment
+      - files
+      - portfolio:
+        - firstname
+        - lastname
+    external:
+      - customexternalsystem
+      - mahara:
+        - firstname
+        - lastname
+
+## PHPUnit test classes.
+phpunit_tests:
+  ## The class will be defined in the file tests/firstclass_test.php
+  ## The full class name will be plugintype_pluginname_firstclass_testcase.
+  - classname: firstclass
+  - classname: secondclass
+    ## This is valid too.
+  - classname: auth_test_thirdclass_testcase
+
+## Specific features for Atto plugins.
+atto_features:
+  ## Adds strings to be initialized in the plugin's user interface.
+  strings_for_js:
+    - id: stringone
+      text: String one text
+    - id: stringtwo
+      text: String two text
+
+    ## Adds parameters to be passed in the javascript init function.
+  params_for_js:
+    - name: param
+      value: value
+      ## The default value for the ATTRS property.
+      default: ''
+
+auth_features:
+  ## The plugin can be configured through the Moodle UI.
+  config_ui: true
+
+  ## The lang string 'auth_description' will be generated with the description text.
+  description: Auth plugin description
+
+  ## Can the auth plugin change the user's password?
+  can_change_password: 'false'
+
+  ## Can the auth plugin edit the user's password?
+  can_edit_profile: false
+
+  ## Is the plugin internal? If commented out, then the is_internal() function will not be generated.
+  #is_internal: true
+
+  ## Should password hashes be stored in the local moodle database?
+  prevent_local_passwords: false
+
+  ## Should moodle update internal user records with data from external sources?
+  is_synchronised_with_external: false
+
+  ## Can the plugin reset the password?
+  can_reset_password: true
+
+  ## Allow signup and user creation?
+  can_signup: true
+
+  ## Allow confirming of new users?
+  can_confirm: true
+
+  ## Can the plugin be manually set for users?
+  can_be_manually_set: false
+
+block_features:
+  ## Creates the file edit_form.php
+  edit_form: true
+
+  ## Allows multiple instances of the block on the same course.
+  instance_allow_multiple: false
+
+  ## Choose where to display the block.
+  applicable_formats:
+    - page: all
+      allowed: false
+    - page: course-view
+      allowed: true
+    - page: course-view-social
+      allowed: false
+
+  ## Backup the block plugin.
+  backup_moodle2:
+    restore_task: true
+    restore_stepslib: true
+    backup_stepslib: true
+    settingslib: true
+    backup_elements:
+      - name: elt
+    restore_elements:
+      - name: elt
+        path: /path/to/file
+
+enrol_features:
+  ## Allows manual enrolment. Requires enrol/<enrolname>:enrol capability.
+  allow_enrol: false
+
+  ## Allows manual unenrolment. Requires enrol/<enrolname>:unenrol capability.
+  allow_unenrol: true
+
+  ## Allows manual unenrolment of a specific user.
+  ## Requires the enrol/<enrolname>:unenrol capability to be defined.
+  allow_unenrol_user: true
+
+  ## Allows manual changes in the user_enrolment table.
+  ## Requires enrol/<enrolname>:manage capability.
+  allow_manage: true
+
+mod_features:
+  ## Creates the gradebook related functions. Adds FEATURE_GRADE_HAS_GRADE.
+  ## The file grade.php is also created.
+  gradebook: true
+
+  ## Creates the files API related function.
+  ## Adds FEATURE_MOD_INTRO.
+  file_area: true
+
+  ## Creates the functions <modulename>_extend_navigation() and
+  ## <modulename>_extend_settings_navigation() in lib.php.
+  navigation: true
+
+  ## Backup the mod plugin.
+  backup_moodle2:
+    settingslib: true
+    backup_elements:
+      - name: elt
+    restore_elements:
+      - name: elt
+        path: /path/to/file
+
+qtype_features:
+  base_class: question_graded_automatically
+
+contenttype_features:
+  ## Upload settings features
+  can_upload:
+    ## The doctype for the web page (necessary if can_upload is true).
+    file_extensions:
+      - .html
+
+    ## Online editor features
+    can_edit:
+      ## Online editor available contents (necessary if can_edit is true)
+      add_menu:
+        ## This is an entry in the "add" Content bank menu
+        - name: content name
+          icon: f/html-64
+          ## If no editor params are defined it will be considered a title, not an option.
+          editor_params: template=none
+
+theme_features:
+  ## Apply the theme to all layouts.
+  all_layouts: true
+
+  ## The doctype for the web page.
+  doctype: html5
+
+  ## Parents for the theme. Optional.
+  parents:
+    - base_theme: base
+
+  ## Stylesheets defined by the plugin. They go in the 'styles' directory.
+  stylesheets:
+    - name: sheet
+
+  ## Custom layouts that go in the 'layout' directory.
+  custom_layouts:
+    - name: test
+
+## If the plugin depends on other plugins, declare the dependencies.
+dependencies:
+  - plugin: mod_forum
+    version: ANY_VERSION
+  - plugin: tool_another
+    version: 2016121200
+
+## Capabilities defined by the plugin.
+capabilities:
+  - name: view
+    title: View test
+    captype: view
+    contextlevel: CONTEXT_MODULE
+    archetypes:
+      - role: student
+        permission: CAP_ALLOW
+      - role: editingteacher
+        permission: CAP_ALLOW
+    clonepermissionsfrom: moodle/course:view
+
+  - name: edit
+    title: Edit test
+    captype: write
+
+  ## Required by enrol plugins if allow_enrol is true.
+  - name: enrol
+    title: Enrol users
+    captype: write
+    contextlevel: CONTEXT_COURSE
+    archetypes:
+      - role: manager
+        permission: CAP_ALLOW
+      - role: editingteacher
+        permission: CAP_ALLOW
+
+  # Required by enrol plugins if allow_unenrol or allow_unenrol_user are true.
+  - name: unenrol
+    title: Unenrol users
+    captype: write
+    contextlevel: CONTEXT_COURSE
+    archetypes:
+      - role: manager
+        permission: CAP_ALLOW
+      - role: editingteacher
+        permission: CAP_ALLOW
+
+  # Required by enrol plugins if allow_manage is true.
+  - name: manage
+    title: Manage users
+    captype: write
+    contextlevel: CONTEXT_COURSE
+    archetypes:
+      - role: manager
+        permission: CAP_ALLOW
+      - role: editingteacher
+        permission: CAP_ALLOW
+
+  # Required by content types.
+  - name: access
+    title: Access content
+    captype: read
+    contextlevel: CONTEXT_COURSE
+    archetypes:
+      - role: manager
+        permission: CAP_ALLOW
+      - role: editingteacher
+        permission: CAP_ALLOW
+    clonepermissionsfrom: moodle/course:view
+
+  # Required by for content types with can_upload feature
+  - name: upload
+    title: Upload content
+    captype: write
+    contextlevel: CONTEXT_COURSE
+    archetypes:
+      - role: manager
+        permission: CAP_ALLOW
+      - role: editingteacher
+        permission: CAP_ALLOW
+
+  # Required by for content types wuth can_edit feature
+  - name: useeditor
+    title: Edit content
+    captype: write
+    contextlevel: CONTEXT_COURSE
+    archetypes:
+      - role: manager
+        permission: CAP_ALLOW
+      - role: editingteacher
+        permission: CAP_ALLOW
+
+## Message producers to be used with the Message API.
+message_providers:
+  - name: submission
+    ## Used to create the lang string messageprovider:submission.
+    title: Submission message
+    capability: mod/quiz:emailnotifysubmission
+  - name: expiry
+    ## Used to create the lang string messageprovider:expiry.
+    title: Expiry message
+
+  ## Creates the cli script files cli/firstfilename.php and cli/seconfilename.php.
+cli_scripts:
+  - filename: firstfilename
+  - filename: secondfilename
+
+## Register observers for events.
+observers:
+  - eventname: \core\event\something_happened
+    ## The callback creates the file classes/observer_one.php. The namespace for the file is 'local_test'.
+    callback: \local_test\another\observer_one::something_happened
+    includefile: "/path/to/file/relative/to/moodle/dir/root"
+    priority: 200
+    internal: true
+
+  - eventname: \core\event\something_else_happened
+    ## The callback creates the function in locallib.php.
+    callback: local_test_locallib_function
+    internal: false
+
+  - eventname: \core\event\something_else_happened
+    ## This callback creates the class 'local_test_observer_two' in the file
+    ## classes/observer_two.php. The class is created in the global namespace.
+    callback: local_test_observer_two::do_something
+
+## Creates event classes. The first class, located at
+## classes/event/first_event.php, will extend the base class
+## \core\event\first_event and the second class will be located at
+## classes/event/second_event.php.
+events:
+  - eventname: first_event
+    extends: \core\event\first_event
+  - eventname: second_event
+  ## Activity modules are supposed to have the following two events.
+  - eventname: course_module_viewed
+    extends: \core\event\course_module_viewed
+  - eventname: course_module_instance_list_viewed
+    extends: \core\event\course_module_instance_list_viewed
+
+## Creates a list of mobile remote addons at db/mobile.php.
+mobile_addons:
+  - name: 'my_first_addon'
+    dependencies:
+      - name: dependency_one
+      - name: dependency_two
+  - name: 'my_second_addon'
+
+## Explicitly added strings
+lang_strings:
+  - id: mycustomstring
+    text: You can add 'extra' strings via the recipe file.
+  - id: mycustomstring2
+    text: Another string with {$a->some} placeholder.
+
+    ## Needed for mod plugins.
+  - id: modulenameplural
+    text: newmodules
+  - id: modulename_help
+    text: Use the newmodule module for...
+  - id: newmodulefieldset
+    text: Custom example fieldset.
+  - id: newmodulename
+    text: newmodule name
+  - id: newmodulename_help
+    text: This is the content of the help tooltip associated with the newmodulename field
+  - id: modulename
+    text: newmodule
+  - id: pluginadministration
+    text: newmodule administration
+  - id: newmodulesettings
+    text: Settings
+  - id: missingidandcmid
+    text: Missing id and cmid
+  - id: nonewmodules
+    text: No newmodules
+  - id: view
+    text: View
+
+    ## Needed for qtype plugins.
+  - id: pluginnamesummary
+    text: Rendered when choosing the question type to be added.
+  - id: pluginnameadding
+    text: Rendered when adding this question type.
+  - id: pluginnameediting
+    text: Rendered when editing this question type.
+  - id: pluginname_help
+    text: Help text when adding this question type.
+
+    ## Needed for theme plugins.
+  - id: choosereadme
+    text: Readme when selecting the theme.
+
+## External functions provided by the plugin.
+external:
+  - name: list_things
+    desc: Returns a paginated list of thing records
+    type: read
+    ajax: 'true'
+    loginrequired: 'true'
+    readonlysession: 'false'
+
+    parameters:
+      - name: pagenum
+        type: PARAM_INT
+        desc: Page number to return
+      - name: perpage
+        type: PARAM_INT
+        desc: Number of things per page
+        required: false
+        ## Non-numeric literals must be quoted as in "'foo'".
+        ## Otherwise they are generated as constants.
+        default: 10
+      - name: sort
+        desc: List of fields to sort by
+        required: false
+        multiple:
+          - required: true
+            desc: Specifies the field and how to sort by it
+            single:
+            - name: field
+              type: PARAM_ALPHANUM
+              desc: Sort by this field
+            - name: asc
+              type: PARAM_BOOL
+              desc: Should be sorted ASC?
+      - name: filterids
+        desc: Filter IDs
+        multiple:
+          - type: PARAM_INT
+            desc: Thing identifier
+
+    returns:
+      - multiple:
+        - single:
+          - name: id
+            type: PARAM_INT
+            desc: Identifier of the thing.
+            required: 'true'
+          - name: title
+            type: PARAM_RAW
+            desc: Title of the thing.
+          - name: properties
+            multiple:
+              - single:
+                - name: key
+                  type: PARAM_ALPHANUMEXT
+                  desc: Property name
+                - name: value
+                  type: PARAM_RAW
+                  desc: Property value
+
+## Pre-built web services provided by the plugin.
+services:
+  - name: Things management
+    shortname: things_management
+    functions:
+      - local_wsexample_list_things
+    requiredcapability: local/wsexample:managethings
+    enabled: 'true'
+    downloadfiles: 'false'
+    uploadfiles: 'false'
+
+## Mustache templates.
+templates:
+  - widget_name
+  - another_name

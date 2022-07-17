@@ -1,0 +1,60 @@
+component: block_skeltest
+name: Skeleton test
+release: "0.1.0"
+requires: "3.9"
+maturity: MATURITY_BETA
+copyright: 2021 Your Name <your@email.com>
+
+features:
+  readme: true
+  license: true
+  settings: true
+  upgrade: true
+  upgradelib: true
+  install: true
+  uninstall: true
+
+privacy:
+  haspersonaldata: false
+
+block_features:
+  edit_form: true
+  instance_allow_multiple: true
+  applicable_formats:
+    - page: all
+      allowed: false
+    - page: course-view
+      allowed: true
+    - page: course-view-social
+      allowed: false
+  backup_moodle2:
+    restore_task: true
+    restore_stepslib: true
+    backup_stepslib: true
+    settingslib: true
+    backup_elements:
+      - name: elt
+    restore_elements:
+      - name: elt
+        path: /path/to/file
+
+capabilities:
+  - name: addinstance
+    title: Add a new test block
+    riskbitmask: RISK_XSS | RISK_SPAM
+    captype: write
+    contextlevel: CONTEXT_BLOCK
+    archetypes:
+      - role: manager
+        permission: CAP_ALLOW
+      - role: editingteacher
+        permission: CAP_ALLOW
+    clonepermissionsfrom: moodle/site:manageblocks
+  - name: myaddinstance
+    title: Add a new test block to dashboard
+    captype: write
+    contextlevel: CONTEXT_SYSTEM
+    archetypes:
+      - role: user
+        permission: CAP_ALLOW
+    clonepermissionsfrom: moodle/my:manageblocks
