@@ -186,7 +186,7 @@ class stateupdates_test extends \advanced_testcase {
             $this->assertEquals($action, $update->action);
             $this->assertEquals('section', $update->name);
             // Delete does not provide all fields.
-            if ($action == 'delete') {
+            if ($action == 'remove') {
                 $this->assertEquals($section->id, $update->fields->id);
             } else {
                 $this->assertEquals($expected, $update->fields);
@@ -203,7 +203,7 @@ class stateupdates_test extends \advanced_testcase {
         return array_merge(
             $this->add_section_provider_helper('put'),
             $this->add_section_provider_helper('create'),
-            $this->add_section_provider_helper('delete'),
+            $this->add_section_provider_helper('remove'),
         );
     }
 
@@ -215,7 +215,7 @@ class stateupdates_test extends \advanced_testcase {
      */
     private function add_section_provider_helper(string $action): array {
         // Delete does not depends on user permissions.
-        if ($action == 'delete') {
+        if ($action == 'remove') {
             $studentsections = [0, 1, 2];
         } else {
             $studentsections = [0, 1];
@@ -247,7 +247,7 @@ class stateupdates_test extends \advanced_testcase {
      * @dataProvider add_cm_provider
      * @covers ::add_cm_update
      * @covers ::add_cm_create
-     * @covers ::add_cm_delete
+     * @covers ::add_cm_remove
      *
      * @param string $action the action name
      * @param string $role the user role name
@@ -330,7 +330,7 @@ class stateupdates_test extends \advanced_testcase {
             $this->assertEquals($action, $update->action);
             $this->assertEquals('cm', $update->name);
             // Delete does not provide all fields.
-            if ($action == 'delete') {
+            if ($action == 'remove') {
                 $this->assertEquals($cm->id, $update->fields->id);
             } else {
                 $this->assertEquals($expected, $update->fields);
@@ -347,7 +347,7 @@ class stateupdates_test extends \advanced_testcase {
         return array_merge(
             $this->add_cm_provider_helper('put'),
             $this->add_cm_provider_helper('create'),
-            $this->add_cm_provider_helper('delete'),
+            $this->add_cm_provider_helper('remove'),
         );
     }
 
@@ -359,7 +359,7 @@ class stateupdates_test extends \advanced_testcase {
      */
     private function add_cm_provider_helper(string $action): array {
         // Delete does not depends on user permissions.
-        if ($action == 'delete') {
+        if ($action == 'remove') {
             $studentcms = [0, 1, 2, 3];
         } else {
             $studentcms = [0];
