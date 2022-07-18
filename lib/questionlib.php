@@ -721,9 +721,6 @@ function question_move_questions_to_category($questionids, $newcategoryid): bool
             question_bank::get_qtype($question->qtype)->move_files(
                     $question->id, $question->contextid, $newcategorydata->contextid);
         }
-        // Move set_reference records to new category.
-        move_question_set_references($question->category, $newcategoryid,
-            $question->contextid, $newcategorydata->contextid, true);
         // Check whether there could be a clash of idnumbers in the new category.
         list($idnumberclash, $rec) = idnumber_exist_in_question_category($question->idnumber, $newcategoryid);
         if ($idnumberclash) {

@@ -1,0 +1,53 @@
+@mod @mod_quiz
+
+Feature: Moving a question to another category should not affect random questions in a quiz
+  In order for a quiz with random questions to work as expected
+  Teachers should be able to
+  Move a question to a different category without affecting the category the random questions in the quiz reference to
+
+  Background:
+    Given the following "users" exist:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | format |
+      | Course 1 | C1 | weeks |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity   | name   | intro                                           | course | idnumber |
+      | quiz       | Quiz 1 | Quiz 1 for testing the Add random question form | C1     | quiz1    |
+    And the following "question categories" exist:
+      | contextlevel | reference | questioncategory | name           |
+      | Course       | C1        | Top              | top            |
+      | Course       | C1        | top              | Default for C1 |
+      | Course       | C1        | Default for C1   | Subcategory    |
+      | Course       | C1        | top              | Used category  |
+    And the following "questions" exist:
+      | questioncategory | qtype | name                      | questiontext                  |
+      | Used category    | essay | Test question to be moved | Write about whatever you want |
+
+  @javascript
+  Scenario: Moving a question should not change the random question
+    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    When I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I set the field "Category" to "Used category"
+    And I press "Add random question"
+    And I should see "Random (Used category)" on quiz page "1"
+    And I click on "(See questions)" "link"
+    And I should see "Used category"
+    And I click on "Test question to be moved" "checkbox" in the "Test question to be moved" "table_row"
+    And I click on "With selected" "button"
+    And I click on question bulk action "move"
+    And I set the field "Question category" to "Subcategory"
+    And I press "Move to"
+    Then I should see "Test question to be moved"
+    And the field "Select a category" matches value "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subcategory (1)"
+    And the "Select a category" select box should contain "Used category"
+    And the "Select a category" select box should not contain "Used category (1)"
+    And I am on the "Quiz 1" "mod_quiz > Edit" page
+    And I should see "Random (Used category)" on quiz page "1"
+    And I click on "(See questions)" "link"
+    And I should see "Used category"
