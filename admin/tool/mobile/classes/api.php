@@ -504,6 +504,7 @@ class api {
                 'NoDelegate_H5POffline' => new lang_string('h5poffline', 'tool_mobile'),
                 'NoDelegate_DarkMode' => new lang_string('darkmode', 'tool_mobile'),
                 'CoreFilterDelegate' => new lang_string('type_filter_plural', 'plugin'),
+                'CoreReportBuilderDelegate' => new lang_string('reportbuilder', 'core_reportbuilder'),
             ),
             "$mainmenu" => array(
                 '$mmSideMenuDelegate_mmaFrontpage' => new lang_string('sitehome'),
