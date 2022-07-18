@@ -4109,14 +4109,22 @@ function course_classify_for_timeline($course, $user = null, $completioninfo = n
         $user = $USER;
     }
 
+    if ($completioninfo == null) {
+        $completioninfo = new completion_info($course);
+    }
+
+    // Let plugins override data for timeline classification.
+    $pluginsfunction = get_plugins_with_function('extend_course_classify_for_timeline', 'lib.php');
+    foreach ($pluginsfunction as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginfunction($course, $user, $completioninfo);
+        }
+    }
+
     $today = time();
     // End date past.
     if (!empty($course->enddate) && (course_classify_end_date($course) < $today)) {
         return COURSE_TIMELINE_PAST;
-    }
-
-    if ($completioninfo == null) {
-        $completioninfo = new completion_info($course);
     }
 
     // Course was completed.
