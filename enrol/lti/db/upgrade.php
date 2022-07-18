@@ -459,5 +459,17 @@ function xmldb_enrol_lti_upgrade($oldversion) {
     // Automatically generated Moodle v4.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2022041901) {
+        // Disable all orphaned enrolment method instances.
+        $sql = "id IN (SELECT t.enrolid
+                         FROM {enrol_lti_tools} t
+                    LEFT JOIN {context} c ON (t.contextid = c.id)
+                        WHERE c.id IS NULL)";
+        $DB->set_field_select('enrol', 'status', 1, $sql);
+
+        // Lti savepoint reached.
+        upgrade_plugin_savepoint(true, 2022041901, 'enrol', 'lti');
+    }
+
     return true;
 }
