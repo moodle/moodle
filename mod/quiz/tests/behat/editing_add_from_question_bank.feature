@@ -26,10 +26,7 @@ Feature: Adding questions to a quiz from the question bank
       | Test questions   | essay     | question 02 name | teacher1 | Question 02 text | qidnum   |
 
   Scenario: The questions can be filtered by tag
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I navigate to "Question bank" in current page administration
-    And I choose "Edit question" action for "question 01 name" in the question bank
+    Given I am on the "question 01 name" "core_question > edit" page logged in as teacher1
     And I set the following fields to these values:
       | Tags | foo |
     And I press "id_submitbutton"
@@ -37,7 +34,7 @@ Feature: Adding questions to a quiz from the question bank
     And I set the following fields to these values:
       | Tags | bar |
     And I press "id_submitbutton"
-    And I am on the "Quiz 1" "mod_quiz > Edit" page
+    When I am on the "Quiz 1" "mod_quiz > Edit" page
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I should see "foo" in the "question 01 name" "table_row"
