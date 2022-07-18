@@ -2,6 +2,10 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 4.1 ===
+* New \core_courseformat\stateupdates methods add_section_remove() and add_cm_remove() have been added to replace
+  the deprecated methods add_section_delete() and add_cm_delete().
+
 === 4.0 ===
 * New core_courseformat\base::uses_course_index() to define whether the course format uses course index or not.
 * New core_courseformat\base::supports_components() to specify if the format is compatible with reactive components.
