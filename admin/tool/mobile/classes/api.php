@@ -344,6 +344,10 @@ class api {
             $settings->enabledashboard = $CFG->enabledashboard;
         }
 
+        if (empty($section) || $section === 'themesettings') {
+            $settings->customusermenuitems = $CFG->customusermenuitems;
+        }
+
         return $settings;
     }
 
