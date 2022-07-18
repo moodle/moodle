@@ -467,6 +467,8 @@ class question_category_object {
             $cat->stamp = make_unique_id_code();
         }
         $DB->update_record('question_categories', $cat);
+        // Update the set_reference records when moving a category to a different context.
+        move_question_set_references($cat->id, $cat->id, $oldcat->contextid, $tocontextid);
 
         // Log the update of this category.
         $event = \core\event\question_category_updated::create_from_question_category_instance($cat);
