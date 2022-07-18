@@ -25,6 +25,9 @@
 $string['allowframeembedding'] = 'Note: It is recommended that the site administration setting \'Allow frame embedding\' is enabled, so that tools are displayed within a frame rather than in a new window.';
 $string['authltimustbeenabled'] = 'Note: This plugin requires the LTI authentication plugin to be enabled too.';
 $string['couldnotestablishproxy'] = 'Could not establish proxy with consumer.';
+$string['deletedactivity'] = 'Deleted activity';
+$string['deletedactivityalt'] = 'The activity shared by this instance has been deleted';
+$string['deletedactivitydescription'] = 'The activity shared by this instance has been deleted. You can select another activity to share by editing the instance or, if no longer required, you can simply delete the instance. Deleting the instance will remove any associated user enrolments.';
 $string['enrolenddate'] = 'End date';
 $string['enrolenddate_help'] = 'If enabled, users can access until this date only.';
 $string['enrolenddateerror'] = 'Enrolment end date cannot be earlier than start date';
