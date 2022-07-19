@@ -1,6 +1,10 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
+=== 4.1 ===
+* The function course_modchooser() has been finally deprecated and can not be used anymore. Please use
+  course_activitychooser() instead.
+
 === 4.0 ===
 * All activity icons have been replaced with black monochrome icons. The background
 colour for these icons is defined using a new 'FEATURE_MOD_PURPOSE' support variable in the module lib.php file
