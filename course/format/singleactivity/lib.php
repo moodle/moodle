@@ -378,7 +378,6 @@ class format_singleactivity extends core_courseformat\base {
 
     /**
      * Checks if the activity type has multiple items in the activity chooser.
-     * This may happen as a result of defining callback modulename_get_shortcuts().
      *
      * @return bool|null (null if the check is not possible)
      */

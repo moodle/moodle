@@ -134,17 +134,10 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Build the HTML for the module chooser javascript popup
-     *
-     * @param array $modules A set of modules as returned form @see
-     * get_module_metadata
-     * @param object $course The course that will be displayed
-     * @return string The composed HTML for the module
+     * @deprecated since 3.9
      */
-    public function course_modchooser($modules, $course) {
-        debugging('course_modchooser() is deprecated. Please use course_activitychooser() instead.', DEBUG_DEVELOPER);
-
-        return $this->course_activitychooser($course->id);
+    public function course_modchooser() {
+        throw new coding_exception('course_modchooser() can not be used anymore, please use course_activitychooser() instead.');
     }
 
     /**
