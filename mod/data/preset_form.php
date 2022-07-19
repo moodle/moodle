@@ -17,7 +17,8 @@ class data_existing_preset_form extends moodleform {
         $this->_form->setType('action', PARAM_ALPHANUM);
         $delete = get_string('delete');
         foreach ($this->_customdata['presets'] as $preset) {
-            $this->_form->addElement('radio', 'fullname', null, ' '.$preset->description, $preset->userid.'/'.$preset->shortname);
+            $userid = $preset instanceof \mod_data\preset ? $preset->get_userid() : $preset->userid;
+            $this->_form->addElement('radio', 'fullname', null, ' '.$preset->description, $userid.'/'.$preset->shortname);
         }
         $this->_form->addElement('submit', 'importexisting', get_string('choose'));
     }

@@ -31,6 +31,7 @@
                 "name": "Image gallery",
                 "shortname": "imagegallery",
                 "fullname": "Image gallery",
+                "description": "Use this preset to collect images",
                 "userid": 0,
                 "actions": []
             },
@@ -56,7 +57,8 @@
         <thead>
             <tr>
                 <th class="pl-4 border-top-0" scope="col" style="width: 3%"></th>
-                <th class="pl-4 border-top-0" scope="col">{{#str}} name {{/str}}</th>
+                <th class="pl-4 border-top-0" scope="col" style="width:30%">{{#str}} name {{/str}}</th>
+                <th class="pl-4 border-top-0" scope="col">{{#str}} description {{/str}}</th>
                 <th class="pl-4 border-top-0" scope="col" style="width: 3%">{{#showmanage}}{{#str}} action {{/str}}{{/showmanage}}</th>
             </tr>
         </thead>
@@ -67,6 +69,7 @@
                     <input type="radio" name="fullname" value="{{userid}}/{{shortname}}" />
                 </td>
                 <td class="p-4">{{fullname}}</td>
+                <td class="p-4">{{description}}</td>
                 <td class="p-4 preset_action_menu">
                     {{#actions}}
                         <div class="float-right">

@@ -29,6 +29,7 @@
  */
 
 use mod_data\manager;
+use mod_data\preset;
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/data/lib.php');
@@ -84,7 +85,8 @@ if ($action === 'export') {
         throw new \moodle_exception('headersent');
     }
 
-    $exportfile = data_presets_export($course, $cm, $data);
+    $preset = preset::create_from_instance($manager, $data->name);
+    $exportfile = $preset->export();
     $exportfilename = basename($exportfile);
     header("Content-Type: application/download\n");
     header("Content-Disposition: attachment; filename=\"$exportfilename\"");

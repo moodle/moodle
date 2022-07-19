@@ -24,6 +24,7 @@
  */
 
 use mod_data\manager;
+use mod_data\preset;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -369,22 +370,27 @@ class mod_data_generator extends testing_module_generator {
      *
      * @param stdClass $instance The mod_data instance.
      * @param stdClass|null $record The preset information, like 'name'.
-     * @return bool Whether the preset has been created or not.
+     * @return preset The preset that has been created.
      */
-    public function create_preset(stdClass $instance, stdClass $record = null): bool {
-        global $DB;
-
+    public function create_preset(stdClass $instance, stdClass $record = null): preset {
         if (is_null($record)) {
             $record = new stdClass();
         }
 
         // Fill in optional values if not specified.
-        if (!isset($record->name)) {
-            $record->name = 'New preset ' . microtime();
+        $presetname = 'New preset ' . microtime();
+        if (isset($record->name)) {
+            $presetname = $record->name;
+        }
+        $presetdescription = null;
+        if (isset($record->description)) {
+            $presetdescription = $record->description;
         }
 
-        $course = $DB->get_record('course', ['id' => $instance->course], '*', MUST_EXIST);
-        $cm = get_coursemodule_from_instance(manager::MODULE, $instance->id, $course->id, null, MUST_EXIST);
-        return data_presets_save($course, $cm, $instance, $record->name);
+        $manager = manager::create_from_instance($instance);
+        $preset = preset::create_from_instance($manager, $presetname, $presetdescription);
+        $preset->save();
+
+        return $preset;
     }
 }

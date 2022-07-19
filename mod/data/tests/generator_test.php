@@ -16,6 +16,8 @@
 
 namespace mod_data;
 
+use stdClass;
+
 /**
  * PHPUnit data generator testcase.
  *
@@ -234,9 +236,13 @@ class generator_test extends \advanced_testcase {
     /**
      * Test for create_preset().
      *
+     * @dataProvider create_preset_provider
      * @covers ::create_preset
+     * @param stdClass|null $record data for the preset that will be created (like name or description)
      */
-    public function test_create_preset() {
+    public function test_create_preset(?stdClass $record) {
+        global $USER;
+
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -249,27 +255,55 @@ class generator_test extends \advanced_testcase {
         $savedpresets = $manager->get_available_saved_presets();
         $this->assertEmpty($savedpresets);
 
-        // Create one preset with the default configuration.
+        // Create one preset with the configuration in $record.
         $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
-        $result = $plugingenerator->create_preset($activity);
-        $this->assertTrue($result);
+        $preset = $plugingenerator->create_preset($activity, $record);
+        // Check the preset has been saved.
         $savedpresets = $manager->get_available_saved_presets();
         $this->assertCount(1, $savedpresets);
-        $preset = reset($savedpresets);
-        $this->assertStringStartsWith('New preset', $preset->name);
-
-        // Create another preset with a specific name.
-        $record = (object) [
-            'name' => 'World recipes preset',
-        ];
-        $result = $plugingenerator->create_preset($activity, $record);
-        $this->assertTrue($result);
-        $savedpresets = $manager->get_available_saved_presets();
-        $this->assertCount(2, $savedpresets);
-        foreach ($savedpresets as $preset) {
-            if (!str_starts_with($preset->name, 'New preset')) {
-                $this->assertEquals('World recipes preset', $preset->name);
-            }
+        // Check the preset name has the expected value.
+        if (is_null($record) || !property_exists($record, 'name')) {
+            $this->assertStringStartsWith('New preset', $preset->name);
+        } else {
+            $this->assertEquals($record->name, $preset->name);
         }
+        // Check the preset description has the expected value.
+        if (is_null($record) || !property_exists($record, 'description')) {
+            $this->assertEmpty($preset->description);
+        } else {
+            $this->assertEquals($record->description, $preset->description);
+        }
+        // Check the file has been updated properly.
+        $this->assertNotNull($preset->storedfile);
+        $this->assertEquals($USER->id, $preset->get_userid());
+    }
+
+    /**
+     * Data provider for test_create_preset().
+     *
+     * @return array
+     */
+    public function create_preset_provider(): array {
+        return [
+            'Create using the default configuration' => [
+                'record' => null,
+            ],
+            'Create with a given name but no description' => [
+                'record' => (object) [
+                    'name' => 'World recipes preset',
+                ],
+            ],
+            'Create with a given description but no name' => [
+                'record' => (object) [
+                    'description' => 'This is a preset to collect the most popular world recipes.',
+                ],
+            ],
+            'Create with a given name and description' => [
+                'record' => (object) [
+                    'name' => 'World recipes preset',
+                    'description' => 'This is a preset to collect the most popular world recipes.',
+                ],
+            ],
+        ];
     }
 }

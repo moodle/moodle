@@ -341,14 +341,7 @@ class manager {
                 continue;
             }
 
-            $preset = new stdClass();
-            $preset->isplugin = false;
-            $preset->path = $file->get_filepath();
-            $preset->name = trim($preset->path, '/');
-            $preset->shortname = $preset->name;
-            $preset->userid = $userid;
-            $preset->id = $file->get_id();
-            $preset->storedfile = $file;
+            $preset = preset::create_from_storedfile($this, $file);
             $presets[] = $preset;
         }
 
@@ -366,12 +359,7 @@ class manager {
         $dirs = core_component::get_plugin_list('datapreset');
         foreach ($dirs as $dir => $fulldir) {
             if (preset::is_directory_a_preset($fulldir)) {
-                $preset = new stdClass();
-                $preset->isplugin = true;
-                $preset->path = $fulldir;
-                $preset->userid = 0;
-                $preset->shortname = $dir;
-                $preset->name = preset::get_name_from_plugin($dir);
+                $preset = preset::create_from_plugin(null, $dir);
                 $presets[] = $preset;
             }
         }

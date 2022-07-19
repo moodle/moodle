@@ -18,6 +18,7 @@ namespace mod_data\output;
 
 use action_menu;
 use action_menu_link_secondary;
+use mod_data\preset;
 use moodle_url;
 use templatable;
 use renderable;
@@ -86,12 +87,13 @@ class presets implements templatable, renderable {
         $presets = [];
         foreach ($this->presets as $preset) {
             $presetname = $preset->name;
-            if (!empty($preset->userid)) {
+            $userid = $preset instanceof preset ? $preset->get_userid() : $preset->userid;
+            if (!empty($userid)) {
                 // If the preset has the userid field, the full name of creator it will be added to the end of the name.
                 $userfieldsapi = \core_user\fields::for_name();
                 $namefields = $userfieldsapi->get_sql('', false, '', '', false)->selects;
                 $fields = 'id, ' . $namefields;
-                $presetuser = \core_user::get_user($preset->userid, $fields, MUST_EXIST);
+                $presetuser = \core_user::get_user($userid, $fields, MUST_EXIST);
                 $username = fullname($presetuser, true);
                 $presetname = "{$presetname} ({$username})";
             }
@@ -101,7 +103,7 @@ class presets implements templatable, renderable {
                 // Only presets saved by users can be removed (so the datapreset plugins shouldn't display the delete button).
                 if (!$preset->isplugin && data_user_can_delete_preset($PAGE->context, $preset)) {
                     $deleteactionurl = new moodle_url('/mod/data/preset.php',
-                        ['d' => $this->id, 'fullname' => "{$preset->userid}/{$preset->shortname}",
+                        ['d' => $this->id, 'fullname' => "{$userid}/{$preset->shortname}",
                         'action' => 'confirmdelete']);
 
                     $actionmenu = new action_menu();
@@ -124,7 +126,8 @@ class presets implements templatable, renderable {
                 'name' => $preset->name,
                 'shortname' => $preset->shortname,
                 'fullname' => $presetname,
-                'userid' => $preset->userid,
+                'description' => $preset->description,
+                'userid' => $userid,
                 'actions' => $actions,
             ];
         }

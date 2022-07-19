@@ -3450,52 +3450,16 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
  * @param stdClass $data The database record
  * @param string $path
  * @return bool
+ * @deprecated since Moodle 4.1 MDL-75142 - please, use the preset::save() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::save()
  */
 function data_presets_save($course, $cm, $data, $path) {
-    global $USER;
-    $fs = get_file_storage();
-    $filerecord = new stdClass;
-    $filerecord->contextid = DATA_PRESET_CONTEXT;
-    $filerecord->component = DATA_PRESET_COMPONENT;
-    $filerecord->filearea = DATA_PRESET_FILEAREA;
-    $filerecord->itemid = 0;
-    $filerecord->filepath = '/'.$path.'/';
-    $filerecord->userid = $USER->id;
+    debugging('data_presets_save() is deprecated. Please use preset::save() instead.', DEBUG_DEVELOPER);
 
-    $filerecord->filename = 'preset.xml';
-    $fs->create_file_from_string($filerecord, data_presets_generate_xml($course, $cm, $data));
-
-    $filerecord->filename = 'singletemplate.html';
-    $fs->create_file_from_string($filerecord, $data->singletemplate);
-
-    $filerecord->filename = 'listtemplateheader.html';
-    $fs->create_file_from_string($filerecord, $data->listtemplateheader);
-
-    $filerecord->filename = 'listtemplate.html';
-    $fs->create_file_from_string($filerecord, $data->listtemplate);
-
-    $filerecord->filename = 'listtemplatefooter.html';
-    $fs->create_file_from_string($filerecord, $data->listtemplatefooter);
-
-    $filerecord->filename = 'addtemplate.html';
-    $fs->create_file_from_string($filerecord, $data->addtemplate);
-
-    $filerecord->filename = 'rsstemplate.html';
-    $fs->create_file_from_string($filerecord, $data->rsstemplate);
-
-    $filerecord->filename = 'rsstitletemplate.html';
-    $fs->create_file_from_string($filerecord, $data->rsstitletemplate);
-
-    $filerecord->filename = 'csstemplate.css';
-    $fs->create_file_from_string($filerecord, $data->csstemplate);
-
-    $filerecord->filename = 'jstemplate.js';
-    $fs->create_file_from_string($filerecord, $data->jstemplate);
-
-    $filerecord->filename = 'asearchtemplate.html';
-    $fs->create_file_from_string($filerecord, $data->asearchtemplate);
-
-    return true;
+    $manager = manager::create_from_instance($data);
+    $preset = preset::create_from_instance($manager, $path);
+    return $preset->save();
 }
 
 /**
@@ -3506,151 +3470,42 @@ function data_presets_save($course, $cm, $data, $path) {
  * @param stdClass $cm The course module record
  * @param stdClass $data The database record
  * @return string The XML for the preset
+ * @deprecated since Moodle 4.1 MDL-75142 - please, use the protected preset::generate_preset_xml() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::generate_preset_xml()
  */
 function data_presets_generate_xml($course, $cm, $data) {
-    global $DB;
-
-    // Assemble "preset.xml":
-    $presetxmldata = "<preset>\n\n";
-
-    // Raw settings are not preprocessed during saving of presets
-    $raw_settings = array(
-        'intro',
-        'comments',
-        'requiredentries',
-        'requiredentriestoview',
-        'maxentries',
-        'rssarticles',
-        'approval',
-        'manageapproved',
-        'defaultsortdir'
+    debugging(
+        'data_presets_generate_xml() is deprecated. Please use the protected preset::generate_preset_xml() instead.',
+        DEBUG_DEVELOPER
     );
 
-    $presetxmldata .= "<settings>\n";
-    // First, settings that do not require any conversion
-    foreach ($raw_settings as $setting) {
-        $presetxmldata .= "<$setting>" . htmlspecialchars($data->$setting) . "</$setting>\n";
-    }
-
-    // Now specific settings
-    if ($data->defaultsort > 0 && $sortfield = data_get_field_from_id($data->defaultsort, $data)) {
-        $presetxmldata .= '<defaultsort>' . htmlspecialchars($sortfield->field->name) . "</defaultsort>\n";
-    } else {
-        $presetxmldata .= "<defaultsort>0</defaultsort>\n";
-    }
-    $presetxmldata .= "</settings>\n\n";
-    // Now for the fields. Grab all that are non-empty
-    $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
-    ksort($fields);
-    if (!empty($fields)) {
-        foreach ($fields as $field) {
-            $presetxmldata .= "<field>\n";
-            foreach ($field as $key => $value) {
-                if ($value != '' && $key != 'id' && $key != 'dataid') {
-                    $presetxmldata .= "<$key>" . htmlspecialchars($value) . "</$key>\n";
-                }
-            }
-            $presetxmldata .= "</field>\n\n";
-        }
-    }
-    $presetxmldata .= '</preset>';
-    return $presetxmldata;
+    $manager = manager::create_from_instance($data);
+    $preset = preset::create_from_instance($manager, $data->name);
+    $reflection = new \ReflectionClass(preset::class);
+    $method = $reflection->getMethod('generate_preset_xml');
+    $method->setAccessible(true);
+    return $method->invokeArgs($preset, []);
 }
 
+/**
+ * Export current fields and presets.
+ *
+ * @param stdClass $course The course the database module belongs to.
+ * @param stdClass $cm The course module record
+ * @param stdClass $data The database record
+ * @param bool $tostorage
+ * @return string the full path to the exported preset file.
+ * @deprecated since Moodle 4.1 MDL-75142 - please, use the preset::export() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::export()
+ */
 function data_presets_export($course, $cm, $data, $tostorage=false) {
-    global $CFG, $DB;
+    debugging('data_presets_export() is deprecated. Please use preset::export() instead.', DEBUG_DEVELOPER);
 
-    $presetname = clean_filename($data->name) . '-preset-' . gmdate("Ymd_Hi");
-    $exportsubdir = "mod_data/presetexport/$presetname";
-    make_temp_directory($exportsubdir);
-    $exportdir = "$CFG->tempdir/$exportsubdir";
-
-    // Assemble "preset.xml":
-    $presetxmldata = data_presets_generate_xml($course, $cm, $data);
-
-    // After opening a file in write mode, close it asap
-    $presetxmlfile = fopen($exportdir . '/preset.xml', 'w');
-    fwrite($presetxmlfile, $presetxmldata);
-    fclose($presetxmlfile);
-
-    // Now write the template files
-    $singletemplate = fopen($exportdir . '/singletemplate.html', 'w');
-    fwrite($singletemplate, $data->singletemplate);
-    fclose($singletemplate);
-
-    $listtemplateheader = fopen($exportdir . '/listtemplateheader.html', 'w');
-    fwrite($listtemplateheader, $data->listtemplateheader);
-    fclose($listtemplateheader);
-
-    $listtemplate = fopen($exportdir . '/listtemplate.html', 'w');
-    fwrite($listtemplate, $data->listtemplate);
-    fclose($listtemplate);
-
-    $listtemplatefooter = fopen($exportdir . '/listtemplatefooter.html', 'w');
-    fwrite($listtemplatefooter, $data->listtemplatefooter);
-    fclose($listtemplatefooter);
-
-    $addtemplate = fopen($exportdir . '/addtemplate.html', 'w');
-    fwrite($addtemplate, $data->addtemplate);
-    fclose($addtemplate);
-
-    $rsstemplate = fopen($exportdir . '/rsstemplate.html', 'w');
-    fwrite($rsstemplate, $data->rsstemplate);
-    fclose($rsstemplate);
-
-    $rsstitletemplate = fopen($exportdir . '/rsstitletemplate.html', 'w');
-    fwrite($rsstitletemplate, $data->rsstitletemplate);
-    fclose($rsstitletemplate);
-
-    $csstemplate = fopen($exportdir . '/csstemplate.css', 'w');
-    fwrite($csstemplate, $data->csstemplate);
-    fclose($csstemplate);
-
-    $jstemplate = fopen($exportdir . '/jstemplate.js', 'w');
-    fwrite($jstemplate, $data->jstemplate);
-    fclose($jstemplate);
-
-    $asearchtemplate = fopen($exportdir . '/asearchtemplate.html', 'w');
-    fwrite($asearchtemplate, $data->asearchtemplate);
-    fclose($asearchtemplate);
-
-    // Check if all files have been generated
-    if (! preset::is_directory_a_preset($exportdir)) {
-        throw new \moodle_exception('generateerror', 'data');
-    }
-
-    $filenames = array(
-        'preset.xml',
-        'singletemplate.html',
-        'listtemplateheader.html',
-        'listtemplate.html',
-        'listtemplatefooter.html',
-        'addtemplate.html',
-        'rsstemplate.html',
-        'rsstitletemplate.html',
-        'csstemplate.css',
-        'jstemplate.js',
-        'asearchtemplate.html'
-    );
-
-    $filelist = array();
-    foreach ($filenames as $filename) {
-        $filelist[$filename] = $exportdir . '/' . $filename;
-    }
-
-    $exportfile = $exportdir.'.zip';
-    file_exists($exportfile) && unlink($exportfile);
-
-    $fp = get_file_packer('application/zip');
-    $fp->archive_to_pathname($filelist, $exportfile);
-
-    foreach ($filelist as $file) {
-        unlink($file);
-    }
-    rmdir($exportdir);
-
-    // Return the full path to the exported preset file:
-    return $exportfile;
+    $manager = manager::create_from_instance($data);
+    $preset = preset::create_from_instance($manager, $data->name);
+    return $preset->export();
 }
 
 /**
@@ -3999,7 +3854,8 @@ function data_user_can_delete_preset($context, $preset) {
         return true;
     } else {
         $candelete = false;
-        if ($preset->userid == $USER->id) {
+        $userid = $preset instanceof preset ? $preset->get_userid() : $preset->userid;
+        if ($userid == $USER->id) {
             $candelete = true;
         }
         return $candelete;
