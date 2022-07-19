@@ -186,9 +186,10 @@ class EmailVars {
             // Get the company theme.
             if (method_exists($this->company,'get_theme')) {
                 $theme = $this->company->get_theme();
-                return new moodle_url($this->course->url, array('theme' => $theme));
+                $this->course->url->param('theme', $theme);
+                return $this->course->url;
             } else {
-                return new moodle_url($this->course->url);
+                return $this->course->url;
             }
         }
     }
