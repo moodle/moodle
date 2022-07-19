@@ -584,7 +584,7 @@ function local_kaltura_lti1p3_get_launch_data($module, $withblocks, $editor = nu
 		if ($ltiversion !== LTI_VERSION_1P3) {
 			$parms = lti_sign_parameters($requestparams, $endpoint, 'POST', $key, $secret);
 		} else {
-			$parms = lti_sign_jwt($requestparams, $endpoint, $key, $instance->partner_id, $nonce);
+			$parms = lti_sign_jwt($requestparams, $endpoint, $key, $instance->resourcekey, $nonce);
 		}
 
 		$endpointurl = new \moodle_url($endpoint);

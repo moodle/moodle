@@ -102,8 +102,7 @@ if ($hassiteconfig) {
 
 		$clientid = random_string(15);
 
-		set_config(KALTURA_PLUGIN_NAME, 'client_id', $clientid);
-
+		set_config('client_id', $clientid, KALTURA_PLUGIN_NAME);
 	}
 
 	$adminsetting = new admin_setting_description('client_id', 'Client ID', '<input type="text" class="form-control" size="30" value="'.$clientid.'" disabled/><p>Should be used in the KAF hosted module</p>');

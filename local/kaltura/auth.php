@@ -73,7 +73,7 @@ if ($ok) {
 	$module['cmid'] = 0;
 	$module['module'] = $ltimessagehint;
 
-	$ok = ($id !== $ltimessagehint);
+	$ok = ($id == $ltimessagehint);
 	if (!$ok) {
 		$error = 'invalid_request';
 	} else {
