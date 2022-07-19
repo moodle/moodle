@@ -40,3 +40,44 @@
  ```
 
 6. Check the (Release notes)[https://www.tiny.cloud/docs/tinymce/6/release-notes/] for any new plugins, premium plugins, menu items, or buttons and add them to classes/manager.php
+
+## Update procedure for included TinyMCE translations
+
+1. Visit https://www.tiny.cloud/get-tiny/language-packages/ and download a translation which has been fully translated, for example the German translation.
+2. If you did not download the German translation, update the final line of `tools/getOriginals.mjs` to the language code for the relevant translation.
+3. Unzip the translation into a new directory:
+
+ ```
+ langdir=`mktemp -d`
+ cd "${langdir}"
+ unzip path/to/de.zip
+ ```
+
+4. Run the translation tool:
+
+ ```
+ node "${MOODLEDIR}/tools/getOriginals.mjs"
+ ```
+
+ This will generate two files
+
+5. Copy the `tinystrings.json` file into the Moodle directory
+
+ ```
+ cp tinystrings.json "${MOODLEDIR}/tinystrings.json"
+ ```
+
+6. Copy the content of the `strings.php` file over the existing tiny strings:
+
+ ```
+ sed -i "/string\['tiny:/d" "${MOODLEDIR}/lang/en/editor_tiny.php"
+ cat strings.php >> "${MOODLEDIR}/lang/en/editor_tiny.php"
+ ```
+
+7. Commit changes
+
+---
+
+**Note:** You will need to manually check for any Moodle-updated language strings as part of this change (for example any from the en_fixes).
+
+---
