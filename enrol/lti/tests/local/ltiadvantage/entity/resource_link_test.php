@@ -229,15 +229,16 @@ class resource_link_test extends \advanced_testcase {
      * @covers ::add_user
      */
     public function test_add_user() {
+        global $CFG;
         $reslinkwithid = resource_link::create('res-link-id-123', 24, 44, 66, 33);
-        $user = $reslinkwithid->add_user(2, 'platform-user-id-123', 'en', 'Sydney', 'AU', 'Test university', '99');
+        $user = $reslinkwithid->add_user(2, 'platform-user-id-123', $CFG->lang, 'Sydney', 'AU', 'Test university', '99');
         $this->assertInstanceOf(user::class, $user);
         $this->assertEquals(33, $user->get_resourcelinkid());
 
         $reslinkwithoutid = resource_link::create('res-link-id-123', 24, 44);
         $this->expectException(\coding_exception::class);
         $this->expectExceptionMessage("Can't add user to a resource_link that hasn't first been saved");
-        $reslinkwithoutid->add_user(2, 'platform-user-id-123', 'en', 'Sydney', 'Australia', 'Test university', '99');
+        $reslinkwithoutid->add_user(2, 'platform-user-id-123', $CFG->lang, 'Sydney', 'Australia', 'Test university', '99');
     }
 
     /**
