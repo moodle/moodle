@@ -105,6 +105,7 @@ $string['selectiomadpolicyandversion'] = 'Use the filter above to select policy 
 $string['steppolicies'] = 'Policy {$a->numiomadpolicy} out of {$a->totalpolicies}';
 $string['pluginname'] = 'IOMAD Policies';
 $string['policiesagreements'] = 'Policies and agreements';
+$string['importiomadpolicy'] = 'Import polices from tool_policy';
 $string['iomadpolicy:accept'] = 'Agree to the policies';
 $string['iomadpolicy:acceptbehalf'] = 'Give consent for policies on someone else\'s behalf';
 $string['iomadpolicy:managedocs'] = 'Manage policies';

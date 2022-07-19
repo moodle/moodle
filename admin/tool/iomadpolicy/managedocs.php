@@ -29,6 +29,14 @@ require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $archived = optional_param('archived', 0, PARAM_INT);
+$import = optional_param('import', 0, PARAM_INT);
+
+if ($import && has_capability('tool/iomadpolicy:managedocs', \context_system::instance())) {
+    if (!$DB->get_records('tool_iomadpolicy')) {
+        tool_iomadpolicy\api::import_policies();
+    }
+}
+require_login();
 
 admin_externalpage_setup('tool_iomadpolicy_managedocs', '', ['archived' => $archived]);
 

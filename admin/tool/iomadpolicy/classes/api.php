@@ -1212,4 +1212,35 @@ class api {
 
         return $hit;
     }
+
+    public static function import_policies() {
+        global $DB;
+
+        if ($DB->get_records('tool_iomadpolicy')) {
+            return;
+        }
+
+        // Get all the policies.
+        if ($policies = $DB->get_records('tool_policy')) {
+            foreach ($policies as $policy) {
+                $DB->insert_record('tool_iomadpolicy', $policy);
+            }
+        }
+
+        // Get all the versions.
+        if ($versions = $DB->get_records('tool_policy_versions')) {
+            foreach ($versions as $version) {
+                $version->iomadpolicyid = $version->policyid;
+                $DB->insert_record('tool_iomadpolicy_versions', $version);
+            }
+        }
+
+        // Get all the acceptances.
+        if ($accpetances = $DB->get_records('tool_policy_acceptances')) {
+            foreach ($accpetances as $acceptance) {
+                $acceptance->iomadpolicyversionid = $acceptance->policyversionid;
+                $DB->insert_record('tool_iomadpolicy_acceptances', $acceptance);
+            }
+        }
+    }
 }

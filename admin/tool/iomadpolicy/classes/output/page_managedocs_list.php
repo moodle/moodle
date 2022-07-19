@@ -112,6 +112,7 @@ class page_managedocs_list implements renderable, templatable {
 
         // List all policies. Display current and all draft versions of each iomadpolicy in this list.
         // If none found, then show only one archived version.
+        $allpolicies = api::list_policies(null, true, -1);
         $policies = api::list_policies(null, true, $companyid);
         foreach ($policies as $i => $iomadpolicy) {
 
@@ -142,6 +143,12 @@ class page_managedocs_list implements renderable, templatable {
                     true, false, false);
             }
 
+        }
+
+        // Add an import if there are no already defined policies.
+        $data->canimport = $data->canaddnew;
+        if (!empty($allpolicies)) {
+            $data->canimport = false;
         }
 
         return $data;
