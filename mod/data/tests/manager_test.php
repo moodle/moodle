@@ -132,8 +132,6 @@ class manager_test extends \advanced_testcase {
      * @covers ::set_template_viewed
      */
     public function test_set_template_viewed() {
-        global $CFG;
-
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -145,7 +143,6 @@ class manager_test extends \advanced_testcase {
         );
         $manager = manager::create_from_instance($instance);
         $context = $manager->get_context();
-        $cm = $manager->get_coursemodule();
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -153,9 +150,8 @@ class manager_test extends \advanced_testcase {
         $manager->set_template_viewed();
 
         $events = $sink->get_events();
-        // 2 additional events thanks to completion.
         $this->assertCount(1, $events);
-        $event = array_shift($events);
+        $event = reset($events);
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('mod_data\event\template_viewed', $event);

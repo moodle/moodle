@@ -37,9 +37,6 @@ class manager {
     /** Module name. */
     const MODULE = 'data';
 
-    /** Pluginname name. */
-    const PLUGIN = 'mod_data';
-
     /** Template list with their files required to save the information of a preset. */
     const TEMPLATES_LIST = [
         'listtemplate' => 'listtemplate.html',
@@ -67,12 +64,12 @@ class manager {
     private $cm;
 
     /** @var array the current data_fields records.
-     * Do not acces this attribute directly, use $this->get_field_records instead
+     * Do not access this attribute directly, use $this->get_field_records instead
      */
     private $_fieldrecords = null;
 
     /**
-     * Class contructor.
+     * Class constructor.
      *
      * @param cm_info $cm course module info object
      * @param stdClass $instance activity instance object.
@@ -89,7 +86,7 @@ class manager {
     /**
      * Create a manager instance from an instance record.
      *
-     * @param stdClass $instance a activity record
+     * @param stdClass $instance an activity record
      * @return manager
      */
     public static function create_from_instance(stdClass $instance): self {
@@ -100,9 +97,9 @@ class manager {
     }
 
     /**
-     * Create a manager instance from an course_modules record.
+     * Create a manager instance from a course_modules record.
      *
-     * @param stdClass|cm_info $cm a activity record
+     * @param stdClass|cm_info $cm an activity record
      * @return manager
      */
     public static function create_from_coursemodule($cm): self {
@@ -249,8 +246,8 @@ class manager {
      * @return template the template instance
      */
     public function get_template(string $templatename, array $options = []): template {
-        if ($templatename == 'single') {
-            $templatename == 'singletemplate';
+        if ($templatename === 'single') {
+            $templatename = 'singletemplate';
         }
         $instance = $this->instance;
         $templatecontent = $instance->{$templatename} ?? '';
@@ -258,7 +255,7 @@ class manager {
             $templatecontent = data_generate_default_template($instance, $templatename, 0, false, false);
         }
         // Some templates have extra options.
-        if ($templatename == 'singletemplate') {
+        if ($templatename === 'singletemplate') {
             $options['comments'] = true;
             $options['ratings'] = true;
         }
@@ -271,7 +268,7 @@ class manager {
      * @param stdClass $newtemplates an object with all the new templates
      * @return bool if updated successfully.
      */
-    public function update_templates(stdClass $newtemplates) {
+    public function update_templates(stdClass $newtemplates): bool {
         global $DB;
         $record = (object)[
             'id' => $this->instance->id,

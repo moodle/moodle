@@ -20,7 +20,6 @@ use templatable;
 use renderable;
 use core_tag_tag;
 use mod_data\manager;
-use moodle_url;
 
 /**
  * Renderable class for template editor tools.
@@ -118,7 +117,7 @@ class template_editor_tools implements templatable, renderable {
      * @param string $templatename the template name
      * @return array|null array of tags.
      */
-    protected function get_action_tags(string $templatename = null): array {
+    protected function get_action_tags(string $templatename): array {
         $name = get_string('actions');
         if ($templatename == 'addtemplate' || $templatename == 'asearchtemplate') {
             return $this->get_optgroup_data($name, []);
@@ -146,7 +145,7 @@ class template_editor_tools implements templatable, renderable {
      * @param string $templatename the template name
      * @return array associative array of tags => tag name
      */
-    protected function get_other_tags(string $templatename = null): array {
+    protected function get_other_tags(string $templatename): array {
         $name = get_string('other', 'data');
         $taglist = [];
         if ($templatename == 'asearchtemplate') {

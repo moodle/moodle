@@ -144,10 +144,6 @@ class template_test extends \advanced_testcase {
         }
 
         // Some cooked variables for the regular expression.
-        $userfullname = fullname($user);
-        $timeadded = userdate($entry->timecreated);
-        $timemodified = userdate($entry->timemodified);
-        $fieldid = $field->field->id;
         $replace = [
             '{authorfullname}' => fullname($author),
             '{timeadded}' => userdate($entry->timecreated),
@@ -444,7 +440,6 @@ class template_test extends \advanced_testcase {
                 'templatecontent' => 'Some ##export## tag',
                 'expected' => '|Some  tag|',
                 'rolename' => 'student',
-                'enableexport' => true,
                 'enableexport' => false,
                 'approved' => true,
                 'enablecomments' => false,

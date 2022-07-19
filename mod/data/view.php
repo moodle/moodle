@@ -53,15 +53,17 @@ if ($id) {
 } else if ($rid) {
     $record = $DB->get_record('data_records', ['id' => $rid], '*', MUST_EXIST);
     $manager = manager::create_from_data_record($record);
+    $cm = $manager->get_coursemodule();
+    $course = get_course($cm->course);
 } else {   // We must have $d.
     $data = $DB->get_record('data', ['id' => $d], '*', MUST_EXIST);
     $manager = manager::create_from_instance($data);
+    $cm = $manager->get_coursemodule();
+    $course = get_course($cm->course);
 }
 
 $data = $manager->get_instance();
-$cm = $manager->get_coursemodule();
 $context = $manager->get_context();
-$course = get_course($cm->course);
 
 require_login($course, true, $cm);
 
@@ -441,8 +443,6 @@ if ($showactivity) {
                     data_generate_default_template($data, 'singletemplate', 0, false, false);
                 }
 
-                //data_print_template() only adds ratings for singletemplate which is why we're attaching them here
-                //attach ratings to data records
                 require_once($CFG->dirroot.'/rating/lib.php');
                 if ($data->assessed != RATING_AGGREGATE_NONE) {
                     $ratingoptions = new stdClass;

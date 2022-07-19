@@ -42,13 +42,13 @@ if ($id) {
 } else {   // We must have $d.
     $instance = $DB->get_record('data', ['id' => $d], '*', MUST_EXIST);
     $manager = manager::create_from_instance($instance);
+    $cm = $manager->get_coursemodule();
+    $course = get_course($cm->course);
     $url->param('d', $d);
 }
 
 $instance = $manager->get_instance();
-$cm = $manager->get_coursemodule();
 $context = $manager->get_context();
-$course = get_course($cm->course);
 
 $url->param('mode', $mode);
 $PAGE->set_url($url);

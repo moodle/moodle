@@ -108,7 +108,7 @@ defined('MOODLE_INTERNAL') || die();
                                                       array('fieldid'=>$firstfield->id, 'recordid'=>$record->id)));
                 }
                 $parser = $manager->get_template('rsstemplate');
-                $item->title = $parser->parse_entries($recordarray);
+                $item->description = $parser->parse_entries($recordarray);
                 $item->pubdate = $record->timecreated;
                 $item->link = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$record->id;
 

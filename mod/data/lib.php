@@ -613,12 +613,15 @@ function data_generate_default_template(&$data, $template, $recordid = 0, $form 
     if (!$data && !$template) {
         return false;
     }
-    if ($template == 'csstemplate'
-        || $template == 'jstemplate'
-        || $template == 'listtemplateheader'
-        || $template == 'listtemplatefooter'
-        || $template == 'rsstitletemplate'
-    ) {
+
+    $defaulttemplates = [
+        'csstemplate',
+        'jstemplate',
+        'listtemplateheader',
+        'listtemplatefooter',
+        'rsstitletemplate',
+    ];
+    if (in_array($template, $defaulttemplates)) {
         return '';
     }
 

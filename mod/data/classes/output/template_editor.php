@@ -66,21 +66,20 @@ class template_editor implements templatable, renderable {
         ];
 
         // Determine whether to use HTML editors.
-        if (($this->templatename === 'csstemplate') || ($this->templatename === 'jstemplate')) {
-            $usehtmleditor = false;
-        } else {
+        $usehtmleditor = false;
+        $disableeditor = false;
+        if (($this->templatename !== 'csstemplate') && ($this->templatename !== 'jstemplate')) {
             $usehtmleditor = data_get_config($instance, "editor_{$this->templatename}", true);
+            $disableeditor = true;
         }
         $data['usehtmleditor'] = $usehtmleditor;
+        // Some templates, like CSS, cannot enable the wysiwyg editor.
+        $data['disableeditor'] = $disableeditor;
 
         $tools = new template_editor_tools($this->manager, $this->templatename);
         $data['toolbar'] = $tools->export_for_template($output);
         $data['editors'] = $this->get_editors_data($usehtmleditor);
 
-        // Some templates cannot enable the wysiwyg editor.
-        if ($this->templatename == 'csstemplate' || $this->templatename == 'jstemplate') {
-            $data['disableeditor'] = false;
-        }
         return $data;
     }
 
@@ -104,16 +103,15 @@ class template_editor implements templatable, renderable {
             ['d' => $instance->id, 'mode' => $this->templatename]
         );
 
+        $format = FORMAT_PLAIN;
         if ($usehtmleditor) {
             $format = FORMAT_HTML;
-        } else {
-            $format = FORMAT_PLAIN;
         }
 
         $editor = editors_get_preferred_editor($format);
 
         // Add editors.
-        if ($this->templatename == 'listtemplate') {
+        if ($this->templatename === 'listtemplate') {
             $result[] = $this->generate_editor_data(
                 $editor,
                 'header',
@@ -133,7 +131,7 @@ class template_editor implements templatable, renderable {
             $value
         );
 
-        if ($this->templatename == 'listtemplate') {
+        if ($this->templatename === 'listtemplate') {
             $result[] = $this->generate_editor_data(
                 $editor,
                 'footer',
@@ -142,7 +140,7 @@ class template_editor implements templatable, renderable {
             );
         }
 
-        if ($this->templatename == 'rsstemplate') {
+        if ($this->templatename === 'rsstemplate') {
             $result[] = $this->generate_editor_data(
                 $editor,
                 'rsstitletemplate',
@@ -157,7 +155,7 @@ class template_editor implements templatable, renderable {
     /**
      * Generate a single editor data.
      *
-     * @param texteditor $editor the edtitor object
+     * @param texteditor $editor the editor object
      * @param string $name the editor name
      * @param string $fieldname the field name
      * @param string|null $value the current value
