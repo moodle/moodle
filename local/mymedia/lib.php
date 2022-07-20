@@ -27,7 +27,7 @@
  * @return void
  */
 function local_mymedia_extend_navigation($navigation) {
-    global $USER, $DB, $PAGE;
+    global $USER, $DB, $PAGE, $CFG;
 
     if (empty($USER->id)) {
         return;
@@ -53,8 +53,14 @@ function local_mymedia_extend_navigation($navigation) {
     if (!has_capability('local/mymedia:view', $context, $USER)) {
         return;
     }
-    $mymedia = get_string('nav_mymedia', 'local_mymedia');
-    $icon = new pix_icon('my-media', '', 'local_mymedia');
-    $nodemymedia = $nodehome->add($mymedia, new moodle_url('/local/mymedia/mymedia.php'), navigation_node::NODETYPE_LEAF, $mymedia, 'mymedia', $icon);
-    $nodemymedia->showinflatnavigation = true;
+
+    $menuHeaderStr = get_string('nav_mymedia', 'local_mymedia');
+
+    if (strpos($CFG->custommenuitems,$menuHeaderStr) !== false) {
+		//My Media is already part of the config, no need to add it again.
+		return;
+	}
+
+	$myMediaStr = "\n$menuHeaderStr|/local/mymedia/mymedia.php";
+	$CFG->custommenuitems .= $myMediaStr;
 }

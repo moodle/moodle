@@ -30,6 +30,7 @@ require_login();
 
 global $PAGE;
 
+
 $url = required_param('url', PARAM_URL);
 $width = required_param('width', PARAM_INT);
 $height = required_param('height', PARAM_INT);
