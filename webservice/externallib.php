@@ -168,7 +168,7 @@ class core_webservice_external extends external_api {
 
         // Retrieve some advanced features. Only enable/disable ones (bool).
         $advancedfeatures = array("usecomments", "usetags", "enablenotes", "messaging", "enableblogs",
-                                    "enablecompletion", "enablebadges", "messagingallusers");
+                                    "enablecompletion", "enablebadges", "messagingallusers", "enablecustomreports");
         foreach ($advancedfeatures as $feature) {
             if (isset($CFG->{$feature})) {
                 $siteinfo['advancedfeatures'][] = array(
