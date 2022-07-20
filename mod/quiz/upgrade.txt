@@ -4,6 +4,9 @@ This files describes API changes in the quiz code.
 
 * External function mod_quiz_external::get_user_best_grade now returns and additional optional field:
   - gradetopass: The grade to pass the quiz (if set)
+* If a quiz is sequential the external functions mod_quiz_external::get_attempt_data, mod_quiz_external::get_attempt_summary will not return any data
+related to out of sequence question except while reviewing the quiz (MDL-75210).
+
 
 === 3.10.1 ===
 
