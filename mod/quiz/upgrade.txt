@@ -1,12 +1,16 @@
 This files describes API changes in the quiz code.
 
+=== 4.0.3, 4.1 ===
+
+* If a quiz is sequential the external functions mod_quiz_external::get_attempt_data, mod_quiz_external::get_attempt_summary will not return any data
+related to out of sequence question except while reviewing the quiz (MDL-75210).
+
 === 4.0.2, 4.1 ===
 
 * No external code should be calling quiz_overview_report::regrade_attempt because it is an
   internal method of the quiz_overview plugin. But if you are incorrectly using it, be aware
   that the API changed slightly. It now returns an array listing any questions which could
   not be regraded.
-
 
 === 4.0 ===
 

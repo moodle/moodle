@@ -112,7 +112,21 @@ class behat_mod_quiz extends behat_question_base {
             case 'manual grading report':
                 return new moodle_url('/mod/quiz/report.php',
                         ['id' => $this->get_cm_by_quiz_name($identifier)->id, 'mode' => 'grading']);
-
+            case 'attempt view':
+                list($quizname, $username, $attemptno, $pageno) = explode(' > ', $identifier);
+                $pageno = intval($pageno);
+                $pageno = $pageno > 0 ? $pageno - 1 : 0;
+                $attemptno = (int) trim(str_replace ('Attempt', '', $attemptno));
+                $quiz = $this->get_quiz_by_name($quizname);
+                $quizcm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+                $user = $DB->get_record('user', ['username' => $username], '*', MUST_EXIST);
+                $attempt = $DB->get_record('quiz_attempts',
+                    ['quiz' => $quiz->id, 'userid' => $user->id, 'attempt' => $attemptno], '*', MUST_EXIST);
+                return new moodle_url('/mod/quiz/attempt.php', [
+                    'attempt' => $attempt->id,
+                    'cmid' => $quizcm->id,
+                    'page' => $pageno
+                ]);
             case 'attempt review':
                 if (substr_count($identifier, ' > ') !== 2) {
                     throw new coding_exception('For "attempt review", name must be ' .
