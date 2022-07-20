@@ -1623,7 +1623,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
 
-        // Now, force the quiz with QUIZ_NAVMETHOD_SEQ (sequencial) navigation method.
+        // Now, force the quiz with QUIZ_NAVMETHOD_SEQ (sequential) navigation method.
         $DB->set_field('quiz', 'navmethod', QUIZ_NAVMETHOD_SEQ, array('id' => $quiz->id));
         // Quiz requiring preflightdata.
         $DB->set_field('quiz', 'password', 'abcdef', array('id' => $quiz->id));
@@ -2010,5 +2010,138 @@ class external_test extends externallib_advanced_testcase {
         ksort($result['questiontypes']);
 
         $this->assertEquals($expected, $result['questiontypes']);
+    }
+
+    /**
+     * Test that a sequential navigation quiz is not allowing to see questions in advance except if reviewing
+     */
+    public function test_sequential_navigation_view_attempt() {
+        // Test user with full capabilities.
+        $quiz = $this->prepare_sequential_quiz();
+        $attemptobj = $this->create_quiz_attempt_object($quiz);
+        $this->setUser($this->student);
+        // Check out of sequence access for view.
+        $this->assertNotEmpty(mod_quiz_external::view_attempt($attemptobj->get_attemptid(), 0, []));
+        try {
+            mod_quiz_external::view_attempt($attemptobj->get_attemptid(), 3, []);
+            $this->fail('Exception expected due to out of sequence access.');
+        } catch (\moodle_exception $e) {
+            $this->assertStringContainsString('quiz/Out of sequence access', $e->getMessage());
+        }
+    }
+
+    /**
+     * Test that a sequential navigation quiz is not allowing to see questions in advance for a student
+     */
+    public function test_sequential_navigation_attempt_summary() {
+        // Test user with full capabilities.
+        $quiz = $this->prepare_sequential_quiz();
+        $attemptobj = $this->create_quiz_attempt_object($quiz);
+        $this->setUser($this->student);
+        // Check that we do not return other questions than the one currently viewed.
+        $result = mod_quiz_external::get_attempt_summary($attemptobj->get_attemptid());
+        $this->assertCount(1, $result['questions']);
+        $this->assertStringContainsString('Question (1)', $result['questions'][0]['html']);
+    }
+
+    /**
+     * Test that a sequential navigation quiz is not allowing to see questions in advance for student
+     */
+    public function test_sequential_navigation_get_attempt_data() {
+        // Test user with full capabilities.
+        $quiz = $this->prepare_sequential_quiz();
+        $attemptobj = $this->create_quiz_attempt_object($quiz);
+        $this->setUser($this->student);
+        // Test invalid instance id.
+        try {
+            mod_quiz_external::get_attempt_data($attemptobj->get_attemptid(), 2);
+            $this->fail('Exception expected due to out of sequence access.');
+        } catch (\moodle_exception $e) {
+            $this->assertStringContainsString('quiz/Out of sequence access', $e->getMessage());
+        }
+        // Now we moved to page 1, we should see page 2 and 1 but not 0 or 3.
+        $attemptobj->set_currentpage(1);
+        // Test invalid instance id.
+        try {
+            mod_quiz_external::get_attempt_data($attemptobj->get_attemptid(), 0);
+            $this->fail('Exception expected due to out of sequence access.');
+        } catch (\moodle_exception $e) {
+            $this->assertStringContainsString('quiz/Out of sequence access', $e->getMessage());
+        }
+
+        try {
+            mod_quiz_external::get_attempt_data($attemptobj->get_attemptid(), 3);
+            $this->fail('Exception expected due to out of sequence access.');
+        } catch (\moodle_exception $e) {
+            $this->assertStringContainsString('quiz/Out of sequence access', $e->getMessage());
+        }
+
+        // Now we can see page 1.
+        $result = mod_quiz_external::get_attempt_data($attemptobj->get_attemptid(), 1);
+        $this->assertCount(1, $result['questions']);
+        $this->assertStringContainsString('Question (2)', $result['questions'][0]['html']);
+    }
+
+    /**
+     * Prepare quiz for sequential navigation tests
+     *
+     * @return quiz
+     */
+    private function prepare_sequential_quiz(): quiz {
+        // Create a new quiz with 5 questions and one attempt started.
+        // Create a new quiz with attempts.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $data = [
+            'course' => $this->course->id,
+            'sumgrades' => 2,
+            'preferredbehaviour' => 'deferredfeedback',
+            'navmethod' => QUIZ_NAVMETHOD_SEQ
+        ];
+        $quiz = $quizgenerator->create_instance($data);
+
+        // Now generate the questions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+        for ($pageindex = 1; $pageindex <= 5; $pageindex++) {
+            $question = $questiongenerator->create_question('truefalse', null, [
+                'category' => $cat->id,
+                'questiontext' => ['text' => "Question ($pageindex)"]
+            ]);
+            quiz_add_quiz_question($question->id, $quiz, $pageindex);
+        }
+
+        $quizobj = quiz::create($quiz->id, $this->student->id);
+        // Set grade to pass.
+        $item = \grade_item::fetch(array('courseid' => $this->course->id, 'itemtype' => 'mod',
+            'itemmodule' => 'quiz', 'iteminstance' => $quiz->id, 'outcomeid' => null));
+        $item->gradepass = 80;
+        $item->update();
+        return $quizobj;
+    }
+
+    /**
+     * Create question attempt
+     *
+     * @param quiz $quizobj
+     * @param int|null $userid
+     * @param bool|null $ispreview
+     * @return quiz_attempt
+     * @throws \moodle_exception
+     */
+    private function create_quiz_attempt_object(quiz $quizobj, ?int $userid = null, ?bool $ispreview = false): quiz_attempt {
+        global $USER;
+        $timenow = time();
+        // Now, do one attempt.
+        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+        $attemptnumber = 1;
+        if (!empty($USER->id)) {
+            $attemptnumber = count(quiz_get_user_attempts($quizobj->get_quizid(), $USER->id)) + 1;
+        }
+        $attempt = quiz_create_attempt($quizobj, $attemptnumber, false, $timenow, $ispreview, $userid ?? $this->student->id);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+        $attemptobj = quiz_attempt::create($attempt->id);
+        return $attemptobj;
     }
 }
