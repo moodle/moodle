@@ -94,18 +94,25 @@ class qtype_truefalse extends question_type {
             // But we'll do it anyway, just for robustness.
             $options->trueanswer  = $trueid;
             $options->falseanswer = $falseid;
+            $options->showstandardinstruction = !empty($question->showstandardinstruction);
             $DB->update_record('question_truefalse', $options);
         } else {
             $options = new stdClass();
             $options->question    = $question->id;
             $options->trueanswer  = $trueid;
             $options->falseanswer = $falseid;
+            $options->showstandardinstruction = !empty($question->showstandardinstruction);
             $DB->insert_record('question_truefalse', $options);
         }
 
         $this->save_hints($question);
 
         return true;
+    }
+
+    public function save_defaults_for_new_questions(stdClass $fromform): void {
+        parent::save_defaults_for_new_questions($fromform);
+        $this->set_default_value('showstandardinstruction', $fromform->showstandardinstruction);
     }
 
     /**
@@ -148,6 +155,7 @@ class qtype_truefalse extends question_type {
                 $answers[$questiondata->options->falseanswer]->feedbackformat;
         $question->trueanswerid =  $questiondata->options->trueanswer;
         $question->falseanswerid = $questiondata->options->falseanswer;
+        $question->showstandardinstruction = $questiondata->options->showstandardinstruction;
     }
 
     public function delete_question($questionid, $contextid) {

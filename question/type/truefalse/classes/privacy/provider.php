@@ -14,33 +14,44 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qtype_truefalse\privacy;
+
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\writer;
+
 /**
- * Privacy Subsystem implementation for qtype_truefalse.
+ * Privacy Subsystem implementation for qtype_truefalse
  *
  * @package    qtype_truefalse
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace qtype_truefalse\privacy;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Privacy Subsystem for qtype_truefalse implementing null_provider.
- *
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class provider implements \core_privacy\local\metadata\null_provider {
+class provider implements
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\user_preference_provider {
 
     /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
+     * Returns metadata about this system
      *
-     * @return  string
+     * @param collection $collection
+     * @return collection
      */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
+    public static function get_metadata(collection $collection): collection {
+        $collection->add_user_preference('qtype_truefalse_showstandardinstruction', 'privacy:preference:showstandardinstruction');
+        return $collection;
+    }
+
+    /**
+     * Export plugin user preferences for the given user
+     *
+     * @param int $userid
+     */
+    public static function export_user_preferences(int $userid): void {
+        $preference = get_user_preferences('qtype_truefalse_showstandardinstruction', null, $userid);
+        if ($preference !== null) {
+            writer::export_user_preference('qtype_truefalse', 'showstandardinstruction', transform::yesno($preference),
+                get_string('privacy:preference:showstandardinstruction', 'qtype_truefalse'));
+        }
     }
 }
