@@ -1320,7 +1320,7 @@ class core_plugin_manager {
             return false;
         }
 
-        $ok = get_string('ok', 'core');
+        $ok = get_string('statusok', 'core');
 
         // Let admins know they can expect more verbose output.
         $silent or $this->mtrace(get_string('packagesdebug', 'core_plugin'), PHP_EOL, DEBUG_NORMAL);
