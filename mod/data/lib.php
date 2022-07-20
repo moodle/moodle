@@ -2085,8 +2085,13 @@ function data_get_available_site_presets($context, array $presets=array()) {
  *
  * @param string $name
  * @return bool
+ * @deprecated since Moodle 4.1 MDL-75187 - please, use the preset::delete() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::delete()
  */
 function data_delete_site_preset($name) {
+    debugging('data_delete_site_preset() is deprecated. Please use preset::delete() instead.', DEBUG_DEVELOPER);
+
     $fs = get_file_storage();
 
     $files = $fs->get_directory_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA, 0, '/'.$name.'/');
@@ -3852,9 +3857,21 @@ function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $so
  * @param stdClass $context  Context object.
  * @param stdClass $preset  The preset object that we are checking for deletion.
  * @return bool  Returns true if the user can delete, otherwise false.
+ * @deprecated since Moodle 4.1 MDL-75187 - please, use the preset::can_manage() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::can_manage()
  */
 function data_user_can_delete_preset($context, $preset) {
     global $USER;
+
+    debugging('data_user_can_delete_preset() is deprecated. Please use manager::can_manage() instead.', DEBUG_DEVELOPER);
+
+    if ($context->contextlevel == CONTEXT_MODULE && isset($preset->name)) {
+        $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
+        $manager = manager::create_from_coursemodule($cm);
+        $todelete = preset::create_from_instance($manager, $preset->name);
+        return $todelete->can_manage();
+    }
 
     if (has_capability('mod/data:manageuserpresets', $context)) {
         return true;

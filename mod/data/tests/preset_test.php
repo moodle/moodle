@@ -610,4 +610,120 @@ class preset_test extends \advanced_testcase {
         $file = preset::get_file($preset->get_path(), 'unexistingpreset.xml');
         $this->assertNull($file);
     }
+
+    /**
+     * Test for can_manage().
+     *
+     * @covers ::can_manage
+     */
+    public function test_can_manage() {
+        $this->resetAfterTest();
+
+        // Create course, database activity and users.
+        $course = $this->getDataGenerator()->create_course();
+        $data = $this->getDataGenerator()->create_module('data', ['course' => $course->id]);
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $manager = manager::create_from_instance($data);
+
+        $preset1name = 'Admin preset';
+        $preset2name = 'Teacher preset';
+
+        // Create a saved preset by admin.
+        $this->setAdminUser();
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $record = (object) [
+            'name' => $preset1name,
+            'description' => 'Testing preset description',
+        ];
+        $adminpreset = $plugingenerator->create_preset($data, $record);
+
+        // Create a saved preset by teacher.
+        $this->setUser($teacher);
+        $record = (object) [
+            'name' => $preset2name,
+            'description' => 'Testing preset description',
+        ];
+        $teacherpreset = $plugingenerator->create_preset($data, $record);
+
+        // Plugins can't be deleted.
+        $pluginpresets = manager::get_available_plugin_presets();
+        $pluginpreset = reset($pluginpresets);
+        $this->assertFalse($pluginpreset->can_manage());
+
+        // Admin can delete all saved presets.
+        $this->setAdminUser();
+        $this->assertTrue($adminpreset->can_manage());
+        $this->assertTrue($teacherpreset->can_manage());
+
+        // Teacher can delete their own preset only.
+        $this->setUser($teacher);
+        $this->assertFalse($adminpreset->can_manage());
+        $this->assertTrue($teacherpreset->can_manage());
+
+        // Student can't delete any of the presets.
+        $this->setUser($student);
+        $this->assertFalse($adminpreset->can_manage());
+        $this->assertFalse($teacherpreset->can_manage());
+    }
+
+    /**
+     * Test for delete().
+     *
+     * @covers ::delete
+     */
+    public function test_delete() {
+        $this->resetAfterTest();
+
+        // Create course, database activity and users.
+        $course = $this->getDataGenerator()->create_course();
+        $data = $this->getDataGenerator()->create_module('data', ['course' => $course->id]);
+        $manager = manager::create_from_instance($data);
+        $presetname = 'Admin preset';
+
+        // Create a saved preset by admin.
+        $this->setAdminUser();
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $record = (object) [
+            'name' => $presetname,
+            'description' => 'Testing preset description',
+        ];
+        $adminpreset = $plugingenerator->create_preset($data, $record);
+        $initialpresets = $manager->get_available_presets();
+
+        // Plugins can't be deleted.
+        $pluginpresets = manager::get_available_plugin_presets();
+        $pluginpreset = reset($pluginpresets);
+        $result = $pluginpreset->delete();
+        $currentpluginpresets = manager::get_available_plugin_presets();
+        $this->assertEquals(count($pluginpresets), count($currentpluginpresets));
+
+        $result = $adminpreset->delete();
+        $this->assertTrue($result);
+
+        // After deleting the preset, there is no file linked.
+        $adminpreset = preset::create_from_instance($manager, $presetname);
+        $this->assertEmpty($adminpreset->storedfile);
+
+        // Check the preset has been deleted.
+        $currentpresets = $manager->get_available_presets();
+        $this->assertEquals(count($initialpresets) - 1, count($currentpresets));
+
+        // The behavior of trying to delete a preset twice.
+        $result = $adminpreset->delete();
+        $this->assertFalse($result);
+
+        // Check the preset has not been deleted.
+        $currentpresets = $manager->get_available_presets();
+        $this->assertEquals(count($initialpresets) - 1, count($currentpresets));
+
+        $emptypreset = preset::create_from_instance($manager, $presetname);
+        // The behavior of deleting an empty preset.
+        $result = $emptypreset->delete();
+        $this->assertFalse($result);
+
+        // Check the preset has not been deleted.
+        $currentpresets = $manager->get_available_presets();
+        $this->assertEquals(count($initialpresets) - 1, count($currentpresets));
+    }
 }
