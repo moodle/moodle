@@ -106,7 +106,7 @@ class audience extends base {
             $persistent = $reportaudience->get_persistent();
             $canedit = $reportaudience->user_can_edit();
 
-            $editable = new audience_heading_editable($persistent->get('id'));
+            $editable = new audience_heading_editable(0, $persistent);
 
             $params = [
                 'instanceid' => $persistent->get('id'),

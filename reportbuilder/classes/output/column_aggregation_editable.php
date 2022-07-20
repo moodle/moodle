@@ -25,6 +25,11 @@ use core_reportbuilder\permission;
 use core_reportbuilder\local\helpers\aggregation;
 use core_reportbuilder\local\models\column;
 
+defined('MOODLE_INTERNAL') || die;
+
+global $CFG;
+require_once("{$CFG->libdir}/external/externallib.php");
+
 /**
  * Column aggregation editable component
  *
