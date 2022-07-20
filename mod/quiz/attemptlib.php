@@ -2478,19 +2478,25 @@ class quiz_attempt {
     }
 
     /**
-     * Check a page access to see if is an out of sequence access.
+     * Check a page read access to see if is an out of sequence access.
      *
-     * @param  int $page page number.
-     * @return boolean false is is an out of sequence access, true otherwise.
+     * If allownext is set then we also check whether access to the page
+     * after the current one should be permitted.
+     *
+     * @param int $page page number.
+     * @param bool $allownext in case of a sequential navigation, can we go to next page ?
+     * @return boolean false is an out of sequence access, true otherwise.
      * @since Moodle 3.1
      */
-    public function check_page_access($page) {
-        if ($this->get_currentpage() != $page) {
-            if ($this->get_navigation_method() == QUIZ_NAVMETHOD_SEQ && $this->get_currentpage() > $page) {
-                return false;
-            }
+    public function check_page_access($page, $allownext = true) {
+        if ($this->get_navigation_method() != QUIZ_NAVMETHOD_SEQ) {
+            return true;
         }
-        return true;
+        // Sequential access: allow access to the summary, current page or next page.
+        // Or if the user review his/her attempt, see MDLQA-1523.
+        return $page == -1
+            || $page == $this->get_currentpage()
+            || $allownext && ($page == $this->get_currentpage() + 1);
     }
 
     /**

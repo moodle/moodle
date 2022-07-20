@@ -970,8 +970,9 @@ class mod_quiz_external extends external_api {
             if ($displayoptions->marks >= question_display_options::MARK_AND_MAX) {
                 $question['mark'] = $attemptobj->get_question_mark($slot);
             }
-
-            $questions[] = $question;
+            if ($attemptobj->check_page_access($attemptobj->get_question_page($slot), false)) {
+                $questions[] = $question;
+            }
         }
         return $questions;
     }

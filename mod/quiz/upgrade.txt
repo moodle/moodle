@@ -1,5 +1,10 @@
 This files describes API changes in the quiz code.
 
+=== 3.9 ===
+
+* If a quiz is sequential the external functions mod_quiz_external::get_attempt_data, mod_quiz_external::get_attempt_summary will not return any data
+related to out of sequence question except while reviewing the quiz (MDL-75210).
+
 === 3.7 ===
 
 * Quiz_cron() has been removed. Sub-plugins should implemented scheduled tasks, however legacy cron in subplugins are
