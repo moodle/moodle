@@ -35,6 +35,15 @@ class send_schedule extends adhoc_task {
     use \core\task\logging_trait;
 
     /**
+     * Return name of the task
+     *
+     * @return string
+     */
+    public function get_name(): string {
+        return get_string('tasksendschedule', 'core_reportbuilder');
+    }
+
+    /**
      * Execute the task
      */
     public function execute(): void {
