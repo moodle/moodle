@@ -138,6 +138,7 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_sort_order(): array {
         return [
+            'completionview',
             'completionengagementchats',
             'completionengagementtalks',
             'completionengagementraisehand',
