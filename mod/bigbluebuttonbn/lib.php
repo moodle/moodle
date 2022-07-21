@@ -740,3 +740,31 @@ function bigbluebuttonbn_pre_enable_plugin_actions(): bool {
     // Otherwise, continue and enable the plugin.
     return true;
 }
+
+/**
+ * Creates a number of BigblueButtonBN activities.
+ *
+ * @param tool_generator_course_backend $backend
+ * @param testing_data_generator $generator
+ * @param int $courseid
+ * @param int $number
+ * @return void
+ */
+function bigbluebuttonbn_course_backend_generator_create_activity(tool_generator_course_backend $backend,
+    testing_data_generator $generator,
+    int $courseid,
+    int $number
+) {
+    // Set up generator.
+    $bbbgenerator = $generator->get_plugin_generator('mod_bigbluebuttonbn');
+
+    // Create assignments.
+    $backend->log('createbigbluebuttonbn', $number, true, 'mod_bigbluebuttonbn');
+    for ($i = 0; $i < $number; $i++) {
+        $record = array('course' => $courseid);
+        $options = array('section' => $backend->get_target_section());
+        $bbbgenerator->create_instance($record, $options);
+        $backend->dot($i, $number);
+    }
+    $backend->end_log();
+}
