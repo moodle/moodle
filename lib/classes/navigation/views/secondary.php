@@ -392,30 +392,25 @@ class secondary extends view {
         $settingsnav = $this->page->settingsnav;
         $navigation = $this->page->navigation;
 
-        $url = new \moodle_url('/course/view.php', ['id' => $course->id]);
-        $firstnodeidentifier = get_string('course');
-        $issitecourse = $course->id == $SITE->id;
-        if ($issitecourse) {
-            $firstnodeidentifier = get_string('home');
-            if ($frontpage = $settingsnav->get('frontpage')) {
-                $settingsnav = $frontpage;
-            }
+        if ($course->id == $SITE->id) {
+            $firstnodeidentifier = get_string('home'); // The first node in the site course nav is called 'Home'.
+            $frontpage = $settingsnav->get('frontpage'); // The site course nodes are children of a dedicated 'frontpage' node.
+            $settingsnav = $frontpage ?: $settingsnav;
+            $courseadminnode = $frontpage ?: null; // Custom nodes for the site course are also children of the 'frontpage' node.
+        } else {
+            $firstnodeidentifier = get_string('course'); // Regular courses have a first node called 'Course'.
+            $courseadminnode = $settingsnav->get('courseadmin'); // Custom nodes for regular courses live under 'courseadmin'.
         }
-        $rootnode->add($firstnodeidentifier, $url, self::TYPE_COURSE, null, 'coursehome');
 
+        // Add the known nodes from settings and navigation.
         $nodes = $this->get_default_course_mapping();
         $nodesordered = $this->get_leaf_nodes($settingsnav, $nodes['settings'] ?? []);
         $nodesordered += $this->get_leaf_nodes($navigation, $nodes['navigation'] ?? []);
         $this->add_ordered_nodes($nodesordered, $rootnode);
 
-        // Try to get any custom nodes defined by a user which may include containers.
-        $expectedcourseadmin = $this->get_expected_course_admin_nodes();
-        $courseadminnode = $settingsnav;
-        if (!$issitecourse) {
-            $courseadminnode = $settingsnav->get('courseadmin');
-        }
-
+        // Try to get any custom nodes defined by plugins, which may include containers.
         if ($courseadminnode) {
+            $expectedcourseadmin = $this->get_expected_course_admin_nodes();
             foreach ($courseadminnode->children as $other) {
                 if (array_search($other->key, $expectedcourseadmin, true) === false) {
                     $othernode = $this->get_first_action_for_node($other);
@@ -427,16 +422,21 @@ class secondary extends view {
             }
         }
 
-        $coursecontext = \context_course::instance($course->id);
-        if (has_capability('moodle/course:update', $coursecontext)) {
-            $overflownode = $this->get_course_overflow_nodes($rootnode);
-            if (is_null($overflownode)) {
-                return;
-            }
+        // Move some nodes into a 'course reuse' node.
+        $overflownode = $this->get_course_overflow_nodes($rootnode);
+        if (!is_null($overflownode)) {
             $actionnode = $this->get_first_action_for_node($overflownode);
             // All additional nodes will be available under the 'Course reuse' page.
             $text = get_string('coursereuse');
             $rootnode->add($text, $actionnode->action, navigation_node::TYPE_COURSE, null, 'coursereuse', new \pix_icon('t/edit', $text));
+        }
+
+        // Add the respective first node, provided there are other nodes included.
+        if (!empty($nodekeys = $rootnode->children->get_key_list())) {
+            $rootnode->add_node(
+                navigation_node::create($firstnodeidentifier, new \moodle_url('/course/view.php', ['id' => $course->id]),
+                    self::TYPE_COURSE, null, 'coursehome'), reset($nodekeys)
+            );
         }
     }
 
