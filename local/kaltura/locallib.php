@@ -521,12 +521,12 @@ function local_kaltura_lti1p3_get_launch_data($module, $withblocks, $editor = nu
 		$secret = '';
 	}
 
-	$endpoint = $instance->kaf_uri;
-	$endpoint = trim($endpoint);
+    $endpoint = $instance->toolurl;
+    $endpoint = trim($endpoint);
 
 	$ltiversion = $instance->lti_version;
 
-	$course = $PAGE->course;
+	$course = isset($module["course"]) ? $module["course"] : $PAGE->course;
 	$allparams = lti_build_request($instance, $typeconfig, $course);
 	$requestparams = $allparams;
 	$requestparams = array_merge($requestparams, lti_build_standard_message($instance, null, LTI_VERSION_1P3));

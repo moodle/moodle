@@ -68,7 +68,6 @@ if ($ok) {
 	list($courseid, $typeid, $id, $titleb64, $textb64) = explode(',', $SESSION->lti_message_hint, 5);
 
 	$module = array();
-	$module['course'] = $PAGE->course;
 	$module['id'] = 1;
 	$module['cmid'] = 0;
 	$module['module'] = $ltimessagehint;
@@ -120,13 +119,18 @@ if ($ok && !empty($prompt) && ($prompt !== 'none')) {
 
 if ($ok) {
 	$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-	if ($id) {
-
+	if ($id && $course) {
+        $module["course"]=$course;
 		$editor = $SESSION->editor;
 		list($endpoint, $params) = local_kaltura_lti1p3_get_launch_data($module, null, $editor, $nonce);
-	}
+	} else {
+        $ok = false;
+        $error = 'course_not_found';
+        $desc = 'Course Not Found';
+    }
+}
 
-} else {
+if (!$ok) {
 	$params['error'] = $error;
 	if (!empty($desc)) {
 		$params['error_description'] = $desc;
