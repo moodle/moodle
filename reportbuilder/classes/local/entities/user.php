@@ -111,6 +111,34 @@ class user extends base {
     }
 
     /**
+     * Returns column that corresponds to the given identity field
+     *
+     * @param string $identityfield Field from the user table, or the shortname of a custom profile field
+     * @return column
+     */
+    public function get_identity_column(string $identityfield): column {
+        if (preg_match("/^profile_field_(?<shortname>.*)$/", $identityfield, $matches)) {
+            $identityfield = 'profilefield_' . $matches['shortname'];
+        }
+
+        return $this->get_column($identityfield);
+    }
+
+    /**
+     * Returns filter that corresponds to the given identity field
+     *
+     * @param string $identityfield Field from the user table, or the shortname of a custom profile field
+     * @return filter
+     */
+    public function get_identity_filter(string $identityfield): filter {
+        if (preg_match("/^profile_field_(?<shortname>.*)$/", $identityfield, $matches)) {
+            $identityfield = 'profilefield_' . $matches['shortname'];
+        }
+
+        return $this->get_filter($identityfield);
+    }
+
+    /**
      * Return joins necessary for retrieving tags
      *
      * @return string[]

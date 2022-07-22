@@ -4,11 +4,14 @@ Feature: Configure access to reports based on intended audience
   I want to restrict which users have access to a report
 
   Background:
-    Given the following "users" exist:
-      | username  | firstname | lastname |
-      | user1     | User      | 1        |
-      | user2     | User      | 2        |
-      | user3     | User      | 3        |
+    Given the following "custom profile fields" exist:
+      | datatype | shortname | name  |
+      | text     | fruit     | Fruit |
+    And the following "users" exist:
+      | username  | firstname | lastname | email             | profile_field_fruit |
+      | user1     | User      | 1        | user1@example.com | Apple               |
+      | user2     | User      | 2        | user2@example.com | Banana              |
+      | user3     | User      | 3        | user3@example.com | Banana              |
     And the following "core_reportbuilder > Reports" exist:
       | name      | source                                   | default |
       | My report | core_user\reportbuilder\datasource\users | 1       |
@@ -173,6 +176,36 @@ Feature: Configure access to reports based on intended audience
     And I should see "User 2"
     And I should not see "User 3"
     And I click on the "Access" dynamic tab
+    And I should not see "User 1" in the "reportbuilder-table" "table"
+    And I should see "User 2" in the "reportbuilder-table" "table"
+    And I should not see "User 3" in the "reportbuilder-table" "table"
+
+  Scenario: View configured user identity fields on the access tab
+    Given the following config values are set as admin:
+      | showuseridentity | email,profile_field_fruit |
+    And the following "core_reportbuilder > Audiences" exist:
+      | report    | configdata |
+      | My report |            |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    When I click on the "Access" dynamic tab
+    Then the following should exist in the "reportbuilder-table" table:
+      | -0-    | Email address     | Fruit  |
+      | User 1 | user1@example.com | Apple  |
+      | User 2 | user2@example.com | Banana |
+      | User 3 | user3@example.com | Banana |
+    # Now let's filter them.
+    And I click on "Filters" "button"
+    And I set the following fields in the "Fruit" "core_reportbuilder > Filter" to these values:
+      | Fruit operator | Is equal to |
+      | Fruit value    | Banana      |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should not see "User 1" in the "reportbuilder-table" "table"
+    And I should see "User 2" in the "reportbuilder-table" "table"
+    And I should see "User 3" in the "reportbuilder-table" "table"
+    And I set the following fields in the "Email address" "core_reportbuilder > Filter" to these values:
+      | Email address operator | Contains |
+      | Email address value    | user2 |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     And I should not see "User 1" in the "reportbuilder-table" "table"
     And I should see "User 2" in the "reportbuilder-table" "table"
     And I should not see "User 3" in the "reportbuilder-table" "table"

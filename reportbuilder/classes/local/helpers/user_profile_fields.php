@@ -19,11 +19,11 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\helpers;
 
 use context_system;
+use core_text;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
-use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
 use lang_string;
@@ -126,10 +126,10 @@ class user_profile_fields {
             $columntype = $this->get_user_field_type($profilefield->field->datatype);
 
             $column = (new column(
-                'profilefield_' . $profilefield->field->shortname,
+                'profilefield_' . core_text::strtolower($profilefield->field->shortname),
                 new lang_string('customfieldcolumn', 'core_reportbuilder',
                     format_string($profilefield->field->name, true,
-                        ['escape' => true, 'context' => context_system::instance()])),
+                        ['escape' => false, 'context' => context_system::instance()])),
                 $this->entityname
             ))
                 ->add_joins($this->get_joins())
@@ -192,7 +192,7 @@ class user_profile_fields {
 
             $filter = (new filter(
                 $classname,
-                'profilefield_' . $profilefield->field->shortname,
+                'profilefield_' . core_text::strtolower($profilefield->field->shortname),
                 new lang_string('customfieldcolumn', 'core_reportbuilder',
                     format_string($profilefield->field->name, true,
                         ['escape' => false, 'context' => context_system::instance()])),
