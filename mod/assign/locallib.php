@@ -38,6 +38,7 @@ define('ASSIGN_FILTER_SUBMITTED', 'submitted');
 define('ASSIGN_FILTER_NOT_SUBMITTED', 'notsubmitted');
 define('ASSIGN_FILTER_SINGLE_USER', 'singleuser');
 define('ASSIGN_FILTER_REQUIRE_GRADING', 'requiregrading');
+define('ASSIGN_FILTER_GRADED', 'graded');
 define('ASSIGN_FILTER_GRANTED_EXTENSION', 'grantedextension');
 define('ASSIGN_FILTER_DRAFT', 'draft');
 
@@ -9591,6 +9592,7 @@ class assign {
                 ASSIGN_FILTER_DRAFT,
                 ASSIGN_FILTER_SUBMITTED,
                 ASSIGN_FILTER_REQUIRE_GRADING,
+                ASSIGN_FILTER_GRADED,
             ],
             [
                 ASSIGN_FILTER_GRANTED_EXTENSION,
