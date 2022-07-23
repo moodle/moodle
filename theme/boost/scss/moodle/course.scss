@@ -634,11 +634,7 @@ input.titleeditor {
 }
 
 span.editinstructions {
-    /*rtl:remove*/
     position: absolute;
-    /*rtl:raw:
-    position: relative;
-    */
     top: 0;
     margin-top: -22px;
     margin-left: 30px;
@@ -821,11 +817,7 @@ span.editinstructions {
     font-weight: normal;
     padding: 2px 18px;
 }
-/* rtl:raw:
-.course_category_tree .category > .info > .categoryname {
-    background-image:url([[pix:moodle|t/collapsed_empty_rtl]]);
-}
- */
+
 .course_category_tree .category.with_children > .info > .categoryname {
     background-image: url([[pix:moodle|t/expanded]]);
     background-repeat: no-repeat;
@@ -1251,7 +1243,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 .activity-add,
 .block-add {
     @include border-radius();
-    @include alert-variant($primary-light-background, $primary-light-border, $primary-light-border);
+    @include alert-variant($primary-light-background, $primary-light-border, $primary);
     border-width: $border-width;
     .pluscontainer {
         border: $border-width solid $primary-light-border;
@@ -1299,7 +1291,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     padding-left: 0;
     border-bottom: $border-width solid $border-color;
 
-    &:last-child {
+    &:last-child:not(.section-summary) {
         border-bottom: 0;
     }
 

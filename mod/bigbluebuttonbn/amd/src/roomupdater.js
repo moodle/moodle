@@ -25,7 +25,7 @@ import Templates from "core/templates";
 import {exception as displayException} from 'core/notification';
 import {getMeetingInfo} from './repository';
 
-const timeout = 1000;
+const timeout = 5000;
 const maxFactor = 10;
 
 let updateCount = 0;
@@ -65,7 +65,7 @@ const poll = () => {
         return;
     }
     if ((updateCount % updateFactor) === 0) {
-        updateRoom(true)
+        updateRoom()
         .then(() => {
             if (updateFactor >= maxFactor) {
                 updateFactor = 1;

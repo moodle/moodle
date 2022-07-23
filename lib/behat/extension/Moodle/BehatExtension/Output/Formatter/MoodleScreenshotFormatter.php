@@ -14,64 +14,45 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
+namespace Moodle\BehatExtension\Output\Formatter;
+
+use Behat\Behat\EventDispatcher\Event\AfterStepTested;
+use Behat\Behat\EventDispatcher\Event\BeforeScenarioTested;
+use Behat\Behat\EventDispatcher\Event\BeforeStepTested;
+use Behat\Testwork\Output\Formatter;
+use Behat\Testwork\Output\Printer\OutputPrinter;
+
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
+
 /**
  * Feature step counter for distributing features between parallel runs.
  *
  * Use it with --dry-run (and any other selectors combination) to
  * get the results quickly.
  *
+ * @package core
  * @copyright  2016 onwards Rajesh Taneja
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace Moodle\BehatExtension\Output\Formatter;
-
-use Behat\Behat\EventDispatcher\Event\AfterFeatureTested;
-use Behat\Behat\EventDispatcher\Event\AfterOutlineTested;
-use Behat\Behat\EventDispatcher\Event\AfterScenarioTested;
-use Behat\Behat\EventDispatcher\Event\AfterStepTested;
-use Behat\Behat\EventDispatcher\Event\BeforeFeatureTested;
-use Behat\Behat\EventDispatcher\Event\BeforeOutlineTested;
-use Behat\Behat\EventDispatcher\Event\BeforeScenarioTested;
-use Behat\Behat\EventDispatcher\Event\BeforeStepTested;
-use Behat\Behat\Tester\Result\ExecutedStepResult;
-use Behat\Testwork\Counter\Memory;
-use Behat\Testwork\Counter\Timer;
-use Behat\Testwork\EventDispatcher\Event\AfterExerciseCompleted;
-use Behat\Testwork\EventDispatcher\Event\AfterSuiteTested;
-use Behat\Testwork\EventDispatcher\Event\BeforeExerciseCompleted;
-use Behat\Testwork\EventDispatcher\Event\BeforeSuiteTested;
-use Behat\Testwork\Output\Exception\BadOutputPathException;
-use Behat\Testwork\Output\Formatter;
-use Behat\Testwork\Output\Printer\OutputPrinter;
-
 class MoodleScreenshotFormatter implements Formatter {
 
-    /**
-     * @var OutputPrinter
-     */
+    /** @var OutputPrinter */
     private $printer;
-    /**
-     * @var array
-     */
+
+    /** @var array */
     private $parameters;
-    /**
-     * @var string
-     */
+
+    /** @var string */
     private $name;
-    /**
-     * @var string
-     */
+
+    /** @var string */
     private $description;
 
-    /**
-     * @var int The scenario count.
-     */
+    /** @var int The scenario count */
     protected static $currentscenariocount = 0;
 
-    /**
-     * @var int The step count within the current scenario.
-     */
+    /** @var int The step count within the current scenario */
     protected static $currentscenariostepcount = 0;
 
     /**
@@ -88,7 +69,6 @@ class MoodleScreenshotFormatter implements Formatter {
      * @param string        $description
      * @param array         $parameters
      * @param OutputPrinter $printer
-     * @param EventListener $listener
      */
     public function __construct($name, $description, array $parameters, OutputPrinter $printer) {
         $this->name = $name;
@@ -99,47 +79,59 @@ class MoodleScreenshotFormatter implements Formatter {
 
     /**
      * Returns an array of event names this subscriber wants to listen to.
+     *
      * @return array The event names to listen to
      */
     public static function getSubscribedEvents() {
-        return array(
-
+        return [
             'tester.scenario_tested.before'    => 'beforeScenario',
             'tester.step_tested.before'        => 'beforeStep',
             'tester.step_tested.after'         => 'afterStep',
-        );
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * Returns formatter name.
+     *
+     * @return string
      */
     public function getName() {
         return $this->name;
     }
 
     /**
-     * {@inheritdoc}
+     * Returns formatter description.
+     *
+     * @return string
      */
     public function getDescription() {
         return $this->description;
     }
 
     /**
-     * {@inheritdoc}
+     * Returns formatter output printer.
+     *
+     * @return OutputPrinter
      */
     public function getOutputPrinter() {
         return $this->printer;
     }
 
     /**
-     * {@inheritdoc}
+     * Sets formatter parameter.
+     *
+     * @param string $name
+     * @param mixed  $value
      */
     public function setParameter($name, $value) {
         $this->parameters[$name] = $value;
     }
 
     /**
-     * {@inheritdoc}
+     * Returns parameter name.
+     *
+     * @param string $name
+     * @return mixed
      */
     public function getParameter($name) {
         return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
@@ -221,7 +213,8 @@ class MoodleScreenshotFormatter implements Formatter {
         if (!is_dir(self::$faildumpdirname) && !mkdir(self::$faildumpdirname, $dirpermissions, true)) {
             // It shouldn't, we already checked that the directory is writable.
             throw new FormatterException(sprintf(
-                'No directories can be created inside %s, check the directory permissions.', $screenshotpath));
+                'No directories can be created inside %s, check the directory permissions.', $screenshotpath
+            ));
         }
 
         return self::$faildumpdirname;
@@ -232,6 +225,7 @@ class MoodleScreenshotFormatter implements Formatter {
      *
      * @throws Exception
      * @param AfterStepTested $event
+     * @param Context $context
      */
     protected function take_screenshot(AfterStepTested $event, $context) {
         // Goutte can't save screenshots.
@@ -249,6 +243,7 @@ class MoodleScreenshotFormatter implements Formatter {
      *
      * @throws Exception
      * @param AfterStepTested $event
+     * @param \Behat\Context\Context\Context $context
      */
     protected function take_contentdump(AfterStepTested $event, $context) {
         list ($dir, $filename) = $this->get_faildump_filename($event, 'html');
@@ -282,7 +277,8 @@ class MoodleScreenshotFormatter implements Formatter {
         if (!is_dir($dir) && !mkdir($dir, $dirpermissions, true)) {
             // We already checked that the directory is writable. This should not fail.
             throw new FormatterException(sprintf(
-                'No directories can be created inside %s, check the directory permissions.', $dir));
+                'No directories can be created inside %s, check the directory permissions.', $dir
+            ));
         }
 
         // The failed step text.
@@ -294,6 +290,6 @@ class MoodleScreenshotFormatter implements Formatter {
         // File name limited to 255 characters. Leaving 4 chars for the file
         // extension as we allow .png for images and .html for DOM contents.
         $filename = substr($filename, 0, 250) . '.' . $filetype;
-        return array($dir, $filename);
+        return [$dir, $filename];
     }
 }

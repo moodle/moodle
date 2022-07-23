@@ -45,16 +45,15 @@ trait quiz_question_helper_test_trait {
      */
     protected function create_test_quiz(\stdClass $course): \stdClass {
 
+        /** @var mod_quiz_generator $quizgenerator */
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
-        $quiz = $quizgenerator->create_instance([
+        return $quizgenerator->create_instance([
             'course' => $course->id,
             'questionsperpage' => 0,
             'grade' => 100.0,
             'sumgrades' => 2,
         ]);
-        $quiz->coursemodule = $quiz->cmid;
-        return $quiz;
     }
 
     /**
@@ -64,7 +63,7 @@ trait quiz_question_helper_test_trait {
      * @param \stdClass $quiz
      * @param array $override
      */
-    protected function add_regular_questions($questiongenerator, \stdClass $quiz, $override = null): void {
+    protected function add_two_regular_questions($questiongenerator, \stdClass $quiz, $override = null): void {
         // Create a couple of questions.
         $cat = $questiongenerator->create_question_category($override);
 
@@ -86,7 +85,7 @@ trait quiz_question_helper_test_trait {
      * @param \stdClass $quiz
      * @param array $override
      */
-    protected function add_random_questions($questiongenerator, \stdClass $quiz, $override = []): void {
+    protected function add_one_random_question($questiongenerator, \stdClass $quiz, $override = []): void {
         // Create a random question.
         $cat = $questiongenerator->create_question_category($override);
         $questiongenerator->create_question('truefalse', null, array('category' => $cat->id));
@@ -106,18 +105,18 @@ trait quiz_question_helper_test_trait {
         $this->setUser($user);
 
         $starttime = time();
-        $quizobj = \quiz::create($quiz->id, $user->id);
+        $quizobj = quiz::create($quiz->id, $user->id);
 
-        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
         // Start the attempt.
-        $attempt = quiz_create_attempt($quizobj, $attemptnumber, false, $starttime, false, $user->id);
+        $attempt = quiz_create_attempt($quizobj, $attemptnumber, null, $starttime, false, $user->id);
         quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $starttime);
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Finish the attempt.
-        $attemptobj = \quiz_attempt::create($attempt->id);
+        $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($starttime, false);
 
         $this->setUser();
@@ -140,7 +139,7 @@ trait quiz_question_helper_test_trait {
 
         $backupid = 'test-question-backup-restore';
 
-        $bc = new backup_controller(backup::TYPE_1ACTIVITY, $quiz->coursemodule, backup::FORMAT_MOODLE,
+        $bc = new backup_controller(backup::TYPE_1ACTIVITY, $quiz->cmid, backup::FORMAT_MOODLE,
             backup::INTERACTIVE_NO, backup::MODE_GENERAL, $user->id);
         $bc->execute_plan();
 

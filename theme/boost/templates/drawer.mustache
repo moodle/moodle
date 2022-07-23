@@ -27,7 +27,7 @@
     }
 }}
 <div {{!
-    }} class="{{$drawerclasses}}{{/drawerclasses}} not-initialized"{{!
+    }} class="{{$drawerclasses}}{{/drawerclasses}} d-print-none not-initialized"{{!
     }} data-region="fixed-drawer"{{!
     }} id="{{$id}}{{/id}}"{{!
     }} data-preference="{{$drawerpreferencename}}{{/drawerpreferencename}}"{{!
@@ -48,7 +48,7 @@
             {{#pix}} e/cancel, core {{/pix}}
         </button>
     </div>
-    <div class="drawercontent" data-usertour="scroller">
+    <div class="drawercontent drag-container" data-usertour="scroller">
         {{$drawercontent}}{{/drawercontent}}
     </div>
 </div>

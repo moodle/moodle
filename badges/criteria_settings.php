@@ -55,6 +55,12 @@ if ($badge->is_active() || $badge->is_locked()) {
     redirect($return);
 }
 
+// Make sure the criteria type is accepted.
+$accepted = $badge->get_accepted_criteria();
+if (!in_array($type, $accepted)) {
+    redirect($return);
+}
+
 if ($badge->type == BADGE_TYPE_COURSE) {
     require_login($badge->courseid);
     $course = get_course($badge->courseid);

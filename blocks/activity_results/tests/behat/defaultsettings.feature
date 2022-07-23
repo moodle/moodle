@@ -37,10 +37,10 @@ Feature: The activity results block can have administrator set defaults
     And I add the "Activity results" block
     When I configure the "Activity results" block
     And the following fields match these values:
-      | id_config_showbest    | 0 |
-      | id_config_showworst   | 0 |
-      | id_config_gradeformat | Fractions |
-      | id_config_nameformat  | Display only ID numbers |
+      | config_showbest    | 0 |
+      | config_showworst   | 0 |
+      | config_gradeformat | Fractions |
+      | config_nameformat  | Display only ID numbers |
     And I press "Save changes"
     Then I should see "This block's configuration currently does not allow it to show any results." in the "Activity results" "block"
 
@@ -54,9 +54,9 @@ Feature: The activity results block can have administrator set defaults
     And I add the "Activity results" block
     When I configure the "Activity results" block
     And the following fields match these values:
-      | id_config_showbest    | 0 |
-      | id_config_showworst   | 0 |
-    And the "id_config_showbest" "field" should be readonly
-    And the "id_config_showworst" "field" should be readonly
+      | config_showbest    | 0 |
+      | config_showworst   | 0 |
+    And the "config_showbest" "field" should be readonly
+    And the "config_showworst" "field" should be readonly
     And I press "Save changes"
     Then I should see "This block's configuration currently does not allow it to show any results." in the "Activity results" "block"

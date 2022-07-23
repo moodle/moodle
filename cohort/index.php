@@ -40,7 +40,7 @@ if ($contextid) {
 }
 
 if ($context->contextlevel != CONTEXT_COURSECAT and $context->contextlevel != CONTEXT_SYSTEM) {
-    print_error('invalidcontext');
+    throw new \moodle_exception('invalidcontext');
 }
 
 $category = null;
@@ -71,6 +71,12 @@ if ($category) {
     $showall = false;
 } else {
     admin_externalpage_setup('cohorts', '', null, '', array('pagelayout'=>'report'));
+    $PAGE->set_primary_active_tab('siteadminnode');
+    if ($showall == 1) {
+        $PAGE->navbar->add(get_string('allcohorts', 'cohort'), $PAGE->url);
+    } else if (!$showall) {
+        $PAGE->navbar->add(get_string('systemcohorts', 'cohort'), $PAGE->url);
+    }
 }
 
 echo $OUTPUT->header();

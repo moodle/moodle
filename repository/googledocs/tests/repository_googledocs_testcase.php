@@ -60,10 +60,12 @@ abstract class repository_googledocs_testcase extends \advanced_testcase {
      * @param string $thumbnail The thumbnail of the file
      * @param string|null $link The external link to the file
      * @param string|null $exportformat The export format of the file
+     * @param string|null $googledoctype The type of the Google Doc file (if applicable)
      * @return array The repository file node array
      */
     protected function create_file_content_node_array(string $id, string $name, string $title, ?string $size = null,
-            string $modified = '', string $thumbnail = '' , string $link = '', string $exportformat = ''): array {
+            string $modified = '', string $thumbnail = '' , string $link = '', string $exportformat = '',
+            ?string $googledoctype = null): array {
 
         return [
             'id' => $id,
@@ -72,7 +74,8 @@ abstract class repository_googledocs_testcase extends \advanced_testcase {
                 'id' => $id,
                 'name' => $name,
                 'link' => $link,
-                'exportformat' => $exportformat
+                'exportformat' => $exportformat,
+                'googledoctype' => $googledoctype
             ]),
             'date' => $modified,
             'size' => $size,

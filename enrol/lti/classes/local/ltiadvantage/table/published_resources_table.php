@@ -92,7 +92,8 @@ class published_resources_table extends \table_sql {
      * @return string
      */
     public function col_name($tool) {
-        $name = helper::get_name($tool);
+        $toolcontext = \context::instance_by_id($tool->contextid, IGNORE_MISSING);
+        $name = $toolcontext ? helper::get_name($tool) : $this->get_deleted_activity_name_html($tool);
 
         return $this->get_display_text($tool, $name);
     }
@@ -215,9 +216,39 @@ class published_resources_table extends \table_sql {
      */
     protected function get_display_text($tool, $text) {
         if ($tool->status != ENROL_INSTANCE_ENABLED) {
-            return \html_writer::tag('span', $text, array('class' => 'dimmed_text'));
+            return \html_writer::tag('div', $text, array('class' => 'dimmed_text'));
         }
 
         return $text;
+    }
+
+    /**
+     * Get a warning icon, with tooltip, describing enrolment instances sharing activities which have been deleted.
+     *
+     * @param \stdClass $tool the tool instance record.
+     * @return string the HTML for the name column.
+     */
+    protected function get_deleted_activity_name_html(\stdClass $tool): string {
+        global $OUTPUT;
+        $icon = \html_writer::tag(
+            'a',
+            $OUTPUT->pix_icon('enrolinstancewarning', get_string('deletedactivityalt' , 'enrol_lti'), 'enrol_lti'), [
+                "class" => "btn btn-link p-0",
+                "role" => "button",
+                "data-container" => "body",
+                "data-toggle" => "popover",
+                "data-placement" => right_to_left() ? "left" : "right",
+                "data-content" => get_string('deletedactivitydescription', 'enrol_lti'),
+                "data-html" => "true",
+                "tabindex" => "0",
+                "data-trigger" => "focus"
+            ]
+        );
+        $name = \html_writer::span($icon . get_string('deletedactivity', 'enrol_lti'));
+        if ($tool->name) {
+            $name .= \html_writer::empty_tag('br') . \html_writer::empty_tag('br') . $tool->name;
+        }
+
+        return $name;
     }
 }

@@ -24,6 +24,8 @@
  * @since      Moodle 3.0
  */
 
+use core_course\external\helper_for_get_mods_by_courses;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
@@ -154,13 +156,8 @@ class mod_resource_external extends external_api {
             $resources = get_all_instances_in_courses("resource", $courses);
             foreach ($resources as $resource) {
                 $context = context_module::instance($resource->coursemodule);
-                // Entry to return.
-                $resource->name = external_format_string($resource->name, $context->id);
-                $options = array('noclean' => true);
-                list($resource->intro, $resource->introformat) =
-                    external_format_text($resource->intro, $resource->introformat, $context->id, 'mod_resource', 'intro', null,
-                        $options);
-                $resource->introfiles = external_util::get_area_files($context->id, 'mod_resource', 'intro', false, false);
+
+                helper_for_get_mods_by_courses::format_name_and_intro($resource, 'mod_resource');
                 $resource->contentfiles = external_util::get_area_files($context->id, 'mod_resource', 'content');
 
                 $returnedresources[] = $resource;
@@ -184,15 +181,9 @@ class mod_resource_external extends external_api {
         return new external_single_structure(
             array(
                 'resources' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Module id'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_RAW, 'Page name'),
-                            'intro' => new external_value(PARAM_RAW, 'Summary'),
-                            'introformat' => new external_format_value('intro', 'Summary format'),
-                            'introfiles' => new external_files('Files in the introduction text'),
+                    new external_single_structure(array_merge(
+                        helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(),
+                        [
                             'contentfiles' => new external_files('Files in the content'),
                             'tobemigrated' => new external_value(PARAM_INT, 'Whether this resource was migrated'),
                             'legacyfiles' => new external_value(PARAM_INT, 'Legacy files flag'),
@@ -202,12 +193,8 @@ class mod_resource_external extends external_api {
                             'filterfiles' => new external_value(PARAM_INT, 'If filters should be applied to the resource content'),
                             'revision' => new external_value(PARAM_INT, 'Incremented when after each file changes, to avoid cache'),
                             'timemodified' => new external_value(PARAM_INT, 'Last time the resource was modified'),
-                            'section' => new external_value(PARAM_INT, 'Course section id'),
-                            'visible' => new external_value(PARAM_INT, 'Module visibility'),
-                            'groupmode' => new external_value(PARAM_INT, 'Group mode'),
-                            'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
-                        )
-                    )
+                        ]
+                    ))
                 ),
                 'warnings' => new external_warnings(),
             )

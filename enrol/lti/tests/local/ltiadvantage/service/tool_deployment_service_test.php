@@ -46,6 +46,7 @@ class tool_deployment_service_test extends \lti_advantage_testcase {
     protected function generate_application_registration(): application_registration {
         $reg = application_registration::create(
             'Example LMS application',
+            'a2c94a2c94',
             new \moodle_url('https://lms.example.org'),
             '123',
             new \moodle_url('https://example.org/authrequesturl'),

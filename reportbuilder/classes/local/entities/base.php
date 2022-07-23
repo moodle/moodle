@@ -200,7 +200,7 @@ abstract class base {
      *
      * @return string[]
      */
-    final protected function get_joins(): array {
+    final public function get_joins(): array {
         return array_values($this->joins);
     }
 

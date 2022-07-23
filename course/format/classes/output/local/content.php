@@ -140,7 +140,8 @@ class content implements named_templatable, renderable {
             // The course/view.php check the section existence but the output can be called
             // from other parts so we need to check it.
             if (!$thissection) {
-                print_error('unknowncoursesection', 'error', course_get_url($course), format_string($course->fullname));
+                throw new \moodle_exception('unknowncoursesection', 'error', course_get_url($course),
+                    format_string($course->fullname));
             }
 
             $section = new $this->sectionclass($format, $thissection);

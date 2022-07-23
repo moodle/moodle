@@ -145,4 +145,16 @@ class manager {
 
         return $sources;
     }
+
+    /**
+     * Configured site limit for number of custom reports threshold has been reached
+     *
+     * @return bool
+     */
+    public static function report_limit_reached(): bool {
+        global $CFG;
+
+        return (!empty($CFG->customreportslimit) &&
+            (int) $CFG->customreportslimit <= report::count_records(['type' => base::TYPE_CUSTOM_REPORT]));
+    }
 }

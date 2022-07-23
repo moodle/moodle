@@ -80,4 +80,8 @@ class question_name_idnumber_tags_column extends viewquestionname_column_helper 
         parent::load_question_tags($questions);
     }
 
+    public function get_extra_classes(): array {
+        return ['pr-3'];
+    }
+
 }

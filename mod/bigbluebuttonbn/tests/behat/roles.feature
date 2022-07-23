@@ -3,6 +3,7 @@ Feature: Bigbluebuttonbn rooms
   When a meeting is created, roles for each type of participant can be changed
 
   Background:  Make sure that a course is created
+    Given I enable "bigbluebuttonbn" "mod" plugin
     And the following course exists:
       | name      | Test course |
       | shortname | C1          |

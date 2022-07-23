@@ -14,13 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Backup restore permission tests.
- *
- * @package   core_backup
- * @copyright Tomo Tsuyuki <tomotsuyuki@catalyst-au.net>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use core_backup_backup_restore_base_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,9 +26,13 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 /**
- * Testcase class for permission backup / restore functionality.
+ * Backup restore permission tests.
+ *
+ * @package   core_backup
+ * @copyright Tomo Tsuyuki <tomotsuyuki@catalyst-au.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_backup_restore_permission_testcase extends core_backup_backup_restore_base_testcase {
+class backup_restore_permission_test extends core_backup_backup_restore_base_testcase {
 
     /** @var stdClass A test course which is restored/imported from. */
     protected $course1;
@@ -62,9 +62,9 @@ class core_backup_backup_restore_permission_testcase extends core_backup_backup_
         // Create a course with some availability data set.
         $generator = $this->getDataGenerator();
         $this->course1 = $generator->create_course();
-        $this->course1context = context_course::instance($this->course1->id);
+        $this->course1context = \context_course::instance($this->course1->id);
         $this->course2 = $generator->create_course();
-        $this->course2context = context_course::instance($this->course2->id);
+        $this->course2context = \context_course::instance($this->course2->id);
         $this->capabilityname = 'enrol/manual:enrol';
         $this->user = $generator->create_user();
 

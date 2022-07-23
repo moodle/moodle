@@ -616,13 +616,13 @@ define(
                 replaceActionItem(actionItem, 'i/marked',
                     'highlightoff', 'core', 'removemarker');
                 courseeditor.dispatch('legacySectionAction', action, sectionid);
-                setSectionBadge(sectionElement[0], 'highlighted', true);
+                setSectionBadge(sectionElement[0], 'iscurrent', true);
             } else if (action === 'removemarker') {
                 sectionElement.removeClass('current');
                 replaceActionItem(actionItem, 'i/marker',
                     'highlight', 'core', 'setmarker');
                 courseeditor.dispatch('legacySectionAction', action, sectionid);
-                setSectionBadge(sectionElement[0], 'highlighted', false);
+                setSectionBadge(sectionElement[0], 'iscurrent', false);
             }
         };
 
@@ -739,15 +739,17 @@ define(
             if (!sectionbadges) {
                 return;
             }
+            const badge = sectionbadges.querySelector('[data-type="' + badgetype + '"]');
+            if (!badge) {
+                return;
+            }
             if (add) {
-                templates.render('core_courseformat/local/content/section/badges', {[badgetype]: 1})
-                .then(function(html, js) {
-                    templates.prependNodeContents(sectionbadges, html, js);
-                    return true;
-                }).catch(notification.exception);
+                document.querySelectorAll('[data-type="' + badgetype + '"]').forEach((b) => {
+                    b.classList.add('d-none');
+                });
+                badge.classList.remove('d-none');
             } else {
-                const badge = sectionbadges.querySelector('[data-type="' + badgetype + '"]');
-                badge.remove();
+                badge.classList.add('d-none');
             }
         };
 

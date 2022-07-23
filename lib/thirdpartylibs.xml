@@ -4,7 +4,7 @@
     <location>adodb</location>
     <name>AdoDB</name>
     <license>BSD/LGPL</license>
-    <version>5.21.4</version>
+    <version>5.22.2</version>
     <licenseversion>3-Clause/2.1+</licenseversion>
   </library>
   <library>
@@ -13,13 +13,6 @@
     <license>MPL</license>
     <version>4.3.5</version>
     <licenseversion>2.0</licenseversion>
-  </library>
-  <library>
-    <location>behat/extension</location>
-    <name>Moodle behat extension</name>
-    <license>GPL</license>
-    <version>3.400.5</version>
-    <licenseversion>3.0+</licenseversion>
   </library>
   <library>
     <location>bennu</location>
@@ -102,7 +95,7 @@
     <location>phpmailer</location>
     <name>PHPMailer</name>
     <license>LGPL</license>
-    <version>6.2.0</version>
+    <version>6.5.3</version>
     <licenseversion>2.1</licenseversion>
   </library>
   <library>

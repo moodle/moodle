@@ -23,5 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['filtername'] = 'Multi-Language Content';
-$string['privacy:metadata'] = 'The Multi-Language Content plugin does not store any personal data.';
+$string['filtername'] = 'Multi-language content';
+$string['forceoldsyntax'] = 'Force old syntax';
+$string['forceoldsyntax_desc'] = 'Force old multi-language syntax: &lt;span&gt; without the class="multilang" and &lt;lang&gt;.';
+$string['privacy:metadata'] = 'The Multi-language content plugin does not store any personal data.';

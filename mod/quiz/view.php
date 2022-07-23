@@ -35,20 +35,20 @@ $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('quiz', $id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
 } else {
     if (!$quiz = $DB->get_record('quiz', array('id' => $q))) {
-        print_error('invalidquizid', 'quiz');
+        throw new \moodle_exception('invalidquizid', 'quiz');
     }
     if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
     if (!$cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 }
 
@@ -208,14 +208,15 @@ if (!$viewobj->quizhasquestions) {
 
 } else {
     if ($unfinished) {
-        if ($canattempt) {
-            $viewobj->buttontext = get_string('continueattemptquiz', 'quiz');
-        } else if ($canpreview) {
+        if ($canpreview) {
             $viewobj->buttontext = get_string('continuepreview', 'quiz');
+        } else if ($canattempt) {
+            $viewobj->buttontext = get_string('continueattemptquiz', 'quiz');
         }
-
     } else {
-        if ($canattempt) {
+        if ($canpreview) {
+            $viewobj->buttontext = get_string('previewquizstart', 'quiz');
+        } else if ($canattempt) {
             $viewobj->preventmessages = $viewobj->accessmanager->prevent_new_attempt(
                     $viewobj->numattempts, $viewobj->lastfinishedattempt);
             if ($viewobj->preventmessages) {
@@ -225,20 +226,21 @@ if (!$viewobj->quizhasquestions) {
             } else {
                 $viewobj->buttontext = get_string('reattemptquiz', 'quiz');
             }
-
-        } else if ($canpreview) {
-            $viewobj->buttontext = get_string('previewquizstart', 'quiz');
         }
     }
 
-    // If, so far, we think a button should be printed, so check if they will be
-    // allowed to access it.
-    if ($viewobj->buttontext) {
+    // Users who can preview the quiz should be able to see all messages for not being able to access the quiz.
+    if ($canpreview) {
+        $viewobj->preventmessages = $viewobj->accessmanager->prevent_access();
+    } else if ($viewobj->buttontext) {
+        // If, so far, we think a button should be printed, so check if they will be allowed to access it.
         if (!$viewobj->moreattempts) {
             $viewobj->buttontext = '';
-        } else if ($canattempt
-                && $viewobj->preventmessages = $viewobj->accessmanager->prevent_access()) {
-            $viewobj->buttontext = '';
+        } else if ($canattempt) {
+            $viewobj->preventmessages = $viewobj->accessmanager->prevent_access();
+            if ($viewobj->preventmessages) {
+                $viewobj->buttontext = '';
+            }
         }
     }
 }

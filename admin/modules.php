@@ -38,11 +38,22 @@
     }
 
     if (!empty($show) and confirm_sesskey()) {
-        $class = \core_plugin_manager::resolve_plugininfo_class('mod');
-        $class::enable_plugin($show, true);
+        $canenablemodule = true;
+        $modulename = $show;
 
-        admin_get_root(true, false);  // settings not required - only pages
-        redirect(new moodle_url('/admin/modules.php'));
+        // Invoking a callback function that enables plugins to force additional actions (e.g. displaying notifications,
+        // modals, etc.) and also specify through its returned value (bool) whether the process of enabling the plugin
+        // should continue after these actions or not.
+        if (component_callback_exists("mod_{$modulename}", 'pre_enable_plugin_actions')) {
+            $canenablemodule = component_callback("mod_{$modulename}", 'pre_enable_plugin_actions');
+        }
+
+        if ($canenablemodule) {
+            $class = \core_plugin_manager::resolve_plugininfo_class('mod');
+            $class::enable_plugin($show, true);
+            admin_get_root(true, false);  // Settings not required - only pages.
+            redirect(new moodle_url('/admin/modules.php'));
+        }
     }
 
     echo $OUTPUT->header();
@@ -51,7 +62,7 @@
 /// Get and sort the existing modules
 
     if (!$modules = $DB->get_records('modules', array(), 'name ASC')) {
-        print_error('moduledoesnotexist', 'error');
+        throw new \moodle_exception('moduledoesnotexist', 'error');
     }
 
 /// Print the table of all modules
@@ -75,7 +86,7 @@
             $missing = true;
         } else {
             // took out hspace="\10\", because it does not validate. don't know what to replace with.
-            $icon = "<img src=\"" . $OUTPUT->image_url('icon', $module->name) . "\" class=\"icon\" alt=\"\" />";
+            $icon = "<img src=\"" . $OUTPUT->image_url('monologo', $module->name) . "\" class=\"icon\" alt=\"\" />";
             $strmodulename = $icon.' '.get_string('modulename', $module->name);
             $missing = false;
         }

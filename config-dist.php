@@ -105,8 +105,9 @@ $CFG->dboptions = array(
       'latency' => 0.5,      // Set read-only slave sync latency in seconds.
                              // When 'latency' seconds have lapsed after an update to a table
                              // it is deemed safe to use readonly slave for reading from the table.
-                             // It is optional. If omitted once written to a table it will always
-                             // use master handle for reading.
+                             // It is optional, defaults to 1 second. If you want once written to a table
+                             // to always use master handle for reading set it to something ridiculosly big,
+                             // eg 10.
                              // Lower values increase the performance, but setting it too low means
                              // missing the master-slave sync.
       'exclude_tables' => [  // Tables to exclude from read-only slave feature.
@@ -316,20 +317,22 @@ $CFG->admin = 'admin';
 //   Redis session handler (requires redis server and redis extension):
 //      $CFG->session_handler_class = '\core\session\redis';
 //      $CFG->session_redis_host = '127.0.0.1';
-//      $CFG->session_redis_port = 6379;  // Optional.
-//      $CFG->session_redis_database = 0;  // Optional, default is db 0.
-//      $CFG->session_redis_auth = ''; // Optional, default is don't set one.
-//      $CFG->session_redis_prefix = ''; // Optional, default is don't set one.
-//      $CFG->session_redis_acquire_lock_timeout = 120;
-//      $CFG->session_redis_lock_expire = 7200;
-//      $CFG->session_redis_lock_retry = 100; // Optional wait between lock attempts in ms, default is 100.
-//                                            // After 5 seconds it will throttle down to once per second.
+//      $CFG->session_redis_port = 6379;                     // Optional.
+//      $CFG->session_redis_database = 0;                    // Optional, default is db 0.
+//      $CFG->session_redis_auth = '';                       // Optional, default is don't set one.
+//      $CFG->session_redis_prefix = '';                     // Optional, default is don't set one.
+//      $CFG->session_redis_acquire_lock_timeout = 120;      // Default is 2 minutes.
+//      $CFG->session_redis_acquire_lock_warn = 0;           // If set logs early warning if a lock has not been acquried.
+//      $CFG->session_redis_lock_expire = 7200;              // Optional, defaults to session timeout.
+//      $CFG->session_redis_lock_retry = 100;                // Optional wait between lock attempts in ms, default is 100.
+//                                                           // After 5 seconds it will throttle down to once per second.
+//
 //      Use the igbinary serializer instead of the php default one. Note that phpredis must be compiled with
 //      igbinary support to make the setting to work. Also, if you change the serializer you have to flush the database!
 //      $CFG->session_redis_serializer_use_igbinary = false; // Optional, default is PHP builtin serializer.
-//      $CFG->session_redis_compressor = 'none'; // Optional, possible values are:
-//                                               // 'gzip' - PHP GZip compression
-//                                               // 'zstd' - PHP Zstandard compression
+//      $CFG->session_redis_compressor = 'none';             // Optional, possible values are:
+//                                                           // 'gzip' - PHP GZip compression
+//                                                           // 'zstd' - PHP Zstandard compression
 //
 // Please be aware that when selecting Memcached for sessions that it is advised to use a dedicated
 // memcache server. The memcached extension does not provide isolated environments for individual uses.
@@ -634,14 +637,6 @@ $CFG->admin = 'admin';
 //
 //      $CFG->upgradekey = 'put_some_password-like_value_here';
 //
-// Document conversion limit
-//
-// How many times the background task should attempt to convert a given attempt
-// before removing it from the queue. Currently this limit is only used by the
-// mod_assign conversion task.
-//
-//      $CFG->conversionattemptlimit = 3;
-//
 // Font used in exported PDF files. When generating a PDF, Moodle embeds a subset of
 // the font in the PDF file so it will be readable on the widest range of devices.
 // The default font is 'freesans' which is part of the GNU FreeFont collection.
@@ -694,16 +689,6 @@ $CFG->admin = 'admin';
 //
 //      $CFG->uninstallclionly = true;
 //
-//
-// Forum summary report
-//
-// In order for the forum summary report to calculate word count and character count data, those details are now stored
-// for each post in the database when posts are created or updated. For posts that existed prior to a Moodle 3.8 upgrade,
-// these are calculated by the refresh_forum_post_counts ad-hoc task in chunks of 5000 posts per batch by default.
-// That default can be overridden by setting an integer value for $CFG->forumpostcountchunksize.
-//
-//      $CFG->forumpostcountchunksize = 5000;
-//
 // Course and category sorting
 //
 // If the number of courses in a category exceeds $CFG->maxcoursesincategory (10000 by default), it may lead to duplicate
@@ -741,6 +726,17 @@ $CFG->admin = 'admin';
 // Settings this to anonymous will enable CORS requests for media elements to have the credentials
 // flag set to 'same-origin'. This may be needed when using tool_objectfs as an alternative file
 // system with CloudFront configured.
+//
+// Enrolments sync interval
+//
+// The minimum time in seconds between re-synchronization of enrollment via enrol_check_plugins which is
+// a potentially expensive operation and otherwise happens every time a user is authenticated. This only
+// applies to web requests without a session such as webservice calls, tokenpluginfile.php and rss links
+// where the user is re-authenticated on every request. Set it to 0 to force enrollment checking constantly
+// and increase this number to improve performance at the cost of adding a latency for enrollment updates.
+// Defaults to 60 minutes.
+//
+//      $CFG->enrolments_sync_interval = 3600
 
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!

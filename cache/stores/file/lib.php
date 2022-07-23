@@ -518,7 +518,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      */
     protected function prep_data_after_read($data) {
         $result = @unserialize($data);
-        if ($result === false) {
+        if ($result === false && $data != serialize(false)) {
             throw new coding_exception('Failed to unserialise data from file. Either failed to read, or failed to write.');
         }
         return $result;

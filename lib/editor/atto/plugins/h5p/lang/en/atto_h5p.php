@@ -36,9 +36,3 @@ $string['instructions'] = 'You can insert H5P content by <strong>either</strong>
 $string['noh5pcontent'] = 'No H5P content added';
 $string['pluginname'] = 'Insert H5P';
 $string['privacy:metadata'] = 'The atto_h5p plugin does not store any personal data.';
-
-// Deprecated since Moodle 3.9.
-$string['either'] = 'Either';
-$string['enterurl'] = 'URL or embed code';
-$string['h5pproperties'] = 'H5P properties';
-$string['or'] = 'or';

@@ -30,6 +30,7 @@ $string['display_city'] = 'Display city';
 $string['display_email'] = 'Display email';
 $string['display_phone1'] = 'Display phone';
 $string['display_phone2'] = 'Display mobile phone';
+$string['display_idnumber'] = 'Display ID number';
 $string['display_institution'] = 'Display institution';
 $string['display_address'] = 'Display address';
 $string['display_firstaccess'] = 'Display first access';

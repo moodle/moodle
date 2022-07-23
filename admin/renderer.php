@@ -15,19 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Renderer for core_admin subsystem
+ * Standard HTML output renderer for core_admin subsystem.
  *
  * @package    core
  * @subpackage admin
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Standard HTML output renderer for core_admin subsystem
  */
 class core_admin_renderer extends plugin_renderer_base {
 
@@ -301,6 +294,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output = '';
 
         $output .= $this->header();
+        $output .= $this->output->heading(get_string('notifications', 'admin'));
         $output .= $this->maturity_info($maturity);
         $output .= $this->legacy_log_store_writing_error();
         $output .= empty($CFG->disableupdatenotifications) ? $this->available_updates($availableupdates, $availableupdatesfetch) : '';
@@ -1086,12 +1080,21 @@ class core_admin_renderer extends plugin_renderer_base {
             $plugintyperows = array();
 
             foreach ($plugins as $name => $plugin) {
+                $component = "{$plugin->type}_{$plugin->name}";
+
                 $sumtotal++;
                 $row = new html_table_row();
-                $row->attributes['class'] = 'type-' . $plugin->type . ' name-' . $plugin->type . '_' . $plugin->name;
+                $row->attributes['class'] = "type-{$plugin->type} name-{$component}";
 
-                if ($this->page->theme->resolve_image_location('icon', $plugin->type . '_' . $plugin->name, null)) {
-                    $icon = $this->output->pix_icon('icon', '', $plugin->type . '_' . $plugin->name, array('class' => 'smallicon pluginicon'));
+                $iconidentifier = 'icon';
+                if ($plugin->type === 'mod') {
+                    $iconidentifier = 'monologo';
+                }
+
+                if ($this->page->theme->resolve_image_location($iconidentifier, $component, null)) {
+                    $icon = $this->output->pix_icon($iconidentifier, '', $component, [
+                        'class' => 'smallicon pluginicon',
+                    ]);
                 } else {
                     $icon = '';
                 }
@@ -1804,11 +1807,20 @@ class core_admin_renderer extends plugin_renderer_base {
             }
 
             foreach ($plugins as $name => $plugin) {
-                $row = new html_table_row();
-                $row->attributes['class'] = 'type-' . $plugin->type . ' name-' . $plugin->type . '_' . $plugin->name;
+                $component = "{$plugin->type}_{$plugin->name}";
 
-                if ($this->page->theme->resolve_image_location('icon', $plugin->type . '_' . $plugin->name, null)) {
-                    $icon = $this->output->pix_icon('icon', '', $plugin->type . '_' . $plugin->name, array('class' => 'icon pluginicon'));
+                $row = new html_table_row();
+                $row->attributes['class'] = "type-{$plugin->type} name-{$component}";
+
+                $iconidentifier = 'icon';
+                if ($plugin->type === 'mod') {
+                    $iconidentifier = 'monologo';
+                }
+
+                if ($this->page->theme->resolve_image_location($iconidentifier, $component, null)) {
+                    $icon = $this->output->pix_icon($iconidentifier, '', $component, [
+                        'class' => 'icon pluginicon',
+                    ]);
                 } else {
                     $icon = $this->output->spacer();
                 }
@@ -2068,7 +2080,7 @@ class core_admin_renderer extends plugin_renderer_base {
                         $errorline = true;
                     } else {
                         if ($status) {                                          //Handle ok result (ok)
-                            $status = get_string('ok');
+                            $status = get_string('statusok');
                         } else {
                             if ($environment_result->getLevel() == 'optional') {//Handle check result (warning)
                                 $status = get_string('check');

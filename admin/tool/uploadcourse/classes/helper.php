@@ -325,6 +325,11 @@ class tool_uploadcourse_helper {
                     continue;
                 }
                 $rolenames['role_' . $rolesids[$matches[1]]] = $value;
+            } else if (preg_match('/^(.+)?_role$/', $field, $matches)) {
+                if (!isset($rolesids[$value])) {
+                    $invalidroles[] = $value;
+                    break;
+                }
             }
 
         }

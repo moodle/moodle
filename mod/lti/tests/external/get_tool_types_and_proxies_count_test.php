@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_lti\external;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -28,7 +30,7 @@ require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lti_get_tool_types_and_proxies_count_testcase extends mod_lti_testcase {
+class get_tool_types_and_proxies_count_test extends \mod_lti_testcase {
 
     /**
      * This method runs before every test.
@@ -48,7 +50,7 @@ class mod_lti_get_tool_types_and_proxies_count_testcase extends mod_lti_testcase
         }
 
         $data = \mod_lti\external\get_tool_types_and_proxies_count::execute(0, false);
-        $data = external_api::clean_returnvalue(\mod_lti\external\get_tool_types_and_proxies_count::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(\mod_lti\external\get_tool_types_and_proxies_count::execute_returns(), $data);
 
         $this->assertEquals(20, $data['count']);
     }
@@ -58,7 +60,7 @@ class mod_lti_get_tool_types_and_proxies_count_testcase extends mod_lti_testcase
      */
     public function test_mod_lti_get_tool_types_and_proxies_count_with_no_tools_configured() {
         $data = \mod_lti\external\get_tool_types_and_proxies_count::execute(0, false);
-        $data = external_api::clean_returnvalue(\mod_lti\external\get_tool_types_and_proxies_count::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(\mod_lti\external\get_tool_types_and_proxies_count::execute_returns(), $data);
 
         $this->assertEquals(0, $data['count']);
     }

@@ -311,7 +311,7 @@ class mod_data_generator extends testing_module_generator {
                     get_file_storage()->create_file_from_string(['component' => 'user', 'filearea' => 'draft',
                         'contextid' => $usercontext->id, 'itemid' => $itemid, 'filepath' => '/',
                         'filename' => $filename],
-                        file_get_contents($CFG->dirroot.'/mod/data/pix/icon.png'));
+                        file_get_contents($CFG->dirroot.'/mod/data/pix/monologo.png'));
                 }
 
                 $fieldname = 'field_' . $fieldid . '_file';

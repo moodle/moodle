@@ -48,15 +48,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_block_course_summary_upgrade($oldversion, $block) {
     global $CFG, $DB;
 
-    // Automatically generated Moodle v3.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.7.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -70,6 +61,9 @@ function xmldb_block_course_summary_upgrade($oldversion, $block) {
 
         upgrade_block_savepoint(true, 2021121600, 'course_summary', false);
     }
+
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

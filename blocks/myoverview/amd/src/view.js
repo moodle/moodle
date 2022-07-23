@@ -228,7 +228,7 @@ const addToFavourites = (root, courseId) => {
 
     setCourseFavouriteState(courseId, true).then(success => {
         if (success) {
-            PubSub.publish(CourseEvents.favorited, courseId);
+            PubSub.publish(CourseEvents.favourited, courseId);
             removeAction.removeClass('hidden');
             addAction.addClass('hidden');
             showFavouriteIcon(root, courseId);
@@ -436,7 +436,7 @@ const setCourseFavouriteState = (courseId, status) => {
         if (result.warnings.length === 0) {
             loadedPages.forEach(courseList => {
                 courseList.courses.forEach((course, index) => {
-                    if (course.id === courseId) {
+                    if (course.id == courseId) {
                         courseList.courses[index].isfavourite = status;
                     }
                 });
@@ -783,7 +783,7 @@ const registerEventListeners = (root, page) => {
             activeSearch(clearIcon);
             initializePagedContent(root, searchFunctionalityCurry(), input.value.trim());
         }
-    }, 300));
+    }, 1000));
 };
 
 /**

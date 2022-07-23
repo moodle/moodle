@@ -26,6 +26,7 @@ global $CFG;
 
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest.php');
 
 /**
  * Course restore testcase.
@@ -533,5 +534,50 @@ class restore_test extends \advanced_testcase {
         $this->assertNotEquals($chat1->chattime, $restoredchat1->chattime);
         $this->assertEquals($chat2->chattime, $restoredchat2->chattime);
         $this->assertEquals($c2->startdate + 1 * WEEKSECS, $restoredchat2->chattime);
+    }
+
+    /**
+     * Tests course restore with editor in course format.
+     *
+     * @author Matthew Hilton
+     * @covers \core_courseformat
+     */
+    public function test_restore_editor_courseformat() {
+        $this->resetAfterTest();
+
+        // Setup user with restore permissions.
+        $dg = $this->getDataGenerator();
+        $u1 = $dg->create_user();
+
+        $managers = get_archetype_roles('manager');
+        $manager = array_shift($managers);
+        $dg->role_assign($manager->id, $u1->id);
+
+        // Create a course with an editor item in the course format.
+        $courseformatoptiondata = (object) [
+            "hideoddsections" => 1,
+            'summary_editor' => [
+                'text' => '<p>Somewhere over the rainbow</p><p>The <b>quick</b> brown fox jumpos over the lazy dog.</p>',
+                'format' => 1
+            ]
+        ];
+        $course1 = $dg->create_course(['format' => 'theunittest']);
+        $course2 = $dg->create_course(['format' => 'theunittest']);
+        $this->assertEquals('theunittest', $course1->format);
+        course_create_sections_if_missing($course1, array(0, 1));
+
+        // Set the course format.
+        $courseformat = course_get_format($course1);
+        $courseformat->update_course_format_options($courseformatoptiondata);
+
+        // Backup and restore the course.
+        $backupid = $this->backup_course($course1->id);
+        $this->restore_to_existing_course($backupid, $course2->id, $u1->id);
+
+        // Get the restored course format.
+        $restoredformat = course_get_format($course2);
+        $restoredformatoptions = $restoredformat->get_format_options();
+
+        $this->assertEqualsCanonicalizing($courseformatoptiondata, (object) $restoredformatoptions);
     }
 }

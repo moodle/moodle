@@ -46,6 +46,7 @@ class dates extends activity_dates {
         if (!empty($chat->schedule) && $chattime > $now) {
             return [
                 [
+                    'dataid' => 'chattime',
                     'label'     => get_string('nextchattime', 'mod_chat'),
                     'timestamp' => (int) $chattime
                 ]

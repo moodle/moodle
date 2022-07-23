@@ -22,16 +22,24 @@
     Example context (json):
     {
         "newcourseurl": "https://moodle.test/course/edit.php?category=1",
-        "manageurl": "https://moodle.test/course/management.php?categoryid=1"
+        "manageurl": "https://moodle.test/course/management.php?categoryid=1",
+        "courserequesturl": "https://moodle.test/course/request.php?categoryid=1"
     }
 }}
-<div class="btn-group">
+<div class="btn-group{{#manageurl}} course-manage{{/manageurl}}{{#courserequesturl}} course-request{{/courserequesturl}}">
     <!-- Set as a link to appease Goutte behat. -->
     <a href="#" class="btn btn-link btn-icon icon-size-3 rounded-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{#str}}coursemanagementoptions, my{{/str}}">
         <i class="fa fa-ellipsis-v text-dark  py-2" aria-hidden="true"></i>
     </a>
     <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" href="{{newcourseurl}}">{{#str}}newcourse, core{{/str}}</a>
-        <a class="dropdown-item" href="{{manageurl}}">{{#str}}managecourses, core{{/str}}</a>
+        {{#newcourseurl}}
+            <a class="dropdown-item" href="{{newcourseurl}}">{{#str}}newcourse, core{{/str}}</a>
+        {{/newcourseurl}}
+        {{#manageurl}}
+            <a class="dropdown-item" href="{{manageurl}}">{{#str}}managecourses, core{{/str}}</a>
+        {{/manageurl}}
+        {{#courserequesturl}}
+            <a class="dropdown-item" href="{{courserequesturl}}">{{#str}}requestcourse, core{{/str}}</a>
+        {{/courserequesturl}}
     </div>
 </div>

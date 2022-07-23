@@ -354,8 +354,14 @@ function question_delete_question($questionid): void {
              WHERE q.id = ?';
     $questiondata = $DB->get_record_sql($sql, [$question->id]);
 
+    $questionstocheck = [$question->id];
+
+    if ($question->parent) {
+        $questionstocheck[] = $question->parent;
+    }
+
     // Do not delete a question if it is used by an activity module
-    if (questions_in_use([$question->id])) {
+    if (questions_in_use($questionstocheck)) {
         return;
     }
 
@@ -715,9 +721,6 @@ function question_move_questions_to_category($questionids, $newcategoryid): bool
             question_bank::get_qtype($question->qtype)->move_files(
                     $question->id, $question->contextid, $newcategorydata->contextid);
         }
-        // Move set_reference records to new category.
-        move_question_set_references($question->category, $newcategoryid,
-            $question->contextid, $newcategorydata->contextid, true);
         // Check whether there could be a clash of idnumbers in the new category.
         list($idnumberclash, $rec) = idnumber_exist_in_question_category($question->idnumber, $newcategoryid);
         if ($idnumberclash) {
@@ -2096,7 +2099,7 @@ function is_latest(string $version, string $questionbankentryid) : bool {
  *      filter settings, theme, lang, etc.) Defaults to $PAGE->context.
  * @return moodle_url the URL.
  * @deprecated since Moodle 4.0
- * @see qbank_previewquestion\previewquestion_helper::question_preview_url()
+ * @see qbank_previewquestion\helper::question_preview_url()
  * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
 function question_preview_url($questionid, $preferredbehaviour = null,

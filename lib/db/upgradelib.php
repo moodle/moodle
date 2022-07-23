@@ -532,104 +532,6 @@ function upgrade_delete_orphaned_file_records() {
 }
 
 /**
- * Updates the existing prediction actions in the database according to the new suggested actions.
- * @return null
- */
-function upgrade_rename_prediction_actions_useful_incorrectly_flagged() {
-    global $DB;
-
-    // The update depends on the analyser class used by each model so we need to iterate through the models in the system.
-    $modelids = $DB->get_records_sql("SELECT DISTINCT am.id, am.target
-                                        FROM {analytics_models} am
-                                        JOIN {analytics_predictions} ap ON ap.modelid = am.id
-                                        JOIN {analytics_prediction_actions} apa ON ap.id = apa.predictionid");
-    foreach ($modelids as $model) {
-        $targetname = $model->target;
-        if (!class_exists($targetname)) {
-            // The plugin may not be available.
-            continue;
-        }
-        $target = new $targetname();
-
-        $analyserclass = $target->get_analyser_class();
-        if (!class_exists($analyserclass)) {
-            // The plugin may not be available.
-            continue;
-        }
-
-        if ($analyserclass::one_sample_per_analysable()) {
-            // From 'fixed' to 'useful'.
-            $params = ['oldaction' => 'fixed', 'newaction' => 'useful'];
-        } else {
-            // From 'notuseful' to 'incorrectlyflagged'.
-            $params = ['oldaction' => 'notuseful', 'newaction' => 'incorrectlyflagged'];
-        }
-
-        $subsql = "SELECT id FROM {analytics_predictions} WHERE modelid = :modelid";
-        $updatesql = "UPDATE {analytics_prediction_actions}
-                         SET actionname = :newaction
-                       WHERE predictionid IN ($subsql) AND actionname = :oldaction";
-
-        $DB->execute($updatesql, $params + ['modelid' => $model->id]);
-    }
-}
-
-/**
- * Convert the site settings for the 'hub' component in the config_plugins table.
- *
- * @param stdClass $hubconfig Settings loaded for the 'hub' component.
- * @param string $huburl The URL of the hub to use as the valid one in case of conflict.
- * @return stdClass List of new settings to be applied (including null values to be unset).
- */
-function upgrade_convert_hub_config_site_param_names(stdClass $hubconfig, string $huburl): stdClass {
-
-    $cleanhuburl = clean_param($huburl, PARAM_ALPHANUMEXT);
-    $converted = [];
-
-    foreach ($hubconfig as $oldname => $value) {
-        if (preg_match('/^site_([a-z]+)([A-Za-z0-9_-]*)/', $oldname, $matches)) {
-            $newname = 'site_'.$matches[1];
-
-            if ($oldname === $newname) {
-                // There is an existing value with the new naming convention already.
-                $converted[$newname] = $value;
-
-            } else if (!array_key_exists($newname, $converted)) {
-                // Add the value under a new name and mark the original to be unset.
-                $converted[$newname] = $value;
-                $converted[$oldname] = null;
-
-            } else if ($matches[2] === '_'.$cleanhuburl) {
-                // The new name already exists, overwrite only if coming from the valid hub.
-                $converted[$newname] = $value;
-                $converted[$oldname] = null;
-
-            } else {
-                // Just unset the old value.
-                $converted[$oldname] = null;
-            }
-
-        } else {
-            // Not a hub-specific site setting, just keep it.
-            $converted[$oldname] = $value;
-        }
-    }
-
-    return (object) $converted;
-}
-
-/**
- * Fix the incorrect default values inserted into analytics contextids field.
- */
-function upgrade_analytics_fix_contextids_defaults() {
-    global $DB;
-
-    $select = $DB->sql_compare_text('contextids') . ' = :zero OR ' . $DB->sql_compare_text('contextids') . ' = :null';
-    $params = ['zero' => '0', 'null' => 'null'];
-    $DB->execute("UPDATE {analytics_models} set contextids = null WHERE " . $select, $params);
-}
-
-/**
  * Upgrade core licenses shipped with Moodle.
  */
 function upgrade_core_licenses() {
@@ -1276,135 +1178,359 @@ function upgrade_calendar_override_events_fix(stdClass $info, bool $output = tru
 }
 
 /**
- * Split question table in 2 new tables:
+ * Add a new item at the end of the usermenu.
  *
- * question_bank_entries
- * question_versions
- *
- * Move the random questions records to the following table:
- * question_set_reference
- *
- * Move the question related records from quiz_slots table to:
- * question_reference
- *
- * Move the tag related data from quiz_slot_tags to:
- * question_references
- *
- * For more information: https://moodle.org/mod/forum/discuss.php?d=417599#p1688163
+ * @param string $menuitem
  */
-function upgrade_migrate_question_table(): void {
+function upgrade_add_item_to_usermenu(string $menuitem): void {
+    global $CFG;
+
+    // Get current configuration data.
+    $currentcustomusermenuitems = str_replace(["\r\n", "\r"], "\n", $CFG->customusermenuitems);
+    $lines = preg_split('/\n/', $currentcustomusermenuitems, -1, PREG_SPLIT_NO_EMPTY);
+    $lines = array_map('trim', $lines);
+
+    if (!in_array($menuitem, $lines)) {
+        // Add the item to the menu.
+        $lines[] = $menuitem;
+        set_config('customusermenuitems', implode("\n", $lines));
+    }
+}
+
+/**
+ * Update all instances of a block shown on a pagetype to a new default region, adding missing block instances where
+ * none is found.
+ *
+ * Note: This is intended as a helper to add blocks to all instances of the standard my-page. It will only work where
+ * the subpagepattern is a string representation of an integer. If there are any string values this will not work.
+ *
+ * @param string $blockname The block name, without the block_ frankenstyle component
+ * @param string $pagename The type of my-page to match
+ * @param string $pagetypepattern The page type pattern to match for the block
+ * @param string $newdefaultregion The new region to set
+ */
+function upgrade_block_set_defaultregion(
+    string $blockname,
+    string $pagename,
+    string $pagetypepattern,
+    string $newdefaultregion
+): void {
     global $DB;
 
-    // Maximum size of array.
-    $maxlength = 30000;
+    // The subpagepattern is a string.
+    // In all core blocks it contains a string represnetation of an integer, but it is theoretically possible for a
+    // community block to do something different.
+    // This function is not suited to those cases.
+    $subpagepattern = $DB->sql_cast_char2int('bi.subpagepattern');
+    $subpageempty = $DB->sql_isnotempty('block_instances', 'bi.subpagepattern', true, false);
 
-    // Array of question_versions objects.
-    $questionversions = [];
+    // If a subquery returns any NULL then the NOT IN returns no results at all.
+    // By adding a join in the inner select on my_pages we remove any possible nulls and prevent any need for
+    // additional casting to filter out the nulls.
+    $sql = <<<EOF
+        INSERT INTO {block_instances} (
+            blockname,
+            parentcontextid,
+            showinsubcontexts,
+            pagetypepattern,
+            subpagepattern,
+            defaultregion,
+            defaultweight,
+            timecreated,
+            timemodified
+        ) SELECT
+            :selectblockname AS blockname,
+            c.id AS parentcontextid,
+            0 AS showinsubcontexts,
+            :selectpagetypepattern AS pagetypepattern,
+            mp.id AS subpagepattern,
+            :selectdefaultregion AS defaultregion,
+            0 AS defaultweight,
+            :selecttimecreated AS timecreated,
+            :selecttimemodified AS timemodified
+          FROM {my_pages} mp
+          JOIN {context} c ON c.instanceid = mp.userid AND c.contextlevel = :contextuser
+         WHERE mp.id NOT IN (
+            SELECT mpi.id FROM {my_pages} mpi
+              JOIN {block_instances} bi
+                    ON bi.blockname = :blockname
+                   AND bi.subpagepattern IS NOT NULL AND {$subpageempty}
+                   AND bi.pagetypepattern = :pagetypepattern
+                   AND {$subpagepattern} = mpi.id
+         )
+         AND mp.private = 1
+         AND mp.name = :pagename
+    EOF;
 
-    // Array of question_set_references objects.
-    $questionsetreferences = [];
+    $DB->execute($sql, [
+        'selectblockname' => $blockname,
+        'contextuser' => CONTEXT_USER,
+        'selectpagetypepattern' => $pagetypepattern,
+        'selectdefaultregion' => $newdefaultregion,
+        'selecttimecreated' => time(),
+        'selecttimemodified' => time(),
+        'pagetypepattern' => $pagetypepattern,
+        'blockname' => $blockname,
+        'pagename' => $pagename,
+    ]);
 
-    // The actual update/insert done with multiple DB access, so we do it in a transaction.
-    $transaction = $DB->start_delegated_transaction();
+    // Update the existing instances.
+    $sql = <<<EOF
+        UPDATE {block_instances}
+           SET defaultregion = :newdefaultregion
+         WHERE id IN (
+            SELECT * FROM (
+                SELECT bi.id
+                  FROM {my_pages} mp
+                  JOIN {block_instances} bi
+                        ON bi.blockname = :blockname
+                       AND bi.subpagepattern IS NOT NULL AND {$subpageempty}
+                       AND bi.pagetypepattern = :pagetypepattern
+                       AND {$subpagepattern} = mp.id
+                 WHERE mp.private = 1
+                   AND mp.name = :pagename
+                   AND bi.defaultregion <> :existingnewdefaultregion
+            ) bid
+         )
+    EOF;
 
-    // Count all questions to be migrated (for progress bar).
-    $total = $DB->count_records('question');
-    $pbar = new progress_bar('migratequestions', 1000, true);
-    $i = 0;
-    // Get all records in question table, we dont need the subquestions, just regular questions and random questions.
-    $questions = $DB->get_recordset('question');
-    foreach ($questions as $question) {
-        upgrade_set_timeout(60);
-        // Populate table question_bank_entries.
-        $questionbankentry = new \stdClass();
-        $questionbankentry->questioncategoryid = $question->category;
-        $questionbankentry->idnumber = $question->idnumber;
-        $questionbankentry->ownerid = $question->createdby;
-        // Insert a question_bank_entries record here as the id is required to populate other tables.
-        $questionbankentry->id = $DB->insert_record('question_bank_entries', $questionbankentry);
+    $DB->execute($sql, [
+        'newdefaultregion' => $newdefaultregion,
+        'pagetypepattern' => $pagetypepattern,
+        'blockname' => $blockname,
+        'existingnewdefaultregion' => $newdefaultregion,
+        'pagename' => $pagename,
+    ]);
 
-        // Create question_versions records to be added.
-        $questionversion = new \stdClass();
-        $questionversion->questionbankentryid = $questionbankentry->id;
-        $questionversion->questionid = $question->id;
-        $questionstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
-        if ((int)$question->hidden === 1) {
-            $questionstatus = \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN;
-        }
-        $questionversion->status = $questionstatus;
-        $questionversions[] = $questionversion;
+    // Note: This can be time consuming!
+    \context_helper::create_instances(CONTEXT_BLOCK);
+}
 
-        // Insert the records if the array limit is reached.
-        if (count($questionversions) >= $maxlength) {
-            $DB->insert_records('question_versions', $questionversions);
-            $questionversions = [];
-        }
+/**
+ * Remove all instances of a block on pages of the specified pagetypepattern.
+ *
+ * Note: This is intended as a helper to add blocks to all instances of the standard my-page. It will only work where
+ * the subpagepattern is a string representation of an integer. If there are any string values this will not work.
+ *
+ * @param string $blockname The block name, without the block_ frankenstyle component
+ * @param string $pagename The type of my-page to match
+ * @param string $pagetypepattern This is typically used on the 'my-index'
+ */
+function upgrade_block_delete_instances(
+    string $blockname,
+    string $pagename,
+    string $pagetypepattern
+): void {
+    global $DB;
 
-        // Create question_set_references records to be added.
-        // Only if the question type is random and the question is used in a quiz.
-        if ($question->qtype === 'random') {
-            $quizslots = $DB->get_records('quiz_slots', ['questionid' => $question->id]);
-            foreach ($quizslots as $quizslot) {
-                $questionsetreference = new \stdClass();
-                $cm = get_coursemodule_from_instance('quiz', $quizslot->quizid);
-                $questionsetreference->usingcontextid = context_module::instance($cm->id)->id;
-                $questionsetreference->component = 'mod_quiz';
-                $questionsetreference->questionarea = 'slot';
-                $questionsetreference->itemid = $quizslot->id;
-                $catcontext = $DB->get_field('question_categories', 'contextid', ['id' => $question->category]);
-                $questionsetreference->questionscontextid = $catcontext;
-                // Migration of the slot tags and filter identifiers from slot table to filtercondition.
-                $filtercondition = new stdClass();
-                $filtercondition->questioncategoryid = $question->category;
-                $filtercondition->includingsubcategories = $quizslot->includingsubcategories;
-                $tags = $DB->get_records('quiz_slot_tags', ['slotid' => $quizslot->id]);
-                $tagstrings = [];
-                foreach ($tags as $tag) {
-                    $tagstrings [] = "{$tag->id},{$tag->name}";
-                }
-                if (!empty($tagstrings)) {
-                    $filtercondition->tags = $tagstrings;
-                }
-                $questionsetreference->filtercondition = json_encode($filtercondition);
+    $deleteblockinstances = function (string $instanceselect, array $instanceparams) use ($DB) {
+        $deletesql = <<<EOF
+            SELECT c.id AS cid
+              FROM {context} c
+              JOIN {block_instances} bi ON bi.id = c.instanceid AND c.contextlevel = :contextlevel
+             WHERE {$instanceselect}
+        EOF;
+        $DB->delete_records_subquery('context', 'id', 'cid', $deletesql, array_merge($instanceparams, [
+            'contextlevel' => CONTEXT_BLOCK,
+        ]));
 
-                $questionsetreferences[] = $questionsetreference;
+        $deletesql = <<<EOF
+            SELECT bp.id AS bpid
+              FROM {block_positions} bp
+              JOIN {block_instances} bi ON bi.id = bp.blockinstanceid
+             WHERE {$instanceselect}
+        EOF;
+        $DB->delete_records_subquery('block_positions', 'id', 'bpid', $deletesql, $instanceparams);
 
-                // Insert the records if the array limit is reached.
-                if (count($questionsetreferences) >= $maxlength) {
-                    $DB->insert_records('question_set_references', $questionsetreferences);
-                    $questionsetreferences = [];
-                }
-            }
-        }
-        // Update progress.
-        $i++;
-        $pbar->update($i, $total, "Migrating questions - $i/$total.");
+        $blockhidden = $DB->sql_concat("'block'", 'bi.id', "'hidden'");
+        $blockdocked = $DB->sql_concat("'docked_block_instance_'", 'bi.id');
+        $deletesql = <<<EOF
+            SELECT p.id AS pid
+              FROM {user_preferences} p
+              JOIN {block_instances} bi ON p.name IN ({$blockhidden}, {$blockdocked})
+             WHERE {$instanceselect}
+        EOF;
+        $DB->delete_records_subquery('user_preferences', 'id', 'pid', $deletesql, $instanceparams);
+
+        $deletesql = <<<EOF
+            SELECT bi.id AS bid
+              FROM {block_instances} bi
+             WHERE {$instanceselect}
+        EOF;
+        $DB->delete_records_subquery('block_instances', 'id', 'bid', $deletesql, $instanceparams);
+    };
+
+    // Delete the default indexsys version of the block.
+    $subpagepattern = $DB->get_record('my_pages', [
+        'userid' => null,
+        'name' => $pagename,
+        'private' => MY_PAGE_PRIVATE,
+    ], 'id', IGNORE_MULTIPLE)->id;
+
+    $instanceselect = <<<EOF
+            blockname = :blockname
+        AND pagetypepattern = :pagetypepattern
+        AND subpagepattern = :subpagepattern
+    EOF;
+
+    $params = [
+        'blockname' => $blockname,
+        'pagetypepattern' => $pagetypepattern,
+        'subpagepattern' => $subpagepattern,
+    ];
+    $deleteblockinstances($instanceselect, $params);
+
+    // The subpagepattern is a string.
+    // In all core blocks it contains a string represnetation of an integer, but it is theoretically possible for a
+    // community block to do something different.
+    // This function is not suited to those cases.
+    $subpagepattern = $DB->sql_cast_char2int('bi.subpagepattern');
+
+    // Look for any and all instances of the block in customised /my pages.
+    $subpageempty = $DB->sql_isnotempty('block_instances', 'bi.subpagepattern', true, false);
+    $instanceselect = <<<EOF
+         bi.id IN (
+            SELECT * FROM (
+                SELECT bi.id
+                  FROM {my_pages} mp
+                  JOIN {block_instances} bi
+                        ON bi.blockname = :blockname
+                       AND bi.subpagepattern IS NOT NULL AND {$subpageempty}
+                       AND bi.pagetypepattern = :pagetypepattern
+                       AND {$subpagepattern} = mp.id
+                 WHERE mp.private = :private
+                   AND mp.name = :pagename
+            ) bid
+         )
+    EOF;
+
+    $params = [
+        'blockname' => $blockname,
+        'pagetypepattern' => $pagetypepattern,
+        'pagename' => $pagename,
+        'private' => MY_PAGE_PRIVATE,
+    ];
+
+    $deleteblockinstances($instanceselect, $params);
+}
+
+/**
+ * Update the block instance parentcontext to point to the correct user context id for the specified block on a my page.
+ *
+ * @param string $blockname
+ * @param string $pagename
+ * @param string $pagetypepattern
+ */
+function upgrade_block_set_my_user_parent_context(
+    string $blockname,
+    string $pagename,
+    string $pagetypepattern
+): void {
+    global $DB;
+
+    $subpagepattern = $DB->sql_cast_char2int('bi.subpagepattern');
+    // Look for any and all instances of the block in customised /my pages.
+    $subpageempty = $DB->sql_isnotempty('block_instances', 'bi.subpagepattern', true, false);
+
+    $dbman = $DB->get_manager();
+    $temptablename = 'block_instance_context';
+    $xmldbtable = new \xmldb_table($temptablename);
+    $xmldbtable->add_field('instanceid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
+    $xmldbtable->add_field('contextid', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null);
+    $xmldbtable->add_key('primary', XMLDB_KEY_PRIMARY, ['instanceid']);
+    $dbman->create_temp_table($xmldbtable);
+
+    $sql = <<<EOF
+        INSERT INTO {block_instance_context} (
+            instanceid,
+            contextid
+        ) SELECT
+            bi.id as instanceid,
+            c.id as contextid
+           FROM {my_pages} mp
+           JOIN {context} c ON c.instanceid = mp.userid AND c.contextlevel = :contextuser
+           JOIN {block_instances} bi
+                ON bi.blockname = :blockname
+               AND bi.subpagepattern IS NOT NULL AND {$subpageempty}
+               AND bi.pagetypepattern = :pagetypepattern
+               AND {$subpagepattern} = mp.id
+          WHERE mp.name = :pagename AND bi.parentcontextid <> c.id
+    EOF;
+
+    $DB->execute($sql, [
+        'blockname' => $blockname,
+        'pagetypepattern' => $pagetypepattern,
+        'contextuser' => CONTEXT_USER,
+        'pagename' => $pagename,
+    ]);
+
+    $dbfamily = $DB->get_dbfamily();
+    if ($dbfamily === 'mysql') {
+        // MariaDB and MySQL.
+        $sql = <<<EOF
+            UPDATE {block_instances} bi, {block_instance_context} bic
+               SET bi.parentcontextid = bic.contextid
+             WHERE bi.id = bic.instanceid
+        EOF;
+    } else if ($dbfamily === 'oracle') {
+        $sql = <<<EOF
+            UPDATE {block_instances} bi
+            SET (bi.parentcontextid) = (
+                SELECT bic.contextid
+                  FROM {block_instance_context} bic
+                 WHERE bic.instanceid = bi.id
+            ) WHERE EXISTS (
+                SELECT 'x'
+                  FROM {block_instance_context} bic
+                 WHERE bic.instanceid = bi.id
+            )
+        EOF;
+    } else {
+        // Postgres and sqlsrv.
+        $sql = <<<EOF
+            UPDATE {block_instances}
+            SET parentcontextid = bic.contextid
+            FROM {block_instance_context} bic
+            WHERE {block_instances}.id = bic.instanceid
+        EOF;
     }
-    $questions->close();
 
-    // Insert the remaining question_versions records.
-    if ($questionversions) {
-        $DB->insert_records('question_versions', $questionversions);
-    }
-
-    // Insert the remaining question_set_references records.
-    if ($questionsetreferences) {
-        $DB->insert_records('question_set_references', $questionsetreferences);
-    }
-
-    // Create question_references record for each question.
-    // Except if qtype is random. That case is handled by question_set_reference.
-    $sql = "INSERT INTO {question_references}
-                        (usingcontextid, component, questionarea, itemid, questionbankentryid)
-                 SELECT c.id, 'mod_quiz', 'slot', qs.id, qv.questionbankentryid
-                   FROM {question} q
-                   JOIN {question_versions} qv ON q.id = qv.questionid
-                   JOIN {quiz_slots} qs ON q.id = qs.questionid
-                   JOIN {modules} m ON m.name = 'quiz'
-                   JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = qs.quizid
-                   JOIN {context} c ON c.instanceid = cm.id AND c.contextlevel = " . CONTEXT_MODULE . "
-                  WHERE q.qtype <> 'random'";
     $DB->execute($sql);
 
-    $transaction->allow_commit();
+    $dbman->drop_table($xmldbtable);
+}
+
+/**
+ * Fix the timestamps for files where their timestamps are older
+ * than the directory listing that they are contained in.
+ */
+function upgrade_fix_file_timestamps() {
+    global $DB;
+
+    // Due to incompatability in SQL syntax for updates with joins,
+    // These will be updated in a select + separate update.
+    $sql = "SELECT f.id, f2.timecreated
+              FROM {files} f
+              JOIN {files} f2
+                    ON f2.contextid = f.contextid
+                   AND f2.filepath = f.filepath
+                   AND f2.component = f.component
+                   AND f2.filearea = f.filearea
+                   AND f2.itemid = f.itemid
+                   AND f2.filename = '.'
+             WHERE f2.timecreated > f.timecreated";
+
+    $recordset = $DB->get_recordset_sql($sql);
+
+    if (!$recordset->valid()) {
+        $recordset->close();
+        return;
+    }
+
+    foreach ($recordset as $record) {
+        $record->timemodified = $record->timecreated;
+        $DB->update_record('files', $record);
+    }
+
+    $recordset->close();
 }

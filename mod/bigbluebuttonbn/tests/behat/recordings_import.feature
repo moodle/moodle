@@ -7,6 +7,7 @@ Feature: Manage and list recordings
     And the following config values are set as admin:
       | bigbluebuttonbn_importrecordings_enabled | 1 |
       | bigbluebuttonbn_importrecordings_from_deleted_enabled | 1 |
+    And I enable "bigbluebuttonbn" "mod" plugin
     And the following "courses" exist:
       | fullname      | shortname | category |
       | Test Course 1 | C1        | 0        |

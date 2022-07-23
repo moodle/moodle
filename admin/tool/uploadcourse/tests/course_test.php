@@ -1562,6 +1562,94 @@ class course_test extends \advanced_testcase {
     }
 
     /**
+     * Test when role doesn't exist.
+     *
+     * @covers \tool_uploadcourse_course::prepare
+     */
+    public function test_role_not_exist() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+
+        $upload = new tool_uploadcourse_course($mode, $updatemode, [
+            'category' => 1,
+            'fullname' => 'Testing',
+            'shortname' => 'T101',
+            'enrolment_1' => 'manual',
+            'enrolment_1_role' => 'notexist'
+        ]);
+
+        $this->assertFalse($upload->prepare());
+        $this->assertArrayHasKey('invalidroles', $upload->get_errors());
+    }
+
+    /**
+     * Test when role not allowed in course context.
+     *
+     * @covers \tool_uploadcourse_course::proceed
+     */
+    public function test_role_not_allowed() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $roleid = create_role('New student role', 'student2', 'New student description', 'student');
+        set_role_contextlevels($roleid, [CONTEXT_BLOCK]);
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+
+        $upload = new tool_uploadcourse_course($mode, $updatemode, [
+            'category' => 1,
+            'fullname' => 'Testing',
+            'shortname' => 'T101',
+            'enrolment_1' => 'manual',
+            'enrolment_1_role' => 'student2'
+        ]);
+
+        $this->assertFalse($upload->prepare());
+        $this->assertArrayHasKey('contextrolenotallowed', $upload->get_errors());
+    }
+
+    /**
+     * Test when role is allowed.
+     *
+     * @covers \tool_uploadcourse_course::proceed
+     */
+    public function test_role_allowed() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_MISSING_WITH_DATA_OR_DEFAUTLS;
+
+        $course = $this->getDataGenerator()->create_course([
+            'shortname' => 'c1',
+        ]);
+
+        $instances = enrol_get_instances($course->id, true);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+        $instance = reset($instances);
+        $this->assertEquals($studentrole->id, $instance->roleid);
+
+        $upload = new tool_uploadcourse_course($mode, $updatemode, [
+            'shortname' => 'c1',
+            'enrolment_1' => 'manual',
+            'enrolment_1_role' => 'teacher'
+        ]);
+
+        $this->assertTrue($upload->prepare());
+        $upload->proceed();
+        $instances = enrol_get_instances($course->id, true);
+        $instance = reset($instances);
+        $this->assertEquals($teacherrole->id, $instance->roleid);
+    }
+
+    /**
      * Get custom field plugin generator
      *
      * @return core_customfield_generator

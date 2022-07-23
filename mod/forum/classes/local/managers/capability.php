@@ -119,6 +119,12 @@ class capability {
             }
         }
 
+        // If the user reaches the number of posts equal to warning/blocking setting then return the value of canpost in $warningobj.
+        $cmrecord = $this->forum->get_course_module_record();
+        if ($warningobj = forum_check_throttling($this->forumrecord, $cmrecord)) {
+            return $warningobj->canpost;
+        }
+
         switch ($this->forum->get_type()) {
             case 'news':
                 $capability = 'mod/forum:addnews';
@@ -316,12 +322,19 @@ class capability {
     public function can_post_in_discussion(stdClass $user, discussion_entity $discussion) : bool {
         $forum = $this->get_forum();
         $forumrecord = $this->get_forum_record();
+
         $discussionrecord = $this->get_discussion_record($discussion);
         $context = $this->get_context();
         $coursemodule = $forum->get_course_module_record();
         $course = $forum->get_course_record();
 
-        return forum_user_can_post($forumrecord, $discussionrecord, $user, $coursemodule, $course, $context);
+        $status = forum_user_can_post($forumrecord, $discussionrecord, $user, $coursemodule, $course, $context);
+
+        // If the user reaches the number of posts equal to warning/blocking setting then logically and canpost value with $status.
+        if ($warningobj = forum_check_throttling($forumrecord, $coursemodule)) {
+            return $status && $warningobj->canpost;
+        }
+        return $status;
     }
 
     /**

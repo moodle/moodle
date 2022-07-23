@@ -13,7 +13,7 @@ env:
 
 jobs:
   Grunt:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checking out code
@@ -54,11 +54,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-18.04
-            php: 7.3
+          - os: ubuntu-20.04
+            php: 7.4
             extensions:
             db: mysqli
-          - os: ubuntu-18.04
+          - os: ubuntu-20.04
             php: 8.0
             db: pgsql
             extensions: xmlrpc-beta
@@ -79,7 +79,7 @@ jobs:
         if: ${{ matrix.db == 'pgsql' }}
         uses: m4nu56/postgresql-action@v1
         with:
-          postgresql version: 10
+          postgresql version: 12
           postgresql db: test
           postgresql user: test
           postgresql password: test
@@ -111,4 +111,5 @@ jobs:
       - name: Running PHPUnit tests
         env:
           dbtype: ${{ matrix.db }}
-        run: vendor/bin/phpunit -v
+          phpunit_options: ${{ secrets.phpunit_options }}
+        run: vendor/bin/phpunit $phpunit_options

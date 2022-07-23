@@ -664,7 +664,7 @@ function groups_course_module_visible() {
  */
 function error() {
     throw new coding_exception('notlocalisederrormessage', 'error', $link, $message, 'error() is a removed, please call
-            print_error() instead of error()');
+            throw new \moodle_exception() instead of error()');
 }
 
 
@@ -2770,121 +2770,20 @@ function report_insights_context_insights(\context $context) {
 }
 
 /**
- * Retrieve all metadata for the requested modules
- *
- * @deprecated since 3.9.
- * @param object $course The Course
- * @param array $modnames An array containing the list of modules and their
- * names
- * @param int $sectionreturn The section to return to
- * @return array A list of stdClass objects containing metadata about each
- * module
+ * @deprecated since 3.9
  */
-function get_module_metadata($course, $modnames, $sectionreturn = null) {
-    global $OUTPUT;
-
-    debugging('get_module_metadata is deprecated. Please use \core_course\local\service\content_item_service instead.');
-
-    // get_module_metadata will be called once per section on the page and courses may show
-    // different modules to one another
-    static $modlist = array();
-    if (!isset($modlist[$course->id])) {
-        $modlist[$course->id] = array();
-    }
-
-    $return = array();
-    $urlbase = new moodle_url('/course/mod.php', array('id' => $course->id, 'sesskey' => sesskey()));
-    if ($sectionreturn !== null) {
-        $urlbase->param('sr', $sectionreturn);
-    }
-    foreach($modnames as $modname => $modnamestr) {
-        if (!course_allowed_module($course, $modname)) {
-            continue;
-        }
-        if (isset($modlist[$course->id][$modname])) {
-            // This module is already cached
-            $return += $modlist[$course->id][$modname];
-            continue;
-        }
-        $modlist[$course->id][$modname] = array();
-
-        // Create an object for a default representation of this module type in the activity chooser. It will be used
-        // if module does not implement callback get_shortcuts() and it will also be passed to the callback if it exists.
-        $defaultmodule = new stdClass();
-        $defaultmodule->title = $modnamestr;
-        $defaultmodule->name = $modname;
-        $defaultmodule->link = new moodle_url($urlbase, array('add' => $modname));
-        $defaultmodule->icon = $OUTPUT->pix_icon('icon', '', $defaultmodule->name, array('class' => 'icon'));
-        $sm = get_string_manager();
-        if ($sm->string_exists('modulename_help', $modname)) {
-            $defaultmodule->help = get_string('modulename_help', $modname);
-            if ($sm->string_exists('modulename_link', $modname)) {  // Link to further info in Moodle docs.
-                $link = get_string('modulename_link', $modname);
-                $linktext = get_string('morehelp');
-                $defaultmodule->help .= html_writer::tag('div',
-                    $OUTPUT->doc_link($link, $linktext, true), array('class' => 'helpdoclink'));
-            }
-        }
-        $defaultmodule->archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
-
-        // Each module can implement callback modulename_get_shortcuts() in its lib.php and return the list
-        // of elements to be added to activity chooser.
-        $items = component_callback($modname, 'get_shortcuts', array($defaultmodule), null);
-        if ($items !== null) {
-            foreach ($items as $item) {
-                // Add all items to the return array. All items must have different links, use them as a key in the return array.
-                if (!isset($item->archetype)) {
-                    $item->archetype = $defaultmodule->archetype;
-                }
-                if (!isset($item->icon)) {
-                    $item->icon = $defaultmodule->icon;
-                }
-                // If plugin returned the only one item with the same link as default item - cache it as $modname,
-                // otherwise append the link url to the module name.
-                $item->name = (count($items) == 1 &&
-                    $item->link->out() === $defaultmodule->link->out()) ? $modname : $modname . ':' . $item->link;
-
-                // If the module provides the helptext property, append it to the help text to match the look and feel
-                // of the default course modules.
-                if (isset($item->help) && isset($item->helplink)) {
-                    $linktext = get_string('morehelp');
-                    $item->help .= html_writer::tag('div',
-                        $OUTPUT->doc_link($item->helplink, $linktext, true), array('class' => 'helpdoclink'));
-                }
-                $modlist[$course->id][$modname][$item->name] = $item;
-            }
-            $return += $modlist[$course->id][$modname];
-            // If get_shortcuts() callback is defined, the default module action is not added.
-            // It is a responsibility of the callback to add it to the return value unless it is not needed.
-            continue;
-        }
-
-        // The callback get_shortcuts() was not found, use the default item for the activity chooser.
-        $modlist[$course->id][$modname][$modname] = $defaultmodule;
-        $return[$modname] = $defaultmodule;
-    }
-
-    core_collator::asort_objects_by_property($return, 'title');
-    return $return;
+function get_module_metadata() {
+    throw new coding_exception(
+        'get_module_metadata() has been removed. Please use \core_course\local\service\content_item_service instead.');
 }
 
 /**
- * Runs a single cron task. This function assumes it is displaying output in pseudo-CLI mode.
- *
- * The function will fail if the task is disabled.
- *
- * Warning: Because this function closes the browser session, it may not be safe to continue
- * with other processing (other than displaying the rest of the page) after using this function!
- *
  * @deprecated since Moodle 3.9 MDL-63580. Please use the \core\task\manager::run_from_cli($task).
- * @todo final deprecation. To be removed in Moodle 4.1 MDL-63594.
- * @param \core\task\scheduled_task $task Task to run
- * @return bool True if cron run successful
  */
-function cron_run_single_task(\core\task\scheduled_task $task) {
-    debugging('cron_run_single_task() is deprecated. Please use \\core\task\manager::run_from_cli() instead.',
-        DEBUG_DEVELOPER);
-    return \core\task\manager::run_from_cli($task);
+function cron_run_single_task() {
+    throw new coding_exception(
+        'cron_run_single_task() has been removed. Please use \\core\task\manager::run_from_cli() instead.'
+    );
 }
 
 /**
@@ -3687,4 +3586,81 @@ function print_grade_plugin_selector($plugin_info, $active_type, $active_plugin,
         // only one option - no plugin selector needed
         return '';
     }
+
+    /**
+     * Purge the cache of a course section.
+     *
+     * $sectioninfo must have following attributes:
+     *   - course: course id
+     *   - section: section number
+     *
+     * @param object $sectioninfo section info
+     * @return void
+     * @deprecated since Moodle 4.0. Please use {@link course_modinfo::purge_course_section_cache_by_id()}
+     *             or {@link course_modinfo::purge_course_section_cache_by_number()} instead.
+     */
+    function course_purge_section_cache(object $sectioninfo): void {
+        debugging(__FUNCTION__ . '() is deprecated. ' .
+            'Please use course_modinfo::purge_course_section_cache_by_id() ' .
+            'or course_modinfo::purge_course_section_cache_by_number() instead.',
+            DEBUG_DEVELOPER);
+        $sectionid = $sectioninfo->section;
+        $courseid = $sectioninfo->course;
+        course_modinfo::purge_course_section_cache_by_id($courseid, $sectionid);
+    }
+
+    /**
+     * Purge the cache of a course module.
+     *
+     * $cm must have following attributes:
+     *   - id: cmid
+     *   - course: course id
+     *
+     * @param cm_info|stdClass $cm course module
+     * @return void
+     * @deprecated since Moodle 4.0. Please use {@link course_modinfo::purge_course_module_cache()} instead.
+     */
+    function course_purge_module_cache($cm): void {
+        debugging(__FUNCTION__ . '() is deprecated. ' . 'Please use course_modinfo::purge_course_module_cache() instead.',
+            DEBUG_DEVELOPER);
+        $cmid = $cm->id;
+        $courseid = $cm->course;
+        course_modinfo::purge_course_module_cache($courseid, $cmid);
+    }
+}
+
+/**
+ * For a given course, returns an array of course activity objects
+ * Each item in the array contains he following properties:
+ *
+ * @param int $courseid course id
+ * @param bool $usecache get activities from cache if modinfo exists when $usecache is true
+ * @return array list of activities
+ * @deprecated since Moodle 4.0. Please use {@link course_modinfo::get_array_of_activities()} instead.
+ */
+function get_array_of_activities(int $courseid, bool $usecache = false): array {
+    debugging(__FUNCTION__ . '() is deprecated. ' . 'Please use course_modinfo::get_array_of_activities() instead.',
+        DEBUG_DEVELOPER);
+    return course_modinfo::get_array_of_activities(get_course($courseid), $usecache);
+}
+
+/**
+ * Abort execution by throwing of a general exception,
+ * default exception handler displays the error message in most cases.
+ *
+ * @deprecated since Moodle 4.1
+ * @todo MDL-74484 Final deprecation in Moodle 4.5.
+ * @param string $errorcode The name of the language string containing the error message.
+ *      Normally this should be in the error.php lang file.
+ * @param string $module The language file to get the error message from.
+ * @param string $link The url where the user will be prompted to continue.
+ *      If no url is provided the user will be directed to the site index page.
+ * @param object $a Extra words and phrases that might be required in the error string
+ * @param string $debuginfo optional debugging information
+ * @return void, always throws exception!
+ */
+function print_error($errorcode, $module = 'error', $link = '', $a = null, $debuginfo = null) {
+    debugging("The function print_error() is deprecated. " .
+            "Please throw a new moodle_exception instance instead.", DEBUG_DEVELOPER);
+    throw new \moodle_exception($errorcode, $module, $link, $a, $debuginfo);
 }

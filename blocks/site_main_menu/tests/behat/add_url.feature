@@ -12,8 +12,8 @@ Feature: Add URL to main menu block
     And I add the "Main menu" block
     When I add a "URL" to section "0" and I fill the form with:
       | Name         | reference link        |
-      | Description  | gooooooooogle         |
-      | External URL | http://www.google.com |
+      | Description  | mooooooooodle         |
+      | External URL | http://www.moodle.com |
       | id_display   | In pop-up             |
     Then "reference link" "link" should exist in the "Main menu" "block"
     And "Add an activity or resource" "button" should exist in the "Main menu" "block"
@@ -35,8 +35,8 @@ Feature: Add URL to main menu block
     And I press "Save changes"
     And I add a "URL" to section "0" and I fill the form with:
       | Name         | reference link        |
-      | Description  | gooooooooogle         |
-      | External URL | http://www.google.com |
+      | Description  | mooooooooodle         |
+      | External URL | http://www.moodle.com |
       | id_display   | Embed                 |
     Then I click on "reference link" "link" in the "Main menu" "block"
     And "reference link" "link" should exist in the "Main menu" "block"
@@ -62,8 +62,8 @@ Feature: Add URL to main menu block
     And I press "Save changes"
     And I add a "URL" to section "0" and I fill the form with:
       | Name         | reference link        |
-      | Description  | gooooooooogle         |
-      | External URL | http://www.google.com |
+      | Description  | mooooooooodle         |
+      | External URL | http://www.moodle.com |
       | id_display   | Embed                 |
     Then I click on "reference link" "link" in the "Main menu" "block"
     And "reference link" "link" should exist in the "Main menu" "block"
@@ -71,3 +71,28 @@ Feature: Add URL to main menu block
     And "Main menu" "block" should not exist
     And I navigate to "Badges > Add a new badge" in site administration
     And "Main menu" "block" should not exist
+
+  @javascript
+  Scenario: When the "Main Menu" block is displayed throrought the entire site, adding an URL in a course
+    results in adding it in the course and not in the frontpage
+    Given the following "course" exists:
+      | fullname         | Course 1 |
+      | shortname        | C1       |
+      | category         | 0        |
+    And I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    And I add the "Main menu" block
+    And I configure the "Main menu" block
+    And I set the following fields to these values:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
+    When I am on the "C1" Course page
+    And I add a "URL" to section "0" and I fill the form with:
+      | Name                               | reference link        |
+      | Description                        | mooooooooodle         |
+      | External URL                       | http://www.moodle.com |
+      | Display description on course page | 1                     |
+      | id_display                         | In pop-up             |
+    Then "reference link" "link" should not exist in the "Main menu" "block"
+    And I should see "mooooooooodle" in the "region-main" "region"

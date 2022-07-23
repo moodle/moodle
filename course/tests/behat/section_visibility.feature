@@ -104,9 +104,9 @@ Feature: Show/hide course sections
       | Course layout | Show one section per page |
       | Enable completion tracking | Yes |
     And I press "Save and display"
-    And I add a "Label" to section "1" and I fill the form with:
-      | Label text | Test label |
-      | Completion tracking | Students can manually mark the activity as completed |
+    And the following "activities" exist:
+      | activity | course | section | name       | completion |
+      | label    | C1     | 1       | Test label | 1          |
     And I edit the section "2"
     And I expand all fieldsets
     And I click on "Add restriction..." "button"

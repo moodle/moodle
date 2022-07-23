@@ -66,6 +66,7 @@ $title = get_string('overridesforquiz', 'quiz',
         format_string($quiz->name, true, ['context' => $context]));
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 $PAGE->activityheader->disable();

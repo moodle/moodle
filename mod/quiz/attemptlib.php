@@ -25,8 +25,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
+
+use mod_quiz\question\bank\qbank_helper;
 
 
 /**
@@ -79,7 +80,11 @@ class quiz {
     /** @var context the quiz context. */
     protected $context;
 
-    /** @var stdClass[] of questions augmented with slot information. */
+    /**
+     * @var stdClass[] of questions augmented with slot information. For non-random
+     *     questions, the array key is question id. For random quesions it is 's' . $slotid.
+     *     probalby best to use ->questionid field of the object instead.
+     */
     protected $questions = null;
     /** @var stdClass[] of quiz_section rows. */
     protected $sections = null;
@@ -145,35 +150,33 @@ class quiz {
      * Load just basic information about all the questions in this quiz.
      */
     public function preload_questions() {
-        $specificquestionids = \mod_quiz\question\bank\qbank_helper::get_specific_version_question_ids($this->quiz->id);
-        $latestquestionids = \mod_quiz\question\bank\qbank_helper::get_always_latest_version_question_ids($this->quiz->id);
-        $questionids = array_merge($specificquestionids, $latestquestionids);
-        $questiondata = [];
-        if (!empty($questionids)) {
-            $questiondata = \mod_quiz\question\bank\qbank_helper::get_question_structure_data($this->quiz->id, $questionids, true);
+        $slots = qbank_helper::get_question_structure($this->quiz->id, $this->context);
+        $this->questions = [];
+        foreach ($slots as $slot) {
+            $this->questions[$slot->questionid] = $slot;
         }
-        $allquestiondata = \mod_quiz\question\bank\qbank_helper::question_array_sort(
-            \mod_quiz\question\bank\qbank_helper::question_load_random_questions($this->quiz->id, $questiondata), 'slot');
-        $this->questions = $allquestiondata;
     }
 
     /**
      * Fully load some or all of the questions for this quiz. You must call
      * {@link preload_questions()} first.
      *
-     * @param array|null $questionids question ids of the questions to load. null for all.
+     * @param array|null $deprecated no longer supported (it was not used).
      */
-    public function load_questions($questionids = null) {
+    public function load_questions($deprecated = null) {
+        if ($deprecated !== null) {
+            debugging('The argument to quiz::load_questions is no longer supported. ' .
+                    'All questions are always loaded.', DEBUG_DEVELOPER);
+        }
         if ($this->questions === null) {
             throw new coding_exception('You must call preload_questions before calling load_questions.');
         }
-        if (is_null($questionids)) {
-            $questionids = array_keys($this->questions);
-        }
-        $questionstoprocess = array();
-        foreach ($questionids as $id) {
-            if (array_key_exists($id, $this->questions)) {
-                $questionstoprocess[$id] = $this->questions[$id];
+
+        $questionstoprocess = [];
+        foreach ($this->questions as $question) {
+            if (is_number($question->questionid)) {
+                $question->id = $question->questionid;
+                $questionstoprocess[$question->questionid] = $question;
             }
         }
         get_question_options($questionstoprocess);
@@ -540,8 +543,18 @@ class quiz {
         $qcategories = array();
 
         foreach ($this->get_questions() as $questiondata) {
-            if (!in_array($questiondata->qtype, $questiontypes)) {
-                $questiontypes[] = $questiondata->qtype;
+            if ($questiondata->qtype === 'random' && $includepotential) {
+                if (!isset($qcategories[$questiondata->category])) {
+                    $qcategories[$questiondata->category] = false;
+                }
+                if (!empty($questiondata->filtercondition)) {
+                    $filtercondition = json_decode($questiondata->filtercondition);
+                    $qcategories[$questiondata->category] = !empty($filtercondition->includingsubcategories);
+                }
+            } else {
+                if (!in_array($questiondata->qtype, $questiontypes)) {
+                    $questiontypes[] = $questiondata->qtype;
+                }
             }
         }
 
@@ -1636,7 +1649,7 @@ class quiz_attempt {
      * @return bool whether show all on one page should be on by default.
      */
     public function get_default_show_all($script) {
-        return $script == 'review' && count($this->questionpages) < self::MAX_SLOTS_FOR_DEFAULT_REVIEW_SHOW_ALL;
+        return $script === 'review' && count($this->questionpages) < self::MAX_SLOTS_FOR_DEFAULT_REVIEW_SHOW_ALL;
     }
 
     // Bits of content =========================================================
@@ -1836,7 +1849,7 @@ class quiz_attempt {
      */
     public function render_question_for_commenting($slot) {
         $options = $this->get_display_options(true);
-        $options->hide_all_feedback();
+        $options->generalfeedback = question_display_options::HIDDEN;
         $options->manualcomment = question_display_options::EDITABLE;
         return $this->quba->render_question($slot, $options,
                 $this->get_question_number($slot));
@@ -1888,8 +1901,7 @@ class quiz_attempt {
         $bc = new block_contents();
         $bc->attributes['id'] = 'mod_quiz_navblock';
         $bc->attributes['role'] = 'navigation';
-        $bc->attributes['aria-labelledby'] = 'mod_quiz_navblock_title';
-        $bc->title = html_writer::span(get_string('quiznavigation', 'quiz'), '', array('id' => 'mod_quiz_navblock_title'));
+        $bc->title = get_string('quiznavigation', 'quiz');
         $bc->content = $output->navigation_panel($panel);
         return $bc;
     }
@@ -2099,8 +2111,9 @@ class quiz_attempt {
         $transaction = $DB->start_delegated_transaction();
 
         // Add the question to the usage. It is important we do this before we choose a variant.
-        $newquestion = question_bank::load_question(
-            \mod_quiz\question\bank\qbank_helper::choose_question_for_redo($this->slots[$slot]->id, $qubaids));
+        $newquestionid = qbank_helper::choose_question_for_redo($this->get_quizid(),
+                    $this->get_quizobj()->get_context(), $this->slots[$slot]->id, $qubaids);
+        $newquestion = question_bank::load_question($newquestionid, $this->get_quiz()->shuffleanswers);
         $newslot = $this->quba->add_question_in_place_of_other($slot, $newquestion);
 
         // Choose the variant.
@@ -2332,10 +2345,11 @@ class quiz_attempt {
         // Add a fragment to scroll down to the question.
         $fragment = '';
         if ($slot !== null) {
-            if ($slot == reset($this->pagelayout[$page])) {
-                // First question on page, go to top.
+            if ($slot == reset($this->pagelayout[$page]) && $thispage != $page) {
+                // Changing the page, go to top.
                 $fragment = '#';
             } else {
+                // Link to the question container.
                 $qa = $this->get_question_attempt($slot);
                 $fragment = '#' . $qa->get_outer_question_div_unique_id();
             }
@@ -2395,7 +2409,7 @@ class quiz_attempt {
         $becomingoverdue = false;
         $becomingabandoned = false;
         if ($timeup) {
-            if ($this->get_quiz()->overduehandling == 'graceperiod') {
+            if ($this->get_quiz()->overduehandling === 'graceperiod') {
                 if (is_null($graceperiodmin)) {
                     $graceperiodmin = get_config('quiz', 'graceperiodmin');
                 }
@@ -2455,7 +2469,15 @@ class quiz_attempt {
             if ($becomingabandoned) {
                 $this->process_abandon($timenow, true);
             } else {
-                $this->process_finish($timenow, !$toolate, $toolate ? $timeclose : $timenow, true);
+                if (!$toolate || $this->get_quiz()->overduehandling === 'graceperiod') {
+                    // Normally, we record the accurate finish time when the student is online.
+                    $finishtime = $timenow;
+                } else {
+                    // But, if there is no grade period, and the final responses were too
+                    // late to be processed, record the close time, to reduce confusion.
+                    $finishtime = $timeclose;
+                }
+                $this->process_finish($timenow, !$toolate, $finishtime, true);
             }
 
         } catch (question_out_of_sequence_exception $e) {
@@ -2781,7 +2803,7 @@ abstract class quiz_nav_panel_base {
             $button->number      = $this->attemptobj->get_question_number($slot);
             $button->stateclass  = $qa->get_state_class($showcorrectness);
             $button->navmethod   = $this->attemptobj->get_navigation_method();
-            if (!$showcorrectness && $button->stateclass == 'notanswered') {
+            if (!$showcorrectness && $button->stateclass === 'notanswered') {
                 $button->stateclass = 'complete';
             }
             $button->statestring = $this->get_state_string($qa, $showcorrectness);

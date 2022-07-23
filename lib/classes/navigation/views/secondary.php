@@ -417,7 +417,7 @@ class secondary extends view {
 
         if ($courseadminnode) {
             foreach ($courseadminnode->children as $other) {
-                if (array_search($other->key, $expectedcourseadmin) === false) {
+                if (array_search($other->key, $expectedcourseadmin, true) === false) {
                     $othernode = $this->get_first_action_for_node($other);
                     $recursivenode = $othernode && !$rootnode->get($othernode->key) ? $othernode : $other;
                     // Get the first node and check whether it's been added already.
@@ -728,8 +728,6 @@ class secondary extends view {
                     $siteadminnode->add_node(clone $child);
                 }
             }
-        } else if ($this->page->course->id == $SITE->id) {
-            $this->load_course_navigation();
         }
     }
 
@@ -778,7 +776,7 @@ class secondary extends view {
         $existingkeys = $completenode->get_children_key_list();
         $leftover = array_diff($existingkeys, $populatedkeys);
         foreach ($leftover as $key) {
-            if (!in_array($key, $flattenednodes) && $leftovernode = $completenode->get($key)) {
+            if (!in_array($key, $flattenednodes, true) && $leftovernode = $completenode->get($key)) {
                 // Check for nodes with children and potentially no action to direct to.
                 if ($leftovernode->has_children()) {
                     $leftovernode = $this->get_first_action_for_node($leftovernode);
@@ -1024,15 +1022,20 @@ class secondary extends view {
     protected function load_single_activity_course_navigation(): void {
         $page = $this->page;
         $course = $page->course;
-        // Create 'Course' node and add it to the secondary navigation.
-        $coursesecondarynode = $this->add(get_string('course'), null, self::TYPE_COURSE, null, 'course');
+
+        // Create 'Course' navigation node.
+        $coursesecondarynode = navigation_node::create(get_string('course'), null, self::TYPE_COURSE, null, 'course');
         $this->load_course_navigation($coursesecondarynode);
         // Remove the unnecessary 'Course' child node generated in load_course_navigation().
         $coursesecondarynode->find('coursehome', self::TYPE_COURSE)->remove();
 
-        // Once all the items have been added to the 'Course' secondary navigation node, set the 'showchildreninsubmenu'
-        // property to true. This is required to force the template to output these items within a dropdown menu.
-        $coursesecondarynode->showchildreninsubmenu = true;
+        // Add the 'Course' node to the secondary navigation only if this node has children nodes.
+        if (count($coursesecondarynode->children) > 0) {
+            $this->add_node($coursesecondarynode);
+            // Once all the items have been added to the 'Course' secondary navigation node, set the 'showchildreninsubmenu'
+            // property to true. This is required to force the template to output these items within a dropdown menu.
+            $coursesecondarynode->showchildreninsubmenu = true;
+        }
 
         // Create 'Activity' navigation node.
         $activitysecondarynode = navigation_node::create(get_string('activity'), null, self::TYPE_ACTIVITY, null, 'activity');

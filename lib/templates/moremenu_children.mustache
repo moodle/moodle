@@ -32,20 +32,28 @@
 }}
 {{#haschildren}}
     <li class="dropdown nav-item" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
-        <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" id="drop-down-{{moremenuid}}" role="menuitem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" aria-controls="drop-down-menu-{{moremenuid}}" tabindex="-1">
+        <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" id="drop-down-{{moremenuid}}" role="menuitem" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false" href="#" aria-controls="drop-down-menu-{{moremenuid}}"
+            {{#isactive}}aria-current="true"{{/isactive}}
+            {{^isactive}}tabindex="-1"{{/isactive}}
+        >
             {{{text}}}
         </a>
         <div class="dropdown-menu" role="menu" id="drop-down-menu-{{moremenuid}}" aria-labelledby="drop-down-{{moremenuid}}">
             {{#children}}
                 {{^divider}}
                     {{#is_action_link}}
-                        <a class="dropdown-item" role="menuitem" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} href="{{{url}}}{{{action}}}" data-disableactive="true">{{{text}}}</a>
+                        <a class="dropdown-item" role="menuitem" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} href="{{{url}}}{{{action}}}"
+                            data-disableactive="true" tabindex="-1"
+                        >
+                            {{{text}}}
+                        </a>
                         {{#action_link_actions}}
                             {{> core/actions }}
                         {{/action_link_actions}}
                     {{/is_action_link}}
                     {{^is_action_link}}
-                        <a class="dropdown-item" role="menuitem" href="{{{url}}}{{{action}}}">{{{text}}}</a>
+                        <a class="dropdown-item" role="menuitem" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1">{{{text}}}</a>
                     {{/is_action_link}}
                 {{/divider}}
                 {{#divider}}
@@ -56,10 +64,10 @@
     </li>
 {{/haschildren}}
 {{^haschildren}}
-    <li class="nav-item" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
-        {{#tab}}
+    <li data-key="{{key}}" class="nav-item" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
+        {{#istablist}}
             {{#is_action_link}}
-                <a role="menuitem" class="nav-link {{#classes}}{{.}} {{/classes}}" href="{{tab}}" data-toggle="tab" data-text="{{{text}}}" aria-current="false" data-disableactive="true" tabindex="-1">
+                <a role="tab" class="nav-link {{#classes}}{{.}} {{/classes}}" href="{{tab}}" data-toggle="tab" data-text="{{{text}}}" data-disableactive="true" tabindex="-1">
                     {{{text}}}
                 </a>
                 {{#action_link_actions}}
@@ -67,12 +75,16 @@
                 {{/action_link_actions}}
             {{/is_action_link}}
             {{^is_action_link}}
-                <a role="menuitem" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{tab}}" data-toggle="tab" data-text="{{{text}}}" aria-current="false" tabindex="-1">
+                <a role="tab" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
+                    href="{{tab}}" data-toggle="tab" data-text="{{{text}}}"
+                    {{#isactive}}aria-selected="true"{{/isactive}}
+                    {{^isactive}}tabindex="-1"{{/isactive}}
+                >
                     {{{text}}}
                 </a>
             {{/is_action_link}}
-        {{/tab}}
-        {{^tab}}
+        {{/istablist}}
+        {{^istablist}}
             {{#is_action_link}}
                 <a role="menuitem" class="nav-link {{#classes}}{{.}} {{/classes}}" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} href="{{{url}}}{{{action}}}" data-disableactive="true" tabindex="-1">
                     {{{text}}}
@@ -82,10 +94,14 @@
                 {{/action_link_actions}}
             {{/is_action_link}}
             {{^is_action_link}}
-                <a role="menuitem" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1">
+                <a role="menuitem" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
+                    href="{{{url}}}{{{action}}}"
+                    {{#isactive}}aria-current="true"{{/isactive}}
+                    {{^isactive}}tabindex="-1"{{/isactive}}
+                >
                     {{{text}}}
                 </a>
             {{/is_action_link}}
-        {{/tab}}
+        {{/istablist}}
     </li>
 {{/haschildren}}

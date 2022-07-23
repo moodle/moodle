@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\report;
 
+use action_menu_link;
 use lang_string;
 use moodle_url;
 use pix_icon;
@@ -94,14 +95,13 @@ final class action {
     }
 
     /**
-     * Return rendered action link suitable for output, or null if the action cannot be displayed (because one of it's callbacks
+     * Return action menu link suitable for output, or null if the action cannot be displayed (because one of its callbacks
      * returned false, {@see add_callback})
      *
      * @param stdClass $row
-     * @return string|null
+     * @return action_menu_link|null
      */
-    public function get_action_link(stdClass $row): ?string {
-        global $OUTPUT;
+    public function get_action_link(stdClass $row): ?action_menu_link {
 
         foreach ($this->callbacks as $callback) {
             $row = clone $row; // Clone so we don't modify the shared row inside a callback.
@@ -115,8 +115,6 @@ final class action {
             $this->url->out_omit_querystring(true),
             self::replace_placeholders($this->url->params(), $row)
         );
-
-        $this->attributes['role'] = 'button';
 
         // Ensure we have a title attribute set, if one wasn't already provided.
         if (!array_key_exists('title', $this->attributes)) {
@@ -136,7 +134,7 @@ final class action {
         $title = $attributes['title'];
         unset($attributes['title']);
 
-        return $OUTPUT->action_link($url, $title, null, $attributes, $this->icon);
+        return new action_menu_link($url, $this->icon, $title, null, $attributes);
     }
 
     /**

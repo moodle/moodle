@@ -52,6 +52,8 @@ $pageurl = new moodle_url('/admin/plugins.php', $pageparams);
 
 $pluginman = core_plugin_manager::instance();
 
+$PAGE->set_primary_active_tab('siteadminnode');
+
 if ($uninstall) {
 
     if (!$confirmed) {

@@ -34,18 +34,22 @@ class more_menu implements renderable, templatable {
     protected $content;
     protected $navbarstyle;
     protected $haschildren;
+    protected $istablist;
 
     /**
      * Constructor for this class.
      *
      * @param object $content Navigation objects.
      * @param string $navbarstyle class name.
-     * @param bool $haschildren  The content has children.
+     * @param bool $haschildren The content has children.
+     * @param bool $istablist When true, the more menu should be rendered and behave with a tablist ARIA role.
+     *                        If false, it's rendered with a menubar ARIA role. Defaults to false.
      */
-    public function __construct(object $content, string $navbarstyle, bool $haschildren = true) {
+    public function __construct(object $content, string $navbarstyle, bool $haschildren = true, bool $istablist = false) {
         $this->content = $content;
         $this->navbarstyle = $navbarstyle;
         $this->haschildren = $haschildren;
+        $this->istablist = $istablist;
     }
 
     /**
@@ -55,7 +59,10 @@ class more_menu implements renderable, templatable {
      * @return array Data for rendering a template
      */
     public function export_for_template(renderer_base $output): array {
-        $data = ['navbarstyle' => $this->navbarstyle];
+        $data = [
+            'navbarstyle' => $this->navbarstyle,
+            'istablist' => $this->istablist,
+        ];
         if ($this->haschildren) {
             // The node collection doesn't have anything to render so exit now.
             if (!isset($this->content->children) || count($this->content->children) == 0) {

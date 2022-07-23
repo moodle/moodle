@@ -718,6 +718,14 @@ class grade_grade extends grade_object {
     protected static function flatten_dependencies_array(&$dependson, &$dependencydepth) {
         // Flatten the nested dependencies - this will handle recursion bombs because it removes duplicates.
         $somethingchanged = true;
+        // First of all, delete any incorrect (not array or individual null) dependency, they aren't welcome.
+        // TODO: Maybe we should report about this happening, it shouldn't if all dependencies are correct and consistent.
+        foreach ($dependson as $itemid => $depends) {
+            $depends = is_array($depends) ? $depends : []; // Only arrays are accepted.
+            $dependson[$itemid] = array_filter($depends, function($val) { // Only not-null values are accepted.
+                return !is_null($val);
+            });
+        }
         while ($somethingchanged) {
             $somethingchanged = false;
 
@@ -725,7 +733,7 @@ class grade_grade extends grade_object {
                 // Make a copy so we can tell if it changed.
                 $before = $dependson[$itemid];
                 foreach ($depends as $subitemid => $subdepends) {
-                    $dependson[$itemid] = array_unique(array_merge($depends, $dependson[$subdepends]));
+                    $dependson[$itemid] = array_unique(array_merge($depends, $dependson[$subdepends] ?? []));
                     sort($dependson[$itemid], SORT_NUMERIC);
                 }
                 if ($before != $dependson[$itemid]) {
@@ -760,7 +768,7 @@ class grade_grade extends grade_object {
         global $CFG;
 
         if (count($grade_grades) !== count($grade_items)) {
-            print_error('invalidarraysize', 'debug', '', 'grade_grade::get_hiding_affected()!');
+            throw new \moodle_exception('invalidarraysize', 'debug', '', 'grade_grade::get_hiding_affected()!');
         }
 
         $dependson = array();

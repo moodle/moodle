@@ -7,6 +7,9 @@ This library is a patched for use in Moodle - it requires the following changes 
 on Moodle's definition of PHP's arg_separator.output which is set to '&amp;' in lib/setup.php.
 4. Update the firebase/php-jwt requirement from ^5.2 to ^6.0, to match the version shipped with Moodle. This can be removed
 when the upstream PR is merged: https://github.com/packbackbooks/lti-1-3-php-library/pull/46
+5. Fix launches for platforms choosing to omit 'alg' from their JWKS JSON. This fix is required because of the upgrade to
+firebase/php-jwt 6.0, which now requires alg for its key parsing. This can be removed when a similar fix is included upstream,
+perhaps when the upstream PR is merged: https://github.com/packbackbooks/lti-1-3-php-library/pull/46
 
 To upgrade to a new version of this library:
 1. Clone the latest version of the upstream library from github:

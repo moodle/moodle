@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use mod_quiz\question\bank\qbank_helper;
+
 /**
  * Test the restore of random question tags.
  *
@@ -73,15 +75,35 @@ class mod_quiz_tags_testcase extends advanced_testcase {
         $tag3 = core_tag_tag::get_by_name(0, 't3', 'id, name');
         $this->assertNotFalse($tag3);
 
-        $slottags = quiz_retrieve_slot_tags($question->slotid);
+        $slottags = $this->get_tags_for_slot($question->slotid);
         $slottags = reset($slottags);
         $slottags = explode(',', $slottags);
         $this->assertEquals("{$tag2->id},{$tag2->name}", "{$slottags[0]},{$slottags[1]}");
 
         $defaultcategory = question_get_default_category(context_course::instance($newcourseid)->id);
-        $this->assertEquals($defaultcategory->id, $question->categoryobject->id);
-        $randomincludingsubcategories = $DB->get_record('question_set_references', ['itemid' => reset($slots)->id]);
+        $this->assertEquals($defaultcategory->id, $question->category);
+        $randomincludingsubcategories = $DB->get_record('question_set_references',
+            ['itemid' => reset($slots)->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
         $filtercondition = json_decode($randomincludingsubcategories->filtercondition);
         $this->assertEquals(0, $filtercondition->includingsubcategories);
+    }
+
+    /**
+     * Helper to get the random tags, if any, for a slot.
+     *
+     * @param int $slotid the id of the slot to get tags for.
+     * @return array the tags.
+     */
+    protected function get_tags_for_slot(int $slotid): array {
+        global $DB;
+        $referencedata = $DB->get_record('question_set_references',
+                ['itemid' => $slotid, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+        if (isset($referencedata->filtercondition)) {
+            $filtercondition = json_decode($referencedata->filtercondition);
+            if (isset($filtercondition->tags)) {
+                return $filtercondition->tags;
+            }
+        }
+        return [];
     }
 }

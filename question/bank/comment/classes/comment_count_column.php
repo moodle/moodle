@@ -68,13 +68,17 @@ class comment_count_column extends column_base {
             $datatarget = '[data-target="' . $target . '"]';
             $PAGE->requires->js_call_amd('qbank_comment/comment', 'init', [$datatarget]);
             $attributes = [
+                'href' => '#',
                 'data-target' => $target,
                 'data-questionid' => $question->id,
                 'data-courseid' => $this->qbank->course->id,
-                'class' => 'link-primary comment-pointer'
             ];
         }
         echo \html_writer::tag('a', $commentcount, $attributes);
+    }
+
+    public function get_extra_classes(): array {
+        return ['pr-3'];
     }
 
 }

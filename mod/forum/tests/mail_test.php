@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The forum module mail generation tests.
- *
- * @package    mod_forum
- * @category   external
- * @copyright  2013 Andrew Nicols
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_forum;
+
+use mod_forum_tests_generator_trait;
+use mod_forum_tests_cron_trait;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,7 +26,16 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
 require_once(__DIR__ . '/cron_trait.php');
 require_once(__DIR__ . '/generator_trait.php');
 
-class mod_forum_mail_testcase extends advanced_testcase {
+/**
+ * The forum module mail generation tests.
+ *
+ * @package    mod_forum
+ * @category   test
+ * @copyright  2013 Andrew Nicols
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ */
+class mail_test extends \advanced_testcase {
     // Make use of the cron tester trait.
     use mod_forum_tests_cron_trait;
 
@@ -240,7 +245,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
 
         // A user with the manageactivities capability within the course can subscribe.
         $roleids = $DB->get_records_menu('role', null, '', 'shortname, id');
-        assign_capability('moodle/course:manageactivities', CAP_ALLOW, $roleids['student'], context_course::instance($course->id));
+        assign_capability('moodle/course:manageactivities', CAP_ALLOW, $roleids['student'], \context_course::instance($course->id));
 
         // Suscribe the recipient only.
         \mod_forum\subscriptions::subscribe_user($recipient->id, $forum);
@@ -289,7 +294,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
 
         // A user with the manageactivities capability within the course can subscribe.
         $roleids = $DB->get_records_menu('role', null, '', 'shortname, id');
-        assign_capability('moodle/course:manageactivities', CAP_ALLOW, $roleids['student'], context_course::instance($course->id));
+        assign_capability('moodle/course:manageactivities', CAP_ALLOW, $roleids['student'], \context_course::instance($course->id));
 
         // Run cron and check that the expected number of users received the notification.
         list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
@@ -1187,7 +1192,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
                     $fs = get_file_storage();
                     foreach ($attachments as $attachment) {
                         $filerecord = array(
-                            'contextid' => context_module::instance($forum->cmid)->id,
+                            'contextid' => \context_module::instance($forum->cmid)->id,
                             'component' => 'mod_forum',
                             'filearea'  => 'attachment',
                             'itemid'    => $post->id,

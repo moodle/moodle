@@ -39,6 +39,7 @@ if (empty($courseid)) {
     $context = context_system::instance();
     $coursename = format_string($SITE->fullname, true, array('context' => $context));
     $PAGE->set_context($context);
+    $PAGE->set_primary_active_tab('siteadminnode');
 } else {
     $course = get_course($courseid);
     require_login($course);
@@ -55,7 +56,6 @@ $PAGE->set_url($manageurl);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($coursename);
 $PAGE->set_heading($coursename);
-
 
 if (!empty($action) && $action == 'changestatus') {
     require_sesskey();
@@ -74,6 +74,9 @@ if (!empty($action) && $ruleid) {
         redirect(new moodle_url('/admin/tool/monitor/managerules.php', array('courseid' => $courseid)));
     }
 
+    if ($action === 'delete') {
+        $PAGE->navbar->add(get_string('deleterule', 'tool_monitor'), $PAGE->url);
+    }
     echo $OUTPUT->header();
     $rule = \tool_monitor\rule_manager::get_rule($rule);
     switch ($action) {

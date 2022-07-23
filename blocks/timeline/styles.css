@@ -16,11 +16,6 @@
 #block-region-side-pre .block_timeline h6.event-action a.btn {
     width: auto;
 }
-/* Override the width/height of the .activityiconcontainer class in the timeline block. */
-.block_timeline .activityiconcontainer {
-    width: 40px;
-    height: 40px;
-}
 
 .block_timeline .timeline-action-button {
     margin-left: auto;

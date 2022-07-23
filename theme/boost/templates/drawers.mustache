@@ -89,11 +89,11 @@
             {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
         {{/ theme_boost/drawer}}
     {{/hasblocks}}
-    <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}}">
+    <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container">
         <div id="topofscroll" class="main-inner">
             <div class="drawer-toggles d-flex">
                 {{#courseindex}}
-                    <div class="drawer-toggler drawer-left-toggle open-nav">
+                    <div class="drawer-toggler drawer-left-toggle open-nav d-print-none">
                         <button
                             class="btn icon-no-margin"
                             data-toggler="drawers"
@@ -109,7 +109,7 @@
                     </div>
                 {{/courseindex}}
                 {{#hasblocks}}
-                    <div class="drawer-toggler drawer-right-toggle ml-auto">
+                    <div class="drawer-toggler drawer-right-toggle ml-auto d-print-none">
                         <button
                             class="btn icon-no-margin"
                             data-toggler="drawers"
@@ -120,14 +120,15 @@
                             title="{{#str}}opendrawerblocks, core{{/str}}"
                         >
                             <span class="sr-only">{{#str}}opendrawerblocks, core{{/str}}</span>
-                            {{#pix}}t/blocks_drawer, core{{/pix}}
+                            <span class="dir-rtl-hide">{{#pix}}t/blocks_drawer, core{{/pix}}</span>
+                            <span class="dir-ltr-hide">{{#pix}}t/blocks_drawer_rtl, core{{/pix}}</span>
                         </button>
                     </div>
                 {{/hasblocks}}
             </div>
             {{{ output.full_header }}}
             {{#secondarymoremenu}}
-                <div class="secondary-navigation">
+                <div class="secondary-navigation d-print-none">
                     {{> core/moremenu}}
                 </div>
             {{/secondarymoremenu}}

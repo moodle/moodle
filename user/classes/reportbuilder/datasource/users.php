@@ -20,6 +20,7 @@ namespace core_user\reportbuilder\datasource;
 
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\user;
+use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\helpers\database;
 
 /**
@@ -56,13 +57,11 @@ class users extends datasource {
             $userparamguest => $CFG->siteguest,
         ]);
 
-        // Add all columns from entities to be available in custom reports.
         $this->add_entity($userentity);
 
+        // Add all columns/filters/conditions from entities to be available in custom reports.
         $userentityname = $userentity->get_entity_name();
-        $this->add_columns_from_entity($userentityname);
-        $this->add_filters_from_entity($userentityname);
-        $this->add_conditions_from_entity($userentityname);
+        $this->add_all_from_entity($userentityname);
     }
 
     /**
@@ -89,6 +88,22 @@ class users extends datasource {
      * @return string[]
      */
     public function get_default_conditions(): array {
-        return ['user:fullname', 'user:username', 'user:email'];
+        return [
+            'user:fullname',
+            'user:username',
+            'user:email',
+            'user:suspended',
+        ];
+    }
+
+    /**
+     * Return the conditions values that will be added to the report once is created
+     *
+     * @return array
+     */
+    public function get_default_condition_values(): array {
+        return [
+            'user:suspended_operator' => boolean_select::NOT_CHECKED,
+        ];
     }
 }

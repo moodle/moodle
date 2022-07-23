@@ -404,7 +404,7 @@ function resource_get_intro(object $resource, object $cm, bool $ignoresettings =
 
     $content = "";
     if ($ignoresettings || !empty($options['printintro']) || $extraintro) {
-        $gotintro = trim(strip_tags($resource->intro));
+        $gotintro = !html_is_blank($resource->intro);
         if ($gotintro || $extraintro) {
             if ($gotintro) {
                 $content = format_module_intro('resource', $resource, $cm->id);

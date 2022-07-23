@@ -74,7 +74,7 @@ $presets = data_get_available_presets($context);
 
 if ($action === 'export') {
     if (headers_sent()) {
-        print_error('headersent');
+        throw new \moodle_exception('headersent');
     }
 
     $exportfile = data_presets_export($course, $cm, $data);
@@ -147,7 +147,7 @@ if (in_array($action, ['confirmdelete', 'delete', 'finishimport'])) {
             }
         }
         if (!isset($selectedpreset->shortname) || !data_user_can_delete_preset($context, $selectedpreset)) {
-            print_error('invalidrequest');
+            throw new \moodle_exception('invalidrequest');
         }
 
         data_delete_site_preset($shortname);
@@ -161,7 +161,7 @@ if (in_array($action, ['confirmdelete', 'delete', 'finishimport'])) {
         if (!$fullname) {
             $presetdir = $CFG->tempdir.'/forms/'.required_param('directory', PARAM_FILE);
             if (!file_exists($presetdir) || !is_dir($presetdir)) {
-                print_error('cannotimport');
+                throw new \moodle_exception('cannotimport');
             }
             $importer = new data_preset_upload_importer($course, $cm, $data, $presetdir);
         } else {

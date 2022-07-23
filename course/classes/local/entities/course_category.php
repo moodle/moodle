@@ -18,12 +18,13 @@ declare(strict_types=1);
 
 namespace core_course\local\entities;
 
+use context_coursecat;
+use context_helper;
 use lang_string;
 use stdClass;
 use core_course_category;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\text;
+use core_reportbuilder\local\filters\{category, text};
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
 
@@ -135,22 +136,28 @@ class course_category extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->add_join("
-                JOIN {context} {$tablealiascontext}
-                  ON {$tablealiascontext}.instanceid = {$tablealias}.id
-                 AND {$tablealiascontext}.contextlevel = " . CONTEXT_COURSECAT)
-            ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealiascontext}.id AS contextid")
-            ->add_callback(static function(string $description, stdClass $category): string {
+            ->add_join("LEFT JOIN {context} {$tablealiascontext}
+                    ON {$tablealiascontext}.contextlevel = " . CONTEXT_COURSECAT . "
+                   AND {$tablealiascontext}.instanceid = {$tablealias}.id")
+            ->set_type(column::TYPE_LONGTEXT)
+            ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealias}.id")
+            ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
+            ->add_callback(static function(?string $description, stdClass $category): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
 
-                $description = file_rewrite_pluginfile_urls($description, 'pluginfile.php', $category->contextid, 'coursecat',
+                if ($description === null) {
+                    return '';
+                }
+
+                context_helper::preload_from_record($category);
+                $context = context_coursecat::instance($category->id);
+
+                $description = file_rewrite_pluginfile_urls($description, 'pluginfile.php', $context->id, 'coursecat',
                     'description', null);
 
-                return format_text($description, $category->descriptionformat, ['context' => $category->contextid]);
-            })
-            ->set_is_sortable(false);
+                return format_text($description, $category->descriptionformat, ['context' => $context->id]);
+            });
 
         return $columns;
     }
@@ -163,18 +170,28 @@ class course_category extends base {
     protected function get_all_filters(): array {
         $tablealias = $this->get_table_alias('course_categories');
 
-        // Name filter.
+        // Select category filter.
         $filters[] = (new filter(
-            select::class,
+            category::class,
             'name',
-            new lang_string('categoryname'),
+            new lang_string('categoryselect', 'core_reportbuilder'),
             $this->get_entity_name(),
             "{$tablealias}.id"
         ))
             ->add_joins($this->get_joins())
-            ->set_options_callback(static function(): array {
-                return core_course_category::make_categories_list('moodle/category:viewcourselist');
-            });
+            ->set_options([
+                'requiredcapabilities' => 'moodle/category:viewcourselist',
+            ]);
+
+        // Name filter.
+        $filters[] = (new filter(
+            text::class,
+            'text',
+            new lang_string('categoryname'),
+            $this->get_entity_name(),
+            "{$tablealias}.name"
+        ))
+            ->add_joins($this->get_joins());
 
         // ID number filter.
         $filters[] = (new filter(

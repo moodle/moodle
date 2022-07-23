@@ -22,12 +22,12 @@ use advanced_testcase;
 use coding_exception;
 use context_system;
 use lang_string;
-use ReflectionClass;
 use core_reportbuilder\course_entity_report;
 use core_reportbuilder\manager;
 use core_reportbuilder\testable_system_report_table;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
+use core_reportbuilder\local\filters\tags;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\helpers\user_filter_manager;
@@ -77,6 +77,7 @@ class course_test extends advanced_testcase {
             'calendartype' => 'Gregorian',
             'theme' => 'afterburner',
             'lang' => 'en',
+            'tags' => ['dancing'],
         ]);
 
         $coursecategory2 = $this->getDataGenerator()->create_category();
@@ -155,6 +156,7 @@ class course_test extends advanced_testcase {
         $this->assertEquals('Gregorian', $courserow['calendartype']);
         $this->assertEquals('afterburner', $courserow['theme']);
         $this->assertEquals(get_string_manager()->get_list_of_translations()['en'], $courserow['lang']);
+        $this->assertEquals('dancing', $courserow['tags']);
         $expected = '<a href="https://www.example.com/moodle/course/view.php?id=' . $course1->id . '">Course 1</a>';
         $this->assertEquals($expected, $courserow['coursefullnamewithlink']);
         $expected = '<a href="https://www.example.com/moodle/course/view.php?id=' . $course1->id . '">C1</a>';
@@ -172,6 +174,8 @@ class course_test extends advanced_testcase {
      * Test filtering report by course fields
      */
     public function test_filters(): void {
+        global $DB;
+
         $this->resetAfterTest();
 
         [$coursecategory1] = $this->generate_courses();
@@ -244,6 +248,15 @@ class course_test extends advanced_testcase {
         $this->assertEquals([
             'Course 1',
         ], array_column($tablerows, 'fullname'));
+
+        // Filter by tags field.
+        $tablerows = $this->get_report_table_rows([
+            'course:tags_operator' => tags::EQUAL_TO,
+            'course:tags_value' => [
+                $DB->get_field('tag', 'id', ['name' => 'dancing'], MUST_EXIST),
+            ],
+        ]);
+        $this->assertEquals(['Course 1'], array_column($tablerows, 'fullname'));
     }
 
     /**
@@ -415,13 +428,11 @@ class course_test extends advanced_testcase {
         $tablejoin = "JOIN {course} c2 ON c2.id = c1.id";
         $courseentity->add_join($tablejoin);
 
-        $method = (new ReflectionClass(course::class))->getMethod('get_joins');
-        $method->setAccessible(true);
-        $this->assertEquals([$tablejoin], $method->invoke($courseentity));
+        $this->assertEquals([$tablejoin], $courseentity->get_joins());
     }
 
     /**
-     * Test adding multiple join
+     * Test adding multiple joins
      */
     public function test_add_joins(): void {
         $courseentity = (new course())
@@ -433,9 +444,25 @@ class course_test extends advanced_testcase {
         ];
         $courseentity->add_joins($tablejoins);
 
-        $method = (new ReflectionClass(course::class))->getMethod('get_joins');
-        $method->setAccessible(true);
-        $this->assertEquals($tablejoins, $method->invoke($courseentity));
+        $this->assertEquals($tablejoins, $courseentity->get_joins());
+    }
+
+    /**
+     * Test adding duplicate joins
+     */
+    public function test_add_duplicate_joins(): void {
+        $courseentity = (new course())
+            ->set_table_alias('course', 'c1');
+
+        $tablejoins = [
+            "JOIN {course} c2 ON c2.id = c1.id",
+            "JOIN {course} c3 ON c3.id = c1.id",
+        ];
+        $courseentity
+            ->add_joins($tablejoins)
+            ->add_joins($tablejoins);
+
+        $this->assertEquals($tablejoins, $courseentity->get_joins());
     }
 
     /**

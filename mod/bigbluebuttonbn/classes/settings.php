@@ -50,6 +50,9 @@ class settings {
     /** @var string The name of the section */
     private $section;
 
+    /** @var string The parent name */
+    private $parent = "modbigbluebuttonbnfolder";
+
     /** @var string The section name prefix */
     private $sectionnameprefix = "mod_bigbluebuttonbn";
 
@@ -66,7 +69,7 @@ class settings {
         $this->section = $categoryname;
 
         $modbigbluebuttobnfolder = new admin_category(
-            $categoryname,
+            $this->parent,
             new lang_string('pluginname', 'mod_bigbluebuttonbn'),
             $module->is_enabled() === false
         );
@@ -74,7 +77,7 @@ class settings {
         $admin->add('modsettings', $modbigbluebuttobnfolder);
 
         $mainsettings = $this->add_general_settings();
-        $admin->add($categoryname, $mainsettings);
+        $admin->add($this->parent, $mainsettings);
     }
 
     /**
@@ -132,7 +135,7 @@ class settings {
      */
     protected function add_general_settings(): admin_settingpage {
         $settingsgeneral = new admin_settingpage(
-            "{$this->sectionnameprefix}_general",
+            $this->section,
             get_string('config_general', 'bigbluebuttonbn'),
             'moodle/site:config',
             !((boolean) setting_validator::section_general_shown()) && ($this->moduleenabled)
@@ -171,6 +174,16 @@ class settings {
             );
             $this->add_conditional_element(
                 'shared_secret',
+                $item,
+                $settingsgeneral
+            );
+            $item = new \admin_setting_description(
+                'bigbluebuttonbn_dpa_info',
+                '',
+                get_string('config_dpa_note', 'bigbluebuttonbn', config::DEFAULT_DPA_URL),
+            );
+            $this->add_conditional_element(
+                'dpa_info',
                 $item,
                 $settingsgeneral
             );
@@ -309,7 +322,7 @@ class settings {
                 $recordingsetting
             );
         }
-        $this->admin->add($this->section, $recordingsetting);
+        $this->admin->add($this->parent, $recordingsetting);
     }
 
     /**
@@ -354,7 +367,7 @@ class settings {
                 $importrecordingsettings
             );
         }
-        $this->admin->add($this->section, $importrecordingsettings);
+        $this->admin->add($this->parent, $importrecordingsettings);
     }
 
     /**
@@ -465,7 +478,7 @@ class settings {
                 $showrecordingsettings
             );
         }
-        $this->admin->add($this->section, $showrecordingsettings);
+        $this->admin->add($this->parent, $showrecordingsettings);
     }
 
     /**
@@ -534,7 +547,7 @@ class settings {
                 $waitmoderatorsettings
             );
         }
-        $this->admin->add($this->section, $waitmoderatorsettings);
+        $this->admin->add($this->parent, $waitmoderatorsettings);
     }
 
     /**
@@ -568,7 +581,7 @@ class settings {
                 $voicebridgesettings
             );
         }
-        $this->admin->add($this->section, $voicebridgesettings);
+        $this->admin->add($this->parent, $voicebridgesettings);
     }
 
     /**
@@ -593,13 +606,13 @@ class settings {
             $preuploadsettings->add($item);
 
             $item = new admin_setting_configcheckbox(
-                'bigbluebuttonbn_preuploadpresentation_enabled',
-                get_string('config_preuploadpresentation_enabled', 'bigbluebuttonbn'),
-                get_string('config_preuploadpresentation_enabled_description', 'bigbluebuttonbn'),
+                'bigbluebuttonbn_preuploadpresentation_editable',
+                get_string('config_preuploadpresentation_editable', 'bigbluebuttonbn'),
+                get_string('config_preuploadpresentation_editable_description', 'bigbluebuttonbn'),
                 0
             );
             $this->add_conditional_element(
-                'preuploadpresentation_enabled',
+                'preuploadpresentation_editable',
                 $item,
                 $preuploadsettings
             );
@@ -622,7 +635,7 @@ class settings {
 
             $preuploadsettings->add($filemanager);
         }
-        $this->admin->add($this->section, $preuploadsettings);
+        $this->admin->add($this->parent, $preuploadsettings);
     }
 
     /**
@@ -668,7 +681,7 @@ class settings {
                 $userlimitsettings
             );
         }
-        $this->admin->add($this->section, $userlimitsettings);
+        $this->admin->add($this->parent, $userlimitsettings);
     }
 
     /**
@@ -709,7 +722,7 @@ class settings {
                 $participantsettings
             );
         }
-        $this->admin->add($this->section, $participantsettings);
+        $this->admin->add($this->parent, $participantsettings);
     }
 
     /**
@@ -754,7 +767,7 @@ class settings {
                 $muteonstartsetting
             );
         }
-        $this->admin->add($this->section, $muteonstartsetting);
+        $this->admin->add($this->parent, $muteonstartsetting);
     }
 
     /**
@@ -777,7 +790,7 @@ class settings {
             $this->add_lock_setting_from_name('hideuserlist', $lockingsetting);
             $this->add_lock_setting_from_name('lockonjoin', $lockingsetting);
         }
-        $this->admin->add($this->section, $lockingsetting);
+        $this->admin->add($this->parent, $lockingsetting);
     }
 
     /**
@@ -847,7 +860,7 @@ class settings {
                 $extendedcapabilitiessetting
             );
         }
-        $this->admin->add($this->section, $extendedcapabilitiessetting);
+        $this->admin->add($this->parent, $extendedcapabilitiessetting);
         // Configuration for extended BN capabilities should go here.
     }
 
@@ -883,7 +896,7 @@ class settings {
                 $experimentalfeaturessetting
             );
         }
-        $this->admin->add($this->section, $experimentalfeaturessetting);
+        $this->admin->add($this->parent, $experimentalfeaturessetting);
     }
 
     /**

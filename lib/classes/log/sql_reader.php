@@ -61,6 +61,16 @@ interface sql_reader extends reader {
     public function get_events_select_count($selectwhere, array $params);
 
     /**
+     * Get whether events are present for the given select clause.
+     *
+     * @param string $selectwhere select conditions.
+     * @param array $params params.
+     *
+     * @return bool Whether events available for the given conditions
+     */
+    public function get_events_select_exists(string $selectwhere, array $params): bool;
+
+    /**
      * Fetch records using the given criteria returning an traversable list of events.
      *
      * Note that the returned object is Traversable, not Iterator, as we are returning

@@ -3101,6 +3101,36 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
     }
 
     /**
+     * Returns true if the user has all the given permissions.
+     *
+     * @param array $permissionstocheck The value can be create, manage or any specific capability.
+     * @return bool
+     */
+    private function has_capabilities(array $permissionstocheck): bool {
+        if (empty($permissionstocheck)) {
+            throw new coding_exception('Invalid permissionstocheck parameter');
+        }
+        foreach ($permissionstocheck as $permission) {
+            if ($permission == 'create') {
+                if (!$this->can_create_course()) {
+                    return false;
+                }
+            } else if ($permission == 'manage') {
+                if (!$this->has_manage_capability()) {
+                    return false;
+                }
+            } else {
+                // Specific capability.
+                if (!$this->is_uservisible() || !has_capability($permission, $this->get_context())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Returns true if the user can approve course requests.
      * @return bool
      */
@@ -3145,5 +3175,33 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 $categorynode->make_active();
             }
         }
+    }
+
+    /**
+     * Returns the core_course_category object for the first category that the current user have the permission for the course.
+     *
+     * Only returns if it exists and is creatable/manageable to the current user
+     *
+     * @param core_course_category $parentcat Parent category to check.
+     * @param array $permissionstocheck The value can be create, manage or any specific capability.
+     * @return core_course_category|null
+     */
+    public static function get_nearest_editable_subcategory(core_course_category $parentcat,
+        array $permissionstocheck): ?core_course_category {
+        // First, check the parent category.
+        if ($parentcat->has_capabilities($permissionstocheck)) {
+            return $parentcat;
+        }
+
+        // Check the child categories.
+        $subcategoryids = $parentcat->get_all_children_ids();
+        foreach ($subcategoryids as $subcategoryid) {
+            $subcategory = static::get($subcategoryid, MUST_EXIST, true);
+            if ($subcategory->has_capabilities($permissionstocheck)) {
+                return $subcategory;
+            }
+        }
+
+        return null;
     }
 }

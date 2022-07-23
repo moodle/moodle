@@ -30,12 +30,15 @@ use core_calendar\local\event\entities\action_interface;
 use mod_bigbluebuttonbn\completion\custom_completion;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\bigbluebutton;
+use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
 use mod_bigbluebuttonbn\local\helpers\files;
 use mod_bigbluebuttonbn\local\helpers\mod_helper;
 use mod_bigbluebuttonbn\local\helpers\reset;
+use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 use mod_bigbluebuttonbn\logger;
 use mod_bigbluebuttonbn\meeting;
 use mod_bigbluebuttonbn\recording;
+use mod_bigbluebuttonbn\local\config;
 
 global $CFG;
 
@@ -208,24 +211,11 @@ function bigbluebuttonbn_delete_instance($id) {
  * @return stdClass with info and time (timestamp of the last log)
  */
 function bigbluebuttonbn_user_outline(stdClass $course, stdClass $user, cm_info $mod, stdClass $bigbluebuttonbn): stdClass {
-    $customcompletion = new custom_completion($mod, $user->id);
-    $completed = $customcompletion->get_overall_completion_state();
-    $result = new stdClass();
-    if ($completed) {
-        $results = [];
-        $lastlog = 0;
-        foreach ($customcompletion->get_available_custom_rules() as $rule) {
-            $results[] = $customcompletion->get_printable_state($rule);
-            $lastlogrule = $customcompletion->get_last_log_timestamp($rule);
-            if ($lastlogrule > $lastlog) {
-                $lastlog = $lastlogrule;
-            }
-        }
-        $result = new stdClass();
-        $result->info = join(', ', $results);
-        $result->time = $lastlog;
-    }
-    return $result;
+    [$infos, $logtimestamps] = \mod_bigbluebuttonbn\local\helpers\user_info::get_user_info_outline($course, $user, $mod);
+    return (object) [
+        'info' => join(',', $infos),
+        'time' => !empty($logtimestamps) ? max($logtimestamps) : 0
+    ];
 }
 
 /**
@@ -239,12 +229,8 @@ function bigbluebuttonbn_user_outline(stdClass $course, stdClass $user, cm_info 
  *
  */
 function bigbluebuttonbn_user_complete(stdClass $course, stdClass $user, cm_info $mod, stdClass $bigbluebuttonbn) {
-    $customcompletion = new custom_completion($mod, $user->id);
-    $result = [];
-    foreach ($customcompletion->get_available_custom_rules() as $rule) {
-        $result[] = $customcompletion->get_printable_state($rule);
-    }
-    echo join(', ', $result);
+    [$infos] = \mod_bigbluebuttonbn\local\helpers\user_info::get_user_info_outline($course, $user, $mod);
+    echo join(', ', $infos);
 }
 
 /**
@@ -326,6 +312,13 @@ function bigbluebuttonbn_reset_userdata(stdClass $data) {
         reset::reset_tags($data->courseid);
         unset($items['tags']);
         $status[] = reset::reset_getstatus('tags');
+    }
+
+    if (!empty($data->reset_bigbluebuttonbn_logs)) {
+        // Remove all the tags linked to the room/activities in this course.
+        reset::reset_logs($data->courseid);
+        unset($items['logs']);
+        $status[] = reset::reset_getstatus('logs');
     }
     return $status;
 }
@@ -474,8 +467,20 @@ function mod_bigbluebuttonbn_core_calendar_provide_event_action(
     $instance = instance::get_from_instanceid($bigbluebuttonbn->id);
     // Get if the room is available.
     $roomavailable = $instance->is_currently_open();
-    // Get if the user can join.
-    $meetinginfo = meeting::get_meeting_info_for_instance($instance);
+
+    $meetinginfo = null;
+    // Check first if the server can be contacted.
+    try {
+        if (empty(bigbluebutton_proxy::get_server_version())) {
+            // In this case we should already have debugging message printed.
+            return null;
+        }
+        // Get if the user can join.
+        $meetinginfo = meeting::get_meeting_info_for_instance($instance);
+    } catch (moodle_exception $e) {
+        debugging('Error - Cannot retrieve info from meeting ('.$instance->get_meeting_id().') ' . $e->getMessage());
+        return null;
+    }
     $usercanjoin = $meetinginfo->canjoin;
 
     // Check if the room is closed and the user has already joined this session or played the record.
@@ -682,5 +687,24 @@ function bigbluebuttonbn_print_recent_activity(object $course, bool $viewfullnam
 
         echo $out;
     }
+    return true;
+}
+
+/**
+ * Callback method executed prior to enabling the activity module.
+ *
+ * @return bool Whether to proceed and enable the plugin or not.
+ */
+function bigbluebuttonbn_pre_enable_plugin_actions(): bool {
+    global $PAGE;
+
+    // If the default server configuration is used and the administrator has not accepted the default data processing
+    // agreement, do not enable the plugin. Instead, display a dynamic form where the administrator can confirm that he
+    // accepts the DPA prior to enabling the plugin.
+    if (config::get('server_url') === config::DEFAULT_SERVER_URL && !config::get('default_dpa_accepted')) {
+        $PAGE->requires->js_call_amd('mod_bigbluebuttonbn/accept_dpa', 'init', []);
+        return false;
+    }
+    // Otherwise, continue and enable the plugin.
     return true;
 }

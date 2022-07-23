@@ -14,37 +14,60 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Driver factory for the Moodle WebDriver.
- *
- * @package    behat
- * @copyright  2020 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace Moodle\BehatExtension\Driver;
 
 use Behat\MinkExtension\ServiceContainer\Driver\DriverFactory;
 use OAndreyev\Mink\Driver\WebDriverFactory as UpstreamFactory;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Definition;
 
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
+
+/**
+ * Driver factory for the Moodle WebDriver.
+ *
+ * @package    core
+ * @copyright  2020 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class WebDriverFactory extends UpstreamFactory implements DriverFactory {
     /**
-     * {@inheritdoc}
+     * Builds the service definition for the driver.
+     *
+     * @param array $config
+     * @return Definition
      */
-    public function buildDriver(array $config)
-    {
-        // Merge capabilities
-        $extraCapabilities = $config['capabilities']['extra_capabilities'];
+    public function buildDriver(array $config) {
+        // Merge capabilities.
+        $extracapabilities = $config['capabilities']['extra_capabilities'];
         unset($config['capabilities']['extra_capabilities']);
 
-        // Ensure that the capabilites.browser is set correctly.
-        $config['capabilities']['browser'] = $config['browser'];
+        // Normalise the Edge browser name.
+        if ($config['browser'] === 'edge') {
+            $config['browser'] = 'MicrosoftEdge';
+        }
 
-        $capabilities = array_replace($this->guessCapabilities(), $extraCapabilities, $config['capabilities']);
+        // Ensure that the capabilites.browserName is set correctly.
+        $config['capabilities']['browserName'] = $config['browser'];
 
-        // Build driver definition
+        $capabilities = array_replace($extracapabilities, $config['capabilities']);
+
+        // Incorrect top level capabilities lead to invalid Selenium browser selection.
+        // See https://github.com/SeleniumHQ/selenium/issues/10410 for more information.
+        // If any of these settings are mentioned then additional empty Capability options are created and a random
+        // browser is chosen.
+        $filteredcapabilities = [
+            'tags',
+            'ignoreZoomSetting',
+            'marionette',
+            'browser',
+            'name',
+        ];
+
+        foreach ($filteredcapabilities as $capabilityname) {
+            unset($capabilities[$capabilityname]);
+        }
+
+        // Build driver definition.
         return new Definition(WebDriver::class, [
             $config['browser'],
             $capabilities,
@@ -53,10 +76,11 @@ class WebDriverFactory extends UpstreamFactory implements DriverFactory {
     }
 
     /**
-     * {@inheritdoc}
+     * Get the CapabilitiesNode.
+     *
+     * @return Node
      */
-    protected function getCapabilitiesNode()
-    {
+    protected function getCapabilitiesNode() {
         $node = parent::getCapabilitiesNode();
 
         // Specify chrome as the default browser.

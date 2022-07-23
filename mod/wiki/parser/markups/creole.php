@@ -87,7 +87,7 @@ class creole_parser extends wiki_markup_parser {
      */
 
     protected function before_parsing() {
-        $this->string = htmlspecialchars($this->string);
+        $this->string = htmlspecialchars($this->string, ENT_COMPAT);
         parent::before_parsing();
     }
 

@@ -7,6 +7,9 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
+    And the following "scales" exist:
+      | name       | scale                          |
+      | Test Scale | Disappointing, Good, Excellent |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -44,6 +47,14 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
       | id_response_editor_1 | Incorrect answer |
       | id_jumpto_1 | This page |
     And I press "Save page"
+    And I am on "Course 1" course homepage with editing mode on
+    And I duplicate "Test lesson name" activity
+    And I wait until section "1" is available
+    And I am on the "Test lesson name (copy)" "lesson activity editing" page
+    And I set the field "Name" to "Test lesson name 2"
+    And I set the field "grade[modgrade_type]" to "Scale"
+    And I set the field "Scale" to "Test Scale"
+    And I press "Save and return to course"
     And I log out
     And I log in as "student1"
 
@@ -83,3 +94,16 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
     And I should see "Number of correct answers: 0"
     And I should see "Your score is 0 (out of 1)."
     And I should see "Your current grade is 0#0 out of 75"
+
+  Scenario: Current grade is displayed at end of lesson when grade type is set to scale
+    Given I am on "Course 1" course homepage
+    And I follow "Test lesson name 2"
+    When I press "Next page"
+    And I should see "1 + 1?"
+    And I set the following fields to these values:
+      | Your answer | 2 |
+    And I press "Submit"
+    And I press "Continue"
+    Then I should see "Congratulations - end of lesson reached"
+    And I should see "Your score is 1 (out of 1)."
+    And I should see "Your current grade is Excellent"

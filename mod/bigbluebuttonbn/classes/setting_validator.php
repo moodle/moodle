@@ -114,7 +114,7 @@ class setting_validator {
      */
     public static function section_preupload_presentation_shown() {
         global $CFG;
-        return (!isset($CFG->bigbluebuttonbn['preuploadpresentation_enabled']));
+        return (!isset($CFG->bigbluebuttonbn['preuploadpresentation_editable']));
     }
 
     /**

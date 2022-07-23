@@ -63,6 +63,12 @@ Feature: Verify that courseindex is usable with the keyboard
     And I should see "Activity sample 2" in the "courseindex-content" "region"
 
   @javascript
+  Scenario: Enter key should not collapse sections.
+    When I press the down key
+    And I press enter
+    And I should see "Activity sample 1" in the "courseindex-content" "region"
+
+  @javascript
   Scenario: Navigate to an activity.
     When I press the down key
     And I press the right key

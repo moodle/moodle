@@ -480,7 +480,7 @@ class gradeimport_csv_load_data {
                     $maperrors[$j] = true;
                 } else {
                     // Collision.
-                    print_error('cannotmapfield', '', '', $j);
+                    throw new \moodle_exception('cannotmapfield', '', '', $j);
                 }
             }
         }

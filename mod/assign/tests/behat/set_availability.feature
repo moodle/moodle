@@ -5,7 +5,10 @@ Feature: Set availability dates for an assignment
   I need be able to set availability dates for an assignment
 
   Background:
-    Given the following "courses" exist:
+    Given I log in as "admin"
+    And I set the following administration settings values:
+      | Enable timed assignments | 1 |
+    And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
     And the following "users" exist:
@@ -27,6 +30,19 @@ Feature: Set availability dates for an assignment
       | assignsubmission_file_maxfiles     | 1                      |
       | assignsubmission_file_maxsizebytes | 0                      |
       | submissiondrafts                   | 0                      |
+    Given the following "activity" exists:
+      | activity                            | assign                               |
+      | course                              | C1                                   |
+      | name                                | Test late assignment with time limit |
+      | assignsubmission_onlinetext_enabled | 1                                    |
+      | assignsubmission_file_enabled       | 1                                    |
+      | assignsubmission_file_maxfiles      | 1                                    |
+      | assignsubmission_file_maxsizebytes  | 1000000                              |
+      | submissiondrafts                    | 0                                    |
+      | allowsubmissionsfromdate_enabled    | 0                                    |
+      | duedate_enabled                     | 0                                    |
+      | cutoffdate_enabled                  | 0                                    |
+      | gradingduedate_enabled              | 0                                    |
 
   Scenario: Student cannot submit an assignment prior to the 'allow submissions from' date
     Given I am on the "Assignment name" Activity page logged in as teacher1
@@ -164,7 +180,8 @@ Feature: Set availability dates for an assignment
     And I set the field "timelimit[timeunit]" to "seconds"
     # Set 'Due date' to 2 days 5 hours 30 minutes ago.
     And I set the field "Due date" to "##2 days 5 hours 30 minutes ago##"
-    And I press "Save and return to course"
+    And I press "Save and display"
+    And I should see "5 secs" in the "Time limit" "table_row"
     And I log out
 
     When I am on the "Assignment name" Activity page logged in as student1
@@ -200,3 +217,22 @@ Feature: Set availability dates for an assignment
     And I follow "View all submissions"
     And I should see "No submission" in the "Student 1" "table_row"
     And I should see "Assignment is overdue by: 2 days 5 hours" in the "Student 1" "table_row"
+
+  @_file_upload
+  Scenario: Late submission will be calculated only when the student starts the assignment
+    Given I am on the "Test late assignment with time limit" Activity page logged in as admin
+    And I navigate to "Settings" in current page administration
+    And I follow "Expand all"
+    # Set 'Time limit' to 5 seconds.
+    And I set the field "timelimit[enabled]" to "1"
+    And I set the field "timelimit[number]" to "5"
+    And I set the field "timelimit[timeunit]" to "seconds"
+    And I press "Save and return to course"
+    When I am on the "Test late assignment with time limit" Activity page logged in as student1
+    And I wait "6" seconds
+    And I click on "Begin assignment" "link"
+    And I click on "Begin assignment" "button"
+    And I upload "lib/tests/fixtures/empty.txt" file to "File submissions" filemanager
+    And I press "Save changes"
+    Then I should see "Submitted for grading" in the "Submission status" "table_row"
+    And I should see "under the time limit" in the "Time remaining" "table_row"

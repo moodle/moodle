@@ -627,7 +627,7 @@ class behat_navigation extends behat_base {
             }
             return [$component, $name];
         } else {
-            throw new coding_exception('The page name most be in the form ' .
+            throw new coding_exception('The page name must be in the form ' .
                     '"{page-name}" for core pages, or "{component} > {page-name}" ' .
                     'for pages belonging to other components. ' .
                     'For example "Admin notifications" or "mod_quiz > View".');
@@ -1018,6 +1018,7 @@ class behat_navigation extends behat_base {
     /**
      * Clicks link with specified id|title|alt|text in the secondary navigation
      *
+     * @When I select :link from secondary navigation
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $link
      */
@@ -1056,7 +1057,7 @@ class behat_navigation extends behat_base {
             $tabxpath = '//ul[@role=\'tablist\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
             $menubarxpath = '//ul[@role=\'menubar\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
             $linkname = behat_context_helper::escape(get_string('moremenu'));
-            $menubarmorexpath = '//ul[@role=\'menubar\']/li/a[contains(normalize-space(.), ' . $linkname . ')]';
+            $menubarmorexpath = '//ul[contains(@class,\'more-nav\')]/li/a[contains(normalize-space(.), ' . $linkname . ')]';
             $tabnode = $this->getSession()->getPage()->find('xpath', $tabxpath);
             $menunode = $this->getSession()->getPage()->find('xpath', $menubarxpath);
             $menubuttons = $this->getSession()->getPage()->findAll('xpath', $menubarmorexpath);

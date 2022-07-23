@@ -244,18 +244,3 @@ Feature: Course category breadcrumbs navigation
     And I should see "Cat 1" in the ".page-context-header" "css_element"
     And I should see "Content bank" in the "region-main" "region"
     And I should see "Cat 1" in the ".block_navigation .active_tree_node" "css_element"
-
-  Scenario: Admin user changes the default home page and navigates to 'course category management' page
-    Given I log in as "admin"
-    And I navigate to "Courses > Manage courses and categories" in site administration
-    And I follow "Cat 1"
-    And I should not see "My courses" in the ".breadcrumb" "css_element"
-    And the following config values are set as admin:
-      | defaulthomepage | 3 |
-    And I navigate to "Courses > Manage courses and categories" in site administration
-    When I follow "Cat 1"
-    Then I should see "My courses" in the ".breadcrumb" "css_element"
-    And I should see "Cat 1" in the ".breadcrumb" "css_element"
-    And I should see "Manage courses and categories" in the ".breadcrumb" "css_element"
-    And I should see "Cat 1" in the ".page-context-header" "css_element"
-    And I should see "Manage course categories and courses" in the "region-main" "region"

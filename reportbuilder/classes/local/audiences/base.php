@@ -254,7 +254,7 @@ abstract class base {
      *
      * @throws report_access_exception
      */
-    public function require_user_can_add(): void {
+    final public function require_user_can_add(): void {
         if (!$this->user_can_add()) {
             throw new report_access_exception('errorreportedit');
         }
@@ -265,7 +265,7 @@ abstract class base {
      *
      * @throws report_access_exception
      */
-    public function require_user_can_edit(): void {
+    final public function require_user_can_edit(): void {
         if (!$this->user_can_edit()) {
             throw new report_access_exception('errorreportedit');
         }

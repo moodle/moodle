@@ -69,12 +69,13 @@
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strmanageblocks);
 
+    echo $OUTPUT->notification(get_string('noteunneededblocks', 'admin'), 'info');
 /// Main display starts here
 
 /// Get and sort the existing blocks
 
     if (!$blocks = $DB->get_records('block', array(), 'name ASC')) {
-        print_error('noblocks', 'error');  // Should never happen
+        throw new \moodle_exception('noblocks', 'error');  // Should never happen.
     }
 
     $incompatible = array();

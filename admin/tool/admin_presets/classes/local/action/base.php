@@ -137,6 +137,10 @@ class base {
             $PAGE->navbar->add($title);
         }
 
+        if ($node = $PAGE->settingsnav->find('tool_admin_presets', \navigation_node::TYPE_SETTING)) {
+            $node->make_active();
+        }
+
         echo $OUTPUT->header();
         echo $OUTPUT->heading($title);
         if ($text) {

@@ -38,10 +38,10 @@ $override = null;
 if ($overrideid) {
 
     if (! $override = $DB->get_record('quiz_overrides', array('id' => $overrideid))) {
-        print_error('invalidoverrideid', 'quiz');
+        throw new \moodle_exception('invalidoverrideid', 'quiz');
     }
     if (! $quiz = $DB->get_record('quiz', array('id' => $override->quiz))) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     list($course, $cm) = get_course_and_cm_from_instance($quiz, 'quiz');
 
@@ -50,7 +50,7 @@ if ($overrideid) {
     $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
 
 } else {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
@@ -82,11 +82,11 @@ if ($overrideid) {
 
     if ($override->groupid) {
         if (!groups_group_visible($override->groupid, $course, $cm)) {
-            print_error('invalidoverrideid', 'quiz');
+            throw new \moodle_exception('invalidoverrideid', 'quiz');
         }
     } else {
         if (!groups_user_groups_visible($course, $override->userid, $cm)) {
-            print_error('invalidoverrideid', 'quiz');
+            throw new \moodle_exception('invalidoverrideid', 'quiz');
         }
     }
 } else {
@@ -239,6 +239,7 @@ if ($mform->is_cancelled()) {
 $pagetitle = get_string('editoverride', 'quiz');
 $PAGE->navbar->add($pagetitle);
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 $PAGE->activityheader->set_attrs([

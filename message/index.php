@@ -31,7 +31,7 @@ if (isguestuser()) {
 }
 
 if (empty($CFG->messaging)) {
-    print_error('disabled', 'message');
+    throw new \moodle_exception('disabled', 'message');
 }
 
 // The id of the user we want to view messages from.

@@ -65,7 +65,7 @@ class stateactions extends core_actions {
         ?int $targetcmid = null
     ): void {
 
-        $updates->add_cm_delete(array_pop($ids));
+        $updates->add_cm_remove(array_pop($ids));
     }
 
     /**

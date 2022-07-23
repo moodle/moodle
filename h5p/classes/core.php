@@ -238,8 +238,22 @@ class core extends H5PCore {
 
         $factory = new factory();
 
-        // Download the latest content type from the H5P official repository.
         $fs = get_file_storage();
+
+        // Delete any existing file, if it was not deleted during a previous download.
+        $existing = $fs->get_file(
+            (\context_system::instance())->id,
+            'core_h5p',
+            'library_sources',
+            0,
+            '/',
+            $library['machineName']
+        );
+        if ($existing) {
+            $existing->delete();
+        }
+
+        // Download the latest content type from the H5P official repository.
         $file = $fs->create_file_from_url(
             (object) [
                 'component' => 'core_h5p',

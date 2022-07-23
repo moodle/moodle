@@ -24,8 +24,9 @@
  */
 
 $string['pluginname'] = 'Question usage';
-$string['privacy:metadata'] = 'The Question usage question bank plugin does not store any user data.';
+$string['privacy:metadata'] = 'The Question usage question bank plugin does not store any personal data.';
 $string['questionusage'] = 'Usage';
+$string['questionusage_help'] = 'The number of quizzes in which the question is used, with a link to open a window listing the quizzes and the number of attempts.';
 $string['usageheader'] = 'Question usage';
 
 // Table.

@@ -63,7 +63,7 @@ class core_question_bank_view_testcase extends advanced_testcase {
         ob_start();
         $pagevars = [
             'qpage' => 0,
-            'qperpage' => 20,
+            'qperpage' => DEFAULT_QUESTIONS_PER_PAGE,
             'cat' => $cat->id . ',' . $context->id,
             'recurse' => false,
             'showhidden' => false,
@@ -104,7 +104,7 @@ class core_question_bank_view_testcase extends advanced_testcase {
         ob_start();
         $pagevars = [
             'qpage' => 0,
-            'qperpage' => 20,
+            'qperpage' => DEFAULT_QUESTIONS_PER_PAGE,
             'cat' => $cat->id . ',' . $context->id,
             'recurse' => false,
             'showhidden' => false,

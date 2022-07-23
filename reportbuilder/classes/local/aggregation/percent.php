@@ -69,9 +69,10 @@ class percent extends base {
      * @param mixed $value
      * @param array $values
      * @param array $callbacks
-     * @return mixed
+     * @param int $columntype
+     * @return string
      */
-    public static function format_value($value, array $values, array $callbacks) {
-        return format::percent(reset($values));
+    public static function format_value($value, array $values, array $callbacks, int $columntype): string {
+        return format::percent((float) reset($values));
     }
 }

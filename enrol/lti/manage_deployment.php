@@ -45,8 +45,8 @@ if (!in_array($action, ['add', 'delete'])) {
 }
 
 // The page to go back to when the respective action has been performed.
-$deploymentslisturl = new moodle_url($CFG->wwwroot . "/enrol/lti/app_tool_deployments.php",
-    ['registrationid' => $registrationid]);
+$deploymentslisturl = new moodle_url($CFG->wwwroot . "/enrol/lti/register_platform.php",
+    ['regid' => $registrationid, 'action' => 'view', 'tabselect' => 'tooldeployments']);
 
 // Local anon helper to extend the nav for this page and call admin_externalpage_setup.
 $pagesetup = function(string $pagetitle) {

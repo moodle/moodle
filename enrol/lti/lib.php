@@ -461,10 +461,36 @@ function enrol_lti_extend_navigation_course($navigation, $course, $context) {
         // Check that they can add an instance.
         $ltiplugin = enrol_get_plugin('lti');
         if ($ltiplugin->can_add_instance($course->id)) {
-            $url = new moodle_url('/enrol/lti/index.php', array('courseid' => $course->id));
+            $url = new moodle_url('/enrol/lti/index.php', ['courseid' => $course->id]);
             $settingsnode = navigation_node::create(get_string('sharedexternaltools', 'enrol_lti'), $url,
                 navigation_node::TYPE_SETTING, null, 'publishedtools', new pix_icon('i/settings', ''));
             $navigation->add_node($settingsnode);
         }
     }
+}
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function enrol_lti_get_fontawesome_icon_map() {
+    return [
+        'enrol_lti:managedeployments' => 'fa-sitemap',
+        'enrol_lti:platformdetails' => 'fa-pencil-square-o',
+        'enrol_lti:enrolinstancewarning' => 'fa-exclamation-circle text-danger',
+    ];
+}
+
+/**
+ * Pre-delete course module hook which disables any methods referring to the deleted module, preventing launches and allowing remap.
+ *
+ * @param stdClass $cm The deleted course module record.
+ */
+function enrol_lti_pre_course_module_delete(stdClass $cm) {
+    global $DB;
+    $sql = "id IN (SELECT t.enrolid
+                     FROM {enrol_lti_tools} t
+                     JOIN {context} c ON (t.contextid = c.id)
+                    WHERE c.contextlevel = :contextlevel
+                      AND c.instanceid = :cmid)";
+    $DB->set_field_select('enrol', 'status', ENROL_INSTANCE_DISABLED, $sql, ['contextlevel' => CONTEXT_MODULE, 'cmid' => $cm->id]);
 }

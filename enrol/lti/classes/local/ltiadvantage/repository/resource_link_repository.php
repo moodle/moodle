@@ -50,7 +50,7 @@ class resource_link_repository {
             $record->id
         );
 
-        if ($record->lineitemsservice) {
+        if ($record->lineitemsservice || $record->lineitemservice) {
             $scopes = [];
             if ($record->lineitemscope) {
                 $lineitemscopes = json_decode($record->lineitemscope);
@@ -65,7 +65,7 @@ class resource_link_repository {
                 $scopes[] = $record->scorescope;
             }
             $resourcelink->add_grade_service(
-                new \moodle_url($record->lineitemsservice),
+                $record->lineitemsservice ? new \moodle_url($record->lineitemsservice) : null,
                 $record->lineitemservice ? new \moodle_url($record->lineitemservice) : null,
                 $scopes
             );
@@ -112,7 +112,7 @@ class resource_link_repository {
             'ltideploymentid' => $resourcelink->get_deploymentid(),
             'resourceid' => $resourcelink->get_resourceid(),
             'lticontextid' => $resourcelink->get_contextid(),
-            'lineitemsservice' => $gradeservice ? $gradeservice->get_lineitemsurl()->out(false) : null,
+            'lineitemsservice' => null,
             'lineitemservice' => null,
             'lineitemscope' => null,
             'resultscope' => $gradeservice ? $gradeservice->get_resultscope() : null,
@@ -121,7 +121,10 @@ class resource_link_repository {
             'nrpsserviceversions' => $nrpservice ? json_encode($nrpservice->get_service_versions()) : null
         ];
 
-        if ($gradeservice  && ($lineitemurl = $gradeservice->get_lineitemurl())) {
+        if ($gradeservice && ($lineitemsurl = $gradeservice->get_lineitemsurl())) {
+            $record['lineitemsservice'] = $lineitemsurl->out(false);
+        }
+        if ($gradeservice && ($lineitemurl = $gradeservice->get_lineitemurl())) {
             $record['lineitemservice'] = $lineitemurl->out(false);
         }
         if ($gradeservice && ($lineitemscopes = $gradeservice->get_lineitemscope())) {

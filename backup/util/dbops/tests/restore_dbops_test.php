@@ -14,12 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    core_backup
- * @category   phpunit
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_backup;
+
+use restore_controller_dbops;
+use restore_dbops;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -28,9 +26,12 @@ global $CFG;
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 /**
- * Restore dbops tests (all).
+ * @package    core_backup
+ * @category   test
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_dbops_testcase extends advanced_testcase {
+class restore_dbops_test extends \advanced_testcase {
 
     /**
      * Verify the xxx_ids_cached (in-memory backup_ids cache) stuff works as expected.
@@ -47,7 +48,7 @@ class restore_dbops_testcase extends advanced_testcase {
         // Some variables and objects for testing.
         $restoreid = 'testrestoreid';
 
-        $mapping = new stdClass();
+        $mapping = new \stdClass();
         $mapping->itemname = 'user';
         $mapping->itemid = 1;
         $mapping->newitemid = 2;
@@ -68,8 +69,8 @@ class restore_dbops_testcase extends advanced_testcase {
         $this->assertSame(null, $result->info);
 
         // Drop the backup_xxx_temp temptables manually, so memory cache won't be invalidated.
-        $dbman->drop_table(new xmldb_table('backup_ids_temp'));
-        $dbman->drop_table(new xmldb_table('backup_files_temp'));
+        $dbman->drop_table(new \xmldb_table('backup_ids_temp'));
+        $dbman->drop_table(new \xmldb_table('backup_files_temp'));
 
         // Verify the mapping continues returning the same info,
         // now from cache (the table does not exist).
@@ -90,8 +91,8 @@ class restore_dbops_testcase extends advanced_testcase {
         try {
             $result = restore_dbops::get_backup_ids_record($restoreid, $mapping->itemname, $mapping->itemid);
             $this->fail('Expecting an exception, none occurred');
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceof dml_exception);
+        } catch (\Exception $e) {
+            $this->assertTrue($e instanceof \dml_exception);
             $this->assertSame('Table "backup_ids_temp" does not exist', $e->getMessage());
         }
 
@@ -114,8 +115,8 @@ class restore_dbops_testcase extends advanced_testcase {
         try {
             $result = restore_dbops::get_backup_ids_record($restoreid, $mapping->itemname, $mapping->itemid);
             $this->fail('Expecting an exception, none occurred');
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceof dml_exception);
+        } catch (\Exception $e) {
+            $this->assertTrue($e instanceof \dml_exception);
             $this->assertSame('Table "backup_ids_temp" does not exist', $e->getMessage());
         }
     }
@@ -349,7 +350,7 @@ class restore_dbops_testcase extends advanced_testcase {
         // Get the dbuser  record, because we may have changed it above.
         $dbuser = $DB->get_record('user', ['id' => $dbuser->id]);
 
-        $method = (new ReflectionClass('restore_dbops'))->getMethod('precheck_user');
+        $method = (new \ReflectionClass('restore_dbops'))->getMethod('precheck_user');
         $method->setAccessible(true);
         $result = $method->invoke(null, $backupuser, $samesite, $siteid);
 

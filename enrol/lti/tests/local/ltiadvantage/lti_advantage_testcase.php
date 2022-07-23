@@ -126,15 +126,16 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
      * @param \stdClass $resource the resource record, allowing the mock to generate a link to this.
      * @param array $mockuser the user on the platform who is performing the launch.
      * @param string|null $resourcelinkid the id of resource link in the platform, if desired.
-     * @param bool $ags whether to include a mock AGS claim or not.
+     * @param array|null $ags array representing the lti-ags claim info. Pass null to omit, empty array to use a default.
      * @param bool $nrps whether to include a mock NRPS claim or not.
      * @param array|null $migrationclaiminfo contains consumer key, secret and any fields which are sent in the claim.
      * @param array|null $customparams an array of custom params to send, or null to just use defaults.
+     * @param mixed $aud the array or string value of aud to use in the mock launch data.
      * @return LtiMessageLaunch the mock launch object with test launch data.
      */
     protected function get_mock_launch(\stdClass $resource, array $mockuser,
-            ?string $resourcelinkid = null, bool $ags = true, bool $nrps = true, ?array $migrationclaiminfo = null,
-            ?array $customparams = null): LtiMessageLaunch {
+            ?string $resourcelinkid = null, ?array $ags = [], bool $nrps = true, ?array $migrationclaiminfo = null,
+            ?array $customparams = null, $aud = '123'): LtiMessageLaunch {
 
         $mocklaunch = $this->getMockBuilder(LtiMessageLaunch::class)
             ->onlyMethods(['getLaunchData'])
@@ -144,14 +145,14 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
             ->method('getLaunchData')
             ->will($this->returnCallback(
                 function()
-                use ($resource, $mockuser, $resourcelinkid, $migrationclaiminfo, $ags, $nrps, $customparams) {
+                use ($resource, $mockuser, $resourcelinkid, $migrationclaiminfo, $ags, $nrps, $customparams, $aud) {
                     // This simulates the data in the jwt['body'] of a real resource link launch.
                     // Real launches would of course have this data and authenticity of the user verified.
                     $rltitle = $resourcelinkid ? "Resource link $resourcelinkid in platform" : "Resource link in platform";
                     $rlid = $resourcelinkid ?: '12345';
                     $data = [
                         'iss' => $this->issuer, // Must match registration in create_test_environment.
-                        'aud' => '123', // Must match registration in create_test_environment.
+                        'aud' => $aud, // Must match registration in create_test_environment.
                         'sub' => $mockuser['user_id'], // User id on the platform site.
                         'exp' => time() + 60,
                         'nonce' => 'some-nonce-value-123',
@@ -183,16 +184,21 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
                         ];
                     }
 
-                    if ($ags) {
-                        $data["https://purl.imsglobal.org/spec/lti-ags/claim/endpoint"] = [
-                            "scope" => [
-                                "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
-                                "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
-                                "https://purl.imsglobal.org/spec/lti-ags/scope/score"
-                            ],
-                            "lineitems" => "https://platform.example.com/10/lineitems/",
-                            "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
-                        ];
+                    if (is_array($ags)) {
+                        if (empty($ags)) {
+                            $agsclaim = [
+                                "scope" => [
+                                    "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+                                    "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+                                    "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                                ],
+                                "lineitems" => "https://platform.example.com/10/lineitems/",
+                                "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                            ];
+                        } else {
+                            $agsclaim = $ags;
+                        }
+                        $data["https://purl.imsglobal.org/spec/lti-ags/claim/endpoint"] = $agsclaim;
                     }
 
                     if ($nrps) {
@@ -276,6 +282,7 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
         // Set up the registration and deployment.
         $reg = application_registration::create(
             'Example LMS application',
+            'a2c94a2c94',
             new moodle_url($this->issuer),
             '123',
             new moodle_url('https://example.org/authrequesturl'),

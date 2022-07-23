@@ -53,6 +53,7 @@ if ($courseid) {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');
     $context = context_system::instance();
+    $PAGE->set_primary_active_tab('siteadminnode');
 }
 
 /// return tracking object
@@ -81,7 +82,7 @@ switch ($action) {
         if (empty($outcome->courseid)) {
             require_capability('moodle/grade:manage', context_system::instance());
         } else if ($outcome->courseid != $courseid) {
-            print_error('invalidcourseid');
+            throw new \moodle_exception('invalidcourseid');
         }
 
         if (!$outcome->can_delete()) {

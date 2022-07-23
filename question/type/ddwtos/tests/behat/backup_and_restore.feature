@@ -19,16 +19,16 @@ Feature: Test duplicating a quiz containing a drag and drop into text question
       | quiz       | Test quiz | C1     | quiz1    |
     And quiz "Test quiz" contains the following questions:
       | Drag to text | 1 |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
 
   @javascript
   Scenario: Backup and restore a course containing a drag and drop into text question
-    When I backup "Course 1" course using this options:
+    When I am on the "Course 1" course page logged in as admin
+    And I backup "Course 1" course using this options:
       | Confirmation | Filename | test_backup.mbz |
     And I restore "test_backup.mbz" backup into a new course using this options:
-      | Schema | Course name | Course 2 |
-    And I navigate to "Question bank" in current page administration
+      | Schema | Course name       | Course 2 |
+      | Schema | Course short name | C2       |
+    And I am on the "Course 2" "core_question > course question bank" page
     And I choose "Edit question" action for "Drag to text" in the question bank
     Then the following fields match these values:
       | Question name                       | Drag to text                                         |

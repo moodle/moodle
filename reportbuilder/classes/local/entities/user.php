@@ -18,7 +18,11 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\entities;
 
+use context_helper;
 use context_system;
+use context_user;
+use core_component;
+use core_tag_tag;
 use html_writer;
 use lang_string;
 use moodle_url;
@@ -27,6 +31,7 @@ use core_user\fields;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
+use core_reportbuilder\local\filters\tags;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\filters\user as user_filter;
 use core_reportbuilder\local\helpers\user_profile_fields;
@@ -51,7 +56,12 @@ class user extends base {
      * @return array
      */
     protected function get_default_table_aliases(): array {
-        return ['user' => 'u'];
+        return [
+            'user' => 'u',
+            'context' => 'uctx',
+            'tag_instance' => 'uti',
+            'tag' => 'ut',
+        ];
     }
 
     /**
@@ -101,6 +111,26 @@ class user extends base {
     }
 
     /**
+     * Return joins necessary for retrieving tags
+     *
+     * @return string[]
+     */
+    private function get_tag_joins(): array {
+        $user = $this->get_table_alias('user');
+        $taginstance = $this->get_table_alias('tag_instance');
+        $tag = $this->get_table_alias('tag');
+
+        return [
+            "LEFT JOIN {tag_instance} {$taginstance}
+                    ON {$taginstance}.component = 'core'
+                   AND {$taginstance}.itemtype = 'user'
+                   AND {$taginstance}.itemid = {$user}.id",
+            "LEFT JOIN {tag} {$tag}
+                    ON {$tag}.id = {$taginstance}.tagid",
+        ];
+    }
+
+    /**
      * Returns list of all available columns
      *
      * These are all the columns available to use in any report that uses this entity.
@@ -109,6 +139,7 @@ class user extends base {
      */
     protected function get_all_columns(): array {
         $usertablealias = $this->get_table_alias('user');
+        $contexttablealias = $this->get_table_alias('context');
 
         $fullnameselect = self::get_name_fields_select($usertablealias);
         $fullnamesort = explode(', ', $fullnameselect);
@@ -213,6 +244,22 @@ class user extends base {
                 return !empty($row->id) ? $OUTPUT->user_picture($row, ['link' => false, 'alttext' => false]) : '';
             });
 
+        // Interests (tags).
+        $tag = $this->get_table_alias('tag');
+        $columns[] = (new column(
+            'interests',
+            new lang_string('interests'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->add_joins($this->get_tag_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_fields("{$tag}.name, {$tag}.rawname")
+            ->set_is_sortable(true)
+            ->add_callback(static function($value, stdClass $tag): string {
+                return core_tag_tag::make_display_name($tag);
+            });
+
         // Add all other user fields.
         $userfields = $this->get_user_fields();
         foreach ($userfields as $userfield => $userfieldlang) {
@@ -235,6 +282,14 @@ class user extends base {
                     $countries = get_string_manager()->get_list_of_countries(true);
                     return $countries[$country] ?? '';
                 });
+            } else if ($userfield === 'description') {
+                // Select enough fields in order to format the column.
+                $column
+                    ->add_join("LEFT JOIN {context} {$contexttablealias}
+                           ON {$contexttablealias}.contextlevel = " . CONTEXT_USER . "
+                          AND {$contexttablealias}.instanceid = {$usertablealias}.id")
+                    ->add_fields("{$usertablealias}.descriptionformat, {$usertablealias}.id")
+                    ->add_fields(context_helper::get_preload_record_columns_sql($contexttablealias));
             }
 
             $columns[] = $column;
@@ -252,6 +307,7 @@ class user extends base {
     protected function is_sortable(string $fieldname): bool {
         // Some columns can't be sorted, like longtext or images.
         $nonsortable = [
+            'description',
             'picture',
         ];
 
@@ -267,12 +323,28 @@ class user extends base {
      * @return string
      */
     public function format($value, stdClass $row, string $fieldname): string {
+        global $CFG;
+
         if ($this->get_user_field_type($fieldname) === column::TYPE_BOOLEAN) {
             return format::boolean_as_text($value);
         }
 
         if ($this->get_user_field_type($fieldname) === column::TYPE_TIMESTAMP) {
             return format::userdate($value, $row);
+        }
+
+        if ($fieldname === 'description') {
+            if (empty($row->id)) {
+                return '';
+            }
+
+            require_once("{$CFG->libdir}/filelib.php");
+
+            context_helper::preload_from_record($row);
+            $context = context_user::instance($row->id);
+
+            $description = file_rewrite_pluginfile_urls($value, 'pluginfile.php', $context->id, 'user', 'profile', null);
+            return format_text($description, $row->descriptionformat, ['context' => $context->id]);
         }
 
         return s($value);
@@ -320,6 +392,7 @@ class user extends base {
             'email' => new lang_string('email'),
             'city' => new lang_string('city'),
             'country' => new lang_string('country'),
+            'description' => new lang_string('description'),
             'firstnamephonetic' => new lang_string('firstnamephonetic'),
             'lastnamephonetic' => new lang_string('lastnamephonetic'),
             'middlename' => new lang_string('middlename'),
@@ -335,6 +408,7 @@ class user extends base {
             'confirmed' => new lang_string('confirmed', 'admin'),
             'username' => new lang_string('username'),
             'moodlenetprofile' => new lang_string('moodlenetprofile', 'user'),
+            'timecreated' => new lang_string('timecreated', 'core_reportbuilder'),
         ];
     }
 
@@ -346,11 +420,15 @@ class user extends base {
      */
     protected function get_user_field_type(string $userfield): int {
         switch ($userfield) {
+            case 'description':
+                $fieldtype = column::TYPE_LONGTEXT;
+                break;
             case 'confirmed':
             case 'suspended':
                 $fieldtype = column::TYPE_BOOLEAN;
                 break;
             case 'lastaccess':
+            case 'timecreated':
                 $fieldtype = column::TYPE_TIMESTAMP;
                 break;
             default:
@@ -367,6 +445,8 @@ class user extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
+        global $DB;
+
         $filters = [];
         $tablealias = $this->get_table_alias('user');
 
@@ -386,6 +466,13 @@ class user extends base {
         // User fields filters.
         $fields = $this->get_user_fields();
         foreach ($fields as $field => $name) {
+            // Filtering isn't supported for LONGTEXT fields on Oracle.
+            if ($this->get_user_field_type($field) === column::TYPE_LONGTEXT &&
+                    $DB->get_dbfamily() === 'oracle') {
+
+                continue;
+            }
+
             $optionscallback = [static::class, 'get_options_for_' . $field];
             if (is_callable($optionscallback)) {
                 $classname = select::class;
@@ -414,6 +501,22 @@ class user extends base {
             $filters[] = $filter;
         }
 
+        // Interests (tags).
+        $tag = $this->get_table_alias('tag');
+        $filters[] = (new filter(
+            tags::class,
+            'interests',
+            new lang_string('interests'),
+            $this->get_entity_name(),
+            "{$tag}.id"
+        ))
+            ->add_joins($this->get_joins())
+            ->add_joins($this->get_tag_joins())
+            ->set_options([
+                'component' => 'core',
+                'itemtype' => 'user',
+            ]);
+
         // User select filter.
         $filters[] = (new filter(
             user_filter::class,
@@ -423,6 +526,31 @@ class user extends base {
             "{$tablealias}.id"
         ))
             ->add_joins($this->get_joins());
+
+        // Authentication method filter.
+        $filters[] = (new filter(
+            select::class,
+            'auth',
+            new lang_string('authentication', 'moodle'),
+            $this->get_entity_name(),
+            "{$tablealias}.auth"
+        ))
+            ->set_options_callback(static function(): array {
+                $plugins = core_component::get_plugin_list('auth');
+                $enabled = get_string('pluginenabled', 'core_plugin');
+                $disabled = get_string('plugindisabled', 'core_plugin');
+                $authoptions = [$enabled => [], $disabled => []];
+
+                foreach ($plugins as $pluginname => $unused) {
+                    $plugin = get_auth_plugin($pluginname);
+                    if (is_enabled_auth($pluginname)) {
+                        $authoptions[$enabled][$pluginname] = $plugin->get_title();
+                    } else {
+                        $authoptions[$disabled][$pluginname] = $plugin->get_title();
+                    }
+                }
+                return $authoptions;
+            });
 
         return $filters;
     }

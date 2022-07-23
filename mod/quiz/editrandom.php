@@ -54,7 +54,8 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->add_body_class('limitedwidth');
 
-$setreference = $DB->get_record('question_set_references', ['itemid' => $slot->id]);
+$setreference = $DB->get_record('question_set_references',
+    ['itemid' => $slot->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
 $filterconditions = json_decode($setreference->filtercondition);
 
 // Validate the question category.

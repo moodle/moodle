@@ -37,22 +37,22 @@ $PAGE->set_url('/grade/export/key.php', array('id' => $id, 'courseid' => $course
 
 if ($id) {
     if (!$key = $DB->get_record('user_private_key', array('id' => $id))) {
-        print_error('invalidgroupid');
+        throw new \moodle_exception('invalidgroupid');
     }
     if (empty($courseid)) {
         $courseid = $key->instance;
 
     } else if ($courseid != $key->instance) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
 
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
 
 } else {
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
     $key = new stdClass();
 }
@@ -66,12 +66,12 @@ require_capability('moodle/grade:export', $context);
 // Check if the user has at least one grade publishing capability.
 $plugins = grade_helper::get_plugins_export($course->id);
 if (!isset($plugins['keymanager'])) {
-    print_error('nopermissions');
+    throw new \moodle_exception('nopermissions');
 }
 
 // extra security check
 if (!empty($key->userid) and $USER->id != $key->userid) {
-    print_error('notownerofkey');
+    throw new \moodle_exception('notownerofkey');
 }
 
 $returnurl = $CFG->wwwroot.'/grade/export/keymanager.php?id='.$course->id;

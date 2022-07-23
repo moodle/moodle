@@ -478,7 +478,7 @@ class calendar_event {
         if (empty($this->properties->id) || $this->properties->id < 1) {
             if ($checkcapability) {
                 if (!calendar_add_event_allowed($this->properties)) {
-                    print_error('nopermissiontoupdatecalendar');
+                    throw new \moodle_exception('nopermissiontoupdatecalendar');
                 }
             }
 
@@ -594,7 +594,7 @@ class calendar_event {
 
             if ($checkcapability) {
                 if (!calendar_edit_event_allowed($this->properties)) {
-                    print_error('nopermissiontoupdatecalendar');
+                    throw new \moodle_exception('nopermissiontoupdatecalendar');
                 }
             }
 
@@ -810,7 +810,7 @@ class calendar_event {
                     // First check the course is valid.
                     $course = $DB->get_record('course', array('id' => $properties->courseid));
                     if (!$course) {
-                        print_error('invalidcourse');
+                        throw new \moodle_exception('invalidcourse');
                     }
                     // Course context.
                     $this->editorcontext = $this->get_context();
@@ -2158,11 +2158,7 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false, s
             } else if ($isvaliduser) {
                 $groupids = array();
                 foreach ($courseeventsfrom as $courseid => $course) {
-                    // If the user is an editing teacher in there.
-                    if (!empty($user->groupmember[$course->id])) {
-                        // We've already cached the users groups for this course so we can just use that.
-                        $groupids = array_merge($groupids, $user->groupmember[$course->id]);
-                    } else if ($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
+                    if ($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
                         // If this course has groups, show events from all of those related to the current user.
                         $coursegroups = groups_get_user_groups($course->id, $user->id);
                         $groupids = array_merge($groupids, $coursegroups['0']);
@@ -2555,6 +2551,25 @@ function calendar_format_event_time($event, $now, $linkparams = null, $usecommon
 }
 
 /**
+ * Format event location property
+ *
+ * @param calendar_event $event
+ * @return string
+ */
+function calendar_format_event_location(calendar_event $event): string {
+    $location = format_text($event->location, FORMAT_PLAIN, ['context' => $event->context]);
+
+    // If it looks like a link, convert it to one.
+    if (preg_match('/^https?:\/\//i', $location) && clean_param($location, PARAM_URL)) {
+        $location = \html_writer::link($location, $location, [
+            'title' => get_string('eventnamelocation', 'core_calendar', ['name' => $event->name, 'location' => $location]),
+        ]);
+    }
+
+    return $location;
+}
+
+/**
  * Checks to see if the requested type of event should be shown for the given user.
  *
  * @param int $type The type to check the display for (default is to display all)
@@ -2860,7 +2875,7 @@ function calendar_add_subscription($sub) {
             return $sub->id;
         }
     } else {
-        print_error('errorbadsubscription', 'importcalendar');
+        throw new \moodle_exception('errorbadsubscription', 'importcalendar');
     }
 }
 
@@ -3604,7 +3619,7 @@ function calendar_output_fragment_event_form($args) {
         $event = calendar_event::load($eventid);
 
         if (!calendar_edit_event_allowed($event)) {
-            print_error('nopermissiontoupdatecalendar');
+            throw new \moodle_exception('nopermissiontoupdatecalendar');
         }
 
         $mapper = new \core_calendar\local\event\mappers\create_update_form_mapper();

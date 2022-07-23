@@ -100,6 +100,16 @@ Feature: Perform basic calendar functionality
     Then I should not see "Really awesome event!"
 
   @javascript
+  Scenario: Create an event containing URL as location
+    Given I log in as "admin"
+    And I create a calendar event with form data:
+      | Type of event | site               |
+      | Event title   | Important webinar  |
+      | Location      | https://moodle.org |
+    When I click on "Important webinar" "link"
+    Then "https://moodle.org" "link" should exist in the "Important webinar" "dialogue"
+
+  @javascript
   Scenario: Delete an event
     Given I log in as "teacher1"
     And I create a calendar event with form data:

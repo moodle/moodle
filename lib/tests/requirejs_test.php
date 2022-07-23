@@ -42,42 +42,17 @@ class core_requirejs_testcase extends advanced_testcase {
         global $CFG;
 
         // Find a core module.
-        $result = core_requirejs::find_one_amd_module('core', 'templates', false);
+        $result = core_requirejs::find_one_amd_module('core', 'templates');
         $expected = ['core/templates' => $CFG->dirroot . '/lib/amd/build/templates.min.js'];
         $this->assertEquals($expected, $result);
 
-        $result = core_requirejs::find_one_amd_module('core', 'templates', true);
-        $expected = ['core/templates' => $CFG->dirroot . '/lib/amd/src/templates.js'];
-        $this->assertEquals($expected, $result);
-
         // Find a subsystem module (none exist yet).
-        $result = core_requirejs::find_one_amd_module('core_group', 'doesnotexist', false);
+        $result = core_requirejs::find_one_amd_module('core_group', 'doesnotexist');
         $expected = [];
         $this->assertEquals($expected, $result);
 
-        // Find a plugin module.
-        $result = core_requirejs::find_one_amd_module('mod_assign', 'grading_panel', true);
-        $expected = ['mod_assign/grading_panel' => $CFG->dirroot . '/mod/assign/amd/src/grading_panel.js'];
-        $this->assertEquals($expected, $result);
-
-        // Find all modules - no debugging.
-        $result = core_requirejs::find_all_amd_modules(true);
-        foreach ($result as $key => $path) {
-            // Lets verify the first part of the key is a valid component name and the second part correctly contains "min" or not.
-            list($component, $template) = explode('/', $key, 2);
-            // Can we resolve it to a valid dir?
-            $dir = core_component::get_component_directory($component);
-            $this->assertNotEmpty($dir);
-
-            // Only "core" is allowed to have no _ in component names.
-            if (strpos($component, '_') === false) {
-                $this->assertEquals('core', $component);
-            }
-            $this->assertStringNotContainsString('.min', $path);
-        }
-
-        // Find all modules - debugging.
-        $result = core_requirejs::find_all_amd_modules(false);
+        // Find all modules.
+        $result = core_requirejs::find_all_amd_modules();
         foreach ($result as $key => $path) {
             // Lets verify the first part of the key is a valid component name and the second part correctly contains "min" or not.
             list($component, $template) = explode('/', $key, 2);

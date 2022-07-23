@@ -35,11 +35,11 @@ list($formaction) = explode('?', $formaction, 2);
 $actions = array('bulkchange.php');
 
 if (array_search($formaction, $actions) === false) {
-    print_error('unknownuseraction');
+    throw new \moodle_exception('unknownuseraction');
 }
 
 if (!confirm_sesskey()) {
-    print_error('confirmsesskeybad');
+    throw new \moodle_exception('confirmsesskeybad');
 }
 
 if ($formaction == 'bulkchange.php') {
@@ -101,7 +101,7 @@ if ($formaction == 'bulkchange.php') {
 
                     // Retrieve all identity fields required for users.
                     $userfieldsapi = \core_user\fields::for_identity($context);
-                    $userfields = $userfieldsapi->get_sql('u', true, '', '', false);
+                    $userfields = $userfieldsapi->get_sql('u', true);
 
                     $identityfields = array_keys($userfields->mappings);
                     foreach ($identityfields as $field) {
@@ -141,7 +141,7 @@ if ($formaction == 'bulkchange.php') {
                         $groupconcatjoin = '';
                     }
 
-                    $sql = "SELECT u.firstname, u.lastname, {$userfields->selects}
+                    $sql = "SELECT u.firstname, u.lastname {$userfields->selects}
                               FROM {user} u
                                    {$userfields->joins}
                               JOIN ({$enrolledsql}) je ON je.id = u.id
@@ -182,14 +182,14 @@ if ($formaction == 'bulkchange.php') {
             }
         }
         if (!$instance) {
-            print_error('errorwithbulkoperation', 'enrol');
+            throw new \moodle_exception('errorwithbulkoperation', 'enrol');
         }
 
         $manager = new course_enrolment_manager($PAGE, $course, $instance->id);
         $plugins = $manager->get_enrolment_plugins();
 
         if (!isset($plugins[$plugin])) {
-            print_error('errorwithbulkoperation', 'enrol');
+            throw new \moodle_exception('errorwithbulkoperation', 'enrol');
         }
 
         $plugin = $plugins[$plugin];
@@ -197,7 +197,7 @@ if ($formaction == 'bulkchange.php') {
         $operations = $plugin->get_bulk_operations($manager);
 
         if (!isset($operations[$operationname])) {
-            print_error('errorwithbulkoperation', 'enrol');
+            throw new \moodle_exception('errorwithbulkoperation', 'enrol');
         }
         $operation = $operations[$operationname];
 
@@ -244,7 +244,7 @@ if ($formaction == 'bulkchange.php') {
             if ($operation->process($manager, $users, new stdClass)) {
                 redirect($returnurl);
             } else {
-                print_error('errorwithbulkoperation', 'enrol');
+                throw new \moodle_exception('errorwithbulkoperation', 'enrol');
             }
         }
         // Check if the bulk operation has been cancelled.

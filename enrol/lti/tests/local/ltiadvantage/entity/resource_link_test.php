@@ -115,23 +115,96 @@ class resource_link_test extends \advanced_testcase {
     /**
      * Test confirming that a grade service instance can be added to the object instance.
      *
+     * @param array $args the array of method arguments
+     * @param array $expected the array of expectations
+     * @dataProvider add_grade_service_provider
      * @covers ::add_grade_service
      */
-    public function test_add_grade_service() {
+    public function test_add_grade_service(array $args, array $expected) {
         $reslink = resource_link::create('res-link-id-123', 24, 44);
         $this->assertNull($reslink->get_grade_service());
-        $reslink->add_grade_service(
-            new \moodle_url('https://platform.example.org/10/lineitems'),
-            new \moodle_url('https://platform.example.org/10/lineitems/4/lineitem'),
-            ['https://purl.imsglobal.org/spec/lti-ags/scope/lineitem']
-        );
+
+        if (!$expected['valid']) {
+            $this->expectException($expected['exception']);
+        }
+        $reslink->add_grade_service(...array_values($args));
         $gradeservice = $reslink->get_grade_service();
         $this->assertInstanceOf(ags_info::class, $gradeservice);
-        $this->assertEquals(new \moodle_url('https://platform.example.org/10/lineitems'),
-            $gradeservice->get_lineitemsurl());
-        $this->assertEquals(new \moodle_url('https://platform.example.org/10/lineitems/4/lineitem'),
-            $gradeservice->get_lineitemurl());
-        $this->assertEquals(['https://purl.imsglobal.org/spec/lti-ags/scope/lineitem'], $gradeservice->get_scopes());
+        $this->assertEquals($args['lineitemsurl'], $gradeservice->get_lineitemsurl());
+        $this->assertEquals($args['lineitemurl'], $gradeservice->get_lineitemurl());
+        $this->assertEquals($args['scope'], $gradeservice->get_scopes());
+    }
+
+    /**
+     * Data provider for testing the add_grade_service method.
+     *
+     * @return array the array of test case data.
+     */
+    public function add_grade_service_provider(): array {
+        return [
+            'Valid, both URLs, some scopes' => [
+                'args' => [
+                    'lineitemsurl' => new \moodle_url('https://platform.example.org/10/lineitems'),
+                    'lineitemurl' => new \moodle_url('https://platform.example.org/10/lineitems/4/lineitem'),
+                    'scope' => [
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/score'
+                    ]
+                ],
+                'expected' => [
+                    'valid' => true,
+                ]
+            ],
+            'Valid, only coupled line item URL, some scopes' => [
+                'args' => [
+                    'lineitemsurl' => null,
+                    'lineitemurl' => new \moodle_url('https://platform.example.org/10/lineitems/4/lineitem'),
+                    'scope' => [
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/score'
+                    ]
+                ],
+                'expected' => [
+                    'valid' => true,
+                ]
+            ],
+            'Valid, only decoupled line items URL, some scopes' => [
+                'args' => [
+                    'lineitemsurl' => new \moodle_url('https://platform.example.org/10/lineitems'),
+                    'lineitemurl' => null,
+                    'scope' => [
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly',
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/score',
+                    ]
+                ],
+                'expected' => [
+                    'valid' => true,
+                ]
+            ],
+            'Valid, URLs without any scopes' => [
+                'args' => [
+                    'lineitemsurl' => new \moodle_url('https://platform.example.org/10/lineitems'),
+                    'lineitemurl' => new \moodle_url('https://platform.example.org/10/lineitems/4/lineitem'),
+                    'scope' => []
+                ],
+                'expected' => [
+                    'valid' => true,
+                ]
+            ],
+            'Invalid, missing both URLs' => [
+                'args' => [
+                    'lineitemsurl' => null,
+                    'lineitemurl' => null,
+                    'scope' => [
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem'
+                    ]
+                ],
+                'expected' => [
+                    'valid' => false,
+                    'exception' => \coding_exception::class
+                ]
+            ],
+        ];
     }
 
     /**
@@ -156,15 +229,16 @@ class resource_link_test extends \advanced_testcase {
      * @covers ::add_user
      */
     public function test_add_user() {
+        global $CFG;
         $reslinkwithid = resource_link::create('res-link-id-123', 24, 44, 66, 33);
-        $user = $reslinkwithid->add_user(2, 'platform-user-id-123', 'en', 'Sydney', 'AU', 'Test university', '99');
+        $user = $reslinkwithid->add_user(2, 'platform-user-id-123', $CFG->lang, 'Sydney', 'AU', 'Test university', '99');
         $this->assertInstanceOf(user::class, $user);
         $this->assertEquals(33, $user->get_resourcelinkid());
 
         $reslinkwithoutid = resource_link::create('res-link-id-123', 24, 44);
         $this->expectException(\coding_exception::class);
         $this->expectExceptionMessage("Can't add user to a resource_link that hasn't first been saved");
-        $reslinkwithoutid->add_user(2, 'platform-user-id-123', 'en', 'Sydney', 'Australia', 'Test university', '99');
+        $reslinkwithoutid->add_user(2, 'platform-user-id-123', $CFG->lang, 'Sydney', 'Australia', 'Test university', '99');
     }
 
     /**

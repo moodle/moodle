@@ -597,8 +597,19 @@ class block_base {
      * @return boolean
      */
     function user_can_addto($page) {
+        global $CFG;
+        require_once($CFG->dirroot . '/user/lib.php');
+
         // List of formats this block supports.
         $formats = $this->applicable_formats();
+
+        // Check if user is trying to add blocks to their profile page.
+        $userpagetypes = user_page_type_list($page->pagetype, null, null);
+        if (array_key_exists($page->pagetype, $userpagetypes)) {
+            $capability = 'block/' . $this->name() . ':addinstance';
+            return $this->has_add_block_capability($page, $capability)
+                && has_capability('moodle/user:manageownblocks', $page->context);
+        }
 
         // The blocks in My Moodle are a special case and use a different capability.
         $mypagetypes = my_page_type_list($page->pagetype); // Get list of possible my page types.

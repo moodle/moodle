@@ -51,7 +51,7 @@ abstract class quiz_attempts_report extends quiz_default_report {
     /** @var string the mode this report is. */
     protected $mode;
 
-    /** @var object the quiz context. */
+    /** @var context_module the quiz context. */
     protected $context;
 
     /** @var mod_quiz_attempts_report_form The settings form to use. */
@@ -79,7 +79,7 @@ abstract class quiz_attempts_report extends quiz_default_report {
      *      3 => \core\dml\sql_join Contains joins, wheres, params for all the students to show in the report.
      *              Will be the same as either element 1 or 2.
      */
-    protected function init($mode, $formclass, $quiz, $cm, $course) {
+    public function init($mode, $formclass, $quiz, $cm, $course) {
         $this->mode = $mode;
 
         $this->context = context_module::instance($cm->id);

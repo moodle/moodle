@@ -21,14 +21,21 @@ Feature: Adding random questions to a quiz based on category and tags
       | contextlevel | reference | name                 |
       | Course       | C1        | Questions Category 1 |
       | Course       | C1        | Questions Category 2 |
+    And the following "question categories" exist:
+      | contextlevel | reference | name        | questioncategory     |
+      | Course       | C1        | Subcategory | Questions Category 1 |
     And the following "questions" exist:
       | questioncategory     | qtype | name            | user     | questiontext    |
       | Questions Category 1 | essay | question 1 name | admin    | Question 1 text |
       | Questions Category 1 | essay | question 2 name | teacher1 | Question 2 text |
+      | Subcategory          | essay | question 3 name | teacher1 | Question 3 text |
+      | Subcategory          | essay | question 4 name | teacher1 | Question 4 text |
     And the following "core_question > Tags" exist:
       | question        | tag |
       | question 1 name | foo |
       | question 2 name | bar |
+      | question 3 name | foo |
+      | question 4 name | bar |
 
   Scenario: Available tags are shown in the autocomplete tag field
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
@@ -38,13 +45,38 @@ Feature: Adding random questions to a quiz based on category and tags
     Then "foo" "autocomplete_suggestions" should exist
     And "bar" "autocomplete_suggestions" should exist
 
+  Scenario: Questions can be filtered by tags
+    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    When I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I set the field "Category" to "Top for Course 1"
+    And I wait until the page is ready
+    And I open the autocomplete suggestions list
+    And I click on "foo" item in the autocomplete list
+    Then I should see "question 1 name"
+    And I should see "question 3 name"
+    And I should not see "question 2 name"
+    And I should not see "question 4 name"
+    And I set the field "Category" to "Questions Category 1"
+    And I wait until the page is ready
+    And I should see "question 1 name"
+    And I should not see "question 3 name"
+    And I should not see "question 2 name"
+    And I should not see "question 4 name"
+    And I click on "Include questions from subcategories too" "checkbox"
+    And I wait until the page is ready
+    And I should see "question 1 name"
+    And I should see "question 3 name"
+    And I should not see "question 2 name"
+    And I should not see "question 4 name"
+
   Scenario: A random question can be added to the quiz
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     When I open the "last" add to quiz menu
     And I follow "a random question"
     And I set the field "Tags" to "foo"
     And I press "Add random question"
-    And I should see "Random question"
+    And I should see "Random (Questions Category 1, tags: foo)" on quiz page "1"
     And I click on "(See questions)" "link"
     Then I should see "Questions Category 1"
     And I should see "foo"
@@ -67,6 +99,6 @@ Feature: Adding random questions to a quiz based on category and tags
       | Name            | New Random category |
       | Parent category |  Top for Quiz 1     |
     And I press "Create category and add random question"
-    And I should see "Random question"
+    And I should see "Random (New Random category)" on quiz page "1"
     And I click on "(See questions)" "link"
     Then I should see "Top for Quiz 1"

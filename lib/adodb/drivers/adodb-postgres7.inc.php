@@ -154,10 +154,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		}
 	}
 
-	/**
-	 * @returns assoc array where keys are tables, and values are foreign keys
-	 */
-	function MetaForeignKeys($table, $owner=false, $upper=false)
+	public function metaForeignKeys($table, $owner = '', $upper = false, $associative = false)
 	{
 		# Regex isolates the 2 terms between parenthesis using subexpressions
 		$regex = '^.*\((.*)\).*\((.*)\).*$';
@@ -193,49 +190,17 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 
 		$a = array();
 		while (!$rs->EOF) {
+			$lookup_table = $rs->fields('lookup_table');
+			$fields = $rs->fields('dep_field') . '=' . $rs->fields('lookup_field');
 			if ($upper) {
-				$a[strtoupper($rs->Fields('lookup_table'))][] = strtoupper(str_replace('"','',$rs->Fields('dep_field').'='.$rs->Fields('lookup_field')));
-			} else {
-				$a[$rs->Fields('lookup_table')][] = str_replace('"','',$rs->Fields('dep_field').'='.$rs->Fields('lookup_field'));
+				$lookup_table = strtoupper($lookup_table);
+				$fields = strtoupper($fields);
 			}
+			$a[$lookup_table][] = str_replace('"','', $fields);
+
 			$rs->MoveNext();
 		}
 
-		return $a;
-
-	}
-
-	// from  Edward Jaramilla, improved version - works on pg 7.4
-	function _old_MetaForeignKeys($table, $owner=false, $upper=false)
-	{
-		$sql = 'SELECT t.tgargs as args
-		FROM
-		pg_trigger t,pg_class c,pg_proc p
-		WHERE
-		t.tgenabled AND
-		t.tgrelid = c.oid AND
-		t.tgfoid = p.oid AND
-		p.proname = \'RI_FKey_check_ins\' AND
-		c.relname = \''.strtolower($table).'\'
-		ORDER BY
-			t.tgrelid';
-
-		$rs = $this->Execute($sql);
-
-		if (!$rs || $rs->EOF) return false;
-
-		$arr = $rs->GetArray();
-		$a = array();
-		foreach($arr as $v) {
-			$data = explode(chr(0), $v['args']);
-			$size = count($data)-1; //-1 because the last node is empty
-			for($i = 4; $i < $size; $i++) {
-				if ($upper)
-					$a[strtoupper($data[2])][] = strtoupper($data[$i].'='.$data[++$i]);
-				else
-					$a[$data[2]][] = $data[$i].'='.$data[++$i];
-			}
-		}
 		return $a;
 	}
 
@@ -266,7 +231,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		}
 		// check if no data returned, then no need to create real recordset
 		if ($rez && pg_num_fields($rez) <= 0) {
-			if (is_resource($this->_resultid) && get_resource_type($this->_resultid) === 'pgsql result') {
+			if ($this->_resultid !== false) {
 				pg_free_result($this->_resultid);
 			}
 			$this->_resultid = $rez;
@@ -334,10 +299,8 @@ class ADORecordSet_postgres7 extends ADORecordSet_postgres64{
 		if (!$this->EOF) {
 			$this->_currentRow++;
 			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
-				$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-
-				if (is_array($this->fields)) {
-					if ($this->fields && isset($this->_blobArr)) $this->_fixblobs();
+				$this->_prepfields();
+				if ($this->fields !== false) {
 					return true;
 				}
 			}
@@ -360,14 +323,13 @@ class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
 			return false;
 		}
 
-		$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-
-		if ($this->fields) {
-			if (isset($this->_blobArr)) $this->_fixblobs();
+		$this->_prepfields();
+		if ($this->fields !== false) {
 			$this->_updatefields();
+			return true;
 		}
 
-		return (is_array($this->fields));
+		return false;
 	}
 
 	function MoveNext()
@@ -375,18 +337,12 @@ class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
 		if (!$this->EOF) {
 			$this->_currentRow++;
 			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
-				$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-
-				if (is_array($this->fields)) {
-					if ($this->fields) {
-						if (isset($this->_blobArr)) $this->_fixblobs();
-
-						$this->_updatefields();
-					}
+				$this->_prepfields();
+				if ($this->fields !== false) {
+					$this->_updatefields();
 					return true;
 				}
 			}
-
 
 			$this->fields = false;
 			$this->EOF = true;

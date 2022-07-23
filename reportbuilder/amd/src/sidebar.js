@@ -30,7 +30,6 @@ const DEBOUNCE_TIMER = 250;
 const CLASSES = {
     EXPANDED: 'show',
     COLLAPSED: 'collapsed',
-    SHOW: 'd-flex',
     HIDE: 'd-none',
 };
 
@@ -44,27 +43,21 @@ const sidebarCardFilter = (event, sidebarMenu) => {
     const pendingPromise = new Pending('core_reportbuilder/sidebar:cardFilter');
 
     const sidebarCards = sidebarMenu.querySelectorAll(reportSelectors.regions.sidebarCard);
-    const sidebarItems = sidebarMenu.querySelectorAll('.list-group-item');
+    const sidebarItems = sidebarMenu.querySelectorAll(reportSelectors.regions.sidebarItem);
     const searchTerm = event.target.value.toLowerCase();
 
     // Toggle items according to match against search term.
     sidebarItems.forEach(item => {
-        let itemName = item.dataset.name.toLowerCase();
-        if (itemName.includes(searchTerm)) {
-            item.classList.replace(CLASSES.HIDE, CLASSES.SHOW);
-        } else {
-            item.classList.replace(CLASSES.SHOW, CLASSES.HIDE);
-        }
+        const itemContent = item.textContent.toLowerCase();
+        item.classList.toggle(CLASSES.HIDE, !itemContent.includes(searchTerm));
     });
 
     // Toggle cards according to whether they have any visible items.
     sidebarCards.forEach(card => {
-        if (card.querySelectorAll(`.${CLASSES.SHOW}`).length > 0) {
-            card.classList.remove(CLASSES.HIDE);
-            expandCard(card);
-        } else {
-            card.classList.add(CLASSES.HIDE);
-        }
+        const visibleItems = card.querySelectorAll(`${reportSelectors.regions.sidebarItem}:not(.${CLASSES.HIDE})`);
+        card.classList.toggle(CLASSES.HIDE, !visibleItems.length);
+
+        expandCard(card);
     });
 
     pendingPromise.resolve();

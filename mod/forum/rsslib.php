@@ -325,7 +325,7 @@ function forum_rss_feed_contents($forum, $sql, $params, $context) {
     }
 
     if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 
     $formatoptions = new stdClass();

@@ -31,6 +31,8 @@ import {
 
 import {eventTypes, notifyCurrentSessionEnded} from './events';
 
+const timeoutjoin = 5000;
+
 export const init = (bigbluebuttonbnid) => {
     const completionElement = document.querySelector('a[href*=completion_validate]');
     if (completionElement) {
@@ -42,10 +44,12 @@ export const init = (bigbluebuttonbnid) => {
     document.addEventListener('click', e => {
         const joinButton = e.target.closest('[data-action="join"]');
         if (joinButton) {
-            roomUpdater.start();
             window.open(joinButton.href, 'bigbluebutton_conference');
-
             e.preventDefault();
+            // Gives the user a bit of time to go into the meeting.
+            setTimeout(() => {
+                roomUpdater.updateRoom(true);
+                }, timeoutjoin);
         }
     });
 
@@ -60,6 +64,8 @@ export const init = (bigbluebuttonbnid) => {
         roomUpdater.updateRoom();
         fetchNotifications();
     });
+    // Room update.
+    roomUpdater.start();
 };
 
 /**
@@ -68,7 +74,7 @@ export const init = (bigbluebuttonbnid) => {
 const autoclose = () => {
     window.opener.setTimeout(() => {
         roomUpdater.updateRoom(true);
-    }, 5000);
+    }, timeoutjoin);
     window.removeEventListener('onbeforeunload', autoclose);
 };
 

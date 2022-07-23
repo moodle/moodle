@@ -234,14 +234,12 @@ $card-gutter : $card-deck-margin * 2;
     }
 }
 
-@media (min-width: 1200px) {
-    #block-region-side-pre {
-        .dashboard-card-deck:not(.fixed-width-cards) {
-            margin-left: 0;
-            margin-right: 0;
-            .dashboard-card {
-                width: calc(100% - #{$card-gutter}) !important;
-            }
+#block-region-side-pre {
+    .dashboard-card-deck:not(.fixed-width-cards) {
+        margin-left: 0;
+        margin-right: 0;
+        .dashboard-card {
+            width: calc(100% - #{$card-gutter}) !important;
         }
     }
 }
@@ -269,10 +267,34 @@ $card-gutter : $card-deck-margin * 2;
 }
 
 .block_recentlyaccesseditems {
-    img.icon {
-        height: 24px;
-        width: 24px;
-        margin-right: 6px;
+    .activityiconcontainer {
+        width: 40px;
+        height: 40px;
+    }
+
+    aside[id^="block-region-side-"] & .dashboard-card-deck.one-row {
+        flex-flow: wrap;
+        overflow-x: hidden;
+    }
+
+    aside[id^="block-region-side-"] & .dashboard-card-deck .card:nth-of-type(n+4) {
+        display: none;
+    }
+
+    #block-region-content & [data-region="more-items-button-container"] {
+        display: none;
+    }
+
+    a.dashboard-card {
+        @include hover-focus {
+            text-decoration: none;
+            h6 {
+                text-decoration: underline;
+            }
+        }
+        small {
+            color: $body-color;
+        }
     }
 }
 

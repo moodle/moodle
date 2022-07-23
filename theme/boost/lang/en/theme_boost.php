@@ -35,7 +35,7 @@ $string['choosereadme'] = 'Boost is a modern highly-customisable theme. This the
 $string['currentinparentheses'] = '(current)';
 $string['configtitle'] = 'Boost';
 $string['generalsettings'] = 'General settings';
-$string['loginbackgroundimage'] = 'Background image for the login page';
+$string['loginbackgroundimage'] = 'Login page background image';
 $string['loginbackgroundimage_desc'] = 'The image to display as a background for the login page.';
 $string['nobootswatch'] = 'None';
 $string['pluginname'] = 'Boost';
@@ -59,8 +59,10 @@ $string['privacy:drawerindexclosed'] = 'The current preference for the index dra
 $string['privacy:drawerindexopen'] = 'The current preference for the index drawer is open.';
 $string['privacy:drawerblockclosed'] = 'The current preference for the block drawer is closed.';
 $string['privacy:drawerblockopen'] = 'The current preference for the block drawer is open.';
-$string['privacy:drawernavclosed'] = 'The current preference for the navigation drawer is closed.';
-$string['privacy:drawernavopen'] = 'The current preference for the navigation drawer is open.';
 
 // Deprecated since Moodle 4.0.
 $string['totop'] = 'Go to top';
+
+// Deprecated since Moodle 4.1.
+$string['privacy:drawernavclosed'] = 'The current preference for the navigation drawer is closed.';
+$string['privacy:drawernavopen'] = 'The current preference for the navigation drawer is open.';

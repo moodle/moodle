@@ -186,6 +186,12 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         $tree->add_node($node);
     }
 
+    if (!isset($hiddenfields['timezone'])) {
+        $node = new core_user\output\myprofile\node('contact', 'timezone', get_string('timezone'), null, null,
+            core_date::get_user_timezone($user));
+        $tree->add_node($node);
+    }
+
     if (isset($identityfields['address']) && $user->address) {
         $node = new core_user\output\myprofile\node('contact', 'address', get_string('address'), null, null, $user->address);
         $tree->add_node($node);

@@ -25,5 +25,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'gradereport_singleview'; // Full name of the plugin (used for diagnostics).
-$plugin->version  = 2021052500;
-$plugin->requires = 2021052500;
+$plugin->version  = 2022041900;
+$plugin->requires = 2022041200;

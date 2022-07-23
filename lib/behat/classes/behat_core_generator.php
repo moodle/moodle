@@ -162,6 +162,12 @@ class behat_core_generator extends behat_generator_base {
                 'required' => ['fullname', 'course'],
                 'switchids' => ['course' => 'courseid', 'gradecategory' => 'parent'],
             ],
+            'grade grades' => [
+                'singular' => 'grade grade',
+                'datagenerator' => 'grade_grade',
+                'required' => ['gradeitem'],
+                'switchids' => ['user' => 'userid', 'gradeitem' => 'itemid'],
+            ],
             'grade items' => [
                 'singular' => 'grade item',
                 'datagenerator' => 'grade_item',
@@ -287,9 +293,31 @@ class behat_core_generator extends behat_generator_base {
                 'required' => ['user', 'course', 'lastaccess'],
                 'switchids' => ['user' => 'userid', 'course' => 'courseid'],
             ],
+            'notifications' => [
+                'singular' => 'notification',
+                'datagenerator' => 'notification',
+                'required' => ['subject', 'userfrom', 'userto'],
+                'switchids' => ['userfrom' => 'userfromid', 'userto' => 'usertoid'],
+            ],
         ];
 
         return $entities;
+    }
+
+    /**
+     * Get the grade item id using a name.
+     *
+     * @param string $name
+     * @return int The grade item id
+     */
+    protected function get_gradeitem_id(string $name): int {
+        global $DB;
+
+        if (!$id = $DB->get_field('grade_items', 'id', ['itemname' => $name])) {
+            throw new Exception('The specified grade item with name "' . $name . '" could not be found.');
+        }
+
+        return $id;
     }
 
     /**
@@ -1038,6 +1066,39 @@ class behat_core_generator extends behat_generator_base {
         $backpack->password = '';
         $backpack->externalbackpackid = $data['externalbackpackid'];
         $DB->insert_record('badge_backpack', $backpack);
+    }
+
+    /**
+     * Creates notifications to specific user.
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_notification(array $data) {
+        global $DB;
+
+        $notification = new stdClass();
+        $notification->useridfrom = $data['userfromid'];
+        $notification->useridto = $data['usertoid'];
+        $notification->subject = $data['subject'];
+        $notification->fullmessage = $data['subject'] . ' description';
+        $notification->smallmessage = $data['subject'] . ' description';
+        $notification->fullmessagehtml = $data['subject'] . ' description';
+
+        if ($data['timecreated'] !== 'null') {
+            $notification->timecreated = $data['timecreated'];
+        }
+
+        if ($data['timeread'] !== 'null') {
+            $notification->timeread = $data['timeread'];
+        }
+
+        if (!empty($data)) {
+            $popupnotification = new stdClass();
+            $popupnotification->notificationid = $DB->insert_record('notifications', $notification);
+            $DB->insert_record('message_popup_notifications', $popupnotification);
+        }
+
     }
 
     /**

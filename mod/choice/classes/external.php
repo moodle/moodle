@@ -24,6 +24,8 @@
  * @since      Moodle 3.0
  */
 
+use core_course\external\helper_for_get_mods_by_courses;
+
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/choice/lib.php');
@@ -471,8 +473,6 @@ class mod_choice_external extends external_api {
      * @since Moodle 3.0
      */
     public static function get_choices_by_courses($courseids = array()) {
-        global $CFG;
-
         $returnedchoices = array();
         $warnings = array();
 
@@ -494,18 +494,8 @@ class mod_choice_external extends external_api {
             $choices = get_all_instances_in_courses("choice", $courses);
             foreach ($choices as $choice) {
                 $context = context_module::instance($choice->coursemodule);
-                // Entry to return.
-                $choicedetails = array();
-                // First, we return information that any user can see in the web interface.
-                $choicedetails['id'] = $choice->id;
-                $choicedetails['coursemodule'] = $choice->coursemodule;
-                $choicedetails['course'] = $choice->course;
-                $choicedetails['name']  = external_format_string($choice->name, $context->id);
-                // Format intro.
-                $options = array('noclean' => true);
-                list($choicedetails['intro'], $choicedetails['introformat']) =
-                    external_format_text($choice->intro, $choice->introformat, $context->id, 'mod_choice', 'intro', null, $options);
-                $choicedetails['introfiles'] = external_util::get_area_files($context->id, 'mod_choice', 'intro', false, false);
+
+                $choicedetails = helper_for_get_mods_by_courses::standard_coursemodule_element_values($choice, 'mod_choice');
 
                 if (has_capability('mod/choice:choose', $context)) {
                     $choicedetails['publish']  = $choice->publish;
@@ -525,10 +515,6 @@ class mod_choice_external extends external_api {
                 if (has_capability('moodle/course:manageactivities', $context)) {
                     $choicedetails['timemodified']  = $choice->timemodified;
                     $choicedetails['completionsubmit']  = $choice->completionsubmit;
-                    $choicedetails['section']  = $choice->section;
-                    $choicedetails['visible']  = $choice->visible;
-                    $choicedetails['groupmode']  = $choice->groupmode;
-                    $choicedetails['groupingid']  = $choice->groupingid;
                 }
                 $returnedchoices[] = $choicedetails;
             }
@@ -549,15 +535,9 @@ class mod_choice_external extends external_api {
         return new external_single_structure(
             array(
                 'choices' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'Choice instance id'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_RAW, 'Choice name'),
-                            'intro' => new external_value(PARAM_RAW, 'The choice intro'),
-                            'introformat' => new external_format_value('intro'),
-                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
+                    new external_single_structure(array_merge(
+                        helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(),
+                        [
                             'publish' => new external_value(PARAM_BOOL, 'If choice is published', VALUE_OPTIONAL),
                             'showresults' => new external_value(PARAM_INT, '0 never, 1 after answer, 2 after close, 3 always',
                                                                 VALUE_OPTIONAL),
@@ -573,12 +553,8 @@ class mod_choice_external extends external_api {
                             'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
                             'completionsubmit' => new external_value(PARAM_BOOL, 'Completion on user submission', VALUE_OPTIONAL),
                             'showavailable' => new external_value(PARAM_BOOL, 'Show available spaces', VALUE_OPTIONAL),
-                            'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
-                            'visible' => new external_value(PARAM_BOOL, 'Visible', VALUE_OPTIONAL),
-                            'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
-                            'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
-                        ), 'Choices'
-                    )
+                        ]
+                    ), 'Choices')
                 ),
                 'warnings' => new external_warnings(),
             )

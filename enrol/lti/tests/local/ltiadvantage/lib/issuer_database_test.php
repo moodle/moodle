@@ -42,6 +42,7 @@ class issuer_database_test extends \advanced_testcase {
         $appregrepo = new application_registration_repository();
         $appreg = application_registration::create(
             'My platform',
+            'a2c94a2c94',
             new \moodle_url('https://lms.example.com'),
             'client-id-123',
             new \moodle_url('https://lms.example.com/lti/auth'),
@@ -62,7 +63,7 @@ class issuer_database_test extends \advanced_testcase {
         $this->assertNull($issuerdb->findRegistrationByIssuer('https://lms.example.com', 'client-id-456'));
 
         $this->expectException(\coding_exception::class);
-        $this->expectExceptionMessageMatches('/Both issuer and client id are required to identify platform /');
+        $this->expectExceptionMessageMatches('/The param \'clientid\' is required. /');
         $issuerdb->findRegistrationByIssuer('https://lms.example.com');
     }
 
@@ -76,6 +77,7 @@ class issuer_database_test extends \advanced_testcase {
         $appregrepo = new application_registration_repository();
         $appreg = application_registration::create(
             'My platform',
+            'a2c94a2c94',
             new \moodle_url('https://lms.example.com'),
             'client-id-123',
             new \moodle_url('https://lms.example.com/lti/auth'),
@@ -96,7 +98,7 @@ class issuer_database_test extends \advanced_testcase {
         $this->assertNull($issuerdb->findDeployment('https://lms.example.com', 'deployment-id-2', 'client-id-123'));
 
         $this->expectException(\coding_exception::class);
-        $this->expectExceptionMessageMatches('/Both issuer and client id are required to identify platform /');
+        $this->expectExceptionMessageMatches('/Both issuer and client id are required to identify platform registrations /');
         $issuerdb->findDeployment('https://lms.example.com', 'deployment-id-2');
     }
 }

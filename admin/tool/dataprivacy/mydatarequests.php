@@ -36,7 +36,7 @@ $PAGE->set_url($url);
 
 require_login();
 if (isguestuser()) {
-    print_error('noguest');
+    throw new \moodle_exception('noguest');
 }
 
 $usercontext = context_user::instance($USER->id);

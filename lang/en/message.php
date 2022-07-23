@@ -275,10 +275,6 @@ $string['you'] = 'You:';
 $string['youhaveblockeduser'] = 'You have blocked this user.';
 $string['yourcontactrequestpending'] = 'Your contact request is pending with {$a}';
 
-// Deprecated since Moodle 3.9.
-$string['messagecontactrequestsnotification'] = '{$a} is requesting to be added as a contact.';
-$string['messagecontactrequestsnotificationsubject'] = 'Contact request from {$a}';
-
 // Deprecated since Moodle 4.0.
 $string['defaults'] = 'Defaults';
 $string['loggedin_help'] = 'Configure how you would like to receive notifications when you are logged into Moodle';

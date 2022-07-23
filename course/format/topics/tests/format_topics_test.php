@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Topics course format related unit tests.
- *
- * @package    format_topics
- * @copyright  2015 Marina Glancy
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace format_topics;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +28,7 @@ require_once($CFG->dirroot . '/course/lib.php');
  * @copyright  2015 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_topics_testcase extends advanced_testcase {
+class format_topics_test extends \advanced_testcase {
 
     /**
      * Tests for format_topics::get_section_name method with default section names.
@@ -145,9 +139,9 @@ class format_topics_testcase extends advanced_testcase {
 
         // Call webservice without necessary permissions.
         try {
-            core_external::update_inplace_editable('format_topics', 'sectionname', $section->id, 'New section name');
+            \core_external::update_inplace_editable('format_topics', 'sectionname', $section->id, 'New section name');
             $this->fail('Exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('Course or activity not accessible. (Not enrolled)',
                     $e->getMessage());
         }
@@ -156,8 +150,8 @@ class format_topics_testcase extends advanced_testcase {
         $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id);
 
-        $res = core_external::update_inplace_editable('format_topics', 'sectionname', $section->id, 'New section name');
-        $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
+        $res = \core_external::update_inplace_editable('format_topics', 'sectionname', $section->id, 'New section name');
+        $res = \external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
         $this->assertEquals('New section name', $res['value']);
         $this->assertEquals('New section name', $DB->get_field('course_sections', 'name', ['id' => $section->id]));
     }
@@ -191,7 +185,7 @@ class format_topics_testcase extends advanced_testcase {
         try {
             component_callback('format_weeks', 'inplace_editable', ['sectionname', $section->id, 'New name']);
             $this->fail('Exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals(1, preg_match('/^Can\'t find data record in database/', $e->getMessage()));
         }
     }
@@ -218,14 +212,14 @@ class format_topics_testcase extends advanced_testcase {
             'course' => $course,
             'category' => $category,
             'editoroptions' => [
-                'context' => context_course::instance($course->id),
+                'context' => \context_course::instance($course->id),
                 'subdirs' => 0
             ],
-            'returnto' => new moodle_url('/'),
-            'returnurl' => new moodle_url('/'),
+            'returnto' => new \moodle_url('/'),
+            'returnurl' => new \moodle_url('/'),
         ];
 
-        $courseform = new testable_course_edit_form(null, $args);
+        $courseform = new \testable_course_edit_form(null, $args);
         $courseform->definition_after_data();
 
         $enddate = $params['startdate'] + get_config('moodlecourse', 'courseduration');

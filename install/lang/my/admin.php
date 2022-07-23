@@ -29,5 +29,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
+$string['cliincorrectvalueerror'] = 'မှားယွင်းနေပါသည်၊ "{$a->option}" အတွက် "{$a->value}" သည် မှားယွင်းသောတန်ဖိုးဖြစ်ပါသည်';
+$string['cliincorrectvalueretry'] = 'မှားယွင်းသော တန်ဖိုးဖြစ်ပါသည်၊ ထပ်မံကြိုးစားပါ';
 $string['clitypevalue'] = 'တန်ဖိုး ထည့်သွင်းပါ';
 $string['clitypevaluedefault'] = 'တန်ဖိုး ထည့်သွင်းပါ၊ ပုံသေတန်ဖိုး ({$a}) ကိုအသုံးပြုလိုပါက ENTER ကိုနှိပ်ပါ';
+$string['cliunknowoption'] = 'အသိအမှတ် မပြုထားသော ရွေးချယ်မှုများ :
+    {$a}
+ကျေးဇူးပြု၍ -- အကူအညီရယူရန် ကိုနှိပ်ပါ။';
+$string['environmentrequireinstall'] = 'ထည့်သွင်းပြီး အသုံးပြုခွင့်ဖွင့်ပါ';
+$string['environmentrequireversion'] = 'ဗားရှင်း{$a->needed} ကို လိုအပ်ပြီး သင်သည် {$a->current} ကိုအသုံးပြုနေပါသည်';
+$string['upgradekeyset'] = 'ကီး အဆင့်မြှင့်တင်ပါ (မချမှတ်ရန် ကွက်လပ်ချန်ခဲ့ပါ)';

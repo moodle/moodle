@@ -52,7 +52,7 @@ define('IGNORE_MULTIPLE', 1);
 define('MUST_EXIST', 2);
 
 /**
- * DML exception class, use instead of print_error() in dml code.
+ * DML exception class, use instead of throw new \moodle_exception() in dml code.
  *
  * @package    core
  * @category   dml

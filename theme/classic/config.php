@@ -75,7 +75,8 @@ $THEME->layouts = [
     // My courses page.
     'mycourses' => array(
         'file' => 'columns.php',
-        'regions' => array()
+        'regions' => ['side-pre', 'side-post'],
+        'defaultregion' => 'side-pre',
     ),
     // My dashboard page.
     'mydashboard' => array(

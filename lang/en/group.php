@@ -85,6 +85,7 @@ $string['eventgroupinggroupassigned'] = 'Group assigned to grouping';
 $string['eventgroupinggroupunassigned'] = 'Group unassigned from grouping';
 $string['eventgroupingupdated'] = 'Grouping updated';
 $string['existingmembers'] = 'Existing members: {$a}';
+$string['exportgroupsgroupings'] = 'Download groups and groupings as';
 $string['filtergroups'] = 'Filter groups by:';
 $string['group'] = 'Group';
 $string['groupaddedsuccesfully'] = 'Group {$a} added successfully';

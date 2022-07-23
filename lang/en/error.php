@@ -152,7 +152,6 @@ $string['cannotsetupblock'] = 'Blocks tables could NOT be set up successfully!';
 $string['cannotsetupcapformod'] = 'Could not set up the capabilities for {$a}';
 $string['cannotsetupcapforplugin'] = 'Could not set up the capabilities for {$a}';
 $string['cannotshowhidecoursesincategory'] = 'Cannot show/hide the courses in category {$a}.';
-$string['cannotswitcheditmodeon'] = 'Could not switch edit mode on';
 $string['cannotsignup'] = 'You cannot create a new account because you are already logged in as {$a}.';
 $string['cannotunassigncap'] = 'Could not unassign deprecated capability {$a->cap} from role {$a->role}';
 $string['cannotunassignrolefrom'] = 'Cannot unassign this user from role id: {$a}';
@@ -405,6 +404,7 @@ $string['messageundeliveredbynotificationsettings'] = 'The message could not be 
 $string['messagingdisable'] = 'Messaging is disabled on this site';
 $string['mimetexisnotexist'] = 'Your system is not configured to run mimeTeX. You need to obtain the C source from <a href="https://www.forkosh.com/mimetex.zip">https://www.forkosh.com/mimetex.zip</a>, compile it and put the executable into your moodle/filter/tex/ directory.';
 $string['mimetexnotexecutable'] = 'Custom mimetex is not executable!';
+$string['missingcategoryrole'] = 'Could not assign role to user: missing role for category.';
 $string['missingfield'] = 'Field "{$a}" is missing';
 $string['missingkeyinsql'] = 'ERROR: missing param "{$a}" in query';
 $string['missingparam'] = 'A required parameter ({$a}) was missing';
@@ -533,6 +533,9 @@ $string['sessionerroruser2'] = 'A server error that affects your login session w
 $string['sessionipnomatch'] = 'Sorry, but your IP number seems to have changed from when you first logged in.  This security feature prevents crackers stealing your identity while logged in to this site.  Normal users should not be seeing this message - please ask the site administrator for help.';
 $string['sessionipnomatch2'] = '<p>Sorry, but your IP number seems to have changed from when you first logged in. This security feature prevents crackers stealing your identity while logged in to this site. You may see this error if you use wireless networks or if you are roaming between different networks. Please ask the site administrator for more help.</p>
 <p>If you want to continue please press F5 key to refresh this page.</p>';
+$string['sessioncannotobtainlock'] = '<p>Unable to obtain lock for session id {$a->id} within {$a->acquiretimeout}.</p>
+<p>It is likely that another page ({$a->whohaslock}) is still running in another browser tab, or it did not release the lock due to an error.</p>
+<p>You can wait until the session lock timeout ({$a->lockexpire}) or you can restart your browser session. If this error persists, please notify the server administrator.</p>';
 $string['shortnametaken'] = 'Short name is already used for another course ({$a})';
 $string['sitepolicynotagreed'] = 'Site policy not agreed: <a href="{$a}">Click here to open the site policy.</a>';
 $string['scheduledbackupsdisabled'] = 'Scheduled backups have been disabled by the server admin';
@@ -564,6 +567,7 @@ $string['unknowcontext'] = 'This is an unknown context ({$a}) in get_child_conte
 $string['unknowformat'] = 'Format not known ({$a})';
 $string['unknownbackupexporterror'] = 'Unknown error preparing information for import';
 $string['unknownblockregion'] = 'The block region \'{$a}\' is not recognised on this page.';
+$string['unknowncategory'] = 'Unknown category with category ID number "{$a}"';
 $string['unknowncontext'] = 'This is an unknown context.';
 $string['unknowncourse'] = 'Unknown course named "{$a}"';
 $string['unknowncourseidnumber'] = 'Unknown course ID "{$a}"';
@@ -595,6 +599,7 @@ $string['useradminodelete'] = 'Administrator accounts cannot be deleted.';
 $string['userautherror'] = 'Unknown auth plugin';
 $string['userauthunsupported'] = 'Auth plugin not supported here';
 $string['useremailduplicate'] = 'Duplicate address';
+$string['userisfilteredout'] = 'This user does not match filters and table preferences!';
 $string['usermustbemnet'] = 'Users in the MNET access control list must be remote MNET users';
 $string['usernamelowercase'] = 'The username must be in lower case';
 $string['usernotaddederror'] = 'User not added - error';
@@ -631,3 +636,6 @@ $string['xmldberror'] = 'XMLDB error!';
 $string['alreadyloggedin'] = 'You are already logged in as {$a}, you need to log out before logging in as different user.';
 $string['youcannotdeletecategory'] = 'You cannot delete category \'{$a}\' because you can neither delete the contents, nor move them elsewhere.';
 $string['protected_cc_not_supported'] = 'Protected cartridges not supported.';
+
+// Deprecated since Moodle 4.1.
+$string['cannotswitcheditmodeon'] = 'Could not switch edit mode on';

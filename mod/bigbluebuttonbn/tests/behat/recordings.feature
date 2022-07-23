@@ -1,9 +1,10 @@
-@mod @mod_bigbluebuttonbn @core_form @course
+@mod @mod_bigbluebuttonbn
 Feature: The recording can be managed through the room page
   As a user I am able to see the relevant recording for a given bigbluebutton activity and modify its parameters
 
   Background:  Make sure that import recording is enabled and course, activities and recording exists
     Given a BigBlueButton mock server is configured
+    And I enable "bigbluebuttonbn" "mod" plugin
     And the following "courses" exist:
       | fullname      | shortname | category |
       | Test Course 1 | C1        | 0        |
@@ -76,6 +77,7 @@ Feature: The recording can be managed through the room page
     Given the BigBlueButtonBN server has sent recording ready notifications
     And I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as admin
     When I click on "a[data-action='delete']" "css_element" in the "Recording 1" "table_row"
+    And I wait until the page is ready
     And I click on "OK" "button" in the "Confirm" "dialogue"
     Then I should not see "Recording 1"
     And I should see "Recording 2"

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_search;
 /**
  * Area category unit tests.
  *
@@ -21,17 +22,7 @@
  * @copyright  2018 Dmitrii Metelkin <dmitriim@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Area category unit tests.
- *
- * @package    core_search
- * @copyright  2018 Dmitrii Metelkin <dmitriim@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class search_area_category_testcase extends advanced_testcase {
+class area_category_test extends \advanced_testcase {
 
     /**
      * A helper function to get a mocked search area.
@@ -65,7 +56,7 @@ class search_area_category_testcase extends advanced_testcase {
         $areas[] = null;
         $areas[] = [$this->get_mocked_area('area2')];
         $areas[] = $this;
-        $areas[] = new stdClass();
+        $areas[] = new \stdClass();
         $areas[] = $this->get_mocked_area('area3');
         $areas[] = $this->get_mocked_area('area4');
 

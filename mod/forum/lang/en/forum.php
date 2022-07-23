@@ -262,11 +262,13 @@ $string['emaildigesttype_help'] = 'The type of notification that you will receiv
 * Digest - subjects only - you will receive one digest e-mail per day containing just the subject of each forum post.
 ';
 $string['emptymessage'] = 'Something was wrong with your post. Perhaps you left it blank, or the attachment was too big. Your changes have NOT been saved.';
+$string['errorcannotlock'] = 'You do not have the permission to lock discussions.';
+$string['errordiscussionnotfound'] = 'The discussion was not found';
 $string['erroremptymessage'] = 'Post message cannot be empty';
 $string['erroremptysubject'] = 'Post subject cannot be empty.';
 $string['errorenrolmentrequired'] = 'You must be enrolled in this course to access this content';
+$string['errorforumnotfound'] = 'The forum that this discussion belongs to was not found';
 $string['errorwhiledelete'] = 'An error occurred while deleting record.';
-$string['errorcannotlock'] = 'You do not have the permission to lock discussions.';
 $string['eventassessableuploaded'] = 'Some content has been posted.';
 $string['everyonecanchoose'] = 'Everyone can choose to be subscribed';
 $string['everyonecannowchoose'] = 'Everyone can now choose to be subscribed';
@@ -718,11 +720,11 @@ $string['trackingoff'] = 'Off';
 $string['trackingon'] = 'Forced';
 $string['trackingoptional'] = 'Optional';
 $string['trackingtype'] = 'Read tracking';
-$string['trackingtype_help'] = 'Read tracking enables participants to easily check which posts they have not yet seen by highlighting any new posts.
+$string['trackingtype_help'] = 'Read tracking enables participants to check which posts they have not yet seen by highlighting any new posts.
 
-If set to optional, participants can choose whether to turn tracking on or off via a link in the actions menu or administration block, depending on the theme. (Users must also enable forum tracking in their forum preferences.)
+If set to optional, participants can choose whether to turn tracking on or off for the forum. (Users must also enable forum tracking in their forum preferences.)
 
-If \'Allow forced read tracking\' is enabled in the site administration, then a further option is available - forced. This means that tracking is always on, regardless of users\' forum preferences.';
+If \'Allow forced read tracking\' is enabled by a site administrator, then a further option is available - forced. This means that tracking is always on, regardless of users\' forum preferences.';
 $string['unlockdiscussion'] = 'Unlock this discussion';
 $string['unread'] = 'Unread';
 $string['unreadpost'] = 'Unread post';

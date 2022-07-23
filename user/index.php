@@ -34,7 +34,8 @@ use core_table\local\filter\filter;
 use core_table\local\filter\integer_filter;
 use core_table\local\filter\string_filter;
 
-define('DEFAULT_PAGE_SIZE', 20);
+$participantsperpage = intval(get_config('moodlecourse', 'participantsperpage'));
+define('DEFAULT_PAGE_SIZE', (!empty($participantsperpage) ? $participantsperpage : 20));
 
 $page         = optional_param('page', 0, PARAM_INT); // Which page to show.
 $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT); // How many per page.
@@ -54,7 +55,7 @@ $PAGE->set_url('/user/index.php', array(
 if ($contextid) {
     $context = context::instance_by_id($contextid, MUST_EXIST);
     if ($context->contextlevel != CONTEXT_COURSE) {
-        print_error('invalidcontext');
+        throw new \moodle_exception('invalidcontext');
     }
     $course = $DB->get_record('course', array('id' => $context->instanceid), '*', MUST_EXIST);
 } else {

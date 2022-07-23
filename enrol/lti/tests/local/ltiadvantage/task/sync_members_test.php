@@ -610,6 +610,38 @@ class sync_members_test extends \lti_advantage_testcase {
     }
 
     /**
+     * Test syncing members when the enrolment instance is disabled.
+     *
+     * @covers ::execute
+     */
+    public function test_sync_members_disabled_instance() {
+        $this->resetAfterTest();
+        global $DB;
+
+        [$course, $resource, $resource2, $resource3] = $this->create_test_environment();
+        $userrepo = new user_repository();
+
+        // Disable resource 1.
+        $enrol = (object) ['id' => $resource->enrolid, 'status' => ENROL_INSTANCE_DISABLED];
+        $DB->update_record('enrol', $enrol);
+
+        // Delete the activity being shared by resource2, leaving resource 2 disabled as a result.
+        $modcontext = \context::instance_by_id($resource2->contextid);
+        course_delete_module($modcontext->instanceid);
+
+        // Only the enabled resource 3 should sync members.
+        $task = $this->get_mock_task_with_users($this->get_mock_members_with_ids(range(1, 1)));
+        $task->execute();
+
+        $this->expectOutputRegex(
+            "/^Starting - Member sync for published resource '$resource3->id' for course '$course->id'.\n".
+            "Completed - Synced members for tool '$resource3->id' in the course '$course->id'. Processed 0 users; ".
+            "enrolled 0 members; unenrolled 0 members.\n$/"
+        );
+        $this->assertCount(0, $userrepo->find_by_resource($resource->id));
+    }
+
+    /**
      * Test syncing members for a membersync-enabled resource when the launch omits the NRPS service endpoints.
      *
      * @covers ::execute
@@ -621,7 +653,7 @@ class sync_members_test extends \lti_advantage_testcase {
 
         // Launch the tool for a user.
         $mockinstructor = $this->get_mock_launch_users_with_ids([1])[0];
-        $mocklaunch = $this->get_mock_launch($resource, $mockinstructor, null, false, false);
+        $mocklaunch = $this->get_mock_launch($resource, $mockinstructor, null, null, false);
         $launchservice = $this->get_tool_launch_service();
         $instructoruser = $this->lti_advantage_user_authenticates('1');
         $launchservice->user_launches_tool($instructoruser, $mocklaunch);
@@ -708,7 +740,7 @@ class sync_members_test extends \lti_advantage_testcase {
         }
 
         // Mock the launch for the specified user.
-        $mocklaunch = $this->get_mock_launch($resource, $launchdata['user'], null, true, true,
+        $mocklaunch = $this->get_mock_launch($resource, $launchdata['user'], null, [], true,
             $launchdata['launch_migration_claim']);
 
         // Perform the launch.

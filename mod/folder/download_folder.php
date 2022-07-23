@@ -37,13 +37,13 @@ $folder = $DB->get_record('folder', array('id' => $cm->instance), '*', MUST_EXIS
 
 $downloadable = folder_archive_available($folder, $cm);
 if (!$downloadable) {
-    print_error('cannotdownloaddir', 'repository');
+    throw new \moodle_exception('cannotdownloaddir', 'repository');
 }
 
 $fs = get_file_storage();
 $files = $fs->get_area_files($context->id, 'mod_folder', 'content');
 if (empty($files)) {
-    print_error('cannotdownloaddir', 'repository');
+    throw new \moodle_exception('cannotdownloaddir', 'repository');
 }
 
 // Log zip as downloaded.
@@ -52,7 +52,8 @@ folder_downloaded($folder, $course, $cm, $context);
 // Close the session.
 \core\session\manager::write_close();
 
-$filename = shorten_filename(clean_filename($folder->name . "-" . date("Ymd")) . ".zip");
+$foldername = format_string($folder->name, true, ["context" => $context]);
+$filename = shorten_filename(clean_filename($foldername . "-" . date("Ymd")) . ".zip");
 $zipwriter = \core_files\archive_writer::get_stream_writer($filename, \core_files\archive_writer::ZIP_WRITER);
 
 foreach ($files as $file) {

@@ -49,7 +49,7 @@ $PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
 
 // basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 require_login($course);
 $context = context_course::instance($course->id);
@@ -81,29 +81,18 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'grader';
 
-// Build editing on/off buttons
+// Build editing on/off buttons.
 $buttons = '';
-if (has_capability('moodle/grade:edit', $context)) {
 
-    if (($edit != - 1) and $PAGE->user_allowed_editing()) {
+$PAGE->set_other_editing_capability('moodle/grade:edit');
+if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
+    if ($edit != - 1) {
         $USER->editing = $edit;
     }
 
-    // page params for the turn editting on
+    // Page params for the turn editing on button.
     $options = $gpr->get_options();
-    $options['sesskey'] = sesskey();
-
-    if (isset($USER->editing) && $USER->editing) {
-        $options['edit'] = 0;
-        $string = get_string('turneditingoff');
-    } else {
-        $options['edit'] = 1;
-        $string = get_string('turneditingon');
-    }
-
-    if (!$PAGE->theme->haseditswitch) {
-        $buttons = new single_button(new moodle_url('index.php', $options), $string, 'get');
-    }
+    $buttons = $OUTPUT->edit_button(new moodle_url($PAGE->url, $options), 'get');
 }
 
 $gradeserror = array();

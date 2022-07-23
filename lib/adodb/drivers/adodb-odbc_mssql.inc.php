@@ -81,8 +81,7 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 			return $this->GetOne($this->identitySQL);
 	}
 
-
-	function MetaForeignKeys($table, $owner=false, $upper=false)
+	public function metaForeignKeys($table, $owner = '', $upper = false, $associative = false)
 	{
 	global $ADODB_FETCH_MODE;
 

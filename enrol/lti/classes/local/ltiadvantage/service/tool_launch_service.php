@@ -87,7 +87,9 @@ class tool_launch_service {
         $launchdata = $launch->getLaunchData();
         $data = [
             'platform' => $launchdata['iss'],
-            'clientid' => $launchdata['aud'], // See LTI_Message_Launch::validate_registration for details about aud.
+            // The 'aud' property may be an array with one or more values, but can be a string if there is only one value.
+            // https://www.imsglobal.org/spec/security/v1p1#id-token.
+            'clientid' => is_array($launchdata['aud']) ? $launchdata['aud'][0] : $launchdata['aud'],
             'exp' => $launchdata['exp'],
             'nonce' => $launchdata['nonce'],
             'sub' => $launchdata['sub'],
@@ -161,12 +163,12 @@ class tool_launch_service {
                 $context ? $context->get_id() : null
             );
         }
-        // AGS. If the lineitemsurl is missing, it means the tool has no access to the endpoint.
+        // Add the AGS configuration for the resource link.
         // See: http://www.imsglobal.org/spec/lti-ags/v2p0#assignment-and-grade-service-claim.
-        if ($launchdata->ags && $launchdata->ags['lineitems']) {
+        if ($launchdata->ags && (!empty($launchdata->ags['lineitems']) || !empty($launchdata->ags['lineitem']))) {
             $resourcelink->add_grade_service(
-                new \moodle_url($launchdata->ags['lineitems']),
-                isset($launchdata->ags['lineitem']) ? new \moodle_url($launchdata->ags['lineitem']) : null,
+                !empty($launchdata->ags['lineitems']) ? new \moodle_url($launchdata->ags['lineitems']) : null,
+                !empty($launchdata->ags['lineitem']) ? new \moodle_url($launchdata->ags['lineitem']) : null,
                 $launchdata->ags['scope']
             );
         }

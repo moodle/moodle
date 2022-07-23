@@ -85,3 +85,46 @@ Feature: Users can add entries to database activities
       | Textarea field name | This is the content |
     And I click on "Insert H5P" "button"
     Then I should see "Browse repositories..."
+
+  @javascript
+  Scenario: If maximum number of entries is set other than None then add entries should be seen only if number of entries is less than it
+    Given I am on the "Test database name" "data activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Maximum number of entries | 2 |
+    And I press "Save and display"
+    And I add a "Text input" field to "Test database name" database and I fill the form with:
+      | Field name | Test1 |
+    And I navigate to "Templates" in current page administration
+    And I press "Save template"
+    And I log out
+    And I am on the "Test database name" "data activity" page logged in as student1
+    And I press "Add entry"
+    And I set the field "Test1" to "foo"
+    And I press "Save"
+    And I press "Add entry"
+    And I set the field "Test1" to "bar"
+    And I press "Save"
+    And I should not see "Add entry"
+    And I log out
+    And I am on the "Test database name" "data activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Maximum number of entries | 3 |
+    And I press "Save and display"
+    And I log out
+    And I am on the "Test database name" "data activity" page logged in as student1
+    And I should see "Add entry"
+
+  @javascript
+  Scenario: Guest user cannot add entries to a database
+    Given I am on the "Course 1" "enrolment methods" page logged in as teacher1
+    And I click on "Enable" "link" in the "Guest access" "table_row"
+    And I am on "Course 1" course homepage
+    And I add a "Text area" field to "Test database name" database and I fill the form with:
+      | Field name | Textarea field name |
+    And I log out
+    When I am on the "Test database name" "data activity" page logged in as "guest"
+    Then I should not see "Add entry"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20211221" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20220531" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1476,6 +1476,9 @@
         <KEY NAME="usingcontextid" TYPE="foreign" FIELDS="usingcontextid" REFTABLE="context" REFFIELDS="id"/>
         <KEY NAME="questionbankentryid" TYPE="foreign" FIELDS="questionbankentryid" REFTABLE="question_bank_entries" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="context-component-area-itemid" UNIQUE="true" FIELDS="usingcontextid, component, questionarea, itemid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="question_set_references" COMMENT="Records where groups of questions are used.">
       <FIELDS>
@@ -1492,6 +1495,9 @@
         <KEY NAME="usingcontextid" TYPE="foreign" FIELDS="usingcontextid" REFTABLE="context" REFFIELDS="id"/>
         <KEY NAME="questionscontextid" TYPE="foreign" FIELDS="questionscontextid" REFTABLE="context" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="context-component-area-itemid" UNIQUE="true" FIELDS="usingcontextid, component, questionarea, itemid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="question_answers" COMMENT="Answers, with a fractional grade (0-1) and feedback">
       <FIELDS>
@@ -1921,7 +1927,7 @@
         <FIELD NAME="aggregateoutcomes" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Aggregate outcomes"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="hidden" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -2062,7 +2068,7 @@
         <FIELD NAME="aggregateonlygraded" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="aggregate only graded items"/>
         <FIELD NAME="aggregateoutcomes" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Aggregate outcomes"/>
         <FIELD NAME="aggregatesubcats" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="This setting was removed from grade_categories. It is kept here only to preserve history."/>
-        <FIELD NAME="hidden" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -2594,6 +2600,7 @@
         <INDEX NAME="contenthash" UNIQUE="false" FIELDS="contenthash"/>
         <INDEX NAME="pathnamehash" UNIQUE="true" FIELDS="pathnamehash"/>
         <INDEX NAME="license" UNIQUE="false" FIELDS="license"/>
+        <INDEX NAME="filename" UNIQUE="false" FIELDS="filename"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="files_reference" COMMENT="Store files references">
@@ -2854,6 +2861,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="token" UNIQUE="false" FIELDS="token" COMMENT="This index will be used anytime a token is validated."/>
+        <INDEX NAME="sid" UNIQUE="false" FIELDS="sid" COMMENT="This index will be used anytime a token is looked up by its sid."/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="blog_association" COMMENT="Associations of blog entries with courses and module instances">
@@ -3441,6 +3449,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="nextruntime_idx" UNIQUE="false" FIELDS="nextruntime"/>
+        <INDEX NAME="timestarted_idx" UNIQUE="false" FIELDS="timestarted"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="task_log" COMMENT="The log table for all tasks">

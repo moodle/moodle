@@ -238,7 +238,7 @@ function upgrade_set_timeout($max_execution_time=300) {
             $upgraderunning = 0;
         } else {
             // web upgrade not running or aborted
-            print_error('upgradetimedout', 'admin', "$CFG->wwwroot/$CFG->admin/");
+            throw new \moodle_exception('upgradetimedout', 'admin', "$CFG->wwwroot/$CFG->admin/");
         }
     }
 
@@ -333,7 +333,7 @@ function upgrade_mod_savepoint($result, $version, $modname, $allowabort=true) {
     $dbversion = $DB->get_field('config_plugins', 'value', array('plugin'=>$component, 'name'=>'version'));
 
     if (!$module = $DB->get_record('modules', array('name'=>$modname))) {
-        print_error('modulenotexist', 'debug', '', $modname);
+        throw new \moodle_exception('modulenotexist', 'debug', '', $modname);
     }
 
     if ($dbversion >= $version) {
@@ -379,7 +379,7 @@ function upgrade_block_savepoint($result, $version, $blockname, $allowabort=true
     $dbversion = $DB->get_field('config_plugins', 'value', array('plugin'=>$component, 'name'=>'version'));
 
     if (!$block = $DB->get_record('block', array('name'=>$blockname))) {
-        print_error('blocknotexist', 'debug', '', $blockname);
+        throw new \moodle_exception('blocknotexist', 'debug', '', $blockname);
     }
 
     if ($dbversion >= $version) {
@@ -631,7 +631,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
 
         // Throw exception if plugin is incompatible with moodle version.
         if (!empty($plugin->incompatible)) {
-            if ($CFG->branch <= $plugin->incompatible) {
+            if ($CFG->branch >= $plugin->incompatible) {
                 throw new plugin_incompatible_exception($component, $plugin->version);
             }
         }

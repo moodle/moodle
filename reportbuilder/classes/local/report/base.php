@@ -84,6 +84,9 @@ abstract class base {
     /** @var string $downloadfilename Name of the downloaded file */
     private $downloadfilename = '';
 
+    /** @var int Default paging size */
+    private $defaultperpage = self::DEFAULT_PAGESIZE;
+
     /**
      * Base report constructor
      *
@@ -267,6 +270,15 @@ abstract class base {
         }
 
         return $this->entities[$name];
+    }
+
+    /**
+     * Returns the list of all the entities added to the report
+     *
+     * @return entity_base[]
+     */
+    final protected function get_entities(): array {
+        return $this->entities;
     }
 
     /**
@@ -713,5 +725,23 @@ abstract class base {
      */
     public function get_context(): context {
         return $this->report->get_context();
+    }
+
+    /**
+     * Set the default 'per page' size
+     *
+     * @param int $defaultperpage
+     */
+    public function set_default_per_page(int $defaultperpage): void {
+        $this->defaultperpage = $defaultperpage;
+    }
+
+    /**
+     * Default 'per page' size
+     *
+     * @return int
+     */
+    public function get_default_per_page(): int {
+        return $this->defaultperpage;
     }
 }

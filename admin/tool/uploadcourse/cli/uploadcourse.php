@@ -193,9 +193,9 @@ $cir = new csv_import_reader($importid, 'uploadcourse');
 $readcount = $cir->load_csv_content($content, $options['encoding'], $options['delimiter']);
 unset($content);
 if ($readcount === false) {
-    print_error('csvfileerror', 'tool_uploadcourse', '', $cir->get_error());
+    throw new \moodle_exception('csvfileerror', 'tool_uploadcourse', '', $cir->get_error());
 } else if ($readcount == 0) {
-    print_error('csvemptyfile', 'error', '', $cir->get_error());
+    throw new \moodle_exception('csvemptyfile', 'error', '', $cir->get_error());
 }
 $processor = new tool_uploadcourse_processor($cir, $processoroptions, $defaults);
 $processor->execute(new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_PLAIN));

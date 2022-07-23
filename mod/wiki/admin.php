@@ -40,23 +40,23 @@ $toversion = optional_param('toversion', 0, PARAM_INT); // max version to be del
 $fromversion = optional_param('fromversion', 0, PARAM_INT); // min version to be deleted
 
 if (!$page = wiki_get_page($pageid)) {
-    print_error('incorrectpageid', 'wiki');
+    throw new \moodle_exception('incorrectpageid', 'wiki');
 }
 if (!$subwiki = wiki_get_subwiki($page->subwikiid)) {
-    print_error('incorrectsubwikiid', 'wiki');
+    throw new \moodle_exception('incorrectsubwikiid', 'wiki');
 }
 if (!$cm = get_coursemodule_from_instance("wiki", $subwiki->wikiid)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
-    print_error('incorrectwikiid', 'wiki');
+    throw new \moodle_exception('incorrectwikiid', 'wiki');
 }
 
 require_login($course, true, $cm);
 
 if (!wiki_user_can_view($subwiki, $wiki)) {
-    print_error('cannotviewpage', 'wiki');
+    throw new \moodle_exception('cannotviewpage', 'wiki');
 }
 
 $context = context_module::instance($cm->id);
@@ -68,7 +68,7 @@ if (!empty($delete) && confirm_sesskey()) {
         // Validate that we are deleting from the same subwiki.
         $deletepage = wiki_get_page($delete);
         if (!$deletepage || $deletepage->subwikiid != $page->subwikiid) {
-            print_error('incorrectsubwikiid', 'wiki');
+            throw new \moodle_exception('incorrectsubwikiid', 'wiki');
         }
     }
     wiki_delete_pages($context, $delete, $page->subwikiid);
@@ -90,7 +90,7 @@ if (!empty($toversion) && !empty($fromversion) && confirm_sesskey()) {
     $totalversionstodelete += 1; //added 1 as toversion should be included
 
     if (($totalversionstodelete >= $versioncount) || ($versioncount <= 1)) {
-        print_error('incorrectdeleteversions', 'wiki');
+        throw new \moodle_exception('incorrectdeleteversions', 'wiki');
     } else {
         $versions = array();
         for ($i = $fromversion; $i <= $toversion; $i++) {

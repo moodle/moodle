@@ -41,7 +41,7 @@ navigation_node::override_active_url(new moodle_url('/grade/edit/tree/index.php'
     array('id'=>$courseid)));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_login($course);
@@ -57,7 +57,7 @@ $heading = get_string('categoryedit', 'grades');
 
 if ($id) {
     if (!$grade_category = grade_category::fetch(array('id'=>$id, 'courseid'=>$course->id))) {
-        print_error('invalidcategory');
+        throw new \moodle_exception('invalidcategory');
     }
     $grade_category->apply_forced_settings();
     $category = $grade_category->get_record_data();

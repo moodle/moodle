@@ -14,26 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace auth_oauth2;
+
 /**
  * Auth oauth2 auth functions tests.
  *
  * @package    auth_oauth2
  * @category   test
- * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-/**
- * Tests for the \auth_oauth2\auth class.
- *
  * @copyright  2019 Shamim Rezaie
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class auth_oauth2_auth_testcase extends advanced_testcase {
+class auth_test extends \advanced_testcase {
 
     public function test_get_password_change_info() {
         $this->resetAfterTest();

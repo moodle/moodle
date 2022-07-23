@@ -100,7 +100,7 @@ class action_test extends advanced_testcase {
 
         // Assert correct title appears inside action link, after the icon.
         $actionlink = $action->get_action_link((object) $row);
-        $this->assertStringEndsWith('</i>Yes</a>', $actionlink);
+        $this->assertEquals('Yes', $actionlink->text);
     }
 
     /**
@@ -112,7 +112,7 @@ class action_test extends advanced_testcase {
 
         // This is the action URL we expect.
         $expectedactionurl = (new moodle_url('/', ['id' => 42, 'action' => 'edit']))->out(false);
-        $this->assertStringContainsString("href=\"{$expectedactionurl}\"", $actionlink);
+        $this->assertEquals($expectedactionurl, $actionlink->url->out(false));
     }
 
     /**
@@ -128,7 +128,7 @@ class action_test extends advanced_testcase {
             'data-action' => 'edit',
         ];
         foreach ($expectedattributes as $key => $value) {
-            $this->assertStringContainsString("{$key}=\"{$value}\"", $actionlink);
+            $this->assertEquals($value, $actionlink->attributes[$key]);
         }
     }
 

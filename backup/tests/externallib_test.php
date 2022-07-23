@@ -82,8 +82,8 @@ class externallib_test extends externallib_advanced_testcase {
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
 
-        $coursecopy = new \core_backup\copy\copy($formdata);
-        $copydetails = $coursecopy->create_copy();
+        $copydata = \copy_helper::process_formdata($formdata);
+        $copydetails = \copy_helper::create_copy($copydata);
         $copydetails['operation'] = \backup::OPERATION_BACKUP;
 
         $params = array('copies' => $copydetails);

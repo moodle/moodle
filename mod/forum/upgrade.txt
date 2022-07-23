@@ -1,6 +1,12 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 4.1 ===
+
+* The following code, previously used (exclusively) by upgrade steps is not available anymore
+  because of the upgrade cleanup performed for this version. See MDL-71747 for more info:
+    - \mod_forum\task\refresh_forum_post_counts adhoc task.
+
 === 4.0 ===
 
 * The forum_count_replies() function has been removed from core.

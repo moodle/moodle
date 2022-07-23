@@ -14,21 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for mod_lti gradebookservices
- * @package    ltiservice_gradebookservices
- * @category   external
- * @copyright  2020 Claude Vervoort <claude.vervoort@cengage.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-use ltiservice_gradebookservices\local\service\gradebookservices;
+namespace ltiservice_gradebookservices;
 
-defined('MOODLE_INTERNAL') || die();
+use ltiservice_gradebookservices\local\service\gradebookservices;
 
 /**
  * Unit tests for lti gradebookservices.
+ *
+ * @package    ltiservice_gradebookservices
+ * @category   test
+ * @copyright  2020 Claude Vervoort <claude.vervoort@cengage.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lti_gradebookservices_testcase extends advanced_testcase {
+class gradebookservices_test extends \advanced_testcase {
 
     /**
      * Test saving a graded LTI with resource and tag info (as a result of
@@ -278,14 +276,14 @@ class mod_lti_gradebookservices_testcase extends advanced_testcase {
      * Creates a new LTI Tool Type.
      */
     private function create_type() {
-        $type = new stdClass();
+        $type = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->name = "Test tool";
         $type->description = "Example description";
         $type->clientid = "Test client ID";
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
 
-        $config = new stdClass();
+        $config = new \stdClass();
         $config->ltiservice_gradesynchronization = 2;
         return lti_add_type($type, $config);
     }

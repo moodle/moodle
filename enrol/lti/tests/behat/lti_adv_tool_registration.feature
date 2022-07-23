@@ -13,15 +13,35 @@ Feature: Register a platform with the tool
     When I follow "Register a platform"
     And I set the following fields to these values:
       | Platform name | My test platform |
+    And I press "Continue"
+    And I should see "Dynamic registration"
+    And I should see "Manual registration"
+    And I should see "Platform details"
+    And I follow "Back"
+    And "Manage deployments" "link" should exist in the "My test platform" "table_row"
+    And "View platform details" "link" should exist in the "My test platform" "table_row"
+    And "Delete" "link" should exist in the "My test platform" "table_row"
+    And I should see "Pending" in the "My test platform" "table_row"
+    And I click on "View platform details" "link" in the "My test platform" "table_row"
+    And I follow "Edit platform details"
+    And I set the following fields to these values:
       | Platform ID (issuer) | https://lms.example.com |
       | Client ID            | abcd1234                |
       | Authentication request URL | https://lms.example.com/auth |
       | Public keyset URL          | https://lms.example.com/jwks |
       | Access token URL           | https://lms.example.com/token |
     And I press "Save changes"
-    Then I should see "Platform registration added"
+    Then I should see "Platform registration updated"
+    And I should see "My test platform" in the "Platform name" "table_row"
+    And I should see "https://lms.example.com" in the "Platform ID (issuer)" "table_row"
+    And I should see "abcd1234" in the "Client ID" "table_row"
+    And I should see "https://lms.example.com/auth" in the "Authentication request URL" "table_row"
+    And I should see "https://lms.example.com/jwks" in the "Public keyset URL" "table_row"
+    And I should see "https://lms.example.com/token" in the "Access token URL" "table_row"
+    And I follow "Back"
     And I should see "https://lms.example.com" in the "My test platform" "table_row"
-    And "Edit" "link" should exist in the "My test platform" "table_row"
+    And I should see "Active" in the "My test platform" "table_row"
+    And "View platform details" "link" should exist in the "My test platform" "table_row"
     And "Manage deployments" "link" should exist in the "My test platform" "table_row"
     And "Delete" "link" should exist in the "My test platform" "table_row"
 
@@ -31,7 +51,8 @@ Feature: Register a platform with the tool
       | My test platform | https://lms.example.com | abcd1234 | https://lms.example.com/auth | https://lms.example.com/jwks | https://lms.example.com/token |
     And I log in as "admin"
     And I navigate to "Plugins > Enrolments > Publish as LTI tool > Tool registration" in site administration
-    When I click on "Edit" "link" in the "My test platform" "table_row"
+    When I click on "View platform details" "link" in the "My test platform" "table_row"
+    And I follow "Edit platform details"
     And I set the following fields to these values:
       | Platform name | Changed test platform |
       | Platform ID (issuer) | https://lms2.example.com |
@@ -40,8 +61,8 @@ Feature: Register a platform with the tool
       | Public keyset URL          | https://lms2.example.com/jwks |
       | Access token URL           | https://lms2.example.com/token |
     And I press "Cancel"
-    Then I should see "https://lms.example.com" in the "My test platform" "table_row"
-    And I click on "Edit" "link" in the "My test platform" "table_row"
+    Then I should see "https://lms.example.com" in the "Platform ID (issuer)" "table_row"
+    And I follow "Edit platform details"
     And the following fields match these values:
       | Platform name | My test platform |
       | Platform ID (issuer) | https://lms.example.com |
@@ -57,8 +78,8 @@ Feature: Register a platform with the tool
       | Public keyset URL          | https://lms2.example.com/jwks |
       | Access token URL           | https://lms2.example.com/token |
     And I press "Save changes"
-    And I should see "https://lms2.example.com" in the "Changed test platform" "table_row"
-    And I click on "Edit" "link" in the "Changed test platform" "table_row"
+    And I should see "https://lms2.example.com" in the "Platform ID (issuer)" "table_row"
+    And I follow "Edit platform details"
     And the following fields match these values:
       | Platform name | Changed test platform |
       | Platform ID (issuer) | https://lms2.example.com |
@@ -66,6 +87,9 @@ Feature: Register a platform with the tool
       | Authentication request URL | https://lms2.example.com/auth |
       | Public keyset URL          | https://lms2.example.com/jwks |
       | Access token URL           | https://lms2.example.com/token |
+    And I press "Cancel"
+    And I follow "Back"
+    And I should see "https://lms2.example.com" in the "Changed test platform" "table_row"
 
   Scenario: An admin can delete a platform registration
     Given the following "enrol_lti > application registrations" exist:
@@ -89,6 +113,10 @@ Feature: Register a platform with the tool
     And I navigate to "Plugins > Enrolments > Publish as LTI tool > Tool registration" in site administration
     When I follow "Register a platform"
     And I set the following fields to these values:
+    | Platform name | My test platform |
+    And I press "Continue"
+    And I follow "Edit platform details"
+    And I set the following fields to these values:
       | Platform name | My test platform |
       | Platform ID (issuer) | https://lms.example.com |
       | Client ID            | abcd1234                |
@@ -96,7 +124,7 @@ Feature: Register a platform with the tool
       | Public keyset URL          | https://lms.example.com/jwks |
       | Access token URL           | https://lms.example.com/token |
     And I press "Save changes"
-    Then I should see "Invalid Client ID. This Client ID is already registered for the Platform ID provided."
+    Then I should see "Invalid client ID. This client ID is already registered for the platform ID provided."
 
   Scenario: An admin can add deployment ids for a given platform registration
     Given the following "enrol_lti > application registrations" exist:
@@ -156,52 +184,32 @@ Feature: Register a platform with the tool
     And "1" "link" should not exist in the "My test platform" "table_row"
 
   @javascript
-  Scenario: An admin can copy the manual registration endpoints to register the tool with the platform manually
-    Given I log in as "admin"
+  Scenario: An admin can copy the manual and dynamic registration endpoints to register the tool with the platform
+    Given the following "enrol_lti > application registrations" exist:
+      | name |
+      | My test platform |
+    And I log in as "admin"
     And I change window size to "large"
     And I navigate to "Plugins > Enrolments > Publish as LTI tool > Tool registration" in site administration
-    And "Manual registration" "link" should exist
-    And I click on "Manual registration" "link"
+    When I click on "View platform details" "link" in the "My test platform" "table_row"
+    And I follow "Tool details"
+    And the "value" attribute of "Registration URL" "field" should contain "enrol/lti/register.php"
     And the "value" attribute of "Tool URL" "field" should contain "enrol/lti/launch.php"
     And the "value" attribute of "Initiate login URL" "field" should contain "enrol/lti/login.php"
     And the "value" attribute of "JWKS URL" "field" should contain "enrol/lti/jwks.php"
     And the "value" attribute of "Deep linking URL" "field" should contain "enrol/lti/launch_deeplink.php"
-    And "Copy to clipboard" "link" should exist in the "Tool URL" "table_row"
-    And "Copy to clipboard" "link" should exist in the "Initiate login URL" "table_row"
-    And "Copy to clipboard" "link" should exist in the "JWKS URL" "table_row"
-    And "Copy to clipboard" "link" should exist in the "Deep linking URL" "table_row"
-    When I click on "Copy to clipboard" "link" in the "Tool URL" "table_row"
-    Then I should see "Tool URL copied to clipboard"
-    And I click on "Copy to clipboard" "link" in the "Initiate login URL" "table_row"
+    And "Copy to clipboard" "button" should exist in the "Registration URL" "table_row"
+    And "Copy to clipboard" "button" should exist in the "Tool URL" "table_row"
+    And "Copy to clipboard" "button" should exist in the "Initiate login URL" "table_row"
+    And "Copy to clipboard" "button" should exist in the "JWKS URL" "table_row"
+    And "Copy to clipboard" "button" should exist in the "Deep linking URL" "table_row"
+    When I click on "Copy to clipboard" "button" in the "Registration URL" "table_row"
+    Then I should see "Registration URL copied to clipboard"
+    And I click on "Copy to clipboard" "button" in the "Tool URL" "table_row"
+    And I should see "Tool URL copied to clipboard"
+    And I click on "Copy to clipboard" "button" in the "Initiate login URL" "table_row"
     And I should see "Initiate login URL copied to clipboard"
-    And I click on "Copy to clipboard" "link" in the "JWKS URL" "table_row"
+    And I click on "Copy to clipboard" "button" in the "JWKS URL" "table_row"
     And I should see "JWKS URL copied to clipboard"
-    And I click on "Copy to clipboard" "link" in the "Deep linking URL" "table_row"
+    And I click on "Copy to clipboard" "button" in the "Deep linking URL" "table_row"
     And I should see "Deep linking URL copied to clipboard"
-
-  @javascript
-  Scenario: An admin can create a dynamic registration URL for use by platforms
-    Given I log in as "admin"
-    And I change window size to "large"
-    And I navigate to "Plugins > Enrolments > Publish as LTI tool > Tool registration" in site administration
-    And "Dynamic registration" "text" should exist
-    And "Generate registration URL" "button" should exist
-    When I press "Generate registration URL"
-    # The button will be aria disabled and contain some guiding text, so verify this.
-    Then the "class" attribute of "Generate registration URL" "button" should contain "disabled"
-    And the "aria-disabled" attribute of "Generate registration URL" "button" should contain "true"
-    And the "aria-label" attribute of "Generate registration URL" "button" should contain "You must use or delete the current registration URL before you can create a new one."
-    And "Registration URL" "field" should be visible
-    And the "Registration URL" "field" should be readonly
-    And the "value" attribute of "Registration URL" "field" should contain "enrol/lti/register.php?token="
-    And "Copy to clipboard" "link" should exist
-    And "Delete" "link" should exist
-    And I click on "Copy to clipboard" "link"
-    And I should see "Registration URL copied to clipboard"
-    And I click on "Delete" "link"
-    And I click on "Cancel" "button" in the ".modal-dialog" "css_element"
-    And "Registration URL" "field" should exist
-    And I click on "Delete" "link"
-    And I click on "Delete registration URL" "button" in the ".modal-dialog" "css_element"
-    And I should see "Registration URL deleted"
-    And "Registration URL" "field" should not be visible

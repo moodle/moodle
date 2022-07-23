@@ -138,19 +138,25 @@ switch ($mode) {
         // Change the navigation to point to the my grade node (If we are a student).
         if ($USER->id == $user->id) {
             require_once($CFG->dirroot . '/user/lib.php');
-            // Make the dashboard active so that it shows up in the navbar correctly.
-            $gradenode = $PAGE->settingsnav->find('dashboard', null)->make_active();
             // Get the correct 'Grades' url to point to.
             $activeurl = user_mygrades_url();
-            $navbar = $PAGE->navbar->add(get_string('grades', 'grades'), $activeurl, navigation_node::TYPE_SETTING);
+            $navbar = $PAGE->navbar->add(get_string('grades', 'grades'), $activeurl, navigation_node::TYPE_SETTING, null, 'grades');
             $activenode = $navbar->add($course->shortname);
             $activenode->make_active();
             // Find the course node and collapse it.
             $coursenode = $PAGE->navigation->find($course->id, navigation_node::TYPE_COURSE);
             $coursenode->collapse = true;
             $coursenode->make_inactive();
-            $url = new moodle_url('/course/user.php', array('id' => $id, 'user' => $user->id, 'mode' => $mode));
-            $reportnode = $activenode->add(get_string('pluginname', 'gradereport_user'), $url);
+
+            if (!preg_match('/^user\d{0,}$/', $activenode->key)) { // No user name found.
+                $userurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));
+                // Add the user name.
+                $usernode = $activenode->add(fullname($user), $userurl, navigation_node::TYPE_SETTING);
+                $usernode->add(get_string('grades'));
+            } else {
+                $url = new moodle_url('/course/user.php', array('id' => $id, 'user' => $user->id, 'mode' => $mode));
+                $reportnode = $activenode->add(get_string('pluginname', 'gradereport_user'), $url);
+            }
         } else {
             if ($course->id == SITEID) {
                 $activenode = $PAGE->navigation->find('user' . $user->id, null);
@@ -170,11 +176,10 @@ switch ($mode) {
             // Add the 'grades' node to the navbar.
             $navbar = $PAGE->navbar->add(get_string('grades', 'grades'), $gradeurl, navigation_node::TYPE_SETTING);
         }
+
         echo $OUTPUT->header();
 
         if ($course->id !== SITEID) {
-            $backurl = new moodle_url('/user/view.php', ['id' => $user->id, 'course' => $course->id]);
-            echo $OUTPUT->single_button($backurl, get_string('back'), 'get', ['class' => 'mb-3']);
             $userheading = array(
                 'heading' => fullname($user, has_capability('moodle/site:viewfullnames', $PAGE->context)),
                 'user' => $user,
@@ -208,6 +213,5 @@ switch ($mode) {
         // Display the page header to avoid breaking the navigation. A course/user.php review will be done in MDL-49939.
         echo $OUTPUT->header();
 }
-
 
 echo $OUTPUT->footer();

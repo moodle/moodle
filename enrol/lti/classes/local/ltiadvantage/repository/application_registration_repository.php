@@ -36,15 +36,40 @@ class application_registration_repository {
      * @return application_registration an application_registration instance.
      */
     private function application_registration_from_record(\stdClass $record): application_registration {
-        $appreg = application_registration::create(
-            $record->name,
-            new \moodle_url($record->platformid),
-            $record->clientid,
-            new \moodle_url($record->authenticationrequesturl),
-            new \moodle_url($record->jwksurl),
-            new \moodle_url($record->accesstokenurl),
-            $record->id
-        );
+
+        if ($record->status == application_registration::REGISTRATION_STATUS_INCOMPLETE) {
+            $appreg = application_registration::create_draft(
+                $record->name,
+                $record->uniqueid,
+                $record->id
+            );
+            if (!empty($record->platformid)) {
+                $appreg->set_platformid(new \moodle_url($record->platformid));
+            }
+            if (!empty($record->clientid)) {
+                $appreg->set_clientid($record->clientid);
+            }
+            if (!empty($record->authenticationrequesturl)) {
+                $appreg->set_authenticationrequesturl(new \moodle_url($record->authenticationrequesturl));
+            }
+            if (!empty($record->jwksurl)) {
+                $appreg->set_jwksurl(new \moodle_url($record->jwksurl));
+            }
+            if (!empty($record->accesstokenurl)) {
+                $appreg->set_accesstokenurl(new \moodle_url($record->accesstokenurl));
+            }
+        } else if ($record->status == application_registration::REGISTRATION_STATUS_COMPLETE) {
+            $appreg = application_registration::create(
+                $record->name,
+                $record->uniqueid,
+                new \moodle_url($record->platformid),
+                $record->clientid,
+                new \moodle_url($record->authenticationrequesturl),
+                new \moodle_url($record->jwksurl),
+                new \moodle_url($record->accesstokenurl),
+                $record->id
+            );
+        }
         return $appreg;
     }
 
@@ -70,21 +95,42 @@ class application_registration_repository {
      * @return \stdClass the record.
      */
     private function record_from_application_registration(application_registration $appregistration): \stdClass {
-        $indexhash = $this->get_unique_index_hash($appregistration->get_platformid()->out(false),
-            $appregistration->get_clientid());
-        $appregistrationrecord = (object) [
+        $appregistrationrecord = [
             'name' => $appregistration->get_name(),
-            'platformid' => $appregistration->get_platformid()->out(false),
-            'clientid' => $appregistration->get_clientid(),
-            'platformclienthash' => $indexhash,
-            'authenticationrequesturl' => $appregistration->get_authenticationrequesturl()->out(false),
-            'jwksurl' => $appregistration->get_jwksurl()->out(false),
-            'accesstokenurl' => $appregistration->get_accesstokenurl()->out(false),
+            'uniqueid' => $appregistration->get_uniqueid(),
+            'status' => $appregistration->is_complete() ? application_registration::REGISTRATION_STATUS_COMPLETE
+                : application_registration::REGISTRATION_STATUS_INCOMPLETE
         ];
-        if ($id = $appregistration->get_id()) {
-            $appregistrationrecord->id = $id;
+
+        $platformid = $appregistration->get_platformid();
+        $clientid = $appregistration->get_clientid();
+        $authrequesturl = $appregistration->get_authenticationrequesturl();
+        $jwksurl = $appregistration->get_jwksurl();
+        $accesstokenurl = $appregistration->get_accesstokenurl();
+
+        $appregistrationrecord['platformid'] = !is_null($platformid) ? $platformid->out(false) : null;
+        $appregistrationrecord['clientid'] = $clientid;
+        $appregistrationrecord['authenticationrequesturl'] = !is_null($authrequesturl) ? $authrequesturl->out(false) : null;
+        $appregistrationrecord['jwksurl'] = !is_null($jwksurl) ? $jwksurl->out(false) : null;
+        $appregistrationrecord['accesstokenurl'] = !is_null($accesstokenurl) ? $accesstokenurl->out(false) : null;
+
+        if ($platformid && $clientid) {
+            $indexhash = $this->get_unique_index_hash($appregistration->get_platformid()->out(false),
+                $appregistration->get_clientid());
+            $appregistrationrecord['platformclienthash'] = $indexhash;
         }
-        return $appregistrationrecord;
+
+        if ($platformid) {
+            $indexhash = $this->get_unique_index_hash($appregistration->get_platformid()->out(false),
+                $appregistration->get_uniqueid());
+            $appregistrationrecord['platformuniqueidhash'] = $indexhash;
+        }
+
+        if ($id = $appregistration->get_id()) {
+            $appregistrationrecord['id'] = $id;
+        }
+
+        return (object) $appregistrationrecord;
     }
 
     /**
@@ -125,6 +171,41 @@ class application_registration_repository {
     }
 
     /**
+     * Find a registration by its unique {platformid, uniqueid} tuple.
+     *
+     * @param string $platformid the url of the platform (the issuer).
+     * @param string $uniqueid the locally uniqueid of the tool registration.
+     * @return application_registration|null application registration instance if found, else null.
+     */
+    public function find_by_platform_uniqueid(string $platformid, string $uniqueid): ?application_registration {
+        global $DB;
+        try {
+            $indexhash = $this->get_unique_index_hash($platformid, $uniqueid);
+            $record = $DB->get_record($this->applicationregistrationtable, ['platformuniqueidhash' => $indexhash], '*',
+                MUST_EXIST);
+            return $this->application_registration_from_record($record);
+        } catch (\dml_missing_record_exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Find a registration by its uniqueid.
+     *
+     * @param string $uniqueid the uniqueid identifying the registration.
+     * @return application_registration|null application_registration instance if found, else null.
+     */
+    public function find_by_uniqueid(string $uniqueid): ?application_registration {
+        global $DB;
+        try {
+            $record = $DB->get_record($this->applicationregistrationtable, ['uniqueid' => $uniqueid], '*', MUST_EXIST);
+            return $this->application_registration_from_record($record);
+        } catch (\dml_missing_record_exception $e) {
+            return null;
+        }
+    }
+
+    /**
      * Find a registration by its unique {platformid, clientid} tuple.
      *
      * @param string $platformid the url of the platform (the issuer).
@@ -153,7 +234,7 @@ class application_registration_repository {
         global $DB;
         try {
             $sql = "SELECT a.id, a.name, a.platformid, a.clientid, a.authenticationrequesturl, a.jwksurl,
-                           a.accesstokenurl, a.timecreated, a.timemodified
+                           a.accesstokenurl, a.uniqueid, a.status, a.timecreated, a.timemodified
                       FROM {enrol_lti_app_registration} a
                       JOIN {enrol_lti_deployment} d
                         ON (d.platformid = a.id)

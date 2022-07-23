@@ -44,12 +44,14 @@ function message_popup_render_navbar_output(\renderer_base $renderer) {
     $enabled = \core_message\api::is_processor_enabled("popup");
     if ($enabled) {
         $unreadcount = \message_popup\api::count_unread_popup_notifications($USER->id);
+        $caneditownmessageprofile = has_capability('moodle/user:editownmessageprofile', context_system::instance());
+        $preferencesurl = $caneditownmessageprofile ? new moodle_url('/message/notificationpreferences.php') : null;
         $context = [
             'userid' => $USER->id,
             'unreadcount' => $unreadcount,
             'urls' => [
                 'seeall' => (new moodle_url('/message/output/popup/notifications.php'))->out(),
-                'preferences' => (new moodle_url('/message/notificationpreferences.php', ['userid' => $USER->id]))->out(),
+                'preferences' => $preferencesurl ? $preferencesurl->out() : null,
             ],
         ];
         $output .= $renderer->render_from_template('message_popup/notification_popover', $context);

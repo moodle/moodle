@@ -39,6 +39,9 @@ if ($area === false) {
 }
 $areaname = $area->get_visible_name();
 
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->set_secondary_active_tab('modules');
+
 // Start page output.
 $heading = get_string('gradualreindex', 'search', '');
 $PAGE->set_title($PAGE->title . ': ' . $heading);

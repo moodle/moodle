@@ -33,41 +33,67 @@ use core_user;
 class database_test extends advanced_testcase {
 
     /**
-     * Test generating table alias and parameter names
+     * Test generating alias
      */
-    public function test_generate_alias_params(): void {
-        global $DB;
+    public function test_generate_alias(): void {
+        $this->assertMatchesRegularExpression('/^rbalias(\d+)$/', database::generate_alias());
+    }
 
-        $admin = core_user::get_user_by_username('admin');
+    /**
+     * Test generating multiple aliases
+     */
+    public function test_generate_aliases(): void {
+        $aliases = database::generate_aliases(3);
 
-        $usertablealias = database::generate_alias();
-        $usertablealiasjoin = database::generate_alias();
-        $useridalias = database::generate_alias();
-
-        $paramuserid = database::generate_param_name();
-        $paramuserdeleted = database::generate_param_name();
+        $this->assertCount(3, $aliases);
+        [$aliasone, $aliastwo, $aliasthree] = $aliases;
 
         // Ensure they are different.
-        $this->assertNotEquals($usertablealias, $usertablealiasjoin);
-        $this->assertNotEquals($paramuserid, $paramuserdeleted);
+        $this->assertNotEquals($aliasone, $aliastwo);
+        $this->assertNotEquals($aliasone, $aliasthree);
+        $this->assertNotEquals($aliastwo, $aliasthree);
+    }
 
-        $sql = "SELECT {$usertablealias}.id AS {$useridalias}
-                  FROM {user} {$usertablealias}
-                  JOIN {user} {$usertablealiasjoin} ON {$usertablealiasjoin}.id = {$usertablealias}.id
-                 WHERE {$usertablealias}.id = :{$paramuserid} AND {$usertablealias}.deleted = :{$paramuserdeleted}";
-        $params = [$paramuserid => $admin->id, $paramuserdeleted => 0];
+    /**
+     * Test generating parameter name
+     */
+    public function test_generate_param_name(): void {
+        $this->assertMatchesRegularExpression('/^rbparam(\d+)$/', database::generate_param_name());
+    }
 
-        $validated = database::validate_params($params);
-        $this->assertTrue($validated);
+    /**
+     * Test generating multiple parameter names
+     */
+    public function test_generate_param_names(): void {
+        $params = database::generate_param_names(3);
 
-        $record = $DB->get_record_sql($sql, $params);
-        $this->assertEquals($admin->id, $record->{$useridalias});
+        $this->assertCount(3, $params);
+        [$paramone, $paramtwo, $paramthree] = $params;
+
+        // Ensure they are different.
+        $this->assertNotEquals($paramone, $paramtwo);
+        $this->assertNotEquals($paramone, $paramthree);
+        $this->assertNotEquals($paramtwo, $paramthree);
     }
 
     /**
      * Test parameter validation
      */
     public function test_validate_params(): void {
+        [$paramone, $paramtwo] = database::generate_param_names(2);
+
+        $params = [
+            $paramone => 1,
+            $paramtwo => 2,
+        ];
+
+        $this->assertTrue(database::validate_params($params));
+    }
+
+    /**
+     * Test parameter validation for invalid parameters
+     */
+    public function test_validate_params_invalid(): void {
         $params = [
             database::generate_param_name() => 1,
             'invalidfoo' => 2,
@@ -77,5 +103,40 @@ class database_test extends advanced_testcase {
         $this->expectException(coding_exception::class);
         $this->expectExceptionMessage('Invalid parameter names (invalidfoo, invalidbar)');
         database::validate_params($params);
+    }
+
+    /**
+     * Generate aliases and parameters and confirm they can be used within a query
+     */
+    public function test_generated_data_in_query(): void {
+        global $DB;
+
+        // Unique aliases.
+        [
+            $usertablealias,
+            $userfieldalias,
+        ] = database::generate_aliases(2);
+
+        // Unique parameters.
+        [
+            $paramuserid,
+            $paramuserdeleted,
+        ] = database::generate_param_names(2);
+
+        // Simple query to retrieve the admin user.
+        $sql = "SELECT {$usertablealias}.id AS {$userfieldalias}
+                  FROM {user} {$usertablealias}
+                 WHERE {$usertablealias}.id = :{$paramuserid}
+                   AND {$usertablealias}.deleted = :{$paramuserdeleted}";
+
+        $admin = core_user::get_user_by_username('admin');
+
+        $params = [
+            $paramuserid => $admin->id,
+            $paramuserdeleted => 0,
+        ];
+
+        $record = $DB->get_record_sql($sql, $params);
+        $this->assertEquals($admin->id, $record->{$userfieldalias});
     }
 }

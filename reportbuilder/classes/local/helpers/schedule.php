@@ -119,10 +119,12 @@ class schedule {
 
         // Now convert audiences to SQL for user retrieval.
         [$wheres, $params] = audience::user_audience_sql($audiences);
+        [$userorder] = users_order_by_sql('u');
 
         $sql = 'SELECT u.*
                   FROM {user} u
-                 WHERE ' . implode(' OR ', $wheres);
+                 WHERE ' . implode(' OR ', $wheres) . '
+              ORDER BY ' . $userorder;
 
         return $DB->get_records_sql($sql, $params);
     }
@@ -337,10 +339,10 @@ class schedule {
      * @return string[]
      */
     public static function get_format_options(): array {
-        $dataformats = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
+        $dataformats = dataformat::get_enabled_plugins();
 
-        return array_map(static function(dataformat $dataformat): string {
-            return $dataformat->displayname;
+        return array_map(static function(string $pluginname): string {
+            return get_string('dataformat', 'dataformat_' . $pluginname);
         }, $dataformats);
     }
 

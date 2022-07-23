@@ -2103,7 +2103,7 @@ class core_message_external extends external_api {
                     }
 
                     if (!empty($message->component) && substr($message->component, 0, 4) == 'mod_') {
-                        $iconurl = $output->image_url('icon', $message->component);
+                        $iconurl = $output->image_url('monologo', $message->component);
                     } else {
                         $iconurl = $output->image_url('i/marker', 'core');
                     }

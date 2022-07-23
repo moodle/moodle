@@ -1,1 +1,3 @@
 totop,theme_boost
+privacy:drawernavclosed,theme_boost
+privacy:drawernavopen,theme_boost

@@ -97,11 +97,16 @@ class Mustache_Tokenizer
         // Setting mbstring.func_overload makes things *really* slow.
         // Let's do everyone a favor and scan this string as ASCII instead.
         //
+        // The INI directive was removed in PHP 8.0 so we don't need to check there (and can drop it
+        // when we remove support for older versions of PHP).
+        //
         // @codeCoverageIgnoreStart
         $encoding = null;
-        if (function_exists('mb_internal_encoding') && ini_get('mbstring.func_overload') & 2) {
-            $encoding = mb_internal_encoding();
-            mb_internal_encoding('ASCII');
+        if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+            if (function_exists('mb_internal_encoding') && ini_get('mbstring.func_overload') & 2) {
+                $encoding = mb_internal_encoding();
+                mb_internal_encoding('ASCII');
+            }
         }
         // @codeCoverageIgnoreEnd
 

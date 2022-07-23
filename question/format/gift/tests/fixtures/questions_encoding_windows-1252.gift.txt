@@ -1,0 +1,18 @@
+// question: 0  name: Switch category to $course$/top/Default for LTTEST
+$CATEGORY: $course$/top/Default for LTTEST
+
+
+// question: 19756780  name: asdf
+::asdf::[html]<p>asdf<br></p>{}
+
+
+// question: 19756810  name: test daniel
+::test daniel::[html]<p>asdfasdf</p>{}
+
+
+// question: 19756750  name: asdf
+::asdf::[html]<p>asdf<br></p>{
+	=<p>aödf<br></p> -> asdf
+	=<p>asdf<br></p> -> asdf
+	=<p>asdf<br></p> -> asdf
+}

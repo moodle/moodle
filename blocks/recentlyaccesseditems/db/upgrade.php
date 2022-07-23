@@ -38,6 +38,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once("{$CFG->libdir}/db/upgradelib.php");
+
 /**
  * Upgrade the recentlyaccesseditems db table.
  *
@@ -47,67 +49,22 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
     global $DB;
 
-    // Automatically generated Moodle v3.7.0 release upgrade line.
-    // Put any upgrade step following this.
-    if ($oldversion < 2019052001) {
-        // Query the items to be deleted as a list of IDs. We cannot delete directly from this as a
-        // subquery because MySQL does not support delete with subqueries.
-        $fordeletion = $DB->get_fieldset_sql("
-                SELECT rai.id
-                  FROM {block_recentlyaccesseditems} rai
-             LEFT JOIN {course} c ON c.id = rai.courseid
-             LEFT JOIN {course_modules} cm ON cm.id = rai.cmid
-                 WHERE c.id IS NULL OR cm.id IS NULL");
-
-        // Delete the array in chunks of 500 (Oracle does not support more than 1000 parameters,
-        // let's leave some leeway, there are likely only one chunk anyway).
-        $chunks = array_chunk($fordeletion, 500);
-        foreach ($chunks as $chunk) {
-            $DB->delete_records_list('block_recentlyaccesseditems', 'id', $chunk);
-        }
-
-        upgrade_block_savepoint(true, 2019052001, 'recentlyaccesseditems', false);
-    }
-
-    // Automatically generated Moodle v3.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
     if ($oldversion < 2022030200) {
-        $context = context_system::instance();
-
-        // Begin looking for any and all customised /my pages.
-        $pageselect = 'name = :name and private = :private';
-        $pageparams['name'] = '__default';
-        $pageparams['private'] = 1;
-        $pages = $DB->get_recordset_select('my_pages', $pageselect, $pageparams);
-        foreach ($pages as $subpage) {
-            $blockinstance = $DB->get_record('block_instances', ['blockname' => 'recentlyaccesseditems',
-                'pagetypepattern' => 'my-index', 'subpagepattern' => $subpage->id]);
-
-            if (!$blockinstance) {
-                // Insert the recentlyaccesseditems into the default index page.
-                $blockinstance = new stdClass;
-                $blockinstance->blockname = 'recentlyaccesseditems';
-                $blockinstance->parentcontextid = $context->id;
-                $blockinstance->showinsubcontexts = false;
-                $blockinstance->pagetypepattern = 'my-index';
-                $blockinstance->subpagepattern = $subpage->id;
-                $blockinstance->defaultregion = 'side-post';
-                $blockinstance->defaultweight = -10;
-                $blockinstance->timecreated = time();
-                $blockinstance->timemodified = time();
-                $DB->insert_record('block_instances', $blockinstance);
-            } else if ($blockinstance->defaultregion !== 'side-post') {
-                $blockinstance->defaultregion = 'side-post';
-                $DB->update_record('block_instances', $blockinstance);
-            }
-        }
-        $pages->close();
+        // Update all recentlyaccesseditems blocks in the my-index to be in the main side-post region.
+        upgrade_block_set_defaultregion('recentlyaccesseditems', '__default', 'my-index', 'side-post');
         upgrade_block_savepoint(true, 2022030200, 'recentlyaccesseditems', false);
     }
+
+    if ($oldversion < 2022041901) {
+        upgrade_block_set_my_user_parent_context('recentlyaccesseditems', '__default', 'my-index');
+        upgrade_block_savepoint(true, 2022041901, 'recentlyaccesseditems', false);
+    }
+
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

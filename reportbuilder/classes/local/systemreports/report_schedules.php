@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\systemreports;
 
+use context;
 use lang_string;
 use moodle_url;
 use pix_icon;
@@ -28,7 +29,6 @@ use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\helpers\format;
-use core_reportbuilder\local\helpers\schedule as helper;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\models\schedule;
 use core_reportbuilder\local\report\action;
@@ -62,7 +62,9 @@ class report_schedules extends system_report {
         $this->add_join('JOIN {' . report::TABLE . '} rb ON rb.id = sc.reportid');
 
         $this->add_base_condition_simple('sc.reportid', $this->get_parameter('reportid', 0, PARAM_INT));
-        $this->add_base_fields('sc.id, sc.name, sc.enabled'); // Necessary for actions/row class.
+
+        // Select fields required for actions, permission checks, and row class callbacks.
+        $this->add_base_fields('sc.id, sc.name, sc.enabled, rb.contextid');
 
         // Join user entity for "User modified" column.
         $entityuser = new user();
@@ -99,7 +101,7 @@ class report_schedules extends system_report {
      * @return string
      */
     public function get_row_class(stdClass $row): string {
-        return $row->enabled ? '' : 'dimmed_text';
+        return $row->enabled ? '' : 'text-muted';
     }
 
     /**
@@ -145,12 +147,13 @@ class report_schedules extends system_report {
             $this->get_schedule_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tablealias}.name, {$tablealias}.id")
-            ->set_is_sortable(true)
+            // We need enough fields to re-create the persistent and pass to the editable component.
+            ->add_fields("{$tablealias}.id, {$tablealias}.name, {$tablealias}.reportid")
+            ->set_is_sortable(true, ["{$tablealias}.name"])
             ->add_callback(function(string $value, stdClass $schedule): string {
                 global $PAGE;
 
-                $editable = new schedule_name_editable((int) $schedule->id);
+                $editable = new schedule_name_editable(0, new schedule(0, $schedule));
                 return $editable->render($PAGE->get_renderer('core'));
             })
         );
@@ -195,8 +198,11 @@ class report_schedules extends system_report {
             ->add_fields("{$tablealias}.format")
             ->set_is_sortable(true)
             ->add_callback(static function(string $format): string {
-                $formats = helper::get_format_options();
-                return $formats[$format] ?? '';
+                if (get_string_manager()->string_exists('dataformat', 'dataformat_' . $format)) {
+                    return get_string('dataformat', 'dataformat_' . $format);
+                } else {
+                    return $format;
+                }
             })
         );
 
@@ -280,21 +286,39 @@ class report_schedules extends system_report {
         ));
 
         // Send now action.
-        $this->add_action(new action(
+        $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('t/email', ''),
             ['data-action' => 'schedule-send', 'data-schedule-id' => ':id', 'data-schedule-name' => ':name'],
             false,
             new lang_string('sendschedule', 'core_reportbuilder')
-        ));
+        ))
+            ->add_callback(function(stdClass $row): bool {
+
+                // Ensure data name attribute is properly formatted.
+                $row->name = (new schedule(0, $row))->get_formatted_name(
+                    context::instance_by_id($row->contextid));
+
+                return true;
+            })
+        );
 
         // Delete action.
-        $this->add_action(new action(
+        $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('t/delete', ''),
             ['data-action' => 'schedule-delete', 'data-schedule-id' => ':id', 'data-schedule-name' => ':name'],
             false,
             new lang_string('deleteschedule', 'core_reportbuilder')
-        ));
+        ))
+            ->add_callback(function(stdClass $row): bool {
+
+                // Ensure data name attribute is properly formatted.
+                $row->name = (new schedule(0, $row))->get_formatted_name(
+                    context::instance_by_id($row->contextid));
+
+                return true;
+            })
+        );
     }
 }

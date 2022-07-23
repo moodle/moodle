@@ -24,30 +24,26 @@ Feature: Users can view and search database entries
     And the following "activities" exist:
       | activity | name               | intro          | course | idnumber |
       | data     | Test database name | Database intro | C1     | data1    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
-      | Field name        | Test field name        |
-      | Field description | Test field description |
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
-      | Field name        | Test field 2 name        |
-      | Field description | Test field 2 description |
-    # To generate the default templates.
-    And I navigate to "Templates" in current page administration
-    And I log out
+    And the following "mod_data > fields" exist:
+      | database | type | name              | description              |
+      | data1    | text | Test field name   | Test field description   |
+      | data1    | text | Test field 2 name | Test field 2 description |
+    And the following "mod_data > templates" exist:
+      | database | name            |
+      | data1    | singletemplate  |
+      | data1    | listtemplate    |
+      | data1    | addtemplate     |
+      | data1    | asearchtemplate |
+      | data1    | rsstemplate     |
 
   @javascript
   Scenario: Students can add view, list and search entries
-    Given I am on the "Test database name" "data activity" page logged in as student1
-    And I add an entry to "Test database name" database with:
-      | Test field name | Student entry 1 |
-    And I press "Save and add another"
-    And I add an entry to "Test database name" database with:
-      | Test field name | Student entry 2 |
-    And I press "Save and add another"
-    And I add an entry to "Test database name" database with:
-      | Test field name | Student entry 3 |
-    And I press "Save"
+    Given the following "mod_data > entries" exist:
+      | database | Test field name | Test field 2 name |
+      | data1    | Student entry 1 |                   |
+      | data1    | Student entry 2 |                   |
+      | data1    | Student entry 3 |                   |
+    When I log in as "student1"
     And I am on the "Test database name" "data activity" page
     Then I should see "Student entry 1"
     And I should see "Student entry 2"

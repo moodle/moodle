@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,11 +17,10 @@
 namespace Moodle\BehatExtension\Definition\Cli;
 
 use Behat\Behat\Definition\DefinitionWriter;
-use Moodle\BehatExtension\Definition\Printer\ConsoleDefinitionInformationPrinter;
 use Behat\Behat\Definition\Printer\ConsoleDefinitionListPrinter;
-use Behat\Behat\Definition\Printer\DefinitionPrinter;
 use Behat\Testwork\Cli\Controller;
 use Behat\Testwork\Suite\SuiteRepository;
+use Moodle\BehatExtension\Definition\Printer\ConsoleDefinitionInformationPrinter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -31,50 +29,47 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Available definition controller, for calling moodle information printer.
  *
- * @package    behat
+ * @package    core
  * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class AvailableDefinitionsController implements Controller {
-    /**
-     * @var SuiteRepository
-     */
-    private $suiteRepository;
-    /**
-     * @var DefinitionWriter
-     */
+    /** @var SuiteRepository */
+    private $suiterepository;
+
+    /** @var DefinitionWriter */
     private $writer;
-    /**
-     * @var ConsoleDefinitionListPrinter
-     */
-    private $listPrinter;
-    /**
-     * @var ConsoleDefinitionInformationPrinter
-     */
-    private $infoPrinter;
+
+    /** @var ConsoleDefinitionListPrinter */
+    private $listprinter;
+
+    /** @var ConsoleDefinitionInformationPrinter */
+    private $infoprinter;
 
     /**
      * Initializes controller.
      *
-     * @param SuiteRepository                     $suiteRepository
+     * @param SuiteRepository                     $suiterepository
      * @param DefinitionWriter                    $writer
-     * @param ConsoleDefinitionListPrinter        $listPrinter
-     * @param ConsoleDefinitionInformationPrinter $infoPrinter
+     * @param ConsoleDefinitionListPrinter        $listprinter
+     * @param ConsoleDefinitionInformationPrinter $infoprinter
      */
     public function __construct(
-        SuiteRepository $suiteRepository,
+        SuiteRepository $suiterepository,
         DefinitionWriter $writer,
-        ConsoleDefinitionListPrinter $listPrinter,
-        ConsoleDefinitionInformationPrinter $infoPrinter
+        ConsoleDefinitionListPrinter $listprinter,
+        ConsoleDefinitionInformationPrinter $infoprinter
     ) {
-        $this->suiteRepository = $suiteRepository;
+        $this->suiterepository = $suiterepository;
         $this->writer = $writer;
-        $this->listPrinter = $listPrinter;
-        $this->infoPrinter = $infoPrinter;
+        $this->listprinter = $listprinter;
+        $this->infoprinter = $infoprinter;
     }
 
     /**
-     * {@inheritdoc}
+     * Configures command to be executable by the controller.
+     *
+     * @param Command $command
      */
     public function configure(Command $command) {
         $command->addOption('--definitions', '-d', InputOption::VALUE_REQUIRED,
@@ -87,15 +82,20 @@ final class AvailableDefinitionsController implements Controller {
     }
 
     /**
-     * {@inheritdoc}
+     * Executes controller.
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return null|integer
      */
     public function execute(InputInterface $input, OutputInterface $output) {
         if (null === $argument = $input->getOption('definitions')) {
             return null;
         }
 
-        $printer = $this->getDefinitionPrinter($argument);
-        foreach ($this->suiteRepository->getSuites() as $suite) {
+        $printer = $this->getdefinitionPrinter($argument);
+        foreach ($this->suiterepository->getSuites() as $suite) {
             $this->writer->printSuiteDefinitions($printer, $suite);
         }
 
@@ -107,17 +107,17 @@ final class AvailableDefinitionsController implements Controller {
      *
      * @param string $argument
      *
-     * @return DefinitionPrinter
+     * @return \Behat\Behat\Definition\Printer\DefinitionPrinter
      */
-    private function getDefinitionPrinter($argument) {
+    private function getdefinitionprinter($argument) {
         if ('l' === $argument) {
-            return $this->listPrinter;
+            return $this->listprinter;
         }
 
         if ('i' !== $argument) {
-            $this->infoPrinter->setSearchCriterion($argument);
+            $this->infoprinter->setSearchCriterion($argument);
         }
 
-        return $this->infoPrinter;
+        return $this->infoprinter;
     }
 }

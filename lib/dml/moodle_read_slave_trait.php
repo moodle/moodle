@@ -43,8 +43,8 @@ defined('MOODLE_INTERNAL') || die();
  * - It supports multiple 'instance' entries, in case one is not accessible,
  *   but only one (first connectable) instance is used.
  * - 'latency' option: master -> slave sync latency in seconds (will probably
- *   be a fraction of a second). If specified, a table being written to is
- *   deemed fully synced and suitable for slave read.
+ *   be a fraction of a second). A table being written to is deemed fully synced
+ *   after that period and suitable for slave read. Defaults to 1 sec.
  * - 'exclude_tables' option: a list of tables that never go to the slave for
  *   querying. The feature is meant to be used in emergency only, so the
  *   readonly feature can still be used in case there is a rogue query that
@@ -54,8 +54,8 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Choice of the database handle is based on following:
  * - SQL_QUERY_INSERT, UPDATE and STRUCTURE record table from the query
- *   in the $written array and microtime() the event if the 'latency' option
- *   is set. For those queries master write handle is used.
+ *   in the $written array and microtime() the event. For those queries master
+ *   write handle is used.
  * - SQL_QUERY_AUX queries will always use the master write handle because they
  *   are used for transactionstart/end, locking etc. In that respect, query_start() and
  *   query_end() *must not* be used during the connection phase.
@@ -63,11 +63,9 @@ defined('MOODLE_INTERNAL') || die();
  *   -- any of the tables involved is a temp table
  *   -- any of the tables involved is listed in the 'exclude_tables' option
  *   -- any of the tables involved is in the $written array:
- *      * If the 'latency' option is set then the microtime() is compared to
- *        the write microrime, and if more then latency time has passed the slave
- *        handle is used.
- *      * Otherwise (not enough time passed or 'latency' option not set)
- *        we choose the master write handle
+ *      * current microtime() is compared to the write microrime, and if more than
+ *        latency time has passed the slave handle is used
+ *      * otherwise (not enough time passed) we choose the master write handle
  *   If none of the above conditions are met the slave instance is used.
  *
  * A 'latency' example:
@@ -92,7 +90,7 @@ trait moodle_read_slave_trait {
 
     private $wantreadslave = false;
     private $readsslave = 0;
-    private $slavelatency = 0;
+    private $slavelatency = 1;
 
     private $written = []; // Track tables being written to.
     private $readexclude = []; // Tables to exclude from using dbhreadonly.
@@ -195,15 +193,13 @@ trait moodle_read_slave_trait {
                     }
                     $dboptions['dbport'] = isset($slave['dbport']) ? $slave['dbport'] : $dbport;
 
-                    // @codingStandardsIgnoreStart
                     try {
                         $this->raw_connect($rodb['dbhost'], $rodb['dbuser'], $rodb['dbpass'], $dbname, $prefix, $dboptions);
                         $this->dbhreadonly = $this->get_db_handle();
                         break;
-                    } catch (dml_connection_exception $e) {
+                    } catch (dml_connection_exception $e) { // phpcs:ignore
                         // If readonly slave is not connectable we'll have to do without it.
                     }
-                    // @codingStandardsIgnoreEnd
                 }
                 // ... lock_db queries always go to master.
                 // Since it is a lock and as such marshalls concurrent connections,
@@ -277,6 +273,25 @@ trait moodle_read_slave_trait {
     }
 
     /**
+     * This should be called immediately after each db query. It does a clean up of resources.
+     *
+     * @param mixed $result The db specific result obtained from running a query.
+     * @return void
+     */
+    protected function query_end($result) {
+        if ($this->written) {
+            // Adjust the written time.
+            array_walk($this->written, function (&$val) {
+                if ($val === true) {
+                    $val = microtime(true);
+                }
+            });
+        }
+
+        parent::query_end($result);
+    }
+
+    /**
      * Select appropriate db handle - readwrite or readonly
      * @param int $type type of query
      * @param string $sql
@@ -326,25 +341,20 @@ trait moodle_read_slave_trait {
                     }
 
                     if (isset($this->written[$tablename])) {
-                        if ($this->slavelatency) {
-                            $now = $now ?: microtime(true);
-                            if ($now - $this->written[$tablename] < $this->slavelatency) {
-                                return false;
-                            }
-                            unset($this->written[$tablename]);
-                        } else {
+                        $now = $now ?: microtime(true);
+
+                        if ($now - $this->written[$tablename] < $this->slavelatency) {
                             return false;
                         }
+                        unset($this->written[$tablename]);
                     }
                 }
 
                 return true;
             case SQL_QUERY_INSERT:
             case SQL_QUERY_UPDATE:
-                // If we are in transaction we cannot set the written time yet.
-                $now = $this->slavelatency && !$this->transactions ? microtime(true) : true;
                 foreach ($this->table_names($sql) as $tablename) {
-                    $this->written[$tablename] = $now;
+                    $this->written[$tablename] = true;
                 }
                 return false;
             case SQL_QUERY_STRUCTURE:
@@ -366,23 +376,15 @@ trait moodle_read_slave_trait {
      * @throws dml_transaction_exception Creates and throws transaction related exceptions.
      */
     public function commit_delegated_transaction(moodle_transaction $transaction) {
-        parent::commit_delegated_transaction($transaction);
-
-        if ($this->transactions) {
-            return;
-        }
-
-        if (!$this->slavelatency) {
-            return;
-        }
-
-        $now = null;
-        foreach ($this->written as $tablename => $when) {
-            if ($when === true) {
-                $now = $now ?: microtime(true);
+        if ($this->written) {
+            // Adjust the written time.
+            $now = microtime(true);
+            foreach ($this->written as $tablename => $when) {
                 $this->written[$tablename] = $now;
             }
         }
+
+        parent::commit_delegated_transaction($transaction);
     }
 
     /**

@@ -1,5 +1,14 @@
 This files describes API changes for code that uses the user API.
 
+=== 4.1 ===
+* user_get_user_details_courses() now accepts an optional second parameter, an array of userfields that should be
+  returned. The values passed into the $userfields parameter must all be included in the return from
+  user_get_default_fields().
+  It also allows you to reduce how much of a user record is required by the method. The minimum user record fields are:
+    * id
+    * deleted
+    * all potential fullname fields
+
 === 4.0 ===
 
 * External function core_user_external::update_users() will now fail on a per user basis. Previously if one user

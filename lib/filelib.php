@@ -368,7 +368,7 @@ function file_get_unused_draft_itemid() {
 
     if (isguestuser() or !isloggedin()) {
         // guests and not-logged-in users can not be allowed to upload anything!!!!!!
-        print_error('noguest');
+        throw new \moodle_exception('noguest');
     }
 
     $contextid = context_user::instance($USER->id)->id;
@@ -2137,7 +2137,8 @@ function send_file_not_found() {
     }
 
     send_header_404();
-    print_error('filenotfound', 'error', $CFG->wwwroot.'/course/view.php?id='.$COURSE->id); //this is not displayed on IIS??
+    throw new \moodle_exception('filenotfound', 'error',
+        $CFG->wwwroot.'/course/view.php?id='.$COURSE->id); // This is not displayed on IIS?
 }
 /**
  * Helper function to send correct 404 for server.
@@ -2372,7 +2373,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
     if (!$pathisstring) {
         if (!file_exists($path)) {
             send_header_404();
-            print_error('filenotfound', 'error', $CFG->wwwroot.'/');
+            throw new \moodle_exception('filenotfound', 'error', $CFG->wwwroot.'/');
         }
         // executed after normal finish or abort
         core_shutdown_manager::register_function('send_temp_file_finished', array($path));
@@ -2678,6 +2679,8 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
 function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownload=false, array $options=array()) {
     global $CFG, $COURSE;
 
+    static $recursion = 0;
+
     if (empty($options['filename'])) {
         $filename = null;
     } else {
@@ -2721,6 +2724,13 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
 
     // handle external resource
     if ($stored_file && $stored_file->is_external_file() && !isset($options['sendcachedexternalfile'])) {
+
+        // Have we been here before?
+        $recursion++;
+        if ($recursion > 10) {
+            throw new coding_exception('Recursive file serving detected');
+        }
+
         $stored_file->send_file($lifetime, $filter, $forcedownload, $options);
         die;
     }
@@ -3042,6 +3052,38 @@ function file_merge_draft_area_into_draft_area($getfromdraftid, $mergeintodrafti
 function file_is_svg_image_from_mimetype(string $mimetype): bool {
     return preg_match('|^image/svg|', $mimetype);
 }
+
+/**
+ * Returns the moodle proxy configuration as a formatted url
+ *
+ * @return string the string to use for proxy settings.
+ */
+function get_moodle_proxy_url() {
+    global $CFG;
+    $proxy = '';
+    if (empty($CFG->proxytype)) {
+        return $proxy;
+    }
+    if (empty($CFG->proxyhost)) {
+        return $proxy;
+    }
+    if ($CFG->proxytype === 'SOCKS5') {
+        // If it is a SOCKS proxy, append the protocol info.
+        $protocol = 'socks5://';
+    } else {
+        $protocol = '';
+    }
+    $proxy = $CFG->proxyhost;
+    if (!empty($CFG->proxyport)) {
+        $proxy .= ':'. $CFG->proxyport;
+    }
+    if (!empty($CFG->proxyuser) && !empty($CFG->proxypassword)) {
+        $proxy = $protocol . $CFG->proxyuser . ':' . $CFG->proxypassword . '@' . $proxy;
+    }
+    return $proxy;
+}
+
+
 
 /**
  * RESTful cURL class
@@ -4314,16 +4356,16 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
     global $DB, $CFG, $USER;
     // relative path must start with '/'
     if (!$relativepath) {
-        print_error('invalidargorconf');
+        throw new \moodle_exception('invalidargorconf');
     } else if ($relativepath[0] != '/') {
-        print_error('pathdoesnotstartslash');
+        throw new \moodle_exception('pathdoesnotstartslash');
     }
 
     // extract relative path components
     $args = explode('/', ltrim($relativepath, '/'));
 
     if (count($args) < 3) { // always at least context, component and filearea
-        print_error('invalidarguments');
+        throw new \moodle_exception('invalidarguments');
     }
 
     $contextid = (int)array_shift($args);
@@ -4347,7 +4389,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
         }
 
         if (empty($CFG->enableblogs)) {
-            print_error('siteblogdisable', 'blog');
+            throw new \moodle_exception('siteblogdisable', 'blog');
         }
 
         $entryid = (int)array_shift($args);
@@ -4357,7 +4399,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
         if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
             require_login();
             if (isguestuser()) {
-                print_error('noguest');
+                throw new \moodle_exception('noguest');
             }
             if ($CFG->bloglevel == BLOG_USER_LEVEL) {
                 if ($USER->id != $entry->userid) {
@@ -4552,6 +4594,37 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             \core\session\manager::write_close(); // Unlock session during file serving.
             send_stored_file($file, 0, 0, true, $sendfileoptions);
 
+        } else if ($filearea === 'event_description' and $context->contextlevel == CONTEXT_COURSECAT) {
+            if ($CFG->forcelogin) {
+                require_login();
+            }
+
+            // Get category, this will also validate access.
+            $category = core_course_category::get($context->instanceid);
+
+            // Get the event ID from the args array, load event.
+            $eventid = array_shift($args);
+            $event = $DB->get_record('event', [
+                'id' => (int) $eventid,
+                'eventtype' => 'category',
+                'categoryid' => $category->id,
+            ]);
+
+            if (!$event) {
+                send_file_not_found();
+            }
+
+            // Retrieve file from storage, and serve.
+            $filename = array_pop($args);
+            $filepath = $args ? '/' . implode('/', $args) .'/' : '/';
+            $file = $fs->get_file($context->id, $component, $filearea, $eventid, $filepath, $filename);
+            if (!$file || $file->is_directory()) {
+                send_file_not_found();
+            }
+
+            // Unlock session during file serving.
+            \core\session\manager::write_close();
+            send_stored_file($file, HOURSECS, 0, $forcedownload, $sendfileoptions);
         } else if ($filearea === 'event_description' and $context->contextlevel == CONTEXT_COURSE) {
 
             // Respect forcelogin and require login unless this is the site.... it probably

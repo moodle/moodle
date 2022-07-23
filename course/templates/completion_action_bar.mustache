@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/completion_action_bar
+
+    Actions bar in the course completion pages.
+
+    Context variables required for this template:
+    * urlselect - The data object containing the required properties to render core/url_select.
+
+    Example context (json):
+    {
+        "urlselect": {
+            "id": "url_select_test",
+            "action": "https://example.com/post",
+            "formid": "url_select_form",
+            "sesskey": "sesskey",
+            "classes": "urlselect",
+            "label": "",
+            "helpicon": false,
+            "showbutton": null,
+            "options": [
+                {
+                    "name": "Some name",
+                    "value": "/mod/data/someurl.php",
+                    "selected": false
+                }
+            ],
+            "disabled": false,
+            "title": null
+        }
+    }
+}}
+<div class="container-fluid tertiary-navigation">
+    <div class="row">
+        {{#urlselect}}
+            <div class="navitem">
+                {{>core/url_select}}
+            </div>
+        {{/urlselect}}
+    </div>
+</div>

@@ -8,11 +8,11 @@ $cmid = required_param('cmid', PARAM_INT);            // Course Module ID
 $id   = optional_param('id', 0, PARAM_INT);           // EntryID
 
 if (!$cm = get_coursemodule_from_id('glossary', $cmid)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
-    print_error('coursemisconf');
+    throw new \moodle_exception('coursemisconf');
 }
 
 require_login($course, false, $cm);
@@ -20,7 +20,7 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 
 if (!$glossary = $DB->get_record('glossary', array('id'=>$cm->instance))) {
-    print_error('invalidid', 'glossary');
+    throw new \moodle_exception('invalidid', 'glossary');
 }
 
 $url = new moodle_url('/mod/glossary/edit.php', array('cmid'=>$cm->id));
@@ -31,11 +31,11 @@ $PAGE->set_url($url);
 
 if ($id) { // if entry is specified
     if (isguestuser()) {
-        print_error('guestnoedit', 'glossary', "$CFG->wwwroot/mod/glossary/view.php?id=$cmid");
+        throw new \moodle_exception('guestnoedit', 'glossary', "$CFG->wwwroot/mod/glossary/view.php?id=$cmid");
     }
 
     if (!$entry = $DB->get_record('glossary_entries', array('id'=>$id, 'glossaryid'=>$glossary->id))) {
-        print_error('invalidentry');
+        throw new \moodle_exception('invalidentry');
     }
 
     // Check if the user can update the entry (trigger exception if he can't).

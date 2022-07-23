@@ -36,6 +36,10 @@ class history_action_column extends menu_action_column_base {
         $this->strpreview = get_string('history_action', 'qbank_history');
     }
 
+    public function get_extra_classes(): array {
+        return ['pr-3'];
+    }
+
     public function get_name(): string {
         return 'historyaction';
     }

@@ -61,7 +61,7 @@ if ($courseid AND $courseid != SITEID) {
 }
 
 if (!$feedbackcompletion->can_complete()) {
-    print_error('error');
+    throw new \moodle_exception('error');
 }
 
 $PAGE->navbar->add(get_string('feedback:complete', 'feedback'));
@@ -122,7 +122,7 @@ if ($feedbackcompletion->is_empty()) {
                     'generalbox boxaligncenter');
         }
         if (!$PAGE->has_secondary_navigation() && $feedbackcompletion->can_view_analysis()) {
-            echo '<p align="center">';
+            echo '<p class="text-center">';
             $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id' => $cm->id, 'courseid' => $courseid));
             echo html_writer::link($analysisurl, get_string('completed_feedbacks', 'feedback'));
             echo '</p>';

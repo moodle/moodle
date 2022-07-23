@@ -83,6 +83,7 @@ class primary implements renderable, templatable {
                 'text' => $node->text,
                 'icon' => $node->icon,
                 'isactive' => $node->isactive,
+                'key' => $node->key,
             ];
         }
 

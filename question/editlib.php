@@ -30,8 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
 
-define('DEFAULT_QUESTIONS_PER_PAGE', 20);
-define('MAXIMUM_QUESTIONS_PER_PAGE', 1000);
+define('DEFAULT_QUESTIONS_PER_PAGE', 100);
+define('MAXIMUM_QUESTIONS_PER_PAGE', 4000);
 
 function get_module_from_cmid($cmid) {
     global $CFG, $DB;
@@ -40,9 +40,9 @@ function get_module_from_cmid($cmid) {
                                     {modules} md
                                WHERE cm.id = ? AND
                                      md.id = cm.module", array($cmid))){
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     } elseif (!$modrec =$DB->get_record($cmrec->modname, array('id' => $cmrec->instance))) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
     $modrec->instance = $modrec->id;
     $modrec->cmid = $cmrec->id;
@@ -252,10 +252,12 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
  * @param string $edittab Code for this edit tab
  * @param string $baseurl The name of the script calling this funciton. For examle 'qusetion/edit.php'.
  * @param array $params The provided parameters to construct the resources with.
+ * @param int $defaultquestionsperpage number of questions per page, if not given in the URL.
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
-function question_build_edit_resources($edittab, $baseurl, $params) {
-    global $DB, $PAGE, $CFG;
+function question_build_edit_resources($edittab, $baseurl, $params,
+        $defaultquestionsperpage = DEFAULT_QUESTIONS_PER_PAGE) {
+    global $DB;
 
     $thispageurl = new moodle_url($baseurl);
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
@@ -372,8 +374,12 @@ function question_build_edit_resources($edittab, $baseurl, $params) {
         $pagevars['qpage'] = 0;
     }
 
-    $pagevars['qperpage'] = question_set_or_get_user_preference(
-            'qperpage', $qperpage, DEFAULT_QUESTIONS_PER_PAGE, $thispageurl);
+    if ($defaultquestionsperpage == DEFAULT_QUESTIONS_PER_PAGE) {
+        $pagevars['qperpage'] = question_set_or_get_user_preference(
+                'qperpage', $qperpage, DEFAULT_QUESTIONS_PER_PAGE, $thispageurl);
+    } else {
+        $pagevars['qperpage'] = $qperpage ?? $defaultquestionsperpage;
+    }
 
     $defaultcategory = question_make_default_categories($contexts->all());
 
@@ -386,7 +392,7 @@ function question_build_edit_resources($edittab, $baseurl, $params) {
         $catparts = explode(',', $pagevars['cat']);
         if (!$catparts[0] || (false !== array_search($catparts[1], $contextlistarr)) ||
                 !$DB->count_records_select("question_categories", "id = ? AND contextid = ?", array($catparts[0], $catparts[1]))) {
-            print_error('invalidcategory', 'question');
+            throw new \moodle_exception('invalidcategory', 'question');
         }
     } else {
         $category = $defaultcategory;
@@ -486,12 +492,12 @@ function require_login_in_context($contextorid = null){
     } else if ($context && ($context->contextlevel == CONTEXT_MODULE)) {
         if ($cm = $DB->get_record('course_modules',array('id' =>$context->instanceid))) {
             if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-                print_error('invalidcourseid');
+                throw new \moodle_exception('invalidcourseid');
             }
             require_course_login($course, true, $cm);
 
         } else {
-            print_error('invalidcoursemodule');
+            throw new \moodle_exception('invalidcoursemodule');
         }
     } else if ($context && ($context->contextlevel == CONTEXT_SYSTEM)) {
         if (!empty($CFG->forcelogin)) {

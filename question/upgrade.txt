@@ -1,33 +1,114 @@
 This files describes API changes for code that uses the question API.
 
-=== 4.0 ==
+=== 4.0 ===
 
-1) Previously, the questionbank api classes were coupled in one place. Now the classes
-   are divided in two different parts, base classes and feature classes. All the base
-   classes are moved classes/local/bank and all the feature classes will be moved to
-   the plugin for that feature.
+Moodle 4.0 included the results of a major project to re-work the question bank.
 
-2) submit_tags_form and associated external services for question tag, tags_form in question/type,
-   core_question_output_fragment_tags_form method in lib is deprecated and moved to the tagquestion plugin.
+1) Database changes (as usual, all existing data is updated automatically).
+   * Previously there was a single {question} table. This has now been split into three to handle versionning questions:
+     - question              - This now has a row for each version of each question. Therefore, some of the metadata
+                               (e.g. category) is moved to the next table. However, data that defines how a question works
+                               is unchanged, so question type plugins will mostly keep working.
+     - question_bank_entries - Each question bank entry is a question that appears in the question bank, which can
+                               have many versions.
+     - question_versions     - This joins all the versions of a question in the {question} table to the
+                               {question_bank_entries} row they belong to.
+   * Also, how other parts of the code refer to questions they want to to has changed, to be managed by the core
+     API in two new tables.
+      - question_references -> Records where a specific question is used.
+      - question_set_references -> Records where groups of questions are used (for example random questions in quizzes).
+     As a result of this, data from the two quiz tables {quiz_slot} and {quiz_slot_tags} was moved to these new tables.
 
-3) Function question_get_export_single_question_url() in questionlib has been deprecated
-   and moved to qbank_exporttoxml plugin, the new location is:
-   qbank_exporttoxml\helper::question_get_export_single_question_url().
+2) There is a new plugin type 'qbank' for adding features to the question bank. See question/bank/upgrade.txt.
 
-4) The following methods are deprecated in previewlib and moved to the previewquestion plugin:
-   restart_preview(), question_preview_form_url(), question_preview_action_url(),
-   question_preview_question_pluginfile()
-   The following classes are deprecated in previewlib and moves the previewquestion plugin:
-   question_preview_options, preview_options_form.
+3) Many previously core features have been moved into new plugins, meaning that many old functionsand classes in
+   lib/questionlib.php and other locations have been deprecated and moved:
+    * Moved to qbank_previewquestion:
+       - question_preview_url() is moved to qbank_previewquestion\helper::question_preview_url()
+       - question_preview_popup_params() is moved to qbank_previewquestion\helper::question_preview_popup_params()
+      the following were really part of the internal implementation of preview, so should not have been used elsewhere,
+      but they were also moved (from previewlib.php).
+       - restart_preview() => qbank_previewquestion\helper::restart_preview(),
+       - question_preview_form_url() => qbank_previewquestion\helper::question_preview_form_url(),
+       - question_preview_action_url() => qbank_previewquestion\helper::question_preview_action_url(),
+       - question_preview_question_pluginfile() => qbank_previewquestion\helper::question_preview_question_pluginfile(),
+       - class preview_options_form => 'qbank_previewquestion\form\preview_options_form',
+       - class question_preview_options => 'qbank_previewquestion\output\question_preview_options',
+    * Moved to qbank_managecategories:
+       - qbank_managecategories\helper::question_remove_stale_questions_from_category()
+       - flatten_category_tree() => qbank_managecategories\helper::flatten_category_tree()
+       - add_indented_names() => qbank_managecategories\helper::add_indented_names()
+       - question_category_select_menu() => qbank_managecategories\helper::question_category_select_menu()
+       - get_categories_for_contexts() => qbank_managecategories\helper::get_categories_for_contexts()
+       - question_category_options() => qbank_managecategories\helper::question_category_options()
+       - question_add_context_in_key() => qbank_managecategories\helper::question_add_context_in_key()
+       - question_fix_top_names() => qbank_managecategories\helper::question_fix_top_names()
+       - class category_form => qbank_managecategories\form\category_form
+       - class question_category_list => qbank_managecategories\question_category_list
+       - class question_category_list_item => 'bank_managecategories\question_category_list_item
+       - class question_category_object => qbank_managecategories\question_category_object
+       - class question_category_edit_form => qbank_managecategories\form\category_form
+       - class question_move_form => qbank_managecategories\form\question_move_form
+    * Moved to qbank_exporttoxml:
+       - question_get_export_single_question_url() -> qbank_exporttoxml\helper::question_get_export_single_question_url().
+    * Moved to qbank_exportquestions:
+       - class question_export_form => qbank_exportquestions\form\export_form
+       - class export_form => qbank_exportquestions\form\export_form
+    * Moved to qbank_importquestions:
+       - class question_import_form => qbank_importquestions\form\question_import_form
+    * Moved to qbank_tagquestion:
+       - submit_tags_form and associated external services for question tag,
+       - tags_form in question/type,
+       - core_question_output_fragment_tags_form() => /question/bank/qbank_tagquestion/lib.php.
 
-5) submit_tags_form and associated external services for question tag, tags_form in question/type,
-   core_question_output_fragment_tags_form method in lib is deprecated and moved to the tagquestion plugin.
+4) The following functions in questionlib.php now using type hinting. So, if you call them with the wrong types,
+   you will now get fatal errors.
+    - is_latest()
+    - get_next_version()
+    - get_question_version()
+    - get_question_bank_entry()
+    - core_question_find_next_unused_idnumber()
+    - question_module_uses_questions()
+    - question_page_type_list()
+    - core_question_question_preview_pluginfile()
+    - question_rewrite_question_preview_urls()
+    - question_rewrite_question_urls()
+    - question_get_all_capabilities()
+    - question_get_question_capabilities()
+    - question_require_capability_on()
+    - question_has_capability_on()
+    - question_default_export_filename()
+    - get_import_export_formats()
+    - question_categorylist_parents()
+    - question_categorylist()
+    - question_make_default_categories()
+    - question_get_top_categories_for_contexts()
+    - sort_categories_by_tree()
+    - print_question_icon()
+    - question_sort_tags()
+    - _tidy_question()
+    - question_preload_questions()
+    - question_move_category_to_context()
+    - move_question_set_references()
+    - question_move_questions_to_category()
+    - idnumber_exist_in_question_category()
+    - question_move_question_tags_to_new_context()
+    - question_delete_activity()
+    - question_delete_course_category()
+    - question_delete_course()
+    - question_delete_context()
+    - question_delete_question()
+    - delete_question_bank_entry()
+    - question_category_in_use()
+    - question_category_delete_safe()
+    - question_context_has_any_questions()
+    - questions_in_use()
+    - question_save_qtype_order()
+    - question_reorder_qtypes()
 
-6) Function question_get_export_single_question_url() in questionlib has been deprecated
-   and moved to qbank_exporttoxml plugin, the new location is:
-   qbank_exporttoxml\exporttoxml_helper::question_get_export_single_question_url().
+5) Function question_hash() from questionlib.php is deprecated without replacement.
 
-7) The following classes are deleted and available in the new location:
+6) The following classes have been moved, to better follow Moodle's name-space usage rules:
    'core_question\bank\action_column_base' => 'core_question\local\bank\action_column_base',
    'core_question\bank\checkbox_column' => 'core_question\local\bank\checkbox_column',
    'core_question\bank\column_base' => 'core_question\local\bank\column_base',
@@ -52,33 +133,13 @@ This files describes API changes for code that uses the question API.
    'core_question\output\qbank_chooser' => 'qbank_editquestion\qbank_chooser',
    'core_question\output\qbank_chooser_item' => 'qbank_editquestion\qbank_chooser_item',
 
-8) The following classes are deprecated and moved to a new location. These are marked for final deprecation on 4.4:
-   'question_category_list' => 'qbank_managecategories\question_category_list',
-   'question_category_list_item' => 'qbank_managecategories\question_category_list_item',
-   'question_category_object' => 'qbank_managecategories\question_category_object',
-   'question_category_edit_form' => 'qbank_managecategories\form\category_form',
-   'question_export_form' => 'qbank_exportquestions\form\export_form',
-   'question_import_form' => 'qbank_importquestions\form\question_import_form',
-   'question_move_form' => 'qbank_managecategories\form\question_move_form',
-   'preview_options_form' => 'qbank_previewquestion\form\preview_options_form',
-   'question_preview_options' => 'qbank_previewquestion\output\question_preview_options',
-   'category_form' => 'qbank_managecategories\form\category_form',
-   'export_form' => 'qbank_exportquestions\form\export_form'.
+7) The Behat class for question-related steps has been renamed to behat_core_question
+    to match the expected naming convention. In the unlikely event that you are directly
+    referring to the behat_question class name (nothing in the standard Moodle code was)
+    then you will have to update your reference.
 
-9) The following functions are deprecated and moved to the new location:
-   question_preview_question_pluginfile() => qbank_previewquestion\helper::question_preview_question_pluginfile(),
-   question_preview_action_url() => qbank_previewquestion\helper::question_preview_action_url(),
-   question_preview_form_url() => qbank_previewquestion\helper::question_preview_form_url(),
-   restart_preview() => qbank_previewquestion\helper::restart_preview(),
-   core_question_output_fragment_tags_form() => /question/bank/qbank_tagquestion/lib.php.
 
-10)The qbank api now allows bulk actions from qbank plugins. Its possible to implement a qbank plugin and pass the bulk
-   bulk action object from the plugin feature using the get_bulk_actions(). The base class for this feature is bulk_action_base.
-   The following methods are deprecated as a part of bulk actions ui implementation and its no more required to call these methods
-   anymore as the api is now self sufficient, calling the api will fetch all the features:
-   process_actions(), process_actions_needing_ui().
-
-=== 3.9 ==
+=== 3.9 ===
 
 1) For years, the ..._questions_in_use callback has been the right way for plugins to
    tell the core question system if questions are required. Previously this callback

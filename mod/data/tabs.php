@@ -27,7 +27,7 @@
 
 
     if (empty($currenttab) or empty($data) or empty($course)) {
-        print_error('cannotcallscript');
+        throw new \moodle_exception('cannotcallscript');
     }
 
     $context = context_module::instance($cm->id);

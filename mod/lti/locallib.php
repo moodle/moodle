@@ -2837,14 +2837,23 @@ function lti_update_type($type, $config) {
         }
         require_once($CFG->libdir.'/modinfolib.php');
         if ($clearcache) {
-            $sql = "SELECT DISTINCT course
-                      FROM {lti}
-                     WHERE typeid = ?";
+            $sql = "SELECT cm.id, cm.course
+                      FROM {course_modules} cm
+                      JOIN {modules} m ON cm.module = m.id
+                      JOIN {lti} l ON l.course = cm.course
+                     WHERE m.name = :name AND l.typeid = :typeid";
 
-            $courses = $DB->get_fieldset_sql($sql, array($type->id));
+            $rs = $DB->get_recordset_sql($sql, ['name' => 'lti', 'typeid' => $type->id]);
 
-            foreach ($courses as $courseid) {
-                rebuild_course_cache($courseid, true);
+            $courseids = [];
+            foreach ($rs as $record) {
+                $courseids[] = $record->course;
+                \course_modinfo::purge_course_module_cache($record->course, $record->id);
+            }
+            $rs->close();
+            $courseids = array_unique($courseids);
+            foreach ($courseids as $courseid) {
+                rebuild_course_cache($courseid, false, true);
             }
         }
     }
@@ -4004,7 +4013,7 @@ function get_tool_type_icon_url(stdClass $type) {
     }
 
     if (empty($iconurl)) {
-        $iconurl = $OUTPUT->image_url('icon', 'lti')->out();
+        $iconurl = $OUTPUT->image_url('monologo', 'lti')->out();
     }
 
     return $iconurl;
@@ -4091,7 +4100,7 @@ function get_tool_proxy_urls(stdClass $proxy) {
     global $OUTPUT;
 
     $urls = array(
-        'icon' => $OUTPUT->image_url('icon', 'lti')->out(),
+        'icon' => $OUTPUT->image_url('monologo', 'lti')->out(),
         'edit' => get_tool_proxy_edit_url($proxy),
     );
 

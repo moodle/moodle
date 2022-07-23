@@ -14,17 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * PHPunit tests for the cache API and in particular things in locallib.php
- *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are requried in order to use caching.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_cache;
+
+use cache_config_testing;
+use cache_config_writer;
+use cache_factory;
+use cache_helper;
+use cache_store;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,10 +33,12 @@ require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
 /**
  * PHPunit tests for the cache API and in particular the core_cache\administration_helper
  *
+ * @package    core_cache
+ * @category   test
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_cache_administration_helper_testcase extends advanced_testcase {
+class administration_helper_test extends \advanced_testcase {
 
     /**
      * Set things back to the default before each test.
@@ -73,7 +71,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
             cache_store::MODE_REQUEST => array('default_request'),
         )));
 
-        $storesummaries = core_cache\administration_helper::get_store_instance_summaries();
+        $storesummaries = administration_helper::get_store_instance_summaries();
         $this->assertIsArray($storesummaries);
         $this->assertArrayHasKey('summariesstore', $storesummaries);
         $summary = $storesummaries['summariesstore'];
@@ -99,7 +97,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         }));
         $this->assertEquals($mappingcount, $summary['mappings']);
 
-        $definitionsummaries = core_cache\administration_helper::get_definition_summaries();
+        $definitionsummaries = administration_helper::get_definition_summaries();
         $this->assertIsArray($definitionsummaries);
         $this->assertArrayHasKey('core/eventinvalidation', $definitionsummaries);
         $summary = $definitionsummaries['core/eventinvalidation'];
@@ -119,7 +117,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertIsArray($summary['mappings']);
         $this->assertContains('summariesstore', $summary['mappings']);
 
-        $pluginsummaries = core_cache\administration_helper::get_store_plugin_summaries();
+        $pluginsummaries = administration_helper::get_store_plugin_summaries();
         $this->assertIsArray($pluginsummaries);
         $this->assertArrayHasKey('file', $pluginsummaries);
         $summary = $pluginsummaries['file'];
@@ -131,18 +129,18 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         $this->assertArrayHasKey('supports', $summary);
         $this->assertArrayHasKey('canaddinstance', $summary);
 
-        $locksummaries = core_cache\administration_helper::get_lock_summaries();
+        $locksummaries = administration_helper::get_lock_summaries();
         $this->assertIsArray($locksummaries);
         $this->assertTrue(count($locksummaries) > 0);
 
-        $mappings = core_cache\administration_helper::get_default_mode_stores();
+        $mappings = administration_helper::get_default_mode_stores();
         $this->assertIsArray($mappings);
         $this->assertCount(3, $mappings);
         $this->assertArrayHasKey(cache_store::MODE_APPLICATION, $mappings);
         $this->assertIsArray($mappings[cache_store::MODE_APPLICATION]);
         $this->assertContains('summariesstore', $mappings[cache_store::MODE_APPLICATION]);
 
-        $potentials = core_cache\administration_helper::get_definition_store_options('core', 'eventinvalidation');
+        $potentials = administration_helper::get_definition_store_options('core', 'eventinvalidation');
         $this->assertIsArray($potentials); // Currently used, suitable, default
         $this->assertCount(3, $potentials);
         $this->assertArrayHasKey('summariesstore', $potentials[0]);
@@ -160,7 +158,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         try {
             $form = cache_factory::get_administration_display_helper()->get_add_store_form('somethingstupid');
             $this->fail('You should not be able to create an add form for a store plugin that does not exist.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e, 'Needs to be: ' .get_class($e)." ::: ".$e->getMessage());
         }
     }
@@ -170,7 +168,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
      */
     public function test_get_edit_store_form() {
         // Always instantiate a new core display helper here.
-        $administrationhelper = new core_cache\local\administration_display_helper;
+        $administrationhelper = new local\administration_display_helper;
         $config = cache_config_writer::instance();
         $this->assertTrue($config->add_store_instance('test_get_edit_store_form', 'file'));
 
@@ -180,14 +178,14 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         try {
             $form = $administrationhelper->get_edit_store_form('somethingstupid', 'moron');
             $this->fail('You should not be able to create an edit form for a store plugin that does not exist.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
             $form = $administrationhelper->get_edit_store_form('file', 'blisters');
             $this->fail('You should not be able to create an edit form for a store plugin that does not exist.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
     }
@@ -216,7 +214,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         try {
             cache_helper::hash_key('test/test', $definition);
             $this->fail('Invalid key was allowed, you should see this.');
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals('test/test', $e->debuginfo);
         }
 
@@ -248,7 +246,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
                 'area' => 'test',
                 'simplekeys' => true
         ]);
-        $cache = cache::make('phpunit', 'test');
+        $cache = \cache::make('phpunit', 'test');
         for ($i = 0; $i < 100; $i++) {
             $cache->set('key' . $i, str_repeat('x', $i));
         }

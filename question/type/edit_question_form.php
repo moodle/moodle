@@ -846,11 +846,11 @@ abstract class question_edit_form extends question_wizard_form {
         global $DB;
 
         $errors = parent::validation($fromform, $files);
+
+        // Make sure that the user can edit the question.
         if (empty($fromform['makecopy']) && isset($this->question->id)
-                && ($this->question->formoptions->canedit ||
-                        $this->question->formoptions->cansaveasnew)
-                && empty($fromform['usecurrentcat']) && !$this->question->formoptions->canmove) {
-            $errors['currentgrp'] = get_string('nopermissionmove', 'question');
+            && !$this->question->formoptions->canedit) {
+            $errors['currentgrp'] = get_string('nopermissionedit', 'question');
         }
 
         // Category.

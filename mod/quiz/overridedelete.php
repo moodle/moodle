@@ -32,13 +32,13 @@ $overrideid = required_param('id', PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
 if (! $override = $DB->get_record('quiz_overrides', array('id' => $overrideid))) {
-    print_error('invalidoverrideid', 'quiz');
+    throw new \moodle_exception('invalidoverrideid', 'quiz');
 }
 if (! $quiz = $DB->get_record('quiz', array('id' => $override->quiz))) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $quiz->course)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
@@ -51,11 +51,11 @@ require_capability('mod/quiz:manageoverrides', $context);
 
 if ($override->groupid) {
     if (!groups_group_visible($override->groupid, $course, $cm)) {
-        print_error('invalidoverrideid', 'quiz');
+        throw new \moodle_exception('invalidoverrideid', 'quiz');
     }
 } else {
     if (!groups_user_groups_visible($course, $override->userid, $cm)) {
-        print_error('invalidoverrideid', 'quiz');
+        throw new \moodle_exception('invalidoverrideid', 'quiz');
     }
 }
 
@@ -84,6 +84,7 @@ $title = get_string('deletecheck', null, $stroverride);
 
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
+$PAGE->add_body_class('limitedwidth');
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);

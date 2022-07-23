@@ -70,36 +70,36 @@ class actionbar implements renderable, templatable {
      * @return url_select url_select object.
      */
     private function create_select_menu(): url_select {
-        $summarylink = new moodle_url('/mod/survey/report.php', ['id' => $this->id, 'action' => 'summary']);
-        $scaleslink = new moodle_url('/mod/survey/report.php', ['id' => $this->id, 'action' => 'scales']);
-        $questionslink = new moodle_url('/mod/survey/report.php', ['id' => $this->id, 'action' => 'questions']);
-        $participantslink = new moodle_url('/mod/survey/report.php', ['id' => $this->id, 'action' => 'students']);
+        $menu = [];
+        $actions = $this->get_available_reports();
 
-        $menu = [
-            $summarylink->out(false) => get_string('summary', 'survey'),
-            $scaleslink->out(false) => get_string('scales', 'survey'),
-            $questionslink->out(false) => get_string('questions', 'survey'),
-            $participantslink->out(false) => get_string('participants'),
-        ];
-
-        switch ($this->action) {
-            case 'summary':
-                $activeurl = $summarylink;
-                break;
-            case 'scales':
-                $activeurl = $scaleslink;
-                break;
-            case 'questions':
-                $activeurl = $questionslink;
-                break;
-            case 'students':
-                $activeurl = $participantslink;
-                break;
-            default:
-                $activeurl = $this->currenturl;
+        foreach ($actions as $action => $straction) {
+            $url = new moodle_url($this->currenturl, ['id' => $this->id, 'action' => $action]);
+            $menu[$url->out(false)] = $straction;
         }
+        return new url_select($menu, $this->currenturl->out(false), null, 'surveyresponseselect');
+    }
 
-        return new url_select($menu, $activeurl->out(false), null, 'surveyresponseselect');
+    /**
+     * Generate available reports list
+     *
+     * @return array The list of available action => action string.
+     */
+    private function get_available_reports(): array {
+        global $DB;
+
+        $cm = get_coursemodule_from_id('survey', $this->id);
+        $survey = $DB->get_record("survey", ["id" => $cm->instance]);
+
+        $actions = [];
+        if ($survey && ($survey->template != SURVEY_CIQ)) {
+            $actions['summary'] = get_string('summary', 'survey');
+            $actions['scales'] = get_string('scales', 'survey');
+        }
+        $actions['questions'] = get_string('questions', 'survey');
+        $actions['students'] = get_string('participants');
+
+        return $actions;
     }
 
     /**

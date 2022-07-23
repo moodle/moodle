@@ -129,7 +129,7 @@ class core_question_generator extends component_generator_base {
         $fromform = test_question_maker::get_question_form_data($qtype, $which);
         $fromform = (object) $this->datagenerator->combine_defaults_and_record((array) $question, $fromform);
         $fromform = (object) $this->datagenerator->combine_defaults_and_record((array) $fromform, $overrides);
-        $fromform->status = $question->status;
+        $fromform->status = $fromform->status ?? $question->status;
 
         $question = question_bank::get_qtype($qtype)->save_question($question, $fromform);
 

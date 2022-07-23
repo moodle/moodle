@@ -478,6 +478,9 @@ class core_course_external extends external_api {
                                             array(
                                                 'label' => new external_value(PARAM_TEXT, 'date label'),
                                                 'timestamp' => new external_value(PARAM_INT, 'date timestamp'),
+                                                'relativeto' => new external_value(PARAM_INT, 'relative date timestamp',
+                                                    VALUE_OPTIONAL),
+                                                'dataid' => new external_value(PARAM_NOTAGS, 'cm data id', VALUE_OPTIONAL),
                                             )
                                         ),
                                         VALUE_DEFAULT,
@@ -3754,7 +3757,7 @@ class core_course_external extends external_api {
                     VALUE_DEFAULT, null),
                 'customfieldvalue' => new external_value(PARAM_RAW, 'Used when classification = customfield',
                     VALUE_DEFAULT, null),
-                'searchvalue' => new external_value(PARAM_TEXT, 'The value a user wishes to search against',
+                'searchvalue' => new external_value(PARAM_RAW, 'The value a user wishes to search against',
                     VALUE_DEFAULT, null),
             )
         );
@@ -3812,7 +3815,7 @@ class core_course_external extends external_api {
         $offset = $params['offset'];
         $sort = $params['sort'];
         $customfieldvalue = $params['customfieldvalue'];
-        $searchvalue = $params['searchvalue'];
+        $searchvalue = clean_param($params['searchvalue'], PARAM_TEXT);
 
         switch($classification) {
             case COURSE_TIMELINE_ALLINCLUDINGHIDDEN:

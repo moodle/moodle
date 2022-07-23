@@ -53,7 +53,7 @@ require_course_login($course, true, $cm);
 $feedback = $PAGE->activityrecord;
 
 if (!($feedback->publish_stats OR has_capability('mod/feedback:viewreports', $context))) {
-    print_error('error');
+    throw new \moodle_exception('error');
 }
 
 $feedbackstructure = new mod_feedback_structure($feedback, $PAGE->cm, $courseid);
@@ -118,7 +118,7 @@ if ($courseitemfilter > 0) {
 
             echo '<tr>';
             echo '<td>'.$shortname.'</td>';
-            echo '<td align="right">';
+            echo '<td class="text-right">';
             echo format_float(($c->sumvalue / $c->countvalue), 2);
             echo '</td>';
             echo '</tr>';

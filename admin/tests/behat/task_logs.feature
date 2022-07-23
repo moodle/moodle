@@ -14,9 +14,9 @@ Feature: View task logs report and use its filters
     And I change window size to "large"
     And I navigate to "Server > Tasks > Task logs" in site administration
     When I click on "Filters" "button"
-    And I set the following fields in the "Name" "core_reportbuilder > Filter" to these values:
-      | Name operator | Contains |
-      | Name value    | <name>   |
+    And I set the following fields in the "Class name" "core_reportbuilder > Filter" to these values:
+      | Class name operator | Contains |
+      | Class name value    | <name>   |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     Then I should see "Filters applied"
     And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"

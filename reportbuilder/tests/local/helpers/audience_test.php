@@ -211,29 +211,4 @@ class audience_test extends advanced_testcase {
         $reports = audience::user_reports_list((int) $user3->id);
         $this->assertEmpty($reports);
     }
-
-    /**
-     * Test get_all_audiences_menu_types()
-     */
-    public function test_get_all_audiences_menu_types(): void {
-        $this->resetAfterTest();
-
-        // Test with user that has no permission to add audiences.
-        $user1 = $this->getDataGenerator()->create_user();
-        $roleid = create_role('Dummy role', 'dummyrole', 'dummy role description');
-        assign_capability('moodle/user:viewalldetails', CAP_PROHIBIT, $roleid, context_system::instance()->id);
-        role_assign($roleid, $user1->id, context_system::instance()->id);
-        self::setUser($user1);
-        $categories = audience::get_all_audiences_menu_types();
-        $this->assertEmpty($categories);
-
-        self::setAdminUser();
-        $categories = audience::get_all_audiences_menu_types();
-        $category = array_filter($categories, function ($category) {
-            return $category['name'] === 'Site';
-        });
-        $category = reset($category);
-        // We don't use assertEqual here to avoid this test failing when more audience types get created.
-        $this->assertGreaterThanOrEqual(3, $category['items']);
-    }
 }

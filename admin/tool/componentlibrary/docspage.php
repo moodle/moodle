@@ -76,7 +76,7 @@ $PAGE->set_title($title);
 $PAGE->requires->css($cssfile);
 $jsonfile = new moodle_url('/admin/tool/componentlibrary/hugo/site/data/my-index.json');
 $PAGE->requires->js_call_amd('tool_componentlibrary/loader', 'init', ['jsonfile' => $jsonfile->out()]);
-$PAGE->has_secondary_navigation_setter(false);
+$PAGE->set_secondary_navigation(false);
 
 if (get_config('core', 'allowthemechangeonurl')) {
     $themes = core_component::get_plugin_list('theme');

@@ -54,8 +54,12 @@ if (!$task) {
     throw new moodle_exception('cannotfindinfo', 'error', new moodle_url('/admin/tool/task/scheduledtasks.php'), $taskname);
 }
 
-$canruntasks = \core\task\manager::is_runnable() && get_config('tool_task', 'enablerunnow');
-if (!$canruntasks || !$task->can_run()) {
+if (!\core\task\manager::is_runnable()) {
+    $redirecturl = new \moodle_url('/admin/settings.php', ['section' => 'systempaths']);
+    throw new moodle_exception('cannotfindthepathtothecli', 'tool_task', $redirecturl->out());
+}
+
+if (!get_config('tool_task', 'enablerunnow') || !$task->can_run()) {
     throw new moodle_exception('nopermissions', 'error', new moodle_url('/admin/tool/task/scheduledtasks.php'),
         get_string('runnow', 'tool_task'), $task->get_name());
 }

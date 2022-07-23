@@ -7,6 +7,9 @@
     td {
         @extend .align-middle;
     }
+    .action-menu .menubar {
+        justify-content: end;
+    }
 }
 
 /* Filters */
@@ -91,6 +94,10 @@ $rb-right-sidebar-width: 350px;
 .reportbuilder-report-container {
     @extend .flex-fill;
     min-width: 0;
+}
+// Allow horizontal scroll in editor table.
+.reportbuilder-editor-table-container {
+    overflow-x: auto;
 }
 
 /* Custom table headers */

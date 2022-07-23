@@ -18,7 +18,6 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\external\audiences;
 
-use context_system;
 use core_reportbuilder\local\audiences\base;
 use external_api;
 use external_function_parameters;
@@ -72,7 +71,7 @@ class delete extends external_api {
 
         $report = manager::get_report_from_id($reportid);
 
-        self::validate_context(context_system::instance());
+        self::validate_context($report->get_context());
         permission::require_can_edit_report($report->get_report_persistent());
 
         $baseinstance = base::instance($instanceid);

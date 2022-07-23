@@ -79,7 +79,7 @@ function mnet_get_public_key($uri, $application=null) {
                 curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
             } else {
                 curl_close($ch);
-                print_error( 'socksnotsupported','mnet' );
+                throw new \moodle_exception( 'socksnotsupported', 'mnet');
             }
         }
 
@@ -259,7 +259,7 @@ function mnet_encrypt_message($message, $remote_certificate) {
     // Generate a key resource from the remote_certificate text string
     $publickey = openssl_get_publickey($remote_certificate);
 
-    if ( gettype($publickey) != 'resource' ) {
+    if ($publickey === false) {
         // Remote certificate is faulty.
         return false;
     }

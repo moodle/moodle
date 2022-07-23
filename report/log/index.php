@@ -144,6 +144,7 @@ if ($PAGE->user_allowed_editing() && $adminediting != -1) {
 if ($course->id == $SITE->id) {
     admin_externalpage_setup('reportlog', '', null, '', array('pagelayout' => 'report'));
     $PAGE->set_title($SITE->shortname .': '. $strlogs);
+    $PAGE->set_primary_active_tab('siteadminnode');
 } else {
     $PAGE->set_title($course->shortname .': '. $strlogs);
     $PAGE->set_heading($course->fullname);

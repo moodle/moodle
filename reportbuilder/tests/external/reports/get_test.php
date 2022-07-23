@@ -70,7 +70,7 @@ class get_test extends externallib_advanced_testcase {
         $this->assertNotEmpty($result['javascript']);
         $this->assertFalse($result['filterspresent']);
         $this->assertEmpty($result['filtersform']);
-        $this->assertEquals(1, $result['editmode']);
+        $this->assertTrue($result['editmode']);
         $this->assertTrue($result['filters']['hasavailablefilters']);
         $this->assertNotEmpty($result['filters']['availablefilters']);
         $this->assertTrue($result['filters']['hasactivefilters']);
@@ -108,7 +108,7 @@ class get_test extends externallib_advanced_testcase {
         $this->assertNotEmpty($result['javascript']);
         $this->assertTrue($result['filterspresent']);
         $this->assertNotEmpty($result['filtersform']);
-        $this->assertEquals(0, $result['editmode']);
+        $this->assertFalse($result['editmode']);
         $this->assertEmpty($result['filters']);
         $this->assertEmpty($result['conditions']);
         $this->assertEmpty($result['sorting']);

@@ -61,6 +61,7 @@ switch ($context->contextlevel) {
     case CONTEXT_COURSE:
         $course = get_course($context->instanceid);
         $PAGE->set_heading($course->fullname);
+        $PAGE->set_secondary_active_tab('coursereuse');
         break;
     default:
         $PAGE->set_heading($SITE->fullname);

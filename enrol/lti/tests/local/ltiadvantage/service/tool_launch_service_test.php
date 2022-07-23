@@ -72,7 +72,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         }
 
         // Get a mock 1.3 launch, optionally including the lti1p1 migration claim based on a legacy tool secret.
-        $mocklaunch = $this->get_mock_launch($modresource, $launchdata['user'], null, true, true,
+        $mocklaunch = $this->get_mock_launch($modresource, $launchdata['user'], null, [], true,
             $launchdata['launch_migration_claim']);
 
         // Call the service.
@@ -278,7 +278,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         $instructoruser = $this->getDataGenerator()->create_user();
         $launchservice = $this->get_tool_launch_service();
         $mockuser = $this->get_mock_launch_users_with_ids(['1p3_1'])[0];
-        $mocklaunch = $this->get_mock_launch($modresource, $mockuser, null, false, false, null, []);
+        $mocklaunch = $this->get_mock_launch($modresource, $mockuser, null, null, false, null, []);
 
         $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage(get_string('ltiadvlauncherror:missingid', 'enrol_lti'));
@@ -296,7 +296,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         $instructoruser = $this->getDataGenerator()->create_user();
         $launchservice = $this->get_tool_launch_service();
         $mockuser = $this->get_mock_launch_users_with_ids(['1p3_1'])[0];
-        $mocklaunch = $this->get_mock_launch($modresource, $mockuser, null, false, false, null, ['id' => 999999]);
+        $mocklaunch = $this->get_mock_launch($modresource, $mockuser, null, null, false, null, ['id' => 999999]);
 
         $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage(get_string('ltiadvlauncherror:invalidid', 'enrol_lti', 999999));
@@ -501,11 +501,11 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         $learneruser = $this->getDataGenerator()->create_user();
         $mockinstructoruser = $this->get_mock_launch_users_with_ids(['1'])[0];
         $mocklearneruser = $this->get_mock_launch_users_with_ids(['1'], false, '')[0];
-        $mockinstructorlaunch = $this->get_mock_launch($modresource, $mockinstructoruser, null, false, false, null, [
+        $mockinstructorlaunch = $this->get_mock_launch($modresource, $mockinstructoruser, null, null, false, null, [
             'id' => $modresource->uuid,
             'forcedembed' => true
         ]);
-        $mocklearnerlaunch = $this->get_mock_launch($modresource, $mocklearneruser, null, false, false, null, [
+        $mocklearnerlaunch = $this->get_mock_launch($modresource, $mocklearneruser, null, null, false, null, [
             'id' => $modresource->uuid,
             'forcedembed' => true
         ]);
@@ -519,5 +519,310 @@ class tool_launch_service_test extends \lti_advantage_testcase {
         // Learners are.
         $launchservice->user_launches_tool($learneruser, $mocklearnerlaunch);
         $this->assertEquals('embedded', $SESSION->forcepagelayout);
+    }
+
+    /**
+     * Test launching the tool with different 'aud' values, confirming the service handles all variations appropriately.
+     *
+     * @param mixed $aud the aud value to test
+     * @param array $expected the array of expectations to check
+     * @dataProvider aud_data_provider
+     * @covers ::user_launches_tool
+     */
+    public function test_user_launches_tool_aud_variations($aud, array $expected) {
+        $this->resetAfterTest();
+        [$course, $modresource] = $this->create_test_environment();
+        $instructoruser = $this->getDataGenerator()->create_user();
+        $mockinstructoruser = $this->get_mock_launch_users_with_ids(['1'])[0];
+        $mockinstructorlaunch = $this->get_mock_launch($modresource, $mockinstructoruser, null, null, false, null, [
+            'id' => $modresource->uuid,
+        ], $aud);
+
+        $launchservice = $this->get_tool_launch_service();
+        if (isset($expected['exception'])) {
+            $this->expectException($expected['exception']);
+            $this->expectExceptionMessage($expected['exceptionmessage']);
+        }
+        [$userid, $resource] = $launchservice->user_launches_tool($instructoruser, $mockinstructorlaunch);
+
+        $this->assertNotEmpty($userid);
+        $this->assertNotEmpty($resource);
+    }
+
+    /**
+     * Data provider for testing variations of the 'aud' JWT property.
+     *
+     * @return array the test case data
+     */
+    public function aud_data_provider(): array {
+        return [
+            'valid, array having multiple entries with the first one being clientid' => [
+                'aud' => ['123', 'something else', 'blah'],
+                'expected' => [
+                    'valid' => true
+                ]
+            ],
+            'valid, array having a single entry being clientid' => [
+                'aud' => ['123'],
+                'expected' => [
+                    'valid' => true
+                ]
+            ],
+            'valid, string containing the single clientid' => [
+                'aud' => '123',
+                'expected' => [
+                    'valid' => true
+                ]
+            ],
+            'invalid, array having multiple values where the first item is not clientid' => [
+                'aud' => ['cat', 'dog', '123'],
+                'expected' => [
+                    'valid' => false,
+                    'exception' => \moodle_exception::class,
+                    'exceptionmessage' => get_string('ltiadvlauncherror:invalidregistration', 'enrol_lti')
+                ]
+            ],
+            'invalid, array containing a single item which is not clientid' => [
+                'aud' => ['cat'],
+                'expected' => [
+                    'valid' => false,
+                    'exception' => \moodle_exception::class,
+                    'exceptionmessage' => get_string('ltiadvlauncherror:invalidregistration', 'enrol_lti')
+                ]
+            ],
+            'invalid, string contains the item and it is not the clientid' => [
+                'aud' => 'cat',
+                'expected' => [
+                    'valid' => false,
+                    'exception' => \moodle_exception::class,
+                    'exceptionmessage' => get_string('ltiadvlauncherror:invalidregistration', 'enrol_lti')
+                ]
+            ],
+            'invalid, empty string' => [
+                'aud' => '',
+                'expected' => [
+                    'valid' => false,
+                    'exception' => \moodle_exception::class,
+                    'exceptionmessage' => get_string('ltiadvlauncherror:invalidregistration', 'enrol_lti')
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * Test verifying how changes to lti-ags claim information is handled across different launches.
+     *
+     * @param array $agsclaim1 the lti-ags claim data to use in the first launch.
+     * @param array $agsclaim2 the lti-ags claim data to use in the second launch.
+     * @param array $expected the array of test case expectations.
+     * @dataProvider ags_claim_provider
+     * @covers ::user_launches_tool
+     */
+    public function test_user_launches_tool_ags_claim_handling(array $agsclaim1, array $agsclaim2, array $expected) {
+        $this->resetAfterTest();
+        [$course, $modresource] = $this->create_test_environment();
+        $instructoruser = $this->getDataGenerator()->create_user();
+        $mockinstructoruser = $this->get_mock_launch_users_with_ids(['1'])[0];
+        $userrepo = new user_repository();
+        $resourcelinkrepo = new resource_link_repository();
+        $launchservice = $this->get_tool_launch_service();
+
+        // Launch the first time.
+        $mockinstructorlaunch = $this->get_mock_launch($modresource, $mockinstructoruser, null, $agsclaim1, false, null, [
+            'id' => $modresource->uuid,
+        ]);
+        [$userid, $resource] = $launchservice->user_launches_tool($instructoruser, $mockinstructorlaunch);
+
+        $ltiuser = $userrepo->find_single_user_by_resource($userid, $resource->id);
+        $resourcelink = $resourcelinkrepo->find_by_resource_and_user($resource->id, $ltiuser->get_id())[0];
+        $gradeservice = $resourcelink->get_grade_service();
+        $lineitemurl = $agsclaim1['lineitem'] ?? null;
+        $lineitemsurl = $agsclaim1['lineitems'] ?? null;
+        $this->assertEquals($agsclaim1['scope'], $gradeservice->get_scopes());
+        $this->assertEquals($lineitemurl, $gradeservice->get_lineitemurl());
+        $this->assertEquals($lineitemsurl, $gradeservice->get_lineitemsurl());
+
+        // Launch again, with a new lti-ags claim.
+        $mockinstructorlaunch = $this->get_mock_launch($modresource, $mockinstructoruser, null, $agsclaim2, false, null, [
+            'id' => $modresource->uuid,
+        ]);
+        [$userid, $resource] = $launchservice->user_launches_tool($instructoruser, $mockinstructorlaunch);
+        $ltiuser = $userrepo->find_single_user_by_resource($userid, $resource->id);
+        $resourcelink = $resourcelinkrepo->find_by_resource_and_user($resource->id, $ltiuser->get_id())[0];
+        $gradeservice = $resourcelink->get_grade_service();
+        $lineitemurl = $expected['lineitem'] ?? null;
+        $lineitemsurl = $expected['lineitems'] ?? null;
+        $this->assertEquals($expected['scope'], $gradeservice->get_scopes());
+        $this->assertEquals($lineitemurl, $gradeservice->get_lineitemurl());
+        $this->assertEquals($lineitemsurl, $gradeservice->get_lineitemsurl());
+    }
+
+    /**
+     * Data provider for testing user_launches tool with varying mocked lti-ags claim data over several launches.
+     *
+     * @return array the array of test case data.
+     */
+    public function ags_claim_provider(): array {
+        return [
+            'Coupled line item with score post only, no change to scopes on subsequent launch' => [
+                'agsclaim1' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ],
+                'agsclaim2' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ],
+                'expected' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ]
+            ],
+            'Coupled line item with score post only, addition to scopes on subsequent launch' => [
+                'agsclaim1' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ],
+                'agsclaim2' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score",
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ],
+                'expected' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score",
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ]
+            ],
+            'Coupled line item with score post + result read, removal of scopes on subsequent launch' => [
+                'agsclaim1' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ],
+                'agsclaim2' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score",
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ],
+                'expected' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score",
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ]
+            ],
+            'Decoupled line items with all capabilities, change and removal of scopes on subsequent launch' => [
+                'agsclaim1' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitems" => "https://platform.example.com/10/lineitems/",
+                ],
+                'agsclaim2' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitems" => "https://platform.example.com/10/lineitems/",
+                ],
+                'expected' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitems" => "https://platform.example.com/10/lineitems/",
+                ]
+            ],
+            'Decoupled line items with all capabilities, removal of scopes on subsequent launch' => [
+                'agsclaim1' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitems" => "https://platform.example.com/10/lineitems/",
+                ],
+                'agsclaim2' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitems" => "https://platform.example.com/10/lineitems/",
+                ],
+                'expected' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitems" => "https://platform.example.com/10/lineitems/",
+                ]
+            ],
+            'Coupled line items with score post only, addition of lineitemsurl and all capabilities on subsequent launch' => [
+                'agsclaim1' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ],
+                'agsclaim2' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitems" => "https://platform.example.com/10/lineitems/",
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ],
+                'expected' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitems" => "https://platform.example.com/10/lineitems/",
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ]
+            ],
+            'Decoupled line items with all capabilities, change to coupled line item with score post only on subsequent launch' => [
+                'agsclaim1' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitems" => "https://platform.example.com/10/lineitems/",
+                ],
+                'agsclaim2' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ],
+                'expected' => [
+                    "scope" => [
+                        "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+                    ],
+                    "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+                ]
+            ],
+        ];
     }
 }

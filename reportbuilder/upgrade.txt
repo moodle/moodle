@@ -1,0 +1,24 @@
+This file describes API changes in /reportbuilder/*
+Information provided here is intended especially for developers.
+
+=== 4.1 ===
+* 'set_default_per_page' and 'get_default_per_page' methods have been added to \local\report\base class
+  to manage the default displayed rows per page.
+* Added two new methods in the datasource class:
+    - add_all_from_entity() to add all columns/filters/conditions from the given entity to the report at once
+    - add_all_from_entities() to add all columns/filters/conditions from all the entities added to the report at once
+* New database helper methods for generating multiple unique values: `generate_aliases` and `generate_param_names`
+* The base aggregation `format_value` method has a `$columntype` argument in order to preserve type during aggregation. When
+  defining column callbacks, strict typing will now be preserved in your callback methods when the column is being aggregated
+* The method `get_joins()` in the base entity class is now public, allowing for easier joins within reports
+* The following local helper methods have been deprecated, their implementation moved to exporters:
+  - `audience::get_all_audiences_menu_types` -> `custom_report_audience_cards_exporter`
+  - `report::get_available_columns` -> `custom_report_column_cards_exporter`
+* The following permission methods now accept an optional `$context` parameter (default system context):
+  - `[require_]can_view_reports_list`
+  - `[require_]can_create_report`
+* New method `get_default_condition_values()` in base datasource class, to be overridden by sources that wish to
+  define default values for conditions upon report creation.
+* New report filter types:
+  - `category` for reports containing course categories
+  - `tags` for reports containing entities with support for core_tag API

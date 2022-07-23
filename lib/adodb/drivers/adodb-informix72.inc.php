@@ -253,12 +253,12 @@ class ADODB_informix72 extends ADOConnection {
 		return $false;
 	}
 
-   function xMetaColumns($table)
-   {
+	function xMetaColumns($table)
+	{
 		return ADOConnection::MetaColumns($table,false);
-   }
+	}
 
-	 function MetaForeignKeys($table, $owner=false, $upper=false) //!Eos
+	public function metaForeignKeys($table, $owner = '', $upper = false, $associative = false)
 	{
 		$sql = "
 			select tr.tabname,updrule,delrule,

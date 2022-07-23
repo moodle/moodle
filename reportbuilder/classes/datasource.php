@@ -239,6 +239,9 @@ abstract class datasource extends base {
         foreach ($conditionidentifiers as $uniqueidentifier) {
             report::add_report_condition($reportid, $uniqueidentifier);
         }
+
+        // Set the default condition values if they have been set in the datasource.
+        $this->set_condition_values($this->get_default_condition_values());
     }
 
     /**
@@ -247,6 +250,18 @@ abstract class datasource extends base {
      * @return string[]
      */
     abstract public function get_default_conditions(): array;
+
+    /**
+     * Return the default condition values that will be added to the report once is created
+     *
+     * For any of the default conditions returned by the method {@see get_default_conditions} is
+     * possible to set the initial values.
+     *
+     * @return array
+     */
+    public function get_default_condition_values(): array {
+        return [];
+    }
 
     /**
      * Return all configured report conditions
@@ -265,5 +280,25 @@ abstract class datasource extends base {
         }
 
         return $conditions;
+    }
+
+    /**
+     * Adds all columns/filters/conditions from the given entity to the report at once
+     *
+     * @param string $entityname
+     */
+    final protected function add_all_from_entity(string $entityname): void {
+        $this->add_columns_from_entity($entityname);
+        $this->add_filters_from_entity($entityname);
+        $this->add_conditions_from_entity($entityname);
+    }
+
+    /**
+     * Adds all columns/filters/conditions from all the entities added to the report at once
+     */
+    final protected function add_all_from_entities(): void {
+        foreach ($this->get_entities() as $entity) {
+            $this->add_all_from_entity($entity->get_entity_name());
+        }
     }
 }

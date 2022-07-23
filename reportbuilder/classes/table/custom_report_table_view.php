@@ -45,6 +45,17 @@ class custom_report_table_view extends custom_report_table {
     }
 
     /**
+     * Override base implementation, return pagesize as defined in table filterset
+     *
+     * @return int
+     */
+    public function get_default_per_page(): int {
+        $filterset = $this->get_filterset();
+
+        return $filterset->get_filter('pagesize')->current();
+    }
+
+    /**
      * Get the html for the download buttons
      *
      * @return string

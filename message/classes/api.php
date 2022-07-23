@@ -203,6 +203,8 @@ class api {
             throw new \moodle_exception('disabled', 'message');
         }
 
+        require_once($CFG->dirroot . '/user/lib.php');
+
         // Used to search for contacts.
         $fullname = $DB->sql_fullname();
 
@@ -236,6 +238,11 @@ class api {
             }
         }
 
+        // We need to get all the user details for a fullname in the visibility checks.
+        $namefields = \core_user\fields::for_name()
+            // Required by the visibility checks.
+            ->including('deleted');
+
         // Let's get those non-contacts.
         // Because we can't achieve all the required visibility checks in SQL, we'll iterate through the non-contact records
         // and stop once we have enough matching the 'visible' criteria.
@@ -247,7 +254,8 @@ class api {
             $params,
             $excludeparams,
             $userid,
-            $selfconversation
+            $selfconversation,
+            $namefields
         ) {
             global $DB, $CFG;
 
@@ -258,8 +266,9 @@ class api {
 
             // Since we want to order a UNION we need to list out all the user fields individually this will
             // allow us to reference the fullname correctly.
-            $userfields = implode(', u.', get_user_fieldnames());
-            $select = "u.id, " . $DB->sql_fullname() ." AS sortingname, u." . $userfields;
+            $userfields = $namefields->get_sql('u')->selects;
+
+            $select = "u.id, " . $DB->sql_fullname() . " AS sortingname" . $userfields;
 
             // When messageallusers is false valid non-contacts must be enrolled on one of the users courses.
             if (empty($CFG->messagingallusers)) {
@@ -313,13 +322,17 @@ class api {
         // See MDL-63983 dealing with performance improvements to this area of code.
         $noofvalidseenrecords = 0;
         $returnedusers = [];
+
+        // Only fields that are also part of user_get_default_fields() are valid when passed into user_get_user_details().
+        $fields = array_intersect($namefields->get_required_fields(), user_get_default_fields());
+
         foreach ($getnoncontactusers(0, $batchlimit) as $users) {
             foreach ($users as $id => $user) {
                 // User visibility checks: only return users who are visible to the user performing the search.
                 // Which visibility check to use depends on the 'messagingallusers' (site wide messaging) setting:
                 // - If enabled, return matched users whose profiles are visible to the current user anywhere (site or course).
                 // - If disabled, only return matched users whose course profiles are visible to the current user.
-                $userdetails = \core_message\helper::search_get_user_details($user);
+                $userdetails = \core_message\helper::search_get_user_details($user, $fields);
 
                 // Return the user only if the searched field is returned.
                 // Otherwise it means that the $USER was not allowed to search the returned user.
@@ -1898,7 +1911,7 @@ class api {
                 }
                 $processor->available = 1;
             } else {
-                print_error('errorcallingprocessor', 'message');
+                throw new \moodle_exception('errorcallingprocessor', 'message');
             }
         } else {
             $processor->available = 0;

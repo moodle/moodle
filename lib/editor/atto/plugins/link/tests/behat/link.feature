@@ -82,3 +82,37 @@ Feature: Add links to Atto
     And I click on "Link" "button"
     And the field "Text to display" matches value "Moodle - Open-source learning platform"
     And the field "Enter a URL" matches value "https://moodle.org/"
+
+  @javascript
+  Scenario: Insert a link for an image
+    Given I log in as "admin"
+    And I follow "Private files" in the user menu
+    And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
+    And I click on "Save changes" "button"
+    And I open my profile in edit mode
+    And I click on "Insert or edit image" "button"
+    And I click on "Browse repositories..." "button"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
+    And I click on "moodle-logo.png" "link"
+    And I click on "Select this file" "button"
+    And I set the field "Describe this image for someone who cannot see it" to "It's the Moodle"
+    And I press "Save image"
+    And I select the text in the "Description" Atto editor
+    And I press the right key
+    And I press the shift left key
+    And I click on "Link" "button"
+    And I set the field "Enter a URL" to "https://moodle.org/"
+    And I set the field "Text to display" to "Moodle - Open-source learning platform"
+    And I click on "Create link" "button"
+    When I click on "Show more buttons" "button"
+    And I click on "HTML" "button"
+    Then I should see "<a href=\"https://moodle.org/\" title=\"Moodle - Open-source learning platform\"><img"
+    And I click on "HTML" "button"
+    And I select the text in the "Description" Atto editor
+    And I press the shift left key
+    And I click on "Insert or edit image" "button"
+    And the field "Describe this image for someone who cannot see it" matches value "It's the Moodle"
+    And I click on "Close" "button" in the "Image properties" "dialogue"
+    And I click on "Link" "button"
+    And the field "Text to display" matches value "Moodle - Open-source learning platform"
+    And the field "Enter a URL" matches value "https://moodle.org/"

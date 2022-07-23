@@ -203,7 +203,7 @@ class core_backup_renderer extends plugin_renderer_base {
                         $table->data = array();
                     }
                     $name = get_string('pluginname', $activity->modulename);
-                    $icon = new image_icon('icon', '', $activity->modulename, ['class' => 'iconlarge icon-pre']);
+                    $icon = new image_icon('monologo', '', $activity->modulename, ['class' => 'iconlarge icon-pre']);
                     $table->data[] = array(
                         $this->output->render($icon).$name,
                         $activity->title,
@@ -1022,7 +1022,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $tabledata = array();
 
         // Get all in progress course copies for this user.
-        $copies = \core_backup\copy\copy::get_copies($userid, $courseid);
+        $copies = \copy_helper::get_copies($userid, $courseid);
 
         foreach ($copies as $copy) {
             $sourceurl = new \moodle_url('/course/view.php', array('id' => $copy->sourceid));
@@ -1030,7 +1030,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $tablerow = array(
                 html_writer::link($sourceurl, $copy->source),
                 $copy->destination,
-                userdate($copy->time),
+                userdate($copy->timecreated),
                 get_string($copy->operation),
                 $this->get_status_display($copy->status, $copy->backupid, $copy->restoreid, $copy->operation)
             );

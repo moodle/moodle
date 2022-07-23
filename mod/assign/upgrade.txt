@@ -1,4 +1,8 @@
 This files describes API changes in the assign code.
+=== 4.1 ===
+* New method \assign::is_userid_filtered() has been implemented. It returns false if user id is filtered out by either
+  user preferences for grading table or submission status filter. Otherwise, returns true.
+
 === 4.0 ===
 * The method \assign::grading_disabled() now has optional $gradinginfo parameter to improve performance
 * Renderer (renderer.php) has been moved from mod root to classes/output/ to be more PSR compliant.

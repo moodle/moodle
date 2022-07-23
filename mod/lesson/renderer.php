@@ -595,6 +595,9 @@ class mod_lesson_renderer extends plugin_renderer_base {
         if ($data->yourcurrentgradeisoutof !== false) {
             $output .= $this->paragraph(get_string("yourcurrentgradeisoutof", "lesson", $data->yourcurrentgradeisoutof), 'center');
         }
+        if ($data->yourcurrentgradeis !== false) {
+            $output .= $this->paragraph(get_string("yourcurrentgradeis", "lesson", $data->yourcurrentgradeis), 'center');
+        }
         if ($data->eolstudentoutoftimenoanswers !== false) {
             $output .= $this->paragraph(get_string("eolstudentoutoftimenoanswers", "lesson"));
         }

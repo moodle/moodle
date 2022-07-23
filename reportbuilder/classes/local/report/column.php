@@ -478,7 +478,8 @@ final class column {
      * The callback should implement the following signature (where $value is the first column field, $row is all column
      * fields, and $additionalarguments are those passed on from this method):
      *
-     * The type of the $value parameter passed to the callback is determined by calling {@see set_type}
+     * The type of the $value parameter passed to the callback is determined by calling {@see set_type}, this type is preserved
+     * if the column is part of a report source and is aggregated using one of the "Group concatenation" methods
      *
      * function($value, stdClass $row[, $additionalarguments]): string
      *
@@ -643,13 +644,14 @@ final class column {
      * Return the default column value, that being the value of it's first field
      *
      * @param array $values
+     * @param int $columntype
      * @return mixed
      */
-    private function get_default_value(array $values) {
+    public static function get_default_value(array $values, int $columntype) {
         $value = reset($values);
 
         // Ensure default value is cast to it's strict type.
-        switch ($this->get_type()) {
+        switch ($columntype) {
             case self::TYPE_INTEGER:
             case self::TYPE_TIMESTAMP:
                 $value = (int) $value;
@@ -673,11 +675,11 @@ final class column {
      */
     public function format_value(array $row) {
         $values = $this->get_values($row);
-        $value = $this->get_default_value($values);
+        $value = self::get_default_value($values, $this->type);
 
         // If column is being aggregated then defer formatting to them, otherwise loop through all column callbacks.
         if (!empty($this->aggregation)) {
-            $value = $this->aggregation::format_value($value, $values, $this->callbacks);
+            $value = $this->aggregation::format_value($value, $values, $this->callbacks, $this->type);
         } else {
             foreach ($this->callbacks as $callback) {
                 [$callable, $arguments] = $callback;

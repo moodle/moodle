@@ -33,6 +33,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @package   qtype_match
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qtype_match_question
  */
 class question_test extends \advanced_testcase {
 
@@ -243,5 +244,65 @@ class question_test extends \advanced_testcase {
 
         $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
         $this->assertEquals(1, $options['shufflestems']);
+    }
+
+    public function test_validate_can_regrade_with_other_version_ok() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+
+        $this->assertNull($newm->validate_can_regrade_with_other_version($m));
+    }
+
+    public function test_validate_can_regrade_with_other_version_bad_stems() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+        unset($newm->stems[4]);
+
+        $this->assertEquals(get_string('regradeissuenumstemschanged', 'qtype_match'),
+                $newm->validate_can_regrade_with_other_version($m));
+    }
+
+    public function test_validate_can_regrade_with_other_version_bad_choices() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+        unset($newm->choices[3]);
+
+        $this->assertEquals(get_string('regradeissuenumchoiceschanged', 'qtype_match'),
+                $newm->validate_can_regrade_with_other_version($m));
+    }
+
+        public function test_update_attempt_state_date_from_old_version_bad() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+        $newm->stems = [11 => 'Dog', 12 => 'Frog', 13 => 'Toad', 14 => 'Cat', 15 => 'Hippopotamus'];
+        $newm->stemformat = [11 => FORMAT_HTML, 12 => FORMAT_HTML, 13 => FORMAT_HTML, 14 => FORMAT_HTML, 15 => FORMAT_HTML];
+        $newm->choices = [11 => 'Mammal', 12 => 'Amphibian', 13 => 'Insect'];
+        $newm->right = [11 => 11, 12 => 12, 13 => 12, 14 => 11, 15 => 11];
+
+        $oldstep = new question_attempt_step();
+        $oldstep->set_qt_var('_stemorder', '4,1,3,2');
+        $oldstep->set_qt_var('_choiceorder', '2,3,1');
+        $this->expectExceptionMessage(get_string('regradeissuenumstemschanged', 'qtype_match'));
+        $newm->update_attempt_state_data_for_new_version($oldstep, $m);
+    }
+
+    public function test_update_attempt_state_date_from_old_version_ok() {
+        $m = \test_question_maker::make_question('match');
+
+        $newm = clone($m);
+        $newm->stems = [11 => 'Dog', 12 => 'Frog', 13 => 'Toad', 14 => 'Cat'];
+        $newm->stemformat = [11 => FORMAT_HTML, 12 => FORMAT_HTML, 13 => FORMAT_HTML, 14 => FORMAT_HTML];
+        $newm->choices = [11 => 'Mammal', 12 => 'Amphibian', 13 => 'Insect'];
+        $newm->right = [11 => 11, 12 => 12, 13 => 12, 14 => 11];
+
+        $oldstep = new question_attempt_step();
+        $oldstep->set_qt_var('_stemorder', '4,1,3,2');
+        $oldstep->set_qt_var('_choiceorder', '2,3,1');
+        $this->assertEquals(['_stemorder' => '14,11,13,12', '_choiceorder' => '12,13,11'],
+                $newm->update_attempt_state_data_for_new_version($oldstep, $m));
     }
 }

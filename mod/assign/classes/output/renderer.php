@@ -168,7 +168,7 @@ class renderer extends \plugin_renderer_base {
             $fullname = fullname($summary->user, $summary->viewfullnames);
             $extrainfo = array();
             foreach ($summary->extrauserfields as $extrafield) {
-                $extrainfo[] = $summary->user->$extrafield;
+                $extrainfo[] = s($summary->user->$extrafield);
             }
             if (count($extrainfo)) {
                 $fullname .= ' (' . implode(', ', $extrainfo) . ')';
@@ -246,7 +246,7 @@ class renderer extends \plugin_renderer_base {
 
         $description = $header->preface;
         if ($header->showintro || $header->activity) {
-            $description = $this->output->box_start('generalbox boxaligncenter', 'intro');
+            $description = $this->output->box_start('generalbox boxaligncenter');
             if ($header->showintro) {
                 $description .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
             }
@@ -369,6 +369,14 @@ class renderer extends \plugin_renderer_base {
                 }
             }
 
+        }
+
+        // Add time limit info if there is one.
+        $timelimitenabled = get_config('assign', 'enabletimelimit');
+        if ($timelimitenabled && $summary->timelimit > 0) {
+            $cell1content = get_string('timelimit', 'assign');
+            $cell2content = format_time($summary->timelimit);
+            $this->add_table_row_tuple($t, $cell1content, $cell2content, [], []);
         }
 
         // All done - write the table.
@@ -1297,7 +1305,7 @@ class renderer extends \plugin_renderer_base {
 
         // There is a submission, display the relevant early/late message.
         if ($submission && $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
-            $latecalculation = $submission->timemodified - ($timelimitenabledbeforeduedate ? $submission->timecreated : 0);
+            $latecalculation = $submission->timemodified - ($timelimitenabledbeforeduedate ? $submission->timestarted : 0);
             $latethreshold = $timelimitenabledbeforeduedate ? $status->timelimit : $status->duedate;
             $earlystring = $timelimitenabledbeforeduedate ? 'submittedundertime' : 'submittedearly';
             $latestring = $timelimitenabledbeforeduedate ? 'submittedovertime' : 'submittedlate';

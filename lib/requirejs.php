@@ -128,7 +128,7 @@ if ($rev > 0 and $rev < (time() + 60 * 60)) {
 
 // If we've made it here then we're in "dev mode" where everything is lazy loaded.
 // So all files will be served one at a time.
-$jsfiles = core_requirejs::find_one_amd_module($component, $module, false);
+$jsfiles = core_requirejs::find_one_amd_module($component, $module);
 
 if (!empty($jsfiles)) {
     $modulename = array_keys($jsfiles)[0];

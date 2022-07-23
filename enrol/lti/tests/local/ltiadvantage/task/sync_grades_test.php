@@ -394,7 +394,7 @@ class sync_grades_test extends \lti_advantage_testcase {
 
         // Launch the resource for an instructor which will create the domain objects needed for service calls.
         $teachermocklaunch = $this->get_mock_launch($resource, $this->get_mock_launch_users_with_ids(['1'], false)[0],
-            null, false);
+            null, null);
         $instructoruser = $this->getDataGenerator()->create_user();
         [$userid] = $launchservice->user_launches_tool($instructoruser, $teachermocklaunch);
 
@@ -413,12 +413,43 @@ class sync_grades_test extends \lti_advantage_testcase {
     }
 
     /**
+     * Test syncing grades when the enrolment instance is disabled.
+     *
+     * @covers ::execute
+     */
+    public function test_sync_grades_disabled_instance() {
+        $this->resetAfterTest();
+        global $DB;
+
+        [$course, $resource, $resource2, $resource3] = $this->create_test_environment();
+
+        // Disable resource 1.
+        $enrol = (object) ['id' => $resource->enrolid, 'status' => ENROL_INSTANCE_DISABLED];
+        $DB->update_record('enrol', $enrol);
+
+        // Delete the activity being shared by resource 2, leaving resource 2 disabled as a result.
+        $modcontext = \context::instance_by_id($resource2->contextid);
+        course_delete_module($modcontext->instanceid);
+
+        // Only the enabled resource 3 should sync grades.
+        $task = $this->get_task_with_mocked_grade_service();
+        $this->expectOutputRegex(
+            "/^Starting - LTI Advantage grade sync for shared resource '$resource3->id' in course '$course->id'.\n".
+            "Completed - Synced grades for tool '$resource3->id' in the course '$course->id'. Processed 0 users; ".
+            "sent 0 grades.\n$/"
+        );
+        $task->execute();
+    }
+
+    /**
      * Test the grade sync when the context has been deleted in between launch and when the grade sync task is run.
      *
      * @covers ::execute
      */
     public function test_sync_grades_deleted_context() {
         $this->resetAfterTest();
+        global $DB;
+
         [$course, $resource] = $this->create_test_environment();
         $launchservice = $this->get_tool_launch_service();
 
@@ -427,10 +458,11 @@ class sync_grades_test extends \lti_advantage_testcase {
         $instructoruser = $this->getDataGenerator()->create_user();
         [$userid] = $launchservice->user_launches_tool($instructoruser, $teachermocklaunch);
 
-        global $CFG;
-        require_once($CFG->dirroot . '/course/lib.php');
+        // Delete the activity, then enable the enrolment method (it is disabled during activity deletion).
         $modcontext = \context::instance_by_id($resource->contextid);
         course_delete_module($modcontext->instanceid);
+        $enrol = (object) ['id' => $resource->enrolid, 'status' => ENROL_INSTANCE_ENABLED];
+        $DB->update_record('enrol', $enrol);
 
         $task = $this->get_task_with_mocked_grade_service();
         $this->expectOutputRegex(

@@ -26,6 +26,7 @@ use tool_dataprivacy\task\process_data_request_task;
  * API tests.
  *
  * @package    tool_dataprivacy
+ * @covers     \tool_dataprivacy\api
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2172,6 +2173,27 @@ class api_test extends \advanced_testcase {
         $request->save();
 
         return $request;
+    }
+
+    /**
+     * Test whether user can create data download request for themselves
+     */
+    public function test_can_create_data_download_request_for_self(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // The default user role allows for the creation of download data requests.
+        $this->assertTrue(api::can_create_data_download_request_for_self());
+
+        // Prohibit that capability.
+        $userrole = $DB->get_field('role', 'id', ['shortname' => 'user'], MUST_EXIST);
+        assign_capability('tool/dataprivacy:downloadownrequest', CAP_PROHIBIT, $userrole, \context_user::instance($user->id));
+
+        $this->assertFalse(api::can_create_data_download_request_for_self());
     }
 
     /**

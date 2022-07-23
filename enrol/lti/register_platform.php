@@ -26,6 +26,7 @@
  */
 
 use core\output\notification;
+use enrol_lti\local\ltiadvantage\form\create_registration_form;
 use enrol_lti\local\ltiadvantage\form\platform_registration_form;
 use enrol_lti\local\ltiadvantage\entity\application_registration;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
@@ -41,7 +42,7 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/enrol/lti/lib.php');
 
 $action = required_param('action', PARAM_ALPHA);
-if (!in_array($action, ['add', 'edit', 'delete'])) {
+if (!in_array($action, ['add', 'view', 'edit', 'delete'])) {
     throw new coding_exception("Invalid action param '$action'");
 }
 
@@ -59,20 +60,39 @@ $pagesetup = function(string $pagetitle) {
     $PAGE->navbar->add($pagetitle);
 };
 
-if ($action === 'add') {
-    $pagesetup(get_string('registerplatformadd', 'enrol_lti'));
+if ($action == 'view') {
+    $regid = required_param('regid', PARAM_INT);
+    $tabselect = optional_param('tabselect', 'platformdetails', PARAM_ALPHA);
+    global $PAGE;
+    $pagesetup(get_string('registerplatformedit', 'enrol_lti'));
+    $pageurl = new moodle_url('/enrol/lti/register_platform.php', ['action' => 'view', 'regid' => $regid]);
 
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('registerplatformedit', 'enrol_lti'));
+
+    $renderer = $PAGE->get_renderer('enrol_lti');
+    echo $renderer->render_registration_view($regid, $tabselect);
+    echo $OUTPUT->footer();
+    die();
+
+} else if ($action === 'add') {
+    $pagesetup(get_string('registerplatformadd', 'enrol_lti'));
     $pageurl = new moodle_url('/enrol/lti/register_platform.php', ['action' => 'add']);
-    $mform = new platform_registration_form($pageurl->out(false));
+
+    $mform = new create_registration_form($pageurl->out(false));
     if ($data = $mform->get_data()) {
+        // Create the incomplete registration.
         $regservice = new application_registration_service(new application_registration_repository(),
             new deployment_repository(), new resource_link_repository(), new context_repository(),
             new user_repository());
-        $regservice->create_application_registration($data);
-        redirect($toolregistrationurl, get_string('registerplatformaddnotice', 'enrol_lti'), null,
-            notification::NOTIFY_SUCCESS);
-    } else if (!$mform->is_cancelled()) {
+        $draft = $regservice->create_draft_application_registration($data);
 
+        // Redirect to the registration view, which will display endpoints and allow the user to complete the registration.
+        redirect(new moodle_url('/enrol/lti/register_platform.php',
+            ['action' => 'view', 'regid' => $draft->get_id(), 'tabselect' => 'tooldetails']));
+
+    } else if (!$mform->is_cancelled()) {
+        // Display the first step of registration creation.
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('registerplatformadd', 'enrol_lti'));
         $mform->display();
@@ -80,19 +100,20 @@ if ($action === 'add') {
         die();
     }
     redirect($toolregistrationurl);
-
 } else if ($action === 'edit') {
     $regid = required_param('regid', PARAM_INT);
     $pagesetup(get_string('registerplatformedit', 'enrol_lti'));
 
     $pageurl = new moodle_url('/enrol/lti/register_platform.php', ['action' => 'edit', 'regid' => $regid]);
+    $viewurl = new moodle_url('/enrol/lti/register_platform.php', ['action' => 'view', 'regid' => $regid]);
+
     $mform = new platform_registration_form($pageurl->out(false));
     if (($data = $mform->get_data()) && confirm_sesskey()) {
         $regservice = new application_registration_service(new application_registration_repository(),
             new deployment_repository(), new resource_link_repository(), new context_repository(),
             new user_repository());
         $regservice->update_application_registration($data);
-        redirect($toolregistrationurl, get_string('registerplatformeditnotice', 'enrol_lti'), null,
+        redirect($viewurl, get_string('registerplatformeditnotice', 'enrol_lti'), null,
             notification::NOTIFY_SUCCESS);
     } else if (!$mform->is_cancelled()) {
         // Anon helper to transform data.
@@ -121,8 +142,7 @@ if ($action === 'add') {
         echo $OUTPUT->footer();
         die();
     }
-    redirect($toolregistrationurl);
-
+    redirect($viewurl);
 } else if ($action === 'delete') {
     $regid = required_param('regid', PARAM_INT);
     $pagesetup(get_string('registerplatformdelete', 'enrol_lti'));

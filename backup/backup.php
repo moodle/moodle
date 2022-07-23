@@ -60,7 +60,6 @@ if ($cmid !== null) {
 }
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
-
 $id = $courseid;
 $cm = null;
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
@@ -83,6 +82,7 @@ switch ($type) {
     case backup::TYPE_1COURSE :
         require_capability('moodle/backup:backupcourse', $coursecontext);
         $heading = get_string('backupcourse', 'backup', $course->shortname);
+        $PAGE->set_secondary_active_tab('coursereuse');
         break;
     case backup::TYPE_1SECTION :
         require_capability('moodle/backup:backupsection', $coursecontext);
@@ -102,7 +102,7 @@ switch ($type) {
         $heading = get_string('backupactivity', 'backup', $cm->name);
         break;
     default :
-        print_error('unknownbackuptype');
+        throw new \moodle_exception('unknownbackuptype');
 }
 
 $PAGE->set_title($heading);

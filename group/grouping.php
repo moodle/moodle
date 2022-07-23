@@ -36,25 +36,25 @@ $url = new moodle_url('/group/grouping.php');
 if ($id) {
     $url->param('id', $id);
     if (!$grouping = $DB->get_record('groupings', array('id'=>$id))) {
-        print_error('invalidgroupid');
+        throw new \moodle_exception('invalidgroupid');
     }
     $grouping->description = clean_text($grouping->description);
     if (empty($courseid)) {
         $courseid = $grouping->courseid;
     } else if ($courseid != $grouping->courseid) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     } else {
         $url->param('courseid', $courseid);
     }
 
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
 
 } else {
     $url->param('courseid', $courseid);
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-        print_error('invalidcourseid');
+        throw new \moodle_exception('invalidcourseid');
     }
     $grouping = new stdClass();
     $grouping->courseid = $course->id;
@@ -76,7 +76,7 @@ $returnurl = $CFG->wwwroot.'/group/groupings.php?id='.$course->id;
 
 if ($id and $delete) {
     if (!empty($grouping->idnumber) && !has_capability('moodle/course:changeidnumber', $context)) {
-        print_error('groupinghasidnumber', '', '', $grouping->name);
+        throw new \moodle_exception('groupinghasidnumber', '', '', $grouping->name);
     }
     if (!$confirm) {
         $PAGE->set_title(get_string('deletegrouping', 'group'));
@@ -94,7 +94,7 @@ if ($id and $delete) {
         if (groups_delete_grouping($id)) {
             redirect($returnurl);
         } else {
-            print_error('erroreditgrouping', 'group', $returnurl);
+            throw new \moodle_exception('erroreditgrouping', 'group', $returnurl);
         }
     }
 }

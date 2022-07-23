@@ -1,2 +1,12 @@
 This file describes core qbank plugin changes in /question/bank/*,
 information provided here is intended especially for developers.
+
+=== 4.0 ===
+
+* This plugin type is new in Moodle 4.0. It is for adding features to the question bank.
+  They key entry point is the class plugin_feature in the plugin namespace. This tells
+  the core question bank API exactly which features this plugin implements.
+  These features can currently be new columns in the question bank display, and bulk actions.
+  Currently, actions on single questions are implemented as a type of column (but this
+  should probably change in the future.) To get started, have a look at the methods
+  in core_question\local\bank\plugin_features_base which you can override.

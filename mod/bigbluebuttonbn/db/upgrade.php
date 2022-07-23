@@ -26,6 +26,7 @@
 
 use mod_bigbluebuttonbn\plugin;
 use mod_bigbluebuttonbn\local\config;
+use mod_bigbluebuttonbn\task\upgrade_recordings_task;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -396,31 +397,6 @@ function xmldb_bigbluebuttonbn_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2021083100, 'bigbluebuttonbn');
     }
 
-    if ($oldversion < 2021083101) {
-        // Create adhoc task for upgrading of existing bigbluebuttonbn_logs related to recordings.
-        $task = new \stdClass();
-        $task->classname = '\mod_bigbluebuttonbn\task\upgrade_recordings';
-        $task->component = 'mod_bigbluebuttonbn';
-
-        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
-        $nextruntime = time() - 1;
-        $task->nextruntime = $nextruntime;
-        $DB->insert_record('task_adhoc', $task);
-
-        // Create adhoc task for upgrading of existing bigbluebuttonbn_logs related to imported recordings.
-        $task = new \stdClass();
-        $task->classname = '\mod_bigbluebuttonbn\task\upgrade_imported_recordings';
-        $task->component = 'mod_bigbluebuttonbn';
-
-        // Next run time based from nextruntime computation in \core\task\manager::queue_adhoc_task().
-        $nextruntime = time() - 1;
-        $task->nextruntime = $nextruntime;
-        $DB->insert_record('task_adhoc', $task);
-
-        // Bigbluebuttonbn savepoint reached.
-        upgrade_mod_savepoint(true, 2021083101, 'bigbluebuttonbn');
-    }
-
     if ($oldversion < 2021091408) {
         // Change BigBliueButton Server credentials to new defaults if test-install is being used.
         if (config::get('server_url') == 'http://test-install.blindsidenetworks.com/bigbluebutton/') {
@@ -429,6 +405,37 @@ function xmldb_bigbluebuttonbn_upgrade($oldversion = 0) {
         }
         // Bigbluebuttonbn savepoint reached.
         upgrade_mod_savepoint(true, 2021091408, 'bigbluebuttonbn');
+    }
+
+    if ($oldversion < 2022021601) {
+        // Create adhoc task for upgrading of existing bigbluebuttonbn_logs related to recordings.
+        upgrade_recordings_task::schedule_upgrade_per_meeting();
+        upgrade_recordings_task::schedule_upgrade_per_meeting(true);
+        // Bigbluebuttonbn savepoint reached.
+        upgrade_mod_savepoint(true, 2022021601, 'bigbluebuttonbn');
+    }
+
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2022050600) {
+
+        set_config('bigbluebuttonbn_default_dpa_accepted', false);
+
+        // If the default server configuration is used.
+        if (config::get('server_url') === config::DEFAULT_SERVER_URL) {
+            // Disable the BigBlueButton activity module.
+            $DB->set_field('modules', 'visible', 0, ['name' => 'bigbluebuttonbn']);
+
+            // Use an adhoc task to send a notification to inform the admin that the BigBlueButton activity module
+            // has been disabled and they are required to confirm their acceptance of the data processing agreement
+            // prior to re-enabling it.
+            $notificationtask = new mod_bigbluebuttonbn\task\send_bigbluebutton_module_disabled_notification();
+            core\task\manager::queue_adhoc_task($notificationtask);
+        }
+
+        // Bigbluebuttonbn savepoint reached.
+        upgrade_mod_savepoint(true, 2022050600, 'bigbluebuttonbn');
     }
 
     return true;

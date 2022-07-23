@@ -124,7 +124,7 @@ class action_bar {
     /**
      * Generate the output for the action selector in the view page.
      *
-     * @param bool $hasentries Whether entries exist
+     * @param bool $hasentries Whether entries exist.
      * @return string The HTML code for the action selector.
      */
     public function get_view_action_bar(bool $hasentries): string {

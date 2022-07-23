@@ -20,10 +20,12 @@ namespace core_reportbuilder\local\entities;
 
 use context_course;
 use context_helper;
+use core_tag_tag;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\course_selector;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
+use core_reportbuilder\local\filters\tags;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\helpers\custom_fields;
 use core_reportbuilder\local\helpers\format;
@@ -58,6 +60,8 @@ class course extends base {
         return [
             'course' => 'c',
             'context' => 'cctx',
+            'tag_instance' => 'cti',
+            'tag' => 'ct',
         ];
     }
 
@@ -194,6 +198,26 @@ class course extends base {
     }
 
     /**
+     * Return joins necessary for retrieving tags
+     *
+     * @return string[]
+     */
+    private function get_tag_joins(): array {
+        $course = $this->get_table_alias('course');
+        $taginstance = $this->get_table_alias('tag_instance');
+        $tag = $this->get_table_alias('tag');
+
+        return [
+            "LEFT JOIN {tag_instance} {$taginstance}
+                    ON {$taginstance}.component = 'core'
+                   AND {$taginstance}.itemtype = 'course'
+                   AND {$taginstance}.itemid = {$course}.id",
+            "LEFT JOIN {tag} {$tag}
+                    ON {$tag}.id = {$taginstance}.tagid",
+        ];
+    }
+
+    /**
      * Returns list of all available columns.
      *
      * These are all the columns available to use in any report that uses this entity.
@@ -272,6 +296,22 @@ class course extends base {
             $columns[] = $column;
         }
 
+        // Tags.
+        $tag = $this->get_table_alias('tag');
+        $columns[] = (new column(
+            'tags',
+            new lang_string('tags'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->add_joins($this->get_tag_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_fields("{$tag}.name, {$tag}.rawname")
+            ->set_is_sortable(true)
+            ->add_callback(static function($value, stdClass $tag): string {
+                return core_tag_tag::make_display_name($tag);
+            });
+
         return $columns;
     }
 
@@ -322,6 +362,22 @@ class course extends base {
 
             $filters[] = $filter;
         }
+
+        // Tags.
+        $tag = $this->get_table_alias('tag');
+        $filters[] = (new filter(
+            tags::class,
+            'tags',
+            new lang_string('tags'),
+            $this->get_entity_name(),
+            "{$tag}.id"
+        ))
+            ->add_joins($this->get_joins())
+            ->add_joins($this->get_tag_joins())
+            ->set_options([
+                'component' => 'core',
+                'itemtype' => 'course',
+            ]);
 
         // We add our own custom course selector filter.
         $filters[] = (new filter(

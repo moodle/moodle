@@ -29,11 +29,13 @@ require_login();
 $contextid = required_param('contextid', PARAM_INT);
 $pluginname = required_param('plugin', PARAM_PLUGIN);
 $id = optional_param('id', null, PARAM_INT);
+$library = optional_param('library', null, PARAM_RAW);
+
 $context = context::instance_by_id($contextid, MUST_EXIST);
 
 $cb = new \core_contentbank\contentbank();
 if (!$cb->is_context_allowed($context)) {
-    print_error('contextnotallowed', 'core_contentbank');
+    throw new \moodle_exception('contextnotallowed', 'core_contentbank');
 }
 
 require_capability('moodle/contentbank:access', $context);
@@ -59,7 +61,7 @@ if (!empty($id)) {
 // Check plugin is enabled.
 $plugin = core_plugin_manager::instance()->get_plugin_info($contenttypename);
 if (!$plugin || !$plugin->is_enabled()) {
-    print_error('unsupported', 'core_contentbank', $returnurl);
+    throw new \moodle_exception('unsupported', 'core_contentbank', $returnurl);
 }
 
 // Create content type instance.
@@ -67,19 +69,20 @@ $contenttypeclass = "$contenttypename\\contenttype";
 if (class_exists($contenttypeclass)) {
     $contenttype = new $contenttypeclass($context);
 } else {
-    print_error('unsupported', 'core_contentbank', $returnurl);
+    throw new \moodle_exception('unsupported', 'core_contentbank', $returnurl);
 }
 
 // Checks the user can edit this content and content type.
 if (!$contenttype->can_edit($content)) {
-    print_error('contenttypenoedit', 'core_contentbank', $returnurl);
+    throw new \moodle_exception('contenttypenoedit', 'core_contentbank', $returnurl);
 }
 
 $values = [
     'contextid' => $contextid,
     'plugin' => $pluginname,
     'id' => $id,
-    'heading' => $heading
+    'heading' => $heading,
+    'library' => $library
 ];
 
 $title = get_string('contentbank');
@@ -93,7 +96,11 @@ if ($context->contextlevel == CONTEXT_COURSECAT) {
 }
 
 $PAGE->set_url(new \moodle_url('/contentbank/edit.php', $values));
-$PAGE->set_context($context);
+if ($context->id == \context_system::instance()->id) {
+    $PAGE->set_context(context_course::instance($context->id));
+} else {
+    $PAGE->set_context($context);
+}
 if ($content) {
     $PAGE->navbar->add($content->get_name(), new \moodle_url('/contentbank/view.php', ['id' => $id]));
 }
@@ -105,7 +112,7 @@ $PAGE->set_secondary_active_tab('contentbank');
 // Instantiate the content type form.
 $editorclass = "$contenttypename\\form\\editor";
 if (!class_exists($editorclass)) {
-    print_error('noformdesc');
+    throw new \moodle_exception('noformdesc');
 }
 
 $editorform = new $editorclass(null, $values);

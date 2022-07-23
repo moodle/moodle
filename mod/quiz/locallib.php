@@ -28,7 +28,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
@@ -40,6 +39,7 @@ require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
+use mod_quiz\question\bank\qbank_helper;
 
 /**
  * @var int We show the countdown timer if there is less than this amount of time left before the
@@ -81,7 +81,7 @@ define('QUIZ_SHOWIMAGE_LARGE', 2);
  *
  * @param object $quizobj the quiz object to create an attempt for.
  * @param int $attemptnumber the sequence number for the attempt.
- * @param object $lastattempt the previous attempt by this user, if any. Only needed
+ * @param stdClass|null $lastattempt the previous attempt by this user, if any. Only needed
  *         if $attemptnumber > 1 and $quiz->attemptonlast is true.
  * @param int $timenow the time the attempt was started at.
  * @param bool $ispreview whether this new attempt is a preview.
@@ -113,7 +113,7 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
     } else {
         // Build on last attempt.
         if (empty($lastattempt)) {
-            print_error('cannotfindprevattempt', 'quiz');
+            throw new \moodle_exception('cannotfindprevattempt', 'quiz');
         }
         $attempt = $lastattempt;
     }
@@ -171,12 +171,10 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
 
     // First load all the non-random questions.
     $randomfound = false;
-    $randomtestfound = false;
     $slot = 0;
     $questions = array();
     $maxmark = array();
     $page = array();
-    $questiondatarandom = [];
     foreach ($quizobj->get_questions() as $questiondata) {
         $slot += 1;
         $maxmark[$slot] = $questiondata->maxmark;
@@ -185,34 +183,55 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
             $randomfound = true;
             continue;
         }
-
-        // Intended for testing purposes only.
-        foreach ($questionids as $key => $questionid) {
-            if ($questionid !== (int)$questiondata->id && $slot === $key) {
-                $randomtestfound = true;
-                $questiondatarandom[$key] = $questiondata;
-                continue 2;
-            }
-        }
-
         if (!$quizobj->get_quiz()->shuffleanswers) {
             $questiondata->options->shuffleanswers = false;
         }
         $questions[$slot] = question_bank::make_question($questiondata);
     }
 
-    // Then find a question throw an error as something horribly wrong might have happened.
+    // Then find a question to go in place of each random question.
     if ($randomfound) {
-        throw new coding_exception(
-            'Using "random" questions directly in an attempt is deprecated. Please use question_set_references table instead.'
-        );
-    }
+        $slot = 0;
+        $usedquestionids = array();
+        foreach ($questions as $question) {
+            if ($question->id && isset($usedquestions[$question->id])) {
+                $usedquestionids[$question->id] += 1;
+            } else {
+                $usedquestionids[$question->id] = 1;
+            }
+        }
+        $randomloader = new \core_question\local\bank\random_question_loader($qubaids, $usedquestionids);
 
-    // Then find a question to go in place of each random question. Intended for testing purposes only.
-    if ($randomtestfound) {
-        foreach ($questiondatarandom as $slot => $questiondata) {
+        foreach ($quizobj->get_questions() as $questiondata) {
+            $slot += 1;
+            if ($questiondata->qtype != 'random') {
+                continue;
+            }
+
+            $tagids = qbank_helper::get_tag_ids_for_slot($questiondata);
+
             // Deal with fixed random choices for testing.
-            $questions[$slot] = question_bank::load_question($questionids[$slot], $quizobj->get_quiz()->shuffleanswers);
+            if (isset($questionids[$quba->next_slot_number()])) {
+                if ($randomloader->is_question_available($questiondata->category,
+                        (bool) $questiondata->questiontext, $questionids[$quba->next_slot_number()], $tagids)) {
+                    $questions[$slot] = question_bank::load_question(
+                            $questionids[$quba->next_slot_number()], $quizobj->get_quiz()->shuffleanswers);
+                    continue;
+                } else {
+                    throw new coding_exception('Forced question id not available.');
+                }
+            }
+
+            // Normal case, pick one at random.
+            $questionid = $randomloader->get_next_question_id($questiondata->category,
+                    $questiondata->randomrecurse, $tagids);
+            if ($questionid === null) {
+                throw new moodle_exception('notenoughrandomquestions', 'quiz',
+                                           $quizobj->view_url(), $questiondata);
+            }
+
+            $questions[$slot] = question_bank::load_question($questionid,
+                    $quizobj->get_quiz()->shuffleanswers);
         }
     }
 
@@ -2260,9 +2279,12 @@ function quiz_has_question_use($quiz, $slot) {
               JOIN {question_bank_entries} qbe ON qbe.id = qre.questionbankentryid
               JOIN {question_versions} qve ON qve.questionbankentryid = qbe.id
               JOIN {question} q ON q.id = qve.questionid
-             WHERE slot.quizid = ? AND slot.slot = ?';
+             WHERE slot.quizid = ?
+               AND slot.slot = ?
+               AND qre.component = ?
+               AND qre.questionarea = ?';
 
-    $question = $DB->get_record_sql($sql, [$quiz->id, $slot]);
+    $question = $DB->get_record_sql($sql, [$quiz->id, $slot, 'mod_quiz', 'slot']);
 
     if (!$question) {
         return false;
@@ -2306,9 +2328,11 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
               FROM {quiz_slots} slot
               JOIN {question_references} qr ON qr.itemid = slot.id
               JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
-             WHERE slot.quizid = ?";
+             WHERE slot.quizid = ?
+               AND qr.component = ?
+               AND qr.questionarea = ?";
 
-    $questionslots = $DB->get_records_sql($sql, [$quiz->id]);
+    $questionslots = $DB->get_records_sql($sql, [$quiz->id, 'mod_quiz', 'slot']);
 
     $currententry = get_question_bank_entry($questionid);
 
@@ -2385,8 +2409,10 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
               JOIN {question_references} qr ON qbe.id = qr.questionbankentryid AND qr.version = qv.version
               JOIN {quiz_slots} qs ON qs.id = qr.itemid
              WHERE q.id = ?
-               AND qs.id =?";
-    $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slotid]);
+               AND qs.id = ?
+               AND qr.component = ?
+               AND qr.questionarea = ?";
+    $qreferenceitem = $DB->get_record_sql($sql, [$questionid, $slotid, 'mod_quiz', 'slot']);
 
     if (!$qreferenceitem) {
         // Create a new reference record for questions created already.
@@ -2396,9 +2422,7 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         $questionreferences->questionarea = 'slot';
         $questionreferences->itemid = $slotid;
         $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
-        $version = get_question_version($questionid);
-        $questionreferences->version = $version[array_key_first($version)]->version;
-
+        $questionreferences->version = null; // Always latest.
         $DB->insert_record('question_references', $questionreferences);
 
     } else if ($qreferenceitem->itemid === 0 || $qreferenceitem->itemid === null) {
@@ -2414,8 +2438,7 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         $questionreferences->questionarea = 'slot';
         $questionreferences->itemid = $slotid;
         $questionreferences->questionbankentryid = get_question_bank_entry($questionid)->id;
-        $version = get_question_version($questionid);
-        $questionreferences->version = $version[array_key_first($version)]->version;
+        $questionreferences->version = null; // Always latest.
         $DB->insert_record('question_references', $questionreferences);
     }
 
@@ -2791,41 +2814,6 @@ function quiz_retrieve_tags_for_slot_ids($slotids) {
         },
         $emptytagids
     );
-}
-
-/**
- * Retrieves tag information for the given quiz slot.
- * A quiz slot have some tags if and only if it is representing a random question by tags.
- *
- * @param int $slotid The id of the quiz slot.
- * @return array List of tags.
- */
-function quiz_retrieve_slot_tags($slotid) {
-    $referencedata = \mod_quiz\question\bank\qbank_helper::get_random_question_data_from_slot($slotid);
-    if (isset($referencedata->filtercondition)) {
-        $filtercondition = json_decode($referencedata->filtercondition);
-        if (isset($filtercondition->tags)) {
-            return $filtercondition->tags;
-        }
-    }
-    return [];
-}
-
-/**
- * Retrieves tag ids for the given quiz slot.
- * A quiz slot have some tags if and only if it is representing a random question by tags.
- *
- * @param int $slotid The id of the quiz slot.
- * @return int[]
- */
-function quiz_retrieve_slot_tag_ids($slotid) {
-    $tagids = [];
-    $tags = quiz_retrieve_slot_tags($slotid);
-    foreach ($tags as $tag) {
-        $tagstring = explode(',', $tag);
-        $tagids [] = $tagstring[0];
-    }
-    return $tagids;
 }
 
 /**

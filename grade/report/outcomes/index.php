@@ -31,13 +31,17 @@ $courseid = required_param('id', PARAM_INT);                   // course id
 $PAGE->set_url('/grade/report/outcomes/index.php', array('id'=>$courseid));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourseid');
+    throw new \moodle_exception('invalidcourseid');
 }
 
 require_login($course);
 $context = context_course::instance($course->id);
 
 require_capability('gradereport/outcomes:view', $context);
+
+if (empty($CFG->enableoutcomes)) {
+    redirect(course_get_url($course), get_string('outcomesdisabled', 'core_grades'));
+}
 
 // First make sure we have proper final grades.
 grade_regrade_final_grades_if_required($course);

@@ -27,9 +27,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// @codingStandardsIgnoreStart
-require('../config.php');
-// @codingStandardsIgnoreEnd
+require('../config.php'); // phpcs:ignore
 
 $context = context_system::instance();
 $title = get_string('pagenotexisttitle', 'error');
@@ -38,7 +36,6 @@ $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->navbar->add($title);
-$PAGE->has_secondary_navigation_setter(false);
 
 // This allows the webserver to dictate wether the http status should remain
 // what it would have been, or force it to be a 404. Under other conditions

@@ -37,19 +37,19 @@ $tool = \enrol_lti\helper::get_lti_tool($toolid);
 
 // Check if the authentication plugin is disabled.
 if (!is_enabled_auth('lti')) {
-    print_error('pluginnotenabled', 'auth', '', get_string('pluginname', 'auth_lti'));
+    throw new \moodle_exception('pluginnotenabled', 'auth', '', get_string('pluginname', 'auth_lti'));
     exit();
 }
 
 // Check if the enrolment plugin is disabled.
 if (!enrol_is_enabled('lti')) {
-    print_error('enrolisdisabled', 'enrol_lti');
+    throw new \moodle_exception('enrolisdisabled', 'enrol_lti');
     exit();
 }
 
 // Check if the enrolment instance is disabled.
 if ($tool->status != ENROL_INSTANCE_ENABLED) {
-    print_error('enrolisdisabled', 'enrol_lti');
+    throw new \moodle_exception('enrolisdisabled', 'enrol_lti');
     exit();
 }
 
@@ -59,7 +59,7 @@ $messagetype = required_param('lti_message_type', PARAM_TEXT);
 
 // Only accept launch requests from this endpoint.
 if ($messagetype != "basic-lti-launch-request") {
-    print_error('invalidrequest', 'enrol_lti');
+    throw new \moodle_exception('invalidrequest', 'enrol_lti');
     exit();
 }
 

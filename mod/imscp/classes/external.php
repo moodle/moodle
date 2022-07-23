@@ -24,6 +24,8 @@
  * @since      Moodle 3.0
  */
 
+use core_course\external\helper_for_get_mods_by_courses;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
@@ -151,34 +153,14 @@ class mod_imscp_external extends external_api {
             // We can avoid then additional validate_context calls.
             $imscps = get_all_instances_in_courses("imscp", $courses);
             foreach ($imscps as $imscp) {
-                $context = context_module::instance($imscp->coursemodule);
+                $imscpdetails = helper_for_get_mods_by_courses::standard_coursemodule_element_values(
+                        $imscp, 'mod_imscp', 'moodle/course:manageactivities', 'mod/imscp:view');
 
-                // Entry to return.
-                $imscpdetails = array();
-                // First, we return information that any user can see in the web interface.
-                $imscpdetails['id'] = $imscp->id;
-                $imscpdetails['coursemodule']      = $imscp->coursemodule;
-                $imscpdetails['course']            = $imscp->course;
-                $imscpdetails['name']              = external_format_string($imscp->name, $context->id);
-
-                if (has_capability('mod/imscp:view', $context)) {
-                    // Format intro.
-                    $options = array('noclean' => true);
-                    list($imscpdetails['intro'], $imscpdetails['introformat']) =
-                        external_format_text($imscp->intro, $imscp->introformat, $context->id, 'mod_imscp', 'intro', null,
-                            $options);
-                    $imscpdetails['introfiles'] = external_util::get_area_files($context->id, 'mod_imscp', 'intro', false, false);
-                }
-
-                if (has_capability('moodle/course:manageactivities', $context)) {
+                if (has_capability('moodle/course:manageactivities', context_module::instance($imscp->coursemodule))) {
                     $imscpdetails['revision']      = $imscp->revision;
                     $imscpdetails['keepold']       = $imscp->keepold;
                     $imscpdetails['structure']     = $imscp->structure;
                     $imscpdetails['timemodified']  = $imscp->timemodified;
-                    $imscpdetails['section']       = $imscp->section;
-                    $imscpdetails['visible']       = $imscp->visible;
-                    $imscpdetails['groupmode']     = $imscp->groupmode;
-                    $imscpdetails['groupingid']    = $imscp->groupingid;
                 }
                 $returnedimscps[] = $imscpdetails;
             }
@@ -199,25 +181,15 @@ class mod_imscp_external extends external_api {
         return new external_single_structure(
             array(
                 'imscps' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'IMSCP id'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_RAW, 'Activity name'),
-                            'intro' => new external_value(PARAM_RAW, 'The IMSCP intro', VALUE_OPTIONAL),
-                            'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
-                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
+                    new external_single_structure(array_merge(
+                        helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(true),
+                        [
                             'revision' => new external_value(PARAM_INT, 'Revision', VALUE_OPTIONAL),
                             'keepold' => new external_value(PARAM_INT, 'Number of old IMSCP to keep', VALUE_OPTIONAL),
                             'structure' => new external_value(PARAM_RAW, 'IMSCP structure', VALUE_OPTIONAL),
                             'timemodified' => new external_value(PARAM_RAW, 'Time of last modification', VALUE_OPTIONAL),
-                            'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
-                            'visible' => new external_value(PARAM_BOOL, 'If visible', VALUE_OPTIONAL),
-                            'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
-                            'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
-                        ), 'IMS content packages'
-                    )
+                        ]
+                    ), 'IMS content packages')
                 ),
                 'warnings' => new external_warnings(),
             )

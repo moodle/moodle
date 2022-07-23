@@ -34,8 +34,10 @@ class user_repository_test extends \advanced_testcase {
      * @return user a user instance
      */
     protected function generate_user(int $mockresourceid = 1): user {
+        global $CFG;
         $registration = application_registration::create(
             'Test',
+            'a2c94a2c94',
             new \moodle_url('http://lms.example.org'),
             'clientid_123',
             new \moodle_url('https://example.org/authrequesturl'),
@@ -65,7 +67,7 @@ class user_repository_test extends \advanced_testcase {
         $ltiuser = $savedresourcelink->add_user(
             $user->id,
             'source-id-123',
-            'en',
+            $CFG->lang,
             'Perth',
             'AU',
             'An Example Institution',
@@ -214,6 +216,7 @@ class user_repository_test extends \advanced_testcase {
      * @covers ::save
      */
     public function test_save_stale_id() {
+        global $CFG;
         $this->resetAfterTest();
         $instructoruser = $this->getDataGenerator()->create_user();
         $userrepo = new user_repository();
@@ -222,7 +225,7 @@ class user_repository_test extends \advanced_testcase {
             $instructoruser->id,
             5,
             'source-id-123',
-            'en',
+            $CFG->lang,
             '99',
             '',
             '',
@@ -279,6 +282,7 @@ class user_repository_test extends \advanced_testcase {
      * @covers ::find_by_resource
      */
     public function test_find_by_resource() {
+        global $CFG;
         $this->resetAfterTest();
         $user = $this->generate_user();
         $userrepo = new user_repository();
@@ -290,7 +294,7 @@ class user_repository_test extends \advanced_testcase {
             $instructoruser->id,
             $saveduser->get_deploymentid(),
             'another-user-123',
-            'en',
+            $CFG->lang,
             '99',
             'Perth',
             'AU',
@@ -313,6 +317,7 @@ class user_repository_test extends \advanced_testcase {
      * @covers ::find_by_resource_link
      */
     public function test_find_by_resource_link() {
+        global $CFG;
         $this->resetAfterTest();
         $user = $this->generate_user();
         $user->set_resourcelinkid(33);
@@ -325,7 +330,7 @@ class user_repository_test extends \advanced_testcase {
             $instructoruser->id,
             $saveduser->get_deploymentid(),
             'another-user-123',
-            'en',
+            $CFG->lang,
             '99',
             'Perth',
             'AU',
@@ -389,6 +394,7 @@ class user_repository_test extends \advanced_testcase {
      * @covers ::delete_by_deployment
      */
     public function test_delete_by_deployment() {
+        global $CFG;
         $this->resetAfterTest();
         $user = $this->generate_user();
         $userrepo = new user_repository();
@@ -401,7 +407,7 @@ class user_repository_test extends \advanced_testcase {
             $instructoruser->id,
             $saveduser->get_deploymentid(),
             'another-user-123',
-            'en',
+            $CFG->lang,
             '99',
             'Perth',
             'AU',
@@ -414,7 +420,7 @@ class user_repository_test extends \advanced_testcase {
             $instructor2user->id,
             $saveduser->get_deploymentid() + 1,
             'another-user-678',
-            'en',
+            $CFG->lang,
             '99',
             'Melbourne',
             'AU',

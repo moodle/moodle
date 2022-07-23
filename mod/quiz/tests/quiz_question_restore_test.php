@@ -39,6 +39,11 @@ class quiz_question_restore_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
     /**
+     * @var \stdClass test student user.
+     */
+    protected $student;
+
+    /**
      * Called before every test.
      */
     public function setUp(): void {
@@ -56,23 +61,37 @@ class quiz_question_restore_test extends \advanced_testcase {
      * @covers ::get_question_structure
      */
     public function test_quiz_restore_in_a_different_course_using_course_question_bank() {
-        global $DB;
         $this->resetAfterTest();
+
+        // Create the test quiz.
         $quiz = $this->create_test_quiz($this->course);
+        $oldquizcontext = \context_module::instance($quiz->cmid);
         // Test for questions from a different context.
-        $context = \context_course::instance($this->course->id);
+        $coursecontext = \context_course::instance($this->course->id);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->add_regular_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
-        $this->add_random_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
+        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $coursecontext->id]);
+        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $coursecontext->id]);
+
+        // Make the backup.
         $backupid = $this->backup_quiz($quiz, $this->user);
+
         // Delete the current course to make sure there is no data.
         delete_course($this->course, false);
-        // Check if the questions and associated datas are deleted properly.
-        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure($quiz->id)));
+
+        // Check if the questions and associated data are deleted properly.
+        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
+                $quiz->id, $oldquizcontext)));
+
+        // Restore the course.
         $newcourse = $this->getDataGenerator()->create_course();
         $this->restore_quiz($backupid, $newcourse, $this->user);
-        $module = $DB->get_record('quiz', ['course' => $newcourse->id]);
-        $this->assertEquals(3, count(\mod_quiz\question\bank\qbank_helper::get_question_structure($module->id)));
+
+        // Verify.
+        $modules = get_fast_modinfo($newcourse->id)->get_instances_of('quiz');
+        $module = reset($modules);
+        $questions = \mod_quiz\question\bank\qbank_helper::get_question_structure(
+                $module->instance, $module->context);
+        $this->assertCount(3, $questions);
     }
 
     /**
@@ -81,33 +100,45 @@ class quiz_question_restore_test extends \advanced_testcase {
      * @covers ::get_question_structure
      */
     public function test_quiz_restore_in_a_different_course_using_quiz_question_bank() {
-        global $DB;
         $this->resetAfterTest();
+
+        // Create the test quiz.
         $quiz = $this->create_test_quiz($this->course);
         // Test for questions from a different context.
-        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quiz->id, $this->course->id)->id);
+        $quizcontext = \context_module::instance($quiz->cmid);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->add_regular_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
-        $this->add_random_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
+        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $quizcontext->id]);
+        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $quizcontext->id]);
+
+        // Make the backup.
         $backupid = $this->backup_quiz($quiz, $this->user);
+
         // Delete the current course to make sure there is no data.
         delete_course($this->course, false);
+
         // Check if the questions and associated datas are deleted properly.
-        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure($quiz->id)));
+        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
+                $quiz->id, $quizcontext)));
+
+        // Restore the course.
         $newcourse = $this->getDataGenerator()->create_course();
         $this->restore_quiz($backupid, $newcourse, $this->user);
-        $module = $DB->get_record('quiz', ['course' => $newcourse->id]);
-        $this->assertEquals(3, count(\mod_quiz\question\bank\qbank_helper::get_question_structure($module->id)));
+
+        // Verify.
+        $modules = get_fast_modinfo($newcourse->id)->get_instances_of('quiz');
+        $module = reset($modules);
+        $this->assertEquals(3, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
+                $module->instance, $module->context)));
     }
 
     /**
      * Count the questions for the context.
      *
-     * @param int $context
+     * @param int $contextid
      * @param string $extracondition
-     * @return int
+     * @return int the number of questions.
      */
-    protected function question_count($context, $extracondition = ''): int {
+    protected function question_count(int $contextid, string $extracondition = ''): int {
         global $DB;
         return $DB->count_records_sql(
             "SELECT COUNT(q.id)
@@ -116,7 +147,7 @@ class quiz_question_restore_test extends \advanced_testcase {
                JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
                JOIN {question_categories} qc on qc.id = qbe.questioncategoryid
               WHERE qc.contextid = ?
-              $extracondition", [$context]);
+              $extracondition", [$contextid]);
     }
 
     /**
@@ -130,8 +161,8 @@ class quiz_question_restore_test extends \advanced_testcase {
         // Test for questions from a different context.
         $context = \context_course::instance($this->course->id);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->add_regular_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
-        $this->add_random_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
+        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
+        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $context->id]);
         // Count the questions in course context.
         $this->assertEquals(7, $this->question_count($context->id));
         $newquiz = $this->duplicate_quiz($this->course, $quiz);
@@ -150,10 +181,10 @@ class quiz_question_restore_test extends \advanced_testcase {
         $this->resetAfterTest();
         $quiz = $this->create_test_quiz($this->course);
         // Test for questions from a different context.
-        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quiz->id, $this->course->id)->id);
+        $context = \context_module::instance($quiz->cmid);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->add_regular_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
-        $this->add_random_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
+        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
+        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $context->id]);
         // Count the questions in course context.
         $this->assertEquals(7, $this->question_count($context->id));
         $newquiz = $this->duplicate_quiz($this->course, $quiz);
@@ -169,28 +200,37 @@ class quiz_question_restore_test extends \advanced_testcase {
      * @covers ::get_question_structure
      */
     public function test_quiz_restore_with_attempts() {
-        global $DB;
         $this->resetAfterTest();
+
+        // Create a quiz.
         $quiz = $this->create_test_quiz($this->course);
-        // Test for questions from a different context.
-        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quiz->id, $this->course->id)->id);
+        $quizcontext = \context_module::instance($quiz->cmid);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->add_regular_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
-        $this->add_random_questions($questiongenerator, $quiz, ['contextid' => $context->id]);
-        list($quizobj, $quba, $attemptobj) = $this->attempt_quiz($quiz, $this->student);
-        $userattempts = quiz_get_user_attempts($quiz->id, $this->student->id);
-        // Count the attempts for this quiz.
+        $this->add_two_regular_questions($questiongenerator, $quiz, ['contextid' => $quizcontext->id]);
+        $this->add_one_random_question($questiongenerator, $quiz, ['contextid' => $quizcontext->id]);
+
+        // Attempt it as a student, and check.
+        /** @var \question_usage_by_activity $quba */
+        [, $quba] = $this->attempt_quiz($quiz, $this->student);
         $this->assertEquals(3, $quba->question_count());
-        $this->assertEquals(1, count($userattempts));
+        $this->assertCount(1, quiz_get_user_attempts($quiz->id, $this->student->id));
+
+        // Make the backup.
         $backupid = $this->backup_quiz($quiz, $this->user);
+
         // Delete the current course to make sure there is no data.
         delete_course($this->course, false);
+
+        // Restore the backup.
         $newcourse = $this->getDataGenerator()->create_course();
         $this->restore_quiz($backupid, $newcourse, $this->user);
-        $module = $DB->get_record('quiz', ['course' => $newcourse->id]);
-        $userattempts = quiz_get_user_attempts($module->id, $this->student->id);
-        $this->assertEquals(1, count($userattempts));
-        $this->assertEquals(3, count(\mod_quiz\question\bank\qbank_helper::get_question_structure($module->id)));
+
+        // Verify.
+        $modules = get_fast_modinfo($newcourse->id)->get_instances_of('quiz');
+        $module = reset($modules);
+        $this->assertCount(1, quiz_get_user_attempts($module->instance, $this->student->id));
+        $this->assertCount(3, \mod_quiz\question\bank\qbank_helper::get_question_structure(
+                $module->instance, $module->context));
     }
 
     /**
@@ -220,7 +260,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         $modinfo = get_fast_modinfo($newcourseid);
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
         $quizobj = \quiz::create($quiz->instance);
-        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $structure = structure::create_for_quiz($quizobj);
 
         // Are the correct slots returned?
         $slots = $structure->get_slots();
@@ -232,8 +272,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         $this->assertCount(2, $questions);
 
         // Count the questions in quiz qbank.
-        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quizobj->get_quizid(), $newcourseid)->id);
-        $this->assertEquals(2, $this->question_count($context->id));
+        $this->assertEquals(2, $this->question_count($quizobj->get_context()->id));
     }
 
     /**
@@ -244,6 +283,7 @@ class quiz_question_restore_test extends \advanced_testcase {
     public function test_pre_4_quiz_restore_for_random_questions() {
         global $USER, $DB;
         $this->resetAfterTest();
+
         $backupid = 'abc';
         $backuppath = make_backup_temp_directory($backupid);
         get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
@@ -263,7 +303,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         $modinfo = get_fast_modinfo($newcourseid);
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
         $quizobj = \quiz::create($quiz->instance);
-        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $structure = structure::create_for_quiz($quizobj);
 
         // Are the correct slots returned?
         $slots = $structure->get_slots();
@@ -280,7 +320,63 @@ class quiz_question_restore_test extends \advanced_testcase {
             "AND q.qtype <> 'random'"));
 
         // Count the questions in quiz qbank.
+        $this->assertEquals(0, $this->question_count($quizobj->get_context()->id));
+    }
+
+    /**
+     * Test pre 4.0 quiz restore for random question tags.
+     *
+     * @covers ::process_quiz_question_legacy_instance
+     */
+    public function test_pre_4_quiz_restore_for_random_question_tags() {
+        global $USER, $DB;
+        $this->resetAfterTest();
+        $randomtags = [
+            '1' => ['first question', 'one', 'number one'],
+            '2' => ['first question', 'one', 'number one'],
+            '3' => ['one', 'number one', 'second question'],
+        ];
+        $backupid = 'abc';
+        $backuppath = make_backup_temp_directory($backupid);
+        get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
+            __DIR__ . "/fixtures/moodle_311_quiz.mbz", $backuppath);
+
+        // Do the restore to new course with default settings.
+        $categoryid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
+        $newcourseid = \restore_dbops::create_new_course('Test fullname', 'Test shortname', $categoryid);
+        $rc = new \restore_controller($backupid, $newcourseid, \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+            \backup::TARGET_NEW_COURSE);
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Get the information about the resulting course and check that it is set up correctly.
+        $modinfo = get_fast_modinfo($newcourseid);
+        $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
+        $quizobj = \quiz::create($quiz->instance);
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        // Count the questions in quiz qbank.
         $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quizobj->get_quizid(), $newcourseid)->id);
-        $this->assertEquals(0, $this->question_count($context->id));
+        $this->assertEquals(2, $this->question_count($context->id));
+
+        // Are the correct slots returned?
+        $slots = $structure->get_slots();
+        $this->assertCount(3, $slots);
+
+        // Check if the tags match with the actual restored data.
+        foreach ($slots as $slot) {
+            $setreference = $DB->get_record('question_set_references',
+                ['itemid' => $slot->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+            $filterconditions = json_decode($setreference->filtercondition);
+            $tags = [];
+            foreach ($filterconditions->tags as $tagstring) {
+                $tag = explode(',', $tagstring);
+                $tags[] = $tag[1];
+            }
+            $this->assertEquals([], array_diff($randomtags[$slot->slot], $tags));
+        }
+
     }
 }

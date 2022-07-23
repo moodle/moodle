@@ -208,11 +208,19 @@ function do_post_request($url, $data, $optional_headers = null)
   $fp = @fopen($url, 'rb', false, $ctx);
   if (!$fp) {
     echo @stream_get_contents($fp);
-    throw new Exception("Problem with $url, $php_errormsg");
+    $message = "(No error message provided.)";
+    if ($error = error_get_last()) {
+      $message = $error["message"];
+    }
+    throw new Exception("Problem with $url, $message");
   }
   $response = @stream_get_contents($fp);
   if ($response === false) {
-    throw new Exception("Problem reading data from $url, $php_errormsg");
+    $message = "(No error message provided.)";
+    if ($error = error_get_last()) {
+        $message = $error["message"];
+    }
+    throw new Exception("Problem reading data from $url, $message");
   }
   return $response;
 }

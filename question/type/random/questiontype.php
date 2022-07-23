@@ -130,7 +130,7 @@ class qtype_random extends question_type {
     /**
      * Random questions always get a question name that is Random (cateogryname).
      * This function is a centralised place to calculate that, given the category.
-     * @param stdClass $category the category this question picks from. (Only ->name is used.)
+     * @param stdClass $category the category this question picks from. (->parent, ->name & ->contextid are used.)
      * @param bool $includesubcategories whether this question also picks from subcategories.
      * @param string[] $tagnames Name of tags this question picks from.
      * @return string the name this question should have.

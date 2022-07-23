@@ -28,6 +28,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_quiz\question\bank\custom_view;
+
 require_once($CFG->dirroot . '/calendar/lib.php');
 
 
@@ -154,7 +156,7 @@ function quiz_update_instance($quiz, $mform) {
     quiz_delete_previews($quiz);
 
     // Repaginate, if asked to.
-    if (!empty($quiz->repaginatenow)) {
+    if (!empty($quiz->repaginatenow) && !quiz_has_attempts($quiz->id)) {
         quiz_repaginate_questions($quiz->id, $quiz->questionsperpage);
     }
 
@@ -996,7 +998,7 @@ function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames
     if ($detail) {
         $modname = $modnames[$activity->type];
         echo '<div class="title">';
-        echo $OUTPUT->image_icon('icon', $modname, $activity->type);
+        echo $OUTPUT->image_icon('monologo', $modname, $activity->type);
         echo '<a href="' . $CFG->wwwroot . '/mod/quiz/view.php?id=' .
                 $activity->cmid . '">' . $activity->name . '</a>';
         echo '</div>';
@@ -1435,12 +1437,16 @@ function quiz_get_post_actions() {
 function quiz_questions_in_use($questionids) {
     global $DB;
     list($test, $params) = $DB->get_in_or_equal($questionids);
+    $params['component'] = 'mod_quiz';
+    $params['questionarea'] = 'slot';
     $sql = "SELECT qs.id
               FROM {quiz_slots} qs
               JOIN {question_references} qr ON qr.itemid = qs.id
               JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
               JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-              WHERE qv.questionid $test";
+             WHERE qv.questionid $test
+               AND qr.component = ?
+               AND qr.questionarea = ?";
     return $DB->record_exists_sql($sql, $params) || question_engine::questions_in_use(
             $questionids, new qubaid_join('{quiz_attempts} quiza',
             'quiza.uniqueid', 'quiza.preview = 0'));
@@ -2378,14 +2384,14 @@ function mod_quiz_output_fragment_quiz_question_bank($args) {
     // Build the required resources. The $params are all cleaned as
     // part of this process.
     list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
-            question_build_edit_resources('editq', '/mod/quiz/edit.php', $params);
+            question_build_edit_resources('editq', '/mod/quiz/edit.php', $params, custom_view::DEFAULT_PAGE_SIZE);
 
     // Get the course object and related bits.
     $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
     require_capability('mod/quiz:manage', $contexts->lowest());
 
     // Create quiz question bank view.
-    $questionbank = new mod_quiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $quiz);
+    $questionbank = new custom_view($contexts, $thispageurl, $course, $cm, $quiz);
     $questionbank->set_quiz_has_attempts(quiz_has_attempts($quiz->id));
 
     // Output.

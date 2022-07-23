@@ -538,7 +538,7 @@ class question_type {
         $result = $this->save_question_options($form);
 
         if (!empty($result->error)) {
-            print_error($result->error);
+            throw new \moodle_exception($result->error);
         }
 
         if (!empty($result->notice)) {
@@ -903,7 +903,7 @@ class question_type {
      *                         specific information (it is passed by reference).
      */
     public function get_question_options($question) {
-        global $CFG, $DB, $OUTPUT;
+        global $DB, $OUTPUT;
 
         if (!isset($question->options)) {
             $question->options = new stdClass();

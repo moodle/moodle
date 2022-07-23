@@ -1085,8 +1085,10 @@ class externallib_test extends externallib_advanced_testcase {
             array('course' => $course->id, 'intro' => 'forum completion tracking auto', 'trackingtype' => 2),
             array('showdescription' => true, 'completionview' => 1, 'completion' => COMPLETION_TRACKING_AUTOMATIC));
         $forumcompleteautocm = get_coursemodule_from_id('forum', $forumcompleteauto->cmid);
-
-        rebuild_course_cache($course->id, true);
+        $sectionrecord = $DB->get_record('course_sections', $conditions);
+        // Invalidate the section cache by given section number.
+        course_modinfo::purge_course_section_cache_by_number($sectionrecord->course, $sectionrecord->section);
+        rebuild_course_cache($course->id, true, true);
 
         return array($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm, $forumcompleteautocm);
     }
@@ -1651,6 +1653,59 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertCount(0, $sections[4]['modules']); // No modules for the section hidden.
         $this->assertCount(1, $sections[5]['modules']); // One stealth module.
         $this->assertEquals(-1, $sections[5]['id']);
+    }
+
+    /**
+     * Test get course contents dates.
+     */
+    public function test_get_course_contents_dates() {
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        set_config('enablecourserelativedates', 1);
+
+        // Course with just main section.
+        $timenow = time();
+        $course = self::getDataGenerator()->create_course(
+            ['numsections' => 0, 'relativedatesmode' => true, 'startdate' => $timenow - DAYSECS]);
+
+        $teacher = self::getDataGenerator()->create_user();
+        self::getDataGenerator()->enrol_user($teacher->id, $course->id, 'editingteacher');
+
+        $this->setUser($teacher);
+
+        // Create resource (empty dates).
+        $resource = self::getDataGenerator()->create_module('resource', ['course' => $course->id]);
+        // Create activities with dates.
+        $resource = self::getDataGenerator()->create_module('forum', ['course' => $course->id, 'duedate' => $timenow]);
+        $resource = self::getDataGenerator()->create_module('choice',
+            ['course' => $course->id, 'timeopen' => $timenow, 'timeclose' => $timenow + DAYSECS]);
+        $resource = self::getDataGenerator()->create_module('assign',
+            ['course' => $course->id, 'allowsubmissionsfromdate' => $timenow]);
+
+        $result = core_course_external::get_course_contents($course->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
+
+        foreach ($result[0]['modules'] as $module) {
+            if ($module['modname'] == 'resource') {
+                $this->assertEmpty($module['dates']);
+            } else if ($module['modname'] == 'forum') {
+                $this->assertCount(1, $module['dates']);
+                $this->assertEquals('duedate', $module['dates'][0]['dataid']);
+                $this->assertEquals($timenow, $module['dates'][0]['timestamp']);
+            } else if ($module['modname'] == 'choice') {
+                $this->assertCount(2, $module['dates']);
+                $this->assertEquals('timeopen', $module['dates'][0]['dataid']);
+                $this->assertEquals($timenow, $module['dates'][0]['timestamp']);
+                $this->assertEquals('timeclose', $module['dates'][1]['dataid']);
+                $this->assertEquals($timenow + DAYSECS, $module['dates'][1]['timestamp']);
+            } else if ($module['modname'] == 'assign') {
+                $this->assertCount(1, $module['dates']);
+                $this->assertEquals('allowsubmissionsfromdate', $module['dates'][0]['dataid']);
+                $this->assertEquals($timenow, $module['dates'][0]['timestamp']);
+                $this->assertEquals($course->startdate, $module['dates'][0]['relativeto']);
+            }
+        }
     }
 
     /**

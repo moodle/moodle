@@ -130,6 +130,8 @@
 
 .path-admin-tool-lp .competency-rule-points {
     margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .path-admin-tool-lp .competency-rule-points table input {
@@ -240,4 +242,8 @@ input[type="checkbox"].tool_lp_scale_proficient {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+}
+
+.path-admin-tool-lp #region-main {
+    overflow-x: visible;
 }

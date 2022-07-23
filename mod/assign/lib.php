@@ -939,7 +939,7 @@ function assign_print_recent_mod_activity($activity, $courseid, $detail, $modnam
     if ($detail) {
         $modname = $modnames[$activity->type];
         echo '<div class="title">';
-        echo $OUTPUT->image_icon('icon', $modname, 'assign');
+        echo $OUTPUT->image_icon('monologo', $modname, 'assign');
         echo '<a href="' . $CFG->wwwroot . '/mod/assign/view.php?id=' . $activity->cmid . '">';
         echo $activity->name;
         echo '</a>';
@@ -1438,6 +1438,14 @@ function mod_assign_output_fragment_gradingpanel($args) {
     $assign = new assign($context, null, null);
 
     $userid = clean_param($args['userid'], PARAM_INT);
+
+    $participant = $assign->get_participant($userid);
+    $isfiltered = $assign->is_userid_filtered($userid);
+    if (!$participant || !$isfiltered) {
+        // User is not enrolled or filtered out by filters and table preferences.
+        return '';
+    }
+
     $attemptnumber = clean_param($args['attemptnumber'], PARAM_INT);
     $formdata = array();
     if (!empty($args['jsonformdata'])) {

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_lti\external\get_tool_types_and_proxies;
+namespace mod_lti\external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_lti_get_tool_types_and_proxies_testcase extends mod_lti_testcase {
+class get_tool_types_and_proxies_test extends \mod_lti_testcase {
 
     /**
      * This method runs before every test.
@@ -48,7 +48,7 @@ class mod_lti_get_tool_types_and_proxies_testcase extends mod_lti_testcase {
         $this->generate_tool_type(1, $proxy->id);
 
         $data = get_tool_types_and_proxies::execute(0, false, 50, 0);
-        $data = external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
 
         $this->assertCount(1, $data['types']);
         $type = $data['types'][0];
@@ -71,7 +71,7 @@ class mod_lti_get_tool_types_and_proxies_testcase extends mod_lti_testcase {
         }
 
         $data = get_tool_types_and_proxies::execute(0, false,  5, 0);
-        $data = external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
 
         $this->assertCount(2, $data['types']);
         $this->assertCount(3, $data['proxies']);
@@ -89,7 +89,7 @@ class mod_lti_get_tool_types_and_proxies_testcase extends mod_lti_testcase {
         }
 
         $data = get_tool_types_and_proxies::execute(0, false, 5, 10);
-        $data = external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
 
         $this->assertCount(2, $data['types']);
         $this->assertCount(0, $data['proxies']);
@@ -107,7 +107,7 @@ class mod_lti_get_tool_types_and_proxies_testcase extends mod_lti_testcase {
         }
 
         $data = get_tool_types_and_proxies::execute(0, false,  0, 0);
-        $data = external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(get_tool_types_and_proxies::execute_returns(), $data);
 
         $this->assertCount(10, $data['types']);
         $this->assertCount(10, $data['proxies']);

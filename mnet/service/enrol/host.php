@@ -49,7 +49,7 @@ if (!$service->is_available()) {
 $hosts = $service->get_remote_publishers();
 
 if (empty($hosts[$hostid])) {
-    print_error('wearenotsubscribedtothishost', 'mnetservice_enrol');
+    throw new \moodle_exception('wearenotsubscribedtothishost', 'mnetservice_enrol');
 }
 $host = $hosts[$hostid];
 
@@ -59,7 +59,7 @@ if (!$usecache) {
 }
 $courses = $service->get_remote_courses($host->id, $usecache);
 if (is_string($courses)) {
-    print_error('fetchingcourses', 'mnetservice_enrol', '', null, $service->format_error_message($courses));
+    throw new \moodle_exception('fetchingcourses', 'mnetservice_enrol', '', null, $service->format_error_message($courses));
 }
 
 echo $OUTPUT->header();

@@ -16,6 +16,10 @@
 
 namespace mod_quiz\question\bank;
 
+use core_question\local\bank\question_version_status;
+use core_question\local\bank\random_question_loader;
+use qubaid_condition;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
@@ -33,395 +37,222 @@ require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 class qbank_helper {
 
     /**
-     * Check if the slot is a random question or not.
+     * Get the available versions of a question where one of the version has the given question id.
      *
-     * @param int $slotid
-     * @return bool
+     * @param int $questionid id of a question.
+     * @return \stdClass[] other versions of this question. Each object has fields versionid,
+     *       version and questionid. Array is returned most recent version first.
      */
-    public static function is_random($slotid): bool {
+    public static function get_version_options(int $questionid): array {
         global $DB;
+
+        return $DB->get_records_sql("
+                SELECT allversions.id AS versionid,
+                       allversions.version,
+                       allversions.questionid
+
+                  FROM {question_versions} allversions
+
+                 WHERE allversions.questionbankentryid = (
+                            SELECT givenversion.questionbankentryid
+                              FROM {question_versions} givenversion
+                             WHERE givenversion.questionid = ?
+                       )
+                   AND allversions.status <> ?
+
+              ORDER BY allversions.version DESC
+              ", [$questionid, question_version_status::QUESTION_STATUS_DRAFT]);
+    }
+
+    /**
+     * Get the information about which questions should be used to create a quiz attempt.
+     *
+     * Each element in the returned array is indexed by slot.slot (slot number) an each object hass:
+     * - All the field of the slot table.
+     * - contextid for where the question(s) come from.
+     * - category id for where the questions come from.
+     * - For non-random questions, All the fields of the question table (but id is in questionid).
+     *   Also question version and question bankentryid.
+     * - For random questions, filtercondition, which is also unpacked into category, randomrecurse,
+     *   randomtags, and note that these also have a ->name set and ->qtype set to 'random'.
+     *
+     * @param int $quizid the id of the quiz to load the data for.
+     * @param \context_module $quizcontext the context of this quiz.
+     * @param int|null $slotid optional, if passed only load the data for this one slot (if it is in this quiz).
+     * @return array indexed by slot, with information about the content of each slot.
+     */
+    public static function get_question_structure(int $quizid, \context_module $quizcontext,
+            int $slotid = null): array {
+        global $DB;
+
         $params = [
-            'itemid' => $slotid,
-            'component' => 'mod_quiz',
-            'questionarea' => 'slot'
-            ];
-        return $DB->record_exists('question_set_references', $params);
-    }
-
-    /**
-     * Get the version options for the question.
-     *
-     * @param int $questionid
-     * @return array
-     */
-    public static function get_version_options($questionid): array {
-        global $DB;
-        $sql = "SELECT qv.id AS versionid, qv.version
-                  FROM {question_versions} qv
-                 WHERE qv.questionbankentryid = (SELECT DISTINCT qbe.id
-                                                   FROM {question_bank_entries} qbe
-                                                   JOIN {question_versions} qv ON qbe.id = qv.questionbankentryid
-                                                   JOIN {question} q ON qv.questionid = q.id
-                                                  WHERE q.id = ?)
-              ORDER BY qv.version DESC";
-
-        return $DB->get_records_sql($sql, [$questionid]);
-    }
-
-    /**
-     * Sort the elements of an array according to a key.
-     *
-     * @param array $arrays
-     * @param string $on
-     * @param int $order
-     * @return array
-     */
-    public static function question_array_sort($arrays, $on, $order = SORT_ASC): array {
-        $element = [];
-        foreach ($arrays as $array) {
-            $element[$array->$on] = $array;
-        }
-        ksort($element, $order);
-        return $element;
-    }
-
-    /**
-     * Get the question id from slot id.
-     *
-     * @param int $slotid
-     * @return mixed
-     */
-    public static function get_question_for_redo($slotid) {
-        global $DB;
-        $params = [
-            'itemid' => $slotid,
-            'component' => 'mod_quiz',
-            'questionarea' => 'slot'
+            'draft' => question_version_status::QUESTION_STATUS_DRAFT,
+            'quizcontextid' => $quizcontext->id,
+            'quizcontextid2' => $quizcontext->id,
+            'quizcontextid3' => $quizcontext->id,
+            'quizid' => $quizid,
+            'quizid2' => $quizid,
         ];
-        $referencerecord = $DB->get_record('question_references', $params);
-        if ($referencerecord->version === null) {
-            $questionsql = 'SELECT q.id
-                              FROM {question} q
-                              JOIN {question_versions} qv ON qv.questionid = q.id
-                             WHERE qv.version = (SELECT MAX(v.version)
-                                                   FROM {question_versions} v
-                                                   JOIN {question_bank_entries} be
-                                                     ON be.id = v.questionbankentryid
-                                                  WHERE be.id = qv.questionbankentryid)
-                               AND qv.questionbankentryid = ?';
-            $questionid = $DB->get_record_sql($questionsql, [$referencerecord->questionbankentryid])->id;
-        } else {
-            $questionid = $DB->get_field('question_versions', 'questionid',
-                ['questionbankentryid' => $referencerecord->questionbankentryid,
-                'version' => $referencerecord->version]);
+        $slotidtest = '';
+        $slotidtest2 = '';
+        if ($slotid !== null) {
+            $params['slotid'] = $slotid;
+            $params['slotid2'] = $slotid;
+            $slotidtest = ' AND slot.id = :slotid';
+            $slotidtest2 = ' AND lslot.id = :slotid2';
         }
-        return $questionid;
-    }
 
-    /**
-     * Get random question object from the slot id.
-     *
-     * @param int $slotid
-     * @return false|mixed|\stdClass
-     */
-    public static function get_random_question_data_from_slot($slotid) {
-        global $DB;
-        $params = [
-            'itemid' => $slotid,
-            'component' => 'mod_quiz',
-            'questionarea' => 'slot'
-        ];
-        return $DB->get_record('question_set_references', $params);
-    }
-
-    /**
-     * Get the question ids for specific question version.
-     *
-     * @param int $quizid
-     * @return array
-     */
-    public static function get_specific_version_question_ids($quizid) {
-        global $DB;
-        $questionids = [];
-        $sql = 'SELECT qv.questionid
-                  FROM {quiz_slots} qs
-                  JOIN {question_references} qr ON qr.itemid = qs.id
-                  JOIN {question_versions} qv ON qv.questionbankentryid = qr.questionbankentryid
-                   AND qv.version = qr.version
-                 WHERE qr.version IS NOT NULL
-                   AND qs.quizid = ?
-                   AND qr.component = ?
-                   AND qr.questionarea = ?';
-        $questions = $DB->get_records_sql($sql, [$quizid, 'mod_quiz', 'slot']);
-        foreach ($questions as $question) {
-            $questionids [] = $question->questionid;
-        }
-        return $questionids;
-    }
-
-    /**
-     * Get the question ids for always latest options.
-     *
-     * @param int $quizid
-     * @return array
-     */
-    public static function get_always_latest_version_question_ids($quizid) {
-        global $DB;
-        $questionids = [];
-        $sql = 'SELECT qr.questionbankentryid as entry
-                  FROM {quiz_slots} qs
-                  JOIN {question_references} qr ON qr.itemid = qs.id
-                 WHERE qr.version IS NULL
-                   AND qs.quizid = ?
-                   AND qr.component = ?
-                   AND qr.questionarea = ?';
-        $entryids = $DB->get_records_sql($sql, [$quizid, 'mod_quiz', 'slot']);
-        $questionentries = [];
-        foreach ($entryids as $entryid) {
-            $questionentries [] = $entryid->entry;
-        }
-        if (empty($questionentries)) {
-            return $questionids;
-        }
-        list($questionidcondition, $params) = $DB->get_in_or_equal($questionentries);
-        $extracondition = 'AND qv.questionbankentryid ' . $questionidcondition;
-        $questionsql = "SELECT q.id
-                          FROM {question} q
-                          JOIN {question_versions} qv ON qv.questionid = q.id
-                         WHERE qv.version = (SELECT MAX(v.version)
-                                                FROM {question_versions} v
-                                                JOIN {question_bank_entries} be
-                                                  ON be.id = v.questionbankentryid
-                                               WHERE be.id = qv.questionbankentryid)
-                         $extracondition";
-        $questions = $DB->get_records_sql($questionsql, $params);
-        foreach ($questions as $question) {
-            $questionids [] = $question->id;
-        }
-        return $questionids;
-    }
-
-    /**
-     * Get the question structure data for the given quiz or question ids.
-     *
-     * @param null $quizid
-     * @param array $questionids
-     * @param bool $attempt
-     * @return array
-     */
-    public static function get_question_structure_data($quizid, $questionids = [], $attempt = false) {
-        global $DB;
-        $params = ['quizid' => $quizid];
-        $condition = '';
-        $joinon = 'AND qr.version = qv.version';
-        if (!empty($questionids)) {
-            list($condition, $param) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'questionid');
-            $condition = 'AND q.id ' . $condition;
-            $joinon = '';
-            $params = array_merge($params, $param);
-        }
-        if ($attempt) {
-            $selectstart = 'q.*, slot.id AS slotid, slot.slot,';
-        } else {
-            $selectstart = 'slot.slot, slot.id AS slotid, q.*,';
-        }
-        $sql = "SELECT $selectstart
-                       q.id AS questionid,
-                       q.name,
-                       q.qtype,
-                       q.length,
+        // Load all the data about each slot.
+        $slotdata = $DB->get_records_sql("
+                SELECT slot.slot,
+                       slot.id AS slotid,
                        slot.page,
                        slot.maxmark,
                        slot.requireprevious,
-                       qc.id as category,
-                       qc.contextid,qv.status,
-                       qv.id as versionid,
+                       qsr.filtercondition,
+                       qv.status,
+                       qv.id AS versionid,
                        qv.version,
-                       qv.questionbankentryid
+                       qr.version AS requestedversion,
+                       qv.questionbankentryid,
+                       q.id AS questionid,
+                       q.*,
+                       qc.id AS category,
+                       COALESCE(qc.contextid, qsr.questionscontextid) AS contextid
+
                   FROM {quiz_slots} slot
-             LEFT JOIN {question_references} qr ON qr.itemid = slot.id AND qr.component = 'mod_quiz' AND qr.questionarea = 'slot'
+
+             -- case where a particular question has been added to the quiz.
+             LEFT JOIN {question_references} qr ON qr.usingcontextid = :quizcontextid AND qr.component = 'mod_quiz'
+                                        AND qr.questionarea = 'slot' AND qr.itemid = slot.id
              LEFT JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
-             LEFT JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id $joinon
+
+             -- This way of getting the latest version for each slot is a bit more complicated
+             -- than we would like, but the simpler SQL did not work in Oracle 11.2.
+             -- (It did work fine in Oracle 19.x, so once we have updated our min supported
+             -- version we could consider digging the old code out of git history from
+             -- just before the commit that added this comment.
+             -- For relevant question_bank_entries, this gets the latest non-draft slot number.
+             LEFT JOIN (
+                   SELECT lv.questionbankentryid, MAX(lv.version) AS version
+                     FROM {quiz_slots} lslot
+                     JOIN {question_references} lqr ON lqr.usingcontextid = :quizcontextid2 AND lqr.component = 'mod_quiz'
+                                        AND lqr.questionarea = 'slot' AND lqr.itemid = lslot.id
+                     JOIN {question_versions} lv ON lv.questionbankentryid = lqr.questionbankentryid
+                    WHERE lslot.quizid = :quizid2
+                          $slotidtest2
+                      AND lqr.version IS NULL
+                      AND lv.status <> :draft
+                 GROUP BY lv.questionbankentryid
+             ) latestversions ON latestversions.questionbankentryid = qr.questionbankentryid
+
+             LEFT JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
+                                       -- Either specified version, or latest ready version.
+                                       AND qv.version = COALESCE(qr.version, latestversions.version)
              LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
              LEFT JOIN {question} q ON q.id = qv.questionid
+
+             -- Case where a random question has been added.
+             LEFT JOIN {question_set_references} qsr ON qsr.usingcontextid = :quizcontextid3 AND qsr.component = 'mod_quiz'
+                                        AND qsr.questionarea = 'slot' AND qsr.itemid = slot.id
+
                  WHERE slot.quizid = :quizid
-             $condition";
-        $questiondatas = $DB->get_records_sql($sql, $params);
-        foreach ($questiondatas as $questiondata) {
-            $questiondata->_partiallyloaded = true;
-        }
-        if (!empty($questiondatas)) {
-            return $questiondatas;
-        }
-        return [];
-    }
+                       $slotidtest
 
-    /**
-     * Get question structure.
-     *
-     * @param int $quizid
-     * @return array
-     */
-    public static function get_question_structure($quizid) {
-        $firstslotsets = self::get_question_structure_data($quizid);
-        $latestquestionids = self::get_always_latest_version_question_ids($quizid);
-        $secondslotsets = self::get_question_structure_data($quizid, $latestquestionids);
-        foreach ($firstslotsets as $key => $firstslotset) {
-            foreach ($secondslotsets as $secondslotset) {
-                if ($firstslotset->slotid === $secondslotset->slotid) {
-                    unset($firstslotsets[$key]);
-                }
-            }
-        }
+              ORDER BY slot.slot
+              ", $params);
 
-        return self::question_array_sort(array_merge($firstslotsets, $secondslotsets), 'slot');
-    }
+        // Unpack the random info from question_set_reference.
+        foreach ($slotdata as $slot) {
+            // Ensure the right id is the id.
+            $slot->id = $slot->slotid;
 
-    /**
-     * Load random questions.
-     *
-     * @param int $quizid
-     * @param array $questiondata
-     * @return array
-     */
-    public static function question_load_random_questions($quizid, $questiondata) {
-        global $DB, $USER;
-        $sql = 'SELECT slot.id AS slotid,
-                       slot.maxmark,
-                       slot.slot,
-                       slot.page,
-                       qsr.filtercondition
-                 FROM {question_set_references} qsr
-                 JOIN {quiz_slots} slot ON slot.id = qsr.itemid
-                WHERE slot.quizid = ?
-                  AND qsr.component = ?
-                  AND qsr.questionarea = ?';
-        $randomquestiondatas = $DB->get_records_sql($sql, [$quizid, 'mod_quiz', 'slot']);
-
-        $randomquestions = [];
-        // Questions already added.
-        $usedquestionids = [];
-        foreach ($questiondata as $question) {
-            if (isset($usedquestions[$question->id])) {
-                $usedquestionids[$question->id] += 1;
+            if ($slot->filtercondition) {
+                // Unpack the information about a random question.
+                $filtercondition = json_decode($slot->filtercondition);
+                $slot->questionid = 's' . $slot->id; // Sometimes this is used as an array key, so needs to be unique.
+                $slot->category = $filtercondition->questioncategoryid;
+                $slot->randomrecurse = (bool) $filtercondition->includingsubcategories;
+                $slot->randomtags = isset($filtercondition->tags) ? (array) $filtercondition->tags : [];
+                $slot->qtype = 'random';
+                $slot->name = get_string('random', 'quiz');
+                $slot->length = 1;
+            } else if ($slot->qtype === null) {
+                // This question must have gone missing. Put in a placeholder.
+                $slot->questionid = 's' . $slot->id; // Sometimes this is used as an array key, so needs to be unique.
+                $slot->category = 0;
+                $slot->qtype = 'missingtype';
+                $slot->name = get_string('missingquestion', 'quiz');
+                $slot->maxmark = 0;
+                $slot->questiontext = ' ';
+                $slot->questiontextformat = FORMAT_HTML;
+                $slot->length = 1;
+            } else if (!\question_bank::qtype_exists($slot->qtype)) {
+                // Question of unknown type found in the database. Set to placeholder question types instead.
+                $slot->qtype = 'missingtype';
             } else {
-                $usedquestionids[$question->id] = 1;
+                $slot->_partiallyloaded = 1;
             }
         }
-        // Usages for this user's previous quiz attempts.
-        $qubaids = new \mod_quiz\question\qubaids_for_users_attempts($quizid, $USER->id);
-        $randomloader = new \core_question\local\bank\random_question_loader($qubaids, $usedquestionids);
 
-        foreach ($randomquestiondatas as $randomquestiondata) {
-            $filtercondition = json_decode($randomquestiondata->filtercondition);
-            $tagids = [];
-            if (isset($filtercondition->tags)) {
-                foreach ($filtercondition->tags as $tag) {
-                    $tagstring = explode(',', $tag);
-                    $tagids [] = $tagstring[0];
-                }
-            }
-            $randomquestiondata->randomfromcategory = $filtercondition->questioncategoryid;
-            $randomquestiondata->randomincludingsubcategories = $filtercondition->includingsubcategories;
-            $randomquestiondata->questionid = $randomloader->get_next_question_id($randomquestiondata->randomfromcategory,
-                $randomquestiondata->randomincludingsubcategories, $tagids);
-            $randomquestions [] = $randomquestiondata;
-        }
-
-        foreach ($randomquestions as $randomquestion) {
-            // Should not add if there is no question found from the ramdom question loader, maybe empty category.
-            if ($randomquestion->questionid === null) {
-                continue;
-            }
-            $question = new \stdClass();
-            $question->slotid = $randomquestion->slotid;
-            $question->maxmark = $randomquestion->maxmark;
-            $question->slot = $randomquestion->slot;
-            $question->page = $randomquestion->page;
-            $qdatas = question_preload_questions($randomquestion->questionid);
-            $qdatas = reset($qdatas);
-            foreach ($qdatas as $key => $qdata) {
-                $question->$key = $qdata;
-            }
-            $questiondata[$question->id] = $question;
-        }
-
-        return $questiondata;
+        return $slotdata;
     }
 
     /**
-     * Choose question for redo.
+     * Get this list of random selection tag ids from one of the slots returned by get_question_structure.
      *
-     * @param int $slotid
-     * @param \qubaid_condition $qubaids
-     * @return int
+     * @param \stdClass $slotdata one of the array elements returned by get_question_structure.
+     * @return array list of tag ids.
      */
-    public static function choose_question_for_redo($slotid, $qubaids): int {
-        // Choose the replacement question.
-        if (!self::is_random($slotid)) {
-            $newqusetionid = self::get_question_for_redo($slotid);
-        } else {
-            $tagids = [];
-            $randomquestiondata = self::get_random_question_data_from_slot($slotid);
-            $filtercondition = json_decode($randomquestiondata->filtercondition);
-            if (isset($filtercondition->tags)) {
-                foreach ($filtercondition->tags as $tag) {
-                    $tagstring = explode(',', $tag);
-                    $tagids [] = $tagstring[0];
-                }
-            }
+    public static function get_tag_ids_for_slot(\stdClass $slotdata): array {
+        $tagids = [];
+        foreach ($slotdata->randomtags as $taginfo) {
+            [$id] = explode(',', $taginfo, 2);
+            $tagids[] = $id;
+        }
+        return $tagids;
+    }
 
-            $randomloader = new \core_question\local\bank\random_question_loader($qubaids, []);
-            $newqusetionid = $randomloader->get_next_question_id($filtercondition->questioncategoryid,
-                (bool) $filtercondition->includingsubcategories, $tagids);
-            if ($newqusetionid === null) {
-                throw new \moodle_exception('notenoughrandomquestions', 'quiz');
-            }
+    /**
+     * Given a slot from the array returned by get_question_structure, describe the random question it represents.
+     *
+     * @param \stdClass $slotdata one of the array elements returned by get_question_structure.
+     * @return string that can be used to display the random slot.
+     */
+    public static function describe_random_question(\stdClass $slotdata): string {
+        global $DB;
+        $category = $DB->get_record('question_categories', ['id' => $slotdata->category]);
+        return \question_bank::get_qtype('random')->question_name(
+               $category, $slotdata->randomrecurse, $slotdata->randomtags);
+    }
 
+    /**
+     * Choose question for redo in a particular slot.
+     *
+     * @param int $quizid the id of the quiz to load the data for.
+     * @param \context_module $quizcontext the context of this quiz.
+     * @param int $slotid optional, if passed only load the data for this one slot (if it is in this quiz).
+     * @param qubaid_condition $qubaids attempts to consider when avoiding picking repeats of random questions.
+     * @return int the id of the question to use.
+     */
+    public static function choose_question_for_redo(int $quizid, \context_module $quizcontext,
+            int $slotid, qubaid_condition $qubaids): int {
+        $slotdata = self::get_question_structure($quizid, $quizcontext, $slotid);
+        $slotdata = reset($slotdata);
+
+        // Non-random question.
+        if ($slotdata->qtype != 'random') {
+            return $slotdata->questionid;
+        }
+
+        // Random question.
+        $randomloader = new random_question_loader($qubaids, []);
+        $newqusetionid = $randomloader->get_next_question_id($slotdata->category,
+                $slotdata->randomrecurse, self::get_tag_ids_for_slot($slotdata));
+
+        if ($newqusetionid === null) {
+            throw new \moodle_exception('notenoughrandomquestions', 'quiz');
         }
         return $newqusetionid;
-    }
-
-    /**
-     * Get the version information for a question to show in the version selection dropdown.
-     *
-     * @param int $questionid
-     * @param int $slotid
-     * @return array
-     */
-    public static function get_question_version_info($questionid, $slotid): array {
-        global $DB;
-        $versiondata = [];
-        $versionsoptions = self::get_version_options($questionid);
-        $latestversion = reset($versionsoptions);
-        // Object for using the latest version.
-        $alwaysuselatest = new \stdClass();
-        $alwaysuselatest->versionid = 0;
-        $alwaysuselatest->version = 0;
-        $alwaysuselatest->versionvalue = get_string('alwayslatest', 'quiz');
-        array_unshift($versionsoptions, $alwaysuselatest);
-        $referencedata = $DB->get_record('question_references', ['itemid' => $slotid]);
-        if (!isset($referencedata->version) || ($referencedata->version === null)) {
-            $currentversion = 0;
-        } else {
-            $currentversion = $referencedata->version;
-        }
-
-        foreach ($versionsoptions as $versionsoption) {
-            $versionsoption->selected = false;
-            if ($versionsoption->version === $currentversion) {
-                $versionsoption->selected = true;
-            }
-            if (!isset($versionsoption->versionvalue)) {
-                if ($versionsoption->version === $latestversion->version) {
-                    $versionsoption->versionvalue = get_string('questionversionlatest', 'quiz', $versionsoption->version);
-                } else {
-                    $versionsoption->versionvalue = get_string('questionversion', 'quiz', $versionsoption->version);
-                }
-            }
-
-            $versiondata[] = $versionsoption;
-        }
-        return $versiondata;
     }
 }

@@ -100,7 +100,7 @@ Feature: In a lesson activity, teachers can review student attempts
     Then I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    And I follow "Reports"
+    And I navigate to "Reports" in current page administration
     And I should see "Student 1"
     And I should see "100%"
     And I should see "High score"
@@ -158,7 +158,7 @@ Feature: In a lesson activity, teachers can review student attempts
     Then I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test lesson name"
-    And I follow "Reports"
+    And I navigate to "Reports" in current page administration
     And I should see "Student 1"
     And I should not see "High score"
     And I should not see "Average score"

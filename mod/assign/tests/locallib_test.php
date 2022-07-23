@@ -4331,4 +4331,268 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
             $assign->get_course_module()->id .  '&amp;action=grading">' .
             get_string('numberofsubmissionsneedgradinglabel', 'assign', 1) . '</a>', $summary);
     }
+
+    /**
+     * Test that attachments should not be provided if \assign->show_intro returns false.
+     *
+     * @covers \assign::should_provide_intro_attachments
+     */
+    public function test_should_provide_intro_attachments_with_show_intro_disabled() {
+        $this->resetAfterTest();
+        $futuredate = time() + 300;
+        list($assign, $instance, $student) = $this->create_submission([
+            'alwaysshowdescription' => '0',
+            'allowsubmissionsfromdate' => $futuredate,
+        ]);
+        $this->assertFalse($assign->should_provide_intro_attachments($student->id));
+    }
+
+    /**
+     * Test that attachments should be provided if user has capability to manage activity.
+     *
+     * @covers \assign::should_provide_intro_attachments
+     */
+    public function test_should_provide_intro_attachments_with_bypass_capability() {
+        $this->resetAfterTest();
+        list($assign, $instance, $student) = $this->create_submission([
+            'submissionattachments' => 1,
+        ]);
+        // Provide teaching role to student1 so they are able to bypass time limit restrictions on viewing attachments.
+        $this->getDataGenerator()->enrol_user($student->id, $instance->course, 'editingteacher');
+        $this->assertTrue($assign->should_provide_intro_attachments($student->id));
+    }
+
+    /**
+     * Test that attachments should be provided if submissionattachments is disabled.
+     *
+     * @covers \assign::should_provide_intro_attachments
+     */
+    public function test_should_provide_intro_attachments_with_submissionattachments_disabled() {
+        $this->resetAfterTest();
+        list($assign, $instance, $student) = $this->create_submission();
+        $this->assertTrue($assign->should_provide_intro_attachments($student->id));
+    }
+
+    /**
+     * Test that attachments should not be provided if submissionattachments is enabled with no open submission.
+     *
+     * @covers \assign::should_provide_intro_attachments
+     */
+    public function test_should_provide_intro_attachments_with_submissionattachments_enabled_and_submissions_closed() {
+        $this->resetAfterTest();
+        // Set cut-off date to the past.
+        list($assign, $instance, $student) = $this->create_submission([
+            'timelimit' => '300',
+            'submissionattachments' => 1,
+            'cutoffdate' => time() - 300,
+        ]);
+        $this->assertFalse($assign->should_provide_intro_attachments($student->id));
+    }
+
+    /**
+     * Test that attachments should be provided if submissionattachments is enabled with an open submission.
+     *
+     * @covers \assign::should_provide_intro_attachments
+     */
+    public function test_should_provide_intro_attachments_submissionattachments_enabled_and_an_open_submission() {
+        $this->resetAfterTest();
+        set_config('enabletimelimit', '1', 'assign');
+        list($assign, $instance, $student) = $this->create_submission([
+            'timelimit' => '300',
+            'submissionattachments' => 1,
+        ]);
+
+        // Open a submission.
+        $assign->get_user_submission($student->id, true);
+
+        $this->assertTrue($assign->should_provide_intro_attachments($student->id));
+    }
+
+    /**
+     * Test that a submission using a time limit is currently open.
+     *
+     * @covers \assign::is_attempt_in_progress
+     */
+    public function test_is_attempt_in_progress_with_open_submission() {
+        global $DB;
+        $this->resetAfterTest();
+        set_config('enabletimelimit', '1', 'assign');
+        list($assign, $instance, $student) = $this->create_submission([
+            'timelimit' => '300',
+        ]);
+        $submission = $assign->get_user_submission($student->id, true);
+        // Set a timestarted.
+        $submission->timestarted = time() - 300;
+        $DB->update_record('assign_submission', $submission);
+        $this->assertTrue($assign->is_attempt_in_progress());
+    }
+
+    /**
+     * Test that a submission using a time limit is started without a start time.
+     *
+     * @covers \assign::is_attempt_in_progress
+     */
+    public function test_is_attempt_in_progress_with_open_submission_and_no_timestarted() {
+        $this->resetAfterTest();
+        set_config('enabletimelimit', '1', 'assign');
+        list($assign, $instance, $student) = $this->create_submission([
+            'timelimit' => '300',
+        ]);
+        $assign->get_user_submission($student->id, true);
+        $this->assertFalse($assign->is_attempt_in_progress());
+    }
+
+    /**
+     * Test that a submission using a time limit is currently not open.
+     *
+     * @covers \assign::is_attempt_in_progress
+     */
+    public function test_is_attempt_in_progress_with_no_open_submission() {
+        global $DB;
+        $this->resetAfterTest();
+        set_config('enabletimelimit', '1', 'assign');
+        list($assign, $instance, $student) = $this->create_submission([
+            'timelimit' => '300',
+        ]);
+        // Clear all current submissions.
+        $DB->delete_records('assign_submission', ['assignment' => $instance->id]);
+        $this->assertFalse($assign->is_attempt_in_progress());
+    }
+
+    /**
+     * Create a submission for testing.
+     * @param  array $params Optional params to use for creating assignment instance.
+     * @return array an array containing all the required data for testing
+     */
+    protected function create_submission(array $params = []) {
+        global $DB;
+
+        // Create a course and assignment and users.
+        $course = self::getDataGenerator()->create_course(array('groupmode' => SEPARATEGROUPS, 'groupmodeforce' => 1));
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $params = array_merge(array(
+            'course' => $course->id,
+            'assignsubmission_file_maxfiles' => 1,
+            'assignsubmission_file_maxsizebytes' => 1024 * 1024,
+            'assignsubmission_onlinetext_enabled' => 1,
+            'assignsubmission_file_enabled' => 1,
+            'submissiondrafts' => 1,
+            'assignfeedback_file_enabled' => 1,
+            'assignfeedback_comments_enabled' => 1,
+            'attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL,
+            'sendnotifications' => 0
+        ), $params);
+
+        set_config('submissionreceipts', 0, 'assign');
+
+        $instance = $generator->create_instance($params);
+        $cm = get_coursemodule_from_instance('assign', $instance->id);
+        $context = \context_module::instance($cm->id);
+
+        $assign = new \mod_assign_testable_assign($context, $cm, $course);
+
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+
+        $this->setUser($student);
+
+        // Create a student1 with an online text submission.
+        // Simulate a submission.
+        $submission = $assign->get_user_submission($student->id, true);
+
+        $data = new \stdClass();
+        $data->onlinetext_editor = array(
+            'itemid' => file_get_unused_draft_itemid(),
+            'text' => 'Submission text with a <a href="@@PLUGINFILE@@/intro.txt">link</a>',
+            'format' => FORMAT_MOODLE);
+
+        $draftidfile = file_get_unused_draft_itemid();
+        $usercontext = \context_user::instance($student->id);
+        $filerecord = array(
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $draftidfile,
+            'filepath'  => '/',
+            'filename'  => 't.txt',
+        );
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecord, 'text contents');
+
+        $data->files_filemanager = $draftidfile;
+
+        $notices = array();
+        $assign->save_submission($data, $notices);
+
+        return array($assign, $instance, $student);
+    }
+
+    /**
+     * Test user filtering by First name, Last name and Submission status.
+     *
+     * @covers \assign::is_userid_filtered
+     */
+    public function test_is_userid_filtered() {
+        $this->resetAfterTest();
+
+        // Generate data and simulate student submissions.
+        $course = $this->getDataGenerator()->create_course();
+        $params1 = ['firstname' => 'Valentin', 'lastname' => 'Ivanov'];
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student', $params1);
+        $params2 = ['firstname' => 'Nikolay', 'lastname' => 'Petrov'];
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student', $params2);
+        $assign = $this->create_instance($course, ['assignsubmission_onlinetext_enabled' => 1]);
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $this->setUser($student1);
+        $submission = $assign->get_user_submission($student1->id, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $student1->id, true, false);
+        $this->setUser($student2);
+        $submission = $assign->get_user_submission($student2->id, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+        $assign->testable_update_submission($submission, $student2->id, true, false);
+        $this->setUser($teacher);
+
+        // By default, both users should match filters.
+        $this->AssertTrue($assign->is_userid_filtered($student1->id));
+        $this->AssertTrue($assign->is_userid_filtered($student2->id));
+
+        // Filter by First name starting with V.
+        $_GET['tifirst'] = 'V';
+        $this->AssertTrue($assign->is_userid_filtered($student1->id));
+        $this->AssertFalse($assign->is_userid_filtered($student2->id));
+
+        // Add Last name to filter out both users.
+        $_GET['tilast'] = 'G';
+        $this->AssertFalse($assign->is_userid_filtered($student1->id));
+        $this->AssertFalse($assign->is_userid_filtered($student2->id));
+
+        // Unsetting variables doesn't change behaviour because filters are stored in user preferences.
+        unset($_GET['tifirst']);
+        unset($_GET['tilast']);
+        $this->AssertFalse($assign->is_userid_filtered($student1->id));
+        $this->AssertFalse($assign->is_userid_filtered($student2->id));
+
+        // Reset table preferences.
+        $_GET['treset'] = '1';
+        $this->AssertTrue($assign->is_userid_filtered($student1->id));
+        $this->AssertTrue($assign->is_userid_filtered($student2->id));
+
+        // Display users with submitted submissions only.
+        set_user_preference('assign_filter', ASSIGN_SUBMISSION_STATUS_SUBMITTED);
+        $this->AssertTrue($assign->is_userid_filtered($student1->id));
+        $this->AssertFalse($assign->is_userid_filtered($student2->id));
+
+        // Display users with drafts.
+        set_user_preference('assign_filter', ASSIGN_SUBMISSION_STATUS_DRAFT);
+        $this->AssertFalse($assign->is_userid_filtered($student1->id));
+        $this->AssertTrue($assign->is_userid_filtered($student2->id));
+
+        // Reset the filter.
+        set_user_preference('assign_filter', '');
+        $this->AssertTrue($assign->is_userid_filtered($student1->id));
+        $this->AssertTrue($assign->is_userid_filtered($student2->id));
+    }
 }

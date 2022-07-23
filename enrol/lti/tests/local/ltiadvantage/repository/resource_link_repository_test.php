@@ -36,6 +36,7 @@ class resource_link_repository_test extends \advanced_testcase {
     protected function generate_resource_link($id = 'res-link-1'): resource_link {
         $registration = application_registration::create(
             'Test',
+            'a2c94a2c94',
             new \moodle_url('http://lms.example.org'),
             'clientid_123',
             new \moodle_url('https://example.org/authrequesturl'),
@@ -196,6 +197,7 @@ class resource_link_repository_test extends \advanced_testcase {
      * @covers ::find_by_resource_and_user
      */
     public function test_find_by_resource_and_user() {
+        global $CFG;
         $this->resetAfterTest();
         $resourcelink = $this->generate_resource_link();
         $repository = new resource_link_repository();
@@ -213,7 +215,7 @@ class resource_link_repository_test extends \advanced_testcase {
         $user = $newreslink->add_user(
             $user1->id,
             'platform-user-id-123',
-            'en',
+            $CFG->lang,
             'Sydney',
             'AU',
             'Test university',
@@ -226,7 +228,7 @@ class resource_link_repository_test extends \advanced_testcase {
         $user2 = $newreslink3->add_user(
             $user2->id,
             'platform-user-id-777',
-            'en',
+            $CFG->lang,
             'Melbourne',
             'AU',
             'Test university',
@@ -254,6 +256,7 @@ class resource_link_repository_test extends \advanced_testcase {
      * @covers ::delete
      */
     public function test_delete() {
+        global $CFG;
         $this->resetAfterTest();
         $resourcelink = $this->generate_resource_link();
         $repository = new resource_link_repository();
@@ -264,7 +267,7 @@ class resource_link_repository_test extends \advanced_testcase {
         $user = $newreslink->add_user(
             2,
             'source-id-123',
-            'en',
+            $CFG->lang,
             'Perth',
             'AU',
             'An Example Institution',
@@ -292,6 +295,7 @@ class resource_link_repository_test extends \advanced_testcase {
      * @covers ::delete_by_resource
      */
     public function test_delete_by_resource() {
+        global $CFG;
         $this->resetAfterTest();
         $resourcelink = $this->generate_resource_link();
         $repository = new resource_link_repository();
@@ -301,7 +305,7 @@ class resource_link_repository_test extends \advanced_testcase {
         $user = $newreslink->add_user(
             2,
             'source-id-123',
-            'en',
+            $CFG->lang,
             'Perth',
             'AU',
             'An Example Institution',
@@ -336,6 +340,7 @@ class resource_link_repository_test extends \advanced_testcase {
      * @covers ::delete_by_deployment
      */
     public function test_delete_by_deployment() {
+        global $CFG;
         $this->resetAfterTest();
         $resourcelink = $this->generate_resource_link();
         $repository = new resource_link_repository();
@@ -346,7 +351,7 @@ class resource_link_repository_test extends \advanced_testcase {
         $user = $newreslink->add_user(
             2,
             'source-id-123',
-            'en',
+            $CFG->lang,
             'Perth',
             'AU',
             'An Example Institution',

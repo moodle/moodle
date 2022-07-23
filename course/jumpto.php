@@ -31,11 +31,11 @@ $jump = required_param('jump', PARAM_RAW);
 $PAGE->set_url('/course/jumpto.php');
 
 if (!confirm_sesskey()) {
-    print_error('confirmsesskeybad');
+    throw new \moodle_exception('confirmsesskeybad');
 }
 
 if (strpos($jump, '/') === 0 || strpos($jump, $CFG->wwwroot) === 0) {
     redirect(new moodle_url($jump));
 } else {
-    print_error('error');
+    throw new \moodle_exception('error');
 }

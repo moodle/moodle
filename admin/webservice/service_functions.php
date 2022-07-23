@@ -41,6 +41,9 @@ $node = $PAGE->settingsnav->find('externalservices', navigation_node::TYPE_SETTI
 if ($node) {
     $node->make_active();
 }
+$PAGE->set_primary_active_tab('siteadminnode');
+$PAGE->navbar->add(get_string('externalservices', 'webservice'),
+   new moodle_url('/admin/settings.php', ['section' => 'externalservices']));
 $PAGE->navbar->add(get_string('functions', 'webservice'),
         new moodle_url('/' . $CFG->admin . '/webservice/service_functions.php', array('id' => $serviceid)));
 

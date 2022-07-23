@@ -35,6 +35,9 @@ class config {
     /** @var string Default bigbluebutton server shared secret */
     public const DEFAULT_SHARED_SECRET = '0b21fcaf34673a8c3ec8ed877d76ae34';
 
+    /** @var string Default bigbluebutton data processing agreement url */
+    public const DEFAULT_DPA_URL = 'https://blindsidenetworks.com/dpa-moodle-free-tier';
+
     /**
      * Returns moodle version.
      *
@@ -64,7 +67,7 @@ class config {
             'waitformoderator_cache_ttl' => '60',
             'userlimit_default' => '0',
             'userlimit_editable' => false,
-            'preuploadpresentation_enabled' => false,
+            'preuploadpresentation_editable' => false,
             'recordingready_enabled' => false,
             'recordingstatus_enabled' => false,
             'meetingevents_enabled' => false,
@@ -108,6 +111,7 @@ class config {
             'lockonjoin_default' => true,
             'lockonjoin_editable' => false,
             'welcome_default' => '',
+            'default_dpa_accepted' => false,
         ];
     }
 
@@ -175,7 +179,7 @@ class config {
                'waitformoderator_editable' => self::get('waitformoderator_editable'),
                'userlimit_default' => self::get('userlimit_default'),
                'userlimit_editable' => self::get('userlimit_editable'),
-               'preuploadpresentation_enabled' => self::get('preuploadpresentation_enabled'),
+               'preuploadpresentation_editable' => self::get('preuploadpresentation_editable'),
                'recordings_enabled' => self::get('recordings_enabled'),
                'meetingevents_enabled' => self::get('meetingevents_enabled'),
                'recordings_deleted_default' => self::get('recordings_deleted_default'),

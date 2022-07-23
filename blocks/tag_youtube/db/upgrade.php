@@ -101,6 +101,12 @@ function xmldb_block_tag_youtube_upgrade($oldversion) {
             // If the block uses a legacy category name, update it to use the current category ID instead.
             foreach ($blockinstances as $blockinstance) {
                 $blockconfig = unserialize(base64_decode($blockinstance->configdata));
+
+                // Skip if the block does not have a specific category set.
+                if (!isset($blockconfig->category)) {
+                    continue;
+                }
+
                 $blockcategoryconfig = $blockconfig->category;
                 // The block is using a legacy category name as a category config.
                 if (array_key_exists($blockcategoryconfig, $categorynamemap)) {
@@ -125,6 +131,9 @@ function xmldb_block_tag_youtube_upgrade($oldversion) {
 
         upgrade_block_savepoint(true, 2021052501, 'tag_youtube', false);
     }
+
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

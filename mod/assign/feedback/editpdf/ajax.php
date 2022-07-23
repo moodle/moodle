@@ -48,7 +48,7 @@ $assignment = new \assign($context, null, null);
 require_login($assignment->get_course(), false, $cm);
 
 if (!$assignment->can_view_submission($userid)) {
-    print_error('nopermission');
+    throw new \moodle_exception('nopermission');
 }
 
 if ($action === 'pollconversions') {
@@ -82,21 +82,11 @@ if ($action === 'pollconversions') {
     $completestatuslist = [combined_document::STATUS_COMPLETE, combined_document::STATUS_FAILED];
 
     if (in_array($response->status, $readystatuslist)) {
-        // It seems that the files for this submission haven't been combined by the
-        // "\assignfeedback_editpdf\task\convert_submissions" scheduled task.
+        // It seems that the files for this submission haven't been combined in cron yet.
         // Try to combine them in the user session.
         $combineddocument = document_services::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
         $response->status = $combineddocument->get_status();
         $response->filecount = $combineddocument->get_document_count();
-
-        // Check status of the combined document and remove the submission
-        // from the task queue if combination completed.
-        if (in_array($response->status, $completestatuslist)) {
-            $submission = $assignment->get_user_submission($userid, false, $attemptnumber);
-            if ($submission) {
-                $DB->delete_records('assignfeedback_editpdf_queue', array('submissionid' => $submission->id));
-            }
-        }
     }
 
     if (in_array($response->status, $completestatuslist)) {

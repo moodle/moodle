@@ -88,7 +88,7 @@ class structure {
     public static function create_for_quiz($quizobj) {
         $structure = self::create();
         $structure->quizobj = $quizobj;
-        $structure->populate_structure($quizobj->get_quiz());
+        $structure->populate_structure();
         return $structure;
     }
 
@@ -612,80 +612,26 @@ class structure {
 
     /**
      * Set up this class with the structure for a given quiz.
-     * @param \stdClass $quiz the quiz settings.
      */
-    public function populate_structure($quiz) {
+    protected function populate_structure() {
         global $DB;
 
-        $slots = qbank_helper::get_question_structure($quiz->id);
-
-        $slots = $this->populate_missing_questions($slots);
+        $slots = qbank_helper::get_question_structure($this->quizobj->get_quizid(), $this->quizobj->get_context());
 
         $this->questions = [];
         $this->slotsinorder = [];
         foreach ($slots as $slotdata) {
             $this->questions[$slotdata->questionid] = $slotdata;
 
-            $slot = new \stdClass();
-            $slot->id = $slotdata->slotid;
-            $slot->name = $slotdata->name;
-            $slot->slot = $slotdata->slot;
-            $slot->quizid = $quiz->id;
-            $slot->page = $slotdata->page;
-            $slot->questionid = $slotdata->questionid;
-            $slot->maxmark = $slotdata->maxmark;
-            $slot->requireprevious = $slotdata->requireprevious;
-            $slot->qtype = $slotdata->qtype;
-            $slot->length = $slotdata->length;
-            $slot->category = $slotdata->category;
-            $slot->questionbankentryid = $slotdata->questionbankentryid ?? null;
-            $slot->version = $slotdata->version ?? null;
-
+            $slot = clone($slotdata);
+            $slot->quizid = $this->quizobj->get_quizid();
             $this->slotsinorder[$slot->slot] = $slot;
         }
 
         // Get quiz sections in ascending order of the firstslot.
-        $this->sections = $DB->get_records('quiz_sections', array('quizid' => $quiz->id), 'firstslot ASC');
+        $this->sections = $DB->get_records('quiz_sections', ['quizid' => $this->quizobj->get_quizid()], 'firstslot');
         $this->populate_slots_with_sections();
         $this->populate_question_numbers();
-    }
-
-    /**
-     * Used by populate. Make up fake data for any missing questions.
-     * @param \stdClass[] $slots the data about the slots and questions in the quiz.
-     * @return \stdClass[] updated $slots array.
-     */
-    protected function populate_missing_questions($slots) {
-        global $DB;
-        // Address missing/random question types.
-        foreach ($slots as $slot) {
-            if ($slot->qtype === null) {
-                // Check if the question is random.
-                if ($setreference = $DB->get_record('question_set_references', ['itemid' => $slot->slotid])) {
-                    $filtercondition = json_decode($setreference->filtercondition);
-                    $slot->id = $slot->slotid;
-                    $slot->category = $filtercondition->questioncategoryid;
-                    $slot->qtype = 'random';
-                    $slot->name = get_string('random', 'quiz');
-                    $slot->length = 1;
-                } else {
-                    // If the questiontype is missing change the question type.
-                    $slot->id = $slot->questionid;
-                    $slot->category = 0;
-                    $slot->qtype = 'missingtype';
-                    $slot->name = get_string('missingquestion', 'quiz');
-                    $slot->maxmark = 0;
-                    $slot->requireprevious = 0;
-                    $slot->questiontext = ' ';
-                    $slot->questiontextformat = FORMAT_HTML;
-                    $slot->length = 1;
-                }
-            } else if (!\question_bank::qtype_exists($slot->qtype)) {
-                $slot->qtype = 'missingtype';
-            }
-        }
-
-        return $slots;
     }
 
     /**
@@ -718,6 +664,45 @@ class structure {
                 $number += 1;
             }
         }
+    }
+
+    /**
+     * Get the version options to show on the Questions page for a particular question.
+     *
+     * @param int $slotnumber which slot to get the choices for.
+     * @return \stdClass[] other versions of this question. Each object has fields versionid,
+     *       version and selected. Array is returned most recent version first.
+     */
+    public function get_version_choices_for_slot(int $slotnumber): array {
+        $slot = $this->get_slot_by_number($slotnumber);
+
+        // Get all the versions which exist.
+        $versions = qbank_helper::get_version_options($slot->questionid);
+        $latestversion = reset($versions);
+
+        // Format the choices for display.
+        $versionoptions = [];
+        foreach ($versions as $version) {
+            $version->selected = $version->version === $slot->requestedversion;
+
+            if ($version->version === $latestversion->version) {
+                $version->versionvalue = get_string('questionversionlatest', 'quiz', $version->version);
+            } else {
+                $version->versionvalue = get_string('questionversion', 'quiz', $version->version);
+            }
+
+            $versionoptions[] = $version;
+        }
+
+        // Make a choice for 'Always latest'.
+        $alwaysuselatest = new \stdClass();
+        $alwaysuselatest->versionid = 0;
+        $alwaysuselatest->version = 0;
+        $alwaysuselatest->versionvalue = get_string('alwayslatest', 'quiz');
+        $alwaysuselatest->selected = $slot->requestedversion === null;
+        array_unshift($versionoptions, $alwaysuselatest);
+
+        return $versionoptions;
     }
 
     /**
@@ -965,7 +950,8 @@ class structure {
         $questionsetreference = $DB->get_record('question_set_references',
                 ['component' => 'mod_quiz', 'questionarea' => 'slot', 'itemid' => $slot->id]);
         if ($questionsetreference) {
-            $DB->delete_records('question_set_references', ['id' => $questionsetreference->id]);
+            $DB->delete_records('question_set_references',
+                ['id' => $questionsetreference->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
         }
         $DB->delete_records('quiz_slots', array('id' => $slot->id));
         for ($i = $slot->slot + 1; $i <= $maxslot; $i++) {

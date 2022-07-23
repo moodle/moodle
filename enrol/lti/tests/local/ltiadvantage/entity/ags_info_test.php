@@ -42,7 +42,12 @@ class ags_info_test extends \advanced_testcase {
             $agsinfo = ags_info::create(...array_values($args));
             $this->assertEquals($args['lineitemsurl'], $agsinfo->get_lineitemsurl());
             $this->assertEquals($args['lineitemurl'], $agsinfo->get_lineitemurl());
-            $this->assertEquals($args['scopes'], $agsinfo->get_scopes());
+            if (isset($expectations['scopes'])) {
+                $this->assertEquals($expectations['scopes'], $agsinfo->get_scopes());
+            } else {
+                $this->assertEquals($args['scopes'], $agsinfo->get_scopes());
+            }
+
             $this->assertEquals($expectations['lineitemscope'], $agsinfo->get_lineitemscope());
             $this->assertEquals($expectations['scorescope'], $agsinfo->get_scorescope());
             $this->assertEquals($expectations['resultscope'], $agsinfo->get_resultscope());
@@ -239,7 +244,7 @@ class ags_info_test extends \advanced_testcase {
                     'exceptionmessage' => 'Scope must be a string value'
                 ]
             ],
-            'Both lineitems and lineitem URL provided with invalid scopes' => [
+            'Both lineitems and lineitem URL provided with unsupported scopes' => [
                 'args' => [
                     'lineitemsurl' => new \moodle_url('https://platform.example.org/10/lineitems'),
                     'lineitemurl' => new \moodle_url('https://platform.example.org/10/lineitems/4/lineitem'),
@@ -248,13 +253,23 @@ class ags_info_test extends \advanced_testcase {
                         'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly',
                         'https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly',
                         'https://purl.imsglobal.org/spec/lti-ags/scope/score',
-                        'https://example.com/invalid/scope'
+                        'https://example.com/unsupported/scope'
                     ]
                 ],
                 'expectations' => [
-                    'valid' => false,
-                    'exception' => \coding_exception::class,
-                    'exceptionmessage' => "Scope 'https://example.com/invalid/scope' is invalid."
+                    'valid' => true,
+                    'scopes' => [
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly',
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly',
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/score',
+                    ],
+                    'lineitemscope' => [
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem',
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly'
+                    ],
+                    'resultscope' => 'https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly',
+                    'scorescope' => 'https://purl.imsglobal.org/spec/lti-ags/scope/score'
                 ]
             ],
             'Both lineitems and lineitem URL provided with invalid scope types' => [
@@ -269,6 +284,35 @@ class ags_info_test extends \advanced_testcase {
                     'valid' => false,
                     'exception' => \coding_exception::class,
                     'exceptionmessage' => "Scope must be a string value"
+                ]
+            ],
+            'Claim contains a single lineitem URL only with valid scopes' => [
+                'args' => [
+                    'lineitemsurl' => null,
+                    'lineitemurl' => new \moodle_url('https://platform.example.org/10/lineitems/4/lineitem'),
+                    'scopes' => [
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/score'
+                    ]
+                ],
+                'expectations' => [
+                    'valid' => true,
+                    'lineitemscope' => null,
+                    'scorescope' => 'https://purl.imsglobal.org/spec/lti-ags/scope/score',
+                    'resultscope' => null
+                ]
+            ],
+            'Claim contains no lineitems URL or lineitem URL' => [
+                'args' => [
+                    'lineitemsurl' => null,
+                    'lineitemurl' => null,
+                    'scopes' => [
+                        'https://purl.imsglobal.org/spec/lti-ags/scope/score'
+                    ]
+                ],
+                'expectations' => [
+                    'valid' => false,
+                    'exception' => \coding_exception::class,
+                    'exceptionmessage' => "Missing lineitem or lineitems URL"
                 ]
             ],
         ];

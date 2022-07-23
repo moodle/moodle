@@ -353,7 +353,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $questionreference->questionarea = 'slot';
             $questionreference->itemid = $data->id;
             $questionreference->questionbankentryid = $question->questionbankentryid;
-            $questionreference->version = $question->version;
+            $questionreference->version = null; // Default to Always latest.
             $DB->insert_record('question_references', $questionreference);
         }
     }
@@ -416,16 +416,16 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
     }
 
     /**
-     * Process a quiz_slot_tags restore
+     * Process a quiz_slot_tags to restore the tags to the new structure.
      *
      * @param stdClass|array $data The quiz_slot_tags data
      */
     protected function process_quiz_slot_tags($data) {
         global $DB;
 
-        $data = (object)$data;
-
+        $data = (object) $data;
         $slotid = $this->get_new_parentid('quiz_question_instance');
+
         if ($this->task->is_samesite() && $tag = core_tag_tag::get($data->tagid, 'id, name')) {
             $data->tagname = $tag->name;
         } else if ($tag = core_tag_tag::get_by_name(0, $data->tagname, 'id, name')) {
@@ -434,21 +434,13 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $data->tagid = null;
             $data->tagname = $tag->name;
         }
+
         $tagstring = "{$data->tagid},{$data->tagname}";
-        $setreferencedata = $DB->get_record('question_set_references', ['itemid' => $slotid]);
-
+        $setreferencedata = $DB->get_record('question_set_references',
+            ['itemid' => $slotid, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
         $filtercondition = json_decode($setreferencedata->filtercondition);
-        $tagstrings = [];
-        if (isset($filtercondition->tags)) {
-            $tags = explode(',', $filtercondition->tags);
-            foreach ($tags as $tag) {
-                $tagstrings [] = $tag;
-            }
-        }
-        $tagstrings [] = $tagstring;
-        $filtercondition->tags = $tagstrings;
+        $filtercondition->tags[] = $tagstring;
         $setreferencedata->filtercondition = json_encode($filtercondition);
-
         $DB->update_record('question_set_references', $setreferencedata);
     }
 

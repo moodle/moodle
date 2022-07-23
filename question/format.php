@@ -95,6 +95,40 @@ class qformat_default {
         return ($file->get_mimetype() == $this->mime_type());
     }
 
+    /**
+     * Validate the given file.
+     *
+     * For more expensive or detailed integrity checks.
+     *
+     * @param stored_file $file the file to check
+     * @return string the error message that occurred while validating the given file
+     */
+    public function validate_file(stored_file $file): string {
+        return '';
+    }
+
+    /**
+     * Check if the given file has the required utf8 encoding.
+     *
+     * @param stored_file $file the file to check
+     * @return string the error message if the file encoding is not UTF-8
+     */
+    protected function validate_is_utf8_file(stored_file $file): string {
+        if (!mb_check_encoding($file->get_content(), "UTF-8")) {
+            return get_string('importwrongfileencoding', 'question',  $this->get_name());
+        }
+        return '';
+    }
+
+    /**
+     * Return the localized pluginname string for the question format.
+     *
+     * @return string the pluginname string for the question format
+     */
+    protected function get_name(): string {
+        return get_string('pluginname', get_class($this));
+    }
+
     // Accessor methods
 
     /**
@@ -995,7 +1029,7 @@ class qformat_default {
 
         // did we actually process anything
         if ($count==0) {
-            print_error('noquestions', 'question', $continuepath);
+            throw new \moodle_exception('noquestions', 'question', $continuepath);
         }
 
         // final pre-process on exported data
@@ -1032,7 +1066,7 @@ class qformat_default {
         global $DB;
 
         if (!$category = $DB->get_record('question_categories', array('id' => $id))) {
-            print_error('cannotfindcategory', 'error', '', $id);
+            throw new \moodle_exception('cannotfindcategory', 'error', '', $id);
         }
         $contextstring = $this->translator->context_to_string($category->contextid);
 

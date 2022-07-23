@@ -26,30 +26,30 @@ $edit = optional_param('edit', -1, PARAM_BOOL);
 
 if ($id) {
     if (! $cm = get_coursemodule_from_id('chat', $id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 
     if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
 
     chat_update_chat_times($cm->instance);
 
     if (! $chat = $DB->get_record('chat', array('id' => $cm->instance))) {
-        print_error('invalidid', 'chat');
+        throw new \moodle_exception('invalidid', 'chat');
     }
 
 } else {
     chat_update_chat_times($c);
 
     if (! $chat = $DB->get_record('chat', array('id' => $c))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $course = $DB->get_record('course', array('id' => $chat->course))) {
-        print_error('coursemisconf');
+        throw new \moodle_exception('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-        print_error('invalidcoursemodule');
+        throw new \moodle_exception('invalidcoursemodule');
     }
 }
 
@@ -58,9 +58,16 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 
+// Initialize $PAGE.
+$courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
+$title = $courseshortname . ': ' . format_string($chat->name);
+$PAGE->set_url('/mod/chat/view.php', ['id' => $cm->id]);
+$PAGE->set_title($title);
+$PAGE->set_heading($course->fullname);
+$PAGE->add_body_class('limitedwidth');
+
 // Show some info for guests.
 if (isguestuser()) {
-    $PAGE->set_title($chat->name);
     echo $OUTPUT->header();
     echo $OUTPUT->confirm('<p>'.get_string('noguests', 'chat').'</p>'.get_string('liketologin'),
             get_login_url(), $CFG->wwwroot.'/course/view.php?id='.$course->id);
@@ -75,15 +82,6 @@ chat_view($chat, $course, $cm, $context);
 $strenterchat    = get_string('enterchat', 'chat');
 $stridle         = get_string('idle', 'chat');
 $strcurrentusers = get_string('currentusers', 'chat');
-
-$courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
-$title = $courseshortname . ': ' . format_string($chat->name);
-
-// Initialize $PAGE.
-$PAGE->set_url('/mod/chat/view.php', array('id' => $cm->id));
-$PAGE->set_title($title);
-$PAGE->set_heading($course->fullname);
-$PAGE->add_body_class('limitedwidth');
 
 // Check to see if groups are being used here.
 $groupmode = groups_get_activity_groupmode($cm);

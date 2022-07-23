@@ -54,7 +54,7 @@ class assignfeedback_file_import_zip_form extends moodleform implements renderab
         $update = false;
 
         if (!$importer) {
-            print_error('invalidarguments');
+            throw new \moodle_exception('invalidarguments');
             return;
         }
 

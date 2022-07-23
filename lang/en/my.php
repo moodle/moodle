@@ -23,6 +23,7 @@
  */
 
 $string['coursemanagementoptions'] = 'Course management options';
+$string['error:dashboardisdisabled'] = 'The Dashboard has been disabled by an administrator.';
 $string['mymoodle'] = 'Dashboard';
 $string['nocourses'] = 'No course information to show.';
 $string['noguest'] = 'The Dashboard page is not available to guest users';

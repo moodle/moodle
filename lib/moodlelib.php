@@ -589,7 +589,7 @@ function required_param($parname, $type) {
     } else if (isset($_GET[$parname])) {
         $param = $_GET[$parname];
     } else {
-        print_error('missingparam', '', '', $parname);
+        throw new \moodle_exception('missingparam', '', '', $parname);
     }
 
     if (is_array($param)) {
@@ -628,10 +628,10 @@ function required_param_array($parname, $type) {
     } else if (isset($_GET[$parname])) {
         $param = $_GET[$parname];
     } else {
-        print_error('missingparam', '', '', $parname);
+        throw new \moodle_exception('missingparam', '', '', $parname);
     }
     if (!is_array($param)) {
-        print_error('missingparam', '', '', $parname);
+        throw new \moodle_exception('missingparam', '', '', $parname);
     }
 
     $result = array();
@@ -1004,8 +1004,18 @@ function clean_param($param, $type) {
             return preg_replace('/[^a-zA-Z0-9_-]/i', '', $param);
 
         case PARAM_SAFEPATH:
-            // Remove everything not a-zA-Z0-9/_- .
-            return preg_replace('/[^a-zA-Z0-9\/_-]/i', '', $param);
+            // Replace MS \ separators.
+            $param = str_replace('\\', '/', $param);
+            // Remove any number of ../ to prevent path traversal.
+            $param = preg_replace('/\.\.+\//', '', $param);
+            // Remove everything not a-zA-Z0-9/:_- .
+            $param = preg_replace('/[^a-zA-Z0-9\/:_-]/i', '', $param);
+            // Remove leading slash.
+            $param = ltrim($param, '/');
+            if ($param === '.') {
+                $param = '';
+            }
+            return $param;
 
         case PARAM_FILE:
             // Strip all suspicious characters from filename.
@@ -1258,7 +1268,7 @@ function clean_param($param, $type) {
 
         default:
             // Doh! throw error, switched parameters in optional_param or another serious problem.
-            print_error("unknownparamtype", '', '', $type);
+            throw new \moodle_exception("unknownparamtype", '', '', $type);
     }
 }
 
@@ -1408,64 +1418,67 @@ function html_is_blank($string) {
  * @param string $plugin (optional) the plugin scope, default null
  * @return bool true or exception
  */
-function set_config($name, $value, $plugin=null) {
+function set_config($name, $value, $plugin = null) {
     global $CFG, $DB;
 
-    if (empty($plugin)) {
-        if (!array_key_exists($name, $CFG->config_php_settings)) {
-            // So it's defined for this invocation at least.
-            if (is_null($value)) {
-                unset($CFG->$name);
-            } else {
-                // Settings from db are always strings.
-                $CFG->$name = (string)$value;
-            }
-        }
+    // Redirect to appropriate handler when value is null.
+    if ($value === null) {
+        return unset_config($name, $plugin);
+    }
 
-        if ($DB->get_field('config', 'name', array('name' => $name))) {
-            if ($value === null) {
-                $DB->delete_records('config', array('name' => $name));
-            } else {
-                $DB->set_field('config', 'value', $value, array('name' => $name));
-            }
-        } else {
-            if ($value !== null) {
-                $config = new stdClass();
-                $config->name  = $name;
-                $config->value = $value;
-                $DB->insert_record('config', $config, false);
-            }
-            // When setting config during a Behat test (in the CLI script, not in the web browser
-            // requests), remember which ones are set so that we can clear them later.
-            if (defined('BEHAT_TEST')) {
-                if (!property_exists($CFG, 'behat_cli_added_config')) {
-                    $CFG->behat_cli_added_config = [];
-                }
-                $CFG->behat_cli_added_config[$name] = true;
-            }
-        }
-        if ($name === 'siteidentifier') {
-            cache_helper::update_site_identifier($value);
-        }
-        cache_helper::invalidate_by_definition('core', 'config', array(), 'core');
+    // Set variables determining conditions and where to store the new config.
+    // Plugin config goes to {config_plugins}, core config goes to {config}.
+    $iscore = empty($plugin);
+    if ($iscore) {
+        // If it's for core config.
+        $table = 'config';
+        $conditions = ['name' => $name];
+        $invalidatecachekey = 'core';
     } else {
-        // Plugin scope.
-        if ($id = $DB->get_field('config_plugins', 'id', array('name' => $name, 'plugin' => $plugin))) {
-            if ($value===null) {
-                $DB->delete_records('config_plugins', array('name' => $name, 'plugin' => $plugin));
-            } else {
-                $DB->set_field('config_plugins', 'value', $value, array('id' => $id));
-            }
-        } else {
-            if ($value !== null) {
-                $config = new stdClass();
-                $config->plugin = $plugin;
-                $config->name   = $name;
-                $config->value  = $value;
-                $DB->insert_record('config_plugins', $config, false);
-            }
+        // If it's a plugin.
+        $table = 'config_plugins';
+        $conditions = ['name' => $name, 'plugin' => $plugin];
+        $invalidatecachekey = $plugin;
+    }
+
+    // DB handling - checks for existing config, updating or inserting only if necessary.
+    $invalidatecache = true;
+    $inserted = false;
+    $record = $DB->get_record($table, $conditions, 'id, value');
+    if ($record === false) {
+        // Inserts a new config record.
+        $config = new stdClass();
+        $config->name  = $name;
+        $config->value = $value;
+        if (!$iscore) {
+            $config->plugin = $plugin;
         }
-        cache_helper::invalidate_by_definition('core', 'config', array(), $plugin);
+        $inserted = $DB->insert_record($table, $config, false);
+    } else if ($invalidatecache = ($record->value !== $value)) {
+        // Record exists - Check and only set new value if it has changed.
+        $DB->set_field($table, 'value', $value, ['id' => $record->id]);
+    }
+
+    if ($iscore && !isset($CFG->config_php_settings[$name])) {
+        // So it's defined for this invocation at least.
+        // Settings from db are always strings.
+        $CFG->$name = (string) $value;
+    }
+
+    // When setting config during a Behat test (in the CLI script, not in the web browser
+    // requests), remember which ones are set so that we can clear them later.
+    if ($iscore && $inserted && defined('BEHAT_TEST')) {
+        $CFG->behat_cli_added_config[$name] = true;
+    }
+
+    // Update siteidentifier cache, if required.
+    if ($iscore && $name === 'siteidentifier') {
+        cache_helper::update_site_identifier($value);
+    }
+
+    // Invalidate cache, if required.
+    if ($invalidatecache) {
+        cache_helper::invalidate_by_definition('core', 'config', [], $invalidatecachekey);
     }
 
     return true;
@@ -2353,6 +2366,18 @@ function date_format_string($date, $format, $tz = 99) {
     }
 
     date_default_timezone_set(core_date::get_user_timezone($tz));
+
+    if (strftime('%p', 0) === strftime('%p', HOURSECS * 18)) {
+        $datearray = getdate($date);
+        $format = str_replace([
+            '%P',
+            '%p',
+        ], [
+            $datearray['hours'] < 12 ? get_string('am', 'langconfig') : get_string('pm', 'langconfig'),
+            $datearray['hours'] < 12 ? get_string('amcaps', 'langconfig') : get_string('pmcaps', 'langconfig'),
+        ], $format);
+    }
+
     $datestring = strftime($format, $date);
     core_date::set_default_server_timezone();
 
@@ -2774,7 +2799,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     if ($course->id != SITEID and \core\session\manager::is_loggedinas()) {
         if ($USER->loginascontext->contextlevel == CONTEXT_COURSE) {
             if ($USER->loginascontext->instanceid != $course->id) {
-                print_error('loginasonecourse', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
+                throw new \moodle_exception('loginasonecourse', '',
+                    $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
             }
         }
     }
@@ -3239,17 +3265,17 @@ function validate_user_key($keyvalue, $script, $instance) {
     global $DB;
 
     if (!$key = $DB->get_record('user_private_key', array('script' => $script, 'value' => $keyvalue, 'instance' => $instance))) {
-        print_error('invalidkey');
+        throw new \moodle_exception('invalidkey');
     }
 
     if (!empty($key->validuntil) and $key->validuntil < time()) {
-        print_error('expiredkey');
+        throw new \moodle_exception('expiredkey');
     }
 
     if ($key->iprestriction) {
         $remoteaddr = getremoteaddr(null);
         if (empty($remoteaddr) or !address_in_subnet($remoteaddr, $key->iprestriction)) {
-            print_error('ipmismatch');
+            throw new \moodle_exception('ipmismatch');
         }
     }
     return $key;
@@ -3269,7 +3295,7 @@ function require_user_key_login($script, $instance = null, $keyvalue = null) {
     global $DB;
 
     if (!NO_MOODLE_COOKIES) {
-        print_error('sessioncookiesdisable');
+        throw new \moodle_exception('sessioncookiesdisable');
     }
 
     // Extra safety.
@@ -3282,13 +3308,13 @@ function require_user_key_login($script, $instance = null, $keyvalue = null) {
     $key = validate_user_key($keyvalue, $script, $instance);
 
     if (!$user = $DB->get_record('user', array('id' => $key->userid))) {
-        print_error('invaliduserid');
+        throw new \moodle_exception('invaliduserid');
     }
 
     core_user::require_active_user($user, true, true);
 
     // Emulate normal session.
-    enrol_check_plugins($user);
+    enrol_check_plugins($user, false);
     \core\session\manager::set_user($user);
 
     // Note we are not using normal login.
@@ -3763,7 +3789,7 @@ function get_auth_plugin($auth) {
 
     // Check the plugin exists first.
     if (! exists_auth_plugin($auth)) {
-        print_error('authpluginnotfound', 'debug', '', $auth);
+        throw new \moodle_exception('authpluginnotfound', 'debug', '', $auth);
     }
 
     // Return auth plugin instance.
@@ -3900,10 +3926,6 @@ function create_user_record($username, $password, $auth = 'manual') {
         if (email_is_not_allowed($newuser->email)) {
             unset($newuser->email);
         }
-    }
-
-    if (!isset($newuser->city)) {
-        $newuser->city = '';
     }
 
     $newuser->auth = $auth;
@@ -4622,7 +4644,7 @@ function complete_user_login($user) {
                 redirect($CFG->wwwroot.'/login/change_password.php');
             }
         } else {
-            print_error('nopasswordchangeforced', 'auth');
+            throw new \moodle_exception('nopasswordchangeforced', 'auth');
         }
     }
     return $USER;
@@ -4881,23 +4903,6 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
     if ($lastaccesses = $DB->get_records('user_lastaccess', array('userid' => $user->id))) {
         foreach ($lastaccesses as $lastaccess) {
             $user->lastcourseaccess[$lastaccess->courseid] = $lastaccess->timeaccess;
-        }
-    }
-
-    $sql = "SELECT g.id, g.courseid
-              FROM {groups} g, {groups_members} gm
-             WHERE gm.groupid=g.id AND gm.userid=?";
-
-    // This is a special hack to speedup calendar display.
-    $user->groupmember = array();
-    if (!isguestuser($user)) {
-        if ($groups = $DB->get_records_sql($sql, array($user->id))) {
-            foreach ($groups as $group) {
-                if (!array_key_exists($group->courseid, $user->groupmember)) {
-                    $user->groupmember[$group->courseid] = array();
-                }
-                $user->groupmember[$group->courseid][$group->id] = $group->id;
-            }
         }
     }
 
@@ -5347,8 +5352,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     fulldelete($CFG->dataroot.'/'.$course->id);
 
     // Delete from cache to reduce the cache size especially makes sense in case of bulk course deletion.
-    $cachemodinfo = cache::make('core', 'coursemodinfo');
-    $cachemodinfo->delete($courseid);
+    course_modinfo::purge_course_cache($courseid);
 
     // Trigger a course content deleted event.
     $event = \core\event\course_content_deleted::create(array(
@@ -5876,7 +5880,7 @@ function email_should_be_diverted($email) {
         return true;
     }
 
-    $patterns = array_map('trim', preg_split("/[\s,]+/", $CFG->divertallemailsexcept));
+    $patterns = array_map('trim', preg_split("/[\s,]+/", $CFG->divertallemailsexcept, -1, PREG_SPLIT_NO_EMPTY));
     foreach ($patterns as $pattern) {
         if (preg_match("/$pattern/", $email)) {
             return false;
@@ -6425,7 +6429,7 @@ function reset_password_and_mail($user) {
     $newpassword = generate_password();
 
     if (!$userauth->user_update_password($user, $newpassword)) {
-        print_error("cannotsetpassword");
+        throw new \moodle_exception("cannotsetpassword");
     }
 
     $a = new stdClass();
@@ -8768,8 +8772,9 @@ function format_float($float, $decimalpoints=1, $localized=true, $stripzeros=fal
     }
 
     $result = number_format($float, $decimalpoints, $separator, '');
-    if ($stripzeros) {
+    if ($stripzeros && $decimalpoints > 0) {
         // Remove zeros and final dot if not needed.
+        // However, only do this if there is a decimal point!
         $result = preg_replace('~(' . preg_quote($separator, '~') . ')?0+$~', '', $result);
     }
     return $result;
@@ -10367,15 +10372,38 @@ function get_home_page() {
     global $CFG;
 
     if (isloggedin() && !isguestuser() && !empty($CFG->defaulthomepage)) {
+        // If dashboard is disabled, home will be set to default page.
+        $defaultpage = get_default_home_page();
         if ($CFG->defaulthomepage == HOMEPAGE_MY) {
-            return HOMEPAGE_MY;
+            if (!empty($CFG->enabledashboard)) {
+                return HOMEPAGE_MY;
+            } else {
+                return $defaultpage;
+            }
         } else if ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES) {
             return HOMEPAGE_MYCOURSES;
         } else {
-            return (int)get_user_preferences('user_home_page_preference', HOMEPAGE_MY);
+            $userhomepage = (int) get_user_preferences('user_home_page_preference', $defaultpage);
+            if (empty($CFG->enabledashboard) && $userhomepage == HOMEPAGE_MY) {
+                // If the user was using the dashboard but it's disabled, return the default home page.
+                $userhomepage = $defaultpage;
+            }
+            return $userhomepage;
         }
     }
     return HOMEPAGE_SITE;
+}
+
+/**
+ * Returns the default home page to display if current one is not defined or can't be applied.
+ * The default behaviour is to return Dashboard if it's enabled or My courses page if it isn't.
+ *
+ * @return int The default home page.
+ */
+function get_default_home_page(): int {
+    global $CFG;
+
+    return !empty($CFG->enabledashboard) ? HOMEPAGE_MY : HOMEPAGE_MYCOURSES;
 }
 
 /**

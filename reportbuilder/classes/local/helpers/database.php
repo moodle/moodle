@@ -46,6 +46,19 @@ class database {
 
         return static::GENERATE_ALIAS_PREFIX . ($aliascount++);
     }
+
+    /**
+     * Generate multiple unique table/column aliases, see {@see generate_alias} for info
+     *
+     * @param int $count
+     * @return string[]
+     */
+    public static function generate_aliases(int $count): array {
+        return array_map([
+            static::class, 'generate_alias'
+        ], array_fill(0, $count, null));
+    }
+
     /**
      * Generates unique parameter name that must be used in generated SQL
      *
@@ -55,6 +68,18 @@ class database {
         static $paramcount = 0;
 
         return static::GENERATE_PARAM_PREFIX . ($paramcount++);
+    }
+
+    /**
+     * Generate multiple unique parameter names, see {@see generate_param_name} for info
+     *
+     * @param int $count
+     * @return string[]
+     */
+    public static function generate_param_names(int $count): array {
+        return array_map([
+            static::class, 'generate_param_name'
+        ], array_fill(0, $count, null));
     }
 
     /**
@@ -109,7 +134,7 @@ class database {
             }
 
             // Cast sort, stick the direction on the end.
-            $fieldsort = "CAST({$fieldsort} AS VARCHAR) {$fieldsortdirection}";
+            $fieldsort = $DB->sql_cast_to_char($fieldsort) . ' ' . $fieldsortdirection;
         }
 
         return $fieldsort;

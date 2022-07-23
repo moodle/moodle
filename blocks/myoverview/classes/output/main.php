@@ -412,8 +412,8 @@ class main implements renderable, templatable {
 
         $newcourseurl = '';
         $coursecat = \core_course_category::user_top();
-        if ($coursecat->can_create_course()) {
-            $newcourseurl = new \moodle_url('/course/edit.php', ['category' => $coursecat->id]);
+        if ($coursecat && ($category = \core_course_category::get_nearest_editable_subcategory($coursecat, ['create']))) {
+            $newcourseurl = new \moodle_url('/course/edit.php', ['category' => $category->id]);
         }
 
         $customfieldvalues = $this->get_customfield_values_for_export();

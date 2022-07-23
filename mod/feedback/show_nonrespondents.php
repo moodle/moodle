@@ -50,13 +50,13 @@ if ($message) {
 
 list ($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 //this page only can be shown on nonanonymous feedbacks in courses
 //we should never reach this page
 if ($feedback->anonymous != FEEDBACK_ANONYMOUS_NO OR $feedback->course == SITEID) {
-    print_error('error');
+    throw new \moodle_exception('error');
 }
 
 $url = new moodle_url('/mod/feedback/show_nonrespondents.php', array('id'=>$cm->id));
@@ -73,7 +73,7 @@ require_login($course, true, $cm);
 $actionbar = new \mod_feedback\output\responses_action_bar($cm->id, $url);
 
 if (($formdata = data_submitted()) AND !confirm_sesskey()) {
-    print_error('invalidsesskey');
+    throw new \moodle_exception('invalidsesskey');
 }
 
 require_capability('mod/feedback:viewreports', $context);

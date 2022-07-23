@@ -81,7 +81,8 @@ $THEME->layouts = [
     // My courses page.
     'mycourses' => array(
         'file' => 'drawers.php',
-        'regions' => array(),
+        'regions' => ['side-pre'],
+        'defaultregion' => 'side-pre',
         'options' => array('nonavbar' => true),
     ),
     // My dashboard page.

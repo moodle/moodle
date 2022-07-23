@@ -19,7 +19,12 @@ Feature: Import and edit calendar events
     Given I log in as "teacher1"
     And I view the calendar for "1" "2016"
     And I click on "Import or export calendars" "link"
+    And "Calendar" "link" should exist in the ".breadcrumb" "css_element"
+    And "Import or export calendars" "text" should exist in the ".breadcrumb" "css_element"
     And I press "Import calendar"
+    And "Calendar" "link" should exist in the ".breadcrumb" "css_element"
+    And "Import or export calendars" "link" should exist in the ".breadcrumb" "css_element"
+    And "Import calendar" "text" should exist in the ".breadcrumb" "css_element"
     And I set the following fields to these values:
       | Calendar name  | Test Import |
       | Import from    | Calendar file (.ics) |

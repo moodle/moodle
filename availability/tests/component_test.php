@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the component and plugin definitions for availability system.
- *
- * @package core_availability
- * @copyright 2014 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_availability;
 
 /**
  * Unit tests for the component and plugin definitions for availability system.
@@ -31,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_availability_component_testcase extends advanced_testcase {
+class component_test extends \advanced_testcase {
     /**
      * Tests loading a class from /availability/classes.
      */
@@ -47,7 +39,7 @@ class core_availability_component_testcase extends advanced_testcase {
         // This code will throw debugging information if the plugininfo class
         // is missing. Unfortunately it doesn't actually cause the test to
         // fail, but it's obvious when running test at least.
-        $pluginmanager = core_plugin_manager::instance();
+        $pluginmanager = \core_plugin_manager::instance();
         $list = $pluginmanager->get_enabled_plugins('availability');
         $this->assertArrayHasKey('completion', $list);
         $this->assertArrayHasKey('date', $list);

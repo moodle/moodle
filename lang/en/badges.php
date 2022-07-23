@@ -141,7 +141,7 @@ $string['badges'] = 'Badges';
 $string['badgedetails'] = 'Badge details';
 $string['badgeimage'] = 'Image';
 $string['badgeimage_help'] = 'The image should be at least 300 x 300 pixels in size. It will be displayed as 300 x 300 pixels on the badge page and 100 x 100 pixels on the user\'s profile page.';
-
+$string['badgeissued'] = 'Badge issued';
 $string['badgeprivacysetting'] = 'Badge privacy settings';
 $string['badgeprivacysetting_help'] = 'Badges you earn can be displayed on your account profile page. This setting allows you to automatically set the visibility of the newly earned badges.
 
@@ -154,10 +154,10 @@ Note: For recipient verification purposes, please avoid changing this setting on
 $string['badgesdisabled'] = 'Badges are not enabled on this site.';
 $string['badgesearned'] = 'Number of badges earned: {$a}';
 $string['badgesettings'] = 'Badges settings';
-$string['badgestatus_0'] = 'Not available to users';
-$string['badgestatus_1'] = 'Available to users';
-$string['badgestatus_2'] = 'Not available to users';
-$string['badgestatus_3'] = 'Available to users';
+$string['badgestatus_0'] = 'Not available';
+$string['badgestatus_1'] = 'Available';
+$string['badgestatus_2'] = 'Not available (criteria locked)';
+$string['badgestatus_3'] = 'Available (criteria locked)';
 $string['badgestatus_4'] = 'Archived';
 $string['badgestoearn'] = 'Number of badges available: {$a}';
 $string['badgesview'] = 'Course badges';
@@ -493,6 +493,7 @@ $string['privacy:metadata:manualaward:datemet'] = 'The date when the user was aw
 $string['privacy:metadata:manualaward:issuerid'] = 'The ID of the user awarding the badge';
 $string['privacy:metadata:manualaward:issuerrole'] = 'The role of the user awarding the badge';
 $string['privacy:metadata:manualaward:recipientid'] = 'The ID of the user who is manually awarded a badge';
+$string['recipient'] = 'Badge recipient';
 $string['recipients'] = 'Badge recipients';
 $string['recipientvalidationproblem'] = 'This user cannot be verified as a recipient of this badge.';
 $string['relative'] = 'Relative date';
@@ -574,10 +575,6 @@ $string['version_help'] = 'The version field may be used to keep track of the ba
 $string['warnexpired'] = ' (This badge has expired!)';
 $string['year'] = 'Year(s)';
 $string['includeauthdetails'] = "Include authentication details with the backpack";
-
-// Deprecated since Moodle 3.9.
-$string['editsettings'] = 'Edit settings';
-$string['sitebackpackverify'] = 'Backpack connection';
 
 // Deprecated since Moodle 3.10.
 $string['backpackneedsupdate'] = 'The backpack connected to this profile does not match the backpack for the site. You need to disconnect and reconnect the backpack.';

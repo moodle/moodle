@@ -29,11 +29,11 @@
         "welcomemessage": "welcomemessage"
     }
 }}
-<header id="page-header" class="header-maxwidth">
+<header id="page-header" class="header-maxwidth d-print-none">
     <div class="w-100">
         <div class="d-flex flex-wrap">
             {{#hasnavbar}}
-            <div id="page-navbar" class="p-1">
+            <div id="page-navbar">
                 {{{navbar}}}
             </div>
             {{/hasnavbar}}
@@ -44,7 +44,7 @@
                 {{{courseheader}}}
             </div>
         </div>
-        <div class="d-sm-flex align-items-center">
+        <div class="d-flex align-items-center">
             {{^welcomemessage}}
                 {{#contextheader}}
                     <div class="mr-auto">

@@ -45,7 +45,7 @@ $mform = null;
 
 $issuer = \core\oauth2\api::get_issuer($issuerid);
 if (!$issuer) {
-    print_error('invaliddata');
+    throw new \moodle_exception('invaliddata');
 }
 $PAGE->navbar->override_active_url(new moodle_url('/admin/tool/oauth2/issuers.php'), true);
 

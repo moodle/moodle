@@ -10,14 +10,18 @@ language: php
 
 os: linux
 
-dist: bionic
+dist: focal
 
 services:
     - mysql
     - docker
 
 addons:
-  postgresql: "10"
+  postgresql: "12"
+  apt:
+    packages:
+      - postgresql-12
+      - postgresql-client-12
 
 branches:
   except:
@@ -32,18 +36,18 @@ jobs:
     fast_finish: true
 
     include:
-        # First all the lowest php ones (7.3)
-        - php: 7.3
+        # First all the lowest php ones (7.4)
+        - php: 7.4
           env: DB=none     TASK=CITEST
-        - php: 7.3
-          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+        - php: 7.4
+          env: DB=none     TASK=GRUNT
 
         - if: env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present
-          php: 7.3
+          php: 7.4
           env: DB=pgsql    TASK=PHPUNIT
 
         - if: env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all"
-          php: 7.3
+          php: 7.4
           env: DB=mysqli   TASK=PHPUNIT
 
         # Then, conditionally, all the highest php ones (8.0)
@@ -52,7 +56,7 @@ jobs:
           env: DB=none     TASK=CITEST
         - if: env(MOODLE_PHP) = "all"
           php: 8.0
-          env: DB=none     TASK=GRUNT    NVM_VERSION='lts/carbon'
+          env: DB=none     TASK=GRUNT
 
         - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present)
           php: 8.0
@@ -71,6 +75,11 @@ before_install:
     - docker run -d -p 127.0.0.1:8080:80 --name exttests moodlehq/moodle-exttests
     # Avoid IPv6 default binding as service (causes redis not to start).
     - sudo service redis-server start --bind 127.0.0.1
+
+env:
+  global:
+    - PGVER=12
+    - PGPORT=5433
 
 install:
     - >
@@ -91,7 +100,7 @@ install:
             sudo service postgresql stop
             sudo mv /var/lib/postgresql /mnt/ramdisk
             sudo ln -s /mnt/ramdisk/postgresql /var/lib/postgresql
-            sudo service postgresql start 9.6
+            sudo service postgresql start
         fi
     - >
         if [ "$TASK" = 'PHPUNIT' ];
@@ -113,8 +122,8 @@ install:
     - >
         if [ "$TASK" = 'GRUNT' ];
         then
-            nvm install $NVM_VERSION ;
-            nvm use $NVM_VERSION ;
+            nvm install
+            nvm use
         fi
 
 before_script:
@@ -146,10 +155,11 @@ before_script:
         then
           # Postgres-specific setup.
           sed -i \
-            -e "s%= 'username'%= 'postgres'%" \
+            -e "s%= 'username'%= 'travis'%" \
+            -e "s%'dbsocket'  => false%'dbsocket'  => true%" \
             config.php ;
 
-          psql -c 'CREATE DATABASE travis_ci_test;' -U postgres;
+          psql -c 'CREATE DATABASE travis_ci_test;' -U travis;
         fi
 
         if [ "$DB" = 'mysqli' ];

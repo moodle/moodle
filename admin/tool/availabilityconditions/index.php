@@ -47,7 +47,7 @@ $pageurl = new moodle_url('/' . $CFG->admin . '/tool/availabilityconditions/');
 if (($plugin = optional_param('plugin', '', PARAM_PLUGIN))) {
     require_sesskey();
     if (!array_key_exists($plugin, $plugins)) {
-        print_error('invalidcomponent', 'error', $pageurl);
+        throw new \moodle_exception('invalidcomponent', 'error', $pageurl);
     }
     $action = required_param('action', PARAM_ALPHA);
     switch ($action) {

@@ -90,6 +90,32 @@ class groupconcatdistinct_test extends core_reportbuilder_testcase {
     }
 
     /**
+     * Test aggregation when applied to column with multiple fields
+     */
+    public function test_column_aggregation_multiple_fields(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user(['firstname' => 'Adam', 'lastname' => 'Apple']);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
+
+        // This is the column we'll aggregate.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullnamewithlink'])
+            ->set('aggregation', groupconcatdistinct::get_class_name())
+            ->update();
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertCount(1, $content);
+
+        // Ensure users are sorted predictably (Adam -> Admin).
+        [$userone, $usertwo] = explode(', ', reset($content[0]));
+        $this->assertStringContainsString(fullname($user, true), $userone);
+        $this->assertStringContainsString(fullname(get_admin(), true), $usertwo);
+    }
+
+    /**
      * Test aggregation when applied to column with callback
      */
     public function test_column_aggregation_with_callback(): void {

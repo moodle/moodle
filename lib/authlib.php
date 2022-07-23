@@ -133,7 +133,7 @@ class auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
-        print_error('mustbeoveride', 'debug', '', 'user_login()' );
+        throw new \moodle_exception('mustbeoveride', 'debug', '', 'user_login()' );
     }
 
     /**
@@ -302,7 +302,7 @@ class auth_plugin_base {
      */
     function user_signup($user, $notify=true) {
         //override when can signup
-        print_error('mustbeoveride', 'debug', '', 'user_signup()' );
+        throw new \moodle_exception('mustbeoveride', 'debug', '', 'user_signup()' );
     }
 
     /**
@@ -335,7 +335,7 @@ class auth_plugin_base {
      */
     function user_confirm($username, $confirmsecret) {
         //override when can confirm
-        print_error('mustbeoveride', 'debug', '', 'user_confirm()' );
+        throw new \moodle_exception('mustbeoveride', 'debug', '', 'user_confirm()' );
     }
 
     /**
@@ -651,7 +651,7 @@ class auth_plugin_base {
         $user = $DB->get_record('user', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id));
         if (empty($user)) { // Trouble.
             error_log($this->errorlogtag . get_string('auth_usernotexist', 'auth', $username));
-            print_error('auth_usernotexist', 'auth', '', $username);
+            throw new \moodle_exception('auth_usernotexist', 'auth', '', $username);
             die;
         }
 
@@ -877,6 +877,7 @@ function login_attempt_valid($user) {
 /**
  * To be called after failed user login.
  * @param stdClass $user
+ * @throws moodle_exception
  */
 function login_attempt_failed($user) {
     global $CFG;
@@ -888,30 +889,53 @@ function login_attempt_failed($user) {
         return;
     }
 
-    $count = get_user_preferences('login_failed_count', 0, $user);
-    $last = get_user_preferences('login_failed_last', 0, $user);
-    $sincescuccess = get_user_preferences('login_failed_count_since_success', $count, $user);
-    $sincescuccess = $sincescuccess + 1;
-    set_user_preference('login_failed_count_since_success', $sincescuccess, $user);
+    // Force user preferences cache reload to ensure the most up-to-date login_failed_count is fetched.
+    // This is perhaps overzealous but is the documented way of reloading the cache, as per the test method
+    // 'test_check_user_preferences_loaded'.
+    unset($user->preference);
 
-    if (empty($CFG->lockoutthreshold)) {
-        // No threshold means no lockout.
-        // Always unlock here, there might be some race conditions or leftovers when switching threshold.
-        login_unlock_account($user);
-        return;
-    }
+    $resource = 'user:' . $user->id;
+    $lockfactory = \core\lock\lock_config::get_lock_factory('core_failed_login_count_lock');
 
-    if (!empty($CFG->lockoutwindow) and time() - $last > $CFG->lockoutwindow) {
-        $count = 0;
-    }
+    // Get a new lock for the resource, waiting for it for a maximum of 10 seconds.
+    if ($lock = $lockfactory->get_lock($resource, 10)) {
+        try {
+            $count = get_user_preferences('login_failed_count', 0, $user);
+            $last = get_user_preferences('login_failed_last', 0, $user);
+            $sincescuccess = get_user_preferences('login_failed_count_since_success', $count, $user);
+            $sincescuccess = $sincescuccess + 1;
+            set_user_preference('login_failed_count_since_success', $sincescuccess, $user);
 
-    $count = $count+1;
+            if (empty($CFG->lockoutthreshold)) {
+                // No threshold means no lockout.
+                // Always unlock here, there might be some race conditions or leftovers when switching threshold.
+                login_unlock_account($user);
+                $lock->release();
+                return;
+            }
 
-    set_user_preference('login_failed_count', $count, $user);
-    set_user_preference('login_failed_last', time(), $user);
+            if (!empty($CFG->lockoutwindow) and time() - $last > $CFG->lockoutwindow) {
+                $count = 0;
+            }
 
-    if ($count >= $CFG->lockoutthreshold) {
-        login_lock_account($user);
+            $count = $count + 1;
+
+            set_user_preference('login_failed_count', $count, $user);
+            set_user_preference('login_failed_last', time(), $user);
+
+            if ($count >= $CFG->lockoutthreshold) {
+                login_lock_account($user);
+            }
+
+            // Release locks when we're done.
+            $lock->release();
+        } catch (Exception $e) {
+            // Always release the lock on a failure.
+            $lock->release();
+        }
+    } else {
+        // We did not get access to the resource in time, give up.
+        throw new moodle_exception('locktimeout');
     }
 }
 

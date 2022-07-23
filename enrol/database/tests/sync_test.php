@@ -35,6 +35,17 @@ class sync_test extends \advanced_testcase {
     /** @var string Original error log */
     protected $oldlog;
 
+    public static function tearDownAfterClass(): void {
+        global $DB;
+        // Apply sqlsrv native driver error and logging default
+        // settings while finishing the AdoDB tests.
+        if ($DB->get_dbfamily() === 'mssql') {
+            sqlsrv_configure("WarningsReturnAsErrors", false);
+            sqlsrv_configure("LogSubsystems", SQLSRV_LOG_SYSTEM_OFF);
+            sqlsrv_configure("LogSeverity", SQLSRV_LOG_SEVERITY_ERROR);
+        }
+    }
+
     protected function init_enrol_database() {
         global $DB, $CFG;
 

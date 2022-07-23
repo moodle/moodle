@@ -252,7 +252,7 @@ foreach ($modinfo->sections as $sectionnum=>$section) {
         $activitycell = new html_table_cell();
         $activitycell->attributes['class'] = 'activity';
 
-        $activityicon = $OUTPUT->pix_icon('icon', $modulename, $cm->modname, array('class'=>'icon'));
+        $activityicon = $OUTPUT->pix_icon('monologo', $modulename, $cm->modname, array('class'=>'icon'));
 
         $attributes = array();
         if (!$cm->visible) {

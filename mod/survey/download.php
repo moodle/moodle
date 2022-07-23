@@ -33,11 +33,11 @@ $type  = optional_param('type', 'xls', PARAM_ALPHA);
 $group = optional_param('group', 0, PARAM_INT);
 
 if (! $cm = get_coursemodule_from_id('survey', $id)) {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
+    throw new \moodle_exception('coursemisconf');
 }
 
 $context = context_module::instance($cm->id);
@@ -48,7 +48,7 @@ require_login($course, false, $cm);
 require_capability('mod/survey:download', $context) ;
 
 if (! $survey = $DB->get_record("survey", array("id"=>$cm->instance))) {
-    print_error('invalidsurveyid', 'survey');
+    throw new \moodle_exception('invalidsurveyid', 'survey');
 }
 
 $params = array(
@@ -135,7 +135,7 @@ unset($allquestions);
 
 // Get and collate all the results in one big array
 if (! $surveyanswers = $DB->get_records("survey_answers", array("survey"=>$survey->id), "time ASC")) {
-    print_error('cannotfindanswer', 'survey');
+    throw new \moodle_exception('cannotfindanswer', 'survey');
 }
 
 $results = array();
@@ -194,7 +194,7 @@ if ($type == "ods") {
         $col = 0;
         $row++;
         if (! $u = $DB->get_record("user", array("id"=>$user))) {
-            print_error('invaliduserid');
+            throw new \moodle_exception('invaliduserid');
         }
         if ($n = $DB->get_record("survey_analysis", array("survey"=>$survey->id, "userid"=>$user))) {
             $notes = $n->notes;
@@ -270,7 +270,7 @@ if ($type == "xls") {
         $col = 0;
         $row++;
         if (! $u = $DB->get_record("user", array("id"=>$user))) {
-            print_error('invaliduserid');
+            throw new \moodle_exception('invaliduserid');
         }
         if ($n = $DB->get_record("survey_analysis", array("survey"=>$survey->id, "userid"=>$user))) {
             $notes = $n->notes;
@@ -336,7 +336,7 @@ echo "\n";
 // Print all the lines of data.
 foreach ($results as $user => $rest) {
     if (! $u = $DB->get_record("user", array("id"=>$user))) {
-        print_error('invaliduserid');
+        throw new \moodle_exception('invaliduserid');
     }
     echo $survey->id."\t";
     echo strip_tags(format_string($survey->name,true))."\t";

@@ -129,7 +129,7 @@ class chart_axis implements JsonSerializable {
      *
      * @return array
      */
-    public function jsonSerialize() { // @codingStandardsIgnoreLine (CONTRIB-6469).
+    public function jsonSerialize() {
         return [
             'label' => $this->label,
             'labels' => $this->labels,

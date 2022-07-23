@@ -29,6 +29,7 @@
 
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/my/lib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
 redirect_if_major_upgrade_required();
 
@@ -51,24 +52,43 @@ $PAGE->set_context($context);
 $PAGE->set_url('/my/courses.php');
 $PAGE->add_body_classes(['limitedwidth', 'page-mycourses']);
 $PAGE->set_pagelayout('mycourses');
-$PAGE->has_secondary_navigation_setter(false);
 
 $PAGE->set_pagetype('my-index');
 $PAGE->blocks->add_region('content');
 $PAGE->set_subpage($currentpage->id);
 $PAGE->set_title(get_string('mycourses'));
 $PAGE->set_heading(get_string('mycourses'));
+
+// No blocks can be edited on this page (including by managers/admins) because:
+// - Course overview is a fixed item on the page and cannot be moved/removed.
+// - We do not want new blocks on the page.
+// - Only global blocks (if any) should be visible on the site panel, and cannot be moved int othe centre pane.
+$PAGE->force_lock_all_blocks();
+
 // Force the add block out of the default area.
 $PAGE->theme->addblockposition  = BLOCK_ADDBLOCK_POSITION_CUSTOM;
 
 // Add course management if the user has the capabilities for it.
 $coursecat = core_course_category::user_top();
-if ($coursecat->can_create_course() || $coursecat->has_manage_capability()) {
-    $data = [
-        'newcourseurl' => new moodle_url('/course/edit.php', ['category' => $coursecat->id]),
-        'manageurl' => new moodle_url('/course/management.php', ['categoryid' => $coursecat->id]),
-    ];
-    $PAGE->add_header_action($OUTPUT->render_from_template('my/dropdown', $data));
+$coursemanagemenu = [];
+if ($coursecat && ($category = core_course_category::get_nearest_editable_subcategory($coursecat, ['create']))) {
+    // The user has the capability to create course.
+    $coursemanagemenu['newcourseurl'] = new moodle_url('/course/edit.php', ['category' => $category->id]);
+}
+if ($coursecat && ($category = core_course_category::get_nearest_editable_subcategory($coursecat, ['manage']))) {
+    // The user has the capability to manage the course category.
+    $coursemanagemenu['manageurl'] = new moodle_url('/course/management.php', ['categoryid' => $category->id]);
+}
+if ($coursecat) {
+    $category = core_course_category::get_nearest_editable_subcategory($coursecat, ['moodle/course:request']);
+    if ($category && $category->can_request_course()) {
+        $coursemanagemenu['courserequesturl'] = new moodle_url('/course/request.php', ['categoryid' => $category->id]);
+
+    }
+}
+if (!empty($coursemanagemenu)) {
+    // Render the course management menu.
+    $PAGE->add_header_action($OUTPUT->render_from_template('my/dropdown', $coursemanagemenu));
 }
 
 echo $OUTPUT->header();

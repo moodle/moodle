@@ -77,6 +77,7 @@ abstract class backup_cron_automated_helper {
      * First backup courses that do not have an entry in backup_courses first,
      * as they are likely new and never been backed up. Do the oldest modified courses first.
      * Then backup courses that have previously been backed up starting with the oldest next start time.
+     * Finally, all else being equal, defer to the sortorder of the courses.
      *
      * @param null|int $now timestamp to use in course selection.
      * @return moodle_recordset The recordset of matching courses.
@@ -93,7 +94,8 @@ abstract class backup_cron_automated_helper {
              LEFT JOIN {backup_courses} bc ON bc.courseid = c.id
                  WHERE bc.nextstarttime IS NULL OR bc.nextstarttime < ?
               ORDER BY nextstarttime ASC,
-                       c.timemodified DESC';
+                       c.timemodified DESC,
+                       c.sortorder';
 
         $params = array(
             $now,  // Only get courses where the backup start time is in the past.
@@ -200,7 +202,7 @@ abstract class backup_cron_automated_helper {
         $message .= get_string('summary') . "\n";
         $message .= "==================================================\n";
         $message .= '  ' . get_string('courses') . ': ' . array_sum($count) . "\n";
-        $message .= '  ' . get_string('ok') . ': ' . $count[self::BACKUP_STATUS_OK] . "\n";
+        $message .= '  ' . get_string('statusok') . ': ' . $count[self::BACKUP_STATUS_OK] . "\n";
         $message .= '  ' . get_string('skipped') . ': ' . $count[self::BACKUP_STATUS_SKIPPED] . "\n";
         $message .= '  ' . get_string('error') . ': ' . $count[self::BACKUP_STATUS_ERROR] . "\n";
         $message .= '  ' . get_string('unfinished') . ': ' . $count[self::BACKUP_STATUS_UNFINISHED] . "\n";
@@ -788,7 +790,7 @@ abstract class backup_cron_automated_helper {
                 $where .= " and target <> 'course_backup'";
             }
 
-            if ($reader->get_events_select_count($where, $params)) {
+            if ($reader->get_events_select_exists($where, $params)) {
                 return true;
             }
         }

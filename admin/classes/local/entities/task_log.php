@@ -243,11 +243,25 @@ class task_log extends base {
         $filters[] = (new filter(
             text::class,
             'name',
-            new lang_string('name'),
+            new lang_string('classname', 'tool_task'),
             $this->get_entity_name(),
             "{$tablealias}.classname"
         ))
             ->add_joins($this->get_joins());
+
+        // Type filter.
+        $filters[] = (new filter(
+            select::class,
+            'type',
+            new lang_string('tasktype', 'admin'),
+            $this->get_entity_name(),
+            "{$tablealias}.type"
+        ))
+            ->add_joins($this->get_joins())
+            ->set_options([
+                \core\task\database_logger::TYPE_ADHOC => new lang_string('task_type:adhoc', 'admin'),
+                \core\task\database_logger::TYPE_SCHEDULED => new lang_string('task_type:scheduled', 'admin'),
+            ]);
 
         // Output filter (Filter by task output).
         $filters[] = (new filter(

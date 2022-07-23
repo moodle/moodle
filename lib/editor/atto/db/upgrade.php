@@ -32,73 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_editor_atto_upgrade($oldversion) {
     global $CFG;
 
-    // Automatically generated Moodle v3.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v3.7.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2019090900) {
-        $toolbar = get_config('editor_atto', 'toolbar');
-
-        if (strpos($toolbar, 'h5p') === false) {
-            $glue = "\r\n";
-            if (strpos($toolbar, $glue) === false) {
-                $glue = "\n";
-            }
-            $groups = explode($glue, $toolbar);
-            // Try to put h5p in the files group.
-            foreach ($groups as $i => $group) {
-                $parts = explode('=', $group);
-                if (trim($parts[0]) == 'files') {
-                    $groups[$i] = 'files = ' . trim($parts[1]) . ', h5p';
-                    // Update config variable.
-                    $toolbar = implode($glue, $groups);
-                    set_config('toolbar', $toolbar, 'editor_atto');
-                }
-            }
-        }
-        // Atto editor savepoint reached.
-        upgrade_plugin_savepoint(true, 2019090900, 'editor', 'atto');
-    }
-    // Automatically generated Moodle v3.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2020052100) {
-        // The old default toolbar config for 38 and below.
-        $oldtoolbar = 'collapse = collapse
-style1 = title, bold, italic
-list = unorderedlist, orderedlist
-links = link
-files = image, media, recordrtc, managefiles, h5p
-style2 = underline, strike, subscript, superscript
-align = align
-indent = indent
-insert = equation, charmap, table, clear
-undo = undo
-accessibility = accessibilitychecker, accessibilityhelper
-other = html';
-
-        // Check if the current toolbar config matches the old toolbar config.
-        if (get_config('editor_atto', 'toolbar') === $oldtoolbar) {
-            // If the site is still using the old defaults, upgrade to the new default.
-            $newtoolbar = 'collapse = collapse
-style1 = title, bold, italic
-list = unorderedlist, orderedlist, indent
-links = link
-files = emojipicker, image, media, recordrtc, managefiles, h5p
-style2 = underline, strike, subscript, superscript
-align = align
-insert = equation, charmap, table, clear
-undo = undo
-accessibility = accessibilitychecker, accessibilityhelper
-other = html';
-            set_config('toolbar', $newtoolbar, 'editor_atto');
-        }
-
-        upgrade_plugin_savepoint(true, 2020052100, 'editor', 'atto');
-    }
-
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -140,6 +73,9 @@ other = html';
 
         upgrade_plugin_savepoint(true, 2021062400, 'editor', 'atto');
     }
+
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

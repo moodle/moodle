@@ -29,6 +29,9 @@
     * see mod/assign/classes/output/grading_app.php
 
     This template uses ajax functionality, so it cannot be shown in the template library.
+
+    Example context (json):
+    { }
 }}
 <a href="#previous" data-action="previous-user" aria-label="{{#str}} previoususer, mod_assign {{/str}}" title="{{#str}} previoususer, mod_assign {{/str}}">{{{larrow}}}</a>
 <span data-region="input-field">
@@ -54,6 +57,9 @@
         {{/filters}}
     </span>
     {{#pix}}i/filter{{/pix}}
+</a>
+<a href="#" data-region="user-resettable" title="{{#str}}resettable{{/str}}">
+    {{#str}}resettable{{/str}}
 </a>
 <div data-region="configure-filters" id="filter-configuration-{{uniqid}}" class="card card-large p-2">
     <form>

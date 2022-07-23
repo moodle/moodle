@@ -25,8 +25,6 @@
 
 namespace core_message\event;
 
-use core_message_messagelib_testcase;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -41,7 +39,7 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @copyright 2014 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class events_test extends core_message_messagelib_testcase {
+class events_test extends \core_message\messagelib_test {
 
     /**
      * Test set up.

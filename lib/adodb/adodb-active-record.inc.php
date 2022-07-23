@@ -281,7 +281,7 @@ class ADODB_Active_Record {
 
 	static function TableBelongsTo($table, $foreignRef, $foreignKey=false, $parentKey='', $parentClass = 'ADODB_Active_Record')
 	{
-		$ar = new ADOdb_Active_Record($table);
+		$ar = new ADODB_Active_Record($table);
 		$ar->belongsTo($foreignRef, $foreignKey, $parentKey, $parentClass);
 	}
 
@@ -290,7 +290,7 @@ class ADODB_Active_Record {
 		if (!is_array($tablePKey)) {
 			$tablePKey = array($tablePKey);
 		}
-		$ar = new ADOdb_Active_Record($table, $tablePKey);
+		$ar = new ADODB_Active_Record($table, $tablePKey);
 		$ar->belongsTo($foreignRef, $foreignKey, $parentKey, $parentClass);
 	}
 

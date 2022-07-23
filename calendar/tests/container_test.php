@@ -14,19 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Event container tests.
- *
- * @package    core_calendar
- * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-
-require_once($CFG->dirroot . '/calendar/lib.php');
+namespace core_calendar;
 
 use core_calendar\local\event\entities\action_event;
 use core_calendar\local\event\entities\event;
@@ -36,13 +24,20 @@ use core_calendar\local\event\factories\event_factory_interface;
 use core_calendar\local\event\mappers\event_mapper;
 use core_calendar\local\event\mappers\event_mapper_interface;
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+
+require_once($CFG->dirroot . '/calendar/lib.php');
+
 /**
- * Core container testcase.
+ * Event container test..
  *
+ * @package core_calendar
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_container_testcase extends advanced_testcase {
+class container_test extends \advanced_testcase {
 
     /**
      * Test setup.
@@ -435,10 +430,10 @@ class core_calendar_container_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
 
-        foreach (core_component::get_plugin_list('mod') as $modname => $unused) {
+        foreach (\core_component::get_plugin_list('mod') as $modname => $unused) {
             try {
                 $generator = $this->getDataGenerator()->get_plugin_generator('mod_'.$modname);
-            } catch (coding_exception $e) {
+            } catch (\coding_exception $e) {
                 // Module generator is not implemented.
                 continue;
             }
@@ -544,7 +539,7 @@ class core_calendar_container_testcase extends advanced_testcase {
             $record->$name = $value;
         }
 
-        $event = new calendar_event($record);
+        $event = new \calendar_event($record);
         return $event->create($record, false);
     }
 

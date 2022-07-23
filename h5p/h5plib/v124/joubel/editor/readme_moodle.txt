@@ -33,5 +33,6 @@ Added:
 Changed:
  * Updated H5peditor::getLibraryData parameters to fix PHP8.0 warnings. See MDL-70903 for details.
  * Make get_magic_quotes_gpc() use conditional, it has been removed in php80. See MDL-73502 for details.
+ * Updated CKEditor to 4.17.1 from https://github.com/h5p/h5p-editor-php-library/commit/1ae19fdb80839b32dad3846d6b0a5c745f8f6187. It has been applied the commit on h5p-editor-php-library where CKEditor is updated to 4.17.1. Once, this library will be upgraded to the latest version, this changed should be removed.
 
 Downloaded version: moodle-1.20.2 release

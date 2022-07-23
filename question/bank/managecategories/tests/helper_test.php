@@ -16,6 +16,9 @@
 
 namespace qbank_managecategories;
 
+use moodle_url;
+use core_question\local\bank\question_edit_contexts;
+
 /**
  * Unit tests for helper class.
  *
@@ -48,6 +51,11 @@ class helper_test extends \advanced_testcase {
     protected $quiz;
 
     /**
+     * @var question_category_object used in the tests.
+     */
+    protected $qcobject;
+
+    /**
      * Tests initial setup.
      */
     protected function setUp(): void {
@@ -60,6 +68,12 @@ class helper_test extends \advanced_testcase {
         $this->quiz = $datagenerator->create_module('quiz', ['course' => $this->course->id]);
         $this->qgenerator = $datagenerator->get_plugin_generator('core_question');
         $this->context = \context_module::instance($this->quiz->cmid);
+
+        $contexts = new question_edit_contexts($this->context);
+        $this->qcobject = new question_category_object(null,
+            new moodle_url('/question/bank/managecategories/category.php', ['courseid' => SITEID]),
+            $contexts->having_one_edit_tab_cap('categories'), 0, null, 0,
+            $contexts->having_cap('moodle/question:add'));
     }
 
     /**
@@ -88,57 +102,40 @@ class helper_test extends \advanced_testcase {
         $q2d = $DB->get_record_sql("SELECT qsr.*
                                       FROM {quiz_slots} qs
                                       JOIN {question_set_references} qsr ON qsr.itemid = qs.id
-                                     WHERE qs.quizid = ?",
-            ['quizid' => $this->quiz->id], MUST_EXIST);
+                                     WHERE qs.quizid = ?
+                                       AND qsr.component = ?
+                                       AND qsr.questionarea = ?",
+            [$this->quiz->id, 'mod_quiz', 'slot'], MUST_EXIST);
 
         // The following 2 lines have to be after the quiz_add_random_questions() call above.
         // Otherwise, quiz_add_random_questions() will to be "smart" and use them instead of creating a new "random" question.
         $q1b = $this->qgenerator->create_question('random', null, ['category' => $qcat1->id]);          // Will not be used.
         $q2c = $this->qgenerator->create_question('random', null, ['category' => $qcat2->id]);          // Will not be used.
 
-        $sql = "SELECT count(q.id)
-                  FROM {question} q
-                  JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                 WHERE qbe.questioncategoryid = ?";
-        $this->assertEquals(2, $DB->count_records_sql($sql, [$qcat1->id]));
-        $this->assertEquals(3, $DB->count_records_sql($sql, [$qcat2->id]));
+        $this->assertEquals(2, count($this->qcobject->get_real_question_ids_in_category($qcat1->id)));
+        $this->assertEquals(3, count($this->qcobject->get_real_question_ids_in_category($qcat2->id)));
 
         // Non-existing category, nothing will happen.
         helper::question_remove_stale_questions_from_category(0);
-        $sql = "SELECT count(q.id)
-                  FROM {question} q
-                  JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                 WHERE qbe.questioncategoryid = ?";
-        $this->assertEquals(2, $DB->count_records_sql($sql, [$qcat1->id]));
-        $this->assertEquals(3, $DB->count_records_sql($sql, [$qcat2->id]));
+        $this->assertEquals(2, count($this->qcobject->get_real_question_ids_in_category($qcat1->id)));
+        $this->assertEquals(3, count($this->qcobject->get_real_question_ids_in_category($qcat2->id)));
 
         // First category, should be empty afterwards.
         helper::question_remove_stale_questions_from_category($qcat1->id);
-        $sql = "SELECT count(q.id)
-                  FROM {question} q
-                  JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                 WHERE qbe.questioncategoryid = ?";
-        $this->assertEquals(0, $DB->count_records_sql($sql, [$qcat1->id]));
-        $this->assertEquals(3, $DB->count_records_sql($sql, [$qcat2->id]));
+        $this->assertEquals(0, count($this->qcobject->get_real_question_ids_in_category($qcat1->id)));
+        $this->assertEquals(3, count($this->qcobject->get_real_question_ids_in_category($qcat2->id)));
         $this->assertFalse($DB->record_exists('question', ['id' => $q1a->id]));
         $this->assertFalse($DB->record_exists('question', ['id' => $q1b->id]));
 
         // Second category, used questions should be left untouched.
         helper::question_remove_stale_questions_from_category($qcat2->id);
-        $sql = "SELECT count(q.id)
-                  FROM {question} q
-                  JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                 WHERE qbe.questioncategoryid = ?";
-        $this->assertEquals(0, $DB->count_records_sql($sql, [$qcat1->id]));
-        $this->assertEquals(1, $DB->count_records_sql($sql, [$qcat2->id]));
+        $this->assertEquals(0, count($this->qcobject->get_real_question_ids_in_category($qcat1->id)));
+        $this->assertEquals(1, count($this->qcobject->get_real_question_ids_in_category($qcat2->id)));
         $this->assertFalse($DB->record_exists('question', ['id' => $q2a->id]));
         $this->assertTrue($DB->record_exists('question', ['id' => $q2b->id]));
         $this->assertFalse($DB->record_exists('question', ['id' => $q2c->id]));
-        $this->assertTrue($DB->record_exists('question_set_references', ['id' => $q2d->id]));
+        $this->assertTrue($DB->record_exists('question_set_references',
+            ['id' => $q2d->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']));
     }
 
     /**

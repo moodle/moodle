@@ -85,6 +85,13 @@ class block_myprofile_edit_form extends block_edit_form {
             $mform->setDefault('config_display_address', '0');
         }
 
+        $mform->addElement('selectyesno', 'config_display_idnumber', get_string('display_idnumber', 'block_myprofile'));
+        if (isset($this->block->config->display_idnumber)) {
+            $mform->setDefault('config_display_idnumber', $this->block->config->display_idnumber);
+        } else {
+            $mform->setDefault('config_display_idnumber', '0');
+        }
+
         $mform->addElement('selectyesno', 'config_display_firstaccess', get_string('display_firstaccess', 'block_myprofile'));
         if (isset($this->block->config->display_firstaccess)) {
             $mform->setDefault('config_display_firstaccess', $this->block->config->display_firstaccess);

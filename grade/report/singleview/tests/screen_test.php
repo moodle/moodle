@@ -14,26 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace gradereport_singleview;
+
+use gradereport_singleview_screen_testable;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once(__DIR__ . '/fixtures/screen.php');
+require_once($CFG->libdir . '/gradelib.php');
+
 /**
- * Unit tests for gradereport_singleview screen class.
+ * Tests for screen class.
  *
  * @package    gradereport_singleview
  * @category   test
  * @copyright  2014 onwards Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-global $CFG;
-require_once(__DIR__ . '/fixtures/screen.php');
-require_once($CFG->libdir . '/gradelib.php');
-
-defined('MOODLE_INTERNAL') || die();
-/**
- * Tests for screen class.
- *
- * Class gradereport_singleview_screen_testcase.
- */
-class gradereport_singleview_screen_testcase extends advanced_testcase {
+class screen_test extends \advanced_testcase {
 
     /**
      * Test load_users method.
@@ -48,7 +47,7 @@ class gradereport_singleview_screen_testcase extends advanced_testcase {
 
         // Create a course, users and groups.
         $course = $this->getDataGenerator()->create_course();
-        $coursecontext = context_course::instance($course->id);
+        $coursecontext = \context_course::instance($course->id);
         $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
         $teacher = $this->getDataGenerator()->create_user();
         $user1 = $this->getDataGenerator()->create_user();

@@ -6,28 +6,25 @@ Feature: Preview a Short answer question
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | teacher1 | T1        | Teacher1 | teacher1@moodle.com |
+      | username |
+      | teacher  |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
+      | user    | course | role           |
+      | teacher | C1     | editingteacher |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name            | template |
       | Test questions   | shortanswer | shortanswer-001 | frogtoad |
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
 
   @javascript @_switch_window
   Scenario: Preview a Short answer question with correct answer
-    When I choose "Preview" action for "shortanswer-001" in the question bank
-    Then I should see "Name an amphibian:"
+    When I am on the "shortanswer-001" "core_question > preview" page logged in as teacher
+    And I should see "Name an amphibian:"
     # Set behaviour options
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
@@ -40,8 +37,8 @@ Feature: Preview a Short answer question
 
   @javascript @_switch_window
   Scenario: Preview a Short answer question with almost correct answer
-    When I choose "Preview" action for "shortanswer-001" in the question bank
-    Then I should see "Name an amphibian:"
+    When I am on the "shortanswer-001" "core_question > preview" page logged in as teacher
+    And I should see "Name an amphibian:"
     # Set behaviour options
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
@@ -54,8 +51,8 @@ Feature: Preview a Short answer question
 
   @javascript @_switch_window
   Scenario: Preview a Short answer question with incorrect answer
-    When I choose "Preview" action for "shortanswer-001" in the question bank
-    Then I should see "Name an amphibian:"
+    When I am on the "shortanswer-001" "core_question > preview" page logged in as teacher
+    And I should see "Name an amphibian:"
     # Set behaviour options
     And I set the following fields to these values:
       | behaviour | immediatefeedback |

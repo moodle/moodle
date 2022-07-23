@@ -151,7 +151,7 @@ $string['condifmodeditdefaults'] = 'Default values are used in the settings form
 $string['confeditorhidebuttons'] = 'Select the buttons that should be hidden in the HTML editor.';
 $string['configallowattachments'] = 'If enabled, emails sent from the site can have attachments, such as badges.';
 $string['configallcountrycodes'] = 'This is the list of countries that may be selected in various places, for example in a user\'s profile. If blank (the default) the list in countries.php in the standard English language pack is used. That is the list from ISO 3166-1. Otherwise, you can specify a comma-separated list of codes, for example \'GB,FR,ES\'. If you add new, non-standard codes here, you will need to add them to countries.php in \'en\' and your language pack.';
-$string['configallowassign'] = 'You can allow people who have the roles on the left side to assign some of the column roles to other people';
+$string['configallowassign'] = 'For each role in the left column, select which roles that they can assign to others.';
 $string['configallowcategorythemes'] = 'If you enable this, then themes can be set at the category level. This will affect all child categories and courses unless they have specifically set their own theme. WARNING: Enabling category themes may affect performance.';
 $string['configallowcohortthemes'] = 'If you enable this, then themes can be set at the cohort level. This will affect all users with only one cohort or more than one but with the same theme.';
 $string['configallowcoursethemes'] = 'If enabled, then courses will be allowed to set their own themes.  Course themes override all other theme choices (site, user, category, cohort or URL-defined themes).';
@@ -162,15 +162,15 @@ $string['configallowemojipickerincompatible'] = 'Your current database configura
 $string['configallowguestmymoodle'] = 'If enabled, guests can access the Dashboard. Otherwise guests are redirected to the site home.';
 $string['configallowobjectembed'] = 'As a default security measure, normal users are not allowed to embed multimedia (like Flash) within texts using explicit EMBED and OBJECT tags in their HTML (although it can still be done safely using the mediaplugins filter).  If you wish to allow these tags then enable this option.';
 $string['configallowoverride'] = 'You can allow people with the roles on the left side to override some of the column roles';
-$string['configallowoverride2'] = 'Select which role(s) can be overridden by each role in the left column.<br />Note that these settings only apply to users who have either the capability moodle/role:override or the capability moodle/role:safeoverride allowed.';
-$string['configallowswitch'] = 'Select which roles a user may switch to, based on which roles they already have. In addition to an entry in this table, a user must also have the moodle/role:switchroles capability to be able to switch.<br />Note that it is only possible to switch to roles that have the moodle/course:view capability, and that do not have the moodle/site:doanything capability, so some columns in this table are disabled.';
+$string['configallowoverride2'] = 'For each role in the left column, select which roles that they can set overrides for.<br />Users must also have either the capability moodle/role:override or moodle/role:safeoverride.';
+$string['configallowswitch'] = 'For each role in the left column, select which roles they can switch to.<br />Users must also have the capability moodle/role:switchroles.';
 $string['configallowthemechangeonurl'] = 'If enabled, the theme can be changed by adding either:<br />?theme=themename to any Moodle URL (eg: mymoodlesite.com/?theme=afterburner ) or <br />&theme=themename to any internal Moodle URL (eg: mymoodlesite.com/course/view.php?id=2&theme=afterburner ).';
 $string['configallowuserblockhiding'] = 'Do you want to allow users to hide/show side blocks throughout this site?  This feature uses Javascript and cookies to remember the state of each collapsible block, and only affects the user\'s own view.';
 $string['configallowusermailcharset'] = 'If enabled, users can choose an email charset in their messaging preferences.';
 $string['configallowuserswitchrolestheycantassign'] = 'By default, moodle/role:assign is required for users to switch roles. Enabling this setting removes this requirement, and results in the roles available in the "Switch role to" dropdown menu being determined by settings in the "Allow role assignments" table only.
 It is recommended that the settings in the "Allow role assignments" table do not allow users to switch to a role with more capabilities than their existing role.';
 $string['configallowuserthemes'] = 'If you enable this, then users will be allowed to set their own themes.  User themes override site themes (but not course themes)';
-$string['configallowview'] = 'Select which roles a user will see, be able to filter by etc. based on which roles they already have.';
+$string['configallowview'] = 'For each role in the left column, select which roles that they can view, search and filter by.';
 $string['configallusersaresitestudents'] = 'For activities on the site home, should ALL users be considered as students?  If yes, then anyone with an account will be allowed to participate as a student in these activities.  If no, then only users who are already a participant in at least one course will be able to take part in these activities. Only admins and specially assigned teachers can act as teachers for site home activities.';
 $string['configauthenticationplugins'] = 'Please choose the authentication plugins you wish to use and arrange them in order of failthrough.';
 $string['configautolang'] = 'Detect default language from browser setting, if disabled site default is used.';
@@ -199,9 +199,9 @@ Courses
 -All courses|/course/
 -Course search|/course/search.php
 -###
--FAQ|https://someurl.xyz/faq
--Preguntas más frecuentes|https://someurl.xyz/pmf||es
-Mobile app|https://someurl.xyz/app|Download our app
+-FAQ|https://example.org/faq
+-Preguntas más frecuentes|https://example.org/pmf||es
+Mobile app|https://example.org/app|Download our app
 </pre>';
 $string['configcustomusermenuitems'] = 'You can configure the contents of the user menu (with the exception of the log out link, which is automatically added). Each line is separated by pipe characters and consists of 1) a string in "langstringname, componentname" form or as plain text, and 2) a URL. Dividers can be used by adding a line of one or more # characters where desired.';
 $string['configdbsessions'] = 'If enabled, this setting will use the database to store information about current sessions. Note that changing this setting now will log out all current users (including you). If you are using MySQL please make sure that \'max_allowed_packet\' in my.cnf (or my.ini) is at least 4M. Other session drivers can be configured directly in config.php, see config-dist.php for more information. This option disappears if you specify session driver in config.php file.';
@@ -251,6 +251,7 @@ $string['configextramemorylimit'] = 'Some scripts like search, backup/restore or
 $string['configfilterall'] = 'Filter all strings, including headings, titles, navigation bar and so on.  This is mostly useful when using the multilang filter, otherwise it will just create extra load on your site for little gain.';
 $string['configfiltermatchoneperpage'] = 'Automatic linking filters will only generate a single link for the first matching text instance found on the complete page. All others are ignored.';
 $string['configfiltermatchonepertext'] = 'Automatic linking filters will only generate a single link for the first matching text instance found in each item of text on the page. All others are ignored. This setting has no effect if \'Filter match once per page\' is enabled.';
+$string['configfilternavigationwithsystemcontext'] = 'Normal use of the filtering is tied to the context in which it is used (e.g. course context), but for the site navigation, explicitly making everything filter with site context can yield performance improvements when using "content and headings" filtering.';
 $string['configfilteruploadedfiles'] = 'Process all uploaded HTML and text files with the filters before displaying them, only uploaded HTML files or none at all.';
 $string['configforcelogin'] = 'Normally, the site home and the course listings (but not courses) can be read by people without logging in to the site. If you want to force people to log in before they do ANYTHING on the site, then you should enable this setting.';
 $string['configforceloginforprofiles'] = 'This setting forces people to log in as a real (non-guest) account before viewing any user\'s profile. If you disabled this setting, you may find that some users post advertising (spam) or other inappropriate content in their profiles, which is then visible to the whole world.';
@@ -316,7 +317,7 @@ $string['configpasswordresettime'] = 'This specifies the amount of time people h
 $string['configpathtodu'] = 'Path to du. Probably something like /usr/bin/du. If you enter this, pages that display directory contents will run much faster for directories with a lot of files.';
 $string['configpathtophp'] = 'Path to PHP CLI. Probably something like /usr/bin/php. If you enter this, cron scripts can be executed from admin web interface.';
 $string['configperfdebug'] = 'If you turn this on, performance info will be printed in the footer of the standard theme';
-$string['configprofileroles'] = 'List of roles that are visible on user profiles and participation page.';
+$string['configprofileroles'] = 'Roles that are listed in user profiles and on the participants page.';
 $string['configprofilesforenrolledusersonly'] = 'To prevent misuse by spammers, profile descriptions of users who are not yet enrolled in any course are hidden. New users must enrol in at least one course before they can add a profile description.';
 $string['configprotectusernames'] = 'If enabled, the forgotten password form will not display any hints allowing account usernames or email addresses to be guessed.';
 $string['configproxybypass'] = 'Comma separated list of (partial) hostnames or IPs that should bypass proxy (e.g., 192.168., .mydomain.com)';
@@ -325,6 +326,8 @@ $string['configproxypassword'] = 'Password needed to access internet through pro
 $string['configproxyport'] = 'If this server needs to use a proxy computer, then provide the proxy port here.';
 $string['configproxytype'] = 'Type of web proxy (PHP5 and cURL extension required for SOCKS5 support).';
 $string['configproxyuser'] = 'Username needed to access internet through proxy if required, empty if none (PHP cURL extension required).';
+$string['configproxyfixunsafe_help'] = 'This attempts to fix internal calls which do not go through the proxy by adding the MoodleBot User Agent and using the proxy.';
+$string['configproxylogunsafe_help'] = 'This attempts to log internal calls which do not go through the proxy and should.';
 $string['configrecaptchaprivatekey'] = 'String of characters (secret key) used to communicate between your Moodle server and the recaptcha server. ReCAPTCHA keys can be obtained from <a target="_blank" href="https://www.google.com/recaptcha">Google reCAPTCHA</a>.';
 $string['configrecaptchapublickey'] = 'String of characters (site key) used to display the reCAPTCHA element in the signup form and site support form. ReCAPTCHA keys can be obtained from <a target="_blank" href="https://www.google.com/recaptcha">Google reCAPTCHA</a>.';
 $string['configrequestedstudentname'] = 'Word for student used in requested courses';
@@ -374,9 +377,9 @@ $string['configstatsruntimestart'] = 'What time should the cronjob that does the
 $string['configstatsuserthreshold'] = 'This setting specifies the minimum number of enrolled users for a course to be included in statistics calculations.';
 $string['configstrictformsrequired'] = 'If enabled, users are prevented from entering a space or line break only in required fields in forms.';
 $string['configstripalltitletags'] = 'Uncheck this setting to allow HTML tags in activity and resource names.';
-$string['configsupportemail'] = 'If SMTP is configured on this site and a support page is not configured, this email address will be sent general help requests submitted through the support form (for example, when new users create their own accounts). If sending fails, this email address will be displayed to logged in users.';
-$string['configsupportname'] = 'This is the name of a person or other entity offering general help via the support email or web address.';
-$string['configsupportpage'] = 'This web address will be published to users of this site as the one to go to when they need general help (for example, when new users create their own accounts). If this address is left blank then a link to the support email form will be supplied.';
+$string['configsupportemail'] = 'If SMTP is configured on this site and a support page is not set, this email address will receive messages submitted through the support form. If sending fails, the email address will be displayed to logged-in users.';
+$string['configsupportname'] = 'The name of the person or other entity providing support via the support form or support page.';
+$string['configsupportpage'] = 'A link to this page will be provided for users to contact the site support. If the field is left blank then a link to a support form will be provided instead.';
 $string['configtempdatafoldercleanup'] = 'Remove temporary data files from the data folder that are older than the selected time.';
 $string['configthemedesignermode'] = 'Normally all theme images and style sheets are cached in browsers and on the server for a very long time, for performance. If you are designing themes or developing code then you probably want to turn this mode on so that you are not served cached versions.  Warning: this will make your site slower for all users!  Alternatively, you can also reset the theme caches manually from the Theme selection page.';
 $string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).
@@ -561,6 +564,8 @@ $string['enablecourserelativedates'] = 'Enable course relative dates';
 $string['enablecourserelativedates_desc'] = 'Allow courses to be set up to display dates relative to the user\'s start date in the course.';
 $string['enablecourserequests'] = 'Enable course requests';
 $string['enabled'] = 'Enabled';
+$string['enabledashboard'] = 'Enable Dashboard';
+$string['enabledashboard_help'] = 'The Dashboard shows Timeline, Calendar and Recently accessed items by default. You can set a different default Dashboard for everyone and allow users to customise their own Dashboard. If disabled, you need to set \'Start page for users\' to a value other than Dashboard.';
 $string['enabledevicedetection'] = 'Enable device detection';
 $string['enableglobalsearch'] = 'Enable global search';
 $string['enableglobalsearch_desc'] = 'If enabled, data will be indexed and synchronised by a scheduled task.';
@@ -621,6 +626,7 @@ $string['filestoredinhelp'] = 'Where the file will be stored';
 $string['filterall'] = 'Filter all strings';
 $string['filtermatchoneperpage'] = 'Filter match once per page';
 $string['filtermatchonepertext'] = 'Filter match once per text';
+$string['filternavigationwithsystemcontext'] = 'Filter navigation with system context';
 $string['filters'] = 'Filters';
 $string['filtersettings'] = 'Manage filters';
 $string['filtersettingsgeneral'] = 'General filter settings';
@@ -778,9 +784,9 @@ $string['loginpageautofocus'] = 'Autofocus login page form';
 $string['loginpageautofocus_help'] = 'Enabling this option improves usability of the login page, but automatically focusing fields may be considered an accessibility issue.';
 $string['loglifetime'] = 'Keep logs for';
 $string['logo'] = 'Logo';
-$string['logo_desc'] = 'A full logo to be used as decoration by some themes (such as core themes). This image can be quite high resolution because it will be scaled down for use (and cached for performance). Logos that are wider than they are high usually give better results. Formats accepted: PNG and JPG.';
+$string['logo_desc'] = 'A full logo to be used as decoration by some themes (such as core themes). This image can be quite high resolution because it will be scaled down for use (and cached for performance). Logos that are wider than they are high usually give better results.';
 $string['logocompact'] = 'Compact logo';
-$string['logocompact_desc'] = 'A compact version of the same logo as above, such as an emblem, shield or icon. The image should be clear even at small sizes. Formats accepted: PNG and JPG.';
+$string['logocompact_desc'] = 'A compact version of the same logo as above, such as an emblem, shield or icon. The image should be clear even at small sizes.';
 $string['logossettings'] = 'Logos';
 $string['logstorenotrequired'] = 'Log store not required';
 $string['logstoressupported'] = 'Log stores that support this report';
@@ -857,7 +863,6 @@ $string['mobilenotconfiguredwarning'] = 'The Moodle app is not enabled.';
 $string['modeditdefaults'] = 'Default values for activity settings';
 $string['modsettings'] = 'Manage activities';
 $string['modulesecurity'] = 'Module security';
-$string['multilangforceold'] = 'Force old multilang syntax: &lt;span&gt; without the class="multilang" and &lt;lang&gt;';
 $string['mustenablestats'] = 'Statistics have not yet been enabled on this site.';
 $string['mycourses'] = 'My courses';
 $string['mycoursesperpage'] = 'Number of courses';
@@ -894,6 +899,7 @@ $string['none'] = 'None';
 $string['nonewsettings'] = 'No new settings were added during this upgrade.';
 $string['nonexistentbookmark'] = 'The bookmark you requested does not exist.';
 $string['nosupportedlogstore'] = 'No supported logstore found';
+$string['noteunneededblocks'] = 'Note: Blocks set to show will not be listed in the \'Add a block\' menu in a course if they are specified in the theme setting \'Unneeded blocks\'.';
 $string['maxtimelimit'] = 'Maximum time limit';
 $string['maxtimelimit_desc'] = 'To restrict the maximum PHP execution time that Moodle will allow without any output being displayed, enter a value in seconds here. 0 means that Moodle default restrictions are used. If you have a front-end server with its own time limit, set this value lower to receive PHP errors in logs. Does not apply to CLI scripts.';
 $string['moodleapp'] = 'Moodle app';
@@ -1067,6 +1073,8 @@ $string['proxypassword'] = 'Proxy password';
 $string['proxyport'] = 'Proxy port';
 $string['proxytype'] = 'Proxy type';
 $string['proxyuser'] = 'Proxy username';
+$string['proxylogunsafe'] = 'Log unproxied calls';
+$string['proxyfixunsafe'] = 'Fix unproxied calls';
 $string['query'] = 'Query';
 $string['question'] = 'Question';
 $string['questionbehaviours'] = 'Question behaviours';
@@ -1322,6 +1330,7 @@ $string['task_duration'] = 'Duration';
 $string['task_dbstats'] = 'Database';
 $string['task_result'] = 'Result';
 $string['tasktype'] = 'Type';
+$string['tasklockcleanuptask'] = 'Clean up ad hoc task metadata';
 $string['taskadmintitle'] = 'Tasks';
 $string['taskanalyticscleanup'] = 'Analytics cleanup';
 $string['taskautomatedbackup'] = 'Automated backups';
@@ -1543,10 +1552,6 @@ $string['cachesessionhelp'] = 'User specific cache that expires when the user\'s
 $string['cacheapplication'] = 'Application cache';
 $string['cacheapplicationhelp'] = 'Cached items are shared among all users and expire by a determined time to live (ttl).';
 
-// Deprecated since Moodle 3.9.
-$string['availablelicenses'] = 'Available licences';
-$string['managelicenses'] = 'Manage licences';
-
 // Deprecated since Moodle 3.11.
 $string['configenableactivitychooser'] = 'The activity chooser is a dialog box with a short description of each activity and resource. If disabled, separate resource and activity drop-down menus are provided instead.';
 $string['enableactivitychooser'] = 'Enable activity chooser';
@@ -1558,3 +1563,5 @@ $string['coursepage'] = 'Course page';
 $string['mediapluginswf'] = 'Enable .swf filter';
 $string['mediapluginswfnote'] = 'As a default security measure, normal users should not be allowed to embed swf flash files.';
 
+// Deprecated since Moodle 4.1.
+$string['multilangforceold'] = 'Force old multilang syntax: &lt;span&gt; without the class="multilang" and &lt;lang&gt;';

@@ -44,14 +44,14 @@ $PAGE->set_url($url);
 if (empty($cfgscorm->allowaicchacp)) {
     require_login();
     if (!confirm_sesskey($sessionid)) {
-        print_error('invalidsesskey');
+        throw new \moodle_exception('invalidsesskey');
     }
     $aiccuser = $USER;
     $scormsession = $SESSION->scorm;
 } else {
     $scormsession = scorm_aicc_confirm_hacp_session($sessionid);
     if (empty($scormsession)) {
-        print_error('invalidhacpsession', 'scorm');
+        throw new \moodle_exception('invalidhacpsession', 'scorm');
     }
     $aiccuser = $DB->get_record('user', array('id' => $scormsession->userid), 'id,username,lastname,firstname', MUST_EXIST);
 }
@@ -62,7 +62,7 @@ if (!empty($command)) {
     if (isset($scormsession->scoid)) {
         $scoid = $scormsession->scoid;
     } else {
-        print_error('cannotcallscript');
+        throw new \moodle_exception('cannotcallscript');
     }
     $mode = 'normal';
     if (isset($scormsession->scormmode)) {
@@ -80,10 +80,10 @@ if (!empty($command)) {
 
     if ($sco = scorm_get_sco($scoid, SCO_ONLY)) {
         if (!$scorm = $DB->get_record('scorm', array('id' => $sco->scorm))) {
-            print_error('cannotcallscript');
+            throw new \moodle_exception('cannotcallscript');
         }
     } else {
-        print_error('cannotcallscript');
+        throw new \moodle_exception('cannotcallscript');
     }
     $aiccrequest = "MOODLE scoid: $scoid"
                  . "\r\nMOODLE mode: $mode"
@@ -192,7 +192,7 @@ if (!empty($command)) {
                         echo 'Max_Time_Allowed='.$userdata->max_time_allowed."\r\n";
                         echo 'Time_Limit_Action='.$userdata->time_limit_action."\r\n";
                     } else {
-                        print_error('cannotfindsco', 'scorm');
+                        throw new \moodle_exception('cannotfindsco', 'scorm');
                     }
                 }
             break;

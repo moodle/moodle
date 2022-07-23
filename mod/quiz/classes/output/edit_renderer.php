@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 use mod_quiz\question\bank\qbank_helper;
 use \mod_quiz\structure;
 use \html_writer;
-use \qbank_previewquestion\helper;
 use renderable;
 
 /**
@@ -733,7 +732,6 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function question(structure $structure, int $slot, \moodle_url $pageurl) {
-        global $DB;
         // Get the data required by the question_slot template.
         $slotid = $structure->get_slot_id_for_slot($slot);
 
@@ -758,7 +756,7 @@ class edit_renderer extends \plugin_renderer_base {
         $data['versionoptions'] = [];
         if ($structure->get_slot_by_number($slot)->qtype !== 'random') {
             $data['versionselection'] = true;
-            $data['versionoption'] = qbank_helper::get_question_version_info($structure->get_question_in_slot($slot)->id, $slotid);
+            $data['versionoption'] = $structure->get_version_choices_for_slot($slot);
             $this->page->requires->js_call_amd('mod_quiz/question_slot', 'init', [$slotid]);
         }
 
@@ -821,8 +819,9 @@ class edit_renderer extends \plugin_renderer_base {
         $qtype = $structure->get_question_type_for_slot($slot);
         $questionicons = '';
         if ($qtype !== 'random') {
-            $questionicons .= $this->question_preview_icon($structure->get_quiz(), $structure->get_question_in_slot($slot),
-                null, null, $qtype);
+            $questionicons .= $this->question_preview_icon($structure->get_quiz(),
+                    $structure->get_question_in_slot($slot),
+                    null, null, $qtype);
         }
         if ($structure->can_be_edited()) {
             $questionicons .= $this->question_remove_icon($structure, $slot, $pageurl);
@@ -862,13 +861,19 @@ class edit_renderer extends \plugin_renderer_base {
      * Render the preview icon.
      *
      * @param \stdClass $quiz the quiz settings from the database.
-     * @param \stdClass $question data from the question and quiz_slots tables.
+     * @param \stdClass $questiondata which question to preview.
+     *      If ->questionid is set, that is used instead of ->id.
      * @param bool $label if true, show the preview question label after the icon
      * @param int $variant which question variant to preview (optional).
-     * @param string $qtype the type of question
      * @return string HTML to output.
      */
-    public function question_preview_icon($quiz, $question, $label = null, $variant = null, $qtype = null) {
+    public function question_preview_icon($quiz, $questiondata, $label = null, $variant = null) {
+        $question = clone($questiondata);
+        if (isset($question->questionid)) {
+
+            $question->id = $question->questionid;
+        }
+
         $url = quiz_question_preview_url($quiz, $question, $variant);
 
         // Do we want a label?
@@ -994,7 +999,7 @@ class edit_renderer extends \plugin_renderer_base {
         $question = $structure->get_question_in_slot($slot);
         $editurl = new \moodle_url('/question/bank/editquestion/question.php', array(
                 'returnurl' => $pageurl->out_as_local_url(),
-                'cmid' => $structure->get_cmid(), 'id' => $question->id));
+                'cmid' => $structure->get_cmid(), 'id' => $question->questionid));
 
         $instancename = quiz_question_tostring($question);
 
@@ -1034,10 +1039,8 @@ class edit_renderer extends \plugin_renderer_base {
 
         $temp = clone($question);
         $temp->questiontext = '';
+        $temp->name = qbank_helper::describe_random_question($slot);
         $instancename = quiz_question_tostring($temp);
-
-        $setreference = qbank_helper::get_random_question_data_from_slot($slot->id);
-        $filtercondition = json_decode($setreference->filtercondition);
 
         $configuretitle = get_string('configurerandomquestion', 'quiz');
         $qtype = \question_bank::get_qtype($question->qtype, false);
@@ -1046,15 +1049,15 @@ class edit_renderer extends \plugin_renderer_base {
                 'class' => 'icon activityicon', 'alt' => ' ', 'role' => 'presentation'));
 
         $editicon = $this->pix_icon('t/edit', $configuretitle, 'moodle', array('title' => ''));
-        $qbankurlparams = array(
-                'cmid' => $structure->get_cmid(),
-                'cat' => $filtercondition->questioncategoryid . ',' . $setreference->questionscontextid,
-                'recurse' => !empty($setreference->questionscontextid)
-        );
+        $qbankurlparams = [
+            'cmid' => $structure->get_cmid(),
+            'cat' => $slot->category . ',' . $slot->contextid,
+            'recurse' => $slot->randomrecurse,
+        ];
 
         $slottags = [];
-        if (isset($filtercondition->tags)) {
-            $slottags = $filtercondition->tags;
+        if (isset($slot->randomtags)) {
+            $slottags = $slot->randomtags;
         }
         foreach ($slottags as $index => $slottag) {
             $slottag = explode(',', $slottag);

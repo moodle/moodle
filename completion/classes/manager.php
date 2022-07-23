@@ -223,7 +223,7 @@ class manager {
         $canmanage = has_capability('moodle/course:manageactivities', $coursecontext);
         $course = get_course($this->courseid);
         foreach ($data->modules as $module) {
-            $module->icon = $OUTPUT->image_url('icon', $module->name)->out();
+            $module->icon = $OUTPUT->image_url('monologo', $module->name)->out();
             $module->formattedname = format_string(get_string('modulenameplural', 'mod_' . $module->name),
                 true, ['context' => $coursecontext]);
             $module->canmanage = $canmanage && course_allowed_module($course, $module->name);
@@ -262,10 +262,14 @@ class manager {
     /**
      * Gets the available completion tabs for the current course and user.
      *
+     * @deprecated since Moodle 4.0
      * @param stdClass|int $courseorid the course object or id.
      * @return tabobject[]
      */
     public static function get_available_completion_tabs($courseorid) {
+        debugging('get_available_completion_tabs() has been deprecated. Please use ' .
+            'core_completion\manager::get_available_completion_options() instead.', DEBUG_DEVELOPER);
+
         $tabs = [];
 
         $courseid = is_object($courseorid) ? $courseorid->id : $courseorid;
@@ -296,6 +300,34 @@ class manager {
         }
 
         return $tabs;
+    }
+
+    /**
+     * Returns an array with the available completion options (url => name) for the current course and user.
+     *
+     * @param int $courseid The course id.
+     * @return array
+     */
+    public static function get_available_completion_options(int $courseid): array {
+        $coursecontext = context_course::instance($courseid);
+        $options = [];
+
+        if (has_capability('moodle/course:update', $coursecontext)) {
+            $completionlink = new moodle_url('/course/completion.php', ['id' => $courseid]);
+            $options[$completionlink->out(false)] = get_string('coursecompletion', 'completion');
+        }
+
+        if (has_capability('moodle/course:manageactivities', $coursecontext)) {
+            $defaultcompletionlink = new moodle_url('/course/defaultcompletion.php', ['id' => $courseid]);
+            $options[$defaultcompletionlink->out(false)] = get_string('defaultcompletion', 'completion');
+        }
+
+        if (self::can_edit_bulk_completion($courseid)) {
+            $bulkcompletionlink = new moodle_url('/course/bulkcompletion.php', ['id' => $courseid]);
+            $options[$bulkcompletionlink->out(false)] = get_string('bulkactivitycompletion', 'completion');
+        }
+
+        return $options;
     }
 
     /**

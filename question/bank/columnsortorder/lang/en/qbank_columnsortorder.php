@@ -24,10 +24,10 @@
  */
 
 $string['pluginname'] = 'Column sort order';
-$string['privacy:metadata'] = 'Column sort order does not store any personal data.';
+$string['privacy:metadata'] = 'The Column sort order question bank plugin does not store any personal data.';
 $string['qbankcolumnsortorder'] = 'Column sort order';
-$string['qbankgotocolumnsort'] = 'You can reorder column order in the question bank view on the {$a} page';
-$string['qbankcolumnsdisabled'] = 'Columns below are currently disabled.';
-$string['qbankgotomanageqbanks'] = 'Enable and disable column plugins via <a href=\'{$a}\'>Manage question bank plugins</a>';
+$string['qbankgotocolumnsort'] = 'You can change the order of the columns in the question bank on the page {$a}.';
+$string['qbankcolumnsdisabled'] = 'Currently disabled question bank plugins:';
+$string['qbankgotomanageqbanks'] = 'You can remove a column by disabling the plugin in <a href=\'{$a}\'>Manage question bank plugins</a>.';
 $string['qbankcolumnname'] = '({$a})';
-$string['qbanksortdescription'] = 'Column order modification in this page will reorder column display in question bank view';
+$string['qbanksortdescription'] = 'The order in which plugins are listed below determines the order of the columns in the question bank.';

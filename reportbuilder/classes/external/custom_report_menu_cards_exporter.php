@@ -18,28 +18,16 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\external;
 
-use renderer_base;
 use core\external\exporter;
 
 /**
- * Custom report menu cards exporter class
+ * Custom report menu cards exporter abstract class
  *
  * @package     core_reportbuilder
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_report_menu_cards_exporter extends exporter {
-
-    /**
-     * Return a list of objects that are related to the exporter
-     *
-     * @return array
-     */
-    protected static function define_related(): array {
-        return [
-            'menucards' => 'array[]',
-        ];
-    }
+abstract class custom_report_menu_cards_exporter extends exporter {
 
     /**
      * Return the list of additional properties for read structure and export
@@ -52,11 +40,9 @@ class custom_report_menu_cards_exporter extends exporter {
                 'type' => [
                     'name' => [
                         'type' => PARAM_TEXT,
-                        'optional' => true,
                     ],
                     'key' => [
                         'type' => PARAM_TEXT,
-                        'optional' => true,
                     ],
                     'items' => [
                         'type' => [
@@ -85,18 +71,6 @@ class custom_report_menu_cards_exporter extends exporter {
                 'optional' => true,
                 'multiple' => true,
             ],
-        ];
-    }
-
-    /**
-     * Get the additional values to inject while exporting
-     *
-     * @param renderer_base $output
-     * @return array
-     */
-    protected function get_other_values(renderer_base $output): array {
-        return [
-            'menucards' => $this->related['menucards']
         ];
     }
 }

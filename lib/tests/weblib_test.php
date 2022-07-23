@@ -941,4 +941,30 @@ EXPECTED;
 
         $this->assertNotEquals($policydisabled, print_password_policy());
     }
+
+    /**
+     * Data provider for the testing get_html_lang_attribute_value().
+     *
+     * @return string[][]
+     */
+    public function get_html_lang_attribute_value_provider() {
+        return [
+            'Empty lang code' => ['    ', 'unknown'],
+            'English' => ['en', 'en'],
+            'English, US' => ['en_us', 'en-us'],
+        ];
+    }
+
+    /**
+     * Test for get_html_lang_attribute_value().
+     *
+     * @covers ::get_html_lang_attribute_value()
+     * @dataProvider get_html_lang_attribute_value_provider
+     * @param string $langcode The language code to convert.
+     * @param string $expected The expected converted value.
+     * @return void
+     */
+    public function test_get_html_lang_attribute_value(string $langcode, string $expected): void {
+        $this->assertEquals($expected, get_html_lang_attribute_value($langcode));
+    }
 }

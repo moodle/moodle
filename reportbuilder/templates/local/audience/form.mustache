@@ -32,7 +32,7 @@
         "form": "form"
     }
 }}
-<div class="instance-card" data-classname="{{identifier}}" data-instanceid="{{instanceid}}" data-title="{{heading}}" data-region="audience-card">
+<div class="instance-card" data-instanceid="{{instanceid}}" data-title="{{heading}}" data-region="audience-card">
     {{#showormessage}}
         <span class="audience-separator d-flex mb-3 justify-content-center align-items-center small text-muted font-weight-bold">
             {{#str}} or, core_reportbuilder {{/str}}
@@ -41,7 +41,7 @@
     <div class="mb-3 card">
         <div class="card-header p-0">
             <div class="mb-0 d-flex">
-                <h3 class="h6 text-left m-0 align-self-center pl-3">
+                <h3 class="h6 text-left m-0 align-self-center pl-3" data-region="audience-heading">
                     {{{headingeditable}}}
                 </h3>
                 <span class="ml-auto">

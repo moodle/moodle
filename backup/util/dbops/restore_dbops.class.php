@@ -1019,21 +1019,26 @@ abstract class restore_dbops {
                 continue;
             }
 
+            // Updated the times of the new record.
+            // The file record should reflect when the file entered the system,
+            // and when this record was created.
+            $time = time();
+
             // The file record to restore.
             $file_record = array(
-                'contextid'   => $newcontextid,
-                'component'   => $component,
-                'filearea'    => $filearea,
-                'itemid'      => $rec->newitemid,
-                'filepath'    => $file->filepath,
-                'filename'    => $file->filename,
-                'timecreated' => $file->timecreated,
-                'timemodified'=> $file->timemodified,
-                'userid'      => $mappeduserid,
-                'source'      => $file->source,
-                'author'      => $file->author,
-                'license'     => $file->license,
-                'sortorder'   => $file->sortorder
+                'contextid'    => $newcontextid,
+                'component'    => $component,
+                'filearea'     => $filearea,
+                'itemid'       => $rec->newitemid,
+                'filepath'     => $file->filepath,
+                'filename'     => $file->filename,
+                'timecreated'  => $time,
+                'timemodified' => $time,
+                'userid'       => $mappeduserid,
+                'source'       => $file->source,
+                'author'       => $file->author,
+                'license'      => $file->license,
+                'sortorder'    => $file->sortorder
             );
 
             if (empty($file->repositoryid)) {

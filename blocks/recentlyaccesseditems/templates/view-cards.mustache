@@ -40,20 +40,27 @@
     }
 }}
 
-<div class="card-deck dashboard-card-deck one-row" role="list">
+<div class="card-deck dashboard-card-deck one-row" data-region="items-list" role="list">
     {{#items}}
-        <a class="card dashboard-card mb-1 py-2 coursename" href="{{{viewurl}}}">
-            <div class="card-body course-info-container">
+        <a class="card dashboard-card mb-1" href="{{{viewurl}}}" title="{{{name}}}">
+            <div class="card-body p-2 m-1">
                 <div class="d-flex text-truncate">
-                    <div class="d-flex align-self-center">
+                    <div class="d-flex align-self-center activityiconcontainer {{purpose}}">
                         {{{icon}}}
                     </div>
                     <div class="w-100 line-height-3 text-truncate ml-2">
-                        <h6 class="mb-0 text-truncate">{{{name}}}</h6>
-                        <small class="text-muted text-truncate mb-0">{{{coursename}}}</small>
+                        <h6 class="mb-0 text-truncate"><span class="clickable">{{{name}}}</span></h6>
+                        <small class="text-truncate mb-0">{{{coursename}}}</small>
                     </div>
                 </div>
             </div>
         </a>
     {{/items}}
 </div>
+{{#hasmoreitems}}
+    <div data-region="more-items-button-container" class="mt-2 px-1">
+        <button type="button" class="btn btn-secondary btn-sm" data-action="more-items">
+            {{#str}}moreitems, block_recentlyaccesseditems {{/str}}
+        </button>
+    </div>
+{{/hasmoreitems}}

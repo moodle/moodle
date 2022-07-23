@@ -22,15 +22,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace tool_langimport;
 
 /**
  * Tests for \tool_langimport\locale class.
  *
+ * @package    tool_langimport
+ * @category   test
  * @copyright  2018 Université Rennes 2 {@link https://www.univ-rennes2.fr}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class locale_testcase extends \advanced_testcase {
+class locale_test extends \advanced_testcase {
     /**
      * Test that \tool_langimport\locale::check_locale_availability() works as expected.
      *
@@ -65,7 +67,7 @@ class locale_testcase extends \advanced_testcase {
 
         // Test an invalid parameter.
         $locale = new \tool_langimport\locale();
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         $locale->check_locale_availability('');
     }
 }

@@ -26,7 +26,7 @@ require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('searchareas');
 
-$areaid = optional_param('areaid', null, PARAM_ALPHAEXT);
+$areaid = optional_param('areaid', null, PARAM_ALPHANUMEXT);
 $action = optional_param('action', null, PARAM_ALPHA);
 $indexingenabled = \core_search\manager::is_indexing_enabled(); // This restricts many of the actions on this page.
 
@@ -36,6 +36,8 @@ try {
 } catch (core_search\engine_exception $searchmanagererror) {
     // In action cases, we'll throw this exception below. In non-action cases, we produce a lang string error.
 }
+
+$PAGE->set_primary_active_tab('siteadminnode');
 
 // Handle all the actions.
 if ($action) {

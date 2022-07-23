@@ -85,23 +85,23 @@ class number extends base {
     public function setup_form(\MoodleQuickForm $mform): void {
         $objs = [];
 
-        $objs['select'] = $mform->createElement('select', $this->name . '_operator', null, $this->get_operators());
+        $objs['select'] = $mform->createElement('select', $this->name . '_operator',
+            get_string('filterfieldoperator', 'core_reportbuilder', $this->get_header()), $this->get_operators());
         $mform->setType($this->name . '_operator', PARAM_INT);
 
-        $objs['text'] = $mform->createElement('text', $this->name . '_value1', null, ['size' => 3]);
+        $objs['text'] = $mform->createElement('text', $this->name . '_value1',
+            get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header()), ['size' => 3]);
         $mform->setType($this->name . '_value1', PARAM_INT);
         $mform->setDefault($this->name . '_value1', 0);
 
-        $objs['text2'] = $mform->createElement('text', $this->name . '_value2', null, ['size' => 3]);
+        $objs['text2'] = $mform->createElement('text', $this->name . '_value2', get_string('to'), ['size' => 3]);
         $mform->setType($this->name . '_value2', PARAM_INT);
         $mform->setDefault($this->name . '_value2', 0);
 
         $mform->addElement('group', $this->name . '_grp', '', $objs, '', false);
 
-        $mform->hideIf($this->name . '_value1', $this->name . '_operator', 'eq', self::ANY_VALUE);
-        $mform->hideIf($this->name . '_value1', $this->name . '_operator', 'eq', self::IS_NOT_EMPTY);
-        $mform->hideIf($this->name . '_value1', $this->name . '_operator', 'eq', self::IS_EMPTY);
-
+        $mform->hideIf($this->name . '_value1', $this->name . '_operator', 'in',
+            [self::ANY_VALUE,  self::IS_NOT_EMPTY,  self::IS_EMPTY]);
         $mform->hideIf($this->name . '_value2', $this->name . '_operator', 'noteq', self::RANGE);
     }
 
@@ -112,7 +112,8 @@ class number extends base {
      * @return array array of two elements - SQL query and named parameters
      */
     public function get_sql_filter(array $values) : array {
-        $operator = $values["{$this->name}_operator"] ?? self::ANY_VALUE;
+        $operator = (int) ($values["{$this->name}_operator"] ?? self::ANY_VALUE);
+
         $value1 = $values["{$this->name}_value1"] ?? null;
         $value2 = $values["{$this->name}_value2"] ?? null;
 
@@ -122,8 +123,8 @@ class number extends base {
             return ['', []];
         }
 
-        $param = database::generate_param_name();
-        $param2 = database::generate_param_name();
+        [$param, $param2] = database::generate_param_names(2);
+
         $fieldsql = $this->filter->get_field_sql();
         $params = $this->filter->get_field_params();
 

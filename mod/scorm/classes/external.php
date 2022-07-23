@@ -24,6 +24,8 @@
  * @since      Moodle 3.0
  */
 
+use core_course\external\helper_for_get_mods_by_courses;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
@@ -684,17 +686,7 @@ class mod_scorm_external extends external_api {
                 $context = context_module::instance($scorm->coursemodule);
 
                 // Entry to return.
-                $module = array();
-
-                // First, we return information that any user can see in (or can deduce from) the web interface.
-                $module['id'] = $scorm->id;
-                $module['coursemodule'] = $scorm->coursemodule;
-                $module['course'] = $scorm->course;
-                $module['name']  = external_format_string($scorm->name, $context->id);
-                $options = array('noclean' => true);
-                list($module['intro'], $module['introformat']) =
-                    external_format_text($scorm->intro, $scorm->introformat, $context->id, 'mod_scorm', 'intro', null, $options);
-                $module['introfiles'] = external_util::get_area_files($context->id, 'mod_scorm', 'intro', false, false);
+                $module = helper_for_get_mods_by_courses::standard_coursemodule_element_values($scorm, 'mod_scorm');
 
                 // Check if the SCORM open and return warnings if so.
                 list($open, $openwarnings) = scorm_get_availability_status($scorm, true, $context);
@@ -730,12 +722,9 @@ class mod_scorm_external extends external_api {
 
                     // Check additional permissions for returning optional private settings.
                     if (has_capability('moodle/course:manageactivities', $context)) {
-
                         $additionalfields = array('updatefreq', 'options', 'completionstatusrequired', 'completionscorerequired',
-                                                  'completionstatusallscos', 'autocommit', 'timemodified', 'section', 'visible',
-                                                  'groupmode', 'groupingid');
+                                                  'completionstatusallscos', 'autocommit', 'timemodified');
                         $viewablefields = array_merge($viewablefields, $additionalfields);
-
                     }
 
                     foreach ($viewablefields as $field) {
@@ -764,15 +753,9 @@ class mod_scorm_external extends external_api {
         return new external_single_structure(
             array(
                 'scorms' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'SCORM id'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_RAW, 'SCORM name'),
-                            'intro' => new external_value(PARAM_RAW, 'The SCORM intro'),
-                            'introformat' => new external_format_value('intro'),
-                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
+                    new external_single_structure(array_merge(
+                        helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(),
+                        [
                             'packagesize' => new external_value(PARAM_INT, 'SCORM zip package size', VALUE_OPTIONAL),
                             'packageurl' => new external_value(PARAM_URL, 'SCORM zip package URL', VALUE_OPTIONAL),
                             'version' => new external_value(PARAM_NOTAGS, 'SCORM version (SCORM_12, SCORM_13, SCORM_AICC)',
@@ -821,12 +804,8 @@ class mod_scorm_external extends external_api {
                             'completionstatusallscos' => new external_value(PARAM_INT, 'Require all scos to return completion status', VALUE_OPTIONAL),
                             'autocommit' => new external_value(PARAM_BOOL, 'Save track data automatically?', VALUE_OPTIONAL),
                             'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
-                            'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
-                            'visible' => new external_value(PARAM_BOOL, 'Visible', VALUE_OPTIONAL),
-                            'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
-                            'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
-                        ), 'SCORM'
-                    )
+                        ]
+                    ), 'SCORM')
                 ),
                 'warnings' => new external_warnings(),
             )

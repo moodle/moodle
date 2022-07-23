@@ -72,7 +72,7 @@ class quiz_question_version_test extends \advanced_testcase {
         $structure = \mod_quiz\structure::create_for_quiz($quizobj);
         $slots = $structure->get_slots();
         $slot = reset($slots);
-        // Test that the version added is the latest version, as there are three created.
+        // Test that the version added is 'always latest'.
         $this->assertEquals(3, $slot->version);
         $quizobj->preload_questions();
         $quizobj->load_questions();
@@ -80,9 +80,22 @@ class quiz_question_version_test extends \advanced_testcase {
         $question = reset($questions);
         $this->assertEquals(3, $question->version);
         $this->assertEquals('This is the third version', $question->name);
+        // Create another version.
+        $questiongenerator->update_question($numq, null, ['name' => 'This is the latest version']);
+        // Check that 'Always latest is working'.
+        $quizobj->preload_questions();
+        $quizobj->load_questions();
+        $questions = $quizobj->get_questions();
+        $question = reset($questions);
+        $this->assertEquals(4, $question->version);
+        $this->assertEquals('This is the latest version', $question->name);
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $slots = $structure->get_slots();
+        $slot = reset($slots);
+        $this->assertEquals(4, $slot->version);
         // Now change the version using the external service.
         $versions = qbank_helper::get_version_options($slot->questionid);
-        // We dont want the current version.
+        // We don't want the current version.
         $selectversions = [];
         foreach ($versions as $version) {
             if ($version->version === $slot->version) {
@@ -114,20 +127,6 @@ class quiz_question_version_test extends \advanced_testcase {
         $slots = $structure->get_slots();
         $slot = reset($slots);
         $this->assertEquals(2, $slot->version);
-        // Create another version.
-        $questiongenerator->update_question($numq, null, ['name' => 'This is the latest version']);
-        // Change to always latest.
-        submit_question_version::execute($slot->id, 0);
-        $quizobj->preload_questions();
-        $quizobj->load_questions();
-        $questions = $quizobj->get_questions();
-        $question = reset($questions);
-        $this->assertEquals(4, $question->version);
-        $this->assertEquals('This is the latest version', $question->name);
-        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
-        $slots = $structure->get_slots();
-        $slot = reset($slots);
-        $this->assertEquals(4, $slot->version);
     }
 
     /**
