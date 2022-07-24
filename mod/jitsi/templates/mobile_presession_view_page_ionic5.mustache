@@ -1,0 +1,40 @@
+{{=<% %>=}}
+    <ion-card>
+        <ion-card-header>
+            <ion-card-title>
+                <% title %>
+            </ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+            <%#intro%>
+                <%{ intro }%>
+            <%/intro%>
+            <br>
+            <%#nostart_show%>
+                {{ 'plugin.mod_jitsi.nostart' | translate: {$a: <% minpretime %>} }}
+            <%/nostart_show%>
+            <%^nostart_show%>
+                <%#finish_show%>
+                    {{ 'plugin.mod_jitsi.finish' | translate }}
+                <%/finish_show%>
+                <%^finish_show%>
+                    {{ 'plugin.mod_jitsi.instruction' | translate }}
+                    <ion-button expand="block" core-site-plugins-new-content component="mod_jitsi" method="mobile_session_view" title="<% room %>" [args]="{cmid: '<% cmid %>', courseid: '<% courseid %>', nom: '<% nom %>', ses: '<% ses %>', avatar: '<% avatar %>', t: '<% t %>'}">
+                    {{ 'plugin.mod_jitsi.access' | translate }}
+                    </ion-button>
+                <%/finish_show%>
+            <%/nostart_show%>
+
+        </ion-card-content>
+    </ion-card>
+
+    <%#help%>
+        <ion-card>
+            <ion-card-content>
+                <%{ help }%>
+            </ion-card-content>
+        </ion-card>
+    <%/help%>
+
+    <span core-site-plugins-call-ws-on-load name="mod_jitsi_view_jitsi" [params]="{cmid: <% cmid %>}" [preSets]="{getFromCache: 0, saveToCache: 0}"></span>
