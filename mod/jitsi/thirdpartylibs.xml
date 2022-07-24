@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>api/</location>
+        <name>Google api client</name>
+        <version>v2</version>
+        <license>Google</license>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>
