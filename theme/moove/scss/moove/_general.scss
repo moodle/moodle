@@ -1,0 +1,104 @@
+body {
+    background-color: $background !important; /* stylelint-disable-line */
+}
+
+#page-header {
+    margin: 1.25rem auto;
+    padding: 0;
+
+    h1 {
+        margin-bottom: 0;
+    }
+
+    #page-navbar {
+        display: flex;
+        align-items: center;
+        justify-content: right;
+    }
+
+    .courseheader {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+}
+
+.moove-container-fluid {
+    padding: 0;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.card {
+    border: none;
+    -webkit-box-shadow: 0 0 35px 0 rgba(154, 161, 171, 0.15);
+    box-shadow: 0 0 35px 0 rgba(154, 161, 171, 0.15);
+}
+
+.moove-container-fluid,
+.container-fluid {
+    max-width: 85%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.container-fluid.tertiary-navigation {
+    max-width: 100%;
+}
+
+a {
+    transition: all 0.25s ease-out;
+    color: $brand-primary;
+}
+
+.dropdown-item:active,
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item:focus-within {
+    background-color: darken($brand-primary, 10%);
+}
+
+.shadow {
+    box-shadow: 0 0.375rem 1.5rem 0 rgb(140 152 164 / 13%) !important;
+}
+
+@include media-breakpoint-up(md) {
+    .pagelayout-standard #page.drawers .main-inner,
+    body.limitedwidth #page.drawers .main-inner,
+    #page.drawers .main-inner,
+    .moove-container-fluid,
+    .container-fluid,
+    .container-lg,
+    .container-md,
+    .container-sm,
+    .container-xl,
+    .container-xxl {
+        max-width: 85%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .header-maxwidth {
+        max-width: 100%;
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .pagelayout-standard #page.drawers .main-inner,
+    body.limitedwidth #page.drawers .main-inner,
+    #page.drawers .main-inner,
+    .moove-container-fluid,
+    .container-fluid,
+    .container-lg,
+    .container-md,
+    .container-sm,
+    .container-xl,
+    .container-xxl {
+        max-width: 95%;
+    }
+}
