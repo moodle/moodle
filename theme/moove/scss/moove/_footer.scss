@@ -1,0 +1,194 @@
+#page-footer {
+    margin: 0 -15px;
+    background-color: #282829;
+    color: #fff;
+
+    a:not(.btn) {
+        color: #fff;
+    }
+
+    .contactsitesupport {
+        border: 1px solid #fff;
+        color: #fff;
+    }
+
+    .popover.footer .popover-body .footer-section {
+        color: #1d2125;
+
+        a {
+            color: #1d2125;
+        }
+    }
+
+    .footer-columns {
+        padding: 15px;
+    }
+
+    .logo {
+        max-width: 50%;
+    }
+
+    h3.footer-title {
+        font-size: $h6-font-size;
+        line-height: 1.2;
+        font-weight: 500;
+    }
+
+    .socialnetworks,
+    .contact {
+        margin-top: .5rem;
+
+        ul {
+            padding-left: 0;
+
+            li {
+                display: inline;
+
+                a {
+                    text-decoration: none;
+                    color: #fff;
+                    width: 38px;
+                    height: 38px;
+
+                    &.btn-rounded {
+                        border-radius: 50%;
+                    }
+
+                    &.website {
+                        background-color: $brand-primary;
+                        &:hover {
+                            background-color: darken($brand-primary, 20%);
+                        }
+                    }
+
+                    &.mobile {
+                        background-color: $brand-primary;
+                        &:hover {
+                            background-color: darken($brand-primary, 20%);
+                        }
+                    }
+
+                    &.mail {
+                        background-color: $brand-primary;
+                        &:hover {
+                            background-color: darken($brand-primary, 20%);
+                        }
+                    }
+
+                    &.facebook {
+                        background-color: $facebook-color;
+                        &:hover {
+                            background-color: darken($facebook-color, 20%);
+                        }
+                    }
+
+                    &.twitter {
+                        background-color: $twitter-color;
+                        &:hover {
+                            background-color: darken($twitter-color, 20%);
+                        }
+                    }
+
+                    &.linkedin {
+                        background-color: $linkedin-color;
+                        &:hover {
+                            background-color: darken($linkedin-color, 20%);
+                        }
+                    }
+
+                    &.youtube {
+                        background-color: $youtube-color;
+                        &:hover {
+                            background-color: darken($youtube-color, 20%);
+                        }
+                    }
+
+                    &.instagram {
+                        background-color: $instagram-color;
+                        &:hover {
+                            background-color: darken($instagram-color, 20%);
+                        }
+                    }
+
+                    &.whatsapp {
+                        background-color: $whatsapp-color;
+                        &:hover {
+                            background-color: darken($whatsapp-color, 20%);
+                        }
+                    }
+
+                    &.telegram {
+                        background-color: $telegram-color;
+
+                        &:hover {
+                            background-color: darken($telegram-color, 20%);
+                        }
+
+                        .fa {
+                            margin-left: -1px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .supportemail,
+    .logininfo,
+    .tool_dataprivacy{
+        margin: .5rem 0;
+    }
+
+    .column-center {
+        text-align: center;
+    }
+
+    .column-right {
+        text-align: right;
+
+        .stores {
+            a {
+                display: block;
+            }
+
+            img {
+                max-width: 160px;
+            }
+        }
+    }
+
+    .copyright {
+        background-color: $moodle-color;
+        text-align: center;
+        min-height: inherit;
+        color: #fff;
+        margin-bottom: 0;
+
+        .madeby {
+            padding: .5rem 0;
+
+            p {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .btn-footer-popover {
+        bottom: 1rem;
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    #page-footer {
+        .column-right,
+        .column-left {
+            text-align: center;
+        }
+
+        .column-center,
+        .column-right {
+            margin-top: 1rem;
+        }
+    }
+}
+
