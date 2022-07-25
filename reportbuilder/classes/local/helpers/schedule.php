@@ -24,11 +24,11 @@ use core_user;
 use invalid_parameter_exception;
 use stdClass;
 use stored_file;
+use table_dataformat_export_format;
 use core\message\message;
 use core\plugininfo\dataformat;
 use core_reportbuilder\local\models\audience as audience_model;
 use core_reportbuilder\local\models\schedule as model;
-use core_reportbuilder\output\dataformat_export_format;
 use core_reportbuilder\table\custom_report_table_view;
 
 /**
@@ -163,7 +163,7 @@ class schedule {
         // cleaned in order to instantiate export class without exception).
         ob_start();
         $table->download = $schedule->get('format');
-        $exportclass = new dataformat_export_format($table, $table->download);
+        $exportclass = new table_dataformat_export_format($table, $table->download);
         ob_end_clean();
 
         // Create our schedule report stored file.
@@ -180,11 +180,14 @@ class schedule {
         $storedfile = \core\dataformat::write_data_to_filearea(
             $filerecord,
             $table->download,
-            $table->headers,
+            $exportclass->format_data($table->headers),
             $table->rawdata,
-            static function(stdClass $record) use ($table, $exportclass): array {
+            static function(stdClass $record, bool $supportshtml) use ($table, $exportclass): array {
                 $record = $table->format_row($record);
-                return $exportclass->format_data($record);
+                if (!$supportshtml) {
+                    $record = $exportclass->format_data($record);
+                }
+                return $record;
             }
         );
 
