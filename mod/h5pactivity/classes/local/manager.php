@@ -357,6 +357,9 @@ class manager {
 
         // But excluding all reviewattempts users converting a capabilities join into left join.
         $reviewersjoin = get_with_capability_join($context, 'mod/h5pactivity:reviewattempts', 'u.id');
+        if ($reviewersjoin->cannotmatchanyrows) {
+            return $capjoin;
+        }
 
         $capjoin = new sql_join(
             $capjoin->joins . "\n LEFT " . str_replace('ra', 'reviewer', $reviewersjoin->joins),
