@@ -2164,6 +2164,14 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 
 /** Chart area. */
 .chart-area {
+    @include media-breakpoint-up(lg) {
+        .chart-image {
+            position: relative;
+            margin: auto;
+            height: 48vh;
+            width: 46vw;
+        }
+    }
 
     .chart-table-data {
         display: none;
