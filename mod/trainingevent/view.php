@@ -455,7 +455,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         ($chosenevent->approvaltype == 1 && $myapprovallevel == "department")) {
 
                         // Get the user's company.
-                        $usercompany = company::get_company_byuserid($user->id);
+                        $usercompany = company::by_userid($user->id);
 
                         // Add to the chosen event.
                         if (!$DB->get_record('trainingevent_users', array('userid' => $userid,
@@ -572,7 +572,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                && $myapprovallevel == "department") {
 
                         // Get the user's company.
-                        $usercompany = company::get_company_byuserid($user->id);
+                        $usercompany = company::by_userid($user->id);
 
                         // More levels of approval are required.
                         if (!$userbooking = $DB->get_record('block_iomad_approve_access', array('activityid' => $chosenevent->id,
@@ -681,7 +681,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         if ($action == 'delete' && !empty($userid)) {
 
             // Get the user's company.
-            $usercompany = company::get_company_byuserid($userid);
+            $usercompany = company::by_userid($userid);
 
             // Remove the userid from the event.
             if ($DB->delete_records('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id))) {
@@ -731,6 +731,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             }
         }
         if ($action == 'add' && !empty($userid)) {
+            // Get the user's company.
+            $usercompany = company::by_userid($userid);
+
             $chosenlocation = $DB->get_record('classroom', array('id' => $event->classroomid));
             $alreadyattending = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0));
             $user = $DB->get_record('user', array('id' => $userid));
@@ -740,9 +743,6 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
             $waitlist = $alreadyattending >= $maxcapacity;
             if ($alreadyattending < $maxcapacity) {
-
-                // Get the user's company.
-                $usercompany = company::get_company_byuserid($user->id);
 
                 // What kind of event is this?
                 if ($event->approvaltype == 0 || $event->approvaltype == 4 || $myapprovallevel == "company" ||

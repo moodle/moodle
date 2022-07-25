@@ -15,19 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Label module version info
+ * Event observer for trainingevent activity plugin.
  *
- * @package    mod
- * @subpackage Training Event
- * @copyright  2014 E-Learn Design Ltd. {@link https://www.e-learndesign.co.uk}
- * @author     Derick Turner
+ * @package    mod_trainingevent
+ * @copyright  2022 Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->release  = '4.0.1+ (Build: 20220519)'; // Human-friendly version name
-$plugin->component  = 'mod_trainingevent';
-$plugin->version  = 2022072500;  // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2019052000;  // Requires this Moodle version.
-$plugin->cron     = 0;           // Period for cron to check this module (secs).
+require_once($CFG->dirroot.'/mod/trainingevent/lib.php');
+
+class mod_trainingevent_observer {
+
+    /**
+     * Triggered via block_iomad_company_admin::company_created event.
+     *
+     * @param \mod_trainingevent\event\user_removed $event
+     * @return bool true on success.
+     */
+    public static function user_removed($event) {
+        trainingevent_user_removed($event);
+        return true;
+    }
+}

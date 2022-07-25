@@ -382,10 +382,17 @@ function trainingevent_user_removed($event) {
         $moodleevent->trigger();
 
         // Add to the users calendar.
+<<<<<<< HEAD
         $calendarevent = (object) [];
         $calendarevent->eventtype = 'user';
         $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
         $calendarevent->name = get_string('calendartitle', 'trainingevent', $trainingevent->name);
+=======
+        $calendarevent = new stdClass();
+        $calendarevent->eventtype = TRAININGEVENT_EVENT_TYPE; // Constant defined somewhere in your code - this can be any string value you want. It is a way to identify the event.
+        $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
+        $calendarevent->name = get_string('calendarstart', 'trainingevent', $trainingevent->name);
+>>>>>>> f85358b2fb3... IOMAD: change to training event to first person in the waitlist get's automatically added to the event when someone is removed
         $calendarevent->description = format_module_intro('trainingevent', $trainingevent, $event->contextinstanceid, false);
         $calendarevent->format = FORMAT_HTML;
         $eventlocation = format_string($location->name);
@@ -402,7 +409,11 @@ function trainingevent_user_removed($event) {
             $eventlocation .= ", " . format_string($location->postcode);
         }
         $calendarevent->location = $eventlocation; 
+<<<<<<< HEAD
         $calendarevent->courseid = 0;
+=======
+        $calendarevent->courseid = $trainingevent->course;
+>>>>>>> f85358b2fb3... IOMAD: change to training event to first person in the waitlist get's automatically added to the event when someone is removed
         $calendarevent->groupid = 0;
         $calendarevent->userid = $user->id;
         $calendarevent->modulename = 'trainingevent';

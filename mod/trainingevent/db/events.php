@@ -15,19 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Label module version info
+ * Add event handlers for the quiz
  *
- * @package    mod
- * @subpackage Training Event
- * @copyright  2014 E-Learn Design Ltd. {@link https://www.e-learndesign.co.uk}
- * @author     Derick Turner
+ * @package    mod_trainingevent
+ * @copyright  2022 Derick Turner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->release  = '4.0.1+ (Build: 20220519)'; // Human-friendly version name
-$plugin->component  = 'mod_trainingevent';
-$plugin->version  = 2022072500;  // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2019052000;  // Requires this Moodle version.
-$plugin->cron     = 0;           // Period for cron to check this module (secs).
+// List of observers.
+$observers = array(
+
+    array(
+        'eventname'   => '\mod_trainingevent\event\user_removed',
+        'callback'    => 'mod_trainingevent_observer::user_removed',
+        'includefile' => '/mod/trainingevent/classes/observer.php',
+        'internal'    => false,
+    ),
+
+);
