@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.0.3 ===
+* When exporting table content, HTML tags/entities will be removed when the selected dataformat does not support HTML
+
 === 4.0.2 ===
 * The core renderer `edit_button` method now accepts an optional `$method` argument (get/post) for the button
 * The check for $plugin->incompatible was found to be incorrect. The $plugin->incompatible attribute is meant to define the minimum
