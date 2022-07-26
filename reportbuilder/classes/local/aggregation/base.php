@@ -81,9 +81,14 @@ abstract class base {
      *
      * @param string[] $sqlfields
      * @param string $delimeter
+     * @param string $coalescechar
      * @return string
      */
-    final protected static function get_column_fields_concat(array $sqlfields, string $delimeter = ','): string {
+    final protected static function get_column_fields_concat(
+        array $sqlfields,
+        string $delimeter = ',',
+        string $coalescechar = ' '
+    ): string {
         global $DB;
 
         // We need to ensure all values are char.
@@ -95,8 +100,8 @@ abstract class base {
                 $sqlfield = $DB->sql_cast_to_char($sqlfield);
             }
 
-            // Coalesce all the SQL fields, to remove all nulls.
-            $concatfields[] = "COALESCE({$sqlfield}, ' ')";
+            // Coalesce all the SQL fields. Ensure cross-DB compatibility, and that we always get string data back.
+            $concatfields[] = "COALESCE({$sqlfield}, '{$coalescechar}')";
             $concatfields[] = "'{$delimeter}'";
         }
 
