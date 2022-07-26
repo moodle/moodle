@@ -509,6 +509,7 @@ class api {
                 'NoDelegate_DarkMode' => new lang_string('darkmode', 'tool_mobile'),
                 'CoreFilterDelegate' => new lang_string('type_filter_plural', 'plugin'),
                 'CoreReportBuilderDelegate' => new lang_string('reportbuilder', 'core_reportbuilder'),
+                'NoDelegate_CoreUserSupport' => new lang_string('contactsitesupport', 'admin'),
             ),
             "$mainmenu" => array(
                 '$mmSideMenuDelegate_mmaFrontpage' => new lang_string('sitehome'),
