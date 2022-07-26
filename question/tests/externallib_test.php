@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Question external functions tests.
- *
- * @package    core_question
- * @category   external
- * @copyright  2016 Pau Ferrer <pau@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.1
- */
-
 namespace core_question;
 
 use core_question_external;
@@ -40,6 +30,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * Question external functions tests
  *
  * @package    core_question
+ * @covers     \core_question_external
  * @category   external
  * @copyright  2016 Pau Ferrer <pau@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
