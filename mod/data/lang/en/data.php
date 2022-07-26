@@ -52,7 +52,6 @@ Only the tags that are in the "Available tags" list may be used for the current 
 $string['availabletodate'] = 'Available to';
 $string['availabletodatevalidation'] = 'The available to date cannot be before the available from date.';
 $string['blank'] = 'Blank';
-$string['buttons'] = 'Actions';
 $string['bynameondate'] = 'by {$a->name} - {$a->date}';
 $string['calendarend'] = '{$a} closes';
 $string['calendarstart'] = '{$a} opens';
@@ -203,6 +202,7 @@ $string['headerlisttemplate'] = 'Defines browsing interface for multiple entries
 $string['headerrsstemplate'] = 'Defines appearance of entries in RSS feeds';
 $string['headersingletemplate'] = 'Defines browsing interface for a single entry';
 $string['checkbox'] = 'Checkbox';
+$string['id'] = 'Entry ID';
 $string['chooseexportfields'] = 'Choose the fields you wish to export';
 $string['chooseexportformat'] = 'Choose the format you wish to export to';
 $string['chooseorupload'] = 'Choose file';
@@ -432,3 +432,6 @@ $string['wrongdataid'] = 'Wrong data id provided';
 
 // Deprecated since Moodle 3.11.
 $string['unsupportedexport'] = '({$a->fieldtype}) cannot be exported.';
+
+// Deprecated since Moodle 4.1.
+$string['buttons'] = 'Actions';
