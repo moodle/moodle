@@ -302,4 +302,3 @@ Feature: Scorm multi-sco review mode.
     Then I should not see "Review mode"
     And I switch to "scorm_object" iframe
     And I should see "Play of the game"
-  
