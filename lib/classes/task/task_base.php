@@ -247,7 +247,7 @@ abstract class task_base {
             return true;
         } else {
             $plugininfo = core_plugin_manager::instance()->get_plugin_info($component);
-            return $plugininfo && $plugininfo->is_enabled();
+            return $plugininfo && ($plugininfo->is_enabled() !== false);
         }
     }
 }
