@@ -509,7 +509,7 @@ function local_kaltura_lti_get_type_type_config($ltirequest, $kaltura_config) {
  * @since  Moodle 3.0
  */
 function local_kaltura_lti1p3_get_launch_data($module, $withblocks, $editor = null, $nonce = '') {
-	global $PAGE;
+	global $PAGE, $USER;
 
 	$instance = local_kaltura_format_lti_instance_object($module);
 
@@ -530,6 +530,9 @@ function local_kaltura_lti1p3_get_launch_data($module, $withblocks, $editor = nu
 	$allparams = lti_build_request($instance, $typeconfig, $course);
 	$requestparams = $allparams;
 	$requestparams = array_merge($requestparams, lti_build_standard_message($instance, null, LTI_VERSION_1P3));
+
+    $requestparams['user_id'] = $USER->username; // override the Moodle default - Kaltura session info should be the Moodle username.
+
 	$customstr = '';
 	if (isset($typeconfig['customparameters'])) {
 		$customstr = $typeconfig['customparameters'];

@@ -120,7 +120,7 @@ if ($ok && !empty($prompt) && ($prompt !== 'none')) {
 if ($ok) {
 	$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 	if ($id && $course) {
-        $module["course"]=$course;
+        $module["course"] = $course;
 		$editor = $SESSION->editor;
 		list($endpoint, $params) = local_kaltura_lti1p3_get_launch_data($module, null, $editor, $nonce);
 	} else {
