@@ -38,6 +38,7 @@ $string['both'] = 'Manager and company manager';
 $string['capacity'] = 'Capacity';
 $string['calendarend'] = '{$a} closes';
 $string['calendarstart'] = '{$a} opens';
+$string['calendartitle'] = 'Attending event {$a}';
 $string['chosenclassroomunavailable'] = 'The chosen location is already in use';
 $string['companymanager'] = 'Company manager';
 $string['trainingevent:add'] = 'Ad a user to a classroom events';

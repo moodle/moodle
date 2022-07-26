@@ -112,7 +112,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
         if (!empty($exportcalendar)) {
             if ($calendareventrec = $DB->get_record('event',['userid' => $USER->id,
-                                                                         'courseid' => $event->course,
+                                                                         'courseid' => 0,
                                                                          'modulename' => 'trainingevent',
                                                                          'instance' => $event->id])) {
                 $calendarevent = calendar_event::load($calendareventrec->id);
@@ -235,9 +235,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
                         // Add to the users calendar.
                         $calendarevent = new stdClass();
-                        $calendarevent->eventtype = TRAININGEVENT_EVENT_TYPE; // Constant defined somewhere in your code - this can be any string value you want. It is a way to identify the event.
+                        $calendarevent->eventtype = 'user';
                         $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
-                        $calendarevent->name = get_string('calendarstart', 'trainingevent', $event->name);
+                        $calendarevent->name = get_string('calendartitle', 'trainingevent', $event->name);
                         $calendarevent->description = format_module_intro('trainingevent', $event, $cmidinfo->id, false);
                         $calendarevent->format = FORMAT_HTML;
                         $eventlocation = format_string($location->name);
@@ -254,7 +254,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $eventlocation .= ", " . format_string($location->postcode);
                         }
                         $calendarevent->location = $eventlocation; 
-                        $calendarevent->courseid = $event->course;
+                        $calendarevent->courseid = 0;
                         $calendarevent->groupid = 0;
                         $calendarevent->userid = $USER->id;
                         $calendarevent->modulename = 'trainingevent';
@@ -307,7 +307,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
                         // Remove from the users calendar.
                         if ($calendareventrec = $DB->get_record('event',['userid' => $USER->id,
-                                                                         'courseid' => $event->course,
+                                                                         'courseid' => 0,
                                                                          'modulename' => 'trainingevent',
                                                                          'instance' => $event->id])) {
                             $calendarevent = calendar_event::load($calendareventrec->id);
@@ -474,9 +474,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
                             // Add to the users calendar.
                             $calendarevent = new stdClass();
-                            $calendarevent->eventtype = TRAININGEVENT_EVENT_TYPE; // Constant defined somewhere in your code - this can be any string value you want. It is a way to identify the event.
+                            $calendarevent->eventtype = 'user';
                             $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
-                            $calendarevent->name = get_string('calendarstart', 'trainingevent', $event->name);
+                            $calendarevent->name = get_string('calendartitle', 'trainingevent', $event->name);
                             $calendarevent->description = format_module_intro('trainingevent', $event, $cmidinfo->id, false);
                             $calendarevent->format = FORMAT_HTML;
                             $eventlocation = format_string($location->name);
@@ -493,7 +493,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                 $eventlocation .= ", " . format_string($location->postcode);
                             }
                             $calendarevent->location = $eventlocation; 
-                            $calendarevent->courseid = $event->course;
+                            $calendarevent->courseid = 0;
                             $calendarevent->groupid = 0;
                             $calendarevent->userid = $user->id;
                             $calendarevent->modulename = 'trainingevent';
@@ -536,7 +536,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                              'event' => $event));
                         // Remove from the users calendar.
                         if ($calendareventrec = $DB->get_record('event', ['userid' => $user->id,
-                                                                         'courseid' => $event->course,
+                                                                         'courseid' => 0,
                                                                          'modulename' => 'trainingevent',
                                                                          'instance' => $event->id])) {
                             $calendarevent = calendar_event::load($calendareventrec->id);
@@ -704,7 +704,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
                 // Remove from the users calendar.
                 if ($calendareventrec = $DB->get_record('event',['userid' => $user->id,
-                                                                 'courseid' => $event->course,
+                                                                 'courseid' => 0,
                                                                  'modulename' => 'trainingevent',
                                                                  'instance' => $event->id])) {
                     $calendarevent = calendar_event::load($calendareventrec->id);
@@ -774,9 +774,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
                         // Add to the users calendar.
                         $calendarevent = new stdClass();
-                        $calendarevent->eventtype = TRAININGEVENT_EVENT_TYPE; // Constant defined somewhere in your code - this can be any string value you want. It is a way to identify the event.
+                        $calendarevent->eventtype = 'user';
                         $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
-                        $calendarevent->name = get_string('calendarstart', 'trainingevent', $event->name);
+                        $calendarevent->name = get_string('calendartitle', 'trainingevent', $event->name);
                         $calendarevent->description = format_module_intro('trainingevent', $event, $cmidinfo->id, false);
                         $calendarevent->format = FORMAT_HTML;
                         $eventlocation = format_string($location->name);
@@ -793,7 +793,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $eventlocation .= ", " . format_string($location->postcode);
                         }
                         $calendarevent->location = $eventlocation; 
-                        $calendarevent->courseid = $event->course;
+                        $calendarevent->courseid = 0;
                         $calendarevent->groupid = 0;
                         $calendarevent->userid = $user->id;
                         $calendarevent->modulename = 'trainingevent';
@@ -1011,10 +1011,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         date($dateformat, $event->enddatetime) . "</td></tr>";
         if ($attending) {
             $eventtable .= "<tr><th>" . get_string('exportcalendar', 'trainingevent') . "</th><td>";
-            $icalpic =  $OUTPUT->image_url('i/ical');
             $exportlink = new moodle_url('/mod/trainingevent/view.php',
                                          array('id' => $id, 'exportcalendar' => 'yes'));
-            $eventtable .=   "<a href='" . $exportlink . "'><img src='" . $icalpic . "'></a>";
+            $eventtable .=   "<a href='" . $exportlink . "' class='btn btn-secondary'>" . get_string('exportbutton', 'calendar') ."</a>";
             $eventtable .=   "</td></tr>";
         }
         if (empty($location->isvirtual) || !empty($event->coursecapacity)) {
