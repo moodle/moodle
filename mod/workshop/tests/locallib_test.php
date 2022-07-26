@@ -778,4 +778,97 @@ class locallib_test extends \advanced_testcase {
         $this->assertTrue($workshop3->check_group_membership($student2->id));
         $this->assertFalse($workshop3->check_group_membership($student3->id));
     }
+
+    /**
+     * Test init_initial_bar function.
+     *
+     * @covers \workshop::init_initial_bar
+     */
+    public function test_init_initial_bar(): void {
+        global $SESSION;
+        $this->resetAfterTest();
+
+        $_GET['ifirst'] = 'A';
+        $_GET['ilast'] = 'B';
+        $contextid = $this->workshop->context->id;
+
+        $this->workshop->init_initial_bar();
+        $initialbarprefs = $this->get_initial_bar_prefs_property();
+
+        $this->assertEquals('A', $initialbarprefs['i_first']);
+        $this->assertEquals('B', $initialbarprefs['i_last']);
+        $this->assertEquals('A', $SESSION->mod_workshop->initialbarprefs['id-' . $contextid]['i_first']);
+        $this->assertEquals('B', $SESSION->mod_workshop->initialbarprefs['id-' . $contextid]['i_last']);
+
+        $_GET['ifirst'] = null;
+        $_GET['ilast'] = null;
+        $SESSION->mod_workshop->initialbarprefs['id-' . $contextid]['i_first'] = 'D';
+        $SESSION->mod_workshop->initialbarprefs['id-' . $contextid]['i_last'] = 'E';
+
+        $this->workshop->init_initial_bar();
+        $initialbarprefs = $this->get_initial_bar_prefs_property();
+
+        $this->assertEquals('D', $initialbarprefs['i_first']);
+        $this->assertEquals('E', $initialbarprefs['i_last']);
+    }
+
+    /**
+     * Test empty init_initial_bar
+     *
+     * @covers \workshop::init_initial_bar
+     */
+    public function test_init_initial_bar_empty(): void {
+        $this->resetAfterTest();
+
+        $this->workshop->init_initial_bar();
+        $initialbarprefs = $this->get_initial_bar_prefs_property();
+
+        $this->assertEmpty($initialbarprefs);
+    }
+
+    /**
+     * Test get_initial_first function
+     *
+     * @covers \workshop::get_initial_first
+     */
+    public function test_get_initial_first(): void {
+        $this->resetAfterTest();
+        $this->workshop->init_initial_bar();
+        $this->assertEquals(null, $this->workshop->get_initial_first());
+
+        $_GET['ifirst'] = 'D';
+        $this->workshop->init_initial_bar();
+        $this->assertEquals('D', $this->workshop->get_initial_first());
+    }
+
+    /**
+     * Test get_initial_last function
+     *
+     * @covers \workshop::get_initial_last
+     */
+    public function test_get_initial_last(): void {
+        $this->resetAfterTest();
+        $this->workshop->init_initial_bar();
+        $this->assertEquals(null, $this->workshop->get_initial_last());
+
+        $_GET['ilast'] = 'D';
+        $this->workshop->init_initial_bar();
+        $this->assertEquals('D', $this->workshop->get_initial_last());
+    }
+
+    /**
+     * Get the protected propertyinitialbarprefs from workshop class.
+     *
+     * @coversNothing
+     * @return array initialbarspref property. eg ['i_first' => 'A', 'i_last' => 'B']
+     */
+    private function get_initial_bar_prefs_property(): array {
+
+        $reflector = new \ReflectionObject($this->workshop);
+        $initialbarprefsprop = $reflector->getProperty('initialbarprefs');
+        $initialbarprefsprop->setAccessible(true);
+        $initialbarprefs = $initialbarprefsprop->getValue($this->workshop);
+
+        return $initialbarprefs;
+    }
 }

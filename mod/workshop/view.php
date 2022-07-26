@@ -72,7 +72,7 @@ if ($workshop->phase == workshop::PHASE_SUBMISSION and $workshop->phaseswitchass
 if (!is_null($editmode) && $PAGE->user_allowed_editing()) {
     $USER->editing = $editmode;
 }
-
+$workshop->init_initial_bar();
 $userplan = new workshop_user_plan($workshop, $USER->id);
 
 foreach ($userplan->phases as $phase) {
@@ -281,7 +281,7 @@ switch ($workshop->phase) {
                 $reportopts->showsubmissiongrade = false;
                 $reportopts->showgradinggrade = false;
                 $reportopts->workshopphase = $workshop->phase;
-
+                echo $output->initials_bars($workshop, $baseurl);
                 echo $output->render($pagingbar);
                 echo $output->render(new workshop_grading_report($data, $reportopts));
                 echo $output->render($pagingbar);
@@ -341,6 +341,7 @@ switch ($workshop->phase) {
                     'workshop-viewlet-gradereport-collapsed');
                 echo $output->box_start('generalbox gradesreport');
                 echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
+                echo $output->initials_bars($workshop, $baseurl);
                 echo $output->render($pagingbar);
                 echo $output->render(new workshop_grading_report($data, $reportopts));
                 echo $output->render($pagingbar);
@@ -498,6 +499,7 @@ switch ($workshop->phase) {
                     'workshop-viewlet-gradereport-collapsed');
                 echo $output->box_start('generalbox gradesreport');
                 echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
+                echo $output->initials_bars($workshop, $baseurl);
                 echo $output->render($pagingbar);
                 echo $output->render(new workshop_grading_report($data, $reportopts));
                 echo $output->render($pagingbar);
@@ -623,6 +625,7 @@ switch ($workshop->phase) {
                     'workshop-viewlet-gradereport-collapsed');
                 echo $output->box_start('generalbox gradesreport');
                 echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
+                echo $output->initials_bars($workshop, $baseurl);
                 echo $output->render($pagingbar);
                 echo $output->render(new workshop_grading_report($data, $reportopts));
                 echo $output->render($pagingbar);
