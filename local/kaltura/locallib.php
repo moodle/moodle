@@ -521,8 +521,8 @@ function local_kaltura_lti1p3_get_launch_data($module, $withblocks, $editor = nu
 		$secret = '';
 	}
 
-    $endpoint = $instance->toolurl;
-    $endpoint = trim($endpoint);
+	$endpoint = $instance->toolurl;
+	$endpoint = trim($endpoint);
 
 	$ltiversion = $instance->lti_version;
 
@@ -530,18 +530,17 @@ function local_kaltura_lti1p3_get_launch_data($module, $withblocks, $editor = nu
 	$allparams = lti_build_request($instance, $typeconfig, $course);
 	$requestparams = $allparams;
 	$requestparams = array_merge($requestparams, lti_build_standard_message($instance, null, LTI_VERSION_1P3));
-
-    $requestparams['user_id'] = $USER->username; // override the Moodle default - Kaltura session info should be the Moodle username.
+	$requestparams['user_id'] = $USER->username; // override the Moodle default - Kaltura session info should be the Moodle username.
 
 	$customstr = '';
 	if (isset($typeconfig['customparameters'])) {
 		$customstr = $typeconfig['customparameters'];
 	}
 
-    // Add custom parameters
-    $requestparams['custom_publishdata'] = local_kaltura_get_kaf_publishing_data();
-    $requestparams['custom_publishdata_encoded'] = '1';
-    $requestparams['custom_moodle_plugin_version'] = local_kaltura_get_config()->version;
+	// Add custom parameters
+	$requestparams['custom_publishdata'] = local_kaltura_get_kaf_publishing_data();
+	$requestparams['custom_publishdata_encoded'] = '1';
+	$requestparams['custom_moodle_plugin_version'] = local_kaltura_get_config()->version;
 
 	$requestparams = array_merge($requestparams, lti_build_custom_parameters(null, $instance, (object)$module, $allparams, $customstr,
 		$module->instructorcustomparameters, null));
