@@ -237,7 +237,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         $calendarevent = new stdClass();
                         $calendarevent->eventtype = 'user';
                         $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
-                        $calendarevent->name = get_string('calendartitle', 'trainingevent', $event->name);
+                        $calendarevent->name = get_string('calendartitle', 'trainingevent', (object) ['coursename' => format_string($course->fullname), 'eventname' => format_string($event->name)]);
                         $calendarevent->description = format_module_intro('trainingevent', $event, $cmidinfo->id, false);
                         $calendarevent->format = FORMAT_HTML;
                         $eventlocation = format_string($location->name);
@@ -476,7 +476,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $calendarevent = new stdClass();
                             $calendarevent->eventtype = 'user';
                             $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
-                            $calendarevent->name = get_string('calendartitle', 'trainingevent', $event->name);
+                            $calendarevent->name = get_string('calendartitle', 'trainingevent', (object) ['coursename' => format_string($course->fullname), 'eventname' => format_string($event->name)]);
                             $calendarevent->description = format_module_intro('trainingevent', $event, $cmidinfo->id, false);
                             $calendarevent->format = FORMAT_HTML;
                             $eventlocation = format_string($location->name);
@@ -776,7 +776,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         $calendarevent = new stdClass();
                         $calendarevent->eventtype = 'user';
                         $calendarevent->type = CALENDAR_EVENT_TYPE_ACTION; // This is used for events we only want to display on the calendar, and are not needed on the block_myoverview.
-                        $calendarevent->name = get_string('calendartitle', 'trainingevent', $event->name);
+                        $calendarevent->name = get_string('calendartitle', 'trainingevent', (object) ['coursename' => format_string($course->fullname), 'eventname' => format_string($event->name)]);
                         $calendarevent->description = format_module_intro('trainingevent', $event, $cmidinfo->id, false);
                         $calendarevent->format = FORMAT_HTML;
                         $eventlocation = format_string($location->name);
