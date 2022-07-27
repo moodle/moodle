@@ -66,6 +66,8 @@ if ($deletelibrary) {
 }
 
 if (!is_null($action)) {
+    require_sesskey();
+
     if ($action == 'enable' || $action == 'disable') {
         // If action is enable or disable, library id is required too.
         $libraryid = required_param('id', PARAM_INT);

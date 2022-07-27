@@ -92,11 +92,13 @@ class libraries implements renderable, templatable {
                     $version->toggleenabledurl = new moodle_url('/h5p/libraries.php', [
                         'id' => $version->id,
                         'action' => 'disable',
+                        'sesskey' => sesskey(),
                     ]);
                 } else {
                     $version->toggleenabledurl = new moodle_url('/h5p/libraries.php', [
                         'id' => $version->id,
                         'action' => 'enable',
+                        'sesskey' => sesskey(),
                     ]);
                 }
                 $installed[] = $version;
