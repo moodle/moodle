@@ -19683,7 +19683,7 @@ li.activity.label,
   text-align: right;
   padding: 8px; }
 
-.choosercontainer #chooseform .option label {
+.choosercontainer #chooseform .option {
   font-size: 12px; }
 
 /* block.invisible vs .invisible
