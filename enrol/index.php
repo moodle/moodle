@@ -55,6 +55,8 @@ if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', cont
 $PAGE->set_course($course);
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_url('/enrol/index.php', array('id'=>$course->id));
+$PAGE->set_secondary_navigation(false);
+$PAGE->add_body_class('limitedwidth');
 
 // do not allow enrols when in login-as session
 if (\core\session\manager::is_loggedinas() and $USER->loginascontext->contextlevel == CONTEXT_COURSE) {
