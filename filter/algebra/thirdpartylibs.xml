@@ -3,8 +3,9 @@
   <library>
       <location>AlgParser.pm</location>
       <name>WeBWorK</name>
-      <license>GPL</license>
       <version>2.4.9+</version>
+      <license>GPL</license>
       <licenseversion>2.0+</licenseversion>
+      <upgradable>false</upgradable>
   </library>
 </libraries>
