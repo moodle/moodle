@@ -96,6 +96,9 @@ abstract class base {
 
             // We need to ensure all values are char (this ought to be done in the DML drivers, see MDL-72184).
             switch ($DB->get_dbfamily()) {
+                case 'mssql' :
+                    $sqlfield = $DB->sql_concat("''", $sqlfield);
+                    break;
                 case 'postgres' :
                     $sqlfield = "CAST({$sqlfield} AS VARCHAR)";
                     break;
