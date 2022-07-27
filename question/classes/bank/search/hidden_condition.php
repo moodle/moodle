@@ -69,7 +69,7 @@ class hidden_condition extends condition {
         global $PAGE;
         $displaydata = [];
         if (!$this->hide) {
-            $displaydata['checked'] = 'checked="true"';
+            $displaydata['checked'] = 'checked';
         }
         return $PAGE->get_renderer('core_question', 'bank')->render_hidden_condition_advanced($displaydata);
     }
