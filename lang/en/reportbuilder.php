@@ -255,6 +255,7 @@ $string['sorting'] = 'Sorting';
 $string['sorting_help'] = 'Sorting defines the initial sort order of columns in the report. The order can be reversed by toggling the Up/down icon. Users can then define their own sort order by clicking on a column name.';
 $string['switchedit'] = 'Switch to edit mode';
 $string['switchpreview'] = 'Switch to preview mode';
+$string['tasksendschedule'] = 'Send report schedule';
 $string['tasksendschedules'] = 'Send report schedules';
 $string['timeadded'] = 'Time added';
 $string['timecreated'] = 'Time created';

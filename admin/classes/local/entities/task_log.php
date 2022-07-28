@@ -107,15 +107,15 @@ class task_log extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_field("$tablealias.classname")
             ->set_is_sortable(true)
-            ->add_callback(static function(string $value): string {
+            ->add_callback(static function(string $classname): string {
                 $output = '';
-                if (class_exists($value)) {
-                    $task = new $value;
-                    if ($task instanceof \core\task\scheduled_task) {
+                if (class_exists($classname)) {
+                    $task = new $classname;
+                    if ($task instanceof \core\task\task_base) {
                         $output = $task->get_name();
                     }
                 }
-                $output .= \html_writer::tag('div', "\\{$value}", [
+                $output .= \html_writer::tag('div', "\\{$classname}", [
                     'class' => 'task-class',
                 ]);
                 return $output;
