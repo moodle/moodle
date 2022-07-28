@@ -71,6 +71,7 @@ if ($ok) {
 	$module['id'] = 1;
 	$module['cmid'] = 0;
 	$module['module'] = $ltimessagehint;
+	$module['title'] = $titleb64 ? base64_decode($titleb64) : '';
 
 	$ok = ($id == $ltimessagehint);
 	if (!$ok) {
