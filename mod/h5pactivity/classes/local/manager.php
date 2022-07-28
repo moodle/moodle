@@ -332,15 +332,24 @@ class manager {
      *
      * @since Moodle 3.9.7
      * @param bool $allpotentialusers if true, the join will return all active users, not only the ones with attempts.
+     * @param int|bool $currentgroup False if groups not used, 0 for all groups, group id (int) to filter by specific group
      * @return sql_join the active users attempts join
      */
-    public function get_active_users_join(bool $allpotentialusers = false): sql_join {
+    public function get_active_users_join(bool $allpotentialusers = false, $currentgroup = false): sql_join {
 
         // Only valid users counts. By default, all users with submit capability are considered potential ones.
         $context = $this->get_context();
+        $coursemodule = $this->get_coursemodule();
+
+        // Ensure user can view users from all groups.
+        if ($currentgroup === 0 && $coursemodule->effectivegroupmode == SEPARATEGROUPS
+                && !has_capability('moodle/site:accessallgroups', $context)) {
+
+            return new sql_join('', '1=2', [], true);
+        }
 
         // We want to present all potential users.
-        $capjoin = get_enrolled_with_capabilities_join($context, '', 'mod/h5pactivity:view');
+        $capjoin = get_enrolled_with_capabilities_join($context, '', 'mod/h5pactivity:view', $currentgroup);
 
         if ($capjoin->cannotmatchanyrows) {
             return $capjoin;
@@ -438,9 +447,10 @@ class manager {
      *
      * @param int $userid an opional userid to show
      * @param int $attemptid an optional $attemptid to show
+     * @param int|bool $currentgroup False if groups not used, 0 for all groups, group id (int) to filter by specific group
      * @return report|null available report (or null if no report available)
      */
-    public function get_report(int $userid = null, int $attemptid = null): ?report {
+    public function get_report(int $userid = null, int $attemptid = null, $currentgroup = false): ?report {
         global $USER;
 
         // If tracking is disabled, no reports are available.
@@ -480,7 +490,7 @@ class manager {
         } else if ($user) {
             return new attempts($this, $user);
         }
-        return new participants($this);
+        return new participants($this, $currentgroup);
     }
 
     /**
