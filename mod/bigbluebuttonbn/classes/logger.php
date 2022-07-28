@@ -177,6 +177,7 @@ EOF;
         [$insql, $params] = $DB->get_in_or_equal($filters, SQL_PARAMS_NAMED);
         $wheres = [];
         $wheres['bigbluebuttonbnid'] = '= :instanceid';
+        $wheres['courseid'] = '= :courseid'; // This speeds up the requests masively as courseid is an index.
         if ($timestart) {
             $wheres['timecreated'] = ' > :timestart';
             $params['timestart'] = $timestart;
@@ -186,6 +187,7 @@ EOF;
             $params['userid'] = $userid;
         }
         $params['instanceid'] = $instance->get_instance_id();
+        $params['courseid'] = $instance->get_course_id();
         $wheres['log'] = " $insql";
         $wheresqls = [];
         foreach ($wheres as $key => $val) {
