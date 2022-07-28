@@ -61,8 +61,9 @@ class participants extends table_sql implements report {
      * Create a new participants report.
      *
      * @param manager $manager h5pactivitymanager object
+     * @param int|bool $currentgroup False if groups not used, 0 for all groups, group id (int) to filter by specific group
      */
-    public function __construct(manager $manager) {
+    public function __construct(manager $manager, $currentgroup = false) {
         parent::__construct('mod_h5pactivity-participants');
         $this->manager = $manager;
         $this->scores = $manager->get_users_scaled_score();
@@ -83,7 +84,7 @@ class participants extends table_sql implements report {
         $this->no_sorting('attempts');
         $this->pageable(true);
 
-        $capjoin = $this->manager->get_active_users_join(true);
+        $capjoin = $this->manager->get_active_users_join(true, $currentgroup);
 
         // Final SQL.
         $this->set_sql(
