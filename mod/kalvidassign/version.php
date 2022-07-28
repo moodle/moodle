@@ -28,7 +28,7 @@ if (!defined('MOODLE_INTERNAL')) {
 $plugin->version = 2022041903;
 $plugin->component  = 'mod_kalvidassign';
 $plugin->release    = 'Kaltura release 4.4.2';
-$plugin->requires = 2022041903;
+$plugin->requires = 2022041902;
 $plugin->cron       = 0;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->dependencies = array(
