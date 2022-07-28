@@ -442,7 +442,7 @@ function local_kaltura_request_lti1p3_launch($ltirequest, $withblocks = true, $e
 	}
 
 	$SESSION->editor = $editor;
-	return lti_initiate_login($ltirequest['course']->id, $ltirequest['module'], null, $config);
+	return lti_initiate_login($ltirequest['course']->id, $ltirequest['module'], null, $config, null, $ltirequest['title']);
 }
 /**
  * Generates some of the tool configuration based on the admin configuration details
