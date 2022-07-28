@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * mod_h5pactivity manager tests
- *
- * @package    mod_h5pactivity
- * @category   test
- * @copyright  2020 Ferran Recio <ferran@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 namespace mod_h5pactivity\local;
 use context_module;
@@ -31,6 +23,7 @@ use stdClass;
  * Manager tests class for mod_h5pactivity.
  *
  * @package    mod_h5pactivity
+ * @covers     \mod_h5pactivity\local\manager
  * @category   test
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -627,7 +620,7 @@ class manager_test extends \advanced_testcase {
     }
 
     /**
-     * Test static count_attempts of all active participants.
+     * Test static test_get_active_users_join of all active participants.
      *
      * Most method scenarios are tested in test_count_attempts_all so we only
      * need to test the with $allpotentialusers true and false.
@@ -690,6 +683,58 @@ class manager_test extends \advanced_testcase {
                 'result' => 1,
             ],
         ];
+    }
+
+    /**
+     * Test active users joins returns appropriate results for groups
+     */
+    public function test_get_active_users_join_groupmode(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course(['groupmode' => SEPARATEGROUPS, 'groupmodeforce' => 1]);
+
+        // Teacher/user one in group one.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $userone = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $groupone = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupone->id, 'userid' => $teacher->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupone->id, 'userid' => $userone->id]);
+
+        // User two in group two.
+        $usertwo = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        $grouptwo = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $grouptwo->id, 'userid' => $usertwo->id]);
+
+        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
+        $manager = manager::create_from_instance($activity);
+
+        // Admin user can view all participants.
+        $usersjoin = $manager->get_active_users_join(true, 0);
+        $users = $DB->get_fieldset_sql("SELECT u.username FROM {user} u {$usersjoin->joins} WHERE {$usersjoin->wheres}",
+            $usersjoin->params);
+
+        $this->assertEqualsCanonicalizing([$teacher->username, $userone->username, $usertwo->username], $users);
+
+        // Switch to teacher, who cannot view all participants.
+        $this->setUser($teacher);
+
+        $usersjoin = $manager->get_active_users_join(true, 0);
+        $users = $DB->get_fieldset_sql("SELECT u.username FROM {user} u {$usersjoin->joins} WHERE {$usersjoin->wheres}",
+            $usersjoin->params);
+
+        $this->assertEmpty($users);
+
+        // Teacher can view participants inside group.
+        $usersjoin = $manager->get_active_users_join(true, $groupone->id);
+        $users = $DB->get_fieldset_sql("SELECT u.username FROM {user} u {$usersjoin->joins} WHERE {$usersjoin->wheres}",
+            $usersjoin->params);
+
+        $this->assertEqualsCanonicalizing([$teacher->username, $userone->username], $users);
     }
 
     /**
