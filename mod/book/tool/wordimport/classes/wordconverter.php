@@ -24,63 +24,73 @@
 
 namespace booktool_wordimport;
 
-defined('MOODLE_INTERNAL') || die;
-define('DEBUG_WORDIMPORT', DEBUG_DEVELOPER);
+defined('MOODLE_INTERNAL') || die();
 
+use moodle_exception;
+use ZipArchive;
 require_once(__DIR__.'/xslemulatexslt.php');
+require_once($CFG->dirroot.'/mod/book/tool/importhtml/locallib.php');
 
 /**
  * Import HTML pages from a Word file
  *
- * @param string $wordfilename Word file
- * @param stdClass $book
- * @param context_module $context
- * @param bool $splitonsubheadings
- * @return void
+ * To import Word files, process a .docx Zip file, extracting the text and images, and convert it into XHTML.
+ * To export HTML pages to Word, wrap them in a standard template, and apply Words pre-defined class names to headings,
+ * paragraphs, lists, etc. For example, <h1> becomes <h1 class="MsoHeading1"> and <p> becomes <p class="MsoBodyText">.
  */
 class wordconverter {
-
-    /*
-     * @var string Stylesheet to convert WordML to XHTML
-    */
+    /** @var string Stylesheet to convert WordML to XHTML */
     private $word2xmlstylesheet1 = __DIR__ . "/wordml2xhtmlpass1.xsl"; // Convert WordML into basic XHTML.
-    /*
-     * @var string Stylesheet to clean XHTML up and insert images as Base64-encoded data.
-    */
+
+    /** @var string Stylesheet to clean XHTML up and insert images as Base64-encoded data. */
     private $word2xmlstylesheet2 = __DIR__ . "/wordml2xhtmlpass2.xsl"; // Refine basic XHTML into Word-compatible XHTML.
-    /*
-     * @var string XHTML template for exporting content, with Word-compatible CSS style definitions.
-    */
+
+    /** @var string XHTML template for exporting content, with Word-compatible CSS style definitions. */
     private $wordfiletemplate = __DIR__ . '/wordfiletemplate.html';
-    /*
-     * @var string Stylesheet to export generic XHTML into Word-compatible XHTML.
-    */
+
+    /** @var string Stylesheet to export generic XHTML into Word-compatible XHTML. */
     private $exportstylesheet = __DIR__ . "/xhtml2wordpass2.xsl";
-    /*
-     * @var string How should images be handled: embedded as Base64-encoded data, or referenced (default).
-    */
-    private $imagehandling = 'referenced';
-    /*
-     * @var int Word heading style level to HTML element mapping, default "Heading 1" = <h3>
-    */
-    private $heading1styleoffset = 3;
 
     /**
-     * Process XML using XSLT script
+     * Class constructor
+     *
+     * @param string $plugin Name of plugin module
+     */
+    public function __construct(string $plugin = 'booktool_wordimport') {
+        global $CFG, $USER, $COURSE;
+
+        // Set common parameters for all XSLT transformations. Note that the XSLT processor doesn't support $arguments.
+        $this->xsltparameters = array(
+            'course_id' => $COURSE->id,
+            'course_name' => $COURSE->fullname,
+            'author_name' => $USER->firstname . ' ' . $USER->lastname,
+            'moodle_country' => $USER->country,
+            'moodle_language' => current_language(),
+            'moodle_textdirection' => (right_to_left()) ? 'rtl' : 'ltr',
+            'moodle_release' => $CFG->release, // Moodle version, e.g. 3.5, 3.10.
+            'moodle_release_date' => substr($CFG->version, 0, 8), // The Moodle major version release date, for testing.
+            'moodle_url' => $CFG->wwwroot . "/",
+            'moodle_username' => $USER->username,
+            'imagehandling' => 'referenced', // Atto, Books and Lessons are referenced, Glossaries and Question are embedded.
+            'heading1stylelevel' => 3, // Atto, Books and Lessons are 3, Glossaries and Question banks should be overridden to 1.
+            'pluginname' => $plugin,
+            'debug_flag' => (debugging(null, DEBUG_DEVELOPER)) ? '1' : '0'
+            );
+    }
+
+    /**
+     * Transform XML using XSLT script
      *
      * @param string $xmldata XML-formatted content
      * @param string $xslfile Full path to XSLT script file
-     * @param array $parameters array of parameters to pass into script
+     * @param array $parameters Extra XSLT parameters, if any
      * @return string Processed XML content
      */
-    public function convert(string $xmldata, string $xslfile, array $parameters) {
+    public function xsltransform(string $xmldata, string $xslfile, array $parameters = array()) {
         global $CFG;
 
-        // Check that XSLT is installed.
-        if (!class_exists('XSLTProcessor') || !function_exists('xslt_create')) {
-            // PHP 'xsl' extension library is required for this action.
-            throw new \moodle_exception(get_string('extensionrequired', 'tool_xmldb', 'xsl'));
-        }
+        // Set common parameters for all XSLT transformations. Note that the XSLT processor doesn't support $arguments.
+        $this->xsltparameters = array_merge($this->xsltparameters, $parameters);
 
         // Check that the XSLT stylesheet exists.
         if (!file_exists($xslfile)) {
@@ -94,14 +104,16 @@ class wordconverter {
 
         // Run the XSLT script using the PHP xsl library.
         $xsltproc = xslt_create();
-        if (!($xsltoutput = xslt_process($xsltproc, $tempxmlfilename, $xslfile, null, null, $parameters))) {
+        if (!($xsltoutput = xslt_process($xsltproc, $tempxmlfilename, $xslfile, null, null, $this->xsltparameters))) {
             // Transformation failed.
-            $this->debug_unlink($tempxmlfilename);
+            unlink($tempxmlfilename);
             throw new \moodle_exception('transformationfailed', 'booktool_wordimport', $tempxmlfilename);
         }
-        $this->debug_unlink($tempxmlfilename);
+        unlink($tempxmlfilename);
 
+        // Clean namespaces.
         $xsltoutput = $this->clean_namespaces($xsltoutput);
+        $xsltoutput = $this->clean_mathml_namespaces($xsltoutput);
         return $xsltoutput;
     }
 
@@ -111,16 +123,17 @@ class wordconverter {
      *
      * @param string $filename Word file
      * @param array $imagesforzipping array to store embedded image files
+     * @param bool $convertgifs Convert GIF images to PNG.
      * @return string XHTML content extracted from Word file and split into files
      */
-    public function import(string $filename, array &$imagesforzipping) {
+    public function import(string $filename, array &$imagesforzipping, bool $convertgifs = false) {
         global $CFG;
 
         // Check that we can unzip the Word .docx file into its component files.
         $zipres = zip_open($filename);
         if (!is_resource($zipres)) {
             // Cannot unzip file.
-            $this->debug_unlink($filename);
+            unlink($filename);
             throw new \moodle_exception('cannotunzipfile', 'error');
         }
 
@@ -134,8 +147,11 @@ class wordconverter {
 
         // Pre-XSLT preparation: merge the WordML and image content from the .docx Word file into one large XML file.
         // Initialise an XML string to use as a wrapper around all the XML files.
-        $xmldeclaration = '<?xml version="1.0" encoding="UTF-8"?>';
+        $xmldeclaration = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
         $wordmldata = $xmldeclaration . "\n<pass1Container>\n";
+        $imagestring = "";
+        $gifimagefilenames = array();
+        $pngimagefilenames = array();
 
         $zipentry = zip_read($zipres);
         while ($zipentry) {
@@ -149,13 +165,27 @@ class wordconverter {
             $zefilesize = zip_entry_filesize($zipentry);
 
             // Insert internal images into the array of images.
-            if (strpos($zefilename, "media")) {
+            if (!(strpos($zefilename, "media") === false)) {
                 $imagedata = zip_entry_read($zipentry, $zefilesize);
                 $imagename = basename($zefilename);
                 $imagesuffix = strtolower(pathinfo($zefilename, PATHINFO_EXTENSION));
+                if ($imagesuffix == 'jpg') {
+                    $imagesuffix = "jpeg";
+                } else if ($imagesuffix == "gif" && $convertgifs) {
+                    // For Glossaries and Questions, convert GIF images to PNG on import, not on export.
+                    // This is because it is too hard to identify them in PHP when exporting.
+                    list ($pngfilename, $imagedata) = $this->giftopng($imagedata, $imagename);
+                    // Map old GIF image name to a new PNG name, derived from the temporary PNG file name.
+                    $pngimagefilenames[] = basename($imagename, '.gif') . $pngfilename;
+                    $gifimagefilenames[] = $imagename;
+                }
+
                 // Internet formats like GIF, PNG and JPEG are supported, but not non-Internet formats like BMP or EPS.
-                if ($imagesuffix == 'gif' or $imagesuffix == 'png' or $imagesuffix == 'jpg' or $imagesuffix == 'jpeg') {
+                if ($imagesuffix == 'gif' or $imagesuffix == 'png' or $imagesuffix == 'jpeg') {
                     $imagesforzipping[$imagename] = $imagedata;
+                    $imagemimetype = "image/" . $imagesuffix;
+                    $imagestring .= '<file filename="media/' . $imagename . '" mime-type="' . $imagemimetype . '">'
+                        . base64_encode($imagedata) . "</file>\n";
                 }
             } else {
                 // Look for required XML files, read and wrap it, remove the XML declaration, and add it to the XML string.
@@ -175,7 +205,7 @@ class wordconverter {
                         $wordmldata .= "<styleMap>" . $xmlfiledata . "</styleMap>\n";
                         break;
                     case "word/_rels/document.xml.rels":
-                        $wordmldata .= "<documentLinks>" . $xmlfiledata . "</documentLinks>\n";
+                        $documentlinks = "<documentLinks>" . $xmlfiledata . "</documentLinks>\n";
                         break;
                     case "word/footnotes.xml":
                         $wordmldata .= "<footnotesContainer>" . $xmlfiledata . "</footnotesContainer>\n";
@@ -183,11 +213,6 @@ class wordconverter {
                     case "word/_rels/footnotes.xml.rels":
                         $wordmldata .= "<footnoteLinks>" . $xmlfiledata . "</footnoteLinks>\n";
                         break;
-                    // @codingStandardsIgnoreLine case "word/_rels/settings.xml.rels":
-                        // @codingStandardsIgnoreLine $wordmldata .= "<settingsLinks>" . $xmlfiledata . "</settingsLinks>\n";
-                        // @codingStandardsIgnoreLine break;
-                    default:
-                        // @codingStandardsIgnoreLine debugging(__FUNCTION__ . ":" . __LINE__ . ": Ignore $zefilename", DEBUG_WORDIMPORT);
                 }
             }
             // Get the next file in the Zip package.
@@ -195,32 +220,30 @@ class wordconverter {
         }  // End while loop.
         zip_close($zipres);
 
-        // Close the merged XML file.
-        $wordmldata .= "</pass1Container>";
-
-        // Set common parameters for both XSLT transformations.
-        $parameters = array (
-            'moodle_language' => current_language(),
-            'moodle_textdirection' => (right_to_left()) ? 'rtl' : 'ltr',
-            'heading1stylelevel' => $this->heading1styleoffset,
-            'imagehandling' => $this->imagehandling, // Are images embedded or referenced.
-            'debug_flag' => '1'
-        );
-
-        // Pass 1 - convert WordML into linear XHTML.
-        $xsltoutput = $this->convert($wordmldata, $this->word2xmlstylesheet1, $parameters);
-
-        // Pass 2 - tidy up linear XHTML.
-        $xsltoutput = $this->convert($xsltoutput, $this->word2xmlstylesheet2, $parameters);
-        // Remove 'mml:' prefix from child MathML element and attributes for compatibility with MathJax.
-        $xsltoutput = $this->clean_mathml_namespaces($xsltoutput);
-
-        // Keep the converted XHTML file for debugging if developer debugging enabled.
-        if (DEBUG_WORDIMPORT == DEBUG_DEVELOPER and debugging(null, DEBUG_DEVELOPER)) {
-            $tempxhtmlfilename = $CFG->tempdir . DIRECTORY_SEPARATOR . basename($filename, ".tmp") . ".xhtml";
-            file_put_contents($tempxhtmlfilename, $xsltoutput);
+        // Preprocess the document links and images to rename any re-formatted GIF images to be PNGs instead.
+        // Fixing filenames in the document links is the simplest solution for this issue.
+        if (count($gifimagefilenames) > 0) {
+            $documentlinks = str_replace($gifimagefilenames, $pngimagefilenames, $documentlinks);
+            $imagestring = str_replace($gifimagefilenames, $pngimagefilenames, $imagestring);
+            $imagestring = str_replace("image/gif", "image/png", $imagestring);
         }
 
+        // Add Base64 images section and close the merged XML file.
+        $wordmldata .= $documentlinks . "<imagesContainer>\n" . $imagestring . "</imagesContainer>\n";
+        $wordmldata .= "</pass1Container>";
+
+        // Pass 1 - convert WordML into linear XHTML.
+        $xsltoutput = $this->xsltransform($wordmldata, $this->word2xmlstylesheet1);
+
+        // Pass 2 - tidy up linear XHTML.
+        $xsltoutput = $this->xsltransform($xsltoutput, $this->word2xmlstylesheet2);
+
+        // Remove extra superfluous markup included in the Word to XHTML conversion.
+        $xsltoutput = str_replace("</strong><strong>", "", $xsltoutput);
+        $xsltoutput = str_replace("</em><em>", "", $xsltoutput);
+        $xsltoutput = str_replace("</u><u>", "", $xsltoutput);
+
+        unlink($filename);
         return $xsltoutput;
     }   // End import function.
 
@@ -232,14 +255,15 @@ class wordconverter {
      *
      * @param string $xhtmldata XHTML content from a book, book chapter, question bank category, glossary, etc.
      * @param string $module Where it is called from: book, glossary, lesson or question
+     * @param string $moodlelabels User-readable text strings that may be included in the output file
+     * @param string $imagehandling Embedded or encoded image data
      * @return string Word-compatible XHTML text
      */
-    public function export(string $xhtmldata, string $module = 'book') {
-        global $CFG, $USER, $COURSE, $OUTPUT;
+    public function export(string $xhtmldata, string $module, string $moodlelabels, string $imagehandling = 'embedded') {
 
         // Check the HTML template exists.
         if (!file_exists($this->wordfiletemplate)) {
-            echo $OUTPUT->notification(get_string('stylesheetunavailable', 'booktool_wordimport', $this->wordfiletemplate));
+            throw new \moodle_exception(get_string('stylesheetunavailable', 'booktool_wordimport', $this->wordfiletemplate));
             return false;
         }
 
@@ -251,27 +275,21 @@ class wordconverter {
 
         // Set parameters for XSLT transformation. Note that we cannot use $arguments though.
         $parameters = array (
-            'course_id' => $COURSE->id,
-            'course_name' => $COURSE->fullname,
-            'author_name' => $USER->firstname . ' ' . $USER->lastname,
-            'moodle_country' => $USER->country,
-            'moodle_language' => current_language(),
-            'moodle_textdirection' => (right_to_left()) ? 'rtl' : 'ltr',
-            'moodle_release' => $CFG->release,
-            'moodle_url' => $CFG->wwwroot . "/",
-            'moodle_username' => $USER->username,
-            'moodle_module' => $module,
-            'debug_flag' => debugging('', DEBUG_WORDIMPORT),
-            'transformationfailed' => get_string('transformationfailed', 'booktool_wordimport', $this->exportstylesheet)
+            'pluginname' => $module,
+            'exportimagehandling' => $imagehandling // Embedded or appended images.
         );
 
-        // Assemble the book contents and the HTML template to a single XML file for easier XSLT processing.
+        // Append the Moodle text labels with the local ones for error and warning messages.
+        $moodlelabels = str_ireplace('</moodlelabels>', $this->get_text_labels() . "\n</moodlelabels>", $moodlelabels);
+
+        // Assemble the book contents, the HTML template and Moodle text labels to a single XML file for easier XSLT processing.
         $xhtmloutput = "<container>\n<container><html xmlns='http://www.w3.org/1999/xhtml'><body>" .
-                $cleancontent . "</body></html></container>\n<htmltemplate>\n" .
-                file_get_contents($this->wordfiletemplate) . "\n</htmltemplate>\n</container>";
+                $cleancontent . "</body></html></container>\n" .
+                "<htmltemplate>\n" . file_get_contents($this->wordfiletemplate) . "\n</htmltemplate>\n" .
+                $moodlelabels . "</container>";
 
         // Do Pass 2 XSLT transformation (Pass 1 must be done in separate convert() call if necessary).
-        $xsltoutput = $this->convert($xhtmloutput, $this->exportstylesheet, $parameters);
+        $xsltoutput = $this->xsltransform($xhtmloutput, $this->exportstylesheet, $parameters);
         $xsltoutput = $this->clean_comments($xsltoutput);
         $xsltoutput = $this->clean_xmldecl($xsltoutput);
 
@@ -279,38 +297,177 @@ class wordconverter {
     }   // End export function.
 
     /**
-     * Get images and write them as base64 inside the HTML content
+     * Split HTML into multiple sections based on headings
      *
-     * A string containing the HTML with embedded base64 images is returned
+     * The HTML content must have been created by mapping Heading 1 styles in Word into h3 elements in the HTML.
+     *
+     * @param string $htmlcontent HTML from a single Word file
+     * @param ZipArchive $zipfile Zip file to insert HTML sections into
+     * @param bool $splitonsubheadings Split on Heading 2 (h4) as well as Heading 1 (h3) styles/elements
+     * @param bool $verbose Display extra progress messages
+     * @return void
+     */
+    public function split_html(string $htmlcontent, ZipArchive $zipfile, bool $splitonsubheadings, bool $verbose = false) {
+
+        // Split the single HTML file into multiple chapters based on h3 elements.
+        $h3matches = null;
+        $chaptermatches = null;
+        $htmlelement = '<html xmlns="http://www.w3.org/1999/xhtml" ' .
+            'xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math">';
+        // Grab title and contents of each 'Heading 1' section, which is mapped to h3.
+        $chaptermatches = preg_split('#<h3>.*</h3>#isU', $htmlcontent);
+        $langmatches = array();
+        preg_match('#<meta name="moodleLanguage" content="(.*)"/>#i', $htmlcontent, $langmatches);
+        preg_match_all('#<h3>(.*)</h3>#i', $htmlcontent, $h3matches);
+
+        // If no h3 elements are present, treat the whole file as a single chapter.
+        if (count($chaptermatches) == 1) {
+            $zipfile->addFromString("index.htm", $htmlcontent);
+        }
+
+        // Create a separate HTML file in the Zip file for each section of content.
+        for ($i = 1; $i < count($chaptermatches); $i++) {
+            // Remove any tags from heading, as it prevents proper import of the chapter title.
+            $chaptitle = strip_tags($h3matches[1][$i - 1]);
+            $chapcontent = $chaptermatches[$i];
+            $chapfilename = sprintf("index%02d.htm", $i);
+
+            // Remove the closing HTML markup from the last section.
+            if ($i == (count($chaptermatches) - 1)) {
+                $chapcontent = substr($chapcontent, 0, strpos($chapcontent, "</div></body>"));
+            }
+
+            if ($splitonsubheadings) {
+                // Save each subsection as a separate HTML file with a '_sub.htm' suffix.
+                $h4matches = null;
+                $subchaptermatches = null;
+                // Grab title and contents of each subsection.
+                preg_match_all('#<h4>(.*)</h4>#i', $chapcontent, $h4matches);
+                $subchaptermatches = preg_split('#<h4>.*</h4>#isU', $chapcontent);
+
+                // First save the initial chapter content.
+                $chapcontent = $subchaptermatches[0];
+                $chapfilename = sprintf("index%02d_00.htm", $i);
+                $htmlfilecontent = $htmlelement . "<head><title>{$chaptitle}</title>" . $langmatches[0] . "</head>" .
+                    "<body>{$chapcontent}</body></html>";
+                $zipfile->addFromString($chapfilename, $htmlfilecontent);
+
+                // Save each subsection to a separate file.
+                for ($j = 1; $j < count($subchaptermatches); $j++) {
+                    $subchaptitle = strip_tags($h4matches[1][$j - 1]);
+                    $subchapcontent = $subchaptermatches[$j];
+                    $subsectionfilename = sprintf("index%02d_%02d_sub.htm", $i, $j);
+                    $htmlfilecontent = $htmlelement . "<head><title>{$subchaptitle}</title>" . $langmatches[0] . "</head>" .
+                        "<body>{$subchapcontent}</body></html>";
+                    $zipfile->addFromString($subsectionfilename, $htmlfilecontent);
+                }
+            } else {
+                // Save each section as a HTML file.
+                $htmlfilecontent = $htmlelement . "<head><title>{$chaptitle}</title>" . $langmatches[0] . "</head>" .
+                    "<body>{$chapcontent}</body></html>";
+                $zipfile->addFromString($chapfilename, $htmlfilecontent);
+            }
+        }
+        $zipfile->close();
+    }
+
+    /**
+     * Store the Zip file in the temporary file storage area
+     *
+     * @param string $zipfilename Name of temporary Zip file
+     * @param ZipArchive $zipfile Zip file to insert HTML sections into
+     * @param context_module $context
+     * @return file_info Stored Zip file information
+     */
+    public function store_html(string $zipfilename, ZipArchive $zipfile, \context_module $context) {
+
+        // Create a record for the file store.
+        $fs = get_file_storage();
+        $zipfilerecord = array(
+            'contextid' => $context->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => 0,
+            'filepath' => "/",
+            'filename' => basename($zipfilename)
+            );
+        // Copy the temporary Zip file into the store, and then delete it.
+        $zipfile = $fs->create_file_from_pathname($zipfilerecord, $zipfilename);
+        return $zipfile;
+    }
+
+    /**
+     * Store images in a Zip file
+     *
+     * @param string $zipfilename Name and location of Zip file to create
+     * @param array $images Array of image data
+     * @return \ZipArchive Stored Zip file information
+     */
+    public function zip_images(string $zipfilename, array $images) {
+        // Create a temporary Zip file.
+        $zipfile = new \ZipArchive();
+        if (!($zipfile->open($zipfilename, ZipArchive::CREATE))) {
+            // Cannot open zip file.
+            throw new \moodle_exception('cannotopenzip', 'error');
+        }
+
+        // Add any images to the Zip file.
+        if (count($images) > 0) {
+            foreach ($images as $imagename => $imagedata) {
+                $zipfile->addFromString($imagename, $imagedata);
+            }
+        }
+        return $zipfile;
+    }
+
+    /**
+     * Get images and write them as base64 inside the HTML content for Word export
+     *
+     * A string containing the HTML with embedded base64 images is returned.
+     * If the images are in GIF format, convert them to PNG for Word compatibility.
      *
      * @param string $contextid the context ID
-     * @param string $filearea filearea: chapter or intro
-     * @param string $chapterid the chapter ID (optional)
+     * @param string $component File component: book, question, glossary, lesson
+     * @param string $filearea File area within component
+     * @param array $giffilenames array to store GIF image file names
+     * @param string $chapterid the chapter or page ID (optional)
      * @return string the modified HTML with embedded images
      */
-    public function base64_images($contextid, $filearea, $chapterid = null) {
+    public function base64_images(string $contextid, string $component, string $filearea, $chapterid = null, array &$giffilenames) {
         // Get the list of files embedded in the book or chapter.
         // Note that this will break on images in the Book Intro section.
         $imagestring = '';
         $fs = get_file_storage();
         if ($filearea == 'intro') {
-            $files = $fs->get_area_files($contextid, 'mod_book', $filearea);
+            $files = $fs->get_area_files($contextid, $component, $filearea);
         } else {
-            $files = $fs->get_area_files($contextid, 'mod_book', $filearea, $chapterid);
+            $files = $fs->get_area_files($contextid, $component, $filearea, $chapterid);
         }
+
+        // Keep a count of the GIF images that need to be converted to PNG for Word compatibility.
+        $i = 0;
         foreach ($files as $fileinfo) {
             // Process image files, converting them into Base64 encoding.
-            debugging(__FUNCTION__ . ": $filearea file: " . $fileinfo->get_filename(), DEBUG_WORDIMPORT);
             $fileext = strtolower(pathinfo($fileinfo->get_filename(), PATHINFO_EXTENSION));
             if ($fileext == 'png' or $fileext == 'jpg' or $fileext == 'jpeg' or $fileext == 'gif') {
                 $filename = $fileinfo->get_filename();
                 $filetype = ($fileext == 'jpg') ? 'jpeg' : $fileext;
                 $fileitemid = $fileinfo->get_itemid();
                 $filepath = $fileinfo->get_filepath();
-                $filedata = $fs->get_file($contextid, 'mod_book', $filearea, $fileitemid, $filepath, $filename);
-
+                $filedata = $fs->get_file($contextid, $component, $filearea, $fileitemid, $filepath, $filename);
+                $imagedata = $filedata->get_content();
                 if (!$filedata === false) {
-                    $base64data = base64_encode($filedata->get_content());
+                    // Convert GIF images to PNG for Word compatibility.
+                    if ($fileext == 'gif') {
+                        list ($pngfilename, $imagedata) = $this->giftopng($imagedata, $filename);
+                        $giffilenames['png'][$i] = basename($filename, '.gif') . "-" . $pngfilename;
+                        $giffilenames['gif'][$i] = $filename;
+                        // Change image1.gif to image1XXX.png", where XXX is taken from the temporary PNG file name.
+                        $filetype = 'png';
+                        $filename = $giffilenames['png'][$i];
+                        $i++;
+                    }
+                    $base64data = base64_encode($imagedata);
                     $filedata = 'data:image/' . $filetype . ';base64,' . $base64data;
                     // Embed the image name and data into the HTML.
                     $imagestring .= '<img title="' . $filename . '" src="' . $filedata . '"/>';
@@ -322,6 +479,48 @@ class wordconverter {
             return '<div class="ImageFile">' . $imagestring . '</div>';
         }
         return '';
+    }
+
+    /**
+     * Convert a GIF image to PNG format for Word compatibility
+     *
+     * A string containing the PNG instead of GIF image data is returned
+     *
+     * @param string $imagedata GIF image data
+     * @param string $filename GIF image filename to use in case of errors
+     * @return array containing the temporary PNG file name and the PNG image data
+     */
+    private function giftopng(string $imagedata, string $filename) {
+        global $CFG;
+
+        // Store the GIF data in a temporary file.
+        if (($giffile = tempnam($CFG->tempdir, "gif")) === false) {
+            return false;
+        }
+        file_put_contents($giffile, $imagedata);
+        if (($gdimagedata = imagecreatefromgif($giffile)) === false) {
+            unlink($giffile);
+            return false;
+        }
+
+        // Convert the GIF data into a temporary PNG file.
+        if (($pngfile = tempnam($CFG->tempdir, "png")) === false) {
+            unlink($giffile);
+            return false;
+        }
+        if ((imagepng($gdimagedata, $pngfile)) === true) {
+            $imagedata = file_get_contents($pngfile);
+        } else { // Use invalid.png if the image function failed.
+            $imagedata = base64_decode("iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEUAAAD/QDz/QDz/QDz/QDz/QDz/" .
+                "QDz/QDz/QDz/QDz/QDz/QDz/QDz/QDz/QDz/QDxu8djTAAAAD3RSTlMAECAwQFBgcICPn6+/z+/qVnWSAAAAcklEQVQIHQXBzQ3BAAA" .
+                "G0Nf4KeLQBawgFpDYgBG6QTuCARyMYAMjcHQVA0gs4CI9ED7vUbSUFWZvjleKe7ajfCuDZ7omvw3LJLmhOCbvCsbJHpRJC+bJA5y65g" .
+                "P91MOsMO1ozljXDF+4wI7eASYLfWD1B++9KixJ5BTzAAAAAElFTkSuQmCC");
+        }
+        unlink($giffile);
+        unlink($pngfile);
+        // Change "pngXXXX.tmp" into "XXXX.png" for appending to the original GIF file name.
+        $pngfilename = substr(basename($pngfile, ".tmp"), 3) . ".png";
+        return array($pngfilename, $imagedata);
     }
 
     /**
@@ -358,10 +557,10 @@ class wordconverter {
      * @param string $xhtmldata complete XHTML text including head element metadata
      * @return string XHTML text inside <body> element
      */
-    public function body_only($xhtmldata) {
-        $matches = null;
-        if (preg_match('/<body[^>]*>(.+)<\/body>/is', $xhtmldata, $matches)) {
-            return $matches[1];
+    public function htmlbody($xhtmldata) {
+        ;
+        if (($htmlbody = toolbook_importhtml_parse_body($xhtmldata)) != '') {
+            return $htmlbody;
         } else {
             return $xhtmldata;
         }
@@ -374,7 +573,7 @@ class wordconverter {
      * @return void
      */
     public function set_imagehandling(string $imagehandling) {
-        $this->imagehandling = $imagehandling;
+        $this->xsltparameters['imagehandling'] = $imagehandling;
     }
 
     /**
@@ -384,7 +583,7 @@ class wordconverter {
      * @return void
      */
     public function set_heading1styleoffset(int $headinglevel) {
-        $this->heading1styleoffset = $headinglevel;
+        $this->xsltparameters['heading1stylelevel'] = $headinglevel;
     }
 
     /**
@@ -398,24 +597,21 @@ class wordconverter {
 
         // Release-independent list of all strings required in the XSLT stylesheets for labels etc.
         $textstrings = array(
-            'booktool_wordimport' => array('transformationfailed')
+            'booktool_wordimport' => array('transformationfailed', 'embeddedimageswarning', 'encodedimageswarning')
             );
 
-        $expout = "<moodlelabels>\n";
+        $expout = "";
         foreach ($textstrings as $typegroup => $grouparray) {
             foreach ($grouparray as $stringid) {
                 $namestring = $typegroup . '_' . $stringid;
                 // Clean up question type explanation, in case the default text has been overridden on the site.
-                $cleantext = get_string($stringid, $typegroup);
+                $cleantext = $this->convert_to_xml(get_string($stringid, $typegroup));
                 $expout .= '<data name="' . $namestring . '"><value>' . $cleantext . "</value></data>\n";
             }
         }
-        $expout .= "</moodlelabels>";
         $expout = str_replace("<br>", "<br/>", $expout);
-
         return $expout;
     }
-
 
     /**
      * Clean HTML content
@@ -425,7 +621,7 @@ class wordconverter {
      * @param string $cdatastring XHTML from inside a CDATA_SECTION in a question text element
      * @return string
      */
-    private function clean_html_text(string $cdatastring) {
+    public function clean_html_text(string $cdatastring) {
 
         // Escape double minuses, which cause XSLT processing to fail.
         $cdatastring = str_replace("--", "WORDIMPORTMinusMinus", $cdatastring);
@@ -468,6 +664,38 @@ class wordconverter {
     }
 
     /**
+     * Convert content into well-formed XML
+     *
+     * A string containing clean XHTML is returned
+     *
+     * @param string $cdatastring XHTML from questions or help text
+     * @return string well-formed XML
+     */
+    public function convert_to_xml($cdatastring) {
+
+        // Escape double minuses, which cause XSLT processing to fail.
+        $cdatastring = str_replace("--", "WordTableMinusMinus", $cdatastring);
+
+        // Wrap the string in a HTML wrapper, load it into a new DOM document as HTML, but save as XML.
+        $doc = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $doc->loadHTML('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><html><body>' . $cdatastring . '</body></html>');
+        $doc->getElementsByTagName('html')->item(0)->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+        $xml = $doc->saveXML();
+
+        $bodystart = stripos($xml, '<body>') + strlen('<body>');
+        $bodylength = strripos($xml, '</body>') - $bodystart;
+
+        if ($bodystart || $bodylength) {
+            $cleanxhtml = substr($xml, $bodystart, $bodylength);
+        } else {
+            $cleanxhtml = $cdatastring;
+        }
+
+        return $cleanxhtml;
+    }
+
+    /**
      * Strip out any superfluous default namespaces inserted by XSLT processing
      *
      * @param string $xhtmldata data processed by XSLT
@@ -496,15 +724,30 @@ class wordconverter {
     }
 
     /**
+     * Write contents to a file for debugging purposes
+     *
+     * @param string $content text to save
+     * @param string $prefix file prefix
+     * @return void
+     */
+    public function debug_write(string $content, string $prefix) {
+        global $CFG;
+
+        if (debugging(null, DEBUG_DEVELOPER)) {
+            $tempxmlfilename = tempnam($CFG->tempdir, $prefix);
+            file_put_contents($tempxmlfilename, $content);
+        }
+    }
+
+    /**
      * Delete temporary files if debugging disabled
      *
      * @param string $filename name of file to be deleted
      * @return void
      */
-    private function debug_unlink($filename) {
-        if (DEBUG_WORDIMPORT !== DEBUG_DEVELOPER or !(debugging(null, DEBUG_DEVELOPER))) {
+    public function debug_unlink($filename) {
+        if (!debugging(null, DEBUG_DEVELOPER)) { // Not Parenthesis debugging(null, DEBUG_DEVELOPER) parenthesis.
             unlink($filename);
         }
     }
-
 }

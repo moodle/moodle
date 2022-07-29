@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy information for administration tool upload enrolment methods- no user data stored.
+ * Privacy information for book tool Word import - no user data stored.
  *
  * @package     booktool_wordimport
  * @copyright   2018 Eoin Campbell
@@ -42,7 +42,7 @@ class provider implements \core_privacy\local\metadata\null_provider {
      *
      * @return  string
      */
-    public static function _get_reason() {
+    public static function get_reason() : string {
         return 'privacy:metadata';
     }
 }

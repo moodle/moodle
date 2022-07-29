@@ -35,13 +35,15 @@ use \booktool_wordimport\wordconverter;
 /**
  * Import HTML pages from a Word file
  *
- * @param string $wordfilename Word file
- * @param stdClass $book
+ * @param string $wordfilename Word file to be imported
+ * @param stdClass $book Book being imported into
  * @param context_module $context
- * @param bool $splitonsubheadings
+ * @param bool $splitonsubheadings Split book into chapters and subchapters
+ * @param bool $verbose Print extra progress messages
  * @return void
  */
-function booktool_wordimport_import($wordfilename, $book, $context, $splitonsubheadings) {
+function booktool_wordimport_import(string $wordfilename, stdClass $book, context_module $context,
+                bool $splitonsubheadings = false, bool $verbose = false) {
     global $CFG;
 
     // Convert the Word file content into XHTML and an array of images.
@@ -49,91 +51,13 @@ function booktool_wordimport_import($wordfilename, $book, $context, $splitonsubh
     $word2xml = new wordconverter();
     $htmlcontent = $word2xml->import($wordfilename, $imagesforzipping);
 
-    // Create a temporary Zip file to store the HTML and images for feeding to import function.
-    $zipfilename = $CFG->tempdir . DIRECTORY_SEPARATOR . basename($wordfilename, ".tmp") . ".zip";
-    $zipfile = new ZipArchive;
-    if (!($zipfile->open($zipfilename, ZipArchive::CREATE))) {
-        // Cannot open zip file.
-        throw new \moodle_exception('cannotopenzip', 'error');
-    }
-
-    // Add any images to the Zip file.
-    if (count($imagesforzipping) > 0) {
-        foreach ($imagesforzipping as $imagename => $imagedata) {
-            $zipfile->addFromString($imagename, $imagedata);
-        }
-    }
-
-    // Split the single HTML file into multiple chapters based on h1 elements.
-    $h1matches = null;
-    $chaptermatches = null;
-    // Grab title and contents of each 'Heading 1' section, which is mapped to h3.
-    $chaptermatches = preg_split('#<h3>.*</h3>#isU', $htmlcontent);
-    preg_match_all('#<h3>(.*)</h3>#i', $htmlcontent, $h1matches);
-    // @codingStandardsIgnoreLine debugging(__FUNCTION__ . ":" . __LINE__ . ": n chapters = " . count($chaptermatches), DEBUG_WORDIMPORT);
-
-    // If no h3 elements are present, treat the whole file as a single chapter.
-    if (count($chaptermatches) == 1) {
-        $zipfile->addFromString("index.htm", $htmlcontent);
-    }
-
-    // Create a separate HTML file in the Zip file for each section of content.
-    for ($i = 1; $i < count($chaptermatches); $i++) {
-        // Remove any tags from heading, as it prevents proper import of the chapter title.
-        $chaptitle = strip_tags($h1matches[1][$i - 1]);
-        // @codingStandardsIgnoreLine debugging(__FUNCTION__ . ":" . __LINE__ . ": chaptitle = " . $chaptitle, DEBUG_WORDIMPORT);
-        $chapcontent = $chaptermatches[$i];
-        $chapfilename = sprintf("index%02d.htm", $i);
-
-        // Remove the closing HTML markup from the last section.
-        if ($i == (count($chaptermatches) - 1)) {
-            $chapcontent = substr($chapcontent, 0, strpos($chapcontent, "</div></body>"));
-        }
-
-        if ($splitonsubheadings) {
-            // Save each subsection as a separate HTML file with a '_sub.htm' suffix.
-            $h2matches = null;
-            $subchaptermatches = null;
-            // Grab title and contents of each subsection.
-            preg_match_all('#<h4>(.*)</h4>#i', $chapcontent, $h2matches);
-            $subchaptermatches = preg_split('#<h4>.*</h4>#isU', $chapcontent);
-
-            // First save the initial chapter content.
-            $chapcontent = $subchaptermatches[0];
-            $chapfilename = sprintf("index%02d_00.htm", $i);
-            $htmlfilecontent = "<html><head><title>{$chaptitle}</title></head>" .
-                "<body>{$chapcontent}</body></html>";
-            $zipfile->addFromString($chapfilename, $htmlfilecontent);
-
-            // Save each subsection to a separate file.
-            for ($j = 1; $j < count($subchaptermatches); $j++) {
-                $subchaptitle = strip_tags($h2matches[1][$j - 1]);
-                $subchapcontent = $subchaptermatches[$j];
-                $subsectionfilename = sprintf("index%02d_%02d_sub.htm", $i, $j);
-                $htmlfilecontent = "<html><head><title>{$subchaptitle}</title></head>" .
-                    "<body>{$subchapcontent}</body></html>";
-                $zipfile->addFromString($subsectionfilename, $htmlfilecontent);
-            }
-        } else {
-            // Save each section as a HTML file.
-            $htmlfilecontent = "<html><head><title>{$chaptitle}</title></head>" .
-                "<body>{$chapcontent}</body></html>";
-            $zipfile->addFromString($chapfilename, $htmlfilecontent);
-        }
-    }
-    $zipfile->close();
-
-    // Add the Zip file to the file storage area.
-    $fs = get_file_storage();
-    $zipfilerecord = array(
-        'contextid' => $context->id,
-        'component' => 'user',
-        'filearea' => 'draft',
-        'itemid' => $book->revision,
-        'filepath' => "/",
-        'filename' => basename($zipfilename)
-        );
-    $zipfile = $fs->create_file_from_pathname($zipfilerecord, $zipfilename);
+    // Store images in a Zip file and split the HTML file into sections.
+    // Add the sections to the Zip file and store it in Moodles' file storage area.
+    $zipfilename = tempnam($CFG->tempdir, "zip");
+    $zipfile = $word2xml->zip_images($zipfilename, $imagesforzipping);
+    $word2xml->split_html($htmlcontent, $zipfile, $splitonsubheadings, $verbose);
+    $zipfile = $word2xml->store_html($zipfilename, $zipfile, $context);
+    unlink($zipfilename);
 
     // Call the core HTML import function to really import the content.
     // Argument 2, value 2 = Each HTML file represents 1 chapter.
@@ -141,7 +65,7 @@ function booktool_wordimport_import($wordfilename, $book, $context, $splitonsubh
 }
 
 /**
- * Export HTML pages to a Word file
+ * Export Book chapters to a Word file
  *
  * @param stdClass $book Book to export
  * @param context_module $context Current course context
@@ -149,7 +73,7 @@ function booktool_wordimport_import($wordfilename, $book, $context, $splitonsubh
  * @return string
  */
 function booktool_wordimport_export(stdClass $book, context_module $context, int $chapterid = 0) {
-    global $CFG, $DB, $USER;
+    global $DB;
 
     // Export a single chapter or the whole book into Word.
     $allchapters = array();
@@ -159,10 +83,15 @@ function booktool_wordimport_export(stdClass $book, context_module $context, int
         $allchapters = $DB->get_records('book_chapters', array('bookid' => $book->id), 'pagenum');
         // Read the title and introduction into a string, embedding images.
         $booktext .= '<p class="MsoTitle">' . $book->name . "</p>\n";
-        $booktext .= '<div class="chapter" id="intro">' . $book->intro;
-        // This is probably wrong.
-        $booktext .= $word2xml->base64_images($context->id, 'intro');
-        $booktext .= "</div>\n";
+        // Grab the images, convert any GIFs to PNG, and return the list of converted images.
+        $giffilenames = array();
+        $imagestring = $word2xml->base64_images($context->id, 'mod_book', 'intro', null, $giffilenames);
+
+        $introcontent = $book->intro;
+        if (count($giffilenames) > 0) {
+            $introcontent = str_replace($giffilenames['gif'], $giffilenames['png'], $introcontent);
+        }
+        $booktext .= '<div class="chapter" id="intro">' . $introcontent . $imagestring . "</div>\n";
     } else {
         $allchapters[0] = $DB->get_record('book_chapters', array('bookid' => $book->id, 'id' => $chapterid), '*', MUST_EXIST);
     }
@@ -178,14 +107,23 @@ function booktool_wordimport_export(stdClass $book, context_module $context, int
             } else if ($chapter->subchapter and !strpos($chapter->content, "<h2")) {
                 $booktext .= "<h2>" . $chapter->title . "</h2>\n";
             }
-            $booktext .= $chapter->content;
-            $booktext .= $word2xml->base64_images($context->id, 'chapter', $chapter->id);
-            $booktext .= "</div>\n";
+
+            // Grab the images, convert any GIFs to PNG, and return the list of converted images.
+            $giffilenames = array();
+            $imagestring = $word2xml->base64_images($context->id, 'mod_book', 'chapter', $chapter->id, $giffilenames);
+
+            // Grab the chapter text content, and update any GIF image names to the new PNG name.
+            $chaptercontent = $chapter->content;
+            if (count($giffilenames) > 0) {
+                $chaptercontent = str_replace($giffilenames['gif'], $giffilenames['png'], $chaptercontent);
+            }
+            $booktext .= $chaptercontent . $imagestring . "</div>\n";
         }
     }
+    $moodlelabels = "<moodlelabels></moodlelabels>\n";
 
-    // Convert the XHTML string into a Word-compatible version, with images converted to Base64 data.
-    $booktext = $word2xml->export($booktext, 'book');
+    // Convert the XHTML string into a Word-compatible version, with image data embedded in Word 365-compatible way.
+    $booktext = $word2xml->export($booktext, 'booktool_wordimport', $moodlelabels, 'embedded');
     return $booktext;
 }
 

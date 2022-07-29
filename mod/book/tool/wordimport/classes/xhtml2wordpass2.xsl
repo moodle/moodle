@@ -39,9 +39,11 @@
 <xsl:param name="moodle_language" select="'en'"/> <!-- Interface language for user -->
 <xsl:param name="moodle_textdirection"/> <!-- Current text direction ltr or rtl -->
 <xsl:param name="moodle_release"/>  <!-- 1.9 or 2.x -->
+<xsl:param name="moodle_release_date"/>  <!-- Used for version-specific comparisons -->
 <xsl:param name="moodle_url"/>      <!-- Location of Moodle site -->
-<xsl:param name="moodle_module"/> <!-- Book, Glossary, Lesson or Question? -->
+<xsl:param name="pluginname"/> <!-- Book, Glossary, Lesson or Question? -->
 <xsl:param name="heading1stylelevel" select="'3'"/>      <!-- H1 heading level in Word -->
+<xsl:param name="exportimagehandling" select="'embedded'"/>      <!-- Images embedded or appended -->
 <xsl:param name="debug_flag" select="'0'"/>      <!-- Debugging on or off -->
 
 <xsl:variable name="ucase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
@@ -53,18 +55,20 @@
 <xsl:output method="xml" version="1.0" omit-xml-declaration="yes" encoding="ISO-8859-1" indent="yes" />
 
 <!-- Text labels from translated Moodle files -->
-<xsl:variable name="moodle_labels" select="/container/moodlelabels"/>
+<xsl:variable name="moodle_labels" select="//moodlelabels"/>
 <!-- Word-compatible XHTML template into which the XHTML contents are inserted -->
 <xsl:variable name="htmltemplate" select="/container/htmltemplate" />
 <!-- Throw away the extra wrapper elements, now we've read them into variables -->
-<xsl:template match="/container/moodlelabels"/>
+<xsl:template match="//moodlelabels"/>
 <xsl:template match="/container/htmltemplate"/>
 
 <!-- Read in the input XML into a variable, and handle unusual situation where the inner container element doesn't have an explicit namespace declaration  -->
 <xsl:variable name="data" select="/container/*[local-name() = 'container']" />
-<xsl:variable name="contains_embedded_images" select="count($data//htm:img[contains(@src, $base64data_string)])"/>
+<xsl:variable name="contains_embedded_images" select="count($data//htm:img)"/>
 
 <xsl:variable name="transformationfailed" select="$moodle_labels/data[@name = 'booktool_wordimport_transformationfailed']"/>
+<xsl:variable name="encodedimageswarning" select="$moodle_labels/data[@name = 'booktool_wordimport_encodedimageswarning']"/>
+<xsl:variable name="embeddedimageswarning" select="$moodle_labels/data[@name = 'booktool_wordimport_embeddedimageswarning']"/>
 
 <!-- Get the locale if present as part of the language definition (e.g. zh_cn) -->
 <xsl:variable name="moodle_language_locale">
@@ -143,8 +147,20 @@
     <xsl:comment>Author name: <xsl:value-of select="$author_name"/></xsl:comment>
     <xsl:comment>Author ID: <xsl:value-of select="$author_id"/></xsl:comment>
     <xsl:comment>Author username: <xsl:value-of select="$moodle_username"/></xsl:comment>
+    <xsl:comment>Image handling: <xsl:value-of select="$exportimagehandling"/></xsl:comment>
     <xsl:comment>Contains embedded images: <xsl:value-of select="$contains_embedded_images"/></xsl:comment>
 
+    <xsl:if test="$contains_embedded_images != 0">
+        <xsl:text>&#x0a;</xsl:text>
+        <p class="Warning">
+            <xsl:choose>
+            <xsl:when test="$exportimagehandling = 'imagetable'"><xsl:value-of disable-output-escaping="yes" select="$encodedimageswarning"/></xsl:when>
+            <xsl:otherwise><xsl:value-of disable-output-escaping="yes" select="$embeddedimageswarning"/></xsl:otherwise>
+            </xsl:choose>
+            </p>
+        <xsl:text>&#x0a;</xsl:text>
+
+    </xsl:if>
     <!-- Handle the text content -->
     <xsl:apply-templates select="$data/htm:html/htm:body/*"/>
     <!-- Check that the content has been successfully read in: if the title is empty, include an error message in the Word file rather than leave it blank -->
@@ -153,7 +169,7 @@
     </xsl:if>
 
     <!-- Add a table for images, if present -->
-    <xsl:if test="$contains_embedded_images != 0">
+    <xsl:if test="$contains_embedded_images != 0 and $exportimagehandling = 'imagetable'">
         <table border="1" style="display:none;"><thead>
         <tr><td colspan="7"><p class="Cell">&#160;</p></td><td><p class="QFType">Images</p></td></tr>
         <tr><td><p class="TableHead">ID</p></td><td><p class="TableHead">Name</p></td><td><p class="TableHead">Width</p></td><td><p class="TableHead">Height</p></td><td><p class="TableHead">Alt</p></td><td><p class="TableHead">Format</p></td><td><p class="TableHead">Encoding</p></td><td><p class="TableHead">Data</p></td></tr>
@@ -179,6 +195,11 @@
 <!-- Set the title property (File->Properties... Summary tab) -->
 <xsl:template match="processing-instruction('replace')[.='insert-title']">
     <!-- Place category info and course name into document title -->
+    <xsl:call-template name="debugComment">
+        <xsl:with-param name="comment_text" select="concat('htm:title = ', $data/htm:html/htm:head/htm:title)"/>
+        <xsl:with-param name="inline" select="'true'"/>
+        <xsl:with-param name="condition" select="$debug_flag &gt;= '1'"/>
+    </xsl:call-template>
     <xsl:value-of select="$data/htm:html/htm:head/htm:title"/>
 </xsl:template>
 
@@ -191,20 +212,23 @@
     <!-- Include custom properties used by Moodle2Word Startup Word template and re-import code -->
     <o:DC.Type>
         <xsl:choose>
-        <xsl:when test="$moodle_module = 'book'">
+        <xsl:when test="$pluginname = 'booktool_wordimport'">
             <xsl:value-of select="'Book'"/>
         </xsl:when>
-        <xsl:when test="$moodle_module = 'glossary'">
+        <xsl:when test="$pluginname = 'local_glossary_wordimport'">
             <xsl:value-of select="'Glossary'"/>
         </xsl:when>
-        <xsl:when test="$moodle_module = 'lesson'">
+        <xsl:when test="$pluginname = 'local_lesson_wordimport'">
             <xsl:value-of select="'Lesson'"/>
         </xsl:when>
         <xsl:otherwise>
-            <xsl:value-of select="Question"/>
+            <xsl:value-of select="'Question'"/>
         </xsl:otherwise>
         </xsl:choose>
     </o:DC.Type>
+    <xsl:if test="$pluginname = 'qformat_wordtable'">
+        <o:moodleQuestionSeqNum><xsl:value-of select="count($data//htm:table) + 1"/></o:moodleQuestionSeqNum>
+    </xsl:if>
     <o:moodleCourseID><xsl:value-of select="$course_id"/></o:moodleCourseID>
     <o:moodleImages><xsl:value-of select="$contains_embedded_images"/></o:moodleImages>
     <o:moodleLanguage><xsl:value-of select="$moodle_language"/></o:moodleLanguage>
@@ -246,57 +270,31 @@
 </xsl:template>
 
 <xsl:template match="processing-instruction('replace')[.='insert-styletemplate']">
-    <!-- Set the language and text direction of the Word Normal style -->
-
+    <!-- Set the default Word template used in the file (part 1) -->
     <xsl:choose>
-    <xsl:when test="$moodle_module = 'book'">
-        <xsl:value-of select="'moodleBook.dotx'"/>
-    </xsl:when>
-    <xsl:when test="$moodle_module = 'glossary'">
-        <xsl:value-of select="'moodleGlossary.dotx'"/>
-    </xsl:when>
-    <xsl:when test="$moodle_module = 'lesson'">
-        <xsl:value-of select="'moodleLesson.dotx'"/>
+    <xsl:when test="$pluginname = 'qformat_wordtable' or $pluginname = 'local_glossary_wordimport'">
+        <xsl:text>moodleQuestion.dotx</xsl:text>
     </xsl:when>
     <xsl:otherwise>
-        <xsl:value-of select="moodleQuestion.dotx"/>
+        <xsl:text>moodleBook.dotx</xsl:text>
     </xsl:otherwise>
     </xsl:choose>
 </xsl:template>
 
 <xsl:template match="processing-instruction('replace')[.='insert-styletemplateelement']">
-    <!-- Set the language and text direction of the Word Normal style -->
-
-    <xsl:choose>
-    <xsl:when test="$moodle_module = 'book'">
-        <xsl:element name="w:AttachedTemplate">
-            <xsl:attribute name="HRef">
-                <xsl:value-of select="'moodleBook.dotx'"/>
-            </xsl:attribute>
-        </xsl:element>
-    </xsl:when>
-    <xsl:when test="$moodle_module = 'glossary'">
-        <xsl:element name="w:AttachedTemplate">
-            <xsl:attribute name="HRef">
-                <xsl:value-of select="'moodleGlossary.dotx'"/>
-            </xsl:attribute>
-        </xsl:element>
-    </xsl:when>
-    <xsl:when test="$moodle_module = 'lesson'">
-        <xsl:element name="w:AttachedTemplate">
-            <xsl:attribute name="HRef">
-                <xsl:value-of select="'moodleLesson.dotx'"/>
-            </xsl:attribute>
-        </xsl:element>
-    </xsl:when>
-    <xsl:otherwise>
-        <xsl:element name="w:AttachedTemplate">
-            <xsl:attribute name="HRef">
-                <xsl:value-of select="'moodleQuestion.dotx'"/>
-            </xsl:attribute>
-        </xsl:element>
-    </xsl:otherwise>
-    </xsl:choose>
+    <!-- Set the default Word template used in the file (part 2) -->
+    <xsl:element name="w:AttachedTemplate">
+        <xsl:attribute name="HRef">
+            <xsl:choose>
+            <xsl:when test="$pluginname = 'qformat_wordtable' or $pluginname = 'local_glossary_wordimport'">
+                <xsl:text>moodleQuestion.dotx</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>moodleBook.dotx</xsl:text>
+            </xsl:otherwise>
+            </xsl:choose>
+        </xsl:attribute>
+    </xsl:element>
 </xsl:template>
 
 <!-- Pass h1 heading through, as it is the chapter title -->
@@ -405,36 +403,36 @@
     </table>
 </xsl:template>
 
-<!-- Column heading -->
-<xsl:template match="htm:th|htm:td[ancestor::htm:thead]">
+<!-- Table column headings -->
+<xsl:template match="htm:th[ancestor::htm:thead]">
     <xsl:value-of select="'&#x0a;'"/>
     <th>
+        <xsl:call-template name="copyAttributes"/>
         <p class="TableHead">
-            <xsl:call-template name="copyAttributes"/>
             <xsl:apply-templates/>
         </p>
     </th>
 </xsl:template>
 
-<!-- Row heading -->
+<!-- Table row headings -->
 <xsl:template match="htm:th[ancestor::htm:tbody]">
     <xsl:value-of select="'&#x0a;'"/>
     <th>
+        <xsl:call-template name="copyAttributes"/>
         <p class="TableRowHead">
-            <xsl:call-template name="copyAttributes"/>
             <xsl:apply-templates/>
         </p>
     </th>
 </xsl:template>
 
-<!-- Look for table body cells with just text, and wrap them in a Body Text paragraph style -->
+<!-- Look for table body cells with just text, and wrap them in a Cell paragraph style -->
 <xsl:template match="htm:td">
     <xsl:value-of select="'&#x0a;'"/> <!-- Start each cell on a new line to simplify PHPUnit tests -->
     <td>
         <xsl:call-template name="copyAttributes"/>
         <xsl:choose>
         <xsl:when test="count(*) = 0">
-            <p class="MsoBodyText">
+            <p class="Cell">
                 <xsl:apply-templates/>
             </p>
         </xsl:when>
@@ -526,7 +524,7 @@
 </xsl:template>
 
 
-<!-- Any paragraphs without an explicit class are set to have the Body Text style -->
+<!-- Convert the blockquote element into the Block Quote style for each contained p element -->
 <xsl:template match="htm:blockquote">
     <xsl:apply-templates mode="blockQuote"/>
 </xsl:template>
@@ -554,7 +552,6 @@
         <xsl:with-param name="condition" select="$debug_flag = '2'"/>
     </xsl:call-template>
 
-
     <xsl:choose>
     <xsl:when test="contains(htm:img/@src, $pluginfiles_string) or contains(htm:img/@src, $embeddedimagedata_string)">
         <!-- Place the hyperlink anchor inside the bookmark anchor -->
@@ -569,7 +566,7 @@
     </xsl:choose>
 </xsl:template>
 
-<!-- Handle a hyperlinked img element -->
+<!-- Handle a hyperlinked img element, when image is linked to -->
 <xsl:template match="htm:img" mode="linkedImage">
     <xsl:variable name="chapid">
         <xsl:choose>
@@ -603,40 +600,22 @@
 
 <!-- Handle the img element within the main component text by replacing it with a bookmark as a placeholder -->
 <xsl:template match="htm:img" priority="2">
-    <xsl:variable name="chapid">
-        <xsl:choose>
-        <xsl:when test="ancestor::htm:div[@class = 'chapter']/@id != ''">
-            <xsl:number value="ancestor::htm:div[@class = 'chapter']/@id" format="00001"/>
-        </xsl:when>
-        <xsl:otherwise>
-            <xsl:text>00001</xsl:text>
-        </xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="imgnum">
-        <xsl:choose>
-        <xsl:when test="@id and @id != ''">
-            <xsl:value-of select="@id"/>
-        </xsl:when>
-        <xsl:otherwise>
-            <xsl:number value="count(preceding::htm:img) + 1" format="0001"/>
-        </xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>
-
-    <xsl:variable name="bookmark_name" select="concat('MQIMAGE_Q', $chapid, '_IID', $imgnum)"/>
-
     <xsl:choose>
-    <xsl:when test="contains(@src, $pluginfiles_string) or contains(@src, $embeddedimagedata_string)">
-        <!-- Generated from Moodle 2.x, so images are handled neatly, using a reference to the data -->
-        <!-- If imported from Word2MQXML, images are base64-encoded into the @src attribute -->
-        <a name="{$bookmark_name}" style="color:red;">x</a>
-    </xsl:when>
-    <xsl:otherwise>
-        <img>
-            <xsl:call-template name="copyAttributes"/>
-        </img>
-    </xsl:otherwise>
+        <xsl:when test="contains(@src, $pluginfiles_string)">
+            <!-- Referenced images must be embedded as base64 data for Word 2020. -->
+            <!-- Get the image data from the table passed in-->
+            <xsl:variable name="image_id" select="substring-after(@src, $pluginfiles_string)"/>
+            <xsl:variable name="imagedata" select="ancestor::htm:div[@class = 'chapter']/htm:div[@class='ImageFile']/htm:img[@title = $image_id]/@src"/>
+
+            <img src="{$imagedata}">
+                <xsl:call-template name="copyImgAttributes"/>
+            </img>
+        </xsl:when>
+        <xsl:otherwise>
+            <img>
+                <xsl:call-template name="copyAttributes"/>
+            </img>
+        </xsl:otherwise>
     </xsl:choose>
 </xsl:template>
 
@@ -754,7 +733,6 @@
         </xsl:choose>
     </xsl:variable>
 
-    <!--<xsl:variable name="image_name" select="ancestor::htm:div[@class='chapter']//htm:div[@class = 'ImageFile' and htm:img/@title = $image_file_name]/htm:img/@title"/>-->
     <xsl:variable name="image_data" select="ancestor::htm:div[@class='chapter']//htm:div[@class = 'ImageFile']/htm:img/@src"/>
     <xsl:variable name="image_format" select="substring-before(substring-after('data:image/', $image_data), ';')"/>
     <xsl:variable name="image_encoding" select="substring-after(substring-before(',', $image_data), ';')"/>
@@ -846,6 +824,14 @@
 <xsl:template name="copyAttributes">
     <xsl:for-each select="@*">
         <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
+    </xsl:for-each>
+</xsl:template>
+
+<xsl:template name="copyImgAttributes">
+    <xsl:for-each select="@*">
+        <xsl:if test="name() != 'src'">
+        <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
+        </xsl:if>
     </xsl:for-each>
 </xsl:template>
 

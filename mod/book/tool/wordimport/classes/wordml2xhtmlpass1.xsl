@@ -2470,9 +2470,21 @@
             </xsl:if>
         </xsl:variable>
         <xsl:choose>
-            <xsl:when test="$rStyleId='' and $styleMod=''">
-                <xsl:call-template name="DisplayRContent"/>
 
+            <xsl:when test="$rStyleId='' and $styleMod=''">
+                <!-- Handle language changes -->
+                <xsl:choose>
+                    <xsl:when test="w:rPr/w:lang/@w:val != ''">
+                        <span>
+                            <xsl:attribute name="lang"><xsl:value-of select="substring-before(w:rPr/w:lang/@w:val, '-')"/></xsl:attribute>
+                            <!-- <xsl:attribute name="class">multilang</xsl:attribute> -->
+                            <xsl:call-template name="DisplayRContent"/>
+                        </span>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="DisplayRContent"/>
+                    </xsl:otherwise>
+                </xsl:choose>
                 <xsl:if test="$pr.listSuff = $prListSuff_space"><xsl:text> </xsl:text></xsl:if>
             </xsl:when>
             <xsl:otherwise>
@@ -2486,6 +2498,11 @@
                         <xsl:attribute name="style"><xsl:value-of select="$styleMod"/></xsl:attribute>
                 </xsl:if>
 
+                <!-- Handle language changes -->
+                <xsl:if test="w:rPr/w:lang/@w:val != ''">
+                        <xsl:attribute name="lang"><xsl:value-of select="substring-before(w:rPr/w:lang/@w:val, '-')"/></xsl:attribute>
+                        <!-- <xsl:attribute name="class">multilang</xsl:attribute> -->
+                </xsl:if>
 
 
                                 <xsl:choose>
@@ -3680,7 +3697,7 @@
         <xsl:variable name="after" select="count($meInContext/following-sibling::*[descendant-or-self::*[name()='w:tc' and (count(ancestor::w:tbl)=$tblCount)]])" />
 
         <xsl:if test="not($vmerge and not($vmerge/@w:val))">
-            <xsl:value-of select="$debug_newline"/>
+            <!-- <xsl:value-of select="$debug_newline"/> -->
             <xsl:element name="{$table_celltype}">
 
         <xsl:if test="$sTblStyleName/@w:styleId != ''">
@@ -4628,67 +4645,6 @@
                         <meta name="{@name}" content="{normalize-space(.)}"/>
                     </xsl:if>
                 </xsl:for-each>
-
-                <!-- Image data in Base64, generated from files in word/media folder of .docx file -->
-                <xsl:if test="$debug_flag &gt; 1">
-                    <xsl:value-of select="$debug_newline"/>
-                    <imagesContainer>
-                        <xsl:for-each select="$imagesContainer/*">
-                            <xsl:value-of select="$debug_newline"/>
-                            <file filename="{@filename}" mime-type="{@mime-type}">
-                                <xsl:value-of select="substring(normalize-space(.), 1, 100)"/>
-                            </file>
-                        </xsl:for-each>
-                        <xsl:value-of select="$debug_newline"/>
-                    </imagesContainer>
-                    <xsl:value-of select="$debug_newline"/>
-                </xsl:if>
-                <!-- Image relationships from file word/_rels/document.xml.rels -->
-                <xsl:if test="$debug_flag &gt; 1">
-                    <xsl:value-of select="$debug_newline"/>
-                    <imageLinks>
-                        <xsl:for-each select="$imageLinks">
-                            <xsl:value-of select="$debug_newline"/>
-                            <Relationship Id="{@Id}" Target="{@Target}" TargetMode="{@TargetMode}"/>
-                        </xsl:for-each>
-                        <xsl:value-of select="$debug_newline"/>
-                    </imageLinks>
-                </xsl:if>
-                <!-- Style mapping language-specific names to language-independent ids from file word/styles.xml -->
-                <xsl:if test="$debug_flag &gt; 1">
-                    <xsl:value-of select="$debug_newline"/>
-                    <styleMap>
-                        <xsl:comment><xsl:value-of select="concat('style count: ', count($nsStyles[name() = 'w:style']))"/></xsl:comment>
-                        <xsl:for-each select="$nsStyles">
-                            <xsl:value-of select="$debug_newline"/>
-                            <style styleId="{@w:styleId}" styleName="{w:name/@w:val}" customStyle="{@w:customStyle}"/>
-                        </xsl:for-each>
-                        <xsl:value-of select="$debug_newline"/>
-                    </styleMap>
-                </xsl:if>
-                <!-- Hyperlink mapping from file word/_rels/document.xml.rels -->
-                <xsl:if test="$debug_flag &gt; 1">
-                    <xsl:value-of select="$debug_newline"/>
-                    <hyperLinks>
-                        <xsl:comment><xsl:value-of select="concat('link count: ', count($hyperLinks))"/></xsl:comment>
-                        <xsl:for-each select="$hyperLinks">
-                            <xsl:value-of select="$debug_newline"/>
-                            <xsl:element name="Relationship">
-                                <xsl:attribute name="Id">
-                                    <xsl:value-of select="@Id"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="Target">
-                                    <xsl:value-of select="@Target"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="TargetMode">
-                                    <xsl:value-of select="@TargetMode"/>
-                                </xsl:attribute>
-                            </xsl:element>
-                        </xsl:for-each>
-                        <xsl:value-of select="$debug_newline"/>
-                    </hyperLinks>
-                    <xsl:value-of select="$debug_newline"/>
-                </xsl:if>
             </head>
             <body>
                 <div class="level1">
@@ -4786,7 +4742,7 @@
             </xsl:when>
             <xsl:when test="$img_rid != '' and $imagehandling = 'referenced'">
                 <!-- Use the image file name in the @src attribute -->
-                <xsl:value-of select="substring-after($img_filename, '/')"/>
+                <xsl:value-of select="substring-after($img_filename, 'media/')"/>
             </xsl:when>
             <xsl:when test="$img_rid != ''">
                 <!-- Dereference the reference ID field to get the file name, and map to the src attribute -->
@@ -4799,12 +4755,24 @@
             </xsl:choose>
         </xsl:variable>
 
+        <!-- Get the image name without any 'media/' prefix, if present -->
+        <xsl:variable name="img_basefilename">
+            <xsl:choose>
+                <xsl:when test="contains($img_filename, 'media/')">
+                    <xsl:value-of select="substring-after($img_filename, '/')"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$img_filename"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
         <!-- Handle case where image might be hyperlinked -->
         <xsl:choose>
         <xsl:when test="$img_hyperlink != ''">
             <!-- The image is linked -->
             <a href="{$img_hyperlink}">
-                <img src="{$img_src}" id="{$img_id}" alt="{$img_alt}" longdesc="{$img_longdesc}">
+                <img src="{$img_src}" id="{$img_id}" name="{$img_basefilename}" alt="{$img_alt}" longdesc="{$img_longdesc}">
                     <xsl:if test="$img_width != ''">
                         <xsl:attribute name="width">
                             <xsl:value-of select="$img_width"/>
@@ -4818,7 +4786,7 @@
         </xsl:when>
         <xsl:otherwise>
             <!-- The image is not linked -->
-            <img src="{$img_src}" id="{$img_id}" alt="{$img_alt}" longdesc="{$img_longdesc}">
+            <img src="{$img_src}" id="{$img_id}" name="{$img_basefilename}" alt="{$img_alt}" longdesc="{$img_longdesc}">
                 <xsl:if test="$img_width != ''">
                     <xsl:attribute name="width">
                         <xsl:value-of select="$img_width"/>

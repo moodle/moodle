@@ -32,10 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_qformat_wordtable_upgrade($oldversion) {
 
-    debugging(__FUNCTION__ . "(oldversion = $oldversion)", DEBUG_DEVELOPER);
-
     if (get_config('converter_url', 'qformat_wordtable') !== false) {
-        debugging(__FUNCTION__ . ":" . __LINE__ . ": Deleting unused configuration values", DEBUG_DEVELOPER);
         unset_config('converter_url', 'qformat_wordtable');
         unset_config('registration_url', 'qformat_wordtable');
         unset_config('username', 'qformat_wordtable');

@@ -36,9 +36,10 @@
     <xsl:preserve-space elements="x:span x:p"/>
 
     <xsl:param name="debug_flag" select="0"/>
+    <xsl:param name="pluginname"/>
     <xsl:param name="imagehandling"/>
     <xsl:param name="course_id"/>
-    <xsl:param name="heading1stylelevel"/> <!-- Should be 1 for Books and WordTable, 3 for Atto -->
+    <xsl:param name="heading1stylelevel"/> <!-- Should be 1 for Glossaries and Questions, 3 for Books, Lessons and Atto -->
 
     <!-- Figure out an offset by which to demote headings e.g. Heading 1  to H2, etc. -->
     <!-- Use a system default, or a document-specific override -->
@@ -63,6 +64,13 @@
 
     <xsl:template match="/">
         <xsl:apply-templates/>
+        <!--
+        <xsl:call-template name="debugComment">
+            <xsl:with-param name="comment_text" select="concat('pluginname = ', $pluginname, '; imagehandling = ', $imagehandling, '; heading1stylelevel = ', $heading1stylelevel)"/>
+            <xsl:with-param name="inline" select="'true'"/>
+            <xsl:with-param name="condition" select="$debug_flag &gt;= 1"/>
+        </xsl:call-template>
+        -->
     </xsl:template>
 
     <!-- Start: Identity transformation -->
@@ -90,6 +98,9 @@
 
      <!-- Delete superfluous spans that wrap the complete para content -->
     <xsl:template match="x:span[count(.//node()[self::x:span]) = count(.//node())]" priority="2"/>
+
+     <!-- Delete dangerous script element that can contain JavaScript -->
+    <xsl:template match="x:script"/>
 
     <!-- Out go horizontal bars -->
     <xsl:template match="x:p[@class='horizontalbar']"/>
@@ -290,11 +301,53 @@
             </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-
         <xsl:variable name="heading_tag" select="concat('h', $computed_heading_level)"/>
-        <xsl:element name="{$heading_tag}">
-            <xsl:apply-templates select="node()"/>
-        </xsl:element>
+        <!--
+        <xsl:call-template name="debugComment">
+            <xsl:with-param name="comment_text" select="concat('pluginname = ', $pluginname, '; heading1stylelevel = ', $heading1stylelevel, '; computed_heading_level = ', $computed_heading_level)"/>
+            <xsl:with-param name="inline" select="'true'"/>
+            <xsl:with-param name="condition" select="$debug_flag &gt;= 1"/>
+        </xsl:call-template>
+        -->
+
+        <!-- If importing questions, then the h2 is the question name, and we process the question table into XML here -->
+        <xsl:choose>
+        <xsl:when test="$pluginname = 'qformat_wordtable' and $computed_heading_level = 2">
+            <div class="{concat('level', $computed_heading_level + 1)}">
+                <!-- Emit the heading inside the start of the div -->
+                <xsl:element name="{$heading_tag}">
+                    <xsl:apply-templates select="node()"/>
+                </xsl:element>
+
+                <!-- Grab the next table following, and put it inside the same div, introducing a simple hierarchy to group the question name and body-->
+                <xsl:apply-templates select="following::x:table[contains(@class, 'moodleQuestion')][1]" mode="moodleQuestion"/>
+            </div>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:element name="{$heading_tag}">
+                <xsl:apply-templates select="node()"/>
+            </xsl:element>
+        </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <!-- Handle question tables in moodleQuestion mode, to wrap them inside a div with the previous heading 2 (question name) -->
+    <xsl:template match="x:table[contains(@class, 'moodleQuestion')]" mode="moodleQuestion">
+        <xsl:value-of select="$debug_newline"/>
+        <table class="moodleQuestion">
+            <xsl:apply-templates/>
+        </table>
+    </xsl:template>
+
+    <!-- Handle question tables in normal processing, as they are grabbed by the previous heading 2 style when used in Questions -->
+    <xsl:template match="x:table[contains(@class, 'moodleQuestion')]">
+        <!-- If importing questions to a question bank, ignore these tables, as they've been done already -->
+        <xsl:if test="$pluginname != 'qformat_wordtable'">
+            <xsl:value-of select="$debug_newline"/>
+            <table class="moodleQuestion">
+                <xsl:apply-templates/>
+            </table>
+        </xsl:if>
     </xsl:template>
 
 <!-- Handle simple unnested lists, as long as they use the explicit "List Number" or "List Bullet" styles -->
@@ -621,7 +674,7 @@
 
     <!-- Convert table body cells containing headings into th's -->
     <xsl:template match="x:td[contains(x:p[1]/@class, 'tablerowhead')]">
-        <xsl:value-of select="$debug_newline"/>
+        <!-- <xsl:value-of select="$debug_newline"/> -->
         <th>
             <xsl:apply-templates/>
         </th>
@@ -674,7 +727,7 @@
 
         <!-- Process this paragraph if it has the same class as the last one -->
         <xsl:if test="starts-with(@class, $paraClass)">
-            <xsl:value-of select="$debug_newline"/>
+            <!-- <xsl:value-of select="$debug_newline"/> -->
             <p>
                 <xsl:for-each select="@*">
                     <xsl:if test="name() != 'class'">

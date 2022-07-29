@@ -1,6 +1,12 @@
 # Change log
 
 Date          Version   Comment
+2022/04/05    3.9.4     Support file validation on import for Moodle 3.11.6 and higher.
+2022/04/04    3.9.3     Support "Import questions" command in Lesson activity (thanks to drobayo for the code).
+2021/08/31    3.9.2     Improve support for Lesson question imports.
+2021/08/23    3.9.1     Fix dependency on Book Word converter.
+2021/08/21    3.9.0     Use Book Word import wordconverter class for import/export of Word files.
+2020/12/08    3.7.1     Add support for letter-groups in Select Missing Word questions.
 2020/07/10    3.6.3     Stop leaving temporary files lying around.
 2020/07/10    3.6.2     Add support for Office MML m:deg element, which caused an error.
 2020/06/18    3.6.1     Add support for 'No online text' responses and accepted file types.

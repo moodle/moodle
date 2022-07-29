@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code fragment to define the version of wordtable for Moodle 2.x
+ * Word table question import format
  *
  * This fragment is called by moodle_needs_upgrading() and /admin/index.php
  *
  * @package    qformat_wordtable
- * @copyright  2010-2016 Eoin Campbell
+ * @copyright  2010-2021 Eoin Campbell
  * @author     Eoin Campbell
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later (5)
  **/
@@ -28,9 +28,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020071101;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2022040500;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->maturity  = MATURITY_STABLE;  // Maturity level.
 $plugin->component  = 'qformat_wordtable';  // Plugin name.
-$plugin->release  = '3.6.3 (Build: 2020071101)';  // The current module release in human-readable form (x.y).
-$plugin->requires = 2011070100.03;  // Requires Moodle 2.1 or later.
-$plugin->cron     = 0;           // Period for cron to check this module (secs).
+$plugin->release  = '3.9.4 (Build: 2022040500)';  // The current module release in human-readable form (x.y).
+$plugin->requires = 2018051700;  // Requires Moodle 3.5 or later.
+$plugin->dependencies = array('booktool_wordimport' => 2021083100);
