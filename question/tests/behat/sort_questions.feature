@@ -22,9 +22,7 @@ Feature: The questions in the question bank can be sorted in various ways
       | Test questions   | essay     | A question 1 name | admin    | Question 1 text | numidnum</a |
       | Test questions   | essay     | B question 2 name | teacher1 | Question 2 text |             |
       | Test questions   | numerical | C question 3 name | teacher1 | Question 3 text | numidnum</c |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
 
   @javascript
   Scenario: The questions are sorted by type by default

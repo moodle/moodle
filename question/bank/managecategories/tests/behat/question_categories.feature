@@ -70,7 +70,7 @@ Feature: A teacher can put questions in categories in the question bank
 
   @_file_upload
   Scenario: Multi answer questions with their child questions can be moved to another category when the current category is deleted
-    When I am on the "Course 1" "core_question > course question categories" page
+    When I am on the "Course 1" "core_question > course question import" page
     And I set the field "id_format_xml" to "1"
     And I upload "question/format/xml/tests/fixtures/multianswer.xml" file to "Import" filemanager
     And I press "id_submitbutton"

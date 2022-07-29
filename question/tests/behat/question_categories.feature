@@ -28,7 +28,7 @@ Feature: A teacher can move questions between categories in the question bank
 
   @javascript
   Scenario: Move a question between categories via the question page
-    When I navigate to "Question bank" in current page administration
+    When I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
     And I set the field "Select a category" to "Used category"
     And I click on "Test question to be moved" "checkbox" in the "Test question to be moved" "table_row"
     And I click on "With selected" "button"

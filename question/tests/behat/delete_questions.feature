@@ -20,9 +20,7 @@ Feature: A teacher can delete questions in the question bank
     And the following "questions" exist:
       | questioncategory | qtype | name                        | questiontext                  |
       | Test questions   | essay | Test question to be deleted | Write about whatever you want |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
 
   @javascript
   Scenario: A question not used anywhere can really be deleted
@@ -52,8 +50,7 @@ Feature: A teacher can delete questions in the question bank
     And quiz "Test quiz" contains the following questions:
       | question                         | page | requireprevious |
       | Test used question to be deleted | 1    | 0               |
-    When I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+    When I am on the "Course 1" "core_question > course question bank" page
     And I choose "Delete" action for "Test used question to be deleted" in the question bank
     And I press "Delete"
     Then I should not see "Test used question to be deleted"
