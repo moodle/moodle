@@ -25,7 +25,7 @@
 define('AJAX_SCRIPT', true);
 
 require(__DIR__ . '/../../../../../config.php');
-require(__DIR__ . '/lib.php');
+require_once(__DIR__ . '/lib.php');
 
 $itemid = required_param('itemid', PARAM_INT);
 $contextid = required_param('ctx_id', PARAM_INT);
@@ -59,7 +59,6 @@ if (!$tmpfilename = $file->copy_content_to_temp()) {
 
 // Convert the Word file into XHTML, store any images, and delete the temporary HTML file once we're finished.
 $htmltext = atto_wordimport_convert_to_xhtml($tmpfilename, $usercontext->id, $itemid);
-unlink($tmpfilename);
 
 if (!$htmltext) {
     // Error processing upload file.
