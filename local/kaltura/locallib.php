@@ -543,7 +543,7 @@ function local_kaltura_lti1p3_get_launch_data($module, $withblocks, $editor = nu
 	$requestparams['custom_moodle_plugin_version'] = local_kaltura_get_config()->version;
 
 	$requestparams = array_merge($requestparams, lti_build_custom_parameters(null, $instance, (object)$module, $allparams, $customstr,
-		$module->instructorcustomparameters, null));
+		$instance->instructorcustomparameters, null));
 
 	$launchcontainer = lti_get_launch_container($instance, $typeconfig);
 	$returnurlparams = array('course' => $course->id,
