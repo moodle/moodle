@@ -20,9 +20,7 @@ Feature: A teacher can preview questions in the question bank
     And the following "questions" exist:
       | questioncategory | qtype     | name                          |
       | Test questions   | numerical | Test question to be previewed |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank > Questions" in current page administration
+    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
     When I choose "Preview" action for "Test question to be previewed" in the question bank
     And I switch to "questionpreview" window
 
