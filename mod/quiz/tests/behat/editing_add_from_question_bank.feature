@@ -26,7 +26,7 @@ Feature: Adding questions to a quiz from the question bank
       | Test questions   | essay     | question 02 name | teacher1 | Question 02 text | qidnum   |
 
   Scenario: The questions can be filtered by tag
-    Given I am on the "question 01 name" "core_question > edit" page logged in as teacher1
+    Given I am on the "question 01 name" "core_question > edit" page logged in as "teacher1"
     And I set the following fields to these values:
       | Tags | foo |
     And I press "id_submitbutton"
