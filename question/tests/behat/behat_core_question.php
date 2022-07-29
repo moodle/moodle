@@ -71,6 +71,10 @@ class behat_core_question extends behat_question_base {
                 return new moodle_url('/question/edit.php',
                         ['courseid' => $this->get_course_id($identifier)]);
 
+            case 'course question categories':
+                return new moodle_url('/question/bank/managecategories/category.php',
+                        ['courseid' => $this->get_course_id($identifier)]);
+
             case 'course question import':
                 return new moodle_url('/question/bank/importquestions/import.php',
                         ['courseid' => $this->get_course_id($identifier)]);
