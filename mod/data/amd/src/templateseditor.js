@@ -41,6 +41,10 @@ const selectors = {
 const registerEventListeners = (d, mode) => {
     const toggleTemplateEditor = document.querySelector(selectors.toggleTemplateEditor);
 
+    if (!toggleTemplateEditor) {
+        return;
+    }
+
     toggleTemplateEditor.addEventListener('click', async(event) => {
         event.preventDefault();
         // Whether the event action attempts to enable or disable the template editor.

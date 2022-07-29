@@ -52,6 +52,15 @@ class adhoc_test_task extends \core\task\adhoc_task {
     }
 
     /**
+     * Get task name
+     *
+     * @return string
+     */
+    public function get_name() {
+        return 'Test adhoc class';
+    }
+
+    /**
      * Execute.
      */
     public function execute() {

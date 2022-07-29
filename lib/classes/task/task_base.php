@@ -63,6 +63,13 @@ abstract class task_base {
     private $pid = null;
 
     /**
+     * Get a descriptive name for the task (shown to admins)
+     *
+     * @return string
+     */
+    abstract public function get_name();
+
+    /**
      * Set the current lock for this task.
      * @param \core\lock\lock $lock
      */

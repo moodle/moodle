@@ -3,8 +3,12 @@
   <library>
     <location>phpml</location>
     <name>PHP-ML</name>
-    <license>MIT</license>
+    <description>Machine learning library used to generate data for the Analytics system.</description>
     <version>0.9.0</version>
-    <licenseversion></licenseversion>
+    <license>MIT</license>
+    <repository>https://gitlab.com/php-ai/php-ml</repository>
+    <copyrights>
+      <copyright>2016-2020 Arkadiusz Kondas arkadiusz.kondas[at]gmail</copyright>
+    </copyrights>
   </library>
 </libraries>

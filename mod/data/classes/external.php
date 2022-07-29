@@ -33,6 +33,7 @@ use mod_data\external\database_summary_exporter;
 use mod_data\external\record_exporter;
 use mod_data\external\content_exporter;
 use mod_data\external\field_exporter;
+use mod_data\manager;
 
 /**
  * Database module external functions
@@ -206,11 +207,13 @@ class mod_data_external extends external_api {
         list($database, $course, $cm, $context) = self::validate_database($params['databaseid']);
 
         // Call the data/lib API.
-        data_view($database, $course, $cm, $context);
+        $manager = manager::create_from_coursemodule($cm);
+        $manager->set_module_viewed($course);
 
-        $result = array();
-        $result['status'] = true;
-        $result['warnings'] = $warnings;
+        $result = [
+            'status' => true,
+            'warnings' => $warnings,
+        ];
         return $result;
     }
 
@@ -404,6 +407,8 @@ class mod_data_external extends external_api {
             }
         }
 
+        $manager = manager::create_from_instance($database);
+
         list($records, $maxcount, $totalcount, $page, $nowperpage, $sort, $mode) =
             data_search_entries($database, $cm, $context, 'list', $groupid, '', $params['sort'], $params['order'],
                 $params['page'], $params['perpage']);
@@ -446,11 +451,8 @@ class mod_data_external extends external_api {
 
         // Check if we should return the list rendered.
         if ($params['returncontents']) {
-            ob_start();
-            // The return parameter stops the execution after the first record.
-            data_print_template('listtemplate', $records, $database, '', $page, false);
-            $result['listviewcontents'] = ob_get_contents();
-            ob_end_clean();
+            $parser = $manager->get_template('listtemplate', ['page' => $page]);
+            $result['listviewcontents'] = $parser->parse_entries($records);
         }
 
         return $result;
@@ -515,6 +517,8 @@ class mod_data_external extends external_api {
         $canmanageentries = has_capability('mod/data:manageentries', $context);
         data_require_time_available($database, $canmanageentries);
 
+        $manager = manager::create_from_instance($database);
+
         if ($record->groupid != 0) {
             if (!groups_group_visible($record->groupid, $course, $cm)) {
                 throw new moodle_exception('notingroup');
@@ -543,7 +547,8 @@ class mod_data_external extends external_api {
         // Check if we should return the entry rendered.
         if ($params['returncontents']) {
             $records = [$record];
-            $result['entryviewcontents'] = data_print_template('singletemplate', $records, $database, '', 0, true);
+            $parser = $manager->get_template('singletemplate');
+            $result['entryviewcontents'] = $parser->parse_entries($records);
         }
 
         return $result;
@@ -714,6 +719,8 @@ class mod_data_external extends external_api {
         // Check database is open in time.
         data_require_time_available($database, null, $context);
 
+        $manager = manager::create_from_instance($database);
+
         if (!empty($params['groupid'])) {
             $groupid = $params['groupid'];
             // Determine is the group is visible to user.
@@ -779,11 +786,8 @@ class mod_data_external extends external_api {
 
         // Check if we should return the list rendered.
         if ($params['returncontents']) {
-            ob_start();
-            // The return parameter stops the execution after the first record.
-            data_print_template('listtemplate', $records, $database, '', $page, false);
-            $result['listviewcontents'] = ob_get_contents();
-            ob_end_clean();
+            $parser = $manager->get_template('listtemplate', ['page' => $page]);
+            $result['listviewcontents'] = $parser->parse_entries($records);
         }
 
         return $result;

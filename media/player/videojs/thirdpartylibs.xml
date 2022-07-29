@@ -3,42 +3,71 @@
     <library>
         <location>amd/src/video-lazy.js</location>
         <name>VideoJS</name>
-        <license>Apache</license>
+        <description>JavaScript library that makes it easier to work with and build on HTML5 video.</description>
         <version>7.17.0</version>
+        <license>Apache</license>
         <licenseversion>2.0</licenseversion>
+        <repository>https://github.com/videojs/video.js</repository>
+        <copyrights>
+            <copyright>Brightcove, Inc</copyright>
+        </copyrights>
+        <customised/>
     </library>
     <library>
         <location>amd/src/Youtube-lazy.js</location>
-        <name>YouTube Playback Technology for Video.js</name>
-        <license>MIT</license>
+        <name>videojs-youtube</name>
+        <description>YouTube Playback Technology for Video.js.</description>
         <version>2.6.1</version>
-        <licenseversion></licenseversion>
+        <license>MIT</license>
+        <repository>https://github.com/videojs/videojs-youtube</repository>
+        <copyrights>
+          <copyright>2014-2015 Benoit Tremblay &lt;trembl.ben@gmail.com&gt;</copyright>
+        </copyrights>
     </library>
     <library>
         <location>videojs</location>
         <name>VideoJS support files</name>
-        <license>Apache</license>
+        <description>JavaScript library that makes it easier to work with and build on HTML5 video</description>
         <version>7.17.0</version>
+        <license>Apache</license>
         <licenseversion>2.0</licenseversion>
+        <repository>https://github.com/videojs/video.js</repository>
+        <copyrights>
+            <copyright>Brightcove, Inc</copyright>
+        </copyrights>
+        <customised/>
     </library>
     <library>
         <location>amd/src/local/ogv/ogv.js</location>
         <name>ogv.js</name>
-        <license>MIT</license>
+        <description>Javascript media decoder and player for Ogg Vorbis/Opus/Theora and WebM VP8/VP9/AV1 video.</description>
         <version>1.8.4</version>
-        <licenseversion></licenseversion>
+        <license>MIT</license>
+        <repository>https://github.com/brion/ogv.js/</repository>
+        <copyrights>
+            <copyright>Brion Vibber</copyright>
+        </copyrights>
     </library>
     <library>
         <location>ogvjs</location>
         <name>ogv.js support files</name>
+        <description>JavaScript media decoder and player for Ogg Vorbis/Opus/Theora and WebM VP8/VP9/AV1 video.</description>
         <license>MIT</license>
         <version>1.8.4</version>
+        <repository>https://github.com/brion/ogv.js/</repository>
+        <copyrights>
+            <copyright>Brion Vibber</copyright>
+        </copyrights>
     </library>
     <library>
         <location>amd/src/videojs-ogvjs-lazy.js</location>
         <name>ogv.js Tech plugin for Video.JS</name>
-        <license>MIT</license>
+        <description>The ogv.js tech plugin for VideoJS</description>
         <version>0.1.2</version>
-        <licenseversion></licenseversion>
+        <license>MIT</license>
+        <repository>https://github.com/HuongNV13/videojs-ogvjs</repository>
+        <copyrights>
+            <copyright>2021 Huong Nguyen huongnv13@gmail.com</copyright>
+        </copyrights>
     </library>
 </libraries>

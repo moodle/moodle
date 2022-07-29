@@ -3,15 +3,20 @@
   <library>
     <location>yui/src/codemirror</location>
     <name>codemirror</name>
-    <license>MIT</license>
+    <description>CodeMirror is a versatile text editor implemented in JavaScript for the browser.</description>
     <version>5.65.0</version>
-    <licenseversion></licenseversion>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/CodeMirror</repository>
   </library>
   <library>
     <location>yui/src/beautify</location>
     <name>jsbeautify</name>
-    <license>MIT</license>
+    <description>Beautify HTML code in Atto.</description>
     <version>1.14.0</version>
-    <licenseversion></licenseversion>
+    <license>MIT</license>
+    <repository>https://github.com/beautify-web/js-beautify</repository>
+    <copyrights>
+      <copyright>2007-2018 Einar Lielmanis, Liam Newman, and contributors.</copyright>
+    </copyrights>
   </library>
 </libraries>

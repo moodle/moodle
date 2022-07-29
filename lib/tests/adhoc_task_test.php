@@ -39,6 +39,26 @@ require_once(__DIR__ . '/fixtures/task_fixtures.php');
 class core_adhoc_task_testcase extends advanced_testcase {
 
     /**
+     * Test getting name of task that implements it's own get_name method
+     *
+     * @covers \core\task\adhoc_task::get_name
+     */
+    public function test_get_name(): void {
+        $task = new \core\task\adhoc_test_task();
+        $this->assertEquals('Test adhoc class', $task->get_name());
+    }
+
+    /**
+     * Test getting name of task that uses the default implementation of get_name
+     *
+     * @covers \core\task\adhoc_task::get_name
+     */
+    public function test_get_name_default(): void {
+        $task = new \mod_fake\task\adhoc_component_task();
+        $this->assertEquals('Adhoc component task', $task->get_name());
+    }
+
+    /**
      * Test basic adhoc task execution.
      */
     public function test_get_next_adhoc_task_now() {

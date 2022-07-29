@@ -3,357 +3,615 @@
   <library>
     <location>adodb</location>
     <name>AdoDB</name>
-    <license>BSD/LGPL</license>
+    <description>Database abstraction library for MySQL, PostgreSQL, MSSQL, Oracle, Interbase, Foxpro, Access, ADO, Sybase, DB2 and ODBC.</description>
     <version>5.22.2</version>
+    <license>BSD/LGPL</license>
     <licenseversion>3-Clause/2.1+</licenseversion>
+    <repository>https://github.com/ADOdb/ADOdb</repository>
+    <copyrights>
+      <copyright>2000-2013 John Lim (jlim#natsoft.com). All rights reserved.</copyright>
+      <copyright>2014 Damien Regad, Mark Newnham and the ADOdb community</copyright>
+    </copyrights>
   </library>
   <library>
     <location>behat/axe</location>
     <name>axe-core</name>
-    <license>MPL</license>
+    <description>Accessibility testing engine for websites and other HTML-based user interfaces.</description>
     <version>4.3.5</version>
+    <license>MPL</license>
     <licenseversion>2.0</licenseversion>
+    <repository>https://github.com/dequelabs/axe-core</repository>
+    <copyrights>
+      <copyright>2005, Jon Papaioannou</copyright>
+    </copyrights>
   </library>
   <library>
     <location>bennu</location>
     <name>Bennu</name>
-    <license>LGPL</license>
+    <description>Bennu is an object-oriented library written in PHP that implements the iCalendar standard (RFC 2445).</description>
     <version>0.1-custom</version>
+    <license>LGPL</license>
     <licenseversion>2.1+</licenseversion>
+    <repository>https://sourceforge.net/projects/bennu/</repository>
+    <copyrights>
+      <copyright>2005, Jon Papaioannou</copyright>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>evalmath</location>
     <name>EvalMath</name>
+    <description>Class to safely evaluate math expressions.</description>
+    <version>1.0.0</version>
     <license>BSD</license>
-    <version></version>
-    <licenseversion></licenseversion>
+    <repository>https://github.com/dbojdo/eval-math</repository>
+    <copyrights>
+      <copyright>Miles Kaufmann</copyright>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>phpspreadsheet</location>
     <name>PhpSpreadsheet</name>
-    <license>MIT</license>
+    <description>Library to read, write and create spreadsheet documents in PHP.</description>
     <version>1.21.0</version>
-    <licenseversion></licenseversion>
+    <license>MIT</license>
+    <repository>https://github.com/PHPOffice/PhpSpreadsheet</repository>
+    <customised/>
   </library>
   <library>
     <location>google</location>
-    <name>Google APIs Client Library</name>
-    <license>Apache</license>
+    <name>Google APIs</name>
+    <description>Library Google APIs Client Library for PHP</description>
     <version>1.1.7</version>
+    <license>Apache</license>
     <licenseversion>2.0</licenseversion>
+    <repository>https://github.com/googleapis/google-api-php-client</repository>
+    <customised/>
   </library>
   <library>
     <location>htmlpurifier</location>
     <name>HTML Purifier</name>
-    <license>LGPL</license>
+    <description>Filters HTML.</description>
     <version>4.13.0</version>
+    <license>LGPL</license>
     <licenseversion>2.1+</licenseversion>
+    <repository>https://github.com/ezyang/htmlpurifier</repository>
   </library>
   <library>
     <location>minify/matthiasmullie-minify</location>
     <name>MatthiasMullie\Minify</name>
-    <license>MIT</license>
+    <description>CSS &amp; JavaScript minifier, in PHP</description>
     <version>1.3.66</version>
-    <licenseversion></licenseversion>
+    <license>MIT</license>
+    <repository>https://github.com/matthiasmullie/minify</repository>
+    <customised/>
   </library>
   <library>
     <location>minify/matthiasmullie-pathconverter</location>
     <name>MatthiasMullie\PathConverter</name>
-    <license>MIT</license>
+    <description>CSS path converter, in PHP</description>
     <version>1.1.3</version>
-    <licenseversion></licenseversion>
+    <license>MIT</license>
+    <repository>https://github.com/matthiasmullie/path-converter</repository>
   </library>
   <library>
     <location>pear/HTML/Common.php</location>
     <name>Pear_HTML_Common</name>
-    <license>PHP</license>
+    <description>Class with many common HTML functions (used by HTML Quickform)</description>
     <version>1.7</version>
+    <license>PHP</license>
     <licenseversion>2.0</licenseversion>
+    <repository>http://pear.php.net/package/HTML_Common</repository>
+    <copyrights>
+      <copyright>2004 Adam Daniel, Bertrand Mansion, Klaus Guenther, Alexey Borzov</copyright>
+    </copyrights>
+    <customised/>
+    <upgradable>false</upgradable>
   </library>
   <library>
     <location>pear/HTML/QuickForm.php</location>
     <name>Pear_HTML_QuickForm.php</name>
-    <license>PHP</license>
+    <description>Class to write forms</description>
     <version>2.0</version>
+    <license>PHP</license>
     <licenseversion>2.0</licenseversion>
+    <repository>https://pear.php.net/package/HTML_Quickform</repository>
+    <copyrights>
+      <copyright>2004 Bertrand Mansion, Adam Daniel, Alexey Borzov</copyright>
+    </copyrights>
+    <customised/>
+    <upgradable>false</upgradable>
   </library>
   <library>
     <location>pear/HTML/QuickForm</location>
     <name>Pear_HTML_QuickForm</name>
-    <license>PHP</license>
+    <description>Class to write forms</description>
     <version>2.0</version>
+    <license>PHP</license>
     <licenseversion>2.0</licenseversion>
+    <repository>https://pear.php.net/package/HTML_Quickform</repository>
+    <copyrights>
+      <copyright>2004 Bertrand Mansion, Adam Daniel, Alexey Borzov</copyright>
+    </copyrights>
+    <customised/>
+    <upgradable>false</upgradable>
   </library>
   <library>
     <location>pear/PEAR.php</location>
     <name>Pear.php</name>
-    <license>PHP</license>
+    <description>Base class for other PEAR classes.</description>
     <version>1.4.5</version>
+    <license>PHP</license>
     <licenseversion>3.0</licenseversion>
+    <repository>https://pear.php.net/package/PEAR</repository>
+    <copyrights>
+      <copyright>2001-2006 The PHP Group. All rights reserved</copyright>
+    </copyrights>
+    <customised/>
+    <upgradable>false</upgradable>
   </library>
   <library>
     <location>phpmailer</location>
     <name>PHPMailer</name>
-    <license>LGPL</license>
+    <description>Class for sending email using either sendmail, PHP mail(), or SMTP. Methods are based upon the standard AspEmail(tm) classes.</description>
     <version>6.5.3</version>
+    <license>LGPL</license>
     <licenseversion>2.1</licenseversion>
+    <repository>https://github.com/PHPMailer/PHPMailer</repository>
+    <copyrights>
+      <copyright>2003 Brent R. Matzelle (bmatzelle AT yahoo DOT com)</copyright>
+    </copyrights>
   </library>
   <library>
     <location>simplepie</location>
     <name>SimplePie</name>
-    <license>BSD</license>
+    <description>Simple Pie helps with blogs.</description>
     <version>1.5.6</version>
-    <licenseversion></licenseversion>
+    <license>BSD</license>
+    <repository>https://github.com/simplepie/simplepie</repository>
   </library>
   <library>
     <location>tcpdf</location>
     <name>TCPDF</name>
-    <license>LGPL</license>
+    <description>Class to generate PDF files</description>
     <version>6.4.1</version>
+    <license>LGPL</license>
     <licenseversion>3.0-only</licenseversion>
+    <repository>https://github.com/tecnickcom/TCPDF</repository>
+    <copyrights>
+      <copyright>Olivier PLATHEY</copyright>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>yuilib</location>
     <name>YUI</name>
-    <license>BSD</license>
+    <description>The Yahoo! User Interface Library is a set of utilities and controls, in JavaScript, for building richly interactive web applications using techniques such as DOM scripting, DHTML and AJAX. The YUI Library also includes several core CSS resources.Set of user-interface components using AJAX, DHTML etc. We use it for all our AJAX-related stuff.</description>
     <version>3.17.2</version>
-    <licenseversion></licenseversion>
+    <license>BSD</license>
+    <repository>https://github.com/yui/yui3</repository>
+    <copyrights>
+      <copyright>2006, Yahoo! Inc.</copyright>
+    </copyrights>
+    <upgradable>false</upgradable>
   </library>
   <library>
     <location>yuilib/gallery</location>
     <name>YUI Gallery</name>
     <license>BSD</license>
     <version>gallery-2013.10.02-20-26</version>
-    <licenseversion></licenseversion>
+    <description>The Gallery is a collection of modules that have been developed by the YUI community to enhance the capabilities of YUI.</description>
+    <repository>https://github.com/yui/yui3-gallery</repository>
+    <copyrights>
+      <copyright>2006, Yahoo! Inc.</copyright>
+    </copyrights>
+    <upgradable>false</upgradable>
   </library>
   <library>
     <location>jquery</location>
     <name>jQuery</name>
-    <license>MIT</license>
+    <description>jQuery is a fast, small, and feature-rich JavaScript library widely used on moodle.</description>
     <version>3.6.0</version>
-    <licenseversion></licenseversion>
+    <license>MIT</license>
+    <repository>https://github.com/jquery/jquery</repository>
+    <copyrights>
+      <copyright>2016 The jQuery Foundation</copyright>
+    </copyrights>
   </library>
   <library>
     <location>jquery</location>
     <name>jQuery UI</name>
-    <license>MIT</license>
+    <description>jQuery UI is a set of user interface interactions, effects, widgets, and themes built on top of the jQuery library.</description>
     <version>1.13.0</version>
-    <licenseversion></licenseversion>
+    <license>MIT</license>
+    <repository>https://github.com/jquery/jquery-ui</repository>
+    <copyrights>
+      <copyright>2016 The jQuery Foundation and other contributors</copyright>
+    </copyrights>
   </library>
   <library>
     <location>html2text</location>
     <name>HTML2Text</name>
-    <license>GPL</license>
+    <description>PHP script to convert HTML into an approximate text equivalent.</description>
     <version>4.3.1</version>
+    <license>GPL</license>
     <licenseversion>2.0+</licenseversion>
+    <repository>https://github.com/mtibben/html2text</repository>
+    <copyrights>
+      <copyright>2005-2007 Jon Abernathy jon@chuggnutt.com</copyright>
+    </copyrights>
   </library>
   <library>
     <location>markdown</location>
-    <name>Markdown original</name>
-    <license>BSD</license>
+    <name>Markdown</name>
+    <description>Functions to convert from the Markdown text format into clean XHTML.</description>
     <version>1.9.0</version>
-    <licenseversion></licenseversion>
+    <license>BSD</license>
+    <repository>https://github.com/michelf/php-markdown</repository>
+    <copyrights>
+      <copyright>2004-2016 Michel Fortin https://michelf.com/projects/php-markdown/</copyright>
+      <copyright>(Original Markdown) 2004-2006 John Gruber https://daringfireball.net/projects/markdown/
+All rights reserved.</copyright>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>xhprof</location>
     <name>XHProf</name>
-    <license>Apache</license>
+    <description>A Hierarchical Profiler for PHP.</description>
     <version>2.3.5</version>
+    <license>Apache</license>
     <licenseversion>2.0</licenseversion>
+    <repository>https://github.com/longxinH/xhprof</repository>
+    <copyrights>
+      <copyright>2009 Phacility</copyright>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>horde</location>
     <name>Horde</name>
+    <description>Library used by the inbound e-mail handling system.</description>
     <license>LGPL/BSD</license>
     <version>5.2.23</version>
     <licenseversion>2.1</licenseversion>
+    <repository>https://github.com/horde/base</repository>
+    <copyrights>
+      <copyright>Horde LLC</copyright>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>requirejs</location>
     <name>RequireJS</name>
-    <license>MIT</license>
+    <description>RequireJS is a JavaScript file and module loader.</description>
     <version>2.3.5</version>
-    <licenseversion></licenseversion>
+    <license>MIT</license>
+    <repository>https://github.com/requirejs/requirejs</repository>
+    <copyrights>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>amd/src/loglevel.js</location>
     <name>loglevel.js</name>
-    <license>MIT</license>
+    <description>Minimal lightweight simple logging for JavaScript.</description>
     <version>1.7.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/pimterry/loglevel/</repository>
+    <copyrights>
+      <copyright>2019 Tim Perry</copyright>
+    </copyrights>
   </library>
   <library>
     <location>mustache</location>
     <name>Mustache</name>
-    <license>MIT</license>
+    <description>PHP library for displaying mustache templates.</description>
     <version>2.13.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/bobthecow/mustache.php</repository>
+    <copyrights>
+      <copyright>2010-2016 Justin Hileman</copyright>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>amd/src/mustache.js</location>
     <name>Mustache.js</name>
-    <license>MIT</license>
+    <description>JS library for displaying mustache templates.</description>
     <version>3.1.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/janl/mustache.js</repository>
+    <copyrights>
+      <copyright>2009 Chris Wanstrath (Ruby)</copyright>
+      <copyright>2010-2014 Jan Lehnardt (JavaScript)</copyright>
+      <copyright>2010-2015 The mustache.js community</copyright>
+    </copyrights>
   </library>
   <library>
     <location>graphlib.php</location>
     <name>Graph Class</name>
-    <license>GPL</license>
+    <description>Class to draw line, point, bar, and area graphs, including numeric x-axis and double y-axis.</description>
     <version>1.6.3</version>
+    <license>GPL</license>
+    <copyrights>
+      <copyright>2000 Herman Veluwenkamp (hermanV AT mindless DOT com)</copyright>
+    </copyrights>
   </library>
   <library>
     <location>php-css-parser</location>
     <name>PHP-CSS-Parser</name>
-    <license>MIT</license>
+    <description>A Parser for CSS Files written in PHP.</description>
     <version>8.3.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/sabberworm/PHP-CSS-Parser</repository>
+    <copyrights>
+      <copyright>2011 Raphael Schweikert, http://sabberworm.com/</copyright>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>rtlcss</location>
     <name>RTLCSS for PHP</name>
-    <license>MIT</license>
+    <description>RTLCSS is a framework for converting Left-To-Right (LTR) Cascading Style Sheets(CSS) to Right-To-Left (RTL).</description>
     <version>1.0.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/moodlehq/rtlcss-php</repository>
+    <copyrights>
+      <copyright>Frédéric Massart</copyright>
+    </copyrights>
   </library>
   <library>
     <location>scssphp</location>
     <name>scssphp</name>
-    <license>MIT</license>
+    <description>scssphp is a compiler for SCSS written in PHP.</description>
     <version>1.10.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/scssphp/scssphp/</repository>
+    <copyrights>
+      <copyright>2015 Leaf Corcoran</copyright>
+    </copyrights>
   </library>
   <library>
     <location>spout</location>
     <name>Spout</name>
-    <license>Apache</license>
+    <description>Library for importing and exporting csv / excel / ODS files.</description>
     <version>3.3.0</version>
+    <license>Apache</license>
     <licenseversion>2.0</licenseversion>
+    <repository>https://github.com/box/spout/</repository>
+    <copyrights>
+      <copyright>2022 Box, Inc. All rights reserved</copyright>
+    </copyrights>
   </library>
   <library>
     <location>amd/src/chartjs-lazy.js</location>
     <name>Chart.js</name>
+    <description>Simple yet flexible JavaScript charting for designers &amp; developers.</description>
+    <version>3.8.0</version>
     <license>MIT</license>
-    <version>2.9.4</version>
+    <repository>https://github.com/chartjs/Chart.js</repository>
+    <copyrights>
+      <copyright>2016 Nick Downie</copyright>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>maxmind/GeoIp2</location>
     <name>GeoIP2 PHP API</name>
-    <license>Apache 2.0</license>
+    <description>Library for processing of GeoIP data files.</description>
     <version>2.11.0</version>
+    <license>Apache</license>
+    <licenseversion>2.0</licenseversion>
+    <repository>https://github.com/maxmind/GeoIP2-php</repository>
+    <copyrights>
+      <copyright>MaxMind</copyright>
+    </copyrights>
   </library>
   <library>
     <location>maxmind/MaxMind</location>
     <name>MaxMind DB Reader API</name>
-    <license>Apache 2.0</license>
+    <description>PHP API for reading MaxMind DB files.</description>
     <version>1.10.1</version>
+    <license>Apache</license>
+    <licenseversion>2.0</licenseversion>
+    <repository>https://github.com/maxmind/MaxMind-DB-Reader-php/</repository>
+    <copyrights>
+      <copyright>MaxMind</copyright>
+    </copyrights>
   </library>
   <library>
     <location>ltiprovider</location>
     <name>LTI Tool Provider Library PHP</name>
-    <license>Apache</license>
+    <description>PHP library for communicating with learning tools as per the LTI specification.</description>
     <version>3.0.2</version>
+    <license>Apache</license>
     <licenseversion>2.0</licenseversion>
+    <repository>https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP</repository>
+    <copyrights>
+      <copyright>2016 IMS Global Learning Consortium Inc. All Rights Reserved. Trademark Policy - (www.imsglobal.org/trademarks)</copyright>
+    </copyrights>
   </library>
   <library>
     <location>lti1p3</location>
     <name>LTI 1.3 Tool Library</name>
-    <license>Apache</license>
+    <description>A library used for building IMS-certified LTI 1.3 tool providers in PHP.</description>
     <version>5.1.0</version>
+    <license>Apache</license>
     <licenseversion>2.0</licenseversion>
+    <repository>https://github.com/packbackbooks/lti-1-3-php-library</repository>
+    <copyrights>
+      <copyright>MartinLenord</copyright>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>amd/src/truncate.js</location>
     <name>Truncate.js</name>
-    <license>MIT</license>
+    <description>Dead simple HTML-safe truncation via the DOM. It truncates HTML code, and has several options such as length, finishBlock and noBreak.</description>
     <version>0.0.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/pathable/truncate</repository>
+    <customised/>
   </library>
   <library>
     <location>fonts</location>
-    <name>Font Awesome by Dave Gandy - http://fontawesome.io</name>
-    <license>SIL OFL</license>
+    <name>Font Awesome - http://fontawesome.io</name>
+    <description>The Font Awesome font. Font Awesome is the Internet's icon library and toolkit, used by millions of designers, developers, and content creators.</description>
     <version>4.7.0</version>
+    <license>SIL OFL</license>
     <licenseversion>1.1</licenseversion>
+    <repository>https://github.com/FortAwesome/Font-Awesome</repository>
+    <copyrights>
+      <copyright>Dave Gandy</copyright>
+    </copyrights>
   </library>
   <library>
     <location>amd/src/adapter.js</location>
     <name>WebRTC adapter</name>
-    <license>BSD</license>
+    <description>JavaScript library to insulate apps from spec changes and prefix differences in WebRTC. The prefix differences are mostly gone these days but differences in behaviour between browsers remain.</description>
     <version>8.0.0</version>
+    <license>BSD</license>
     <licenseversion>3-Clause</licenseversion>
+    <repository>https://github.com/webrtc/adapter</repository>
+    <copyrights>
+      <copyright>2014, The WebRTC project authors. All rights reserved. Copyright (c) 2018, The adapter.js project authors.</copyright>
+    </copyrights>
   </library>
   <library>
     <location>validateurlsyntax.php</location>
-    <name>Url Syntax Validation using PHP and Regular Expressions</name>
+    <name>validateUrlSyntax</name>
+    <description>URL syntax validation using PHP and regular expressions.</description>
     <license>GPL</license>
     <licenseversion>2.0+</licenseversion>
+    <copyrights>
+      <copyright>2000 Rod Apeldoorn - rod(at)canowhoopass(dot)com</copyright>
+    </copyrights>
+    <customised/>
+    <upgradable>false</upgradable>
   </library>
   <library>
     <location>amd/src/popper.js</location>
     <name>Popper.js</name>
-    <license>MIT</license>
+    <description>A kickass library used to created Poppers in web applications.</description>
     <version>v1.12.6</version>
-    <licenseversion></licenseversion>
+    <license>MIT</license>
+    <repository>https://github.com/floating-ui/floating-ui</repository>
+    <copyrights>
+      <copyright>2016 Federico Zivolo and contributors</copyright>
+    </copyrights>
   </library>
   <library>
     <location>geopattern-php</location>
-    <name>Generate tiling SVG patterns from a string</name>
-    <license>MIT</license>
+    <name>GeoPattern</name>
+    <description>Library for creating beautiful generative background images from a string.</description>
     <version>1.1.2</version>
+    <license>MIT</license>
+    <repository>https://github.com/RedeyeGroup/geopattern-php</repository>
+    <copyrights>
+      <copyright>2015 Leaf Corcoran</copyright>
+    </copyrights>
   </library>
   <library>
     <location>php-jwt</location>
     <name>A simple library to encode and decode JSON Web Tokens (JWT) in PHP, conforming to RFC 7519</name>
-    <license>BSD</license>
+    <description>A simple library to encode and decode JSON Web Tokens (JWT) in PHP, conforming to RFC 7519</description>
     <version>6.0.0</version>
+    <license>BSD</license>
     <licenseversion>3-Clause</licenseversion>
+    <repository>https://github.com/firebase/php-jwt</repository>
+    <copyrights>
+      <copyright>2011, Neuman Vong</copyright>
+    </copyrights>
   </library>
   <library>
     <location>polyfills</location>
     <name>regenerator-runtime</name>
-    <license>MIT</license>
+    <description>This package implements a fully-functional source transformation that takes the syntax for generators/yield from ECMAScript 2015 or ES2015 and Asynchronous Iteration proposal and spits out efficient JS-of-today (ES5) that behaves the same way.</description>
     <version>0.13.7</version>
+    <license>MIT</license>
+    <repository>https://github.com/facebook/regenerator/</repository>
   </library>
   <library>
     <location>polyfills</location>
     <name>core-js-bundle</name>
-    <license>MIT</license>
+    <description>Modular standard library for JavaScript. Includes polyfills for ECMAScript up to 2021: promises, symbols, collections, iterators, typed arrays, many other features, ECMAScript proposals, some cross-platform WHATWG / W3C features and proposals like URL. You can load only required features or use it without global namespace pollution.</description>
     <version>3.15.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/zloirock/core-js</repository>
   </library>
   <library>
     <location>polyfills</location>
     <name>mdn-polyfill</name>
-    <license>MIT</license>
+    <description>A collection of side-effect ECMAScript modules. Minimized, mangled and extremely small thanks to Rollup - next-generation ES6 module bundler.</description>
     <version>5.20.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/msn0/mdn-polyfills</repository>
   </library>
   <library>
     <location>emoji-data</location>
     <name>Emoji data</name>
-    <license>MIT</license>
+    <description>Library to parse easily data and sprite sheets for emoji.</description>
     <version>7.0.2</version>
+    <license>MIT</license>
+    <repository>https://github.com/iamcal/emoji-data/</repository>
+    <copyrights>
+      <copyright>2013 Cal Henderson</copyright>
+    </copyrights>
+    <customised/>
   </library>
   <library>
     <location>polyfills</location>
     <name>url-polyfill</name>
-    <license>MIT</license>
+    <description>Polyfill URL and URLSearchParams to match last WHATWG specifications.</description>
     <version>1.1.12</version>
+    <license>MIT</license>
+    <repository>https://github.com/lifaon74/url-polyfill</repository>
   </library>
   <library>
     <location>plist</location>
     <name>plist</name>
-    <license>MIT</license>
+    <description>PHP Implementation of Apple's PList (binary and XML).</description>
     <version>2.0.2</version>
+    <license>MIT</license>
+    <repository>https://github.com/TECLIB/CFPropertyList</repository>
+    <copyrights>
+      <copyright>2018 Teclib</copyright>
+      <copyright>2009 Christian Kruse, Rodney Rehm</copyright>
+    </copyrights>
   </library>
   <library>
     <location>zipstream</location>
     <name>ZipStream-PHP</name>
-    <license>MIT</license>
+    <description>PHP ZIP Streaming Library</description>
     <version>2.1.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/maennchen/ZipStream-PHP</repository>
+    <copyrights>
+      <copyright>2007-2009 Paul Duncan pabs@pablotron.org</copyright>
+      <copyright>2014 Jonatan Männchen jonatan@maennchen.ch</copyright>
+      <copyright>2014 Jesse G. Donat donatj@gmail.com</copyright>
+      <copyright>2018 Nicolas CARPi nicolas.carpi@curie.fr</copyright>
+    </copyrights>
   </library>
   <library>
     <location>php-enum</location>
     <name>php-enum</name>
-    <license>MIT</license>
+    <description>PHP Enum implementation inspired from SplEnum</description>
     <version>1.8.3</version>
+    <license>MIT</license>
+    <repository>https://github.com/myclabs/php-enum</repository>
+    <copyrights>
+      <copyright>2015 My C-Labs</copyright>
+    </copyrights>
   </library>
   <library>
     <location>http-message</location>
     <name>http-message</name>
-    <license>MIT</license>
+    <description>Provide a set of common interfaces for HTTP messages as described in RFC 7230 and RFC 7231</description>
     <version>1.0.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/php-fig/http-message</repository>
   </library>
 </libraries>
