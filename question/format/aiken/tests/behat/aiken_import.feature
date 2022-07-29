@@ -14,16 +14,13 @@ Feature: Test importing questions from Aiken format.
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage
 
   @javascript @_file_upload
   Scenario: import some Aiken questions
-    When I navigate to "Question bank" in current page administration
-    And I select "Import" from the "Question bank tertiary navigation" singleselect
+    Given I am on the "Course 1" "core_question > course question import" page logged in as "teacher"
     And I set the field "id_format_aiken" to "1"
     And I upload "question/format/aiken/tests/fixtures/questions.aiken.txt" file to "Import" filemanager
-    And I press "id_submitbutton"
+    When I press "id_submitbutton"
     Then I should see "Parsing questions from import file."
     And I should see "Importing 2 questions from file"
     And I should see "The Moodle project was started by:"

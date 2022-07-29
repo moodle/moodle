@@ -20,9 +20,7 @@ Feature: A teacher can duplicate questions in the question bank
     And the following "questions" exist:
       | questioncategory | qtype | name                       | questiontext                  | idnumber |
       | Test questions   | essay | Test question to be copied | Write about whatever you want | qid      |
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher"
 
   Scenario: Duplicating a previously created question
     When I choose "Duplicate" action for "Test question to be copied" in the question bank
