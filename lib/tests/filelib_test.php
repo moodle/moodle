@@ -976,6 +976,155 @@ EOF;
         $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexample));
         // Test it does nothing to the 'plain' data.
         $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexpected));
+
+        $httpsexample = <<<EOF
+HTTP/1.0 200 Connection established
+
+HTTP/2 200 OK
+Date: Fri, 22 Feb 2013 17:14:23 GMT
+Server: Apache/2
+X-Powered-By: PHP/5.3.3-7+squeeze14
+Content-Type: text/xml
+Connection: close
+Content-Encoding: gzip
+Transfer-Encoding: chunked
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<rss version="2.0">...
+EOF;
+        $httpsexpected = <<<EOF
+HTTP/2 200 OK
+Date: Fri, 22 Feb 2013 17:14:23 GMT
+Server: Apache/2
+X-Powered-By: PHP/5.3.3-7+squeeze14
+Content-Type: text/xml
+Connection: close
+Content-Encoding: gzip
+Transfer-Encoding: chunked
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<rss version="2.0">...
+EOF;
+        // For HTTP, replace the \n with \r\n.
+        $httpsexample = preg_replace("~(?!<\r)\n~", "\r\n", $httpsexample);
+        $httpsexpected = preg_replace("~(?!<\r)\n~", "\r\n", $httpsexpected);
+
+        // Test stripping works OK.
+        $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexample));
+        // Test it does nothing to the 'plain' data.
+        $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexpected));
+
+        $httpsexample = <<<EOF
+HTTP/1.0 200 Connection established
+
+HTTP/2.1 200 OK
+Date: Fri, 22 Feb 2013 17:14:23 GMT
+Server: Apache/2
+X-Powered-By: PHP/5.3.3-7+squeeze14
+Content-Type: text/xml
+Connection: close
+Content-Encoding: gzip
+Transfer-Encoding: chunked
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<rss version="2.0">...
+EOF;
+        $httpsexpected = <<<EOF
+HTTP/2.1 200 OK
+Date: Fri, 22 Feb 2013 17:14:23 GMT
+Server: Apache/2
+X-Powered-By: PHP/5.3.3-7+squeeze14
+Content-Type: text/xml
+Connection: close
+Content-Encoding: gzip
+Transfer-Encoding: chunked
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<rss version="2.0">...
+EOF;
+        // For HTTP, replace the \n with \r\n.
+        $httpsexample = preg_replace("~(?!<\r)\n~", "\r\n", $httpsexample);
+        $httpsexpected = preg_replace("~(?!<\r)\n~", "\r\n", $httpsexpected);
+
+        // Test stripping works OK.
+        $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexample));
+        // Test it does nothing to the 'plain' data.
+        $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexpected));
+
+        $httpsexample = <<<EOF
+HTTP/1.1 200 Connection established
+
+HTTP/3 200 OK
+Date: Fri, 22 Feb 2013 17:14:23 GMT
+Server: Apache/2
+X-Powered-By: PHP/5.3.3-7+squeeze14
+Content-Type: text/xml
+Connection: close
+Content-Encoding: gzip
+Transfer-Encoding: chunked
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<rss version="2.0">...
+EOF;
+        $httpsexpected = <<<EOF
+HTTP/3 200 OK
+Date: Fri, 22 Feb 2013 17:14:23 GMT
+Server: Apache/2
+X-Powered-By: PHP/5.3.3-7+squeeze14
+Content-Type: text/xml
+Connection: close
+Content-Encoding: gzip
+Transfer-Encoding: chunked
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<rss version="2.0">...
+EOF;
+        // For HTTP, replace the \n with \r\n.
+        $httpsexample = preg_replace("~(?!<\r)\n~", "\r\n", $httpsexample);
+        $httpsexpected = preg_replace("~(?!<\r)\n~", "\r\n", $httpsexpected);
+
+        // Test stripping works OK.
+        $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexample));
+        // Test it does nothing to the 'plain' data.
+        $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexpected));
+
+        $httpsexample = <<<EOF
+HTTP/2 200 Connection established
+
+HTTP/4 200 OK
+Date: Fri, 22 Feb 2013 17:14:23 GMT
+Server: Apache/2
+X-Powered-By: PHP/5.3.3-7+squeeze14
+Content-Type: text/xml
+Connection: close
+Content-Encoding: gzip
+Transfer-Encoding: chunked
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<rss version="2.0">...
+EOF;
+        $httpsexpected = <<<EOF
+HTTP/4 200 OK
+Date: Fri, 22 Feb 2013 17:14:23 GMT
+Server: Apache/2
+X-Powered-By: PHP/5.3.3-7+squeeze14
+Content-Type: text/xml
+Connection: close
+Content-Encoding: gzip
+Transfer-Encoding: chunked
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<rss version="2.0">...
+EOF;
+        // For HTTP, replace the \n with \r\n.
+        $httpsexample = preg_replace("~(?!<\r)\n~", "\r\n", $httpsexample);
+        $httpsexpected = preg_replace("~(?!<\r)\n~", "\r\n", $httpsexpected);
+
+        // Test stripping works OK.
+        $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexample));
+        // Test it does nothing to the 'plain' data.
+        $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexpected));
+
     }
 
     /**

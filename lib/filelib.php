@@ -4168,14 +4168,14 @@ class curl {
         $crlf = "\r\n";
         return preg_replace(
                 // HTTP version and status code (ignore value of code).
-                '~^HTTP/1\..*' . $crlf .
+                '~^HTTP/[1-9](\.[0-9])?.*' . $crlf .
                 // Header name: character between 33 and 126 decimal, except colon.
                 // Colon. Header value: any character except \r and \n. CRLF.
                 '(?:[\x21-\x39\x3b-\x7e]+:[^' . $crlf . ']+' . $crlf . ')*' .
                 // Headers are terminated by another CRLF (blank line).
                 $crlf .
                 // Second HTTP status code, this time must be 200.
-                '(HTTP/1.[01] 200 )~', '$1', $input);
+                '(HTTP/[1-9](\.[0-9])? 200)~', '$2', $input);
     }
 }
 
