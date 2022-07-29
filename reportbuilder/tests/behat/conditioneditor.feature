@@ -35,13 +35,13 @@ Feature: Manage custom report conditions
 
   Scenario: Add tags condition to report
     Given the following "core_reportbuilder > Condition" exists:
-      | report           | My report      |
-      | uniqueidentifier | user:interests |
+      | report           | My report |
+      | uniqueidentifier | tag:name  |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     When I click on "Show/hide 'Conditions'" "button"
-    And I set the following fields in the "Interests" "core_reportbuilder > Condition" to these values:
-      | Interests operator | Is equal to |
-      | Interests value    | dancing     |
+    And I set the following fields in the "Tag name" "core_reportbuilder > Condition" to these values:
+      | Tag name operator | Is equal to |
+      | Tag name value    | dancing     |
     And I click on "Apply" "button" in the "[data-region='settings-conditions']" "css_element"
     Then I should see "Conditions applied"
     And I should see "User One" in the "reportbuilder-table" "table"

@@ -24,7 +24,7 @@ use html_writer;
 use lang_string;
 use stdClass;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\filters\{boolean_select, date, text};
+use core_reportbuilder\local\filters\{boolean_select, date, tags};
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\{column, filter};
 
@@ -193,11 +193,11 @@ class tag extends base {
 
         // Name.
         $filters[] = (new filter(
-            text::class,
+            tags::class,
             'name',
             new lang_string('name', 'core_tag'),
             $this->get_entity_name(),
-            "{$tagalias}.rawname"
+            "{$tagalias}.id"
         ))
             ->add_joins($this->get_joins());
 

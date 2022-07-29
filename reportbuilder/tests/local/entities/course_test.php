@@ -156,7 +156,6 @@ class course_test extends advanced_testcase {
         $this->assertEquals('Gregorian', $courserow['calendartype']);
         $this->assertEquals('afterburner', $courserow['theme']);
         $this->assertEquals(get_string_manager()->get_list_of_translations()['en'], $courserow['lang']);
-        $this->assertEquals('dancing', $courserow['tags']);
         $expected = '<a href="https://www.example.com/moodle/course/view.php?id=' . $course1->id . '">Course 1</a>';
         $this->assertEquals($expected, $courserow['coursefullnamewithlink']);
         $expected = '<a href="https://www.example.com/moodle/course/view.php?id=' . $course1->id . '">C1</a>';
@@ -248,15 +247,6 @@ class course_test extends advanced_testcase {
         $this->assertEquals([
             'Course 1',
         ], array_column($tablerows, 'fullname'));
-
-        // Filter by tags field.
-        $tablerows = $this->get_report_table_rows([
-            'course:tags_operator' => tags::EQUAL_TO,
-            'course:tags_value' => [
-                $DB->get_field('tag', 'id', ['name' => 'dancing'], MUST_EXIST),
-            ],
-        ]);
-        $this->assertEquals(['Course 1'], array_column($tablerows, 'fullname'));
     }
 
     /**

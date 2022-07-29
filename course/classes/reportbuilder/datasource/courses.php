@@ -22,6 +22,7 @@ use core_course\local\entities\course_category;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\course;
 use core_reportbuilder\local\helpers\database;
+use core_tag\reportbuilder\local\entities\tag;
 
 /**
  * Courses datasource
@@ -63,9 +64,20 @@ class courses extends datasource {
             ->add_join("JOIN {course_categories} {$coursecattablealias}
                 ON {$coursecattablealias}.id = {$coursetablealias}.category"));
 
+        // Join the tag entity.
+        $tagentity = (new tag())
+            ->set_table_alias('tag', $courseentity->get_table_alias('tag'));
+        $this->add_entity($tagentity
+            ->add_joins($courseentity->get_tag_joins()));
+
         // Add all columns/filters/conditions from entities to be available in custom reports.
         $this->add_all_from_entity($coursecatentity->get_entity_name());
         $this->add_all_from_entity($courseentity->get_entity_name());
+
+        // Add specific tag entity elements.
+        $this->add_columns_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink']);
+        $this->add_filter($tagentity->get_filter('name'));
+        $this->add_condition($tagentity->get_condition('name'));
     }
 
     /**

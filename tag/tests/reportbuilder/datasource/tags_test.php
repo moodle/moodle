@@ -23,7 +23,8 @@ use context_user;
 use core_collator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
-use core_reportbuilder\local\filters\{boolean_select, date, select, text};
+use core_reportbuilder\local\filters\{boolean_select, date, select};
+use core_reportbuilder\local\filters\tags as tags_filter;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -137,7 +138,6 @@ class tags_test extends core_reportbuilder_testcase {
         $this->assertEquals($course->id, $courserow[12]);
         $this->assertNotEmpty($courserow[13]);
         $this->assertNotEmpty($courserow[14]);
-
     }
 
     /**
@@ -167,8 +167,11 @@ class tags_test extends core_reportbuilder_testcase {
 
             // Tag.
             'Filter tag name' => ['tag:name', [
-                'tag:name_operator' => text::IS_EQUAL_TO,
-                'tag:name_value' => 'Horses',
+                'tag:name_operator' => tags_filter::EQUAL_TO,
+                'tag:name_value' => [-1],
+            ], false],
+            'Filter tag name not empty' => ['tag:name', [
+                'tag:name_operator' => tags_filter::NOT_EMPTY,
             ], true],
             'Filter tag standard' => ['tag:standard', [
                 'tag:standard_operator' => boolean_select::NOT_CHECKED,

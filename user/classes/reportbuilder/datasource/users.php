@@ -18,15 +18,17 @@ declare(strict_types=1);
 
 namespace core_user\reportbuilder\datasource;
 
+use lang_string;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\helpers\database;
+use core_tag\reportbuilder\local\entities\tag;
 
 /**
  * Users datasource
  *
- * @package   core_reportbuilder
+ * @package   core_user
  * @copyright 2021 David Matamoros <davidmc@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -59,9 +61,20 @@ class users extends datasource {
 
         $this->add_entity($userentity);
 
+        // Join the tag entity.
+        $tagentity = (new tag())
+            ->set_table_alias('tag', $userentity->get_table_alias('tag'))
+            ->set_entity_title(new lang_string('interests'));
+        $this->add_entity($tagentity
+            ->add_joins($userentity->get_tag_joins()));
+
         // Add all columns/filters/conditions from entities to be available in custom reports.
-        $userentityname = $userentity->get_entity_name();
-        $this->add_all_from_entity($userentityname);
+        $this->add_all_from_entity($userentity->get_entity_name());
+
+        // Add specific tag entity elements.
+        $this->add_columns_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink']);
+        $this->add_filter($tagentity->get_filter('name'));
+        $this->add_condition($tagentity->get_condition('name'));
     }
 
     /**
