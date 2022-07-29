@@ -2781,6 +2781,12 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'core_reportbuilder_set_filters' => [
+        'classname'   => 'core_reportbuilder\external\filters\set',
+        'description' => 'Set filter values for given report',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
     'core_dynamic_tabs_get_content' => [
         'classname'   => 'core\external\dynamic_tabs_get_content',
         'description' => 'Returns the content for a dynamic tab',
