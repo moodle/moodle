@@ -24,10 +24,9 @@ Feature: A teacher can put questions in categories in the question bank
       | questioncategory | qtype | name                      | questiontext                  |
       | Used category    | essay | Test question to be moved | Write about whatever you want |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
 
   Scenario: A new question category can be created
-    When I navigate to "Question bank > Categories" in current page administration
+    When I am on the "Course 1" "core_question > course question categories" page
     And I set the following fields to these values:
       | Name            | New Category 1    |
       | Parent category | Top               |
@@ -39,7 +38,7 @@ Feature: A teacher can put questions in categories in the question bank
     And "New Category 1 [newcatidnumber]" "option" should exist in the "Parent category" "select"
 
   Scenario: A question category can be edited
-    When I navigate to "Question bank > Categories" in current page administration
+    When I am on the "Course 1" "core_question > course question categories" page
     And I click on "Edit this category" "link" in the "Subcategory" "list_item"
     And the field "parent" matches value "&nbsp;&nbsp;&nbsp;Default for C1"
     And I set the following fields to these values:
@@ -50,12 +49,12 @@ Feature: A teacher can put questions in categories in the question bank
     And I should see "I was edited" in the "New name" "list_item"
 
   Scenario: An empty question category can be deleted
-    When I navigate to "Question bank > Categories" in current page administration
+    When I am on the "Course 1" "core_question > course question categories" page
     And I click on "Delete" "link" in the "Subcategory" "list_item"
     Then I should not see "Subcategory"
 
   Scenario: An non-empty question category can be deleted if you move the contents elsewhere
-    When I navigate to "Question bank > Categories" in current page administration
+    When I am on the "Course 1" "core_question > course question categories" page
     And I click on "Delete" "link" in the "Used category" "list_item"
     And I should see "The category 'Used category' contains 1 questions"
     And I press "Save in category"
@@ -86,3 +85,4 @@ Feature: A teacher can put questions in categories in the question bank
     And the field "Select a category" matches value "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subcategory (1)"
     And the "Select a category" select box should contain "Used category"
     And the "Select a category" select box should not contain "Used category (1)"
+
