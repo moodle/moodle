@@ -79,14 +79,20 @@ class mariadb_native_moodle_database extends mysqli_native_moodle_database {
      * @return array Array containing 'description' and 'version' info
      */
     public function get_server_info() {
-        $version = $this->mysqli->server_info;
-        $matches = null;
-        if (preg_match('/^5\.5\.5-(10\..+)-MariaDB/i', $version, $matches)) {
-            // Looks like MariaDB decided to use these weird version numbers for better BC with MySQL...
-            $version = $matches[1];
-        }
-        return array('description'=>$this->mysqli->server_info, 'version'=>$version);
+	$result = $this->mysqli->query("SELECT VERSION();");
+	$result_array  = $result->fecth_assoc();
+	$version_ugly = $result_array["VERSION()"];
+	$version_array = explode("-", $version_ugly);
+	$version = $version_array[0]; // the actual version
+	
+	// continue normal code
+	$matches = null;
+    if (preg_match('/^5\.5\.5-(10\..+)-MariaDB/i', $version, $matches)) {
+        // Looks like MariaDB decided to use these weird version numbers for better BC with MySQL...
+        $version = $matches[1];
     }
+    return array('description'=>$this->mysqli->server_info, 'version'=>$version);
+}
 
     protected function has_breaking_change_quoted_defaults() {
         $version = $this->get_server_info()['version'];
