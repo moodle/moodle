@@ -32,7 +32,6 @@ require_once(__DIR__ . '/behat_form_textarea.php');
 /**
  * Moodle editor field.
  *
- * @todo Support for multiple editors
  * @package   core_form
  * @category  test
  * @copyright 2012 David Monllaó
@@ -44,26 +43,18 @@ class behat_form_editor extends behat_form_textarea {
      * Sets the value to a field.
      *
      * @param string $value
-     * @return void
      */
-    public function set_value($value) {
-
+    public function set_value($value): void {
         $editorid = $this->field->getAttribute('id');
         if ($this->running_javascript()) {
             $value = addslashes($value);
             // This will be transported in JSON, which doesn't allow newlines in strings, so we must escape them.
             $value = str_replace("\n", "\\n", $value);
-            $js = '
-(function() {
-    var editor = Y.one(document.getElementById("'.$editorid.'editable"));
-    if (editor) {
-        editor.setHTML("' . $value . '");
-    }
-    editor = Y.one(document.getElementById("'.$editorid.'"));
-    editor.set("value", "' . $value . '");
-})();
-';
-            behat_base::execute_script_in_session($this->session, $js);
+            behat_base::execute_in_matching_contexts('editor', 'set_editor_value', [
+                $editorid,
+                $value,
+            ]);
+
         } else {
             parent::set_value($value);
         }
@@ -106,4 +97,3 @@ class behat_form_editor extends behat_form_textarea {
         return $this->text_matches($expectedvalue) || $this->text_matches('<p>' . $expectedvalue . '</p>');
     }
 }
-
