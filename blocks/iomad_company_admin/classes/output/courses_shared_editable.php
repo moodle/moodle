@@ -138,8 +138,8 @@ class courses_shared_editable extends \core\output\inplace_editable {
             $courseinfo->groupmode = 1;
             $courseinfo->groupmodeforce = 1;
             $DB->update_record('course', $courseinfo);
-            $coursedetails['shared'] = $shared;
-            $DB->update_record('iomad_courses', $coursedetails);
+            $courserec->shared = $shared;
+            $DB->update_record('iomad_courses', $courserec);
 
             // Deal with any current enrolments.
             if ($companycourses = $DB->get_records('company_course', array('courseid' => $courseid))) {
