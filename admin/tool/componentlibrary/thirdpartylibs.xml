@@ -3,8 +3,9 @@
   <library>
     <location>amd/src/lunr.js</location>
     <name>lunr - http://lunrjs.com</name>
-    <license>MIT</license>
+    <description>Provide a great search experience without the need for external, server-side, search services.</description>
     <version>2.3.8</version>
-    <licenseversion></licenseversion>
+    <license>MIT</license>
+    <repository>https://github.com/olivernn/lunr.js</repository>
   </library>
 </libraries>

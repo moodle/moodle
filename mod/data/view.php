@@ -1,26 +1,28 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 2005 Martin Dougiamas  http://dougiamas.com             //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file is part of the Database module for Moodle
+ *
+ * @copyright 2005 Martin Dougiamas  http://dougiamas.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod_data
+ */
+
+use mod_data\manager;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/data/locallib.php');
@@ -43,50 +45,31 @@ $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
 $multidelete = optional_param_array('delcheck', null, PARAM_INT);
 $serialdelete = optional_param('serialdelete', null, PARAM_RAW);
 
-if ($id) {
-    if (! $cm = get_coursemodule_from_id('data', $id)) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-        throw new \moodle_exception('coursemisconf');
-    }
-    if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-    $record = NULL;
+$record = null;
 
+if ($id) {
+    list($course, $cm) = get_course_and_cm_from_cmid($id, manager::MODULE);
+    $manager = manager::create_from_coursemodule($cm);
 } else if ($rid) {
-    if (! $record = $DB->get_record('data_records', array('id'=>$rid))) {
-        throw new \moodle_exception('invalidrecord', 'data');
-    }
-    if (! $data = $DB->get_record('data', array('id'=>$record->dataid))) {
-        throw new \moodle_exception('invalidid', 'data');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        throw new \moodle_exception('coursemisconf');
-    }
-    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-} else {   // We must have $d
-    if (! $data = $DB->get_record('data', array('id'=>$d))) {
-        throw new \moodle_exception('invalidid', 'data');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        throw new \moodle_exception('coursemisconf');
-    }
-    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-    $record = NULL;
+    $record = $DB->get_record('data_records', ['id' => $rid], '*', MUST_EXIST);
+    $manager = manager::create_from_data_record($record);
+    $cm = $manager->get_coursemodule();
+    $course = get_course($cm->course);
+} else {   // We must have $d.
+    $data = $DB->get_record('data', ['id' => $d], '*', MUST_EXIST);
+    $manager = manager::create_from_instance($data);
+    $cm = $manager->get_coursemodule();
+    $course = get_course($cm->course);
 }
-$cm = cm_info::create($cm);
-require_course_login($course, true, $cm);
+
+$data = $manager->get_instance();
+$context = $manager->get_context();
+
+require_login($course, true, $cm);
 
 require_once($CFG->dirroot . '/comment/lib.php');
 comment::init();
 
-$context = context_module::instance($cm->id);
 require_capability('mod/data:viewentry', $context);
 
 /// If we have an empty Database then redirect because this page is useless without data
@@ -188,8 +171,8 @@ if ($perpage != $oldperpage) {
     set_user_preference('data_perpage_'.$data->id, $perpage);
 }
 
-// Completion and trigger events.
-data_view($data, $course, $cm, $context);
+// Trigger module viewed event and completion.
+$manager->set_module_viewed($course);
 
 $urlparams = array('d' => $data->id);
 if ($record) {
@@ -305,7 +288,8 @@ if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, 
                         $deletebutton, 'view.php?d='.$data->id);
 
                 $records[] = $deleterecord;
-                echo data_print_template('singletemplate', $records, $data, '', 0, true);
+                $parser = $manager->get_template('singletemplate');
+                echo $parser->parse_entries($records);
 
                 echo $OUTPUT->footer();
                 exit;
@@ -348,7 +332,8 @@ if ($multidelete && confirm_sesskey() && $canmanageentries) {
         $cancelurl = new moodle_url('/mod/data/view.php', array('d' => $data->id));
         $deletebutton = new single_button($action, get_string('delete'));
         echo $OUTPUT->confirm(get_string('confirmdeleterecords', 'data'), $deletebutton, $cancelurl);
-        echo data_print_template('listtemplate', $validrecords, $data, '', 0, false);
+        $parser = $manager->get_template('listtemplate');
+        echo $parser->parse_entries($validrecords);
         echo $OUTPUT->footer();
         exit;
     }
@@ -458,8 +443,6 @@ if ($showactivity) {
                     data_generate_default_template($data, 'singletemplate', 0, false, false);
                 }
 
-                //data_print_template() only adds ratings for singletemplate which is why we're attaching them here
-                //attach ratings to data records
                 require_once($CFG->dirroot.'/rating/lib.php');
                 if ($data->assessed != RATING_AGGREGATE_NONE) {
                     $ratingoptions = new stdClass;
@@ -478,7 +461,13 @@ if ($showactivity) {
                     $records = $rm->get_ratings($ratingoptions);
                 }
 
-                data_print_template('singletemplate', $records, $data, $search, $page, false, new moodle_url($baseurl));
+                $options = [
+                    'search' => $search,
+                    'page' => $page,
+                    'baseurl' => new moodle_url($baseurl),
+                ];
+                $parser = $manager->get_template('singletemplate', $options);
+                echo $parser->parse_entries($records);
 
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
@@ -499,7 +488,14 @@ if ($showactivity) {
                     data_generate_default_template($data, 'listtemplate', 0, false, false);
                 }
                 echo $data->listtemplateheader;
-                data_print_template('listtemplate', $records, $data, $search, $page, false, new moodle_url($baseurl));
+                $options = [
+                    'search' => $search,
+                    'page' => $page,
+                    'baseurl' => new moodle_url($baseurl),
+                ];
+                $parser = $manager->get_template('listtemplate', $options);
+                echo $parser->parse_entries($records);
+
                 echo $data->listtemplatefooter;
 
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);

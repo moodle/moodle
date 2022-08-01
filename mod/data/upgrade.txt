@@ -1,6 +1,11 @@
 This files describes API changes in /mod/data - plugins,
 information provided here is intended especially for developers.
 
+=== 4.1 ===
+* The method data_view is now deprecated. Use $maganer->set_module_viewed instead.
+* The data_print_template function is now deprecated and replaced by mod_data\template class.
+* The data_print_ratings function now has an extra $print to get the ratings output instead of printing it directly.
+
 === 3.7 ===
 * External functions get_entries, get_entry and search_entries now return an additional field "tags" containing the entry tags.
 

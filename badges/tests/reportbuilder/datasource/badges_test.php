@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace core_badges\reportbuilder\datasource;
 
-use core_badges\badge;
+use core_badges_generator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
 
@@ -56,13 +56,16 @@ class badges_test extends core_reportbuilder_testcase {
         $user1 = $this->getDataGenerator()->create_user(['firstname' => 'Alan', 'lastname' => 'Apple']);
         $user2 = $this->getDataGenerator()->create_user(['firstname' => 'Barry', 'lastname' => 'Banana']);
 
-        $sitebadge = $this->create_badge(['name' => 'Badge 1']);
+        /** @var core_badges_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
+
+        $sitebadge = $generator->create_badge(['name' => 'Badge 1']);
         $sitebadge->issue($user1->id, true);
         $sitebadge->issue($user2->id, true);
 
         // Another badge, in a course, no issues.
         $course = $this->getDataGenerator()->create_course();
-        $coursebadge = $this->create_badge(['name' => 'Badge 2', 'type' => BADGE_TYPE_COURSE, 'courseid' => $course->id]);
+        $coursebadge = $generator->create_badge(['name' => 'Badge 2', 'type' => BADGE_TYPE_COURSE, 'courseid' => $course->id]);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -102,8 +105,11 @@ class badges_test extends core_reportbuilder_testcase {
         $course = $this->getDataGenerator()->create_course(['tags' => ['horse']]);
         $user = $this->getDataGenerator()->create_user(['interests' => ['pie']]);
 
+        /** @var core_badges_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
+
         // Create course badge, issue to user.
-        $badge = $this->create_badge(['name' => 'Course badge', 'type' => BADGE_TYPE_COURSE, 'courseid' => $course->id]);
+        $badge = $generator->create_badge(['name' => 'Course badge', 'type' => BADGE_TYPE_COURSE, 'courseid' => $course->id]);
         $badge->issue($user->id, true);
 
         /** @var core_reportbuilder_generator $generator */
@@ -127,46 +133,5 @@ class badges_test extends core_reportbuilder_testcase {
             fullname($user),
             'pie',
         ], array_values($content[0]));
-    }
-
-    /**
-     * Helper method to create a badge
-     *
-     * @param array $params
-     * @return badge
-     */
-    protected function create_badge(array $params = []): badge {
-        global $DB, $USER;
-
-        $record = (object) array_merge([
-            'name' => 'Test badge',
-            'description' => 'Testing badges',
-            'timecreated' => time(),
-            'timemodified' => time(),
-            'usercreated' => $USER->id,
-            'usermodified' => $USER->id,
-            'issuername' => 'Test issuer',
-            'issuerurl' => 'http://issuer-url.domain.co.nz',
-            'issuercontact' => 'issuer@example.com',
-            'expiredate' => null,
-            'expireperiod' => null,
-            'type' => BADGE_TYPE_SITE,
-            'courseid' => null,
-            'messagesubject' => 'Test message subject',
-            'message' => 'Test message body',
-            'attachment' => 1,
-            'notification' => 0,
-            'status' => BADGE_STATUS_ACTIVE,
-            'version' => OPEN_BADGES_V2,
-            'language' => 'en',
-            'imageauthorname' => 'Image author',
-            'imageauthoremail' => 'author@example.com',
-            'imageauthorurl' => 'http://image.example.com/',
-            'imagecaption' => 'Image caption'
-        ], $params);
-
-        $record->id = $DB->insert_record('badge', $record);
-
-        return new badge($record->id);
     }
 }

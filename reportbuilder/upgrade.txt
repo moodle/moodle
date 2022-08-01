@@ -2,11 +2,18 @@ This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
 === 4.1 ===
+
+* New external method `core_reportbuilder_set_filters` for setting report filter values (plus `setFilters` AJAX repository
+  export for calling from Javascript modules)
+* New method `set_filter_form_default` in base system report class, to override whether the default filters form
+  should be shown for a report
+* New external methods for retrieving custom report data:
+  - `core_reportbuilder_view_report`
 * 'set_default_per_page' and 'get_default_per_page' methods have been added to \local\report\base class
   to manage the default displayed rows per page.
 * Added two new methods in the datasource class:
-    - add_all_from_entity() to add all columns/filters/conditions from the given entity to the report at once
-    - add_all_from_entities() to add all columns/filters/conditions from all the entities added to the report at once
+  - add_all_from_entity() to add all columns/filters/conditions from the given entity to the report at once
+  - add_all_from_entities() to add all columns/filters/conditions from all the entities added to the report at once
 * New database helper methods for generating multiple unique values: `generate_aliases` and `generate_param_names`
 * The base aggregation `format_value` method has a `$columntype` argument in order to preserve type during aggregation. When
   defining column callbacks, strict typing will now be preserved in your callback methods when the column is being aggregated

@@ -137,7 +137,7 @@ class category_condition extends condition {
         global $PAGE;
         $displaydata = [];
         if ($this->recurse) {
-            $displaydata['checked'] = 'checked="true"';
+            $displaydata['checked'] = 'checked';
         }
         return $PAGE->get_renderer('core_question', 'bank')->render_category_condition_advanced($displaydata);
     }

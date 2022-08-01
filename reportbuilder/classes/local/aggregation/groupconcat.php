@@ -34,6 +34,9 @@ class groupconcat extends base {
     /** @var string Character to use as a delimeter between column fields */
     protected const COLUMN_FIELD_DELIMETER = '<|>';
 
+    /** @var string Character to use a null coalesce value */
+    protected const COLUMN_NULL_COALESCE = '<^>';
+
     /** @var string Character to use as a delimeter between field values */
     protected const FIELD_VALUE_DELIMETER = '<,>';
 
@@ -79,7 +82,7 @@ class groupconcat extends base {
             return parent::get_column_field_sql($sqlfields);
         }
 
-        return self::get_column_fields_concat($sqlfields, self::COLUMN_FIELD_DELIMETER);
+        return self::get_column_fields_concat($sqlfields, self::COLUMN_FIELD_DELIMETER, self::COLUMN_NULL_COALESCE);
     }
 
     /**
@@ -124,7 +127,11 @@ class groupconcat extends base {
                 continue;
             }
 
-            $originalvalues = array_combine($valuenames, $valuedata);
+            // Re-construct original values, also ensuring any nulls contained within are restored.
+            $originalvalues = array_map(static function(string $value): ?string {
+                return $value === self::COLUMN_NULL_COALESCE ? null : $value;
+            }, array_combine($valuenames, $valuedata));
+
             $originalvalue = column::get_default_value($originalvalues, $columntype);
 
             // Once we've re-constructed each value, we can apply callbacks to it.

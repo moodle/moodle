@@ -1,5 +1,9 @@
 This files describes API changes in the lti code.
 
+=== 4.1 ===
+
+* The callback get_shortcuts() is now removed. Please use get_course_content_items and get_all_content_items instead.
+
 === 3.10 ===
 
 * Select Content supports multiple, allowing a tool to return more than one link at a time.

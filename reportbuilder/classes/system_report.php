@@ -40,6 +40,9 @@ abstract class system_report extends base {
     /** @var string[] $basefields List of base fields */
     private $basefields = [];
 
+    /** @var bool $filterformdefault Whether to use the default filters form */
+    private $filterformdefault = true;
+
     /** @var action[] $actions */
     private $actions = [];
 
@@ -117,6 +120,25 @@ abstract class system_report extends base {
      */
     final public function get_base_fields(): array {
         return $this->basefields;
+    }
+
+    /**
+     * Override whether to use the default system report filters form, for instance this can be disabled if the UI requires
+     * it's own custom filter management form for a specific report
+     *
+     * @param bool $filterformdefault
+     */
+    final public function set_filter_form_default(bool $filterformdefault = true): void {
+        $this->filterformdefault = $filterformdefault;
+    }
+
+    /**
+     * Whether to use the default filters form
+     *
+     * @return bool
+     */
+    final public function get_filter_form_default(): bool {
+        return $this->filterformdefault;
     }
 
     /**

@@ -40,6 +40,24 @@ export const resetFilters = reportId => {
 };
 
 /**
+ * Set filter values for given report
+ *
+ * @method
+ * @param {Number} reportId
+ * @param {String} reportParameters
+ * @param {String} filterValues
+ * @return {Promise}
+ */
+export const setFilters = (reportId, reportParameters, filterValues) => {
+    const request = {
+        methodname: 'core_reportbuilder_set_filters',
+        args: {reportid: reportId, parameters: reportParameters, values: filterValues}
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
  * Add a filter to the given report
  *
  * @param {Number} reportId

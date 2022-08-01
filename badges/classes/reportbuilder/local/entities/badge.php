@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_badges\reportbuilder\local\entities;
 
 use context_course;
+use context_helper;
 use context_system;
 use html_writer;
 use lang_string;
@@ -48,7 +49,10 @@ class badge extends base {
      * @return array
      */
     protected function get_default_table_aliases(): array {
-        return ['badge' => 'b'];
+        return [
+            'badge' => 'b',
+            'context' => 'bctx',
+        ];
     }
 
     /**
@@ -89,6 +93,7 @@ class badge extends base {
      */
     protected function get_all_columns(): array {
         $badgealias = $this->get_table_alias('badge');
+        $contextalias = $this->get_table_alias('context');
 
         // Name.
         $columns[] = (new column(
@@ -101,7 +106,7 @@ class badge extends base {
             ->add_field("{$badgealias}.name")
             ->set_is_sortable(true);
 
-        // Description.
+        // Description (note, this column contains plaintext so requires no post-processing).
         $columns[] = (new column(
             'description',
             new lang_string('description', 'core_badges'),
@@ -137,13 +142,20 @@ class badge extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
+            ->add_join("LEFT JOIN {context} {$contextalias}
+                    ON {$contextalias}.contextlevel = " . CONTEXT_COURSE . "
+                   AND {$contextalias}.instanceid = {$badgealias}.courseid")
             ->set_type(column::TYPE_INTEGER)
             ->add_fields("{$badgealias}.id, {$badgealias}.type, {$badgealias}.courseid, {$badgealias}.imagecaption")
+            ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->set_disabled_aggregation_all()
             ->add_callback(static function(int $badgeid, stdClass $badge): string {
-                $context = $badge->type == BADGE_TYPE_SITE
-                    ? context_system::instance()
-                    : context_course::instance($badge->courseid);
+                if ($badge->type == BADGE_TYPE_SITE) {
+                    $context = context_system::instance();
+                } else {
+                    context_helper::preload_from_record($badge);
+                    $context = context_course::instance($badge->courseid);
+                }
 
                 $badgeimage = moodle_url::make_pluginfile_url($context->id, 'badges', 'badgeimage', $badgeid, '/', 'f2');
                 return html_writer::img($badgeimage, $badge->imagecaption);
