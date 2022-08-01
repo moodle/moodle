@@ -35,7 +35,35 @@ require_once(__DIR__ . '/../../../../behat/behat_base.php');
  * @category   test
  * @copyright  2022 Andrew Lyons <andrew@nicols.co.uk>
  */
-class behat_editor_tiny extends behat_base {
+class behat_editor_tiny extends behat_base implements \core_behat\settable_editor {
+    /**
+     * Set the value for the editor.
+     *
+     * Note: This function is called by the behat_form_editor class.
+     * It is called regardless of the current default editor as editor selection is a user preference.
+     * Therefore it must fail gracefully and only set a value if the editor instance was found on the page.
+     *
+     * @param string $editorid
+     * @param string $value
+     */
+    public function set_editor_value(string $editorid, string $value): void {
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        $js = <<<EOF
+        require(['editor_tiny/editor'], (editor) => {
+            const instance = editor.getInstanceForElementId('${editorid}');
+            if (instance) {
+                instance.setContent('${value}');
+                instance.undoManager.add();
+            }
+        });
+        EOF;
+
+        $this->execute_script($js);
+    }
+
     /**
      * Set Tiny as default editor before executing Tiny tests.
      *
