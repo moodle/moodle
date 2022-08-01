@@ -129,6 +129,7 @@ $string['editentry'] = 'Edit entry';
 $string['editfield'] = 'Edit field';
 $string['editordisable'] = 'Disable editor';
 $string['editorenable'] = 'Enable editor';
+$string['editpreset'] = 'Edit preset';
 $string['emptyadd'] = 'The Add template is empty, generating a default form...';
 $string['emptyaddform'] = 'You did not fill out any fields!';
 $string['enabletemplateeditorcheck'] = 'Are you sure you want to enable the editor? This may result in content being altered when the template is saved.';

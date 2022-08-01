@@ -143,6 +143,10 @@ class preset {
 
         $path = '/' . $presetname . '/';
         $file = static::get_file($path, '.');
+        if (!is_null($file)) {
+            // If the file is not empty, create the instance based on the storedfile.
+            return self::create_from_storedfile($manager, $file);
+        }
 
         return new self($manager, $isplugin, $presetname, $presetname, $description, $file);
     }
@@ -160,23 +164,81 @@ class preset {
             return false;
         }
 
+        if (!is_null($this->storedfile)) {
+            // It's a pre-existing preset, so it needs to be updated.
+            return $this->update_user_preset();
+        }
+
+        // The preset hasn't been saved before.
+        $fs = get_file_storage();
+
+        // Create and save the preset.xml file, with the description, settings, fields...
+        $filerecord = static::get_filerecord('preset.xml', $this->get_path(), $USER->id);
+        $fs->create_file_from_string($filerecord, $this->generate_preset_xml());
+
+        // Create and save the template files.
+        $instance = $this->manager->get_instance();
+        foreach (manager::TEMPLATES_LIST as $templatename => $templatefile) {
+            $filerecord->filename = $templatefile;
+            $fs->create_file_from_string($filerecord, $instance->{$templatename});
+        }
+        // Update the storedfile with the one we've just saved.
+        $this->storedfile = static::get_file($this->get_path(), '.');
+
+        return true;
+    }
+
+    /**
+     * Update the stored user preset.
+     * This method is used internally by the save method.
+     *
+     * @return bool true if the preset has been saved; false otherwise.
+     */
+    private function update_user_preset(): bool {
+        global $USER;
+
         $result = false;
-        if (is_null($this->storedfile)) {
-            // The preset hasn't been saved before.
-            $fs = get_file_storage();
+        $shouldbesaved = false;
 
-            // Create and save the preset.xml file, with the description, settings, fields...
-            $filerecord = static::get_filerecord('preset.xml', $this->get_path(), $USER->id);
-            $fs->create_file_from_string($filerecord, $this->generate_preset_xml());
-
-            // Create and save the template files.
-            $instance = $this->manager->get_instance();
-            foreach (manager::TEMPLATES_LIST as $templatename => $templatefile) {
-                $filerecord->filename = $templatefile;
-                $fs->create_file_from_string($filerecord, $instance->{$templatename});
+        // Update description (if required).
+        $oldpresetfile = static::get_file($this->storedfile->get_filepath(), 'preset.xml');
+        $presetxml = $oldpresetfile->get_content();
+        $parsedxml = simplexml_load_string($presetxml);
+        if (property_exists($parsedxml, 'description')) {
+            if ($parsedxml->description != $this->description) {
+                $parsedxml->description = $this->description;
+                $shouldbesaved = true;
             }
-            // Update the storedfile with the one we've just saved.
-            $this->storedfile = static::get_file($this->get_path(), '.');
+        } else {
+            if (!is_null($this->description)) {
+                $parsedxml->addChild('description', $this->description);
+                $shouldbesaved = true;
+            }
+        }
+
+        // Update name (if required).
+        $oldname = trim($this->storedfile->get_filepath(), '/');
+        $newpath = '/' . $this->name . '/';
+        if ($oldname != $this->name) {
+            // Preset name has changed, so files need to be updated too because the preset name is saved in the filepath.
+            foreach (manager::TEMPLATES_LIST as $templatename => $templatefile) {
+                $oldfile = static::get_file($this->storedfile->get_filepath(), $templatefile);
+                $oldfile->rename($newpath, $templatefile);
+            }
+            // The root folder should also be renamed.
+            $this->storedfile->rename($newpath, $this->storedfile->get_filename());
+            $shouldbesaved = true;
+        }
+
+        // Only save the new preset.xml if there are changes.
+        if ($shouldbesaved) {
+            // Before saving preset.xml, the old preset.xml file should be removed.
+            $oldpresetfile->delete();
+            // Create the new file with the new content.
+            $filerecord = static::get_filerecord('preset.xml', $newpath, $USER->id);
+            $presetcontent = $parsedxml->asXML();
+            $fs = get_file_storage();
+            $fs->create_file_from_string($filerecord, $presetcontent);
             $result = true;
         }
 
