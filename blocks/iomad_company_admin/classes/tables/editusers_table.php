@@ -353,7 +353,7 @@ class editusers_table extends table_sql {
      *      as a key when storing table properties like sort order in the session.
      */
     function __construct($uniqueid) {
-        global $DB, $companyid, $CFG;
+        global $DB, $companyid, $company, $USER, $CFG;
 
         $context = context_system::instance();
         $this->uniqueid = $uniqueid;
