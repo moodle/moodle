@@ -1,0 +1,7 @@
+This file describes API changes in /reportbuilder/*
+Information provided here is intended especially for developers.
+
+=== 4.0.3 ===
+
+* The external `core_reportbuilder_filters_reset` method now accepts an optional `parameters` argument, required by
+  some system reports

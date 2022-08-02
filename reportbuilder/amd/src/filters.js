@@ -86,13 +86,14 @@ export const init = (reportId, contextId) => {
         event.preventDefault();
 
         const pendingPromise = new Pending('core_reportbuilder/filters:reset');
+        const reportParameters = reportElement.dataset.parameter;
 
-        resetFilters(reportId)
+        resetFilters(reportId, reportParameters)
             .then(() => getString('filtersreset', 'core_reportbuilder'))
             .then(addToast)
             .then(() => loadFragment('core_reportbuilder', 'filters_form', contextId, {
                 reportid: reportId,
-                parameters: reportElement.dataset.parameter,
+                parameters: reportParameters,
             }))
             .then((html, js) => {
                 Templates.replaceNodeContents(filterFormContainer, html, js);
