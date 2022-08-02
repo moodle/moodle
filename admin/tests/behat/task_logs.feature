@@ -63,7 +63,7 @@ Feature: View task logs report and use its filters
     Then I should see "Filters applied"
     And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     And I should see "Nothing to display"
-    And I click on "Reset" "button" in the "[data-region='report-filters']" "css_element"
+    And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
     And I should see "Filters reset"
     And I should not see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     And I should see "Filters" in the "#dropdownFiltersButton" "css_element"

@@ -7,6 +7,8 @@ Information provided here is intended especially for developers.
   export for calling from Javascript modules)
 * New method `set_filter_form_default` in base system report class, to override whether the default filters form
   should be shown for a report
+* The external `core_reportbuilder_filters_reset` method now accepts an optional `parameters` argument, required by
+  some system reports
 * New external methods for retrieving custom report data:
   - `core_reportbuilder_view_report`
 * 'set_default_per_page' and 'get_default_per_page' methods have been added to \local\report\base class

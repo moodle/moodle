@@ -69,8 +69,9 @@ class report_access_list extends system_report {
      */
     protected function can_view(): bool {
         $reportid = $this->get_parameter('id', 0, PARAM_INT);
-        $reportpersistent = new report($reportid);
-        return permission::can_edit_report($reportpersistent);
+        $report = report::get_record(['id' => $reportid], MUST_EXIST);
+
+        return permission::can_edit_report($report);
     }
 
     /**
