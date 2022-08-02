@@ -111,6 +111,11 @@ class groupconcat extends base {
      * @return mixed
      */
     public static function format_value($value, array $values, array $callbacks, int $columntype) {
+        $firstvalue = reset($values);
+        if ($firstvalue === null) {
+            return '';
+        }
+
         $formattedvalues = [];
 
         // Store original names of all values that would be present without aggregation.
@@ -118,7 +123,7 @@ class groupconcat extends base {
         $valuenamescount = count($valuenames);
 
         // Loop over each extracted value from the concatenated string.
-        $values = explode(self::FIELD_VALUE_DELIMETER, (string) reset($values));
+        $values = explode(self::FIELD_VALUE_DELIMETER, (string)$firstvalue);
         foreach ($values as $value) {
 
             // Ensure we have equal number of value names/data, account for truncation by DB.
