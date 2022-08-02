@@ -19,22 +19,69 @@
     Context variables required for this template:
     * formactionul - The form action url.
     * d - The database id.
-    * presetstable - The HTML output of the table with presets
+    * presets - List of presets containing id, name, fullname, shortname and actions.
 
     Example context (json):
     {
         "formactionul": "http://www.example.com",
         "d": 1,
-        "presetstable": "<table></table>"
+        "presets": [
+            {
+                "id": 1,
+                "name": "Image gallery",
+                "shortname": "imagegallery",
+                "fullname": "Image gallery",
+                "userid": 0,
+                "actions": []
+            },
+            {
+                "id": 2,
+                "name": "Preset saved manually",
+                "shortname": "Preset saved manually",
+                "fullname": "Preset saved manually (admin)",
+                "userid": 2,
+                "actions": []
+            }
+        ]
     }
 }}
+{{#str}}presetshelp, mod_data{{/str}}
+
 <form method="post" action="{{formactionul}}" class="mt-4">
     <input type="hidden" name="d" value="{{d}}">
     <input type="hidden" name="mode" value="usepreset">
     <input type="hidden" name="action" value="select">
-    {{{presetstable}}}
-    <input type="submit" name="selectpreset" value="{{#str}}usepreset, mod_data{{/str}}" class="btn btn-primary mt-2">
+
+    <table id="presets-list" class="generaltable fullwidth">
+        <thead>
+            <tr>
+                <th class="pl-4 border-top-0" scope="col" style="width: 3%"></th>
+                <th class="pl-4 border-top-0" scope="col">{{#str}} name {{/str}}</th>
+                <th class="pl-4 border-top-0" scope="col" style="width: 3%">{{#showmanage}}{{#str}} action {{/str}}{{/showmanage}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#presets}}
+            <tr>
+                <td class="p-4 border-right">
+                    <input type="radio" name="fullname" value="{{userid}}/{{shortname}}" />
+                </td>
+                <td class="p-4">{{fullname}}</td>
+                <td class="p-4 preset_action_menu">
+                    {{#actions}}
+                        <div class="float-right">
+                            {{>core/action_menu}}
+                        </div>
+                    {{/actions}}
+                </td>
+            </tr>
+            {{/presets}}
+        </tbody>
+    </table>
+
+    <input type="submit" name="selectpreset" value="{{#str}}usepreset, mod_data{{/str}}" class="btn btn-secondary mt-2 float-right" disabled>
 </form>
+
 {{#js}}
     require(['mod_data/selectpreset'], function(selectPreset) {
         selectPreset.init();

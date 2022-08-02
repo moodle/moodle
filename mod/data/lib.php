@@ -22,6 +22,7 @@
  */
 
 use mod_data\manager;
+use mod_data\preset;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -2030,52 +2031,30 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
  * @param string $shortname
  * @param  string $path
  * @return string
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the preset::get_name_from_plugin() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see preset::get_name_from_plugin()
  */
 function data_preset_name($shortname, $path) {
+    debugging('data_preset_name() is deprecated. Please use preset::get_name_from_plugin() instead.', DEBUG_DEVELOPER);
 
-    // We are looking inside the preset itself as a first choice, but also in normal data directory
-    $string = get_string('modulename', 'datapreset_'.$shortname);
-
-    if (substr($string, 0, 1) == '[') {
-        return $shortname;
-    } else {
-        return $string;
-    }
+    return preset::get_name_from_plugin($shortname);
 }
 
 /**
  * Returns an array of all the available presets.
  *
  * @return array
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the manager::get_available_presets() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see manager::get_available_presets()
  */
 function data_get_available_presets($context) {
-    global $CFG, $USER;
+    debugging('data_get_available_presets() is deprecated. Please use manager::get_available_presets() instead.', DEBUG_DEVELOPER);
 
-    $presets = array();
-
-    // First load the ratings sub plugins that exist within the modules preset dir
-    if ($dirs = core_component::get_plugin_list('datapreset')) {
-        foreach ($dirs as $dir=>$fulldir) {
-            if (is_directory_a_preset($fulldir)) {
-                $preset = new stdClass();
-                $preset->path = $fulldir;
-                $preset->userid = 0;
-                $preset->shortname = $dir;
-                $preset->name = data_preset_name($dir, $fulldir);
-                if (file_exists($fulldir.'/screenshot.jpg')) {
-                    $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.jpg';
-                } else if (file_exists($fulldir.'/screenshot.png')) {
-                    $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.png';
-                } else if (file_exists($fulldir.'/screenshot.gif')) {
-                    $preset->screenshot = $CFG->wwwroot.'/mod/data/preset/'.$dir.'/screenshot.gif';
-                }
-                $presets[] = $preset;
-            }
-        }
-    }
-    // Now add to that the site presets that people have saved
-    $presets = data_get_available_site_presets($context, $presets);
-    return $presets;
+    $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
+    $manager = manager::create_from_coursemodule($cm);
+    return $manager->get_available_presets();
 }
 
 /**
@@ -2084,30 +2063,20 @@ function data_get_available_presets($context) {
  * @param stdClass $context The context that we are looking from.
  * @param array $presets
  * @return array An array of presets
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the manager::get_available_saved_presets() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see manager::get_available_saved_presets()
  */
 function data_get_available_site_presets($context, array $presets=array()) {
-    global $USER;
+    debugging(
+        'data_get_available_site_presets() is deprecated. Please use manager::get_available_saved_presets() instead.',
+        DEBUG_DEVELOPER
+    );
 
-    $fs = get_file_storage();
-    $files = $fs->get_area_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA);
-    $canviewall = has_capability('mod/data:viewalluserpresets', $context);
-    if (empty($files)) {
-        return $presets;
-    }
-    foreach ($files as $file) {
-        if (($file->is_directory() && $file->get_filepath()=='/') || !$file->is_directory() || (!$canviewall && $file->get_userid() != $USER->id)) {
-            continue;
-        }
-        $preset = new stdClass;
-        $preset->path = $file->get_filepath();
-        $preset->name = trim($preset->path, '/');
-        $preset->shortname = $preset->name;
-        $preset->userid = $file->get_userid();
-        $preset->id = $file->get_id();
-        $preset->storedfile = $file;
-        $presets[] = $preset;
-    }
-    return $presets;
+    $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
+    $manager = manager::create_from_coursemodule($cm);
+    $savedpresets = $manager->get_available_saved_presets();
+    return array_merge($presets, $savedpresets);
 }
 
 /**
@@ -2261,22 +2230,18 @@ function data_in_readonly_period($data) {
 }
 
 /**
- * @return bool
+ * Check if the files in a directory are the expected for a preset.
+ *
+ * @return bool Wheter the defined $directory has or not all the expected preset files.
+ *
+ * @deprecated since Moodle 4.1 MDL-75148 - please, use the preset::is_directory_a_preset() function instead.
+ * @todo MDL-75189 This will be deleted in Moodle 4.5.
+ * @see manager::is_directory_a_preset()
  */
 function is_directory_a_preset($directory) {
-    $directory = rtrim($directory, '/\\') . '/';
-    $status = file_exists($directory.'singletemplate.html') &&
-              file_exists($directory.'listtemplate.html') &&
-              file_exists($directory.'listtemplateheader.html') &&
-              file_exists($directory.'listtemplatefooter.html') &&
-              file_exists($directory.'addtemplate.html') &&
-              file_exists($directory.'rsstemplate.html') &&
-              file_exists($directory.'rsstitletemplate.html') &&
-              file_exists($directory.'csstemplate.css') &&
-              file_exists($directory.'jstemplate.js') &&
-              file_exists($directory.'preset.xml');
+    debugging('is_directory_a_preset() is deprecated. Please use preset::is_directory_a_preset() instead.', DEBUG_DEVELOPER);
 
-    return $status;
+    return preset::is_directory_a_preset($directory);
 }
 
 /**
@@ -2350,7 +2315,7 @@ abstract class data_preset_importer {
         require_once($CFG->libdir.'/xmlize.php');
 
         $fs = $fileobj = null;
-        if (!is_directory_a_preset($this->directory)) {
+        if (!preset::is_directory_a_preset($this->directory)) {
             //maybe the user requested a preset stored in the Moodle file storage
 
             $fs = get_file_storage();
@@ -3650,7 +3615,7 @@ function data_presets_export($course, $cm, $data, $tostorage=false) {
     fclose($asearchtemplate);
 
     // Check if all files have been generated
-    if (! is_directory_a_preset($exportdir)) {
+    if (! preset::is_directory_a_preset($exportdir)) {
         throw new \moodle_exception('generateerror', 'data');
     }
 
