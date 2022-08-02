@@ -11,8 +11,8 @@
         margin-bottom: 25px;
     }
 
-    .navitem:not(:last-child) {
-        margin-right: 20px;
+    .row {
+        column-gap: 20px;
     }
 }
 
