@@ -22,6 +22,7 @@ Feature: Perform basic calendar functionality
       | student1 | C1 | student |
       | student3 | C1 | student |
       | teacher1 | C1 | teacher |
+      | admin    | C1 | editingteacher |
     And the following "groups" exist:
       | name | course | idnumber |
       | Group 1 | C1 | G1 |
@@ -198,7 +199,6 @@ Feature: Perform basic calendar functionality
   Scenario: Admin can only see all courses if calendar_adminseesall setting is enabled.
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    And I enrol "admin" user as "Teacher"
     And I am viewing site calendar
     And I click on "New event" "button"
     And I set the field "Type of event" to "Course"
@@ -286,3 +286,51 @@ Feature: Perform basic calendar functionality
     Then the field "Event title" matches value "Test course event"
     And the field "Type of event" matches value "Course"
     And "Course 4" "autocomplete_selection" should exist
+
+  @javascript
+  Scenario: Changing the event type should clear previous data
+    Given I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I follow "Full calendar"
+    And I set the field "course" to "C1"
+    And I press "New event"
+    And I set the following fields to these values:
+      | Event title | Group 1 event |
+      | Type of event | Group       |
+    And I press "Save"
+    And I am on "Course 1" course homepage
+    And I follow "Full calendar"
+    And I click on "Group 1 event" "link"
+    And I should see "Group event"
+    And I should see "Group 1"
+    When I click on "Edit" "button"
+    And I set the following fields to these values:
+      | Event title | My own user event |
+      | Type of event | user |
+    And I press "Save"
+    And I click on "My own user event" "link"
+    Then I should see "User event"
+    And I should not see "Group 1"
+    And I click on "Edit" "button"
+    And I set the following fields to these values:
+      | Event title | Site event |
+      | Type of event | site |
+    And I press "Save"
+    And I click on "Site event" "link"
+    And I should see "Site event"
+    And I click on "Edit" "button"
+    And I set the following fields to these values:
+      | Event title | Course 1 event |
+      | Type of event | course |
+    And I expand the "Course" autocomplete
+    And I click on "Course 1" item in the autocomplete list
+    And I press "Save"
+    And I click on "Course 1 event" "link"
+    And I should see "Course event"
+    And I click on "Edit" "button"
+    And I set the following fields to these values:
+      | Event title | Category event |
+      | Type of event | category |
+    And I press "Save"
+    And I click on "Category event" "link"
+    And I should see "Category event"
