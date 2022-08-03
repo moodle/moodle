@@ -131,7 +131,7 @@ function block_iomad_company_admin_menu() {
                 'name' => get_string('assigntocompany', 'block_iomad_company_admin'),
                 'url' => 'company_users_form.php',
                 'cap' => 'block/iomad_company_admin:company_user',
-                'icondefault' => '',
+                'icondefault' => 'assigntocompany',
                 'style' => 'user',
                 'icon' => 'fa-building',
                 'iconsmall' => 'fa-chevron-circle-left',
