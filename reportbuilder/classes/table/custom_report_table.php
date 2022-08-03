@@ -78,10 +78,11 @@ class custom_report_table extends base_report_table {
         $this->showdownloadbuttonsat = [TABLE_P_BOTTOM];
         $this->is_downloading($download ?? null, $this->persistent->get_formatted_name());
 
-        // Retrieve all report columns, exit early if there are none.
+        // Retrieve all report columns, exit early if there are none. Defining empty columns prevents errors during out().
         $columns = $this->get_active_columns();
         if (empty($columns)) {
             $this->init_sql('*', "{{$maintable}} {$maintablealias}", [], '1=0', []);
+            $this->define_columns([0]);
             return;
         }
 
@@ -281,7 +282,16 @@ class custom_report_table extends base_report_table {
         echo html_writer::end_tag('div');
         $this->wrap_html_finish();
 
-        $notification = (new notification(get_string('nothingtodisplay'), notification::NOTIFY_INFO, false))
+        // With the live editing disabled we need to notify user that data is shown only in preview mode.
+        if ($this->editing && !self::show_live_editing()) {
+            $notificationmsg = get_string('customreportsliveeditingdisabled', 'core_reportbuilder');
+            $notificationtype = notification::NOTIFY_WARNING;
+        } else {
+            $notificationmsg = get_string('nothingtodisplay');
+            $notificationtype = notification::NOTIFY_INFO;
+        }
+
+        $notification = (new notification($notificationmsg, $notificationtype, false))
             ->set_extra_classes(['mt-3']);
         echo $OUTPUT->render($notification);
 
@@ -314,5 +324,36 @@ class custom_report_table extends base_report_table {
             $html .= html_writer::tag('td', $button, ['class' => 'card-toggle d-none']);
         }
         return $html;
+    }
+
+    /**
+     * Overriding this method to handle live editing setting.
+     * @param int $pagesize
+     * @param bool $useinitialsbar
+     * @param string $downloadhelpbutton
+     */
+    public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
+        $this->pagesize = $pagesize;
+        $this->setup();
+
+        // If the live editing setting is disabled, we not need to fetch custom report data except in preview mode.
+        if (!$this->editing || self::show_live_editing()) {
+            $this->query_db($pagesize, $useinitialsbar);
+            $this->build_table();
+            $this->close_recordset();
+        }
+
+        $this->finish_output();
+    }
+
+    /**
+     * Whether or not report data should be included in the table while in editing mode
+     *
+     * @return bool
+     */
+    private static function show_live_editing(): bool {
+        global $CFG;
+
+        return !empty($CFG->customreportsliveediting);
     }
 }

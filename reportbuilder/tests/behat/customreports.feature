@@ -233,3 +233,17 @@ Feature: Manage custom reports
       | customreportslimit     | 2 |
     And I reload the page
     And "New report" "button" should not exist
+
+  Scenario: Disable live editing of custom reports
+    Given the following config values are set as admin:
+      | customreportsliveediting     | 0 |
+    And the following "core_reportbuilder > Reports" exist:
+      | name           | source                                       |
+      | Report users   | core_user\reportbuilder\datasource\users     |
+    When I am on the "Report users" "reportbuilder > Editor" page logged in as "admin"
+    Then I should see "Viewing of report data while editing is disabled by the site administrator. Switch to preview mode to view the report." in the "[data-region='core_table/dynamic']" "css_element"
+    And I click on "Switch to preview mode" "button"
+    And I should see "admin" in the "reportbuilder-table" "table"
+    And I click on "Close 'Report users' editor" "button"
+    And I press "View" action in the "Report users" report row
+    And I should see "admin" in the "reportbuilder-table" "table"
