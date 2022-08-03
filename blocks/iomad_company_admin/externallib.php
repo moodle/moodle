@@ -56,7 +56,7 @@ class block_iomad_company_admin_external extends external_api {
                             'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0', VALUE_DEFAULT, 0),
                             'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
                             'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
-                            'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
+                            'customcss' => new external_value(PARAM_TEXT, 'Company custom css', VALUE_DEFAULT, ''),
                             'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_DEFAULT, null),
                             'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),
                             'companyterminated' => new external_value(PARAM_INT, 'Company contract is terminated when <> 0', VALUE_DEFAULT, 0),
@@ -85,6 +85,7 @@ class block_iomad_company_admin_external extends external_api {
 
         // Validate parameters
         $params = self::validate_parameters(self::create_companies_parameters(), array('companies' => $companies));
+echo "<pre>";print_r($params);die;
 
         // Get/check context/capability
         $context = context_system::instance();
@@ -178,7 +179,7 @@ class block_iomad_company_admin_external extends external_api {
                      'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0'),
                      'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
                      'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
-                     'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
+                     'customcss' => new external_value(PARAM_TEXT, 'Company custom css', VALUE_DEFAULT, ''),
                      'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_DEFAULT, null),
                      'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),
                      'companyterminated' => new external_value(PARAM_INT, 'Company contract is terminated when <> 0', VALUE_DEFAULT, 0),
