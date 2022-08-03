@@ -90,7 +90,7 @@ class cron_task extends \core\task\scheduled_task {
         if ($suspendcompanies = $DB->get_records_sql("SELECT * FROM {company}
                                                       WHERE suspended = 0
                                                       AND validto IS NOT NULL
-                                                      AND validto + suspendafter < :runtime",
+                                                      AND validto < :runtime",
                                                       array('runtime' => $runtime))) {
             foreach ($suspendcompanies as $suspendcompany) {
                 $target = new \company($suspendcompany->id);
@@ -103,7 +103,8 @@ class cron_task extends \core\task\scheduled_task {
         if ($terminatecompanies = $DB->get_records_sql("SELECT * FROM {company}
                                                         WHERE companyterminated = 0
                                                         AND validto IS NOT NULL
-                                                        AND validto < :runtime",
+                                                        AND suspendafter > 0
+                                                        AND validto + suspendafter < :runtime",
                                                         array('runtime' => $runtime))) {
             foreach ($suspendcompanies as $suspendcompany) {
                 $target = new \company($suspendcompany->id);

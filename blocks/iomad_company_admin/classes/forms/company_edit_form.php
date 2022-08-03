@@ -247,9 +247,10 @@ class company_edit_form extends \company_moodleform {
         }
 
         $mform->addElement('date_time_selector', 'validto', get_string('companyvalidto', 'block_iomad_company_admin'), array('optional' => true));
-        $mform->addElement('duration', 'suspendafter', get_string('companysuspendafter', 'block_iomad_company_admin'));
+        $mform->addElement('duration', 'suspendafter', get_string('companyterminateafter', 'block_iomad_company_admin'));
         $mform->addHelpButton('validto', 'companyvalidto', 'block_iomad_company_admin');
-        $mform->addHelpButton('suspendafter', 'companysuspendafter', 'block_iomad_company_admin');
+        $mform->addHelpButton('suspendafter', 'companyterminateafter', 'block_iomad_company_admin');
+        $mform->disabledIF('suspendafter', 'validto[enabled]', 'notchecked');
 
         $mform->setType('parentid', PARAM_INT);
         $mform->setType('ecommerce', PARAM_INT);
