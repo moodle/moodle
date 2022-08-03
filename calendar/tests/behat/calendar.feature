@@ -16,6 +16,7 @@ Feature: Perform basic calendar functionality
       | Course 1 | C1 | topics |
       | Course 2 | C2 | topics |
       | Course 3 | C3 | topics |
+      | Course 4 | C4 | topics |
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
@@ -276,3 +277,22 @@ Feature: Perform basic calendar functionality
     And I should not see "Event 1:1"
     And I hover over day "1" of this month in the full calendar page
     And I should see "Event 1:1"
+
+  @javascript
+  Scenario: Admin can create and edit course events if calendar_adminseesall setting is disabled
+    Given I log in as "admin"
+    And the following config values are set as admin:
+      | calendar_adminseesall | 0 |
+    And I am on "Course 4" course homepage with editing mode on
+    And I add the "Upcoming events" block
+    And I click on "Go to calendar..." "link" in the "Upcoming events" "block"
+    And I click on "New event" "button"
+    And I should see "Course" in the "Type of event" "select"
+    And "Course 4" "autocomplete_selection" should exist
+    And I set the field "Event title" to "Test course event"
+    And I click on "Save" "button"
+    And I should see "Test course event"
+    When I click on "Edit" "link" in the "region-main" "region"
+    Then the field "Event title" matches value "Test course event"
+    And the field "Type of event" matches value "Course"
+    And "Course 4" "autocomplete_selection" should exist
