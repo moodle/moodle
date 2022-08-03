@@ -583,12 +583,19 @@ if (empty($courseid)) {
     $wheresql = "companyid = :companyid $coursesearchsql group by courseid, coursename, companyid";
 
     // Set up the headers for the table.
-    $courseheaders = array(get_string('coursename', 'local_report_completion'),
-                     get_string('licenseallocated', 'local_report_user_license_allocations'),
-                     get_string('usersummary', 'local_report_completion'));
-    $coursecolumns = array('coursename',
-                     'licenseallocated',
-                     'usersummary');
+    if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $context)) {
+        $courseheaders = array(get_string('coursename', 'local_report_completion'),
+                         get_string('licenseallocated', 'local_report_user_license_allocations'),
+                         get_string('usersummary', 'local_report_completion'));
+        $coursecolumns = array('coursename',
+                         'licenseallocated',
+                         'usersummary');
+    } else {
+        $courseheaders = array(get_string('coursename', 'local_report_completion'),
+                         get_string('usersummary', 'local_report_completion'));
+        $coursecolumns = array('coursename',
+                         'usersummary');
+    }
 
     $coursetable->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
     $coursetable->define_baseurl($url);
