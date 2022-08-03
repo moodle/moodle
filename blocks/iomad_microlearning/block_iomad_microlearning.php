@@ -41,7 +41,7 @@ class block_iomad_microlearning extends block_base {
         global $CFG, $USER, $DB;
 
         // Get any nuggets assigned and not completed.
-        $mynuggets = $DB->get_records_sql("SELECT mtu.*,mn.name AS nuggetname,mn.cmid,.mn.sectionid,mt.name AS threadname 
+        $mynuggets = $DB->get_records_sql("SELECT mtu.*, mn.name AS nuggetname, mn.cmid, mn.sectionid, mn.url as url, mt.name AS threadname 
                                            FROM {microlearning_thread_user} mtu
                                            JOIN {microlearning_nugget} mn ON (mtu.nuggetid = mn.id)
                                            JOIN {microlearning_thread} mt ON (mtu.threadid = mt.id)
