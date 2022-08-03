@@ -735,10 +735,10 @@ class block_iomad_company_admin_external extends external_api {
 
             if (!company::upsert_company_user($userrecord['userid'],
                                               $company->id,
-                                               $userrecord['departmentid'],
-                                               $userrecord['managertype'],
-                                               null,
-                                               true)) {
+                                              $userrecord['departmentid'],
+                                              $userrecord['managertype'],
+                                              false,
+                                              true)) {
                  $succeeded = false;
                  $errormessage = "Unable to assign user";
             } else {
