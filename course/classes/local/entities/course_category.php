@@ -100,8 +100,9 @@ class course_category extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.name, {$tablealias}.id")
-            ->add_callback(static function(string $name, stdClass $category): string {
-                return core_course_category::get($category->id, MUST_EXIST, true)->get_formatted_name();
+            ->add_callback(static function(?string $name, stdClass $category): string {
+                return empty($category->id) ? '' :
+                    core_course_category::get($category->id, MUST_EXIST, true)->get_formatted_name();
             })
             ->set_is_sortable(true);
 
@@ -116,7 +117,10 @@ class course_category extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.name, {$tablealias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
-            ->add_callback(static function(string $name, stdClass $category): string {
+            ->add_callback(static function(?string $name, stdClass $category): string {
+                if (empty($category->id)) {
+                    return '';
+                }
                 context_helper::preload_from_record($category);
                 $context = context_coursecat::instance($category->id);
                 $url = new moodle_url('/course/management.php', ['categoryid' => $category->id]);
@@ -134,8 +138,9 @@ class course_category extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.name, {$tablealias}.id")
-            ->add_callback(static function(string $name, stdClass $category): string {
-                return core_course_category::get($category->id, MUST_EXIST, true)->get_nested_name(false);
+            ->add_callback(static function(?string $name, stdClass $category): string {
+                return empty($category->id) ? '' :
+                    core_course_category::get($category->id, MUST_EXIST, true)->get_nested_name(false);
             })
             ->set_disabled_aggregation(['groupconcat', 'groupconcatdistinct'])
             ->set_is_sortable(true);
