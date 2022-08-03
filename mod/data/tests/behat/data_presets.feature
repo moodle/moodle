@@ -98,7 +98,7 @@ Feature: Users can view and manage data presets
     And I set the field "Name" to "New saved preset"
     And I set the field "Description" to "My funny description goes here."
     And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
-    And I should see "Saved successfully. Your preset will now be available across the site."
+    And I should see "Preset saved."
     And I follow "Presets"
     And I should see "New saved preset"
     And I should see "My funny description goes here." in the "New saved preset" "table_row"
@@ -134,7 +134,7 @@ Feature: Users can view and manage data presets
     And "Replace existing preset with this name and overwrite its contents" "checkbox" should be visible
     And I click on "Replace existing preset with this name and overwrite its contents" "checkbox" in the "Save all fields and templates as preset" "dialogue"
     And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
-    And I should see "Saved successfully. Your preset will now be available across the site."
+    And I should see "Preset saved."
     And I follow "Presets"
     And I should see "New saved preset"
     And I should see "This is a new description that will be overwritten." in the "New saved preset" "table_row"
