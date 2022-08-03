@@ -180,7 +180,11 @@ function trainingevent_get_coursemodule_info($coursemodule) {
         $info = new cached_cm_info();
 
         // No filtering here because this info is cached and filtered later.
-        $extra = $trainingevent->intro;
+        if (empty($coursemodule->showdescription)) {
+            $extra = '';
+        } else {
+            $extra = $trainingevent->intro;
+        }
 
         if ($trainingevent->classroomid) {
             if ($classroom = $DB->get_record('classroom', array('id' => $trainingevent->classroomid), '*')) {
@@ -196,6 +200,7 @@ function trainingevent_get_coursemodule_info($coursemodule) {
         // Sneakily prepend the extra info to the intro value (only for the remainder of this function).
         $trainingevent->intro = "<div>" . $extra . "</div>";
 
+        $info->content = null;
         $info->content = format_module_intro('trainingevent', $trainingevent, $coursemodule->id, false);
         
         $info->name  = format_string($trainingevent->name);
