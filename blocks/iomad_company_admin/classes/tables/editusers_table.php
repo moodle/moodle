@@ -51,6 +51,11 @@ class editusers_table extends table_sql {
      */
     public function col_fullname($row) {
         $name = fullname($row, has_capability('moodle/site:viewfullnames', $this->get_context()));
+
+        // Deal with suspended users.
+        if (!empty($row->suspended)) {
+            $name = format_string("$name (S)");
+        }
         return $name;
     }
 
