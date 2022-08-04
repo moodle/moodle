@@ -53,7 +53,7 @@ class behat_mod_data_generator extends behat_generator_base {
                 'singular' => 'preset',
                 'datagenerator' => 'preset',
                 'required' => ['database', 'name'],
-                'switchids' => ['database' => 'databaseid'],
+                'switchids' => ['database' => 'databaseid', 'user' => 'userid'],
             ],
         ];
     }
