@@ -277,7 +277,13 @@ class core extends H5PCore {
         $file->delete();
 
         $librarykey = static::libraryToString($library);
-        $libraryid = $factory->get_storage()->h5pC->librariesJsonData[$librarykey]["libraryId"];
+
+        $libraryjson = $factory->get_storage()->h5pC->librariesJsonData[$librarykey];
+        if (!array_key_exists('libraryId', $libraryjson)) {
+            return null;
+        }
+
+        $libraryid = $libraryjson['libraryId'];
 
         // Update example and tutorial (if any of them are defined in $library).
         $params = ['id' => $libraryid];
