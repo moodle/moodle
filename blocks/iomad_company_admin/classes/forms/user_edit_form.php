@@ -68,19 +68,9 @@ class user_edit_form extends \moodleform {
             $departmentid = $this->departmentid;
         }
         $this->userdepartment = $userhierarchylevel;
-
-        $options = array('context' => $this->context,
-                         'multiselect' => true,
-                         'companyid' => $this->selectedcompany,
-                         'departmentid' => $departmentid,
-                         'subdepartments' => $this->subhierarchieslist,
-                         'parentdepartmentid' => $parentlevel,
-                         'showopenshared' => true,
-                         'license' => false);
-
-        $this->currentcourses = new \potential_subdepartment_course_selector('currentcourses', $options);
-        $this->currentcourses->set_rows(20);
+        $this->companycourses = $this->company->get_menu_courses(true, true);
         $this->context = \context_coursecat::instance($CFG->defaultrequestcategory);
+
         parent::__construct($actionurl);
     }
 
@@ -281,11 +271,9 @@ class user_edit_form extends \moodleform {
 
         if (iomad::has_capability('block/iomad_company_admin:company_course_users', $systemcontext)) {
             $mform->addElement('header', 'courses', get_string('assigncourses', 'block_iomad_company_admin'));
-            $mform->addElement('html', "<div class='fitem'><div class='fitemtitle'>" .
-                                        get_string('selectenrolmentcourse', 'block_iomad_company_admin') .
-                                        "</div><div class='felement'>");
-            $mform->addElement('html', $this->currentcourses->display(true));
-            $mform->addElement('html', "</div></div>");
+            $autooptions = array('multiple' => true,
+                                 'noselectionstring' => get_string('none'));
+            $mform->addElement('autocomplete', 'currentcourses', get_string('selectenrolmentcourse', 'block_iomad_company_admin'), $this->companycourses, $autooptions);
         }
 
         // add action buttons
