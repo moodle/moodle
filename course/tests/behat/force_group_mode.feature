@@ -14,11 +14,11 @@ Feature: Force group mode in a course
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity | course | name      |
+      | chat     | C1     | Chat room |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Chat" to section "1" and I fill the form with:
-      | Name of this chat room | Chat room |
-      | Description | Chat description |
     And I navigate to "Settings" in current page administration
 
   @javascript
