@@ -23,6 +23,7 @@ use core_calendar\local\event\factories\event_factory;
 use core_calendar\local\event\factories\event_factory_interface;
 use core_calendar\local\event\mappers\event_mapper;
 use core_calendar\local\event\mappers\event_mapper_interface;
+use core_completion\api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -365,6 +366,41 @@ class container_test extends \advanced_testcase {
         // The result should now be null since we have disabled completion.
         $this->assertNull($factory->create_instance($event));
     }
+
+    /**
+     * Checks that completed activities events do not show.
+     * @covers \core_calendar\local\event::init
+     */
+    public function test_event_factory_with_completed_module_related_event() {
+        global $CFG, $DB;
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        // Create an assign activity with a time set.
+        $time = time();
+        $assign = $this->getDataGenerator()->create_module(
+            'assign', ['course' => $course->id, 'completion' => COMPLETION_TRACKING_MANUAL]);
+
+        // Create the event but set it to tomorrow.
+        $CFG->enablecompletion = true;
+        api::update_completion_date_event($assign->cmid, 'assign', $assign,
+            $time + DAYSECS);
+
+        $this->setUser($user);
+        // Check that we get should be completed event.
+        $this->assertCount(1, \core_calendar\local\event\container::get_event_vault()->get_events());
+        // Then Complete the activity.
+        $completion = new \completion_info($course);
+        $cmassign = get_coursemodule_from_id('assign', $assign->cmid);
+        // This should trigger another call to the update_completion_date_event.
+        $completion->update_state($cmassign, COMPLETION_COMPLETE, $user->id);
+        // Check that we do not see the event anymore.
+        $this->assertCount(0, \core_calendar\local\event\container::get_event_vault()->get_events());
+    }
+
 
     /**
      * Test that the event factory only returns an event if the logged in user
