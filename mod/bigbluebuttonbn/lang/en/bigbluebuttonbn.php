@@ -286,11 +286,6 @@ $string['config_hideuserlist_default_description'] = 'If enabled the session use
 $string['config_hideuserlist_editable'] = 'Hide user list can be edited';
 $string['config_hideuserlist_editable_description'] = 'Hide user list by default can be edited when the instance is added or updated.';
 
-$string['config_lockonjoin_default'] = 'Lock on join enabled by default';
-$string['config_lockonjoin_default_description'] = 'If enabled the settings locked by configuration are applied to the user when they join. Lock configuration must be enabled for this to apply.';
-$string['config_lockonjoin_editable'] = 'Lock on join can be edited';
-$string['config_lockonjoin_editable_description'] = 'Lock on join by default can be edited when the instance is added or updated.';
-
 $string['config_experimental_features'] = 'Experimental features';
 $string['config_experimental_features_description'] = 'Configuration for experimental features.';
 
@@ -373,7 +368,6 @@ $string['mod_form_field_disableprivatechat'] = 'Disable private chat';
 $string['mod_form_field_disablepublicchat'] = 'Disable public chat';
 $string['mod_form_field_disablenote'] = 'Disable shared notes';
 $string['mod_form_field_hideuserlist'] = 'Hide user list';
-$string['mod_form_field_lockonjoin'] = 'Lock settings on join';
 $string['mod_form_locksettings'] = 'Lock settings';
 $string['report_join_info']  = 'Has joined the room {$a} time(s)';
 $string['report_play_recording_info']  = 'Has played a recording {$a} time(s)';

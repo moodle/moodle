@@ -350,7 +350,6 @@ class meeting {
         'disableprivatechat' => 'lockSettingsDisablePrivateChat',
         'disablepublicchat' => 'lockSettingsDisablePublicChat',
         'disablenote' => 'lockSettingsDisableNote',
-        'lockonjoin' => 'lockSettingsLockOnJoin',
         'hideuserlist' => 'lockSettingsHideUserList'
     ];
     /**
@@ -391,6 +390,9 @@ class meeting {
             $instancevar = $this->instance->get_instance_var($instancevarname);
             if (!is_null($instancevar)) {
                 $data[$lockname] = $instancevar ? 'true' : 'false';
+                if ($instancevar) {
+                    $data['lockSettingsLockOnJoin'] = 'true'; // This will be locked whenever one settings is locked.
+                }
             }
         }
         return $data;
