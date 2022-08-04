@@ -839,7 +839,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $updateuser->suspended = 1;
                     user_update_user($updateuser, false);
                     echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
-                    \core\session\manager::kill_user_sessions($user->id);
+                    \core\session\manager::destroy_user_sessions($user->id);
                 }
             } else {
                 print_string('nouserentriestoremove', 'auth_ldap');

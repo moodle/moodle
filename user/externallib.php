@@ -659,7 +659,7 @@ class core_user_external extends \core_external\external_api {
                     useredit_update_user_preference($userpref);
                 }
                 if (isset($user['suspended']) and $user['suspended']) {
-                    \core\session\manager::kill_user_sessions($user['id']);
+                    \core\session\manager::destroy_user_sessions($user['id']);
                 }
 
                 $transaction->allow_commit();

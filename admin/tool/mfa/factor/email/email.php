@@ -79,7 +79,7 @@ if ($form->is_cancelled()) {
         $DB->set_field('tool_mfa', 'revoked', 1, ['userid' => $user->id, 'factor' => 'email']);
 
         // Remotely logout all sessions for user.
-        $manager = \core\session\manager::kill_user_sessions($instance->userid);
+        \core\session\manager::destroy_user_sessions($instance->userid);
 
         // Log event.
         $ip = $instance->createdfromip;

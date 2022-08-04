@@ -64,7 +64,7 @@ if ($delete && confirm_sesskey()) {
 
 // Delete all sessions except current.
 if ($deleteall && confirm_sesskey()) {
-    \core\session\manager::kill_user_sessions($USER->id, session_id());
+    \core\session\manager::destroy_user_sessions($USER->id, session_id());
     redirect(
         url: $PAGE->url,
         message: get_string('logoutothersessionssuccess', 'report_usersessions'),
@@ -82,15 +82,13 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('mysessions', 'report_usersessions'));
 
 $data = array();
-$sql = "SELECT id, timecreated, timemodified, firstip, lastip, sid
-          FROM {sessions}
-         WHERE userid = :userid
-      ORDER BY timemodified DESC";
-$params = array('userid' => $USER->id, 'sid' => session_id());
-
-$sessions = $DB->get_records_sql($sql, $params);
+$sessions = \core\session\manager::get_sessions_by_userid($USER->id);
+// Order records by timemodified DESC.
+usort($sessions, function($a, $b){
+    return $b->timemodified <=> $a->timemodified;
+});
 foreach ($sessions as $session) {
-    if ($session->sid === $params['sid']) {
+    if ($session->sid === session_id()) {
         $lastaccess = get_string('thissession', 'report_usersessions');
         $deletelink = '';
 

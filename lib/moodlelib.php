@@ -2689,7 +2689,8 @@ function require_logout() {
             'other' => array('sessionid' => $sid),
         )
     );
-    if ($session = $DB->get_record('sessions', array('sid'=>$sid))) {
+    $session = \core\session\manager::get_session_by_sid($sid);
+    if (isset($session->id)) {
         $event->add_record_snapshot('sessions', $session);
     }
 
@@ -3675,7 +3676,7 @@ function delete_user(stdClass $user) {
     }
 
     // Force logout - may fail if file based sessions used, sorry.
-    \core\session\manager::kill_user_sessions($user->id);
+    \core\session\manager::destroy_user_sessions($user->id);
 
     // Generate username from email address, or a fake email.
     $delemail = !empty($user->email) ? $user->email : $user->username . '.' . $user->id . '@unknownemail.invalid';

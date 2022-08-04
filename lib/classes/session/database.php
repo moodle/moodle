@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Database based session handler.
- *
- * @package    core
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\session;
 
 use SessionHandlerInterface;
@@ -34,7 +26,8 @@ use SessionHandlerInterface;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class database extends handler implements SessionHandlerInterface {
-    /** @var \stdClass $record session record */
+
+    /** @var int $record session record */
     protected $recordid = null;
 
     /** @var \moodle_database $database session database */
@@ -62,9 +55,7 @@ class database extends handler implements SessionHandlerInterface {
         }
     }
 
-    /**
-     * Init session handler.
-     */
+    #[\Override]
     public function init() {
         if (!$this->database->session_lock_supported()) {
             throw new exception('sessionhandlerproblem', 'error', '', null, 'Database does not support session locking');
@@ -76,35 +67,36 @@ class database extends handler implements SessionHandlerInterface {
         }
     }
 
-    /**
-     * Check the backend contains data for this session id.
-     *
-     * Note: this is intended to be called from manager::session_exists() only.
-     *
-     * @param string $sid
-     * @return bool true if session found.
-     */
+    #[\Override]
     public function session_exists($sid) {
         // It was already checked in the calling code that the record in sessions table exists.
         return true;
     }
 
-    /**
-     * Kill all active sessions, the core sessions table is
-     * purged afterwards.
-     */
-    public function kill_all_sessions() {
-        // Nothing to do, the sessions table is cleared from core.
-        return;
-    }
+    #[\Override]
+    public function destroy(string $id): bool {
+        if (!$session = $this->get_session_by_sid($id)) {
+            if ($id == session_id()) {
+                $this->recordid = null;
+                $this->lasthash = null;
+            }
+            return true;
+        }
 
-    /**
-     * Kill one session, the session record is removed afterwards.
-     * @param string $sid
-     */
-    public function kill_session($sid) {
-        // Nothing to do, the sessions table is purged afterwards.
-        return;
+        if ($this->recordid && ($session->id == $this->recordid)) {
+            try {
+                $this->database->release_session_lock($this->recordid);
+            } catch (\Exception $ex) {
+                // Log and ignore any problems.
+                mtrace('Failed to release session lock: '.$ex->getMessage());
+            }
+            $this->recordid = null;
+            $this->lasthash = null;
+        }
+
+        $this->database->delete_records('sessions', ['id' => $session->id]);
+
+        return true;
     }
 
     /**
@@ -151,7 +143,7 @@ class database extends handler implements SessionHandlerInterface {
      */
     public function read(string $sid): string|false {
         try {
-            if (!$record = $this->database->get_record('sessions', array('sid'=>$sid), 'id')) {
+            if (!$record = $this->get_session_by_sid($sid)) {
                 // Let's cheat and skip locking if this is the first access,
                 // do not create the record here, let the manager do it after session init.
                 $this->failed = false;
@@ -252,56 +244,4 @@ class database extends handler implements SessionHandlerInterface {
         return true;
     }
 
-    /**
-     * Destroy session handler.
-     *
-     * {@see http://php.net/manual/en/function.session-set-save-handler.php}
-     *
-     * @param string $id
-     * @return bool success
-     */
-    public function destroy(string $id): bool {
-        if (!$session = $this->database->get_record('sessions', ['sid' => $id], 'id, sid')) {
-            if ($id == session_id()) {
-                $this->recordid = null;
-                $this->lasthash = null;
-            }
-            return true;
-        }
-
-        if ($this->recordid && ($session->id == $this->recordid)) {
-            try {
-                $this->database->release_session_lock($this->recordid);
-            } catch (\Exception $ex) {
-                // Ignore problems.
-            }
-            $this->recordid = null;
-            $this->lasthash = null;
-        }
-
-        $this->database->delete_records('sessions', ['id' => $session->id]);
-
-        return true;
-    }
-
-    /**
-     * GC session handler.
-     *
-     * {@see http://php.net/manual/en/function.session-set-save-handler.php}
-     *
-     * @param int $max_lifetime moodle uses special timeout rules
-     * @return bool success
-     */
-    // phpcs:ignore moodle.NamingConventions.ValidVariableName.VariableNameUnderscore
-    public function gc(int $max_lifetime): int|false {
-        // This should do something only if cron is not running properly...
-        if (!$stalelifetime = ini_get('session.gc_maxlifetime')) {
-            return false;
-        }
-        $params = ['purgebefore' => (time() - $stalelifetime)];
-        $count = $this->database->count_records_select('sessions', 'userid = 0 AND timemodified < :purgebefore', $params);
-        $this->database->delete_records_select('sessions', 'userid = 0 AND timemodified < :purgebefore', $params);
-
-        return $count;
-    }
 }

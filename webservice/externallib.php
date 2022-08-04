@@ -213,7 +213,7 @@ class core_webservice_external extends \core_external\external_api {
         $siteinfo['limitconcurrentlogins'] = (int) $CFG->limitconcurrentlogins;
         if (!empty($CFG->limitconcurrentlogins)) {
             // For performance, only when enabled.
-            $siteinfo['usersessionscount'] = $DB->count_records('sessions', ['userid' => $USER->id]);
+            $siteinfo['usersessionscount'] = count(\core\session\manager::get_sessions_by_userid($USER->id));
         }
 
         $siteinfo['policyagreed'] = $USER->policyagreed;
