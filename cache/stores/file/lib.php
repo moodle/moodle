@@ -37,7 +37,8 @@
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cachestore_file extends cache_store implements cache_is_key_aware, cache_is_configurable, cache_is_searchable  {
+class cachestore_file extends cache_store implements cache_is_key_aware, cache_is_configurable, cache_is_searchable,
+        cache_is_lockable {
 
     /**
      * The name of the store.
@@ -128,6 +129,23 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      */
     private $cfg = null;
 
+    /** @var int Maximum number of seconds to wait for a lock before giving up. */
+    protected $lockwait = 60;
+
+    /**
+     * Instance of file_lock_factory configured to create locks in the cache directory.
+     *
+     * @var \core\lock\file_lock_factory $lockfactory
+     */
+    protected $lockfactory = null;
+
+    /**
+     * List of current locks.
+     *
+     * @var array $locks
+     */
+    protected $locks = [];
+
     /**
      * Constructs the store instance.
      *
@@ -192,6 +210,21 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
             $this->asyncpurge = (bool)$configuration['asyncpurge'];
         } else {
             $this->asyncpurge = false;
+        }
+
+        // Leverage cachelock_file to provide native locking, to avoid duplicating logic.
+        // This will store locks alongside the cache, so local cache uses local locks.
+        $lockdir = $path . '/filelocks';
+        if (!file_exists($lockdir)) {
+            make_writable_directory($lockdir);
+        }
+        if (array_key_exists('lockwait', $configuration)) {
+            $this->lockwait = (int)$configuration['lockwait'];
+        }
+        $this->lockfactory = new \core\lock\file_lock_factory('cachestore_file', $lockdir);
+        if (!$this->lockfactory->is_available()) {
+            // File locking is disabled in config, fall back to default lock factory.
+            $this->lockfactory = \core\lock\lock_config::get_lock_factory('cachestore_file');
         }
     }
 
@@ -675,6 +708,9 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         if (isset($data->asyncpurge)) {
             $config['asyncpurge'] = $data->asyncpurge;
         }
+        if (isset($data->lockwait)) {
+            $config['lockwait'] = $data->lockwait;
+        }
 
         return $config;
     }
@@ -701,6 +737,9 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         }
         if (isset($config['asyncpurge'])) {
             $data['asyncpurge'] = (bool)$config['asyncpurge'];
+        }
+        if (isset($config['lockwait'])) {
+            $data['lockwait'] = (int)$config['lockwait'];
         }
         $editform->set_data($data);
     }
@@ -923,5 +962,71 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         $squarediff /= $result->items;
         $result->sd = sqrt($squarediff);
         return $result;
+    }
+
+    /**
+     * Use lock factory to determine the lock state.
+     *
+     * @param string $key Lock identifier
+     * @param string $ownerid Cache identifier
+     * @return bool|null
+     */
+    public function check_lock_state($key, $ownerid) : ?bool {
+        if (!array_key_exists($key, $this->locks)) {
+            return null; // Lock does not exist.
+        }
+        if (!array_key_exists($ownerid, $this->locks[$key])) {
+            return false; // Lock exists, but belongs to someone else.
+        }
+        if ($this->locks[$key][$ownerid] instanceof \core\lock\lock) {
+            return true; // Lock exists, and we own it.
+        }
+        // Try to get the lock with an immediate timeout. If this succeeds, the lock does not currently exist.
+        $lock = $this->lockfactory->get_lock($key, 0);
+        if ($lock) {
+            // Lock was not already held.
+            $lock->release();
+            return null;
+        } else {
+            // Lock is held by someone else.
+            return false;
+        }
+    }
+
+    /**
+     * Use lock factory to acquire a lock.
+     *
+     * @param string $key Lock identifier
+     * @param string $ownerid Cache identifier
+     * @return bool
+     * @throws cache_exception
+     */
+    public function acquire_lock($key, $ownerid) : bool {
+        $lock = $this->lockfactory->get_lock($key, $this->lockwait);
+        if ($lock) {
+            $this->locks[$key][$ownerid] = $lock;
+        }
+        return (bool)$lock;
+    }
+
+    /**
+     * Use lock factory to release a lock.
+     *
+     * @param string $key Lock identifier
+     * @param string $ownerid Cache identifier
+     * @return bool
+     */
+    public function release_lock($key, $ownerid) : bool {
+        if (!array_key_exists($key, $this->locks)) {
+            return false; // No lock to release.
+        }
+        if (!array_key_exists($ownerid, $this->locks[$key])) {
+            return false; // Tried to release someone else's lock.
+        }
+        $unlocked = $this->locks[$key][$ownerid]->release();
+        if ($unlocked) {
+            unset($this->locks[$key]);
+        }
+        return $unlocked;
     }
 }

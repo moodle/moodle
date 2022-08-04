@@ -382,6 +382,7 @@ class cache_helper {
                         'misses' => 0,
                         'sets' => 0,
                         'iobytes' => cache_store::IO_BYTES_NOT_SUPPORTED,
+                        'locks' => 0,
                     )
                 )
             );
@@ -392,6 +393,7 @@ class cache_helper {
                 'misses' => 0,
                 'sets' => 0,
                 'iobytes' => cache_store::IO_BYTES_NOT_SUPPORTED,
+                'locks' => 0,
             );
         }
     }
