@@ -652,7 +652,6 @@ class behat_forms extends behat_base {
      * @param string $value
      */
     public function set_field_node_value(NodeElement $fieldnode, string $value): void {
-        $this->ensure_node_is_visible($fieldnode);
         $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
         $field->set_value($value);
     }
