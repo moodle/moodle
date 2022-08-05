@@ -296,6 +296,10 @@ class recording_data {
         if ($rec->get('imported')) {
             return true;
         }
+        // When show imported recordings only is enabled, exclude all other recordings.
+        if ($instance->get_recordings_imported() && !$rec->get('imported')) {
+            return false;
+        }
         // Administrators and moderators are always allowed.
         if ($instance->is_admin() || $instance->is_moderator()) {
             return true;

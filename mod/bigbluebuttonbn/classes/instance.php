@@ -764,6 +764,18 @@ EOF;
     }
 
     /**
+     * Get recordings_imported from instancedata.
+     *
+     * @return bool
+     */
+    public function get_recordings_imported(): bool {
+        if (config::get('recordings_imported_editable')) {
+            return (bool) $this->get_instance_var('recordings_imported');
+        }
+        return config::get('recordings_imported_default');
+    }
+
+    /**
      * Whether this instance is recorded from the start.
      *
      * @return bool
