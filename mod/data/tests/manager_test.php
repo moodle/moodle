@@ -399,4 +399,149 @@ class manager_test extends \advanced_testcase {
         $preset = reset($presets);
         $this->assertEquals($teacherpreset->name, $preset->name);
     }
+
+    /**
+     * Test for can_view_preset().
+     *
+     * @covers ::can_view_preset
+     * @dataProvider can_view_preset_provider
+     * @param string $rolename the user role name
+     * @param bool $ownpreset if the preset belongs to the user
+     * @param bool|null $useridparam if the method should be called with a user id param
+     * @param bool $plugin if the preset is a plugin or not
+     * @param bool $expected the expected result
+     */
+    public function test_can_view_preset(string $rolename, bool $ownpreset, ?bool $useridparam, bool $plugin, bool $expected) {
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, $rolename);
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $cm = get_coursemodule_from_id(manager::MODULE, $activity->cmid, 0, false, MUST_EXIST);
+        $manager = manager::create_from_coursemodule($cm);
+
+        // Create preset.
+        if ($ownpreset) {
+            $this->setUser($user);
+        } else {
+            $this->setAdminUser();
+        }
+
+        if ($plugin) {
+            $preset = preset::create_from_plugin($manager, 'imagegallery');
+        } else {
+            $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+            $preset = $plugingenerator->create_preset($activity, (object)['name' => 'Preset name']);
+        }
+
+        // Setup user param.
+        if ($useridparam) {
+            // Login as a different user to validate the userid param is working.
+            $otheruser = $this->getDataGenerator()->create_user();
+            $this->setUser($otheruser);
+            $useridparam = $user->id;
+        } else {
+            $this->setUser($user);
+        }
+
+        $result = $manager->can_view_preset($preset, $useridparam);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Data provider for test_can_view_preset.
+     *
+     * @return array
+     */
+    public function can_view_preset_provider(): array {
+        return [
+            // User presets.
+            'Teacher owned preset without user id param' => [
+                'rolename' => 'editingteacher',
+                'ownpreset' => true,
+                'useridparam' => null,
+                'plugin' => false,
+                'expected' => true,
+            ],
+            'Teacher owned preset with user id param' => [
+                'rolename' => 'editingteacher',
+                'ownpreset' => true,
+                'useridparam' => true,
+                'plugin' => false,
+                'expected' => true,
+            ],
+            'Teacher not owned preset without user id param' => [
+                'rolename' => 'editingteacher',
+                'ownpreset' => false,
+                'useridparam' => null,
+                'plugin' => false,
+                'expected' => true,
+            ],
+            'Teacher not owned preset with user id param' => [
+                'rolename' => 'editingteacher',
+                'ownpreset' => false,
+                'useridparam' => true,
+                'plugin' => false,
+                'expected' => true,
+            ],
+            'Student owned preset without user id param' => [
+                'rolename' => 'student',
+                'ownpreset' => true,
+                'useridparam' => null,
+                'plugin' => false,
+                'expected' => true,
+            ],
+            'Student owned preset with user id param' => [
+                'rolename' => 'student',
+                'ownpreset' => true,
+                'useridparam' => true,
+                'plugin' => false,
+                'expected' => true,
+            ],
+            'Student not owned preset without user id param' => [
+                'rolename' => 'student',
+                'ownpreset' => false,
+                'useridparam' => null,
+                'plugin' => false,
+                'expected' => false,
+            ],
+            'Student not owned preset with user id param' => [
+                'rolename' => 'student',
+                'ownpreset' => false,
+                'useridparam' => true,
+                'plugin' => false,
+                'expected' => false,
+            ],
+            // Plugin presets.
+            'Teacher plugin preset without user id param' => [
+                'rolename' => 'editingteacher',
+                'ownpreset' => false,
+                'useridparam' => null,
+                'plugin' => true,
+                'expected' => true,
+            ],
+            'Teacher plugin preset with user id param' => [
+                'rolename' => 'editingteacher',
+                'ownpreset' => false,
+                'useridparam' => true,
+                'plugin' => true,
+                'expected' => true,
+            ],
+            'Student plugin preset without user id param' => [
+                'rolename' => 'student',
+                'ownpreset' => false,
+                'useridparam' => null,
+                'plugin' => true,
+                'expected' => true,
+            ],
+            'Student plugin preset with user id param' => [
+                'rolename' => 'student',
+                'ownpreset' => false,
+                'useridparam' => true,
+                'plugin' => true,
+                'expected' => true,
+            ],
+        ];
+    }
 }

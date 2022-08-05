@@ -149,3 +149,19 @@
 .entry-actionsmenu .dropdown-toggle::after {
     display: none;
 }
+
+/* Preset preview styles */
+#page-mod-data-preset .nopreview {
+    border: 1px solid var(--secondary);
+    padding: 0.2rem;
+    border-radius: 5px;
+}
+/* Disable links and buttons in the preset preview */
+.template-preview-content .preview-disabled,
+.template-preview-content .action-icon,
+.template-preview-content .dropdown-menu a,
+.template-preview-content .data-field-link,
+.template-preview-content .data-field-html a,
+.template-preview-content .data-field-html button {
+    pointer-events: none;
+}

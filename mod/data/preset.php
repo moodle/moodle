@@ -30,6 +30,8 @@
 
 use mod_data\manager;
 use mod_data\preset;
+use mod_data\output\action_bar;
+use mod_data\output\preset_preview;
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/data/lib.php');
@@ -54,7 +56,7 @@ if ($id) {
 
 $action = optional_param('action', 'view', PARAM_ALPHA); // The page action.
 $allowedactions = ['view', 'import', 'importzip', 'finishimport',
-    'export'];
+    'export', 'preview'];
 if (!in_array($action, $allowedactions)) {
     throw new moodle_exception('invalidaccess');
 }
@@ -110,6 +112,28 @@ $formimportzip->set_data(array('d' => $data->id));
 
 if ($formimportzip->is_cancelled()) {
     redirect(new moodle_url('/mod/data/preset.php', ['d' => $data->id]));
+}
+
+// Preset preview injects CSS and JS to the page and should be done before the page header.
+if ($action === 'preview') {
+    $fullname = optional_param('fullname', '', PARAM_PATH); // The directory the preset is in.
+    $templatename = optional_param('template', 'listtemplate', PARAM_ALPHA);
+    // Find out preset owner userid and shortname.
+    $preset = preset::create_from_fullname($manager, $fullname);
+    // Validate if the user can view this preset.
+    if (!$manager->can_view_preset($preset)) {
+        throw new \moodle_exception('cannotaccesspresentsother', manager::PLUGINNAME);
+    }
+    $preview = new preset_preview($manager, $preset, $templatename);
+    $preview->prepare_page($PAGE);
+    // Print the preview screen.
+    echo $OUTPUT->header();
+    $actionbar = new action_bar($data->id, $url);
+    echo $actionbar->get_presets_preview_action_bar($manager, $fullname, $templatename);
+    echo $OUTPUT->heading(ucfirst($preset->name), 2, 'mb-4');
+    echo $renderer->render($preview);
+    echo $OUTPUT->footer();
+    exit(0);
 }
 
 echo $OUTPUT->header();

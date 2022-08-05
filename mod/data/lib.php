@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -85,6 +84,9 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     /** priority value for maximum priority */
     const MAX_PRIORITY = 4;
 
+    /** @var bool whether the field is used in preview mode. */
+    protected $preview = false;
+
     /**
      * Constructor function
      *
@@ -146,6 +148,58 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      */
     public function get_name(): string {
         return $this->field->name;
+    }
+
+    /**
+     * Return if the field type supports preview.
+     *
+     * Fields without a preview cannot be displayed in the preset preview.
+     *
+     * @return bool if the plugin supports preview.
+     */
+    public function supports_preview(): bool {
+        return false;
+    }
+
+    /**
+     * Generate a fake data_content for this field to be used in preset previews.
+     *
+     * Data plugins must override this method and support_preview in order to enable
+     * preset preview for this field.
+     *
+     * @param int $recordid the fake record id
+     * @return stdClass the fake record
+     */
+    public function get_data_content_preview(int $recordid): stdClass {
+        $message = get_string('nopreviewavailable', 'mod_data', $this->field->name);
+        return (object)[
+            'id' => 0,
+            'fieldid' => $this->field->id,
+            'recordid' => $recordid,
+            'content' => "<span class=\"nopreview\">$message</span>",
+            'content1' => null,
+            'content2' => null,
+            'content3' => null,
+            'content4' => null,
+        ];
+    }
+
+    /**
+     * Set the field to preview mode.
+     *
+     * @param bool $preview the new preview value
+     */
+    public function set_preview(bool $preview) {
+        $this->preview = $preview;
+    }
+
+    /**
+     * Get the field preview value.
+     *
+     * @return bool
+     */
+    public function get_preview(): bool {
+        return $this->preview;
     }
 
 
@@ -378,6 +432,23 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     }
 
     /**
+     * Return the data_content of the field, or generate it if it is in preview mode.
+     *
+     * @param int $recordid the record id
+     * @return stdClass|bool the record data or false if none
+     */
+    protected function get_data_content(int $recordid) {
+        global $DB;
+        if ($this->preview) {
+            return $this->get_data_content_preview($recordid);
+        }
+        return $DB->get_record(
+            'data_content',
+            ['fieldid' => $this->field->id, 'recordid' => $recordid]
+        );
+    }
+
+    /**
      * Display the content of the field in browse mode
      *
      * @global object
@@ -387,23 +458,18 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      */
     function display_browse_field($recordid, $template) {
         global $DB;
-
-        if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-            if (isset($content->content)) {
-                $options = new stdClass();
-                if ($this->field->param1 == '1') {  // We are autolinking this field, so disable linking within us
-                    //$content->content = '<span class="nolink">'.$content->content.'</span>';
-                    //$content->content1 = FORMAT_HTML;
-                    $options->filter=false;
-                }
-                $options->para = false;
-                $str = format_text($content->content, $content->content1, $options);
-            } else {
-                $str = '';
-            }
-            return $str;
+        $content = $this->get_data_content($recordid);
+        if (!$content || !isset($content->content)) {
+            return '';
         }
-        return false;
+        $options = new stdClass();
+        if ($this->field->param1 == '1') {
+            // We are autolinking this field, so disable linking within us.
+            $options->filter = false;
+        }
+        $options->para = false;
+        $str = format_text($content->content, $content->content1, $options);
+        return $str;
     }
 
     /**
