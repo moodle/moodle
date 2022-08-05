@@ -276,6 +276,10 @@ class manager {
             $options['comments'] = true;
             $options['ratings'] = true;
         }
+        if ($templatename === 'listtemplate') {
+            // The "Show more" button should be only displayed in the listtemplate.
+            $options['showmore'] = true;
+        }
         return new template($this, $templatecontent, $options);
     }
 

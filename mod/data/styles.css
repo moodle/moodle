@@ -149,6 +149,7 @@
     padding-left: 10px;
 }
 
-.preset_action_menu .dropdown-toggle::after {
+.preset_action_menu .dropdown-toggle::after,
+.entry-actionsmenu .dropdown-toggle::after {
     display: none;
 }

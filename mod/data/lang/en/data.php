@@ -24,6 +24,7 @@
  */
 
 $string['action'] = 'Action';
+$string['actionsmenu'] = 'Actions menu';
 $string['add'] = 'Add entry';
 $string['addcomment'] = 'Add comment';
 $string['addentries'] = 'Add entries';
@@ -387,6 +388,7 @@ $string['selectedrequired'] = 'All selected required';
 $string['selectfields'] = 'Select fields';
 $string['selectexportoptions'] = 'Select export options';
 $string['showall'] = 'Show all entries';
+$string['showmore'] = 'Show more';
 $string['single'] = 'View single';
 $string['singleview'] = 'Single view';
 $string['singletemplate'] = 'Single template';
