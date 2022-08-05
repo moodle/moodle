@@ -737,6 +737,7 @@ class behat_navigation extends behat_base {
      * | Page type                  | Identifier meaning        | description                          |
      * | Category                   | category idnumber         | List of courses in that category.    |
      * | Course                     | course shortname          | Main course home page                |
+     * | Course editing             | course shortname          | Edit settings page for the course    |
      * | Activity                   | activity idnumber         | Start page for that activity         |
      * | Activity editing           | activity idnumber         | Edit settings page for that activity |
      * | [modname] Activity         | activity name or idnumber | Start page for that activity         |
@@ -778,7 +779,7 @@ class behat_navigation extends behat_base {
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
                     throw new Exception('The specified course with shortname, fullname, or idnumber "' .
-                            $identifier . '" does not exist');
+                        $identifier . '" does not exist');
                 }
                 return new moodle_url('/course/edit.php', ['id' => $courseid]);
 
