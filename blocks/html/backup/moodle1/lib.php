@@ -36,7 +36,7 @@ class moodle1_block_html_handler extends moodle1_block_handler {
         $contextid  = $this->converter->get_contextid(CONTEXT_BLOCK, $olddata['id']);
         $decodeddata = base64_decode($olddata['configdata']);
         list($updated, $configdata) = upgrade_fix_serialized_objects($decodeddata);
-        $configdata = unserialize($configdata);
+        $configdata = unserialize_object($configdata);
 
         // get a fresh new file manager for this instance
         $this->fileman = $this->converter->get_file_manager($contextid, 'block_html');
@@ -44,7 +44,7 @@ class moodle1_block_html_handler extends moodle1_block_handler {
         // convert course files embedded in the block content
         $this->fileman->filearea = 'content';
         $this->fileman->itemid   = 0;
-        $configdata->text = moodle1_converter::migrate_referenced_files($configdata->text, $this->fileman);
+        $configdata->text = moodle1_converter::migrate_referenced_files($configdata->text ?? '', $this->fileman);
         $configdata->format = FORMAT_HTML;
 
         return base64_encode(serialize($configdata));
