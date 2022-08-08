@@ -20,9 +20,7 @@ Feature: A teacher can edit questions in the question bank
     And the following "questions" exist:
       | questioncategory | qtype | name                       | questiontext                  |
       | Test questions   | essay | Test question to be edited | Write about whatever you want |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank > Questions" in current page administration
+    And I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
 
   Scenario: Edit a previously created question
     When I choose "Edit question" action for "Test question to be edited" in the question bank

@@ -14,12 +14,10 @@ Feature: Test importing calculated question from WebCT format.
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage
 
   @javascript @_file_upload
   Scenario: import a WebCT calculated question
-    When I navigate to "Question bank > Import" in current page administration
+    When I am on the "Course 1" "core_question > course question import" page logged in as "teacher"
     And I set the field "id_format_webct" to "1"
     And I upload "question/format/webct/tests/fixtures/sample_calculated_webct.txt" file to "Import" filemanager
     And I press "id_submitbutton"
