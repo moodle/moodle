@@ -133,8 +133,11 @@ Feature: Verify that all form fields values can be get and set
 
   @javascript
   Scenario: with JS enabled all form fields getters and setters works as expected
-    Then I am on "Course 1" course homepage
-    And I navigate to "Users > Groups" in current page administration
+    Given the following "activities" exist:
+      | activity | course | name        |
+      | lesson   | C1     | Test lesson |
+    When I am on "Course 1" course homepage
+    Then I navigate to "Users > Groups" in current page administration
     # Select (multi-select & AJAX) - Checking "I set the field" and "select box should contain".
     And I set the field "groups" to "Group 2"
     And the "members" select box should contain "Student 2 (s2@example.com)"
@@ -145,11 +148,8 @@ Feature: Verify that all form fields values can be get and set
     And the "members" select box should contain "Student 2 (s2@example.com)"
     And the "members" select box should not contain "Student 3 (s3@example.com)"
     # Checkbox (AJAX) - Checking "I set the field" and "I set the following fields to these values".
-    And I am on "Course 1" course homepage
-    And I add a "Lesson" to section "1"
+    And I am on the "Test lesson" "lesson activity editing" page
     And I set the following fields to these values:
-      | Name | Test lesson |
-      | Description | Test lesson description |
       | available[enabled] | 1 |
     And I set the field "deadline[enabled]" to "1"
     # Checkbox (AJAX) - Checking "the field matches value" before saving.

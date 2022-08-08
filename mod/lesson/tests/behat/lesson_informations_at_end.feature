@@ -14,13 +14,10 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson name |
-      | Description | Test lesson description |
-      | Custom scoring | No |
-    And I follow "Test lesson name"
+    And the following "activities" exist:
+      | activity | course | name             | custom |
+      | lesson   | C1     | Test lesson name | 0      |
+    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -42,9 +39,7 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
       | id_jumpto_1 | This page |
     And I press "Save page"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Test lesson name"
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "First page contents"
     And I press "Next page"
     And I should see "1 + 1?"

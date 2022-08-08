@@ -19,8 +19,8 @@ Feature: Lesson user override
       | student1 | C1 | student |
       | student2 | C1 | student |
     And the following "activities" exist:
-      | activity | name             | intro                   | course | idnumber |
-      | lesson   | Test lesson name | Test lesson description | C1     | lesson1  |
+      | activity | name             | course | idnumber |
+      | lesson   | Test lesson name | C1     | lesson1  |
     And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
@@ -35,7 +35,6 @@ Feature: Lesson user override
       | id_response_editor_1 | Wrong |
       | id_jumpto_1          | This page |
     And I press "Save page"
-    And I log out
 
   @javascript
   Scenario: Add, modify then delete a user override
@@ -97,7 +96,6 @@ Feature: Lesson user override
       | Re-takes allowed | 1 |
     And I press "Save"
     And I should see "Re-takes allowed"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -108,7 +106,6 @@ Feature: Lesson user override
     When I am on the "Test lesson name" "lesson activity" page
     Then I should not see "You are not allowed to retake this lesson."
     And I should see "Cat is an amphibian"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -133,7 +130,6 @@ Feature: Lesson user override
       | Password protected lesson | 12345 |
     And I press "Save"
     And I should see "Password protected lesson"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "Test lesson name is a password protected lesson"
     And I should not see "Cat is an amphibian"
@@ -149,7 +145,6 @@ Feature: Lesson user override
     And I press "Submit"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I should see "Test lesson name is a password protected lesson"
     And I should not see "Cat is an amphibian"
@@ -183,12 +178,10 @@ Feature: Lesson user override
       | deadline[minute]    | 00 |
     And I press "Save"
     And I should see "Lesson closes"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I wait until the page is ready
     Then I should see "This lesson closed on Saturday, 1 January 2000, 8:00"
     And I should not see "Cat is an amphibian"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
 
@@ -215,12 +208,10 @@ Feature: Lesson user override
       | available[minute]    | 00 |
     And I press "Save"
     And I should see "Lesson opens"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I wait until the page is ready
     Then I should see "This lesson will be open on Tuesday, 1 January 2030, 8:00"
     And I should not see "Cat is an amphibian"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
 
@@ -237,7 +228,6 @@ Feature: Lesson user override
       | Maximum number of attempts per question | 2 |
     And I press "Save"
     And I should see "Maximum number of attempts per question"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -250,7 +240,6 @@ Feature: Lesson user override
     And I press "Submit"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -264,8 +253,8 @@ Feature: Lesson user override
       | capability                  | permission | role           | contextlevel | reference |
       | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |
     And the following "activities" exist:
-      | activity | name     | intro                | course | idnumber | groupmode |
-      | lesson   | Lesson 2 | Lesson 2 description | C1     | lesson2  | 1         |
+      | activity | name     | course | idnumber | groupmode |
+      | lesson   | Lesson 2 | C1     | lesson2  | 1         |
     And I am on the "Lesson 2" "lesson activity" page logged in as teacher1
     And I navigate to "User overrides" in current page administration
     Then I should see "No groups you can access."
@@ -276,8 +265,8 @@ Feature: Lesson user override
       | capability                  | permission | role           | contextlevel | reference |
       | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |
     And the following "activities" exist:
-      | activity | name     | intro                | course | idnumber | groupmode |
-      | lesson   | Lesson 2 | Lesson 2 description | C1     | lesson2  | 1         |
+      | activity | name     | course | idnumber | groupmode |
+      | lesson   | Lesson 2 | C1     | lesson2  | 1         |
     And the following "groups" exist:
       | name    | course | idnumber |
       | Group 1 | C1     | G1       |
@@ -299,8 +288,8 @@ Feature: Lesson user override
       | capability                  | permission | role           | contextlevel | reference |
       | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |
     And the following "activities" exist:
-      | activity | name     | intro                | course | idnumber | groupmode |
-      | lesson   | Lesson 2 | Lesson 2 description | C1     | lesson2  | 1         |
+      | activity | name     | course | idnumber | groupmode |
+      | lesson   | Lesson 2 | C1     | lesson2  | 1         |
     And the following "groups" exist:
       | name    | course | idnumber |
       | Group 1 | C1     | G1       |
@@ -331,7 +320,6 @@ Feature: Lesson user override
       | deadline[hour]      | 08       |
       | deadline[minute]    | 00       |
     And I press "Save"
-    And I log out
     When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
     And I navigate to "User overrides" in current page administration
     Then I should see "Student1" in the ".generaltable" "css_element"

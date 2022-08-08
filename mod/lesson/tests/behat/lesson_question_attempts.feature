@@ -20,10 +20,8 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
       | course                   | C1                      |
       | idnumber                 | 0001                    |
       | name                     | Test lesson name        |
-      | intro                    | Test lesson description |
       | retake                   | 1                       |
       | minquestions             | 3                       |
-      | section                  | 1                       |
     And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a content page"
     And I set the following fields to these values:
@@ -89,7 +87,6 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
     And I press "Save page"
-    And I log out
 
   Scenario: Check that we can leave a quiz and when we re-enter we can not re-attempt the question again
     Given I am on the "Test lesson name" "lesson activity" page logged in as student1

@@ -16,14 +16,14 @@ Feature: In a lesson activity, students can see questions in random order and a 
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity | name                   | course | idnumber |
+      | lesson   | Lesson with subcluster | C1     | lesson1  |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Lesson with subcluster
-    Given I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Lesson with subcluster |
-      | Description | Test lesson description |
-    And I follow "Lesson with subcluster"
+    Given I am on the "Lesson with subcluster" "lesson activity" page
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -139,10 +139,7 @@ Feature: In a lesson activity, students can see questions in random order and a 
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Lesson with subcluster"
+    When I am on the "Lesson with subcluster" "lesson activity" page logged in as student1
     Then I should see "First page contents"
     And I press "Next page"
     And I should see "Question from cluster"
