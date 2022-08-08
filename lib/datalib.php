@@ -506,20 +506,26 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
         $params = $params + (array)$extraparams;
     }
 
-    if ($sort) {
-        $sort = " ORDER BY $sort $dir";
-    }
-
     // If a context is specified, get extra user fields that the current user
     // is supposed to see.
     $extrafields = '';
+    $includedfields = ['id', 'username', 'email', 'firstname', 'lastname', 'city', 'country',
+        'lastaccess', 'confirmed', 'mnethostid', 'suspended'];
     if ($extracontext) {
-        $extrafields = get_extra_user_fields_sql($extracontext, '', '',
-                array('id', 'username', 'email', 'firstname', 'lastname', 'city', 'country',
-                'lastaccess', 'confirmed', 'mnethostid'));
+        $extrafields = get_extra_user_fields_sql($extracontext, '', '', $includedfields);
     }
     $namefields = get_all_user_name_fields(true);
     $extrafields = "$extrafields, $namefields";
+
+    if ($sort) {
+        $orderbymap = trim($extrafields, ', ');
+        $orderbymap = array_merge(explode(',', $orderbymap), $includedfields);
+        $neworderbymap = ['default' => 'lastaccess'];
+        foreach($orderbymap as $value) {
+            $neworderbymap[$value] = $value;
+        }
+        $sort = get_safe_orderby($neworderbymap, $sort, $dir);
+    }
 
     // warning: will return UNCONFIRMED USERS
     return $DB->get_records_sql("SELECT id, username, email, city, country, lastaccess, confirmed, mnethostid, suspended $extrafields

@@ -685,6 +685,108 @@ class core_datalib_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests the get_users_listing function.
+     */
+    public function test_get_users_listing(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+
+        // Set up profile field.
+        $generator->create_custom_profile_field(['datatype' => 'text',
+                'shortname' => 'specialid', 'name' => 'Special user id']);
+
+        // Set up the show user identity option.
+        set_config('showuseridentity', 'department');
+
+        // Get all the existing user ids (we're going to remove these from test results).
+        $existingids = array_fill_keys($DB->get_fieldset_select('user', 'id', '1 = 1'), true);
+
+        // Create some test user accounts.
+        $userids = [];
+        foreach (['a', 'b', 'c', 'd'] as $key) {
+            $record = [
+                'username' => 'user_' . $key,
+                'firstname' => $key . '_first',
+                'lastname' => 'last_' . $key,
+                'department' => 'department_' . $key,
+                'lastaccess' => ord($key)
+            ];
+            $user = $generator->create_user($record);
+            $userids[] = $user->id;
+        }
+
+        // Check default result with no parameters.
+        $results = get_users_listing();
+        $results = array_diff_key($results, $existingids);
+
+        // It should return all the results in order.
+        $this->assertEquals($userids, array_keys($results));
+
+        // Results should have some general fields and name fields, check some samples.
+        $this->assertEquals('user_a', $results[$userids[0]]->username);
+        $this->assertEquals('user_a@example.com', $results[$userids[0]]->email);
+        $this->assertEquals(1, $results[$userids[0]]->confirmed);
+        $this->assertEquals('a_first', $results[$userids[0]]->firstname);
+        $this->assertObjectHasAttribute('firstnamephonetic', $results[$userids[0]]);
+
+        // Should not have department because no context specified.
+        $this->assertObjectNotHasAttribute('department', $results[$userids[0]]);
+
+        // Check sorting.
+        $results = get_users_listing('username', 'DESC');
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals([$userids[3], $userids[2], $userids[1], $userids[0]], array_keys($results));
+
+        // Check default fallback sort field works as expected.
+        $results = get_users_listing('blah2', 'ASC');
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals([$userids[0], $userids[1], $userids[2], $userids[3]], array_keys($results));
+
+        // Check default fallback sort direction works as expected.
+        $results = get_users_listing('lastaccess', 'blah2');
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals([$userids[0], $userids[1], $userids[2], $userids[3]], array_keys($results));
+
+        // Add the options to showuseridentity and check it returns those fields but only if you
+        // specify a context AND have permissions.
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', '', '', '', null,
+                \context_system::instance());
+        $this->assertObjectNotHasAttribute('department', $results[$userids[0]]);
+        $this->setAdminUser();
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', '', '', '', null,
+                \context_system::instance());
+        $this->assertEquals('department_a', $results[$userids[0]]->department);
+
+        // Check search (full name, email, username).
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, 'b_first last_b');
+        $this->assertEquals([$userids[1]], array_keys($results));
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, 'c@example');
+        $this->assertEquals([$userids[2]], array_keys($results));
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, 'user_d');
+        $this->assertEquals([$userids[3]], array_keys($results));
+
+        // Check first and last initial restriction (all the test ones have same last initial).
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', 'C');
+        $this->assertEquals([$userids[2]], array_keys($results));
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', '', 'L');
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals($userids, array_keys($results));
+
+        // Check the extra where clause, either with the 'u.' prefix or not.
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', '', '', 'id IN (:x,:y)',
+                ['x' => $userids[1], 'y' => $userids[3]]);
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals([$userids[1], $userids[3]], array_keys($results));
+        $results = get_users_listing('lastaccess', 'asc', 0, 0, '', '', '', 'id IN (:x,:y)',
+                ['x' => $userids[1], 'y' => $userids[3]]);
+        $results = array_diff_key($results, $existingids);
+        $this->assertEquals([$userids[1], $userids[3]], array_keys($results));
+    }
+
+    /**
      * Data provider for test_get_safe_orderby().
      *
      * @return array
