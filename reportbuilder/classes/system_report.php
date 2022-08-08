@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder;
 
+use action_menu_filler;
 use coding_exception;
 use stdClass;
 use core_reportbuilder\local\models\report;
@@ -43,7 +44,7 @@ abstract class system_report extends base {
     /** @var bool $filterformdefault Whether to use the default filters form */
     private $filterformdefault = true;
 
-    /** @var action[] $actions */
+    /** @var action|action_menu_filler[] $actions */
     private $actions = [];
 
     /** @var column $initialsortcolumn */
@@ -151,6 +152,17 @@ abstract class system_report extends base {
     }
 
     /**
+     * Adds action divider to the report
+     *
+     */
+    final public function add_action_divider(): void {
+        $divider = new action_menu_filler();
+        // We need to set as not primary action because we just need add an action divider, not a new action item.
+        $divider->primary = false;
+        $this->actions[] = $divider;
+    }
+
+    /**
      * Whether report has any actions
      *
      * @return bool
@@ -162,7 +174,7 @@ abstract class system_report extends base {
     /**
      * Return report actions
      *
-     * @return action[]
+     * @return action|action_menu_filler[]
      */
     final public function get_actions(): array {
         return $this->actions;
