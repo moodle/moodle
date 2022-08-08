@@ -17,13 +17,12 @@ Feature: In a lesson activity, students can see questions in random order
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following "activities" exist:
-      | activity | name                 | intro                    | course | idnumber | section |
-      | lesson   | Lesson with clusters | Test lesson description  | C1     | lesson1  | 1       |
+      | activity | name                 | course | idnumber |
+      | lesson   | Lesson with clusters | C1     | lesson1  |
     And I log in as "teacher1"
 
   Scenario: Lesson with two clusters
-    Given I am on "Course 1" course homepage with editing mode on
-    And I follow "Lesson with clusters"
+    Given I am on the "Lesson with clusters" "lesson activity" page
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -119,10 +118,7 @@ Feature: In a lesson activity, students can see questions in random order
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Lesson with clusters"
+    When I am on the "Lesson with clusters" "lesson activity" page logged in as student1
     Then I should see "First page contents"
     And I press "Next page"
     And I should see "Second page contents"

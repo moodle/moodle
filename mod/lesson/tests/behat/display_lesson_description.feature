@@ -20,18 +20,20 @@ Feature: Display the lesson description in the lesson and optionally in the cour
       | idnumber | 0001                    |
       | name     | Test lesson name        |
       | intro    | Test lesson description |
-      | section  | 1                       |
-    And I log in as "teacher1"
+    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
+    And I follow "Add a content page"
+    And I set the following fields to these values:
+      | Page title  | Test lesson part 1        |
+      | Description | Lesson part 1 description |
+      | Jump        | Next page                 |
+    And I click on "Save page" "button"
 
   Scenario: Description is displayed in the Lesson
-    Given I am on "Course 1" course homepage
-    When I follow "Test lesson"
+    When I am on the "Test lesson name" "lesson activity" page
     Then I should see "Test lesson description"
 
   Scenario: Show lesson description in the course homepage
-    Given I am on "Course 1" course homepage
-    And I follow "Test lesson"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page
     And the following fields match these values:
       | Display description on course page | |
     And I set the following fields to these values:
@@ -41,9 +43,7 @@ Feature: Display the lesson description in the lesson and optionally in the cour
     Then I should see "Test lesson description"
 
   Scenario: Hide lesson description in the course homepage
-    Given I am on "Course 1" course homepage
-    And I follow "Test lesson"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page
     And the following fields match these values:
       | Display description on course page | |
     And I press "Save and return to course"
