@@ -99,9 +99,7 @@ Feature: Edit quiz page - adding things
       in various categories and add them to the question bank.
 
     # Create a couple of sub categories.
-    When I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
-    And I select "Categories" from the "Question bank tertiary navigation" singleselect
+    When I am on the "Course 1" "core_question > course question categories" page
     Then I should see "Add category"
     And I follow "Add category"
     Then I set the field "Parent category" to "Default for C1"
