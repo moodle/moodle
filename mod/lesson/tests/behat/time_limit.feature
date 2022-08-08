@@ -17,30 +17,30 @@ Feature: A teacher can set a time limit for a lesson
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Lesson" to section "1" and I fill the form with:
-      | Name | Test lesson |
-      | Description | Test lesson description |
-      | timelimit[enabled] | 1 |
-      | timelimit[timeunit] | 60 |
-      | timelimit[number]   | 1  |
-    And I am on the "Test lesson" "lesson activity" page
+    And the following "activities" exist:
+      | activity | course | name        |
+      | lesson   | C1     | Test lesson |
+    And I am on the "Test lesson" "lesson activity editing" page logged in as teacher1
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | timelimit[enabled]  | 1  |
+      | timelimit[timeunit] | 1  |
+      | timelimit[number]   | 10 |
+    And I press "Save and display"
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | Lesson page name |
       | Page contents | Single lesson page contents |
       | Description | Single button |
     And I press "Save page"
-    And I log out
     When I am on the "Test lesson" "lesson activity" page logged in as student1
-    Then I should see "You have 1 min to finish the lesson."
+    Then I should see "You have 10 secs to finish the lesson."
     And I wait "3" seconds
     And I should see "Time remaining"
     And I press "Single button"
     And I should see "0:00:"
     And I should see "Warning: You have 1 minute or less to finish the lesson."
-    And I wait "60" seconds
+    And I wait "10" seconds
     And I press "Single button"
     And I should see "You ran out of time for this lesson."
     And I should see "Your last answer may not have counted if it was answered after the time was up."
