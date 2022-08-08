@@ -19,20 +19,14 @@ Feature: Lesson with no calendar capabilites
       | course        | C1                      |
       | idnumber      | 0001                    |
       | name          | Test lesson name        |
-      | intro         | Test lesson description |
-      | section       | 1                       |
     And I log in as "admin"
     And I am on the "Course 1" "permissions" page
     And I override the system permissions of "Teacher" role with:
       | capability | permission |
       | moodle/calendar:manageentries | Prohibit |
-    And I log out
 
   Scenario: Editing a lesson
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test lesson name"
-    And I navigate to "Settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as admin
     And I set the following fields to these values:
       | id_available_enabled | 1 |
       | id_available_day | 1 |
@@ -43,11 +37,7 @@ Feature: Lesson with no calendar capabilites
       | id_deadline_month | 2 |
       | id_deadline_year | 2017 |
     And I press "Save and return to course"
-    And I log out
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test lesson name"
-    And I navigate to "Settings" in current page administration
+    When I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | id_available_year | 2018 |
       | id_deadline_year | 2018 |

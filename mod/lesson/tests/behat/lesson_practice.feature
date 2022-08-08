@@ -21,11 +21,7 @@ Feature: Practice mode in a lesson activity
       | course                        | C1                 |
       | idnumber                      | 0001               |
       | name                          | Test lesson name   |
-      | intro                         | Lesson description |
-      | section                       | 1                  |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test lesson name"
+    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
     And I press "Add a question page"
@@ -35,18 +31,15 @@ Feature: Practice mode in a lesson activity
       | id_answer_editor_0 | True |
       | id_answer_editor_1 | False |
     And I press "Save page"
+    And I am on the "Test lesson name" "lesson activity editing" page
 
   Scenario: Non-practice lesson records grades in the gradebook
-    Given I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
+    Given I set the following fields to these values:
       | Name | Non-practice lesson |
       | Description | This lesson will affect your course grade |
       | Practice lesson | No |
     And I press "Save and display"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Non-practice lesson"
+    When I am on the "Non-practice lesson" "lesson activity" page logged in as student1
     And I set the following fields to these values:
       | True | 1 |
     And I press "Submit"
@@ -56,16 +49,12 @@ Feature: Practice mode in a lesson activity
     And I should see "Non-practice lesson"
 
   Scenario: Practice lesson doesn't record grades in the gradebook
-    Given I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
+    Given I set the following fields to these values:
       | Name | Practice lesson |
       | Description | This lesson will NOT affect your course grade |
       | Practice lesson | Yes |
     And I press "Save and display"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Practice lesson"
+    When I am on the "Practice lesson" "lesson activity" page logged in as student1
     And I set the following fields to these values:
       | True | 1 |
     And I press "Submit"
@@ -75,17 +64,13 @@ Feature: Practice mode in a lesson activity
     And I should not see "Practice lesson"
 
   Scenario: Practice lesson with scale doesn't record grades in the gradebook
-    Given I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
+    Given I set the following fields to these values:
       | Name | Practice lesson with scale |
       | Description | This lesson will NOT affect your course grade |
       | Practice lesson | Yes |
       | Type | Scale |
     And I press "Save and display"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Practice lesson with scale"
+    When I am on the "Practice lesson with scale" "lesson activity" page logged in as student1
     And I set the following fields to these values:
       | True | 1 |
     And I press "Submit"

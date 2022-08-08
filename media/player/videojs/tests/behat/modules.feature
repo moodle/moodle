@@ -34,10 +34,10 @@ Feature: Embed videos without the media filter
 
   @javascript
   Scenario: Add a video as content to a lesson. Make sure media filters work
-    When I add a "Lesson" to section "1"
-    And I set the following fields to these values:
-      | Name | Lesson with video |
-      | Description | Example of a video in a lesson |
+    Given the following "activities" exist:
+      | activity | course               | section | name              |
+      | lesson   | Acceptance test site | 1       | Lesson with video |
+    When I am on the "Lesson with video" "lesson activity editing" page
     And I expand all fieldsets
     And I upload "media/player/videojs/tests/fixtures/test.mov" file to "Linked media" filemanager
     And I press "Save and display"
