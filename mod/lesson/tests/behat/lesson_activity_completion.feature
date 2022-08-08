@@ -44,7 +44,6 @@ Feature: View activity completion in the lesson activity
       | Jump          | End of lesson                          |
       | Score         | 1                                      |
     And I press "Save page"
-    And I log out
 
   Scenario: View automatic completion items as a teacher
     When I am on the "Music history" "lesson activity" page logged in as teacher1
@@ -82,7 +81,6 @@ Feature: View activity completion in the lesson activity
     And I press "Save and display"
     # Teacher view.
     And the manual completion button for "Music history" should be disabled
-    And I log out
     # Student view.
     When I am on the "Music history" "lesson activity" page logged in as student1
     Then the manual completion button of "Music history" is displayed as "Mark as done"

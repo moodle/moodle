@@ -21,24 +21,19 @@ Feature: Set time spent as a completion condition for a lesson
       | course        | C1                      |
       | idnumber      | 0001                    |
       | name          | Test lesson             |
-      | intro         | Test lesson description |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
-    And I follow "Test lesson"
-    And I navigate to "Settings" in current page administration
+    And I am on the "Test lesson" "lesson activity editing" page
     And I set the following fields to these values:
       | Completion tracking | Show activity as complete when conditions are met |
       | completionview                | 0 |
       | completiontimespentenabled    | 1 |
       | completiontimespent[timeunit] | 1 |
-      | completiontimespent[number]   | 10 |
-    And I press "Save and return to course"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson"
+      | completiontimespent[number]   | 5 |
+    And I press "Save and display"
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -55,28 +50,23 @@ Feature: Set time spent as a completion condition for a lesson
       | id_answer_editor_1 | Next page |
       | id_jumpto_1 | Next page |
     And I press "Save page"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    Then the "Spend at least 10 secs on this activity" completion condition of "Test lesson" is displayed as "todo"
+    When I am on the "Course 1" course page logged in as student1
+    Then the "Spend at least 5 secs on this activity" completion condition of "Test lesson" is displayed as "todo"
     And I follow "Test lesson"
     And I press "Next page"
     # Add 1 sec delay so lesson knows a valid attempt has been made in past.
     And I wait "1" seconds
     And I press "Next page"
     And I should see "You completed this lesson in"
-    And I should see ", which is less than the required time of 10 secs. You might need to attempt the lesson again."
+    And I should see ", which is less than the required time of 5 secs. You might need to attempt the lesson again."
     And I am on "Course 1" course homepage
-    And the "Spend at least 10 secs on this activity" completion condition of "Test lesson" is displayed as "todo"
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson"
+    And the "Spend at least 5 secs on this activity" completion condition of "Test lesson" is displayed as "todo"
+    And I am on the "Test lesson" "lesson activity" page
     And I press "Next page"
-    And I wait "11" seconds
+    And I wait "5" seconds
     And I press "Next page"
     And I should not see "You might need to attempt the lesson again."
     And I am on "Course 1" course homepage
-    And the "Spend at least 10 secs on this activity" completion condition of "Test lesson" is displayed as "done"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And the "Spend at least 5 secs on this activity" completion condition of "Test lesson" is displayed as "done"
+    And I am on the "Course 1" course page logged in as teacher1
     And "Student 1" user has completed "Test lesson" activity

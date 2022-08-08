@@ -16,14 +16,13 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity   | name             | course | idnumber    |
+      | lesson     | Test lesson name | C1     | lesson1     |
     And I log in as "teacher1"
 
   Scenario: Student navigation with pages and questions
-    Given the following "activities" exist:
-      | activity   | name             | intro                   | course | idnumber    |
-      | lesson     | Test lesson name | Test lesson description | C1     | lesson1     |
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
+    Given I am on the "Test lesson name" "lesson activity" page
     And I follow "Add a content page"
     And I set the following fields to these values:
       | Page title | First page name |
@@ -56,10 +55,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | id_jumpto_1 | Second page name |
       | id_score_1 | 0 |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Test lesson name"
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "First page contents"
     And I press "Next page"
     And I should see "Second page contents"
@@ -88,17 +84,11 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I should see "Your score is 0 (out of 1)."
 
   Scenario: Student reattempts a question until out of attempts
-    Given the following "activities" exist:
-      | activity   | name             | intro                   | course | idnumber    |
-      | lesson     | Test lesson name | Test lesson description | C1     | lesson1     |
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
-    And I navigate to "Settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page
     And I set the following fields to these values:
       | id_review | Yes |
       | id_maxattempts | 3 |
-    And I press "Save and return to course"
-    And I follow "Test lesson name"
+    And I press "Save and display"
     And I follow "Add a question page"
     And I set the following fields to these values:
       | id_qtype | True/false |
@@ -109,10 +99,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | id_answer_editor_0 | right |
       | id_answer_editor_1 | wrong |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Test lesson name"
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "Test content"
     And I set the following fields to these values:
       | wrong | 1 |
@@ -134,16 +121,11 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I should see "Congratulations - end of lesson reached"
 
   Scenario: Student reattempts a question until out of attempts with specific jumps
-    Given the following "activities" exist:
-      | activity   | name             | intro                   | course | idnumber    |
-      | lesson     | Test lesson name | Test lesson description | C1     | lesson1     |
-    And I am on the "Test lesson name" "lesson activity" page
-    And I navigate to "Settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page
     And I set the following fields to these values:
       | id_review      | Yes |
       | id_maxattempts | 3   |
-    And I press "Save and return to course"
-    And I follow "Test lesson name"
+    And I press "Save and display"
     And I follow "Add a question page"
     And I set the following fields to these values:
       | id_qtype | True/false |
@@ -165,7 +147,6 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | id_answer_editor_1 | wrong           |
       | id_jumpto_1        | Test question   |
     And I press "Save page"
-    And I log out
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "Test content 1"
     And I set the following fields to these values:
@@ -192,17 +173,11 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I should see "Test content 1"
 
   Scenario: Student should not see remaining attempts notification if maximum number of attempts is set to unlimited
-    Given the following "activities" exist:
-      | activity   | name             | intro                   | course | idnumber    |
-      | lesson     | Test lesson name | Test lesson description | C1     | lesson1     |
-    And I am on "Course 1" course homepage
-    And I follow "Test lesson name"
-    And I navigate to "Settings" in current page administration
+    Given I am on the "Test lesson name" "lesson activity editing" page
     And I set the following fields to these values:
       | id_review | Yes |
       | id_maxattempts | 0 |
-    And I press "Save and return to course"
-    And I follow "Test lesson name"
+    And I press "Save and display"
     And I follow "Add a question page"
     And I set the following fields to these values:
       | id_qtype | True/false |
@@ -213,10 +188,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | id_answer_editor_0 | right |
       | id_answer_editor_1 | wrong |
     And I press "Save page"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Test lesson name"
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "Test content"
     And I set the following fields to these values:
       | wrong | 1 |

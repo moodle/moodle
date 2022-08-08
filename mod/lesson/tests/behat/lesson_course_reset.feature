@@ -23,8 +23,8 @@ Feature: Lesson reset
       | Group 1 | C1     | G1       |
       | Group 2 | C1     | G2       |
     And the following "activities" exist:
-      | activity | name             | intro                   | course | idnumber |
-      | lesson   | Test lesson name | Test lesson description | C1     | lesson1  |
+      | activity | name             | course | idnumber |
+      | lesson   | Test lesson name | C1     | lesson1  |
     And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I follow "Add a question page"
     And I set the field "Select a question type" to "True/false"
@@ -41,15 +41,13 @@ Feature: Lesson reset
     And I press "Save page"
 
   Scenario: Use course reset to clear all attempt data
-    When I log out
-    And I am on the "Test lesson name" "lesson activity" page logged in as student1
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | False | 1 |
     And I press "Submit"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
-    And I log out
     And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I navigate to "Reports" in current page administration
     And I should see "Sam1 Student1"
