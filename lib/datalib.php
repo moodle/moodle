@@ -522,16 +522,24 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
         $params = $params + (array)$extraparams;
     }
 
-    if ($sort) {
-        $sort = " ORDER BY $sort $dir";
-    }
-
     // If a context is specified, get extra user fields that the current user
     // is supposed to see, otherwise just get the name fields.
     $userfields = \core_user\fields::for_name();
     if ($extracontext) {
         $userfields->with_identity($extracontext, true);
     }
+
+    if ($sort) {
+        $possiblesortfields = \core_user\fields::for_name();
+        if ($extracontext) {
+            $possiblesortfields->with_identity($extracontext);
+        }
+        $orderbymap = $possiblesortfields->including('id', 'city', 'country', 'lastaccess', 'confirmed', 'mnethostid', 'suspended');
+        $orderbymap = $orderbymap->get_sql('u', true)->mappings;
+        $orderbymap['default'] = 'lastaccess';
+        $sort = get_safe_orderby($orderbymap, $sort, $dir);
+    }
+
     $userfields->excluding('id', 'username', 'email', 'city', 'country', 'lastaccess', 'confirmed', 'mnethostid');
     ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams] =
             (array)$userfields->get_sql('u', true);
