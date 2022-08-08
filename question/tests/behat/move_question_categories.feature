@@ -17,12 +17,10 @@ Feature: A teacher can move question categories in the question bank
     And the following "activities" exist:
       | activity   | name      | course | idnumber |
       | quiz       | Test quiz | C1     | quiz1    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher1"
 
   Scenario: A question category can be moved to another context
-    When I follow "Test quiz"
-    And I navigate to "Question bank > Categories" in current page administration
+    When I navigate to "Question bank > Categories" in current page administration
     And I set the following fields to these values:
       | Name            | Test category         |
       | Parent category | Top for Test quiz     |
@@ -31,8 +29,7 @@ Feature: A teacher can move question categories in the question bank
     Then I should see "Test category" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' questioncategories ') and contains(concat(' ', normalize-space(@class), ' '), ' contextlevel50 ')]" "xpath_element"
 
   Scenario: A question category can be moved to top level
-    When I follow "Test quiz"
-    And I navigate to "Question bank > Categories" in current page administration
+    When I navigate to "Question bank > Categories" in current page administration
     And I set the following fields to these values:
       | Name            | Test category         |
       | Parent category | Default for Test quiz |
