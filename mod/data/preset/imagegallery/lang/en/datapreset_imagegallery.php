@@ -24,5 +24,6 @@
  */
 
 $string['modulename'] = 'Image gallery';
+$string['modulename_help'] = 'Use this preset to collect images.';
 $string['pluginname'] = 'Image gallery';
 $string['privacy:metadata'] = 'The Image gallery plugin does not store any personal data.';
