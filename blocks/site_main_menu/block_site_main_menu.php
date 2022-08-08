@@ -102,7 +102,7 @@ class block_site_main_menu extends block_list {
                             'contentwithoutlink activity-item activity'
                         );
                     } else {
-                        $cmname = new $cmnameclass($format, $cm->get_section_info(), $cm, $isediting);
+                        $cmname = new $cmnameclass($format, $cm->get_section_info(), $cm);
                         $activitybasis = html_writer::div(
                             $indent . $courserenderer->render($cmname),
                             'activity-basis d-flex align-items-center');
@@ -214,7 +214,7 @@ class block_site_main_menu extends block_list {
                             'contentwithoutlink activity-item activity'
                         );
                     } else {
-                        $cmname = new $cmnameclass($format, $mod->get_section_info(), $mod, $isediting);
+                        $cmname = new $cmnameclass($format, $mod->get_section_info(), $mod);
                         $activitybasis = html_writer::div(
                             $moveaction .
                             $indent .

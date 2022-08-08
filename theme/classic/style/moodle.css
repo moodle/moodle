@@ -14731,7 +14731,7 @@ span.editinstructions {
     .block-add:hover .activity-add-text {
       text-decoration: underline; }
 
-#changenumsections {
+.changenumsections {
   border-top: 1px solid #3584c9; }
 
 .section-collapsemenu .collapseall {
@@ -14821,7 +14821,8 @@ span.editinstructions {
 
 .activity-item {
   position: relative;
-  border-radius: 0.25rem; }
+  border-radius: 0.25rem;
+  /* Prevent bootstrap strech-link from covering the inplace editable button using z-index. */ }
   .activity-item:not(.activityinline) {
     border: 1px solid #dee2e6;
     padding: 1rem; }
@@ -14841,9 +14842,11 @@ span.editinstructions {
     display: flex;
     flex: 0 1 auto;
     max-width: 100%; }
-  .activity-item .inplaceeditable .quickeditlink,
-  .activity-item .afterlink {
-    margin: 1.5rem 0 0.2rem 0.5rem; }
+  .activity-item .activityname .afterlink {
+    margin-left: 0.5rem; }
+  .activity-item .activityname .inplaceeditable .quickeditlink {
+    z-index: 2;
+    margin-left: 0.5rem; }
   .activity-item .action-menu-item {
     display: flex;
     align-items: center; }

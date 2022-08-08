@@ -4577,6 +4577,12 @@ class action_menu implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
+        // Assign a role of menubar to this action menu when:
+        // - it contains 2 or more primary actions; or
+        // - if it contains a primary action and secondary actions.
+        if (count($this->primaryactions) > 1 || (!empty($this->primaryactions) && !empty($this->secondaryactions))) {
+            $this->attributes['role'] = 'menubar';
+        }
         $attributes = $this->attributes;
         $attributesprimary = $this->attributesprimary;
         $attributessecondary = $this->attributessecondary;
@@ -4615,6 +4621,12 @@ class action_menu implements renderable, templatable {
             $primary->title = get_string('actionsmenu');
             $iconattributes = ['class' => 'iconsmall actionmenu', 'title' => $primary->title];
             $actionicon = new pix_icon('t/edit_menu', '', 'moodle', $iconattributes);
+        }
+
+        // If the menu trigger is within the menubar, assign a role of menuitem. Otherwise, assign as a button.
+        $primary->triggerrole = 'button';
+        if (isset($attributes['role']) && $attributes['role'] === 'menubar') {
+            $primary->triggerrole = 'menuitem';
         }
 
         if ($actionicon instanceof pix_icon) {

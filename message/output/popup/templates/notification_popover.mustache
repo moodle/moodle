@@ -42,11 +42,19 @@
     {{$classes}}popover-region-notifications{{/classes}}
     {{$attributes}}id="nav-notification-popover-container" data-userid="{{userid}}"{{/attributes}}
 
-    {{$togglelabel}}{{#str}} shownotificationwindownonew, message {{/str}}{{/togglelabel}}
+    {{$togglelabel}}{{!
+        }}{{^unreadcount}} {{#str}} shownotificationwindownonew, message {{/str}} {{/unreadcount}} {{!
+        }}{{#unreadcount}} {{#str}} shownotificationwindowwithcount, message, {{.}} {{/str}} {{/unreadcount}} {{!
+    }}{{/togglelabel}}
     {{$togglecontent}}
         {{#pix}} i/notifications, core, {{#str}} togglenotificationmenu, message {{/str}} {{/pix}}
-        <div class="count-container {{^unreadcount}}hidden{{/unreadcount}}" data-region="count-container"
-        aria-label="{{#str}} unreadnotifications, core_message, {{unreadcount}} {{/str}}">{{unreadcount}}</div>
+        <div
+            class="count-container {{^unreadcount}}hidden{{/unreadcount}}"
+            data-region="count-container"
+            aria-hidden=true
+        >
+            {{unreadcount}}
+        </div>
     {{/togglecontent}}
 
     {{$containerlabel}}{{#str}} notificationwindow, message {{/str}}{{/containerlabel}}
@@ -81,9 +89,9 @@
     {{/content}}
 {{/ core/popover_region }}
 {{#js}}
-require(['jquery', 'message_popup/notification_popover_controller'], function($, controller) {
+require(['jquery', 'message_popup/notification_popover_controller'], function($, Controller) {
     var container = $('#nav-notification-popover-container');
-    var controller = new controller(container);
+    var controller = new Controller(container);
     controller.registerEventListeners();
     controller.registerListNavigationEventListeners();
 });
