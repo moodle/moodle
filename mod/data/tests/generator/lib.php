@@ -208,10 +208,18 @@ class mod_data_generator extends testing_module_generator {
      * @param int $groupid
      * @param array $tags
      * @param array $options
+     * @param int $userid if defined, it will be the author of the entry
      * @return int id of the generated record in table {data_records}
      */
-    public function create_entry($data, array $contents, $groupid = 0, $tags = [], array $options = null) {
+    public function create_entry($data, array $contents, $groupid = 0, $tags = [], array $options = null, int $userid = 0) {
         global $DB, $USER, $CFG;
+
+        // Set current user if defined.
+        if (!empty($userid)) {
+            $currentuser = $USER;
+            $user = \core_user::get_user($userid);
+            $this->set_user($user);
+        }
 
         $this->databaserecordcount++;
 
@@ -360,6 +368,10 @@ class mod_data_generator extends testing_module_generator {
             $cm = get_coursemodule_from_instance('data', $data->id);
             core_tag_tag::set_item_tags('mod_data', 'data_records', $recordid,
                 context_module::instance($cm->id), $tags);
+        }
+
+        if (isset($currentuser)) {
+            $this->set_user($currentuser);
         }
 
         return $recordid;
