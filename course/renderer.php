@@ -613,14 +613,12 @@ class core_course_renderer extends plugin_renderer_base {
             $format,
             $mod->get_section_info(),
             $mod,
-            $this->page->user_is_editing(),
+            null,
             $displayoptions
         );
 
-        $data = $cmname->export_for_template($this->output);
-
-        return $this->output->render_from_template('core/inplace_editable', $data) .
-            $groupinglabel;
+        $renderer = $format->get_renderer($this->page);
+        return $renderer->render($cmname) . $groupinglabel;
     }
 
     /**

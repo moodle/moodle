@@ -1,6 +1,13 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
+=== 4.0.3 ===
+* A critical accessibility issue is been found (MDL-74800) at the output class
+  core_courseformat\output\local\content\cm\cmname. To solve the problem this output element is not
+  rendered anymore using inplace_editable but using a regular named_templatable interface.
+  Some format plugins that override the deprecated renderer method course_section_cm_name can be affected.
+  Check the current course_section_cm_name code to see how to render it properly.
+
 === 4.0 ===
 * All activity icons have been replaced with black monochrome icons. The background
 colour for these icons is defined using a new 'FEATURE_MOD_PURPOSE' support variable in the module lib.php file
