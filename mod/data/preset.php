@@ -86,7 +86,10 @@ if ($action === 'export') {
         throw new \moodle_exception('headersent');
     }
 
-    $preset = preset::create_from_instance($manager, $data->name);
+    // Check if we should export a given preset or the current one.
+    $presetname = optional_param('presetname', $data->name, PARAM_FILE);
+
+    $preset = preset::create_from_instance($manager, $presetname);
     $exportfile = $preset->export();
     $exportfilename = basename($exportfile);
     header("Content-Type: application/download\n");

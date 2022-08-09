@@ -260,3 +260,17 @@ Feature: Users can view and manage data presets
     And I click on "Delete" "button" in the "Delete preset Saved preset by teacher1?" "dialogue"
     And I should see "Preset deleted"
     And I should not see "Saved preset by teacher1"
+
+  @javascript
+  Scenario: Teachers can export any saved preset
+    Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
+    When I follow "Presets"
+    # Plugin presets can't be exported.
+    And I should not see "Actions" in the "Image gallery" "table_row"
+    # The teacher should be able to export any saved preset.
+    And I open the action menu in "Saved preset by teacher1" "table_row"
+    Then I should see "Export"
+    And following "Export" "link" in the "Saved preset by teacher1" "table_row" should download between "1" and "5000" bytes
+    And I open the action menu in "Saved preset 1" "table_row"
+    And I should see "Export"
+    And following "Export" "link" in the "Saved preset 1" "table_row" should download between "1" and "5000" bytes
