@@ -171,9 +171,27 @@ class editor extends \texteditor {
             // File picker options.
             'filepicker' => $fpoptions,
 
+            'currentLanguage' => current_language(),
+
+            // Language options.
+            'language' => [
+                'currentlang' => current_language(),
+                'installed' => get_string_manager()->get_list_of_translations(true),
+                'available' => get_string_manager()->get_list_of_languages()
+            ],
+
             // Plugin configuration.
-            'plugins' => $this->manager->get_plugin_configuration($context, $options, $fpoptions),
+            'plugins' => $this->manager->get_plugin_configuration($context, $options, $fpoptions, $this),
         ];
+
+        foreach ($fpoptions as $fp) {
+            // Guess the draftitemid for the editor.
+            // Note: This is the best we can do at the moment.
+            if (!empty($fp->itemid)) {
+                $config->draftitemid = $fp->itemid;
+                break;
+            }
+        }
 
         $configoptions = json_encode(convert_to_array($config));
 

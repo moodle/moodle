@@ -27,45 +27,61 @@ use context;
  */
 class manager {
 
+    /**
+     * Get the configuration for all plugins.
+     *
+     * @param context $context The context that the editor is used within
+     * @param array $options The options passed in when requesting the editor
+     * @param array $fpoptions The filepicker options passed in when requesting the editor
+     * @param  editor $editor The editor instance in which the plugin is initialised
+     */
     public function get_plugin_configuration(
         context $context,
         array $options = [],
-        array $fpoptions = []
+        array $fpoptions = [],
+        ?editor $editor = null
     ): array {
         $disabledplugins = $this->get_disabled_plugins();
 
+        // Get the list of plugins.
+        // Note: Disabled plugins are already removed from this list.
         $plugins = $this->get_shipped_plugins();
 
         // Fetch configuration for Moodle plugins.
         $moodleplugins = \core_component::get_plugin_list_with_class('tiny', 'plugininfo');
         foreach ($moodleplugins as $plugin => $classname) {
-            if (in_array($plugin, $disabledplugins)) {
+            if (in_array($plugin, $disabledplugins) || in_array("{$plugin}/plugin", $disabledplugins)) {
                 // Skip getting data for disabled plugins.
                 continue;
             }
 
             if (!is_a($classname, plugin::class, true)) {
+                // Skip plugins that do not implement the plugin interface.
+                debugging("Plugin {$plugin} does not implement the plugin interface", DEBUG_DEVELOPER);
                 continue;
             }
 
-            $plugininfo = $classname::get_plugin_info();
+            if (!$classname::is_enabled($context, $options, $fpoptions, $editor)) {
+                // This plugin has disabled itself for some reason.
+                // This is typical for media plugins where there is no file storage.
+                continue;
+            }
 
-            $config = $classname::get_plugin_configuration_for_context(
+            // Get the plugin information, which includes the list of buttons, menu items, and configuration.
+            $plugininfo = $classname::get_plugin_info(
                 $context,
                 $options,
-                $fpoptions
+                $fpoptions,
+                $editor
             );
 
             if (!empty($config)) {
                 $plugininfo['config'] = $config;
             }
 
+            // We suffix the plugin name for Moodle plugins with /plugin to avoid conflicts with Tiny plugins.
             $plugins["{$plugin}/plugin"] = $plugininfo;
         }
-
-        $plugins = array_filter($plugins, function ($plugin) use ($disabledplugins) {
-            return !in_array($plugin, $disabledplugins);
-        }, ARRAY_FILTER_USE_KEY);
 
         return $plugins;
     }

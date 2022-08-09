@@ -33,7 +33,39 @@ use context;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class plugin {
-    public static function get_plugin_info(): array {
+    /**
+     * Whether the plugin is enabled
+     *
+     * @param context $context The context that the editor is used within
+     * @param array $options The options passed in when requesting the editor
+     * @param array $fpoptions The filepicker options passed in when requesting the editor
+     * @param editor $editor The editor instance in which the plugin is initialised
+     * @return boolean
+     */
+    public static function is_enabled(
+        context $context,
+        array $options,
+        array $fpoptions,
+        ?editor $editor = null
+    ): bool {
+        return true;
+    }
+
+    /**
+     * Get the plugin information for the plugin.
+     *
+     * @param context $context The context that the editor is used within
+     * @param array $options The options passed in when requesting the editor
+     * @param array $fpoptions The filepicker options passed in when requesting the editor
+     * @param editor $editor The editor instance in which the plugin is initialised
+     * @return array
+     */
+    final public static function get_plugin_info(
+        context $context,
+        array $options,
+        array $fpoptions,
+        ?editor $editor = null
+    ): array {
         $plugindata = [];
 
         if (is_a(static::class, plugin_with_buttons::class, true)) {
@@ -44,18 +76,10 @@ abstract class plugin {
             $plugindata['menuitems'] = static::get_available_menuitems();
         }
 
-        return $plugindata;
-    }
-
-    public static function get_plugin_configuration_for_context(
-        context $context,
-        array $options,
-        array $fpoptions
-    ): array {
         if (is_a(static::class, plugin_with_configuration::class, true)) {
-            return static::get_plugin_configuration_for_context($context, $options, $fpoptions);
+            $plugindata['config'] = static::get_plugin_configuration_for_context($context, $options, $fpoptions, $editor);
         }
 
-        return [];
+        return $plugindata;
     }
 }

@@ -32,11 +32,13 @@ interface plugin_with_configuration {
      * @param context $context The context that the editor is used within
      * @param array $options The options passed in when requesting the editor
      * @param array $fpoptions The filepicker options passed in when requesting the editor
+     * @param editor $editor The editor instance in which the plugin is initialised
      * @return array
      */
     public static function get_plugin_configuration_for_context(
         context $context,
         array $options,
-        array $fpoptions
+        array $fpoptions,
+        ?editor $editor = null
     ): array;
 }
