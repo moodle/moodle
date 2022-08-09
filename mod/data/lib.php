@@ -606,15 +606,16 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
  * @param int $recordid the entry record
  * @param bool $form print a form instead of data
  * @param bool $update if the function update the $data object or not
- * @return bool|string the template content.
+ * @return string the template content or an empty string if no content is available (for instance, when database has no fields).
  */
 function data_generate_default_template(&$data, $template, $recordid = 0, $form = false, $update = true) {
     global $DB;
 
-    if (!$data && !$template) {
-        return false;
+    if (!$data || !$template) {
+        return '';
     }
 
+    // These templates are empty by default (they have no content).
     $defaulttemplates = [
         'csstemplate',
         'jstemplate',
@@ -626,7 +627,8 @@ function data_generate_default_template(&$data, $template, $recordid = 0, $form 
         return '';
     }
 
-    // get all the fields for that database
+    // Get all the fields for that database.
+    $str = '';
     if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id')) {
 
         $table = new html_table();
@@ -675,7 +677,6 @@ function data_generate_default_template(&$data, $template, $recordid = 0, $form 
             $table->data[] = $row;
         }
 
-        $str = '';
         if ($template == 'listtemplate'){
             $str .= '##delcheck##';
             $str .= html_writer::empty_tag('br');
@@ -695,9 +696,9 @@ function data_generate_default_template(&$data, $template, $recordid = 0, $form 
             $DB->update_record('data', $newdata);
             $data->{$template} = $str;
         }
-
-        return $str;
     }
+
+    return $str;
 }
 
 /**
