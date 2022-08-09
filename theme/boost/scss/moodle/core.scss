@@ -2369,6 +2369,7 @@ $footer-link-color: $bg-inverse-link-color !default;
         width: 100%;
         color: $body-color;
     }
+    &.active,
     &:active,
     &:hover,
     &:focus,
@@ -2380,13 +2381,14 @@ $footer-link-color: $bg-inverse-link-color !default;
             color: $dropdown-link-active-color;
         }
     }
-    &[aria-current="true"] {
+    &[aria-current="true"],
+    &[aria-selected="true"] {
         position: relative;
         display: flex;
         align-items: center;
         &:before {
             @include fa-icon();
-            content: $fa-var-circle;
+            content: $fa-var-check;
             position: absolute;
             left: 0.4rem;
             font-size: 0.7rem;
@@ -2942,4 +2944,23 @@ body.dragging {
     font-size: 9px;
     width: 9px;
     border: 0;
+}
+
+.select-menu {
+    ul[role="group"] {
+        padding: 0;
+        margin: 0;
+        li:first-child {
+            cursor: default;
+            font-weight: bold;
+            padding: 0.25rem 1.5rem;
+            display: block;
+        }
+        .dropdown-item {
+            padding-left: 3rem;
+        }
+    }
+    .dropdown-item {
+        cursor: pointer;
+    }
 }
