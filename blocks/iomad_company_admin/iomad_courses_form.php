@@ -103,7 +103,7 @@ if (empty($companyid) && !empty($mycompanyid)) {
     $params['companyid'] = $mycompanyid;
 }
 
-$company = new company($companyid);
+$company = new company($mycompanyid);
 
 // Delete any valid courses.
 if (!empty($deleteid)) {
