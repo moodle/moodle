@@ -491,6 +491,9 @@ class manager {
             'image',
             'media',
 
+            // Use the Moodle autosave plugin instead.
+            'autosave',
+
             // Disable the Template plugin for now.
             'template',
         ];

@@ -14,23 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace editor_tiny\privacy;
-
 /**
- * Privacy Subsystem implementation for the TinyMCE Editor.
+ * Strings for component 'tiny_autosave', language 'en'.
  *
- * @package    editor_tiny
+ * @package    tiny_autosave
  * @copyright  2022 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
 
-    /**
-     * Return the langstring identifier for the reason that no privacy provider needs to be implemented for this plugin.
-     *
-     * @return string
-     */
-    public static function get_reason(): string {
-        return 'privacy:reason';
-    }
-}
+$string['pluginname'] = 'Tiny Autosave';
+$string['helplinktext'] = 'Moodle Autosave';
+$string['privacy:metadata:database:tiny_autosave:userid'] = 'The user ID of the user who created the autosave session';
+$string['privacy:metadata:database:tiny_autosave:drafttext'] = 'The text content of the autosave session';
+$string['privacy:metadata:database:tiny_autosave:timemodified'] = 'The time that the autosave session was last modified';
+$string['privacy:metadata:database:tiny_autosave'] = 'A table storing autosave session data for the TinyMCE editor';
