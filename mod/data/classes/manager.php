@@ -228,10 +228,13 @@ class manager {
     public function get_field(stdClass $fieldrecord): data_field_base {
         $filepath = "{$this->path}/field/{$fieldrecord->type}/field.class.php";
         $classname = "data_field_{$fieldrecord->type}";
-        if (!file_exists($filepath) || !class_exists($classname)) {
+        if (!file_exists($filepath)) {
             return new data_field_base($fieldrecord, $this->instance, $this->cm);
         }
         require_once($filepath);
+        if (!class_exists($classname)) {
+            return new data_field_base($fieldrecord, $this->instance, $this->cm);
+        }
         $newfield = new $classname($fieldrecord, $this->instance, $this->cm);
         return $newfield;
     }
