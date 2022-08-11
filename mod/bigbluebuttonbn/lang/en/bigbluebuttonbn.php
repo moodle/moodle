@@ -476,6 +476,8 @@ $string['view_message_conference_in_progress'] = 'The session is in progress.';
 $string['view_message_conference_has_ended'] = 'The session has ended.';
 $string['view_message_tab_close'] = 'This tab/window must be closed manually';
 $string['view_message_recordings_disabled'] = 'Recordings are disabled on the server. BigBlueButton activities of type \'Recordings only\' cannot be used.';
+$string['view_message_cron_disabled'] = 'The scheduled task to fetch pending recordings has not been run for a while.
+ Please contact the site administrator with the following information: {$a}.';
 $string['view_message_importrecordings_disabled'] = 'Import recording links is disabled on the server.';
 
 $string['view_groups_selection_warning'] = 'There is a room for each group and you have access to more than one. Be sure to select the correct one.';
