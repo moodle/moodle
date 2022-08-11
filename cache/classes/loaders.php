@@ -1809,10 +1809,11 @@ class cache_application extends cache implements cache_loader_with_locking {
      * @throws coding_exception
      */
     public function get_many(array $keys, $strictness = IGNORE_MISSING) {
+        $locks = [];
         if ($this->requirelockingread) {
             foreach ($keys as $id => $key) {
-                $lock =$this->acquire_lock($key);
-                if (!$lock) {
+                $locks[$key] = $this->acquire_lock($key);
+                if (!$locks[$key]) {
                     if ($strictness === MUST_EXIST) {
                         throw new coding_exception('Could not acquire read locks for all of the items being requested.');
                     } else {
@@ -1823,7 +1824,13 @@ class cache_application extends cache implements cache_loader_with_locking {
 
             }
         }
-        return parent::get_many($keys, $strictness);
+        $result = parent::get_many($keys, $strictness);
+        if ($this->requirelockingread) {
+            foreach ($locks as $key => $lock) {
+                $this->release_lock($key);
+            }
+        }
+        return $result;
     }
 
     /**
