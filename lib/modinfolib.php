@@ -970,6 +970,7 @@ class course_modinfo {
      * @param int $courseid Course id
      */
     public static function purge_course_cache(int $courseid): void {
+        increment_revision_number('course', 'cacherev', 'id = :id', array('id' => $courseid));
         $cachemodinfo = cache::make('core', 'coursemodinfo');
         $cachemodinfo->delete($courseid);
     }
