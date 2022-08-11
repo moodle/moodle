@@ -47,6 +47,9 @@ class template {
     /** @var string the template. */
     private $templatecontent;
 
+    /** @var string the template name. */
+    private $templatename;
+
     /** @var moodle_url the base url. */
     private $baseurl;
 
@@ -115,6 +118,7 @@ class template {
         $this->search = $options['search'] ?? null;
         $this->ratings = $options['ratings'] ?? false;
         $this->forcecomments = $options['comments'] ?? false;
+        $this->templatename = $options['templatename'] ?? 'singletemplate';
     }
 
     /**
@@ -211,7 +215,7 @@ class template {
             $pattern = '[[' . $field->field->name . ']]';
             $result[$pattern] = highlight(
                 $this->search,
-                $field->display_browse_field($entry->id, $this->templatecontent)
+                $field->display_browse_field($entry->id, $this->templatename)
             );
             // Field id.
             $pattern = '[[' . $field->field->name . '#id]]';

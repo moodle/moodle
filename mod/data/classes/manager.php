@@ -255,6 +255,7 @@ class manager {
         if (empty($templatecontent)) {
             $templatecontent = data_generate_default_template($instance, $templatename, 0, false, false);
         }
+        $options['templatename'] = $templatename;
         // Some templates have extra options.
         if ($templatename === 'singletemplate') {
             $options['comments'] = true;
