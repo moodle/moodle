@@ -15,20 +15,36 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tiny_media/image
+    @template tiny_media/embed_media_video
 
-    Image template.
+    Embed media video template.
 
     Example context (json):
     {
 
     }
 }}
-<img src="{{url}}" alt="{{alt}}"{{!
+&nbsp;<video{{!
     }}{{#width}} width="{{.}}"{{/width}}{{!
     }}{{#height}} height="{{.}}"{{/height}}{{!
-    }}{{#presentation}} role="presentation"{{/presentation}}{{!
-    }}{{#customstyle}} style="{{.}}"{{/customstyle}}{{!
-    }}{{#classlist}} class="{{.}}"{{/classlist}}{{!
-    }}{{#id}} id="{{.}}"{{/id}}{{!
-}}/>
+    }}{{#poster}} poster="{{.}}"{{/poster}}{{!
+    }}{{#showControls}} controls="true"{{/showControls}}{{!
+    }}{{#loop}} loop="true"{{/loop}}{{!
+    }}{{#muted}} muted="true"{{/muted}}{{!
+    }}{{#autoplay}} autoplay="true"{{/autoplay}}{{!
+    }}{{#title}} title="{{.}}"{{/title}}{{!
+}}>
+    {{#sources}}
+        <source src="{{.}}">
+    {{/sources}}
+    {{#tracks}}
+        <track{{!
+            }} src="{{track}}"{{!
+            }} kind="{{kind}}"{{!
+            }} srclang="{{srclang}}"{{!
+            }} label="{{label}}"{{!
+            }}{{#defaultTrack}} default="true"{{/defaultTrack}}{{!
+        }}>
+    {{/tracks}}
+    {{#description}}{{.}}{{/description}}
+</video>&nbsp;

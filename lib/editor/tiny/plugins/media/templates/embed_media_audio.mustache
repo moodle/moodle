@@ -15,20 +15,27 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tiny_media/image
+    @template tiny_media/embed_media_audio
 
-    Image template.
+    Embed media audio template.
 
     Example context (json):
     {
 
     }
 }}
-<img src="{{url}}" alt="{{alt}}"{{!
-    }}{{#width}} width="{{.}}"{{/width}}{{!
-    }}{{#height}} height="{{.}}"{{/height}}{{!
-    }}{{#presentation}} role="presentation"{{/presentation}}{{!
-    }}{{#customstyle}} style="{{.}}"{{/customstyle}}{{!
-    }}{{#classlist}} class="{{.}}"{{/classlist}}{{!
-    }}{{#id}} id="{{.}}"{{/id}}{{!
-}}/>
+&nbsp;<audio{{!
+    }}{{#showControls}} controls="true" {{/showControls}}{{!
+    }}{{#loop}} loop="true"{{/loop}}{{!
+    }}{{#muted}} muted="true"{{/muted}}{{!
+    }}{{#autoplay}} autoplay="true"{{/autoplay}}{{!
+    }}{{#title}} title="{{.}}"{{/title}}{{!
+}}>
+    {{#sources}}<source src="{{source}}"/>{{/sources}}
+    {{#tracks}}
+    <track src="{{track}}" kind="{{kind}}" srclang="{{srclang}}" label="{{label}}"{{!
+        }}{{#defaultTrack}} default="true"{{/defaultTrack}}{{!
+    }}>
+    {{/tracks}}
+    {{#description}}{{.}}{{/description}}
+</audio>&nbsp;

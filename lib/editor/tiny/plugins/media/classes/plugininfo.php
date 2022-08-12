@@ -44,14 +44,23 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         ];
     }
 
-    public static function get_plugin_configuration_for_context(context $context, array $options, array $fpoptions,
-        ?editor $editor = null): array {
+    public static function get_plugin_configuration_for_context(
+        context $context,
+        array $options,
+        array $fpoptions,
+        ?editor $editor = null
+    ): array {
         $permissions = [
-            'upload' => true,
+            'image' => [
+                'filepicker' => true,
+            ],
+            'embed' => [
+                'filepicker' => true,
+            ]
         ];
+
         return [
             'permissions' => $permissions,
-            'storeinrepo' => true,
         ];
     }
 }
