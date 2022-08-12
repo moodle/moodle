@@ -79,7 +79,8 @@ class company_users_licenses_form extends moodleform {
         $this->user = $DB->get_record('user', array('id' => $this->userid));
         $this->license = $DB->get_record('companylicense', array('id' => $this->licenseid));
 
-
+        // Disable the onchange popup.
+        $mform->disable_form_change_checker();
 
         parent::__construct($actionurl);
     }

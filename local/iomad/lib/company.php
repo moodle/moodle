@@ -256,9 +256,9 @@ class company {
         // Is this an admin, or a normal user?
         if (iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
             if ($showsuspended) {
-                $companies = $DB->get_recordset('company', array(), 'name', '*');
+                $companies = $DB->get_recordset('company', ['parentid' => 0], 'name', '*');
             } else {
-                $companies = $DB->get_recordset('company', array('suspended' => 0), 'name', '*');
+                $companies = $DB->get_recordset('company', ['suspended' => 0, 'parentid' => 0], 'name', '*');
             }
         } else {
             if ($showsuspended) {
@@ -270,18 +270,34 @@ class company {
                                                  WHERE id IN (
                                                    SELECT companyid FROM {company_users}
                                                    WHERE userid = :userid )
-                                                   $suspendedsql
+                                                 AND parentid = 0
+                                                 $suspendedsql
                                                  ORDER BY name", array('userid' => $USER->id, 'suspended' => $showsuspended));
         }
         $companyselect = array();
         foreach ($companies as $company) {
             if (empty($company->suspended)) {
-                $companyselect[$company->id] = $company->name;
+                $companyselect[$company->id] = format_string($company->name);
             } else {
-                $companyselect[$company->id] = $company->name . '(S)';
+                $companyselect[$company->id] = format_string($company->name . '(S)');
             }
+            $allchildren = self::get_formatted_child_companies_select($company->id);
+            $companyselect = $companyselect + $allchildren;
         }
         return $companyselect;
+    }
+
+    private static function get_formatted_child_companies_select($companyid, &$companyarray = [], $prepend = "") {
+        global $DB;
+
+       if ($children = $DB->get_records('company', ['parentid' => $companyid ], 'name', 'id,name,parentid')) {
+           $prepend = "--" . $prepend;
+           foreach ($children as $child) {
+               $companyarray[$child->id] = $prepend . format_string($child->name);
+               self::get_formatted_child_companies_select($child->id, $companyarray, $prepend);
+           }
+        }
+        return $companyarray;
     }
 
     /**
