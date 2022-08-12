@@ -33,8 +33,8 @@ $string['admindirname'] = 'Directorio Admin';
 $string['availablelangs'] = 'Lista de idiomas dispoñíbeis';
 $string['chooselanguagehead'] = 'Escolla un idioma';
 $string['chooselanguagesub'] = 'Escolla un idioma para o proceso de instalación. Este idioma empregarase tamén como idioma predeterminado do sitio, malia que pode cambiarse máis adiante.';
-$string['clialreadyconfigured'] = 'Xa existe o ficheiro config.php. Empregue admin/cli/install_database.php se quere actualizar o seu sitio web.';
-$string['clialreadyinstalled'] = 'Xa existe o ficheiro config.php. Empregue admin/cli/upgrade.php se quere actualizar o seu sitio web.';
+$string['clialreadyconfigured'] = 'O ficheiro de configuración config.php xa existe. Use admin/cli/install_database.php para instalar Moodle para este sitio.';
+$string['clialreadyinstalled'] = 'O ficheiro de configuración config.php xa existe. Use admin/cli/install_database.php para actualizar Moodle para este sitio.';
 $string['cliinstallheader'] = 'Programa de instalación de Moodle en liña de ordes {$a}';
 $string['clitablesexist'] = 'Xa existen táboas de base de datos, a instalación CLI non pode continuar.';
 $string['databasehost'] = 'Enderezo/máquina da base de datos';
@@ -95,7 +95,7 @@ $string['phpversionhelp'] = '<p>Moodle require polo menos unha das versións de 
 <p>Debe actualizar PHP ou trasladarse a outro servidor cunha versión máis recente de PHP!<br />
 (NO caso de 5.0.x podería tamén reverter cara a versión 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Se esta a ver esta páxina é porque puido instalar satisfactoriamente e
+$string['welcomep20'] = 'Se esta a ver esta páxina é porque puido instalar correctamente e
     executar o paquete <strong>{$a->packname} {$a->packversion}</strong> no seu computador. Parabéns!';
 $string['welcomep30'] = 'Esta versión de <strong>{$a->installername}</strong> inclúe as aplicacións
     para crear un contorno no que <strong>Moodle</strong> funcione, nomeadamente:';
