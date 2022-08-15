@@ -19,19 +19,17 @@ Feature: File types of the submission and feedback attachments can be limitted
       | student1 | c1     | student        |
       | student2 | c1     | student        |
     And the following "activities" exist:
-      | activity | name         | intro                     | course | idnumber  | submissiontypetext | submissiontypefile |
-      | workshop | TestWorkshop | Test workshop description | c1     | workshop1 | 2                  | 1                  |
+      | activity | name         | course | idnumber  | submissiontypetext | submissiontypefile |
+      | workshop | TestWorkshop | c1     | workshop1 | 2                  | 1                  |
 
   @_file_upload @javascript
   Scenario: Student submission attachments obey the list of allowed file types
     # Define workshop to accept only images as submission attachments.
-    Given I am on the TestWorkshop "workshop activity" page logged in as teacher1
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "TestWorkshop" "workshop activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "Submission attachment allowed file types" to "image"
     And I press "Save and display"
     And I change phase in workshop "TestWorkshop" to "Submission phase"
-    And I log out
     # As a student, attempt to attach a non-image file.
     And I am on the TestWorkshop "workshop activity" page logged in as student1
     And I press "Add submission"
@@ -58,8 +56,7 @@ Feature: File types of the submission and feedback attachments can be limitted
   @_file_upload @javascript
   Scenario: Overall feedback attachments obey the list of allowed file types
     # Define workshop to accept only .php files as overall feedback attachments.
-    Given I log in as "teacher1"
-    And I am on "Course1" course homepage
+    Given I am on the "Course1" course page logged in as teacher1
     And I edit assessment form in workshop "TestWorkshop" as:"
       | id_description__idx_0_editor | Aspect1 |
       | id_description__idx_1_editor | Aspect2 |
@@ -70,20 +67,17 @@ Feature: File types of the submission and feedback attachments can be limitted
     And I set the field "Feedback attachment allowed file types" to "PHP"
     And I press "Save and display"
     And I change phase in workshop "TestWorkshop" to "Submission phase"
-    And I log out
     # As a student, attempt to attach an invalid file.
     And I am on the TestWorkshop "workshop activity" page logged in as student1
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission1  |
       | Submission content | Some content |
-    And I log out
     # As a teacher, allocate that submission to be assessed by another student.
     And I am on the TestWorkshop "workshop activity" page logged in as teacher1
     And I allocate submissions in workshop "TestWorkshop" as:"
       | Participant   | Reviewer      |
       | Sam1 Student1 | Sam2 Student2 |
     And I change phase in workshop "TestWorkshop" to "Assessment phase"
-    And I log out
     # As the other student, assess the assigned submission.
     And I am on the TestWorkshop "workshop activity" page logged in as student2
     And I follow "Submission1"

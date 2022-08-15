@@ -26,8 +26,7 @@ Feature: We can set the grade to pass value
       | name                                | Test Assignment 1       |
       | intro                               | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1                       |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
 
   @javascript
   Scenario: Validate that switching the type of grading used correctly disables grade to pass
@@ -115,11 +114,10 @@ Feature: We can set the grade to pass value
 
   Scenario: Set a valid grade to pass for workshop activity
     Given the following "activities" exist:
-      | activity   | name              | intro         | course | section | idnumber  |
-      | workshop   | Test Workshop 1   | Test workshop | C1     | 1       | workshop1 |
+      | activity   | name              | course | idnumber  |
+      | workshop   | Test Workshop 1   | C1     | workshop1 |
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test Workshop 1"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test Workshop 1" "workshop activity editing" page
     And I set the following fields to these values:
       | grade | 80 |
       | Submission grade to pass | 40 |
@@ -138,19 +136,16 @@ Feature: We can set the grade to pass value
     And the field "Grade to pass" matches value "10"
     And I set the field "Grade to pass" to "15"
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I follow "Test Workshop 1"
-    And I follow "Edit settings"
+    And I am on the "Test Workshop 1" "workshop activity editing" page
     And the field "Submission grade to pass" matches value "45"
     And the field "Assessment grade to pass" matches value "15"
 
   Scenario: Set an invalid grade to pass for workshop activity
     Given the following "activities" exist:
-      | activity   | name              | intro            | course | section | idnumber  |
-      | workshop   | Test Workshop 1   | Test workshop    | C1     | 1       | workshop1 |
+      | activity   | name              | course | idnumber  |
+      | workshop   | Test Workshop 1   | C1     | workshop1 |
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test Workshop 1"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test Workshop 1" "workshop activity editing" page
     And I set the following fields to these values:
       | grade | 80 |
       | Submission grade to pass | 90 |
