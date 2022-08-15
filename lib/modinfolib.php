@@ -475,18 +475,7 @@ class course_modinfo {
         // partial rebuild logic sometimes sets the $coursemodinfo->cacherev to -1 which is an
         // indicator that it needs rebuilding.
         if ($coursemodinfo === false || ($course->cacherev > $coursemodinfo->cacherev)) {
-            $cachekey = $course->id;
-            $lock = $cachecoursemodinfo->acquire_lock($cachekey);
-            try {
-                // Only actually do the build if it's still needed after getting the lock (not if
-                // somebody else, who might have been holding the lock, built it already).
-                $coursemodinfo = $cachecoursemodinfo->get_versioned($course->id, $course->cacherev);
-                if ($coursemodinfo === false || ($course->cacherev > $coursemodinfo->cacherev)) {
-                    $coursemodinfo = self::inner_build_course_cache($course, $lock);
-                }
-            } finally {
-                $cachecoursemodinfo->release_lock($cachekey);
-            }
+            $coursemodinfo = self::build_course_cache($course);
         }
 
         // Set initial values
@@ -653,10 +642,16 @@ class course_modinfo {
         $cachekey = $course->id;
         $cachecoursemodinfo->acquire_lock($cachekey);
         try {
-            return self::inner_build_course_cache($course, $partialrebuild);
+            // Only actually do the build if it's still needed after getting the lock (not if
+            // somebody else, who might have been holding the lock, built it already).
+            $coursemodinfo = $cachecoursemodinfo->get_versioned($course->id, $course->cacherev);
+            if ($coursemodinfo === false || ($course->cacherev > $coursemodinfo->cacherev)) {
+                $coursemodinfo = self::inner_build_course_cache($course);
+            }
         } finally {
             $cachecoursemodinfo->release_lock($cachekey);
         }
+        return $coursemodinfo;
     }
 
     /**
