@@ -22,7 +22,6 @@ Feature: Workshop submission and assessment with pass grade activity completion
     And the following "activity" exists:
       | activity                  | workshop                  |
       | name                      | TestWorkshop              |
-      | intro                     | Test workshop description |
       | course                    | c1                        |
       | idnumber                  | workshop1                 |
       | submissiontypetext        | 2                         |
@@ -39,25 +38,21 @@ Feature: Workshop submission and assessment with pass grade activity completion
       | id_description__idx_1_editor | Aspect2 |
       | id_description__idx_2_editor |         |
     And I change phase in workshop "TestWorkshop" to "Submission phase"
-    And I log out
     # student1 submits
     And I am on the "TestWorkshop" "workshop activity" page logged in as student1
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission1  |
       | Submission content | Some content |
-    And I log out
     # student2 submits
     And I am on the "TestWorkshop" "workshop activity" page logged in as student2
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission2  |
       | Submission content | Some content |
-    And I log out
     # student3 submits
     And I am on the "TestWorkshop" "workshop activity" page logged in as student3
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission3  |
       | Submission content | Some content |
-    And I log out
     # teacher1 allocates reviewers and changes the phase to assessment
     And I am on the "TestWorkshop" "workshop activity" page logged in as teacher1
     And I allocate submissions in workshop "TestWorkshop" as:"
@@ -68,7 +63,6 @@ Feature: Workshop submission and assessment with pass grade activity completion
       | Sam2 Student2 | Sam4 Student4 |
     And I am on the "TestWorkshop" "workshop activity" page
     And I change phase in workshop "TestWorkshop" to "Assessment phase"
-    And I log out
     # student1 assesses work of student2 and student3
     And I am on the "TestWorkshop" "workshop activity" page logged in as student1
     And I assess submission "Sam2" in workshop "TestWorkshop" as:"
@@ -84,7 +78,6 @@ Feature: Workshop submission and assessment with pass grade activity completion
       | grade__idx_1            | 8 / 10      |
       | peercomment__idx_1      | Very good   |
       | Feedback for the author | No comments |
-    And I log out
     # student2 assesses work of student1
     And I am on the "TestWorkshop" "workshop activity" page logged in as student2
     And I assess submission "Sam1" in workshop "TestWorkshop" as:"
@@ -93,7 +86,6 @@ Feature: Workshop submission and assessment with pass grade activity completion
       | grade__idx_1            | 7 / 10     |
       | peercomment__idx_1      |            |
       | Feedback for the author | Keep it up |
-    And I log out
     # teacher1 makes sure he can see all peer grades
     And I am on the "TestWorkshop" "workshop activity" page logged in as teacher1
     And I click on "//table/tbody/tr[td[contains(concat(' ', normalize-space(@class), ' '), ' participant ') and contains(.,'Sam2')]]/td[contains(concat(' ', normalize-space(@class), ' '), ' receivedgrade ') and contains(.,'Sam1')]/descendant::a[@class='grade']" "xpath_element"
@@ -114,31 +106,21 @@ Feature: Workshop submission and assessment with pass grade activity completion
     And I press "Save and close"
     And I press "Re-calculate grades"
     And I change phase in workshop "TestWorkshop" to "Closed"
-    And I log out
 
   Scenario: Add and assess submissions in workshop with javascript enabled
-    And I log in as "student1"
-    And I am on "Course1" course homepage
+    And I am on the "Course1" course page logged in as student1
     And the "Receive a grade" completion condition of "TestWorkshop" is displayed as "done"
     And the "Receive a passing grade" completion condition of "TestWorkshop" is displayed as "failed"
-    And I log out
-    And I log in as "student2"
-    And I am on "Course1" course homepage
+    And I am on the "Course1" course page logged in as student2
     And the "Receive a grade" completion condition of "TestWorkshop" is displayed as "done"
     And the "Receive a passing grade" completion condition of "TestWorkshop" is displayed as "done"
-    And I log out
-    And I log in as "student3"
-    And I am on "Course1" course homepage
+    And I am on the "Course1" course page logged in as student3
     And the "Receive a grade" completion condition of "TestWorkshop" is displayed as "done"
     And the "Receive a passing grade" completion condition of "TestWorkshop" is displayed as "done"
-    And I log out
-    And I log in as "student4"
-    And I am on "Course1" course homepage
+    And I am on the "Course1" course page logged in as student4
     And the "Receive a grade" completion condition of "TestWorkshop" is displayed as "todo"
     And the "Receive a passing grade" completion condition of "TestWorkshop" is displayed as "todo"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course1" course homepage
+    And I am on the "Course1" course page logged in as teacher1
     And "Sam1 Student1" user has completed "TestWorkshop" activity
     And "Sam2 Student2" user has completed "TestWorkshop" activity
     And "Sam3 Student3" user has completed "TestWorkshop" activity
