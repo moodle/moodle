@@ -23,17 +23,15 @@ Feature: Workshop submission and assessment
       | student4 | c1     | student        |
       | teacher1 | c1     | editingteacher |
     And the following "activities" exist:
-      | activity | name         | intro                     | course | idnumber  | submissiontypetext | submissiontypefile |
-      | workshop | TestWorkshop | Test workshop description | c1     | workshop1 | 2                  | 1                  |
+      | activity | name         | course | idnumber  | submissiontypetext | submissiontypefile |
+      | workshop | TestWorkshop | c1     | workshop1 | 2                  | 1                  |
 # teacher1 sets up assessment form and changes the phase to submission
-    When I log in as "teacher1"
-    And I am on "Course1" course homepage
+    When I am on the "Course1" course page logged in as teacher1
     And I edit assessment form in workshop "TestWorkshop" as:"
       | id_description__idx_0_editor | Aspect1 |
       | id_description__idx_1_editor | Aspect2 |
       | id_description__idx_2_editor |         |
     And I change phase in workshop "TestWorkshop" to "Submission phase"
-    And I log out
 # student1 submits
     And I am on the TestWorkshop "workshop activity" page logged in as student1
     Then I should see "Submit your work"
@@ -41,21 +39,16 @@ Feature: Workshop submission and assessment
       | Title              | Submission1  |
       | Submission content | Some content |
     And "//div[@class='submission-full' and contains(.,'Submission1') and contains(.,'submitted on')]" "xpath_element" should exist
-    And I log out
 # student2 submits
-    And I log in as "student2"
-    And I am on "Course1" course homepage
+    And I am on the "Course1" course page logged in as student2
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission2  |
       | Submission content | Some content |
-    And I log out
 # student3 submits
-    And I log in as "student3"
-    And I am on "Course1" course homepage
+    And I am on the "Course1" course page logged in as student3
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission3  |
       | Submission content | Some content |
-    And I log out
 # teacher1 allocates reviewers and changes the phase to assessment
     And I am on the TestWorkshop "workshop activity" page logged in as teacher1
     And I should see "to allocate: 3"
@@ -75,7 +68,6 @@ Feature: Workshop submission and assessment
     And I am on the TestWorkshop "workshop activity" page
     And I should see "to allocate: 0"
     And I change phase in workshop "TestWorkshop" to "Assessment phase"
-    And I log out
 # student1 assesses work of student2 and student3
     And I am on the TestWorkshop "workshop activity" page logged in as student1
     And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 2') and contains(.,'total: 2')]" "xpath_element" should exist
@@ -94,7 +86,6 @@ Feature: Workshop submission and assessment
       | peercomment__idx_1      | Very good   |
       | Feedback for the author | No comments |
     And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 0') and contains(.,'total: 2')]" "xpath_element" should exist
-    And I log out
 # student2 assesses work of student1
     And I am on the TestWorkshop "workshop activity" page logged in as student2
     And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 1') and contains(.,'total: 1')]" "xpath_element" should exist
@@ -105,7 +96,6 @@ Feature: Workshop submission and assessment
       | peercomment__idx_1      |            |
       | Feedback for the author | Keep it up |
     And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 0') and contains(.,'total: 1')]" "xpath_element" should exist
-    And I log out
 # teacher1 makes sure he can see all peer grades
     And I am on the TestWorkshop "workshop activity" page logged in as teacher1
     And I should see grade "52" for workshop participant "Sam1" set by peer "Sam2"
@@ -139,7 +129,6 @@ Feature: Workshop submission and assessment
     And I should see "32" in the "//table/tbody/tr[td[contains(concat(' ', normalize-space(@class), ' '), ' participant ') and contains(.,'Sam1')]]/td[contains(concat(' ', normalize-space(@class), ' '), ' submissiongrade ')]" "xpath_element"
     And I should see "16" in the "//table/tbody/tr[td[contains(concat(' ', normalize-space(@class), ' '), ' participant ') and contains(.,'Sam1')]]/td[contains(concat(' ', normalize-space(@class), ' '), ' gradinggrade ')]" "xpath_element"
     And I change phase in workshop "TestWorkshop" to "Closed"
-    And I log out
 
     # student1 looks at the activity
     And I am on the TestWorkshop "workshop activity" page logged in as student1
