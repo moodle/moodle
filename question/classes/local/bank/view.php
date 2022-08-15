@@ -202,22 +202,27 @@ class view {
     protected function init_bulk_actions(): void {
         $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
         foreach ($plugins as $componentname => $plugin) {
-            $pluginentrypoint = new $plugin();
-            $pluginentrypointobject = $pluginentrypoint->get_bulk_actions();
-            // Don't need the plugins without bulk actions.
-            if ($pluginentrypointobject === null) {
-                unset($plugins[$componentname]);
-                continue;
-            }
             if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
-                unset($plugins[$componentname]);
                 continue;
             }
-            $this->bulkactions[$pluginentrypointobject->get_bulk_action_key()] = [
-                'title' => $pluginentrypointobject->get_bulk_action_title(),
-                'url' => $pluginentrypointobject->get_bulk_action_url(),
-                'capabilities' => $pluginentrypointobject->get_bulk_action_capabilities()
-            ];
+
+            $pluginentrypoint = new $plugin();
+            $bulkactions = $pluginentrypoint->get_bulk_actions();
+            if (!is_array($bulkactions)) {
+                debugging("The method {$componentname}::get_bulk_actions() must return an array of bulk actions instead of
+                 a single bulk action. Please update your implementation of get_bulk_actions() to return an array. Check out the
+                  qbank_bulkmove plugin for a working example.", DEBUG_DEVELOPER);
+                $bulkactions = [$bulkactions];
+            }
+
+            foreach ($bulkactions as $bulkactionobject) {
+                $this->bulkactions[$bulkactionobject->get_key()] = [
+                    'title' => $bulkactionobject->get_bulk_action_title(),
+                    'url' => $bulkactionobject->get_bulk_action_url(),
+                    'capabilities' => $bulkactionobject->get_bulk_action_capabilities()
+                ];
+            }
+
         }
     }
 
