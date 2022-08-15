@@ -30,7 +30,7 @@ class bulk_move_action extends \core_question\local\bank\bulk_action_base {
         return get_string('movetobulkaction', 'qbank_bulkmove');
     }
 
-    public function get_bulk_action_key(): string {
+    public function get_key(): string {
         return 'move';
     }
 
