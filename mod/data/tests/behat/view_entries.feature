@@ -28,6 +28,7 @@ Feature: Users can view and search database entries
       | database | type | name              | description              |
       | data1    | text | Test field name   | Test field description   |
       | data1    | text | Test field 2 name | Test field 2 description |
+      | data1    | url  | Test field 3 name | Test field 3 description |
     And the following "mod_data > templates" exist:
       | database | name            |
       | data1    | singletemplate  |
@@ -37,19 +38,23 @@ Feature: Users can view and search database entries
       | data1    | rsstemplate     |
 
   @javascript
-  Scenario: Students can add view, list and search entries
+  Scenario: Students can view, list and search entries
     Given the following "mod_data > entries" exist:
-      | database | Test field name | Test field 2 name |
-      | data1    | Student entry 1 |                   |
-      | data1    | Student entry 2 |                   |
-      | data1    | Student entry 3 |                   |
+      | database | Test field name | Test field 2 name | Test field 3 name      |
+      | data1    | Student entry 1 |                   | https://moodledev.io   |
+      | data1    | Student entry 2 |                   |                        |
+      | data1    | Student entry 3 |                   |                        |
     When I log in as "student1"
     And I am on the "Test database name" "data activity" page
     Then I should see "Student entry 1"
+    # Confirm that the URL field is displayed as a link.
+    And "https://moodledev.io" "link" should exist
     And I should see "Student entry 2"
     And I should see "Student entry 3"
     And I select "Single view" from the "jump" singleselect
     And I should see "Student entry 1"
+    # Confirm that the URL field is displayed as a link.
+    And "https://moodledev.io" "link" should exist
     And I should not see "Student entry 2"
     And "2" "link" should exist
     And "3" "link" should exist

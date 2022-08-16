@@ -21,6 +21,10 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+
 require_once($CFG->dirroot.'/lib/filelib.php');
 require_once($CFG->dirroot.'/repository/lib.php');
 
