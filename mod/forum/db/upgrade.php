@@ -162,5 +162,16 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022062700, 'forum');
     }
 
+    if ($oldversion < 2022072900) {
+        // Define key usermodified (foreign) to be added to forum_discussions.
+        $table = new xmldb_table('forum_discussions');
+        $key = new xmldb_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+        // Launch add key usermodified.
+        $dbman->add_key($table, $key);
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2022072900, 'forum');
+    }
+
     return true;
 }
