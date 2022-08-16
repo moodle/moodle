@@ -15,7 +15,6 @@ Feature: View task logs report and use its filters
     And I navigate to "Server > Tasks > Task logs" in site administration
     When I click on "Filters" "button"
     And I set the following fields in the "Class name" "core_reportbuilder > Filter" to these values:
-      | Class name operator | Contains |
       | Class name value    | <name>   |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     Then I should see "Filters applied"
@@ -27,9 +26,9 @@ Feature: View task logs report and use its filters
       | Type      | Name       |
       | Scheduled | <nonmatch> |
     Examples:
-      | name               | match                        | nonmatch                     |
-      | task\\clean_events | Cleanup event monitor events | Incoming email pickup        |
-      | task\\pickup_task  | Incoming email pickup        | Cleanup event monitor events |
+      | name                         | match                        | nonmatch                     |
+      | Cleanup event monitor events | Cleanup event monitor events | Incoming email pickup        |
+      | Incoming email pickup        | Incoming email pickup        | Cleanup event monitor events |
 
   @javascript
   # Task duration is dependent on many factors, we are asserting here that no task has a duration >2 minutes.
