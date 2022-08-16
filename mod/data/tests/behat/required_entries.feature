@@ -151,7 +151,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
     And ".alert" "css_element" should not exist in the "Not required Multimenu" "table_row"
     And I am on "Course 1" course homepage
     And I follow "Test database name"
-    And I should see "No entries in database"
+    And I should see "No entries yet"
 
   Scenario: Students recieve no error for filled in required fields
     When I log in as "student1"

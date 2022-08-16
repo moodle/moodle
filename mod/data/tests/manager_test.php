@@ -164,6 +164,32 @@ class manager_test extends \advanced_testcase {
     }
 
     /**
+     * Test for has_fields().
+     *
+     * @covers ::has_fields
+     */
+    public function test_has_fields() {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $manager = manager::create_from_instance($activity);
+
+        // Empty database should return false.
+        $this->assertFalse($manager->has_fields());
+
+        // Add a field to the activity.
+        $datagenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $fieldrecord = new \stdClass();
+        $fieldrecord->name = 'field1';
+        $fieldrecord->type = 'text';
+        $datagenerator->create_field($fieldrecord, $activity);
+
+        // Database with fields should return true.
+        $this->assertTrue($manager->has_fields());
+    }
+
+    /**
      * Test for get_available_presets().
      *
      * @covers ::get_available_presets

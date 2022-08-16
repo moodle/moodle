@@ -139,4 +139,42 @@ class mod_data_renderer extends plugin_renderer_base {
         $data = $presets->export_for_template($this);
         return $this->render_from_template('mod_data/presets', $data);
     }
+
+    /**
+     * Renders the action bar for the zero state (no fields created) page.
+     *
+     * @param \mod_data\manager $manager The manager instance.
+     *
+     * @return string The HTML output
+     */
+    public function render_zero_state(\mod_data\manager $manager): string {
+        $actionbar = new \mod_data\output\zero_state_action_bar($manager);
+        $data = $actionbar->export_for_template($this);
+        if (empty($data)) {
+            // No actions for the user.
+            $data['title'] = get_string('activitynotready');
+            $data['intro'] = get_string('comebacklater');
+        } else {
+            $data['title'] = get_string('startbuilding', 'mod_data');
+            $data['intro'] = get_string('createfields', 'mod_data');
+        }
+        $data['noitemsimgurl'] = $this->output->image_url('nofields', 'mod_data')->out();
+
+        return $this->render_from_template('mod_data/zero_state', $data);
+    }
+
+    /**
+     * Renders the action bar for an empty database view page.
+     *
+     * @param \mod_data\manager $manager The manager instance.
+     *
+     * @return string The HTML output
+     */
+    public function render_empty_database(\mod_data\manager $manager): string {
+        $actionbar = new \mod_data\output\empty_database_action_bar($manager);
+        $data = $actionbar->export_for_template($this);
+        $data['noitemsimgurl'] = $this->output->image_url('nofields', 'mod_data')->out();
+
+        return $this->render_from_template('mod_data/view_noentries', $data);
+    }
 }

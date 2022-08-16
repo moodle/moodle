@@ -114,6 +114,21 @@ class externallib_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Add a test field to the database activity instance to be used in the unit tests.
+     *
+     * @return \data_field_base
+     */
+    protected function add_test_field(): \data_field_base {
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+
+        // Add fields.
+        $fieldrecord = new \stdClass();
+        $fieldrecord->name = 'Test field'; // Identifier of the records for testing.
+        $fieldrecord->type = 'text';
+        return $generator->create_field($fieldrecord, $this->database);
+    }
+
+    /**
      * Test get databases by courses
      */
     public function test_mod_data_get_databases_by_courses() {
@@ -321,6 +336,10 @@ class externallib_test extends externallib_advanced_testcase {
      */
     public function test_get_data_access_information_student() {
         global $DB;
+
+        // Add a field to database to let users add new entries.
+        $this->add_test_field();
+
         // Modify the database to add access restrictions.
         $this->database->timeavailablefrom = time() + DAYSECS;
         $this->database->requiredentries = 2;
@@ -350,6 +369,10 @@ class externallib_test extends externallib_advanced_testcase {
      */
     public function test_get_data_access_information_teacher() {
         global $DB;
+
+        // Add a field to database to let users add new entries.
+        $this->add_test_field();
+
         // Modify the database to add access restrictions.
         $this->database->timeavailablefrom = time() + DAYSECS;
         $this->database->requiredentries = 2;
@@ -379,6 +402,9 @@ class externallib_test extends externallib_advanced_testcase {
      */
     public function test_get_data_access_information_groups() {
         global $DB;
+
+        // Add a field to database to let users add new entries.
+        $this->add_test_field();
 
         $DB->set_field('course', 'groupmode', VISIBLEGROUPS, ['id' => $this->course->id]);
 
@@ -1088,6 +1114,10 @@ class externallib_test extends externallib_advanced_testcase {
      * Test add_entry empty_form.
      */
     public function test_add_entry_empty_form() {
+
+        // Add a field to database to let users add new entries.
+        $this->add_test_field();
+
         $result = mod_data_external::add_entry($this->database->id, 0, []);
         $result = \external_api::clean_returnvalue(mod_data_external::add_entry_returns(), $result);
         $this->assertEquals(0, $result['newentryid']);
@@ -1133,10 +1163,24 @@ class externallib_test extends externallib_advanced_testcase {
      * Test add_entry invalid group.
      */
     public function test_add_entry_invalid_group() {
+
+        // Add a field to database to let users add new entries.
+        $this->add_test_field();
+
         $this->setUser($this->student1);
         $this->expectExceptionMessage(get_string('noaccess', 'data'));
         $this->expectException('moodle_exception');
         mod_data_external::add_entry($this->database->id, $this->group2->id, []);
+    }
+
+    /**
+     * Test add_entry for an empty database (no fields).
+     *
+     * @covers \mod_data\mod_data_external::add_entry
+     */
+    public function test_add_entry_empty_database() {
+        $this->expectException('moodle_exception');
+        mod_data_external::add_entry($this->database->id, 0, []);
     }
 
     /**

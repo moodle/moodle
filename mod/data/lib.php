@@ -2139,7 +2139,12 @@ function data_print_header($course, $cm, $data, $currenttab='', string $actionba
  * @return bool
  */
 function data_user_can_add_entry($data, $currentgroup, $groupmode, $context = null) {
-    global $USER;
+    global $DB;
+
+    // Don't let add entry to a database that has no fields.
+    if (!$DB->record_exists('data_fields', ['dataid' => $data->id])) {
+        return false;
+    }
 
     if (empty($context)) {
         $cm = get_coursemodule_from_instance('data', $data->id, 0, false, MUST_EXIST);
