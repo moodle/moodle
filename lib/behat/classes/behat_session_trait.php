@@ -954,8 +954,11 @@ EOF;
                     }
 
                 } else {
-                    $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
-                        $this->get_debug_text($errorinfoboxes[1]->getHtml());
+                    $errorinfo = implode("\n", [
+                        $this->get_debug_text($errorinfoboxes[0]->getHtml()),
+                        $this->get_debug_text($errorinfoboxes[1]->getHtml()),
+                        html_to_text($errorinfoboxes[2]->find('css', 'ul')->getHtml()),
+                    ]);
                 }
 
                 $msg = "Moodle exception: " . $errormsg->getText() . "\n" . $errorinfo;
