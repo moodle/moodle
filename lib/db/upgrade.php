@@ -2877,6 +2877,15 @@ privatefiles,moodle|/user/files.php';
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2022061500.00);
+
+    }
+
+    if ($oldversion < 2022072900.00) {
+        // Call the helper function that updates the foreign keys and indexes in MDL-49795.
+        upgrade_add_foreign_key_and_indexes();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022072900.00);
     }
 
     return true;

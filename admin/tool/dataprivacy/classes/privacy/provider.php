@@ -79,6 +79,16 @@ class provider implements
             'privacy:metadata:request'
         );
 
+        // Regarding this block, we are unable to export or purge this data, as
+        // it would damage the privacy data across the whole site.
+        $collection->add_database_table(
+            'tool_dataprivacy_purposerole',
+            [
+                'usermodified' => 'privacy:metadata:purpose:usermodified',
+            ],
+            'privacy:metadata:purpose'
+        );
+
         $collection->add_user_preference(tool_helper::PREF_REQUEST_FILTERS,
             'privacy:metadata:preference:tool_dataprivacy_request-filters');
         $collection->add_user_preference(tool_helper::PREF_REQUEST_PERPAGE,
