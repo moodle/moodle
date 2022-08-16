@@ -1774,10 +1774,10 @@ function upgrade_add_foreign_key_and_indexes() {
     // Launch add key usermodified.
     $dbman->add_key($table, $key);
 
-    // Define key relatedcompetencyid (foreign) to be added to competency_relatedcomp.
+    // Define key competencyid (foreign) to be added to competency_relatedcomp.
     $table = new xmldb_table('competency_relatedcomp');
-    $key = new xmldb_key('relatedcompetencyid', XMLDB_KEY_FOREIGN, ['relatedcompetencyid'], 'competency', ['id']);
-    // Launch add key relatedcompetencyid.
+    $key = new xmldb_key('competencyid', XMLDB_KEY_FOREIGN, ['competencyid'], 'competency', ['id']);
+    // Launch add key competencyid.
     $dbman->add_key($table, $key);
 
     // Define key relatedcompetencyid (foreign) to be added to competency_relatedcomp.
