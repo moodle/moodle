@@ -170,7 +170,6 @@ class conversion extends \core\persistent {
         $records = $DB->get_records_sql($sql, [
             'ccontenthash' => $file->get_contenthash(),
             'osourcefileid' => $file->get_id(),
-            'cfilepath' => "/{$format}/",
             'ofilepath' => "/{$format}/",
             'cformat' => $format,
             'oformat' => $format,
