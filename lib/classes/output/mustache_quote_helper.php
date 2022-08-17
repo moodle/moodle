@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Wrap content in quotes, and escape all quotes used.
+ * Wrap content in quotes, and escape all special JSON characters used.
  *
  * @package    core
  * @category   output
@@ -26,7 +26,7 @@
 namespace core\output;
 
 /**
- * Wrap content in quotes, and escape all quotes used.
+ * Wrap content in quotes, and escape all special JSON characters used.
  *
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,22 +34,21 @@ namespace core\output;
 class mustache_quote_helper {
 
     /**
-     * Wrap content in quotes, and escape all quotes used.
+     * Wrap content in quotes, and escape all special JSON characters used.
      *
      * Note: This helper is only compatible with the standard {{ }} delimeters.
      *
      * @param string $text The text to parse for arguments.
-     * @param Mustache_LambdaHelper $helper Used to render nested mustache variables.
+     * @param \Mustache_LambdaHelper $helper Used to render nested mustache variables.
      * @return string
      */
     public function quote($text, \Mustache_LambdaHelper $helper) {
-        // Split the text into an array of variables.
         $content = trim($text);
         $content = $helper->render($content);
 
-        // Escape the {{ and the ".
-        $content = str_replace('"', '\\"', $content);
+        // Escape the {{ and JSON encode.
+        $content = json_encode($content);
         $content = preg_replace('([{}]{2,3})', '{{=<% %>=}}${0}<%={{ }}=%>', $content);
-        return '"' . $content . '"';
+        return $content;
     }
 }
