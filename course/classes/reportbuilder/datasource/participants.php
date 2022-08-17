@@ -69,7 +69,7 @@ class participants extends datasource {
         $userentity = new user();
         $user = $userentity->get_table_alias('user');
         $userentity->add_joins($enrolmententity->get_joins());
-        $userentity->add_join("LEFT JOIN {user} {$user} ON {$userenrolment}.userid = {$user}.id");
+        $userentity->add_join("LEFT JOIN {user} {$user} ON {$userenrolment}.userid = {$user}.id AND {$user}.deleted = 0");
         $this->add_entity($userentity);
 
         // Join completion entity.
@@ -92,9 +92,6 @@ class participants extends datasource {
                    ON {$lastaccess}.userid = {$user}.id AND {$lastaccess}.courseid = {$course}.id
         ");
         $this->add_entity($accessentity);
-
-        // Do not show deleted users.
-        $this->add_base_condition_sql("{$user}.deleted = 0");
 
         // Add all entities columns/filters/conditions.
         $this->add_all_from_entities();
