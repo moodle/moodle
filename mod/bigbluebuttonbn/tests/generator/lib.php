@@ -258,7 +258,9 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
         ]);
         $mockdata['startTime'] = $data['starttime'] ?? $now;
         $mockdata['endTime'] = $data['endtime'] ?? $mockdata['startTime'] + HOURSECS;
-
+        if (!empty($data['playback'])) {
+            $mockdata['playback'] = json_encode($data['playback']);
+        }
         if (!empty($data['isBreakout'])) {
             // If it is a breakout meeting, we do not have any way to know the real Id of the meeting
             // unless we query the list of submeetings.

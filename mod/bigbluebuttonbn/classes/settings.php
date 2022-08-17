@@ -377,6 +377,26 @@ class settings {
                 $item,
                 $recordingsetting
             );
+            $recordingsafeformat = [
+                'notes' => get_string('view_recording_format_notes', 'mod_bigbluebuttonbn'),
+                'podcast' => get_string('view_recording_format_podcast', 'mod_bigbluebuttonbn'),
+                'presentation' => get_string('view_recording_format_presentation', 'mod_bigbluebuttonbn'),
+                'screenshare' => get_string('view_recording_format_screenshare', 'mod_bigbluebuttonbn'),
+                'statistics' => get_string('view_recording_format_statistics', 'mod_bigbluebuttonbn'),
+                'video' => get_string('view_recording_format_video', 'mod_bigbluebuttonbn'),
+            ];
+            $item = new admin_setting_configmultiselect(
+                'bigbluebuttonbn_recording_safe_formats',
+                get_string('config_recording_safe_formats', 'mod_bigbluebuttonbn'),
+                get_string('config_recording_safe_formats_description', 'mod_bigbluebuttonbn'),
+                ['video', 'presentation'],
+                $recordingsafeformat
+            );
+            $this->add_conditional_element(
+                'recording_hide_button_editable',
+                $item,
+                $recordingsetting
+            );
         }
         $this->admin->add($this->parent, $recordingsetting);
     }
