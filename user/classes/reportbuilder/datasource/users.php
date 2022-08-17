@@ -24,6 +24,8 @@ use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\helpers\database;
 use core_tag\reportbuilder\local\entities\tag;
+use core_reportbuilder\manager;
+use core_reportbuilder\local\helpers\report;
 
 /**
  * Users datasource
@@ -118,5 +120,20 @@ class users extends datasource {
         return [
             'user:suspended_operator' => boolean_select::NOT_CHECKED,
         ];
+    }
+
+    /**
+     * Set default columns and the sortorder
+     */
+    public function add_default_columns(): void {
+        parent::add_default_columns();
+
+        $persistent = $this->get_report_persistent();
+        $report = manager::get_report_from_persistent($persistent);
+        foreach ($report->get_active_columns() as $column) {
+            if ($column->get_unique_identifier() === 'user:fullname') {
+                report::toggle_report_column_sorting($persistent->get('id'), $column->get_persistent()->get('id'), true);
+            }
+        }
     }
 }
