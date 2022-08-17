@@ -436,7 +436,11 @@ class template {
         $fields = $this->manager->get_fields();
         list($formats, $files) = data_portfolio_caller::formats($fields, $entry);
         $button->set_formats($formats);
-        return $button->to_html(PORTFOLIO_ADD_ICON_LINK);
+        $result = $button->to_html(PORTFOLIO_ADD_ICON_LINK);
+        if (is_null($result)) {
+            $result = '';
+        }
+        return $result;
     }
 
     /**
