@@ -263,7 +263,7 @@ class bigbluebutton_proxy extends proxy_base {
                 'id' => instance::TYPE_ROOM_ONLY,
                 'name' => get_string('instance_type_room_only', 'bigbluebuttonbn'),
                 'features' => ['showroom', 'welcomemessage', 'voicebridge', 'waitformoderator', 'userlimit',
-                    'recording', 'sendnotifications', 'preuploadpresentation', 'permissions', 'schedule', 'groups',
+                    'recording', 'sendnotifications', 'lock', 'preuploadpresentation', 'permissions', 'schedule', 'groups',
                     'modstandardelshdr', 'availabilityconditionsheader', 'tagshdr', 'competenciessection',
                     'completionattendance', 'completionengagement', 'availabilityconditionsheader']
             ],
