@@ -957,12 +957,25 @@ class theme_config {
 
         // First editor plugins.
         $plugins = core_component::get_plugin_list('editor');
-        foreach ($plugins as $plugin=>$fulldir) {
+        foreach ($plugins as $plugin => $fulldir) {
             $sheetfile = "$fulldir/editor_styles.css";
             if (is_readable($sheetfile)) {
                 $files['plugin_'.$plugin] = $sheetfile;
             }
+
+            $subplugintypes = core_component::get_subplugins("editor_{$plugin}");
+            // Fetch sheets for any editor subplugins.
+            foreach ($subplugintypes as $plugintype => $subplugins) {
+                foreach ($subplugins as $subplugin) {
+                    $plugindir = core_component::get_plugin_directory($plugintype, $subplugin);
+                    $sheetfile = "{$plugindir}/editor_styles.css";
+                    if (is_readable($sheetfile)) {
+                        $files["{$plugintype}_{$subplugin}"] = $sheetfile;
+                    }
+                }
+            }
         }
+
         // Then parent themes - base first, the immediate parent last.
         foreach (array_reverse($this->parent_configs) as $parent_config) {
             if (empty($parent_config->editor_sheets)) {
