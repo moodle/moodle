@@ -16,6 +16,7 @@
 
 declare(strict_types=1);
 
+use core_reportbuilder\local\helpers\user_filter_manager;
 use core_reportbuilder\table\custom_report_table_view;
 
 /**
@@ -32,10 +33,14 @@ abstract class core_reportbuilder_testcase extends advanced_testcase {
      *
      * @param int $reportid
      * @param int $pagesize
+     * @param array $filtervalues
      * @return array[]
      */
-    protected function get_custom_report_content(int $reportid, int $pagesize = 30): array {
+    protected function get_custom_report_content(int $reportid, int $pagesize = 30, array $filtervalues = []): array {
         $records = [];
+
+        // Apply filter values.
+        user_filter_manager::set($reportid, $filtervalues);
 
         // Create table instance.
         $table = custom_report_table_view::create($reportid);
