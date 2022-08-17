@@ -12637,15 +12637,15 @@ body.dragging .dragging {
   margin: 0; }
 
 .path-admin .header-maxwidth,
-.path-admin .secondary-navigation,
+.path-admin .secondary-navigation .navigation .nav-tabs,
 .format-site .header-maxwidth,
-.format-site .secondary-navigation {
+.format-site .secondary-navigation .navigation .nav-tabs {
   max-width: none; }
 
 .path-admin.path-admin-roles:not(.format-site) .header-maxwidth,
-.path-admin.path-admin-roles:not(.format-site) .secondary-navigation,
+.path-admin.path-admin-roles:not(.format-site) .secondary-navigation .navigation .nav-tabs,
 .path-admin.path-admin-tool-lp .header-maxwidth,
-.path-admin.path-admin-tool-lp .secondary-navigation {
+.path-admin.path-admin-tool-lp .secondary-navigation .navigation .nav-tabs {
   max-width: 830px; }
 
 .plugincheckwrapper {
@@ -21699,22 +21699,22 @@ div.editor_atto_toolbar button .icon {
       border-right: 0; }
 
 .secondary-navigation {
-  max-width: 830px;
-  margin: 0 auto;
   padding-bottom: 15px; }
   .secondary-navigation .navigation {
-    border-top: 1px solid #dee2e6;
     border-bottom: 1px solid #dee2e6;
-    height: calc(60px + 2px);
-    background-color: #fff; }
+    background-color: #fff;
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem; }
     .secondary-navigation .navigation .nav-tabs {
-      border: none; }
+      border: none;
+      max-width: 830px;
+      margin: 0 auto; }
       .secondary-navigation .navigation .nav-tabs .nav-link {
         border-radius: initial; }
 
 @media (min-width: 768px) {
-  .secondary-navigation {
-    padding: 0 15px 15px; } }
+  .secondary-navigation .navigation {
+    padding: 0 calc(0.5rem + 15px); } }
 
 .tertiary-navigation {
   padding-top: 10px; }
