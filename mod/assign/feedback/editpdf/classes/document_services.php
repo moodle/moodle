@@ -916,10 +916,13 @@ EOD;
         $oldfile = $fs->get_file($record->contextid, $record->component, $record->filearea,
             $record->itemid, $record->filepath, $record->filename);
 
-        $newhash = sha1($newfilepath);
-
-        // Delete old file if exists.
-        if ($oldfile && $newhash !== $oldfile->get_contenthash()) {
+        if ($oldfile) {
+            $newhash = \file_storage::hash_from_path($newfilepath);
+            if ($newhash === $oldfile->get_contenthash()) {
+                // Use existing file if contenthash match.
+                return $oldfile;
+            }
+            // Delete existing file.
             $oldfile->delete();
         }
 
