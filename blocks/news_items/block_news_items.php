@@ -119,10 +119,19 @@ class block_news_items extends block_base {
                 if (!empty($CFG->forum_enabletimedposts) && ($discussion->timestart > $posttime)) {
                     $posttime = $discussion->timestart;
                 }
+
+                // If the user who created the discussion post has been deleted, indicate so.
+                if ($discussion->userdeleted) {
+                    $userfullname = get_string('deleteduser', 'mod_forum');
+                } else {
+                    $userfullname = fullname($discussion, has_capability('moodle/site:viewfullnames', $context));
+                }
+
                 $text .= '<li class="post">'.
                          '<div class="head clearfix">'.
                          '<div class="date">'.userdate($posttime, $strftimerecent).'</div>'.
-                         '<div class="name">'.fullname($discussion).'</div></div>'.
+                         '<div class="name">'.$userfullname.'</div>'.
+                         '</div>'.
                          '<div class="info"><a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->discussion.'">'.$discussion->subject.'</a></div>'.
                          "</li>\n";
             }
