@@ -45,6 +45,12 @@ class tags extends base {
     /** @var int Filter for selected tags */
     public const EQUAL_TO = 2;
 
+    /** @var int Tags are not present */
+    public const EMPTY = 3;
+
+    /** @var int Filter for excluded tags */
+    public const NOT_EQUAL_TO = 4;
+
     /**
      * Returns an array of comparison operators
      *
@@ -54,7 +60,9 @@ class tags extends base {
         $operators = [
             self::ANY_VALUE => new lang_string('filterisanyvalue', 'core_reportbuilder'),
             self::NOT_EMPTY => new lang_string('filterisnotempty', 'core_reportbuilder'),
+            self::EMPTY => new lang_string('filterisempty', 'core_reportbuilder'),
             self::EQUAL_TO => new lang_string('filterisequalto', 'core_reportbuilder'),
+            self::NOT_EQUAL_TO => new lang_string('filterisnotequalto', 'core_reportbuilder'),
         ];
 
         return $this->filter->restrict_limited_operators($operators);
@@ -84,7 +92,7 @@ class tags extends base {
         $valuelabel = get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header());
         $mform->addElement('autocomplete', "{$this->name}_value", $valuelabel, $tags, ['multiple' => true])
             ->setHiddenLabel(true);
-        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'neq', self::EQUAL_TO);
+        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'in', [self::ANY_VALUE, self::EMPTY, self::NOT_EMPTY]);
     }
 
     /**
@@ -104,11 +112,20 @@ class tags extends base {
 
         if ($operator === self::NOT_EMPTY) {
             $select = "{$fieldsql} IS NOT NULL";
+        } else if ($operator === self::EMPTY) {
+            $select = "{$fieldsql} IS NULL";
         } else if ($operator === self::EQUAL_TO && !empty($tags)) {
             [$tagselect, $tagselectparams] = $DB->get_in_or_equal($tags, SQL_PARAMS_NAMED,
                 database::generate_param_name() . '_');
 
             $select = "{$fieldsql} {$tagselect}";
+            $params = array_merge($params, $tagselectparams);
+        } else if ($operator === self::NOT_EQUAL_TO && !empty($tags)) {
+            [$tagselect, $tagselectparams] = $DB->get_in_or_equal($tags, SQL_PARAMS_NAMED,
+                database::generate_param_name() . '_', false);
+
+            // We should also return those elements that aren't tagged at all.
+            $select = "COALESCE({$fieldsql}, 0) {$tagselect}";
             $params = array_merge($params, $tagselectparams);
         } else {
             // Invalid/inactive (any value) filter..

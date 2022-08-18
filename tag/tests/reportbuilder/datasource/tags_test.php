@@ -166,9 +166,16 @@ class tags_test extends core_reportbuilder_testcase {
             ], false],
 
             // Tag.
-            'Filter tag name' => ['tag:name', [
+            'Filter tag name equal to' => ['tag:name', [
                 'tag:name_operator' => tags_filter::EQUAL_TO,
                 'tag:name_value' => [-1],
+            ], false],
+            'Filter tag name not equal to' => ['tag:name', [
+                'tag:name_operator' => tags_filter::NOT_EQUAL_TO,
+                'tag:name_value' => [-1],
+            ], true],
+            'Filter tag name empty' => ['tag:name', [
+                'tag:name_operator' => tags_filter::EMPTY,
             ], false],
             'Filter tag name not empty' => ['tag:name', [
                 'tag:name_operator' => tags_filter::NOT_EMPTY,
