@@ -1352,7 +1352,7 @@ function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
  * in the course. Returns an empty array on any errors.
  *
  * The returned objects includle the columns cw.section, cm.visible,
- * cm.groupmode, and cm.groupingid, and are indexed by cm.id.
+ * cm.groupmode, cm.groupingid and cm.lang and are indexed by cm.id.
  *
  * @global object
  * @global object
@@ -1380,7 +1380,7 @@ function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $incl
     $params['modulename'] = $modulename;
 
     if (!$rawmods = $DB->get_records_sql("SELECT cm.id AS coursemodule, m.*, cw.section, cm.visible AS visible,
-                                                 cm.groupmode, cm.groupingid
+                                                 cm.groupmode, cm.groupingid, cm.lang
                                             FROM {course_modules} cm, {course_sections} cw, {modules} md,
                                                  {".$modulename."} m
                                            WHERE cm.course $coursessql AND

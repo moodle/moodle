@@ -4491,6 +4491,10 @@ class restore_module_structure_step extends restore_structure_step {
             $data->availability = upgrade_group_members_only($data->groupingid, $data->availability);
         }
 
+        if (!has_capability('moodle/course:setforcedlanguage', context_course::instance($data->course))) {
+            unset($data->lang);
+        }
+
         // course_module record ready, insert it
         $newitemid = $DB->insert_record('course_modules', $data);
         // save mapping

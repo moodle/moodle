@@ -949,12 +949,13 @@ EOD;
     /**
      * Assigns the specified role to a user in the context.
      *
-     * @param int $roleid
+     * @param int|string $role either an int role id or a string role shortname.
      * @param int $userid
      * @param int $contextid Defaults to the system context
      * @return int new/existing id of the assignment
      */
-    public function role_assign($roleid, $userid, $contextid = false) {
+    public function role_assign($role, $userid, $contextid = false) {
+        global $DB;
 
         // Default to the system context.
         if (!$contextid) {
@@ -962,15 +963,18 @@ EOD;
             $contextid = $context->id;
         }
 
-        if (empty($roleid)) {
+        if (empty($role)) {
             throw new coding_exception('roleid must be present in testing_data_generator::role_assign() arguments');
+        }
+        if (!is_number($role)) {
+            $role = $DB->get_field('role', 'id', ['shortname' => $role], MUST_EXIST);
         }
 
         if (empty($userid)) {
             throw new coding_exception('userid must be present in testing_data_generator::role_assign() arguments');
         }
 
-        return role_assign($roleid, $userid, $contextid);
+        return role_assign($role, $userid, $contextid);
     }
 
     /**

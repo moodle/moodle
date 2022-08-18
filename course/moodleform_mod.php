@@ -625,17 +625,21 @@ abstract class moodleform_mod extends moodleform {
         $mform->addElement('modvisible', 'visible', get_string($modvisiblelabel), null,
                 array('allowstealth' => $allowstealth, 'sectionvisible' => $section->visible, 'cm' => $this->_cm));
         $mform->addHelpButton('visible', $modvisiblelabel);
-        if (!empty($this->_cm)) {
-            $context = context_module::instance($this->_cm->id);
-            if (!has_capability('moodle/course:activityvisibility', $context)) {
-                $mform->hardFreeze('visible');
-            }
+        if (!empty($this->_cm) && !has_capability('moodle/course:activityvisibility', $this->get_context())) {
+            $mform->hardFreeze('visible');
         }
 
         if ($this->_features->idnumber) {
             $mform->addElement('text', 'cmidnumber', get_string('idnumbermod'));
             $mform->setType('cmidnumber', PARAM_RAW);
             $mform->addHelpButton('cmidnumber', 'idnumbermod');
+        }
+
+        if (has_capability('moodle/course:setforcedlanguage', $this->get_context())) {
+            $languages = ['' => get_string('forceno')];
+            $languages += get_string_manager()->get_list_of_translations();
+
+            $mform->addElement('select', 'lang', get_string('forcelanguage'), $languages);
         }
 
         if ($CFG->downloadcoursecontentallowed) {
@@ -900,9 +904,8 @@ abstract class moodleform_mod extends moodleform {
 
         $rolenamestring = null;
         if ($isupdate) {
-            $context = context_module::instance($this->_cm->id);
             $capabilities = ['moodle/rating:rate', "mod/{$this->_cm->modname}:rate"];
-            $rolenames = get_role_names_with_caps_in_context($context, $capabilities);
+            $rolenames = get_role_names_with_caps_in_context($this->get_context(), $capabilities);
             $rolenamestring = implode(', ', $rolenames);
         } else {
             $rolenamestring = get_string('capabilitychecknotavailable', 'rating');

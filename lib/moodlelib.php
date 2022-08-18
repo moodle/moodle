@@ -7080,7 +7080,7 @@ function clean_filename($string) {
  * @return string
  */
 function current_language() {
-    global $CFG, $USER, $SESSION, $COURSE;
+    global $CFG, $PAGE, $SESSION, $USER;
 
     if (!empty($SESSION->forcelang)) {
         // Allows overriding course-forced language (useful for admins to check
@@ -7089,9 +7089,13 @@ function current_language() {
         // specific language (see force_current_language()).
         $return = $SESSION->forcelang;
 
-    } else if (!empty($COURSE->id) and $COURSE->id != SITEID and !empty($COURSE->lang)) {
+    } else if (!empty($PAGE->cm->lang)) {
+        // Activity language, if set.
+        $return = $PAGE->cm->lang;
+
+    } else if (!empty($PAGE->course->id) && $PAGE->course->id != SITEID && !empty($PAGE->course->lang)) {
         // Course language can override all other settings for this page.
-        $return = $COURSE->lang;
+        $return = $PAGE->course->lang;
 
     } else if (!empty($SESSION->lang)) {
         // Session language can override other settings.
@@ -7144,7 +7148,7 @@ function force_current_language($language) {
     global $SESSION;
     $sessionforcelang = isset($SESSION->forcelang) ? $SESSION->forcelang : '';
     if ($language !== $sessionforcelang) {
-        // Seting forcelang to null or an empty string disables it's effect.
+        // Setting forcelang to null or an empty string disables its effect.
         if (empty($language) || get_string_manager()->translation_exists($language, false)) {
             $SESSION->forcelang = $language;
             moodle_setlocale();

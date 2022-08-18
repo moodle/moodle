@@ -193,15 +193,19 @@ class externallib_test extends externallib_advanced_testcase {
         // First for the student user.
         $expectedfields = array('id', 'coursemodule', 'course', 'name', 'comments', 'timeavailablefrom',
                             'timeavailableto', 'timeviewfrom', 'timeviewto', 'requiredentries', 'requiredentriestoview',
-                            'intro', 'introformat', 'introfiles', 'maxentries', 'rssarticles', 'singletemplate', 'listtemplate',
+                            'intro', 'introformat', 'introfiles', 'lang',
+                            'maxentries', 'rssarticles', 'singletemplate', 'listtemplate',
                             'listtemplateheader', 'listtemplatefooter', 'addtemplate', 'rsstemplate', 'rsstitletemplate',
-                            'csstemplate', 'jstemplate', 'asearchtemplate', 'approval', 'defaultsort', 'defaultsortdir', 'manageapproved');
+                            'csstemplate', 'jstemplate', 'asearchtemplate', 'approval',
+                            'defaultsort', 'defaultsortdir', 'manageapproved');
 
         // Add expected coursemodule.
         $database1->coursemodule = $database1->cmid;
         $database1->introfiles = [];
+        $database1->lang = '';
         $database2->coursemodule = $database2->cmid;
         $database2->introfiles = [];
+        $database2->lang = '';
 
         $expected1 = array();
         $expected2 = array();

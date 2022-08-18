@@ -647,7 +647,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertCount(1, $result['warnings']);
         // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles'.
-        $this->assertCount(7, $result['scorms'][0]);
+        $this->assertCount(8, $result['scorms'][0]);
         $this->assertEquals('expired', $result['warnings'][0]['warningcode']);
 
         $scorm1->timeopen = $timenow + DAYSECS;
@@ -658,7 +658,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertCount(1, $result['warnings']);
         // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles'.
-        $this->assertCount(7, $result['scorms'][0]);
+        $this->assertCount(8, $result['scorms'][0]);
         $this->assertEquals('notopenyet', $result['warnings'][0]['warningcode']);
 
         // Reset times.
@@ -668,7 +668,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
-        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'version', 'maxgrade',
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'lang', 'version', 'maxgrade',
                                 'grademethod', 'whatgrade', 'maxattempt', 'forcecompleted', 'forcenewattempt', 'lastattemptlock',
                                 'displayattemptstatus', 'displaycoursestructure', 'sha1hash', 'md5hash', 'revision', 'launch',
                                 'skipview', 'hidebrowse', 'hidetoc', 'nav', 'navpositionleft', 'navpositiontop', 'auto',
@@ -681,12 +681,14 @@ class externallib_test extends externallib_advanced_testcase {
         $scorm1->visible = true;
         $scorm1->groupmode = 0;
         $scorm1->groupingid = 0;
+        $scorm1->lang = '';
 
         $scorm2->coursemodule = $scorm2->cmid;
         $scorm2->section = 0;
         $scorm2->visible = true;
         $scorm2->groupmode = 0;
         $scorm2->groupingid = 0;
+        $scorm2->lang = '';
 
         // SCORM size. The same package is used in both SCORMs.
         $scormcontext1 = \context_module::instance($scorm1->cmid);
