@@ -24,6 +24,7 @@ Feature: I need to export grades as text
     And I am on "Course 1" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
+    And I change window size to "large"
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name"
     And I press "Save changes"
 
