@@ -101,4 +101,15 @@ class boolean_select extends base {
 
         return [$fieldsql, $params];
     }
+
+    /**
+     * Return sample filter values
+     *
+     * @return array
+     */
+    public function get_sample_values(): array {
+        return [
+            "{$this->name}_operator" => self::CHECKED,
+        ];
+    }
 }
