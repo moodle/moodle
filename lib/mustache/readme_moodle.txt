@@ -17,3 +17,6 @@ Local changes:
 Note: All this changes need to be reviewed on every upgrade and, if they have
 been already applied upstream for the release being used, can be removed
 from the list. If still not available upstream, they will need to be re-applied.
+
+1) If the relevant pull request has not been accepted yet, apply the following commit, so we are able to disable unnecessary rendering:
+    https://github.com/bobthecow/mustache.php/pull/402/commits/db771014c7e346438f68077813ebdda3fdae12df#
