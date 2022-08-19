@@ -173,5 +173,12 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022072900, 'forum');
     }
 
+    if ($oldversion < 2022081900) {
+        // Some very old discussions from early Moodle versions may have the usermodified set to zero.
+        $DB->execute("UPDATE {forum_discussions} SET usermodified = userid WHERE usermodified = 0");
+
+        upgrade_mod_savepoint(true, 2022081900, 'forum');
+    }
+
     return true;
 }
