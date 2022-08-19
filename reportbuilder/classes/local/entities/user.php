@@ -535,6 +535,7 @@ class user extends base {
             $this->get_entity_name(),
             "{$tablealias}.auth"
         ))
+            ->add_joins($this->get_joins())
             ->set_options_callback(static function(): array {
                 $plugins = core_component::get_plugin_list('auth');
                 $enabled = get_string('pluginenabled', 'core_plugin');
