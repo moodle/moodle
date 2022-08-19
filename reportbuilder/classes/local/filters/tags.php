@@ -117,4 +117,16 @@ class tags extends base {
 
         return [$select, $params];
     }
+
+    /**
+     * Return sample filter values
+     *
+     * @return array
+     */
+    public function get_sample_values(): array {
+        return [
+            "{$this->name}_operator" => self::EQUAL_TO,
+            "{$this->name}_value" => [1],
+        ];
+    }
 }

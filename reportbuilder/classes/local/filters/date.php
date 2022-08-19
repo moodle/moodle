@@ -281,4 +281,16 @@ class date extends base {
             $dateend->getTimestamp(),
         ];
     }
+
+    /**
+     * Return sample filter values
+     *
+     * @return array
+     */
+    public function get_sample_values(): array {
+        return [
+            "{$this->name}_operator" => self::DATE_CURRENT,
+            "{$this->name}_unit" => self::DATE_UNIT_WEEK,
+        ];
+    }
 }
