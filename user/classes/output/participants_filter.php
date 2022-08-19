@@ -229,7 +229,7 @@ class participants_filter extends \core\output\datafilter {
 
         // Get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
         // We need to make it diferently for normal courses and site course.
-        if (!$this->course->id == SITEID) {
+        if (!($this->course->id == SITEID)) {
             // Regular course.
             $params = [
                 'courseid' => $this->course->id,
