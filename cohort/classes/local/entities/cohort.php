@@ -85,6 +85,8 @@ class cohort extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
+        global $DB;
+
         $tablealias = $this->get_table_alias('cohort');
 
         // Category/context column.
@@ -124,14 +126,19 @@ class cohort extends base {
             ->set_is_sortable(true);
 
         // Description column.
+        $descriptionfieldsql = "{$tablealias}.description";
+        if ($DB->get_dbfamily() === 'oracle') {
+            $descriptionfieldsql = $DB->sql_order_by_text($descriptionfieldsql, 1024);
+        }
         $columns[] = (new column(
             'description',
             new lang_string('description'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealias}.id, {$tablealias}.contextid")
+            ->set_type(column::TYPE_LONGTEXT)
+            ->add_field($descriptionfieldsql, 'description')
+            ->add_fields("{$tablealias}.descriptionformat, {$tablealias}.id, {$tablealias}.contextid")
             ->add_callback(static function(?string $description, stdClass $cohort): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");

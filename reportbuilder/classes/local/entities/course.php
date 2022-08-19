@@ -201,7 +201,8 @@ class course extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
-        $columns = [];
+        global $DB;
+
         $coursefields = $this->get_course_fields();
         $tablealias = $this->get_table_alias('course');
         $contexttablealias = $this->get_table_alias('context');
@@ -247,14 +248,21 @@ class course extends base {
         }
 
         foreach ($coursefields as $coursefield => $coursefieldlang) {
+            $columntype = $this->get_course_field_type($coursefield);
+
+            $columnfieldsql = "{$tablealias}.{$coursefield}";
+            if ($columntype === column::TYPE_LONGTEXT && $DB->get_dbfamily() === 'oracle') {
+                $columnfieldsql = $DB->sql_order_by_text($columnfieldsql, 1024);
+            }
+
             $column = (new column(
                 $coursefield,
                 $coursefieldlang,
                 $this->get_entity_name()
             ))
                 ->add_joins($this->get_joins())
-                ->set_type($this->get_course_field_type($coursefield))
-                ->add_field("$tablealias.$coursefield")
+                ->set_type($columntype)
+                ->add_field($columnfieldsql, $coursefield)
                 ->add_callback([$this, 'format'], $coursefield)
                 ->set_is_sortable($this->is_sortable($coursefield));
 
