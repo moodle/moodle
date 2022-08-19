@@ -237,7 +237,7 @@ Feature: The logged in user block allows users to view their profile information
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | One      | teacher1@example.com |
     And I log in as "teacher1"
-    And I press "Customise this page"
+    And I turn editing mode on
     When I add the "Logged in user" block
     And I configure the "Logged in user" block
     And I set the following fields to these values:
@@ -249,4 +249,6 @@ Feature: The logged in user block allows users to view their profile information
     And I set the following fields to these values:
       | Display last login | Yes |
     And I press "Save changes"
+    And I log out
+    And I log in as "teacher1"
     And I should see "Last login:" in the "Logged in user" "block"
