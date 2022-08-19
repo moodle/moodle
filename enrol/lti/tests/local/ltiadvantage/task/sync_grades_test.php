@@ -18,6 +18,8 @@ namespace enrol_lti\local\ltiadvantage\task;
 
 use enrol_lti\helper;
 use Packback\Lti1p3\LtiAssignmentsGradesService;
+use Packback\Lti1p3\LtiGrade;
+use Packback\Lti1p3\LtiLineitem;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -707,6 +709,155 @@ class sync_grades_test extends \lti_advantage_testcase {
             "'$resource->id' and the course '$course->id' failed to send.",
             "Completed - Synced grades for tool '$resource->id' in the course '$course->id'. ".
             "Processed 2 users; sent 0 grades."
+        ];
+        foreach ($expectedtraces as $expectedtrace) {
+            $this->assertStringContainsString($expectedtrace, $ob);
+        }
+    }
+
+    /**
+     * Test the sync when only the lineitem URL is provided and when lineitem creation/query isn't expected.
+     *
+     * @covers ::execute
+     */
+    public function test_sync_grades_coupled_lineitem() {
+        $this->resetAfterTest();
+
+        [$course, $resource] = $this->create_test_environment();
+        $launchservice = $this->get_tool_launch_service();
+
+        // The launches use a coupled line item. Only scores can be posted. Line items and results cannot be created or queried.
+        $agsclaim = [
+            "scope" => ["https://purl.imsglobal.org/spec/lti-ags/scope/score"],
+            "lineitem" => "https://platform.example.com/10/lineitems/45/lineitem"
+        ];
+
+        // Launch the resource for an instructor which will create the domain objects needed for service calls.
+        $teachermocklaunch = $this->get_mock_launch($resource, $this->get_mock_launch_users_with_ids(['1'], false)[0], null,
+            $agsclaim);
+        $instructoruser = $this->getDataGenerator()->create_user();
+        [$teacherid, $resource] = $launchservice->user_launches_tool($instructoruser, $teachermocklaunch);
+
+        // Launch the resource for a few more users, creating those enrolments and allowing grading to take place.
+        $studentusers = $this->get_mock_launch_users_with_ids(['2', '3'], false,
+            'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner');
+
+        $student1mocklaunch = $this->get_mock_launch($resource, $studentusers[0], null, $agsclaim);
+        $student2mocklaunch = $this->get_mock_launch($resource, $studentusers[1], null, $agsclaim);
+        $student1user = $this->getDataGenerator()->create_user();
+        $student2user = $this->getDataGenerator()->create_user();
+        [$student1id] = $launchservice->user_launches_tool($student1user, $student1mocklaunch);
+        [$student2id] = $launchservice->user_launches_tool($student2user, $student2mocklaunch);
+
+        // Grade student1 only.
+        $expectedstudent1grade = $this->set_user_grade_for_resource($student1id, 65, $resource);
+
+        // Mock task, asserting that score posting to an existing line item takes place, via a mock grade service object.
+        $mockgradeservice = $this->createMock(LtiAssignmentsGradesService::class);
+        $mockgradeservice->method('putGrade')->willReturnCallback(function() {
+            return ['headers' => ['httpstatus' => "HTTP/2 200 OK"], 'body' => '', 'status' => 200];
+        });
+        $mockgradeservice->expects($this->never())
+            ->method('findOrCreateLineitem');
+        $mockgradeservice->expects($this->once())
+            ->method('putGrade')
+            ->with($this->isInstanceOf(LtiGrade::class));
+        $mocktask = $this->getMockBuilder(sync_grades::class)
+            ->onlyMethods(['get_ags'])
+            ->getMock();
+        $mocktask->method('get_ags')->willReturn($mockgradeservice);
+
+        // Sync and verify that only student1's grade is sent.
+        ob_start();
+        $mocktask->execute();
+        $ob = ob_get_contents();
+        ob_end_clean();
+        $expectedtraces = [
+            "Starting - LTI Advantage grade sync for shared resource '$resource->id' in course '$course->id'.",
+            "Skipping - Invalid grade for the user '$teacherid', for the resource '$resource->id' and the course ".
+            "'$course->id'.",
+            "Success - The grade '$expectedstudent1grade' for the user '$student1id', for the resource ".
+            "'$resource->id' and the course '$course->id' was sent.",
+            "Skipping - Invalid grade for the user '$student2id', for the resource '$resource->id' and the course ".
+            "'$course->id'.",
+            "Completed - Synced grades for tool '$resource->id' in the course '$course->id'. ".
+            "Processed 3 users; sent 1 grades."
+        ];
+        foreach ($expectedtraces as $expectedtrace) {
+            $this->assertStringContainsString($expectedtrace, $ob);
+        }
+    }
+
+    /**
+     * Test the sync when only the lineitems URL is provided and when line item creation/query is expected.
+     *
+     * @covers ::execute
+     */
+    public function test_sync_grades_none_or_many_lineitems() {
+        $this->resetAfterTest();
+
+        [$course, $resource] = $this->create_test_environment();
+        $launchservice = $this->get_tool_launch_service();
+
+        // The launches omit the 'lineitem' claim, meaning the item may have none (or many) line items.
+        $agsclaim = [
+            "scope" => [
+                "https://purl.imsglobal.org/spec/lti-ags/scope/score",
+                "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+            ],
+            "lineitems" => "https://platform.example.com/10/lineitems"
+        ];
+
+        // Launch the resource for an instructor which will create the domain objects needed for service calls.
+        $teachermocklaunch = $this->get_mock_launch($resource, $this->get_mock_launch_users_with_ids(['1'], false)[0], null,
+            $agsclaim);
+        $instructoruser = $this->getDataGenerator()->create_user();
+        [$teacherid, $resource] = $launchservice->user_launches_tool($instructoruser, $teachermocklaunch);
+
+        // Launch the resource for a few more users, creating those enrolments and allowing grading to take place.
+        $studentusers = $this->get_mock_launch_users_with_ids(['2', '3'], false,
+            'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner');
+
+        $student1mocklaunch = $this->get_mock_launch($resource, $studentusers[0], null, $agsclaim);
+        $student2mocklaunch = $this->get_mock_launch($resource, $studentusers[1], null, $agsclaim);
+        $student1user = $this->getDataGenerator()->create_user();
+        $student2user = $this->getDataGenerator()->create_user();
+        [$student1id] = $launchservice->user_launches_tool($student1user, $student1mocklaunch);
+        [$student2id] = $launchservice->user_launches_tool($student2user, $student2mocklaunch);
+
+        // Grade student1 only.
+        $expectedstudent1grade = $this->set_user_grade_for_resource($student1id, 65, $resource);
+
+        // Mock task, asserting that line item creation takes place via a mock grade service object.
+        $mockgradeservice = $this->createMock(LtiAssignmentsGradesService::class);
+        $mockgradeservice->method('putGrade')->willReturnCallback(function() {
+            return ['headers' => ['httpstatus' => "HTTP/2 200 OK"], 'body' => '', 'status' => 200];
+        });
+        $mockgradeservice->expects($this->once())
+            ->method('findOrCreateLineitem');
+        $mockgradeservice->expects($this->once())
+            ->method('putGrade')
+            ->with($this->isInstanceOf(LtiGrade::class), $this->isInstanceOf(LtiLineitem::class));
+        $mocktask = $this->getMockBuilder(sync_grades::class)
+            ->onlyMethods(['get_ags'])
+            ->getMock();
+        $mocktask->method('get_ags')->willReturn($mockgradeservice);
+
+        // Sync and verify that only student1's grade is sent.
+        ob_start();
+        $mocktask->execute();
+        $ob = ob_get_contents();
+        ob_end_clean();
+        $expectedtraces = [
+            "Starting - LTI Advantage grade sync for shared resource '$resource->id' in course '$course->id'.",
+            "Skipping - Invalid grade for the user '$teacherid', for the resource '$resource->id' and the course ".
+            "'$course->id'.",
+            "Success - The grade '$expectedstudent1grade' for the user '$student1id', for the resource ".
+            "'$resource->id' and the course '$course->id' was sent.",
+            "Skipping - Invalid grade for the user '$student2id', for the resource '$resource->id' and the course ".
+            "'$course->id'.",
+            "Completed - Synced grades for tool '$resource->id' in the course '$course->id'. ".
+            "Processed 3 users; sent 1 grades."
         ];
         foreach ($expectedtraces as $expectedtrace) {
             $this->assertStringContainsString($expectedtrace, $ob);
