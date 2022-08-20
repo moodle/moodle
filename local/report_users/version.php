@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->release  = '4.0.1+ (Build: 20220519)'; // Human-friendly version name
+$plugin->release  = '4.0.3 (Build: 20220822)'; // Human-friendly version name
 $plugin->version  = 2020102700;
 $plugin->requires = 2019052000;
 $plugin->component  = 'local_report_users';

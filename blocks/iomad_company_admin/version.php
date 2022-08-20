@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->release  = '4.0.1+ (Build: 20220519)'; // Human-friendly version name
+$plugin->release  = '4.0.3 (Build: 20220822)'; // Human-friendly version name
 $plugin->version  = 2021110200;   // The (date) version of this plugin.
 $plugin->requires = 2019052000;   // Requires this Moodle version.
 $plugin->component  = 'block_iomad_company_admin';
