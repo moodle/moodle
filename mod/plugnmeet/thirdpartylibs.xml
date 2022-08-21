@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>helpers/libs/plugnmeet-sdk-php</location>
+        <name>plugnmeet-sdk-php</name>
+        <version>1.0.3</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>helpers/plugNmeetConnect.php</location>
+        <name>plugNmeetConnect</name>
+        <version>1.0.3</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>
