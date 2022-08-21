@@ -1,9 +1,0 @@
-# Path-based git attributes
-# https://www.kernel.org/pub/software/scm/git/docs/gitattributes.html
-
-# This way, the files would be available in the repository but it would not be downloaded when the package is required by another project.
-/.github            export-ignore
-/.gitignore         export-ignore
-/tests              export-ignore
-/phpunit.xml.dist   export-ignore
-/psalm.xml          export-ignore
