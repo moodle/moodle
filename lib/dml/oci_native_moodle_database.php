@@ -245,12 +245,12 @@ class oci_native_moodle_database extends moodle_database {
     /**
      * Called before each db query.
      * @param string $sql
-     * @param array array of parameters
+     * @param array|null $params An array of parameters.
      * @param int $type type of query
      * @param mixed $extrainfo driver specific extra information
      * @return void
      */
-    protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
+    protected function query_start($sql, ?array $params, $type, $extrainfo=null) {
         parent::query_start($sql, $params, $type, $extrainfo);
         // oci driver tents to send debug to output, we do not need that ;-)
         $this->last_error_reporting = error_reporting(0);
