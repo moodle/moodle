@@ -118,16 +118,16 @@ class event implements event_interface {
      * @param int                        $id             The event's ID in the database.
      * @param string                     $name           The event's name.
      * @param description_interface      $description    The event's description.
-     * @param proxy_interface            $category       The category associated with the event.
-     * @param proxy_interface            $course         The course associated with the event.
-     * @param proxy_interface            $group          The group associated with the event.
-     * @param proxy_interface            $user           The user associated with the event.
-     * @param event_collection_interface $repeats        Collection of repeat events.
-     * @param proxy_interface            $coursemodule   The course module that created the event.
+     * @param proxy_interface|null       $category       The category associated with the event.
+     * @param proxy_interface|null       $course         The course associated with the event.
+     * @param proxy_interface|null       $group          The group associated with the event.
+     * @param proxy_interface|null       $user           The user associated with the event.
+     * @param event_collection_interface|null $repeats   Collection of repeat events.
+     * @param proxy_interface|null       $coursemodule   The course module that created the event.
      * @param string                     $type           The event's type.
      * @param times_interface            $times          The times associated with the event.
      * @param bool                       $visible        The event's visibility. True for visible, false for invisible.
-     * @param proxy_interface            $subscription   The event's subscription.
+     * @param proxy_interface|null       $subscription   The event's subscription.
      * @param string                     $location       The event's location.
      * @param string                     $component      The event's component.
      */
@@ -135,12 +135,12 @@ class event implements event_interface {
         $id,
         $name,
         description_interface $description,
-        proxy_interface $category = null,
-        proxy_interface $course = null,
-        proxy_interface $group = null,
-        proxy_interface $user = null,
-        event_collection_interface $repeats = null,
-        proxy_interface $coursemodule = null,
+        ?proxy_interface $category,
+        ?proxy_interface $course,
+        ?proxy_interface $group,
+        ?proxy_interface $user,
+        ?event_collection_interface $repeats,
+        ?proxy_interface $coursemodule,
         $type,
         times_interface $times,
         $visible,
