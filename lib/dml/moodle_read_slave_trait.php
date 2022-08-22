@@ -262,12 +262,12 @@ trait moodle_read_slave_trait {
     /**
      * Called before each db query.
      * @param string $sql
-     * @param array $params array of parameters
+     * @param array|null $params An array of parameters.
      * @param int $type type of query
      * @param mixed $extrainfo driver specific extra information
      * @return void
      */
-    protected function query_start($sql, array $params = null, $type, $extrainfo = null) {
+    protected function query_start($sql, ?array $params, $type, $extrainfo = null) {
         parent::query_start($sql, $params, $type, $extrainfo);
         $this->select_db_handle($type, $sql);
     }

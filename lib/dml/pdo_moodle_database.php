@@ -614,12 +614,12 @@ abstract class pdo_moodle_database extends moodle_database {
      * Overridden to ensure $this->lastErorr is reset each query
      *
      * @param string $sql
-     * @param array array of parameters
+     * @param array|null $params An array of parameters.
      * @param int $type type of query
      * @param mixed $extrainfo driver specific extra information
      * @return void
      */
-    protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
+    protected function query_start($sql, ?array $params, $type, $extrainfo=null) {
         $this->lastError = null;
         parent::query_start($sql, $params, $type, $extrainfo);
     }

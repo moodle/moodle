@@ -95,11 +95,11 @@ trait test_moodle_read_slave_trait {
     /**
      * Upgrade to public
      * @param string $sql
-     * @param array $params
+     * @param array|null $params
      * @param int $type
      * @param array $extrainfo
      */
-    public function query_start($sql, array $params = null, $type, $extrainfo = null) {
+    public function query_start($sql, ?array $params, $type, $extrainfo = null) {
         return parent::query_start($sql, $params, $type);
     }
 

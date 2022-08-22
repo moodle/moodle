@@ -786,13 +786,13 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
  * $options = clean_param($options, PARAM_INT);
  * </code>
  *
- * @param array $param the variable array we are cleaning
+ * @param array|null $param the variable array we are cleaning
  * @param string $type expected format of param after cleaning.
  * @param bool $recursive clean recursive arrays
  * @return array
  * @throws coding_exception
  */
-function clean_param_array(array $param = null, $type, $recursive = false) {
+function clean_param_array(?array $param, $type, $recursive = false) {
     // Convert null to empty array.
     $param = (array)$param;
     foreach ($param as $key => $value) {
