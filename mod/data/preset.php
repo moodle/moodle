@@ -28,12 +28,12 @@
  * @package mod_data
  */
 
+use mod_data\local\importer\preset_importer;
+use mod_data\local\importer\preset_upload_importer;
 use mod_data\manager;
 use mod_data\preset;
 use mod_data\output\action_bar;
 use mod_data\output\preset_preview;
-use mod_data\local\importer\preset_upload_importer;
-use mod_data\local\importer\preset_existing_importer;
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/data/lib.php');
@@ -57,7 +57,7 @@ if ($id) {
 }
 
 $action = optional_param('action', 'view', PARAM_ALPHA); // The page action.
-$allowedactions = ['view', 'import', 'importzip', 'finishimport',
+$allowedactions = ['view', 'importzip', 'finishimport',
     'export', 'preview'];
 if (!in_array($action, $allowedactions)) {
     throw new moodle_exception('invalidaccess');
@@ -113,11 +113,22 @@ if ($action === 'export') {
     exit(0);
 }
 
-$formimportzip = new data_import_preset_zip_form();
-$formimportzip->set_data(array('d' => $data->id));
 
-if ($formimportzip->is_cancelled()) {
-    redirect(new moodle_url('/mod/data/preset.php', ['d' => $data->id]));
+if ($action == 'importzip') {
+    $filepath = optional_param('filepath', '', PARAM_PATH);
+    $manager = manager::create_from_coursemodule($cm);
+    $importer = new preset_upload_importer($manager, $CFG->tempdir . $filepath);
+    if ($importer->needs_mapping()) {
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('importpreset', 'data'), 2, 'mb-4');
+        echo $renderer->importing_preset($data, $importer);
+        echo $OUTPUT->footer();
+        exit(0);
+    }
+    $importer->import(false);
+    core\notification::success(get_string('importsuccess', 'mod_data'));
+    redirect(new moodle_url('/mod/data/field.php', ['id' => $cm->id]));
+    exit(0);
 }
 
 // Preset preview injects CSS and JS to the page and should be done before the page header.
@@ -142,55 +153,15 @@ if ($action === 'preview') {
     exit(0);
 }
 
-if ($formdata = $formimportzip->get_data()) {
-    $file = new stdClass;
-    $file->name = $formimportzip->get_new_filename('importfile');
-    $file->path = $formimportzip->save_temp_file('importfile');
-    $importer = new preset_upload_importer($manager, $file->path);
-    if ($importer->needs_mapping()) {
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('importpreset', 'data'), 2, 'mb-4');
-        echo $renderer->importing_preset($data, $importer);
-        echo $OUTPUT->footer();
-        exit(0);
-    }
-
-    $importer->import(false);
-    redirect(new moodle_url('/mod/data/field.php', ['id' => $cm->id]));
-}
-
 echo $OUTPUT->header();
 
 if ($action === 'finishimport') {
-    $fullname = optional_param('fullname', '' , PARAM_PATH); // The directory the preset is in.
-    // Find out preset owner userid and shortname.
-    $parts = explode('/', $fullname, 2);
-    $userid = empty($parts[0]) ? 0 : (int)$parts[0];
-    $shortname = empty($parts[1]) ? '' : $parts[1];
-    echo html_writer::start_div('overflow-hidden');
-
     if (!confirm_sesskey()) {
         throw new moodle_exception('invalidsesskey');
     }
     $overwritesettings = optional_param('overwritesettings', false, PARAM_BOOL);
-    if (!$fullname) {
-        $presetdir = $CFG->tempdir.'/forms/'.required_param('directory', PARAM_FILE);
-        if (!file_exists($presetdir) || !is_dir($presetdir)) {
-            throw new \moodle_exception('cannotimport');
-        }
-        $importer = new preset_upload_importer($manager, $presetdir);
-    } else {
-        $importer = new preset_existing_importer($manager, $fullname);
-    }
-    $importer->import($overwritesettings);
-    $strimportsuccess = get_string('importsuccess', 'data');
-    $straddentries = get_string('addentries', 'data');
-    $strtodatabase = get_string('todatabase', 'data');
-    if (!$DB->get_records('data_records', ['dataid' => $data->id])) {
-        echo $OUTPUT->notification("$strimportsuccess <a href='edit.php?d=$data->id'>$straddentries</a> $strtodatabase", 'notifysuccess');
-    } else {
-        echo $OUTPUT->notification("$strimportsuccess", 'notifysuccess');
-    }
+    $importer = preset_importer::create_from_parameters($manager);
+    $importer->finish_import_process($overwritesettings, $data);
 
     echo $OUTPUT->continue_button(new moodle_url('/mod/data/preset.php', ['d' => $data->id]));
     echo html_writer::end_div();
@@ -198,15 +169,10 @@ if ($action === 'finishimport') {
     exit(0);
 }
 
-if ($action === 'import') {
-    echo $OUTPUT->heading(get_string('importpreset', 'data'), 2, 'mb-4');
-    echo $formimportzip->display();
-} else {
-    $actionbar = new \mod_data\output\action_bar($data->id, $url);
-    echo $actionbar->get_presets_action_bar();
-    echo $OUTPUT->heading(get_string('presets', 'data'), 2, 'mb-4');
-    $presets = new \mod_data\output\presets($data->id, $presets, new \moodle_url('/mod/data/field.php'), true);
-    echo $renderer->render_presets($presets);
-}
+$actionbar = new \mod_data\output\action_bar($data->id, $url);
+echo $actionbar->get_presets_action_bar();
+echo $OUTPUT->heading(get_string('presets', 'data'), 2, 'mb-4');
+$presets = new \mod_data\output\presets($manager, $presets, new \moodle_url('/mod/data/field.php'), true);
+echo $renderer->render_presets($presets);
 
 echo $OUTPUT->footer();

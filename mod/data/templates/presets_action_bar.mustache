@@ -18,16 +18,23 @@
 
     Context variables required for this template:
     * importpreseturl - The url to the import preset page.
+    * d - The database id.
 
     Example context (json):
     {
-        "importpreseturl": "http://www.example.com"
+        "importpreseturl": "http://www.example.com",
+        "d" : 1
     }
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="row float-right">
         <div class="navitem">
-            <a role="button" href="{{importpreseturl}}" class="btn btn-secondary">{{#str}}import, core{{/str}}</a>
+            <a role="button" href="{{importpreseturl}}" class="btn btn-secondary" data-action="importpresets" data-dataid="{{d}}">{{#str}}import, core{{/str}}</a>
         </div>
     </div>
+{{#js}}
+    require(['mod_data/importpresets'], function(importPresetsModal) {
+        importPresetsModal.init();
+    });
+{{/js}}
 </div>

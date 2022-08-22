@@ -62,8 +62,11 @@ class action_bar {
         global $PAGE, $DB;
 
         $createfieldlink = new moodle_url('/mod/data/field.php', ['d' => $this->id]);
+        $presetslink = new moodle_url('/mod/data/preset.php', ['d' => $this->id]);
+
         $menu = [
             $createfieldlink->out(false) => get_string('managefields', 'mod_data'),
+            $presetslink->out(false) => get_string('usestandard', 'mod_data'),
         ];
 
         $selected = $createfieldlink->out(false);
@@ -226,11 +229,15 @@ class action_bar {
      * @return string The HTML code for the action selector.
      */
     public function get_presets_action_bar(): string {
-        global $PAGE;
+        global $PAGE, $DB;
 
         $renderer = $PAGE->get_renderer('mod_data');
+        $data = $DB->get_record('data', ['id' => $this->id], '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('data', $data->id, $data->course, null, MUST_EXIST);
+        if (!has_capability('mod/data:managetemplates', \context_module::instance($cm->id))) {
+            return '';
+        }
         $presetsactionbar = new presets_action_bar($this->id);
-
         return $renderer->render_presets_action_bar($presetsactionbar);
     }
 

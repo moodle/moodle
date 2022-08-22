@@ -23,9 +23,11 @@
  * @package mod_data
  */
 
-use mod_data\manager;
+use core\notification;
 use mod_data\local\importer\preset_existing_importer;
+use mod_data\local\importer\preset_importer;
 use mod_data\local\importer\preset_upload_importer;
+use mod_data\manager;
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -88,9 +90,6 @@ $context = $manager->get_context();
 require_login($course, true, $cm);
 require_capability('mod/data:managetemplates', $context);
 
-$formimportzip = new data_import_preset_zip_form();
-$formimportzip->set_data(array('d' => $data->id));
-
 $actionbar = new \mod_data\output\action_bar($data->id, $PAGE->url);
 
 $PAGE->add_body_class('mediumwidth');
@@ -111,34 +110,11 @@ $renderer = $manager->get_renderer();
 if ($action == 'finishimport' && confirm_sesskey()) {
     data_print_header($course, $cm, $data, false);
     $overwritesettings = optional_param('overwritesettings', false, PARAM_BOOL);
-
-    if (!$fullname) {
-        $presetdir = $CFG->tempdir . '/forms/' . required_param('directory', PARAM_FILE);
-        if (!file_exists($presetdir) || !is_dir($presetdir)) {
-            throw new moodle_exception('cannotimport', 'error');
-        }
-        $importer = new preset_upload_importer($manager, $presetdir);
-    } else {
-        $importer = new preset_existing_importer($manager, $fullname);
-    }
-
-    if ($importer->needs_mapping()) {
-        $importer->import($overwritesettings);
-        $strimportsuccess = get_string('importsuccess', 'data');
-        $straddentries = get_string('addentries', 'data');
-        $strtodatabase = get_string('todatabase', 'data');
-
-        if (!$DB->get_records('data_records', array('dataid' => $data->id))) {
-            echo $OUTPUT->notification("$strimportsuccess <a href='edit.php?d=$data->id'>$straddentries</a> $strtodatabase",
-                'notifysuccess');
-        } else {
-            echo $OUTPUT->notification("$strimportsuccess", 'notifysuccess');
-        }
-
-        echo $OUTPUT->continue_button(new moodle_url('/mod/data/field.php', ['d' => $data->id]));
-        echo $OUTPUT->footer();
-        exit;
-    }
+    $importer = preset_importer::create_from_parameters($manager);
+    $importer->finish_import_process($overwritesettings, $data);
+    echo $OUTPUT->continue_button(new moodle_url('/mod/data/field.php', ['d' => $data->id]));
+    echo $OUTPUT->footer();
+    exit;
 }
 
 switch ($mode) {
@@ -278,13 +254,13 @@ switch ($mode) {
         break;
 
     case 'usepreset':
-        $importer = new preset_existing_importer($manager, $fullname);
+        $importer = preset_importer::create_from_parameters($manager);
         if (!$importer->needs_mapping()) {
             $backurl = new moodle_url('/mod/data/field.php', ['id' => $cm->id]);
             if ($importer->import(false)) {
-                \core\notification::success(get_string('importsuccess', 'mod_data'));
+                notification::success(get_string('importsuccess', 'mod_data'));
             } else {
-                \core\notification::error(get_string('presetapplied', 'mod_data'));
+                notification::error(get_string('presetapplied', 'mod_data'));
             }
             redirect($backurl);
         }
