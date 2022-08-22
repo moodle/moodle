@@ -2088,7 +2088,7 @@ class core_renderer extends renderer_base {
         $output .= html_writer::tag('p', $message);
         $output .= $this->box_end();
         $output .= $this->box_start('modal-footer', 'modal-footer');
-        $output .= html_writer::tag('div', $this->render($continue) . $this->render($cancel), array('class' => 'buttons'));
+        $output .= html_writer::tag('div', $this->render($cancel) . $this->render($continue), ['class' => 'buttons']);
         $output .= $this->box_end();
         $output .= $this->box_end();
         $output .= $this->box_end();
@@ -5569,7 +5569,7 @@ class core_renderer_maintenance extends core_renderer {
         $output = $this->box_start('generalbox', 'notice');
         $output .= html_writer::tag('h4', get_string('confirm'));
         $output .= html_writer::tag('p', $message);
-        $output .= html_writer::tag('div', $this->render($continue) . $this->render($cancel), array('class' => 'buttons'));
+        $output .= html_writer::tag('div', $this->render($cancel) . $this->render($continue), ['class' => 'buttons']);
         $output .= $this->box_end();
         return $output;
     }
