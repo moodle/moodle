@@ -14,7 +14,6 @@ Feature: A teacher or admin can view breadcrumbs in the reply, delete, split, ed
     And the following "activity" exists:
       | course   | C1                             |
       | activity | forum                          |
-      | intro    | Test forum description         |
       | name     | Test forum name                |
 
   Scenario: A teacher views add discussion topics advanced page
@@ -26,8 +25,7 @@ Feature: A teacher or admin can view breadcrumbs in the reply, delete, split, ed
     And I should see "Test forum name" in the ".breadcrumb" "css_element"
 
   Scenario: A teacher adds posts and then verifies the breadcrumbs in the links
-    Given I log in as "teacher"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Test post subject one |
       | Message | Test post message one |

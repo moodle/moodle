@@ -14,7 +14,7 @@ Feature: Section 0 default/custom title
     And the following "activities" exist:
       | activity | name               | intro                        | course | idnumber   | section |
       | data     | Test database name | Test database description    | C1     | database1  | 2       |
-      | forum    | Test forum name    | Test forum name description  | C1     | forum1     | 1       |
+      | forum    | Test forum name    |                              | C1     | forum1     | 1       |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |

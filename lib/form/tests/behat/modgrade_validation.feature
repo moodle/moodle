@@ -23,7 +23,10 @@ Feature: Using the activity grade form element
     And the following "activities" exist:
       | activity | course | section | name                 | intro                       | idnumber | type    | groupmode |
       | assign   | C1     | 1       | Test assignment name | Test assignment description |          |         |           |
-      | forum    | C1     | 1       | Test forum name      | Test forum description      | forum1   | general | 0         |
+      | forum    | C1     | 1       | Test forum name      |                             | forum1   | general | 0         |
+    And the following forum discussions exist in course "Course 1":
+      | user     | forum           | name               | message            |
+      | student1 | Test forum name | Discussion subject | Discussion message |
 
   @javascript
   Scenario: Being able to change the grade type, scale and maximum grade when there are no grades
@@ -61,20 +64,10 @@ Feature: Using the activity grade form element
       | Ratings > Aggregate type        | Average of ratings |
       | id_scale_modgrade_type          | Scale              |
       | Ratings > scale[modgrade_scale] | ABCDEF             |
-    And I press "Save and return to course"
-    And I log out
-    And I am on the "Test forum name" "forum activity" page logged in as student1
-    And I click on "Add discussion topic" "link"
-    And I set the following fields to these values:
-      | Subject  | Discussion subject |
-      | Message | Discussion message |
-    And I press "Post to forum"
-    And I log out
-    And I am on the "Test forum name" "forum activity" page logged in as teacher1
+    And I press "Save and display"
     And I follow "Discussion subject"
     And I set the field "rating" to "D"
-    And I am on the "Test forum name" "forum activity" page
-    And I navigate to "Settings" in current page administration
+    And I am on the "Test forum name" "forum activity editing" page
     When I expand all fieldsets
     Then I should see "Some grades have already been awarded, so the grade type and scale cannot be changed"
     # Try saving the form and visiting it back to verify that everything is working ok.
@@ -116,20 +109,10 @@ Feature: Using the activity grade form element
       | Ratings > Aggregate type        | Average of ratings |
       | id_scale_modgrade_type          | Point              |
       | Ratings > scale[modgrade_point] | 100                |
-    And I press "Save and return to course"
-    And I log out
-    And I am on the "Test forum name" "forum activity" page logged in as student1
-    And I click on "Add discussion topic" "link"
-    And I set the following fields to these values:
-      | Subject  | Discussion subject |
-      | Message | Discussion message |
-    And I press "Post to forum"
-    And I log out
-    And I am on the "Test forum name" "forum activity" page logged in as teacher1
+    And I press "Save and display"
     And I follow "Discussion subject"
     And I set the field "rating" to "100"
-    And I am on the "Test forum name" "forum activity" page
-    And I navigate to "Settings" in current page administration
+    And I am on the "Test forum name" "forum activity editing" page
     When I expand all fieldsets
     Then I should see "You cannot change the type, as grades already exist for this item."
     And the "Maximum grade" "field" should be disabled
