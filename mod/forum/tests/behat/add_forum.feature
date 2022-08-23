@@ -20,10 +20,8 @@ Feature: Add forum activities and discussions
     And the following "activity" exists:
       | activity    | forum                  |
       | course      | C1                     |
-      | section     | 1                      |
       | name        | Test forum name        |
       | type        | general                |
-      | description | Test forum description |
     And the following forum discussions exist in course "Course 1":
       | user     | forum              | name                 | message          | attachments |
       | teacher1 | Test forum name    | Forum post 1         | this is the body |             |

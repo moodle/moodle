@@ -53,8 +53,8 @@ Feature: View the user page for the outline report
 
   Scenario: View the user complete report page when there is a no-grade forum
     Given the following "activities" exist:
-      | activity | name   | description     | course | idnumber |
-      | forum    | forum1 | C1 first forum  | C1     | forum1   |
+      | activity | name   | course | idnumber |
+      | forum    | forum1 | C1     | forum1   |
     And I am on "Course 1" course homepage
     When I follow "Participants"
     And I follow "Student 1"
