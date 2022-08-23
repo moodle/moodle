@@ -22,7 +22,6 @@ Feature: View discussion while grading in a forum
     And the following "activity" exists:
       | activity    | forum                      |
       | name        | Gradable forum             |
-      | intro       | Standard forum description |
       | course      | C1                         |
       | idnumber    | forum1                     |
       | grade_forum | 100                        |
