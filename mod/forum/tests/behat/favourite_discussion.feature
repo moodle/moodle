@@ -15,14 +15,12 @@ Feature: A student can favourite a discussion via the forum settings menu
       | course   | C1              |
       | activity | forum           |
       | name     | Test forum name |
-    And I am on the "Course 1" Course page logged in as admin
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 1 |
-      | Message | Discussion contents 1, first message |
-    And I reply "Discussion 1" post from "Test forum name" forum with:
-      | Subject | Reply 1 to discussion 1 |
-      | Message | Discussion contents 1, second message |
-    And I log out
+    And the following forum discussions exist in course "Course 1":
+      | user  | forum           | name         | message                              |
+      | admin | Test forum name | Discussion 1 | Discussion contents 1, first message |
+    And the following forum replies exist in course "Course 1":
+      | user  | forum           | discussion   | name                    | message                               |
+      | admin | Test forum name | Discussion 1 | Reply 1 to discussion 1 | Discussion contents 1, second message |
 
   Scenario: Student can favourite a discussion from within an individual discussion
     Given I am on the "Course 1" Course page logged in as student1
