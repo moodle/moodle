@@ -176,7 +176,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $sql = "SELECT engine
                   FROM INFORMATION_SCHEMA.TABLES
                  WHERE table_schema = DATABASE() AND table_name = '{$this->prefix}config'";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($rec = $result->fetch_assoc()) {
@@ -194,7 +194,7 @@ class mysqli_native_moodle_database extends moodle_database {
 
         // Get the default database engine.
         $sql = "SELECT @@default_storage_engine engine";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($rec = $result->fetch_assoc()) {
@@ -205,7 +205,7 @@ class mysqli_native_moodle_database extends moodle_database {
         if ($engine === 'MyISAM') {
             // we really do not want MyISAM for Moodle, InnoDB or XtraDB is a reasonable defaults if supported
             $sql = "SHOW STORAGE ENGINES";
-            $this->query_start($sql, NULL, SQL_QUERY_AUX);
+            $this->query_start($sql, null, SQL_QUERY_AUX);
             $result = $this->mysqli->query($sql);
             $this->query_end($result);
             $engines = array();
@@ -349,7 +349,7 @@ class mysqli_native_moodle_database extends moodle_database {
 
             $sql = "SHOW VARIABLES LIKE 'innodb_file_format'";
         }
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($rec = $result->fetch_assoc()) {
@@ -541,8 +541,8 @@ class mysqli_native_moodle_database extends moodle_database {
 
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
-        // dbsocket is used ONLY if host is NULL or 'localhost',
-        // you can not disable it because it is always tried if dbhost is 'localhost'
+        // The dbsocket option is used ONLY if host is null or 'localhost'.
+        // You can not disable it because it is always tried if dbhost is 'localhost'.
         if (!empty($this->dboptions['dbsocket'])
                 and (strpos($this->dboptions['dbsocket'], '/') !== false or strpos($this->dboptions['dbsocket'], '\\') !== false)) {
             $dbsocket = $this->dboptions['dbsocket'];
@@ -696,7 +696,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $this->tables = array();
         $prefix = str_replace('_', '\\_', $this->prefix);
         $sql = "SHOW TABLES LIKE '$prefix%'";
-        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $this->query_start($sql, null, $usecache ? SQL_QUERY_AUX_READONLY : SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         $len = strlen($this->prefix);
@@ -723,7 +723,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $indexes = array();
         $fixedtable = $this->fix_table_name($table);
         $sql = "SHOW INDEXES FROM $fixedtable";
-        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX_READONLY);
         $result = $this->mysqli->query($sql);
         try {
             $this->query_end($result);
@@ -760,7 +760,7 @@ class mysqli_native_moodle_database extends moodle_database {
                  WHERE table_name = '" . $this->prefix.$table . "'
                        AND table_schema = '" . $this->dbname . "'
               ORDER BY ordinal_position";
-        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX_READONLY);
         $result = $this->mysqli->query($sql);
         $this->query_end(true); // Don't want to throw anything here ever. MDL-30147
 
@@ -783,7 +783,7 @@ class mysqli_native_moodle_database extends moodle_database {
             $result->close();
             $fixedtable = $this->fix_table_name($table);
             $sql = "SHOW COLUMNS FROM $fixedtable";
-            $this->query_start($sql, null, SQL_QUERY_AUX);
+            $this->query_start($sql, null, SQL_QUERY_AUX_READONLY);
             $result = $this->mysqli->query($sql);
             $this->query_end(true);
             if ($result === false) {
@@ -1065,7 +1065,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $charset = reset($collationinfo);
 
         $sql = "SHOW COLLATION WHERE Collation ='$collation' AND Charset = '$charset'";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX_READONLY);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($result->fetch_assoc()) {
@@ -1404,28 +1404,10 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Insert multiple records into database as fast as possible.
-     *
-     * Order of inserts is maintained, but the operation is not atomic,
-     * use transactions if necessary.
-     *
-     * This method is intended for inserting of large number of small objects,
-     * do not use for huge objects with text or binary fields.
-     *
-     * @since Moodle 2.7
-     *
-     * @param string $table  The database table to be inserted into
-     * @param array|Traversable $dataobjects list of objects to be inserted, must be compatible with foreach
-     * @return void does not return new record ids
-     *
-     * @throws coding_exception if data objects have different structure
-     * @throws dml_exception A DML specific exception is thrown for any errors.
+     * Get chunk size for multiple records insert
+     * @return int
      */
-    public function insert_records($table, $dataobjects) {
-        if (!is_array($dataobjects) and !$dataobjects instanceof Traversable) {
-            throw new coding_exception('insert_records() passed non-traversable object');
-        }
-
+    private function insert_chunk_size(): int {
         // MySQL has a relatively small query length limit by default,
         // make sure 'max_allowed_packet' in my.cnf is high enough
         // if you change the following default...
@@ -1456,7 +1438,33 @@ class mysqli_native_moodle_database extends moodle_database {
                 }
             }
         }
+        return $chunksize;
+    }
 
+    /**
+     * Insert multiple records into database as fast as possible.
+     *
+     * Order of inserts is maintained, but the operation is not atomic,
+     * use transactions if necessary.
+     *
+     * This method is intended for inserting of large number of small objects,
+     * do not use for huge objects with text or binary fields.
+     *
+     * @since Moodle 2.7
+     *
+     * @param string $table  The database table to be inserted into
+     * @param array|Traversable $dataobjects list of objects to be inserted, must be compatible with foreach
+     * @return void does not return new record ids
+     *
+     * @throws coding_exception if data objects have different structure
+     * @throws dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function insert_records($table, $dataobjects) {
+        if (!is_array($dataobjects) && !$dataobjects instanceof Traversable) {
+            throw new coding_exception('insert_records() passed non-traversable object');
+        }
+
+        $chunksize = $this->insert_chunk_size();
         $columns = $this->get_columns($table, true);
         $fields = null;
         $count = 0;
@@ -2023,12 +2031,12 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         $sql = "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
 
         $sql = "START TRANSACTION";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
     }
@@ -2044,7 +2052,7 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         $sql = "COMMIT";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
     }
@@ -2060,7 +2068,7 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         $sql = "ROLLBACK";
-        $this->query_start($sql, NULL, SQL_QUERY_AUX);
+        $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
 
