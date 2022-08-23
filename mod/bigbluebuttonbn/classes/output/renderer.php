@@ -53,7 +53,7 @@ class renderer extends plugin_renderer_base {
      */
     public function render_groups_selector(instance $instance): string {
         $groupmode = groups_get_activity_groupmode($instance->get_cm());
-        if ($groupmode === NOGROUPS) {
+        if ($groupmode == NOGROUPS) {
             return '';
         }
 
