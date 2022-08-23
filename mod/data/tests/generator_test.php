@@ -249,6 +249,11 @@ class generator_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
         $cm = get_coursemodule_from_id(manager::MODULE, $activity->cmid, 0, false, MUST_EXIST);
+        if (!is_null($record) && property_exists($record, 'user')) {
+            $user = $this->getDataGenerator()->create_and_enrol($course, 'teacher', (object)['username' => $record->user]);
+            $record->userid = $user->id;
+            unset($record->user);
+        }
 
         // Check initially there are no saved presets.
         $manager = manager::create_from_coursemodule($cm);
@@ -273,9 +278,14 @@ class generator_test extends \advanced_testcase {
         } else {
             $this->assertEquals($record->description, $preset->description);
         }
+        // Check the preset author has the expected value.
+        if (is_null($record) || !property_exists($record, 'userid')) {
+            $this->assertEquals($USER->id, $preset->get_userid());
+        } else {
+            $this->assertEquals($record->userid, $preset->get_userid());
+        }
         // Check the file has been updated properly.
         $this->assertNotNull($preset->storedfile);
-        $this->assertEquals($USER->id, $preset->get_userid());
     }
 
     /**
@@ -302,6 +312,30 @@ class generator_test extends \advanced_testcase {
                 'record' => (object) [
                     'name' => 'World recipes preset',
                     'description' => 'This is a preset to collect the most popular world recipes.',
+                ],
+            ],
+            'Create with a given user but no description or name' => [
+                'record' => (object) [
+                    'user' => 'teacher1',
+                ],
+            ],
+            'Create with a given name and user but no description' => [
+                'record' => (object) [
+                    'name' => 'World recipes preset',
+                    'user' => 'teacher1',
+                ],
+            ],
+            'Create with a given description and user but no name' => [
+                'record' => (object) [
+                    'description' => 'This is a preset to collect the most popular world recipes.',
+                    'user' => 'teacher1',
+                ],
+            ],
+            'Create with a given name, description and user' => [
+                'record' => (object) [
+                    'name' => 'World recipes preset',
+                    'description' => 'This is a preset to collect the most popular world recipes.',
+                    'user' => 'teacher1',
                 ],
             ],
         ];
