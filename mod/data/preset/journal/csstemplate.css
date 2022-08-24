@@ -1,0 +1,16 @@
+/******  List View CSS ******/
+
+.truncate-overflow {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/*****  Add entry CSS *****/
+
+.journal-addentry .form-group label,
+.journal-asearch .form-group label {
+    font-weight: bold;
+    padding-top: 20px;
+}
