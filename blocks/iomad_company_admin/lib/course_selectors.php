@@ -151,10 +151,12 @@ class current_company_course_selector extends company_course_selector_base {
                 $sharedsql = " FROM {course} c
                                INNER JOIN {iomad_courses} pc
                                ON c.id=pc.courseid
-                               WHERE pc.shared = 1
+                               WHERE $wherecondition
+                               AND pc.shared = 1
                                AND pc.licensed = 1";
                 $partialsharedsql = " FROM {course} c
-                                      WHERE c.id IN
+                                      WHERE $wherecondition
+                                      AND c.id IN
                                        (SELECT pc.courseid
                                         FROM {iomad_courses} pc
                                         INNER JOIN {company_shared_courses} csc
@@ -166,10 +168,12 @@ class current_company_course_selector extends company_course_selector_base {
                 $sharedsql = " FROM {course} c
                                INNER JOIN {iomad_courses} pc
                                ON c.id=pc.courseid
-                               WHERE pc.shared = 1
+                               WHERE $wherecondition
+                               AND pc.shared = 1
                                AND pc.licensed = 0";
                 $partialsharedsql = " FROM {course} c
-                                    WHERE c.id IN (
+                                    WHERE $wherecondition
+                                    AND c.id IN (
                                      SELECT pc.courseid FROM {iomad_courses} pc
                                      INNER JOIN {company_shared_courses} csc ON pc.courseid=csc.courseid
                                      WHERE pc.shared = 2
@@ -842,21 +846,25 @@ class potential_user_course_selector extends course_selector_base {
                 $sharedsql = " FROM {course} c
                                INNER JOIN {iomad_courses} pc
                                ON c.id=pc.courseid
-                               WHERE pc.shared=1
+                               WHERE $wherecondition
+                               AND pc.shared=1
                                AND pc.licensed != 1
                                $currentcoursesql";
                 $partialsharedsql = " FROM {course} c
-                                    WHERE c.id IN (SELECT pc.courseid FROM {iomad_courses} pc
+                                    WHERE $wherecondition
+                                    AND c.id IN (SELECT pc.courseid FROM {iomad_courses} pc
                                     INNER JOIN {company_shared_courses} csc ON pc.courseid=csc.courseid
                                        WHERE pc.shared=2 AND pc.licensed !=1 AND csc.companyid = :companyid)
                                        $currentcoursesql";
             } else {
                 $sharedsql = " FROM {course} c
                                INNER JOIN {iomad_courses} pc ON c.id=pc.courseid
-                               WHERE pc.shared=1
+                               WHERE $wherecondition
+                               AND pc.shared=1
                                $currentcoursesql";
                 $partialsharedsql = " FROM {course} c
-                                      WHERE c.id IN 
+                                      WHERE $wherecondition
+                                      AND c.id IN 
                                          (SELECT pc.courseid WHERE {iomad_courses} pc
                                           INNER JOIN {company_shared_courses} csc ON pc.courseid=csc.courseid
                                           WHERE pc.shared=2 AND csc.companyid = :companyid)
