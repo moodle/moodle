@@ -55,7 +55,8 @@ Feature: Teachers can override the grade for any question
     # This time is same as time the window is open. So wait for it to close before proceeding.
     And I wait "2" seconds
 
-  @javascript @_switch_window @_file_upload @_bug_phantomjs
+  # This scenario has Atto-specific steps. See MDL-75913 for further details.
+  @javascript @_switch_window @_file_upload @_bug_phantomjs @editor_atto
   Scenario: Comment on a response to an essay question attempt.
     When I log in as "teacher1"
     And I follow "Manage private files"

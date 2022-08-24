@@ -18,6 +18,8 @@ Feature: Updating a file in the content bank after using in a course
       | activity | name       | intro      | introformat | course | content  | contentformat | idnumber |
       | page     | PageName1  | PageDesc1  | 1           | C1     | H5Ptest  | 1             | 1        |
 
+  # This scenario has Atto-specific steps. See MDL-75913 for further details.
+  @editor_atto
   Scenario: Referenced files is the default option and updates alias as well
     Given I am on the PageName1 "Page activity editing" page logged in as admin
     And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
@@ -56,6 +58,8 @@ Feature: Updating a file in the content bank after using in a course
     Then I should see "This is a new text"
     And I switch to the main frame
 
+  # This scenario has Atto-specific steps. See MDL-75913 for further details.
+  @editor_atto
   Scenario: Copied files should not be updated if the original is edited
     Given I am on the PageName1 "Page activity editing" page logged in as admin
     And I click on "Insert H5P" "button" in the "#fitem_id_page" "css_element"
