@@ -1,4 +1,5 @@
-@core @core_course @core_customfield @javascript
+# This feature has Atto-specific steps. See MDL-75913 for further details.
+@core @core_course @core_customfield @javascript @editor_atto
 Feature: Teachers can edit course custom fields
   In order to have additional data on the course
   As a teacher

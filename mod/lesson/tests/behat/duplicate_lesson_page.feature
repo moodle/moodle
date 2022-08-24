@@ -1,4 +1,5 @@
-@mod @mod_lesson
+# This feature has Atto-specific steps. See MDL-75913 for further details.
+@mod @mod_lesson @editor_atto
 Feature: In a lesson activity, a teacher can duplicate a lesson page
   In order to duplicate a lesson page
   As a teacher

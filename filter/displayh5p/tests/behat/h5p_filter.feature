@@ -52,7 +52,8 @@ Feature: Render H5P content using filters
     And I wait until the page is ready
     Then ".h5p-iframe" "css_element" should not exist
 
-  @javascript
+  # This scenario has Atto-specific steps. See MDL-75913 for further details.
+  @javascript @editor_atto
   Scenario: Render a local H5P file as admin
     Given I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
@@ -86,7 +87,8 @@ Feature: Render H5P content using filters
     And I should not see "you don't have access"
     And I should see "Lorum ipsum"
 
-  @javascript
+  # This scenario has Atto-specific steps. See MDL-75913 for further details.
+  @javascript @editor_atto
   Scenario: Render a local H5P file as teacher
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
@@ -110,7 +112,8 @@ Feature: Render H5P content using filters
     Then I should see "Note that the libraries may exist in the file you uploaded, but you're not allowed to upload new libraries."
     And I should see "missing-required-library"
 
-  @javascript
+  # This scenario has Atto-specific steps. See MDL-75913 for further details.
+  @javascript @editor_atto
   Scenario: Render a local H5P file with existing libraries
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
@@ -168,7 +171,8 @@ Feature: Render H5P content using filters
     Then I should not see "missing-required-library"
     And I should see "Lorum ipsum"
 
-  @javascript
+  # This scenario has Atto-specific steps. See MDL-75913 for further details.
+  @javascript @editor_atto
   Scenario: Render local H5P file with a disabled main library
     Given I log in as "admin"
 # Upload H5P file to private files.
