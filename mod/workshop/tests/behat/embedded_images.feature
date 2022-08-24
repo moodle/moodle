@@ -4,6 +4,8 @@ Feature: Teachers can embed images into instructions and conclusion fields
   As a teacher
   I need to be able to embed images into the fields and they should display correctly
 
+  # This scenario has Atto-specific steps. See MDL-75913 for further details.
+  @editor_atto
   Scenario: Embedding the image into the instructions and conclusions fields
     Given the following "users" exist:
       | username | firstname | lastname | email                |
