@@ -1,0 +1,85 @@
+.dashboard-card {
+    border: 1px solid $gray-200;
+
+    .dashboard-card-img {
+        padding: .5rem;
+        position: relative;
+        height: 10rem !important;
+
+        .course-category {
+            background-color: $brand-primary;
+            color: #fff;
+            padding: 4px 6px;
+            margin-bottom: .25rem;
+            border-radius: 0.5rem;
+            width: fit-content;
+            font-size: 80%;
+
+            span.categoryname {
+                color: #fff;
+            }
+        }
+    }
+
+    .card-body.course-info-container .coursename .text-truncate {
+        white-space: initial;
+    }
+}
+
+.block .block-cards .moove-card-footer {
+    padding: .8rem;
+
+    .progress {
+        margin-left: auto;
+    }
+}
+
+.block .block-cards {
+    .container-fluid {
+        max-width: 100%;
+    }
+
+    .dashboard-card-footer {
+        border-radius: .5rem;
+
+        &.menu {
+            opacity: .8;
+            padding: 0.5rem 0.8rem;
+
+            .btn.btn-link.btn-icon {
+                background-color: $brand-primary;
+                color: #fff;
+                border-radius: 50%;
+                height: 24px !important;
+                width: 24px !important;
+            }
+        }
+    }
+
+    .moove-card-footer {
+        padding: .8rem;
+
+        .progress {
+            margin-left: auto;
+        }
+    }
+}
+
+.block_myoverview {
+    &.block {
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+
+    .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
+        width: calc(33.33% - 2rem);
+        margin: 1rem;
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .block-myoverview .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
+        width: calc(100%);
+        margin: 1rem 0;
+    }
+}
