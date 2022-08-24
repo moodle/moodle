@@ -41,6 +41,7 @@ information provided here is intended especially for developers.
   implemented by adhoc tasks. For backwards compatibility, a default implementation has been added to `\core\task\adhoc_task` to
   return the class name.
 * The function get_module_metadata() has been finally deprecated and can not be used anymore.
+* New DML driver method `$DB->sql_order_by_null` for sorting nulls sort nulls first when ascending and last when descending.
 
 === 4.0 ===
 

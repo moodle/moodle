@@ -4596,6 +4596,41 @@ EOD;
         $this->assertEquals(2, $last->id);
     }
 
+    /**
+     * Test DML libraries sql_order_by_null method
+     */
+    public function test_sql_order_by_null(): void {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $DB->insert_record($tablename, array('name' => 'aaaa'));
+        $DB->insert_record($tablename, array('name' => 'bbbb'));
+        $DB->insert_record($tablename, array('name' => ''));
+        $DB->insert_record($tablename, array('name' => null));
+
+        $sql = "SELECT * FROM {{$tablename}} ORDER BY ".$DB->sql_order_by_null('name');
+        $records = $DB->get_records_sql($sql);
+        $this->assertEquals(null, array_shift($records)->name);
+        $this->assertEquals('', array_shift($records)->name);
+        $this->assertEquals('aaaa', array_shift($records)->name);
+        $this->assertEquals('bbbb', array_shift($records)->name);
+
+        $sql = "SELECT * FROM {{$tablename}} ORDER BY ".$DB->sql_order_by_null('name', SORT_DESC);
+        $records = $DB->get_records_sql($sql);
+        $this->assertEquals('bbbb', array_shift($records)->name);
+        $this->assertEquals('aaaa', array_shift($records)->name);
+        $this->assertEquals('', array_shift($records)->name);
+        $this->assertEquals(null, array_shift($records)->name);
+    }
+
     public function test_sql_substring() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
