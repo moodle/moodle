@@ -20,5 +20,5 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.ECS_DEV_SSH_KEY }}
           REMOTE_HOST: ${{ secrets.ECS_PROD_HOST_DNS }}
-          REMOTE_USER: ${{ secrets.ECS_DEV_USERNAME }}
+          REMOTE_USER: ${{ secrets.ECS_PROD_USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
