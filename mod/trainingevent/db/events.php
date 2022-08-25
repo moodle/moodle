@@ -28,6 +28,13 @@ defined('MOODLE_INTERNAL') || die();
 $observers = array(
 
     array(
+        'eventname'   => '\mod_trainingevent\event\user_attending',
+        'callback'    => 'mod_trainingevent_observer::user_attending',
+        'includefile' => '/mod/trainingevent/classes/observer.php',
+        'internal'    => false,
+    ),
+
+    array(
         'eventname'   => '\mod_trainingevent\event\user_removed',
         'callback'    => 'mod_trainingevent_observer::user_removed',
         'includefile' => '/mod/trainingevent/classes/observer.php',

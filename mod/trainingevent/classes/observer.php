@@ -29,6 +29,17 @@ require_once($CFG->dirroot.'/mod/trainingevent/lib.php');
 class mod_trainingevent_observer {
 
     /**
+     * Triggered via mod_trainingevent::user_added event.
+     *
+     * @param \mod_trainingevent\event\user_added $event
+     * @return bool true on success.
+     */
+    public static function user_attending($event) {
+        trainingevent_user_attending($event);
+        return true;
+    }
+
+    /**
      * Triggered via block_iomad_company_admin::company_created event.
      *
      * @param \mod_trainingevent\event\user_removed $event
