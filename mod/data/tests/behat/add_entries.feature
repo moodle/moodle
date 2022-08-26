@@ -39,13 +39,15 @@ Feature: Users can add entries to database activities
       | Test field 2 name | Student original entry 2 |
     And I press "Save"
     Then I should see "Student original entry"
-    And I follow "Edit"
+    And I open the action menu in "#defaulttemplate-single" "css_element"
+    And I choose "Edit" in the open action menu
     And I set the following fields to these values:
       | Test field name | Student original entry |
       | Test field 2 name |  |
     And I press "Save"
     Then I should not see "Student original entry 2"
-    And I follow "Edit"
+    And I open the action menu in "#defaulttemplate-single" "css_element"
+    And I choose "Edit" in the open action menu
     And I set the following fields to these values:
       | Test field name | Student edited entry |
     And I press "Save"
@@ -62,18 +64,12 @@ Feature: Users can add entries to database activities
     And I should see "Student second entry"
     And I should see "Student third entry"
     # Will delete the first one.
-    And I follow "Delete"
+    And I open the action menu in ".defaulttemplate-listentry" "css_element"
+    And I choose "Delete" in the open action menu
     And I press "Delete"
     And I should not see "Student edited entry"
     And I should see "Student second entry"
     And I should see "Student third entry"
-    # Now I will bulk delete the rest of the entries.
-    And I log out
-    And I am on the "Test database name" "data activity" page logged in as teacher1
-    And I press "Select all"
-    And I press "Delete selected"
-    And I press "Delete"
-    And I should see "No entries yet"
 
   @javascript @editor @editor_atto @atto @atto_h5p
   Scenario: If a new text area entry is added, the filepicker is displayed in the H5P Atto button

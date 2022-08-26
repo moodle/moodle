@@ -2011,7 +2011,7 @@ class lib_test extends \advanced_testcase {
             'singletemplate',
             'asearchtemplate',
         ];
-        // Check the result is empty when the database has no entries.
+        // Check the result is empty when the database has no fields.
         foreach ($templates as $template) {
             $result = data_generate_default_template($activity, $template, 0, false, false);
             $this->assertEmpty($result);
