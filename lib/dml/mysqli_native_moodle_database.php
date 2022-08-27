@@ -244,9 +244,9 @@ class mysqli_native_moodle_database extends moodle_database {
     /**
      * Set 'dbcollation' option
      *
-     * @return string $dbcollation
+     * @return string|null $dbcollation
      */
-    private function detect_collation(): string {
+    private function detect_collation(): ?string {
         if ($this->external) {
             return null;
         }
