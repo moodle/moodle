@@ -30,8 +30,6 @@ Feature: Users can edit approved entries in database activities
     And I add a "Short text" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
-    # To generate the default templates.
-    And I navigate to "Templates" in current page administration
     And I log out
     # Add an entry as a student.
     And I am on the "Test database name" "data activity" page logged in as student1
@@ -62,8 +60,6 @@ Feature: Users can edit approved entries in database activities
     And I add a "Short text" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
-    # To generate the default templates.
-    And I navigate to "Templates" in current page administration
     And I log out
     # Add an entry as a student.
     And I am on the "Test database name" "data activity" page logged in as student1

@@ -21,13 +21,6 @@ Feature: Users can edit the database templates
       | database | type | name   | description              |
       | data1    | text | field1 | Test field description   |
       | data1    | text | field2 | Test field 2 description |
-    And the following "mod_data > templates" exist:
-      | database | name            |
-      | data1    | singletemplate  |
-      | data1    | listtemplate    |
-      | data1    | addtemplate     |
-      | data1    | asearchtemplate |
-      | data1    | rsstemplate     |
     And the following "mod_data > entries" exist:
       | database | field1          | field2         |
       | data1    | Student entry 1 | Some content 1 |
@@ -113,3 +106,27 @@ Feature: Users can edit the database templates
     When I navigate to "Database" in current page administration
     Then I should not see "Nope"
     And I should see "Yep!"
+
+  @javascript
+  Scenario: Reset database activity template
+    Given I set the following fields to these values:
+      | Header         | New header!                  |
+      | Repeated entry | This is the template content |
+      | Footer         | New footer!                  |
+    And I click on "Save template" "button"
+    And I navigate to "Database" in current page administration
+    And I should see "New header!"
+    And I should see "This is the template content"
+    And I should see "New footer!"
+    And I should not see "Student entry 1"
+    And I should not see "Some content 1"
+    When I navigate to "Templates" in current page administration
+    And I click on "Reset template" "button"
+    And I click on "Reset template" "button" in the "Reset template?" "dialogue"
+    Then I should see "Template reset"
+    And I navigate to "Database" in current page administration
+    And I should not see "New header!"
+    And I should not see "This is the template content"
+    And I should not see "New footer!"
+    And I should see "Student entry 1"
+    And I should see "Some content 1"
