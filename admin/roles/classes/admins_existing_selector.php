@@ -87,8 +87,12 @@ class core_role_admins_existing_selector extends user_selector_base {
             } else {
                 $groupnameprefix = get_string('extusers', 'core_role');
                 foreach ($availableusers as $user) {
-                    $domain = substr($user->email, strpos($user->email, '@'));
-                    $groupname = "$groupnameprefix $domain";
+                    if (isset($user->email)) {
+                        $domain = substr($user->email, strpos($user->email, '@'));
+                        $groupname = "$groupnameprefix $domain";
+                    } else {
+                        $groupname = $groupnameprefix;
+                    }
                     $result[$groupname][] = $user;
                 }
             }
