@@ -959,6 +959,10 @@ function data_get_tag_title_field($dataid) {
     $validfieldtypes = array('text', 'textarea', 'menu', 'radiobutton', 'checkbox', 'multimenu', 'url');
     $fields = $DB->get_records('data_fields', ['dataid' => $dataid]);
     $template = $DB->get_field('data', 'addtemplate', ['id' => $dataid]);
+    if (empty($template)) {
+        $data = $DB->get_record('data', ['id' => $dataid]);
+        $template = data_generate_default_template($data, 'addtemplate', 0, false, false);
+    }
 
     $filteredfields = [];
 

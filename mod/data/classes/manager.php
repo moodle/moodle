@@ -20,9 +20,11 @@ use cm_info;
 use context_module;
 use completion_info;
 use data_field_base;
+use mod_data_renderer;
 use mod_data\event\course_module_viewed;
 use mod_data\event\template_viewed;
 use mod_data\event\template_updated;
+use moodle_page;
 use core_component;
 use stdClass;
 
@@ -156,6 +158,18 @@ class manager {
     }
 
     /**
+     * Return the current module renderer.
+     *
+     * @param moodle_page|null $page the current page
+     * @return mod_data_renderer the module renderer
+     */
+    public function get_renderer(?moodle_page $page = null): mod_data_renderer {
+        global $PAGE;
+        $page = $page ?? $PAGE;
+        return $page->get_renderer(self::PLUGINNAME);
+    }
+
+    /**
      * Trigger module viewed event and set the module viewed for completion.
      *
      * @param stdClass $course course object
@@ -261,6 +275,11 @@ class manager {
      *
      * NOTE: this method returns a default template if the module template is empty.
      * However, it won't update the template database field.
+     *
+     * Some possible options:
+     * - search: string with the current searching text.
+     * - page: integer repesenting the current pagination page numbre (if any)
+     * - baseurl: a moodle_url object to the current page.
      *
      * @param string $templatename
      * @param array $options extra display options array

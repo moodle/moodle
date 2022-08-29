@@ -90,7 +90,10 @@ class data_field_date extends data_field_base {
     }
 
     //Enable the following three functions once core API issues have been addressed.
-    function display_search_field($value=0) {
+    function display_search_field($value = null) {
+        if (empty($value)) {
+            $value = ['timestamp' => 0, 'usedate' => false];
+        }
         $selectors = html_writer::select_time('days', 'f_'.$this->field->id.'_d', $value['timestamp'])
            . html_writer::select_time('months', 'f_'.$this->field->id.'_m', $value['timestamp'])
            . html_writer::select_time('years', 'f_'.$this->field->id.'_y', $value['timestamp']);

@@ -449,11 +449,6 @@ if ($showactivity) {
                 $baseurl = new moodle_url($baseurl, $baseurlparams);
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
-                if (empty($data->singletemplate)){
-                    echo $OUTPUT->notification(get_string('nosingletemplate','data'));
-                    data_generate_default_template($data, 'singletemplate', 0, false, false);
-                }
-
                 require_once($CFG->dirroot.'/rating/lib.php');
                 if ($data->assessed != RATING_AGGREGATE_NONE) {
                     $ratingoptions = new stdClass;
@@ -492,10 +487,6 @@ if ($showactivity) {
 
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
-                if (empty($data->listtemplate)){
-                    echo $OUTPUT->notification(get_string('nolisttemplate','data'));
-                    data_generate_default_template($data, 'listtemplate', 0, false, false);
-                }
                 echo $data->listtemplateheader;
                 $options = [
                     'search' => $search,
