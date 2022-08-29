@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 require_once(__DIR__ . '/../../../../behat/behat_base.php');
@@ -59,6 +61,24 @@ class behat_editor_atto extends behat_base {
         $field->select_text();
     }
 
+    /**
+     * Ensure that the Atto editor is used for all tests using the editor_atto, or atto_* tags.
+     *
+     * This ensures, whatever the default editor, that the Atto editor is used for these tests.
+     *
+     * @BeforeScenario
+     * @param BeforeScenarioScope $scope The Behat Scope
+     */
+    public function set_default_editor_flag(BeforeScenarioScope $scope): void {
+        // This only applies to a scenario which matches the editor_atto, or an atto subplugin.
+        $callback = function (string $tag): bool {
+            return $tag === 'editor_atto' || substr($tag, 0, 5) === 'atto_';
+        };
 
+        if (!self::scope_tags_match($scope, $callback)) {
+            return;
+        }
+
+        $this->execute('behat_general::the_default_editor_is_set_to', ['atto']);
+    }
 }
-
