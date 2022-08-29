@@ -24,6 +24,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Text input';
-$string['fieldtypelabel'] = 'Text field';
-$string['privacy:metadata'] = 'The Text field component does not store any personal data, it uses tables defined in mod_data.';
+$string['pluginname'] = 'Short text';
+$string['fieldtypelabel'] = 'Short text';
+$string['privacy:metadata'] = 'The Short text field component doesn\'t store any personal data; it uses tables defined in mod_data.';
