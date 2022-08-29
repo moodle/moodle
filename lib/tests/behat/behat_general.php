@@ -2190,4 +2190,33 @@ EOF;
         $class = core_plugin_manager::resolve_plugininfo_class($plugintype);
         $class::enable_plugin($plugin, true);
     }
+
+    /**
+     * Set the default text editor to the named text editor.
+     *
+     * @Given the default editor is set to :editor
+     * @param string $editor
+     * @throws ExpectationException If the specified editor is not available.
+     */
+    public function the_default_editor_is_set_to(string $editor): void {
+        global $CFG;
+
+        // Check if the provided editor is available.
+        if (!array_key_exists($editor, editors_get_available())) {
+            throw new ExpectationException(
+                "Unable to set the editor to {$editor} as it is not installed. The available editors are: " .
+                    implode(', ', array_keys(editors_get_available())),
+                $this->getSession()
+            );
+        }
+
+        // Make the provided editor the default one in $CFG->texteditors by
+        // moving it to the first [editor],atto,tiny,tinymce,textarea on the list.
+        $list = explode(',', $CFG->texteditors);
+        array_unshift($list, $editor);
+        $list = array_unique($list);
+
+        // Set the list new list of editors.
+        set_config('texteditors', implode(',', $list));
+    }
 }
