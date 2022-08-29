@@ -119,5 +119,12 @@ class block_myprofile_edit_form extends block_edit_form {
         } else {
             $mform->setDefault('config_display_lastip', '0');
         }
+
+        $mform->addElement('selectyesno', 'config_display_lastlogin', get_string('display_lastlogin', 'block_myprofile'));
+        if (isset($this->block->config->display_lastlogin)) {
+            $mform->setDefault('config_display_lastlogin', $this->block->config->display_lastlogin);
+        } else {
+            $mform->setDefault('config_display_lastlogin', '0');
+        }
     }
 }
