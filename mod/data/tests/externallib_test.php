@@ -513,6 +513,18 @@ class externallib_test extends externallib_advanced_testcase {
      */
     public function test_get_entries() {
         global $DB;
+
+        // Check the behaviour when the database has no entries.
+        $result = mod_data_external::get_entries($this->database->id);
+        $result = \external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
+        $this->assertEmpty($result['entries']);
+
+        $result = mod_data_external::get_entries($this->database->id, 0, true);
+        $result = \external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
+        $this->assertEmpty($result['entries']);
+        $this->assertEmpty($result['listviewcontents']);
+
+        // Add a few fields to the database.
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         // First of all, expect to see only my group entries (not other users in other groups ones).

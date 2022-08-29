@@ -15,6 +15,8 @@ information provided here is intended especially for developers.
   - is_directory_a_preset
 * mod_data_external::add_entry() function throws an error when trying to add an entry to a database with no field created.
 * data_user_can_add_entry() function returns false for any user if there is no field created on the database.
+* From now on, the data_generate_default_template method will always return a string with the template content or an empty
+  string when there is no content available.
 
 === 3.7 ===
 * External functions get_entries, get_entry and search_entries now return an additional field "tags" containing the entry tags.
