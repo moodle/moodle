@@ -3157,12 +3157,14 @@ class assign {
                     $submission->latest = 1;
                 }
             }
+            $transaction = $DB->start_delegated_transaction();
             if ($submission->latest) {
                 // This is the case when we need to set latest to 0 for all the other attempts.
                 $DB->set_field('assign_submission', 'latest', 0, $params);
             }
             $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
             $sid = $DB->insert_record('assign_submission', $submission);
+            $transaction->allow_commit();
             return $DB->get_record('assign_submission', array('id' => $sid));
         }
         return false;
@@ -3939,11 +3941,13 @@ class assign {
                     $submission->latest = 1;
                 }
             }
+            $transaction = $DB->start_delegated_transaction();
             if ($submission->latest) {
                 // This is the case when we need to set latest to 0 for all the other attempts.
                 $DB->set_field('assign_submission', 'latest', 0, $params);
             }
             $sid = $DB->insert_record('assign_submission', $submission);
+            $transaction->allow_commit();
             return $DB->get_record('assign_submission', array('id' => $sid));
         }
         return false;
