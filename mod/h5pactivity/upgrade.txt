@@ -1,6 +1,13 @@
 This files describes API changes in /mod/h5pactivity/*,
 information provided here is intended especially for developers.
 
+=== 4.0.3 ===
+
+* The following methods now accept an optional `$currentgroup` parameter in order to better support groups:
+  - `\mod_h5pactivity\local\manager::get_active_users_join`
+  - `\mod_h5pactivity\local\manager::get_report`
+  - `\mod_h5pactivity\local\report\participants` constructor
+
 === 3.11 ===
 
 * Added mod_h5pactivity\local\manager::get_active_users_join method to query all active
