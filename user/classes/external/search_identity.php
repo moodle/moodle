@@ -29,12 +29,11 @@ class search_identity extends \external_api {
     /**
      * Describes the external function parameters.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function execute_parameters(): \external_function_parameters {
-
         return new \external_function_parameters([
-            'query' => new \external_value(PARAM_TEXT, 'The search query', VALUE_REQUIRED),
+            'query' => new \external_value(PARAM_RAW, 'The search query', VALUE_REQUIRED),
         ]);
     }
 
@@ -50,7 +49,7 @@ class search_identity extends \external_api {
         $params = \external_api::validate_parameters(self::execute_parameters(), [
             'query' => $query,
         ]);
-        $query = $params['query'];
+        $query = clean_param($params['query'], PARAM_TEXT);
 
         // Validate context.
         $context = \context_system::instance();
@@ -106,7 +105,7 @@ class search_identity extends \external_api {
     /**
      * Describes the external function result value.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function execute_returns(): \external_description {
 
