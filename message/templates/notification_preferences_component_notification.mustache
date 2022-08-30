@@ -60,7 +60,8 @@
                             <input type="checkbox"
                                 id="{{{preferencekey}}}_{{{name}}}"
                                 name="{{{preferencekey}}}_{{{name}}}"
-                                class="custom-control-input notification_enabled"
+                                class="custom-control-input notification_enabled{{#disableall}} disabled{{/disableall}}"
+                                {{#disableall}} disabled="true" {{/disableall}}
                                 {{#enabled}}checked{{/enabled}}
                             >
                             <label for="{{{preferencekey}}}_{{{name}}}" class="custom-control-label"
