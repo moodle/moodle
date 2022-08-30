@@ -65,7 +65,7 @@ function xmldb_assign_upgrade($oldversion) {
     // Automatically generated Moodle v3.11.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2022071300) {
+    if ($oldversion < 2021051701) {
         // The most recent assign submission should always have latest = 1, we want to find all records where this is not the case.
         // Find the records with the maximum timecreated for each assign and user combination where latest is also 0.
         $sqluser = "SELECT s.id
@@ -100,7 +100,7 @@ function xmldb_assign_upgrade($oldversion) {
         }
 
         // Assignment savepoint reached.
-        upgrade_mod_savepoint(true, 2022071300, 'assign');
+        upgrade_mod_savepoint(true, 2021051701, 'assign');
     }
     return true;
 }
