@@ -85,7 +85,6 @@ class user_test extends advanced_testcase {
         $this->assertEquals('Yes', $userrow['suspended']);
         $this->assertEquals('No', $userrow['confirmed']);
         $this->assertEquals('Spain', $userrow['country']);
-        $this->assertEquals('dancing', $userrow['interests']);
         $this->assertEquals('Blue', $userrow['profilefield_favcolor']);
         $this->assertEquals('Time travel', $userrow['profilefield_favsuperpower']);
     }
@@ -230,15 +229,6 @@ class user_test extends advanced_testcase {
         $this->assertEquals([
             'Daffy Duck',
         ], array_column($tablerows, 'fullname'));
-
-        // Filter by interests (tags) field.
-        $tablerows = $this->get_report_table_rows([
-            'user:interests_operator' => tags::EQUAL_TO,
-            'user:interests_value' => [
-                $DB->get_field('tag', 'id', ['name' => 'dancing'], MUST_EXIST),
-            ],
-        ]);
-        $this->assertEquals(['Daffy Duck'], array_column($tablerows, 'fullname'));
     }
 
     /**

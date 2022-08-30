@@ -20,6 +20,7 @@ namespace core_course\reportbuilder\datasource;
 
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
+use core_reportbuilder\local\filters\tags;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -27,19 +28,19 @@ global $CFG;
 require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 
 /**
- * Unit tests for component datasources
+ * Unit tests for courses datasources
  *
  * @package     core_course
  * @covers      \core_course\reportbuilder\datasource\courses
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class datasource_test extends core_reportbuilder_testcase {
+class courses_test extends core_reportbuilder_testcase {
 
     /**
-     * Test courses datasource
+     * Test default datasource
      */
-    public function test_courses_datasource(): void {
+    public function test_datasource_default(): void {
         $this->resetAfterTest();
 
         // Test subject.
@@ -53,7 +54,7 @@ class datasource_test extends core_reportbuilder_testcase {
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class]);
+        $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
@@ -65,6 +66,38 @@ class datasource_test extends core_reportbuilder_testcase {
             'All about cats', // Course fullname.
             'CAT101', // Course ID number.
         ], $contentrow);
+    }
+
+    /**
+     * Test datasource columns that aren't added by default
+     */
+    public function test_datasource_non_default_columns(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['tags' => ['Horses']]);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 0]);
+
+        // Category.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:path']);
+
+        // Course.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
+
+        // Tags.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:namewithlink']);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertCount(1, $content);
+
+        $courserow = array_values($content[0]);
+        $this->assertEquals('Category 1', $courserow[0]);
+        $this->assertEquals($course->fullname, $courserow[1]);
+        $this->assertEquals('Horses', $courserow[2]);
+        $this->assertStringContainsString('Horses', $courserow[3]);
     }
 
     /**
@@ -103,5 +136,60 @@ class datasource_test extends core_reportbuilder_testcase {
             'Crs (en)',
             '<a href="' . (string) course_get_url($course->id) . '">Crs (en)</a>',
         ], $contentrow);
+    }
+
+    /**
+     * Data provider for {@see test_datasource_filters}
+     *
+     * @return array[]
+     */
+    public function datasource_filters_provider(): array {
+        return [
+            // Tags.
+            'Filter tag name' => ['tag:name', [
+                'tag:name_operator' => tags::EQUAL_TO,
+                'tag:name_value' => [-1],
+            ], false],
+            'Filter tag name not empty' => ['tag:name', [
+                'tag:name_operator' => tags::NOT_EMPTY,
+            ], true],
+        ];
+    }
+
+    /**
+     * Test datasource filters
+     *
+     * @param string $filtername
+     * @param array $filtervalues
+     * @param bool $expectmatch
+     *
+     * @dataProvider datasource_filters_provider
+     */
+    public function test_datasource_filters(
+        string $filtername,
+        array $filtervalues,
+        bool $expectmatch
+    ): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['tags' => ['Horses']]);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        // Create report containing single column, and given filter.
+        $report = $generator->create_report(['name' => 'Tasks', 'source' => courses::class, 'default' => 0]);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
+
+        // Add filter, set it's values.
+        $generator->create_filter(['reportid' => $report->get('id'), 'uniqueidentifier' => $filtername]);
+        $content = $this->get_custom_report_content($report->get('id'), 0, $filtervalues);
+
+        if ($expectmatch) {
+            $this->assertCount(1, $content);
+            $this->assertEquals($course->fullname, reset($content[0]));
+        } else {
+            $this->assertEmpty($content);
+        }
     }
 }

@@ -22,7 +22,6 @@ use context_helper;
 use context_system;
 use context_user;
 use core_component;
-use core_tag_tag;
 use html_writer;
 use lang_string;
 use moodle_url;
@@ -31,7 +30,6 @@ use core_user\fields;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\tags;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\filters\user as user_filter;
 use core_reportbuilder\local\helpers\user_profile_fields;
@@ -143,7 +141,7 @@ class user extends base {
      *
      * @return string[]
      */
-    private function get_tag_joins(): array {
+    public function get_tag_joins(): array {
         $user = $this->get_table_alias('user');
         $taginstance = $this->get_table_alias('tag_instance');
         $tag = $this->get_table_alias('tag');
@@ -270,22 +268,6 @@ class user extends base {
                 global $OUTPUT;
 
                 return !empty($row->id) ? $OUTPUT->user_picture($row, ['link' => false, 'alttext' => false]) : '';
-            });
-
-        // Interests (tags).
-        $tag = $this->get_table_alias('tag');
-        $columns[] = (new column(
-            'interests',
-            new lang_string('interests'),
-            $this->get_entity_name()
-        ))
-            ->add_joins($this->get_joins())
-            ->add_joins($this->get_tag_joins())
-            ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$tag}.name, {$tag}.rawname")
-            ->set_is_sortable(true)
-            ->add_callback(static function($value, stdClass $tag): string {
-                return core_tag_tag::make_display_name($tag);
             });
 
         // Add all other user fields.
@@ -528,22 +510,6 @@ class user extends base {
 
             $filters[] = $filter;
         }
-
-        // Interests (tags).
-        $tag = $this->get_table_alias('tag');
-        $filters[] = (new filter(
-            tags::class,
-            'interests',
-            new lang_string('interests'),
-            $this->get_entity_name(),
-            "{$tag}.id"
-        ))
-            ->add_joins($this->get_joins())
-            ->add_joins($this->get_tag_joins())
-            ->set_options([
-                'component' => 'core',
-                'itemtype' => 'user',
-            ]);
 
         // User select filter.
         $filters[] = (new filter(

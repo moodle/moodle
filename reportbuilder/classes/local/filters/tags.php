@@ -30,11 +30,6 @@ use core_reportbuilder\local\helpers\database;
  *
  * The field SQL should be the field containing the ID of the {tag} table
  *
- * The following array properties must be passed to the {@see \core_reportbuilder\local\report\filter::set_options} method when
- * defining this filter, to define the component/itemtype you are using for tags:
- *
- * ['component' => 'core', 'itemtype' => 'user']
- *
  * @package     core_reportbuilder
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -69,15 +64,9 @@ class tags extends base {
      * Setup form
      *
      * @param MoodleQuickForm $mform
-     * @throws coding_exception If component/itemtype options are missing
      */
     public function setup_form(MoodleQuickForm $mform): void {
         global $DB;
-
-        $options = $this->filter->get_options();
-        if (!array_key_exists('component', $options) || !array_key_exists('itemtype', $options)) {
-            throw new coding_exception('Missing \'component\' and/or \'itemtype\' in filter options');
-        }
 
         $operatorlabel = get_string('filterfieldoperator', 'core_reportbuilder', $this->get_header());
         $mform->addElement('select', "{$this->name}_operator", $operatorlabel, $this->get_operators())
@@ -85,14 +74,12 @@ class tags extends base {
 
         $sql = 'SELECT DISTINCT t.id, t.name, t.rawname
                   FROM {tag} t
-                  JOIN {tag_instance} ti ON ti.tagid = t.id
-                 WHERE ti.component = :component AND ti.itemtype = :itemtype
               ORDER BY t.name';
 
         // Transform tag records into appropriate display name, for selection in the autocomplete element.
         $tags = array_map(static function(stdClass $record): string {
             return core_tag_tag::make_display_name($record);
-        }, $DB->get_records_sql($sql, ['component' => $options['component'], 'itemtype' => $options['itemtype']]));
+        }, $DB->get_records_sql($sql));
 
         $valuelabel = get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header());
         $mform->addElement('autocomplete', "{$this->name}_value", $valuelabel, $tags, ['multiple' => true])

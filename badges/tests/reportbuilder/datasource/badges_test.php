@@ -94,44 +94,4 @@ class badges_test extends core_reportbuilder_testcase {
             return array_values($row);
         }, $content));
     }
-
-    /**
-     * Test datasource using course/user entities that each contain tags
-     */
-    public function test_datasource_course_user_tags(): void {
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $course = $this->getDataGenerator()->create_course(['tags' => ['horse']]);
-        $user = $this->getDataGenerator()->create_user(['interests' => ['pie']]);
-
-        /** @var core_badges_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
-
-        // Create course badge, issue to user.
-        $badge = $generator->create_badge(['name' => 'Course badge', 'type' => BADGE_TYPE_COURSE, 'courseid' => $course->id]);
-        $badge->issue($user->id, true);
-
-        /** @var core_reportbuilder_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-
-        // Create our report.
-        $report = $generator->create_report(['name' => 'Badges', 'source' => badges::class, 'default' => 0]);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:name']);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:tags']);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname']);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:interests']);
-
-        $content = $this->get_custom_report_content($report->get('id'));
-
-        $this->assertCount(1, $content);
-        $this->assertEquals([
-            $badge->name,
-            $course->fullname,
-            'horse',
-            fullname($user),
-            'pie',
-        ], array_values($content[0]));
-    }
 }
