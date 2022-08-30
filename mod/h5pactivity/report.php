@@ -43,9 +43,11 @@ if (empty($id)) {
 
 require_login($course, true, $cm);
 
+$currentgroup = groups_get_activity_group($cm, true);
+
 $manager = manager::create_from_coursemodule($cm);
 
-$report = $manager->get_report($userid, $attemptid);
+$report = $manager->get_report($userid, $attemptid, $currentgroup);
 if (!$report) {
     print_error('permissiondenied');
 }
@@ -124,6 +126,8 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
 echo $OUTPUT->header();
+
+groups_print_activity_menu($cm, $PAGE->url);
 
 echo $report->print();
 
