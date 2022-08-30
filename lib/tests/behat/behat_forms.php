@@ -148,11 +148,14 @@ class behat_forms extends behat_base {
             $expandallxpath = "//div[@class='collapsible-actions']" .
                 "//a[contains(concat(' ', @class, ' '), ' collapsed ')]" .
                 "//span[contains(concat(' ', @class, ' '), ' expandall ')]";
-            // Else, look for the first expand fieldset link.
-            $expandonlysection = "//legend[@class='ftoggler']" .
+            // Else, look for the first expand fieldset link (old theme structure).
+            $expandsectionold = "//legend[@class='ftoggler']" .
+                    "//a[contains(concat(' ', @class, ' '), ' icons-collapse-expand ') and @aria-expanded = 'false']";
+            // Else, look for the first expand fieldset link (current theme structure).
+            $expandsectioncurrent = "//legend/div[contains(concat(' ', @class, ' '), ' ftoggler ')]" .
                     "//a[contains(concat(' ', @class, ' '), ' icons-collapse-expand ') and @aria-expanded = 'false']";
 
-            $collapseexpandlink = $this->find('xpath', $expandallxpath . '|' . $expandonlysection,
+            $collapseexpandlink = $this->find('xpath', $expandallxpath . '|' . $expandsectionold . '|' . $expandsectioncurrent,
                     false, false, behat_base::get_reduced_timeout());
             $collapseexpandlink->click();
             $this->wait_for_pending_js();
