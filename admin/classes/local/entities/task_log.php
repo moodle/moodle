@@ -283,7 +283,7 @@ class task_log extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
-        $filters = [];
+        global $DB;
 
         $tablealias = $this->get_table_alias('task_log');
 
@@ -342,7 +342,7 @@ class task_log extends base {
             'output',
             new lang_string('task_logoutput', 'admin'),
             $this->get_entity_name(),
-            "{$tablealias}.output"
+            $DB->sql_cast_to_char("{$tablealias}.output")
         ))
             ->add_joins($this->get_joins());
 
