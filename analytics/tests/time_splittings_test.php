@@ -14,30 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for core time splitting methods.
- *
- * @package   core
- * @category  analytics
- * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_analytics;
+
+use test_timesplitting_seconds;
+use test_timesplitting_upcoming_seconds;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/../../analytics/tests/fixtures/test_timesplitting_seconds.php');
-require_once(__DIR__ . '/../../analytics/tests/fixtures/test_timesplitting_upcoming_seconds.php');
+require_once(__DIR__ . '/fixtures/test_timesplitting_seconds.php');
+require_once(__DIR__ . '/fixtures/test_timesplitting_upcoming_seconds.php');
 require_once(__DIR__ . '/../../lib/enrollib.php');
 
 /**
  * Unit tests for core time splitting methods.
  *
  * @package   core
- * @category  analytics
+ * @category  test
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_analytics_time_splittings_testcase extends advanced_testcase {
+class time_splittings_test extends \advanced_testcase {
 
     /**
      * setUp
@@ -214,7 +210,7 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
 
         // We now use an ongoing course not yet ready to generate predictions.
 
-        $threedaysago = new DateTime('-3 days');
+        $threedaysago = new \DateTime('-3 days');
         $params = array(
             'startdate' => $threedaysago->getTimestamp(),
         );
@@ -229,7 +225,7 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
 
         // We now use a ready-to-predict ongoing course.
 
-        $onemonthago = new DateTime('-30 days');
+        $onemonthago = new \DateTime('-30 days');
         $params = array(
             'startdate' => $onemonthago->getTimestamp(),
         );
@@ -284,10 +280,10 @@ class core_analytics_time_splittings_testcase extends advanced_testcase {
 
         // We now check how new ranges get added as time passes.
 
-        $fewsecsago = new DateTime('-5 seconds');
+        $fewsecsago = new \DateTime('-5 seconds');
         $params = array(
             'startdate' => $fewsecsago->getTimestamp(),
-            'enddate' => (new DateTimeImmutable('+1 year'))->getTimestamp(),
+            'enddate' => (new \DateTimeImmutable('+1 year'))->getTimestamp(),
         );
         $course = $this->getDataGenerator()->create_course($params);
         $analysable = new \core_analytics\course($course);

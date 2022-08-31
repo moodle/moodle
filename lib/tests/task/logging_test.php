@@ -18,22 +18,25 @@
  * This file contains the unit tests for the task logging system.
  *
  * @package   core
- * @category  phpunit
+ * @category  test
  * @copyright 2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__ . '/fixtures/task_fixtures.php');
+namespace core\task;
 
+defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../fixtures/task_fixtures.php');
 
 /**
  * This file contains the unit tests for the task logging system.
  *
+ * @package   core
+ * @category  test
  * @copyright 2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_task_logmanager extends advanced_testcase {
+class logging_test extends \advanced_testcase {
 
     /**
      * @var \moodle_database The original database prior to mocking
@@ -47,7 +50,7 @@ class core_task_logmanager extends advanced_testcase {
         global $DB;
 
         // Ensure that any logging is always ended.
-        \core\task\logmanager::finalise_log();
+        logmanager::finalise_log();
 
         if (null !== $this->DB) {
             $DB = $this->DB;
@@ -62,12 +65,12 @@ class core_task_logmanager extends advanced_testcase {
         global $CFG;
         $this->resetAfterTest();
 
-        $CFG->task_logmode = \core\task\logmanager::MODE_NONE;
+        $CFG->task_logmode = logmanager::MODE_NONE;
 
         $initialbufferstate = ob_get_status();
 
         $task = $this->get_test_adhoc_task();
-        \core\task\logmanager::start_logging($task);
+        logmanager::start_logging($task);
 
         // There will be no additional output buffer.
         $this->assertEquals($initialbufferstate, ob_get_status());
@@ -80,12 +83,12 @@ class core_task_logmanager extends advanced_testcase {
         global $CFG;
         $this->resetAfterTest();
 
-        $CFG->task_logmode = \core\task\logmanager::MODE_ALL;
+        $CFG->task_logmode = logmanager::MODE_ALL;
 
         $initialbufferstate = ob_get_status();
 
         $task = $this->get_test_adhoc_task();
-        \core\task\logmanager::start_logging($task);
+        logmanager::start_logging($task);
 
         // Fetch the new output buffer state.
         $state = ob_get_status();
@@ -101,12 +104,12 @@ class core_task_logmanager extends advanced_testcase {
         global $CFG;
         $this->resetAfterTest();
 
-        $CFG->task_logmode = \core\task\logmanager::MODE_FAILONLY;
+        $CFG->task_logmode = logmanager::MODE_FAILONLY;
 
         $initialbufferstate = ob_get_status();
 
         $task = $this->get_test_adhoc_task();
-        \core\task\logmanager::start_logging($task);
+        logmanager::start_logging($task);
 
         // Fetch the new output buffer state.
         $state = ob_get_status();
@@ -122,16 +125,16 @@ class core_task_logmanager extends advanced_testcase {
         global $CFG;
         $this->resetAfterTest();
 
-        $CFG->task_logmode = \core\task\logmanager::MODE_FAILONLY;
+        $CFG->task_logmode = logmanager::MODE_FAILONLY;
 
         $logger = $this->get_mocked_logger();
 
         $initialbufferstate = ob_get_status();
 
         $task = $this->get_test_adhoc_task();
-        \core\task\logmanager::start_logging($task);
+        logmanager::start_logging($task);
 
-        \core\task\manager::adhoc_task_complete($task);
+        manager::adhoc_task_complete($task);
 
         $this->assertEmpty($logger::$storelogfortask);
     }
@@ -143,16 +146,16 @@ class core_task_logmanager extends advanced_testcase {
         global $CFG;
         $this->resetAfterTest();
 
-        $CFG->task_logmode = \core\task\logmanager::MODE_FAILONLY;
+        $CFG->task_logmode = logmanager::MODE_FAILONLY;
 
         $logger = $this->get_mocked_logger();
 
         $initialbufferstate = ob_get_status();
 
         $task = $this->get_test_scheduled_task();
-        \core\task\logmanager::start_logging($task);
+        logmanager::start_logging($task);
 
-        \core\task\manager::scheduled_task_complete($task);
+        manager::scheduled_task_complete($task);
 
         $this->assertEmpty($logger::$storelogfortask);
     }
@@ -170,12 +173,12 @@ class core_task_logmanager extends advanced_testcase {
 
         $task = $this->get_test_adhoc_task();
 
-        $CFG->task_logmode = \core\task\logmanager::MODE_FAILONLY;
+        $CFG->task_logmode = logmanager::MODE_FAILONLY;
 
         $logger = $this->get_mocked_logger();
 
-        \core\task\logmanager::start_logging($task);
-        \core\task\manager::adhoc_task_failed($task);
+        logmanager::start_logging($task);
+        manager::adhoc_task_failed($task);
 
         $this->assertCount(1, $logger::$storelogfortask);
         $this->assertEquals($task, $logger::$storelogfortask[0][0]);
@@ -195,12 +198,12 @@ class core_task_logmanager extends advanced_testcase {
 
         $task = $this->get_test_scheduled_task();
 
-        $CFG->task_logmode = \core\task\logmanager::MODE_FAILONLY;
+        $CFG->task_logmode = logmanager::MODE_FAILONLY;
 
         $logger = $this->get_mocked_logger();
 
-        \core\task\logmanager::start_logging($task);
-        \core\task\manager::scheduled_task_failed($task);
+        logmanager::start_logging($task);
+        manager::scheduled_task_failed($task);
 
         $this->assertCount(1, $logger::$storelogfortask);
         $this->assertEquals($task, $logger::$storelogfortask[0][0]);
@@ -220,12 +223,12 @@ class core_task_logmanager extends advanced_testcase {
 
         $task = $this->get_test_adhoc_task();
 
-        $CFG->task_logmode = \core\task\logmanager::MODE_FAILONLY;
+        $CFG->task_logmode = logmanager::MODE_FAILONLY;
 
         $logger = $this->get_mocked_logger();
 
-        \core\task\logmanager::start_logging($task);
-        \core\task\manager::adhoc_task_failed($task);
+        logmanager::start_logging($task);
+        manager::adhoc_task_failed($task);
 
         $this->assertCount(1, $logger::$storelogfortask);
         $this->assertEquals($task, $logger::$storelogfortask[0][0]);
@@ -245,12 +248,12 @@ class core_task_logmanager extends advanced_testcase {
 
         $task = $this->get_test_scheduled_task();
 
-        $CFG->task_logmode = \core\task\logmanager::MODE_FAILONLY;
+        $CFG->task_logmode = logmanager::MODE_FAILONLY;
 
         $logger = $this->get_mocked_logger();
 
-        \core\task\logmanager::start_logging($task);
-        \core\task\manager::scheduled_task_failed($task);
+        logmanager::start_logging($task);
+        manager::scheduled_task_failed($task);
 
         $this->assertCount(1, $logger::$storelogfortask);
         $this->assertEquals($task, $logger::$storelogfortask[0][0]);
@@ -269,12 +272,12 @@ class core_task_logmanager extends advanced_testcase {
 
         $task = $this->get_test_adhoc_task();
 
-        $CFG->task_logmode = \core\task\logmanager::MODE_ALL;
+        $CFG->task_logmode = logmanager::MODE_ALL;
 
         $logger = $this->get_mocked_logger();
 
-        \core\task\logmanager::start_logging($task);
-        \core\task\manager::adhoc_task_complete($task);
+        logmanager::start_logging($task);
+        manager::adhoc_task_complete($task);
 
         $this->assertCount(1, $logger::$storelogfortask);
         $this->assertEquals($task, $logger::$storelogfortask[0][0]);
@@ -293,12 +296,12 @@ class core_task_logmanager extends advanced_testcase {
 
         $task = $this->get_test_scheduled_task();
 
-        $CFG->task_logmode = \core\task\logmanager::MODE_ALL;
+        $CFG->task_logmode = logmanager::MODE_ALL;
 
         $logger = $this->get_mocked_logger();
 
-        \core\task\logmanager::start_logging($task);
-        \core\task\manager::scheduled_task_complete($task);
+        logmanager::start_logging($task);
+        manager::scheduled_task_complete($task);
 
         $this->assertCount(1, $logger::$storelogfortask);
         $this->assertEquals($task, $logger::$storelogfortask[0][0]);
@@ -312,10 +315,10 @@ class core_task_logmanager extends advanced_testcase {
         $this->resetAfterTest();
 
         $task = $this->get_test_adhoc_task();
-        \core\task\logmanager::start_logging($task);
+        logmanager::start_logging($task);
 
         $this->expectException(\coding_exception::class);
-        \core\task\logmanager::start_logging($task);
+        logmanager::start_logging($task);
     }
 
     /**
@@ -327,11 +330,11 @@ class core_task_logmanager extends advanced_testcase {
         $logger = $this->get_mocked_logger();
 
         $task = $this->get_test_adhoc_task();
-        \core\task\logmanager::start_logging($task);
-        \core\task\logmanager::finalise_log();
+        logmanager::start_logging($task);
+        logmanager::finalise_log();
 
-        \core\task\logmanager::start_logging($task);
-        \core\task\logmanager::finalise_log();
+        logmanager::start_logging($task);
+        logmanager::finalise_log();
 
         $this->assertCount(2, $logger::$storelogfortask);
         $this->assertEquals($task, $logger::$storelogfortask[0][0]);
@@ -346,7 +349,7 @@ class core_task_logmanager extends advanced_testcase {
     public function test_finalise_log_no_logging() {
         $initialbufferstate = ob_get_status();
 
-        \core\task\logmanager::finalise_log();
+        logmanager::finalise_log();
 
         // There will be no additional output buffer.
         $this->assertEquals($initialbufferstate, ob_get_status());
@@ -363,15 +366,15 @@ class core_task_logmanager extends advanced_testcase {
         $testoutput = "I am the output under test.\n";
 
         $task = $this->get_test_adhoc_task();
-        \core\task\logmanager::start_logging($task);
+        logmanager::start_logging($task);
 
         echo $testoutput;
 
         $this->expectOutputString($testoutput);
-        \core\task\logmanager::flush();
+        logmanager::flush();
 
         // Finalise the log.
-        \core\task\logmanager::finalise_log();
+        logmanager::finalise_log();
 
         $this->assertCount(1, $logger::$storelogfortask);
         $this->assertEquals($testoutput, file_get_contents($logger::$storelogfortask[0][1]));
@@ -388,16 +391,16 @@ class core_task_logmanager extends advanced_testcase {
         $testoutput = "I am the output under test.\n";
 
         $task = $this->get_test_adhoc_task();
-        \core\task\logmanager::start_logging($task);
+        logmanager::start_logging($task);
 
         ob_start();
         echo $testoutput;
         ob_end_clean();
 
-        \core\task\logmanager::flush();
+        logmanager::flush();
 
         // Finalise the log.
-        \core\task\logmanager::finalise_log();
+        logmanager::finalise_log();
 
         $this->assertCount(1, $logger::$storelogfortask);
 
@@ -416,7 +419,7 @@ class core_task_logmanager extends advanced_testcase {
         $testoutput = "I am the output under test.\n";
 
         $task = $this->get_test_adhoc_task();
-        \core\task\logmanager::start_logging($task);
+        logmanager::start_logging($task);
 
         // We are going to flush the inner buffer. That means that we should expect the output immediately.
         $this->expectOutputString($testoutput);
@@ -426,7 +429,7 @@ class core_task_logmanager extends advanced_testcase {
         ob_end_flush();
 
         // Finalise the log.
-        \core\task\logmanager::finalise_log();
+        logmanager::finalise_log();
 
         $this->assertCount(1, $logger::$storelogfortask);
 
@@ -437,10 +440,10 @@ class core_task_logmanager extends advanced_testcase {
     /**
      * Get an example adhoc task to use for testing.
      *
-     * @return  \core\task\adhoc_task
+     * @return  adhoc_task
      */
-    protected function get_test_adhoc_task() : \core\task\adhoc_task {
-        $task = $this->getMockForAbstractClass(\core\task\adhoc_task::class);
+    protected function get_test_adhoc_task() : adhoc_task {
+        $task = $this->getMockForAbstractClass(adhoc_task::class);
         $task->set_component('core');
 
         // Mock a lock on the task.
@@ -455,10 +458,10 @@ class core_task_logmanager extends advanced_testcase {
     /**
      * Get an example scheduled task to use for testing.
      *
-     * @return  \core\task\scheduled_task
+     * @return  scheduled_task
      */
-    protected function get_test_scheduled_task() : \core\task\scheduled_task {
-        $task = $this->getMockForAbstractClass(\core\task\scheduled_task::class);
+    protected function get_test_scheduled_task() : scheduled_task {
+        $task = $this->getMockForAbstractClass(scheduled_task::class);
 
         // Mock a lock on the task.
         $lock = $this->getMockBuilder(\core\lock\lock::class)
@@ -472,7 +475,7 @@ class core_task_logmanager extends advanced_testcase {
     /**
      * Create and configure a mocked task logger.
      *
-     * @return  \core\task\task_logger
+     * @return  task_logger
      */
     protected function get_mocked_logger() {
         global $CFG;
@@ -481,8 +484,8 @@ class core_task_logmanager extends advanced_testcase {
         $this->resetAfterTest();
 
         // Note PHPUnit does not support mocking static functions.
-        $CFG->task_log_class = \task_logging_test_mocked_logger::class;
-        \task_logging_test_mocked_logger::test_reset();
+        $CFG->task_log_class = logging_test_mocked_logger::class;
+        logging_test_mocked_logger::test_reset();
 
         return $CFG->task_log_class;
     }
@@ -510,7 +513,7 @@ class core_task_logmanager extends advanced_testcase {
  * @copyright 2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class task_logging_test_mocked_logger implements \core\task\task_logger {
+class logging_test_mocked_logger implements task_logger {
 
     /**
      * @var bool Whether this is configured.
@@ -548,7 +551,7 @@ class task_logging_test_mocked_logger implements \core\task\task_logger {
     /**
      * Store the log for the specified task.
      *
-     * @param   \core\task\task_base   $task The task that the log belongs to.
+     * @param   task_base   $task The task that the log belongs to.
      * @param   string      $logpath The path to the log on disk
      * @param   bool        $failed Whether the task failed
      * @param   int         $dbreads The number of DB reads
@@ -556,7 +559,7 @@ class task_logging_test_mocked_logger implements \core\task\task_logger {
      * @param   float       $timestart The start time of the task
      * @param   float       $timeend The end time of the task
      */
-    public static function store_log_for_task(\core\task\task_base $task, string $logpath, bool $failed,
+    public static function store_log_for_task(task_base $task, string $logpath, bool $failed,
             int $dbreads, int $dbwrites, float $timestart, float $timeend) {
         self::$storelogfortask[] = func_get_args();
     }

@@ -14,21 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for lib/classes/output/mustache_helper_collection
- *
- * @copyright 2019 Ryan Wyllie <ryan@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-use core\output\mustache_helper_collection;
+namespace core\output;
 
 /**
  * Unit tests for the mustache_helper_collection class.
+ *
+ * @package   core
+ * @copyright 2019 Ryan Wyllie <ryan@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_output_mustache_helper_collection_testcase extends advanced_testcase {
+class mustache_helper_collection_test extends \advanced_testcase {
     /**
      * Test cases to confirm that disallowed helpers are stripped from the source
      * text by the helper before being passed to other another helper. This prevents

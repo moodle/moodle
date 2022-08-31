@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__.'/../fixtures/event_fixtures.php');
+
 /**
  * Tests for event manager, base event and observers.
  *
@@ -22,15 +28,10 @@
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__.'/fixtures/event_fixtures.php');
-
-class core_event_unknown_logged_testcase extends advanced_testcase {
+class unknown_logged_test extends \advanced_testcase {
 
     public function test_restore_event() {
-        $event1 = \core_tests\event\unittest_executed::create(array('context' => context_system::instance(), 'other' => array('sample' => 1, 'xx' => 10)));
+        $event1 = \core_tests\event\unittest_executed::create(array('context' => \context_system::instance(), 'other' => array('sample' => 1, 'xx' => 10)));
         $data1 = $event1->get_data();
 
         $data1['eventname'] = '\mod_xx\event\xx_yy';

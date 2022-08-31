@@ -14,28 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for /lib/gradelib.php.
- *
- * @package   core_grades
- * @category  phpunit
- * @copyright 2012 Andrew Davis
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/gradelib.php');
 
-class core_gradelib_testcase extends advanced_testcase {
+/**
+ * Unit tests for /lib/gradelib.php.
+ *
+ * @package   core
+ * @category  test
+ * @copyright 2012 Andrew Davis
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class gradelib_test extends \advanced_testcase {
 
     public function test_grade_update_mod_grades() {
 
         $this->resetAfterTest(true);
 
         // Create a broken module instance.
-        $modinstance = new stdClass();
+        $modinstance = new \stdClass();
         $modinstance->modname = 'doesntexist';
 
         $this->assertFalse(grade_update_mod_grades($modinstance));
@@ -67,17 +68,17 @@ class core_gradelib_testcase extends advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
 
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
 
         // Add a grade letter to the course.
-        $letter = new stdClass();
+        $letter = new \stdClass();
         $letter->letter = 'M';
         $letter->lowerboundary = '100';
         $letter->contextid = $context->id;
         $DB->insert_record('grade_letters', $letter);
 
         // Pre-warm the cache, ensure that that the letter is cached.
-        $cache = cache::make('core', 'grade_letters');
+        $cache = \cache::make('core', 'grade_letters');
 
         // Check that the cache is empty beforehand.
         $letters = $cache->get($context->id);
@@ -108,13 +109,13 @@ class core_gradelib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        $category = core_course_category::create(array('name' => 'Cat1'));
+        $category = \core_course_category::create(array('name' => 'Cat1'));
 
         // Add a grade letter to the category.
-        $letter = new stdClass();
+        $letter = new \stdClass();
         $letter->letter = 'M';
         $letter->lowerboundary = '100';
-        $letter->contextid = context_coursecat::instance($category->id)->id;
+        $letter->contextid = \context_coursecat::instance($category->id)->id;
         $DB->insert_record('grade_letters', $letter);
 
         grade_course_category_delete($category->id, '', false);
@@ -138,11 +139,11 @@ class core_gradelib_testcase extends advanced_testcase {
 
         // We need two grade items.
         $params = ['idnumber' => 'g1', 'courseid' => $course->id];
-        $g1 = new grade_item($this->getDataGenerator()->create_grade_item($params));
+        $g1 = new \grade_item($this->getDataGenerator()->create_grade_item($params));
         unset($params['idnumber']);
-        $g2 = new grade_item($this->getDataGenerator()->create_grade_item($params));
+        $g2 = new \grade_item($this->getDataGenerator()->create_grade_item($params));
 
-        $category = new grade_category($this->getDataGenerator()->create_grade_category($params));
+        $category = new \grade_category($this->getDataGenerator()->create_grade_category($params));
         $catitem = $category->get_grade_item();
 
         // Now set a calculation.
@@ -174,11 +175,11 @@ class core_gradelib_testcase extends advanced_testcase {
      * Tests for the grade_get_date_for_user_grade function.
      *
      * @dataProvider grade_get_date_for_user_grade_provider
-     * @param stdClass $grade
-     * @param stdClass $user
+     * @param \stdClass $grade
+     * @param \stdClass $user
      * @param int $expected
      */
-    public function test_grade_get_date_for_user_grade(stdClass $grade, stdClass $user, ?int $expected): void {
+    public function test_grade_get_date_for_user_grade(\stdClass $grade, \stdClass $user, ?int $expected): void {
         $this->assertEquals($expected, grade_get_date_for_user_grade($grade, $user));
     }
 
@@ -256,9 +257,9 @@ class core_gradelib_testcase extends advanced_testcase {
 
         // Setup some basics.
         $course = $this->getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
 
-        $cache = cache::make('core', 'grade_letters');
+        $cache = \cache::make('core', 'grade_letters');
         $letters = $cache->get($context->id);
 
         // Make sure the cache is empty.
@@ -281,16 +282,16 @@ class core_gradelib_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
 
-        $cache = cache::make('core', 'grade_letters');
+        $cache = \cache::make('core', 'grade_letters');
         $letters = $cache->get($context->id);
 
         // Make sure the cache is empty.
         $this->assertFalse($letters);
 
         // Add a grade letter to the course.
-        $letter = new stdClass();
+        $letter = new \stdClass();
         $letter->letter = 'M';
         $letter->lowerboundary = '100';
         $letter->contextid = $context->id;

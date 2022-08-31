@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains the class containing unit tests for the calendar cron task.
- *
- * @package   core
- * @copyright 2017 Mark Nelson <markn@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core\task;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +28,7 @@ require_once($CFG->dirroot . '/calendar/lib.php');
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_cron_task_testcase extends advanced_testcase {
+class calendar_cron_task_test extends \advanced_testcase {
 
     /**
      * Tests set up
@@ -50,7 +44,7 @@ class core_calendar_cron_task_testcase extends advanced_testcase {
         // ICal URL from external test repo.
         $subscriptionurl = $this->getExternalTestFileUrl('/ical.ics');
 
-        $subscription = new stdClass();
+        $subscription = new \stdClass();
         $subscription->eventtype = 'site';
         $subscription->name = 'test';
         $subscription->url = $subscriptionurl;
@@ -58,7 +52,7 @@ class core_calendar_cron_task_testcase extends advanced_testcase {
         $subscription->lastupdated = 0;
         calendar_add_subscription($subscription);
 
-        $task = new \core\task\calendar_cron_task();
+        $task = new calendar_cron_task();
         ob_start();
         $task->execute();
         $output = ob_get_clean();
@@ -71,7 +65,7 @@ class core_calendar_cron_task_testcase extends advanced_testcase {
      * Test calendar cron task with a broken subscription URL.
      */
     public function test_cron_broken_url() {
-        $subscription = new stdClass();
+        $subscription = new \stdClass();
         $subscription->eventtype = 'site';
         $subscription->name = 'test';
         $subscription->url = 'brokenurl';
@@ -80,7 +74,7 @@ class core_calendar_cron_task_testcase extends advanced_testcase {
         calendar_add_subscription($subscription);
 
         $this->expectOutputRegex('/Error updating calendar subscription: The given iCal URL is invalid/');
-        $task = new \core\task\calendar_cron_task();
+        $task = new calendar_cron_task();
         $task->execute();
     }
 }

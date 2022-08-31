@@ -14,27 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * lock unit tests
- *
- * @package    core
- * @category   lock
- * @copyright  2013 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
+namespace core;
 
 /**
  * Unit tests for our locking configuration.
  *
  * @package    core
- * @category   lock
+ * @category   test
  * @copyright  2013 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lock_config_testcase extends advanced_testcase {
+class lock_config_test extends \advanced_testcase {
 
     /**
      * Tests the static parse charset method
@@ -62,7 +52,7 @@ class lock_config_testcase extends advanced_testcase {
         try {
             $factory = \core\lock\lock_config::get_lock_factory('cache');
             $this->fail('Exception expected');
-        } catch (moodle_exception $ex) {
+        } catch (\moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
         }
 
@@ -77,7 +67,7 @@ class lock_config_testcase extends advanced_testcase {
         try {
             $factory = \core\lock\lock_config::get_lock_factory('cache');
             $this->fail('Exception expected');
-        } catch (moodle_exception $ex) {
+        } catch (\moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
         }
 

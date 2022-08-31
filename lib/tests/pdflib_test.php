@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for PDFlib
- *
- * @package    core
- * @copyright  2021 Brendan Heywood (brendan@catalyst-au.net)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
-defined('MOODLE_INTERNAL') || die();
+use TCPDF_STATIC;
 
 /**
  * Tests for PDFlib
@@ -31,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2021 Brendan Heywood (brendan@catalyst-au.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_pdflib_testcase extends advanced_testcase {
+class pdflib_test extends \advanced_testcase {
 
     public function test_gettcpdf_producer() {
         global $CFG;

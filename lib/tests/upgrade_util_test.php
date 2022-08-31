@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Upgrade utility class  tests.
- *
- * @package    core
- * @copyright  2016 Cameron Ball <cameron@cameron1729.xyz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +28,7 @@ defined('CURL_SSLVERSION_TLSv1_2') || define('CURL_SSLVERSION_TLSv1_2', 6);
  * @copyright 2016 Cameron Ball <cameron@cameron1729.xyz>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class upgrade_util_testcase extends advanced_testcase {
+class upgrade_util_test extends \advanced_testcase {
 
     /**
      * The value of PHP_ZTS when thread safety is enabled.

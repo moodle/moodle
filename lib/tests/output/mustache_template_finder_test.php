@@ -14,24 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
 /**
  * Unit tests for lib/classes/output/mustache_template_finder.php
  *
+ * Unit tests for the Mustache template finder class (contains logic about
+ * resolving mustache template locations.
+ *
  * @package   core
- * @category  phpunit
+ * @category  test
  * @copyright 2015 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-use core\output\mustache_template_finder;
-
-/**
- * Unit tests for the Mustache template finder class (contains logic about
- * resolving mustache template locations.
- */
-class core_output_mustache_template_finder_testcase extends advanced_testcase {
+class mustache_template_finder_test extends \advanced_testcase {
 
     /**
      * Data provider which reutrns a set of valid template directories to be used when testing
@@ -105,7 +101,7 @@ class core_output_mustache_template_finder_testcase extends advanced_testcase {
      */
     public function test_invalid_component_get_template_directories_for_component() {
         // Test something invalid.
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         mustache_template_finder::get_template_directories_for_component('octopus', 'classic');
     }
 
@@ -192,7 +188,7 @@ class core_output_mustache_template_finder_testcase extends advanced_testcase {
      * Tests for get_template_filepath when dealing with an invalid component.
      */
     public function test_invalid_component_get_template_filepath() {
-        $this->expectException(moodle_exception::class);
+        $this->expectException(\moodle_exception::class);
         mustache_template_finder::get_template_filepath('core/octopus', 'classic');
     }
 }
