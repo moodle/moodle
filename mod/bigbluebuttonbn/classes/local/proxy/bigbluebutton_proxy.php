@@ -80,7 +80,10 @@ class bigbluebutton_proxy extends proxy_base {
         if (!is_null($createtime)) {
             $data['createTime'] = $createtime;
         }
-
+        $currentlang = current_language();
+        if (!empty(trim($currentlang))) {
+            $data['userdata-bbb_override_default_locale'] = $currentlang;
+        }
         return self::action_url('join', $data);
     }
 
