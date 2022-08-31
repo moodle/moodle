@@ -147,7 +147,7 @@ class EmailVars {
      **/
     public function __get($name) {
         if (isset($name)) {
-            if (array_key_exists($name, $this)) {
+            if (property_exists($this, $name)) {
                 return $this[$name];
             }
 
