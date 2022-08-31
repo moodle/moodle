@@ -46,6 +46,18 @@ Feature: Configure access to reports based on intended audience
     And I click on "My report" "link" in the "My report" "table_row"
     And I should see "User 1" in the "reportbuilder-table" "table"
 
+  Scenario: Configure report audience with administrator audience type
+    Given I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    And I click on the "Audience" dynamic tab
+    When I click on "Add audience 'Site administrators'" "link"
+    And I press "Save changes"
+    Then I should see "Audience saved"
+    And I click on the "Access" dynamic tab
+    And I should see "Admin User" in the "reportbuilder-table" "table"
+    And I should not see "User 1" in the "reportbuilder-table" "table"
+    And I should not see "User 2" in the "reportbuilder-table" "table"
+    And I should not see "User 3" in the "reportbuilder-table" "table"
+
   Scenario: Configure report audience with has system role audience type
     Given the following "roles" exist:
       | shortname | name      | archetype |
