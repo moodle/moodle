@@ -406,7 +406,7 @@ class api {
         delete_user_key('tool_mobile', $USER->id);
 
         // Create a new key.
-        $iprestriction = getremoteaddr(null);
+        $iprestriction = !empty($mobilesettings->qrsameipcheck) ? getremoteaddr(null) : null;
         $qrkeyttl = !empty($mobilesettings->qrkeyttl) ? $mobilesettings->qrkeyttl : self::LOGIN_QR_KEY_TTL;
         $validuntil = time() + $qrkeyttl;
         return create_user_key('tool_mobile', $USER->id, null, $iprestriction, $validuntil);

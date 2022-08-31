@@ -125,6 +125,8 @@ $string['qrcodetypeurl'] = 'QR code with site URL';
 $string['qrcodetypelogin'] = 'QR code with automatic login';
 $string['qrkeyttl'] = 'QR authentication key duration';
 $string['qrkeyttl_desc'] = 'The length of time for which a QR code for automatic login is valid.';
+$string['qrsameipcheck'] = 'QR authentication same IP check';
+$string['qrsameipcheck_desc'] = 'This setting forces users to use the same network for both generating and scanning a QR code for login. Only disable it in case your users are reporting issues with QR login.';
 $string['readingthisemailgettheapp'] = 'Reading this in an email? <a href="{$a}">Download the mobile app and receive notifications on your mobile device</a>.';
 $string['remoteaddons'] = 'Remote add-ons';
 $string['scanqrcode'] = 'Scan QR code';
