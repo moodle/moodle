@@ -19,15 +19,11 @@ Feature: Change grading options in an H5P activity
     And the following "permission overrides" exist:
       | capability                 | permission | role           | contextlevel | reference |
       | moodle/h5p:updatelibraries | Allow      | editingteacher | System       |           |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "H5P" to section "1"
-    And I set the following fields to these values:
-      | Name        | Awesome H5P package |
-      | Description | Description         |
-    And I upload "h5p/tests/fixtures/multiple-choice-2-6.h5p" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    And I log out
+    And the following "activity" exists:
+      | activity        | h5pactivity                                |
+      | course          | C1                                         |
+      | name            | Awesome H5P package                        |
+      | packagefilepath | h5p/tests/fixtures/multiple-choice-2-6.h5p |
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
@@ -44,7 +40,6 @@ Feature: Change grading options in an H5P activity
     And I click on "Wrong one" "text" in the ".h5p-question-content" "css_element"
     And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
     And I switch to the main frame
-    And I log out
 
   @javascript
   Scenario: Default grading is max attempt grade
