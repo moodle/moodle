@@ -14,22 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * core_minify related tests.
- *
- * @package    core
- * @category   phpunit
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
-defined('MOODLE_INTERNAL') || die();
-
+use core_minify;
 
 /**
  * Class core_minify_testcase.
+ *
+ * core_minify related tests.
+ *
+ * @package    core
+ * @category   test
+ * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_minify_testcase extends advanced_testcase {
+class minify_test extends \advanced_testcase {
     public function test_css() {
         $css = "
 body {

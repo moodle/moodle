@@ -14,14 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests the events related to the user profile fields and categories.
- *
- * @package   core
- * @category  test
- * @copyright 2017 Mark Nelson <markn@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core\event;
+
+use profile_define_base;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +32,7 @@ require_once($CFG->dirroot . '/user/profile/definelib.php');
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_event_profile_field_testcase extends advanced_testcase {
+class profile_field_test extends \advanced_testcase {
 
     /**
      * Test set up.
@@ -134,7 +129,7 @@ class core_event_profile_field_testcase extends advanced_testcase {
         $cat1 = $this->getDataGenerator()->create_custom_profile_field_category(['name' => 'Example category']);
 
         // Create a new profile field.
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->datatype = 'text';
         $data->shortname = 'example';
         $data->name = 'Example field';

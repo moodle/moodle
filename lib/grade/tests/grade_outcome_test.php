@@ -14,19 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    core_grades
- * @category   phpunit
- * @copyright  nicolas@moodle.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/fixtures/lib.php');
 
-
-class core_grade_outcome_testcase extends grade_base_testcase {
+/**
+ * Unit tests for grade_outcome
+ *
+ * @package    core
+ * @category   test
+ * @copyright  nicolas@moodle.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class grade_outcome_test extends \grade_base_testcase {
 
     public function test_grade_outcome() {
         $this->sub_test_grade_outcome_construct();
@@ -38,18 +40,18 @@ class core_grade_outcome_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_outcome_construct() {
-        $params = new stdClass();
+        $params = new \stdClass();
 
         $params->courseid = $this->courseid;
         $params->shortname = 'Team work';
 
-        $grade_outcome = new grade_outcome($params, false);
+        $grade_outcome = new \grade_outcome($params, false);
         $this->assertEquals($params->courseid, $grade_outcome->courseid);
         $this->assertEquals($params->shortname, $grade_outcome->shortname);
     }
 
     protected function sub_test_grade_outcome_insert() {
-        $grade_outcome = new grade_outcome();
+        $grade_outcome = new \grade_outcome();
         $this->assertTrue(method_exists($grade_outcome, 'insert'));
 
         $grade_outcome->courseid = $this->courseid;
@@ -67,7 +69,7 @@ class core_grade_outcome_testcase extends grade_base_testcase {
 
     protected function sub_test_grade_outcome_update() {
         global $DB;
-        $grade_outcome = new grade_outcome($this->grade_outcomes[0], false);
+        $grade_outcome = new \grade_outcome($this->grade_outcomes[0], false);
         $this->assertTrue(method_exists($grade_outcome, 'update'));
         $grade_outcome->shortname = 'Team work';
         $this->assertTrue($grade_outcome->update());
@@ -77,7 +79,7 @@ class core_grade_outcome_testcase extends grade_base_testcase {
 
     protected function sub_test_grade_outcome_delete() {
         global $DB;
-        $grade_outcome = new grade_outcome($this->grade_outcomes[0], false);
+        $grade_outcome = new \grade_outcome($this->grade_outcomes[0], false);
         $this->assertTrue(method_exists($grade_outcome, 'delete'));
 
         $this->assertTrue($grade_outcome->delete());
@@ -85,10 +87,10 @@ class core_grade_outcome_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_outcome_fetch() {
-        $grade_outcome = new grade_outcome();
+        $grade_outcome = new \grade_outcome();
         $this->assertTrue(method_exists($grade_outcome, 'fetch'));
 
-        $grade_outcome = grade_outcome::fetch(array('id'=>$this->grade_outcomes[0]->id));
+        $grade_outcome = \grade_outcome::fetch(array('id'=>$this->grade_outcomes[0]->id));
         $grade_outcome->load_scale();
         $this->assertEquals($this->grade_outcomes[0]->id, $grade_outcome->id);
         $this->assertEquals($this->grade_outcomes[0]->shortname, $grade_outcome->shortname);
@@ -97,10 +99,10 @@ class core_grade_outcome_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_outcome_fetch_all() {
-        $grade_outcome = new grade_outcome();
+        $grade_outcome = new \grade_outcome();
         $this->assertTrue(method_exists($grade_outcome, 'fetch_all'));
 
-        $grade_outcomes = grade_outcome::fetch_all(array());
+        $grade_outcomes = \grade_outcome::fetch_all(array());
         $this->assertEquals(count($this->grade_outcomes), count($grade_outcomes));
     }
 }

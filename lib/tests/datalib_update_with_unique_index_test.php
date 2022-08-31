@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
 /**
  * Tests for {@link decompose_update_into_safe_changes()} and
  * {@link update_field_with_unique_index()}.
@@ -22,18 +24,7 @@
  * @copyright 2014 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Tests for {@link decompose_update_into_safe_changes()} and
- * {@link update_field_with_unique_index()}.
- *
- * @copyright 2014 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class datalib_update_with_unique_index_testcase extends advanced_testcase {
+class datalib_update_with_unique_index_test extends \advanced_testcase {
 
     public function test_decompose_update_into_safe_changes_identity() {
         $this->assertEquals(array(), decompose_update_into_safe_changes(
@@ -72,7 +63,7 @@ class datalib_update_with_unique_index_testcase extends advanced_testcase {
         try {
             decompose_update_into_safe_changes(array(1 => 1), 1);
             $this->fail('Expected exception was not thrown');
-        } catch (coding_exception $e) {
+        } catch (\coding_exception $e) {
             $this->assertEquals('Supposedly unused value 1 is actually used!', $e->a);
         }
     }
@@ -90,7 +81,7 @@ class datalib_update_with_unique_index_testcase extends advanced_testcase {
         $dbman = $DB->get_manager();
         $this->resetAfterTest();
 
-        $table = new xmldb_table('test_table');
+        $table = new \xmldb_table('test_table');
         $table->setComment("This is a test'n drop table. You can drop it safely");
         $tablename = $table->getName();
 

@@ -14,18 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the task that fetch the latest version of H5P content types.
- *
- * @package   core
- * @copyright  2019 Victor Deniz <victor@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core\task;
 
 use core_h5p\local\library\autoloader;
 use core_h5p\h5p_test_factory;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class containing unit tests for the task that fetch the latest version of H5P content types.
@@ -36,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @runTestsInSeparateProcesses
  */
-class h5p_get_content_types_task_testcase extends advanced_testcase {
+class h5p_get_content_types_task_test extends \advanced_testcase {
 
     protected function setup(): void {
         global $CFG;

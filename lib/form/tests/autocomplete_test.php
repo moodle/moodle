@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for autocomplete forms element.
- *
- * This file contains all unit test related to autocomplete forms element.
- *
- * @package    core_form
- * @copyright  2015 Damyon Wiese <damyon@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_form;
+
+use MoodleQuickForm_autocomplete;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,7 +32,7 @@ require_once($CFG->libdir . '/form/autocomplete.php');
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_form_autocomplete_testcase extends basic_testcase {
+class autocomplete_test extends \basic_testcase {
     /**
      * Testcase for validation
      */

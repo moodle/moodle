@@ -14,26 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\task;
+
 /**
  * This file contains the unit tests for the database task logger.
  *
  * @package   core
- * @category  phpunit
+ * @category  test
  * @copyright 2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-use \core\task\database_logger;
-
-/**
- * This file contains the unit tests for the database task logger.
- *
- * @copyright 2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class task_database_logger_testcase extends advanced_testcase {
+class database_logger_test extends \advanced_testcase {
 
     /**
      * @var \moodle_database The original database prior to mocking
@@ -267,7 +258,7 @@ class task_database_logger_testcase extends advanced_testcase {
         set_config('task_logretainruns', 1000);
 
         // Create sample log data - 1 run per hour for 3 days - round down to the start of the hour to avoid time race conditions.
-        $date = new DateTime();
+        $date = new \DateTime();
         $date->setTime($date->format('G'), 0);
         $baselogtime = $date->getTimestamp();
 
@@ -331,7 +322,7 @@ class task_database_logger_testcase extends advanced_testcase {
         set_config('task_logretention', YEARSECS);
 
         // Create sample log data - 2 tasks, once per hour for 3 days.
-        $date = new DateTime();
+        $date = new \DateTime();
         $date->setTime($date->format('G'), 0);
         $firstdate = $date->getTimestamp();
 
@@ -434,7 +425,7 @@ class task_database_logger_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         // Calculate date to be used for logs, starting from current time rounded down to nearest hour.
-        $date = new DateTime();
+        $date = new \DateTime();
         $date->setTime($date->format('G'), 0);
         $baselogtime = $date->getTimestamp();
 

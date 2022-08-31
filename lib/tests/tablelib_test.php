@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test tablelib.
- *
- * @package    core
- * @category   phpunit
- * @copyright  2013 Damyon Wiese <damyon@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core;
+
+use flexible_table;
+use testable_flexible_table;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,11 +29,11 @@ require_once($CFG->libdir . '/tests/fixtures/testable_flexible_table.php');
  * Test some of tablelib.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2013 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_tablelib_testcase extends advanced_testcase {
+class tablelib_test extends \advanced_testcase {
     protected function generate_columns($cols) {
         $columns = array();
         foreach (range(0, $cols - 1) as $j) {
@@ -405,7 +401,7 @@ class core_tablelib_testcase extends advanced_testcase {
 
         // Prohibit the viewfullnames from the default user role.
         $userrole = $DB->get_record('role', ['id' => $CFG->defaultuserroleid]);
-        role_change_permission($userrole->id, context_system::instance(), 'moodle/site:viewfullnames', CAP_PROHIBIT);
+        role_change_permission($userrole->id, \context_system::instance(), 'moodle/site:viewfullnames', CAP_PROHIBIT);
 
         $user = $this->getDataGenerator()->create_user();
 

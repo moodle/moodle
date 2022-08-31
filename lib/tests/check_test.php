@@ -14,18 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Check API unit tests
- *
- * @package    core
- * @category   check
- * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
+namespace core;
 
 use core\check\result;
+use core\check\security\passwordpolicy;
 
 /**
  * Example unit tests for check API
@@ -35,7 +27,7 @@ use core\check\result;
  * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class check_testcase extends advanced_testcase {
+class check_test extends \advanced_testcase {
 
     /**
      * A simple example showing how a check and result object works
@@ -48,7 +40,7 @@ class check_testcase extends advanced_testcase {
         global $CFG;
         $prior = $CFG->passwordpolicy;
 
-        $check = new core\check\security\passwordpolicy();
+        $check = new passwordpolicy();
 
         $CFG->passwordpolicy = false;
         $result = $check->get_result();

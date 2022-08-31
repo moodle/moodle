@@ -14,15 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains the test class testing the \core\ip_utils static helper class functions.
- *
- * @package    core
- * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
-defined('MOODLE_INTERNAL') || die();
+namespace core;
 
 /**
  * This tests the static helper functions contained in the class '\core\ip_utils'.
@@ -31,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_ip_utils_testcase extends basic_testcase {
+class ip_utils_test extends \basic_testcase {
     /**
      * Test for \core\ip_utils::is_domain_name().
      *
