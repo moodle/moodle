@@ -500,6 +500,30 @@ EOD;
         $CFG->debugsqltrace = 0;
     }
 
+    /**
+     * Test the database debugging as SQL comment in anon class
+     *
+     * @covers ::add_sql_debugging
+     */
+    public function test_sql_debugging_anon_class() {
+        global $CFG;
+        $CFG->debugsqltrace = 100;
+
+        // A anon class.
+        $another = new class {
+            /**
+             * Just a test log function
+             */
+            public function log() {
+                global $DB;
+                $DB->get_records_sql('SELECT firstname FROM {user} WHERE firstname = :firstname', ['firstname' => 'JohnDoe']);
+            }
+        };
+        $another->log();
+        $CFG->debugsqltrace = 0;
+        // No assertions just it should not error.
+    }
+
     public function test_strtok() {
         // Strtok was previously used by bound emulation, make sure it is not used any more.
         $DB = $this->tdb;
