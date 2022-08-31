@@ -438,13 +438,15 @@ if ($showactivity) {
             }
 
             if ($mode == 'single') { // Single template
-                $baseurl = 'view.php?d=' . $data->id . '&mode=single&';
+                $baseurl = '/mod/data/view.php';
+                $baseurlparams = ['d' => $data->id, 'mode' => 'single'];
                 if (!empty($search)) {
-                    $baseurl .= 'filter=1&';
+                    $baseurlparams['filter'] = 1;
                 }
                 if (!empty($page)) {
-                    $baseurl .= 'page=' . $page;
+                    $baseurlparams['page'] = $page;
                 }
+                $baseurl = new moodle_url($baseurl, $baseurlparams);
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
                 if (empty($data->singletemplate)){
@@ -462,7 +464,7 @@ if ($showactivity) {
                     $ratingoptions->aggregate = $data->assessed;//the aggregation method
                     $ratingoptions->scaleid = $data->scale;
                     $ratingoptions->userid = $USER->id;
-                    $ratingoptions->returnurl = $CFG->wwwroot.'/mod/data/'.$baseurl;
+                    $ratingoptions->returnurl = $baseurl->out();
                     $ratingoptions->assesstimestart = $data->assesstimestart;
                     $ratingoptions->assesstimefinish = $data->assesstimefinish;
 
@@ -473,7 +475,7 @@ if ($showactivity) {
                 $options = [
                     'search' => $search,
                     'page' => $page,
-                    'baseurl' => new moodle_url($baseurl),
+                    'baseurl' => $baseurl,
                 ];
                 $parser = $manager->get_template('singletemplate', $options);
                 echo $parser->parse_entries($records);
@@ -481,14 +483,12 @@ if ($showactivity) {
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
             } else {                                  // List template
-                $baseurl = 'view.php?d='.$data->id.'&amp;';
-                //send the advanced flag through the URL so it is remembered while paging.
-                $baseurl .= 'advanced='.$advanced.'&amp;';
+                $baseurl = '/mod/data/view.php';
+                $baseurlparams = ['d' => $data->id, 'advanced' => $advanced, 'paging' => $paging];
                 if (!empty($search)) {
-                    $baseurl .= 'filter=1&amp;';
+                    $baseurlparams['filter'] = 1;
                 }
-                //pass variable to allow determining whether or not we are paging through results.
-                $baseurl .= 'paging='.$paging.'&amp;';
+                $baseurl = new moodle_url($baseurl, $baseurlparams);
 
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
@@ -500,14 +500,14 @@ if ($showactivity) {
                 $options = [
                     'search' => $search,
                     'page' => $page,
-                    'baseurl' => new moodle_url($baseurl),
+                    'baseurl' => $baseurl,
                 ];
                 $parser = $manager->get_template('listtemplate', $options);
                 echo $parser->parse_entries($records);
 
                 echo $data->listtemplatefooter;
 
-                echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
+                echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl->out());
             }
 
             if ($mode != 'single' && $canmanageentries) {
