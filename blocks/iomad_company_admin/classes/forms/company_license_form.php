@@ -168,14 +168,17 @@ class company_license_form extends \company_moodleform {
 
         if (empty($this->parentid)) {
             if ($CFG->iomad_autoenrol_managers) {
-                $licensetypes = array(get_string('standard', 'block_iomad_company_admin'),
-                                      get_string('reusable', 'block_iomad_company_admin'));
+                $licensetypes = [0 => get_string('standard', 'block_iomad_company_admin'),
+                                 1 => get_string('reusable', 'block_iomad_company_admin'),
+                                 4 => get_string('blanket', 'block_iomad_company_admin')];
             } else {
-                $licensetypes = array(get_string('standard', 'block_iomad_company_admin'),
-                                      get_string('reusable', 'block_iomad_company_admin'),
-                                      get_string('educator', 'block_iomad_company_admin'),
-                                      get_string('educatorreusable', 'block_iomad_company_admin'));
+                $licensetypes = [0 => get_string('standard', 'block_iomad_company_admin'),
+                                 1 => get_string('reusable', 'block_iomad_company_admin'),
+                                 2 => get_string('educator', 'block_iomad_company_admin'),
+                                 3 => get_string('educatorreusable', 'block_iomad_company_admin'),
+                                 4 => get_string('blanket', 'block_iomad_company_admin')];
             }
+            
             $mform->addElement('select', 'type', get_string('licensetype', 'block_iomad_company_admin'), $licensetypes);
             $mform->addHelpButton('type', 'licensetype', 'block_iomad_company_admin');
             $mform->addElement('selectyesno', 'program', get_string('licenseprogram', 'block_iomad_company_admin'));
@@ -183,6 +186,10 @@ class company_license_form extends \company_moodleform {
             $mform->addElement('selectyesno', 'instant', get_string('licenseinstant', 'block_iomad_company_admin'));
             $mform->addHelpButton('instant', 'licenseinstant', 'block_iomad_company_admin');
             $mform->addElement('date_selector', 'startdate', get_string('licensestartdate', 'block_iomad_company_admin'));
+            
+            // Disable things depending on license type.
+            $mform->disabledIf('program', 'type', 'eq', 4);
+            $mform->disabledIf('instant', 'type', 'eq', 4);
 
             $mform->addHelpButton('startdate', 'licensestartdate', 'block_iomad_company_admin');
             $mform->addRule('startdate', get_string('missingstartdate', 'block_iomad_company_admin'),

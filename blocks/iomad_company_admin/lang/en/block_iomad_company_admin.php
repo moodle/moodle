@@ -53,6 +53,7 @@ $string['autocourses'] = 'Autoenrolment courses';
 $string['autocourses_help'] = 'This is the list of courses which users created using the local IOMAD Signup process will automatically get enrolled on.';
 $string['bgcolor_content'] = 'Content Background Colour';
 $string['bgcolor_header'] = 'Header Background Colour';
+$string['blanket'] = 'Blanket';
 $string['blocktitle'] = 'Company / User Admin';
 $string['cantdeletedepartment'] = 'You cannot delete this department until all of the users are removed.';
 $string['cantdeletetopdepartment'] = 'You cannot delete the top level department';

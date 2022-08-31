@@ -117,6 +117,29 @@ function mycourses_get_my_completion($datefrom = 0) {
             $sharedselfenrolcourse->coursefullname = format_string($sharedselfenrolcourse->coursefullname);
             $myavailablecourses[$sharedselfenrolcourse->coursefullname] = $sharedselfenrolcourse;
         }
+        // Check if there are any courses from 'blanket' licenses.
+        if ($blanketlicenses = $DB->get_records_sql("SELECT * FROM {companylicense}
+                                                     WHERE companyid = :companyid
+                                                     AND type = :type
+                                                     AND startdate < :startdate
+                                                     AND expirydate > :expirydate",
+                                                    ['companyid' => $companyid, 'type' => 4, 'startdate' => time(), 'expirydate' => time()])) {
+            $blanketcourses = [];
+            foreach ($blanketlicenses as $blanketlicense) {
+                $licensecourses = $DB->get_records_sql("SELECT c.id, c.id  as courseid,c.fullname as coursefullname,c.summary as coursesummary
+                                                        FROM {course} c
+                                                        JOIN {companylicense_courses} clc on (c.id = clc.courseid)
+                                                        WHERE clc.licenseid = :licenseid",
+                                                        ['licenseid' => $blanketlicense->id]);
+                foreach ($licensecourses as $licensecourse) {
+                    $blanketcourses[$licensecourse->id] = $licensecourse;
+                }
+            }
+            foreach ($blanketcourses as $blanketcourse) {
+                $blanketcourse->fullname = format_string($blanketcourse->coursefullname);
+                $myavailablecourses[$blanketcourse->coursefullname] = $blanketcourse;
+            }
+        }
     }
     foreach($mynotstartedlicense as $licensedcourse) {
         $licensedcourse->coursefullname = format_string($licensedcourse->coursefullname);
