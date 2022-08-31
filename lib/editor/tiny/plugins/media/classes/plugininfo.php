@@ -31,6 +31,30 @@ use editor_tiny\plugin_with_menuitems;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menuitems, plugin_with_configuration {
+    /**
+     * Whether the plugin is enabled
+     *
+     * @param context $context The context that the editor is used within
+     * @param array $options The options passed in when requesting the editor
+     * @param array $fpoptions The filepicker options passed in when requesting the editor
+     * @param editor $editor The editor instance in which the plugin is initialised
+     * @return boolean
+     */
+    public static function is_enabled(
+        context $context,
+        array $options,
+        array $fpoptions,
+        ?editor $editor = null
+    ): bool {
+        // Disabled if:
+        // - Not logged in or guest.
+        // - Files are not allowed.
+        // - Only URL are supported.
+        $canhavefiles = !empty($options['maxfiles']);
+        $canhaveexternalfiles = !empty($options['return_types']) && ($options['return_types'] & FILE_EXTERNAL);
+
+        return isloggedin() && !isguestuser() && $canhavefiles && $canhaveexternalfiles;
+    }
 
     public static function get_available_buttons(): array {
         return [
@@ -50,6 +74,8 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         array $fpoptions,
         ?editor $editor = null
     ): array {
+
+        // TODO Fetch the actual permissions.
         $permissions = [
             'image' => [
                 'filepicker' => true,
@@ -59,8 +85,50 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
             ]
         ];
 
-        return [
+        return array_merge([
             'permissions' => $permissions,
+        ], self::get_file_manager_configuration($context, $options, $fpoptions));
+    }
+
+    protected static function get_file_manager_configuration(
+        context $context,
+        array $options,
+        array $fpoptions
+    ): array {
+        global $USER;
+
+        $params = [
+            'area' => [],
+            'usercontext' => \context_user::instance($USER->id)->id,
+        ];
+
+        $keys = [
+            'itemid',
+            'areamaxbytes',
+            'maxbytes',
+            'subdirs',
+            'return_types',
+            'removeorphaneddrafts',
+        ];
+        if (isset($options['context'])) {
+            if (is_object($options['context'])) {
+                $params['area']['context'] = $options['context']->id;
+            } else {
+                $params['area']['context'] = $options['context'];
+            }
+        }
+        foreach ($keys as $key) {
+            if (isset($options[$key])) {
+                $params['area'][$key] = $options[$key];
+            }
+        }
+
+        return [
+            'storeinrepo' => true,
+            'data' => [
+                'params' => $params,
+                'fpoptions' => $fpoptions,
+            ],
         ];
     }
 }
