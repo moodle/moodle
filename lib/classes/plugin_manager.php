@@ -2032,6 +2032,7 @@ class core_plugin_manager {
                 'autosave',
                 'h5p',
                 'media',
+                'recordrtc',
             ],
 
             'tinymce' => array(

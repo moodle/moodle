@@ -1,0 +1,43 @@
+.tiny_recordrtc,
+.tiny_recordrtc div {
+    font-weight: normal;
+    line-height: 40px;
+    padding: 3px 0 3px 0;
+}
+
+.tiny_recordrtc .alert {
+    line-height: 40px;
+    text-align: center;
+}
+
+.tiny_recordrtc audio {
+    display: block;
+    width: 100%;
+}
+
+@media screen and (max-width: 670px) {
+    .tiny_recordrtc video {
+        display: block;
+        height: auto;
+        margin: 0 auto;
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 671px) {
+    .tiny_recordrtc video {
+        display: block;
+        height: 480px;
+        margin: 0 auto;
+        width: 640px;
+    }
+}
+
+.tiny_recordrtc #start-stop,
+.tiny_recordrtc #upload {
+    white-space: normal;
+}
+
+.tiny_recordrtc video {
+    border-radius: 8px;
+}
