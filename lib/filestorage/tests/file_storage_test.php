@@ -17,11 +17,19 @@
 /**
  * Unit tests for /lib/filestorage/file_storage.php
  *
- * @package   core_files
- * @category  phpunit
+ * @package   core
+ * @category  test
  * @copyright 2012 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core;
+
+use file_exception;
+use file_reference_exception;
+use repository;
+use stored_file;
+use stored_file_creation_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,11 +41,13 @@ require_once($CFG->libdir . '/filestorage/stored_file.php');
 /**
  * Unit tests for /lib/filestorage/file_storage.php
  *
+ * @package   core
+ * @category  test
  * @copyright 2012 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \file_storage
  */
-class core_files_file_storage_testcase extends advanced_testcase {
+class file_storage_test extends \advanced_testcase {
 
     /**
      * Files can be created from strings.
@@ -53,7 +63,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $installedfiles = $DB->count_records('files', array());
 
         $content = 'abcd';
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $filerecord = array(
             'contextid' => $syscontext->id,
             'component' => 'core',
@@ -126,7 +136,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $installedfiles = $DB->count_records('files', array());
 
         $filepath = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $filerecord = array(
             'contextid' => $syscontext->id,
             'component' => 'core',
@@ -189,7 +199,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         try {
             $fs->create_file_from_pathname($filerecord, $filepath.'nonexistent');
             $this->fail('Exception expected when trying to add non-existent stored file.');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('file_exception', $e);
         }
     }
@@ -205,7 +215,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->resetAfterTest(false);
 
         $filepath = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $filerecord = array(
             'contextid' => $syscontext->id,
             'component' => 'core',
@@ -264,7 +274,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      */
     public function test_get_file_preview_nonimage() {
         $this->resetAfterTest(true);
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $filerecord = array(
             'contextid' => $syscontext->id,
             'component' => 'core',
@@ -294,7 +304,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
         $fs = get_file_storage();
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $component = 'core';
         $filearea  = 'unittest';
         $itemid    = 0;
@@ -343,8 +353,8 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $this->setUser($user);
-        $usercontext = context_user::instance($user->id);
-        $syscontext = context_system::instance();
+        $usercontext = \context_user::instance($user->id);
+        $syscontext = \context_system::instance();
 
         $fs = get_file_storage();
 
@@ -429,8 +439,8 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $this->setUser($user);
-        $usercontext = context_user::instance($user->id);
-        $syscontext = context_system::instance();
+        $usercontext = \context_user::instance($user->id);
+        $syscontext = \context_system::instance();
 
         $fs = get_file_storage();
 
@@ -495,9 +505,9 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $this->setUser($user->id);
-        $usercontext = context_user::instance($user->id);
+        $usercontext = \context_user::instance($user->id);
         // Create a user private file.
-        $file1 = new stdClass;
+        $file1 = new \stdClass;
         $file1->contextid = $usercontext->id;
         $file1->component = 'user';
         $file1->filearea  = 'private';
@@ -782,7 +792,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      */
     public function test_create_directory_component_invalid() {
         $fs = get_file_storage();
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
 
         $this->expectException('file_exception');
         $fs->create_directory($syscontext->id, 'bad/component', 'unittest', 0, '/');
@@ -795,7 +805,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      */
     public function test_create_directory_filearea_invalid() {
         $fs = get_file_storage();
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
 
         $this->expectException('file_exception');
         $fs->create_directory($syscontext->id, 'core', 'bad-filearea', 0, '/');
@@ -808,7 +818,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      */
     public function test_create_directory_itemid_negative() {
         $fs = get_file_storage();
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
 
         $this->expectException('file_exception');
         $fs->create_directory($syscontext->id, 'core', 'unittest', -1, '/');
@@ -821,7 +831,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      */
     public function test_create_directory_itemid_invalid() {
         $fs = get_file_storage();
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
 
         $this->expectException('file_exception');
         $fs->create_directory($syscontext->id, 'core', 'unittest', 'notanint', '/');
@@ -834,7 +844,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      */
     public function test_create_directory_filepath_invalid() {
         $fs = get_file_storage();
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
 
         $this->expectException('file_exception');
         $fs->create_directory($syscontext->id, 'core', 'unittest', 0, '/not-with-trailing/or-leading-slash');
@@ -931,7 +941,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
             'filename'  => 'another-alias-to-1.txt'
         );
 
-        $reference = file_storage::pack_reference(array(
+        $reference = \file_storage::pack_reference(array(
             'contextid' => $user->ctxid,
             'component' => 'user',
             'filearea'  => 'private',
@@ -1062,7 +1072,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
     public function test_create_file_from_url() {
         $this->resetAfterTest(true);
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $filerecord = array(
             'contextid' => $syscontext->id,
             'component' => 'core',
@@ -1133,7 +1143,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         // Create a course with a page resource.
         $course = $this->getDataGenerator()->create_course();
         $page1 = $this->getDataGenerator()->create_module('page', array('course'=>$course->id));
-        $page1context = context_module::instance($page1->cmid);
+        $page1context = \context_module::instance($page1->cmid);
 
         // Add a file to the page.
         $fs = get_file_storage();
@@ -1155,7 +1165,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         // Create a new page.
         $page2 = $this->getDataGenerator()->create_module('page', array('course'=>$course->id));
-        $page2context = context_module::instance($page2->cmid);
+        $page2context = \context_module::instance($page2->cmid);
 
         // Newly created page area is empty.
         $this->assertTrue($fs->is_area_empty($page2context->id, 'mod_page', 'content'));
@@ -1187,7 +1197,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->resetAfterTest(false);
 
         $filepath = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $filerecord = array(
             'contextid' => $syscontext->id,
             'component' => 'core',
@@ -1220,7 +1230,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->resetAfterTest(false);
 
         $filepath = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.png';
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
         $filerecord = array(
             'contextid' => $syscontext->id,
             'component' => 'core',
@@ -1278,8 +1288,8 @@ class core_files_file_storage_testcase extends advanced_testcase {
     }
 
     private function generate_file_record() {
-        $syscontext = context_system::instance();
-        $filerecord = new stdClass();
+        $syscontext = \context_system::instance();
+        $filerecord = new \stdClass();
         $filerecord->contextid = $syscontext->id;
         $filerecord->component = 'core';
         $filerecord->filearea = 'phpunit';
@@ -1490,9 +1500,9 @@ class core_files_file_storage_testcase extends advanced_testcase {
     public function test_create_file_from_storedfile() {
         $this->resetAfterTest(true);
 
-        $syscontext = context_system::instance();
+        $syscontext = \context_system::instance();
 
-        $filerecord = new stdClass();
+        $filerecord = new \stdClass();
         $filerecord->contextid = $syscontext->id;
         $filerecord->component = 'core';
         $filerecord->filearea = 'phpunit';
@@ -1840,7 +1850,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
     }
 
     /**
-     * Calling stored_file::delete_reference() on a non-reference file throws coding_exception
+     * Calling \stored_file::delete_reference() on a non-reference file throws coding_exception
      *
      * @covers \stored_file::delete_reference
      */
@@ -1867,7 +1877,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
     }
 
     /**
-     * Calling stored_file::delete_reference() on a reference file does not affect other
+     * Calling \stored_file::delete_reference() on a reference file does not affect other
      * symlinks to the same original
      *
      * @covers \stored_file::delete_reference
@@ -2047,14 +2057,14 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         $fs = get_file_storage();
         $this->setAdminUser();
-        $contextid = context_user::instance($USER->id)->id;
+        $contextid = \context_user::instance($USER->id)->id;
         $component = 'user';
         $filearea = 'private';
         $itemid = 0;
         $filepath = '/';
 
         // Create some private files.
-        $file = new stdClass;
+        $file = new \stdClass;
         $file->contextid = $contextid;
         $file->component = 'user';
         $file->filearea  = 'private';
@@ -2110,7 +2120,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      * @covers ::mimetype
      */
     public function test_mimetype_not_found() {
-        $mimetype = file_storage::mimetype('/path/to/nonexistent/file');
+        $mimetype = \file_storage::mimetype('/path/to/nonexistent/file');
         $this->assertEquals('document/unknown', $mimetype);
     }
 
@@ -2142,7 +2152,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      * @dataProvider filepath_mimetype_provider
      */
     public function test_mimetype_known(string $filepath, string $expectedmimetype): void {
-        $mimetype = file_storage::mimetype($filepath);
+        $mimetype = \file_storage::mimetype($filepath);
         $this->assertEquals($expectedmimetype, $mimetype);
     }
 
@@ -2153,7 +2163,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      * @covers ::mimetype_from_file
      */
     public function test_mimetype_from_file_not_found() {
-        $mimetype = file_storage::mimetype_from_file('/path/to/nonexistent/file');
+        $mimetype = \file_storage::mimetype_from_file('/path/to/nonexistent/file');
         $this->assertEquals('document/unknown', $mimetype);
     }
 
@@ -2173,7 +2183,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
      * @dataProvider filepath_mimetype_provider
      */
     public function test_mimetype_from_file_known(string $filepath, string $expectedmimetype): void {
-        $mimetype = file_storage::mimetype_from_file($filepath);
+        $mimetype = \file_storage::mimetype_from_file($filepath);
         $this->assertEquals($expectedmimetype, $mimetype);
     }
 

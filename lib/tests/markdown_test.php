@@ -14,19 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
 /**
  * Test markdown text format.
  *
- * @package    core
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
  * This is not a complete markdown test, it just validates
  * Moodle integration works.
  *
@@ -34,11 +26,11 @@ defined('MOODLE_INTERNAL') || die();
  * for more format information.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_markdown_testcase extends basic_testcase {
+class markdown_test extends \basic_testcase {
 
     public function test_paragraphs() {
         $text = "one\n\ntwo";

@@ -18,10 +18,20 @@
  * DML layer tests.
  *
  * @package    core
- * @subpackage dml
+ * @category   test
  * @copyright  2008 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core;
+
+use dml_exception;
+use dml_missing_record_exception;
+use dml_multiple_records_exception;
+use moodle_database;
+use moodle_transaction;
+use xmldb_key;
+use xmldb_table;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,11 +39,12 @@ defined('MOODLE_INTERNAL') || die();
  * DML layer tests.
  *
  * @package    core
- * @subpackage dml
+ * @category   test
  * @copyright  2008 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \moodle_database
  */
-class dml_test extends database_driver_testcase {
+class dml_test extends \database_driver_testcase {
 
     protected function setUp(): void {
         parent::setUp();
@@ -220,7 +231,7 @@ class dml_test extends database_driver_testcase {
         try {
             list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_DOLLAR, 'param', false);
             $this->fail('An Exception is missing, expected due to not supported SQL_PARAMS_DOLLAR');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             $this->assertSame('typenotimplement', $e->errorcode);
         }
@@ -230,7 +241,7 @@ class dml_test extends database_driver_testcase {
         try {
             list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param', false);
             $this->fail('An Exception is missing, expected due to empty array of items');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
@@ -362,7 +373,7 @@ class dml_test extends database_driver_testcase {
         try {
             $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
@@ -372,7 +383,7 @@ class dml_test extends database_driver_testcase {
         try {
             $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
@@ -382,7 +393,7 @@ class dml_test extends database_driver_testcase {
         try {
             $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
@@ -399,7 +410,7 @@ class dml_test extends database_driver_testcase {
         try {
             $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
@@ -410,7 +421,7 @@ class dml_test extends database_driver_testcase {
         try {
             $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
@@ -427,7 +438,7 @@ class dml_test extends database_driver_testcase {
         try {
             $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
@@ -467,7 +478,7 @@ class dml_test extends database_driver_testcase {
         $DB = $this->tdb;
 
         require_once($CFG->dirroot . '/lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php');
-        $fixture = new test_dml_sql_debugging_fixture($this);
+        $fixture = new \test_dml_sql_debugging_fixture($this);
 
         $sql = "SELECT * FROM {users}";
 
@@ -501,7 +512,7 @@ SELECT * FROM {users}
 -- line 74 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
 -- line 83 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two()
 -- line 92 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three()
--- line 497 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
+-- line 508 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
 EOD;
         $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
 
@@ -557,7 +568,7 @@ EOD;
         $this->assertTrue($dbman->table_exists($tablename));
 
         // Test insert record.
-        $rec1 = new stdClass();
+        $rec1 = new \stdClass();
         $rec1->long_int_columnname_with_28c = 28;
         $rec1->long_dec_columnname_with_28c = 28.28;
         $rec1->long_str_columnname_with_28c = '28';
@@ -1015,7 +1026,7 @@ EOD;
         try {
             $DB->execute($sql);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
@@ -1146,7 +1157,7 @@ EOD;
         try {
             $rs = $DB->get_recordset($tablename, $conditions);
             $this->fail('An Exception is missing, expected due to equating of text fields');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             $this->assertSame('textconditionsnotallowed', $e->errorcode);
         }
@@ -1554,7 +1565,7 @@ EOD;
                 // Only in debug mode - hopefully all devs test code in debug mode...
                 $this->fail('An Exception is missing, expected due to equating of text fields');
             }
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             $this->assertSame('textconditionsnotallowed', $e->errorcode);
         }
@@ -1564,7 +1575,7 @@ EOD;
         try {
             $records = $DB->get_records('xxxx', array('id' => 0));
             $this->fail('An Exception is missing, expected due to query against non-existing table');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             if (debugging()) {
                 // Information for developers only, normal users get general error message.
@@ -1575,7 +1586,7 @@ EOD;
         try {
             $records = $DB->get_records('xxxx', array('id' => '1'));
             $this->fail('An Exception is missing, expected due to query against non-existing table');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             if (debugging()) {
                 // Information for developers only, normal users get general error message.
@@ -1587,7 +1598,7 @@ EOD;
         try {
             $records = $DB->get_records($tablename, array('xxxx' => 0));
             $this->fail('An Exception is missing, expected due to query against non-existing column');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             if (debugging()) {
                 // Information for developers only, normal users get general error message.
@@ -1855,7 +1866,7 @@ EOD;
         $DB->insert_record($tablename, array('course' => 2));
 
         $record = $DB->get_record($tablename, array('id' => 2));
-        $this->assertInstanceOf('stdClass', $record);
+        $this->assertInstanceOf(\stdClass::class, $record);
 
         $this->assertEquals(2, $record->course);
         $this->assertEquals(2, $record->id);
@@ -1878,7 +1889,7 @@ EOD;
         $DB->insert_record($tablename, array('course' => 2));
 
         $record = $DB->get_record_select($tablename, "id = ?", array(2));
-        $this->assertInstanceOf('stdClass', $record);
+        $this->assertInstanceOf(\stdClass::class, $record);
 
         $this->assertEquals(2, $record->course);
 
@@ -1902,7 +1913,7 @@ EOD;
 
         // Standard use.
         $record = $DB->get_record_sql("SELECT * FROM {{$tablename}} WHERE id = ?", array(2));
-        $this->assertInstanceOf('stdClass', $record);
+        $this->assertInstanceOf(\stdClass::class, $record);
         $this->assertEquals(2, $record->course);
         $this->assertEquals(2, $record->id);
 
@@ -1983,7 +1994,7 @@ EOD;
                 // Only in debug mode - hopefully all devs test code in debug mode...
                 $this->fail('An Exception is missing, expected due to equating of text fields');
             }
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             $this->assertSame('textconditionsnotallowed', $e->errorcode);
         }
@@ -2106,7 +2117,7 @@ EOD;
         $this->assertEquals($record, $before);
 
         $record = $DB->get_record($tablename, array('course' => 1));
-        $this->assertInstanceOf('stdClass', $record);
+        $this->assertInstanceOf(\stdClass::class, $record);
         $this->assertSame('xx', $record->onechar);
 
         $result = $DB->insert_record_raw($tablename, array('course' => 2, 'onechar' => 'yy'), false);
@@ -2115,21 +2126,21 @@ EOD;
         // Note: bulk not implemented yet.
         $DB->insert_record_raw($tablename, array('course' => 3, 'onechar' => 'zz'), true, true);
         $record = $DB->get_record($tablename, array('course' => 3));
-        $this->assertInstanceOf('stdClass', $record);
+        $this->assertInstanceOf(\stdClass::class, $record);
         $this->assertSame('zz', $record->onechar);
 
         // Custom sequence (id) - returnid is ignored.
         $result = $DB->insert_record_raw($tablename, array('id' => 10, 'course' => 3, 'onechar' => 'bb'), true, false, true);
         $this->assertTrue($result);
         $record = $DB->get_record($tablename, array('id' => 10));
-        $this->assertInstanceOf('stdClass', $record);
+        $this->assertInstanceOf(\stdClass::class, $record);
         $this->assertSame('bb', $record->onechar);
 
         // Custom sequence - missing id error.
         try {
             $DB->insert_record_raw($tablename, array('course' => 3, 'onechar' => 'bb'), true, false, true);
             $this->fail('Exception expected due to missing record');
-        } catch (coding_exception $ex) {
+        } catch (\coding_exception $ex) {
             $this->assertTrue(true);
         }
 
@@ -2192,7 +2203,7 @@ EOD;
         $this->assertEquals(99, $record->course);
 
         // Check nulls are set properly for all types.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->oneint = null;
         $record->onenum = null;
         $record->onechar = null;
@@ -2208,7 +2219,7 @@ EOD;
         $this->assertNull($record->onebinary);
 
         // Check zeros are set properly for all types.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->oneint = 0;
         $record->onenum = 0;
         $recid = $DB->insert_record($tablename, $record);
@@ -2217,7 +2228,7 @@ EOD;
         $this->assertEquals(0, $record->onenum);
 
         // Check booleans are set properly for all types.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->oneint = true; // Trues.
         $record->onenum = true;
         $record->onechar = true;
@@ -2229,7 +2240,7 @@ EOD;
         $this->assertEquals(1, $record->onechar);
         $this->assertEquals(1, $record->onetext);
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->oneint = false; // Falses.
         $record->onenum = false;
         $record->onechar = false;
@@ -2242,34 +2253,34 @@ EOD;
         $this->assertEquals(0, $record->onetext);
 
         // Check string data causes exception in numeric types.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->oneint = 'onestring';
         $record->onenum = 0;
         try {
             $DB->insert_record($tablename, $record);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->oneint = 0;
         $record->onenum = 'onestring';
         try {
             $DB->insert_record($tablename, $record);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
         // Check empty string data is stored as 0 in numeric datatypes.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->oneint = ''; // Empty string.
         $record->onenum = 0;
         $recid = $DB->insert_record($tablename, $record);
         $record = $DB->get_record($tablename, array('id' => $recid));
         $this->assertTrue(is_numeric($record->oneint) && $record->oneint == 0);
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->oneint = 0;
         $record->onenum = ''; // Empty string.
         $recid = $DB->insert_record($tablename, $record);
@@ -2277,7 +2288,7 @@ EOD;
         $this->assertTrue(is_numeric($record->onenum) && $record->onenum == 0);
 
         // Check empty strings are set properly in string types.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->oneint = 0;
         $record->onenum = 0;
         $record->onechar = '';
@@ -2288,7 +2299,7 @@ EOD;
         $this->assertTrue($record->onetext === '');
 
         // Check operation ((210.10 + 39.92) - 150.02) against numeric types.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->oneint = ((210.10 + 39.92) - 150.02);
         $record->onenum = ((210.10 + 39.92) - 150.02);
         $recid = $DB->insert_record($tablename, $record);
@@ -2303,7 +2314,7 @@ EOD;
             'backslashes and quotes sequences (even): \\"\\" \\\'\\\'',
             'backslashes and quotes sequences (odd): \\"\\"\\" \\\'\\\'\\\'');
         foreach ($teststrings as $teststring) {
-            $record = new stdClass();
+            $record = new \stdClass();
             $record->onechar = $teststring;
             $record->onetext = $teststring;
             $recid = $DB->insert_record($tablename, $record);
@@ -2315,7 +2326,7 @@ EOD;
         // Check LOBs in text/binary columns.
         $clob = file_get_contents(__DIR__ . '/fixtures/clob.txt');
         $blob = file_get_contents(__DIR__ . '/fixtures/randombinary');
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->onetext = $clob;
         $record->onebinary = $blob;
         $recid = $DB->insert_record($tablename, $record);
@@ -2328,7 +2339,7 @@ EOD;
         // And "small" LOBs too, just in case.
         $newclob = substr($clob, 0, 500);
         $newblob = substr($blob, 0, 250);
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->onetext = $newclob;
         $record->onebinary = $newblob;
         $recid = $DB->insert_record($tablename, $record);
@@ -2342,7 +2353,7 @@ EOD;
         // And "diagnostic" LOBs too, just in case.
         $newclob = '\'"\\;/ěščřžýáíé';
         $newblob = '\'"\\;/ěščřžýáíé';
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->onetext = $newclob;
         $record->onebinary = $newblob;
         $recid = $DB->insert_record($tablename, $record);
@@ -2354,7 +2365,7 @@ EOD;
         $this->assertEquals(false, $rs->key()); // Ensure recordset key() method to be working ok after closing.
 
         // Test data is not modified.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id     = -1; // Has to be ignored.
         $record->course = 3;
         $record->lalala = 'lalal'; // Unused.
@@ -2417,7 +2428,7 @@ EOD;
         try {
             $DB->insert_record($tablename, $record, false);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
@@ -2425,7 +2436,7 @@ EOD;
         try {
             $DB->insert_record($tablename, $record, true);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
@@ -2433,7 +2444,7 @@ EOD;
         try {
             $DB->insert_record('nonexistenttable', $record, true);
             $this->fail("Expecting an exception, none occurred");
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof dml_exception);
         }
     }
@@ -2456,7 +2467,7 @@ EOD;
 
         $this->assertCount(0, $DB->get_records($tablename));
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id = '1';
         $record->course = '1';
         $record->oneint = null;
@@ -2514,7 +2525,7 @@ EOD;
         try {
             $DB->insert_records($tablename, $records);
             $this->fail('coding_exception expected when insert_records receives different object data structures');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
@@ -2525,7 +2536,7 @@ EOD;
         try {
             $DB->insert_records($tablename, $records);
             $this->fail('coding_exception expected when insert_records receives different object data structures');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
@@ -2533,7 +2544,7 @@ EOD;
         try {
             $DB->insert_records($tablename, $records);
             $this->fail('coding_exception expected when insert_records receives non-traversable data');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
@@ -2541,7 +2552,7 @@ EOD;
         try {
             $DB->insert_records($tablename, $records);
             $this->fail('coding_exception expected when insert_records receives non-objet record');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
     }
@@ -2572,7 +2583,7 @@ EOD;
         try {
             $DB->insert_record($tablename, (object) ['notnull1' => 1, 'nullable1' => 1, 'nullable2' => 1]);
             $this->fail('dml_write_exception expected when a record violates a unique index');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_write_exception', $e);
         }
 
@@ -2646,7 +2657,7 @@ EOD;
         $this->assertEquals(2, $records[13]->course);
 
         // Check nulls are set properly for all types.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id = 20;
         $record->oneint = null;
         $record->onenum = null;
@@ -2663,7 +2674,7 @@ EOD;
         $this->assertNull($record->onebinary);
 
         // Check zeros are set properly for all types.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id = 23;
         $record->oneint = 0;
         $record->onenum = 0;
@@ -2673,29 +2684,29 @@ EOD;
         $this->assertEquals(0, $record->onenum);
 
         // Check string data causes exception in numeric types.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id = 32;
         $record->oneint = 'onestring';
         $record->onenum = 0;
         try {
             $DB->import_record($tablename, $record);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id = 35;
         $record->oneint = 0;
         $record->onenum = 'onestring';
         try {
             $DB->import_record($tablename, $record);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
         // Check empty strings are set properly in string types.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id = 44;
         $record->oneint = 0;
         $record->onenum = 0;
@@ -2707,7 +2718,7 @@ EOD;
         $this->assertTrue($record->onetext === '');
 
         // Check operation ((210.10 + 39.92) - 150.02) against numeric types.
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id = 47;
         $record->oneint = ((210.10 + 39.92) - 150.02);
         $record->onenum = ((210.10 + 39.92) - 150.02);
@@ -2724,7 +2735,7 @@ EOD;
             'backslashes and quotes sequences (even): \\"\\" \\\'\\\'',
             'backslashes and quotes sequences (odd): \\"\\"\\" \\\'\\\'\\\'');
         foreach ($teststrings as $teststring) {
-            $record = new stdClass();
+            $record = new \stdClass();
             $record->id = $i;
             $record->onechar = $teststring;
             $record->onetext = $teststring;
@@ -2737,7 +2748,7 @@ EOD;
 
         // Check LOBs in text/binary columns.
         $clob = file_get_contents(__DIR__ . '/fixtures/clob.txt');
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id = 70;
         $record->onetext = $clob;
         $record->onebinary = '';
@@ -2748,7 +2759,7 @@ EOD;
         $this->assertEquals($clob, $record->onetext, 'Test CLOB insert (full contents output disabled)');
 
         $blob = file_get_contents(__DIR__ . '/fixtures/randombinary');
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id = 71;
         $record->onetext = '';
         $record->onebinary = $blob;
@@ -2761,7 +2772,7 @@ EOD;
         // And "small" LOBs too, just in case.
         $newclob = substr($clob, 0, 500);
         $newblob = substr($blob, 0, 250);
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id = 73;
         $record->onetext = $newclob;
         $record->onebinary = $newblob;
@@ -2801,7 +2812,7 @@ EOD;
         try {
             $DB->update_record_raw($tablename, $record);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('moodle_exception', $e);
         }
 
@@ -2810,7 +2821,7 @@ EOD;
         try {
             $DB->update_record_raw($tablename, $record);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
     }
@@ -2900,7 +2911,7 @@ EOD;
         try {
             $DB->update_record($tablename, $record);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
         $record->oneint = 0;
@@ -2908,7 +2919,7 @@ EOD;
         try {
             $DB->update_record($tablename, $record);
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
@@ -3070,7 +3081,7 @@ EOD;
                 // Only in debug mode - hopefully all devs test code in debug mode...
                 $this->fail('An Exception is missing, expected due to equating of text fields');
             }
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             $this->assertSame('textconditionsnotallowed', $e->errorcode);
         }
@@ -3176,13 +3187,13 @@ EOD;
         try {
             $DB->set_field_select($tablename, 'oneint', 'onestring', 'id = ?', array(1));
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
         try {
             $DB->set_field_select($tablename, 'onenum', 'onestring', 'id = ?', array(1));
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
@@ -3285,7 +3296,7 @@ EOD;
                 // Only in debug mode - hopefully all devs test code in debug mode...
                 $this->fail('An Exception is missing, expected due to equating of text fields');
             }
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             $this->assertSame('textconditionsnotallowed', $e->errorcode);
         }
@@ -3338,14 +3349,14 @@ EOD;
         try {
             $DB->count_records_sql("SELECT onechar FROM {{$tablename}} WHERE course = ?", array(3));
             $this->fail('Exception expected when non-number field used in count_records_sql');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
             $DB->count_records_sql("SELECT course FROM {{$tablename}} WHERE 1 = 2");
             $this->fail('Exception expected when non-number field used in count_records_sql');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
     }
@@ -3378,7 +3389,7 @@ EOD;
                 // Only in debug mode - hopefully all devs test code in debug mode...
                 $this->fail('An Exception is missing, expected due to equating of text fields');
             }
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             $this->assertSame('textconditionsnotallowed', $e->errorcode);
         }
@@ -3529,7 +3540,7 @@ EOD;
                 // Only in debug mode - hopefully all devs test code in debug mode...
                 $this->fail('An Exception is missing, expected due to equating of text fields');
             }
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             $this->assertSame('textconditionsnotallowed', $e->errorcode);
         }
@@ -3542,7 +3553,7 @@ EOD;
                 // Only in debug mode - hopefully all devs test code in debug mode...
                 $this->fail('An Exception is missing, expected due to equating of text fields');
             }
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
             $this->assertSame('textconditionsnotallowed', $e->errorcode);
         }
@@ -3625,11 +3636,11 @@ EOD;
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $o = new stdClass(); // Objects without __toString - never worked.
+        $o = new \stdClass(); // Objects without __toString - never worked.
         try {
             $DB->fix_sql_params("SELECT {{$tablename}} WHERE course = ? ", array($o));
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
@@ -3638,89 +3649,89 @@ EOD;
         try {
             $DB->fix_sql_params("SELECT {{$tablename}} WHERE course = ? ", array($o));
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
             $DB->execute("SELECT {{$tablename}} WHERE course = ? ", array($o));
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
             $DB->get_recordset_sql("SELECT {{$tablename}} WHERE course = ? ", array($o));
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
             $DB->get_records_sql("SELECT {{$tablename}} WHERE course = ? ", array($o));
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
-            $record = new stdClass();
+            $record = new \stdClass();
             $record->course = $o;
             $DB->insert_record_raw($tablename, $record);
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
-            $record = new stdClass();
+            $record = new \stdClass();
             $record->course = $o;
             $DB->insert_record($tablename, $record);
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
-            $record = new stdClass();
+            $record = new \stdClass();
             $record->course = $o;
             $DB->import_record($tablename, $record);
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
-            $record = new stdClass();
+            $record = new \stdClass();
             $record->id = 1;
             $record->course = $o;
             $DB->update_record_raw($tablename, $record);
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
-            $record = new stdClass();
+            $record = new \stdClass();
             $record->id = 1;
             $record->course = $o;
             $DB->update_record($tablename, $record);
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
             $DB->set_field_select($tablename, 'course', 1, "course = ? ", array($o));
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
         try {
             $DB->delete_records_select($tablename, "course = ? ", array($o));
             $this->fail('coding_exception expected');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
     }
@@ -4032,7 +4043,7 @@ EOD;
 
         try {
             $DB->insert_record($tablename, array('name'=>'AAA'));
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             // TODO: ignore case insensitive uniqueness problems for now.
             // $this->fail("Unique index is case sensitive - this may cause problems in some tables");
         }
@@ -4041,7 +4052,7 @@ EOD;
             $DB->insert_record($tablename, array('name'=>'aäa'));
             $DB->insert_record($tablename, array('name'=>'aáa'));
             $this->assertTrue(true);
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $family = $DB->get_dbfamily();
             if ($family === 'mysql' or $family === 'mssql') {
                 $this->fail("Unique index is accent insensitive, this may cause problems for non-ascii languages. This is usually caused by accent insensitive default collation.");
@@ -4575,9 +4586,9 @@ EOD;
             // Silence php warning.
             @$DB->sql_substr("name");
             $this->fail("Expecting an exception, none occurred");
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
-        } catch (Error $error) {
+        } catch (\Error $error) {
             // PHP 7.1 throws Error even earlier.
             $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
         }
@@ -5053,7 +5064,7 @@ EOD;
         $long = '1234567890123456789';
         $DB->replace_all_text($tablename, $columns['name'], 'kk', $long);
         $result = $DB->get_records($tablename, array(), 'id ASC');
-        $expected[$id5]->name = core_text::substr($long.'llll', 0, 20);
+        $expected[$id5]->name = \core_text::substr($long.'llll', 0, 20);
         $this->assertEquals($expected, $result);
 
         $DB->replace_all_text($tablename, $columns['intro'], 'kk', $long);
@@ -5103,7 +5114,7 @@ EOD;
         $this->assertEquals(1, $DB->count_records($tablename));
         try {
             $DB->insert_record($tablename, (object)array('course'=>1));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // This must be ignored and it must not roll back the whole transaction.
         }
         $DB->insert_record($tablename, (object)array('course'=>2));
@@ -5120,7 +5131,7 @@ EOD;
         $this->assertEquals(1, $DB->count_records($tablename));
         try {
             $DB->get_records_sql('s e l e c t');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             // This must be ignored and it must not roll back the whole transaction.
         }
         $DB->insert_record($tablename, (object)array('course'=>2));
@@ -5137,7 +5148,7 @@ EOD;
         $this->assertEquals(1, $DB->count_records($tablename));
         try {
             $DB->execute('xxxx');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             // This must be ignored and it must not roll back the whole transaction.
         }
         $DB->insert_record($tablename, (object)array('course'=>2));
@@ -5154,7 +5165,7 @@ EOD;
         $this->assertEquals(1, $DB->count_records($tablename));
         try {
             $DB->change_database_structure('xxxx');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             // This must be ignored and it must not roll back the whole transaction.
         }
         $DB->insert_record($tablename, (object)array('course'=>2));
@@ -5186,9 +5197,9 @@ EOD;
         $DB->insert_record($tablename, $data);
         $this->assertEquals(1, $DB->count_records($tablename));
         try {
-            $transaction->rollback(new Exception('test'));
+            $transaction->rollback(new \Exception('test'));
             $this->fail('transaction rollback must rethrow exception');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Ignored.
         }
         $this->assertEquals(0, $DB->count_records($tablename));
@@ -5232,9 +5243,9 @@ EOD;
         $DB->insert_record($tablename, $data);
         $transaction2->allow_commit();
         try {
-            $transaction1->rollback(new Exception('test'));
+            $transaction1->rollback(new \Exception('test'));
             $this->fail('transaction rollback must rethrow exception');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertEquals(get_class($e), 'Exception');
         }
         $this->assertEquals(0, $DB->count_records($tablename));
@@ -5249,15 +5260,15 @@ EOD;
         $data = (object)array('course'=>4);
         $DB->insert_record($tablename, $data);
         try {
-            $transaction2->rollback(new Exception('test'));
+            $transaction2->rollback(new \Exception('test'));
             $this->fail('transaction rollback must rethrow exception');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertEquals(get_class($e), 'Exception');
         }
         $this->assertEquals(2, $DB->count_records($tablename)); // Not rolled back yet.
         try {
             $transaction1->allow_commit();
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_transaction_exception', $e);
         }
         $this->assertEquals(2, $DB->count_records($tablename)); // Not rolled back yet.
@@ -5355,7 +5366,7 @@ EOD;
         $DB->insert_record($tablename, $data);
         try {
             $DB->transactions_forbidden();
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_transaction_exception', $e);
         }
         // The previous test does not force rollback.
@@ -5386,13 +5397,13 @@ EOD;
         try {
             $transaction1->allow_commit();
             $this->fail('wrong order of commits must throw exception');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_transaction_exception', $e);
         }
         try {
             $transaction2->allow_commit();
             $this->fail('first wrong commit forces rollback');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_transaction_exception', $e);
         }
         // This is done in default exception handler usually.
@@ -5411,18 +5422,18 @@ EOD;
         $DB->insert_record($tablename, $data);
         try {
             // This first rollback should prevent all other rollbacks.
-            $transaction1->rollback(new Exception('test'));
-        } catch (Exception $e) {
+            $transaction1->rollback(new \Exception('test'));
+        } catch (\Exception $e) {
             $this->assertEquals(get_class($e), 'Exception');
         }
         try {
-            $transaction2->rollback(new Exception('test'));
-        } catch (Exception $e) {
+            $transaction2->rollback(new \Exception('test'));
+        } catch (\Exception $e) {
             $this->assertEquals(get_class($e), 'Exception');
         }
         try {
-            $transaction1->rollback(new Exception('test'));
-        } catch (moodle_exception $e) {
+            $transaction1->rollback(new \Exception('test'));
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_transaction_exception', $e);
         }
         // This is done in default exception handler usually.
@@ -5438,13 +5449,13 @@ EOD;
         try {
             $transaction2->allow_commit();
             $this->fail('foreign transaction must fail');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_transaction_exception', $e);
         }
         try {
             $transaction1->allow_commit();
             $this->fail('first wrong commit forces rollback');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_transaction_exception', $e);
         }
         $DB->force_transaction_rollback();
@@ -5549,7 +5560,7 @@ EOD;
             $DB2->get_session_lock($rowid, $timeout);
             $DB2->release_session_lock($rowid); // Should not be executed, but here for safety.
             $this->fail('An Exception is missing, expected due to session lock acquired.');
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('dml_sessionwait_exception', $e);
             $DB->release_session_lock($rowid); // Release lock on connection1.
         }
@@ -5884,7 +5895,7 @@ EOD;
 
         // Inserts counts as writes.
 
-        $rec1 = new stdClass();
+        $rec1 = new \stdClass();
         $rec1->fieldvalue = 11;
         $rec1->id = $DB->insert_record($tablename, $rec1);
         $this->assertEquals($initwrites + 1, $DB->perf_get_writes());
@@ -5895,7 +5906,7 @@ EOD;
         $this->assertGreaterThanOrEqual($previousqueriestime, $lastqueriestime);
         $previousqueriestime = $lastqueriestime;
 
-        $rec2 = new stdClass();
+        $rec2 = new \stdClass();
         $rec2->fieldvalue = 22;
         $rec2->id = $DB->insert_record($tablename, $rec2);
         $this->assertEquals($initwrites + 2, $DB->perf_get_writes());

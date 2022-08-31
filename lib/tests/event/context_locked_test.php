@@ -14,20 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the context locking events.
- *
- * @package    core
- * @category   test
- * @copyright  2019 University of Nottingham
- * @author     Neill Magill <neill.magill@nottingham.ac.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-use core\event\context_locked;
-use core\event\context_unlocked;
-
-defined('MOODLE_INTERNAL') || die();
+namespace core\event;
 
 /**
  * Unit tests for the context_locked  and context_unlocked events.
@@ -38,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
  * @author     Neill Magill <neill.magill@nottingham.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_event_context_locked_testcase extends \advanced_testcase {
+class context_locked_test extends \advanced_testcase {
     /**
      * Locks an unlocked context and checks that a core\event\context_locked event is created.
      *
@@ -55,7 +42,7 @@ class core_event_context_locked_testcase extends \advanced_testcase {
         $locksink->close();
 
         self::assertCount(1, $lockevents);
-        self::assertContainsOnlyInstancesOf('core\event\context_locked', $lockevents);
+        self::assertContainsOnlyInstancesOf(context_locked::class, $lockevents);
         self::assertEquals($context->id, $lockevents[0]->objectid);
         $this->assertSame('context', $lockevents[0]->objecttable);
         $this->assertEquals($context, $lockevents[0]->get_context());
@@ -101,7 +88,7 @@ class core_event_context_locked_testcase extends \advanced_testcase {
         $unlocksink->close();
 
         self::assertCount(1, $unlockevents);
-        self::assertContainsOnlyInstancesOf('core\event\context_unlocked', $unlockevents);
+        self::assertContainsOnlyInstancesOf(context_unlocked::class, $unlockevents);
         self::assertEquals($context->id, $unlockevents[0]->objectid);
         $this->assertSame('context', $unlockevents[0]->objecttable);
         $this->assertEquals($context, $unlockevents[0]->get_context());

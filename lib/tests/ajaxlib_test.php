@@ -14,22 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
 /**
  * Code quality unit tests that are fast enough to run each time.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2013 Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
  * @covers ::ajax_capture_output
  * @covers ::ajax_check_captured_output
  */
-class core_ajaxlib_testcase extends advanced_testcase {
+class ajaxlib_test extends \advanced_testcase {
     /** @var string Original error log */
     protected $oldlog;
 
