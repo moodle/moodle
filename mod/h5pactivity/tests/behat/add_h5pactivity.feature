@@ -22,13 +22,14 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity to a course
-    When I add a "H5P" to section "1"
-    And I set the following fields to these values:
-      | Name        | Awesome H5P package      |
-      | Description | H5P activity Description |
-    And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Package file" filemanager
-    And I click on "Save and display" "button"
-    And I wait until the page is ready
+    Given the following "activity" exists:
+      | activity        | h5pactivity                   |
+      | course          | C1                            |
+      | section         | 1                             |
+      | name            | Awesome H5P package           |
+      | intro           | H5P activity Description      |
+      | packagefilepath | h5p/tests/fixtures/ipsums.h5p |
+    When I am on the "Awesome H5P package" "h5pactivity activity" page
     Then I should see "H5P activity Description"
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
@@ -40,13 +41,15 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with download
-    When I add a "H5P" to section "1"
-    And I set the following fields to these values:
-      | Name                       | Awesome H5P package |
-      | Description                | Description         |
-      | Allow download             | 1                   |
-    And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Package file" filemanager
-    And I click on "Save and display" "button"
+    Given the following "activity" exists:
+      | activity        | h5pactivity                   |
+      | course          | C1                            |
+      | section         | 1                             |
+      | name            | Awesome H5P package           |
+      | intro           | description                   |
+      | displayoptions  | 12                            |
+      | packagefilepath | h5p/tests/fixtures/ipsums.h5p |
+    When I am on the "Awesome H5P package" "h5pactivity activity" page
     And I wait until the page is ready
     Then I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
@@ -57,13 +60,15 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with embed
-    When I add a "H5P" to section "1"
-    And I set the following fields to these values:
-      | Name              | Awesome H5P package |
-      | Description       | Description         |
-      | Embed button      | 1                   |
-    And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Package file" filemanager
-    And I click on "Save and display" "button"
+    Given the following "activity" exists:
+      | activity        | h5pactivity                   |
+      | course          | C1                            |
+      | section         | 1                             |
+      | name            | Awesome H5P package           |
+      | intro           | description                   |
+      | displayoptions  | 10                            |
+      | packagefilepath | h5p/tests/fixtures/ipsums.h5p |
+    When I am on the "Awesome H5P package" "h5pactivity activity" page
     And I wait until the page is ready
     Then I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
@@ -74,13 +79,15 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with copyright
-    When I add a "H5P" to section "1"
-    And I set the following fields to these values:
-      | Name                  | Awesome H5P package |
-      | Description           | Description         |
-      | Copyright button      | 1                   |
-    And I upload "h5p/tests/fixtures/guess-the-answer.h5p" file to "Package file" filemanager
-    And I click on "Save and display" "button"
+    Given the following "activity" exists:
+      | activity        | h5pactivity                             |
+      | course          | C1                                      |
+      | section         | 1                                       |
+      | name            | Awesome H5P package                     |
+      | intro           | description                             |
+      | displayoptions  | 6                                       |
+      | packagefilepath | h5p/tests/fixtures/guess-the-answer.h5p |
+    When I am on the "Awesome H5P package" "h5pactivity activity" page
     And I wait until the page is ready
     Then I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
@@ -91,13 +98,15 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity with copyright in a content without copyright
-    When I add a "H5P" to section "1"
-    And I set the following fields to these values:
-      | Name                  | Awesome H5P package |
-      | Description           | Description         |
-      | Copyright button      | 1                   |
-    And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Package file" filemanager
-    And I click on "Save and display" "button"
+    Given the following "activity" exists:
+      | activity        | h5pactivity                   |
+      | course          | C1                            |
+      | section         | 1                             |
+      | name            | Awesome H5P package           |
+      | intro           | description                   |
+      | displayoptions  | 6                             |
+      | packagefilepath | h5p/tests/fixtures/ipsums.h5p |
+    When I am on the "Awesome H5P package" "h5pactivity activity" page
     And I wait until the page is ready
     Then I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
@@ -108,15 +117,15 @@ Feature: Add H5P activity
 
   @javascript
   Scenario: Add a h5pactivity activity to a course with all display options enabled
-    When I add a "H5P" to section "1"
-    And I set the following fields to these values:
-      | Name                       | Awesome H5P package |
-      | Description                | Description         |
-      | Allow download             | 1                   |
-      | Embed button               | 1                   |
-      | Copyright button           | 1                   |
-    And I upload "h5p/tests/fixtures/guess-the-answer.h5p" file to "Package file" filemanager
-    And I click on "Save and display" "button"
+    Given the following "activity" exists:
+      | activity        | h5pactivity                             |
+      | course          | C1                                      |
+      | section         | 1                                       |
+      | name            | Awesome H5P package                     |
+      | intro           | description                             |
+      | displayoptions  | 0                                       |
+      | packagefilepath | h5p/tests/fixtures/guess-the-answer.h5p |
+    When I am on the "Awesome H5P package" "h5pactivity activity" page
     And I wait until the page is ready
     Then I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe

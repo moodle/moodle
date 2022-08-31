@@ -25,17 +25,17 @@ Feature: Pass grade activity completion information in the h5p activity
       | Enable completion tracking          | Yes |
       | Show activity completion conditions | Yes |
     And I press "Save and display"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "H5P" to section "1"
-    And I set the following fields to these values:
-      | Name                | Music history                                     |
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require view        | 1                                                 |
-      | Require grade       | 1                                                 |
-      | completionpassgrade | 1                                                 |
-      | gradepass           | 25                                                |
-    And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Package file" filemanager
-    And I click on "Save and display" "button"
+    And the following "activity" exists:
+      | activity            | h5pactivity                          |
+      | course              | C1                                   |
+      | section             | 1                                    |
+      | name                | Music history                        |
+      | completion          | 2                                    |
+      | completionview      | 1                                    |
+      | completionusegrade  | 1                                    |
+      | completionpassgrade | 1                                    |
+      | gradepass           | 25                                   |
+      | packagefilepath     | h5p/tests/fixtures/filltheblanks.h5p |
     And I log out
 
   Scenario: View automatic completion items
