@@ -69,10 +69,7 @@ class system_report_exporter extends persistent_exporter {
             'parameters' => ['type' => PARAM_RAW],
             'filterspresent' => ['type' => PARAM_BOOL],
             'filtersapplied' => ['type' => PARAM_INT],
-            'filtersform' => [
-                'type' => PARAM_RAW,
-                'optional' => true,
-            ],
+            'filtersform' => ['type' => PARAM_RAW],
         ];
     }
 

@@ -90,15 +90,30 @@ class custom_report_exporter extends persistent_exporter {
     protected static function define_other_properties(): array {
         return [
             'table' => ['type' => PARAM_RAW],
-            'sidebarmenucards' => ['type' => custom_report_column_cards_exporter::read_properties_definition()],
-            'conditions' => ['type' => custom_report_conditions_exporter::read_properties_definition()],
-            'filters' => ['type' => custom_report_filters_exporter::read_properties_definition()],
-            'sorting' => ['type' => custom_report_columns_sorting_exporter::read_properties_definition()],
-            'cardview' => ['type' => custom_report_card_view_exporter::read_properties_definition()],
             'filtersapplied' => ['type' => PARAM_INT],
             'filterspresent' => ['type' => PARAM_BOOL],
             'filtersform' => ['type' => PARAM_RAW],
             'editmode' => ['type' => PARAM_BOOL],
+            'sidebarmenucards' => [
+                'type' => custom_report_column_cards_exporter::read_properties_definition(),
+                'optional' => true,
+            ],
+            'conditions' => [
+                'type' => custom_report_conditions_exporter::read_properties_definition(),
+                'optional' => true,
+            ],
+            'filters' => [
+                'type' => custom_report_filters_exporter::read_properties_definition(),
+                'optional' => true,
+            ],
+            'sorting' => [
+                'type' => custom_report_columns_sorting_exporter::read_properties_definition(),
+                'optional' => true,
+            ],
+            'cardview' => [
+                'type' => custom_report_card_view_exporter::read_properties_definition(),
+                'optional' => true,
+            ],
             'javascript' => ['type' => PARAM_RAW],
         ];
     }
@@ -138,32 +153,32 @@ class custom_report_exporter extends persistent_exporter {
         $report = manager::get_report_from_persistent($this->persistent);
 
         // If we are editing we need all this information for the template.
+        $editordata = [];
         if ($this->editmode) {
             $menucardsexporter = new custom_report_column_cards_exporter(null, ['report' => $report]);
-            $menucards = (array) $menucardsexporter->export($output);
+            $editordata['sidebarmenucards'] = (array) $menucardsexporter->export($output);
+
             $conditionsexporter = new custom_report_conditions_exporter(null, ['report' => $report]);
-            $conditions = (array) $conditionsexporter->export($output);
+            $editordata['conditions'] = (array) $conditionsexporter->export($output);
+
             $filtersexporter = new custom_report_filters_exporter(null, ['report' => $report]);
-            $filters = (array) $filtersexporter->export($output);
+            $editordata['filters'] = (array) $filtersexporter->export($output);
+
             $sortingexporter = new custom_report_columns_sorting_exporter(null, ['report' => $report]);
-            $sorting = (array) $sortingexporter->export($output);
+            $editordata['sorting'] = (array) $sortingexporter->export($output);
+
             $cardviewexporter = new custom_report_card_view_exporter(null, ['report' => $report]);
-            $cardview = (array) $cardviewexporter->export($output);
+            $editordata['cardview'] = (array) $cardviewexporter->export($output);
         }
 
         return [
             'table' => $output->render($table),
-            'sidebarmenucards' => $menucards ?? [],
-            'conditions' => $conditions ?? [],
-            'filters' => $filters ?? [],
-            'sorting' => $sorting ?? [],
-            'cardview' => $cardview ?? [],
             'filtersapplied' => $report->get_applied_filter_count(),
             'filterspresent' => $filterspresent,
             'filtersform' => $filtersform,
             'editmode' => $this->editmode,
             'javascript' => '',
-        ];
+        ] + $editordata;
     }
 
     /**

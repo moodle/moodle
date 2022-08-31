@@ -53,7 +53,6 @@ class custom_report_conditions_exporter extends exporter {
         return [
             'hasavailableconditions' => [
                 'type' => PARAM_BOOL,
-                'optional' => true,
             ],
             'availableconditions' => [
                 'type' => [
@@ -71,19 +70,15 @@ class custom_report_conditions_exporter extends exporter {
                     ],
                 ],
                 'multiple' => true,
-                'optional' => true
             ],
             'hasactiveconditions' => [
                 'type' => PARAM_BOOL,
-                'optional' => true,
             ],
             'activeconditionsform' => [
                 'type' => PARAM_RAW,
-                'optional' => true,
             ],
             'helpicon' => [
                 'type' => PARAM_RAW,
-                'optional' => true,
             ],
             'javascript' => [
                 'type' => PARAM_RAW,
