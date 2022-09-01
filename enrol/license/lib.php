@@ -362,7 +362,8 @@ class enrol_license_plugin extends enrol_plugin {
                         // Create an event.
                         $eventother = array('licenseid' => $license->id,
                                             'issuedate' => $issuedate,
-                                            'duedate' => $issuedate);
+                                            'duedate' => $issuedate,
+                                            'noemail' => true);
                         $event = block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($instance->courseid),
                                                                                                       'objectid' => $instance->courseid,
                                                                                                       'courseid' => $instance->courseid,
