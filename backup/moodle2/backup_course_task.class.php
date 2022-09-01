@@ -167,6 +167,7 @@ class backup_course_task extends backup_task {
         $content = self::encode_links_helper($content, 'GRADEREPORTINDEXBYID', '/grade/report/index.php?id=');
         $content = self::encode_links_helper($content, 'BADGESVIEWBYID',       '/badges/view.php?type=2&id=');
         $content = self::encode_links_helper($content, 'USERINDEXVIEWBYID',    '/user/index.php?id=');
+        $content = self::encode_links_helper($content, 'PLUGINFILEBYCONTEXT',  '/pluginfile.php/');
 
         return $content;
     }
