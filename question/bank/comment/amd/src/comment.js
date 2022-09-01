@@ -39,8 +39,7 @@ import Notification from 'core/notification';
 const commentEvent = (questionId, courseID, contextId) => {
     let args = {
         questionid: questionId,
-        courseid: courseID,
-        uniqueidentifier: 'question_comment_version_dropdown'
+        courseid: courseID
     };
     ModalFactory.create({
         type: ModalFactory.types.SAVE_CANCEL,

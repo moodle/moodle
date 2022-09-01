@@ -36,8 +36,7 @@ import * as Str from 'core/str';
  */
 const usageEvent = (questionId, contextId) => {
     let args = {
-        questionid: questionId,
-        uniqueidentifier: 'question_usage_version_dropdown'
+        questionid: questionId
     };
     ModalFactory.create({
         type: ModalFactory.types.CANCEL,
