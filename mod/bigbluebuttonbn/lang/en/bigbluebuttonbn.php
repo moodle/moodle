@@ -298,7 +298,7 @@ $string['general_error_unable_connect'] = 'Unable to connect. Please check the u
 Details : {$a}';
 $string['general_error_no_answer'] = 'Empty response. Please check the url of the BigBlueButton server AND check to see if the BigBlueButton server is running.';
 $string['general_error_not_allowed_to_create_instances'] = 'User is not allowed to create any type of instance.';
-$string['general_error_not_found'] = 'Entity not found : {$a}.';
+$string['general_error_not_found'] = 'Cannot find the BigBlueButton activity ({$a}).';
 $string['general_error_cannot_create_meeting'] = 'Cannot create session.';
 $string['general_error_cannot_get_recordings'] = 'Cannot get recordings.';
 $string['index_confirm_end'] = 'Do you want to end the session?';

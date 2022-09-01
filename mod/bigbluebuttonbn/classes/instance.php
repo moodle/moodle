@@ -999,6 +999,8 @@ EOF;
         return new moodle_url('/mod/bigbluebuttonbn/bbb_view.php', [
             'action' => 'logout',
             'id' => $this->cm->id,
+            'courseid' => $this->cm->course // Used to find the course if ever the activity is deleted
+            // while the meeting is running.
         ]);
     }
 
