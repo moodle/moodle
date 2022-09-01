@@ -359,7 +359,7 @@ class company_license_form extends \company_moodleform {
             $errors['expirydate'] = get_string('errorinvaliddate', 'calendar');
         }
 
-        if ($CFG->iomad_autoenrol_managers && $data['type'] > 1) {
+        if ($CFG->iomad_autoenrol_managers && $data['type'] > 1 && $data['type'] < 4) {
             $errors['type'] = get_string('invalid');
         }
 
