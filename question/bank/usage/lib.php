@@ -32,9 +32,6 @@ defined('MOODLE_INTERNAL') || die();
  * @return string rendered output
  */
 function qbank_usage_output_fragment_question_usage(array $args): string {
-    if (!$args['questionid'] || !$args['uniqueidentifier']) {
-        return '';
-    }
     global $USER, $PAGE, $CFG, $DB;
     require_once($CFG->dirroot . '/question/engine/bank.php');
     $displaydata = [];
@@ -62,7 +59,8 @@ function qbank_usage_output_fragment_question_usage(array $args): string {
         }
     }
     $displaydata['tablesql'] = $questionusagetable->export_for_fragment();
-    $selector = \core_question\output\question_version_selection::make_for_question($args['uniqueidentifier'], $args['questionid']);
+    $selector = \core_question\output\question_version_selection::make_for_question('question_usage_version_dropdown',
+        $args['questionid']);
     $qbankrenderer = $PAGE->get_renderer('core_question', 'bank');
     $displaydata['versionselection'] = $selector->export_for_template($qbankrenderer);
 

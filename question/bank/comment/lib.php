@@ -109,9 +109,6 @@ function qbank_comment_preview_display($question, $courseid): string {
  * @return string rendered output
  */
 function qbank_comment_output_fragment_question_comment($args): string {
-    if (!$args['questionid'] || !$args['uniqueidentifier']) {
-        return '';
-    }
     global $USER, $PAGE, $CFG, $DB;
     $displaydata = [];
     require_once($CFG->dirroot . '/question/engine/bank.php');
@@ -136,7 +133,8 @@ function qbank_comment_output_fragment_question_comment($args): string {
         $displaydata['commenstdisabled'] = true;
     }
 
-    $selector = \core_question\output\question_version_selection::make_for_question($args['uniqueidentifier'], $args['questionid']);
+    $selector = \core_question\output\question_version_selection::make_for_question('question_comment_version_dropdown',
+        $args['questionid']);
     $qbankrenderer = $PAGE->get_renderer('core_question', 'bank');
     $displaydata['versionselection'] = $selector->export_for_template($qbankrenderer);
 
