@@ -32,7 +32,7 @@ $courseid      = required_param('id', PARAM_INT);        // course id
 $page          = optional_param('page', 0, PARAM_INT);   // active page
 $edit          = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
 
-$sortitemid    = optional_param('sortitemid', 0, PARAM_ALPHANUM); // sort by which grade item
+$sortitemid    = optional_param('sortitemid', 0, PARAM_ALPHANUMEXT);
 $action        = optional_param('action', 0, PARAM_ALPHAEXT);
 $move          = optional_param('move', 0, PARAM_INT);
 $type          = optional_param('type', 0, PARAM_ALPHA);

@@ -264,3 +264,9 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     When I navigate to "View > Grader report" in the course gradebook
     Then I should see "litle yellow frog" in the "student1" "table_row"
     And I should see "prince frog" in the "student2" "table_row"
+    # Sort by the custom profile field.
+    And I click on "Favourite frog" "link" in the "gradereport-grader-table" "table"
+    And "student1" "table_row" should appear before "student2" "table_row"
+    # Now sort by descending.
+    And I click on "Favourite frog" "link" in the "gradereport-grader-table" "table"
+    And "student2" "table_row" should appear before "student1" "table_row"
