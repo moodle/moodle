@@ -35,7 +35,7 @@ import {getList} from 'core/normalise';
 import * as CourseEvents from 'core_course/events';
 import Pending from 'core/pending';
 import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
-// The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-79179 is integrated.
+// The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-71979 is integrated.
 import jQuery from 'jquery';
 
 // Load global strings.
@@ -261,7 +261,7 @@ export default class extends BaseComponent {
         );
 
         // Open the cm section node if possible (Bootstrap 4 uses jQuery to interact with collapsibles).
-        // All jQuery int this code can be replaced when MDL-79179 is integrated.
+        // All jQuery int this code can be replaced when MDL-71979 is integrated.
         const sectionnode = currentElement.closest(this.selectors.SECTIONNODE);
         const toggler = jQuery(sectionnode).find(this.selectors.MODALTOGGLER);
         let collapsibleId = toggler.data('target') ?? toggler.attr('href');

@@ -192,7 +192,7 @@ export default class Component extends BaseComponent {
 
         // Course index is based on Bootstrap 4 collapsibles. To collapse them we need jQuery to
         // interact with collapsibles methods. Hopefully, this will change in Bootstrap 5 because
-        // it does not require jQuery anymore (when MDL-79179 is integrated).
+        // it does not require jQuery anymore (when MDL-71979 is integrated).
         const togglerValue = (forceValue) ? 'show' : 'hide';
         jQuery(collapsible).collapse(togglerValue);
     }
