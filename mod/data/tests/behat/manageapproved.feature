@@ -27,7 +27,7 @@ Feature: Users can edit approved entries in database activities
       | approval       | 1                  |
       | manageapproved | 1                  |
     And I am on the "Test database name" "data activity" page logged in as teacher1
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
+    And I add a "Short text" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
     # To generate the default templates.
@@ -59,7 +59,7 @@ Feature: Users can edit approved entries in database activities
       | approval       | 1                  |
       | manageapproved | 0                  |
     And I am on the "Test database name" "data activity" page logged in as teacher1
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
+    And I add a "Short text" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
     # To generate the default templates.
