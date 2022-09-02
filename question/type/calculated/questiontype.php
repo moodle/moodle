@@ -1759,13 +1759,10 @@ class qtype_calculated extends question_type {
                     $line++;
                     $text .= "<td align=\"left\" style=\"white-space:nowrap;\">{$questionname}</td>";
                     // TODO MDL-43779 should not have quiz-specific code here.
-                    $nbofquiz = $DB->count_records('quiz_slots', array('questionid' => $qu->id));
-                    $nbofattempts = $DB->count_records_sql("
-                            SELECT count(1)
-                              FROM {quiz_slots} slot
-                              JOIN {quiz_attempts} quiza ON quiza.quiz = slot.quizid
-                             WHERE slot.questionid = ?
-                               AND quiza.preview = 0", array($qu->id));
+                    $sql = 'SELECT COUNT(*) FROM (' . qbank_usage\helper::get_question_bank_usage_sql() . ') questioncount';
+                    $nbofquiz = $DB->count_records_sql($sql, [$qu->id, 'mod_quiz', 'slot']);
+                    $sql = 'SELECT COUNT(*) FROM (' . qbank_usage\helper::get_question_attempt_usage_sql() . ') attemptcount';
+                    $nbofattempts = $DB->count_records_sql($sql, [$qu->id]);
                     if ($nbofquiz > 0) {
                         $text .= "<td align=\"center\">{$nbofquiz}</td>";
                         $text .= "<td align=\"center\">{$nbofattempts}";
