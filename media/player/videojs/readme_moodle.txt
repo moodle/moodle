@@ -37,3 +37,9 @@ Import plugins:
 
 3. Download https://github.com/videojs/video-js-swf/blob/master/dist/video-js.swf
    and place it into 'videojs/video-js.swf'
+
+Changes:
+In order to improve the validation, a couple of minor changes have been added to the video-lazy.js:
+1. Partial upgrade from VideoJS 7.17.0 for 'Subtitles' label check in 17824 - 17833
+2. Partial upgrade from VideoJS 7.17.0 for 'Captions' label check from 18897 - 18911
+3. Partial upgrade from VideoJS 7.17.0 for 'Description' label check from 19062 - 19075

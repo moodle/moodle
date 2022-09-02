@@ -3479,6 +3479,7 @@
     _proto.createEl = function createEl$1(tagName, properties, attributes) {
       return createEl(tagName, properties, attributes);
     }
+
     /**
      * Localize a string given the string in english.
      *
@@ -17820,11 +17821,16 @@
     _proto.createEl = function createEl(type, props, attrs) {
       // The control is textual, not just an icon
       this.nonIconControl = true;
-      return _ClickableComponent.prototype.createEl.call(this, 'li', assign({
+      var el = _ClickableComponent.prototype.createEl.call(this, 'li', assign({
         className: 'vjs-menu-item',
-        innerHTML: "<span class=\"vjs-menu-item-text\">" + this.localize(this.options_.label) + "</span>",
         tabIndex: -1
-      }, props), attrs);
+      }, props), attrs); // swap icon with menu item text.
+
+      el.replaceChild(createEl('span', {
+        className: 'vjs-menu-item-text',
+        textContent: this.localize(this.options_.label)
+      }), el.querySelector('.vjs-icon-placeholder'));
+      return el;
     }
     /**
      * Ignore keys which are used by the menu, but pass any other ones up. See
@@ -18888,18 +18894,22 @@
     var _proto = SubsCapsMenuItem.prototype;
 
     _proto.createEl = function createEl(type, props, attrs) {
-      var innerHTML = "<span class=\"vjs-menu-item-text\">" + this.localize(this.options_.label);
+      var el = _TextTrackMenuItem.prototype.createEl.call(this, type, props, attrs);
+      var parentSpan = el.querySelector('.vjs-menu-item-text');
 
       if (this.options_.track.kind === 'captions') {
-        innerHTML += "\n        <span aria-hidden=\"true\" class=\"vjs-icon-placeholder\"></span>\n        <span class=\"vjs-control-text\"> " + this.localize('Captions') + "</span>\n      ";
+        parentSpan.appendChild(createEl('span', {
+          className: 'vjs-icon-placeholder'
+        }, {
+          'aria-hidden': true
+        }));
+        parentSpan.appendChild(createEl('span', {
+          className: 'vjs-control-text',
+          // space added as the text will visually flow with the
+          // label
+          textContent: " " + this.localize('Captions')
+        }));
       }
-
-      innerHTML += '</span>';
-
-      var el = _TextTrackMenuItem.prototype.createEl.call(this, type, assign({
-        innerHTML: innerHTML
-      }, props), attrs);
-
       return el;
     };
 
@@ -19049,17 +19059,20 @@
     var _proto = AudioTrackMenuItem.prototype;
 
     _proto.createEl = function createEl(type, props, attrs) {
-      var innerHTML = "<span class=\"vjs-menu-item-text\">" + this.localize(this.options_.label);
+      var el = _MenuItem.prototype.createEl.call(this, type, props, attrs);
+      var parentSpan = el.querySelector('.vjs-menu-item-text');
 
       if (this.options_.track.kind === 'main-desc') {
-        innerHTML += "\n        <span aria-hidden=\"true\" class=\"vjs-icon-placeholder\"></span>\n        <span class=\"vjs-control-text\"> " + this.localize('Descriptions') + "</span>\n      ";
-      }
-
-      innerHTML += '</span>';
-
-      var el = _MenuItem.prototype.createEl.call(this, type, assign({
-        innerHTML: innerHTML
-      }, props), attrs);
+        parentSpan.appendChild(_MenuItem.prototype.createEl.call(this, 'span', {
+          className: 'vjs-icon-placeholder'
+        }, {
+          'aria-hidden': true
+        }));
+        parentSpan.appendChild(_MenuItem.prototype.createEl.call(this, 'span', {
+          className: 'vjs-control-text',
+          textContent: this.localize('Descriptions')
+        }));
+       }
 
       return el;
     }
@@ -32546,7 +32559,22 @@
         return buf.push(' ', node.name, '="', node.value.replace(/[<&"]/g, _xmlEncoder), '"');
 
       case TEXT_NODE:
-        return buf.push(node.data.replace(/[<&]/g, _xmlEncoder));
+        /**
+        * The ampersand character (&) and the left angle bracket (<) must not appear in their literal form,
+        * except when used as markup delimiters, or within a comment, a processing instruction, or a CDATA section.
+        * If they are needed elsewhere, they must be escaped using either numeric character references or the strings
+        * `&amp;` and `&lt;` respectively.
+        * The right angle bracket (>) may be represented using the string " &gt; ", and must, for compatibility,
+        * be escaped using either `&gt;` or a character reference when it appears in the string `]]>` in content,
+        * when that string is not marking the end of a CDATA section.
+        *
+        * In the content of elements, character data is any string of characters
+        * which does not contain the start-delimiter of any markup
+        * and does not include the CDATA-section-close delimiter, `]]>`.
+        *
+        * @see https://www.w3.org/TR/xml/#NT-CharData
+        */
+       return buf.push(node.data.replace(/[<&]/g, _xmlEncoder).replace(/]]>/g, ']]&gt;'));
 
       case CDATA_SECTION_NODE:
         return buf.push('<![CDATA[', node.data, ']]>');
