@@ -21,7 +21,7 @@ Feature: Restore Moodle 2 course backups with different user data settings
       | data     | Test database name | n     | C1     | data1    |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
+    And I add a "Short text" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
     And I navigate to "Templates" in current page administration

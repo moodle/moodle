@@ -23,10 +23,10 @@ Feature: Users can add entries to database activities
   @javascript
   Scenario: Students can add entries to a database
     Given I am on the "Course 1" course page logged in as teacher1
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
+    And I add a "Short text" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
+    And I add a "Short text" field to "Test database name" database and I fill the form with:
       | Field name | Test field 2 name |
       | Field description | Test field 2 description |
     # To generate the default templates.
@@ -94,7 +94,7 @@ Feature: Users can add entries to database activities
     And I set the following fields to these values:
       | Maximum number of entries | 2 |
     And I press "Save and display"
-    And I add a "Text input" field to "Test database name" database and I fill the form with:
+    And I add a "Short text" field to "Test database name" database and I fill the form with:
       | Field name | Test1 |
     And I navigate to "Templates" in current page administration
     And I press "Save template"
