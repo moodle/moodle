@@ -1851,6 +1851,7 @@ class core_plugin_manager {
 
             'datapreset' => array(
                 'imagegallery',
+                'journal',
                 'proposals',
             ),
 
