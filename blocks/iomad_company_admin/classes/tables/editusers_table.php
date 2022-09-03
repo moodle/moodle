@@ -111,13 +111,13 @@ class editusers_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_managertype($row) {
-        global $DB, $USER, $company, $OUTPUT;
+        global $CFG, $DB, $USER, $company, $OUTPUT;
 
         $returnstr = "";
 
         if (empty($USER->editing)) {
             $returnstr .= $this->usertypes[$row->managertype];
-            if (!empty($row->educator)) {
+            if (!empty($row->educator) && empty($CFG->iomad_autoenrol_managers)) {
                 $returnstr .= ",</br>" . $this->usertypes[3];
             }
     
@@ -133,7 +133,11 @@ class editusers_table extends table_sql {
             }
 
             // Set up the current value for the inplace form and display it.
-            $currentvalue = $row->managertype + 10 * $row->educator;
+            if (empty($CFG->iomad_autoenrol_managers)) {
+                $currentvalue = $row->managertype + 10 * $row->educator;
+            } else {
+                $currentvalue = $row->managertype;
+            }
             $editable = new \block_iomad_company_admin\output\user_roles_editable($company,
                                                           \context_system::instance(),
                                                           $row,
