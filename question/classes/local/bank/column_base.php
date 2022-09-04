@@ -31,7 +31,7 @@ namespace core_question\local\bank;
  * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class column_base {
+abstract class column_base extends view_component {
 
     /**
      * @var view $qbank the question bank view we are helping to render.
@@ -40,22 +40,6 @@ abstract class column_base {
 
     /** @var bool determine whether the column is td or th. */
     protected $isheading = false;
-
-    /**
-     * Constructor.
-     * @param view $qbank the question bank view we are helping to render.
-     */
-    public function __construct(view $qbank) {
-        $this->qbank = $qbank;
-        $this->init();
-    }
-
-    /**
-     * A chance for subclasses to initialise themselves, for example to load lang strings,
-     * without having to override the constructor.
-     */
-    protected function init(): void {
-    }
 
     /**
      * Set the column as heading
@@ -297,30 +281,10 @@ abstract class column_base {
         echo \html_writer::end_tag($tag);
     }
 
-    /**
-     * Return an array 'table_alias' => 'JOIN clause' to bring in any data that
-     * this column required.
-     *
-     * The return values for all the columns will be checked. It is OK if two
-     * columns join in the same table with the same alias and identical JOIN clauses.
-     * If to columns try to use the same alias with different joins, you get an error.
-     * The only table included by default is the question table, which is aliased to 'q'.
-     *
-     * It is importnat that your join simply adds additional data (or NULLs) to the
-     * existing rows of the query. It must not cause additional rows.
-     *
-     * @return array 'table_alias' => 'JOIN clause'
-     */
     public function get_extra_joins(): array {
         return [];
     }
 
-    /**
-     * Use table alias 'q' for the question table, or one of the
-     * ones from get_extra_joins. Every field requested must specify a table prefix.
-     *
-     * @return array fields required.
-     */
     public function get_required_fields(): array {
         return [];
     }
