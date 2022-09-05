@@ -544,12 +544,12 @@ class tgz_packer extends file_packer {
      * @param array $expandedfiles List of all files to archive (output)
      * @param string $archivepath Current path within archive
      * @param string $path OS path on disk
-     * @param file_progress $progress Progress indicator or null if none
+     * @param file_progress|null $progress Progress indicator or null if none
      * @param int $done Value for progress indicator
      * @return bool True if successful
      */
     protected function list_files_path(array &$expandedfiles, $archivepath, $path,
-            file_progress $progress = null, $done) {
+            ?file_progress $progress , $done) {
         if (is_dir($path)) {
             // Unless we're using this directory as archive root, add a
             // directory entry.
