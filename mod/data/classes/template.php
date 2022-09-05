@@ -850,7 +850,17 @@ class template {
                         $errors .= $renderer->notification($notification);
                     }
                 }
-                $replacements[] = $errors . $field->display_add_field($entryid, $entrydata);
+                $fielddisplay = '';
+                if ($field->type === 'unknown') {
+                    if ($this->canmanageentries) { // Display notification for users that can manage entries.
+                        $errors .= $renderer->notification(get_string('missingfieldtype', 'data',
+                        (object)['name' => $field->field->name]));
+                    }
+                } else {
+                    $fielddisplay = $field->display_add_field($entryid, $entrydata);
+                }
+
+                $replacements[] = $errors . $fielddisplay;
             }
 
             // Replace the field id tag.
