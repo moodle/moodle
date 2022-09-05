@@ -4536,5 +4536,16 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022041901.07);
     }
 
+    if ($oldversion < 2022041904.03) {
+
+        // Remove any orphaned tag instance records (pointing to non-existing context).
+        $DB->delete_records_select('tag_instance', 'NOT EXISTS (
+            SELECT ctx.id FROM {context} ctx WHERE ctx.id = {tag_instance}.contextid
+        )');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022041904.03);
+    }
+
     return true;
 }
