@@ -323,7 +323,7 @@ class accessibility {
     /**
      * This function runs one specified check on the html item
      *
-     * @param string $html The html string to be analysed; might be NULL.
+     * @param string|null $html The html string to be analysed; might be NULL.
      * @param int $contentid The content area ID
      * @param int $errid The error ID
      * @param string $check The check name to run
@@ -333,7 +333,7 @@ class accessibility {
      * @throws \dml_exception
      */
     public static function run_one_check(
-        string $html = null,
+        ?string $html,
         int $contentid,
         int $errid,
         string $check,
