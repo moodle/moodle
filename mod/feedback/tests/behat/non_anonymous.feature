@@ -140,6 +140,12 @@ Feature: Non anonymous feedback
     And I should not see "Next"
     And I should see "Prev"
     And I click on "Back" "link" in the "region-main" "region"
+    # Sort the feedback responses.
+    And I click on "Do you like this course?" "link" in the "generaltable" "table"
+    And "Username 1" "table_row" should appear before "Username 2" "table_row"
+    # Now sort descending.
+    And I click on "Do you like this course?" "link" in the "generaltable" "table"
+    And "Username 2" "table_row" should appear before "Username 1" "table_row"
     # Delete non anonymous response
     And I click on "Delete entry" "link" in the "Username 1" "table_row"
     And I press "Yes"
