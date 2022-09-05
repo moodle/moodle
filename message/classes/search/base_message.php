@@ -141,7 +141,7 @@ abstract class base_message extends \core_search\base {
      * @return \moodle_recordset|null Recordset or null if no results possible
      * @throws \coding_exception If context invalid
      */
-    protected function get_document_recordset_helper($modifiedfrom, \context $context = null,
+    protected function get_document_recordset_helper($modifiedfrom, ?\context $context,
             $userfield) {
         global $DB;
 

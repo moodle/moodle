@@ -415,12 +415,12 @@ abstract class moodle_database {
     /**
      * This should be called before each db query.
      * @param string $sql The query string.
-     * @param array $params An array of parameters.
+     * @param array|null $params An array of parameters.
      * @param int $type The type of query. ( SQL_QUERY_SELECT | SQL_QUERY_AUX | SQL_QUERY_INSERT | SQL_QUERY_UPDATE | SQL_QUERY_STRUCTURE )
      * @param mixed $extrainfo This is here for any driver specific extra information.
      * @return void
      */
-    protected function query_start($sql, array $params=null, $type, $extrainfo=null) {
+    protected function query_start($sql, ?array $params, $type, $extrainfo=null) {
         if ($this->loggingquery) {
             return;
         }

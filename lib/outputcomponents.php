@@ -4742,12 +4742,12 @@ class action_menu_link extends action_link implements renderable {
      * Constructs the object.
      *
      * @param moodle_url $url The URL for the action.
-     * @param pix_icon $icon The icon to represent the action.
+     * @param pix_icon|null $icon The icon to represent the action.
      * @param string $text The text to represent the action.
      * @param bool $primary Whether this is a primary action or not.
      * @param array $attributes Any attribtues associated with the action.
      */
-    public function __construct(moodle_url $url, pix_icon $icon = null, $text, $primary = true, array $attributes = array()) {
+    public function __construct(moodle_url $url, ?pix_icon $icon, $text, $primary = true, array $attributes = array()) {
         parent::__construct($url, $text, null, $attributes, $icon);
         $this->primary = (bool)$primary;
         $this->add_class('menu-action');
@@ -4813,11 +4813,11 @@ class action_menu_link_primary extends action_menu_link {
      * Constructs the object.
      *
      * @param moodle_url $url
-     * @param pix_icon $icon
+     * @param pix_icon|null $icon
      * @param string $text
      * @param array $attributes
      */
-    public function __construct(moodle_url $url, pix_icon $icon = null, $text, array $attributes = array()) {
+    public function __construct(moodle_url $url, ?pix_icon $icon, $text, array $attributes = array()) {
         parent::__construct($url, $icon, $text, true, $attributes);
     }
 }
@@ -4835,11 +4835,11 @@ class action_menu_link_secondary extends action_menu_link {
      * Constructs the object.
      *
      * @param moodle_url $url
-     * @param pix_icon $icon
+     * @param pix_icon|null $icon
      * @param string $text
      * @param array $attributes
      */
-    public function __construct(moodle_url $url, pix_icon $icon = null, $text, array $attributes = array()) {
+    public function __construct(moodle_url $url, ?pix_icon $icon, $text, array $attributes = array()) {
         parent::__construct($url, $icon, $text, false, $attributes);
     }
 }
