@@ -277,4 +277,18 @@ class participants_test extends core_reportbuilder_testcase {
         $this->assertCount(1, $content);
         $this->assertEquals($expected, $content[0]['c0_firstname']);
     }
+
+    /**
+     * Stress test datasource
+     */
+    public function test_stress_datasource(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->create_and_enrol($course);
+
+        $this->datasource_stress_test_columns(participants::class);
+        $this->datasource_stress_test_columns_aggregation(participants::class);
+        $this->datasource_stress_test_conditions(participants::class, 'course:idnumber');
+    }
 }

@@ -192,4 +192,16 @@ class text extends base {
 
         return true;
     }
+
+    /**
+     * Return sample filter values
+     *
+     * @return array
+     */
+    public function get_sample_values(): array {
+        return [
+            "{$this->name}_operator" => self::IS_EQUAL_TO,
+            "{$this->name}_value" => 'test',
+        ];
+    }
 }

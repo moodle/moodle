@@ -88,6 +88,8 @@ class cohort extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
+        global $DB;
+
         $tablealias = $this->get_table_alias('cohort');
         $contextalias = $this->get_table_alias('context');
 
@@ -130,6 +132,10 @@ class cohort extends base {
             ->set_is_sortable(true);
 
         // Description column.
+        $descriptionfieldsql = "{$tablealias}.description";
+        if ($DB->get_dbfamily() === 'oracle') {
+            $descriptionfieldsql = $DB->sql_order_by_text($descriptionfieldsql, 1024);
+        }
         $columns[] = (new column(
             'description',
             new lang_string('description'),
@@ -138,7 +144,8 @@ class cohort extends base {
             ->add_joins($this->get_joins())
             ->add_join("JOIN {context} {$contextalias} ON {$contextalias}.id = {$tablealias}.contextid")
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealias}.id, {$tablealias}.contextid")
+            ->add_field($descriptionfieldsql, 'description')
+            ->add_fields("{$tablealias}.descriptionformat, {$tablealias}.id, {$tablealias}.contextid")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->add_callback(static function(?string $description, stdClass $cohort): string {
                 global $CFG;

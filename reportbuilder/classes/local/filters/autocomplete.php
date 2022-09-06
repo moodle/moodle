@@ -75,4 +75,15 @@ class autocomplete extends base {
 
         return ["{$fieldsql} $insql", array_merge($params, $inparams)];
     }
+
+    /**
+     * Return sample filter values
+     *
+     * @return array
+     */
+    public function get_sample_values(): array {
+        return [
+            "{$this->name}_values" => [1],
+        ];
+    }
 }

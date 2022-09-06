@@ -137,4 +137,16 @@ class select extends base {
     private function validate_filter_values(?int $operator, $value): bool {
         return !($operator === null || $value === '');
     }
+
+    /**
+     * Return sample filter values
+     *
+     * @return array
+     */
+    public function get_sample_values(): array {
+        return [
+            "{$this->name}_operator" => self::EQUAL_TO,
+            "{$this->name}_value" => 1,
+        ];
+    }
 }

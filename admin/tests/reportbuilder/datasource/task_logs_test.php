@@ -222,6 +222,19 @@ class task_logs_test extends core_reportbuilder_testcase {
     }
 
     /**
+     * Stress test datasource
+     */
+    public function test_stress_datasource(): void {
+        $this->resetAfterTest();
+
+        $this->generate_task_log_data(true, 3, 2, 1654038000, 1654038060, 'hi', 'core_reportbuilder', 'test', 43);
+
+        $this->datasource_stress_test_columns(task_logs::class);
+        $this->datasource_stress_test_columns_aggregation(task_logs::class);
+        $this->datasource_stress_test_conditions(task_logs::class, 'task_log:name');
+    }
+
+    /**
      * Helper to generate some task logs data
      *
      * @param bool $success

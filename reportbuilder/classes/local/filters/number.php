@@ -197,4 +197,16 @@ class number extends base {
 
         return true;
     }
+
+    /**
+     * Return sample filter values
+     *
+     * @return array
+     */
+    public function get_sample_values(): array {
+        return [
+            "{$this->name}_operator" => self::GREATER_THAN,
+            "{$this->name}_value1" => 1,
+        ];
+    }
 }
