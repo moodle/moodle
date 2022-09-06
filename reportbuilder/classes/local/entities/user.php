@@ -108,6 +108,8 @@ class user extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
+        global $DB;
+
         $usertablealias = $this->get_table_alias('user');
 
         $fullnameselect = self::get_name_fields_select($usertablealias);
@@ -218,14 +220,19 @@ class user extends base {
         foreach ($userfields as $userfield => $userfieldlang) {
             $columntype = $this->get_user_field_type($userfield);
 
+            $columnfieldsql = "{$usertablealias}.{$userfield}";
+            if ($columntype === column::TYPE_LONGTEXT && $DB->get_dbfamily() === 'oracle') {
+                $columnfieldsql = $DB->sql_order_by_text($columnfieldsql, 1024);
+            }
+
             $column = (new column(
                 $userfield,
                 $userfieldlang,
                 $this->get_entity_name()
             ))
                 ->add_joins($this->get_joins())
-                ->add_field("{$usertablealias}.{$userfield}")
                 ->set_type($columntype)
+                ->add_field($columnfieldsql, $userfield)
                 ->set_is_sortable($this->is_sortable($userfield))
                 ->add_callback([$this, 'format'], $userfield);
 

@@ -118,12 +118,18 @@ class user_profile_fields {
      * @return column[]
      */
     public function get_columns(): array {
-        $columns = [];
+        global $DB;
 
+        $columns = [];
         foreach ($this->userprofilefields as $profilefield) {
             $userinfotablealias = database::generate_alias();
 
             $columntype = $this->get_user_field_type($profilefield->field->datatype);
+
+            $columnfieldsql = "{$userinfotablealias}.data";
+            if ($DB->get_dbfamily() === 'oracle') {
+                $columnfieldsql = $DB->sql_order_by_text($columnfieldsql, 1024);
+            }
 
             $column = (new column(
                 'profilefield_' . $profilefield->field->shortname,
@@ -136,7 +142,7 @@ class user_profile_fields {
                 ->add_join("LEFT JOIN {user_info_data} {$userinfotablealias} " .
                     "ON {$userinfotablealias}.userid = {$this->usertablefieldalias} " .
                     "AND {$userinfotablealias}.fieldid = {$profilefield->fieldid}")
-                ->add_field("{$userinfotablealias}.data")
+                ->add_field($columnfieldsql, 'data')
                 ->set_type($columntype)
                 ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
                 ->add_callback([$this, 'format_profile_field'], $profilefield);

@@ -37,7 +37,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class datasource_test extends core_reportbuilder_testcase {
+class cohorts_test extends core_reportbuilder_testcase {
 
     /**
      * Test cohorts datasource
@@ -131,5 +131,20 @@ class datasource_test extends core_reportbuilder_testcase {
 
         $contentrow = array_values(reset($content));
         $this->assertEquals([$expectedcohort, $username], $contentrow);
+    }
+
+    /**
+     * Stress test datasource
+     */
+    public function test_stress_datasource(): void {
+        $this->resetAfterTest();
+
+        $cohort = $this->getDataGenerator()->create_cohort();
+        $user = $this->getDataGenerator()->create_user();
+        cohort_add_member($cohort->id, $user->id);
+
+        $this->datasource_stress_test_columns(cohorts::class);
+        $this->datasource_stress_test_columns_aggregation(cohorts::class);
+        $this->datasource_stress_test_conditions(cohorts::class, 'cohort:name');
     }
 }
