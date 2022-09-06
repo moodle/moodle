@@ -279,6 +279,11 @@ XPATH
             'date_time' => <<<XPATH
 .//fieldset[(%idMatch% or ./legend[%exactTagTextMatch%]) and (@data-fieldtype='date' or @data-fieldtype='date_time')]
 XPATH
+        ,
+            'select_menu' => <<<XPATH
+//*[@role='combobox'][@aria-labelledby = //label[contains(normalize-space(string(.)), %locator%)]/@id]
+XPATH
+        ,
         ],
     ];
 

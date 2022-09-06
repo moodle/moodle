@@ -212,6 +212,7 @@ $string['excluded_help'] = 'If ticked, the grade will not be included in any agg
 $string['expand'] = 'Expand category';
 $string['expandcriterion'] = 'Expand criterion';
 $string['export'] = 'Export';
+$string['exportas'] = 'Export as';
 $string['exportalloutcomes'] = 'Export all outcomes';
 $string['exportfeedback'] = 'Include feedback in export';
 $string['exportfeedback_desc'] = 'This can be overridden during export.';
@@ -400,6 +401,7 @@ $string['identifier'] = 'Identify user by';
 $string['idnumbers'] = 'ID numbers';
 $string['ignore'] = 'Ignore';
 $string['import'] = 'Import';
+$string['importas'] = 'Import as';
 $string['importcsv'] = 'Import CSV';
 $string['importcsv_help'] = 'Grades can be imported via a CSV file with format as follows:
 

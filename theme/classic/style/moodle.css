@@ -11758,25 +11758,25 @@ ul {
   width: 100%;
   color: #1d2125; }
 
-.dropdown-item:active, .dropdown-item:hover, .dropdown-item:focus, .dropdown-item:focus-within {
+.dropdown-item.active, .dropdown-item:active, .dropdown-item:hover, .dropdown-item:focus, .dropdown-item:focus-within {
   outline: 0;
   background-color: #0f6cbf;
   color: #fff; }
-  .dropdown-item:active a, .dropdown-item:hover a, .dropdown-item:focus a, .dropdown-item:focus-within a {
+  .dropdown-item.active a, .dropdown-item:active a, .dropdown-item:hover a, .dropdown-item:focus a, .dropdown-item:focus-within a {
     color: #fff; }
 
-.dropdown-item[aria-current="true"] {
+.dropdown-item[aria-current="true"], .dropdown-item[aria-selected="true"] {
   position: relative;
   display: flex;
   align-items: center; }
-  .dropdown-item[aria-current="true"]:before {
+  .dropdown-item[aria-current="true"]:before, .dropdown-item[aria-selected="true"]:before {
     display: inline-block;
     font: normal normal normal 14px/1 FontAwesome;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    content: "";
+    content: "";
     position: absolute;
     left: 0.4rem;
     font-size: 0.7rem; }
@@ -12259,6 +12259,20 @@ body.dragging .dragging {
   font-size: 9px;
   width: 9px;
   border: 0; }
+
+.select-menu ul[role="group"] {
+  padding: 0;
+  margin: 0; }
+  .select-menu ul[role="group"] li:first-child {
+    cursor: default;
+    font-weight: bold;
+    padding: 0.25rem 1.5rem;
+    display: block; }
+  .select-menu ul[role="group"] .dropdown-item {
+    padding-left: 3rem; }
+
+.select-menu .dropdown-item {
+  cursor: pointer; }
 
 .icon {
   font-size: 16px;

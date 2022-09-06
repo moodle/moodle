@@ -27,9 +27,6 @@ use moodle_url;
  */
 class export_action_bar extends action_bar {
 
-    /** @var moodle_url $exportactiveurl The URL that should be set as active in the exports URL selector element. */
-    protected $exportactiveurl;
-
     /** @var string $activeplugin The plugin of the current export grades page (xml, ods, ...). */
     protected $activeplugin;
 
@@ -37,12 +34,14 @@ class export_action_bar extends action_bar {
      * The class constructor.
      *
      * @param \context $context The context object.
-     * @param moodle_url $exportactiveurl The URL that should be set as active in the exports URL selector element.
+     * @param null $unused This parameter has been deprecated since 4.1 and should not be used anymore.
      * @param string $activeplugin The plugin of the current export grades page (xml, ods, ...).
      */
-    public function __construct(\context $context, moodle_url $exportactiveurl, string $activeplugin) {
+    public function __construct(\context $context, $unused, string $activeplugin) {
+        if ($unused !== null) {
+            debugging('Deprecated argument passed to ' . __FUNCTION__, DEBUG_DEVELOPER);
+        }
         parent::__construct($context);
-        $this->exportactiveurl = $exportactiveurl;
         $this->activeplugin = $activeplugin;
     }
 
@@ -85,14 +84,18 @@ class export_action_bar extends action_bar {
         }
 
         $exportsmenu = [];
+        $exportactiveurl = null;
         // Generate the data for the exports navigation selector menu.
         foreach ($exports as $export) {
             $exportsmenu[$export->link->out()] = $export->string;
+            if ($export->id == $this->activeplugin) {
+                $exportactiveurl = $export->link->out();
+            }
         }
 
         // This navigation selector menu will contain the links to all available grade export plugin pages.
-        $exportsurlselect = new \url_select($exportsmenu, $this->exportactiveurl->out(false), null,
-            'gradesexportactionselect');
+        $exportsurlselect = new \core\output\select_menu('exportas', $exportsmenu, $exportactiveurl);
+        $exportsurlselect->set_label(get_string('exportas', 'grades'));
         $data['exportselector'] = $exportsurlselect->export_for_template($output);
 
         return $data;

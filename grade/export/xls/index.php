@@ -33,7 +33,7 @@ $context = context_course::instance($id);
 require_capability('moodle/grade:export', $context);
 require_capability('gradeexport/xls:view', $context);
 
-$actionbar = new \core_grades\output\export_action_bar($context, $PAGE->url, 'xls');
+$actionbar = new \core_grades\output\export_action_bar($context, null, 'xls');
 print_grade_page_head($COURSE->id, 'export', 'xls',
     get_string('exportto', 'grades') . ' ' . get_string('pluginname', 'gradeexport_xls'),
     false, false, true, null, null, null, $actionbar);

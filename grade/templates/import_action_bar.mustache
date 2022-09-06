@@ -44,23 +44,25 @@
             "title": null
         },
         "importselector": {
-            "id": "url_select56789",
-            "action": "https://example.com/get",
-            "formid": "gradesimportactionselect",
-            "sesskey": "sesskey",
-            "classes": "urlselect",
-            "label": "",
-            "helpicon": false,
-            "showbutton": null,
+            "name": "importas",
+            "value": "https://example.com/grade/import/csv/index.php",
+            "baseid": "select-menu56789",
+            "label": "Import as",
+            "labelattributes": [
+                {
+                    "name": "class",
+                    "value": "font-weight-bold"
+                }
+            ],
+            "selectedoption": "CSV file",
             "options": [
                 {
                     "name": "CSV file",
-                    "value": "/grade/import/csv/index.php",
-                    "selected": true
+                    "value": "https://example.com/grade/import/csv/index.php",
+                    "selected": true,
+                    "id": "select-menu-option56789"
                 }
-            ],
-            "disabled": false,
-            "title": null
+            ]
         }
     }
 }}
@@ -73,8 +75,13 @@
         {{/generalnavselector}}
         {{#importselector}}
             <div class="navitem">
-                {{>core/url_select}}
+                {{>core/select_menu}}
             </div>
+            {{#js}}
+                document.querySelector('#{{baseid}}').addEventListener('change', function(e) {
+                window.location.href = e.target.value;
+                });
+            {{/js}}
         {{/importselector}}
     </div>
 </div>

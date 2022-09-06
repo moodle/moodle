@@ -44,23 +44,25 @@
             "title": null
         },
         "exportselector": {
-            "id": "url_select56789",
-            "action": "https://example.com/get",
-            "formid": "gradesexportactionselect",
-            "sesskey": "sesskey",
-            "classes": "urlselect",
-            "label": "",
-            "helpicon": false,
-            "showbutton": null,
+            "name": "exportas",
+            "value": "https://example.com/grade/export/ods/index.php",
+            "baseid": "select-menu56789",
+            "label": "Export as",
+            "labelattributes": [
+                {
+                    "name": "class",
+                    "value": "font-weight-bold"
+                }
+            ],
+            "selectedoption": "OpenDocument spreadsheet",
             "options": [
                 {
                     "name": "OpenDocument spreadsheet",
-                    "value": "/grade/export/ods/index.php",
-                    "selected": true
+                    "value": "https://example.com/grade/export/ods/index.php",
+                    "selected": true,
+                    "id": "select-menu-option56789"
                 }
-            ],
-            "disabled": false,
-            "title": null
+            ]
         }
     }
 }}
@@ -73,8 +75,13 @@
         {{/generalnavselector}}
         {{#exportselector}}
             <div class="navitem">
-                {{>core/url_select}}
+                {{>core/select_menu}}
             </div>
+            {{#js}}
+                document.querySelector('#{{baseid}}').addEventListener('change', function(e) {
+                    window.location.href = e.target.value;
+                });
+            {{/js}}
         {{/exportselector}}
     </div>
 </div>

@@ -48,8 +48,7 @@ class import_key_manager_action_bar extends action_bar {
         }
         $courseid = $this->context->instanceid;
         // Get the data used to output the general navigation selector and imports navigation selector.
-        $importnavselectors = new import_action_bar($this->context,
-            new moodle_url('/grade/import/keymanager.php', ['id' => $courseid]), 'keymanager');
+        $importnavselectors = new import_action_bar($this->context, null, 'keymanager');
         $data = $importnavselectors->export_for_template($output);
 
         // Add a button to the action bar with a link to the 'add user key' page.

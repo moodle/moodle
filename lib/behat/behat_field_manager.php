@@ -190,6 +190,12 @@ class behat_field_manager {
             }
         }
 
+        if ($tagname == 'div') {
+            if ($node->getAttribute('role') == 'combobox') {
+                return 'select_menu';
+            }
+        }
+
         // We can not provide a closer field type.
         return false;
     }
