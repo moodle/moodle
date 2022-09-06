@@ -352,8 +352,10 @@ class grade_report_overview extends grade_report {
         $table->head = array(get_string('coursename', 'grades'));
         $table->data = null;
         foreach ($this->teachercourses as $courseid => $course) {
+            $coursecontext = context_course::instance($course->id);
+            $coursenamelink = format_string($course->fullname, true, ['context' => $coursecontext]);
             $url = new moodle_url('/grade/report/index.php', array('id' => $courseid));
-            $table->data[] = array(html_writer::link($url, $course->fullname));
+            $table->data[] = array(html_writer::link($url, $coursenamelink));
         }
         echo html_writer::table($table);
     }
