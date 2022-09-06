@@ -110,3 +110,10 @@ Feature: Manage and list recordings
     And I select "Recordings from deleted activities" from the "sourcecourseid" singleselect
     And I should see "Recording 1"
     And I should not see "Recording 2"
+
+  Scenario: I check that when I disable Import recording feature the import recording link button should not be shown
+    Given I log in as "admin"
+    And the following config values are set as admin:
+      | bigbluebuttonbn_importrecordings_enabled | 0 |
+    When I am on the "RoomRecordings1" "bigbluebuttonbn activity" page logged in as "admin"
+    Then I should not see "Import recording links"

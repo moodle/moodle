@@ -756,6 +756,9 @@ EOF;
      * @return bool
      */
     public function can_import_recordings(): bool {
+        if (!config::get('importrecordings_enabled')) {
+            return false;
+        }
         if ($this->can_manage_recordings()) {
             return true;
         }
