@@ -79,6 +79,17 @@ information provided here is intended especially for developers.
   Course formats using components will be allowed to use one level indentation only.
 * The method `flexible_table::set_columnsattributes` now can be used with 'class' key to add custom classes to the DOM.
 * The editor_tinymce plugin has been removed from core.
+* Support for serving of AMD modules built in really old versions of Moodle (<= 3.8) has been removed.
+  Please ensure that your AMD modules have been rebuilt with a supported Moodle version.
+* Addition of new 'visibility' and 'participation' fields in the groups table, and 'moodle/group:viewhiddengroups' capability.
+  The following grouplib functions will now return groups and members based on group visibility and the user's permissions:
+   - groups_get_all_groups()
+   - groups_get_user_groups()
+   - groups_get_my_groups()
+   - groups_is_member()
+   - groups_get_members()
+   - groups_get_groups_members()
+  groups_print_activity_menu() will now only return groups where particiation == true.
 
 === 4.1 ===
 

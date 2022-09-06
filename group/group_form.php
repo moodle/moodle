@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use core_group\visibility;
+
 require_once($CFG->dirroot.'/lib/formslib.php');
 
 /**
@@ -66,10 +68,27 @@ class group_form extends moodleform {
         $mform->addHelpButton('enrolmentkey', 'enrolmentkey', 'group');
         $mform->setType('enrolmentkey', PARAM_RAW);
 
+        $visibilityoptions = [
+            GROUPS_VISIBILITY_ALL => get_string('visibilityall', 'group'),
+            GROUPS_VISIBILITY_MEMBERS => get_string('visibilitymembers', 'group'),
+            GROUPS_VISIBILITY_OWN => get_string('visibilityown', 'group'),
+            GROUPS_VISIBILITY_NONE => get_string('visibilitynone', 'group')
+        ];
+        $mform->addElement('select', 'visibility', get_string('visibility', 'group'), $visibilityoptions);
+        $mform->addHelpButton('visibility', 'visibility', 'group');
+        $mform->setType('visibility', PARAM_INT);
+
+        $mform->addElement('advcheckbox', 'participation', '', get_string('participation', 'group'));
+        $mform->addHelpButton('participation', 'participation', 'group');
+        $mform->setType('participation', PARAM_BOOL);
+        $mform->setDefault('participation', 1);
+        $mform->disabledIf('participation', 'visibility', 'in', [GROUPS_VISIBILITY_OWN, GROUPS_VISIBILITY_NONE]);
+
         // Group conversation messaging.
         if (\core_message\api::can_create_group_conversation($USER->id, $coursecontext)) {
             $mform->addElement('selectyesno', 'enablemessaging', get_string('enablemessaging', 'group'));
             $mform->addHelpButton('enablemessaging', 'enablemessaging', 'group');
+            $mform->disabledIf('enablemessaging', 'visibility', 'in', [GROUPS_VISIBILITY_OWN, GROUPS_VISIBILITY_NONE]);
         }
 
         $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
@@ -122,6 +141,16 @@ class group_form extends moodleform {
             if ($mform->elementExists('deletepicture')) {
                 $mform->removeElement('deletepicture');
             }
+        }
+
+        if ($DB->record_exists('groups_members', ['groupid' => $groupid])) {
+            // If the group has members, lock visibility and participation fields.
+            /** @var MoodleQuickForm_select $visibility */
+            $visibility = $mform->getElement('visibility');
+            $visibility->freeze();
+            /** @var MoodleQuickForm_advcheckbox $participation */
+            $participation = $mform->getElement('participation');
+            $participation->freeze();
         }
 
     }

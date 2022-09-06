@@ -174,6 +174,14 @@ $string['nummembers'] = 'Members per group';
 $string['mygroups'] = 'My groups';
 $string['othergroups'] = 'Other groups';
 $string['overview'] = 'Overview';
+$string['participation'] = 'Allow activity participation';
+$string['participation_help'] = 'If enabled, members can select this group when participating in an activity using Separate Groups
+or Visible Groups mode.
+
+This setting is only applicable if the Group visibility is set to "Visible to all" or "Visible to members". Participation is
+disabled otherwise.
+
+This setting cannot be edited once a group has members.';
 $string['potentialmembers'] = 'Potential members: {$a}';
 $string['potentialmembs'] = 'Potential members';
 $string['printerfriendly'] = 'Printer-friendly display';
@@ -198,6 +206,25 @@ $string['toomanygroups'] = 'Insufficient users to populate this number of groups
 $string['usercount'] = 'User count';
 $string['usercounttotal'] = 'User count ({$a})';
 $string['usergroupmembership'] = 'Selected user\'s membership:';
+$string['visibility'] = 'Group visibility';
+$string['visibility_help'] = 'Controls the visibility of membership to this group.
+
+If "Visible to all" is set, all users can see when a user is a member of this group (default).
+
+If "Visible to members" is set, only members of this group can see when another user is a member.
+
+If "See own membership" is set, users can see that they are in this group, but cannot see that other users are members of the group.
+
+If "Membership is hidden" is set, users cannot see that they or anyone else are members of the group.
+
+Users with moodle/course:viewhiddengroups will always be able to see group membership.
+
+This setting cannot be edited once a group has members.
+';
+$string['visibilityall'] = 'Visible to all';
+$string['visibilitymembers'] = 'Visible to members';
+$string['visibilityown'] = 'See own membership';
+$string['visibilitynone'] = 'Membership is hidden';
 $string['memberofgroup'] = 'Group member of: {$a}';
 
 // Deprecated since Moodle 3.11.

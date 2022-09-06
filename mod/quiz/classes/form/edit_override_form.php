@@ -113,7 +113,9 @@ class edit_override_form extends moodleform {
 
                 $groupchoices = [];
                 foreach ($groups as $group) {
-                    $groupchoices[$group->id] = format_string($group->name, true, $this->context);
+                    if ($group->visibility != \core_group\visibility::NONE) {
+                        $groupchoices[$group->id] = format_string($group->name, true, $this->context);
+                    }
                 }
                 unset($groups);
 

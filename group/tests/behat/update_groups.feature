@@ -142,3 +142,20 @@ Feature: Automatic updating of groups and groupings
       | Enrolment key | Abcdef-1 |
     And I press "Save changes"
     And I should not see "This enrolment key is already used for another group."
+
+  @javascript
+  Scenario: Visibility and Participation settings are locked once a group has members
+    Given I set the field "groups" to "Group (with ID)"
+    And I press "Edit group settings"
+    And "visibility" "select" should exist
+    And the field "Group visibility" matches value "Visible to all"
+    And the "participation" "checkbox" should be enabled
+    And the field "Allow activity participation" matches value "1"
+    When the following "group members" exist:
+      | user     | group |
+      | teacher1 | An ID |
+    And I reload the page
+    Then "visibility" "select" should not exist
+    And "Visible to all" "text" should exist
+    And the "participation" "checkbox" should be disabled
+    And the field "Allow activity participation" matches value "1"
