@@ -46,7 +46,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | Field name | Required Coordinates |
       | Field description | Required Coordinates |
       | Required | yes |
-    And I add a "Menu" field to "Test database name" database and I fill the form with:
+    And I add a "Dropdown list" field to "Test database name" database and I fill the form with:
       | Field name | Required Menu |
       | Field description | Required Menu |
       | Required | yes |
@@ -72,13 +72,13 @@ Feature: Users can be required to specify certain fields when adding entries to 
       | Field name | Required URL |
       | Field description | Required URL |
       | Required | yes |
-    And I add a "Multimenu" field to "Test database name" database and I fill the form with:
+    And I add a "Multi-select list" field to "Test database name" database and I fill the form with:
       | Field name | Required Multimenu |
       | Field description | Required Multimenu |
       | Required | yes |
       | Options | Option 1 |
     And I follow "Fields"
-    And I select "Multimenu" from the "newtype" singleselect
+    And I select "Multi-select list" from the "newtype" singleselect
     And I set the following fields to these values:
       | Field name | Required Two-Option Multimenu |
       | Field description | Required Two-Option Multimenu |
@@ -96,7 +96,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
     And I add a "Coordinates" field to "Test database name" database and I fill the form with:
       | Field name | Not required Coordinates |
       | Field description | Not required Coordinates |
-    And I add a "Menu" field to "Test database name" database and I fill the form with:
+    And I add a "Dropdown list" field to "Test database name" database and I fill the form with:
       | Field name | Not required Menu |
       | Field description | Not required Menu |
       | Options | Option 1 |
@@ -116,7 +116,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
     And I add a "URL" field to "Test database name" database and I fill the form with:
       | Field name | Not required URL |
       | Field description | Not required URL |
-    And I add a "Multimenu" field to "Test database name" database and I fill the form with:
+    And I add a "Multi-select list" field to "Test database name" database and I fill the form with:
       | Field name | Not required Multimenu |
       | Field description | Not required Multimenu |
       | Options | Option 1 |
