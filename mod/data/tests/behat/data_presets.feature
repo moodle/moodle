@@ -169,7 +169,6 @@ Feature: Users can view and manage data presets
     And I click on "Save" "button" in the "Edit preset" "dialogue"
     Then I should not see "Preset saved."
     And I should see "Saved preset by teacher1"
-    And I should see "This preset has also a description" in the "Saved preset by teacher1" "table_row"
 
   @javascript
   Scenario: Teachers can edit presets and overwrite them if they are the authors
@@ -237,3 +236,27 @@ Feature: Users can view and manage data presets
     And I should see "This preset has also a description" in the "Saved preset 1" "table_row"
     And I should not see "Saved preset by teacher1"
     And I should not see "The preset1 has description"
+
+  @javascript
+  Scenario: Teachers can delete their own presets
+    Given the following "mod_data > fields" exist:
+      | database | type | name              | description              |
+      | data1    | text | Test field name   | Test field description   |
+    And the following "mod_data > presets" exist:
+      | database | name                      | description                          | user      |
+      | data1    | Saved preset by teacher1  | My funny description goes here.      | teacher1  |
+    And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
+    When I follow "Presets"
+    And I should see "Image gallery"
+    And I should see "Saved preset 1"
+    And I should see "Saved preset by teacher1"
+    # Plugin presets can't be removed.
+    And I should not see "Actions" in the "Image gallery" "table_row"
+    # The teacher should not be able to delete presets saved by others.
+    And I should not see "Actions" in the "Saved preset 1" "table_row"
+    # The teacher should be able to delete their own preset.
+    And I open the action menu in "Saved preset by teacher" "table_row"
+    And I follow "Delete"
+    And I click on "Delete" "button" in the "Delete preset Saved preset by teacher1?" "dialogue"
+    And I should see "Preset deleted"
+    And I should not see "Saved preset by teacher1"

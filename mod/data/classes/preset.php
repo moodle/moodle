@@ -535,4 +535,67 @@ class preset {
 
         return $preset->asXML();
     }
+
+    /**
+     * Checks to see if the user has permission to manage the preset.
+     *
+     * @return bool  Returns true if the user can manage this preset, false otherwise.
+     */
+    public function can_manage(): bool {
+        global $USER;
+
+        if ($this->isplugin) {
+            // Plugin presets can't be removed or edited.
+            return false;
+        }
+
+        $context = $this->manager->get_context();
+        if (has_capability('mod/data:manageuserpresets', $context)) {
+            return true;
+        } else {
+            if ($this->get_userid() == $USER->id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Deletes all files related to a saved preset.
+     *
+     * @return bool True if the preset is a saved preset and the file exists in the file system; false otherwise.
+     */
+    public function delete(): bool {
+        if ($this->isplugin) {
+            // Plugin presets can't be removed.
+            return false;
+        }
+
+        $exists = false;
+        $filepath = $this->get_path();
+
+        $dir = self::get_file($filepath, '.');
+        if (!empty($dir)) {
+            $exists = true;
+
+            $fs = get_file_storage();
+            $files = $fs->get_directory_files(
+                $dir->get_contextid(),
+                $dir->get_component(),
+                $dir->get_filearea(),
+                $dir->get_itemid(),
+                $filepath
+            );
+            if (!empty($files)) {
+                foreach ($files as $file) {
+                    $file->delete();
+                }
+            }
+            $dir->delete();
+            // Reseting storedfile property because the file has been removed.
+            $this->storedfile = null;
+        }
+
+        return $exists;
+    }
 }

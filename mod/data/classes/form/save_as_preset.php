@@ -95,7 +95,7 @@ class save_as_preset extends dynamic_form {
                     break;
                 }
             }
-            if (isset($selectedpreset->name) && !data_user_can_delete_preset($context, $selectedpreset)) {
+            if (!$selectedpreset instanceof preset || !$selectedpreset->can_manage()) {
                 $errors['name'] = get_string('cannotoverwritepreset', 'data');
             }
         } else if ($formdata['action'] == 'saveaspreset' || $formdata['oldpresetname'] != $formdata['name']) {
@@ -105,7 +105,7 @@ class save_as_preset extends dynamic_form {
             $usercandelete = false;
             foreach ($sitepresets as $preset) {
                 if ($formdata['name'] == $preset->name) {
-                    if (data_user_can_delete_preset($context, $preset)) {
+                    if ($preset->can_manage()) {
                         $errors['name'] = get_string('errorpresetexists', 'data');
                         $usercandelete = true;
                     } else {
@@ -176,8 +176,8 @@ class save_as_preset extends dynamic_form {
                         break;
                     }
                 }
-                if (isset($selectedpreset->name) && data_user_can_delete_preset($context, $selectedpreset)) {
-                    data_delete_site_preset($formdata->name);
+                if ($selectedpreset instanceof preset && $selectedpreset->can_manage()) {
+                    $selectedpreset->delete();
                 }
             }
             $presetname = $formdata->name;

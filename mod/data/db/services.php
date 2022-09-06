@@ -115,4 +115,11 @@ $functions = array(
         'capabilities'  => 'mod/data:writeentry',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_data_delete_saved_preset' => array(
+        'classname'     => 'mod_data\external\delete_saved_preset',
+        'description'   => 'Delete site user preset.',
+        'type'          => 'write',
+        'ajax'          => true,
+        'capabilities'  => 'mod/data:manageuserpresets',
+    ),
 );
