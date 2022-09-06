@@ -1679,6 +1679,7 @@ EOF;
         }
 
         // Burst up to the capacity and make sure that the bucket allows it.
+        $burststart = microtime();
         for ($i = 0; $i < $capacity; $i++) {
             if ($i) {
                 sleep(1); // A little delay so we have different timemodified value for files.
@@ -1693,9 +1694,16 @@ EOF;
         // The bucket should be full after bursting.
         $this->assertTrue(file_is_draft_areas_limit_reached($user->id));
 
+        // Calculate the time taken to burst up the bucket capacity.
+        $timetaken = microtime_diff($burststart, microtime());
+
         // The bucket leaks so it shouldn't be full after a certain time.
-        // Reiterating that this test could have been faster if MDL-37327 was implemented.
-        sleep(ceil(1 / $leak) - ($capacity - 1));
+        // Items are added into the bucket at the rate of 1 item per second.
+        // One item leaks from the bucket every 1/$leak seconds.
+        // So it takes 1/$leak - ($capacity-1) seconds for the bucket to leak one item and not be full anymore.
+        $milliseconds = ceil(1000000 * ((1 / $leak) - ($capacity - 1)) - ($timetaken  * 1000));
+        usleep($milliseconds);
+
         $this->assertFalse(file_is_draft_areas_limit_reached($user->id));
 
         // Only one item was leaked from the bucket. So the bucket should become full again if we add a single item to it.
