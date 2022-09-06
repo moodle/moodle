@@ -230,27 +230,37 @@ Feature: Perform basic calendar functionality
     And "Course 3" "autocomplete_suggestions" should exist
 
   @javascript
-  Scenario: Students can only see user event type by default.
+  Scenario: Students can not see event type field by default.
     Given I log in as "student1"
     And I am viewing site calendar
     When I click on "New event" "button"
-    Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
-    And I am on "Course 1" course homepage
-    And I follow "Full calendar"
+    # Only "user" event type is available, so "Type of event" field should not be displayed.
+    Then "Type of event" "select" should not exist
+
+  @javascript
+  Scenario: "Student 2" has "manageentries" capability assigned but it's not enrolled in any course.
+    Given the following "permission overrides" exist:
+      | capability                    | permission | role    | contextlevel | reference |
+      | moodle/calendar:manageentries | Allow      | student | System       |           |
+    And I log in as "student2"
+    And I am viewing site calendar
     When I click on "New event" "button"
-    Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
-    And I click on "Close" "button" in the "New event" "dialogue"
-    And I log out
-    Given I log in as "admin"
-    And I navigate to "Appearance > Calendar" in site administration
-    And I set the field "Admins see all" to "1"
-    And I press "Save changes"
-    And I log out
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Full calendar"
+    # Only "user" event type is available, so "Type of event" field should not be displayed.
+    Then "Type of event" "select" should not exist
+
+  @javascript
+  Scenario: "Student 1" has "manageentries" capability assigned and it's enrolled in a course.
+    Given the following "permission overrides" exist:
+      | capability                    | permission | role    | contextlevel | reference |
+      | moodle/calendar:manageentries | Allow      | student | System       |           |
+    And I log in as "student1"
+    And I am viewing site calendar
     When I click on "New event" "button"
-    Then I should see "User" in the "div#fitem_id_staticeventtype" "css_element"
+    # Student 1 is enrolled in a course and have the capability assigned.
+    # Then, the "Type of event" select box should be visible.
+    Then "Type of event" "select" should exist
+    And I should see "User" in the "Type of event" "select"
+    And I should see "Course" in the "Type of event" "select"
 
   @javascript @accessibility
   Scenario: The calendar page must be accessible
