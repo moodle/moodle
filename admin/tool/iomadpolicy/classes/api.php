@@ -543,7 +543,7 @@ class api {
             // Updating default users only.
             $users = $DB->get_records_sql("SELECT id FROM {user}
                                            WHERE id NOT IN (
-                                              SELECT cu.userid FROM {company_user} cu
+                                              SELECT cu.userid FROM {company_users} cu
                                               JOIN {tool_iomadpolicy} tip ON (cu.companyid = tip.companyid)
                                            )");
             foreach ($users as $user) {
