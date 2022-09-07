@@ -1,8 +1,26 @@
-<div align="center">
-<table id="single">
-<tr><td align="center"><h3>[[title]]</h3></td></tr>
-<tr><td align="center"><div id="singleimage">[[image]]</div></td></tr>
-<tr><td align="center"><span class="caption">[[caption]]</span></td></tr>
-<tr><td align="center">##edit##  ##delete##  ##approve## ##export##</td></tr>
-</table>
+<div class="imagegallery-single">
+    <div class="d-flex">
+        <h3 class="card-title">[[title]]</h3>
+        <div class="ml-auto">##actionsmenu##</div>
+    </div>
+    <div class="imagegallery-single-body">
+        <div class="row">
+          <div class="col col-3 col-md-1"><strong>Author</strong></div>
+          <div class="col">##userpicture## ##user##</div>
+        </div>
+        <div class="row">
+            <div class="col col-3 col-md-1"><strong>Date added</strong></div>
+            <div class="col">##timeadded##</div>
+        </div>
+        <div class="row">
+            <div class="col col-3 col-md-1"><strong>Date modified</strong></div>
+            <div class="col">##timemodified##</div>
+        </div>
+        <div class="row singleentry-image">
+            <div class="col">[[image]]</div>
+        </div>
+        <div class="row singleentry-caption">
+            <div class="col">[[description]]</div>
+        </div>
+    </div>
 </div>
