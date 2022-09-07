@@ -137,16 +137,39 @@ class behat_calendar extends behat_base {
     }
 
     /**
-     * Navigate to a specific date in the calendar.
+     * Navigate to a specific month in the calendar.
      *
      * @Given /^I view the calendar for "(?P<month>\d+)" "(?P<year>\d+)"$/
      * @param int $month the month selected as a number
      * @param int $year the four digit year
      */
     public function i_view_the_calendar_for($month, $year) {
-        $time = make_timestamp($year, $month, 1);
-        $this->execute('behat_general::i_visit', ['/calendar/view.php?view=month&course=1&time='.$time]);
+        $this->view_the_calendar('month', 1, $month, $year);
+    }
 
+    /**
+     * Navigate to a specific date in the calendar.
+     *
+     * @Given /^I view the calendar for "(?P<day>\d+)" "(?P<month>\d+)" "(?P<year>\d+)"$/
+     * @param int $day the day selected as a number
+     * @param int $month the month selected as a number
+     * @param int $year the four digit year
+     */
+    public function i_view_the_calendar_day_view(int $day, int $month, int $year) {
+        $this->view_the_calendar('day', $day, $month, $year);
+    }
+
+    /**
+     * View the correct calendar view with specific day
+     *
+     * @param string $type type of calendar view: month or day
+     * @param int $day the day selected as a number
+     * @param int $month the month selected as a number
+     * @param int $year the four digit year
+     */
+    private function view_the_calendar(string $type, int $day, int $month, int $year) {
+        $time = make_timestamp($year, $month, $day);
+        $this->execute('behat_general::i_visit', ['/calendar/view.php?view=' . $type . '&course=1&time=' . $time]);
     }
 
     /**
