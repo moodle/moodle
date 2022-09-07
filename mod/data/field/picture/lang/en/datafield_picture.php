@@ -24,6 +24,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Picture';
-$string['fieldtypelabel'] = 'Picture field';
-$string['privacy:metadata'] = 'The Picture field component does not store any personal data, it uses tables defined in mod_data.';
+$string['pluginname'] = 'Image';
+$string['fieldtypelabel'] = 'Image';
+$string['privacy:metadata'] = 'The Image field component doesn\'t store any personal data; it uses tables defined in mod_data.';
