@@ -48,7 +48,7 @@ Feature: Completion pass grade
       | completionentriesenabled | 1                                                 |
       | completionentries        | 2                                                 |
     And I press "Save and display"
-    And I add a "Text input" field to "Music history" database and I fill the form with:
+    And I add a "Short text" field to "Music history" database and I fill the form with:
       | Field name | Instrument types |
     And I navigate to "Templates" in current page administration
     And I press "Save template"

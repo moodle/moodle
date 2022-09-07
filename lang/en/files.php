@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['privacy:metadata:file_conversions'] = 'A record of the file_conversions performed by a user';
+$string['privacy:metadata:file_conversions'] = 'A record of the file conversions performed by a user.';
 $string['privacy:metadata:file_conversion:usermodified'] = 'The user who started the file conversion.';
 $string['privacy:metadata:files'] = 'A record of the files uploaded or shared by users';
 $string['privacy:metadata:files:author'] = 'The author of the file\'s content';

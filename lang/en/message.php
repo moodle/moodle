@@ -64,7 +64,7 @@ $string['disableall'] = 'Disable notifications';
 $string['disabled'] = 'Messaging is disabled on this site';
 $string['disallowed'] = 'Locked off';
 $string['editmessages'] = 'Edit messages';
-$string['emailtagline'] = 'This is a copy of a message sent to you at "{$a->sitename}". Go to {$a->url} to reply.';
+$string['emailtagline'] = 'This is a copy of a message sent to you on the site {$a->sitename}. Go to <a href="{$a->url}">{$a->url}</a> to reply.';
 $string['enabled'] = 'Enabled';
 $string['errorcallingprocessor'] = 'Error calling defined output';
 $string['errorconversationdoesnotexist'] = 'Conversation does not exist';
