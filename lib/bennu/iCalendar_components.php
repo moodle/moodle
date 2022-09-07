@@ -303,6 +303,18 @@ class iCalendar_component {
                     $component = $this; // use the iCalendar
                 }
 
+                $cleanedparams = [];
+                // Some parameter values are wrapped by DQUOTE character.
+                // We need to go through and get the actual value inside the quoted string.
+                foreach ($params as $param => $value) {
+                    if (preg_match('#"(?P<actualvalue>[^"]*?)"#', $value, $matches)) {
+                        $cleanedparams[$param] = $matches['actualvalue'];
+                    } else {
+                        $cleanedparams[$param] = $value;
+                    }
+                }
+                $params = $cleanedparams;
+
                 if ($component->add_property($label, $data, $params) === false) {
                     $this->parser_error("Failed to add property '$label' on line $key");
                 }
