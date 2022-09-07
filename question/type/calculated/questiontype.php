@@ -640,23 +640,13 @@ class qtype_calculated extends question_type {
                     if (isset($form->synchronize) && $form->synchronize == 2) {
                         $this->addnamecategory($question);
                     }
-                } else if (!empty($form->makecopy)) {
+                } else {
                     $questionfromid =  $form->id;
                     $question = parent::save_question($question, $form);
                     // Prepare the datasets.
                     $this->preparedatasets($form, $questionfromid);
                     $form->id = $question->id;
                     $this->save_as_new_dataset_definitions($form, $questionfromid);
-                    if (isset($form->synchronize) && $form->synchronize == 2) {
-                        $this->addnamecategory($question);
-                    }
-                } else {
-                    // Editing a question.
-                    $question = parent::save_question($question, $form);
-                    // Prepare the datasets.
-                    $this->preparedatasets($form, $question->id);
-                    $form->id = $question->id;
-                    $this->save_dataset_definitions($form);
                     if (isset($form->synchronize) && $form->synchronize == 2) {
                         $this->addnamecategory($question);
                     }
