@@ -1,0 +1,18 @@
+/******  List View CSS ******/
+
+#proposals-list .card-header a.d-block {
+    color: black;
+    font-weight: bold;
+}
+
+#proposals-list .card {
+    overflow: visible;
+}
+
+/*****  Add entry CSS *****/
+
+.proposals-addentry .form-group label,
+.proposals-asearch .form-group label {
+    font-weight: bold;
+    padding-top: 20px;
+}
