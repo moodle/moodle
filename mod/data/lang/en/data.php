@@ -95,7 +95,7 @@ $string['data:exportuserinfo'] = 'Export user information';
 $string['data:managecomments'] = 'Manage comments';
 $string['data:manageentries'] = 'Manage entries';
 $string['data:managetemplates'] = 'Manage templates';
-$string['data:manageuserpresets'] = 'Manage all template presets';
+$string['data:manageuserpresets'] = 'Manage presets';
 $string['data:rate'] = 'Rate entries';
 $string['data:readentry'] = 'Read entries';
 $string['data:viewalluserpresets'] = 'View presets from all users';
@@ -202,7 +202,7 @@ $string['headerjstemplate'] = 'Defines custom Javascript for manipulating the wa
 $string['headerlisttemplate'] = 'Defines browsing interface for multiple entries';
 $string['headerrsstemplate'] = 'Defines appearance of entries in RSS feeds';
 $string['headersingletemplate'] = 'Defines browsing interface for a single entry';
-$string['checkbox'] = 'Checkbox';
+$string['checkbox'] = 'Checkboxes';
 $string['chooseexportfields'] = 'Choose the fields you wish to export';
 $string['chooseexportformat'] = 'Choose the format you wish to export to';
 $string['chooseorupload'] = 'Choose file';
@@ -236,7 +236,7 @@ $string['invalidrecord'] = 'Incorrect record';
 $string['invalidurl'] = 'The URL you just entered is not valid';
 $string['jstemplate'] = 'Javascript template';
 $string['latitude'] = 'Latitude';
-$string['latlong'] = 'Latitude/longitude';
+$string['latlong'] = 'Coordinates';
 $string['latlongboth'] = 'Both latitude and longitude are required.';
 $string['latlongdownloadallhint'] = 'Download link for all entries as KML';
 $string['latlongkmllabelling'] = 'How to label items in KML files (Google Earth)';
@@ -260,18 +260,18 @@ $string['menuchoose'] = 'Choose...';
 $string['missingdata'] = 'Data id or object must be provided to field class';
 $string['missingfield'] = 'Programmer error: You must specify field and/or data when defining field class.';
 $string['modulename'] = 'Database';
-$string['modulename_help'] = 'The database activity module enables participants to create, maintain and search a collection of entries (i.e. records).  The structure of the entries is defined by the teacher as a number of fields. Field types include checkbox, radio buttons, drop-down menu, text area, URL, picture and uploaded file.
+$string['modulename_help'] = 'Database enables participants to create, maintain, and search a collection of entries.
 
-The visual layout of information when listing, viewing or editing database entries may be controlled by database templates. Database activities may be shared between courses as presets and a teacher may also import and export database entries.
+The structure of the entries is defined using different types of fields, such as short text, dropdown list, text area, URL, image, or file.
 
-If the database auto-linking filter is enabled, any entries in a database will be automatically linked where the words or phrases appear within the course.
+As a teacher, you can comment and rate entries. You can also allow students to rate and comment on entries (peer evaluation). Ratings can be aggregated to form a final grade, which is recorded in the gradebook.
 
-A teacher can allow comments on entries. Entries can also be rated by teachers or students (peer evaluation). Ratings can be aggregated to form a final grade which is recorded in the gradebook.
+If the Database auto-linking filter is enabled, any entries in a database will be automatically linked where the words or phrases appear within the course.
 
-Database activities have many uses, such as
+You can use Database to:
 
-* A collaborative collection of web links, books, book reviews, journal references etc
-* For displaying student-created photos, posters, websites or poems for peer comment and review.';
+* Create a collaborative collection of links, books, book reviews, journal references, etc.
+* Display student-created photos, posters, websites or poems for peer comment and review.';
 $string['modulename_link'] = 'mod/data/view';
 $string['modulenameplural'] = 'Databases';
 $string['more'] = 'More';
@@ -399,7 +399,7 @@ $string['templates'] = 'Templates';
 $string['templatesnavigation'] = 'Templates tertiary navigation';
 $string['templatesaved'] = 'Template saved';
 $string['text'] = 'Text';
-$string['textarea'] = 'Textarea';
+$string['textarea'] = 'Text area';
 $string['timeadded'] = 'Time added';
 $string['timemodified'] = 'Time modified';
 $string['todatabase'] = 'to this database.';
