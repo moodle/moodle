@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="report/coursesize/db" VERSION="20220308" COMMENT="XMLDB file for Moodle report/coursesize"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="report_coursesize" COMMENT="Coursesize calculations cache.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="course id"/>
+        <FIELD NAME="filesize" TYPE="int" LENGTH="15" NOTNULL="true" SEQUENCE="false" COMMENT="Context size in bytes"/>
+        <FIELD NAME="backupsize" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false" COMMENT="size of backups"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

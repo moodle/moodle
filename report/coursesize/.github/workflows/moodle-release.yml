@@ -1,0 +1,22 @@
+#
+# Whenever version.php is changed, add the latest version
+# to the Moodle Plugins directory at https://moodle.org/plugins
+#
+name: Releasing in the Plugins directory
+
+on:
+  push:
+    branches:
+      - MOODLE_39_STABLE
+    paths:
+      - 'version.php'
+
+jobs:
+  workflow_group_39_plus_release:
+    uses: catalyst/catalyst-moodle-workflows/.github/workflows/group-39-plus-release.yml@main
+    with:
+      plugin_name: report_coursesize
+      disable_phpunit: true
+    secrets:
+      moodle_org_token: ${{ secrets.MOODLE_ORG_TOKEN }}
+
