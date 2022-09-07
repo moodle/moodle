@@ -10,10 +10,12 @@ Feature: In a participation report, admin can filter student actions
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
+      | manager1 | Manager | 1 | manager1@example.com |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
+      | manager1 | C1 | manager |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following "activity" exists:
@@ -82,3 +84,21 @@ Feature: In a participation report, admin can filter student actions
     And I set the field "roleid" to "Student"
     And I press "Go"
     Then I should see "Yes (1)"
+
+  @javascript
+  Scenario Outline: Filter participation report by viewable roles
+    Given I am on the "Course 1" course page logged in as "teacher1"
+    When I navigate to "Reports" in current page administration
+    And I click on "Course participation" "link"
+    # Teacher role cannot see Manager by default.
+    Then "Manager" "option" should not exist in the "Show only" "select"
+    And I set the following fields to these values:
+      | Activity module | Test book name |
+      | Show only       | <role>         |
+    And I press "Go"
+    And I should see "<uservisible>" in the "reporttable" "table"
+    And I should not see "<usernonvisible>" in the "reporttable" "table"
+    Examples:
+      | role    | uservisible | usernonvisible |
+      | Student | Student 1   | Teacher 1      |
+      | Teacher | Teacher 1   | Student 1      |
