@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @category   test
  * @copyright  2021 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_bigbluebuttonbn\external\can_join
+ * @covers \mod_bigbluebuttonbn\external\can_join
  */
 class can_join_test extends \externallib_advanced_testcase {
     use testcase_helper_trait;
@@ -48,7 +48,7 @@ class can_join_test extends \externallib_advanced_testcase {
     /**
      * Helper
      *
-     * @param ... $params
+     * @param mixed ...$params
      * @return mixed
      */
     protected function can_join(...$params) {

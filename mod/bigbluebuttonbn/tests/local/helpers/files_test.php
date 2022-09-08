@@ -93,7 +93,8 @@ class files_test extends \advanced_testcase {
         $instance = instance::get_from_instanceid($bbactivity->id);
         $cm = $instance->get_cm();
         $cmrecord = $cm->get_course_module_record();
-        $mediafilename = files::get_plugin_filename($this->get_course(), $cmrecord, $instance->get_context(), ['presentation.pptx']);
+        $mediafilename =
+            files::get_plugin_filename($this->get_course(), $cmrecord, $instance->get_context(), ['presentation.pptx']);
         $this->assertEquals('presentation.pptx', $mediafilename);
     }
 
@@ -199,7 +200,7 @@ class files_test extends \advanced_testcase {
     /**
      * Create a user and an activity
      *
-     * @param null $presentationfilename
+     * @param string|null $presentationpath
      * @param bool $closed
      * @return array
      */

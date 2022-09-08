@@ -162,7 +162,6 @@ class upgrade_recordings_task extends adhoc_task {
      * @param string $meetingid
      * @param bool $isimported
      * @return array
-     * @throws \dml_exception
      */
     protected function get_sql_query_for_logs(string $meetingid, bool $isimported): array {
         global $DB;
@@ -187,7 +186,6 @@ class upgrade_recordings_task extends adhoc_task {
      *
      * @param bool $importedrecordings
      * @return void
-     * @throws \coding_exception
      * @throws \dml_exception
      */
     public static function schedule_upgrade_per_meeting($importedrecordings = false) {
