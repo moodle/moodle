@@ -79,9 +79,6 @@ class company_users_licenses_form extends moodleform {
         $this->user = $DB->get_record('user', array('id' => $this->userid));
         $this->license = $DB->get_record('companylicense', array('id' => $this->licenseid));
 
-        // Disable the onchange popup.
-        $mform->disable_form_change_checker();
-
         parent::__construct($actionurl);
     }
 
@@ -122,6 +119,9 @@ class company_users_licenses_form extends moodleform {
     public function definition_after_data() {
         global $DB, $OUTPUT;
         $mform =& $this->_form;
+
+        // Disable the onchange popup.
+        $mform->disable_form_change_checker();
 
         if (!empty($this->userid)) {
             $this->_form->addElement('hidden', 'userid', $this->userid);
