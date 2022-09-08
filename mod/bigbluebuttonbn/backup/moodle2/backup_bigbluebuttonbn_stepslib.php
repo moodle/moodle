@@ -24,8 +24,6 @@
  * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Define all the backup steps that will be used by the backup_bigbluebuttonbn_activity_task.
  *

@@ -228,11 +228,11 @@ class lib_test extends \advanced_testcase {
                     continue;
                 }
 
-                if (!empty($filter) and $cm->modname != $filter) {
+                if (!empty($filter) && $cm->modname != $filter) {
                     continue;
                 }
 
-                if (!empty($filtermodid) and $cmid != $filtermodid) {
+                if (!empty($filtermodid) && $cmid != $filtermodid) {
                     continue;
                 }
 

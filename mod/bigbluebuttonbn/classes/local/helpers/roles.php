@@ -253,7 +253,7 @@ class roles {
      * Returns an array to populate a list of participants used in mod_form.php with default values.
      *
      * @param context $context
-     * @param int $ownerid
+     * @param int|null $ownerid
      *
      * @return array
      */

@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2021 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @coversDefaultClass \mod_bigbluebuttonbn\external\get_bigbluebuttonbns_by_courses
+ * @covers \mod_bigbluebuttonbn\external\get_bigbluebuttonbns_by_courses
  */
 class get_bigbluebuttons_by_courses_test extends \externallib_advanced_testcase {
     use testcase_helper_trait;
@@ -50,7 +50,7 @@ class get_bigbluebuttons_by_courses_test extends \externallib_advanced_testcase 
     /**
      * Helper
      *
-     * @param ... $params
+     * @param mixed ...$params
      * @return mixed
      */
     protected function get_bigbluebuttons_by_courses(...$params) {

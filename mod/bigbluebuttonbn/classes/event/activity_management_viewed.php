@@ -26,13 +26,14 @@ namespace mod_bigbluebuttonbn\event;
 class activity_management_viewed extends base {
     /**
      * Init method.
+     *
      * @param string $crud
      * @param int $edulevel
      */
     protected function init($crud = 'r', $edulevel = self::LEVEL_PARTICIPATING) {
         parent::init($crud, $edulevel);
-        $this->description = "The user with id '##userid' viewed the bigbluebuttonbn activity management page for ".
-        "the course module id '##contextinstanceid'.";
+        $this->description = "The user with id '##userid' viewed the bigbluebuttonbn activity management page for " .
+            "the course module id '##contextinstanceid'.";
     }
 
     /**
