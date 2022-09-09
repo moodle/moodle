@@ -223,8 +223,14 @@ class task_logs_test extends core_reportbuilder_testcase {
 
     /**
      * Stress test datasource
+     *
+     * In order to execute this test PHPUNIT_LONGTEST should be defined as true in phpunit.xml or directly in config.php
      */
     public function test_stress_datasource(): void {
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
         $this->resetAfterTest();
 
         $this->generate_task_log_data(true, 3, 2, 1654038000, 1654038060, 'hi', 'core_reportbuilder', 'test', 43);
