@@ -158,8 +158,14 @@ class users_test extends core_reportbuilder_testcase {
 
     /**
      * Stress test datasource
+     *
+     * In order to execute this test PHPUNIT_LONGTEST should be defined as true in phpunit.xml or directly in config.php
      */
     public function test_stress_datasource(): void {
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
         $this->resetAfterTest();
 
         $this->getDataGenerator()->create_custom_profile_field(['datatype' => 'text', 'name' => 'Hi', 'shortname' => 'hi']);
