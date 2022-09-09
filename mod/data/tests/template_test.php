@@ -97,17 +97,19 @@ class template_test extends \advanced_testcase {
 
         // Generate an entry.
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
-        $fieldrecord = (object)[
-            'name' => 'myfield',
-            'type' => 'text',
-        ];
+        $fieldrecord = (object)['name' => 'myfield', 'type' => 'text'];
         $field = $generator->create_field($fieldrecord, $activity);
+        $otherfieldrecord = (object)['name' => 'otherfield', 'type' => 'text'];
+        $otherfield = $generator->create_field($otherfieldrecord, $activity);
 
         $this->setUser($user);
 
         $entryid = $generator->create_entry(
             $activity,
-            [$field->field->id => 'Example entry'],
+            [
+                $field->field->id => 'Example entry',
+                $otherfield->field->id => 'Another example',
+            ],
             0,
             ['Cats', 'Dogs'],
             ['approved' => $approved]
@@ -149,6 +151,8 @@ class template_test extends \advanced_testcase {
             '{timeadded}' => userdate($entry->timecreated, get_string('strftimedatemonthabbr', 'langconfig')),
             '{timemodified}' => userdate($entry->timemodified, get_string('strftimedatemonthabbr', 'langconfig')),
             '{fieldid}' => $field->field->id,
+            '{fieldname}' => $field->field->name,
+            '{fielddescription}' => $field->field->description,
             '{entryid}' => $entry->id,
             '{cmid}' => $cm->id,
             '{courseid}' => $course->id,
@@ -330,9 +334,19 @@ class template_test extends \advanced_testcase {
                 'expected' => '|Some .*Example entry.* tag|',
                 'rolename' => 'editingteacher',
             ],
-            'Teacher field#id name tag' => [
+            'Teacher field#id tag' => [
                 'templatecontent' => 'Some [[myfield#id]] tag',
                 'expected' => '|Some {fieldid} tag|',
+                'rolename' => 'editingteacher',
+            ],
+            'Teacher field#name tag' => [
+                'templatecontent' => 'Some [[myfield#name]] tag',
+                'expected' => '|Some {fieldname} tag|',
+                'rolename' => 'editingteacher',
+            ],
+            'Teacher field#description tag' => [
+                'templatecontent' => 'Some [[myfield#description]] tag',
+                'expected' => '|Some {fielddescription} tag|',
                 'rolename' => 'editingteacher',
             ],
             'Teacher comments name tag with comments enabled' => [
@@ -433,6 +447,16 @@ class template_test extends \advanced_testcase {
                 'enablecomments' => false,
                 'enableratings' => false,
                 'options' => ['showmore' => true],
+            ],
+            'Teacher otherfields tag' => [
+                'templatecontent' => 'Some ##otherfields## tag',
+                'expected' => '|Some .*{fieldname}.*Example entry.*otherfield.*Another example.* tag|',
+                'rolename' => 'editingteacher',
+            ],
+            'Teacher otherfields tag with some field in the template' => [
+                'templatecontent' => 'Some [[myfield]] and ##otherfields## tag',
+                'expected' => '|Some .*Example entry.* and .*otherfield.*Another example.* tag|',
+                'rolename' => 'editingteacher',
             ],
             // Student scenarios.
             'Student id tag' => [
@@ -631,6 +655,16 @@ class template_test extends \advanced_testcase {
                 'expected' => '|Some {fieldid} tag|',
                 'rolename' => 'student',
             ],
+            'Student field#name tag' => [
+                'templatecontent' => 'Some [[myfield#name]] tag',
+                'expected' => '|Some {fieldname} tag|',
+                'rolename' => 'student',
+            ],
+            'Student field#description tag' => [
+                'templatecontent' => 'Some [[myfield#description]] tag',
+                'expected' => '|Some {fielddescription} tag|',
+                'rolename' => 'student',
+            ],
             'Student comments name tag with comments enabled' => [
                 'templatecontent' => 'Some ##comments## tag',
                 'expected' => '|Some .*Comments.* tag|',
@@ -730,6 +764,16 @@ class template_test extends \advanced_testcase {
                 'enableratings' => false,
                 'options' => ['showmore' => true],
             ],
+            'Student otherfields tag' => [
+                'templatecontent' => 'Some ##otherfields## tag',
+                'expected' => '|Some .*{fieldname}.*Example entry.*otherfield.*Another example.* tag|',
+                'rolename' => 'student',
+            ],
+            'Student otherfields tag with some field in the template' => [
+                'templatecontent' => 'Some [[myfield]] and ##otherfields## tag',
+                'expected' => '|Some .*Example entry.* and .*otherfield.*Another example.* tag|',
+                'rolename' => 'student',
+            ],
         ];
     }
 
@@ -825,8 +869,11 @@ class template_test extends \advanced_testcase {
         $fieldrecord = (object)[
             'name' => 'myfield',
             'type' => 'text',
+            'description' => 'This is a field'
         ];
         $field = $generator->create_field($fieldrecord, $activity);
+        $otherfieldrecord = (object)['name' => 'otherfield', 'type' => 'text'];
+        $otherfield = $generator->create_field($otherfieldrecord, $activity);
 
         if ($newentry) {
             $entryid = null;
@@ -834,7 +881,10 @@ class template_test extends \advanced_testcase {
         } else {
             $entryid = $generator->create_entry(
                 $activity,
-                [$field->field->id => 'Example entry'],
+                [
+                    $field->field->id => 'Example entry',
+                    $otherfield->field->id => 'Another example',
+                ],
                 0,
                 ['Cats', 'Dogs']
             );
@@ -842,6 +892,7 @@ class template_test extends \advanced_testcase {
                 'd' => $activity->id,
                 'rid' => $entryid,
                 "field_{$field->field->id}" => "New value",
+                "field_{$otherfield->field->id}" => "Altered value",
             ];
         }
 
@@ -850,11 +901,17 @@ class template_test extends \advanced_testcase {
         // Some cooked variables for the regular expression.
         $replace = [
             '{fieldid}' => $field->field->id,
+            '{fieldname}' => $field->field->name,
+            '{fielddescription}' => $field->field->description,
+            '{otherid}' => $otherfield->field->id,
         ];
 
         $processdata = (object)[
             'generalnotifications' => ['GENERAL'],
-            'fieldnotifications' => [$field->field->name => ['FIELD']],
+            'fieldnotifications' => [
+                $field->field->name => ['FIELD'],
+                $otherfield->field->name => ['OTHERFIELD'],
+            ],
         ];
 
         $parser = new template($manager, $templatecontent);
@@ -889,6 +946,22 @@ class template_test extends \advanced_testcase {
                 'expected' => '|GENERAL.*Some field_{fieldid} tag|',
                 'newentry' => false,
             ],
+            'Teacher editing field#name tag' => [
+                'templatecontent' => 'Some [[myfield#name]] tag',
+                'expected' => '|GENERAL.*Some {fieldname} tag|',
+                'newentry' => false,
+            ],
+            'Teacher editing field#description tag' => [
+                'templatecontent' => 'Some [[myfield#description]] tag',
+                'expected' => '|GENERAL.*Some {fielddescription} tag|',
+                'newentry' => false,
+            ],
+            'Teacher editing entry field otherfields tag' => [
+                'templatecontent' => 'Some [[myfield]] and ##otherfields## tag',
+                'expected' => '|GENERAL.*Some .*FIELD.*field_{fieldid}.*input.*New value.* '
+                              . 'and .*OTHERFIELD.*field_{otherid}.*input.*Altered value.* tag|',
+                'newentry' => false,
+            ],
             // New entry.
             'Teacher new entry tags tag' => [
                 'templatecontent' => 'Some ##tags## tag',
@@ -904,6 +977,22 @@ class template_test extends \advanced_testcase {
                 'templatecontent' => 'Some [[myfield#id]] tag',
                 'expected' => '|GENERAL.*Some field_{fieldid} tag|',
                 'newentry' => true,
+            ],
+            'Teacher new entry field#name tag' => [
+                'templatecontent' => 'Some [[myfield#name]] tag',
+                'expected' => '|GENERAL.*Some {fieldname} tag|',
+                'newentry' => false,
+            ],
+            'Teacher new entry field#description tag' => [
+                'templatecontent' => 'Some [[myfield#description]] tag',
+                'expected' => '|GENERAL.*Some {fielddescription} tag|',
+                'newentry' => false,
+            ],
+            'Teacher new entry field otherfields tag' => [
+                'templatecontent' => 'Some [[myfield]] and ##otherfields## tag',
+                'expected' => '|GENERAL.*Some .*FIELD.*field_{fieldid}.*input.*New value.* '
+                              . '.* and .*OTHERFIELD.*field_{otherid}.*input.*Altered value.* |',
+                'newentry' => false,
             ],
         ];
     }
