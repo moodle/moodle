@@ -14,18 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External grade report user API
- *
- * @package    gradereport_user
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace gradereport_user\external;
+
+use external_api;
+use context_course;
+use core_user;
+use external_description;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
+use external_warnings;
+use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once("$CFG->libdir/externallib.php");
-
+require_once($CFG->libdir.'/externallib.php');
 
 /**
  * External grade report API implementation
@@ -35,8 +39,7 @@ require_once("$CFG->libdir/externallib.php");
  * @category   external
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradereport_user_external extends external_api {
-
+class user extends external_api {
 
     /**
      * Validate access permissions to the report
@@ -153,13 +156,13 @@ class gradereport_user_external extends external_api {
                 'courseid'       => $course->id,
                 'courseidnumber' => $course->idnumber,
                 'userid'         => $userid)
-            );
+        );
 
         $reportdata = array();
 
         // Just one user.
         if ($user) {
-            $report = new grade_report_user($course->id, $gpr, $context, $userid);
+            $report = new gradereport_user\report\user($course->id, $gpr, $context, $userid);
             $report->fill_table();
 
             $gradeuserdata = array(
@@ -187,7 +190,7 @@ class gradereport_user_external extends external_api {
 
             while ($userdata = $gui->next_user()) {
                 $currentuser = $userdata->user;
-                $report = new grade_report_user($course->id, $gpr, $context, $currentuser->id);
+                $report = new gradereport_user\report\user($course->id, $gpr, $context, $currentuser->id);
                 $report->fill_table();
 
                 $gradeuserdata = array(
@@ -367,10 +370,10 @@ class gradereport_user_external extends external_api {
         require_once($CFG->dirroot . "/grade/report/user/lib.php");
 
         $params = self::validate_parameters(self::view_grade_report_parameters(),
-                                            array(
-                                                'courseid' => $courseid,
-                                                'userid' => $userid
-                                            ));
+            array(
+                'courseid' => $courseid,
+                'userid' => $userid
+            ));
 
         $warnings = array();
 
@@ -402,7 +405,7 @@ class gradereport_user_external extends external_api {
         }
 
         // Create a report instance. We don't need the gpr second parameter.
-        $report = new grade_report_user($course->id, null, $context, $userid);
+        $report = new gradereport_user\report\user($course->id, null, $context, $userid);
         $report->viewed();
 
         $result = array();
