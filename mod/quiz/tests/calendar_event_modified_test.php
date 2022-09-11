@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_quiz;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/mod/quiz/lib.php');
+
 /**
  * Unit tests for the calendar event modification callbacks used
  * for dragging and dropping quiz calendar events in the calendar
@@ -24,17 +31,7 @@
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/quiz/lib.php');
-
-/**
- * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
-class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
+class calendar_event_modified_test extends \advanced_testcase {
 
     /**
      * Create an instance of the quiz activity.
@@ -71,7 +68,7 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
     /**
      * Create a calendar event for a quiz activity instance.
      *
-     * @param stdClass $quiz The activity instance
+     * @param \stdClass $quiz The activity instance
      * @param array $eventproperties Properties to set on the calendar event
      * @return calendar_event
      */
@@ -241,11 +238,11 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
         $now = time();
-        $timeopen = (new DateTime())->setTimestamp($now);
-        $newtimeopen = (new DateTime())->setTimestamp($now)->modify('+1 day');
+        $timeopen = (new \DateTime())->setTimestamp($now);
+        $newtimeopen = (new \DateTime())->setTimestamp($now)->modify('+1 day');
         $quiz = $this->create_quiz_instance([
             'course' => $course->id,
             'timeopen' => $timeopen->getTimestamp()
@@ -285,11 +282,11 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
         $now = time();
-        $timeopen = (new DateTime())->setTimestamp($now);
-        $newtimeopen = (new DateTime())->setTimestamp($now)->modify('+1 day');
+        $timeopen = (new \DateTime())->setTimestamp($now);
+        $newtimeopen = (new \DateTime())->setTimestamp($now)->modify('+1 day');
         $quiz = $this->create_quiz_instance([
             'course' => $course->id,
             'timeopen' => $timeopen->getTimestamp()
@@ -467,12 +464,12 @@ class mod_quiz_calendar_event_modified_testcase extends advanced_testcase {
         $teacher = $generator->create_user();
         $student = $generator->create_user();
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
         $roleid = $generator->create_role();
         $now = time();
         $timelimit = 600;
-        $timeopen = (new DateTime())->setTimestamp($now);
-        $timeclose = (new DateTime())->setTimestamp($now)->modify('+1 day');
+        $timeopen = (new \DateTime())->setTimestamp($now);
+        $timeclose = (new \DateTime())->setTimestamp($now)->modify('+1 day');
         // The new close time being earlier than the time open + time limit should
         // result in an update to the quiz attempts.
         $newtimeclose = $timeopen->getTimestamp() + $timelimit - 10;

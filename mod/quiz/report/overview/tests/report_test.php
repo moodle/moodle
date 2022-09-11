@@ -14,13 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for the quiz overview report.
- *
- * @package   quiz_overview
- * @copyright 2014 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace quiz_overview;
+
+use question_engine;
+use quiz;
+use quiz_attempt;
+use quiz_attempts_report;
+use quiz_overview_options;
+use quiz_overview_report;
+use quiz_overview_table;
+use testable_quiz_attempts_report;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,14 +34,14 @@ require_once($CFG->dirroot . '/mod/quiz/report/default.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/report.php');
 require_once($CFG->dirroot . '/mod/quiz/report/overview/tests/helpers.php');
 
-
 /**
  * Tests for the quiz overview report.
  *
+ * @package    quiz_overview
  * @copyright  2014 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_overview_report_testcase extends advanced_testcase {
+class report_test extends \advanced_testcase {
 
     /**
      * Data provider for test_report_sql.
@@ -146,7 +149,7 @@ class quiz_overview_report_testcase extends advanced_testcase {
                     $quba->get_question_attempt(1)->manual_grade(
                             'Comment', $sumgrades, FORMAT_HTML, $timestart + 1200);
                     question_engine::save_questions_usage_by_activity($quba);
-                    $update = new stdClass();
+                    $update = new \stdClass();
                     $update->id = $attemptobj->get_attemptid();
                     $update->timemodified = $timestart + 1200;
                     $update->sumgrades = $quba->get_total_mark();
@@ -158,7 +161,7 @@ class quiz_overview_report_testcase extends advanced_testcase {
 
         // Actually getting the SQL to run is quite hard. Do a minimal set up of
         // some objects.
-        $context = context_module::instance($quiz->cmid);
+        $context = \context_module::instance($quiz->cmid);
         $cm = get_coursemodule_from_id('quiz', $quiz->cmid);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
         $studentsjoins = get_enrolled_with_capabilities_join($context, '',
@@ -179,7 +182,7 @@ class quiz_overview_report_testcase extends advanced_testcase {
         $table->download = $isdownloading; // Cannot call the is_downloading API, because it gives errors.
         $table->define_columns(array('fullname'));
         $table->sortable(true, 'uniqueid');
-        $table->define_baseurl(new moodle_url('/mod/quiz/report.php'));
+        $table->define_baseurl(new \moodle_url('/mod/quiz/report.php'));
         $table->setup();
 
         // Run the query.
@@ -217,7 +220,7 @@ class quiz_overview_report_testcase extends advanced_testcase {
         // Ensure that filtering by initial does not break it.
         // This involves setting a private properly of the base class, which is
         // only really possible using reflection :-(.
-        $reflectionobject = new ReflectionObject($table);
+        $reflectionobject = new \ReflectionObject($table);
         while ($parent = $reflectionobject->getParentClass()) {
             $reflectionobject = $parent;
         }
@@ -297,7 +300,7 @@ class quiz_overview_report_testcase extends advanced_testcase {
         $generator->enrol_user($student->id, $course->id);
         $generator->enrol_user($student->id, $course->id, null, 'self');
 
-        $context = context_module::instance($quiz->cmid);
+        $context = \context_module::instance($quiz->cmid);
         $cm = get_coursemodule_from_id('quiz', $quiz->cmid);
         $allowedjoins = get_enrolled_with_capabilities_join($context, '', ['mod/quiz:attempt', 'mod/quiz:reviewmyattempts']);
         $quizattemptsreport = new testable_quiz_attempts_report();

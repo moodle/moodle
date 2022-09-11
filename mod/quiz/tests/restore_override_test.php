@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Restore override tests.
- *
- * @package    mod_quiz
- * @author   2019 Nathan Nguyen <nathannguyen@catalyst-au.net>
- * @copyright Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_quiz;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,12 +23,12 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
 /**
  * Restore override tests.
  *
- * @package    mod_quiz
- * @author   2019 Nathan Nguyen <nathannguyen@catalyst-au.net>
+ * @package   mod_quiz
+ * @author    2019 Nathan Nguyen <nathannguyen@catalyst-au.net>
  * @copyright Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_restore_override_testcase extends restore_date_testcase {
+class restore_override_test extends \restore_date_testcase {
 
     /**
      * Test restore overrides.
