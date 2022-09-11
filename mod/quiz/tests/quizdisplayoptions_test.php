@@ -14,31 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the mod_quiz_display_options class.
- *
- * @package    mod_quiz
- * @category   phpunit
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_quiz;
 
+use mod_quiz_display_options;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-
 /**
  * Unit tests for {@link mod_quiz_display_options}.
  *
+ * @package    mod_quiz
+ * @category   test
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_display_options_testcase extends basic_testcase {
+class quizdisplayoptions_test extends \basic_testcase {
     public function test_num_attempts_access_rule() {
-        $quiz = new stdClass();
+        $quiz = new \stdClass();
         $quiz->decimalpoints = 2;
         $quiz->questiondecimalpoints = -1;
         $quiz->reviewattempt          = 0x11110;

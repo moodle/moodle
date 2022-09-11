@@ -14,32 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * PHPUnit Tests for config_key class.
- *
- * @package    quizaccess_seb
- * @author     Andrew Madden <andrewmadden@catalyst-au.net>
- * @copyright  2019 Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-use quizaccess_seb\config_key;
-
-defined('MOODLE_INTERNAL') || die();
+namespace quizaccess_seb;
 
 /**
  * PHPUnit Tests for config_key class.
  *
- * @copyright  2020 Catalyst IT
+ * @package   quizaccess_seb
+ * @author    Andrew Madden <andrewmadden@catalyst-au.net>
+ * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_seb_config_key_testcase extends advanced_testcase {
+class config_key_test extends \advanced_testcase {
 
     /**
      * Test that trying to generate the hash key with bad xml will result in an error.
      */
     public function test_config_key_not_generated_with_bad_xml() {
-        $this->expectException(invalid_parameter_exception::class);
+        $this->expectException(\invalid_parameter_exception::class);
         $this->expectExceptionMessage("Invalid a PList XML string, representing SEB config");
         config_key::generate("<?xml This is some bad xml for sure.");
     }

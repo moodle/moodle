@@ -14,17 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Quiz events tests.
- *
- * @package   mod_quiz
- * @category  test
- * @copyright 2013 Adrian Greeve
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_quiz;
 
 use mod_quiz\question\bank\qbank_helper;
-use mod_quiz\structure;
+use quiz;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,10 +27,12 @@ require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 /**
  * Unit tests for quiz events.
  *
- * @copyright  2013 Adrian Greeve
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @category  test
+ * @copyright 2013 Adrian Greeve
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_structure_testcase extends advanced_testcase {
+class structure_test extends \advanced_testcase {
 
     /**
      * Create a course with an empty quiz.
@@ -92,7 +87,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         foreach ($layout as $item) {
             if (is_string($item)) {
                 if (isset($headings[$lastpage + 1])) {
-                    throw new coding_exception('Sections cannot be empty.');
+                    throw new \coding_exception('Sections cannot be empty.');
                 }
                 $headings[$lastpage + 1] = $item;
 
@@ -100,7 +95,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
                 list($name, $page, $qtype) = $item;
                 if ($page < 1 || !($page == $lastpage + 1 ||
                         (!isset($headings[$lastpage + 1]) && $page == $lastpage))) {
-                    throw new coding_exception('Page numbers wrong.');
+                    throw new \coding_exception('Page numbers wrong.');
                 }
                 $q = $questiongenerator->create_question($qtype, null,
                         array('name' => $name, 'category' => $cat->id));
@@ -272,7 +267,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         $sections = $structure->get_sections();
         $section = reset($sections);
 
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         $structure->remove_section_heading($section->id);
     }
 
@@ -447,7 +442,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
 
         $idtomove = $structure->get_question_in_slot(3)->slotid;
         $idmoveafter = $structure->get_question_in_slot(2)->slotid;
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         $structure->move_slot($idtomove, $idmoveafter, '1');
     }
 
@@ -461,7 +456,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
 
         $idtomove = $structure->get_question_in_slot(1)->slotid;
         $idmoveafter = $structure->get_question_in_slot(2)->slotid;
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         $structure->move_slot($idtomove, $idmoveafter, '4');
     }
 
@@ -737,7 +732,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         $structure = structure::create_for_quiz($quizobj);
 
         $structure->remove_slot(1);
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         $structure->remove_slot(2);
     }
 
@@ -750,7 +745,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
             ));
         $structure = structure::create_for_quiz($quizobj);
 
-        $this->expectException(coding_exception::class);
+        $this->expectException(\coding_exception::class);
         $structure->remove_slot(3);
     }
 
@@ -860,7 +855,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         $structure = structure::create_for_quiz($quizobj);
 
         $slotid = $structure->get_question_in_slot(2)->slotid;
-        $slots = $structure->update_page_break($slotid, \mod_quiz\repaginate::LINK);
+        $slots = $structure->update_page_break($slotid, repaginate::LINK);
 
         $structure = structure::create_for_quiz($quizobj);
         $this->assert_quiz_layout(array(
@@ -877,7 +872,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         $structure = structure::create_for_quiz($quizobj);
 
         $slotid = $structure->get_question_in_slot(2)->slotid;
-        $slots = $structure->update_page_break($slotid, \mod_quiz\repaginate::UNLINK);
+        $slots = $structure->update_page_break($slotid, repaginate::UNLINK);
 
         $structure = structure::create_for_quiz($quizobj);
         $this->assert_quiz_layout(array(
