@@ -3637,7 +3637,7 @@ function data_comment_validate($comment_param) {
 
     //check if approved
     if ($data->approval and !$record->approved and !data_isowner($record) and !has_capability('mod/data:approve', $context)) {
-        throw new comment_exception('notapproved', 'data');
+        throw new comment_exception('notapprovederror', 'data');
     }
 
     // group access

@@ -294,14 +294,14 @@ class template_test extends \advanced_testcase {
             ],
             'Teacher approvalstatus tag approved entry' => [
                 'templatecontent' => 'Some ##approvalstatus## tag',
-                'expected' => '|Some Approved tag|',
+                'expected' => '|Some  tag|', // We do not display the approval status anymore.
                 'rolename' => 'editingteacher',
                 'enableexport' => false,
                 'approved' => true,
             ],
             'Teacher approvalstatus tag disapproved entry' => [
                 'templatecontent' => 'Some ##approvalstatus## tag',
-                'expected' => '|Some .*not approved.* tag|',
+                'expected' => '|Some .*Pending approval.* tag|',
                 'rolename' => 'editingteacher',
                 'enableexport' => false,
                 'approved' => false,
@@ -590,14 +590,14 @@ class template_test extends \advanced_testcase {
             ],
             'Student approvalstatus tag approved entry' => [
                 'templatecontent' => 'Some ##approvalstatus## tag',
-                'expected' => '|Some Approved tag|',
+                'expected' => '|Some  tag|',
                 'rolename' => 'student',
                 'enableexport' => false,
                 'approved' => true,
             ],
             'Student approvalstatus tag disapproved entry' => [
                 'templatecontent' => 'Some ##approvalstatus## tag',
-                'expected' => '|Some .*not approved.* tag|',
+                'expected' => '|Some .*Pending approval.* tag|',
                 'rolename' => 'student',
                 'enableexport' => false,
                 'approved' => false,
