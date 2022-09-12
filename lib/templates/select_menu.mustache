@@ -92,7 +92,7 @@
         class="btn dropdown-toggle"
         role="combobox"
         data-toggle="dropdown"
-        {{#label}}aria-labelledby="{{baseid}}-label{{/label}}"
+        {{#label}}aria-labelledby="{{baseid}}-label"{{/label}}
         aria-haspopup="listbox"
         aria-expanded="false"
         aria-controls="{{baseid}}-listbox"
@@ -100,26 +100,26 @@
     >
         {{selectedoption}}
     </div>
-    <ul class="dropdown-menu" role="listbox" id="{{baseid}}-listbox" {{#label}}aria-labelledby="{{baseid}}-label{{/label}}">
+    <ul class="dropdown-menu" role="listbox" id="{{baseid}}-listbox" {{#label}}aria-labelledby="{{baseid}}-label"{{/label}}>
         {{#options}}
-        {{#isgroup}}
-            <li role="none">
-                <ul role="group" aria-labelledby="{{id}}">
-                    <li role="presentation" id="{{id}}">{{name}}</li>
-                    {{#options}}
-                        <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
-                            {{name}}
-                        </li>
-                    {{/options}}
-                </ul>
-            </li>
-        {{/isgroup}}
-        {{^isgroup}}
-            <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
-                {{name}}
-            </li>
-        {{/isgroup}}
-    {{/options}}
+            {{#isgroup}}
+                <li role="none">
+                    <ul role="group" aria-labelledby="{{id}}">
+                        <li role="presentation" id="{{id}}">{{name}}</li>
+                        {{#options}}
+                            <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
+                                {{name}}
+                            </li>
+                        {{/options}}
+                    </ul>
+                </li>
+            {{/isgroup}}
+            {{^isgroup}}
+                <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
+                    {{name}}
+                </li>
+            {{/isgroup}}
+        {{/options}}
     </ul>
     <input type="hidden" name="{{name}}" value="{{value}}" />
 </div>

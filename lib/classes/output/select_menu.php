@@ -39,7 +39,7 @@ class select_menu implements \renderable, \templatable {
     protected $label;
 
     /** @var array Button label's attributes */
-    protected $labelattributes;
+    protected $labelattributes = [];
 
     /** @var string Name of the combobox element */
     protected $name;
@@ -119,6 +119,33 @@ class select_menu implements \renderable, \templatable {
     }
 
     /**
+     * Return the name of the selected option.
+     *
+     * @return string|null The name of the selected option or null.
+     */
+    private function get_selected_option(): ?string {
+        foreach ($this->options as $value => $option) {
+            if (is_array($option)) {  // This is a group.
+                foreach ($option as $groupname => $optoptions) {
+                    // Loop through the options within the group to check whether any of them matches the 'selected' value.
+                    foreach ($optoptions as $optvalue => $optoption) {
+                        // If the value of the option matches the 'selected' value, return the name of the option.
+                        if ($this->selected == $optvalue) {
+                            return $optoption;
+                        }
+                    }
+                }
+            } else { // This is a standard option item.
+                // If the value of the option matches the 'selected' value, return the name of the option.
+                if ($this->selected == $value) {
+                    return $option;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Export for template.
      *
      * @param renderer_base $output The renderer.
@@ -128,8 +155,8 @@ class select_menu implements \renderable, \templatable {
         $data = new \stdClass();
         $data->baseid = \html_writer::random_id('select-menu');
         $data->label = $this->label;
-        $data->options = $this->flatten_options($this->options);
-        $data->selectedoption = array_column($data->options, 'name', 'value')[$this->selected];
+        $data->options = $this->flatten_options();
+        $data->selectedoption = $this->get_selected_option();
         $data->name = $this->name;
         $data->value = $this->selected;
 
