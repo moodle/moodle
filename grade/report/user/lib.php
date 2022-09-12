@@ -22,10 +22,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_user\output\myprofile\tree;
+
 require_once($CFG->dirroot . '/grade/report/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
-//showhiddenitems values
 define("GRADE_REPORT_USER_HIDE_HIDDEN", 0);
 define("GRADE_REPORT_USER_HIDE_UNTIL", 1);
 define("GRADE_REPORT_USER_SHOW_HIDDEN", 2);
@@ -36,9 +37,11 @@ define("GRADE_REPORT_USER_VIEW_USER", 2);
 function grade_report_user_settings_definition(&$mform) {
     global $CFG;
 
-    $options = array(-1 => get_string('default', 'grades'),
-                      0 => get_string('hide'),
-                      1 => get_string('show'));
+    $options = [
+        -1 => get_string('default', 'grades'),
+        0 => get_string('hide'),
+        1 => get_string('show')
+    ];
 
     if (empty($CFG->grade_report_user_showrank)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
@@ -115,16 +118,26 @@ function grade_report_user_settings_definition(&$mform) {
 
     $mform->addElement('select', 'report_user_showrange', get_string('showrange', 'grades'), $options);
 
-    $options = array(0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
-    if (! empty($CFG->grade_report_user_rangedecimals)) {
+    $options = [
+        0=>0,
+        1=>1,
+        2=>2,
+        3=>3,
+        4=>4,
+        5=>5
+    ];
+
+    if (!empty($CFG->grade_report_user_rangedecimals)) {
         $options[-1] = $options[$CFG->grade_report_user_rangedecimals];
     }
     $mform->addElement('select', 'report_user_rangedecimals', get_string('rangedecimals', 'grades'), $options);
 
-    $options = array(-1 => get_string('default', 'grades'),
-                      0 => get_string('shownohidden', 'grades'),
-                      1 => get_string('showhiddenuntilonly', 'grades'),
-                      2 => get_string('showallhidden', 'grades'));
+    $options = [
+        -1 => get_string('default', 'grades'),
+        0 => get_string('shownohidden', 'grades'),
+        1 => get_string('showhiddenuntilonly', 'grades'),
+        2 => get_string('showallhidden', 'grades')
+    ];
 
     if (empty($CFG->grade_report_user_showhiddenitems)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
@@ -135,11 +148,12 @@ function grade_report_user_settings_definition(&$mform) {
     $mform->addElement('select', 'report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), $options);
     $mform->addHelpButton('report_user_showhiddenitems', 'showhiddenitems', 'grades');
 
-    //showtotalsifcontainhidden
-    $options = array(-1 => get_string('default', 'grades'),
-                      GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN => get_string('hide'),
-                      GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowexhiddenitems', 'grades'),
-                      GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowinchiddenitems', 'grades') );
+    $options = [
+        -1 => get_string('default', 'grades'),
+        GRADE_REPORT_HIDE_TOTAL_IF_CONTAINS_HIDDEN => get_string('hide'),
+        GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowexhiddenitems', 'grades'),
+        GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowinchiddenitems', 'grades')
+    ];
 
     if (empty($CFG->grade_report_user_showtotalsifcontainhidden)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
@@ -159,19 +173,19 @@ function grade_report_user_settings_definition(&$mform) {
  * @param object $user The user.
  * @param boolean $viewasuser True when we are viewing this as the targetted user sees it.
  */
-function grade_report_user_profilereport($course, $user, $viewasuser = false) {
-    global $OUTPUT;
+function grade_report_user_profilereport(object $course, object $user, bool $viewasuser = false) {
     if (!empty($course->showgrades)) {
 
         $context = context_course::instance($course->id);
 
-        /// return tracking object
+        // Fetch the return tracking object.
         $gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'user', 'courseid'=>$course->id, 'userid'=>$user->id));
-        // Create a report instance
+        // Create a report instance.
         $report = new gradereport_user\report\user($course->id, $gpr, $context, $user->id, $viewasuser);
 
-        // print the page
-        echo '<div class="grade-report-user">'; // css fix to share styles with real report page
+        // Print the page.
+        // A css fix to share styles with real report page.
+        echo '<div class="grade-report-user">';
         if ($report->fill_table()) {
             echo $report->print_table(true);
         }
@@ -182,13 +196,12 @@ function grade_report_user_profilereport($course, $user, $viewasuser = false) {
 /**
  * Add nodes to myprofile page.
  *
- * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param tree $tree Tree object
  * @param stdClass $user user object
  * @param bool $iscurrentuser
- * @param stdClass $course Course object
+ * @param null|stdClass $course Course object
  */
-function gradereport_user_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    global $CFG, $USER;
+function gradereport_user_myprofile_navigation(tree $tree, stdClass $user, bool $iscurrentuser, ?stdClass $course) {
     if (empty($course)) {
         // We want to display these reports under the site context.
         $course = get_fast_modinfo(SITEID)->get_course();

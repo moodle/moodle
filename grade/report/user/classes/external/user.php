@@ -25,7 +25,10 @@ use external_multiple_structure;
 use external_single_structure;
 use external_value;
 use external_warnings;
+use grade_plugin_return;
+use graded_users_iterator;
 use moodle_exception;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -50,16 +53,16 @@ class user extends external_api {
      * @return array with the parameters cleaned and other required information
      * @since  Moodle 3.2
      */
-    protected static function check_report_access($courseid, $userid, $groupid = 0) {
+    protected static function check_report_access(int $courseid, int $userid, int $groupid = 0): array {
         global $USER;
 
         // Validate the parameter.
         $params = self::validate_parameters(self::get_grades_table_parameters(),
-            array(
+            [
                 'courseid' => $courseid,
                 'userid' => $userid,
                 'groupid' => $groupid,
-            )
+            ]
         );
 
         // Compact/extract functions are not recommended.
@@ -95,7 +98,7 @@ class user extends external_api {
         if (has_capability('moodle/grade:viewall', $context)) {
             // Can view all course grades.
             $access = true;
-        } else if ($userid == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
+        } else if ($userid == $USER->id && has_capability('moodle/grade:view', $context) && $course->showgrades) {
             // View own grades.
             $access = true;
         }
@@ -122,7 +125,7 @@ class user extends external_api {
             }
         }
 
-        return array($params, $course, $context, $user, $groupid);
+        return [$params, $course, $context, $user, $groupid];
     }
 
     /**
@@ -136,10 +139,17 @@ class user extends external_api {
      * @return array data and possible warnings
      * @since  Moodle 3.2
      */
-    protected static function get_report_data($course, $context, $user, $userid, $groupid, $tabledata = true) {
+    protected static function get_report_data(
+        stdClass $course,
+        stdClass $context,
+        stdClass $user,
+        int $userid,
+        int $groupid,
+        bool $tabledata = true
+    ): array {
         global $CFG;
 
-        $warnings = array();
+        $warnings = [];
         // Require files here to save some memory in case validation fails.
         require_once($CFG->dirroot . '/group/lib.php');
         require_once($CFG->libdir  . '/gradelib.php');
@@ -150,29 +160,30 @@ class user extends external_api {
         grade_regrade_final_grades($course->id);
 
         $gpr = new grade_plugin_return(
-            array(
+            [
                 'type'           => 'report',
                 'plugin'         => 'user',
                 'courseid'       => $course->id,
                 'courseidnumber' => $course->idnumber,
-                'userid'         => $userid)
+                'userid'         => $userid
+            ]
         );
 
-        $reportdata = array();
+        $reportdata = [];
 
         // Just one user.
         if ($user) {
             $report = new gradereport_user\report\user($course->id, $gpr, $context, $userid);
             $report->fill_table();
 
-            $gradeuserdata = array(
+            $gradeuserdata = [
                 'courseid'       => $course->id,
                 'courseidnumber' => $course->idnumber,
                 'userid'         => $user->id,
                 'userfullname'   => fullname($user),
                 'useridnumber'   => $user->idnumber,
                 'maxdepth'       => $report->maxdepth,
-            );
+            ];
             if ($tabledata) {
                 $gradeuserdata['tabledata'] = $report->tabledata;
             } else {
@@ -193,14 +204,14 @@ class user extends external_api {
                 $report = new gradereport_user\report\user($course->id, $gpr, $context, $currentuser->id);
                 $report->fill_table();
 
-                $gradeuserdata = array(
+                $gradeuserdata = [
                     'courseid'       => $course->id,
                     'courseidnumber' => $course->idnumber,
                     'userid'         => $currentuser->id,
                     'userfullname'   => fullname($currentuser),
                     'useridnumber'   => $currentuser->idnumber,
                     'maxdepth'       => $report->maxdepth,
-                );
+                ];
                 if ($tabledata) {
                     $gradeuserdata['tabledata'] = $report->tabledata;
                 } else {
@@ -210,7 +221,7 @@ class user extends external_api {
             }
             $gui->close();
         }
-        return array($reportdata, $warnings);
+        return [$reportdata, $warnings];
     }
 
     /**
@@ -219,13 +230,13 @@ class user extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.9
      */
-    public static function get_grades_table_parameters() {
+    public static function get_grades_table_parameters(): external_function_parameters {
         return new external_function_parameters (
-            array(
+            [
                 'courseid' => new external_value(PARAM_INT, 'Course Id', VALUE_REQUIRED),
                 'userid'   => new external_value(PARAM_INT, 'Return grades only for this user (optional)', VALUE_DEFAULT, 0),
                 'groupid'  => new external_value(PARAM_INT, 'Get users from this group only', VALUE_DEFAULT, 0)
-            )
+            ]
         );
     }
 
@@ -239,19 +250,18 @@ class user extends external_api {
      * @return array the grades tables
      * @since Moodle 2.9
      */
-    public static function get_grades_table($courseid, $userid = 0, $groupid = 0) {
-        global $CFG, $USER;
+    public static function get_grades_table(int $courseid, int $userid = 0, int $groupid = 0): array {
 
         list($params, $course, $context, $user, $groupid) = self::check_report_access($courseid, $userid, $groupid);
-        $userid   = $params['userid'];
+        $userid = $params['userid'];
 
         // We pass userid because it can be still 0.
         list($tables, $warnings) = self::get_report_data($course, $context, $user, $userid, $groupid);
 
-        $result = array();
-        $result['tables'] = $tables;
-        $result['warnings'] = $warnings;
-        return $result;
+        return [
+            'tables' => $tables,
+            'warnings' => $warnings
+        ];
     }
 
     /**
@@ -260,12 +270,12 @@ class user extends external_api {
      * @return array
      * @since  Moodle 2.9
      */
-    private static function grades_table_column() {
-        return array (
+    private static function grades_table_column(): array {
+        return [
             'class'   => new external_value(PARAM_RAW, 'class'),
             'content' => new external_value(PARAM_RAW, 'cell content'),
             'headers' => new external_value(PARAM_RAW, 'headers')
-        );
+        ];
     }
 
     /**
@@ -274,33 +284,33 @@ class user extends external_api {
      * @return external_single_structure
      * @since Moodle 2.9
      */
-    public static function get_grades_table_returns() {
+    public static function get_grades_table_returns(): external_single_structure {
         return new external_single_structure(
-            array(
+            [
                 'tables' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'courseid' => new external_value(PARAM_INT, 'course id'),
                             'userid'   => new external_value(PARAM_INT, 'user id'),
                             'userfullname' => new external_value(PARAM_TEXT, 'user fullname'),
                             'maxdepth'   => new external_value(PARAM_INT, 'table max depth (needed for printing it)'),
                             'tabledata' => new external_multiple_structure(
                                 new external_single_structure(
-                                    array(
+                                    [
                                         'itemname' => new external_single_structure(
-                                            array (
+                                            [
                                                 'class' => new external_value(PARAM_RAW, 'class'),
                                                 'colspan' => new external_value(PARAM_INT, 'col span'),
                                                 'content'  => new external_value(PARAM_RAW, 'cell content'),
                                                 'celltype'  => new external_value(PARAM_RAW, 'cell type'),
                                                 'id'  => new external_value(PARAM_ALPHANUMEXT, 'id')
-                                            ), 'The item returned data', VALUE_OPTIONAL
+                                            ], 'The item returned data', VALUE_OPTIONAL
                                         ),
                                         'leader' => new external_single_structure(
-                                            array (
+                                            [
                                                 'class' => new external_value(PARAM_RAW, 'class'),
                                                 'rowspan' => new external_value(PARAM_INT, 'row span')
-                                            ), 'The item returned data', VALUE_OPTIONAL
+                                            ], 'The item returned data', VALUE_OPTIONAL
                                         ),
                                         'weight' => new external_single_structure(
                                             self::grades_table_column(), 'weight column', VALUE_OPTIONAL
@@ -329,14 +339,14 @@ class user extends external_api {
                                         'contributiontocoursetotal' => new external_single_structure(
                                             self::grades_table_column(), 'contributiontocoursetotal column', VALUE_OPTIONAL
                                         ),
-                                    ), 'table'
+                                    ], 'table'
                                 )
                             )
-                        )
+                        ]
                     )
                 ),
                 'warnings' => new external_warnings()
-            )
+            ]
         );
     }
 
@@ -346,12 +356,12 @@ class user extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.9
      */
-    public static function view_grade_report_parameters() {
+    public static function view_grade_report_parameters(): external_function_parameters {
         return new external_function_parameters(
-            array(
+            [
                 'courseid' => new external_value(PARAM_INT, 'id of the course'),
                 'userid' => new external_value(PARAM_INT, 'id of the user, 0 means current user', VALUE_DEFAULT, 0),
-            )
+            ]
         );
     }
 
@@ -364,18 +374,18 @@ class user extends external_api {
      * @since Moodle 2.9
      * @throws moodle_exception
      */
-    public static function view_grade_report($courseid, $userid = 0) {
+    public static function view_grade_report(int $courseid, int $userid = 0): array {
         global $CFG, $USER;
         require_once($CFG->dirroot . "/grade/lib.php");
         require_once($CFG->dirroot . "/grade/report/user/lib.php");
 
         $params = self::validate_parameters(self::view_grade_report_parameters(),
-            array(
+            [
                 'courseid' => $courseid,
                 'userid' => $userid
-            ));
+            ]);
 
-        $warnings = array();
+        $warnings = [];
 
         $course = get_course($params['courseid']);
 
@@ -395,7 +405,7 @@ class user extends external_api {
         if (has_capability('moodle/grade:viewall', $context)) {
             // Can view all course grades (any user).
             $access = true;
-        } else if ($userid == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
+        } else if ($userid == $USER->id && has_capability('moodle/grade:view', $context) && $course->showgrades) {
             // View own grades.
             $access = true;
         }
@@ -408,10 +418,10 @@ class user extends external_api {
         $report = new gradereport_user\report\user($course->id, null, $context, $userid);
         $report->viewed();
 
-        $result = array();
-        $result['status'] = true;
-        $result['warnings'] = $warnings;
-        return $result;
+        return [
+            'status' => true,
+            'warnings' => $warnings
+        ];
     }
 
     /**
@@ -422,10 +432,10 @@ class user extends external_api {
      */
     public static function view_grade_report_returns() {
         return new external_single_structure(
-            array(
+            [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings()
-            )
+            ]
         );
     }
 
@@ -435,7 +445,7 @@ class user extends external_api {
      * @return external_function_parameters
      * @since Moodle 3.2
      */
-    public static function get_grade_items_parameters() {
+    public static function get_grade_items_parameters(): external_function_parameters {
         return self::get_grades_table_parameters();
     }
 
@@ -449,26 +459,25 @@ class user extends external_api {
      * @return array the grades tables
      * @since Moodle 3.2
      */
-    public static function get_grade_items($courseid, $userid = 0, $groupid = 0) {
-        global $CFG, $USER;
+    public static function get_grade_items(int $courseid, int $userid = 0, int $groupid = 0): array {
 
         list($params, $course, $context, $user, $groupid) = self::check_report_access($courseid, $userid, $groupid);
-        $userid   = $params['userid'];
+        $userid = $params['userid'];
 
         // We pass userid because it can be still 0.
         list($gradeitems, $warnings) = self::get_report_data($course, $context, $user, $userid, $groupid, false);
 
         foreach ($gradeitems as $gradeitem) {
-            if (isset($gradeitem['feedback']) and isset($gradeitem['feedbackformat'])) {
+            if (isset($gradeitem['feedback']) && isset($gradeitem['feedbackformat'])) {
                 list($gradeitem['feedback'], $gradeitem['feedbackformat']) =
                     external_format_text($gradeitem['feedback'], $gradeitem['feedbackformat'], $context->id);
             }
         }
 
-        $result = array();
-        $result['usergrades'] = $gradeitems;
-        $result['warnings'] = $warnings;
-        return $result;
+        return [
+            'usergrades' => $gradeitems,
+            'warnings' => $warnings
+        ];
     }
 
     /**
@@ -477,12 +486,12 @@ class user extends external_api {
      * @return external_single_structure
      * @since Moodle 3.2
      */
-    public static function get_grade_items_returns() {
+    public static function get_grade_items_returns(): external_single_structure {
         return new external_single_structure(
-            array(
+            [
                 'usergrades' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'courseid' => new external_value(PARAM_INT, 'course id'),
                             'courseidnumber' => new external_value(PARAM_TEXT, 'course idnumber'),
                             'userid'   => new external_value(PARAM_INT, 'user id'),
@@ -492,7 +501,7 @@ class user extends external_api {
                             'maxdepth'   => new external_value(PARAM_INT, 'table max depth (needed for printing it)'),
                             'gradeitems' => new external_multiple_structure(
                                 new external_single_structure(
-                                    array(
+                                    [
                                         'id' => new external_value(PARAM_INT, 'Grade item id'),
                                         'itemname' => new external_value(PARAM_TEXT, 'Grade item name'),
                                         'itemtype' => new external_value(PARAM_ALPHA, 'Grade item type'),
@@ -527,14 +536,14 @@ class user extends external_api {
                                         'averageformatted' => new external_value(PARAM_NOTAGS, 'Grade average', VALUE_OPTIONAL),
                                         'feedback' => new external_value(PARAM_RAW, 'Grade feedback', VALUE_OPTIONAL),
                                         'feedbackformat' => new external_format_value('feedback', VALUE_OPTIONAL),
-                                    ), 'Grade items'
+                                    ], 'Grade items'
                                 )
                             )
-                        )
+                        ]
                     )
                 ),
                 'warnings' => new external_warnings()
-            )
+            ]
         );
     }
 }
