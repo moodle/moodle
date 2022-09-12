@@ -302,14 +302,20 @@ class custom_report_table extends base_report_table {
         $visiblecolumns = $this->report->get_settings_values()['cardview_visiblecolumns'] ?? 1;
         if ($visiblecolumns < count($this->columns)) {
             $buttonicon = html_writer::tag('i', '', ['class' => 'fa fa-angle-down']);
-            $buttonatttributes = [
+
+            // We need a cleaned version (without tags/entities) of the first row column to use as toggle button.
+            $rowfirstcolumn = strip_tags(reset($row));
+            $buttontitle = $rowfirstcolumn !== ''
+                ? get_string('showhide', 'core_reportbuilder', html_entity_decode($rowfirstcolumn))
+                : get_string('showhidecard', 'core_reportbuilder');
+
+            $button = html_writer::tag('button', $buttonicon, [
                 'type' => 'button',
                 'class' => 'btn collapsed',
-                'title' => get_string('showhide', 'core_reportbuilder', reset($row)),
+                'title' => $buttontitle,
                 'data-toggle' => 'collapse',
                 'data-action' => 'toggle-card'
-            ];
-            $button = html_writer::tag('button', $buttonicon, $buttonatttributes);
+            ]);
             $html .= html_writer::tag('td', $button, ['class' => 'card-toggle d-none']);
         }
         return $html;

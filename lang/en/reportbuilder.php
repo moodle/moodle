@@ -247,6 +247,7 @@ $string['selectareportsource'] = 'Select a report source';
 $string['sendschedule'] = 'Send schedule';
 $string['sendscheduleconfirm'] = 'Are you sure you want to queue the schedule \'{$a}\' for sending immediately?';
 $string['showhide'] = 'Show/hide \'{$a}\'';
+$string['showhidecard'] = 'Show/hide card';
 $string['sorting'] = 'Sorting';
 $string['sorting_help'] = 'Sorting defines the initial sort order of columns in the report. The order can be reversed by toggling the Up/down icon. Users can then define their own sort order by clicking on a column name.';
 $string['switchedit'] = 'Switch to edit mode';
