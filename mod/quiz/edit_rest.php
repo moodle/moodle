@@ -156,7 +156,7 @@ switch($requestmethod) {
                         foreach ($ids as $id) {
                             $slot = $DB->get_record('quiz_slots', array('quizid' => $quiz->id, 'id' => $id),
                                     '*', MUST_EXIST);
-                            if (quiz_has_question_use($quiz, $slot->slot)) {
+                            if ($structure->has_use_capability($slot->slot)) {
                                 $structure->remove_slot($slot->slot);
                             }
                         }
@@ -191,6 +191,13 @@ switch($requestmethod) {
                 require_capability('mod/quiz:manage', $modcontext);
                 if (!$slot = $DB->get_record('quiz_slots', array('quizid' => $quiz->id, 'id' => $id))) {
                     throw new moodle_exception('AJAX commands.php: Bad slot ID '.$id);
+                }
+
+                if (!$structure->has_use_capability($slot->slot)) {
+                    $slotdetail = $structure->get_slot_by_id($slot->id);
+                    $context = context::instance_by_id($slotdetail->contextid);
+                    throw new required_capability_exception($context,
+                        'moodle/question:useall', 'nopermissions', '');
                 }
                 $structure->remove_slot($slot->slot);
                 quiz_delete_previews($quiz);

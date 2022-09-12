@@ -271,7 +271,7 @@ class quiz {
     /**
      * Get the quiz context.
      *
-     * @return context the module context for this quiz.
+     * @return context_module the module context for this quiz.
      */
     public function get_context() {
         return $this->context;
