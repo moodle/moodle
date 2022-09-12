@@ -30,7 +30,8 @@ Feature: A teacher can duplicate questions in the question bank
     And I press "id_submitbutton"
     Then I should see "Duplicated question name"
     And I should see "Test question to be copied"
-    And "Test question to be copied ID number qid" row "Created by" column of "categoryquestions" table should contain "Admin User"
+    And I should see "ID number" in the "Test question to be copied" "table_row"
+    And I should see "qid" in the "Test question to be copied" "table_row"
 
   Scenario: Duplicated questions automatically get a new name suggested
     When I choose "Duplicate" action for "Test question to be copied" in the question bank
