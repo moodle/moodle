@@ -262,6 +262,7 @@ $string['gradebookcalculationswarning'] = 'Note: Some errors have been detected 
 
 The newer version is {$a->currentversion}; you are using gradebook version {$a->gradebookversion}. You can see a list of changes in <a href="{$a->url}">Gradebook calculation changes</a>.';
 $string['gradebookhiddenerror'] = 'The gradebook is currently set to hide everything from students.';
+$string['gradebooknavigationmenu'] = 'Gradebook navigation menu';
 $string['gradebookhistories'] = 'Grade histories';
 $string['gradebooksetup'] = 'Gradebook setup';
 $string['gradeboundary'] = 'Letter grade boundary';

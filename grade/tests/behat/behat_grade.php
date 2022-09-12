@@ -334,7 +334,7 @@ class behat_grade extends behat_base {
             $this->execute('behat_navigation::i_select_from_secondary_navigation', get_string('grades'));
         }
 
-        $this->select_in_gradebook_navigation_selector($gradepath, 'gradesactionselect');
+        $this->execute('behat_forms::i_set_the_field_to', [get_string('gradebooknavigationmenu', 'grades'), $gradepath]);
     }
 
     /**
