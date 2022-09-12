@@ -138,6 +138,11 @@ class editusers_table extends table_sql {
             } else {
                 $currentvalue = $row->managertype;
             }
+            // Added due to value mismatch when editing under certain circumstances.
+            if (empty($currentvalue)) {
+                $currentvalue = 0;
+            }
+
             $editable = new \block_iomad_company_admin\output\user_roles_editable($company,
                                                           \context_system::instance(),
                                                           $row,
