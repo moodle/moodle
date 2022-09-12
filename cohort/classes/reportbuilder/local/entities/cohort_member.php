@@ -16,7 +16,7 @@
 
 declare(strict_types=1);
 
-namespace core_cohort\local\entities;
+namespace core_cohort\reportbuilder\local\entities;
 
 use lang_string;
 use core_reportbuilder\local\entities\base;

@@ -15,16 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * This file contains mappings for classes that have been renamed so that they meet the requirements of the autoloader.
  *
- * @package    report
- * @subpackage configlog
- * @copyright  2011 Petr Skoda
+ * @package    report_configlog
+ * @copyright  2022 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022091500;         // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2022041200;         // Requires this Moodle version.
-$plugin->component = 'report_configlog'; // Full name of the plugin (used for diagnostics)
+$renamedclasses = [
+    // Since Moodle 4.1.
+    'report_configlog\\local\\systemreports\\config_changes' =>
+        'report_configlog\\reportbuilder\\local\\systemreports\\config_changes',
+    'report_configlog\\local\\entities\\config_change' =>
+        'report_configlog\\reportbuilder\\local\\entities\\config_change',
+];

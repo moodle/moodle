@@ -16,7 +16,7 @@
 
 declare(strict_types=1);
 
-namespace core_course\local\entities;
+namespace core_course\reportbuilder\local\entities;
 
 use context_coursecat;
 use context_helper;

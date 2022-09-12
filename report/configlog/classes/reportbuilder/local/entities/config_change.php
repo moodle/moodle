@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace report_configlog\local\entities;
+namespace report_configlog\reportbuilder\local\entities;
 
 use lang_string;
 use core_reportbuilder\local\entities\base;

@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace report_configlog\local\systemreports;
+namespace report_configlog\reportbuilder\local\systemreports;
 
 use context_system;
-use report_configlog\local\entities\config_change as config_change_entity;
+use report_configlog\reportbuilder\local\entities\config_change;
 use core_reportbuilder\system_report;
-use core_reportbuilder\local\entities\user as user_entity;
+use core_reportbuilder\local\entities\user;
 use stdClass;
 
 /**
@@ -36,14 +36,14 @@ class config_changes extends system_report {
      */
     protected function initialise(): void {
         // Our main entity, it contains all of the column definitions that we need.
-        $entitymain = new config_change_entity();
+        $entitymain = new config_change();
         $entitymainalias = $entitymain->get_table_alias('config_log');
 
         $this->set_main_table('config_log', $entitymainalias);
         $this->add_entity($entitymain);
 
         // We can join the "user" entity to our "main" entity using standard SQL JOIN.
-        $entityuser = new user_entity();
+        $entityuser = new user();
         $entityuseralias = $entityuser->get_table_alias('user');
         $this->add_entity($entityuser
             ->add_join("LEFT JOIN {user} {$entityuseralias} ON {$entityuseralias}.id = {$entitymainalias}.userid")
