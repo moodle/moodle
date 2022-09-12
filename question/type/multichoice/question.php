@@ -104,7 +104,7 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
 
     public function update_attempt_state_data_for_new_version(
             question_attempt_step $oldstep, question_definition $otherversion) {
-        parent::update_attempt_state_data_for_new_version($oldstep, $otherversion);
+        $startdata = parent::update_attempt_state_data_for_new_version($oldstep, $otherversion);
 
         $mapping = array_combine(array_keys($otherversion->answers), array_keys($this->answers));
 
@@ -113,8 +113,9 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
         foreach ($oldorder as $oldid) {
             $neworder[] = $mapping[$oldid] ?? $oldid;
         }
+        $startdata['_order'] = implode(',', $neworder);
 
-        return ['_order' => implode(',', $neworder)];
+        return $startdata;
     }
 
     public function get_question_summary() {
