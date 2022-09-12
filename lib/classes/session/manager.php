@@ -60,6 +60,9 @@ class manager {
     /** @var array Stores the the SESSION before a request is performed, used to check incorrect read-only modes */
     private static $priorsession = [];
 
+    /** @var array Stores the the SESSION after write_close is called, used to check if it was mutated after the session is closed */
+    private static $sessionatclose = [];
+
     /**
      * @var bool Used to trigger the SESSION mutation warning without actually preventing SESSION mutation.
      * This variable is used to "copy" what the $requireslock parameter  does in start_session().
@@ -686,6 +689,12 @@ class manager {
         global $PERF, $ME, $CFG;
 
         if (self::$sessionactive) {
+            // If debugging, take a snapshot of session at close and compare on shutdown to detect any accidental mutations.
+            if (debugging()) {
+                self::$sessionatclose = (array) $_SESSION['SESSION'];
+                \core_shutdown_manager::register_function('\core\session\manager::check_mutated_closed_session');
+            }
+
             // Grab the time when session lock is released.
             $PERF->sessionlock['released'] = microtime(true);
             if (!empty($PERF->sessionlock['gained'])) {
@@ -733,6 +742,45 @@ class manager {
         }
 
         self::$sessionactive = false;
+    }
+
+    /**
+     * Checks if the session has been mutated since it was closed.
+     * In write_close the session is saved to the variable $sessionatclose
+     * If there is a difference between $sessionatclose and the current session,
+     * it means a script has erroneously closed the session too early.
+     * Script is usually called in shutdown_manager
+     */
+    public static function check_mutated_closed_session() {
+        global $ME;
+
+        // Session is still open, mutations are allowed.
+        if (self::$sessionactive) {
+            return;
+        }
+
+        // Detect if session was cleared.
+        if (!isset($_SESSION['SESSION']) && isset(self::$sessionatclose)) {
+            debugging("Script $ME cleared the session after it was closed.");
+            return;
+        } else if (!isset($_SESSION['SESSION'])) {
+            // Else session is empty, nothing to check.
+            return;
+        }
+
+        // Session is closed - compare the current session to the session when write_close was called.
+        $arraydiff = self::array_session_diff(
+            self::$sessionatclose,
+            (array) $_SESSION['SESSION']
+        );
+
+        if ($arraydiff) {
+            $error = "Script $ME mutated the session after it was closed:";
+            foreach ($arraydiff as $key => $value) {
+                $error .= ' $SESSION->' . $key;
+            }
+            debugging($error);
+        }
     }
 
     /**
