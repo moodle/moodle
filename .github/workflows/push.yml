@@ -13,7 +13,7 @@ env:
 
 jobs:
   Grunt:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checking out code
@@ -54,10 +54,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-18.04
+          - os: ubuntu-22.04
             php: 7.2
             db: mysqli
-          - os: ubuntu-18.04
+          - os: ubuntu-22.04
             php: 7.4
             db: pgsql
 
