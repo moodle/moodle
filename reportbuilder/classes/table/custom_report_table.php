@@ -44,6 +44,9 @@ class custom_report_table extends base_report_table {
     /** @var bool Whether report is being edited (we don't want user filters/sorting to be applied when editing) */
     protected const REPORT_EDITING = true;
 
+    /** @var float $querytimestart Time we began executing table SQL */
+    private $querytimestart = 0.0;
+
     /**
      * Table constructor. Note that the passed unique ID value must match the pattern "custom-report-table-(\d+)" so that
      * dynamic updates continue to load the same report
@@ -299,6 +302,26 @@ class custom_report_table extends base_report_table {
     }
 
     /**
+     * Provide additional table debugging during editing
+     */
+    public function wrap_html_finish(): void {
+        global $OUTPUT;
+
+        if ($this->editing && debugging('', DEBUG_DEVELOPER)) {
+            $params = array_map(static function(string $param, $value): array {
+                return ['param' => $param, 'value' => var_export($value, true)];
+            }, array_keys($this->sql->params), $this->sql->params);
+
+            echo $OUTPUT->render_from_template('core_reportbuilder/local/report/debug', [
+                'query' => $this->get_table_sql(),
+                'params' => $params,
+                'duration' => $this->querytimestart ?
+                    format_time($this->querytimestart - microtime(true)) : null,
+            ]);
+        }
+    }
+
+    /**
      * Override get_row_cells_html to add an extra cell with the toggle button for card view.
      *
      * @param string $rowid
@@ -338,6 +361,7 @@ class custom_report_table extends base_report_table {
 
         // If the live editing setting is disabled, we not need to fetch custom report data except in preview mode.
         if (!$this->editing || self::show_live_editing()) {
+            $this->querytimestart = microtime(true);
             $this->query_db($pagesize, $useinitialsbar);
             $this->build_table();
             $this->close_recordset();

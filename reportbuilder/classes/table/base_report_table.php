@@ -151,14 +151,11 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
     }
 
     /**
-     * Override parent method of the same, to make use of a recordset and avoid issues with duplicate values in the first column
+     * Generate suitable SQL for the table
      *
-     * @param int $pagesize
-     * @param bool $useinitialsbar
+     * @return string
      */
-    public function query_db($pagesize, $useinitialsbar = true) {
-        global $DB;
-
+    protected function get_table_sql(): string {
         $sql = "SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where} {$this->groupbysql}";
 
         $sort = $this->get_sql_sort();
@@ -166,12 +163,25 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
             $sql .= " ORDER BY {$sort}";
         }
 
+        return $sql;
+    }
+
+    /**
+     * Override parent method of the same, to make use of a recordset and avoid issues with duplicate values in the first column
+     *
+     * @param int $pagesize
+     * @param bool $useinitialsbar
+     */
+    public function query_db($pagesize, $useinitialsbar = true): void {
+        global $DB;
+
         if (!$this->is_downloading()) {
             $this->pagesize($pagesize, $DB->count_records_sql($this->countsql, $this->countparams));
 
-            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
+            $this->rawdata = $DB->get_recordset_sql($this->get_table_sql(), $this->sql->params, $this->get_page_start(),
+                $this->get_page_size());
         } else {
-            $this->rawdata = $DB->get_recordset_sql($sql, $this->sql->params);
+            $this->rawdata = $DB->get_recordset_sql($this->get_table_sql(), $this->sql->params);
         }
     }
 
