@@ -21,8 +21,8 @@ Feature: Include private replies in the summary report
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And the following "activities" exist:
-      | activity | name   | description     | course | idnumber |
-      | forum    | forum1 | C1 first forum  | C1     | forum1   |
+      | activity | name   | course | idnumber |
+      | forum    | forum1 | C1     | forum1   |
     And the following forum discussions exist in course "Course 1":
       | user     | forum  | name        | message         |
       | teacher1 | forum1 | discussion1 | t1 earliest     |
@@ -33,17 +33,13 @@ Feature: Include private replies in the summary report
       | teacher1 | forum1 | discussion1 | t1 between  | t1 between  |
       | teacher1 | forum1 | discussion2 | t1 latest   | t1 latest   |
       | student1 | forum1 | discussion1 | s1 earliest | s1 earliest |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And I reply "s1 earliest" post from "discussion1" forum with:
       | Message         | This is a private reply |
       | Reply privately | 1                       |
-    And I log out
 
   Scenario: Private replies are counted for Teacher
-    When I log in as "teacher2"
-    And I am on "Course 1" course homepage
-    And I follow "forum1"
+    When I am on the "forum1" "forum activity" page logged in as teacher2
     And I navigate to "Forum summary report" in current page administration
     Then "Teacher 1" row "Number of replies posted" column of "forumreport_summary_table" table should contain "3"
 
@@ -51,8 +47,6 @@ Feature: Include private replies in the summary report
     Given the following "permission overrides" exist:
       | capability                   | permission | role           | contextlevel | reference |
       | mod/forum:readprivatereplies | Prevent    | editingteacher | Course       | C1        |
-    When I log in as "teacher2"
-    And I am on "Course 1" course homepage
-    And I follow "forum1"
+    When I am on the "forum1" "forum activity" page logged in as teacher2
     And I navigate to "Forum summary report" in current page administration
     Then "Teacher 1" row "Number of replies posted" column of "forumreport_summary_table" table should contain "2"

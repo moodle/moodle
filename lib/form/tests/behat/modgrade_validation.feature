@@ -103,6 +103,7 @@ Feature: Using the activity grade form element
     And the field "grade[modgrade_type]" matches value "Scale"
     And the field "grade[modgrade_scale]" matches value "ABCDEF"
 
+  @javascript
   Scenario: Attempting to change the maximum grade when ratings exist
     Given I am on the "Test forum name" "forum activity editing" page logged in as teacher1
     And I set the following fields to these values:
@@ -112,7 +113,6 @@ Feature: Using the activity grade form element
     And I press "Save and display"
     And I follow "Discussion subject"
     And I set the field "rating" to "100"
-    And I press "Rate"
     And I am on the "Test forum name" "forum activity editing" page
     When I expand all fieldsets
     Then I should see "You cannot change the type, as grades already exist for this item."

@@ -34,10 +34,10 @@ Feature: Groups report filter is available if groups exist
       | teacher1 | G3    |
       | student1 | G3    |
     And the following "activities" exist:
-      | activity | name   | description     | course | idnumber | groupmode |
-      | forum    | forum1 | C1 first forum  | C1     | c1forum1 | 1         |
-      | forum    | forum2 | C1 second forum | C1     | c1forum2 | 2         |
-      | forum    | forum1 | C2 first forum  | C2     | c2forum1 | 0         |
+      | activity | name   | course | idnumber | groupmode |
+      | forum    | forum1 | C1     | c1forum1 | 1         |
+      | forum    | forum2 | C1     | c1forum2 | 2         |
+      | forum    | forum1 | C2     | c2forum1 | 0         |
     And the following forum discussions exist in course "Course 1":
       | user     | forum  | name        | message    | group            | created           |
       | teacher1 | forum1 | discussion1 | D1 message | G1               | ## 1 month ago ## |

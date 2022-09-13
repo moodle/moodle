@@ -19,13 +19,10 @@ Feature: View an outline report
       | student1 | C1 | student |
       | student2 | C1 | student |
     And the following "activities" exist:
-      | activity | course | name      |
-      | book     | C1     | Book name |
-    When I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Forum name |
-      | Description | Forum description |
+      | activity   | name                      | course | idnumber |
+      | forum      | Forum name                | C1     | forum1   |
+      | book       | Book name                 | C1     | book1    |
+    And I am on the "Course 1" course page logged in as admin
 
   Scenario: View the outline report when only the legacy log reader is enabled
     Given I navigate to "Plugins > Logging > Manage log stores" in site administration
@@ -33,8 +30,7 @@ Feature: View an outline report
     And I click on "Disable" "link" in the "Standard log" "table_row"
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
-    And I am on the "Course 1" course page logged in as student1
-    And I follow "Forum name"
+    And I am on the "Forum name" "forum activity" page logged in as student1
     And I am on "Course 1" course homepage
     And I follow "Book name"
     And I am on the "Course 1" course page logged in as student2
@@ -48,8 +44,7 @@ Feature: View an outline report
     Given I navigate to "Plugins > Logging > Manage log stores" in site administration
     And "Enable" "link" should exist in the "Legacy log" "table_row"
     And "Disable" "link" should exist in the "Standard log" "table_row"
-    And I am on the "Course 1" course page logged in as student1
-    And I follow "Forum name"
+    And I am on the "Forum name" "forum activity" page logged in as student1
     And I am on "Course 1" course homepage
     And I follow "Book name"
     And I am on the "Course 1" course page logged in as student2
@@ -65,8 +60,7 @@ Feature: View an outline report
     And "Disable" "link" should exist in the "Standard log" "table_row"
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
-    And I am on the "Course 1" course page logged in as student1
-    And I follow "Forum name"
+    And I am on the "Forum name" "forum activity" page logged in as student1
     And I am on "Course 1" course homepage
     And I follow "Book name"
     And I am on the "Course 1" course page logged in as student2

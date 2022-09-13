@@ -23,21 +23,20 @@ Feature: Completion with no calendar capabilites
     And I log out
 
   Scenario: Editing completion date
-    Given I log in as "admin"
+    Given the following "activity" exists:
+      | activity   | forum                  |
+      | course     | C1                     |
+      | name       | Test forum name        |
+      | completion | 2                      |
+    And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    When I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
-      | Completion tracking | Show activity as complete when conditions are met |
+    And I am on the "Test forum name" "forum activity editing" page
+    And I set the following fields to these values:
       | id_completionexpected_enabled | 1 |
       | id_completionexpected_day | 1 |
       | id_completionexpected_month | 1 |
       | id_completionexpected_year | 2017 |
-    And I log out
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    When I am on the "Test forum name" "forum activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | id_completionexpected_year | 2018 |
     And I press "Save and return to course"

@@ -15,8 +15,8 @@ Feature: A user can control their own subscription preferences for a forum
       | user | course | role |
       | student1 | C1 | student |
     And the following "activities" exist:
-      | activity | course | idnumber | name            | intro                  | type    | section |
-      | forum    | C1     | forum1   | Test forum name | Test forum description | general | 1       |
+      | activity | course | idnumber | name            | type    |
+      | forum    | C1     | forum1   | Test forum name | general |
     And the following "mod_forum > discussions" exist:
       | forum  | course | user  | name              | message           |
       | forum1 | C1     | admin | Test post subject | Test post message |

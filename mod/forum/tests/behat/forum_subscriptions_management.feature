@@ -18,13 +18,15 @@ Feature: A teacher can control the subscription to a forum
       | teacher  | C1     | editingteacher |
       | student1 | C1     | student        |
       | student2 | C1     | student        |
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name        | Test forum name                |
-      | Forum type        | Standard forum for general use |
-      | Description       | Test forum description         |
-      | Subscription mode | Auto subscription              |
+    And the following "activity" exists:
+      | activity         | forum                  |
+      | course           | C1                     |
+      | idnumber         | f01                    |
+      | name             | Test forum name        |
+    And I am on the "Test forum name" "forum activity editing" page logged in as teacher
+    And I set the following fields to these values:
+      | Subscription mode | Auto subscription |
+    And I press "Save and return to course"
 
   Scenario: A teacher can change toggle subscription editing on and off
     Given I follow "Test forum name"

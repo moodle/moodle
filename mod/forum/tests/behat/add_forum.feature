@@ -20,15 +20,13 @@ Feature: Add forum activities and discussions
     And the following "activity" exists:
       | activity    | forum                  |
       | course      | C1                     |
-      | section     | 1                      |
       | name        | Test forum name        |
       | type        | general                |
-      | description | Test forum description |
     And the following forum discussions exist in course "Course 1":
       | user     | forum              | name                 | message          | attachments |
       | teacher1 | Test forum name    | Forum post 1         | this is the body |             |
       | student1 | Test forum name    | Post with attachment | this is the body | empty.txt   |
-    And I log in as "student1"
+    When I am on the "Course 1" course page logged in as student1
     And I reply "Forum post 1" post from "Test forum name" forum with:
       | Subject | Reply with attachment |
       | Message | This is the body |

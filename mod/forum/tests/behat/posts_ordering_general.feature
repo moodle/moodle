@@ -20,6 +20,14 @@ Feature: New discussions and discussions with recently added replies are display
       | course   | C1                   |
       | activity | forum                |
       | name     | Course general forum |
+    #
+    # Add three posts into the blog.
+    #
+    And the following forum discussions exist in course "Course 1":
+      | user     | forum                | name         | message                 | timemodified      |
+      | student1 | Course general forum | Forum post 1 | This is the first post  | ##now +1 second## |
+      | student1 | Course general forum | Forum post 2 | This is the second post | ##now +2 second## |
+      | student1 | Course general forum | Forum post 3 | This is the third post  | ##now +3 second## |
 
   #
   # We need javascript/wait to prevent creation of the posts in the same second. The threads
@@ -30,27 +38,14 @@ Feature: New discussions and discussions with recently added replies are display
   Scenario: Replying to a forum post or editing it puts the discussion to the front
     Given I am on the "Course general forum" "forum activity" page logged in as student1
     #
-    # Add three posts into the forum.
-    #
-    When I add a new discussion to "Course general forum" forum with:
-      | Subject | Forum post 1            |
-      | Message | This is the first post  |
-    And I add a new discussion to "Course general forum" forum with:
-      | Subject | Forum post 2            |
-      | Message | This is the second post |
-    And I add a new discussion to "Course general forum" forum with:
-      | Subject | Forum post 3            |
-      | Message | This is the third post  |
-    #
     # Edit one of the forum posts.
     #
-    And I follow "Forum post 2"
+    When I follow "Forum post 2"
     And I click on "Edit" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][contains(., 'Forum post 2')]" "xpath_element"
     And I set the following fields to these values:
       | Subject | Edited forum post 2     |
     And I press "Save changes"
     And I wait to be redirected
-    And I log out
     #
     # Reply to another forum post.
     #
