@@ -1,4 +1,4 @@
-@core @core_completion
+@core @core_completion @javascript
 Feature: Students will be marked as completed and pass/fail
   if they have viewed an activity and achieved a grade.
 

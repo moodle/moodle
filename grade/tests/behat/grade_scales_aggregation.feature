@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: Control the aggregation of the scales
   In order to use control the aggregation of the scales
   As an admin
@@ -80,7 +80,6 @@ Feature: Control the aggregation of the scales
       | Highest grade                       | Highest grade.                       | 10.00       | 10.00 %  | 10.00        | 0.00         | 75.00        | 75.00 %   | 0.00 %        | 75.00 %       |
       | Mode of grades                      | Mode of grades.                      | 10.00       | 10.00 %  | 10.00        | 0.00         | 75.00        | 75.00 %   | 0.00 %        | 75.00 %       |
 
-  @javascript
   Scenario: Weights of scales cannot be edited when they are not aggregated
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage

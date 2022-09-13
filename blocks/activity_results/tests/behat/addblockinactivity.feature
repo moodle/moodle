@@ -1,4 +1,4 @@
-@block @block_activity_results
+@block @block_activity_results @javascript
 Feature: The activity results block displays student scores
   In order to be display student scores
   As a user
@@ -45,7 +45,7 @@ Feature: The activity results block displays student scores
     And I am on "Course 1" course homepage
 
   Scenario: Configure the block on a non-graded activity to show 3 high scores
-    Given I follow "Test page name"
+    Given I am on the "Test page name" "page activity" page
     And I add the "Activity results" block
     When I configure the "Activity results" block
     And I set the following fields to these values:
@@ -63,25 +63,25 @@ Feature: The activity results block displays student scores
     And I should see "70.00" in the "Activity results" "block"
 
   Scenario: Block should select current activity by default
-    Given I follow "Test assignment 1"
+    Given I am on the "Test assignment 1" "assign activity" page
     When I add the "Activity results" block
     And I configure the "Activity results" block
     Then the field "config_activitygradeitemid" matches value "Test assignment 1"
     And I press "Cancel"
     And I am on "Course 1" course homepage
-    And I follow "Test assignment 2"
+    And I am on the "Test assignment 2" "assign activity" page
     And I add the "Activity results" block
     And I configure the "Activity results" block
     And the field "config_activitygradeitemid" matches value "Test assignment 2"
     And I press "Cancel"
     And I am on "Course 1" course homepage
-    And I follow "Test assignment 3"
+    And I am on the "Test assignment 3" "assign activity" page
     And I add the "Activity results" block
     And I configure the "Activity results" block
     And the field "config_activitygradeitemid" matches value "Test assignment 3"
     And I press "Cancel"
     And I am on "Course 1" course homepage
-    And I follow "Test page name"
+    And I am on the "Test page name" "page activity" page
     And I add the "Activity results" block
     And I configure the "Activity results" block
     And the field "config_activitygradeitemid" does not match value "Test page name"

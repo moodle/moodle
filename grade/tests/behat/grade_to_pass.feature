@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: We can set the grade to pass value
   In order to set the grade to pass value
   As a teacher
@@ -29,7 +29,6 @@ Feature: We can set the grade to pass value
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
 
-  @javascript
   Scenario: Validate that switching the type of grading used correctly disables grade to pass
     Given I turn editing mode on
     And I am on the "Test Assignment 1" "assign activity" page
@@ -41,7 +40,6 @@ Feature: We can set the grade to pass value
     And the "Grade to pass" "field" should be disabled
     And I press "Save and return to course"
 
-  @javascript
   Scenario: Create an activity with a Grade to pass value greater than the maximum grade
     When I turn editing mode on
     And I am on the "Test Assignment 1" "assign activity" page
@@ -54,7 +52,6 @@ Feature: We can set the grade to pass value
     Then I should see "The grade to pass can not be greater than the maximum possible grade 50"
     And I press "Cancel"
 
-  @javascript
   Scenario: Set a valid grade to pass for an assignment activity using points
     When I turn editing mode on
     And I am on the "Test Assignment 1" "assign activity" page
@@ -78,7 +75,6 @@ Feature: We can set the grade to pass value
     And I click on "Edit  assign Test Assignment 1" "link"
     And the field "Grade to pass" matches value "30"
 
-  @javascript
   Scenario: Set a valid grade to pass for an assignment activity using scales
     When I turn editing mode on
     And I am on the "Test Assignment 1" "assign activity" page
@@ -99,7 +95,6 @@ Feature: We can set the grade to pass value
     And I navigate to "Settings" in current page administration
     And the field "Grade to pass" matches value "4"
 
-  @javascript
   Scenario: Set a invalid grade to pass for an assignment activity using scales
     When I turn editing mode on
     And I am on the "Test Assignment 1" "assign activity" page
@@ -116,7 +111,7 @@ Feature: We can set the grade to pass value
       | activity   | name              | intro         | course | section | idnumber  |
       | workshop   | Test Workshop 1   | Test workshop | C1     | 1       | workshop1 |
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test Workshop 1"
+    And I am on the "Test Workshop 1" "workshop activity" page
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | grade | 80 |
@@ -136,7 +131,7 @@ Feature: We can set the grade to pass value
     And I set the field "Grade to pass" to "15"
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Test Workshop 1"
+    And I am on the "Test Workshop 1" "workshop activity" page
     And I follow "Settings"
     And the field "Submission grade to pass" matches value "45"
     And the field "Assessment grade to pass" matches value "15"
@@ -146,7 +141,7 @@ Feature: We can set the grade to pass value
       | activity   | name              | intro            | course | section | idnumber  |
       | workshop   | Test Workshop 1   | Test workshop    | C1     | 1       | workshop1 |
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test Workshop 1"
+    And I am on the "Test Workshop 1" "workshop activity" page
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | grade | 80 |
@@ -162,7 +157,7 @@ Feature: We can set the grade to pass value
       | activity   | name          | course | section | idnumber  |
       | quiz       | Test Quiz 1   | C1     | 1       | quiz1     |
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test Quiz 1"
+    And I am on the "Test Quiz 1" "quiz activity" page
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Grade to pass | 9.5 |
@@ -174,7 +169,7 @@ Feature: We can set the grade to pass value
     And I set the field "Grade to pass" to "8"
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Test Quiz 1"
+    And I am on the "Test Quiz 1" "quiz activity" page
     And I follow "Settings"
     And the field "Grade to pass" matches value "8.00"
 
@@ -183,7 +178,7 @@ Feature: We can set the grade to pass value
       | activity   | name          | intro       | course | section | idnumber  |
       | lesson     | Test Lesson 1 | Test        | C1     | 1       | lesson1   |
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test Lesson 1"
+    And I am on the "Test Lesson 1" "lesson activity" page
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Grade to pass | 90            |
@@ -195,7 +190,7 @@ Feature: We can set the grade to pass value
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Test Lesson 1"
+    And I am on the "Test Lesson 1" "lesson activity" page
     And I follow "Settings"
     And the field "Grade to pass" matches value "80"
 
@@ -207,7 +202,7 @@ Feature: We can set the grade to pass value
       | component       | stringid | value |
       | core_langconfig | decsep   | #     |
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test Lesson 1"
+    And I am on the "Test Lesson 1" "lesson activity" page
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Grade to pass | 90#50 |
@@ -219,7 +214,7 @@ Feature: We can set the grade to pass value
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Test Lesson 1"
+    And I am on the "Test Lesson 1" "lesson activity" page
     And I follow "Settings"
     And the field "Grade to pass" matches value "80#00"
 
@@ -228,7 +223,7 @@ Feature: We can set the grade to pass value
       | activity   | name            | intro       | course | section | idnumber  |
       | data       | Test Database 1 | Test        | C1     | 1       | data1     |
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test Database 1"
+    And I am on the "Test Database 1" "data activity" page
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
@@ -243,7 +238,7 @@ Feature: We can set the grade to pass value
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Test Database 1"
+    And I am on the "Test Database 1" "data activity" page
     And I follow "Settings"
     And the field "Grade to pass" matches value "80"
 
@@ -252,7 +247,7 @@ Feature: We can set the grade to pass value
       | activity    | name         | intro       | course | section | idnumber  |
       | forum       | Test Forum 1 | Test        | C1     | 1       | forum1    |
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test Forum 1"
+    And I am on the "Test Forum 1" "forum activity" page
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
@@ -268,7 +263,7 @@ Feature: We can set the grade to pass value
       | activity    | name         | intro | course | section | idnumber  |
       | forum       | Test Forum 1 | Test  | C1     | 1       | forum1    |
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test Forum 1"
+    And I am on the "Test Forum 1" "forum activity" page
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
@@ -283,7 +278,7 @@ Feature: We can set the grade to pass value
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Test Forum 1"
+    And I am on the "Test Forum 1" "forum activity" page
     And I follow "Settings"
     And the field "Ratings > Grade to pass" matches value "80"
 
@@ -292,7 +287,7 @@ Feature: We can set the grade to pass value
       | activity    | name            | intro       | course | section | idnumber  |
       | glossary    | Test Glossary 1 | Test        | C1     | 1       | glossary1 |
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test Glossary 1"
+    And I am on the "Test Glossary 1" "glossary activity" page
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Ratings > Aggregate type | Average of ratings |
@@ -306,6 +301,6 @@ Feature: We can set the grade to pass value
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Test Glossary 1"
+    And I am on the "Test Glossary 1" "glossary activity" page
     And I follow "Settings"
     And the field "Grade to pass" matches value "80"

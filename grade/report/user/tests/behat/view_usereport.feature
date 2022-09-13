@@ -8,6 +8,7 @@ Feature: We can use the user report
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
 
+  @javascript
   Scenario: Verify we can view a user grade report with no users enrolled.
     Given I log in as "admin"
     And I am on "Course 1" course homepage

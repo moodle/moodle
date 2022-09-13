@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: Grade letters can be overridden
   In order to test the grade letters functionality
   As a teacher I override site defaults
