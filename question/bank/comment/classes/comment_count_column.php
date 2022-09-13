@@ -55,11 +55,12 @@ class comment_count_column extends column_base {
      */
     protected function display_content($question, $rowclasses): void {
         global $DB, $PAGE;
+        $syscontext = \context_system::instance();
         $args = [
             'component' => 'qbank_comment',
             'commentarea' => 'question',
             'itemid' => $question->id,
-            'contextid' => 1
+            'contextid' => $syscontext->id,
         ];
         $commentcount = $DB->count_records('comments', $args);
         $attributes = [];
@@ -72,6 +73,7 @@ class comment_count_column extends column_base {
                 'data-target' => $target,
                 'data-questionid' => $question->id,
                 'data-courseid' => $this->qbank->course->id,
+                'data-contextid' => $syscontext->id,
             ];
         }
         echo \html_writer::tag('a', $commentcount, $attributes);
