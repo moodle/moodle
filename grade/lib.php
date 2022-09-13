@@ -2959,12 +2959,12 @@ abstract class grade_helper {
             }
 
             $pluginstr = get_string('pluginname', 'gradereport_'.$plugin);
-            $url = new moodle_url('/grade/report/'.$plugin.'/index.php', array('id'=>$courseid));
+            $url = new moodle_url('/grade/report/'.$plugin.'/index.php', array('id' => $courseid));
             $gradereports[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
 
             // Add link to preferences tab if such a page exists
             if (file_exists($plugindir.'/preferences.php')) {
-                $url = new moodle_url('/grade/report/'.$plugin.'/preferences.php', array('id'=>$courseid));
+                $url = new moodle_url('/grade/report/'.$plugin.'/preferences.php', array('id' => $courseid));
                 $gradepreferences[$plugin] = new grade_plugin_info($plugin, $url,
                     get_string('preferences', 'grades') . ': ' . $pluginstr);
             }

@@ -33,12 +33,22 @@
  */
 class gradereport_user_renderer extends plugin_renderer_base {
 
-    public function graded_users_selector($report, $course, $userid, $groupid, $includeall) {
-        global $USER;
+    /**
+     * Small rendering function that helps with outputting the relevant user selector.
+     *
+     * @param string $report
+     * @param stdClass $course
+     * @param int $userid
+     * @param int $groupid
+     * @param bool $includeall
+     * @return string The raw HTML to render.
+     * @throws coding_exception
+     */
+    public function graded_users_selector(string $report, stdClass $course, int $userid, int $groupid, bool $includeall): string {
 
         $select = grade_get_graded_users_select($report, $course, $userid, $groupid, $includeall);
-        $output = html_writer::tag('div', $this->output->render($select), array('id'=>'graded_users_selector'));
-        $output .= html_writer::tag('p', '', array('style'=>'page-break-after: always;'));
+        $output = html_writer::tag('div', $this->output->render($select), ['id' => 'graded_users_selector']);
+        $output .= html_writer::tag('p', '', ['style' => 'page-break-after: always;']);
 
         return $output;
     }
@@ -50,20 +60,22 @@ class gradereport_user_renderer extends plugin_renderer_base {
      * @param int $userview The current view user setting constant
      * @return string
      */
-    public function view_user_selector($userid, $userview) {
+    public function view_user_selector(int $userid, int $userview): string {
         global $USER;
         $url = $this->page->url;
         if ($userid != $USER->id) {
             $url->param('userid', $userid);
         }
 
-        $options = array(GRADE_REPORT_USER_VIEW_USER => get_string('otheruser', 'gradereport_user'),
-                GRADE_REPORT_USER_VIEW_SELF => get_string('myself', 'gradereport_user'));
+        $options = [
+            GRADE_REPORT_USER_VIEW_USER => get_string('otheruser', 'gradereport_user'),
+            GRADE_REPORT_USER_VIEW_SELF => get_string('myself', 'gradereport_user')
+        ];
         $select = new single_select($url, 'userview', $options, $userview, null);
 
         $select->label = get_string('viewas', 'gradereport_user');
 
-        $output = html_writer::tag('div', $this->output->render($select), array('class' => 'view_users_selector'));
+        $output = html_writer::tag('div', $this->output->render($select), ['class' => 'view_users_selector']);
 
         return $output;
     }

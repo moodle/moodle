@@ -17,7 +17,7 @@
 namespace core_grades;
 
 use grade_plugin_return;
-use grade_report_user;
+use gradereport_user\report\user as user_report;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -176,7 +176,7 @@ class reportuserlib_test extends \advanced_testcase {
     private function create_report($course, $user, $coursecontext) {
 
         $gpr = new grade_plugin_return(array('type' => 'report', 'plugin'=>'user', 'courseid' => $course->id, 'userid' => $user->id));
-        $report = new grade_report_user($course->id, $gpr, $coursecontext, $user->id);
+        $report = new user_report($course->id, $gpr, $coursecontext, $user->id);
 
         return $report;
     }

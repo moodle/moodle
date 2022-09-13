@@ -20,6 +20,7 @@ use external_api;
 use context_course;
 use core_user;
 use external_description;
+use external_format_value;
 use external_function_parameters;
 use external_multiple_structure;
 use external_single_structure;
@@ -29,6 +30,7 @@ use grade_plugin_return;
 use graded_users_iterator;
 use moodle_exception;
 use stdClass;
+use gradereport_user\report\user as user_report;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -132,7 +134,7 @@ class user extends external_api {
      * Get the report data
      * @param  stdClass $course  course object
      * @param  stdClass $context context object
-     * @param  stdClass $user    user object (it can be null for all the users)
+     * @param  null|stdClass $user    user object (it can be null for all the users)
      * @param  int $userid       the user to retrieve data from, 0 for all
      * @param  int $groupid      the group id to filter
      * @param  bool $tabledata   whether to get the table data (true) or the gradeitemdata
@@ -142,7 +144,7 @@ class user extends external_api {
     protected static function get_report_data(
         stdClass $course,
         stdClass $context,
-        stdClass $user,
+        ?stdClass $user,
         int $userid,
         int $groupid,
         bool $tabledata = true
@@ -173,7 +175,7 @@ class user extends external_api {
 
         // Just one user.
         if ($user) {
-            $report = new gradereport_user\report\user($course->id, $gpr, $context, $userid);
+            $report = new user_report($course->id, $gpr, $context, $userid);
             $report->fill_table();
 
             $gradeuserdata = [
@@ -201,7 +203,7 @@ class user extends external_api {
 
             while ($userdata = $gui->next_user()) {
                 $currentuser = $userdata->user;
-                $report = new gradereport_user\report\user($course->id, $gpr, $context, $currentuser->id);
+                $report = new user_report($course->id, $gpr, $context, $currentuser->id);
                 $report->fill_table();
 
                 $gradeuserdata = [
@@ -415,7 +417,7 @@ class user extends external_api {
         }
 
         // Create a report instance. We don't need the gpr second parameter.
-        $report = new gradereport_user\report\user($course->id, null, $context, $userid);
+        $report = new user_report($course->id, null, $context, $userid);
         $report->viewed();
 
         return [
@@ -430,7 +432,7 @@ class user extends external_api {
      * @return external_description
      * @since Moodle 2.9
      */
-    public static function view_grade_report_returns() {
+    public static function view_grade_report_returns(): external_description {
         return new external_single_structure(
             [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),

@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['eventgradereportviewed'] = 'Grade user report viewed';
 $string['pluginname'] = 'User report';
 $string['user:view'] = 'View your own grade report';

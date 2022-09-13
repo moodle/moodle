@@ -119,12 +119,12 @@ function grade_report_user_settings_definition(&$mform) {
     $mform->addElement('select', 'report_user_showrange', get_string('showrange', 'grades'), $options);
 
     $options = [
-        0=>0,
-        1=>1,
-        2=>2,
-        3=>3,
-        4=>4,
-        5=>5
+        0 => 0,
+        1 => 1,
+        2 => 2,
+        3 => 3,
+        4 => 4,
+        5 => 5
     ];
 
     if (!empty($CFG->grade_report_user_rangedecimals)) {
@@ -179,7 +179,9 @@ function grade_report_user_profilereport(object $course, object $user, bool $vie
         $context = context_course::instance($course->id);
 
         // Fetch the return tracking object.
-        $gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'user', 'courseid'=>$course->id, 'userid'=>$user->id));
+        $gpr = new grade_plugin_return(
+            ['type' => 'report', 'plugin' => 'user', 'courseid' => $course->id, 'userid' => $user->id]
+        );
         // Create a report instance.
         $report = new gradereport_user\report\user($course->id, $gpr, $context, $user->id, $viewasuser);
 
