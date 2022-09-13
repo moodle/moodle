@@ -15,9 +15,9 @@ Feature: Activities can be moved between sections
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity | name               | intro                    | course | idnumber  | section |
-      | forum    | Test forum name    | Test forum description   | C1     | 00001     | 1       |
-      | forum    | Second forum name  | Second forum description | C1     | 00002     | 1       |
+      | activity | name               | course | idnumber  | section |
+      | forum    | Test forum name    | C1     | 00001     | 1       |
+      | forum    | Second forum name  | C1     | 00002     | 1       |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block

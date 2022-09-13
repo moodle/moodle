@@ -21,10 +21,10 @@ Feature: Post date columns data available
       | student2 | C1     | student        |
       | teacher1 | C2     | editingteacher |
     And the following "activities" exist:
-      | activity | name   | description     | course | idnumber |
-      | forum    | forum1 | C1 first forum  | C1     | forum1   |
-      | forum    | forum2 | C1 second forum | C1     | forum2   |
-      | forum    | forum1 | C2 first forum  | C2     | forum1   |
+      | activity | name   | course | idnumber |
+      | forum    | forum1 | C1     | forum1   |
+      | forum    | forum2 | C1     | forum2   |
+      | forum    | forum1 | C2     | forum1   |
     And the following forum discussions exist in course "Course 1":
       | user     | forum  | name        | message         | created                 |
       | teacher1 | forum1 | discussion1 | t1 earliest     | ##2018-01-02 09:00:00## |
@@ -43,8 +43,7 @@ Feature: Post date columns data available
       | user     | forum  | name        | message         | created                 |
       | teacher1 | forum1 | discussion1 | t1 other course | ##2017-01-01 03:00:00## |
       | teacher1 | forum1 | discussion2 | t1 other course | ##2019-09-13 23:59:00## |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as teacher1
     And I follow "forum1"
     And I navigate to "Forum summary report" in current page administration
     Then "Teacher 1" row "Earliest post" column of "forumreport_summary_table" table should contain "Tuesday, 2 January 2018, 9:00"

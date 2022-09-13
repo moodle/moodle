@@ -16,31 +16,27 @@ Feature: Students can reply to a discussion in page.
     And the following "activity" exists:
       | activity    | forum                  |
       | course      | C1                     |
-      | section     | 1                      |
       | idnumber    | 0001                   |
       | name        | Test forum name        |
-      | description | Test forum description |
     And the following "mod_forum > discussions" exist:
       | forum | course | user     | name         | message                              |
       | 0001  | C1     | teacher1 | Discussion 1 | Discussion contents 1, first message |
       | 0001  | C1     | teacher1 | Discussion 2 | Discussion contents 2, first message |
 
   Scenario: Confirm inpage replies work
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    Given I reply "Discussion 2" post from "Test forum name" forum using an inpage reply with:
+    Given I am on the "Course 1" course page logged in as student1
+    When I reply "Discussion 2" post from "Test forum name" forum using an inpage reply with:
       | post | Discussion contents 1, third message |
     Then I should see "Discussion contents 1, third message"
-    When I reload the page
-    Then I should see "Discussion contents 1, third message"
+    And I reload the page
+    And I should see "Discussion contents 1, third message"
 
   Scenario: Confirm inpage replies work - private reply
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I reply "Discussion 2" post from "Test forum name" forum using an inpage reply with:
+    Given I am on the "Course 1" course page logged in as teacher1
+    When I reply "Discussion 2" post from "Test forum name" forum using an inpage reply with:
       | post | Discussion contents 1, third message |
       | privatereply | 1                            |
     Then I should see "Discussion contents 1, third message"
-    Then I should see "This is a private reply. It is only visible to you and anyone with the capability to view private replies, such as teachers or managers."
-    When I reload the page
-    Then I should see "Discussion contents 1, third message"
+    And I should see "This is a private reply. It is only visible to you and anyone with the capability to view private replies, such as teachers or managers."
+    And I reload the page
+    And I should see "Discussion contents 1, third message"

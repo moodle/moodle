@@ -28,17 +28,13 @@ Feature: I can grade a students interaction across a forum
       | course      | C1           |
       | idnumber    | 0001         |
       | name        | Test Forum 1 |
-      | description | Test         |
-      | section     | 1            |
     And I log in as "teacher1"
     And I change window size to "large"
-    And I am on "Course 1" course homepage
-    And I turn editing mode on
+    And I am on "Course 1" course homepage with editing mode on
 
   @javascript
   Scenario: Ensure that forum grade settings do not leak to Ratings
-    Given I am on the "Test Forum 1" "forum activity" page
-    And I navigate to "Settings" in current page administration
+    Given I am on the "Test Forum 1" "forum activity editing" page
     And I expand all fieldsets
 
     # Fields should be hidden when grading is not set.
@@ -80,8 +76,7 @@ Feature: I can grade a students interaction across a forum
 
   @javascript
   Scenario: Ensure that Ratings settings do not leak to Forum grading
-    Given I am on the "Test Forum 1" "forum activity" page
-    And I navigate to "Settings" in current page administration
+    Given I am on the "Test Forum 1" "forum activity editing" page
     And I expand all fieldsets
 
     # Fields should be hidden when grading is not set.
@@ -134,8 +129,7 @@ Feature: I can grade a students interaction across a forum
     And I should see "Tutor" in the "Parent category" "fieldset"
 
   Scenario: Setting both a rating and a whole forum grade does not bleed
-    Given I am on the "Test Forum 1" "forum activity" page
-    And I navigate to "Settings" in current page administration
+    Given I am on the "Test Forum 1" "forum activity editing" page
 
     And I set the field "Ratings > Aggregate type" to "Count of ratings"
     And I set the field "Ratings > Type" to "Point"

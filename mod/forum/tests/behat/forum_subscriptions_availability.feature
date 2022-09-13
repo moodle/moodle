@@ -35,10 +35,10 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | grouping | group |
       | GG1      | G1    |
     And the following "activities" exist:
-      | activity | course | idnumber | section | type    | name           | description            | forcesubscribe |
-      | forum    | C1     | 1        | 1       | general | Forced Forum 1 | Test forum description | 1              |
-      | forum    | C1     | 0001     | 1       | general | Forced Forum 2 | Test forum description |                |
-      | forum    | C1     | 0002     | 1       | general | Forced Forum 3 | Test forum description | 2              |
+      | activity | course | idnumber | type    | name           | forcesubscribe |
+      | forum    | C1     | 1        | general | Forced Forum 1 | 1              |
+      | forum    | C1     | 0001     | general | Forced Forum 2 |                |
+      | forum    | C1     | 0002     | general | Forced Forum 3 | 2              |
     And I log in as "teacher"
     And I am on "Course 1" course homepage with editing mode on
 
@@ -63,13 +63,11 @@ Feature: As a teacher I need to see an accurate list of subscribed users
     And I should not see "Student 3"
 
   Scenario: A forced forum does not allow to edit the subscribers
-    Given I am on the "Forced Forum 2" "forum activity" page
-    And I navigate to "Settings" in current page administration
+    Given I am on the "Forced Forum 2" "forum activity editing" page
     And I set the following fields to these values:
       | Subscription mode | Forced subscription |
       | Availability      | Show on course page |
-    And I press "Save and return to course"
-    And I am on the "Forced Forum 2" "forum activity" page
+    And I press "Save and display"
     And I navigate to "Show/edit current subscribers" in current page administration
     Then I should see "Teacher Teacher"
     And I should see "Student 1"
@@ -82,8 +80,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
     And I set the following fields to these values:
       | Subscription mode | Forced subscription |
       | Availability      | Hide from students |
-    And I press "Save and return to course"
-    And I am on the "Forced Forum 2" "forum activity" page
+    And I press "Save and display"
     And I navigate to "Show/edit current subscribers" in current page administration
     Then I should see "Teacher Teacher"
     And I should not see "Student 1"
@@ -98,7 +95,6 @@ Feature: As a teacher I need to see an accurate list of subscribed users
     And I should see "Teacher Teacher"
     And I should see "Student 2"
     And I should see "Student 3"
-    And I am on "Course 1" course homepage
     And I am on the "Forced Forum 3" "forum activity editing" page
     And I expand all fieldsets
     And I click on "Add restriction..." "button"

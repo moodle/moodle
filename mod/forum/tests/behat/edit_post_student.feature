@@ -15,10 +15,9 @@ Feature: Students can edit or delete their forum posts within a set time limit
       | user | course | role |
       | student1 | C1 | student |
     And the following "activities" exist:
-      | activity   | name                   | intro                   | course  | idnumber  |
-      | forum      | Test forum name        | Test forum description  | C1      | forum     |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+      | activity   | name                   | course  | idnumber  |
+      | forum      | Test forum name        | C1      | forum     |
+    And I am on the "Course 1" course page logged in as student1
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Forum post subject |
       | Message | This is the body |
@@ -48,9 +47,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
       | maxeditingtime | 1 |
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Recent activity" block
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And I should see "New forum posts:" in the "Recent activity" "block"
     And I should see "Forum post subject" in the "Recent activity" "block"
     When I wait "2" seconds

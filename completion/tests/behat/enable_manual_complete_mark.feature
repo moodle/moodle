@@ -20,11 +20,8 @@ Feature: Allow students to manually mark an activity as complete
     And the following "activity" exists:
       | activity | forum                  |
       | course   | C1                     |
-      | section  | 1                      |
       | name     | Test forum name        |
-      | intro    | Test forum description |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
+    And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
@@ -34,12 +31,8 @@ Feature: Allow students to manually mark an activity as complete
       | completion | 1 |
     And I press "Save and return to course"
     And "Student First" user has not completed "Test forum name" activity
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     When I toggle the manual completion state of "Test forum name"
     Then the manual completion button of "Test forum name" is displayed as "Done"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And "Student First" user has completed "Test forum name" activity

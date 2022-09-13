@@ -27,11 +27,10 @@ Feature: Course activity controls works as expected
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity | course | section | name              | intro                    |
-      | forum    | C1     | 1       | Test forum name 1 | Test forum description 1 |
-      | forum    | C1     | 1       | Test forum name 2 | Test forum description 2 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+      | activity | course | section | name              |
+      | forum    | C1     | 1       | Test forum name 1 |
+      | forum    | C1     | 1       | Test forum name 2 |
+    And I am on the "Course 1" course page logged in as teacher1
     When I follow <targetpage>
     And I turn editing mode on
     And I add the "Recent activity" block
@@ -97,11 +96,10 @@ Feature: Course activity controls works as expected
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity  | name                   | intro                         | course | idnumber     | section |
-      | forum     | Test forum name 1      | Test forum description 1      | C1     | 0001         | 1       |
-      | forum     | Test forum name 2      | Test forum description 2      | C1     | 0002         | 1       |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+      | activity  | name                   | course | idnumber     | section |
+      | forum     | Test forum name 1      | C1     | 0001         | 1       |
+      | forum     | Test forum name 2      | C1     | 0002         | 1       |
+    And I am on the "Course 1" course page logged in as teacher1
     When I follow <targetpage>
     And I turn editing mode on
     And I add the "Recent activity" block

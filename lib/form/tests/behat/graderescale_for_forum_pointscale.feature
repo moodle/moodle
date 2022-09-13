@@ -20,22 +20,18 @@ Feature: Using the forum activities which support point scale
       | course      | C1                     |
       | activity    | forum                  |
       | name        | Test forum name        |
-      | description | Test forum description |
       | idnumber    | forum1                 |
+    And the following forum discussions exist in course "Course 1":
+      | user     | forum           | name               | message              |
+      | student1 | Test forum name | Discussion subject | Test post in forum 1 |
 
   @javascript
   Scenario: Forum rescale grade should not be possible when users are graded
-    Given I am on the "Course 1" course page logged in as student1
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion subject   |
-      | Message | Test post in forum 1 |
-    And I log out
-    And I am on the "Test forum name" "forum activity editing" page logged in as teacher1
+    Given I am on the "Test forum name" "forum activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "Ratings > Aggregate type" to "Count of ratings"
     And I set the field "Ratings > Type" to "Point"
-    And I press "Save and return to course"
-    And I am on the "Test forum name" "forum activity" page
+    And I press "Save and display"
     And I follow "Discussion subject"
     And I set the field "rating" to "30"
     When I am on the "Test forum name" "forum activity editing" page

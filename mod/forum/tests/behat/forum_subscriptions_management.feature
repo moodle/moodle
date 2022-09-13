@@ -22,12 +22,8 @@ Feature: A teacher can control the subscription to a forum
       | activity         | forum                  |
       | course           | C1                     |
       | idnumber         | f01                    |
-      | intro            | Test forum description |
       | name             | Test forum name        |
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I follow "Test forum name"
-    And I navigate to "Edit settings" in current page administration
+    And I am on the "Test forum name" "forum activity editing" page logged in as teacher
     And I set the following fields to these values:
       | Subscription mode | Auto subscription |
     And I press "Save and return to course"

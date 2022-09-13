@@ -157,7 +157,6 @@ Feature: Apply tour filters to a tour
       | wiki     | C1     | Test wiki name  | First page     | collaborative |          |                        |         |
       | forum    | C2     | Test forum name |                |               | 001      | Test forum description | general |
     And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
     And I add a new user tour with:
       | Name               | Wiki tour                |
       | Description        | A tour with both matches |

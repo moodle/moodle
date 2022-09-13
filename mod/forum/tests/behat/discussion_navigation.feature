@@ -31,11 +31,9 @@ Feature: A user can navigate to previous and next discussions
 
   Scenario: A user can navigate between discussions
     Given the following "activities" exist:
-      | activity   | name                   | intro             | course | idnumber     | groupmode |
-      | forum      | Test forum name        | Test forum name   | C1     | forum        | 0         |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test forum name"
+      | activity   | name                   | course | idnumber     | groupmode |
+      | forum      | Test forum name        | C1     | forum        | 0         |
+    And I am on the "Test forum name" "forum activity" page logged in as teacher1
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 |
       | Message | Test post message |
@@ -72,37 +70,17 @@ Feature: A user can navigate to previous and next discussions
 
   Scenario: A user can navigate between discussions with visible groups
     Given the following "activities" exist:
-      | activity   | name                   | intro             | course | idnumber     | groupmode |
-      | forum      | Test forum name        | Test forum name   | C1     | forum        | 2         |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test forum name"
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 1 Group 0 |
-      | Message | Test post message |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 2 Group 0 |
-      | Message | Test post message |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 1 Group 1 |
-      | Message | Test post message |
-      | Group   | Group 1 |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 2 Group 1 |
-      | Message | Test post message |
-      | Group   | Group 1 |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 1 Group 2 |
-      | Message | Test post message |
-      | Group   | Group 2 |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 2 Group 2 |
-      | Message | Test post message |
-      | Group   | Group 2 |
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test forum name"
+      | activity   | name                   | course | idnumber     | groupmode |
+      | forum      | Test forum name        | C1     | forum        | 2         |
+    And the following forum discussions exist in course "Course 1":
+      | user     | forum           | name                 | message           | group |
+      | teacher1 | Test forum name | Discussion 1 Group 0 | Test post message |           |
+      | teacher1 | Test forum name | Discussion 2 Group 0 | Test post message |           |
+      | teacher1 | Test forum name | Discussion 1 Group 1 | Test post message | G1        |
+      | teacher1 | Test forum name | Discussion 2 Group 1 | Test post message | G1        |
+      | teacher1 | Test forum name | Discussion 1 Group 2 | Test post message | G2        |
+      | teacher1 | Test forum name | Discussion 2 Group 2 | Test post message | G2        |
+    When I am on the "Test forum name" "forum activity" page logged in as student1
     And I select "All participants" from the "Visible groups" singleselect
     And I follow "Discussion 1 Group 0"
     Then I should see "Discussion 2 Group 0"
@@ -131,35 +109,15 @@ Feature: A user can navigate to previous and next discussions
     Given the following "activities" exist:
       | activity   | name                   | intro             | course | idnumber     | groupmode |
       | forum      | Test forum name        | Test forum name   | C1     | forum        | 1         |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test forum name"
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 1 Group 0 |
-      | Message | Test post message |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 2 Group 0 |
-      | Message | Test post message |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 1 Group 1 |
-      | Message | Test post message |
-      | Group   | Group 1 |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 2 Group 1 |
-      | Message | Test post message |
-      | Group   | Group 1 |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 1 Group 2 |
-      | Message | Test post message |
-      | Group   | Group 2 |
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Discussion 2 Group 2 |
-      | Message | Test post message |
-      | Group   | Group 2 |
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Test forum name"
+    And the following forum discussions exist in course "Course 1":
+      | user     | forum           | name                 | message           | group |
+      | teacher1 | Test forum name | Discussion 1 Group 0 | Test post message |           |
+      | teacher1 | Test forum name | Discussion 2 Group 0 | Test post message |           |
+      | teacher1 | Test forum name | Discussion 1 Group 1 | Test post message | G1        |
+      | teacher1 | Test forum name | Discussion 2 Group 1 | Test post message | G1        |
+      | teacher1 | Test forum name | Discussion 1 Group 2 | Test post message | G2        |
+      | teacher1 | Test forum name | Discussion 2 Group 2 | Test post message | G2        |
+    When I am on the "Test forum name" "forum activity" page logged in as student1
     And I follow "Discussion 1 Group 1"
     Then I should see "Discussion 2 Group 0"
     And I should see "Discussion 2 Group 1"

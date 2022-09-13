@@ -25,26 +25,19 @@ Feature: Show activity completion status or activity completion configuration on
       | Enable completion tracking | Yes |
     And I press "Save and display"
     And the following "activities" exist:
-      | activity | course | idnumber | name            | intro                  | completion | completionview | completionexpected |
-      | forum    | C1     | forum1   | Test forum name | Test forum description | 1          | 0              | 0                  |
-    And the following "activities" exist:
       | activity | course | idnumber | name                 | intro                       | completion | completionview | completionexpected |
       | assign   | C1     | assign1  | Test assignment name | Test assignment description | 2          | 1              | 0                  |
-    And the following "activities" exist:
-      | activity | course | idnumber | name           | intro                 | completion | completionview | completionexpected |
-      | quiz     | C1     | quiz1    | Test quiz name | Test quiz description | 0          | 0              | 0                  |
-    And I log out
+      | quiz     | C1     | quiz1    | Test quiz name       | Test quiz description       | 0          | 0              | 0                  |
+      | forum    | C1     | forum1   | Test forum name      |                             | 1          | 0              | 0                  |
 
   Scenario: Show completion status to students
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as student1
     And the manual completion button of "Test forum name" is displayed as "Mark as done"
     And the "View" completion condition of "Test assignment name" is displayed as "todo"
     And there should be no completion information shown for "Test quiz name"
 
   Scenario: Show completion configuration to editing teachers
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     And the manual completion button for "Test forum name" should be disabled
     And "Test assignment name" should have the "View" completion condition
     And there should be no completion information shown for "Test quiz name"
@@ -54,8 +47,7 @@ Feature: Show activity completion status or activity completion configuration on
     And there should be no completion information shown for "Test quiz name"
 
   Scenario: Show completion configuration to non-editing teachers
-    Given I log in as "teacher2"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher2
     And the manual completion button for "Test forum name" should be disabled
     And "Test assignment name" should have the "View" completion condition
     And there should be no completion information shown for "Test quiz name"
