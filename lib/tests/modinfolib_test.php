@@ -1096,4 +1096,49 @@ class modinfolib_test extends advanced_testcase {
         // Make sure that the cacherev will be reset.
         $this->assertEquals(-1, $coursemodinfo->cacherev);
     }
+
+    /**
+     * Tests that if the modinfo cache returns a newer-than-expected version, Moodle won't rebuild
+     * it.
+     *
+     * This is important to avoid wasted time/effort and poor performance, for example in cases
+     * where multiple requests are accessing the course.
+     *
+     * Certain cases could be particularly bad if this test fails. For example, if using clustered
+     * databases where there is a 100ms delay between updates to the course table being available
+     * to all users (but no such delay on the cache infrastructure), then during that 100ms, every
+     * request that calls get_fast_modinfo and uses the read-only database will rebuild the course
+     * cache. Since these will then create a still-newer version, future requests for the next
+     * 100ms will also rebuild it again... etc.
+     *
+     * @covers \course_modinfo
+     */
+    public function test_get_modinfo_with_newer_version(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Get info about a course and build the initial cache, then drop it from memory.
+        $course = $this->getDataGenerator()->create_course();
+        get_fast_modinfo($course);
+        get_fast_modinfo(0, 0, true);
+
+        // User A starts a request, which takes some time...
+        $useracourse = $DB->get_record('course', ['id' => $course->id]);
+
+        // User B also starts a request and makes a change to the course.
+        $userbcourse = $DB->get_record('course', ['id' => $course->id]);
+        $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
+        rebuild_course_cache($userbcourse->id, false);
+
+        // Finally, user A's request now gets modinfo. It should accept the version from B even
+        // though the course version (of cache) is newer than the one expected by A.
+        $before = $DB->perf_get_queries();
+        $modinfo = get_fast_modinfo($useracourse);
+        $after = $DB->perf_get_queries();
+        $this->assertEquals($after, $before, 'Should use cached version, making no DB queries');
+
+        // Obviously, modinfo should include the Page now.
+        $this->assertCount(1, $modinfo->get_instances_of('page'));
+    }
 }
