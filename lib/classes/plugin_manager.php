@@ -2031,6 +2031,7 @@ class core_plugin_manager {
             'tiny' => [
                 'accessibilitychecker',
                 'autosave',
+                'equation',
                 'h5p',
                 'media',
                 'recordrtc',
