@@ -413,6 +413,9 @@ $CFG->admin = 'admin';
 //   Print to footer (works with the default theme)
 //   define('MDL_PERFTOFOOT', true);
 //
+//   Print additional data to log of included files
+//   define('MDL_PERFINC', true);
+//
 //   Enable earlier profiling that causes more code to be covered
 //   on every request (db connections, config load, other inits...).
 //   Requires extra configuration to be defined in config.php like:
