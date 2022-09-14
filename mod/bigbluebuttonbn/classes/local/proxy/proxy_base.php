@@ -21,7 +21,6 @@ use mod_bigbluebuttonbn\local\exceptions\bigbluebutton_exception;
 use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
 use mod_bigbluebuttonbn\plugin;
 use moodle_url;
-use SimpleXMLElement;
 
 /**
  * The abstract proxy base class.
@@ -61,7 +60,8 @@ abstract class proxy_base {
         }, array_keys($metadata)), $metadata);
 
         $params = http_build_query($data + $metadata, '', '&');
-        return $baseurl . $params . '&checksum=' . sha1($action . $params . self::sanitized_secret());
+        $checksum = self::get_checksum($action, $params);
+        return $baseurl . $params . '&checksum=' . $checksum;
     }
 
     /**
@@ -69,7 +69,7 @@ abstract class proxy_base {
      *
      * @return string
      */
-    protected static function sanitized_url() {
+    protected static function sanitized_url(): string {
         $serverurl = trim(config::get('server_url'));
         if (PHPUNIT_TEST) {
             $serverurl = (new moodle_url(TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER))->out(false);
@@ -95,7 +95,7 @@ abstract class proxy_base {
     /**
      * Throw an exception if there is a problem in the returned XML value
      *
-     * @param SimpleXMLElement|bool $xml
+     * @param \SimpleXMLElement|bool $xml
      * @param array|null $additionaldetails
      * @throws bigbluebutton_exception
      * @throws server_not_available_exception
@@ -164,7 +164,7 @@ abstract class proxy_base {
      * @param string $action
      * @param array $data
      * @param array $metadata
-     * @return null|bool|SimpleXMLElement
+     * @return null|bool|\SimpleXMLElement
      */
     protected static function fetch_endpoint_xml(
         string $action,
@@ -178,5 +178,16 @@ abstract class proxy_base {
         }
         $curl = new curl();
         return $curl->get(self::action_url($action, $data, $metadata));
+    }
+
+    /**
+     * Get checksum
+     *
+     * @param string $action
+     * @param string $params
+     * @return string
+     */
+    public static function get_checksum(string $action, string $params): string {
+        return hash(config::get('checksum_algorithm'), $action . $params . self::sanitized_secret());
     }
 }

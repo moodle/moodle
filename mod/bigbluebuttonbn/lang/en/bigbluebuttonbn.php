@@ -146,6 +146,9 @@ $string['config_server_url_description'] = 'The default credentials are for a <a
 </ol>';
 $string['config_shared_secret'] = 'BigBlueButton shared secret';
 $string['config_shared_secret_description'] = 'The security secret of your BigBlueButton server. The default secret is for a free BigBlueButton service provided by Blindside Networks.';
+$string['config_checksum_algorithm'] = 'BigBlueButton Checksum Algorithm';
+$string['config_checksum_algorithm_description'] = 'The checksum algorithm of your BigBlueButton server.
+ (SHA1 guarantees compatibility with older server versions but is less secure whereas SHA512 is FIPS 140-2 compliant.)';
 
 $string['config_recording'] = 'Recording';
 $string['config_recording_description'] = 'These settings are feature specific';

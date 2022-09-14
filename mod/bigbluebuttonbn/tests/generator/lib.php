@@ -274,6 +274,50 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
     }
 
     /**
+     * Utility to send a request to the mock server
+     *
+     * @param string $endpoint
+     * @param array $params
+     * @param array $mockdata
+     * @return SimpleXMLElement|bool
+     * @throws moodle_exception
+     */
+    protected function send_mock_request(string $endpoint, array $params = [], array $mockdata = []): SimpleXMLElement {
+        $url = $this->get_mocked_server_url($endpoint, $params);
+
+        foreach ($mockdata as $key => $value) {
+            if (is_array($value)) {
+                foreach ($value as $subkey => $subvalue) {
+                    $paramname = "{$key}_{$subkey}";
+                    $url->param($paramname, $subvalue);
+                }
+            } else {
+                $url->param($key, $value);
+            }
+        }
+
+        $curl = new \curl();
+        $result = $curl->get($url->out_omit_querystring(), $url->params());
+
+        $retvalue = @simplexml_load_string($result, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOBLANKS);
+        if ($retvalue === false) {
+            throw new moodle_exception('mockserverconnfailed', 'mod_bigbluebutton');
+        }
+        return $retvalue;
+    }
+
+    /**
+     * Get a URL for a mocked BBB server endpoint.
+     *
+     * @param string $endpoint
+     * @param array $params
+     * @return moodle_url
+     */
+    protected function get_mocked_server_url(string $endpoint = '', array $params = []): moodle_url {
+        return new moodle_url(TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER . '/' . $endpoint, $params);
+    }
+
+    /**
      * Mock an in-progress meeting on the remote server.
      *
      * @param array $data
@@ -356,47 +400,17 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
     }
 
     /**
-     * Get a URL for a mocked BBB server endpoint.
+     * Set a value in the Mock server
      *
-     * @param string $endpoint
-     * @param array $params
-     * @return moodle_url
-     */
-    protected function get_mocked_server_url(string $endpoint = '', array $params = []): moodle_url {
-        return new moodle_url(TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER . '/' . $endpoint, $params);
-    }
-
-    /**
-     * Utility to send a request to the mock server
-     *
-     * @param string $endpoint
-     * @param array $params
-     * @param array $mockdata
-     * @return SimpleXMLElement|bool
+     * @param string $name
+     * @param mixed $value
+     * @return void
      * @throws moodle_exception
      */
-    protected function send_mock_request(string $endpoint, array $params = [], array $mockdata = []): SimpleXMLElement {
-        $url = $this->get_mocked_server_url($endpoint, $params);
-
-        foreach ($mockdata as $key => $value) {
-            if (is_array($value)) {
-                foreach ($value as $subkey => $subvalue) {
-                    $paramname = "{$key}_{$subkey}";
-                    $url->param($paramname, $subvalue);
-                }
-            } else {
-                $url->param($key, $value);
-            }
+    public function set_value(string $name, $value): void {
+        if (defined('TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER')) {
+            $this->send_mock_request('backoffice/set', [], ['name' => $name, 'value' => json_encode($value)]);
         }
-
-        $curl = new \curl();
-        $result = $curl->get($url->out_omit_querystring(), $url->params());
-
-        $retvalue = @simplexml_load_string($result, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOBLANKS);
-        if ($retvalue === false) {
-            throw new moodle_exception('mockserverconnfailed', 'mod_bigbluebutton');
-        }
-        return $retvalue;
     }
 
     /**
