@@ -21200,6 +21200,8 @@ div.editor_atto_toolbar button .icon {
 */
 .reportbuilder-report-container {
   min-width: 0; }
+  .reportbuilder-report-container button[data-action="toggle-edit-preview"] .loading-icon {
+    margin-left: .5rem; }
 
 .reportbuilder-editor-table-container {
   overflow-x: auto; }
