@@ -72,13 +72,13 @@ class logins_table extends table_sql {
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_firstlogin($user) {
+    public function col_urlfirstlogin($user) {
         global $CFG;
 
-        if ($user->firstlogin == null) {
+        if ($user->urlfirstlogin == null) {
             return(get_string('never'));
         } else {
-            return date($CFG->iomad_date_format, $user->firstlogin);
+            return date($CFG->iomad_date_format, $user->urlfirstlogin);
         }
     }
 
@@ -87,13 +87,13 @@ class logins_table extends table_sql {
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_lastlogin($user) {
+    public function col_urllastlogin($user) {
         global $CFG;
 
-        if ($user->lastlogin == null) {
+        if ($user->urllastlogin == null) {
             return(get_string('never'));
         } else {
-            return date($CFG->iomad_date_format, $user->lastlogin);
+            return date($CFG->iomad_date_format, $user->urllastlogin);
         }
     }
 
