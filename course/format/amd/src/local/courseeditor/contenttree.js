@@ -61,7 +61,7 @@ export default class extends Tree {
                 return this._getVisibleItems();
             };
         }
-        // All jQuery events can be replaced when MDL-79179 is integrated.
+        // All jQuery events can be replaced when MDL-71979 is integrated.
         this.treeRoot.on('hidden.bs.collapse shown.bs.collapse', () => {
             this.refreshVisibleItemsCache();
         });
@@ -146,7 +146,7 @@ export default class extends Tree {
      * @param {JQuery} item  the jQuery object
      */
     toggleGroup(item) {
-        // All jQuery in this segment of code can be replaced when MDL-79179 is integrated.
+        // All jQuery in this segment of code can be replaced when MDL-71979 is integrated.
         const toggler = item.find(this.selectors.COLLAPSE);
         let collapsibleId = toggler.data('target') ?? toggler.attr('href');
         if (!collapsibleId) {
