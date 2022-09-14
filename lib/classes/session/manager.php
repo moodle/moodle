@@ -778,6 +778,11 @@ class manager {
             $error = "Script $ME mutated the session after it was closed:";
             foreach ($arraydiff as $key => $value) {
                 $error .= ' $SESSION->' . $key;
+
+                // Extra debugging for cachestore session changes.
+                if (strpos($key, 'cachestore_') === 0 && is_array($value)) {
+                    $error .= ': ' . implode(',', array_keys($value));
+                }
             }
             debugging($error);
         }
