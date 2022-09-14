@@ -27,7 +27,6 @@ define('NO_OUTPUT_BUFFERING', true);
 require_once('../../../config.php');
 require_once($CFG->dirroot.'/lib/gradelib.php');
 require_once($CFG->dirroot.'/grade/lib.php');
-require_once($CFG->dirroot.'/grade/report/singleview/lib.php');
 
 $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', null, PARAM_INT);
@@ -66,7 +65,7 @@ if (!$course = $DB->get_record('course', $courseparams)) {
 
 require_login($course);
 
-if (!in_array($itemtype, gradereport_singleview::valid_screens())) {
+if (!in_array($itemtype, gradereport_singleview\report\singleview::valid_screens())) {
     throw new \moodle_exception('notvalid', 'gradereport_singleview', '', $itemtype);
 }
 
@@ -89,7 +88,7 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'singleview';
 
-$report = new gradereport_singleview($courseid, $gpr, $context, $itemtype, $itemid);
+$report = new gradereport_singleview\report\singleview($courseid, $gpr, $context, $itemtype, $itemid);
 
 $reportname = $report->screen->heading();
 
@@ -151,7 +150,7 @@ if (!empty($options)) {
     $optionkeys = array_keys($options);
     $optionitemid = array_shift($optionkeys);
 
-    $relreport = new gradereport_singleview(
+    $relreport = new gradereport_singleview\report\singleview(
                 $courseid, $gpr, $context,
                 $report->screen->item_type(), $optionitemid
     );

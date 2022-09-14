@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Base lib class for singleview functionality.
- *
- * @package   gradereport_singleview
- * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace gradereport_singleview\report;
+
+use context_course;
+use grade_report;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -33,7 +31,7 @@ require_once($CFG->dirroot . '/grade/report/lib.php');
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradereport_singleview extends grade_report {
+class singleview extends grade_report {
 
     /**
      * Return the list of valid screens, used to validate the input.
@@ -110,4 +108,3 @@ class gradereport_singleview extends grade_report {
         return $OUTPUT->container($this->screen->html(), 'reporttable');
     }
 }
-

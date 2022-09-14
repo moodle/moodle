@@ -79,7 +79,7 @@ class select extends screen {
 
         $html = '';
 
-        $types = gradereport_singleview::valid_screens();
+        $types = gradereport_singleview\report\singleview::valid_screens();
 
         foreach ($types as $type) {
             $classname = "gradereport_singleview\\local\\screen\\${type}";
