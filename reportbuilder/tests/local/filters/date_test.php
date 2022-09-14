@@ -144,6 +144,9 @@ class date_test extends advanced_testcase {
             'Next two weeks' => [date::DATE_NEXT, 2, date::DATE_UNIT_WEEK, '+10 day'],
             'Next two months' => [date::DATE_NEXT, 2, date::DATE_UNIT_MONTH, '+7 week'],
             'Next two years' => [date::DATE_NEXT, 2, date::DATE_UNIT_YEAR, '+15 month'],
+
+            'In the past' => [date::DATE_PAST, null, null, '-3 hour'],
+            'In the future' => [date::DATE_FUTURE, null, null, '+3 hour'],
         ];
     }
 
@@ -152,12 +155,12 @@ class date_test extends advanced_testcase {
      *
      * @param int $operator
      * @param int|null $unitvalue
-     * @param int $unit
+     * @param int|null $unit
      * @param string|null $timecreated Relative time suitable for passing to {@see strtotime} (or null for current time)
      *
      * @dataProvider get_sql_filter_relative_provider
      */
-    public function test_get_sql_filter_relative(int $operator, ?int $unitvalue, int $unit, ?string $timecreated = null): void {
+    public function test_get_sql_filter_relative(int $operator, ?int $unitvalue, ?int $unit, ?string $timecreated = null): void {
         global $DB;
 
         $this->resetAfterTest();
