@@ -130,3 +130,30 @@ Feature: Users can view and search database entries
     And I press "Save settings"
     And I should not see "Student entry 1"
     And I should see "Student entry 2"
+
+  @javascript
+  Scenario: Database entries can be deleted in batch if delcheck is present
+    Given the following "mod_data > entries" exist:
+      | database | user     | Test field name | Test field 2 name      | Test field 3 name |
+      | data1    | student1 | Student entry 1 | Some student content 1 | http://moodle.com |
+      | data1    | teacher1 | Teacher entry 2 | Some teacher content 2 | http://moodle.com |
+    And I am on the "Test database name" "data activity" page logged in as teacher1
+    And I navigate to "Templates" in current page administration
+    And I set the following fields to these values:
+      | Repeated entry | ##delcheck##[[Test field name]]! |
+    And I click on "Save" "button" in the "sticky-footer" "region"
+    When I navigate to "Database" in current page administration
+    When I click on "Select all" "button"
+    And I click on "Delete selected" "button"
+    And I press "Delete"
+    And I should see "No entries yet"
+
+  @javascript
+  Scenario: Database entries cannot be deleted in batch if delcheck is not present
+    Given the following "mod_data > entries" exist:
+      | database | user     | Test field name | Test field 2 name      | Test field 3 name |
+      | data1    | student1 | Student entry 1 | Some student content 1 | http://moodle.com |
+      | data1    | teacher1 | Teacher entry 2 | Some teacher content 2 | http://moodle.com |
+    And I am on the "Test database name" "data activity" page logged in as teacher1
+    Then I should not see "Select all"
+    And I should not see "Delete selected"

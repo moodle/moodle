@@ -115,7 +115,7 @@ class view_footer extends sticky_footer {
             $this->baseurl
         );
 
-        if ($parser->get_template_name() != 'singletemplate' && $canmanageentries) {
+        if ($parser->get_template_name() != 'singletemplate' && $parser->has_tag('delcheck') && $canmanageentries) {
             // Build the select/deselect all control.
             $selectallid = 'selectall-listview-entries';
             $togglegroup = 'listview-entries';
