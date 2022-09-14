@@ -227,7 +227,6 @@ class redis extends handler {
                         throw new RedisException('Unable to select Redis database '.$this->database.'.');
                     }
                 }
-                $this->connection->ping();
                 return true;
             } catch (RedisException $e) {
                 $logstring = "Failed to connect (try {$counter} out of {$maxnumberofretries}) to redis ";
