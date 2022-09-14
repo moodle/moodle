@@ -1,0 +1,14 @@
+/******  Single View CSS ******/
+
+.resources-single .img-wrapper img {
+    flex-shrink: 0;
+    width: 200px;
+}
+
+/*****  Add entry CSS *****/
+
+.resources-addentry .form-group label,
+.resources-asearch .form-group label {
+    font-weight: bold;
+    padding-top: 20px;
+}

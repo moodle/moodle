@@ -1853,6 +1853,7 @@ class core_plugin_manager {
                 'imagegallery',
                 'journal',
                 'proposals',
+                'resources',
             ),
 
             'fileconverter' => array(
