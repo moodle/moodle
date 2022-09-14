@@ -2029,6 +2029,7 @@ class core_plugin_manager {
             ),
 
             'tiny' => [
+                'accessibilitychecker',
                 'autosave',
                 'h5p',
                 'media',
