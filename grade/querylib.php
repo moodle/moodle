@@ -37,6 +37,7 @@ function grade_get_course_grades($courseid, $userid_or_ids=null) {
 
     if ($grade_item->needsupdate) {
         grade_regrade_final_grades($courseid);
+        $grade_item = grade_item::fetch_course_item($courseid);
     }
 
     $item = new stdClass();
