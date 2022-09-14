@@ -3438,8 +3438,17 @@ function update_user_login_times() {
  * @return bool
  */
 function user_not_fully_set_up($user, $strict = true) {
-    global $CFG;
+    global $CFG, $SESSION, $USER;
     require_once($CFG->dirroot.'/user/profile/lib.php');
+
+    // If the user is setup then store this in the session to avoid re-checking.
+    // Some edge cases are when the users email starts to bounce or the
+    // configuration for custom fields has changed while they are logged in so
+    // we re-check this fully every hour for the rare cases it has changed.
+    if (isset($USER->id) && isset($user->id) && $USER->id === $user->id &&
+         isset($SESSION->fullysetupstrict) && (time() - $SESSION->fullysetupstrict) < HOURSECS) {
+        return false;
+    }
 
     if (isguestuser($user)) {
         return false;
@@ -3456,6 +3465,9 @@ function user_not_fully_set_up($user, $strict = true) {
         }
         if (!profile_has_required_custom_fields_set($user->id)) {
             return true;
+        }
+        if (isset($USER->id) && isset($user->id) && $USER->id === $user->id) {
+            $SESSION->fullysetupstrict = time();
         }
     }
 
