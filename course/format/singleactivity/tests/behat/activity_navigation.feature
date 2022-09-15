@@ -9,6 +9,7 @@ Feature: Activity navigation in a single activity course
       | username  | firstname  | lastname  | email                 |
       | teacher1  | Teacher    | 1         | teacher1@example.com  |
       | student1  | Student    | 1         | student1@example.com  |
+      | student2  | Student    | 2         | student2@example.com  |
     And the following "courses" exist:
       | fullname | shortname | format         | activitytype |
       | Course 1 | C1        | singleactivity | forum        |
@@ -65,3 +66,13 @@ Feature: Activity navigation in a single activity course
     Then "#prev-activity-link" "css_element" should not exist
     And "#next-activity-link" "css_element" should not exist
     And "Jump to..." "field" should not exist
+
+  Scenario: The activity navigation asks for login to guest user
+    Given I log in as "guest"
+    When I am on "Course 1" course homepage
+    Then I should see "Guests cannot access this course. Please log in"
+
+  Scenario: The activity navigation asks for login to not enrolled user
+    Given I log in as "student2"
+    When I am on "Course 1" course homepage
+    Then I should see "You cannot enrol yourself in this course"
