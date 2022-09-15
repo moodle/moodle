@@ -107,7 +107,7 @@ class behat_grade extends behat_base {
         $gradeitem = behat_context_helper::escape($gradeitem);
 
         if ($this->running_javascript()) {
-            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]//a[contains(@class,'toggle-display')]";
+            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]//a[contains(@class,'dropdown-toggle')]";
             if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
                 $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
             }
@@ -130,7 +130,7 @@ class behat_grade extends behat_base {
         $gradeitem = behat_context_helper::escape($gradeitem);
 
         if ($this->running_javascript()) {
-            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]//a[contains(@class,'toggle-display')]";
+            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]//a[contains(@class,'dropdown-toggle')]";
             if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
                 $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
             }
