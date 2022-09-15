@@ -298,11 +298,13 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                  'company' => $usercompany,
                                                                                  'event' => $event));
                         // Fire an event for this.
-                        $moodleevent = \mod_trainingevent\event\user_removed::create(array('context' => context_module::instance($id),
-                                                                                           'userid' => $USER->id,
-                                                                                           'relateduserid' => $USER->id,
-                                                                                           'objectid' => $event->id,
-                                                                                           'courseid' => $event->course));
+                        $moodleeventother = ['waitlisted' => $waitingoption];
+                        $moodleevent = \mod_trainingevent\event\user_removed::create(['context' => context_module::instance($id),
+                                                                                      'userid' => $USER->id,
+                                                                                      'relateduserid' => $USER->id,
+                                                                                      'objectid' => $event->id,
+                                                                                      'courseid' => $event->course,
+                                                                                      'other' => $moodleeventother]);
                         $moodleevent->trigger();
 
                         // Remove from the users calendar.
@@ -695,11 +697,13 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                      'company' => $usercompany,
                                                                      'event' => $event));
                 // Fire an event for this.
-                $moodleevent = \mod_trainingevent\event\user_removed::create(array('context' => context_module::instance($id),
-                                                                                   'userid' => $USER->id,
-                                                                                   'relateduserid' => $user->id,
-                                                                                   'objectid' => $event->id,
-                                                                                   'courseid' => $event->course));
+                $moodleeventother = ['waitlisted' => $waitingoption];
+                $moodleevent = \mod_trainingevent\event\user_removed::create(['context' => context_module::instance($id),
+                                                                              'userid' => $USER->id,
+                                                                              'relateduserid' => $user->id,
+                                                                              'objectid' => $event->id,
+                                                                              'courseid' => $event->course,
+                                                                              'other' => $moodleeventother]);
                 $moodleevent->trigger();
 
                 // Remove from the users calendar.
@@ -1187,9 +1191,10 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         $userrow = array($fulluserdata->firstname.' '.$fulluserdata->lastname, $fulluserdata->email);
                         if (has_capability('mod/trainingevent:add', $context)) {
                             $select = new single_select(new moodle_url('/mod/trainingevent/view.php',
-                                                                       array('userid' => $user->id,
-                                                                             'id' => $id,
-                                                                             'view' => 1)),
+                                                                       ['userid' => $user->id,
+                                                                        'id' => $id,
+                                                                        'view' => 1,
+                                                                        'waiting' => $waitingoption]),
                                                                        'chosenevent',
                                                                        $eventselect,
                                                                        $event->id);
@@ -1208,10 +1213,11 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                 $actionhtml .= "&nbsp";
                             }
                             $actionhtml .= $OUTPUT->single_button(new moodle_url('view.php',
-                                                                                  array('userid' => $user->id,
-                                                                                        'id' => $id,
-                                                                                        'action' => 'delete',
-                                                                                        'view' => 1 )),
+                                                                                  ['userid' => $user->id,
+                                                                                   'id' => $id,
+                                                                                   'action' => 'delete',
+                                                                                   'view' => 1,
+                                                                                   'waiting' => $waitingoption]),
                                                                                   get_string("remove", 'trainingevent'));
                             $userrow[] = $eventselecthtml;
                             $userrow[] = $actionhtml;

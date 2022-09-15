@@ -375,6 +375,11 @@ function trainingevent_user_removed($event) {
         return;
     }
 
+    // Is this removal from the waiting list?
+    if (!empty($event->other['waitlisted'])) {
+        return;
+    }
+
     // Is anyone on the waiting list?
     $waitlistusers = $DB->get_records('trainingevent_users', ['trainingeventid' => $trainingevent->id, 'waitlisted' => 1], 'id ASC');
     if (empty($waitlistusers)) {
