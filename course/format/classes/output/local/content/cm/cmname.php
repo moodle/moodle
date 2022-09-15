@@ -64,16 +64,20 @@ class cmname implements named_templatable, renderable {
      * @param course_format $format the course format
      * @param section_info $section the section info
      * @param cm_info $mod the course module ionfo
-     * @param bool|null $editable if it is editable (not used)
+     * @param null $unused This parameter has been deprecated since 4.1 and should not be used anymore.
      * @param array $displayoptions optional extra display options
      */
     public function __construct(
         course_format $format,
         section_info $section,
         cm_info $mod,
-        ?bool $editable = null,
+        ?bool $unused = null,
         array $displayoptions = []
     ) {
+        if ($unused !== null) {
+            debugging('Deprecated argument passed to ' . __FUNCTION__, DEBUG_DEVELOPER);
+        }
+
         $this->format = $format;
         $this->section = $section;
         $this->mod = $mod;
