@@ -14,30 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for xhtml stack.
- *
- * @package   core
- * @category  phpunit
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later (5)
- */
+namespace core;
+
+use xhtml_container_stack;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/outputlib.php');
 
-
 /**
  * Unit tests for the xhtml_container_stack class.
  *
  * These tests assume that developer debug mode is on which is enforced by our phpunit integration.
  *
+ * @package   core
+ * @category  test
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_xhtml_container_stack_testcase extends advanced_testcase {
+class xhtml_container_stack_test extends \advanced_testcase {
     public function test_push_then_pop() {
         // Set up.
         $stack = new xhtml_container_stack();

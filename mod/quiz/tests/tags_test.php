@@ -14,24 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for usage of tags in quizzes.
- *
- * @package    mod_quiz
- * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_quiz;
 
-defined('MOODLE_INTERNAL') || die();
+use mod_quiz\question\bank\qbank_helper;
+use quiz;
 
 /**
  * Class mod_quiz_tags_testcase
  * Class for tests related to usage of question tags in quizzes.
  *
+ * @package    mod_quiz
+ * @category   test
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quiz_tags_testcase extends advanced_testcase {
+class tags_test extends \advanced_testcase {
     public function test_restore_random_question_by_tag() {
         global $CFG, $USER, $DB;
 
@@ -48,9 +45,9 @@ class mod_quiz_tags_testcase extends advanced_testcase {
 
         // Do the restore to new course with default settings.
         $categoryid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
-        $newcourseid = restore_dbops::create_new_course('Test fullname', 'Test shortname', $categoryid);
-        $rc = new restore_controller($backupid, $newcourseid, backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
-                backup::TARGET_NEW_COURSE);
+        $newcourseid = \restore_dbops::create_new_course('Test fullname', 'Test shortname', $categoryid);
+        $rc = new \restore_controller($backupid, $newcourseid, \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+                \backup::TARGET_NEW_COURSE);
 
         $this->assertTrue($rc->execute_precheck());
         $rc->execute_plan();
@@ -60,7 +57,7 @@ class mod_quiz_tags_testcase extends advanced_testcase {
         $modinfo = get_fast_modinfo($newcourseid);
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
         $quizobj = quiz::create($quiz->instance);
-        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $structure = structure::create_for_quiz($quizobj);
 
         // Are the correct slots returned?
         $slots = $structure->get_slots();
@@ -74,13 +71,13 @@ class mod_quiz_tags_testcase extends advanced_testcase {
 
         $question = array_values($questions)[0];
 
-        $tag1 = core_tag_tag::get_by_name(0, 't1', 'id, name');
+        $tag1 = \core_tag_tag::get_by_name(0, 't1', 'id, name');
         $this->assertNotFalse($tag1);
 
-        $tag2 = core_tag_tag::get_by_name(0, 't2', 'id, name');
+        $tag2 = \core_tag_tag::get_by_name(0, 't2', 'id, name');
         $this->assertNotFalse($tag2);
 
-        $tag3 = core_tag_tag::get_by_name(0, 't3', 'id, name');
+        $tag3 = \core_tag_tag::get_by_name(0, 't3', 'id, name');
         $this->assertNotFalse($tag3);
 
         $slottags = quiz_retrieve_slot_tags($question->slotid);
@@ -93,7 +90,7 @@ class mod_quiz_tags_testcase extends advanced_testcase {
                 }, $slottags)
         );
 
-        $defaultcategory = question_get_default_category(context_course::instance($newcourseid)->id);
+        $defaultcategory = question_get_default_category(\context_course::instance($newcourseid)->id);
         $this->assertEquals($defaultcategory->id, $question->randomfromcategory);
         $this->assertEquals(0, $question->randomincludingsubcategories);
     }
