@@ -93,6 +93,8 @@ being forced open in all behat tests.
 * New `required` field added to core\output\datafilter. This will be output via the data-required property in filter_type.mustache,
   any additional filter types will need to output this property as well. Filters with data-required="1" will not be removable from
   the list of filters.
+* addFilterRow() in core/datafilter now accepts a filterdata object to add a row with a pre-defined filter.
+* New "binary" datafilter type added for creating filters with a single yes/no option.
 
 === 4.2 ===
 
