@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 // General Strings.
 $string['all_grades'] = 'All grades';
 $string['assessmentname'] = 'Grade item';

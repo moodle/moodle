@@ -36,14 +36,14 @@ defined('MOODLE_INTERNAL') || die;
 class feedback extends grade_attribute_format implements unique_value, be_disabled {
 
     /** @var string $name Name of this input */
-    public $name = 'feedback';
+    public string $name = 'feedback';
 
     /**
      * Get the value for this input.
      *
      * @return string The value
      */
-    public function get_value() {
+    public function get_value(): ?string {
         return $this->grade->feedback ? $this->grade->feedback : '';
     }
 
@@ -52,7 +52,7 @@ class feedback extends grade_attribute_format implements unique_value, be_disabl
      *
      * @return string The label text
      */
-    public function get_label() {
+    public function get_label(): string {
         if (!isset($this->grade->label)) {
             $this->grade->label = '';
         }
@@ -64,7 +64,7 @@ class feedback extends grade_attribute_format implements unique_value, be_disabl
      *
      * @return boolean Should this input be disabled when the page loads.
      */
-    public function is_disabled() {
+    public function is_disabled(): bool {
         $locked = 0;
         $gradeitemlocked = 0;
         $overridden = 0;
@@ -88,9 +88,9 @@ class feedback extends grade_attribute_format implements unique_value, be_disabl
     /**
      * Create a text_attribute for this ui element.
      *
-     * @return text_attribute
+     * @return element
      */
-    public function determine_format() {
+    public function determine_format(): element {
         return new text_attribute(
             $this->get_name(),
             $this->get_value(),
@@ -105,7 +105,7 @@ class feedback extends grade_attribute_format implements unique_value, be_disabl
      * @param string $value The new feedback value.
      * @return string Any error message
      */
-    public function set($value) {
+    public function set($value): string {
         $finalgrade = false;
         $trimmed = trim($value);
         if (empty($trimmed)) {

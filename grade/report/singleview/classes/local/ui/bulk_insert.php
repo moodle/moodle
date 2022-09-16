@@ -24,8 +24,6 @@
 
 namespace gradereport_singleview\local\ui;
 
-use html_writer;
-
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -55,7 +53,7 @@ class bulk_insert extends element {
      * @param array $data The form data
      * @return bool
      */
-    public function is_applied($data) {
+    public function is_applied(array $data): bool {
         return isset($data->{$this->applyname});
     }
 
@@ -65,7 +63,7 @@ class bulk_insert extends element {
      * @param array $data The form data
      * @return string
      */
-    public function get_type($data) {
+    public function get_type(array $data): string {
         return $data->{$this->selectname};
     }
 
@@ -75,7 +73,7 @@ class bulk_insert extends element {
      * @param array $data The form data
      * @return string
      */
-    public function get_insert_value($data) {
+    public function get_insert_value(array $data): string {
         return $data->{$this->insertname};
     }
 
@@ -84,7 +82,7 @@ class bulk_insert extends element {
      *
      * @return string HTML
      */
-    public function html() {
+    public function html(): string {
         global $OUTPUT;
 
         $text = new text_attribute($this->insertname, "0", 'bulk');

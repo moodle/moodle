@@ -36,14 +36,14 @@ defined('MOODLE_INTERNAL') || die;
 class override extends grade_attribute_format implements be_checked, be_disabled {
 
     /** @var string $name The name for this input */
-    public $name = 'override';
+    public string $name = 'override';
 
     /**
      * Is this input checked
      *
      * @return bool
      */
-    public function is_checked() {
+    public function is_checked(): bool {
         return $this->grade->is_overridden();
     }
 
@@ -52,7 +52,7 @@ class override extends grade_attribute_format implements be_checked, be_disabled
      *
      * @return bool
      */
-    public function is_disabled() {
+    public function is_disabled(): bool {
         $lockedgrade = $lockedgradeitem = 0;
         if (!empty($this->grade->locked)) {
             $lockedgrade = 1;
@@ -68,7 +68,7 @@ class override extends grade_attribute_format implements be_checked, be_disabled
      *
      * @return string
      */
-    public function get_label() {
+    public function get_label(): string {
         if (!isset($this->grade->label)) {
             $this->grade->label = '';
         }
@@ -80,7 +80,7 @@ class override extends grade_attribute_format implements be_checked, be_disabled
      *
      * @return element
      */
-    public function determine_format() {
+    public function determine_format(): element {
         if (!$this->grade->grade_item->is_overridable_item()) {
             return new empty_element();
         }
@@ -98,12 +98,12 @@ class override extends grade_attribute_format implements be_checked, be_disabled
      * @param string $value The new value to set
      * @return mixed string|false Any error message
      */
-    public function set($value) {
+    public function set(string $value) {
         if (empty($this->grade->id)) {
             return false;
         }
 
-        $state = $value == 0 ? false : true;
+        $state = !($value == 0);
 
         $this->grade->set_overridden($state);
         $this->grade->grade_item->force_regrading();

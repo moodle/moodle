@@ -46,16 +46,16 @@ if (empty($itemid)) {
     $itemtype = $defaulttype;
 }
 
-$courseparams = array('id' => $courseid);
-$pageparams = array(
-        'id'        => $courseid,
-        'group'     => $groupid,
-        'userid'    => $userid,
-        'itemid'    => $itemid,
-        'item'      => $itemtype,
-        'page'      => $page,
-        'perpage'   => $perpage,
-    );
+$courseparams = ['id' => $courseid];
+$pageparams = [
+    'id'        => $courseid,
+    'group'     => $groupid,
+    'userid'    => $userid,
+    'itemid'    => $itemid,
+    'item'      => $itemtype,
+    'page'      => $page,
+    'perpage'   => $perpage,
+];
 $PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $pageparams));
 $PAGE->set_pagelayout('incourse');
 
@@ -76,15 +76,15 @@ require_capability('gradereport/singleview:view', $context);
 require_capability('moodle/grade:viewall', $context);
 require_capability('moodle/grade:edit', $context);
 
-$gpr = new grade_plugin_return(array(
+$gpr = new grade_plugin_return([
     'type' => 'report',
     'plugin' => 'singleview',
     'courseid' => $courseid
-));
+]);
 
 // Last selected report session tracking.
 if (!isset($USER->grade_last_report)) {
-    $USER->grade_last_report = array();
+    $USER->grade_last_report = [];
 }
 $USER->grade_last_report[$course->id] = 'singleview';
 
@@ -94,7 +94,7 @@ $reportname = $report->screen->heading();
 
 $pluginname = get_string('pluginname', 'gradereport_singleview');
 
-$pageparams = array(
+$pageparams = [
     'id' => $courseid,
     'itemid' => $itemid,
     'item' => $itemtype,
@@ -102,7 +102,7 @@ $pageparams = array(
     'group' => $groupid,
     'page' => $page,
     'perpage' => $perpage
-);
+];
 
 $PAGE->set_pagelayout('report');
 
@@ -158,18 +158,18 @@ if (!empty($options)) {
     $reloptionssorting = array_keys($relreport->screen->options());
 
     $i = array_search($itemid, $reloptionssorting);
-    $navparams = array('item' => $itemtype, 'id' => $courseid, 'group' => $groupid);
+    $navparams = ['item' => $itemtype, 'id' => $courseid, 'group' => $groupid];
     if ($i > 0) {
         $navparams['itemid'] = $reloptionssorting[$i - 1];
         $link = new moodle_url('/grade/report/singleview/index.php', $navparams);
         $navprev = html_writer::link($link, $OUTPUT->larrow() . ' ' . $reloptions[$reloptionssorting[$i - 1]]);
-        $graderleftnav = html_writer::tag('div', $navprev, array('class' => 'itemnav previtem'));
+        $graderleftnav = html_writer::tag('div', $navprev, ['class' => 'itemnav previtem']);
     }
     if ($i < count($reloptionssorting) - 1) {
         $navparams['itemid'] = $reloptionssorting[$i + 1];
         $link = new moodle_url('/grade/report/singleview/index.php', $navparams);
         $navnext = html_writer::link($link, $reloptions[$reloptionssorting[$i + 1]] . ' ' . $OUTPUT->rarrow());
-        $graderrightnav = html_writer::tag('div', $navnext, array('class' => 'itemnav nextitem'));
+        $graderrightnav = html_writer::tag('div', $navnext, ['class' => 'itemnav nextitem']);
     }
 }
 
@@ -203,11 +203,11 @@ if (!is_null($graderrightnav)) {
 }
 
 $event = \gradereport_singleview\event\grade_report_viewed::create(
-    array(
+    [
         'context' => $context,
         'courseid' => $courseid,
         'relateduserid' => $USER->id,
-    )
+    ]
 );
 $event->trigger();
 

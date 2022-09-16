@@ -48,7 +48,7 @@ class select extends screen {
 
         $roleids = explode(',', get_config('moodle', 'gradebookroles'));
 
-        $this->items = array();
+        $this->items = [];
         foreach ($roleids as $roleid) {
             // Keeping the first user appearance.
             $this->items = $this->items + get_role_users(
@@ -57,7 +57,7 @@ class select extends screen {
                 $this->perpage * $this->page, $this->perpage
             );
         }
-        $this->item = $DB->get_record('course', array('id' => $this->courseid));
+        $this->item = $DB->get_record('course', ['id' => $this->courseid]);
     }
 
     /**
@@ -65,7 +65,7 @@ class select extends screen {
      *
      * @return bool
      */
-    public function item_type() {
+    public function item_type(): string {
         return false;
     }
 
@@ -74,7 +74,7 @@ class select extends screen {
      *
      * @return string
      */
-    public function html() {
+    public function html(): string {
         global $OUTPUT;
 
         $html = '';
@@ -96,16 +96,16 @@ class select extends screen {
                 continue;
             }
 
-            $params = array(
+            $params = [
                 'id' => $this->courseid,
                 'item' => $screen->item_type(),
                 'group' => $this->groupid
-            );
+            ];
 
             $url = new moodle_url('/grade/report/singleview/index.php', $params);
 
-            $select = new \single_select($url, 'itemid', $options, '', array('' => $screen->select_label()));
-            $select->set_label($screen->select_label(), array('class'=>'accesshide'));
+            $select = new \single_select($url, 'itemid', $options, '', ['' => $screen->select_label()]);
+            $select->set_label($screen->select_label(), ['class'=>'accesshide']);
             $html .= $OUTPUT->render($select);
         }
         $html = $OUTPUT->container($html, 'selectitems');
@@ -121,7 +121,7 @@ class select extends screen {
      * Should we show the next prev selector?
      * @return bool
      */
-    public function supports_next_prev() {
+    public function supports_next_prev(): bool {
         return false;
     }
 }

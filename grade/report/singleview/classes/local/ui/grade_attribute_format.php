@@ -24,6 +24,8 @@
 
 namespace gradereport_singleview\local\ui;
 
+use grade_grade;
+
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -36,13 +38,13 @@ defined('MOODLE_INTERNAL') || die;
 abstract class grade_attribute_format extends attribute_format implements unique_name {
 
     /** @var string $name The first part of the name attribute of the form input */
-    public $name;
+    public string $name;
 
-    /** @var string $label The label of the input */
-    public $label;
+    /** @var null|string $label The label of the input */
+    public ?string $label;
 
     /** @var grade_grade $grade The grade_grade of the input */
-    public $grade;
+    public grade_grade $grade;
 
     /**
      * Constructor
@@ -58,7 +60,7 @@ abstract class grade_attribute_format extends attribute_format implements unique
      *
      * @return string The form input name attribute.
      */
-    public function get_name() {
+    public function get_name(): string {
         return "{$this->name}_{$this->grade->itemid}_{$this->grade->userid}";
     }
 
@@ -68,5 +70,5 @@ abstract class grade_attribute_format extends attribute_format implements unique
      * @param string $value The value from the form.
      * @return string Any error message
      */
-    public abstract function set($value);
+    public abstract function set(string $value);
 }

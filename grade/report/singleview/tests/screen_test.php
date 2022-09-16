@@ -43,21 +43,21 @@ class screen_test extends \advanced_testcase {
         $this->setAdminUser();
         $this->resetAfterTest(true);
 
-        $roleteacher = $DB->get_record('role', array('shortname' => 'teacher'), '*', MUST_EXIST);
+        $roleteacher = $DB->get_record('role', ['shortname' => 'teacher'], '*', MUST_EXIST);
 
         // Create a course, users and groups.
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = \context_course::instance($course->id);
-        $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
         $teacher = $this->getDataGenerator()->create_user();
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $roleteacher->id);
         $this->getDataGenerator()->enrol_user($user1->id, $course->id);
         $this->getDataGenerator()->enrol_user($user2->id, $course->id);
-        $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $teacher->id));
-        $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user1->id));
-        $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user2->id));
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $teacher->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $user1->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $user2->id]);
 
         // Perform a regrade before creating the report.
         grade_regrade_final_grades($course->id);

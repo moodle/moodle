@@ -24,8 +24,6 @@
 
 namespace gradereport_singleview\local\ui;
 
-use html_writer;
-
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -38,13 +36,13 @@ defined('MOODLE_INTERNAL') || die;
 class dropdown_attribute extends element {
 
     /** @var string $selected Who is selected ? */
-    private $selected;
+    private string $selected;
 
     /** @var array $options List of options ? */
-    private $options;
+    private array $options;
 
     /** @var bool $isdisabled Is this input disabled. */
-    private $isdisabled;
+    private bool $isdisabled;
 
     /**
      * Constructor
@@ -55,7 +53,7 @@ class dropdown_attribute extends element {
      * @param string $selected The name of the selected item in this input.
      * @param bool $isdisabled Are we disabled?
      */
-    public function __construct($name, $options, $label, $selected = '', $isdisabled = false) {
+    public function __construct(string $name, array $options, string $label, string $selected = '', bool $isdisabled = false) {
         $this->selected = $selected;
         $this->options = $options;
         $this->isdisabled = $isdisabled;
@@ -67,7 +65,7 @@ class dropdown_attribute extends element {
      *
      * @return bool
      */
-    public function is_dropdown() {
+    public function is_dropdown(): bool {
         return true;
     }
 
@@ -76,13 +74,13 @@ class dropdown_attribute extends element {
      *
      * @return string
      */
-    public function html() {
+    public function html(): string {
         global $OUTPUT;
 
         $options = $this->options;
         $selected = $this->selected;
 
-        $context = array(
+        $context = [
             'name' => $this->name,
             'value' => $this->selected,
             'tabindex' => 1,
@@ -95,7 +93,7 @@ class dropdown_attribute extends element {
                 ];
             }, array_keys($options)),
             'label' => get_string('gradefor', 'gradereport_singleview', $this->label),
-        );
+        ];
 
         return $OUTPUT->render_from_template('gradereport_singleview/dropdown_attribute', $context);
     }
