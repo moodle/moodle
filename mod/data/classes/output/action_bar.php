@@ -16,7 +16,9 @@
 
 namespace mod_data\output;
 
+use mod_data\manager;
 use moodle_url;
+use url_select;
 
 /**
  * Class responsible for generating the action bar elements in the database module pages.
@@ -75,7 +77,7 @@ class action_bar {
             $selected = $presetslink->out(false);
         }
 
-        $urlselect = new \url_select($menu, $selected, null, 'fieldactionselect');
+        $urlselect = new url_select($menu, $selected, null, 'fieldactionselect');
         $urlselect->set_label(get_string('fieldsnavigation', 'mod_data'), ['class' => 'sr-only']);
 
         $fieldselect = null;
@@ -144,7 +146,7 @@ class action_bar {
             $activeurl = $viewsinglelink;
         }
 
-        $urlselect = new \url_select($menu, $activeurl->out(false), null, 'viewactionselect');
+        $urlselect = new url_select($menu, $activeurl->out(false), null, 'viewactionselect');
         $urlselect->set_label(get_string('viewnavigation', 'mod_data'), ['class' => 'sr-only']);
         $renderer = $PAGE->get_renderer('mod_data');
         $viewactionbar = new view_action_bar($this->id, $urlselect, $hasentries);
@@ -181,7 +183,7 @@ class action_bar {
             $jstemplatelink->out(false) => get_string('jstemplate', 'mod_data'),
         ];
 
-        $urlselect = new \url_select($menu, $this->currenturl->out(false), null, 'templatesactionselect');
+        $urlselect = new url_select($menu, $this->currenturl->out(false), null, 'templatesactionselect');
         $urlselect->set_label(get_string('templatesnavigation', 'mod_data'), ['class' => 'sr-only']);
 
         $hasfields = $DB->record_exists('data_fields', ['dataid' => $this->id]);
@@ -220,5 +222,47 @@ class action_bar {
         $presetsactionbar = new presets_action_bar($this->id);
 
         return $renderer->render_presets_action_bar($presetsactionbar);
+    }
+
+    /**
+     * Generate the output for the action selector in the presets preview page.
+     *
+     * @param manager $manager the manager instance
+     * @param string $fullname the preset fullname
+     * @param string $current the current template name
+     * @return string The HTML code for the action selector
+     */
+    public function get_presets_preview_action_bar(manager $manager, string $fullname, string $current): string {
+        global $PAGE;
+
+        $renderer = $PAGE->get_renderer(manager::PLUGINNAME);
+
+        $cm = $manager->get_coursemodule();
+
+        $menu = [];
+        $selected = null;
+        foreach (['listtemplate', 'singletemplate'] as $templatename) {
+            $link = new moodle_url('/mod/data/preset.php', [
+                'd' => $this->id,
+                'template' => $templatename,
+                'fullname' => $fullname,
+                'action' => 'preview',
+            ]);
+            $menu[$link->out(false)] = get_string($templatename, manager::PLUGINNAME);
+            if (!$selected || $templatename == $current) {
+                $selected = $link->out(false);
+            }
+        }
+        $urlselect = new url_select($menu, $selected, null);
+        $urlselect->set_label(get_string('templatesnavigation', manager::PLUGINNAME), ['class' => 'sr-only']);
+
+        $data = [
+            'title' => get_string('preview', manager::PLUGINNAME),
+            'hasback' => true,
+            'backtitle' => get_string('back'),
+            'backurl' => new moodle_url('/mod/data/preset.php', ['id' => $cm->id]),
+            'extraurlselect' => $urlselect->export_for_template($renderer),
+        ];
+        return $renderer->render_from_template('mod_data/action_bar', $data);
     }
 }

@@ -31,6 +31,23 @@ class data_field_url extends data_field_base {
      */
     protected static $priority = self::MIN_PRIORITY;
 
+    public function supports_preview(): bool {
+        return true;
+    }
+
+    public function get_data_content_preview(int $recordid): stdClass {
+        return (object)[
+            'id' => 0,
+            'fieldid' => $this->field->id,
+            'recordid' => $recordid,
+            'content' => 'https://example.com',
+            'content1' => null,
+            'content2' => null,
+            'content3' => null,
+            'content4' => null,
+        ];
+    }
+
     function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $PAGE;
 
@@ -138,38 +155,39 @@ class data_field_url extends data_field_base {
     }
 
     function display_browse_field($recordid, $template) {
-        global $DB;
 
-        if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-            $url = empty($content->content)? '':$content->content;
-            $text = empty($content->content1)? '':$content->content1;
-            if (empty($url) or ($url == 'http://')) {
-                return '';
-            }
-            if (!empty($this->field->param2)) {
-                // param2 forces the text to something
-                $text = $this->field->param2;
-            }
-            if ($this->field->param1) {
-                // param1 defines whether we want to autolink the url.
-                $attributes = array();
-                if ($this->field->param3) {
-                    // param3 defines whether this URL should open in a new window.
-                    $attributes['target'] = '_blank';
-                    $attributes['rel'] = 'noreferrer';
-                }
-
-                if (empty($text)) {
-                    $text = $url;
-                }
-
-                $str = html_writer::link($url, $text, $attributes);
-            } else {
-                $str = $url;
-            }
-            return $str;
+        $content = $this->get_data_content($recordid);
+        if (!$content) {
+            return '';
         }
-        return false;
+
+        $url = empty($content->content) ? '' : $content->content;
+        $text = empty($content->content1) ? '' : $content->content1;
+        if (empty($url) || ($url == 'http://')) {
+            return '';
+        }
+        if (!empty($this->field->param2)) {
+            // Param2 forces the text to something.
+            $text = $this->field->param2;
+        }
+        if ($this->field->param1) {
+            // Param1 defines whether we want to autolink the url.
+            $attributes = ['class' => 'data-field-link'];
+            if ($this->field->param3) {
+                // Param3 defines whether this URL should open in a new window.
+                $attributes['target'] = '_blank';
+                $attributes['rel'] = 'noreferrer';
+            }
+
+            if (empty($text)) {
+                $text = $url;
+            }
+
+            $str = html_writer::link($url, $text, $attributes);
+        } else {
+            $str = $url;
+        }
+        return $str;
     }
 
     function update_content_import($recordid, $value, $name='') {

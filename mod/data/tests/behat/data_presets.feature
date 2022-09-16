@@ -260,3 +260,30 @@ Feature: Users can view and manage data presets
     And I click on "Delete" "button" in the "Delete preset Saved preset by teacher1?" "dialogue"
     And I should see "Preset deleted"
     And I should not see "Saved preset by teacher1"
+
+  @javascript
+  Scenario: Teachers can preview a saved preset from the notification
+    Given the following "mod_data > fields" exist:
+      | database | type | name            | description            |
+      | data1    | text | Test field name | Test field description |
+    And the following "mod_data > templates" exist:
+      | database | name            |
+      | data1    | singletemplate  |
+      | data1    | listtemplate    |
+      | data1    | addtemplate     |
+      | data1    | asearchtemplate |
+      | data1    | rsstemplate     |
+    And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
+    And I follow "Templates"
+    And I click on "Save as preset" "button"
+    And I set the field "Name" to "New saved preset"
+    And I set the field "Description" to "My funny description goes here."
+    And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
+    And I should see "Preset saved"
+    When I click on "Preview preset" "link"
+    Then I should see "Preview"
+    And I should see "New saved preset"
+    And I should see "My funny description goes here"
+    And I should see "Test field name"
+    And I should see "This is a short text"
+    Then "Use preset" "button" should exist

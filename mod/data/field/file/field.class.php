@@ -25,6 +25,23 @@
 class data_field_file extends data_field_base {
     var $type = 'file';
 
+    public function supports_preview(): bool {
+        return true;
+    }
+
+    public function get_data_content_preview(int $recordid): stdClass {
+        return (object)[
+            'id' => 0,
+            'fieldid' => $this->field->id,
+            'recordid' => $recordid,
+            'content' => 'samplefile.csv',
+            'content1' => 'samplefile.csv',
+            'content2' => null,
+            'content3' => null,
+            'content4' => null,
+        ];
+    }
+
     function display_add_field($recordid = 0, $formdata = null) {
         global $DB, $OUTPUT, $PAGE;
 
@@ -111,7 +128,7 @@ class data_field_file extends data_field_base {
     function get_file($recordid, $content=null) {
         global $DB;
         if (empty($content)) {
-            if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
+            if (!$content = $this->get_data_content($recordid)) {
                 return null;
             }
         }
@@ -124,28 +141,48 @@ class data_field_file extends data_field_base {
     }
 
     function display_browse_field($recordid, $template) {
-        global $CFG, $DB, $OUTPUT;
+        global $OUTPUT;
 
-        if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
+        $content = $this->get_data_content($recordid);
+
+        if (!$content || empty($content->content)) {
             return '';
         }
 
-        if (empty($content->content)) {
-            return '';
+        $file = null;
+        $url = '';
+        $name = !empty($content->content1) ? $content->content1 : $content->content;
+
+        if ($this->preview) {
+            $file = (object)[
+                'filename' => $content->content,
+                'mimetype' => 'text/csv',
+            ];
+            $name = $content->content;
+        } else {
+            $file = $this->get_file($recordid, $content);
+            if (!$file) {
+                return '';
+            }
+            $fileurl = moodle_url::make_pluginfile_url(
+                $file->get_contextid(),
+                $file->get_component(),
+                $file->get_filearea(),
+                $file->get_itemid(),
+                $file->get_filepath(),
+                $file->get_filename()
+            );
+            $url = $fileurl->out();
         }
 
-        if (!$file = $this->get_file($recordid, $content)) {
-            return '';
-        }
+        $icon = $OUTPUT->pix_icon(
+            file_file_icon($file),
+            get_mimetype_description($file),
+            'moodle',
+            ['width' => 16, 'height' => 16]
+        );
 
-        $name   = empty($content->content1) ? $file->get_filename() : $content->content1;
-        $src    = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/mod_data/content/'.$content->id.'/'.$file->get_filename());
-        $width  = $this->field->param1 ? ' width  = "'.s($this->field->param1).'" ':' ';
-        $height = $this->field->param2 ? ' height = "'.s($this->field->param2).'" ':' ';
-
-        $str = $OUTPUT->pix_icon(file_file_icon($file), get_mimetype_description($file), 'moodle', array('width' => 16, 'height' => 16)). '&nbsp;'.
-               '<a href="'.$src.'" >'.s($name).'</a>';
-        return $str;
+        return $icon . '&nbsp;<a class="data-field-link" href="'.$url.'" >' . s($name) . '</a>';
     }
 
 

@@ -157,6 +157,53 @@ class preset_test extends \advanced_testcase {
     }
 
     /**
+     * Test for static create_from_fullname method.
+     *
+     * @covers ::create_from_fullname
+     */
+    public function test_create_from_fullname() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course and a database activity.
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $manager = manager::create_from_instance($activity);
+
+        // Create a saved preset.
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $record = (object) [
+            'name' => 'Testing preset name',
+            'description' => 'Testing preset description',
+        ];
+        $savedpreset = $plugingenerator->create_preset($activity, $record);
+
+        // Check instantiate from plugin.
+        $pluginname = 'imagegallery';
+        $fullname = '0/imagegallery';
+        $result = preset::create_from_fullname($manager, $fullname);
+        $this->assertTrue($result->isplugin);
+        $this->assertEquals(get_string('modulename', "datapreset_$pluginname"), $result->name);
+        $this->assertEquals($pluginname, $result->shortname);
+        $this->assertEquals(get_string('modulename_help', "datapreset_$pluginname"), $result->description);
+        $this->assertEmpty($result->get_userid());
+        $this->assertEmpty($result->storedfile);
+        $this->assertNull($result->get_path());
+
+        // Check instantiate from user preset
+        // Check create_from_instance is working as expected when a preset with this name exists.
+        $fullname = $savedpreset->get_userid() . '/' . $savedpreset->name;
+        $result = preset::create_from_fullname($manager, $fullname);
+        $this->assertFalse($result->isplugin);
+        $this->assertEquals($savedpreset->name, $result->name);
+        $this->assertEquals($savedpreset->shortname, $result->shortname);
+        $this->assertEquals($savedpreset->description, $savedpreset->description);
+        $this->assertEquals($savedpreset->storedfile->get_userid(), $result->get_userid());
+        $this->assertNotEmpty($result->storedfile);
+        $this->assertEquals('/' . $savedpreset->name . '/', $result->get_path());
+    }
+
+    /**
      * Test for the save a preset method when the preset hasn't been saved before.
      *
      * @covers ::save
@@ -725,5 +772,189 @@ class preset_test extends \advanced_testcase {
         // Check the preset has not been deleted.
         $currentpresets = $manager->get_available_presets();
         $this->assertEquals(count($initialpresets) - 1, count($currentpresets));
+    }
+
+    /**
+     * Test for the get_fields method.
+     *
+     * @covers ::get_fields
+     */
+    public function test_get_fields() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course and a database activity.
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $manager = manager::create_from_instance($activity);
+
+        // Add a field to the activity.
+        $fieldrecord = new stdClass();
+        $fieldrecord->name = 'field-1';
+        $fieldrecord->type = 'text';
+        $datagenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $datagenerator->create_field($fieldrecord, $activity);
+
+        // Create a saved preset.
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $record = (object) [
+            'name' => 'Testing preset name',
+            'description' => 'Testing preset description',
+        ];
+        $preset = $plugingenerator->create_preset($activity, $record);
+
+        // Check regular fields.
+        $fields = $preset->get_fields();
+        $this->assertCount(1, $fields);
+        $this->assertArrayHasKey('field-1', $fields);
+        $field = $fields['field-1'];
+        $this->assertEquals('text', $field->type);
+        $this->assertEquals('field-1', $field->get_name());
+        $this->assertEquals(false, $field->get_preview());
+
+        // Check preview fields.
+        $savedpresets = $manager->get_available_saved_presets();
+        $preset = reset($savedpresets);
+        $fields = $preset->get_fields(true);
+        $this->assertCount(1, $fields);
+        $this->assertArrayHasKey('field-1', $fields);
+        $field = $fields['field-1'];
+        $this->assertEquals('text', $field->type);
+        $this->assertEquals('field-1', $field->get_name());
+        $this->assertEquals(true, $field->get_preview());
+    }
+
+    /**
+     * Test for the get_sample_entries method.
+     *
+     * @covers ::get_sample_entries
+     */
+    public function test_get_sample_entries() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Create a course and a database activity.
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $manager = manager::create_from_instance($activity);
+
+        // Add a field to the activity.
+        $fieldrecord = new stdClass();
+        $fieldrecord->name = 'field-1';
+        $fieldrecord->type = 'text';
+        $datagenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $datagenerator->create_field($fieldrecord, $activity);
+
+        // Create a saved preset.
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $record = (object) [
+            'name' => 'Testing preset name',
+            'description' => 'Testing preset description',
+        ];
+        $preset = $plugingenerator->create_preset($activity, $record);
+
+        $entries = $preset->get_sample_entries(3);
+        $this->assertCount(3, $entries);
+        foreach ($entries as $entry) {
+            $this->assertEquals($user->id, $entry->userid);
+            $this->assertEquals($user->email, $entry->email);
+            $this->assertEquals($user->firstname, $entry->firstname);
+            $this->assertEquals($user->lastname, $entry->lastname);
+            $this->assertEquals($activity->id, $entry->dataid);
+            $this->assertEquals(0, $entry->groupid);
+            $this->assertEquals(1, $entry->approved);
+        }
+    }
+
+    /**
+     * Test for the get_template_content method.
+     *
+     * @covers ::get_template_content
+     */
+    public function test_get_template_content() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $course = $this->getDataGenerator()->create_course();
+
+        // Module data with templates.
+        $templates = [
+            'singletemplate' => 'Single template content',
+            'listtemplate' => 'List template content',
+            'listtemplateheader' => 'List template content header',
+            'listtemplatefooter' => 'List template content footer',
+            'addtemplate' => 'Add template content',
+            'rsstemplate' => 'RSS template content',
+            'rsstitletemplate' => 'RSS title template content',
+            'csstemplate' => 'CSS template content',
+            'jstemplate' => 'JS template content',
+            'asearchtemplate' => 'Advanced search template content',
+        ];
+        $params = array_merge(['course' => $course], $templates);
+
+        // Create a database activity.
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, $params);
+        $manager = manager::create_from_instance($activity);
+
+        // Create a saved preset.
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $record = (object) [
+            'name' => 'Testing preset name',
+            'description' => 'Testing preset description',
+        ];
+        $preset = $plugingenerator->create_preset($activity, $record);
+
+        // Test user preset templates.
+        foreach ($templates as $templatename => $templatecontent) {
+            $content = $preset->get_template_content($templatename);
+            $this->assertEquals($templatecontent, $content);
+        }
+
+        // Test plugin preset content.
+        $pluginname = 'imagegallery';
+        $preset = preset::create_from_plugin($manager, $pluginname);
+        foreach (manager::TEMPLATES_LIST as $templatename => $templatefile) {
+            // Get real file contents.
+            $path = $manager->path . '/preset/' . $pluginname . '/' . $templatefile;
+            $templatecontent = file_get_contents($path);
+            $content = $preset->get_template_content($templatename);
+            $this->assertEquals($templatecontent, $content);
+        }
+    }
+
+    /**
+     * Test for the get_fullname method.
+     *
+     * @covers ::get_fullname
+     */
+    public function test_get_fullname() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a database activity.
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $manager = manager::create_from_instance($activity);
+
+        // Create a saved preset.
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $record = (object) [
+            'name' => 'Testing preset name',
+            'description' => 'Testing preset description',
+        ];
+        $preset = $plugingenerator->create_preset($activity, $record);
+
+        // Test user preset templates.
+        $this->assertEquals("{$user->id}/Testing preset name", $preset->get_fullname());
+
+        // Test plugin preset content.
+        $pluginname = 'imagegallery';
+        $preset = preset::create_from_plugin($manager, $pluginname);
+        $this->assertEquals("0/imagegallery", $preset->get_fullname());
     }
 }

@@ -17,13 +17,13 @@
     Form containing all database presets displayed within a table.
 
     Context variables required for this template:
-    * formactionul - The form action url.
+    * formactionurl - The form action url.
     * d - The database id.
     * presets - List of presets containing id, name, fullname, shortname and actions.
 
     Example context (json):
     {
-        "formactionul": "http://www.example.com",
+        "formactionurl": "http://www.example.com",
         "d": 1,
         "presets": [
             {
@@ -33,6 +33,7 @@
                 "fullname": "Image gallery",
                 "description": "Use this preset to collect images",
                 "userid": 0,
+                "url": "http://www.example.com",
                 "actions": []
             },
             {
@@ -41,6 +42,7 @@
                 "shortname": "Preset saved manually",
                 "fullname": "Preset saved manually (admin)",
                 "userid": 2,
+                "url": "http://www.example.com",
                 "actions": []
             }
         ]
@@ -48,7 +50,7 @@
 }}
 {{#str}}presetshelp, mod_data{{/str}}
 
-<form method="post" action="{{formactionul}}" class="mt-4">
+<form method="post" action="{{formactionurl}}" class="mt-4">
     <input type="hidden" name="d" value="{{d}}">
     <input type="hidden" name="mode" value="usepreset">
     <input type="hidden" name="action" value="select">
@@ -68,7 +70,9 @@
                 <td class="p-4 border-right">
                     <input type="radio" name="fullname" value="{{userid}}/{{shortname}}" />
                 </td>
-                <td class="p-4">{{fullname}}</td>
+                <td class="p-4">
+                    <a href="{{{url}}}">{{fullname}}</a>
+                </td>
                 <td class="p-4">{{description}}</td>
                 <td class="p-4 preset_action_menu">
                     {{#actions}}
