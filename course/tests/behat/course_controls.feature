@@ -85,7 +85,7 @@ Feature: Course activity controls works as expected
       | weeks        | 1             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
       | weeks        | 1             | "General"               | should                    | should not                                               | "8 January - 14 January" |
 
-  Scenario Outline: General activities course controls using topics and weeks formats, and paged mode and not paged mode works as expected
+  Scenario Outline: General activities course controls using topics and weeks formats, and paged mode and not paged mode works as expected without javascript
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |

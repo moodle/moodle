@@ -1642,6 +1642,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     $coursecontext = context_course::instance($mod->course);
     $modcontext = context_module::instance($mod->id);
     $courseformat = course_get_format($mod->get_course());
+    $usecomponents = $courseformat->supports_components();
 
     $editcaps = array('moodle/course:manageactivities', 'moodle/course:activityvisibility', 'moodle/role:assign');
     $dupecaps = array('moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport');
@@ -1680,7 +1681,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     }
 
     // Move (only for component compatible formats).
-    if ($courseformat->supports_components()) {
+    if ($usecomponents) {
         $actions['move'] = new action_menu_link_secondary(
             new moodle_url($baseurl, [
                 'sesskey' => sesskey(),
@@ -1754,7 +1755,11 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                 new moodle_url($baseurl, array('hide' => $mod->id)),
                 new pix_icon('t/hide', '', 'moodle', array('class' => 'iconsmall')),
                 $str->modhide,
-                array('class' => 'editing_hide', 'data-action' => 'hide')
+                [
+                    'class' => 'editing_hide',
+                    'data-action' => ($usecomponents) ? 'cmHide' : 'hide',
+                    'data-id' => $mod->id,
+                ]
             );
         } else if (!$displayedoncoursepage && $sectionvisible) {
             // Offer to "show" only if the section is visible.
@@ -1762,7 +1767,11 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                 new moodle_url($baseurl, array('show' => $mod->id)),
                 new pix_icon('t/show', '', 'moodle', array('class' => 'iconsmall')),
                 $str->modshow,
-                array('class' => 'editing_show', 'data-action' => 'show')
+                [
+                    'class' => 'editing_show',
+                    'data-action' => ($usecomponents) ? 'cmShow' : 'show',
+                    'data-id' => $mod->id,
+                ]
             );
         }
 
@@ -1772,18 +1781,31 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                 new moodle_url($baseurl, array('hide' => $mod->id)),
                 new pix_icon('t/unblock', '', 'moodle', array('class' => 'iconsmall')),
                 $str->makeunavailable,
-                array('class' => 'editing_makeunavailable', 'data-action' => 'hide', 'data-sectionreturn' => $sr)
+                [
+                    'class' => 'editing_makeunavailable',
+                    'data-action' => ($usecomponents) ? 'cmHide' : 'hide',
+                    'data-sectionreturn' => $sr,
+                    'data-id' => $mod->id,
+                ]
             );
         } else if ($unavailable && (!$sectionvisible || $allowstealth) && $mod->has_view()) {
             // Allow to make visually hidden module available in gradebook and other reports by making it a "stealth" module.
             // When the section is hidden it is an equivalent of "showing" the module.
             // Activities without the link (i.e. labels) can not be made available but hidden on course page.
             $action = $sectionvisible ? 'stealth' : 'show';
+            if ($usecomponents) {
+                $action = 'cm' . ucfirst($action);
+            }
             $actions[$action] = new action_menu_link_secondary(
-                new moodle_url($baseurl, array($action => $mod->id)),
+                new moodle_url($baseurl, array('stealth' => $mod->id)),
                 new pix_icon('t/block', '', 'moodle', array('class' => 'iconsmall')),
                 $str->makeavailable,
-                array('class' => 'editing_makeavailable', 'data-action' => $action, 'data-sectionreturn' => $sr)
+                [
+                    'class' => 'editing_makeavailable',
+                    'data-action' => $action,
+                    'data-sectionreturn' => $sr,
+                    'data-id' => $mod->id,
+                ]
             );
         }
     }

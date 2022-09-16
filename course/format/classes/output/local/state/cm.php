@@ -83,6 +83,7 @@ class cm implements renderable {
             'anchor' => "module-{$cm->id}",
             'name' => external_format_string($cm->name, $cm->context, true),
             'visible' => !empty($cm->visible),
+            'stealth' => $cm->is_stealth(),
             'sectionid' => $section->id,
             'sectionnumber' => $section->section,
             'uservisible' => $cm->uservisible,

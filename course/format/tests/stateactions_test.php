@@ -31,6 +31,14 @@ use stdClass;
 class stateactions_test extends \advanced_testcase {
 
     /**
+     * Setup to ensure that fixtures are loaded.
+     */
+    public static function setupBeforeClass(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/lib/externallib.php');
+    }
+
+    /**
      * Helper method to create an activity into a section and add it to the $sections and $activities arrays.
      *
      * @param int $courseid Course identifier where the activity will be added.
@@ -574,6 +582,290 @@ class stateactions_test extends \advanced_testcase {
                     'ids' => ['invalidcm'], 'targetsectionid' => null, 'targetcmid' => null
                 ],
                 'expectedresults' => [],
+                'expectedexception' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Internal method for testing a specific state action.
+     *
+     * @param string $method the method to test
+     * @param string $role the user role
+     * @param string[] $idrefs the sections or cms id references to be used as method params
+     * @param bool $expectedexception whether the call should throw an exception
+     * @param int $expectedtotal the expected total number of state puts
+     * @param string|null $coursefield the course field to check
+     * @param int|string|null $coursevalue the section field value
+     * @param string|null $sectionfield the section field to check
+     * @param int|string|null $sectionvalue the section field value
+     * @param string|null $cmfield the cm field to check
+     * @param int|string|null $cmvalue the cm field value
+     * @return array the state update summary
+     */
+    protected function basic_state_text(
+        string $method = 'section_hide',
+        string $role = 'editingteacher',
+        array $idrefs = [],
+        bool $expectedexception = false,
+        int $expectedtotal = 0,
+        ?string $coursefield = null,
+        $coursevalue = 0,
+        ?string $sectionfield = null,
+        $sectionvalue = 0,
+        ?string $cmfield = null,
+        $cmvalue = 0
+    ): array {
+        $this->resetAfterTest();
+
+        // Create a course with 3 sections, 1 of them hidden.
+        $course = $this->create_course('topics', 3, [2]);
+
+        $references = $this->course_references($course);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $role);
+        $this->setUser($user);
+
+        // Add some activities to the course. One visible and one hidden in both sections 1 and 2.
+        $references["cm0"] = $this->create_activity($course->id, 'assign', 1, true);
+        $references["cm1"] = $this->create_activity($course->id, 'book', 1, false);
+        $references["cm2"] = $this->create_activity($course->id, 'glossary', 2, true);
+        $references["cm3"] = $this->create_activity($course->id, 'page', 2, false);
+
+        if ($expectedexception) {
+            $this->expectException(moodle_exception::class);
+        }
+
+        // Initialise stateupdates.
+        $courseformat = course_get_format($course->id);
+        $updates = new stateupdates($courseformat);
+
+        // Execute the method.
+        $actions = new stateactions();
+        $actions->$method(
+            $updates,
+            $course,
+            $this->translate_references($references, $idrefs),
+        );
+
+        // Format results in a way we can compare easily.
+        $results = $this->summarize_updates($updates);
+
+        // Most state actions does not use create or remove actions because they are designed
+        // to refresh parts of the state.
+        $this->assertEquals(0, $results['create']['count']);
+        $this->assertEquals(0, $results['remove']['count']);
+
+        // Validate we have all the expected entries.
+        $this->assertEquals($expectedtotal, $results['put']['count']);
+
+        // Validate course, section and cm.
+        if (!empty($coursefield)) {
+            foreach ($results['put']['course'] as $courseid) {
+                $this->assertEquals($coursevalue, $results['put']['course'][$courseid][$coursefield]);
+            }
+        }
+        if (!empty($sectionfield)) {
+            foreach ($results['put']['section'] as $section) {
+                $this->assertEquals($sectionvalue, $section->$sectionfield);
+            }
+        }
+        if (!empty($cmfield)) {
+            foreach ($results['put']['cm'] as $cm) {
+                $this->assertEquals($cmvalue, $cm->$cmfield);
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Test for section_hide
+     *
+     * @covers ::section_hide
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_section_hide(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->basic_state_text(
+            'section_hide',
+            $role,
+            ['section1', 'section2', 'section3'],
+            $expectedexception,
+            7,
+            null,
+            null,
+            'visible',
+            0,
+            null,
+            null
+        );
+    }
+
+    /**
+     * Test for section_hide
+     *
+     * @covers ::section_show
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_section_show(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->basic_state_text(
+            'section_show',
+            $role,
+            ['section1', 'section2', 'section3'],
+            $expectedexception,
+            7,
+            null,
+            null,
+            'visible',
+            1,
+            null,
+            null
+        );
+    }
+
+    /**
+     * Test for cm_show
+     *
+     * @covers ::cm_show
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_cm_show(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->basic_state_text(
+            'cm_show',
+            $role,
+            ['cm0', 'cm1', 'cm2', 'cm3'],
+            $expectedexception,
+            4,
+            null,
+            null,
+            null,
+            null,
+            'visible',
+            1
+        );
+    }
+
+    /**
+     * Test for cm_hide
+     *
+     * @covers ::cm_hide
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_cm_hide(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->basic_state_text(
+            'cm_hide',
+            $role,
+            ['cm0', 'cm1', 'cm2', 'cm3'],
+            $expectedexception,
+            4,
+            null,
+            null,
+            null,
+            null,
+            'visible',
+            0
+        );
+    }
+
+    /**
+     * Test for cm_stealth
+     *
+     * @covers ::cm_stealth
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_cm_stealth(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        set_config('allowstealth', 1);
+        $this->basic_state_text(
+            'cm_stealth',
+            $role,
+            ['cm0', 'cm1', 'cm2', 'cm3'],
+            $expectedexception,
+            4,
+            null,
+            null,
+            null,
+            null,
+            'stealth',
+            1
+        );
+        // Disable stealth.
+        set_config('allowstealth', 0);
+        // When stealth are disabled the validation is a but more complex because they depends
+        // also on the section visibility (legacy stealth).
+        $this->basic_state_text(
+            'cm_stealth',
+            $role,
+            ['cm0', 'cm1'],
+            $expectedexception,
+            2,
+            null,
+            null,
+            null,
+            null,
+            'stealth',
+            0
+        );
+        $this->basic_state_text(
+            'cm_stealth',
+            $role,
+            ['cm2', 'cm3'],
+            $expectedexception,
+            2,
+            null,
+            null,
+            null,
+            null,
+            'stealth',
+            1
+        );
+    }
+
+    /**
+     * Data provider for basic role tests.
+     *
+     * @return array the testing scenarios
+     */
+    public function basic_role_provider() {
+        return [
+            'editingteacher' => [
+                'role' => 'editingteacher',
+                'expectedexception' => false,
+            ],
+            'teacher' => [
+                'role' => 'teacher',
+                'expectedexception' => true,
+            ],
+            'student' => [
+                'role' => 'student',
+                'expectedexception' => true,
+            ],
+            'guest' => [
+                'role' => 'guest',
                 'expectedexception' => true,
             ],
         ];
