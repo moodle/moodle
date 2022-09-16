@@ -421,4 +421,59 @@ class behat_grade extends behat_base {
                 "#{$formid}", 'css_element']);
         }
     }
+
+    /**
+     * Confirm if a value is within the search widget within the gradebook.
+     *
+     * Examples:
+     * - I confirm "User1" in "User" search within the gradebook widget exists
+     *
+     * @Given /^I confirm "(?P<needle>(?:[^"]|\\")*)" in "(?P<haystack>(?:[^"]|\\")*)" search within the gradebook widget exists$/
+     * @param string $needle The value to search for.
+     * @param string $haystack The selector to use within the zero state.
+     */
+    public function i_confirm_in_search_within_the_gradebook_widget_exists($needle, $haystack) {
+        $this->execute("behat_general::wait_until_exists", [$haystack, "dialogue"]);
+        $this->execute("behat_general::assert_element_contains_text", [$needle, $haystack, "dialogue"]);
+    }
+
+    /**
+     * Confirm if a value is not within the search widget within the gradebook.
+     *
+     * Examples:
+     * - I confirm "User1" in "User" search within the gradebook widget does not exist
+     *
+     * @Given /^I confirm "(?P<needle>(?:[^"]|\\")*)" in "(?P<haystack>(?:[^"]|\\")*)" search within the gradebook widget does not exist$/
+     * @param string $needle The value to search for.
+     * @param string $haystack The selector to use within the zero state.
+     */
+    public function i_confirm_in_search_within_the_gradebook_widget_does_not_exist($needle, $haystack) {
+        $this->execute("behat_general::wait_until_exists", [$haystack, "dialogue"]);
+        $this->execute("behat_general::assert_element_not_contains_text", [$needle, $haystack, "dialogue"]);
+    }
+
+    /**
+     * Clicks on an option from the specified search widget in the current gradebook page.
+     *
+     * Examples:
+     * - I click on "Student1" in the "user" search widget
+     * - I click on "Group1" in the "group" search widget
+     *
+     * @Given /^I click on "(?P<needle>(?:[^"]|\\")*)" in the "(?P<haystack>(?:[^"]|\\")*)" search widget$/
+     * @param string $needle The value to search for.
+     * @param string $haystack The type of the search widget.
+     */
+    public function i_click_on_in_search_widget(string $needle, string $haystack) {
+        $this->execute("behat_general::wait_until_the_page_is_ready");
+        if ($haystack === 'user') {
+            $this->execute("behat_general::i_click_on", ['.userwidget', "css_element"]);
+            $dialoguetitle = 'Select a user';
+        } else {
+            $this->execute("behat_general::i_click_on", ['.groupwidget', "css_element"]);
+            $dialoguetitle = 'Select a grade item';
+        }
+
+        $this->execute("behat_general::wait_until_exists", [$dialoguetitle, "dialogue"]);
+        $this->execute('behat_general::i_click_on_in_the', [$needle, "link", $dialoguetitle, 'dialogue']);
+    }
 }

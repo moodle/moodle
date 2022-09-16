@@ -35,6 +35,7 @@ use gradereport_user\report\user as user_report;
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/externallib.php');
+require_once($CFG->dirroot.'/grade/lib.php');
 
 /**
  * External grade report API implementation

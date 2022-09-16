@@ -19696,6 +19696,19 @@ p.arrow_button {
 .path-grade-report-singleview input[name^="finalgrade"] {
   width: 80px; }
 
+.searchresultitemscontainer {
+  max-height: 150px;
+  overflow: auto; }
+  .searchresultitemscontainer a:hover {
+    background-color: #f8f9fa; }
+  .searchresultitemscontainer .focused-cell {
+    outline-style: dotted;
+    outline-color: green; }
+
+.unsearchablecontentcontainer {
+  border-top: 1px solid #dee2e6;
+  padding-top: 10px; }
+
 .columns-autoflow-1to1to1 {
   column-count: 3; }
 

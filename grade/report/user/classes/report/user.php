@@ -1221,6 +1221,19 @@ class user extends grade_report {
     }
 
     /**
+     * Build the html for the zero state of the user report.
+     * @return string HTML to display
+     */
+    public function output_report_zerostate(): string {
+        global $OUTPUT, $COURSE;
+        $context = [
+            'courseid' => $COURSE->id,
+            'imglink' => new \moodle_url('/pix/f/clip-353 1.png'),
+        ];
+        return $OUTPUT->render_from_template('gradereport_user/zero_state', $context);
+    }
+
+    /**
      * Trigger the grade_report_viewed event
      *
      * @since Moodle 2.9

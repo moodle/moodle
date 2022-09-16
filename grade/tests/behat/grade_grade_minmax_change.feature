@@ -48,7 +48,7 @@ Feature: We can change the maximum and minimum number of points for manual items
       | Maximum grade | 10 |
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |
       | Manual item 1 | 100.00 %          | 10.00  | 100.00 %                     |
@@ -64,7 +64,7 @@ Feature: We can change the maximum and minimum number of points for manual items
       | Maximum grade | 20 |
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
+    And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |
       | Manual item 1 | 100.00 %          | 20.00  | 100.00 %                     |

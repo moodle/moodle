@@ -725,6 +725,7 @@ $string['savechanges'] = 'Save changes';
 $string['savepreferences'] = 'Save preferences';
 $string['scaleconfirmdelete'] = 'Are you sure you wish to delete the scale "{$a}"?';
 $string['scaledpct'] = 'Scaled %';
+$string['searchusers'] = 'Search users';
 $string['seeallcoursegrades'] = 'See all course grades';
 $string['select'] = 'Select {$a}';
 $string['selectalloroneuser'] = 'Select all or one user';

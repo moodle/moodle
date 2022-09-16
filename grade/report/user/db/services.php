@@ -48,5 +48,5 @@ $functions = [
         'type' => 'read',
         'capabilities' => 'gradereport/user:view',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
-    ]
+    ],
 ];

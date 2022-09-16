@@ -64,7 +64,7 @@ Feature: Extra credit contributions are normalised when going out of bounds
     And I set the following settings for grade item "Manual item 4":
       | Extra credit | 1 |
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |
       | Manual item 1 | <m1w>             | 80.00  | <m1c>                        |

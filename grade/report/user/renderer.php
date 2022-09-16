@@ -39,12 +39,12 @@ class gradereport_user_renderer extends plugin_renderer_base {
      * @param string $report
      * @param stdClass $course
      * @param int $userid
-     * @param int $groupid
+     * @param null|int $groupid
      * @param bool $includeall
      * @return string The raw HTML to render.
      * @throws coding_exception
      */
-    public function graded_users_selector(string $report, stdClass $course, int $userid, int $groupid, bool $includeall): string {
+    public function graded_users_selector(string $report, stdClass $course, int $userid, ?int $groupid, bool $includeall): string {
 
         $select = grade_get_graded_users_select($report, $course, $userid, $groupid, $includeall);
         $output = html_writer::tag('div', $this->output->render($select), ['id' => 'graded_users_selector']);

@@ -42,7 +42,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one          | 28.57 %                | 80.00  | 0–100 | 80.00 %    | 22.86 %                      |
@@ -63,7 +63,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one          | 66.67 %                 | 80.00  | 0–100 | 80.00 %    | 53.33 %                      |
@@ -82,7 +82,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
       | Test assignment one          | 0.00 %( Empty )        | -     | 0–100 | -          | 0.00 %                       |
@@ -109,7 +109,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
       | Test assignment one          | 0.00 %( Extra credit ) | 80.00 | 0–100 | 80.00 %    | 0.00 %                       |
@@ -134,7 +134,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one          | 50.00 %                | 80.00  | 0–100 | 80.00 %    | 40.00 %                      |
@@ -158,7 +158,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one          | 83.33 %                 | 80.00  | 0–100 | 80.00 %    | 66.67 %                      |
@@ -180,7 +180,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
       | Test assignment one          | 0.00 %( Empty )        | -     | 0–100 | -          | 0.00 %                       |
@@ -207,7 +207,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one          | 50.00 %                 | 80.00  | 0–100 | 80.00 %    | 40.00 %                      |
@@ -233,7 +233,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one          | 83.33 %                 | 80.00  | 0–100 | 80.00 %    | 66.67 %                      |
@@ -257,7 +257,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
       | Test assignment one          | 0.00 %( Empty )        | -     | 0–100 | -          | 0.00 %                       |

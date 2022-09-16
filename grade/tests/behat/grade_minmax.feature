@@ -76,7 +76,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     And I give the grade "10.00" to the user "Student 2" for the grade item "MI 3"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
+    And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 20.00 %           | 75.00  | 0–100 | 75.00 %    | 15.00 %                         |
@@ -106,7 +106,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | Maximum grade           | 50.00 |
       | Minimum grade           | 5.00  |
     And I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
+    And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 12.50 %           | 75.00  | 5–50  | 100.00 %   | 18.75 %                      |
@@ -131,7 +131,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | Rescale existing grades | No    |
       | Maximum grade          | 200.00 |
     And I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
+    And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 5         | 40.00 %           | 150.00 | 0–200 | 75.00 %   | 30.00 %                      |
@@ -145,7 +145,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     When I set the field "Min and max grades used in calculation" to "Initial min and max grades"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 16.67 %           | 75.00  | 0–100 | 75.00 %    | 12.50 %                      |
