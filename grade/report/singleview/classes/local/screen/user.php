@@ -152,7 +152,7 @@ class user extends tablelike implements selectable_items {
      * @param grade_item $item
      * @return array
      */
-    public function format_line($item): array{
+    public function format_line($item): array {
         global $OUTPUT;
 
         $grade = $this->fetch_grade_or_default($item, $this->item->id);

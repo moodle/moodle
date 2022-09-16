@@ -35,7 +35,10 @@ defined('MOODLE_INTERNAL') || die;
  */
 class text_attribute extends element {
 
-    /** @var bool $isdisabled Is this input disabled? */
+    /**
+     * Is this input disabled?
+     * @var bool $isdisabled
+     */
     private bool $isdisabled;
 
     /**

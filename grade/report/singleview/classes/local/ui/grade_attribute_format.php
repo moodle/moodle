@@ -37,13 +37,22 @@ defined('MOODLE_INTERNAL') || die;
  */
 abstract class grade_attribute_format extends attribute_format implements unique_name {
 
-    /** @var string $name The first part of the name attribute of the form input */
+    /**
+     * The first part of the name attribute of the form input
+     * @var string $name
+     */
     public string $name;
 
-    /** @var null|string $label The label of the input */
+    /**
+     * The label of the input
+     * @var null|string $label
+     */
     public ?string $label;
 
-    /** @var grade_grade $grade The grade_grade of the input */
+    /**
+     * The grade_grade of the input
+     * @var grade_grade $grade
+     */
     public grade_grade $grade;
 
     /**
@@ -70,5 +79,5 @@ abstract class grade_attribute_format extends attribute_format implements unique
      * @param string $value The value from the form.
      * @return string Any error message
      */
-    public abstract function set(string $value);
+    abstract public function set(string $value);
 }

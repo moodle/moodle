@@ -74,7 +74,14 @@ class singleview extends grade_report {
      * @param int $itemid The id of the user or grade item
      * @param string|null $unused Used to be group id but that was removed and this is now unused.
      */
-    public function __construct(int $courseid, object $gpr, context_course $context, string $itemtype, int $itemid, ?string $unused = null) {
+    public function __construct(
+        int $courseid,
+        object $gpr,
+        context_course $context,
+        string $itemtype,
+        int $itemid,
+        ?string $unused = null
+    ) {
         parent::__construct($courseid, $gpr, $context);
 
         $base = '/grade/report/singleview/index.php';

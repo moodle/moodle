@@ -35,7 +35,10 @@ defined('MOODLE_INTERNAL') || die;
  */
 class feedback extends grade_attribute_format implements unique_value, be_disabled {
 
-    /** @var string $name Name of this input */
+    /**
+     * Name of this input
+     * @var string $name
+     */
     public string $name = 'feedback';
 
     /**
