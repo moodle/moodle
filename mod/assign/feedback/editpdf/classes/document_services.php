@@ -438,9 +438,13 @@ EOD;
         $fs->delete_area_files($record->contextid, $record->component, $record->filearea, $record->itemid);
 
         $files = array();
+        $images = $pdf->get_images();
         for ($i = 0; $i < $pagecount; $i++) {
             try {
-                $image = $pdf->get_image($i);
+                if (empty($images[$i])) {
+                    throw new \moodle_exception('error image');
+                }
+                $image = $images[$i];
                 if (!$resetrotation) {
                     $pagerotation = page_editor::get_page_rotation($grade->id, $i);
                     $degree = !empty($pagerotation) ? $pagerotation->degree : 0;
