@@ -561,6 +561,11 @@ class mysqli_native_moodle_database extends moodle_database {
         if ($dbhost and !empty($this->dboptions['dbpersist'])) {
             $dbhost = "p:$dbhost";
         }
+
+        // We want to keep exceptions out from the native driver.
+        // TODO: See MDL-75761 for future improvements.
+        mysqli_report(MYSQLI_REPORT_OFF); // Disable reporting (default before PHP 8.1).
+
         $this->mysqli = mysqli_init();
         if (!empty($this->dboptions['connecttimeout'])) {
             $this->mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, $this->dboptions['connecttimeout']);
