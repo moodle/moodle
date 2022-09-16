@@ -55,8 +55,7 @@ class pdo_moodle_recordset extends moodle_recordset {
         return $row;
     }
 
-    #[\ReturnTypeWillChange]
-    public function current() {
+    public function current(): stdClass {
         return (object)$this->current;
     }
 

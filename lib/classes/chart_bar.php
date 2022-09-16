@@ -43,8 +43,7 @@ class chart_bar extends chart_base {
      *
      * @return array
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize() {
+    public function jsonSerialize(): array {
         $data = parent::jsonSerialize();
         $data['horizontal'] = $this->get_horizontal();
         $data['stacked'] = $this->get_stacked();

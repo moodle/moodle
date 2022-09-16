@@ -129,8 +129,7 @@ class chart_axis implements JsonSerializable {
      *
      * @return array
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize() {
+    public function jsonSerialize(): array {
         return [
             'label' => $this->label,
             'labels' => $this->labels,

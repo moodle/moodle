@@ -108,16 +108,14 @@ class read_slave_moodle_recordset_special extends \moodle_recordset {
      * Iterator interface
      * @return \stdClass
      */
-    #[\ReturnTypeWillChange]
-    public function current() {
+    public function current(): \stdClass {
         return new \stdClass();
     }
     /**
      * Iterator interface
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function next() {
+    public function next(): void {
     }
     /**
      * Iterator interface
