@@ -104,7 +104,7 @@ if (($formdata = data_submitted()) && confirm_sesskey()) {
     }
 }
 
-$renderer = $PAGE->get_renderer('mod_data');
+$renderer = $manager->get_renderer();
 $templateeditor = new \mod_data\output\template_editor($manager, $mode);
 echo $renderer->render($templateeditor);
 

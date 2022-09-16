@@ -241,7 +241,7 @@ echo $OUTPUT->header();
 
 if (!$manager->has_fields()) {
     // It's a brand-new database. There are no fields.
-    $renderer = $PAGE->get_renderer('mod_data');
+    $renderer = $manager->get_renderer();
     echo $renderer->render_zero_state($manager);
     echo $OUTPUT->footer();
     // Don't check the rest of the options. There is no field, there is nothing else to work with.
@@ -387,7 +387,7 @@ if ($showactivity) {
         $hasrecords = !empty($records);
 
         if ($maxcount == 0) {
-            $renderer = $PAGE->get_renderer('mod_data');
+            $renderer = $manager->get_renderer();
             echo $renderer->render_empty_database($manager);
             echo $OUTPUT->footer();
             // There is no entry, so makes no sense to check different views, pagination, etc.

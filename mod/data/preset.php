@@ -80,7 +80,7 @@ $data->course     = $cm->course;
 $data->cmidnumber = $cm->idnumber;
 $data->instance   = $cm->instance;
 
-$renderer = $PAGE->get_renderer('mod_data');
+$renderer = $manager->get_renderer();
 $presets = $manager->get_available_presets();
 
 if ($action === 'export') {
