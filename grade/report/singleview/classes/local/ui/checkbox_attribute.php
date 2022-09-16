@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die;
 class checkbox_attribute extends element {
 
     /** @var bool $ischecked Is it checked? */
-    private bool $ischecked;
+    private $ischecked;
 
     /**
      * Constructor

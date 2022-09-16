@@ -39,19 +39,19 @@ class dropdown_attribute extends element {
      * Who is selected?
      * @var string $selected
      */
-    private string $selected;
+    private $selected;
 
     /**
      * List of options
      * @var array $options
      */
-    private array $options;
+    private $options;
 
     /**
      * Is this input disabled.
      * @var bool $isdisabled
      */
-    private bool $isdisabled;
+    private $isdisabled;
 
     /**
      * Constructor

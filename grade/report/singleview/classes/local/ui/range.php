@@ -25,7 +25,6 @@
 namespace gradereport_singleview\local\ui;
 
 use grade_item;
-use gradereport_singleview\local\screen\grade;
 
 defined('MOODLE_INTERNAL') || die;
 

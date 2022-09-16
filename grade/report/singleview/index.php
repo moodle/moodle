@@ -41,7 +41,7 @@ $itemtype = optional_param('item', $defaulttype, PARAM_TEXT);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 100, PARAM_INT);
 
-if (empty($itemid)) {
+if (empty($itemid) && ($itemtype !== 'user_select' && $itemtype !== 'grade_select')) {
     $itemid = $userid;
     $itemtype = $defaulttype;
 }
@@ -101,7 +101,7 @@ $pageparams = [
     'userid' => $userid,
     'group' => $groupid,
     'page' => $page,
-    'perpage' => $perpage
+    'perpage' => $perpage,
 ];
 
 $PAGE->set_pagelayout('report');
@@ -132,7 +132,7 @@ if ($data = data_submitted()) {
 
         // And notify the user of the success result.
         \core\notification::add(
-            get_string('savegradessuccess', 'gradereport_singleview', count ((array)$result->changecount)),
+            get_string('savegradessuccess', 'gradereport_singleview', count((array) $result->changecount)),
             \core\notification::SUCCESS
         );
     }
@@ -151,8 +151,8 @@ if (!empty($options)) {
     $optionitemid = array_shift($optionkeys);
 
     $relreport = new gradereport_singleview\report\singleview(
-                $courseid, $gpr, $context,
-                $report->screen->item_type(), $optionitemid
+        $courseid, $gpr, $context,
+        $report->screen->item_type(), $optionitemid
     );
     $reloptions = $relreport->screen->options();
     $reloptionssorting = array_keys($relreport->screen->options());

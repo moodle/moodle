@@ -39,19 +39,19 @@ abstract class element {
      * The first bit of the name for this input.
      * @var string $name
      */
-    public string $name;
+    public $name;
 
     /**
      * The value for this input.
      * @var string $value
      */
-    public string $value;
+    public $value;
 
     /**
      * The form label for this input.
      * @var string $label
      */
-    public string $label;
+    public $label;
 
     /**
      * Constructor

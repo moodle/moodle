@@ -1,5 +1,5 @@
-@core @core_grades @gradereport_user @javascript
-Feature: Within the User report, a teacher can search for users.
+@core @core_grades @gradereport_singleview @javascript
+Feature: Within the singleview report, a teacher can search for users.
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
@@ -20,8 +20,10 @@ Feature: Within the User report, a teacher can search for users.
     And I change window size to "large"
 
   Scenario: A teacher can search for and find a user to view
-    Given I navigate to "View > User report" in the course gradebook
-    When I click on "Click to select user" "link"
+    Given I navigate to "View > Single view" in the course gradebook
+    When I click on "User" "link" in the ".singleindex" "css_element"
+    And I wait until the page is ready
+    And I click on "Click to select user" "link"
     Then I confirm "Student 1" in "Select a user" search within the gradebook widget exists
     And I confirm "Student 2" in "Select a user" search within the gradebook widget exists
     And I confirm "Student 32" in "Select a user" search within the gradebook widget exists

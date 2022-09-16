@@ -48,19 +48,19 @@ class grade extends tablelike implements selectable_items, filterable_items {
      * Used for paging
      * @var int $totalitemcount
      */
-    private int $totalitemcount = 0;
+    private $totalitemcount = 0;
 
     /**
      * True if this is a manual grade item
      * @var bool $requiresextra
      */
-    private bool $requiresextra = false;
+    private $requiresextra = false;
 
     /**
      *  True if there are more users than our limit.
      * @var bool $requirepaging
      */
-    private bool $requirespaging = true;
+    private $requirespaging = true;
 
     /**
      * True if $CFG->grade_overridecat is true

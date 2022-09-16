@@ -40,7 +40,7 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
      * Name of this input
      * @var string $name
      */
-    public string $name = 'finalgrade';
+    public $name = 'finalgrade';
 
     /**
      * Get the value for this input.
@@ -135,7 +135,7 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
      * @param string $value The new value.
      * @return string Any error string
      */
-    public function set($value): string {
+    public function set($value) {
         $userid = $this->grade->userid;
         $gradeitem = $this->grade->grade_item;
 

@@ -45,19 +45,19 @@ abstract class tablelike extends screen {
      * A list of table headers
      * @var array $headers
      */
-    protected array $headers = [];
+    protected $headers = [];
 
     /**
      * A list of errors that mean we should not show the table
      * @var array $initerrors
      */
-    protected array $initerrors = [];
+    protected $initerrors = [];
 
     /**
      * Describes the columns in the table
      * @var array $definition
      */
-    protected array $definition = [];
+    protected $definition = [];
 
     /**
      * Format a row of the table

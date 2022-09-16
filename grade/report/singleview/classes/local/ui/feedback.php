@@ -39,7 +39,7 @@ class feedback extends grade_attribute_format implements unique_value, be_disabl
      * Name of this input
      * @var string $name
      */
-    public string $name = 'feedback';
+    public $name = 'feedback';
 
     /**
      * Get the value for this input.
@@ -106,9 +106,9 @@ class feedback extends grade_attribute_format implements unique_value, be_disabl
      * Update the value for this input.
      *
      * @param string $value The new feedback value.
-     * @return string Any error message
+     * @return null|string Any error message
      */
-    public function set($value): string {
+    public function set($value) {
         $finalgrade = false;
         $trimmed = trim($value);
         if (empty($trimmed)) {

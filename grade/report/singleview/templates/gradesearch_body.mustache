@@ -15,23 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template gradereport_user/zero_state
+    @template core_grades/report/singleview/gradesearch_body
 
-    The zero state of the user report that contains the image and trigger for the search widget.
+    The body of the grade item widget.
 
     Example context (json):
-    {
-        "imglink": "http://foo.bar/gradereport/?userid=25",
-        "courseid": "2"
-    }
+    {}
 }}
-<div class="mx-auto w-50 text-center">
-    <img src="{{imglink}}" alt="Temp" class="w-50 h-50 mb-4">
-    <h3>{{#str}}selectuser, gradereport_user{{/str}}</h3>
-    <p>{{#str}}selectuserinstructions, gradereport_user{{/str}}</p>
-    <a href="#"
-       class="btn btn-light border-secondary userwidget"
-       data-courseid={{courseid}}
-       data-searchtype="user"
-    >{{#str}}selectuserlink, grades{{/str}}</a>
-</div>
+{{< core/search_input_auto }}
+    {{$label}}{{#str}}
+        searchgrades, gradereport_singleview
+    {{/str}}{{/label}}
+    {{$placeholder}}{{#str}}
+        searchgrades, gradereport_singleview
+    {{/str}}{{/placeholder}}
+{{/ core/search_input_auto }}
+
+<div class="searchresultscontainer" data-region="search-results-container-widget" aria-live="polite"></div>

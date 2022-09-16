@@ -16,7 +16,7 @@
 /**
  * A small modal to search users within the gradebook.
  *
- * @module    gradereport_user/user
+ * @module    gradereport_singleview/user
  * @copyright 2022 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -64,7 +64,7 @@ const registerListenerEvents = () => {
                 const courseID = trigger.dataset.courseid;
                 e.preventDefault();
 
-                const actionBaseUrl = Url.relativeUrl('/grade/report/user/index.php', {}, false);
+                const actionBaseUrl = Url.relativeUrl('/grade/report/singleview/index.php', {item: 'user'}, false);
                 // If an error occurs while fetching the data, display the error within the modal.
                 const data = await Repository.userFetch(courseID, actionBaseUrl).catch(async(e) => {
                     const errorTemplateData = {
@@ -74,33 +74,23 @@ const registerListenerEvents = () => {
                         await Templates.render('core_grades/searchwidget/error', errorTemplateData)
                     );
                 });
-
                 // Early return if there is no module data.
                 if (data === []) {
                     return;
                 }
-
-                // The HTML for the 'All users' option which will be rendered in the non-searchable content are of the widget.
-                const allUsersOptionName = await getString('allusersnum', 'gradereport_user', data.users.length);
-                const allUsersOption = await Templates.render('core_grades/searchwidget/searchitem', {
-                    id: 0,
-                    name: allUsersOptionName,
-                    url: Url.relativeUrl('/grade/report/user/index.php', {id: courseID, userid: 0}, false),
-                });
-
                 WidgetBase.init(
                     bodyPromise,
                     data.users,
                     searchUsers(),
-                    getString('selectauser', 'grades'),
-                    allUsersOption
+                    getString('selectauser', 'grades')
                 );
             }
         });
     });
     // Resolvers for passed functions in the modal creation.
     bodyPromiseResolver(Templates.render(
-        'core_grades/searchwidget/user/usersearch_body', {displayunsearchablecontent: true}
+        'core_grades/searchwidget/user/usersearch_body',
+        []
     ));
 };
 

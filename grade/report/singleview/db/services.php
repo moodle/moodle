@@ -15,15 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Standard version file
+ * singleview grade report external functions and service definitions.
  *
  * @package   gradereport_singleview
- * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
+ * @copyright 2022 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die;
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'gradereport_singleview'; // Full name of the plugin (used for diagnostics).
-$plugin->version  = 2022041902;
-$plugin->requires = 2022041200;
+$functions = [
+    'gradereport_singleview_get_grade_items_for_search_widget' => [
+        'methodname' => 'get_grade_items_for_search_widget',
+        'classname' => 'gradereport_singleview\\external\\singleview',
+        'description' => 'Get the gradeitem/(s) for a course',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities' => 'gradereport/singleview:view',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+];

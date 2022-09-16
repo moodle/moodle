@@ -40,16 +40,16 @@ class singleview extends grade_report {
      */
     public static function valid_screens(): array {
         // This is a list of all the known classes representing a screen in this plugin.
-        return ['user', 'select', 'grade'];
+        return ['user', 'select', 'grade', 'user_select', 'grade_select'];
     }
 
     /**
      * Process data from a form submission. Delegated to the current screen.
      *
      * @param array $data The data from the form
-     * @return array List of warnings
+     * @return array|object List of warnings
      */
-    public function process_data($data): array {
+    public function process_data($data) {
         if (has_capability('moodle/grade:edit', $this->context)) {
             return $this->screen->process($data);
         }
@@ -71,7 +71,7 @@ class singleview extends grade_report {
      * @param object $gpr grade plugin return tracking object
      * @param context_course $context
      * @param string $itemtype Should be user, select or grade
-     * @param int $itemid The id of the user or grade item
+     * @param int|null $itemid The id of the user or grade item
      * @param string|null $unused Used to be group id but that was removed and this is now unused.
      */
     public function __construct(
@@ -79,7 +79,7 @@ class singleview extends grade_report {
         object $gpr,
         context_course $context,
         string $itemtype,
-        int $itemid,
+        ?int $itemid,
         ?string $unused = null
     ) {
         parent::__construct($courseid, $gpr, $context);

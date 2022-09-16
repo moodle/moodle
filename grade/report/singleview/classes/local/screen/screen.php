@@ -47,13 +47,13 @@ abstract class screen {
      * The id of the course
      * @var int $courseid
      */
-    protected int $courseid;
+    protected $courseid;
 
     /**
      * Either a user id or a grade_item id
      * @var int|null $itemid
      */
-    protected ?int $itemid;
+    protected $itemid;
 
     /**
      * The currently set groupid (if set)
@@ -65,31 +65,31 @@ abstract class screen {
      * The course context
      * @var context_course $context
      */
-    protected context_course $context;
+    protected $context;
 
     /**
      * The page number
      * @var int $page
      */
-    protected int $page;
+    protected $page;
 
     /**
      * Results per page
      * @var int $perpage
      */
-    protected int $perpage;
+    protected $perpage;
 
     /**
      * List of items on the page, they could be users or grade_items
      * @var array $items
      */
-    protected array $items;
+    protected $items;
 
     /**
      * List of allowed values for 'perpage' setting
      * @var array $validperpage
      */
-    protected static array $validperpage = [20, 50, 100, 200, 400, 1000, 5000];
+    protected static $validperpage = [20, 50, 100, 200, 400, 1000, 5000];
 
     /**
      * Constructor
@@ -251,9 +251,9 @@ abstract class screen {
     /**
      * Get the type of items in the list.
      *
-     * @return string
+     * @return null|string
      */
-    abstract public function item_type(): string;
+    abstract public function item_type(): ?string;
 
     /**
      * Get the entire screen as a string.
@@ -299,10 +299,10 @@ abstract class screen {
     /**
      * Process the data from a form submission.
      *
-     * @param array $data
+     * @param array|object $data
      * @return stdClass of warnings
      */
-    public function process(array $data): stdClass {
+    public function process($data): stdClass {
         $warnings = [];
 
         $fields = $this->definition();

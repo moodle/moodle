@@ -41,19 +41,19 @@ abstract class grade_attribute_format extends attribute_format implements unique
      * The first part of the name attribute of the form input
      * @var string $name
      */
-    public string $name;
+    public $name;
 
     /**
      * The label of the input
      * @var null|string $label
      */
-    public ?string $label;
+    public $label;
 
     /**
      * The grade_grade of the input
      * @var grade_grade $grade
      */
-    public grade_grade $grade;
+    public $grade;
 
     /**
      * Constructor
@@ -79,5 +79,5 @@ abstract class grade_attribute_format extends attribute_format implements unique
      * @param string $value The value from the form.
      * @return string Any error message
      */
-    abstract public function set(string $value);
+    abstract public function set($value);
 }

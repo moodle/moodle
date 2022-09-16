@@ -39,7 +39,7 @@ class override extends grade_attribute_format implements be_checked, be_disabled
      * The name for this input
      * @var string $name
      */
-    public string $name = 'override';
+    public $name = 'override';
 
     /**
      * Is this input checked
@@ -101,7 +101,7 @@ class override extends grade_attribute_format implements be_checked, be_disabled
      * @param string $value The new value to set
      * @return mixed string|false Any error message
      */
-    public function set(string $value) {
+    public function set($value) {
         if (empty($this->grade->id)) {
             return false;
         }

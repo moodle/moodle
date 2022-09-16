@@ -16,7 +16,7 @@
 /**
  * A small modal to search users within the gradebook.
  *
- * @module    gradereport_user/user
+ * @module    gradereport_singleview
  * @copyright 2022 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,6 @@ import CustomEvents from "core/custom_interaction_events";
 import * as Repository from 'core_grades/searchwidget/repository';
 import * as WidgetBase from 'core_grades/searchwidget/basewidget';
 import {get_string as getString} from 'core/str';
-import Url from 'core/url';
 
 /**
  * Our entry point into starting to build the search widget.
@@ -42,7 +41,7 @@ export const init = () => {
 };
 
 /**
- * Register user search widget related event listeners.
+ * Register grade item search widget related event listeners.
  *
  * @method registerListenerEvents
  */
@@ -59,14 +58,13 @@ const registerListenerEvents = () => {
     // Register events.
     events.forEach((event) => {
         document.addEventListener(event, async(e) => {
-            const trigger = e.target.closest('.userwidget');
+            const trigger = e.target.closest('.gradewidget');
             if (trigger) {
                 const courseID = trigger.dataset.courseid;
                 e.preventDefault();
 
-                const actionBaseUrl = Url.relativeUrl('/grade/report/user/index.php', {}, false);
                 // If an error occurs while fetching the data, display the error within the modal.
-                const data = await Repository.userFetch(courseID, actionBaseUrl).catch(async(e) => {
+                const data = await Repository.gradeitemFetch(courseID).catch(async(e) => {
                     const errorTemplateData = {
                         'errormessage': e.message
                     };
@@ -74,54 +72,44 @@ const registerListenerEvents = () => {
                         await Templates.render('core_grades/searchwidget/error', errorTemplateData)
                     );
                 });
-
                 // Early return if there is no module data.
-                if (data === []) {
+                if (data === [] || data === undefined) {
                     return;
                 }
-
-                // The HTML for the 'All users' option which will be rendered in the non-searchable content are of the widget.
-                const allUsersOptionName = await getString('allusersnum', 'gradereport_user', data.users.length);
-                const allUsersOption = await Templates.render('core_grades/searchwidget/searchitem', {
-                    id: 0,
-                    name: allUsersOptionName,
-                    url: Url.relativeUrl('/grade/report/user/index.php', {id: courseID, userid: 0}, false),
-                });
-
                 WidgetBase.init(
                     bodyPromise,
-                    data.users,
-                    searchUsers(),
-                    getString('selectauser', 'grades'),
-                    allUsersOption
+                    data.gradeitems,
+                    searchGradeitems(),
+                    getString('selectagrade', 'gradereport_singleview')
                 );
             }
         });
     });
     // Resolvers for passed functions in the modal creation.
     bodyPromiseResolver(Templates.render(
-        'core_grades/searchwidget/user/usersearch_body', {displayunsearchablecontent: true}
+        'gradereport_singleview/gradesearch_body',
+        []
     ));
 };
 
 /**
- * Define how we want to search and filter users when the user decides to input a search value.
+ * Define how we want to search and filter grade items when the user decides to input a search value.
  *
  * @method registerListenerEvents
  * @returns {function(): function(*, *): (*)}
  */
-const searchUsers = () => {
+const searchGradeitems = () => {
     return () => {
-        return (users, searchTerm) => {
+        return (modules, searchTerm) => {
             if (searchTerm === '') {
-                return users;
+                return modules;
             }
             searchTerm = searchTerm.toLowerCase();
             const searchResults = [];
-            users.forEach((user) => {
-                const userName = user.fullname.toLowerCase();
-                if (userName.includes(searchTerm)) {
-                    searchResults.push(user);
+            modules.forEach((module) => {
+                const moduleName = module.name.toLowerCase();
+                if (moduleName.includes(searchTerm)) {
+                    searchResults.push(module);
                 }
             });
             return searchResults;

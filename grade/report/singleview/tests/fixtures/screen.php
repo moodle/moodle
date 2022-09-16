@@ -38,15 +38,18 @@ class gradereport_singleview_screen_testable extends \gradereport_singleview\loc
     /**
      * Return the HTML for the page.
      */
-    public function init($selfitemisempty = false) {}
+    public function init($selfitemisempty = false) {
+    }
 
     /**
      * Get the type of items on this screen, not valid so return false.
      */
-    public function item_type(): string {}
+    public function item_type(): string {
+    }
 
     /**
      * Return the HTML for the page.
      */
-    public function html(): string {}
+    public function html(): string {
+    }
 }

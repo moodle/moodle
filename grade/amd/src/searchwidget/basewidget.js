@@ -24,6 +24,7 @@ import * as ModalFactory from 'core/modal_factory';
 import * as ModalEvents from 'core/modal_events';
 import {debounce} from 'core/utils';
 import * as Templates from 'core/templates';
+import {comboBox} from 'core/aria';
 
 /**
  * Build the base searching widget.
@@ -72,9 +73,9 @@ const registerListenerEvents = (modal, data, searchFunc, unsearchableContent) =>
                 }
 
                 // The search input is triggered.
-                searchInput.addEventListener('input', debounce(() => {
+                searchInput.addEventListener('input', debounce(async() => {
                     // Display the search results.
-                    renderSearchResults(
+                    await renderSearchResults(
                         searchResultsContainer,
                         debounceCallee(
                             searchInput.value,
@@ -83,6 +84,8 @@ const registerListenerEvents = (modal, data, searchFunc, unsearchableContent) =>
                         )
                     );
                 }, 300));
+                // Trigger event handling for the results in line with aria guidelines.
+                comboBox(searchInput);
                 return body;
             }).catch();
     }).catch();
@@ -99,7 +102,6 @@ const registerListenerEvents = (modal, data, searchFunc, unsearchableContent) =>
 const buildModal = (bodyPromise, modalTitle) => {
     return ModalFactory.create({
         type: ModalFactory.types.DEFAULT,
-        // TODO: Make this defined by the interface.
         title: modalTitle,
         body: bodyPromise,
         small: true,

@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template gradereport_user/zero_state
+    @template core_grades/report/singleview/zero_state_grade
 
     The zero state of the user report that contains the image and trigger for the search widget.
 
@@ -25,13 +25,15 @@
         "courseid": "2"
     }
 }}
+<div class="justify-content-end d-flex">
+    {{>gradereport_singleview/page_toggler}}
+</div>
 <div class="mx-auto w-50 text-center">
     <img src="{{imglink}}" alt="Temp" class="w-50 h-50 mb-4">
-    <h3>{{#str}}selectuser, gradereport_user{{/str}}</h3>
-    <p>{{#str}}selectuserinstructions, gradereport_user{{/str}}</p>
+    <h3>{{#str}}selectgrade, gradereport_singleview{{/str}}</h3>
+    <p>{{#str}}selectgradeinstructions, gradereport_singleview{{/str}}</p>
     <a href="#"
-       class="btn btn-light border-secondary userwidget"
-       data-courseid={{courseid}}
-       data-searchtype="user"
-    >{{#str}}selectuserlink, grades{{/str}}</a>
+       class="btn btn-light border-secondary gradewidget"
+       data-courseid={{courseid}} data-searchtype="gradeitems"
+    >{{#str}}selectgradeitemlink, gradereport_singleview{{/str}}</a>
 </div>

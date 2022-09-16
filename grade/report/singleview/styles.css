@@ -100,3 +100,9 @@
     margin-bottom: 0.5em;
     text-align: left;
 }
+
+.searchresultitemscontainer {
+    max-height: 150px;
+    height: 150px;
+    overflow: auto;
+}

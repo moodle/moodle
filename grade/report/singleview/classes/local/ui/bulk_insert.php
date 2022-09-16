@@ -50,30 +50,30 @@ class bulk_insert extends element {
     /**
      * Is this checkbox checked?
      *
-     * @param array $data The form data
+     * @param array|object $data The form data
      * @return bool
      */
-    public function is_applied(array $data): bool {
+    public function is_applied($data): bool {
         return isset($data->{$this->applyname});
     }
 
     /**
      * Get the type of this input (user or grade)
      *
-     * @param array $data The form data
+     * @param array|object $data The form data
      * @return string
      */
-    public function get_type(array $data): string {
+    public function get_type($data): string {
         return $data->{$this->selectname};
     }
 
     /**
      * Get the value from either the user or grade.
      *
-     * @param array $data The form data
+     * @param array|object $data The form data
      * @return string
      */
-    public function get_insert_value(array $data): string {
+    public function get_insert_value($data): string {
         return $data->{$this->insertname};
     }
 
