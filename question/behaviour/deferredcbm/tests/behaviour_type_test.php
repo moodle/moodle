@@ -18,6 +18,7 @@ namespace qbehaviour_deferredcbm;
 
 use question_display_options;
 use question_engine;
+use question_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -134,8 +135,8 @@ class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
     }
 
     public function test_calculate_bonus() {
-        $this->assertEquals(0.05,  $this->behaviourtype->calculate_bonus(1, 1/2));
-        $this->assertEquals(-0.01, $this->behaviourtype->calculate_bonus(2, 9/10));
-        $this->assertEquals(0,     $this->behaviourtype->calculate_bonus(3, 1));
+        $this->assertEqualsWithDelta(0.05,  $this->behaviourtype->calculate_bonus(1, 1 / 2), question_testcase::GRADE_DELTA);
+        $this->assertEqualsWithDelta(-0.01, $this->behaviourtype->calculate_bonus(2, 9 / 10), question_testcase::GRADE_DELTA);
+        $this->assertEqualsWithDelta(0,     $this->behaviourtype->calculate_bonus(3, 1), question_testcase::GRADE_DELTA);
     }
 }
