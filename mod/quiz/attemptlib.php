@@ -2405,6 +2405,11 @@ class quiz_attempt {
             }
         }
 
+        // Verify if time is really up; time limit could have been changed.
+        if ($timeup && $timenow < $timeclose - QUIZ_MIN_TIME_TO_CONTINUE) {
+            $timeup = false;
+        }
+
         // If time is running out, trigger the appropriate action.
         $becomingoverdue = false;
         $becomingabandoned = false;
