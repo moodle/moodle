@@ -480,6 +480,11 @@ abstract class data_loading_method_test_base extends advanced_testcase {
 
 abstract class question_testcase extends advanced_testcase {
 
+    /**
+     * Tolerance accepted in some unit tests when float operations are involved.
+     */
+    const GRADE_DELTA = 0.00000005;
+
     public function assert($expectation, $compare, $notused = '') {
 
         if (get_class($expectation) === 'question_pattern_expectation') {
