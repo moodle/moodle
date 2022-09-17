@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Unit tests for the multianswer question definition class.
  *
@@ -199,7 +198,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
                            2 => array('sub1_answer' => 'Owl', 'sub2_answer' => $right),
                           );
         $finalgrade = $question->compute_final_grade($responses, 1);
-        $this->assertEquals(1 / 3 * (1 - 0.2) + 2 / 3 * (1 - 2 * 0.2), $finalgrade);
+        $this->assertEqualsWithDelta(1 / 3 * (1 - 0.2) + 2 / 3 * (1 - 2 * 0.2), $finalgrade, question_testcase::GRADE_DELTA);
 
         // Get subquestion 1 right at 3rd try and subquestion 2 right at 2nd try.
         $responses = array(0 => array('sub1_answer' => 'Dog', 'sub2_answer' => $wrong),
@@ -208,7 +207,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
                            3 => array('sub1_answer' => 'Owl', 'sub2_answer' => $right),
                           );
         $finalgrade = $question->compute_final_grade($responses, 1);
-        $this->assertEquals(1 / 3 * (1 - 2 * 0.2) + 2 / 3 * (1 - 0.2), $finalgrade);
+        $this->assertEqualsWithDelta(1 / 3 * (1 - 2 * 0.2) + 2 / 3 * (1 - 0.2), $finalgrade, question_testcase::GRADE_DELTA);
 
         // Get subquestion 1 right at 4th try and subquestion 2 right at 1st try.
         $responses = array(0 => array('sub1_answer' => 'Dog', 'sub2_answer' => $right),
@@ -217,7 +216,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
                            3 => array('sub1_answer' => 'Owl', 'sub2_answer' => $right),
                           );
         $finalgrade = $question->compute_final_grade($responses, 1);
-        $this->assertEquals(1 / 3 * (1 - 3 * 0.2) + 2 / 3, $finalgrade);
+        $this->assertEqualsWithDelta(1 / 3 * (1 - 3 * 0.2) + 2 / 3, $finalgrade, question_testcase::GRADE_DELTA);
 
         // Get subquestion 1 right at 4th try and subquestion 2 right 3rd try.
         // Subquestion 2 was right at 1st try, but last change is at 3rd try.
@@ -227,7 +226,7 @@ class qtype_multianswer_question_test extends advanced_testcase {
                            3 => array('sub1_answer' => 'Owl', 'sub2_answer' => $right),
                           );
         $finalgrade = $question->compute_final_grade($responses, 1);
-        $this->assertEquals(1 / 3 * (1 - 3 * 0.2) + 2 / 3 * (1 - 2 * 0.2), $finalgrade);
+        $this->assertEqualsWithDelta(1 / 3 * (1 - 3 * 0.2) + 2 / 3 * (1 - 2 * 0.2), $finalgrade, question_testcase::GRADE_DELTA);
 
         // Incomplete responses. Subquestion 1 is right at 4th try and subquestion 2 at 3rd try.
         $responses = array(0 => array('sub1_answer' => 'Dog'),
@@ -236,6 +235,6 @@ class qtype_multianswer_question_test extends advanced_testcase {
                            3 => array('sub1_answer' => 'Owl', 'sub2_answer' => $right),
                           );
         $finalgrade = $question->compute_final_grade($responses, 1);
-        $this->assertEquals(1 / 3 * (1 - 3 * 0.2) + 2 / 3 * (1 - 2 * 0.2), $finalgrade);
+        $this->assertEqualsWithDelta(1 / 3 * (1 - 3 * 0.2) + 2 / 3 * (1 - 2 * 0.2), $finalgrade, question_testcase::GRADE_DELTA);
     }
 }
