@@ -14,29 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests for some of the code in ../datalib.php.
- *
- * @package    moodlecore
- * @subpackage questionengine
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
 
+use qubaid_condition;
+use qubaid_join;
+use qubaid_list;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once(__DIR__ . '/../lib.php');
 
-
 /**
  * Unit tests for qubaid_condition and subclasses.
  *
+ * @package    core_question
+ * @category   test
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qubaid_condition_testcase extends advanced_testcase {
+class qubaid_condition_test extends \advanced_testcase {
 
     protected function normalize_sql($sql, $params) {
         $newparams = array();

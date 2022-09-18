@@ -14,14 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for question backup and restore.
- *
- * @package    core_question
- * @category   test
- * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,27 +25,29 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 /**
  * Class core_question_backup_testcase
  *
+ * @package    core_question
+ * @category   test
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_question_backup_testcase extends advanced_testcase {
+class backup_test extends \advanced_testcase {
 
     /**
      * Makes a backup of the course.
      *
-     * @param stdClass $course The course object.
+     * @param \stdClass $course The course object.
      * @return string Unique identifier for this backup.
      */
     protected function backup_course($course) {
         global $CFG, $USER;
 
         // Turn off file logging, otherwise it can't delete the file (Windows).
-        $CFG->backup_file_logger_level = backup::LOG_NONE;
+        $CFG->backup_file_logger_level = \backup::LOG_NONE;
 
         // Do backup with default settings. MODE_IMPORT means it will just
         // create the directory and not zip it.
-        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id,
-                backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id,
+                \backup::FORMAT_MOODLE, \backup::INTERACTIVE_NO, \backup::MODE_IMPORT,
                 $USER->id);
         $backupid = $bc->get_backupid();
         $bc->execute_plan();
@@ -75,13 +70,13 @@ class core_question_backup_testcase extends advanced_testcase {
         global $CFG, $USER;
 
         // Turn off file logging, otherwise it can't delete the file (Windows).
-        $CFG->backup_file_logger_level = backup::LOG_NONE;
+        $CFG->backup_file_logger_level = \backup::LOG_NONE;
 
         // Do restore to new course with default settings.
-        $newcourseid = restore_dbops::create_new_course($fullname, $shortname, $categoryid);
-        $rc = new restore_controller($backupid, $newcourseid,
-                backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
-                backup::TARGET_NEW_COURSE);
+        $newcourseid = \restore_dbops::create_new_course($fullname, $shortname, $categoryid);
+        $rc = new \restore_controller($backupid, $newcourseid,
+                \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+                \backup::TARGET_NEW_COURSE);
 
         $precheck = $rc->execute_precheck();
         if (!$expectedprecheckwarning) {
@@ -113,18 +108,18 @@ class core_question_backup_testcase extends advanced_testcase {
 
         // Create 2 questions.
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $context = context_coursecat::instance($category1->id);
+        $context = \context_coursecat::instance($category1->id);
         $qcat = $qgen->create_question_category(['contextid' => $context->id]);
         $question1 = $qgen->create_question('shortanswer', null, ['category' => $qcat->id, 'idnumber' => 'q1']);
         $question2 = $qgen->create_question('shortanswer', null, ['category' => $qcat->id, 'idnumber' => 'q2']);
 
         // Tag the questions with 2 question tags and 2 course level question tags.
-        $qcontext = context::instance_by_id($qcat->contextid);
-        $coursecontext = context_course::instance($course->id);
-        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['qtag1', 'qtag2']);
-        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['qtag3', 'qtag4']);
-        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['ctag1', 'ctag2']);
-        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['ctag3', 'ctag4']);
+        $qcontext = \context::instance_by_id($qcat->contextid);
+        $coursecontext = \context_course::instance($course->id);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $qcontext, ['qtag1', 'qtag2']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $qcontext, ['qtag3', 'qtag4']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $coursecontext, ['ctag1', 'ctag2']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $coursecontext, ['ctag3', 'ctag4']);
 
         // Create a quiz and add one of the questions to that.
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
@@ -157,14 +152,14 @@ class core_question_backup_testcase extends advanced_testcase {
         // Retrieve tags for each question and check if they are assigned at the right context.
         $qcount = 1;
         foreach ($questions as $question) {
-            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            $tags = \core_tag_tag::get_item_tags('core_question', 'question', $question->id);
 
             // Each question is tagged with 4 tags (2 question tags + 2 course tags).
             $this->assertCount(4, $tags);
 
             foreach ($tags as $tag) {
                 if (in_array($tag->name, ['ctag1', 'ctag2', 'ctag3', 'ctag4'])) {
-                    $expected = context_course::instance($courseid2)->id;
+                    $expected = \context_course::instance($courseid2)->id;
                 } else if (in_array($tag->name, ['qtag1', 'qtag2', 'qtag3', 'qtag4'])) {
                     $expected = $qcontext->id;
                 }
@@ -193,7 +188,7 @@ class core_question_backup_testcase extends advanced_testcase {
 
         // Restore to a new course in the new course category.
         $courseid3 = $this->restore_course($backupid2, $coursefullname, $courseshortname . '_3', $category2->id, $expectedwarnings);
-        $coursecontext3 = context_course::instance($courseid3);
+        $coursecontext3 = \context_course::instance($courseid3);
 
         // The questions should have been moved to a question category that belongs to a course context.
         $questions = $DB->get_records_sql("SELECT q.*
@@ -206,7 +201,7 @@ class core_question_backup_testcase extends advanced_testcase {
 
         // Now, retrieve tags for each question and check if they are assigned at the right context.
         foreach ($questions as $question) {
-            $tags = core_tag_tag::get_item_tags('core_question', 'question', $question->id);
+            $tags = \core_tag_tag::get_item_tags('core_question', 'question', $question->id);
 
             // Each question is tagged with 4 tags (all are course tags now).
             $this->assertCount(4, $tags);
@@ -247,8 +242,8 @@ class core_question_backup_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id, 'manual');
 
         // Backup the course.
-        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
-            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id);
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id, \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id);
         $backupid = $bc->get_backupid();
         $bc->execute_plan();
         $results = $bc->get_results();
@@ -263,9 +258,9 @@ class core_question_backup_testcase extends advanced_testcase {
         question_delete_question($question->id);
 
         // Restore the course.
-        $restoredcourseid = restore_dbops::create_new_course($course->fullname, $course->shortname . '_1', $category->id);
-        $rc = new restore_controller($backupid, $restoredcourseid, backup::INTERACTIVE_NO,
-            backup::MODE_GENERAL, $USER->id, backup::TARGET_NEW_COURSE);
+        $restoredcourseid = \restore_dbops::create_new_course($course->fullname, $course->shortname . '_1', $category->id);
+        $rc = new \restore_controller($backupid, $restoredcourseid, \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL, $USER->id, \backup::TARGET_NEW_COURSE);
         $rc->execute_precheck();
         $rc->execute_plan();
         $rc->destroy();
@@ -304,8 +299,8 @@ class core_question_backup_testcase extends advanced_testcase {
         quiz_add_quiz_question($question->id, $quiz);
 
         // Backup the course.
-        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
-            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id);
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id, \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id);
         $backupid = $bc->get_backupid();
         $bc->execute_plan();
         $results = $bc->get_results();
@@ -320,9 +315,9 @@ class core_question_backup_testcase extends advanced_testcase {
         question_delete_question($question->id);
 
         // Restore the course.
-        $restoredcourseid = restore_dbops::create_new_course($course->fullname, $course->shortname . '_1', $category->id);
-        $rc = new restore_controller($backupid, $restoredcourseid, backup::INTERACTIVE_NO,
-            backup::MODE_GENERAL, $USER->id, backup::TARGET_NEW_COURSE);
+        $restoredcourseid = \restore_dbops::create_new_course($course->fullname, $course->shortname . '_1', $category->id);
+        $rc = new \restore_controller($backupid, $restoredcourseid, \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL, $USER->id, \backup::TARGET_NEW_COURSE);
         $rc->execute_precheck();
         $rc->execute_plan();
         $rc->destroy();
@@ -361,8 +356,8 @@ class core_question_backup_testcase extends advanced_testcase {
         quiz_add_quiz_question($question->id, $quiz);
 
         // Backup the course.
-        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
-            backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $USER->id);
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id, \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO, \backup::MODE_SAMESITE, $USER->id);
         $backupid = $bc->get_backupid();
         $bc->execute_plan();
         $results = $bc->get_results();
@@ -380,9 +375,9 @@ class core_question_backup_testcase extends advanced_testcase {
         set_config('siteidentifier', random_string(32) . 'not the same site');
 
         // Restore the course.
-        $restoredcourseid = restore_dbops::create_new_course($course->fullname, $course->shortname . '_1', $category->id);
-        $rc = new restore_controller($backupid, $restoredcourseid, backup::INTERACTIVE_NO,
-            backup::MODE_SAMESITE, $USER->id, backup::TARGET_NEW_COURSE);
+        $restoredcourseid = \restore_dbops::create_new_course($course->fullname, $course->shortname . '_1', $category->id);
+        $rc = new \restore_controller($backupid, $restoredcourseid, \backup::INTERACTIVE_NO,
+            \backup::MODE_SAMESITE, $USER->id, \backup::TARGET_NEW_COURSE);
         $rc->execute_precheck();
         $rc->execute_plan();
         $rc->destroy();

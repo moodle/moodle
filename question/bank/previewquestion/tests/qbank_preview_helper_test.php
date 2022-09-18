@@ -32,7 +32,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \qbank_previewquestion\helper
  */
-class helper_test extends \advanced_testcase {
+class qbank_preview_helper_test extends \advanced_testcase {
 
     /**
      * @var bool|\context|\context_course $context

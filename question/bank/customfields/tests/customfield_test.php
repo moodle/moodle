@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qbank_customfields;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -28,7 +30,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @author      Matt Porritt <mattp@catalyst-au.net>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbank_customfields_customfield_testcase extends advanced_testcase {
+class customfield_test extends \advanced_testcase {
 
     /**
      * @var array Data object for generating a question.
@@ -89,7 +91,7 @@ class qbank_customfields_customfield_testcase extends advanced_testcase {
         // Question initial set up.
         $this->category = $this->getDataGenerator()->create_category();
         $this->course = $this->getDataGenerator()->create_course(['category' => $this->category->id]);
-        $context = context_coursecat::instance($this->category->id);
+        $context = \context_coursecat::instance($this->category->id);
         $this->qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
         $qcat = $this->qgen->create_question_category(['contextid' => $context->id]);
 
@@ -109,19 +111,19 @@ class qbank_customfields_customfield_testcase extends advanced_testcase {
     /**
      * Makes a backup of the course.
      *
-     * @param stdClass $course The course object.
+     * @param \stdClass $course The course object.
      * @return string Unique identifier for this backup.
      */
     protected function backup_course(\stdClass $course): string {
         global $CFG, $USER;
 
         // Turn off file logging, otherwise it can't delete the file (Windows).
-        $CFG->backup_file_logger_level = backup::LOG_NONE;
+        $CFG->backup_file_logger_level = \backup::LOG_NONE;
 
         // Do backup with default settings. MODE_IMPORT means it will just
         // create the directory and not zip it.
-        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id,
-                backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id,
+                \backup::FORMAT_MOODLE, \backup::INTERACTIVE_NO, \backup::MODE_IMPORT,
                 $USER->id);
         $backupid = $bc->get_backupid();
         $bc->execute_plan();
@@ -143,13 +145,13 @@ class qbank_customfields_customfield_testcase extends advanced_testcase {
         global $CFG, $USER;
 
         // Turn off file logging, otherwise it can't delete the file (Windows).
-        $CFG->backup_file_logger_level = backup::LOG_NONE;
+        $CFG->backup_file_logger_level = \backup::LOG_NONE;
 
         // Do restore to new course with default settings.
-        $newcourseid = restore_dbops::create_new_course($fullname, $shortname, $categoryid);
-        $rc = new restore_controller($backupid, $newcourseid,
-                backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
-                backup::TARGET_NEW_COURSE);
+        $newcourseid = \restore_dbops::create_new_course($fullname, $shortname, $categoryid);
+        $rc = new \restore_controller($backupid, $newcourseid,
+                \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+                \backup::TARGET_NEW_COURSE);
 
         $rc->execute_precheck();
         $rc->execute_plan();

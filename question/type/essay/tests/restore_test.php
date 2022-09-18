@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Test restore logic.
- *
- * @package    qtype_essay
- * @copyright  2019 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_essay;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,10 +24,11 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
 /**
  * Test restore logic.
  *
+ * @package    qtype_essay
  * @copyright  2019 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_essay_restore_testcase extends restore_date_testcase  {
+class restore_test extends \restore_date_testcase {
 
     /**
      * Test missing qtype_essay_options creation.
@@ -48,7 +43,7 @@ class qtype_essay_restore_testcase extends restore_date_testcase  {
         // Create a course with one essay question in its question bank.
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
-        $contexts = new core_question\local\bank\question_edit_contexts(context_course::instance($course->id));
+        $contexts = new \core_question\local\bank\question_edit_contexts(\context_course::instance($course->id));
         $category = question_make_default_categories($contexts->all());
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $essay = $questiongenerator->create_question('essay', null, array('category' => $category->id));
@@ -60,7 +55,7 @@ class qtype_essay_restore_testcase extends restore_date_testcase  {
         $newcourseid = $this->backup_and_restore($course);
 
         // Verify that the restored question has options.
-        $contexts = new core_question\local\bank\question_edit_contexts(context_course::instance($newcourseid));
+        $contexts = new \core_question\local\bank\question_edit_contexts(\context_course::instance($newcourseid));
         $newcategory = question_make_default_categories($contexts->all());
         $newessay = $DB->get_record_sql('SELECT q.*
                                               FROM {question} q

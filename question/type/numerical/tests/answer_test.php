@@ -14,22 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qtype_numerical;
 
-/**
- * Unit tests for the numerical question definition class.
- *
- * @package moodlecore
- * @subpackage questiontypes
- * @copyright 2008 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+use qtype_numerical_answer;
+
+defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/numerical/question.php');
 
-
-class qtype_numerical_answer_test extends advanced_testcase {
+/**
+ * Unit tests for the numerical question definition class.
+ *
+ * @package   qtype_numerical
+ * @category  test
+ * @copyright 2008 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class answer_test extends \advanced_testcase {
     public function test_within_tolerance_nominal() {
         $answer = new qtype_numerical_answer(13, 7.0, 1.0, '', FORMAT_MOODLE, 1.0);
 

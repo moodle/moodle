@@ -14,22 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for parts of {@link question_engine_data_mapper}.
- *
- * @package   core_question
- * @category  test
- * @copyright 2014 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
 
+use qubaid_join;
+use qubaid_list;
+use question_bank;
+use question_engine;
+use question_engine_data_mapper;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once(__DIR__ . '/../lib.php');
 require_once(__DIR__ . '/helpers.php');
-
 
 /**
  * Unit tests for parts of {@link question_engine_data_mapper}.
@@ -39,10 +36,12 @@ require_once(__DIR__ . '/helpers.php');
  * tested elsewhere, e.g. by {@link question_usage_autosave_test}. We do not
  * re-test them here.
  *
+ * @package   core_question
+ * @category  test
  * @copyright 2014 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_base {
+class datalib_test extends \qbehaviour_walkthrough_test_base {
 
     /**
      * We create two usages, each with two questions, a short-answer marked
@@ -81,7 +80,7 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
 
         // Create the second usage.
         $this->quba = question_engine::make_questions_usage_by_activity('unit_test',
-                context_system::instance());
+                \context_system::instance());
 
         $q = question_bank::load_question($sa->id);
         $this->start_attempt_at_question($q, 'interactive', 5);
@@ -136,7 +135,7 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
         $questiondata2 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
         $questiondata3 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
 
-        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
         $question1 = question_bank::load_question($questiondata1->id);
         $question3 = question_bank::load_question($questiondata3->id);
@@ -168,7 +167,7 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
         $cat = $generator->create_question_category();
         $questiondata1 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
 
-        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
         $quba->add_question(question_bank::load_question($questiondata1->id));
         $quba->start_all_questions();
@@ -201,7 +200,7 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
         $cat = $generator->create_question_category();
         $questiondata1 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
 
-        $initquba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $initquba = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
         $initquba->set_preferred_behaviour('deferredfeedback');
         $slot = $initquba->add_question(question_bank::load_question($questiondata1->id));
         $initquba->start_all_questions();
@@ -238,7 +237,7 @@ class question_engine_data_mapper_testcase extends qbehaviour_walkthrough_test_b
         $this->resetAfterTest();
 
         // Create a new usage.
-        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
         $quba->set_preferred_behaviour('deferredfeedback');
 
         // Save it.
