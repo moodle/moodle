@@ -14,15 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains tests for the autosave code in the question_usage class.
- *
- * @package    moodlecore
- * @subpackage questionengine
- * @copyright  2013 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace core_question;
 
+use question_bank;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,14 +25,15 @@ global $CFG;
 require_once(__DIR__ . '/../lib.php');
 require_once(__DIR__ . '/helpers.php');
 
-
 /**
  * Unit tests for the autosave parts of the {@link question_usage} class.
  *
+ * @package   core_question
+ * @category  test
  * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
+class questionusage_autosave_test extends \qbehaviour_walkthrough_test_base {
 
     public function test_autosave_then_display() {
         $this->resetAfterTest();
@@ -452,7 +448,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         if (!isset($cfg->dboptions)) {
             $cfg->dboptions = array();
         }
-        $DB2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        $DB2 = \moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
         $DB2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
 
         // Since we need to commit our transactions in a given order, close the
@@ -523,7 +519,7 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
         if (!isset($cfg->dboptions)) {
             $cfg->dboptions = array();
         }
-        $DB2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        $DB2 = \moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
         $DB2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
 
         // Since we need to commit our transactions in a given order, close the
