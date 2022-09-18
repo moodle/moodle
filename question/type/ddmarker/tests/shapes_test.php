@@ -14,29 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the drag-and-drop words shape code.
- *
- * @package   qtype_ddmarker
- * @copyright 2012 The Open University
- * @author    Jamie Pratt <me@jamiep.org>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_ddmarker;
 
+use qtype_ddmarker_shape_circle;
+use qtype_ddmarker_shape_polygon;
+use qtype_ddmarker_shape_rectangle;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/question/type/ddmarker/shapes.php');
 
-
 /**
- * Unit tests for shape code
+ * Unit tests for the drag-and-drop words shape code.
  *
+ * @package   qtype_ddmarker
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddmarker_shapes_test extends basic_testcase {
+class shapes_test extends \basic_testcase {
 
     public function test_polygon_valdiation_test_ok() {
         $shape = new qtype_ddmarker_shape_polygon('10, 10; 20, 10; 20, 20; 10, 20');
