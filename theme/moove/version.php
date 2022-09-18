@@ -18,7 +18,7 @@
  * Moove.
  *
  * @package    theme_moove
- * @copyright  2022 Willian Mano - conecti.me
+ * @copyright  2022 Willian Mano - https://conecti.me
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,10 +30,10 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'theme_moove';
 
 // This is the version of the plugin.
-$plugin->version = 2022062005;
+$plugin->version = 2022062007;
 
 // This is the named version.
-$plugin->release = '4.0.5';
+$plugin->release = '4.0.7';
 
 // This is a stable release.
 $plugin->maturity = MATURITY_STABLE;
