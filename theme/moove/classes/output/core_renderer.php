@@ -229,7 +229,6 @@ class core_renderer extends \theme_boost\output\core_renderer {
 
         if (!empty($CFG->supportpage)) {
             $attributes = ['href' => $CFG->supportpage, 'target' => 'blank', 'class' => 'btn contactsitesupport btn-outline-info'];
-            $content .= $this->pix_icon('t/life-ring', '', 'moodle', ['class' => 'iconhelp icon-pre']);
         } else {
             $attributes = [
                 'href' => $CFG->wwwroot . '/user/contactsitesupport.php',
@@ -412,6 +411,11 @@ class core_renderer extends \theme_boost\output\core_renderer {
         return $renderer->render($activitynav);
     }
 
+    /**
+     * Returns plugins callback renderable data to be printed on navbar.
+     *
+     * @return string Final html code.
+     */
     public function get_navbar_callbacks_data() {
         $callbacks = get_plugins_with_function('moove_additional_header', 'lib.php');
 

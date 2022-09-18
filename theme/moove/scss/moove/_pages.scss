@@ -10,3 +10,9 @@
         max-width: 100%;
     }
 }
+
+@include media-breakpoint-down(sm) {
+    .moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup {
+        width: 100%;
+    }
+}

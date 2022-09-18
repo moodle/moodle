@@ -18,7 +18,7 @@
  * Moove.
  *
  * @package    theme_moove
- * @copyright  2022 Willian Mano - conecti.me
+ * @copyright  2022 Willian Mano - https://conecti.me
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,7 @@ $plugin->component = 'theme_moove';
 $plugin->version = 2022062007;
 
 // This is the named version.
-$plugin->release = '4.0.5';
+$plugin->release = '4.0.7';
 
 // This is a stable release.
 $plugin->maturity = MATURITY_STABLE;

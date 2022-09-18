@@ -152,23 +152,23 @@ function theme_moove_pluginfile($course, $cm, $context, $filearea, $args, $force
         return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
     }
 
-    if ($context->contextlevel == CONTEXT_SYSTEM and preg_match("/^sliderimage[1-9][0-9]?$/", $filearea) !== false) {
+    if ($context->contextlevel == CONTEXT_SYSTEM && preg_match("/^sliderimage[1-9][0-9]?$/", $filearea) !== false) {
         return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
     }
 
-    if ($context->contextlevel == CONTEXT_SYSTEM and $filearea === 'marketing1icon') {
+    if ($context->contextlevel == CONTEXT_SYSTEM && $filearea === 'marketing1icon') {
         return $theme->setting_file_serve('marketing1icon', $args, $forcedownload, $options);
     }
 
-    if ($context->contextlevel == CONTEXT_SYSTEM and $filearea === 'marketing2icon') {
+    if ($context->contextlevel == CONTEXT_SYSTEM && $filearea === 'marketing2icon') {
         return $theme->setting_file_serve('marketing2icon', $args, $forcedownload, $options);
     }
 
-    if ($context->contextlevel == CONTEXT_SYSTEM and $filearea === 'marketing3icon') {
+    if ($context->contextlevel == CONTEXT_SYSTEM && $filearea === 'marketing3icon') {
         return $theme->setting_file_serve('marketing3icon', $args, $forcedownload, $options);
     }
 
-    if ($context->contextlevel == CONTEXT_SYSTEM and $filearea === 'marketing4icon') {
+    if ($context->contextlevel == CONTEXT_SYSTEM && $filearea === 'marketing4icon') {
         return $theme->setting_file_serve('marketing4icon', $args, $forcedownload, $options);
     }
 

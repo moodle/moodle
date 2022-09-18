@@ -29,6 +29,7 @@ global $DB, $USER, $OUTPUT, $SITE, $PAGE;
 // Get the profile userid.
 $courseid = optional_param('course', 1, PARAM_INT);
 $userid = optional_param('id', $USER->id, PARAM_INT);
+$userid = $userid ? $userid : $USER->id;
 $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
 
 $primary = new core\navigation\output\primary($PAGE);
@@ -71,9 +72,28 @@ if ($usercanviewprofile) {
     $countries = get_string_manager()->get_list_of_countries(true);
 
     $templatecontext['userdescription'] = format_text($user->description, $user->descriptionformat, ['overflowdiv' => true]);
-    $templatecontext['useremail'] = $user->email;
     $templatecontext['usercountry'] = $user->country ? $countries[$user->country] : '';
     $templatecontext['usercity'] = $user->city;
+
+    if ($userid == $USER->id) {
+        $templatecontext['useremail'] = $user->email;
+    } else {
+        if (!empty($courseid)) {
+            $canviewuseremail = has_capability('moodle/course:useremail', $context);
+        } else {
+            $canviewuseremail = false;
+        }
+
+        $showuseridentityfields = \core_user\fields::get_identity_fields($context, false);
+
+        if (($user->maildisplay == core_user::MAILDISPLAY_EVERYONE
+            || ($user->maildisplay == core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY && enrol_sharing_course($user, $USER))
+            || $canviewuseremail  // TODO: Deprecate/remove for MDL-37479.
+            )
+            || in_array('email', $showuseridentityfields)) {
+            $templatecontext['useremail'] = $user->email;
+        }
+    }
 }
 
 $themesettings = new \theme_moove\util\settings();

@@ -197,9 +197,9 @@ if ($ADMIN->fulltree) {
     $name = 'theme_moove/slidercount';
     $title = get_string('slidercount', 'theme_moove');
     $description = get_string('slidercountdesc', 'theme_moove');
-    $default = 1;
+    $default = 0;
     $options = array();
-    for ($i = 1; $i < 13; $i++) {
+    for ($i = 0; $i < 13; $i++) {
         $options[$i] = $i;
     }
     $setting = new admin_setting_configselect($name, $title, $description, $default, $options);
@@ -210,17 +210,32 @@ if ($ADMIN->fulltree) {
     $slidercount = get_config('theme_moove', 'slidercount');
 
     if (!$slidercount) {
-        $slidercount = 1;
+        $slidercount = $default;
     }
 
-    for ($sliderindex = 1; $sliderindex <= $slidercount; $sliderindex++) {
-        $fileid = 'sliderimage' . $sliderindex;
-        $name = 'theme_moove/sliderimage' . $sliderindex;
-        $title = get_string('sliderimage', 'theme_moove');
-        $description = get_string('sliderimagedesc', 'theme_moove');
-        $opts = array('accepted_types' => array('.png', '.jpg', '.gif', '.webp', '.tiff', '.svg'), 'maxfiles' => 1);
-        $setting = new admin_setting_configstoredfile($name, $title, $description, $fileid, 0, $opts);
-        $page->add($setting);
+    if ($slidercount) {
+        for ($sliderindex = 1; $sliderindex <= $slidercount; $sliderindex++) {
+            $fileid = 'sliderimage' . $sliderindex;
+            $name = 'theme_moove/sliderimage' . $sliderindex;
+            $title = get_string('sliderimage', 'theme_moove');
+            $description = get_string('sliderimagedesc', 'theme_moove');
+            $opts = array('accepted_types' => array('.png', '.jpg', '.gif', '.webp', '.tiff', '.svg'), 'maxfiles' => 1);
+            $setting = new admin_setting_configstoredfile($name, $title, $description, $fileid, 0, $opts);
+            $page->add($setting);
+
+            $name = 'theme_moove/slidertitle' . $sliderindex;
+            $title = get_string('slidertitle', 'theme_moove');
+            $description = get_string('slidertitledesc', 'theme_moove');
+            $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+            $page->add($setting);
+
+            $name = 'theme_moove/slidercap' . $sliderindex;
+            $title = get_string('slidercaption', 'theme_moove');
+            $description = get_string('slidercaptiondesc', 'theme_moove');
+            $default = '';
+            $setting = new admin_setting_confightmleditor($name, $title, $description, $default);
+            $page->add($setting);
+        }
     }
 
     $setting = new admin_setting_heading('slidercountseparator', '', '<hr>');
