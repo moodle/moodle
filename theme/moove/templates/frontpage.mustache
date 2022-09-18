@@ -60,31 +60,38 @@
     {{> theme_moove/navbar }}
 
     <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers drag-container bg-white">
-
-
-        <div id="mooveslideshow" class="container-fluid">
-            <div id="carouselIndicators" class="carousel slide" data-ride="carousel">
-                <ol class="carousel-indicators">
-                    {{#slides}}
-                        <li data-target="#mooveslideshow" data-slide-to="{{{ key }}}" {{#active}}class="active"{{/active}}></li>
-                    {{/slides}}
-                </ol>
-                <div class="carousel-inner">
-                    {{#slides}}
-                        <div class="carousel-item {{#active}}active{{/active}}" style="width: 100%; height: 600px; background: url('{{image}}') no-repeat; background-size: cover; background-position: center;">
-                        </div>
-                    {{/slides}}
+        {{#slidercount}}
+            <div id="mooveslideshow" class="container-fluid">
+                <div id="carousel-indicators" class="carousel slide carousel-fade" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        {{#slides}}
+                            <li data-target="#carousel-indicators" data-slide-to="{{{ key }}}" {{#active}}class="active"{{/active}}></li>
+                        {{/slides}}
+                    </ol>
+                    <div class="carousel-inner">
+                        {{#slides}}
+                            <div class="carousel-item {{#active}}active{{/active}}">
+                                <img src="{{image}}" alt="{{slidertitle}}" class="w-100">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5 class="title">{{{title}}}</h5>
+                                    <div class="caption">
+                                        {{{caption}}}
+                                    </div>
+                                </div>
+                            </div>
+                        {{/slides}}
+                    </div>
+                    <a class="carousel-control-prev" href="#carousel-indicators" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">{{#str}}previous{{/str}}</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carousel-indicators" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">{{#str}}next{{/str}}</span>
+                    </a>
                 </div>
-                <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">{{#str}}previous{{/str}}</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselIndicators" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">{{#str}}next{{/str}}</span>
-                </a>
             </div>
-        </div>
+        {{/slidercount}}
 
         {{#displaymarketingbox}}
             <section id="feature">
@@ -92,7 +99,7 @@
                     <div class="row">
                         <div class="col-lg-4 my-3">
                             <h3 class="h1 mt-3 mb-3">{{{marketingheading}}}</h3>
-                            <p>{{{marketingcontent}}}</p>
+                            <div class="marketing-content">{{{marketingcontent}}}</div>
                         </div>
                         <div class="col-lg-8 ps-xl-8">
                             <div class="row">
@@ -105,7 +112,7 @@
                                                 </div>
                                                 <div class="col ps-3">
                                                     <h5>{{{heading}}}</h5>
-                                                    <p class="m-0">{{{content}}}</p>
+                                                    <div class="box-content">{{{content}}}</div>
                                                 </div>
                                             </div>
                                         </div>
