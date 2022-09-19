@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * PHP Version 5
+ * PHP Version 7
  *
  * @file     CAS/Client.php
  * @category Authentication
@@ -102,6 +102,10 @@ class CAS_Client
      */
     public function printHTMLHeader($title)
     {
+        if (!phpCAS::getVerbose()) {
+            return;
+        }
+
         $this->_htmlFilterOutput(
             str_replace(
                 '__TITLE__', $title,
@@ -130,16 +134,17 @@ class CAS_Client
      */
     public function printHTMLFooter()
     {
+        if (!phpCAS::getVerbose()) {
+            return;
+        }
+
         $lang = $this->getLangObj();
-        $this->_htmlFilterOutput(
-            empty($this->_output_footer)?
-            (phpCAS::getVerbose())?
-                '<hr><address>phpCAS __PHPCAS_VERSION__ '
-                .$lang->getUsingServer()
-                .' <a href="__SERVER_BASE_URL__">__SERVER_BASE_URL__</a> (CAS __CAS_VERSION__)</a></address></body></html>'
-                :'</body></html>'
-            :$this->_output_footer
-        );
+        $message = empty($this->_output_footer)
+            ? '<hr><address>phpCAS __PHPCAS_VERSION__ ' . $lang->getUsingServer() .
+              ' <a href="__SERVER_BASE_URL__">__SERVER_BASE_URL__</a> (CAS __CAS_VERSION__)</a></address></body></html>'
+            : $this->_output_footer;
+
+        $this->_htmlFilterOutput($message);
     }
 
     /**
@@ -174,6 +179,21 @@ class CAS_Client
         $this->_output_footer = $footer;
     }
 
+    /**
+     * Simple wrapper for printf function, that respects
+     * phpCAS verbosity setting.
+     *
+     * @param string $format
+     * @param string|int|float ...$values
+     *
+     * @see printf()
+     */
+    private function printf(string $format, ...$values): void
+    {
+        if (phpCAS::getVerbose()) {
+            printf($format, ...$values);
+        }
+    }
 
     /** @} */
 
@@ -1037,7 +1057,7 @@ class CAS_Client
         } else {
             //normal mode: get ticket and remove it from CGI parameters for
             // developers
-            $ticket = (isset($_GET['ticket']) ? $_GET['ticket'] : null);
+            $ticket = (isset($_GET['ticket']) ? $_GET['ticket'] : '');
             if (preg_match('/^[SP]T-/', $ticket) ) {
                 phpCAS::trace('Ticket \''.$ticket.'\' found');
                 $this->setTicket($ticket);
@@ -1553,7 +1573,7 @@ class CAS_Client
     {
         phpCAS::traceBegin();
         $res = false;
-        $validate_url = '';
+
         if ( $this->_wasPreviouslyAuthenticated() ) {
             if ($this->hasTicket()) {
                 // User has a additional ticket but was already authenticated
@@ -1587,6 +1607,10 @@ class CAS_Client
             $this->markAuthenticationCall($res);
         } else {
             if ($this->hasTicket()) {
+                $validate_url = '';
+                $text_response = '';
+                $tree_response = '';
+
                 switch ($this->getServerVersion()) {
                 case CAS_VERSION_1_0:
                     // if a Service Ticket was given, validate it
@@ -1650,7 +1674,7 @@ class CAS_Client
                     $logoutTicket = $this->getTicket();
                     break;
                 default:
-                    phpCAS::trace('Protocoll error');
+                    phpCAS::trace('Protocol error');
                     break;
                 }
             } else {
@@ -1827,7 +1851,7 @@ class CAS_Client
         phpCAS::trace("Redirect to : ".$cas_url);
         $lang = $this->getLangObj();
         $this->printHTMLHeader($lang->getAuthenticationWanted());
-        printf('<p>'. $lang->getShouldHaveBeenRedirected(). '</p>', $cas_url);
+        $this->printf('<p>'. $lang->getShouldHaveBeenRedirected(). '</p>', $cas_url);
         $this->printHTMLFooter();
         phpCAS::traceExit();
         throw new CAS_GracefullTerminationException();
@@ -1870,7 +1894,7 @@ class CAS_Client
         }
         $lang = $this->getLangObj();
         $this->printHTMLHeader($lang->getLogout());
-        printf('<p>'.$lang->getShouldHaveBeenRedirected(). '</p>', $cas_url);
+        $this->printf('<p>'.$lang->getShouldHaveBeenRedirected(). '</p>', $cas_url);
         $this->printHTMLFooter();
         phpCAS::traceExit();
         throw new CAS_GracefullTerminationException();
@@ -2159,6 +2183,8 @@ class CAS_Client
             $validate_url .= '&renew=true';
         }
 
+        $headers = '';
+        $err_msg = '';
         // open and read the URL
         if ( !$this->_readURL($validate_url, $headers, $text_response, $err_msg) ) {
             phpCAS::trace(
@@ -2235,6 +2261,8 @@ class CAS_Client
             $validate_url .= '&renew=true';
         }
 
+        $headers = '';
+        $err_msg = '';
         // open and read the URL
         if ( !$this->_readURL($validate_url, $headers, $text_response, $err_msg) ) {
             phpCAS::trace(
@@ -2892,6 +2920,8 @@ class CAS_Client
         $cas_url = $this->getServerProxyURL().'?targetService='
             .urlencode($target_service).'&pgt='.$this->_getPGT();
 
+        $headers = '';
+        $cas_response = '';
         // open and read the URL
         if ( !$this->_readURL($cas_url, $headers, $cas_response, $err_msg) ) {
             phpCAS::trace(
@@ -4147,7 +4177,7 @@ class CAS_Client
         phpCAS::traceBegin();
         $lang = $this->getLangObj();
         $this->printHTMLHeader($lang->getAuthenticationFailed());
-        printf(
+        $this->printf(
             $lang->getYouWereNotAuthenticated(), htmlentities($this->getURL()),
             isset($_SERVER['SERVER_ADMIN']) ? $_SERVER['SERVER_ADMIN']:''
         );
