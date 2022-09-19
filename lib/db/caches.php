@@ -546,4 +546,14 @@ $definitions = array(
         'staticacceleration' => true,
         'ttl' => 1800,
     ],
+
+    // Cache image dimensions.
+    'file_imageinfo' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'canuselocalstore' => true,
+        'staticaccelerationsize' => 100,
+    ],
 );
