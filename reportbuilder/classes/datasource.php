@@ -260,7 +260,7 @@ abstract class datasource extends base {
         foreach ($activeconditions as $condition) {
             $instance = $this->get_condition($condition->get('uniqueidentifier'));
             if ($instance !== null && $instance->get_is_available()) {
-                $conditions[$instance->get_unique_identifier()] = $instance;
+                $conditions[$instance->get_unique_identifier()] = $instance->set_persistent($condition);
             }
         }
 
