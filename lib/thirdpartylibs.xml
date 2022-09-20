@@ -614,4 +614,17 @@ All rights reserved.</copyright>
     <license>MIT</license>
     <repository>https://github.com/php-fig/http-message</repository>
   </library>
+  <library>
+    <location>phpxmlrpc</location>
+    <name>phpxmlrpc</name>
+    <description>A php library for building xml-rpc clients and servers</description>
+    <version>4.8.0</version>
+    <license>BSD</license>
+    <licenseversion>3-Clause</licenseversion>
+    <repository>https://github.com/gggeek/phpxmlrpc</repository>
+    <copyrights>
+      <copyright>1999,2000,2001 Edd Dumbill, Useful Information Company</copyright>
+    </copyrights>
+    <customised/>
+  </library>
 </libraries>
