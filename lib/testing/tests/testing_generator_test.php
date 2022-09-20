@@ -577,5 +577,12 @@ class testing_generator_test extends \advanced_testcase {
         $field7 = $generator->create_custom_profile_field(
                 ['datatype' => 'checkbox', 'shortname' => 'areyousure', 'name' => 'Are you sure?']);
         $this->assertEquals(0, $field7->defaultdata);
+
+        // Check setting options for menu using \n work as expected.
+        $field8 = $generator->create_custom_profile_field([
+            'datatype' => 'menu', 'shortname' => 'cuisine', 'name' => 'Cuisine', 'param1' => 'French\nChinese\nLebanese',
+            'defaultdata' => 'Chinese'
+        ]);
+        $this->assertEquals("French\nChinese\nLebanese", $field8->param1);
     }
 }
