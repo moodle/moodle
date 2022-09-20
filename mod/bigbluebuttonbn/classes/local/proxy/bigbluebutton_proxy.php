@@ -389,7 +389,7 @@ class bigbluebutton_proxy extends proxy_base {
      */
     public static function get_server_not_available_url(instance $instance): string {
         if ($instance->is_admin()) {
-            return new moodle_url('/admin/settings.php', ['section' => 'mod_bigbluebuttonbn_general']);
+            return new moodle_url('/admin/settings.php', ['section' => 'modsettingbigbluebuttonbn']);
         } else if ($instance->is_moderator()) {
             return new moodle_url('/course/view.php', ['id' => $instance->get_course_id()]);
         } else {
