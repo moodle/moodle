@@ -117,6 +117,27 @@ Feature: Manage custom report columns aggregation
       | Average     | 0,7    |
       | Percentage  | 66,7%  |
 
+  Scenario Outline: Aggregated columns display localised list separators
+    Given the following "language customisations" exist:
+      | component       | stringid | value |
+      | core_langconfig | listsep  | ;     |
+    And the following "core_reportbuilder > Reports" exist:
+      | name      | source                                   | default |
+      | My report | core_user\reportbuilder\datasource\users | 0       |
+    And the following "core_reportbuilder > Columns" exist:
+      | report    | uniqueidentifier |
+      | My report | user:lastname    |
+      | My report | user:firstname   |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    And I change window size to "large"
+    When I set the "First name" column aggregation to "<aggregation>"
+    Then I should see "Aggregated column 'First name'"
+    And I should see "<output>" in the "Richie" "table_row"
+    Examples:
+      | aggregation                     | output          |
+      | Comma separated distinct values | Ben; Bill       |
+      | Comma separated values          | Ben; Bill; Bill |
+
   Scenario: Show unique report rows
     Given the following "core_reportbuilder > Reports" exist:
       | name      | source                                   | default | uniquerows |
