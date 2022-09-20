@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: Hidden grade items should be hidden when grade category is locked, but should be visible in overridden category
   In order to verify existing grades items display as expected
   As an teacher

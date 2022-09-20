@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: We can change the maximum and minimum number of points for manual items with existing grades
   In order to verify existing grades are modified as expected
   As an teacher
@@ -41,10 +41,11 @@ Feature: We can change the maximum and minimum number of points for manual items
     And I give the grade "8.00" to the user "Student 2" for the grade item "Manual item 1"
     And I press "Save changes"
     When I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I click on "Edit settings" "link" in the "Manual item 1" "table_row"
+    And I open the action menu in "Manual item 1" "table_row"
+    And I choose "Edit settings" in the open action menu
     And I set the following fields to these values:
-      | Maximum grade | 10 |
       | Rescale existing grades | No |
+      | Maximum grade | 10 |
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
     And I select "Student 1" from the "Select all or one user" singleselect
@@ -56,10 +57,11 @@ Feature: We can change the maximum and minimum number of points for manual items
       | Grade item    | Calculated weight | Grade  | Contribution to course total |
       | Manual item 1 | 100.00 %          | 8.00   | 80.00 %                      |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I click on "Edit settings" "link" in the "Manual item 1" "table_row"
+    And I open the action menu in "Manual item 1" "table_row"
+    And I choose "Edit settings" in the open action menu
     And I set the following fields to these values:
-      | Maximum grade | 20 |
       | Rescale existing grades | Yes |
+      | Maximum grade | 20 |
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
     And I select "Student 1" from the "Select all or one user" singleselect

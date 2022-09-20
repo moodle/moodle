@@ -1,4 +1,4 @@
-@core @core_grades @gradereport_singleview
+@core @core_grades @gradereport_singleview @javascript
 Feature: We can use Single view
   As a teacher
   In order to view and edit grades
@@ -57,7 +57,6 @@ Feature: We can use Single view
     And I am on "Course 1" course homepage
     Given I navigate to "View > Grader report" in the course gradebook
 
-  @javascript
   Scenario: I can update grades, add feedback and exclude grades.
     Given I navigate to "View > Single view" in the course gradebook
     And I select "Student" from the "Select user..." singleselect

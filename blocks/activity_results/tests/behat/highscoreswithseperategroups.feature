@@ -1,4 +1,4 @@
-@block @block_activity_results
+@block @block_activity_results @javascript
 Feature: The activity results block displays student in separate groups scores
   In order to be display student scores
   As a user

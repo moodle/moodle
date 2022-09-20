@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: We can use calculated grade totals
   In order to calculate grade totals
   As an teacher
@@ -427,9 +427,9 @@ Feature: We can use calculated grade totals
     And I should see "270.00 (27.27 %)" in the ".course" "css_element"
     And I turn editing mode on
     And I set the following settings for grade item "Manual item 2":
-      | Extra credit  | 0   |
-      | Maximum grade | 200 |
       | Rescale existing grades | No |
+      | Maximum grade | 200 |
+      | Extra credit  | 0   |
     And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
     And I press "Save changes"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
@@ -438,9 +438,9 @@ Feature: We can use calculated grade totals
     And I should see "270.00 (22.69 %)" in the ".course" "css_element"
     And I turn editing mode on
     And I set the following settings for grade item "Manual item 2":
-      | Extra credit  | 0   |
-      | Maximum grade | 100 |
       | Rescale existing grades | No |
+      | Maximum grade | 100 |
+      | Extra credit  | 0   |
     And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
     And I press "Save changes"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
@@ -456,7 +456,6 @@ Feature: We can use calculated grade totals
     And I navigate to "View > Grader report" in the course gradebook
     And I should see "270.00 (24.77 %)" in the ".course" "css_element"
 
-  @javascript
   Scenario: Natural aggregation from the setup screen
     And I navigate to "Setup > Gradebook setup" in the course gradebook
 
@@ -509,7 +508,6 @@ Feature: We can use calculated grade totals
     And I reset weights for grade category "Sub category 2 &"
     And the field "Weight of Test assignment ten" matches value "33.333"
 
-  @javascript
   Scenario: Natural aggregation with weights of zero
     When I navigate to "View > Grader report" in the course gradebook
     And I set the following settings for grade item "Course 1":

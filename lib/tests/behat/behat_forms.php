@@ -755,4 +755,45 @@ class behat_forms extends behat_base {
         $node = $this->get_node_in_container('xpath_element', $xpathtarget, 'form_row', $field);
         $this->ensure_node_is_visible($node);
     }
+
+    /**
+     * Checks whether the select menu contains an option with specified text or not.
+     *
+     * @Then the :name select menu should contain :option
+     * @Then the :name select menu should :not contain :option
+     *
+     * @throws ExpectationException When the expectation is not satisfied
+     * @param string $label The label of the select menu element
+     * @param string $option The string that is used to identify an option within the select menu. If the string
+     *                       has two items separated by '>' (ex. "Group > Option"), the first item ("Group") will be
+     *                       used to identify a particular group within the select menu, while the second ("Option")
+     *                       will be used to identify an option within that group. Otherwise, a string with a single
+     *                       item (ex. "Option") will be used to identify an option within the select menu regardless
+     *                       of any existing groups.
+     * @param string|null $not If set, the select menu should not contain the specified option. If null, the option
+     *                         should be present.
+     */
+    public function the_select_menu_should_contain(string $label, string $option, ?string $not = null) {
+
+        $field = behat_field_manager::get_form_field_from_label($label, $this);
+
+        if (!method_exists($field, 'has_option')) {
+            throw new coding_exception('Field does not support the has_option function.');
+        }
+
+        // If the select menu contains the specified option but it should not.
+        if ($field->has_option($option) && $not) {
+            throw new ExpectationException(
+                "The select menu should not contain \"{$option}\" but it does.",
+                $this->getSession()
+            );
+        }
+        // If the select menu does not contain the specified option but it should.
+        if (!$field->has_option($option) && !$not) {
+            throw new ExpectationException(
+                "The select menu should contain \"{$option}\" but it does not.",
+                $this->getSession()
+            );
+        }
+    }
 }

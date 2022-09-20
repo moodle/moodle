@@ -1,4 +1,4 @@
-@core @core_grades @gradereport_user
+@core @core_grades @gradereport_user @javascript
 Feature: View the user report as the student will see it
   In order to know what grades students will see
   As a teacher

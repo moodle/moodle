@@ -33,7 +33,6 @@
 
 .path-grade-report-grader {
     #region-main {
-        overflow-x: visible;
         min-width: 100%;
         width: auto;
         display: flex;
@@ -59,6 +58,12 @@
     }
     .gradefail {
         color: $danger;
+    }
+}
+
+.path-grade {
+    #region-main {
+        overflow-x: visible;
     }
 }
 

@@ -1,4 +1,4 @@
-@block @block_activity_results
+@block @block_activity_results @javascript
 Feature: The activity results block displays student in visible groups scores
   In order to be display student scores
   As a user
@@ -46,7 +46,7 @@ Feature: The activity results block displays student in visible groups scores
       | assign   | Test assignment  | Test assignment | C1     | assign1  | 1       | 0                             |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test assignment"
+    And I am on the "Test assignment" "assign activity" page
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Group mode | Visible groups |

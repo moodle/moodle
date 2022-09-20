@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: We can enter in grades and view reports from the gradebook
   In order to check the expected results are displayed
   As a teacher
@@ -70,7 +70,7 @@ Feature: We can enter in grades and view reports from the gradebook
 
   Scenario: Grade a grade item and ensure the results display correctly in the gradebook
     When I navigate to "View > User report" in the course gradebook
-    And the "jump" select box should contain "Grader report"
+    And the "Gradebook navigation menu" select menu should contain "Grader report"
     And the "Select all or one user" select box should contain "All users (1)"
     And I log out
     And I log in as "student1"

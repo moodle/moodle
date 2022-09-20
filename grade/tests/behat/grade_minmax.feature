@@ -1,4 +1,4 @@
-@core @core_grades
+@core @core_grades @javascript
 Feature: We can choose what min or max grade to use when aggregating grades.
   In order to what min or max grade to use
   As an teacher
@@ -98,13 +98,13 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | Course total | -                 | 60.00  | 0–300 | 20.00 %    | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "MI 1":
+      | Rescale existing grades | No    |
       | Maximum grade           | 50.00 |
       | Minimum grade           | 5.00  |
-      | Rescale existing grades | No    |
     And I set the following settings for grade item "MI 3":
+      | Rescale existing grades | No    |
       | Maximum grade           | 50.00 |
       | Minimum grade           | 5.00  |
-      | Rescale existing grades | No    |
     And I navigate to "View > User report" in the course gradebook
     And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
@@ -128,8 +128,8 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | Course total | -                 | 60.00  | 0–200 | 30.00 %    | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "MI 5":
-      | Maximum grade          | 200.00 |
       | Rescale existing grades | No    |
+      | Maximum grade          | 200.00 |
     And I navigate to "View > User report" in the course gradebook
     And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:

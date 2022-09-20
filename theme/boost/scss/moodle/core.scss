@@ -2947,20 +2947,30 @@ body.dragging {
 }
 
 .select-menu {
+    li:first-child {
+        ul[role="group"] {
+            padding: 0;
+        }
+    }
+
     ul[role="group"] {
-        padding: 0;
+        padding: 0.3rem 0 0 0;
         margin: 0;
         li:first-child {
             cursor: default;
-            font-weight: bold;
+            color: $gray-600;
             padding: 0.25rem 1.5rem;
             display: block;
         }
         .dropdown-item {
-            padding-left: 3rem;
+            padding-left: 2.5rem;
         }
     }
     .dropdown-item {
         cursor: pointer;
+
+        &[aria-selected="true"] {
+            font-weight: bold;
+        }
     }
 }
