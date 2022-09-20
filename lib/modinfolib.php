@@ -239,7 +239,7 @@ class course_modinfo {
      */
     public function get_cm($cmid) {
         if (empty($this->cms[$cmid])) {
-            throw new moodle_exception('invalidcoursemodule', 'error');
+            throw new moodle_exception('invalidcoursemoduleid', 'error', '', $cmid);
         }
         return $this->cms[$cmid];
     }
@@ -2627,7 +2627,7 @@ function get_course_and_cm_from_cmid($cmorid, $modulename = '', $courseorid = 0,
     $modinfo = get_fast_modinfo($course, $userid);
     $cm = $modinfo->get_cm($cmid);
     if ($modulename && $cm->modname !== $modulename) {
-        throw new moodle_exception('invalidcoursemodule', 'error');
+        throw new moodle_exception('invalidcoursemoduleid', 'error', '', $cmid);
     }
     return array($course, $cm);
 }
