@@ -11,6 +11,8 @@ To update:
 - Download or checkout it.
 - Delete the contents on the lib/phpxmlrpc directory (but this file) completely.
 - Copy the /src directory contents of the library to lib/phpxmlrpc.
+- Remove the following files:
+  - Autoloader.php
 - Edit this file and update the release and commit details below.
 - Edit lib/thirdpartylibs.xml and update the information details too.
 
