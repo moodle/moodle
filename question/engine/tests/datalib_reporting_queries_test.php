@@ -14,6 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_question;
+
+use qubaid_list;
+use question_bank;
+use question_engine;
+use question_engine_data_mapper;
+use question_state;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once(__DIR__ . '/../lib.php');
+require_once(__DIR__ . '/helpers.php');
+
 /**
  * Unit tests for the parts of {@link question_engine_data_mapper} related to reporting.
  *
@@ -22,22 +36,7 @@
  * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once(__DIR__ . '/../lib.php');
-require_once(__DIR__ . '/helpers.php');
-
-
-/**
- * Unit tests for the parts of {@link question_engine_data_mapper} related to reporting.
- *
- * @copyright 2013 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthrough_test_base {
+class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
 
     /** @var question_engine_data_mapper */
     protected $dm;
@@ -101,7 +100,7 @@ class question_engine_data_mapper_reporting_testcase extends qbehaviour_walkthro
 
         // Create the second usage.
         $this->quba = question_engine::make_questions_usage_by_activity('unit_test',
-                context_system::instance());
+                \context_system::instance());
 
         $q = question_bank::load_question($this->sa->id);
         $this->start_attempt_at_question($q, 'interactive', 5);
