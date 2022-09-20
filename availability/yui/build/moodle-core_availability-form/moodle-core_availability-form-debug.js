@@ -971,7 +971,21 @@ M.core_availability.Item.prototype.fillErrors = function(errors) {
     // If any errors were added, add the marker to this item.
     var errorLabel = this.node.one('> .badge-warning');
     if (errors.length !== before && !errorLabel.get('firstChild')) {
-        errorLabel.appendChild(document.createTextNode(M.util.get_string('invalid', 'availability')));
+        var errorString = '';
+        // Fetch the last error code from the array of errors and split using the ':' delimiter.
+        var langString = errors[errors.length - 1].split(':');
+        var component = langString[0];
+        var identifier = langString[1];
+        // If get_string can't find the string, it will return the string in this format.
+        var undefinedString = '[[' + identifier + ',' + component + ']]';
+        // Get the lang string.
+        errorString = M.util.get_string(identifier, component);
+        if (errorString === undefinedString) {
+            // Use a generic invalid input message when the error lang string cannot be loaded.
+            errorString = M.util.get_string('invalid', 'availability');
+        }
+        // Show the error string.
+        errorLabel.appendChild(document.createTextNode(errorString));
     } else if (errors.length === before && errorLabel.get('firstChild')) {
         errorLabel.get('firstChild').remove();
     }
