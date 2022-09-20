@@ -165,6 +165,7 @@ $string['nouserevidence'] = 'No evidence of prior learning has been added yet.';
 $string['nouserplans'] = 'No learning plans have been created yet.';
 $string['oneplanwascreated'] = 'A learning plan was created';
 $string['outcome'] = 'Outcome';
+$string['overridegrade'] = 'Override existing competency grade when completed.';
 $string['path'] = 'Path:';
 $string['parentcompetency'] = 'Parent';
 $string['parentcompetency_edit'] = 'Edit parent';

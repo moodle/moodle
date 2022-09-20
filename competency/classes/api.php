@@ -1582,9 +1582,11 @@ class api {
      *
      * @param int|course_module_competency $coursemodulecompetencyorid The course_module_competency, or its ID.
      * @param int $ruleoutcome The value of ruleoutcome.
+     * @param bool $overridegrade If true, will override existing grades in related competencies.
      * @return bool True on success.
      */
-    public static function set_course_module_competency_ruleoutcome($coursemodulecompetencyorid, $ruleoutcome) {
+    public static function set_course_module_competency_ruleoutcome($coursemodulecompetencyorid, $ruleoutcome,
+        $overridegrade = false) {
         static::require_enabled();
         $coursemodulecompetency = $coursemodulecompetencyorid;
         if (!is_object($coursemodulecompetency)) {
@@ -1599,6 +1601,8 @@ class api {
         require_capability('moodle/competency:coursecompetencymanage', $context);
 
         $coursemodulecompetency->set('ruleoutcome', $ruleoutcome);
+        $coursemodulecompetency->set('overridegrade', $overridegrade);
+
         return $coursemodulecompetency->update();
     }
 
@@ -4279,7 +4283,7 @@ class api {
      */
     public static function add_evidence($userid, $competencyorid, $contextorid, $action, $descidentifier, $desccomponent,
                                         $desca = null, $recommend = false, $url = null, $grade = null, $actionuserid = null,
-                                        $note = null) {
+                                        $note = null, $overridegrade = false) {
         global $DB;
         static::require_enabled();
 
@@ -4350,8 +4354,8 @@ class api {
                         $usercompetencycourse = user_competency_course::create_relation($userid, $competencyid, $courseid);
                         $usercompetencycourse->create();
                     }
-                    // Only update the grade and proficiency if there is not already a grade.
-                    if ($usercompetencycourse->get('grade') === null) {
+                    // Only update the grade and proficiency if there is not already a grade or the override option is enabled.
+                    if ($usercompetencycourse->get('grade') === null || $overridegrade) {
                         // Set grade.
                         $usercompetencycourse->set('grade', $grade);
                         // Set proficiency.
@@ -4363,8 +4367,8 @@ class api {
                     $setucgrade = $coursesettings->get('pushratingstouserplans');
 
                     if ($setucgrade) {
-                        // Only push to user plans if there is not already a grade.
-                        if ($usercompetency->get('grade') !== null) {
+                        // Only push to user plans if there is not already a grade or the override option is enabled.
+                        if ($usercompetency->get('grade') !== null && !$overridegrade) {
                             $setucgrade = false;
                         } else {
                             $ucgrade = $grade;
@@ -4374,8 +4378,9 @@ class api {
                 } else {
 
                     // When completing the competency we fetch the default grade from the competency. But we only mark
-                    // the user competency when a grade has not been set yet. Complete is an action to use with automated systems.
-                    if ($usercompetency->get('grade') === null) {
+                    // the user competency when a grade has not been set yet or if override option is enabled.
+                    // Complete is an action to use with automated systems.
+                    if ($usercompetency->get('grade') === null || $overridegrade) {
                         $setucgrade = true;
                         $ucgrade = $grade;
                         $ucproficiency = $proficiency;
@@ -4498,7 +4503,7 @@ class api {
 
         // The competency was marked as completed, apply the rules.
         if ($wascompleted) {
-            self::apply_competency_rules_from_usercompetency($usercompetency, $competency);
+            self::apply_competency_rules_from_usercompetency($usercompetency, $competency, $overridegrade);
         }
 
         return $evidence;
@@ -4557,7 +4562,7 @@ class api {
      * @return void
      */
     protected static function apply_competency_rules_from_usercompetency(user_competency $usercompetency,
-                                                                         competency $competency = null) {
+                                                                         competency $competency = null, $overridegrade = false) {
 
         // Perform some basic checks.
         if (!$usercompetency->get('proficiency')) {
@@ -4624,7 +4629,12 @@ class api {
             'evidence_competencyrule',
             'core_competency',
             null,
-            $recommend
+            $recommend,
+            null,
+            null,
+            null,
+            null,
+            $overridegrade
         );
     }
 
@@ -4659,6 +4669,7 @@ class api {
                 $action = null;
                 $recommend = false;
                 $strdesc = 'evidence_coursemodulecompleted';
+                $overridegrade = $coursemodulecompetency->get('overridegrade');
 
                 if ($outcome == course_module_competency::OUTCOME_NONE) {
                     continue;
@@ -4686,7 +4697,11 @@ class api {
                     'core_competency',
                     $cmname,
                     $recommend,
-                    $url
+                    $url,
+                    null,
+                    null,
+                    null,
+                    $overridegrade
                 );
             }
         }
