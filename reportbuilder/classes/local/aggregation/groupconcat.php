@@ -138,6 +138,7 @@ class groupconcat extends base {
             $formattedvalues[] = parent::format_value($originalvalue, $originalvalues, $callbacks, $columntype);
         }
 
-        return implode(', ', $formattedvalues);
+        $listseparator = get_string('listsep', 'langconfig') . ' ';
+        return implode($listseparator, $formattedvalues);
     }
 }
