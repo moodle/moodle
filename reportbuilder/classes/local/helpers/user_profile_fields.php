@@ -113,6 +113,30 @@ class user_profile_fields {
     }
 
     /**
+     * Generate table alias for given profile field
+     *
+     * @param profile_field_base $profilefield
+     * @return string
+     */
+    private function get_table_alias(profile_field_base $profilefield): string {
+        return "upfs{$profilefield->fieldid}";
+    }
+
+    /**
+     * Generate table join for given profile field
+     *
+     * @param profile_field_base $profilefield
+     * @return string
+     */
+    private function get_table_join(profile_field_base $profilefield): string {
+        $userinfotablealias = $this->get_table_alias($profilefield);
+
+        return "LEFT JOIN {user_info_data} {$userinfotablealias}
+                       ON {$userinfotablealias}.userid = {$this->usertablefieldalias}
+                      AND {$userinfotablealias}.fieldid = {$profilefield->fieldid}";
+    }
+
+    /**
      * Return the user profile fields visible columns.
      *
      * @return column[]
@@ -122,11 +146,9 @@ class user_profile_fields {
 
         $columns = [];
         foreach ($this->userprofilefields as $profilefield) {
-            $userinfotablealias = database::generate_alias();
-
             $columntype = $this->get_user_field_type($profilefield->field->datatype);
 
-            $columnfieldsql = "{$userinfotablealias}.data";
+            $columnfieldsql = $this->get_table_alias($profilefield) . '.data';
             if ($DB->get_dbfamily() === 'oracle') {
                 $columnfieldsql = $DB->sql_order_by_text($columnfieldsql, 1024);
             }
@@ -139,9 +161,7 @@ class user_profile_fields {
                 $this->entityname
             ))
                 ->add_joins($this->get_joins())
-                ->add_join("LEFT JOIN {user_info_data} {$userinfotablealias} " .
-                    "ON {$userinfotablealias}.userid = {$this->usertablefieldalias} " .
-                    "AND {$userinfotablealias}.fieldid = {$profilefield->fieldid}")
+                ->add_join($this->get_table_join($profilefield))
                 ->add_field($columnfieldsql, 'data')
                 ->set_type($columntype)
                 ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
@@ -163,8 +183,7 @@ class user_profile_fields {
 
         $filters = [];
         foreach ($this->userprofilefields as $profilefield) {
-            $userinfotablealias = database::generate_alias();
-            $field = "{$userinfotablealias}.data";
+            $field = $this->get_table_alias($profilefield) . '.data';
             $params = [];
 
             switch ($profilefield->field->datatype) {
@@ -207,9 +226,7 @@ class user_profile_fields {
                 $params
             ))
                 ->add_joins($this->get_joins())
-                ->add_join("LEFT JOIN {user_info_data} {$userinfotablealias} " .
-                    "ON {$userinfotablealias}.userid = {$this->usertablefieldalias} " .
-                    "AND {$userinfotablealias}.fieldid = {$profilefield->fieldid}");
+                ->add_join($this->get_table_join($profilefield));
 
             // If menu type then set filter options as appropriate.
             if ($profilefield->field->datatype === 'menu') {
