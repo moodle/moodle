@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_question;
+
+use core_question\local\bank\question_edit_contexts;
+use core_question\local\bank\view;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/question/editlib.php');
+
 /**
  * Unit tests for the question bank view class.
  *
@@ -22,20 +32,7 @@
  * @copyright  2018 the Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/question/editlib.php');
-
-
-/**
- * Unit tests for the question bank view class.
- *
- * @copyright  2018 the Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class core_question_bank_view_testcase extends advanced_testcase {
+class bank_view_test extends \advanced_testcase {
 
     public function test_viewing_question_bank_should_not_load_individual_questions() {
         $this->resetAfterTest();
@@ -46,20 +43,20 @@ class core_question_bank_view_testcase extends advanced_testcase {
 
         // Create a course.
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
 
         // Create a question in the default category.
-        $contexts = new core_question\local\bank\question_edit_contexts($context);
+        $contexts = new question_edit_contexts($context);
         $cat = question_make_default_categories($contexts->all());
         $questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);
 
         // Ensure the question is not in the cache.
-        $cache = cache::make('core', 'questiondata');
+        $cache = \cache::make('core', 'questiondata');
         $cache->delete($questiondata->id);
 
         // Generate the view.
-        $view = new core_question\local\bank\view($contexts, new moodle_url('/'), $course);
+        $view = new view($contexts, new \moodle_url('/'), $course);
         ob_start();
         $pagevars = [
             'qpage' => 0,
@@ -90,17 +87,17 @@ class core_question_bank_view_testcase extends advanced_testcase {
 
         // Create a course.
         $course = $generator->create_course();
-        $context = context_course::instance($course->id);
+        $context = \context_course::instance($course->id);
 
         // Create a question in the default category.
-        $contexts = new core_question\local\bank\question_edit_contexts($context);
+        $contexts = new question_edit_contexts($context);
         $cat = question_make_default_categories($contexts->all());
         $questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);
         $DB->set_field('question', 'qtype', 'unknownqtype', ['id' => $questiondata->id]);
 
         // Generate the view.
-        $view = new core_question\local\bank\view($contexts, new moodle_url('/'), $course);
+        $view = new view($contexts, new \moodle_url('/'), $course);
         ob_start();
         $pagevars = [
             'qpage' => 0,

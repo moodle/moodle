@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qtype_calculated;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
+
 /**
  * Unit tests for formula validation code.
  *
@@ -21,21 +28,7 @@
  * @copyright  2014 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
-
-
-/**
- * Unit tests for formula validation code.
- *
- * @copyright  2014 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qtype_calculated_formula_validation_testcase extends basic_testcase {
+class formula_validation_test extends \basic_testcase {
     protected function assert_nonempty_string($actual) {
         $this->assertIsString($actual);
         $this->assertNotEquals('', $actual);

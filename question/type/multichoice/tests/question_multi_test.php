@@ -14,31 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the multiple choice, multi-response question definition classes.
- *
- * @package   qtype_multichoice
- * @copyright 2009 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_multichoice;
+
+use question_attempt_step;
+use question_classified_response;
+use question_display_options;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
-
 /**
  * Unit tests for the multiple choice, multi-response question definition class.
  *
+ * @package   qtype_multichoice
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \qtype_multichoice_multi_question
  */
-class qtype_multichoice_multi_question_test extends advanced_testcase {
+class question_multi_test extends \advanced_testcase {
 
     public function test_get_expected_data() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
+        $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array('choice0' => PARAM_BOOL, 'choice1' => PARAM_BOOL,
@@ -46,7 +45,7 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
     }
 
     public function test_is_complete_response() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
+        $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($question->is_complete_response(array()));
@@ -58,7 +57,7 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
     }
 
     public function test_is_gradable_response() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
+        $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($question->is_gradable_response(array()));
@@ -70,7 +69,7 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
     }
 
     public function test_is_same_response() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
+        $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertTrue($question->is_same_response(
@@ -91,7 +90,7 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
     }
 
     public function test_grading() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
+        $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array(1, question_state::$gradedright),
@@ -105,14 +104,14 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
     }
 
     public function test_get_correct_response() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
+        $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals($question->prepare_simulated_post_data(array('A' => 1, 'C' => 1)), $question->get_correct_response());
     }
 
     public function test_get_question_summary() {
-        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc = \test_question_maker::make_a_multichoice_single_question();
         $mc->start_attempt(new question_attempt_step(), 1);
 
         $qsummary = $mc->get_question_summary();
@@ -124,7 +123,7 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
     }
 
     public function test_summarise_response() {
-        $mc = test_question_maker::make_a_multichoice_multi_question();
+        $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->shuffleanswers = false;
         $mc->start_attempt(new question_attempt_step(), 1);
 
@@ -134,7 +133,7 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
     }
 
     public function test_summarise_response_clearchoice() {
-        $mc = test_question_maker::make_a_multichoice_multi_question();
+        $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->shuffleanswers = false;
         $mc->start_attempt(new question_attempt_step(), 1);
 
@@ -144,7 +143,7 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
     }
 
     public function test_un_summarise_response() {
-        $mc = test_question_maker::make_a_multichoice_multi_question();
+        $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->shuffleanswers = false;
         $mc->start_attempt(new question_attempt_step(), 1);
 
@@ -154,7 +153,7 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
     }
 
     public function test_classify_response() {
-        $mc = test_question_maker::make_a_multichoice_multi_question();
+        $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEquals(array(
@@ -166,7 +165,7 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
     }
 
     public function test_prepare_simulated_post_data() {
-        $mc = test_question_maker::make_a_multichoice_multi_question();
+        $mc = \test_question_maker::make_a_multichoice_multi_question();
         $mc->start_attempt(new question_attempt_step(), 1);
         $correctanswers = array(
             array(),
@@ -188,9 +187,9 @@ class qtype_multichoice_multi_question_test extends advanced_testcase {
      * test_get_question_definition_for_external_rendering
      */
     public function test_get_question_definition_for_external_rendering() {
-        $question = test_question_maker::make_a_multichoice_multi_question();
+        $question = \test_question_maker::make_a_multichoice_multi_question();
         $question->start_attempt(new question_attempt_step(), 1);
-        $qa = test_question_maker::get_a_qa($question);
+        $qa = \test_question_maker::get_a_qa($question);
         $displayoptions = new question_display_options();
 
         $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
