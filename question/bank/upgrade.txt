@@ -1,6 +1,12 @@
 This file describes core qbank plugin changes in /question/bank/*,
 information provided here is intended especially for developers.
 
+=== 4.0.5 ===
+* New functions qbank_usage\helper::get_question_bank_usage_sql and
+  qbank_usage\helper::get_question_attempt_usage_sql have been implemented.
+  When calling a query with the SQL those methods returned, you have to be sure
+  in the accompanying $params array are in the right order.
+
 === 4.0 ===
 
 * This plugin type is new in Moodle 4.0. It is for adding features to the question bank.

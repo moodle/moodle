@@ -46,28 +46,9 @@ class helper {
      * @return string
      */
     public static function question_usage_sql(): string {
-        $sqlset = "(SELECT qz.id as quizid,
-                           qz.name as modulename,
-                           qz.course as courseid
-                      FROM {quiz} qz
-                      JOIN {quiz_attempts} qa ON qa.quiz = qz.id
-                      JOIN {question_usages} qu ON qu.id = qa.uniqueid
-                      JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id
-                      JOIN {question} q ON q.id = qatt.questionid
-                      WHERE qa.preview = 0
-                        AND q.id = ?)
-                    UNION
-                    (SELECT qz.id as quizid,
-                            qz.name as modulename,
-                            qz.course as courseid
-                      FROM {quiz_slots} slot
-                      JOIN {quiz} qz ON qz.id = slot.quizid
-                      JOIN {question_references} qr ON qr.itemid = slot.id
-                      JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
-                      JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-                     WHERE qv.questionbankentryid = ?
-                       AND qr.component = ?
-                       AND qr.questionarea = ?)";
+        $sqlset = "(". self::get_question_attempt_usage_sql() .")".
+                   "UNION".
+                   "(". self::get_question_bank_usage_sql() .")";
         return $sqlset;
     }
 
@@ -103,6 +84,54 @@ class helper {
             $param = ['questionid' => $questionid];
         }
         return $DB->count_records_sql($sql, $param);
+    }
+
+    /**
+     * Get the question bank usage sql.
+     *
+     * The resulting string which represents a sql query has then to be
+     * called accompanying a $params array which includes the necessary
+     * parameters in the correct order which are the question id, then
+     * the component and finally the question area.
+     *
+     * @return string
+     */
+    public static function get_question_bank_usage_sql(): string {
+        $sql = "SELECT qz.id as quizid,
+                       qz.name as modulename,
+                       qz.course as courseid
+                  FROM {quiz_slots} slot
+                  JOIN {quiz} qz ON qz.id = slot.quizid
+                  JOIN {question_references} qr ON qr.itemid = slot.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
+                  JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
+                 WHERE qv.questionbankentryid = ?
+                   AND qr.component = ?
+                   AND qr.questionarea = ?";
+        return $sql;
+    }
+
+    /**
+     * Get the question attempt usage sql.
+     *
+     * The resulting string which represents a sql query has then to be
+     * called accompanying a $params array which includes the necessary
+     * parameter, the question id.
+     *
+     * @return string
+     */
+    public static function get_question_attempt_usage_sql(): string {
+        $sql = "SELECT qz.id as quizid,
+                       qz.name as modulename,
+                       qz.course as courseid
+                  FROM {quiz} qz
+                  JOIN {quiz_attempts} qa ON qa.quiz = qz.id
+                  JOIN {question_usages} qu ON qu.id = qa.uniqueid
+                  JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id
+                  JOIN {question} q ON q.id = qatt.questionid
+                 WHERE qa.preview = 0
+                   AND q.id = ?";
+        return $sql;
     }
 
 }
