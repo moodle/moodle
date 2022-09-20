@@ -128,13 +128,18 @@ class manage_categories_action_bar implements \renderable {
      * @return array
      */
     protected function get_search_form(): array {
-        return [
-            'action' => new moodle_url('/course/management.php'),
+        $searchform = [
             'btnclass' => 'btn-primary',
             'inputname' => 'search',
             'searchstring' => get_string('searchcourses'),
             'query' => $this->searchvalue
         ];
+        if (\core_course_category::has_capability_on_any(['moodle/category:manage', 'moodle/course:create'])) {
+            $searchform['action'] = new moodle_url('/course/management.php');
+        } else {
+            $searchform['action'] = new moodle_url('/course/search.php');
+        }
+        return $searchform;
     }
 
     /**
