@@ -241,3 +241,27 @@ Feature: Custom profile fields should be visible and editable by those with the 
     And I should not see "notvisible_field_information"
 
     And I should not see "Edit profile"
+
+  @javascript
+  Scenario: Menu profile field's default data works as expected when editing user profile
+    Given the following "custom profile fields" exist:
+      | datatype | shortname | name       | visible | param1           | defaultdata |
+      | menu     | menufield | Menu field | 2       | OptA\nOptB\nOptC | OptB        |
+    And I log in as "userwithinformation"
+    When I follow "Profile" in the user menu
+    And I click on "Edit profile" "link" in the "region-main" "region"
+    Then the following fields match these values:
+      | Menu field | OptB |
+
+  @javascript
+  Scenario: Menu profile field successfully updated when editing user profile
+    Given the following "custom profile fields" exist:
+      | datatype | shortname | name       | visible | param1           |
+      | menu     | menufield | Menu field | 2       | OptA\nOptB\nOptC |
+    And I log in as "userwithinformation"
+    When I follow "Profile" in the user menu
+    And I click on "Edit profile" "link" in the "region-main" "region"
+    And I set the following fields to these values:
+      | Menu field | OptC |
+    And I click on "Update profile" "button"
+    Then I should see "OptC"
