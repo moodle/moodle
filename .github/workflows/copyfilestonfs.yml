@@ -1,8 +1,19 @@
-- name: ls -a via ssh
-  uses: garygrossgarten/github-action-ssh@release
-  with:
-    command: ls -a
-    host: ${{ secrets.HOST }}
-    username: garygrossgarten
-    passphrase: ${{ secrets.PASSPHRASE }}
-    privateKey: ${{ secrets.PRIVATE_KEY}}
+name: remote ssh command to copy files to nfs
+on:
+  push:
+    branches:
+      - master
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.ECS_DEV_HOST_DNS }}
+        username: ${{ secrets.ECS_DEV_USERNAME }}
+        key: ${{ secrets.ECS_DEV_SSH_KEY }}
+        port: 22
+        script: sudo cp -a /var/moodledata/ /nfs-mount-point
