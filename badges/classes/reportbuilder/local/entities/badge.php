@@ -52,6 +52,8 @@ class badge extends base {
         return [
             'badge' => 'b',
             'context' => 'bctx',
+            'tag_instance' => 'bti',
+            'tag' => 'bt',
         ];
     }
 
@@ -302,5 +304,14 @@ class badge extends base {
             ]);
 
         return $filters;
+    }
+
+    /**
+     * Return joins necessary for retrieving tags
+     *
+     * @return string[]
+     */
+    public function get_tag_joins(): array {
+        return $this->get_tag_joins_for_entity('core_badges', 'badge', $this->get_table_alias('badge') . '.id');
     }
 }
