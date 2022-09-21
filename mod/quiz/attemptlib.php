@@ -2376,38 +2376,39 @@ class quiz_attempt {
 
         $transaction = $DB->start_delegated_transaction();
 
-        // If there is only a very small amount of time left, there is no point trying
-        // to show the student another page of the quiz. Just finish now.
-        $graceperiodmin = null;
+        // Get key times.
         $accessmanager = $this->get_access_manager($timenow);
         $timeclose = $accessmanager->get_end_time($this->get_attempt());
+        $graceperiodmin = get_config('quiz', 'graceperiodmin');
 
         // Don't enforce timeclose for previews.
         if ($this->is_preview()) {
             $timeclose = false;
         }
-        $toolate = false;
-        if ($timeclose !== false && $timenow > $timeclose - QUIZ_MIN_TIME_TO_CONTINUE) {
-            $timeup = true;
-            $graceperiodmin = get_config('quiz', 'graceperiodmin');
-            if ($timenow > $timeclose + $graceperiodmin) {
-                $toolate = true;
-            }
-        }
 
-        // Verify if time is really up; time limit could have been changed.
-        if ($timeup && $timenow < $timeclose - QUIZ_MIN_TIME_TO_CONTINUE) {
-            $timeup = false;
+        // Check where we are in relation to the end time, if there is one.
+        $toolate = false;
+        if ($timeclose !== false) {
+            if ($timenow > $timeclose - QUIZ_MIN_TIME_TO_CONTINUE) {
+                // If there is only a very small amount of time left, there is no point trying
+                // to show the student another page of the quiz. Just finish now.
+                $timeup = true;
+                if ($timenow > $timeclose + $graceperiodmin) {
+                    $toolate = true;
+                }
+            } else {
+                // If time is not close to expiring, then ignore the client-side timer's opinion
+                // about whether time has expired. This can happen if the time limit has changed
+                // since the student's previous interaction.
+                $timeup = false;
+            }
         }
 
         // If time is running out, trigger the appropriate action.
         $becomingoverdue = false;
         $becomingabandoned = false;
         if ($timeup) {
-            if ($this->get_quiz()->overduehandling == 'graceperiod') {
-                if (is_null($graceperiodmin)) {
-                    $graceperiodmin = get_config('quiz', 'graceperiodmin');
-                }
+            if ($this->get_quiz()->overduehandling === 'graceperiod') {
                 if ($timenow > $timeclose + $this->get_quiz()->graceperiod + $graceperiodmin) {
                     // Grace period has run out.
                     $finishattempt = true;

@@ -34,6 +34,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @copyright  2013 The Open University
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \quiz_attempt
  */
 class attempt_walkthrough_test extends \advanced_testcase {
 
@@ -119,9 +120,17 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $this->assertEquals(100, $gradebookgrade->grade);
     }
 
-    public function test_quiz_attempt_walkthrough_submit_time_recorded_correctly_when_overdue() {
+    /**
+     * Create a quiz containing one question and a close time.
+     *
+     * The question is the standard shortanswer test question.
+     * The quiz is set to close 1 hour from now.
+     * The quiz is set to use a grade period of 1 hour once time expires.
+     *
+     * @return \stdClass the quiz that was created.
+     */
+    protected function create_quiz_with_one_question(): \stdClass {
         global $SITE;
-
         $this->resetAfterTest();
 
         // Make a quiz.
@@ -133,6 +142,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
                         'overduehandling' => 'graceperiod', 'graceperiod' => HOURSECS]);
 
         // Create a question.
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
         $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
@@ -140,6 +150,13 @@ class attempt_walkthrough_test extends \advanced_testcase {
         // Add them to the quiz.
         quiz_add_quiz_question($saq->id, $quiz, 0, 1);
         quiz_update_sumgrades($quiz);
+
+        return $quiz;
+    }
+
+    public function test_quiz_attempt_walkthrough_submit_time_recorded_correctly_when_overdue() {
+
+        $quiz = $this->create_quiz_with_one_question();
 
         // Make a user to do the quiz.
         $user = $this->getDataGenerator()->create_user();
@@ -151,11 +168,11 @@ class attempt_walkthrough_test extends \advanced_testcase {
 
         // Process some responses from the student.
         $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_submitted_actions($timeclose - 30 * MINSECS, false, [1 => ['answer' => 'frog']]);
+        $attemptobj->process_submitted_actions($quiz->timeclose - 30 * MINSECS, false, [1 => ['answer' => 'frog']]);
 
         // Attempt goes overdue (e.g. if cron ran).
         $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_going_overdue($timeclose + 2 * get_config('quiz', 'graceperiodmin'), false);
+        $attemptobj->process_going_overdue($quiz->timeclose + 2 * get_config('quiz', 'graceperiodmin'), false);
 
         // Verify the attempt state.
         $attemptobj = quiz_attempt::create($attempt->id);
@@ -167,15 +184,51 @@ class attempt_walkthrough_test extends \advanced_testcase {
 
         // Student submits the attempt during the grace period.
         $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_attempt($timeclose + 30 * MINSECS, true, false, 1);
+        $attemptobj->process_attempt($quiz->timeclose + 30 * MINSECS, true, false, 1);
 
         // Verify the attempt state.
         $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertEquals(1, $attemptobj->get_attempt_number());
         $this->assertEquals(true, $attemptobj->is_finished());
-        $this->assertEquals($timeclose + 30 * MINSECS, $attemptobj->get_submitted_date());
+        $this->assertEquals($quiz->timeclose + 30 * MINSECS, $attemptobj->get_submitted_date());
         $this->assertEquals($user->id, $attemptobj->get_userid());
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+    }
+
+    public function test_quiz_attempt_walkthrough_close_time_extended_at_last_minute() {
+        global $DB;
+
+        $quiz = $this->create_quiz_with_one_question();
+        $originaltimeclose = $quiz->timeclose;
+
+        // Make a user to do the quiz.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $quizobj = quiz::create($quiz->id, $user->id);
+
+        // Start the attempt.
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
+
+        // Process some responses from the student during the attempt.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_submitted_actions($originaltimeclose - 30 * MINSECS, false, [1 => ['answer' => 'frog']]);
+
+        // Teacher edits the quiz to extend the time-limit by one minute.
+        $DB->set_field('quiz', 'timeclose', $originaltimeclose + MINSECS, ['id' => $quiz->id]);
+        \course_modinfo::clear_instance_cache($quiz->course);
+
+        // Timer expires in the student browser and thinks it is time to submit the quiz.
+        // This sets $finishattempt to false - since the student did not click the button, and $timeup to true.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_attempt($originaltimeclose, false, true, 1);
+
+        // Verify the attempt state - the $timeup was ignored becuase things have changed server-side.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $this->assertEquals(1, $attemptobj->get_attempt_number());
+        $this->assertFalse($attemptobj->is_finished());
+        $this->assertEquals(quiz_attempt::IN_PROGRESS, $attemptobj->get_state());
+        $this->assertEquals(0, $attemptobj->get_submitted_date());
+        $this->assertEquals($user->id, $attemptobj->get_userid());
     }
 
     /**
