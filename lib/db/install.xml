@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20221017" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20221216" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2747,6 +2747,7 @@
       <INDEXES>
         <INDEX NAME="parentcontextid-showinsubcontexts-pagetypepattern-subpagepattern" UNIQUE="false" FIELDS="parentcontextid, showinsubcontexts, pagetypepattern, subpagepattern"/>
         <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
+        <INDEX NAME="blocknameindex" UNIQUE="false" FIELDS="blockname"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="block_positions" COMMENT="Stores the position of a sticky block_instance on a another page than the one where it was added.">
