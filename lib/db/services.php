@@ -963,6 +963,13 @@ $functions = array(
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ),
+    'core_grades_get_groups_for_search_widget' => [
+        'classname' =>  'core_grades\external\get_groups_for_search_widget',
+        'description' => 'Get the group/(s) for a course',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
         'methodname' => 'get_definitions',

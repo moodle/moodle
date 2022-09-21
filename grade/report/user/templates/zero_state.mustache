@@ -22,16 +22,28 @@
     Example context (json):
     {
         "imglink": "http://foo.bar/gradereport/?userid=25",
-        "courseid": "2"
+        "courseid": "2",
+        "groupmodeenabled": true,
+        "groupactionbaseurl": "index.php",
+        "groupid": 2
     }
 }}
 <div class="mx-auto w-50 text-center">
     <img src="{{imglink}}" alt="Temp" class="w-50 h-50 mb-4">
     <h3>{{#str}}selectuser, gradereport_user{{/str}}</h3>
     <p>{{#str}}selectuserinstructions, gradereport_user{{/str}}</p>
+    {{#groupmodeenabled}}
+        <a href="#"
+           class="btn btn-light border-secondary groupwidget"
+           data-courseid="{{courseid}}"
+           data-action-base-url="{{groupactionbaseurl}}"
+           data-searchtype="group"
+        >{{#str}}selectgrouplink, grades{{/str}}</a>
+    {{/groupmodeenabled}}
     <a href="#"
        class="btn btn-light border-secondary userwidget"
-       data-courseid={{courseid}}
+       data-courseid="{{courseid}}"
+       data-groupid="{{groupid}}"
        data-searchtype="user"
     >{{#str}}selectuserlink, grades{{/str}}</a>
 </div>

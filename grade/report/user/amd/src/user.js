@@ -62,11 +62,12 @@ const registerListenerEvents = () => {
             const trigger = e.target.closest('.userwidget');
             if (trigger) {
                 const courseID = trigger.dataset.courseid;
+                const groupId = trigger.dataset.groupid;
                 e.preventDefault();
 
                 const actionBaseUrl = Url.relativeUrl('/grade/report/user/index.php', {}, false);
                 // If an error occurs while fetching the data, display the error within the modal.
-                const data = await Repository.userFetch(courseID, actionBaseUrl).catch(async(e) => {
+                const data = await Repository.userFetch(courseID, actionBaseUrl, groupId).catch(async(e) => {
                     const errorTemplateData = {
                         'errormessage': e.message
                     };

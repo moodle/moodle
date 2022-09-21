@@ -14,9 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A small modal to search users within the gradebook.
+ * A small modal to search groups within the gradebook.
  *
- * @module    gradereport_singleview/user
+ * @module    core_grades/searchwidget/group
  * @copyright 2022 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,10 +27,10 @@ import CustomEvents from "core/custom_interaction_events";
 import * as Repository from 'core_grades/searchwidget/repository';
 import * as WidgetBase from 'core_grades/searchwidget/basewidget';
 import {get_string as getString} from 'core/str';
-import Url from 'core/url';
 
 /**
- * Our entry point into starting to build the search widget.
+ * Our entry point into starting to build the group search widget.
+ *
  * It'll eventually, based upon the listeners, open the search widget and allow filtering.
  *
  * @method init
@@ -42,7 +42,7 @@ export const init = () => {
 };
 
 /**
- * Register user search widget related event listeners.
+ * Register event listeners.
  *
  * @method registerListenerEvents
  */
@@ -59,15 +59,14 @@ const registerListenerEvents = () => {
     // Register events.
     events.forEach((event) => {
         document.addEventListener(event, async(e) => {
-            const trigger = e.target.closest('.userwidget');
+            const trigger = e.target.closest('.groupwidget');
             if (trigger) {
                 const courseID = trigger.dataset.courseid;
-                const groupId = trigger.dataset.groupid;
+                const actionBaseUrl = trigger.dataset.actionBaseUrl;
                 e.preventDefault();
 
-                const actionBaseUrl = Url.relativeUrl('/grade/report/singleview/index.php', {item: 'user'}, false);
                 // If an error occurs while fetching the data, display the error within the modal.
-                const data = await Repository.userFetch(courseID, actionBaseUrl, groupId).catch(async(e) => {
+                const data = await Repository.groupFetch(courseID, actionBaseUrl).catch(async(e) => {
                     const errorTemplateData = {
                         'errormessage': e.message
                     };
@@ -81,38 +80,38 @@ const registerListenerEvents = () => {
                 }
                 WidgetBase.init(
                     bodyPromise,
-                    data.users,
-                    searchUsers(),
-                    getString('selectauser', 'grades')
+                    data.groups,
+                    searchGroups(),
+                    getString('selectagroup', 'core')
                 );
             }
         });
     });
     // Resolvers for passed functions in the modal creation.
     bodyPromiseResolver(Templates.render(
-        'core_grades/searchwidget/user/usersearch_body',
+        'core_grades/searchwidget/group/groupsearch_body',
         []
     ));
 };
 
 /**
- * Define how we want to search and filter users when the user decides to input a search value.
+ * Define how we want to search and filter groups when the user decides to input a search value.
  *
  * @method registerListenerEvents
  * @returns {function(): function(*, *): (*)}
  */
-const searchUsers = () => {
+const searchGroups = () => {
     return () => {
-        return (users, searchTerm) => {
+        return (groups, searchTerm) => {
             if (searchTerm === '') {
-                return users;
+                return groups;
             }
             searchTerm = searchTerm.toLowerCase();
             const searchResults = [];
-            users.forEach((user) => {
-                const userName = user.fullname.toLowerCase();
-                if (userName.includes(searchTerm)) {
-                    searchResults.push(user);
+            groups.forEach((group) => {
+                const groupName = group.name.toLowerCase();
+                if (groupName.includes(searchTerm)) {
+                    searchResults.push(group);
                 }
             });
             return searchResults;

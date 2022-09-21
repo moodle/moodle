@@ -465,14 +465,26 @@ class behat_grade extends behat_base {
      */
     public function i_click_on_in_search_widget(string $needle, string $haystack) {
         $this->execute("behat_general::wait_until_the_page_is_ready");
-        if ($haystack === 'user') {
-            $this->execute("behat_general::i_click_on", ['.userwidget', "css_element"]);
-            $dialoguetitle = 'Select a user';
-        } else {
-            $this->execute("behat_general::i_click_on", ['.groupwidget', "css_element"]);
-            $dialoguetitle = 'Select a grade item';
+
+        $triggercssselector = '';
+        $dialoguetitle = '';
+
+        switch ($haystack) {
+            case 'user':
+                $triggercssselector = '.userwidget';
+                $dialoguetitle = 'Select a user';
+                break;
+            case 'grade':
+                $triggercssselector = '.gradewidget';
+                $dialoguetitle = 'Select a grade item';
+                break;
+            case 'group':
+                $triggercssselector = '.groupwidget';
+                $dialoguetitle = 'Select a group';
+                break;
         }
 
+        $this->execute("behat_general::i_click_on", [$triggercssselector, "css_element"]);
         $this->execute("behat_general::wait_until_exists", [$dialoguetitle, "dialogue"]);
         $this->execute('behat_general::i_click_on_in_the', [$needle, "link", $dialoguetitle, 'dialogue']);
     }

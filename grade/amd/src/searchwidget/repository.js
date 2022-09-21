@@ -29,11 +29,32 @@ import ajax from 'core/ajax';
  * @method userFetch
  * @param {int} courseid ID of the course to fetch the users of.
  * @param {string} actionBaseUrl The base URL for the user option.
+ * @param {int} groupId ID of the group to fetch the users of.
  * @return {object} jQuery promise
  */
-export const userFetch = (courseid, actionBaseUrl) => {
+export const userFetch = (courseid, actionBaseUrl, groupId) => {
     const request = {
         methodname: 'core_grades_get_enrolled_users_for_search_widget',
+        args: {
+            courseid: courseid,
+            actionbaseurl: actionBaseUrl,
+            groupid: groupId,
+        },
+    };
+    return ajax.call([request])[0];
+};
+
+/**
+ * Given a course ID, we want to fetch the groups, so we may fetch their users.
+ *
+ * @method groupFetch
+ * @param {int} courseid ID of the course to fetch the users of.
+ * @param {string} actionBaseUrl The base URL for the group action.
+ * @return {object} jQuery promise
+ */
+export const groupFetch = (courseid, actionBaseUrl) => {
+    const request = {
+        methodname: 'core_grades_get_groups_for_search_widget',
         args: {
             courseid: courseid,
             actionbaseurl: actionBaseUrl,
