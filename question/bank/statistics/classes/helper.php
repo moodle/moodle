@@ -56,6 +56,7 @@ class helper {
                   JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id
                  WHERE qatt.questionid $questionidcondition
               GROUP BY qu.component, qu.contextid
+              ORDER BY qu.contextid ASC
                 ", $params);
 
         // Strip out the unwanted ids.
