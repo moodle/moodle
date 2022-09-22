@@ -1,4 +1,4 @@
-@block @block_activity_results @javascript
+@block @block_activity_results @javascript @skip_interim
 Feature: The activity results block displays student scores
   In order to be display student scores
   As a user
