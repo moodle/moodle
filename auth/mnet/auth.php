@@ -418,7 +418,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 // we may be clearing out stale entries
                 $courses = array();
             }
-            $mnetrequest->add_param($courses);
+            $mnetrequest->add_param($courses, 'array');
 
             // Call 0800-RPC Now! -- we don't care too much if it fails
             // as it's just informational.
