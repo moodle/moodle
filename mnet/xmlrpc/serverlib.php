@@ -248,11 +248,18 @@ function mnet_server_prepare_response($response, $privatekey = null) {
 function mnet_server_dispatch($payload) {
     global $CFG, $DB;
     $remoteclient = get_mnet_remote_client();
-    // xmlrpc_decode_request returns an array of parameters, and the $method
-    // variable (which is passed by reference) is instantiated with the value from
-    // the methodName tag in the xml payload
-    //            xmlrpc_decode_request($xml,                   &$method)
-    $params     = xmlrpc_decode_request($payload, $method);
+    // Decode the request to method + params.
+    $method = null;
+    $params = null;
+    $encoder = new \PhpXmlRpc\Encoder();
+    $orequest = $encoder->decodeXML($payload); // First, to internal PhpXmlRpc\Response structure.
+    if ($orequest && $orequest instanceof \PhpXmlRpc\Request) {
+        $method = $orequest->method();
+        $numparams = $orequest->getNumParams();
+        for ($i = 0; $i < $numparams; $i++) {
+            $params[] = $encoder->decode($orequest->getParam($i));
+        }
+    }
 
     // $method is something like: "mod/forum/lib.php/forum_add_instance"
     // $params is an array of parameters. A parameter might itself be an array.
@@ -286,7 +293,9 @@ function mnet_server_dispatch($payload) {
     ////////////////////////////////////// SYSTEM METHODS
     } elseif ($callstack[0] == 'system') {
         $functionname = $callstack[1];
-        $xmlrpcserver = xmlrpc_server_create();
+        $xmlrpcserver = new \PhpXmlRpc\Server();
+        $xmlrpcserver->functions_parameters_type = 'epivals';
+        $xmlrpcserver->compress_response = false;
 
         // register all the system methods
         $systemmethods = array('listMethods', 'methodSignature', 'methodHelp', 'listServices', 'listFiles', 'retrieveFile', 'keyswap');
@@ -303,11 +312,11 @@ function mnet_server_dispatch($payload) {
                 $handler = 'mnet_keyswap';
             }
             if ($method == 'system.' . $m || $method == 'system/' . $m) {
-                xmlrpc_server_register_method($xmlrpcserver, $method, $handler);
-                $response = xmlrpc_server_call_method($xmlrpcserver, $payload, $remoteclient, array("encoding" => "utf-8"));
+                $xmlrpcserver->add_to_map($method, $handler);
+                $xmlrpcserver->user_data = $remoteclient;
+                $response = $xmlrpcserver->service($payload, true);
                 $response = mnet_server_prepare_response($response);
                 echo $response;
-                xmlrpc_server_destroy($xmlrpcserver);
                 return;
             }
         }
@@ -465,10 +474,14 @@ function mnet_server_invoke_plugin_method($method, $callstack, $rpcrecord, $payl
     mnet_setup_dummy_method($method, $callstack, $rpcrecord);
     $methodname = array_pop($callstack);
 
-    $xmlrpcserver = xmlrpc_server_create();
-    xmlrpc_server_register_method($xmlrpcserver, $method, 'mnet_server_dummy_method');
-    $response = xmlrpc_server_call_method($xmlrpcserver, $payload, $methodname, array("encoding" => "utf-8"));
-    xmlrpc_server_destroy($xmlrpcserver);
+    $xmlrpcserver = new \PhpXmlRpc\Server();
+    $xmlrpcserver->functions_parameters_type = 'epivals';
+    $xmlrpcserver->compress_response = false;
+
+    $xmlrpcserver->add_to_map($method, 'mnet_server_dummy_method');
+    $xmlrpcserver->user_data = $methodname;
+    $response = $xmlrpcserver->service($payload, true);
+
     return $response;
 }
 
@@ -504,10 +517,15 @@ function mnet_server_invoke_dangerous_method($includefile, $methodname, $method,
     if (!function_exists($functionname)) {
         throw new mnet_server_exception(7012, "nosuchfunction");
     }
-    $xmlrpcserver = xmlrpc_server_create();
-    xmlrpc_server_register_method($xmlrpcserver, $method, 'mnet_server_dummy_method');
-    $response = xmlrpc_server_call_method($xmlrpcserver, $payload, $methodname, array("encoding" => "utf-8"));
-    xmlrpc_server_destroy($xmlrpcserver);
+
+    $xmlrpcserver = new \PhpXmlRpc\Server();
+    $xmlrpcserver->functions_parameters_type = 'epivals';
+    $xmlrpcserver->compress_response = false;
+
+    $xmlrpcserver->add_to_map($method, 'mnet_server_dummy_method');
+    $xmlrpcserver->user_data = $methodname;
+    $response = $xmlrpcserver->service($payload, true);
+
     return $response;
 }
 
@@ -555,6 +573,8 @@ function mnet_verify_permissions($rpcrecord) {
     if (!empty($CFG->mnet_all_hosts_id)) {
         $id_list .= ', '.$CFG->mnet_all_hosts_id;
     }
+
+    // TODO: Change this to avoid the first column duplicate debugging, keeping current behaviour 100%.
 
     $sql = "SELECT
             r.*, h2s.publish
