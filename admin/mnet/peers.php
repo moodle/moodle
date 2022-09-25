@@ -61,10 +61,6 @@ if (!function_exists('curl_init') ) {
     throw new \moodle_exception('nocurl', 'mnet');
 }
 
-if (!function_exists('xmlrpc_encode_request')) {
-    throw new \moodle_exception('xmlrpc-missing', 'mnet');
-}
-
 if (!isset($CFG->mnet_dispatcher_mode)) {
     set_config('mnet_dispatcher_mode', 'off');
 }
