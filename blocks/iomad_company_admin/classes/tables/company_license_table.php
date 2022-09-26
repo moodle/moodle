@@ -187,7 +187,7 @@ class company_license_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_actions($row) {
-        global $OUTPUT, $params, $context, $gotchildren, $departmentid;
+        global $OUTPUT, $DB, $USER, $params, $context, $gotchildren, $departmentid;
 
         $stredit   = get_string('edit');
         $strdelete = get_string('delete');
@@ -220,7 +220,7 @@ class company_license_table extends table_sql {
                                             SELECT companyid FROM {companylicense}
                                             WHERE id = :parentid)",
                                          array('userid' => $USER->id,
-                                               'parentid' => $license->parentid))) {
+                                               'parentid' => $row->parentid))) {
                 $deletebutton = "<a class='btn btn-primary' href='".
                                  new moodle_url('company_license_list.php', array('delete' => $row->id,
                                                                                   'sesskey' => sesskey())) ."'>$strdelete</a>";
