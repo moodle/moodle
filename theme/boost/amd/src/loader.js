@@ -27,6 +27,7 @@ import * as Aria from './aria';
 import Bootstrap from './index';
 import Pending from 'core/pending';
 import Scroll from './scroll';
+import {DefaultWhitelist} from './bootstrap/tools/sanitizer';
 import setupBootstrapPendingChecks from './pending';
 
 /**
@@ -59,6 +60,14 @@ const enablePopovers = () => {
         container: 'body',
         selector: '[data-toggle="popover"]',
         trigger: 'focus',
+        whitelist: Object.assign(DefaultWhitelist, {
+            table: [],
+            thead: [],
+            tbody: [],
+            tr: [],
+            th: [],
+            td: [],
+        }),
     });
 
     document.addEventListener('keydown', e => {
