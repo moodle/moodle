@@ -14,24 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the import_handler_info class.
- *
- * @package    tool_moodlenet
- * @category   test
- * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-namespace tool_moodlenet\local\tests;
+namespace tool_moodlenet\local;
 
 use tool_moodlenet\local\import_handler_info;
 use tool_moodlenet\local\import_strategy;
 use tool_moodlenet\local\import_strategy_file;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class tool_moodlenet_import_handler_info_testcase, providing test cases for the import_handler_info class.
+ *
+ * @package    tool_moodlenet
+ * @category   test
+ * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class import_handler_info_test extends \advanced_testcase {
 

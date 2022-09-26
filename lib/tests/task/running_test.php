@@ -14,28 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains unit tests for the 'task running' data.
- *
- * @package core
- * @copyright 2019 The Open University
- * @copyright 2020 Mikhail Golenkov <golenkovm@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/fixtures/task_fixtures.php');
+require_once(__DIR__ . '/../fixtures/task_fixtures.php');
 
 /**
  * This file contains unit tests for the 'task running' data.
  *
+ * @package   core
+ * @category  test
  * @copyright 2019 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class task_running_test extends \advanced_testcase {
+class running_test extends \advanced_testcase {
 
     /**
      * Test for ad-hoc tasks.

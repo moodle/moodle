@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains the class containing unit tests for the daily completion cron task.
- *
- * @package   core
- * @copyright 2020 Jun Pataleta
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\task;
 
 use advanced_testcase;

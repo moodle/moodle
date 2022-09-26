@@ -14,23 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\task;
+
+defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../fixtures/task_fixtures.php');
+
 /**
  * This file contains the unit tests for the task manager.
  *
  * @package   core
+ * @category  test
  * @copyright 2019 Brendan Heywood <brendan@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * This file contains the unit tests for the task manager.
- *
- * @copyright 2019 Brendan Heywood <brendan@catalyst-au.net>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class core_task_manager_testcase extends advanced_testcase {
+class manager_test extends \advanced_testcase {
 
     public function test_ensure_adhoc_task_qos_provider() {
         return [
@@ -194,4 +191,3 @@ class core_task_manager_testcase extends advanced_testcase {
     }
 
 }
-

@@ -14,22 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_moodlenet\local;
+
+use tool_moodlenet\local\url;
+
 /**
- * Unit tests for the url class.
+ * Class tool_moodlenet_url_testcase, providing test cases for the url class.
  *
  * @package    tool_moodlenet
  * @category   test
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-namespace tool_moodlenet\local\tests;
-
-use tool_moodlenet\local\url;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Class tool_moodlenet_url_testcase, providing test cases for the url class.
  */
 class url_test extends \advanced_testcase {
 

@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for core_grades\component_gradeitems;
- *
- * @package   core_grades
- * @category  test
- * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
-
 declare(strict_types = 1);
 
 namespace core_grades\grades\grader\gradingpanel\scale\external;
@@ -42,7 +33,7 @@ use moodle_exception;
  * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grades_grader_gradingpanel_scale_external_fetch_test extends advanced_testcase {
+class fetch_test extends advanced_testcase {
 
     public static function setupBeforeClass(): void {
         global $CFG;
