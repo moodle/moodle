@@ -386,11 +386,10 @@ abstract class moodleform_mod extends moodleform {
     // form verification
     function validation($data, $files) {
         global $COURSE, $DB, $CFG;
-        $errors = parent::validation($data, $files);
 
         $mform =& $this->_form;
 
-        $errors = array();
+        $errors = parent::validation($data, $files);
 
         if ($mform->elementExists('name')) {
             $name = trim($data['name']);
