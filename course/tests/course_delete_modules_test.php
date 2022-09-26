@@ -22,9 +22,7 @@
  * @copyright  2021 Tomo Tsuyuki <tomotsuyuki@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tests\core_course;
-
-defined('MOODLE_INTERNAL') || die();
+namespace core_course;
 
 /**
  * Tests for the \core_course\task\course_delete_modules class.

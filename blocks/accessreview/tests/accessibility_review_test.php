@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace block_accessreview\tests;
+namespace block_accessreview;
 
 use ReflectionClass;
 use advanced_testcase;
