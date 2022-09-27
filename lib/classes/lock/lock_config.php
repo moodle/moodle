@@ -84,11 +84,20 @@ class lock_config {
      * @throws \coding_exception
      */
     public static function get_lock_factory(string $type): \core\lock\lock_factory {
+        global $CFG;
+
         $lockfactoryclass = self::get_lock_factory_class();
         $lockfactory = new $lockfactoryclass($type);
         if (!$lockfactory->is_available()) {
             throw new \coding_exception("Lock factory class $lockfactoryclass is not available.");
         }
+
+        // If tracking performance, insert a timing wrapper to keep track of lock delays.
+        if (defined('MDL_PERF') || !empty($CFG->perfdebug)) {
+            $wrapper = new timing_wrapper_lock_factory($type, $lockfactory);
+            $lockfactory = $wrapper;
+        }
+
         return $lockfactory;
     }
 

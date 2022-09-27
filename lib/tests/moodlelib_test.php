@@ -5354,4 +5354,74 @@ EOF;
         $default = get_default_home_page();
         $this->assertEquals(HOMEPAGE_MYCOURSES, $default);
     }
+
+    /**
+     * Tests the get_performance_info function with regard to locks.
+     *
+     * @covers ::get_performance_info
+     */
+    public function test_get_performance_info_locks(): void {
+        global $PERF;
+
+        // Unset lock data just in case previous tests have set it.
+        unset($PERF->locks);
+
+        // With no lock data, there should be no information about locks in the results.
+        $result = get_performance_info();
+        $this->assertStringNotContainsString('Lock', $result['html']);
+        $this->assertStringNotContainsString('Lock', $result['txt']);
+
+        // Rather than really do locks, just fill the array with fake data in the right format.
+        $PERF->locks = [
+            (object) [
+                'type' => 'phpunit',
+                'resource' => 'lock1',
+                'wait' => 0.59,
+                'success' => true,
+                'held' => '6.04'
+            ], (object) [
+                'type' => 'phpunit',
+                'resource' => 'lock2',
+                'wait' => 0.91,
+                'success' => false
+            ]
+        ];
+        $result = get_performance_info();
+
+        // Extract HTML table rows.
+        $this->assertEquals(1, preg_match('~<table class="locktimings.*?</table>~s',
+                $result['html'], $matches));
+        $this->assertEquals(3, preg_match_all('~<tr[> ].*?</tr>~s', $matches[0], $matches2));
+        $rows = $matches2[0];
+
+        // Check header.
+        $this->assertMatchesRegularExpression('~Lock.*Waited.*Obtained.*Held~s', $rows[0]);
+        // Check both locks.
+        $this->assertMatchesRegularExpression('~phpunit/lock1.*0\.6.*&#x2713;.*6\.0~s', $rows[1]);
+        $this->assertMatchesRegularExpression('~phpunit/lock2.*0\.9.*&#x274c;.*-~s', $rows[2]);
+
+        $this->assertStringContainsString('Locks (waited/obtained/held): ' .
+                'phpunit/lock1 (0.6/y/6.0) phpunit/lock2 (0.9/n/-).', $result['txt']);
+    }
+
+    /**
+     * Tests the get_performance_info function with regard to session wait time.
+     *
+     * @covers ::get_performance_info
+     */
+    public function test_get_performance_info_session_wait(): void {
+        global $PERF;
+
+        // With no session lock data, there should be no session wait information in the results.
+        unset($PERF->sessionlock);
+        $result = get_performance_info();
+        $this->assertStringNotContainsString('Session wait', $result['html']);
+        $this->assertStringNotContainsString('sessionwait', $result['txt']);
+
+        // With suitable data, it should be included in the result.
+        $PERF->sessionlock = ['wait' => 4.2];
+        $result = get_performance_info();
+        $this->assertStringContainsString('Session wait: 4.200 secs', $result['html']);
+        $this->assertStringContainsString('sessionwait: 4.200 secs', $result['txt']);
+    }
 }

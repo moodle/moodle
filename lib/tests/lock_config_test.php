@@ -59,6 +59,9 @@ class lock_config_test extends \advanced_testcase {
         // Test explicit file locks.
         $CFG->lock_factory = '\core\lock\file_lock_factory';
         $factory = \core\lock\lock_config::get_lock_factory('cache');
+        if ($factory instanceof \core\lock\timing_wrapper_lock_factory) {
+            $factory = $factory->get_real_factory();
+        }
         $this->assertTrue($factory instanceof \core\lock\file_lock_factory,
                 'Get an explicit file lock factory');
 
@@ -74,6 +77,9 @@ class lock_config_test extends \advanced_testcase {
         // Test explicit db locks.
         $CFG->lock_factory = '\core\lock\db_record_lock_factory';
         $factory = \core\lock\lock_config::get_lock_factory('cache');
+        if ($factory instanceof \core\lock\timing_wrapper_lock_factory) {
+            $factory = $factory->get_real_factory();
+        }
         $this->assertTrue($factory instanceof \core\lock\db_record_lock_factory,
                 'Get an explicit db record lock factory');
 
