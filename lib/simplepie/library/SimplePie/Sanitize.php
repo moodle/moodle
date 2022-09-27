@@ -61,6 +61,7 @@ class SimplePie_Sanitize
 	var $strip_htmltags = array('base', 'blink', 'body', 'doctype', 'embed', 'font', 'form', 'frame', 'frameset', 'html', 'iframe', 'input', 'marquee', 'meta', 'noscript', 'object', 'param', 'script', 'style');
 	var $encode_instead_of_strip = false;
 	var $strip_attributes = array('bgsound', 'expr', 'id', 'style', 'onclick', 'onerror', 'onfinish', 'onmouseover', 'onmouseout', 'onfocus', 'onblur', 'lowsrc', 'dynsrc');
+	var $rename_attributes = array();
 	var $add_attributes = array('audio' => array('preload' => 'none'), 'iframe' => array('sandbox' => 'allow-scripts allow-same-origin'), 'video' => array('preload' => 'none'));
 	var $strip_comments = false;
 	var $output_encoding = 'UTF-8';
@@ -71,6 +72,15 @@ class SimplePie_Sanitize
 	var $useragent = '';
 	var $force_fsockopen = false;
 	var $replace_url_attributes = null;
+	var $registry;
+
+	/**
+	 * List of domains for which to force HTTPS.
+	 * @see SimplePie_Sanitize::set_https_domains()
+	 * Array is a tree split at DNS levels. Example:
+	 * array('biz' => true, 'com' => array('example' => true), 'net' => array('example' => array('www' => true)))
+	 */
+	var $https_domains = array();
 
 	public function __construct()
 	{
@@ -160,6 +170,25 @@ class SimplePie_Sanitize
 		$this->encode_instead_of_strip = (bool) $encode;
 	}
 
+	public function rename_attributes($attribs = array())
+	{
+		if ($attribs)
+		{
+			if (is_array($attribs))
+			{
+				$this->rename_attributes = $attribs;
+			}
+			else
+			{
+				$this->rename_attributes = explode(',', $attribs);
+			}
+		}
+		else
+		{
+			$this->rename_attributes = false;
+		}
+	}
+
 	public function strip_attributes($attribs = array('bgsound', 'expr', 'id', 'style', 'onclick', 'onerror', 'onfinish', 'onmouseover', 'onmouseout', 'onfocus', 'onblur', 'lowsrc', 'dynsrc'))
 	{
 		if ($attribs)
@@ -212,9 +241,9 @@ class SimplePie_Sanitize
 	 * Set element/attribute key/value pairs of HTML attributes
 	 * containing URLs that need to be resolved relative to the feed
 	 *
-	 * Defaults to |a|@href, |area|@href, |blockquote|@cite, |del|@cite,
-	 * |form|@action, |img|@longdesc, |img|@src, |input|@src, |ins|@cite,
-	 * |q|@cite
+	 * Defaults to |a|@href, |area|@href, |audio|@src, |blockquote|@cite,
+	 * |del|@cite, |form|@action, |img|@longdesc, |img|@src, |input|@src,
+	 * |ins|@cite, |q|@cite, |source|@src, |video|@src
 	 *
 	 * @since 1.0
 	 * @param array|null $element_attribute Element/attribute key/value pairs, null for default
@@ -226,6 +255,7 @@ class SimplePie_Sanitize
 			$element_attribute = array(
 				'a' => 'href',
 				'area' => 'href',
+				'audio' => 'src',
 				'blockquote' => 'cite',
 				'del' => 'cite',
 				'form' => 'action',
@@ -235,10 +265,77 @@ class SimplePie_Sanitize
 				),
 				'input' => 'src',
 				'ins' => 'cite',
-				'q' => 'cite'
+				'q' => 'cite',
+				'source' => 'src',
+				'video' => array(
+					'poster',
+					'src'
+				)
 			);
 		}
 		$this->replace_url_attributes = (array) $element_attribute;
+	}
+
+	/**
+	 * Set the list of domains for which to force HTTPS.
+	 * @see SimplePie_Misc::https_url()
+	 * Example array('biz', 'example.com', 'example.org', 'www.example.net');
+	 */
+	public function set_https_domains($domains)
+	{
+		$this->https_domains = array();
+		foreach ($domains as $domain)
+		{
+			$domain = trim($domain, ". \t\n\r\0\x0B");
+			$segments = array_reverse(explode('.', $domain));
+			$node =& $this->https_domains;
+			foreach ($segments as $segment)
+			{//Build a tree
+				if ($node === true)
+				{
+					break;
+				}
+				if (!isset($node[$segment]))
+				{
+					$node[$segment] = array();
+				}
+				$node =& $node[$segment];
+			}
+			$node = true;
+		}
+	}
+
+	/**
+	 * Check if the domain is in the list of forced HTTPS.
+	 */
+	protected function is_https_domain($domain)
+	{
+		$domain = trim($domain, '. ');
+		$segments = array_reverse(explode('.', $domain));
+		$node =& $this->https_domains;
+		foreach ($segments as $segment)
+		{//Explore the tree
+			if (isset($node[$segment]))
+			{
+				$node =& $node[$segment];
+			}
+			else
+			{
+				break;
+			}
+		}
+		return $node === true;
+	}
+
+	/**
+	 * Force HTTPS for selected Web sites.
+	 */
+	public function https_url($url)
+	{
+		return (strtolower(substr($url, 0, 7)) === 'http://') &&
+			$this->is_https_domain(parse_url($url, PHP_URL_HOST)) ?
+			substr_replace($url, 's', 4, 0) :	//Add the 's' to HTTPS
+			$url;
 	}
 
 	public function sanitize($data, $type, $base = '')
@@ -300,6 +397,14 @@ class SimplePie_Sanitize
 					foreach ($this->strip_htmltags as $tag)
 					{
 						$this->strip_tag($tag, $document, $xpath, $type);
+					}
+				}
+
+				if ($this->rename_attributes)
+				{
+					foreach ($this->rename_attributes as $attrib)
+					{
+						$this->rename_attr($attrib, $xpath);
 					}
 				}
 
@@ -376,6 +481,8 @@ class SimplePie_Sanitize
 				{
 					$data = preg_replace('/^<div' . SIMPLEPIE_PCRE_XML_ATTRIBUTE . '>/', '<div>', $data);
 				}
+
+				$data = str_replace('</source>', '', $data);
 			}
 
 			if ($type & SIMPLEPIE_CONSTRUCT_IRI)
@@ -443,6 +550,7 @@ class SimplePie_Sanitize
 						$value = $this->registry->call('Misc', 'absolutize_url', array($element->getAttribute($attribute), $this->base));
 						if ($value !== false)
 						{
+							$value = $this->https_url($value);
 							$element->setAttribute($attribute, $value);
 						}
 					}
@@ -570,6 +678,17 @@ class SimplePie_Sanitize
 		}
 	}
 
+	protected function rename_attr($attrib, $xpath)
+	{
+		$elements = $xpath->query('//*[@' . $attrib . ']');
+
+		foreach ($elements as $element)
+		{
+			$element->setAttribute('data-sanitized-' . $attrib, $element->getAttribute($attrib));
+			$element->removeAttribute($attrib);
+		}
+	}
+
 	protected function add_attr($tag, $valuePairs, $document)
 	{
 		$elements = $document->getElementsByTagName($tag);
@@ -582,3 +701,5 @@ class SimplePie_Sanitize
 		}
 	}
 }
+
+class_alias('SimplePie_Sanitize', 'SimplePie\Sanitize', false);

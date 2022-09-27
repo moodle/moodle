@@ -164,3 +164,5 @@ class SimplePie_Cache_Memcached implements SimplePie_Cache_Base
         return false;
     }
 }
+
+class_alias('SimplePie_Cache_Memcached', 'SimplePie\Cache\Memcached', false);

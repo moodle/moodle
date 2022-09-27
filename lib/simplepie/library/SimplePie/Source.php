@@ -575,3 +575,5 @@ class SimplePie_Source
 		return null;
 	}
 }
+
+class_alias('SimplePie_Source', 'SimplePie\Source', false);

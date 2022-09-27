@@ -364,3 +364,5 @@ class SimplePie_gzdecode
 		return false;
 	}
 }
+
+class_alias('SimplePie_gzdecode', 'SimplePie\Gzdecode', false);
