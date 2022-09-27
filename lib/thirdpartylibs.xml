@@ -413,7 +413,7 @@ All rights reserved.</copyright>
     <location>maxmind/MaxMind</location>
     <name>MaxMind DB Reader API</name>
     <description>PHP API for reading MaxMind DB files.</description>
-    <version>1.10.1</version>
+    <version>1.11.0</version>
     <license>Apache</license>
     <licenseversion>2.0</licenseversion>
     <repository>https://github.com/maxmind/MaxMind-DB-Reader-php/</repository>

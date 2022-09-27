@@ -24,7 +24,7 @@
         "ext-maxminddb": "<1.10.1,>=2.0.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "*",
+        "friendsofphp/php-cs-fixer": "3.*",
         "phpunit/phpunit": ">=8.0.0,<10.0.0",
         "php-coveralls/php-coveralls": "^2.1",
         "phpunit/phpcov": ">=6.0.0",
