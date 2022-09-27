@@ -394,18 +394,20 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         if (!$handle = fopen($file, 'rb')) {
             return false;
         }
-        // Lock it up!
-        // We don't care if this succeeds or not, on some systems it will, on some it won't, meah either way.
-        flock($handle, LOCK_SH);
+
+        // Note: There is no need to perform any file locking here.
+        // The cache file is only ever written to in the `write_file` function, where it does so by writing to a temp
+        // file and performing an atomic rename of that file. The target file is never locked, so there is no benefit to
+        // obtaining a lock (shared or exclusive) here.
+
         $data = '';
         // Read the data in 1Mb chunks. Small caches will not loop more than once.  We don't use filesize as it may
         // be cached with a different value than what we need to read from the file.
         do {
             $data .= fread($handle, 1048576);
         } while (!feof($handle));
-        // Unlock it.
-        flock($handle, LOCK_UN);
         $this->lastiobytes = strlen($data);
+
         // Return it unserialised.
         return $this->prep_data_after_read($data);
     }
