@@ -101,6 +101,7 @@ require_once $__dir . '/HTMLPurifier/AttrDef/HTML/Bool.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/HTML/Nmtokens.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/HTML/Class.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/HTML/Color.php';
+require_once $__dir . '/HTMLPurifier/AttrDef/HTML/ContentEditable.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/HTML/FrameTarget.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/HTML/ID.php';
 require_once $__dir . '/HTMLPurifier/AttrDef/HTML/Pixels.php';
