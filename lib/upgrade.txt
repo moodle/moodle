@@ -2,7 +2,8 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 4.1 ===
-
+* Final deprecation of the following functions behat_field_manager::get_node_type() and behat_field_manager::get_field()
+  please call behat_field_manager::get_field_node_type() and behat_field_manager::get_form_field().
 * Final deprecation and removal of the following class, please use \core\task\manager.
     - \tool_task\run_from_cli
 * Final deprecation and removal of the following CLI scripts:
