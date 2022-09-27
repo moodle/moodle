@@ -15,26 +15,19 @@ Feature: Display the book description in the book and optionally in the course
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity | name      | intro                | course | idnumber | section |
-      | book     | Test book | A book about dreams! | C1     | book1    | 1       |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Test book"
-    And I should see "Add new chapter"
-    And I set the following fields to these values:
-      | Chapter title | Dummy first chapter |
-      | Content | Dream is the start of a journey |
-    And I press "Save changes"
+      | activity | name      | intro                | course | idnumber |
+      | book     | Test book | A book about dreams! | C1     | book1    |
+    And the following "mod_book > chapter" exists:
+      | book    | Test book                       |
+      | title   | Dummy first chapter             |
+      | content | Dream is the start of a journey |
 
   Scenario: Description is displayed in the book
-    Given I am on "Course 1" course homepage
-    When I follow "Test book"
+    When I am on the "Test book" "book activity" page logged in as teacher1
     Then I should see "A book about dreams!"
 
   Scenario: Show book description in the course homepage
-    Given I am on "Course 1" course homepage
-    And I follow "Test book"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test book" "book activity editing" page logged in as teacher1
     And the following fields match these values:
       | Display description on course page | |
     And I set the following fields to these values:
@@ -44,9 +37,7 @@ Feature: Display the book description in the book and optionally in the course
     Then I should see "A book about dreams!"
 
   Scenario: Hide book description in the course homepage
-    Given I am on "Course 1" course homepage
-    And I follow "Test book"
-    And I navigate to "Edit settings" in current page administration
+    Given I am on the "Test book" "book activity editing" page logged in as teacher1
     And the following fields match these values:
       | Display description on course page | |
     And I press "Save and return to course"
