@@ -35,6 +35,13 @@ Feature: bigbluebuttonbn instance
     And I should not see "Join session"
     And I should see "Recordings"
 
+  Scenario: Add a Recording Only activity and check that no live session settings are available for this instance type
+    Given I am on the "Test course" "course" page logged in as "admin"
+    And I am on "Test course" course homepage with editing mode on
+    And I add a "BigBlueButton" to section "1"
+    When  I select "Recordings only" from the "Instance type" singleselect
+    Then I should not see "Lock settings"
+
   Scenario Outline: Add an activity and check that required settings are available for the three types of instance types
     When I turn editing mode on
     And I add a "BigBlueButton" to section "1"

@@ -137,6 +137,9 @@ const applyInstanceTypeProfile = (profileType, isFeatureEnabled) => {
     // Show recordings imported settings validation.
     showInput('id_recordings_imported', showAll ||
         isFeatureEnabled(profileType, 'showrecordings'));
+    // Show lock settings validation.
+    showFieldset('id_lock', showAll ||
+        isFeatureEnabled(profileType, 'lock'));
     // Preuploadpresentation feature validation.
     showFieldset('id_preuploadpresentation', showAll ||
         isFeatureEnabled(profileType, 'preuploadpresentation'));
