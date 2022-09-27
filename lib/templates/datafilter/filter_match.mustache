@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_user/participantsfilter
+    @template core/datafilter/filter_match
 
     Template for the form containing one or more filter rows.
 
@@ -39,10 +39,17 @@
         ]
     }
 }}
-{{> core/datafilter/filter }}
 
-{{#js}}
-    require(['core_user/participants_filter'], function(ParticipantsFilter) {
-        ParticipantsFilter.init('core-filter-{{uniqid}}');
-    });
-{{/js}}
+<div data-filterregion="filtermatch" class="hidden">
+    <label for="core-filter-jointype-{{uniqid}}" class="my-0" aria-hidden="true">
+        {{#str}}match{{/str}}
+    </label>
+    <select class="custom-select" data-filterfield="join" id="core-filter-jointype-{{uniqid}}"
+            aria-label="{{#str}}filtersetmatchdescription{{/str}}">
+        <option value="0">{{#str}}none{{/str}}</option>
+        <option value="1">{{#str}}any{{/str}}</option>
+        <option value="2" selected>{{#str}}all{{/str}}</option>
+    </select>
+    <span aria-hidden="true">{{#str}}matchofthefollowing{{/str}}</span>
+</div>
+
