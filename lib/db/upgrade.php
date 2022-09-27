@@ -2720,5 +2720,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2021051707.05);
     }
 
+    if ($oldversion < 2021051710.03) {
+
+        // Remove any orphaned tag instance records (pointing to non-existing context).
+        $DB->delete_records_select('tag_instance', 'NOT EXISTS (
+            SELECT ctx.id FROM {context} ctx WHERE ctx.id = {tag_instance}.contextid
+        )');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2021051710.03);
+    }
+
     return true;
 }
