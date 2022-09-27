@@ -18,7 +18,7 @@ Feature: Course content collapsed user preferences
     And the following "activities" exist:
       | activity | name              | intro                       | course | idnumber | section |
       | assign   | Activity sample 1 | Test assignment description | C1     | sample1  | 1       |
-      | book     | Activity sample 2 | Test book description       | C1     | sample2  | 2       |
+      | book     | Activity sample 2 |                             | C1     | sample2  | 2       |
       | choice   | Activity sample 3 | Test choice description     | C1     | sample3  | 3       |
       | assign   | Activity sample 4 | Test assignment description | C1     | sample1  | 4       |
       | assign   | Activity sample 5 | Test assignment description | C1     | sample1  | 5       |

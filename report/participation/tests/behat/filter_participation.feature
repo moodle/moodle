@@ -20,13 +20,11 @@ Feature: In a participation report, admin can filter student actions
       | course      | C1             |
       | activity    | book           |
       | name        | Test book name |
-      | description | Test book      |
       | idnumber    | book1          |
-    And I am on the "Test book name" "book activity" page logged in as teacher1
-    And I set the following fields to these values:
-      | Chapter title | Test chapter |
-      | Content | Test chapter content |
-    And I log out
+    And the following "mod_book > chapter" exists:
+      | book    | Test book name       |
+      | title   | Test chapter         |
+      | content | Test chapter content |
 
   @javascript
   Scenario: Filter participation report when only legacy log reader is enabled
@@ -36,10 +34,8 @@ Feature: In a participation report, admin can filter student actions
     And I click on "Enable" "link" in the "Legacy log" "table_row"
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
-    And I log out
 
     And I am on the "Test book name" "book activity" page logged in as student1
-    And I log out
 
     When I am on the "Course 1" course page logged in as admin
     When I navigate to "Reports" in current page administration
@@ -57,7 +53,6 @@ Feature: In a participation report, admin can filter student actions
     And I click on "Enable" "link" in the "Legacy log" "table_row"
     And the following config values are set as admin:
       | loglegacy | 1 | logstore_legacy |
-    And I log out
 
     And I am on the "Test book name" "book activity" page logged in as student1
     And I log out
@@ -65,13 +60,10 @@ Feature: In a participation report, admin can filter student actions
     And I log in as "admin"
     And I navigate to "Plugins > Logging > Manage log stores" in site administration
     And I click on "Enable" "link" in the "Standard log" "table_row"
-    And I log out
 
     And I am on the "Test book name" "book activity" page logged in as student1
-    And I log out
 
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as admin
     When I navigate to "Reports" in current page administration
     And I click on "Course participation" "link"
     And I set the field "instanceid" to "Test book name"
@@ -82,10 +74,8 @@ Feature: In a participation report, admin can filter student actions
   @javascript
   Scenario: Filter participation report when only standard log reader is enabled by default
     Given I am on the "Test book name" "book activity" page logged in as student1
-    And I log out
 
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as admin
     And I navigate to "Reports" in current page administration
     And I click on "Course participation" "link"
     And I set the field "instanceid" to "Test book name"
