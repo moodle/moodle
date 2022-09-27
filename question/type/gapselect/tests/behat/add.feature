@@ -38,7 +38,6 @@ Feature: Test creating a Select missing words question
     And the following fields match these values:
       | id_shuffleanswers | 1 |
 
-  @javascript
   Scenario: Edit a Select missing words question with 2 choice and should not have empty choice.
     Given I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I add a "Select missing words" question filling the form with:
