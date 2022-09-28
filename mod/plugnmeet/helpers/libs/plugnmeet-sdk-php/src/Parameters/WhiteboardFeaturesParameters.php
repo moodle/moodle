@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -53,7 +54,8 @@ class WhiteboardFeaturesParameters
      */
     public function setAllowedWhiteboard(bool $allowedWhiteboard): void
     {
-        $this->allowedWhiteboard = filter_var($allowedWhiteboard, FILTER_VALIDATE_BOOLEAN);;
+        $this->allowedWhiteboard = filter_var($allowedWhiteboard, FILTER_VALIDATE_BOOLEAN);
+        ;
     }
 
     /**
@@ -65,5 +67,4 @@ class WhiteboardFeaturesParameters
             "allowed_whiteboard" => $this->allowedWhiteboard,
         );
     }
-
 }

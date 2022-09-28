@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -93,5 +94,4 @@ class UserMetadataParameters
 
         return $body;
     }
-
 }

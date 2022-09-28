@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -50,7 +51,7 @@ class BreakoutRoomFeaturesParameters
      */
     public function setIsAllow(bool $isAllow): void
     {
-        $this->isAllow = filter_var($isAllow, FILTER_VALIDATE_BOOLEAN);;
+        $this->isAllow = filter_var($isAllow, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**

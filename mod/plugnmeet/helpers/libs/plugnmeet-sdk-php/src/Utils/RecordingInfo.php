@@ -32,7 +32,7 @@ class RecordingInfo
     /**
      * @var object
      */
-    protected object $recording;
+    protected $recording;
 
     /**
      * @param object $recording
@@ -98,4 +98,3 @@ class RecordingInfo
         return $this->recording->room_creation_time;
     }
 }
-

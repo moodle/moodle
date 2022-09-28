@@ -149,9 +149,7 @@ function plugnmeet_delete_instance($id) {
         return false;
     }
 
-    $DB->delete_records('plugnmeet', array('id' => $id));
-
-    return true;
+    return $DB->delete_records('plugnmeet', array('id' => $id));
 }
 
 /**
@@ -198,16 +196,16 @@ function plugnmeet_scale_used_anywhere($scaleid) {
  * Needed by {@see grade_update_mod_grades()}.
  *
  * @param stdClass $moduleinstance Instance object with extra cmidnumber and modname property.
- * @param bool $reset Reset grades in the gradebook.
- * @return void.
+ * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @return int 0 if ok, error code otherwise
  */
-function plugnmeet_grade_item_update($moduleinstance, $reset = false) {
+function plugnmeet_grade_item_update($moduleinstance, $grades = null) {
     global $CFG;
     require_once($CFG->libdir . '/gradelib.php');
 
     $item = array();
     $item['itemname'] = clean_param($moduleinstance->name, PARAM_NOTAGS);
-    $item['gradetype'] = GRADE_TYPE_VALUE;
+    $item['gradetype'] = GRADE_TYPE_NONE;
 
     if ($moduleinstance->grade > 0) {
         $item['gradetype'] = GRADE_TYPE_VALUE;
@@ -216,21 +214,21 @@ function plugnmeet_grade_item_update($moduleinstance, $reset = false) {
     } else if ($moduleinstance->grade < 0) {
         $item['gradetype'] = GRADE_TYPE_SCALE;
         $item['scaleid'] = -$moduleinstance->grade;
-    } else {
-        $item['gradetype'] = GRADE_TYPE_NONE;
-    }
-    if ($reset) {
-        $item['reset'] = true;
     }
 
-    grade_update('/mod/plugnmeet', $moduleinstance->course, 'mod', 'mod_plugnmeet', $moduleinstance->id, 0, null, $item);
+    if ($grades === 'reset') {
+        $item['reset'] = true;
+        $grades = null;
+    }
+
+    return grade_update('/mod/plugnmeet', $moduleinstance->course, 'mod', 'plugnmeet', $moduleinstance->id, 0, $grades, $item);
 }
 
 /**
  * Delete grade item for given mod_plugnmeet instance.
  *
  * @param stdClass $moduleinstance Instance object.
- * @return grade_item.
+ * @return int.
  */
 function plugnmeet_grade_item_delete($moduleinstance) {
     global $CFG;
@@ -254,7 +252,7 @@ function plugnmeet_update_grades($moduleinstance, $userid = 0) {
 
     // Populate array of grade objects indexed by userid.
     $grades = array();
-    grade_update('/mod/plugnmeet', $moduleinstance->course, 'mod', 'mod_plugnmeet', $moduleinstance->id, 0, $grades);
+    grade_update('/mod/plugnmeet', $moduleinstance->course, 'mod', 'plugnmeet', $moduleinstance->id, 0, $grades);
 }
 
 /**

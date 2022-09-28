@@ -59,7 +59,13 @@ class mod_plugnmeet_get_recordings extends external_api {
     public static function get_recordings($instanceid, $roomid, $from, $limit, $orderby) {
         $result = array(
             "status" => false,
-            "result" => null
+            "result" => array (
+                'total_recordings' => 0,
+                'from' => 0,
+                'limit' => 20,
+                'order_by' => 'DESC',
+                'recordings_list' => null
+            )
         );
         $cm = get_coursemodule_from_instance('plugnmeet', $instanceid, 0, false, MUST_EXIST);
         $context = context_module::instance($cm->id);

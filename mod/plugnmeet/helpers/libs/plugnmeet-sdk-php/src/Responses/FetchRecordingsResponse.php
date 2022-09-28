@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -33,32 +34,44 @@ class FetchRecordingsResponse extends BaseResponse
     /**
      * @return int
      */
-    public function getTotalRecordings(): ?int
+    public function getTotalRecordings(): int
     {
+        if (!isset($this->rawResponse->result)) {
+            return 0;
+        }
         return $this->rawResponse->result->total_recordings;
     }
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getFrom(): ?int
+    public function getFrom(): int
     {
+        if (!isset($this->rawResponse->result)) {
+            return 0;
+        }
         return $this->rawResponse->result->from;
     }
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getLimit(): ?int
+    public function getLimit(): int
     {
+        if (!isset($this->rawResponse->result)) {
+            return 20;
+        }
         return $this->rawResponse->result->limit;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getOrderBy(): ?string
+    public function getOrderBy(): string
     {
+        if (!isset($this->rawResponse->result)) {
+            return "DESC";
+        }
         return $this->rawResponse->result->order_by;
     }
 
@@ -68,6 +81,9 @@ class FetchRecordingsResponse extends BaseResponse
     public function getRecordings(): array
     {
         $recordings = [];
+        if (!isset($this->rawResponse->result)) {
+            return $recordings;
+        }
 
         if (count($this->rawResponse->result->recordings_list) > 0) {
             foreach ($this->rawResponse->result->recordings_list as $recording) {
@@ -78,4 +94,3 @@ class FetchRecordingsResponse extends BaseResponse
         return $recordings;
     }
 }
-

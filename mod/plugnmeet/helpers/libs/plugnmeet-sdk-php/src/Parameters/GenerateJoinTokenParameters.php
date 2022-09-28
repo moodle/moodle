@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -28,7 +29,6 @@ namespace Mynaparrot\Plugnmeet\Parameters;
  */
 class GenerateJoinTokenParameters
 {
-
     /**
      * @var string
      */
@@ -179,5 +179,4 @@ class GenerateJoinTokenParameters
 
         return $body;
     }
-
 }

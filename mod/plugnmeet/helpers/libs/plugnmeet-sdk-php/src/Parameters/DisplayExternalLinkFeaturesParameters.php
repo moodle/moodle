@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -59,5 +60,4 @@ class DisplayExternalLinkFeaturesParameters
             "is_allow" => $this->isAllow,
         );
     }
-
 }

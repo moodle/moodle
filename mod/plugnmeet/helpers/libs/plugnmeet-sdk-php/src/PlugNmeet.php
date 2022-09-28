@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -48,7 +49,8 @@ use Ramsey\Uuid\Uuid;
 /**
  *
  */
-class PlugNmeet {
+class PlugNmeet
+{
     /**
      * @var string
      */
@@ -67,11 +69,17 @@ class PlugNmeet {
     protected $defaultPath = "/auth";
 
     /**
+     * @var string
+     */
+    protected $algo = "sha256";
+
+    /**
      * @param $serverUrl plugNmeet server URL
-     * @param $apiKey plugNmeet API_Key
+     * @param $apiKey    plugNmeet API_Key
      * @param $apiSecret plugNmeet API_Secret
      */
-    public function __construct($serverUrl, $apiKey, $apiSecret) {
+    public function __construct($serverUrl, $apiKey, $apiSecret)
+    {
         $this->serverUrl = $serverUrl;
         $this->apiKey = $apiKey;
         $this->apiSecret = $apiSecret;
@@ -79,10 +87,12 @@ class PlugNmeet {
 
     /**
      * Create new room
+     *
      * @param CreateRoomParameters $createRoomParameters
      * @return CreateRoomResponse
      */
-    public function createRoom(CreateRoomParameters $createRoomParameters): CreateRoomResponse {
+    public function createRoom(CreateRoomParameters $createRoomParameters): CreateRoomResponse
+    {
         $body = $createRoomParameters->buildBody();
         $output = $this->sendRequest("/room/create", $body);
         return new CreateRoomResponse($output);
@@ -90,10 +100,12 @@ class PlugNmeet {
 
     /**
      * Generate join token
+     *
      * @param GenerateJoinTokenParameters $generateJoinTokenParameters
      * @return GenerateJoinTokenResponse
      */
-    public function getJoinToken(GenerateJoinTokenParameters $generateJoinTokenParameters): GenerateJoinTokenResponse {
+    public function getJoinToken(GenerateJoinTokenParameters $generateJoinTokenParameters): GenerateJoinTokenResponse
+    {
         $body = $generateJoinTokenParameters->buildBody();
         $output = $this->sendRequest("/room/getJoinToken", $body);
         return new GenerateJoinTokenResponse($output);
@@ -101,10 +113,12 @@ class PlugNmeet {
 
     /**
      * To check if room is active or not
+     *
      * @param IsRoomActiveParameters $isRoomActiveParameters
      * @return IsRoomActiveResponse
      */
-    public function isRoomActive(IsRoomActiveParameters $isRoomActiveParameters): IsRoomActiveResponse {
+    public function isRoomActive(IsRoomActiveParameters $isRoomActiveParameters): IsRoomActiveResponse
+    {
         $body = $isRoomActiveParameters->buildBody();
         $output = $this->sendRequest("/room/isRoomActive", $body);
         return new IsRoomActiveResponse($output);
@@ -112,10 +126,13 @@ class PlugNmeet {
 
     /**
      * Get active room information
+     *
      * @param GetActiveRoomInfoParameters $getActiveRoomInfoParameters
      * @return GetActiveRoomInfoResponse
      */
-    public function getActiveRoomInfo(GetActiveRoomInfoParameters $getActiveRoomInfoParameters): GetActiveRoomInfoResponse {
+    public function getActiveRoomInfo(
+        GetActiveRoomInfoParameters $getActiveRoomInfoParameters
+    ): GetActiveRoomInfoResponse {
         $body = $getActiveRoomInfoParameters->buildBody();
         $output = $this->sendRequest("/room/getActiveRoomInfo", $body);
         return new GetActiveRoomInfoResponse($output);
@@ -123,19 +140,23 @@ class PlugNmeet {
 
     /**
      * Get all active rooms
+     *
      * @return GetActiveRoomsInfoResponse
      */
-    public function getActiveRoomsInfo(): GetActiveRoomsInfoResponse {
+    public function getActiveRoomsInfo(): GetActiveRoomsInfoResponse
+    {
         $output = $this->sendRequest("/room/getActiveRoomsInfo", []);
         return new GetActiveRoomsInfoResponse($output);
     }
 
     /**
      * End active room
+     *
      * @param EndRoomParameters $endRoomParameters
      * @return EndRoomResponse
      */
-    public function endRoom(EndRoomParameters $endRoomParameters) {
+    public function endRoom(EndRoomParameters $endRoomParameters)
+    {
         $body = $endRoomParameters->buildBody();
         $output = $this->sendRequest("/room/endRoom", $body);
         return new EndRoomResponse($output);
@@ -143,10 +164,12 @@ class PlugNmeet {
 
     /**
      * To fetch recordings
+     *
      * @param FetchRecordingsParameters $fetchRecordingsParameters
      * @return FetchRecordingsResponse
      */
-    public function fetchRecordings(FetchRecordingsParameters $fetchRecordingsParameters): FetchRecordingsResponse {
+    public function fetchRecordings(FetchRecordingsParameters $fetchRecordingsParameters): FetchRecordingsResponse
+    {
         $body = $fetchRecordingsParameters->buildBody();
         $output = $this->sendRequest("/recording/fetch", $body);
         return new FetchRecordingsResponse($output);
@@ -154,10 +177,12 @@ class PlugNmeet {
 
     /**
      * To delete recording
+     *
      * @param DeleteRecordingParameters $deleteRecordingParameters
      * @return DeleteRecordingResponse
      */
-    public function deleteRecordings(DeleteRecordingParameters $deleteRecordingParameters): DeleteRecordingResponse {
+    public function deleteRecordings(DeleteRecordingParameters $deleteRecordingParameters): DeleteRecordingResponse
+    {
         $body = $deleteRecordingParameters->buildBody();
         $output = $this->sendRequest("/recording/delete", $body);
         return new DeleteRecordingResponse($output);
@@ -165,10 +190,13 @@ class PlugNmeet {
 
     /**
      * Generate token to download recording
+     *
      * @param RecordingDownloadTokenParameters $recordingDownloadTokenParameters
      * @return RecordingDownloadTokenResponse
      */
-    public function getRecordingDownloadToken(RecordingDownloadTokenParameters $recordingDownloadTokenParameters): RecordingDownloadTokenResponse {
+    public function getRecordingDownloadToken(
+        RecordingDownloadTokenParameters $recordingDownloadTokenParameters
+    ): RecordingDownloadTokenResponse {
         $body = $recordingDownloadTokenParameters->buildBody();
         $output = $this->sendRequest("/recording/getDownloadToken", $body);
         return new RecordingDownloadTokenResponse($output);
@@ -177,7 +205,8 @@ class PlugNmeet {
     /**
      * @return ClientFilesResponses
      */
-    public function getClientFiles() {
+    public function getClientFiles()
+    {
         $output = $this->sendRequest("/getClientFiles", []);
         return new ClientFilesResponses($output);
     }
@@ -189,7 +218,8 @@ class PlugNmeet {
      * @param array $head
      * @return string
      */
-    public function getJWTencodedData(array $payload, int $validity, $algo = "HS256", array $head = []) {
+    public function getJWTencodedData(array $payload, int $validity, $algo = "HS256", array $head = [])
+    {
         $payload['iss'] = $this->apiKey;
         $payload['nbf'] = time();
         $payload['exp'] = time() + $validity;
@@ -202,32 +232,39 @@ class PlugNmeet {
      * @param string $algo
      * @return object
      */
-    public function decodeJWTData(string $raw, $algo = "HS256") {
+    public function decodeJWTData(string $raw, $algo = "HS256")
+    {
         return JWT::decode($raw, new Key($this->apiSecret, $algo));
     }
 
     /**
      * Generate UUID random string
+     *
      * @return string
      */
-    public function getUUID() {
+    public function getUUID()
+    {
         $uuid = Uuid::uuid4();
         return $uuid->toString();
     }
 
     /**
-     * @param $path
+     * @param  $path
      * @param array $body
      * @return object
      */
-    protected function sendRequest($path, array $body) {
+    protected function sendRequest($path, array $body)
+    {
         $output = new \stdClass();
         $output->status = false;
+
+        $fields = json_encode($body);
+        $signature = hash_hmac($this->algo, $fields, $this->apiSecret);
 
         $header = array(
             "Content-type: application/json",
             "API-KEY: " . $this->apiKey,
-            "API-SECRET: " . $this->apiSecret
+            "HASH-SIGNATURE: " . $signature
         );
         $url = $this->serverUrl . $this->defaultPath . $path;
 
@@ -236,7 +273,7 @@ class PlugNmeet {
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
             curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__) . '/cert/cacert.pem');

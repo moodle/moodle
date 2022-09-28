@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -31,7 +32,7 @@ class ActiveRoomInfo
     /**
      * @var object
      */
-    protected object $roomInfo;
+    protected $roomInfo;
 
     /**
      * @param object $roomInfo

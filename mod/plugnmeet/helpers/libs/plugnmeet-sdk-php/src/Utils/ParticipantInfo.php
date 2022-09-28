@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -31,7 +32,7 @@ class ParticipantInfo
     /**
      * @var object
      */
-    protected object $participantInfo;
+    protected $participantInfo;
 
     /**
      * @param object $participantInfo

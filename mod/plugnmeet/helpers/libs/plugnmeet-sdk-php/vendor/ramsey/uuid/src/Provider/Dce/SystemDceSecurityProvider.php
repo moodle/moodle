@@ -229,6 +229,6 @@ class SystemDceSecurityProvider implements DceSecurityProviderInterface
             return '';
         }
 
-        return trim(substr($sid, $lastHyphen + 1));
+        return trim((string) substr($sid, $lastHyphen + 1));
     }
 }

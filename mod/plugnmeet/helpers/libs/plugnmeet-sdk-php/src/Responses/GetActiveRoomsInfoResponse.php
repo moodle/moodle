@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -34,6 +35,10 @@ class GetActiveRoomsInfoResponse extends BaseResponse
     public function getRooms(): array
     {
         $rooms = [];
+        if (!isset($this->rawResponse->rooms)) {
+            return $rooms;
+        }
+
         if (count($this->rawResponse->rooms) > 0) {
             foreach ($this->rawResponse->rooms as $room) {
                 $response = new \stdClass();

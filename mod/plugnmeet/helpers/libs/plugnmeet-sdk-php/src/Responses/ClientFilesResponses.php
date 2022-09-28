@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -26,19 +27,21 @@ namespace Mynaparrot\Plugnmeet\Responses;
 /**
  *
  */
-class ClientFilesResponses extends BaseResponse {
-    
+class ClientFilesResponses extends BaseResponse
+{
     /**
      * @return array|null
      */
-    public function getCSSFiles(): ?array {
+    public function getCSSFiles(): ?array
+    {
         return $this->rawResponse->css;
     }
 
     /**
      * @return array|null
      */
-    public function getJSFiles(): ?array {
+    public function getJSFiles(): ?array
+    {
         return $this->rawResponse->js;
     }
 }

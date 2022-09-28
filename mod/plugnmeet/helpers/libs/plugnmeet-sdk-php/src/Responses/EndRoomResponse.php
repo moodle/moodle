@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -25,6 +26,4 @@ namespace Mynaparrot\Plugnmeet\Responses;
 
 class EndRoomResponse extends BaseResponse
 {
-    
 }
-

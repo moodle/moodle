@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -47,7 +48,8 @@ class ExternalMediaPlayerFeaturesParameters
      */
     public function setAllowedExternalMediaPlayer(bool $allowedExternalMediaPlayer): void
     {
-        $this->allowedExternalMediaPlayer = filter_var($allowedExternalMediaPlayer, FILTER_VALIDATE_BOOLEAN);;
+        $this->allowedExternalMediaPlayer = filter_var($allowedExternalMediaPlayer, FILTER_VALIDATE_BOOLEAN);
+        ;
     }
 
     /**
@@ -59,5 +61,4 @@ class ExternalMediaPlayerFeaturesParameters
             "allowed_external_media_player" => $this->allowedExternalMediaPlayer,
         );
     }
-
 }

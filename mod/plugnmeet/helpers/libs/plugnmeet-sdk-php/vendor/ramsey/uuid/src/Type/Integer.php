@@ -15,11 +15,9 @@ declare(strict_types=1);
 namespace Ramsey\Uuid\Type;
 
 use Ramsey\Uuid\Exception\InvalidArgumentException;
-use ValueError;
 
 use function ctype_digit;
 use function ltrim;
-use function sprintf;
 use function strpos;
 use function substr;
 
@@ -117,14 +115,6 @@ final class Integer implements NumberInterface
     }
 
     /**
-     * @return array{string: string}
-     */
-    public function __serialize(): array
-    {
-        return ['string' => $this->toString()];
-    }
-
-    /**
      * Constructs the object from a serialized string representation
      *
      * @param string $serialized The serialized string representation of the object
@@ -135,19 +125,5 @@ final class Integer implements NumberInterface
     public function unserialize($serialized): void
     {
         $this->__construct($serialized);
-    }
-
-    /**
-     * @param array{string: string} $data
-     */
-    public function __unserialize(array $data): void
-    {
-        // @codeCoverageIgnoreStart
-        if (!isset($data['string'])) {
-            throw new ValueError(sprintf('%s(): Argument #1 ($data) is invalid', __METHOD__));
-        }
-        // @codeCoverageIgnoreEnd
-
-        $this->unserialize($data['string']);
     }
 }

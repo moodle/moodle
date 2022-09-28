@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -65,5 +66,4 @@ class EndRoomParameters
             "room_id" => $this->roomId,
         );
     }
-    
 }

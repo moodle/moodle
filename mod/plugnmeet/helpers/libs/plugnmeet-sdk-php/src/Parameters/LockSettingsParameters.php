@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -28,7 +29,6 @@ namespace Mynaparrot\Plugnmeet\Parameters;
  */
 class LockSettingsParameters
 {
-
     /**
      * @var bool
      */

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -28,5 +29,4 @@ namespace Mynaparrot\Plugnmeet\Responses;
  */
 class DeleteRecordingResponse extends BaseResponse
 {
-    
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 MynaParrot
  *
@@ -36,4 +37,3 @@ class RecordingDownloadTokenResponse extends BaseResponse
         return $this->rawResponse->token;
     }
 }
-

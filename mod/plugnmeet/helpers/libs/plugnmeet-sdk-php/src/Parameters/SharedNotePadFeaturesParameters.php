@@ -54,7 +54,8 @@ class SharedNotePadFeaturesParameters
      */
     public function setAllowedSharedNotePad(bool $allowedSharedNotePad): void
     {
-        $this->allowedSharedNotePad = filter_var($allowedSharedNotePad, FILTER_VALIDATE_BOOLEAN);;
+        $this->allowedSharedNotePad = filter_var($allowedSharedNotePad, FILTER_VALIDATE_BOOLEAN);
+        ;
     }
 
     /**
@@ -67,4 +68,3 @@ class SharedNotePadFeaturesParameters
         );
     }
 }
-

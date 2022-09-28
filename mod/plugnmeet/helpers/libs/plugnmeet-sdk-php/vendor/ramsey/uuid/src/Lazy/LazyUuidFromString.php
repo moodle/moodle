@@ -24,12 +24,10 @@ use Ramsey\Uuid\Type\Hexadecimal;
 use Ramsey\Uuid\Type\Integer as IntegerObject;
 use Ramsey\Uuid\UuidFactory;
 use Ramsey\Uuid\UuidInterface;
-use ValueError;
 
 use function assert;
 use function bin2hex;
 use function hex2bin;
-use function sprintf;
 use function str_replace;
 use function substr;
 
@@ -93,16 +91,6 @@ final class LazyUuidFromString implements UuidInterface
     }
 
     /**
-     * @return array{string: string}
-     *
-     * @psalm-return array{string: non-empty-string}
-     */
-    public function __serialize(): array
-    {
-        return ['string' => $this->uuid];
-    }
-
-    /**
      * {@inheritDoc}
      *
      * @param string $serialized
@@ -112,22 +100,6 @@ final class LazyUuidFromString implements UuidInterface
     public function unserialize($serialized): void
     {
         $this->uuid = $serialized;
-    }
-
-    /**
-     * @param array{string: string} $data
-     *
-     * @psalm-param array{string: non-empty-string} $data
-     */
-    public function __unserialize(array $data): void
-    {
-        // @codeCoverageIgnoreStart
-        if (!isset($data['string'])) {
-            throw new ValueError(sprintf('%s(): Argument #1 ($data) is invalid', __METHOD__));
-        }
-        // @codeCoverageIgnoreEnd
-
-        $this->unserialize($data['string']);
     }
 
     /** @psalm-suppress DeprecatedMethod */

@@ -87,7 +87,7 @@ class CombGenerator implements RandomGeneratorInterface
      */
     public function generate(int $length): string
     {
-        if ($length < self::TIMESTAMP_BYTES) {
+        if ($length < self::TIMESTAMP_BYTES || $length < 0) {
             throw new InvalidArgumentException(
                 'Length must be a positive integer greater than or equal to ' . self::TIMESTAMP_BYTES
             );
