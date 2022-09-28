@@ -3383,5 +3383,35 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023081800.01);
     }
 
+    if ($oldversion < 2023082200.01) {
+
+        // Remove any non-unique filters/conditions.
+        $duplicates = $DB->get_records_sql("
+            SELECT MIN(id) AS id, reportid, uniqueidentifier, iscondition
+              FROM {reportbuilder_filter}
+          GROUP BY reportid, uniqueidentifier, iscondition
+            HAVING COUNT(*) > 1");
+
+        foreach ($duplicates as $duplicate) {
+            $DB->delete_records_select(
+                'reportbuilder_filter',
+                'id <> :id AND reportid = :reportid AND uniqueidentifier = :uniqueidentifier AND iscondition = :iscondition',
+                (array) $duplicate
+            );
+        }
+
+        // Define index report-filter (unique) to be added to reportbuilder_filter.
+        $table = new xmldb_table('reportbuilder_filter');
+        $index = new xmldb_index('report-filter', XMLDB_INDEX_UNIQUE, ['reportid', 'uniqueidentifier', 'iscondition']);
+
+        // Conditionally launch add index report-filter.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082200.01);
+    }
+
     return true;
 }
