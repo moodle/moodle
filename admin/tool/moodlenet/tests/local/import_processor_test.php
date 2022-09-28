@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the import_processor class.
- *
- * @package    tool_moodlenet
- * @category   test
- * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-namespace tool_moodlenet\local\tests;
+namespace tool_moodlenet\local;
 
 use tool_moodlenet\local\import_handler_registry;
 use tool_moodlenet\local\import_processor;
@@ -31,10 +23,13 @@ use tool_moodlenet\local\import_strategy_link;
 use tool_moodlenet\local\remote_resource;
 use tool_moodlenet\local\url;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class tool_moodlenet_import_processor_testcase, providing test cases for the import_processor class.
+ *
+ * @package    tool_moodlenet
+ * @category   test
+ * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class import_processor_test extends \advanced_testcase {
 

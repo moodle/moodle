@@ -14,23 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_moodlenet\local;
+
+use tool_moodlenet\local\remote_resource;
+use tool_moodlenet\local\url;
+
 /**
- * Unit tests for the remote_resource class.
+ * Class tool_moodlenet_remote_resource_testcase, providing test cases for the remote_resource class.
  *
  * @package    tool_moodlenet
  * @category   test
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-namespace tool_moodlenet\local\tests;
-
-use tool_moodlenet\local\remote_resource;
-use tool_moodlenet\local\url;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Class tool_moodlenet_remote_resource_testcase, providing test cases for the remote_resource class.
  */
 class remote_resource_test extends \advanced_testcase {
 

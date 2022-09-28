@@ -14,16 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Testing the H5P H5PFileStorage interface implementation.
- *
- * @package    core_h5p
- * @category   test
- * @copyright  2019 Victor Deniz <victor@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-namespace core_h5p\local\tests;
+namespace core_h5p;
 
 use core_h5p\file_storage;
 use core_h5p\local\library\autoloader;
@@ -38,11 +29,12 @@ use zip_archive;
  * Test class covering the H5PFileStorage interface implementation.
  *
  * @package    core_h5p
+ * @category   test
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @runTestsInSeparateProcesses
  */
-class h5p_file_storage_test extends \advanced_testcase {
+class file_storage_test extends \advanced_testcase {
 
     /** @var \core_h5p\file_storage H5P file storage instance */
     protected $h5p_file_storage;

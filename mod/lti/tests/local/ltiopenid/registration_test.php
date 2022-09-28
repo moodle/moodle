@@ -32,22 +32,17 @@
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
 // Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
+namespace mod_lti\local\ltiopenid;
+
 /**
- * This file contains unit tests for lti/openidregistrationlib.php
+ * OpenId LTI Registration library tests
  *
  * @package    mod_lti
  * @copyright  2020 Claude Vervoort, Cengage
  * @author     Claude Vervoort
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_lti\local\ltiopenid;
-use mod_lti\local\ltiopenid\registration_exception;
-use mod_lti\local\ltiopenid\registration_helper;
-
-/**
- * OpenId LTI Registration library tests
- */
-class openidregistration_test extends \advanced_testcase {
+class registration_test extends \advanced_testcase {
 
     /**
      * @var string A has-it-all client registration.

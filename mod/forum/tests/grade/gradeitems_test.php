@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for mod_forum\grades\gradeitems.
- *
- * @package   mod_forum
- * @category  test
- * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
-
 declare(strict_types = 1);
 
 namespace mod_forum\grade;
@@ -39,7 +30,7 @@ use coding_exception;
  * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grades_gradeitems_test extends advanced_testcase {
+class gradeitems_test extends advanced_testcase {
 
     /**
      * Ensure that the mappings are present and correct.

@@ -14,18 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for core_grades\component_gradeitems;
- *
- * @package   core_grades
- * @category  test
- * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
-
 declare(strict_types = 1);
 
-namespace core_grades\grades\grader\gradingpanel\point\external;
+namespace core_grades\grades\grader\gradingpanel\scale\external;
 
 use advanced_testcase;
 use coding_exception;
@@ -44,7 +35,7 @@ use grade_item;
  * @copyright 2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grades_grader_gradingpanel_point_external_store_test extends advanced_testcase {
+class store_test extends advanced_testcase {
 
     public static function setupBeforeClass(): void {
         global $CFG;
@@ -85,7 +76,7 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
 
         $forum = $this->get_forum_instance([
             // Negative numbers mean a scale.
-            'grade_forum' => -1,
+            'grade_forum' => 5,
         ]);
         $course = $forum->get_course_record();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
@@ -95,7 +86,7 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
         $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
 
         $this->expectException(moodle_exception::class);
-        $this->expectExceptionMessage("not configured for direct grading");
+        $this->expectExceptionMessage("not configured for grading with scales");
         store::execute('mod_forum', (int) $forum->get_context()->id, 'forum', (int) $student->id, false, 'formdata');
     }
 
@@ -122,15 +113,13 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
      * Ensure that an execute against the correct grading method returns the current state of the user.
      */
     public function test_execute_store_empty(): void {
-        $this->resetAfterTest();
+        [
+            'forum' => $forum,
+            'options' => $options,
+            'student' => $student,
+            'teacher' => $teacher,
+        ] = $this->get_test_data();
 
-        $forum = $this->get_forum_instance([
-            // Negative numbers mean a scale.
-            'grade_forum' => 5,
-        ]);
-        $course = $forum->get_course_record();
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
-        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $this->setUser($teacher);
 
         $formdata = [
@@ -147,16 +136,7 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
         $this->assertIsArray($result);
         $this->assertArrayHasKey('templatename', $result);
 
-        $this->assertEquals('core_grades/grades/grader/gradingpanel/point', $result['templatename']);
-
-        $this->assertArrayHasKey('grade', $result);
-        $this->assertIsArray($result['grade']);
-        $this->assertArrayHasKey('grade', $result['grade']);
-        $this->assertEmpty($result['grade']['grade']);
-        $this->assertArrayHasKey('timecreated', $result['grade']);
-        $this->assertIsInt($result['grade']['timecreated']);
-        $this->assertArrayHasKey('timemodified', $result['grade']);
-        $this->assertIsInt($result['grade']['timemodified']);
+        $this->assertEquals('core_grades/grades/grader/gradingpanel/scale', $result['templatename']);
 
         $this->assertArrayHasKey('warnings', $result);
         $this->assertIsArray($result['warnings']);
@@ -166,22 +146,36 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
         $this->assertArrayHasKey('grade', $result);
         $this->assertIsArray($result['grade']);
 
-        $this->assertArrayHasKey('grade', $result['grade']);
-        $this->assertEquals(null, $result['grade']['grade']);
-
         $this->assertIsInt($result['grade']['timecreated']);
         $this->assertArrayHasKey('timemodified', $result['grade']);
         $this->assertIsInt($result['grade']['timemodified']);
 
         $this->assertArrayHasKey('usergrade', $result['grade']);
-        $this->assertEquals('- / 5.00', $result['grade']['usergrade']);
+        $this->assertEquals('-', $result['grade']['usergrade']);
 
         $this->assertArrayHasKey('maxgrade', $result['grade']);
         $this->assertIsInt($result['grade']['maxgrade']);
-        $this->assertEquals(5, $result['grade']['maxgrade']);
+        $this->assertEquals(3, $result['grade']['maxgrade']);
 
         $this->assertArrayHasKey('gradedby', $result['grade']);
         $this->assertEquals(fullname($teacher), $result['grade']['gradedby']);
+
+        $this->assertArrayHasKey('options', $result['grade']);
+        $this->assertCount(count($options), $result['grade']['options']);
+        rsort($options);
+        foreach ($options as $index => $option) {
+            $this->assertArrayHasKey($index, $result['grade']['options']);
+
+            $returnedoption = $result['grade']['options'][$index];
+            $this->assertArrayHasKey('value', $returnedoption);
+            $this->assertEquals(3 - $index, $returnedoption['value']);
+
+            $this->assertArrayHasKey('title', $returnedoption);
+            $this->assertEquals($option, $returnedoption['title']);
+
+            $this->assertArrayHasKey('selected', $returnedoption);
+            $this->assertFalse($returnedoption['selected']);
+        }
 
         // Compare against the grade stored in the database.
         $storedgradeitem = grade_item::fetch([
@@ -202,20 +196,18 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
     /**
      * Ensure that an execute against the correct grading method returns the current state of the user.
      */
-    public function test_execute_store_graded(): void {
-        $this->resetAfterTest();
+    public function test_execute_store_not_selected(): void {
+        [
+            'forum' => $forum,
+            'options' => $options,
+            'student' => $student,
+            'teacher' => $teacher,
+        ] = $this->get_test_data();
 
-        $forum = $this->get_forum_instance([
-            // Negative numbers mean a scale.
-            'grade_forum' => 5,
-        ]);
-        $course = $forum->get_course_record();
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
-        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $this->setUser($teacher);
 
         $formdata = [
-            'grade' => 4,
+            'grade' => -1,
         ];
 
         $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
@@ -228,7 +220,7 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
         $this->assertIsArray($result);
         $this->assertArrayHasKey('templatename', $result);
 
-        $this->assertEquals('core_grades/grades/grader/gradingpanel/point', $result['templatename']);
+        $this->assertEquals('core_grades/grades/grader/gradingpanel/scale', $result['templatename']);
 
         $this->assertArrayHasKey('warnings', $result);
         $this->assertIsArray($result['warnings']);
@@ -238,22 +230,36 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
         $this->assertArrayHasKey('grade', $result);
         $this->assertIsArray($result['grade']);
 
-        $this->assertArrayHasKey('grade', $result['grade']);
-        $this->assertEquals(grade_floatval(unformat_float(4)), $result['grade']['grade']);
-
         $this->assertIsInt($result['grade']['timecreated']);
         $this->assertArrayHasKey('timemodified', $result['grade']);
         $this->assertIsInt($result['grade']['timemodified']);
 
         $this->assertArrayHasKey('usergrade', $result['grade']);
-        $this->assertEquals('4.00 / 5.00', $result['grade']['usergrade']);
+        $this->assertEquals('-', $result['grade']['usergrade']);
 
         $this->assertArrayHasKey('maxgrade', $result['grade']);
         $this->assertIsInt($result['grade']['maxgrade']);
-        $this->assertEquals(5, $result['grade']['maxgrade']);
+        $this->assertEquals(3, $result['grade']['maxgrade']);
 
         $this->assertArrayHasKey('gradedby', $result['grade']);
-        $this->assertEquals(fullname($teacher), $result['grade']['gradedby']);
+        $this->assertEquals(null, $result['grade']['gradedby']);
+
+        $this->assertArrayHasKey('options', $result['grade']);
+        $this->assertCount(count($options), $result['grade']['options']);
+        rsort($options);
+        foreach ($options as $index => $option) {
+            $this->assertArrayHasKey($index, $result['grade']['options']);
+
+            $returnedoption = $result['grade']['options'][$index];
+            $this->assertArrayHasKey('value', $returnedoption);
+            $this->assertEquals(3 - $index, $returnedoption['value']);
+
+            $this->assertArrayHasKey('title', $returnedoption);
+            $this->assertEquals($option, $returnedoption['title']);
+
+            $this->assertArrayHasKey('selected', $returnedoption);
+            $this->assertFalse($returnedoption['selected']);
+        }
 
         // Compare against the grade stored in the database.
         $storedgradeitem = grade_item::fetch([
@@ -268,26 +274,116 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
             'itemid' => $storedgradeitem->id,
         ]);
 
-        $this->assertEquals(grade_floatval(unformat_float(4)), $storedgrade->rawgrade);
+        // No grade will have been saved.
+        $this->assertFalse($storedgrade);
+    }
+
+    /**
+     * Ensure that an execute against the correct grading method returns the current state of the user.
+     */
+    public function test_execute_store_graded(): void {
+        [
+            'scale' => $scale,
+            'forum' => $forum,
+            'options' => $options,
+            'student' => $student,
+            'teacher' => $teacher,
+        ] = $this->get_test_data();
+
+        $this->setUser($teacher);
+
+        $formdata = [
+            'grade' => 2,
+        ];
+        $formattedvalue = grade_floatval(unformat_float($formdata['grade']));
+
+        $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
+
+        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum',
+                (int) $student->id, false, http_build_query($formdata));
+        $result = external_api::clean_returnvalue(store::execute_returns(), $result);
+
+        // The result should still be empty.
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('templatename', $result);
+
+        $this->assertEquals('core_grades/grades/grader/gradingpanel/scale', $result['templatename']);
+
+        $this->assertArrayHasKey('warnings', $result);
+        $this->assertIsArray($result['warnings']);
+        $this->assertEmpty($result['warnings']);
+
+        // Test the grade array items.
+        $this->assertArrayHasKey('grade', $result);
+        $this->assertIsArray($result['grade']);
+
+        $this->assertIsInt($result['grade']['timecreated']);
+        $this->assertArrayHasKey('timemodified', $result['grade']);
+        $this->assertIsInt($result['grade']['timemodified']);
+
+        $this->assertArrayHasKey('usergrade', $result['grade']);
+        $this->assertEquals('B', $result['grade']['usergrade']);
+
+        $this->assertArrayHasKey('maxgrade', $result['grade']);
+        $this->assertIsInt($result['grade']['maxgrade']);
+        $this->assertEquals(3, $result['grade']['maxgrade']);
+
+        $this->assertArrayHasKey('gradedby', $result['grade']);
+        $this->assertEquals(fullname($teacher), $result['grade']['gradedby']);
+
+        $this->assertArrayHasKey('options', $result['grade']);
+        $this->assertCount(count($options), $result['grade']['options']);
+        rsort($options);
+        foreach ($options as $index => $option) {
+            $this->assertArrayHasKey($index, $result['grade']['options']);
+
+            $returnedoption = $result['grade']['options'][$index];
+            $this->assertArrayHasKey('value', $returnedoption);
+            $this->assertEquals(3 - $index, $returnedoption['value']);
+
+            $this->assertArrayHasKey('title', $returnedoption);
+            $this->assertEquals($option, $returnedoption['title']);
+
+            $this->assertArrayHasKey('selected', $returnedoption);
+        }
+
+        // Compare against the grade stored in the database.
+        $storedgradeitem = grade_item::fetch([
+            'courseid' => $forum->get_course_id(),
+            'itemtype' => 'mod',
+            'itemmodule' => 'forum',
+            'iteminstance' => $forum->get_id(),
+            'itemnumber' => $gradeitem->get_grade_itemid(),
+        ]);
+        $storedgrade = grade_grade::fetch([
+            'userid' => $student->id,
+            'itemid' => $storedgradeitem->id,
+        ]);
+
+        $this->assertEquals($formattedvalue, $storedgrade->rawgrade);
+        $this->assertEquals($scale->id, $storedgrade->rawscaleid);
+
+        // The grade was 2, which relates to the middle option.
+        $this->assertFalse($result['grade']['options'][0]['selected']);
+        $this->assertTrue($result['grade']['options'][1]['selected']);
+        $this->assertFalse($result['grade']['options'][2]['selected']);
     }
 
     /**
      * Ensure that an out-of-range value is rejected.
      *
      * @dataProvider execute_out_of_range_provider
-     * @param int $maxvalue The max value of the forum
      * @param int $suppliedvalue The value that was submitted
      */
-    public function test_execute_store_out_of__range(int $maxvalue, float $suppliedvalue): void {
-        $this->resetAfterTest();
+    public function test_execute_store_out_of_range(int $suppliedvalue): void {
+        [
+            'scale' => $scale,
+            'forum' => $forum,
+            'options' => $options,
+            'student' => $student,
+            'teacher' => $teacher,
+        ] = $this->get_test_data();
 
-        $forum = $this->get_forum_instance([
-            // Negative numbers mean a scale.
-            'grade_forum' => $maxvalue,
-        ]);
-        $course = $forum->get_course_record();
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
-        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $this->setUser($teacher);
 
         $formdata = [
@@ -297,7 +393,7 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
         $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
 
         $this->expectException(moodle_exception::class);
-        $this->expectExceptionMessage("Invalid grade '{$suppliedvalue}' provided. Grades must be between 0 and {$maxvalue}.");
+        $this->expectExceptionMessage("Invalid grade '{$suppliedvalue}' provided. Grades must be between 0 and 3.");
         store::execute('mod_forum', (int) $forum->get_context()->id, 'forum',
                 (int) $student->id, false, http_build_query($formdata));
     }
@@ -310,20 +406,16 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
     public function execute_out_of_range_provider(): array {
         return [
             'above' => [
-                'max' => 100,
-                'supplied' => 101,
+                'supplied' => 500,
             ],
             'above just' => [
-                'max' => 100,
-                'supplied' => 101.001,
+                'supplied' => 4,
             ],
             'below' => [
-                'max' => 100,
                 'supplied' => -100,
             ],
-            '-1' => [
-                'max' => 100,
-                'supplied' => -1,
+            '-10' => [
+                'supplied' => -10,
             ],
         ];
     }
@@ -346,5 +438,37 @@ class grades_grader_gradingpanel_point_external_store_test extends advanced_test
         $vault = $vaultfactory->get_forum_vault();
 
         return $vault->get_from_id((int) $forum->id);
+    }
+
+    /**
+     * Get test data for scaled forums.
+     *
+     * @return array
+     */
+    protected function get_test_data(): array {
+        $this->resetAfterTest();
+
+        $options = [
+            'A',
+            'B',
+            'C'
+        ];
+        $scale = $this->getDataGenerator()->create_scale(['scale' => implode(',', $options)]);
+
+        $forum = $this->get_forum_instance([
+            // Negative numbers mean a scale.
+            'grade_forum' => -1 * $scale->id
+        ]);
+        $course = $forum->get_course_record();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        return [
+            'forum' => $forum,
+            'scale' => $scale,
+            'options' => $options,
+            'student' => $student,
+            'teacher' => $teacher,
+        ];
     }
 }
