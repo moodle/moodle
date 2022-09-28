@@ -276,7 +276,18 @@ class behat_mod_quiz extends behat_question_base {
                 } else {
                     $includingsubcategories = clean_param($questiondata['includingsubcategories'], PARAM_BOOL);
                 }
-                quiz_add_random_questions($quiz, $page, $question->category, 1, $includingsubcategories);
+
+                $filter = [
+                    'category' => [
+                        'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
+                        'values' => [$question->category],
+                        'filteroptions' => ['includesubcategories' => $includingsubcategories],
+                    ],
+                ];
+                $filtercondition['filter'] = $filter;
+                $settings = quiz_settings::create($quiz->id);
+                $structure = \mod_quiz\structure::create_for_quiz($settings);
+                $structure->add_random_questions($page, 1, $filtercondition);
             } else {
                 // Add the question.
                 quiz_add_quiz_question($question->id, $quiz, $page, $maxmark);

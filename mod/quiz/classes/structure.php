@@ -1389,4 +1389,43 @@ class structure {
         // All the associated code for this method have been removed to get rid of accidental call or errors.
         return [];
     }
+
+    /**
+     * Add a random question to the quiz at a given point.
+     *
+     * @param int $addonpage the page on which to add the question.
+     * @param int $number the number of random questions to add.
+     * @param array $filtercondition the filter condition. Must contain at least a category filter.
+     */
+    public function add_random_questions(int $addonpage, int $number, array $filtercondition): void {
+        global $DB;
+
+        if (!isset($filtercondition['filter']['category'])) {
+            throw new \invalid_parameter_exception('$filtercondition must contain at least a category filter.');
+        }
+        $categoryid = $filtercondition['filter']['category']['values'][0];
+
+        $category = $DB->get_record('question_categories', ['id' => $categoryid]);
+        if (!$category) {
+            new \moodle_exception('invalidcategoryid');
+        }
+
+        $catcontext = \context::instance_by_id($category->contextid);
+        require_capability('moodle/question:useall', $catcontext);
+
+        // Create the selected number of random questions.
+        for ($i = 0; $i < $number; $i++) {
+            // Slot data.
+            $randomslotdata = new stdClass();
+            $randomslotdata->quizid = $this->get_quizid();
+            $randomslotdata->usingcontextid = context_module::instance($this->get_cmid())->id;
+            $randomslotdata->questionscontextid = $category->contextid;
+            $randomslotdata->maxmark = 1;
+
+            $randomslot = new \mod_quiz\local\structure\slot_random($randomslotdata);
+            $randomslot->set_quiz($this->get_quiz());
+            $randomslot->set_filter_condition(json_encode($filtercondition));
+            $randomslot->insert($addonpage);
+        }
+    }
 }

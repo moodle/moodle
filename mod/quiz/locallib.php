@@ -213,8 +213,9 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
 
             // Deal with fixed random choices for testing.
             if (isset($questionids[$quba->next_slot_number()])) {
-                if ($randomloader->is_question_available($questiondata->category,
-                        (bool) $questiondata->questiontext, $questionids[$quba->next_slot_number()], $tagids)) {
+                $filtercondition = $questiondata->filtercondition;
+                $filters = $filtercondition['filter'] ?? [];
+                if ($randomloader->is_filtered_question_available($filters, $questionids[$quba->next_slot_number()])) {
                     $questions[$slot] = question_bank::load_question(
                             $questionids[$quba->next_slot_number()], $quizobj->get_quiz()->shuffleanswers);
                     continue;
@@ -224,8 +225,10 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
             }
 
             // Normal case, pick one at random.
-            $questionid = $randomloader->get_next_question_id($questiondata->category,
-                    $questiondata->randomrecurse, $tagids);
+            $filtercondition = $questiondata->filtercondition;
+            $filters = $filtercondition['filter'] ?? [];
+            $questionid = $randomloader->get_next_filtered_question_id($filters);
+
             if ($questionid === null) {
                 throw new moodle_exception('notenoughrandomquestions', 'quiz',
                                            $quizobj->view_url(), $questiondata);
@@ -1884,54 +1887,18 @@ function quiz_update_section_firstslots($quizid, $direction, $afterslot, $before
  * @param int $addonpage the page on which to add the question.
  * @param int $categoryid the question category to add the question from.
  * @param int $number the number of random questions to add.
- * @param bool $includesubcategories whether to include questoins from subcategories.
- * @param int[] $tagids Array of tagids. The question that will be picked randomly should be tagged with all these tags.
+ * @deprecated Since Moodle 4.3 MDL-72321
+ * @todo Final deprecation in Moodle 4.7 MDL-78091
  */
-function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
-        $includesubcategories, $tagids = []) {
-    global $DB;
+function quiz_add_random_questions(stdClass $quiz, int $addonpage, int $categoryid, int $number): void {
+    debugging(
+        'quiz_add_random_questions is deprecated. Please use mod_quiz\structure::add_random_questions() instead.',
+        DEBUG_DEVELOPER
+    );
 
-    $category = $DB->get_record('question_categories', ['id' => $categoryid]);
-    if (!$category) {
-        new moodle_exception('invalidcategoryid');
-    }
-
-    $catcontext = context::instance_by_id($category->contextid);
-    require_capability('moodle/question:useall', $catcontext);
-
-    // Tags for filter condition.
-    $tags = \core_tag_tag::get_bulk($tagids, 'id, name');
-    $tagstrings = [];
-    foreach ($tags as $tag) {
-        $tagstrings[] = "{$tag->id},{$tag->name}";
-    }
-    // Create the selected number of random questions.
-    for ($i = 0; $i < $number; $i++) {
-        // Set the filter conditions.
-        $filtercondition = new stdClass();
-        $filtercondition->questioncategoryid = $categoryid;
-        $filtercondition->includingsubcategories = $includesubcategories ? 1 : 0;
-        if (!empty($tagstrings)) {
-            $filtercondition->tags = $tagstrings;
-        }
-
-        if (!isset($quiz->cmid)) {
-            $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
-            $quiz->cmid = $cm->id;
-        }
-
-        // Slot data.
-        $randomslotdata = new stdClass();
-        $randomslotdata->quizid = $quiz->id;
-        $randomslotdata->usingcontextid = context_module::instance($quiz->cmid)->id;
-        $randomslotdata->questionscontextid = $category->contextid;
-        $randomslotdata->maxmark = 1;
-
-        $randomslot = new \mod_quiz\local\structure\slot_random($randomslotdata);
-        $randomslot->set_quiz($quiz);
-        $randomslot->set_filter_condition($filtercondition);
-        $randomslot->insert($addonpage);
-    }
+    $settings = quiz_settings::create($quiz->id);
+    $structure = \mod_quiz\structure::create_for_quiz($settings);
+    $structure->add_random_questions($addonpage, $number, $categoryid);
 }
 
 /**

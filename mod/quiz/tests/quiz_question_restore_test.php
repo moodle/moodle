@@ -470,7 +470,7 @@ class quiz_question_restore_test extends \advanced_testcase {
         quiz_add_quiz_question($saq->id, $quiz, 1, 3);
         quiz_add_quiz_question($numq->id, $quiz, 2, 2);
         quiz_add_quiz_question($matchq->id, $quiz, 3, 1);
-        quiz_add_random_questions($quiz, 3, $randomcat->id, 2, false);
+        $this->add_random_questions($quiz->id, 3, $randomcat->id, 2);
 
         $quizobj = quiz_settings::create($quiz->id, $user1->id);
         $originalstructure = \mod_quiz\structure::create_for_quiz($quizobj);

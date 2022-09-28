@@ -16,8 +16,13 @@
 
 namespace qbank_managecategories;
 
+defined('MOODLE_INTERNAL') || die();
+
 use moodle_url;
 use core_question\local\bank\question_edit_contexts;
+
+global $CFG;
+require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
 
 /**
  * Unit tests for helper class.
@@ -29,6 +34,8 @@ use core_question\local\bank\question_edit_contexts;
  * @coversDefaultClass \qbank_managecategories\helper
  */
 class helper_test extends \advanced_testcase {
+
+    use \quiz_question_helper_test_trait;
 
     /**
      * @var \context_module module context.
@@ -97,7 +104,7 @@ class helper_test extends \advanced_testcase {
         quiz_add_quiz_question($q2b->id, $this->quiz);
 
         // Adding a new random question does not add a new question, adds a question_set_references record.
-        quiz_add_random_questions($this->quiz, 0, $qcat2->id, 1, false);
+        $this->add_random_questions($this->quiz->id, 0, $qcat2->id, 1);
 
         // We added one random question to the quiz and we expect the quiz to have only one random question.
         $q2d = $DB->get_record_sql("SELECT qsr.*

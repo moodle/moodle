@@ -270,7 +270,10 @@ function question_build_edit_resources($edittab, $baseurl, $params,
     }
 
     if (!empty($params['filter'])) {
-        $cleanparams['filter'] = json_decode($params['filter'], true);
+        if (!is_array($params['filter'])) {
+            $params['filter'] = json_decode($params['filter'], true);
+        }
+        $cleanparams['filter'] = $params['filter'];
     }
 
     $cmid = $cleanparams['cmid'];

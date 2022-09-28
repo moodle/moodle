@@ -25,6 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
 
 /**
  * Tests for the {@see \core_question\local\bank\random_question_loader} class.
@@ -34,6 +35,8 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class random_question_loader_test extends \advanced_testcase {
+
+    use \quiz_question_helper_test_trait;
 
     public function test_empty_category_gives_null() {
         $this->resetAfterTest();
@@ -104,7 +107,7 @@ class random_question_loader_test extends \advanced_testcase {
         $cat = $generator->create_question_category();
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course]);
-        quiz_add_random_questions($quiz, 1, $cat->id, 1);
+        $this->add_random_questions($quiz->id, 1, $cat->id, 1);
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
         $filters = question_filter_test_helper::create_filters([$cat->id]);
