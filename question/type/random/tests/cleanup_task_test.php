@@ -67,4 +67,37 @@ class qtype_random_cleanup_task_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('question', ['id' => $quizslots[1]->questionid]));
         $this->assertFalse($DB->record_exists('question', ['id' => $quizslots[2]->questionid]));
     }
+
+    /**
+     * Test that remove_unused_questions aborts when there is a course restore in progress.
+     */
+    public function test_cleanup_task_checks_for_active_restores() {
+        $this->resetAfterTest();
+
+        // Get ready the tasks.
+        $cleanuptask = new \qtype_random\task\remove_unused_questions();
+        $restoretask = new \core\task\asynchronous_restore_task();
+        \core\task\manager::queue_adhoc_task($restoretask);
+        $copytask = new \core\task\asynchronous_copy_task();
+        \core\task\manager::queue_adhoc_task($copytask);
+
+        // Start the first adhoc task. This might be either restore or copy adhoc task.
+        $task1 = \core\task\manager::get_next_adhoc_task(time());
+        \core\task\manager::adhoc_task_starting($task1);
+        $cleanuptask->execute();
+
+        // Complete the first task and start the second one.
+        \core\task\manager::adhoc_task_complete($task1);
+        $task2 = \core\task\manager::get_next_adhoc_task(time());
+        \core\task\manager::adhoc_task_starting($task2);
+        $cleanuptask->execute();
+
+        // Complete the second adhoc task.
+        \core\task\manager::adhoc_task_complete($task2);
+        $cleanuptask->execute();
+
+        $aborted = 'Detected running async restore. Aborting the task.';
+        $completed = 'Cleaned up 0 unused random questions.';
+        $this->expectOutputRegex("/.*$aborted.*\s.*$aborted.*\s.*$completed.*/");
+    }
 }

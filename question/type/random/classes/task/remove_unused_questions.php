@@ -25,6 +25,8 @@
 
 namespace qtype_random\task;
 
+use core\task\manager;
+
 defined('MOODLE_INTERNAL') || die();
 
 
@@ -43,6 +45,21 @@ class remove_unused_questions extends \core\task\scheduled_task {
     public function execute() {
         global $DB, $CFG;
         require_once($CFG->libdir . '/questionlib.php');
+
+        // Confirm, that there is no restore in progress to make sure we do not
+        // clean up questions that have their quiz slots not restored yet.
+        $restoretasks = [
+            '\core\task\asynchronous_copy_task',
+            '\core\task\asynchronous_restore_task',
+        ];
+
+        $running = manager::get_running_tasks();
+        foreach ($running as $task) {
+            if (in_array($task->classname, $restoretasks)) {
+                mtrace('Detected running async restore. Aborting the task.');
+                return;
+            }
+        }
 
         // Find potentially unused random questions (up to 10000).
         // Note, because we call question_delete_question below,
