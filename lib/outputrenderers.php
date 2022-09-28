@@ -4269,8 +4269,10 @@ EOD;
      * @return moodle_url The moodle_url for the favicon
      */
     public function favicon() {
-        global $CFG;
-        $logo = get_config('core_admin', 'favicon');
+        $logo = null;
+        if (!during_initial_install()) {
+            $logo = get_config('core_admin', 'favicon');
+        }
         if (empty($logo)) {
             return $this->image_url('favicon', 'theme');
         }
