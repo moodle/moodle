@@ -474,32 +474,40 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame(
             '#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)',
             clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_RAW));
+        $this->assertSame(null, clean_param(null, PARAM_RAW));
     }
 
     public function test_clean_param_trim() {
         $this->assertSame('Frog toad', clean_param("   Frog toad   \r\n  ", PARAM_RAW_TRIMMED));
+        $this->assertSame('', clean_param(null, PARAM_RAW_TRIMMED));
     }
 
     public function test_clean_param_clean() {
         // PARAM_CLEAN is an ugly hack, do not use in new code (skodak),
         // instead use more specific type, or submit sothing that can be verified properly.
         $this->assertSame('xx', clean_param('xx<script>', PARAM_CLEAN));
+        $this->assertSame('', clean_param(null, PARAM_CLEAN));
+        $this->assertSame('', clean_param(null, PARAM_CLEANHTML));
     }
 
     public function test_clean_param_alpha() {
         $this->assertSame('DSFMOSDJ', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_ALPHA));
+        $this->assertSame('', clean_param(null, PARAM_ALPHA));
     }
 
     public function test_clean_param_alphanum() {
         $this->assertSame('978942897DSFMOSDJ', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_ALPHANUM));
+        $this->assertSame('', clean_param(null, PARAM_ALPHANUM));
     }
 
     public function test_clean_param_alphaext() {
         $this->assertSame('DSFMOSDJ', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_ALPHAEXT));
+        $this->assertSame('', clean_param(null, PARAM_ALPHAEXT));
     }
 
     public function test_clean_param_sequence() {
         $this->assertSame(',9789,42897', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_SEQUENCE));
+        $this->assertSame('', clean_param(null, PARAM_SEQUENCE));
     }
 
     public function test_clean_param_component() {
@@ -528,6 +536,7 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param('_user', PARAM_COMPONENT));
         $this->assertSame('', clean_param('2rating', PARAM_COMPONENT));
         $this->assertSame('', clean_param('user_', PARAM_COMPONENT));
+        $this->assertSame('', clean_param(null, PARAM_COMPONENT));
     }
 
     public function test_clean_param_localisedfloat() {
@@ -544,6 +553,7 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame(false, clean_param('1X000X5', PARAM_LOCALISEDFLOAT));
         $this->assertSame(false, clean_param('nan', PARAM_LOCALISEDFLOAT));
         $this->assertSame(false, clean_param('10.6blah', PARAM_LOCALISEDFLOAT));
+        $this->assertSame(null, clean_param(null, PARAM_LOCALISEDFLOAT));
 
         // Tests with a localised decimal separator.
         $this->define_local_decimal_separator();
@@ -593,6 +603,7 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param('Xx', PARAM_PLUGIN));
         $this->assertSame('', clean_param('_xx', PARAM_PLUGIN));
         $this->assertSame('', clean_param('xx_', PARAM_PLUGIN));
+        $this->assertSame('', clean_param(null, PARAM_PLUGIN));
     }
 
     public function test_clean_param_area() {
@@ -609,6 +620,7 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param('some-thing', PARAM_AREA));
         $this->assertSame('', clean_param('somethííng', PARAM_AREA));
         $this->assertSame('', clean_param('something.x', PARAM_AREA));
+        $this->assertSame('', clean_param(null, PARAM_AREA));
     }
 
     public function test_clean_param_text() {
@@ -630,6 +642,7 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('<lang lang="en">a>a</lang>', clean_param('<lang lang="en">a>a</lang>', PARAM_TEXT)); // Standard strip_tags() behaviour.
         $this->assertSame('a', clean_param('<lang lang="en">a<a</lang>', PARAM_TEXT));
         $this->assertSame('<lang lang="en">aa</lang>', clean_param('<lang lang="en">a<br>a</lang>', PARAM_TEXT));
+        $this->assertSame('', clean_param(null, PARAM_TEXT));
     }
 
     public function test_clean_param_url() {
@@ -655,6 +668,7 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param('mailto:support@moodle.org', PARAM_URL));
         $this->assertSame('', clean_param('mailto:support@moodle.org?subject=Hello%20Moodle', PARAM_URL));
         $this->assertSame('', clean_param('mailto:support@moodle.org?subject=Hello%20Moodle&cc=feedback@moodle.org', PARAM_URL));
+        $this->assertSame('', clean_param(null, PARAM_URL));
     }
 
     public function test_clean_param_localurl() {
@@ -695,6 +709,9 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param('http://www.example.com.evil.net/hack.php', PARAM_LOCALURL));
         $CFG->wwwroot = 'https://www.example.com';
         $this->assertSame('', clean_param('https://www.example.com.evil.net/hack.php', PARAM_LOCALURL));
+
+        $this->assertSame('', clean_param('', PARAM_LOCALURL));
+        $this->assertSame('', clean_param(null, PARAM_LOCALURL));
     }
 
     public function test_clean_param_file() {
@@ -719,6 +736,7 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame(' . .dontltrim.me', clean_param(' . .dontltrim.me', PARAM_FILE));
         $this->assertSame('here is a tab.txt', clean_param("here is a tab\t.txt", PARAM_FILE));
         $this->assertSame('here is a linebreak.txt', clean_param("here is a line\r\nbreak.txt", PARAM_FILE));
+        $this->assertSame('', clean_param(null, PARAM_FILE));
 
         // The following behaviours have been maintained although they seem a little odd.
         $this->assertSame('funnything', clean_param('funny:thing', PARAM_FILE));
@@ -746,6 +764,13 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('/..b../.../myfile.txt', clean_param('/..b../.../myfile.txt', PARAM_PATH));
         $this->assertSame('..b../.../myfile.txt', clean_param('..b../.../myfile.txt', PARAM_PATH));
         $this->assertSame('/super/slashes/', clean_param('/super//slashes///', PARAM_PATH));
+        $this->assertSame('', clean_param(null, PARAM_PATH));
+    }
+
+    public function test_clean_param_safepath() {
+        $this->assertSame('folder/file', clean_param('folder/file', PARAM_SAFEPATH));
+        $this->assertSame('folder//file', clean_param('folder/../file', PARAM_SAFEPATH));
+        $this->assertSame('', clean_param(null, PARAM_SAFEPATH));
     }
 
     public function test_clean_param_username() {
@@ -767,6 +792,7 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame(clean_param('john#$%&() ', PARAM_USERNAME), 'john');
         $this->assertSame('johnd', clean_param('JOHNdóé ', PARAM_USERNAME));
         $this->assertSame(clean_param('john.,:;-_/|\ñÑ[]A_X-,D {} ~!@#$%^&*()_+ ?><[] ščřžžý ?ýá?ý??doe ', PARAM_USERNAME), 'john.-_a_x-d@_doe');
+        $this->assertSame('', clean_param(null, PARAM_USERNAME));
 
         // Test success condition, if extendedusernamechars == ENABLE;.
         $CFG->extendedusernamechars = true;
@@ -796,6 +822,7 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param('0numeric', PARAM_STRINGID));
         $this->assertSame('', clean_param('*', PARAM_STRINGID));
         $this->assertSame('', clean_param(' ', PARAM_STRINGID));
+        $this->assertSame('', clean_param(null, PARAM_STRINGID));
     }
 
     public function test_clean_param_timezone() {
@@ -830,12 +857,35 @@ class moodlelib_test extends \advanced_testcase {
             '13.5'                           => '',
             '+13.5'                          => '',
             '-13.5'                          => '',
-            '0.2'                            => '');
+            '0.2'                            => '',
+            ''                               => '',
+            null                             => '',
+        );
 
         foreach ($testvalues as $testvalue => $expectedvalue) {
             $actualvalue = clean_param($testvalue, PARAM_TIMEZONE);
             $this->assertEquals($expectedvalue, $actualvalue);
         }
+    }
+
+    public function test_clean_param_null_argument() {
+        $this->assertEquals(0, clean_param(null, PARAM_INT));
+        $this->assertEquals(0, clean_param(null, PARAM_FLOAT));
+        $this->assertEquals(0, clean_param(null, PARAM_LOCALISEDFLOAT));
+        $this->assertEquals(false, clean_param(null, PARAM_BOOL));
+        $this->assertEquals('', clean_param(null, PARAM_NOTAGS));
+        $this->assertEquals('', clean_param(null, PARAM_SAFEDIR));
+        $this->assertEquals('', clean_param(null, PARAM_HOST));
+        $this->assertEquals('', clean_param(null, PARAM_PEM));
+        $this->assertEquals('', clean_param(null, PARAM_BASE64));
+        $this->assertEquals('', clean_param(null, PARAM_TAG));
+        $this->assertEquals('', clean_param(null, PARAM_TAGLIST));
+        $this->assertEquals('', clean_param(null, PARAM_CAPABILITY));
+        $this->assertEquals(0, clean_param(null, PARAM_PERMISSION));
+        $this->assertEquals('', clean_param(null, PARAM_AUTH));
+        $this->assertEquals('', clean_param(null, PARAM_LANG));
+        $this->assertEquals('', clean_param(null, PARAM_THEME));
+        $this->assertEquals('', clean_param(null, PARAM_EMAIL));
     }
 
     public function test_validate_param() {
@@ -5423,5 +5473,18 @@ EOF;
         $result = get_performance_info();
         $this->assertStringContainsString('Session wait: 4.200 secs', $result['html']);
         $this->assertStringContainsString('sessionwait: 4.200 secs', $result['txt']);
+    }
+
+    /**
+     * Test the html_is_blank() function.
+     * 
+     * @covers ::html_is_blank
+     */
+    public function test_html_is_blank() {
+        $this->assertEquals(true, html_is_blank(null));
+        $this->assertEquals(true, html_is_blank(''));
+        $this->assertEquals(true, html_is_blank('<p> </p>'));
+        $this->assertEquals(false, html_is_blank('<p>.</p>'));
+        $this->assertEquals(false, html_is_blank('<img src="#">'));
     }
 }
