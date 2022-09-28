@@ -70,7 +70,7 @@ class users_test extends core_reportbuilder_testcase {
     public function test_datasource_non_default_columns(): void {
         $this->resetAfterTest();
 
-        $user = $this->getDataGenerator()->create_user(['fisrtname' => 'Zoe', 'interests' => ['Horses']]);
+        $user = $this->getDataGenerator()->create_user(['firstname' => 'Zoe', 'interests' => ['Horses']]);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -96,7 +96,7 @@ class users_test extends core_reportbuilder_testcase {
         $this->assertEmpty($adminrow[1]);
         $this->assertEmpty($adminrow[2]);
 
-        $this->assertEquals($user->firstname, $userrow[0]);
+        $this->assertEquals('Zoe', $userrow[0]);
         $this->assertEquals('Horses', $userrow[1]);
         $this->assertStringContainsString('Horses', $userrow[2]);
     }
