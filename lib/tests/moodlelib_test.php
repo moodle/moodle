@@ -5477,7 +5477,7 @@ EOF;
 
     /**
      * Test the html_is_blank() function.
-     * 
+     *
      * @covers ::html_is_blank
      */
     public function test_html_is_blank() {
