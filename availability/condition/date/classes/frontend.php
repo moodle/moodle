@@ -49,7 +49,7 @@ class frontend extends \core_availability\frontend {
 
     protected function get_javascript_strings() {
         return array('ajaxerror', 'direction_before', 'direction_from', 'direction_until',
-                'direction_label');
+                'direction_label', 'error_dateconflict');
     }
 
     /**
