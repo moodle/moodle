@@ -50,10 +50,10 @@ class audience_test extends advanced_testcase {
     public function test_get_base_records(): void {
         $this->resetAfterTest();
 
-        // Report with no audiences.
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
 
+        // Report with no audiences.
         $report = $generator->create_report([
             'name' => 'My report',
             'source' => users::class,
@@ -65,13 +65,14 @@ class audience_test extends advanced_testcase {
         // Create a couple of manual audience types.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
-        $generator->create_audience([
+        $audience1 = $generator->create_audience([
             'reportid' => $report->get('id'),
             'classname' => manual::class,
             'configdata' => ['users' => [$user1->id, $user2->id]],
         ]);
+
         $user3 = $this->getDataGenerator()->create_user();
-        $generator->create_audience([
+        $audience2 = $generator->create_audience([
             'reportid' => $report->get('id'),
             'classname' => manual::class,
             'configdata' => ['users' => [$user3->id]],
@@ -79,8 +80,17 @@ class audience_test extends advanced_testcase {
 
         $baserecords = audience::get_base_records($report->get('id'));
         $this->assertCount(2, $baserecords);
-        $this->assertInstanceOf(manual::class, $baserecords[0]);
-        $this->assertInstanceOf(manual::class, $baserecords[1]);
+        $this->assertContainsOnlyInstancesOf(manual::class, $baserecords);
+
+        // Set invalid classname of first audience, should be excluded in subsequent request.
+        $audience1->get_persistent()->set('classname', '\invalid')->save();
+
+        $baserecords = audience::get_base_records($report->get('id'));
+        $this->assertCount(1, $baserecords);
+
+        $baserecord = reset($baserecords);
+        $this->assertInstanceOf(manual::class, $baserecord);
+        $this->assertEquals($audience2->get_persistent()->get('id'), $baserecord->get_persistent()->get('id'));
     }
 
     /**

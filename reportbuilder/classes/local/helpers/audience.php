@@ -35,16 +35,20 @@ use core_reportbuilder\local\models\audience as audience_model;
 class audience {
 
     /**
-     * Return audience base records for a given report
+     * Return audience instances for a given report. Note that any records pointing to invalid audience types will be excluded
      *
      * @param int $reportid
      * @return base[]
      */
     public static function get_base_records(int $reportid): array {
         $records = audience_model::get_records(['reportid' => $reportid], 'id');
-        return array_map(function ($record) {
-            return base::instance(0, $record->to_record());
+
+        $instances = array_map(static function(audience_model $audience): ?base {
+            return base::instance(0, $audience->to_record());
         }, $records);
+
+        // Filter and remove null elements (invalid audience types).
+        return array_filter($instances);
     }
 
     /**
