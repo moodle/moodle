@@ -4239,7 +4239,8 @@ class restore_block_instance_structure_step extends restore_structure_step {
 
         // Look for the parent contextid
         if (!$data->parentcontextid = $this->get_mappingid('context', $data->parentcontextid)) {
-            throw new restore_step_exception('restore_block_missing_parent_ctx', $data->parentcontextid);
+            // Parent contextid does not exist, ignore this block.
+            return false;
         }
 
         // TODO: it would be nice to use standard plugin supports instead of this instance_allow_multiple()
@@ -4285,14 +4286,17 @@ class restore_block_instance_structure_step extends restore_structure_step {
                 $params['subpagepattern'] = $data->subpagepattern;
             }
 
-            $exists = $DB->record_exists_sql("SELECT bi.id
+            $existingblock = $DB->get_records_sql("SELECT bi.id
                                                 FROM {block_instances} bi
                                                 JOIN {block} b ON b.name = bi.blockname
                                                WHERE bi.blockname = :blockname
                                                  AND $contextsql
                                                  AND bi.pagetypepattern $pagetypepatternsql
                                                  AND $subpagepatternsql", $params);
-            if ($exists) {
+            if (!empty($existingblock)) {
+                // Save the context mapping in case something else is linking to this block's context.
+                $newcontext = context_block::instance(reset($existingblock)->id);
+                $this->set_mapping('context', $oldcontextid, $newcontext->id);
                 // There is at least one very similar block visible on the page where we
                 // are trying to restore the block. In these circumstances the block API
                 // would not allow the user to add another instance of the block, so we
@@ -4311,6 +4315,9 @@ class restore_block_instance_structure_step extends restore_structure_step {
         if ($birecs = $DB->get_records('block_instances', $params)) {
             foreach($birecs as $birec) {
                 if ($birec->configdata == $data->configdata) {
+                    // Save the context mapping in case something else is linking to this block's context.
+                    $newcontext = context_block::instance($birec->id);
+                    $this->set_mapping('context', $oldcontextid, $newcontext->id);
                     return false;
                 }
             }
