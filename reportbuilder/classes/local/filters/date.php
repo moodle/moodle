@@ -118,7 +118,7 @@ class date extends base {
         $elements[] = $mform->createElement('text', "{$this->name}_value", $valuelabel, ['size' => 3]);
         $mform->setType("{$this->name}_value", PARAM_INT);
         $mform->setDefault("{$this->name}_value", 1);
-        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'in', $typesnounit + [self::DATE_CURRENT]);
+        $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'in', array_merge($typesnounit, [self::DATE_CURRENT]));
 
         // Unit selector for last and next operators.
         $unitlabel = get_string('filterdurationunit', 'core_reportbuilder', $this->get_header());
