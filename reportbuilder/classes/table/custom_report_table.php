@@ -84,7 +84,7 @@ class custom_report_table extends base_report_table {
         // Retrieve all report columns, exit early if there are none. Defining empty columns prevents errors during out().
         $columns = $this->get_active_columns();
         if (empty($columns)) {
-            $this->init_sql('*', "{{$maintable}} {$maintablealias}", [], '1=0', []);
+            $this->init_sql("{$maintablealias}.*", "{{$maintable}} {$maintablealias}", $joins, '1=0', []);
             $this->define_columns([0]);
             return;
         }
