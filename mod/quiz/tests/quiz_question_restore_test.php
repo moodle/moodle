@@ -508,4 +508,65 @@ class quiz_question_restore_test extends \advanced_testcase {
             $this->assertEquals($originalslot->maxmark, $restoredslot->maxmark);
         }
     }
+
+    /**
+     * Test pre 4.3 quiz restore for random question filter conditions.
+     *
+     * @covers \restore_question_set_reference_data_trait::process_question_set_reference
+     */
+    public function test_pre_43_quiz_restore_for_random_question_filtercondition() {
+        global $USER, $DB;
+        $this->resetAfterTest();
+        $backupid = 'abc';
+        $backuppath = make_backup_temp_directory($backupid);
+        get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
+                __DIR__ . "/fixtures/moodle_42_random_question.mbz", $backuppath);
+
+        // Do the restore to new course with default settings.
+        $categoryid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
+        $newcourseid = \restore_dbops::create_new_course('Test fullname', 'Test shortname', $categoryid);
+        $rc = new \restore_controller($backupid, $newcourseid, \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+                \backup::TARGET_NEW_COURSE);
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Get the information about the resulting course and check that it is set up correctly.
+        $modinfo = get_fast_modinfo($newcourseid);
+        $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        // Count the questions in quiz qbank.
+        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quizobj->get_quizid(), $newcourseid)->id);
+        $this->assertEquals(2, $this->question_count($context->id));
+
+        // Are the correct slots returned?
+        $slots = $structure->get_slots();
+        $this->assertCount(1, $slots);
+
+        // Check that the filtercondition now matches the 4.3 structure.
+        foreach ($slots as $slot) {
+            $setreference = $DB->get_record('question_set_references',
+                    ['itemid' => $slot->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+            $filterconditions = json_decode($setreference->filtercondition, true);
+            $this->assertArrayHasKey('cat', $filterconditions);
+            $this->assertArrayHasKey('jointype', $filterconditions);
+            $this->assertArrayHasKey('qpage', $filterconditions);
+            $this->assertArrayHasKey('qperpage', $filterconditions);
+            $this->assertArrayHasKey('filter', $filterconditions);
+            $this->assertArrayHasKey('category', $filterconditions['filter']);
+            $this->assertArrayHasKey('qtagids', $filterconditions['filter']);
+            $this->assertArrayNotHasKey('questioncategoryid', $filterconditions);
+            $this->assertArrayNotHasKey('tags', $filterconditions);
+            $expectedtags = \core_tag_tag::get_by_name_bulk(1, ['foo', 'bar']);
+            $expectedtagids = array_values(array_map(fn($expectedtag) => $expectedtag->id, $expectedtags));
+            $this->assertEquals($expectedtagids, $filterconditions['filter']['qtagids']['values']);
+            $expectedcategory = $DB->get_record('question_categories', ['idnumber' => 'RAND']);
+            $this->assertEquals($expectedcategory->id, $filterconditions['filter']['category']['values'][0]);
+            $expectedcat = implode(',', [$expectedcategory->id, $expectedcategory->contextid]);
+            $this->assertEquals($expectedcat, $filterconditions['cat']);
+        }
+    }
 }

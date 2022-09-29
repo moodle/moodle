@@ -86,15 +86,15 @@ class question_reference_manager {
      * @return array Post-4.3 filter condition.
      */
     public static function convert_legacy_set_reference_filter_condition(array $filtercondition): array {
-        if (!isset($filtercondition['filters'])) {
-            $filtercondition['filters'] = [];
+        if (!isset($filtercondition['filter'])) {
+            $filtercondition['filter'] = [];
 
             // Question category filter.
             if (isset($filtercondition['questioncategoryid'])) {
-                $filtercondition['filters']['category'] = [
-                        'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
-                        'values' => [$filtercondition['questioncategoryid']],
-                        'includesubcategories' => $filtercondition['includingsubcategories'],
+                $filtercondition['filter']['category'] = [
+                    'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
+                    'values' => [$filtercondition['questioncategoryid']],
+                    'includesubcategories' => $filtercondition['includingsubcategories'],
                 ];
                 unset($filtercondition['questioncategoryid']);
                 unset($filtercondition['includingsubcategories']);
@@ -102,12 +102,23 @@ class question_reference_manager {
 
             // Tag filters.
             if (isset($filtercondition['tags'])) {
-                $filtercondition['filters']['qtagid'] = [
+                // Get the names of the tags in the condition. Find or create corresponding tags,
+                // and set their ids in the new condition.
+                $oldtags = array_map(fn($oldtag) => explode(',', $oldtag)[1], $filtercondition['tags']);
+                $newtags = \core_tag_tag::create_if_missing(1, $oldtags);
+                $newtagids = array_map(fn($newtag) => $newtag->id, $newtags);
+
+                $filtercondition['filter']['qtagids'] = [
                     'jointype' => \qbank_tagquestion\tag_condition::JOINTYPE_DEFAULT,
-                    'values' => $filtercondition['tags']
+                    'values' => array_values($newtagids),
                 ];
                 unset($filtercondition['tags']);
             }
+            // Add additional default properties to the filtercondition.
+            $filtercondition['tabname'] = 'questions';
+            $filtercondition['qpage'] = 0;
+            $filtercondition['qperpage'] = 100;
+            $filtercondition['jointype'] = \core\output\datafilter::JOINTYPE_ALL;
         }
         return $filtercondition;
     }

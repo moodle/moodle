@@ -6191,14 +6191,29 @@ trait restore_question_set_reference_data_trait {
         $data = (object) $data;
         $data->usingcontextid = $this->get_mappingid('context', $data->usingcontextid);
         $data->itemid = $this->get_new_parentid('quiz_question_instance');
-        $filtercondition = json_decode($data->filtercondition);
-        if ($category = $this->get_mappingid('question_category', $filtercondition->questioncategoryid)) {
-            $filtercondition->questioncategoryid = $category;
+        $filtercondition = json_decode($data->filtercondition, true);
+
+        if (!isset($filtercondition['filter'])) {
+            // Pre-4.3, convert the old filtercondition format to the new format.
+            $filtercondition = \core_question\question_reference_manager::convert_legacy_set_reference_filter_condition(
+                    $filtercondition);
         }
-        $data->filtercondition = json_encode($filtercondition);
+
+        // Map category id used for category filter condition and corresponding context id.
+        $oldcategoryid = $filtercondition['filter']['category']['values'][0];
+        $newcategoryid = $this->get_mappingid('question_category', $oldcategoryid);
+        $filtercondition['filter']['category']['values'][0] = $newcategoryid;
+
         if ($context = $this->get_mappingid('context', $data->questionscontextid)) {
             $data->questionscontextid = $context;
         }
+
+        $filtercondition['cat'] = implode(',', [
+            $filtercondition['filter']['category']['values'][0],
+            $data->questionscontextid,
+        ]);
+
+        $data->filtercondition = json_encode($filtercondition);
 
         $DB->insert_record('question_set_references', $data);
     }
