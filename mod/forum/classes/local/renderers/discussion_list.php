@@ -197,6 +197,7 @@ class discussion_list {
             'gradingcomponent' => $this->forumgradeitem->get_grading_component_name(),
             'gradingcomponentsubtype' => $this->forumgradeitem->get_grading_component_subtype(),
             'sendstudentnotifications' => $forum->should_notify_students_default_when_grade_for_forum(),
+            'gradeonlyactiveusers' => $this->forumgradeitem->should_grade_only_active_users(),
             'hasanyactions' => $hasanyactions,
             'groupchangemenu' => groups_print_activity_menu(
                 $cm,
