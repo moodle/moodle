@@ -532,14 +532,15 @@ EOD;
             /**
              * Just a test log function
              */
-            public function log() {
+            public function get_site() {
                 global $DB;
-                $DB->get_records_sql('SELECT firstname FROM {user} WHERE firstname = :firstname', ['firstname' => 'JohnDoe']);
+
+                return $DB->get_record('course', ['category' => 0]);
             }
         };
-        $another->log();
+        $site = $another->get_site();
         $CFG->debugsqltrace = 0;
-        // No assertions just it should not error.
+        $this->assertEquals(get_site(), $site);
     }
 
     public function test_strtok() {
