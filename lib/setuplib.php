@@ -714,18 +714,23 @@ function format_backtrace($callers, $plaintext = false) {
         if (!isset($caller['file'])) {
             $caller['file'] = 'unknownfile'; // probably call_user_func()
         }
-        $from .= $plaintext ? '* ' : '<li>';
-        $from .= 'line ' . $caller['line'] . ' of ' . str_replace($dirroot, '', $caller['file']);
+        $line = $plaintext ? '* ' : '<li>';
+        $line .= 'line ' . $caller['line'] . ' of ' . str_replace($dirroot, '', $caller['file']);
         if (isset($caller['function'])) {
-            $from .= ': call to ';
+            $line .= ': call to ';
             if (isset($caller['class'])) {
-                $from .= $caller['class'] . $caller['type'];
+                $line .= $caller['class'] . $caller['type'];
             }
-            $from .= $caller['function'] . '()';
+            $line .= $caller['function'] . '()';
         } else if (isset($caller['exception'])) {
-            $from .= ': '.$caller['exception'].' thrown';
+            $line .= ': '.$caller['exception'].' thrown';
         }
-        $from .= $plaintext ? "\n" : '</li>';
+
+        // Remove any non printable chars.
+        $line = preg_replace('/[[:^print:]]/', '', $line);
+
+        $line .= $plaintext ? "\n" : '</li>';
+        $from .= $line;
     }
     $from .= $plaintext ? '' : '</ul>';
 
