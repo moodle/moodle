@@ -1654,6 +1654,19 @@ class oci_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Returns the SQL text to be used to order by columns, standardising the return
+     * pattern of null values across database types to sort nulls first when ascending
+     * and last when descending.
+     *
+     * @param string $fieldname The name of the field we need to sort by.
+     * @param int $sort An order to sort the results in.
+     * @return string The piece of SQL code to be used in your statement.
+     */
+    public function sql_order_by_null(string $fieldname, int $sort = SORT_ASC): string {
+        return parent::sql_order_by_null($fieldname, $sort) . ' NULLS ' . ($sort == SORT_ASC ? 'FIRST' : 'LAST');
+    }
+
+    /**
      * Constructs 'IN()' or '=' sql fragment
      *
      * Method overriding {@link moodle_database::get_in_or_equal} to be able to get

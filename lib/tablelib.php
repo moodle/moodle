@@ -601,9 +601,9 @@ class flexible_table {
                 $column = $DB->sql_order_by_text($column);
             }
             if ($order == SORT_ASC) {
-                $bits[] = $column . ' ASC';
+                $bits[] = $DB->sql_order_by_null($column);
             } else {
-                $bits[] = $column . ' DESC';
+                $bits[] = $DB->sql_order_by_null($column, SORT_DESC);
             }
         }
 
