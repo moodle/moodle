@@ -240,9 +240,9 @@ class template {
      * @return pix_icon[] icon name => pix_icon
      */
     protected function get_icons() {
-        $attrs = ['class' => 'iconsmall'];
+        $attrs = ['class' => 'iconsmall dataicon'];
         return [
-            'edit' => new pix_icon('t/edit', get_string('edit'), '', $attrs),
+            'edit' => new pix_icon('t/editinline', get_string('edit'), '', $attrs),
             'delete' => new pix_icon('t/delete', get_string('delete'), '', $attrs),
             'more' => new pix_icon('t/preview', get_string('more', 'data'), '', $attrs),
             'approve' => new pix_icon('t/approve', get_string('approve', 'data'), '', $attrs),
