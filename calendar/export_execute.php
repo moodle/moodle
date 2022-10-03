@@ -5,6 +5,8 @@ require_once('../config.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
 require_once($CFG->libdir.'/bennu/bennu.inc.php');
 
+raise_memory_limit(MEMORY_HUGE);
+
 $userid = optional_param('userid', 0, PARAM_INT);
 $username = optional_param('username', '', PARAM_TEXT);
 $authtoken = required_param('authtoken', PARAM_ALPHANUM);
