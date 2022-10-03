@@ -146,8 +146,8 @@ class template_test extends \advanced_testcase {
         // Some cooked variables for the regular expression.
         $replace = [
             '{authorfullname}' => fullname($author),
-            '{timeadded}' => userdate($entry->timecreated),
-            '{timemodified}' => userdate($entry->timemodified),
+            '{timeadded}' => userdate($entry->timecreated, get_string('strftimedatemonthabbr', 'langconfig')),
+            '{timemodified}' => userdate($entry->timemodified, get_string('strftimedatemonthabbr', 'langconfig')),
             '{fieldid}' => $field->field->id,
             '{entryid}' => $entry->id,
             '{cmid}' => $cm->id,
@@ -256,12 +256,12 @@ class template_test extends \advanced_testcase {
             ],
             'Teacher timeadded tag' => [
                 'templatecontent' => 'Some ##timeadded## tag',
-                'expected' => '|Some {timeadded} tag|',
+                'expected' => '|Some <span.*>{timeadded}</span> tag|',
                 'rolename' => 'editingteacher',
             ],
             'Teacher timemodified tag' => [
                 'templatecontent' => 'Some ##timemodified## tag',
-                'expected' => '|Some {timemodified} tag|',
+                'expected' => '|Some <span.*>{timemodified}</span> tag|',
                 'rolename' => 'editingteacher',
             ],
             'Teacher approve tag approved entry' => [
@@ -552,12 +552,12 @@ class template_test extends \advanced_testcase {
             ],
             'Student timeadded tag' => [
                 'templatecontent' => 'Some ##timeadded## tag',
-                'expected' => '|Some {timeadded} tag|',
+                'expected' => '|Some <span.*>{timeadded}</span> tag|',
                 'rolename' => 'student',
             ],
             'Student timemodified tag' => [
                 'templatecontent' => 'Some ##timemodified## tag',
-                'expected' => '|Some {timemodified} tag|',
+                'expected' => '|Some <span.*>{timemodified}</span> tag|',
                 'rolename' => 'student',
             ],
             'Student approve tag approved entry' => [

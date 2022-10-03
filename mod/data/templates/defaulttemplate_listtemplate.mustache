@@ -34,10 +34,25 @@
     }
 }}
 <div class="defaulttemplate-listentry my-5 p-5 card">
-    <div class="d-flex">
-        <div class="ml-auto my-auto ##approvalstatusclass##">##approvalstatus##</div>
-        <div>##actionsmenu##</div>
+    <div class="row my-6">
+        <div class="col-auto">##userpicture##</div>
+        <div class="col">
+            <div class="row h-100">
+                <div class="col-3 align-self-center">
+                    ##user##<br/><span class="data-timeinfo">##timeadded##</span>
+                </div>
+                <div class="col-4 col-md-6 text-right align-self-center data-timeinfo">
+                    <span class="font-weight-bold ">{{#str}}datemodified, mod_data{{/str}}</span>##timemodified##
+                </div>
+                <div class="col-4 col-md-3 ml-auto align-self-center d-flex flex-row-reverse">
+                    <div>##actionsmenu##</div>
+                    <div class="ml-auto my-auto ##approvalstatusclass##">##approvalstatus##</div>
+                </div>
+            </div>
+        </div>
     </div>
+    <hr/>
+
     <div class="defaulttemplate-list-body">
         {{#fields}}
             <div class="row my-3 align-items-start justify-content-start">
