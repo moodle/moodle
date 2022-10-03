@@ -236,10 +236,11 @@ switch ($mode) {
                 } else {
                     $fieldtypename = $field->name();
                 }
-                echo $OUTPUT->confirm('<strong>'.$fieldtypename.': '.$field->field->name.'</strong><br /><br />'.
-                            get_string('confirmdeletefield', 'data'),
-                            'field.php?d='.$data->id.'&mode=delete&fid='.$fid.'&confirm=1',
-                            'field.php?d='.$data->id);
+                echo $OUTPUT->confirm('<strong>' . $fieldtypename . ': ' . $field->field->name . '</strong><br /><br />' .
+                        get_string('confirmdeletefield', 'data'),
+                        'field.php?d=' . $data->id . '&mode=delete&fid=' . $fid . '&confirm=1',
+                        'field.php?d=' . $data->id,
+                        ['type' => single_button::BUTTON_DANGER]);
 
                 echo $OUTPUT->footer();
                 exit;
