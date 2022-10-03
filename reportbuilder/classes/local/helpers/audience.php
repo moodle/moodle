@@ -19,6 +19,8 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\helpers;
 
 use cache;
+use context;
+use context_system;
 use core_collator;
 use core_component;
 use core_plugin_manager;
@@ -52,11 +54,11 @@ class audience {
     }
 
     /**
-     * Returns list of reports that the specified user can access. Note this is potentially very expensive to calculate if a
+     * Returns list of report IDs that the specified user can access, based on audience configuration. This can be expensive if the
      * site has lots of reports, with lots of audiences, so we cache the result for the duration of the users session
      *
      * @param int|null $userid User ID to check, or the current user if omitted
-     * @return array
+     * @return int[]
      */
     public static function get_allowed_reports(?int $userid = null): array {
         global $USER, $DB;
@@ -113,7 +115,7 @@ class audience {
     }
 
     /**
-     * Generate SQL select clause and params for selecting reports specified user can access
+     * Generate SQL select clause and params for selecting reports specified user can access, based on audience configuration
      *
      * @param string $reporttablealias
      * @param int|null $userid User ID to check, or the current user if omitted
@@ -137,7 +139,7 @@ class audience {
     }
 
     /**
-     * Return list of report ID's specified user can access
+     * Return list of report ID's specified user can access, based on audience configuration
      *
      * @param int|null $userid User ID to check, or the current user if omitted
      * @return int[]
@@ -151,6 +153,53 @@ class audience {
                  WHERE {$select}";
 
         return $DB->get_fieldset_sql($sql, $params);
+    }
+
+    /**
+     * Returns SQL to limit the list of reports to those that the given user has access to
+     *
+     * - A user with 'editall' capability will have access to all reports
+     * - A user with 'edit' capability will have access to:
+     *      - Those reports this user has created
+     *      - Those reports this user is in audience of
+     * - A user with 'view' capability will have access to:
+     *      - Those reports this user is in audience of
+     *
+     * @param string $reporttablealias
+     * @param int|null $userid User ID to check, or the current user if omitted
+     * @param context|null $context
+     * @return array
+     */
+    public static function user_reports_list_access_sql(
+        string $reporttablealias,
+        ?int $userid = null,
+        ?context $context = null
+    ): array {
+        global $DB, $USER;
+
+        if ($context === null) {
+            $context = context_system::instance();
+        }
+
+        // If user can't view all reports, limit the returned list to those reports they can see.
+        if (!has_capability('moodle/reportbuilder:editall', $context, $userid)) {
+            $reports = self::user_reports_list($userid);
+
+            [$paramprefix, $paramuserid] = database::generate_param_names(2);
+            [$reportselect, $params] = $DB->get_in_or_equal($reports, SQL_PARAMS_NAMED, "{$paramprefix}_", true, null);
+
+            $where = "{$reporttablealias}.id {$reportselect}";
+
+            // User can also see any reports that they can edit.
+            if (has_capability('moodle/reportbuilder:edit', $context, $userid)) {
+                $where = "({$reporttablealias}.usercreated = :{$paramuserid} OR {$where})";
+                $params[$paramuserid] = $userid ?? $USER->id;
+            }
+
+            return [$where, $params];
+        }
+
+        return ['1=1', []];
     }
 
     /**

@@ -221,4 +221,71 @@ class audience_test extends advanced_testcase {
         $reports = audience::user_reports_list((int) $user3->id);
         $this->assertEmpty($reports);
     }
+
+    /**
+     * Test retrieving full list of reports that user can access
+     */
+    public function test_user_reports_list_access_sql(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $userone = $this->getDataGenerator()->create_user();
+        $usertwo = $this->getDataGenerator()->create_user();
+        $userthree = $this->getDataGenerator()->create_user();
+        $userfour = $this->getDataGenerator()->create_user();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        // Manager role gives users one and two capability to create own reports.
+        $managerrole = $DB->get_field('role', 'id', ['shortname' => 'manager']);
+        role_assign($managerrole, $userone->id, context_system::instance());
+        role_assign($managerrole, $usertwo->id, context_system::instance());
+
+        // Admin creates a report, no audience.
+        $this->setAdminUser();
+        $useradminreport = $generator->create_report(['name' => 'Admin report', 'source' => users::class]);
+
+        // User one creates a report, adds users two and three to audience.
+        $this->setUser($userone);
+        $useronereport = $generator->create_report(['name' => 'User one report', 'source' => users::class]);
+        $generator->create_audience(['reportid' => $useronereport->get('id'), 'classname' => manual::class, 'configdata' => [
+            'users' => [$usertwo->id, $userthree->id],
+        ]]);
+
+        // User two creates a report, no audience.
+        $this->setUser($usertwo);
+        $usertworeport = $generator->create_report(['name' => 'User two report', 'source' => users::class]);
+
+        // Admin user sees all reports.
+        $this->setAdminUser();
+        [$where, $params] = audience::user_reports_list_access_sql('r');
+        $reports = $DB->get_fieldset_sql("SELECT r.id FROM {reportbuilder_report} r WHERE {$where}", $params);
+        $this->assertEqualsCanonicalizing([
+            $useradminreport->get('id'),
+            $useronereport->get('id'),
+            $usertworeport->get('id'),
+        ], $reports);
+
+        // User one sees only the report they created.
+        [$where, $params] = audience::user_reports_list_access_sql('r', (int) $userone->id);
+        $reports = $DB->get_fieldset_sql("SELECT r.id FROM {reportbuilder_report} r WHERE {$where}", $params);
+        $this->assertEquals([$useronereport->get('id')], $reports);
+
+        // User two see the report they created and the one they are in the audience of.
+        [$where, $params] = audience::user_reports_list_access_sql('r', (int) $usertwo->id);
+        $reports = $DB->get_fieldset_sql("SELECT r.id FROM {reportbuilder_report} r WHERE {$where}", $params);
+        $this->assertEqualsCanonicalizing([$useronereport->get('id'), $usertworeport->get('id')], $reports);
+
+        // User three sees the report they are in the audience of.
+        [$where, $params] = audience::user_reports_list_access_sql('r', (int) $userthree->id);
+        $reports = $DB->get_fieldset_sql("SELECT r.id FROM {reportbuilder_report} r WHERE {$where}", $params);
+        $this->assertEquals([$useronereport->get('id')], $reports);
+
+        // User four sees no reports.
+        [$where, $params] = audience::user_reports_list_access_sql('r', (int) $userfour->id);
+        $reports = $DB->get_fieldset_sql("SELECT r.id FROM {reportbuilder_report} r WHERE {$where}", $params);
+        $this->assertEmpty($reports);
+    }
 }
