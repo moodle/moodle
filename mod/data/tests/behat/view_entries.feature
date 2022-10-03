@@ -121,12 +121,12 @@ Feature: Users can view and search database entries
     And I log out
     When I am on the "Test database name" "data activity" page logged in as teacher1
     And I click on "Advanced search" "checkbox"
-    And I set the field "Author first name" to "Bob"
+    And I set the field "First name" to "Bob"
     And I press "Save settings"
     Then I should see "Student entry 1"
     And I should not see "Student entry 2"
-    And I set the field "Author first name" to ""
-    And I set the field "Author surname" to "2"
+    And I set the field "First name" to ""
+    And I set the field "Last name" to "2"
     And I press "Save settings"
     And I should not see "Student entry 1"
     And I should see "Student entry 2"

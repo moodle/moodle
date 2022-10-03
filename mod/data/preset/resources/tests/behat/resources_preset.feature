@@ -74,6 +74,8 @@ Feature: Users can use the Resources preset
     Given I am on the "Student resources" "data activity" page logged in as student1
     And "My favourite book" "text" should appear before "My favourite podcast" "text"
     When I click on "Advanced search" "checkbox"
+    And I should see "First name"
+    And I should see "Last name"
     And I set the field "Title" to "book"
     And I press "Save settings"
     Then I should see "My favourite book"
