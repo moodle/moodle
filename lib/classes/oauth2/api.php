@@ -332,14 +332,14 @@ class api {
         // Will throw exceptions on validation failures.
         if ($create) {
             $issuer->create();
+
+            // Perform service discovery.
+            $classname = self::get_service_classname($issuer->get('servicetype'));
+            $classname::discover_endpoints($issuer);
+            self::guess_image($issuer);
         } else {
             $issuer->update();
         }
-
-        // Perform service discovery.
-        $classname = self::get_service_classname($issuer->get('servicetype'));
-        $classname::discover_endpoints($issuer);
-        self::guess_image($issuer);
 
         return $issuer;
     }
