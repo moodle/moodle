@@ -77,6 +77,7 @@ if ($form->is_cancelled()) {
 
 /// Print the page header
 $PAGE->navbar->add(get_string('add', 'data'));
+$PAGE->add_body_class('mediumwidth');
 $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_secondary_active_tab('modulepage');

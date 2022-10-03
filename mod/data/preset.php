@@ -70,6 +70,7 @@ require_capability('mod/data:managetemplates', $context);
 
 $url = new moodle_url('/mod/data/preset.php', array('d' => $data->id));
 
+$PAGE->add_body_class('mediumwidth');
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
