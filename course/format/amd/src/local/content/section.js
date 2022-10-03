@@ -148,10 +148,10 @@ export default class extends DndSection {
      */
     _updateBadges(section) {
         const current = this.getElement(`${this.selectors.SECTIONBADGES} [data-type='iscurrent']`);
-        current.classList.toggle(this.classes.HIDE, !section.current);
+        current?.classList.toggle(this.classes.HIDE, !section.current);
 
         const hiddenFromStudents = this.getElement(`${this.selectors.SECTIONBADGES} [data-type='hiddenfromstudents']`);
-        hiddenFromStudents.classList.toggle(this.classes.HIDE, section.visible);
+        hiddenFromStudents?.classList.toggle(this.classes.HIDE, section.visible);
     }
 
     /**
