@@ -397,12 +397,6 @@ if ($showactivity) {
         $actionbar = new \mod_data\output\action_bar($data->id, $pageurl);
         echo $actionbar->get_view_action_bar($hasrecords);
 
-        if ($mode === 'single') {
-            echo $OUTPUT->heading(get_string('singleview', 'mod_data'), 2, 'mb-4');
-        } else {
-            echo $OUTPUT->heading(get_string('listview', 'mod_data'), 2, 'mb-4');
-        }
-
         if ($groupmode) {
             $returnurl = new moodle_url('/mod/data/view.php', ['d' => $data->id, 'mode' => $mode, 'search' => s($search),
                 'sort' => s($sort), 'order' => s($order)]);
