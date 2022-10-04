@@ -26,6 +26,9 @@ This files describes API changes for code that uses the user API.
   * user/templates/local/participantsfilter/autocomplete_selection_items.mustache → lib/templates/datafilter/autocomplete_selection_items.mustache
   Class participant_filter now extends core filter api in core user.
 
+* The unified_filter function has been finally deprecated and cannot be used anymore
+* The class \core_user\output\unified_filter has been finally deprecated and removed
+
 === 4.0 ===
 
 * External function core_user_external::update_users() will now fail on a per user basis. Previously if one user
