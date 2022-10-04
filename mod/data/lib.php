@@ -3525,11 +3525,11 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
             $defaultemplate = 'singletemplate';
         }
 
+        $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d' => $data->id)));
         $datanode->add(get_string('fields', 'data'),
             new moodle_url('/mod/data/field.php', array('d' => $data->id)));
         $datanode->add(get_string('templates', 'data'),
             new moodle_url('/mod/data/templates.php', array('d' => $data->id)));
-        $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d' => $data->id)));
     }
 
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
