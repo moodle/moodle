@@ -84,7 +84,7 @@ function qbank_comment_preview_display($question, $courseid): string {
             && core\plugininfo\qbank::is_plugin_enabled('qbank_comment')) {
         \comment::init($PAGE);
         $args = new \stdClass;
-        $args->contextid = 1; // Static data to bypass comment sql as context is not needed.
+        $args->contextid = context_system::instance()->id; // Static data to bypass comment sql as context is not needed.
         $args->courseid  = $courseid;
         $args->area      = 'question';
         $args->itemid    = $question->id;
