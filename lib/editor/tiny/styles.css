@@ -17,3 +17,7 @@
     width: inherit;
     height: inherit;
 }
+
+.tox.tox-tinymce .tox-toolbar__group {
+    padding-right: 0;
+}
