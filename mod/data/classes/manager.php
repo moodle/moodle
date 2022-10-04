@@ -26,8 +26,6 @@ use mod_data\event\template_viewed;
 use mod_data\event\template_updated;
 use moodle_page;
 use core_component;
-use mod_data_renderer;
-use moodle_page;
 use stdClass;
 
 /**

@@ -232,15 +232,6 @@ class template {
     }
 
     /**
-     * Return the raw template content.
-     *
-     * @return string the template content before parsing
-     */
-    public function get_template_content(): string {
-        return $this->templatecontent;
-    }
-
-    /**
      * Return the parsed entry using a template.
      *
      * This method apply a template replacing all necessary tags.
