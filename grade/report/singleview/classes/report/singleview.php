@@ -19,6 +19,7 @@ namespace gradereport_singleview\report;
 use context_course;
 use grade_report;
 use moodle_url;
+use renderer_base;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
@@ -167,4 +168,33 @@ class singleview extends grade_report {
             $this->itemselector = $renderer->grade_items_selector($this->course, $itemid);
         }
     }
+
+    /**
+     * Adds bulk actions menu.
+     *
+     * @param renderer_base $output
+     * @return string HTML to display
+     */
+    public function bulk_actions_menu(renderer_base $output) : string {
+        $options = [
+            'overrideallgrades' => get_string('overrideallgrades', 'gradereport_singleview'),
+            'overridenonegrades' => get_string('overridenonegrades', 'gradereport_singleview'),
+            'excludeallgrades' => get_string('excludeallgrades', 'gradereport_singleview'),
+            'excludenonegrades' => get_string('excludenonegrades', 'gradereport_singleview'),
+            'bulklegend' => get_string('bulklegend', 'gradereport_singleview')
+        ];
+
+        $menu = new \action_menu();
+        $menu->set_menu_trigger(get_string('actions'), 'text-dark');
+
+        foreach ($options as $type => $option) {
+            $action = new \action_menu_link_secondary(new \moodle_url('#'), null, $option,
+                ['data-role' => $type]);
+            $menu->add($action);
+        }
+        $menu->attributes['class'] .= ' float-left my-auto';
+
+        return $output->render($menu);
+    }
+
 }

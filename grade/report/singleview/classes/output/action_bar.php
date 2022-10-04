@@ -66,6 +66,8 @@ class action_bar extends \core_grades\output\action_bar {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
+        global $USER;
+
         $courseid = $this->context->instanceid;
         // Get the data used to output the general navigation selector.
         $generalnavselector = new \core_grades\output\general_action_bar(
@@ -91,6 +93,10 @@ class action_bar extends \core_grades\output\action_bar {
         $data['itemselector'] = $this->report->itemselector;
 
         $data['pbarurl'] = $this->report->pbarurl->out(false);
+
+        if (!empty($USER->editing) && isset($this->report->screen->item)) {
+            $data['bulkactions'] = $this->report->bulk_actions_menu($output);
+        }
 
         return $data;
     }

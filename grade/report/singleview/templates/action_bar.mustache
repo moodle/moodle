@@ -39,6 +39,15 @@
         {{/itemselector}}
         {{#pagetoggler}}
             <div class="d-flex ml-auto">
+                {{#bulkactions}}
+                        <div class="navitem-divider"></div>
+                        <div class="navitem">{{{bulkactions}}}</div>
+                        {{#js}}
+                            require(['gradereport_singleview/bulkactions'], function(bulkactions) {
+                            bulkactions.init();
+                            });
+                        {{/js}}
+                {{/bulkactions}}
                 <div class="navitem-divider"></div>
                 <div class="navitem">
                     {{>gradereport_singleview/page_toggler}}
