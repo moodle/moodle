@@ -223,7 +223,7 @@ class lesson_override_form extends moodleform {
         $mform->setDefault('review', $this->lesson->review);
 
         // Number of attempts.
-        $numbers = array();
+        $numbers = ['0' => get_string('unlimited')];
         for ($i = 10; $i > 0; $i--) {
             $numbers[$i] = $i;
         }
