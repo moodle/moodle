@@ -4304,7 +4304,13 @@ EOF;
                 'config' => "\r\n example.com \r\n test.com \r\n",
                 'result' => true
             ],
-
+            [
+                'email' => 'fromuser@EXAMPLE.com',
+                'display' => \core_user::MAILDISPLAY_EVERYONE,
+                'samecourse' => false,
+                'config' => "example.com\r\ntest.com",
+                'result' => true,
+            ],
             // Test from email is not in allowed domain.
             // Test that from display is set to show no one.
             [   'email' => 'fromuser@moodle.com',
