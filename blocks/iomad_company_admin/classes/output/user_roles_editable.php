@@ -77,7 +77,7 @@ class user_roles_editable extends \core\output\inplace_editable {
         // Invent an itemid.
         $itemid = $company->id . ':' . $user->id;
 
-        $value = json_encode($currentvalue);
+        $value = $currentvalue;
 
         // Remember these for the display value.
         $this->assignableroles = $assignableroles;
