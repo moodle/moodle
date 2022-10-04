@@ -141,6 +141,17 @@ class mod_data_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Renders the default template.
+     *
+     * @param \mod_data\output\defaulttemplate $template
+     * @return string The HTML output
+     */
+    public function render_defaulttemplate(\mod_data\output\defaulttemplate $template): string {
+        $data = $template->export_for_template($this);
+        return $this->render_from_template($template->get_templatename(), $data);
+    }
+
+    /**
      * Renders the action bar for the zero state (no fields created) page.
      *
      * @param \mod_data\manager $manager The manager instance.

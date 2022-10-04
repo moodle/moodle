@@ -129,26 +129,27 @@ Feature: Users can be required to specify certain fields when adding entries to 
     And I add an entry to "Test database name" database with:
        | Base Text input | Some input to allow us to submit the otherwise empty form |
     And I press "Save"
-    Then ".alert" "css_element" should exist in the "Required Checkbox" "table_row"
-    And ".alert" "css_element" should exist in the "Required Two-Option Checkbox" "table_row"
-    And ".alert" "css_element" should exist in the "Required Coordinates" "table_row"
-    And ".alert" "css_element" should exist in the "Required Menu" "table_row"
-    And ".alert" "css_element" should exist in the "Required Number" "table_row"
-    And ".alert" "css_element" should exist in the "Required Radio" "table_row"
-    And ".alert" "css_element" should exist in the "Required Text input" "table_row"
-    And ".alert" "css_element" should exist in the "Required Text area" "table_row"
-    And ".alert" "css_element" should exist in the "Required URL" "table_row"
-    And ".alert" "css_element" should exist in the "Required Multimenu" "table_row"
-    And ".alert" "css_element" should exist in the "Required Two-Option Multimenu" "table_row"
-    And ".alert" "css_element" should not exist in the "Not required Checkbox" "table_row"
-    And ".alert" "css_element" should not exist in the "Not required Coordinates" "table_row"
-    And ".alert" "css_element" should not exist in the "Not required Menu" "table_row"
-    And ".alert" "css_element" should not exist in the "Not required Number" "table_row"
-    And ".alert" "css_element" should not exist in the "Not required Radio" "table_row"
-    And ".alert" "css_element" should not exist in the "Not required Text input" "table_row"
-    And ".alert" "css_element" should not exist in the "Not required Text area" "table_row"
-    And ".alert" "css_element" should not exist in the "Not required URL" "table_row"
-    And ".alert" "css_element" should not exist in the "Not required Multimenu" "table_row"
+#    Then ".alert" "css_element" should exist in the "//div[contains(@id,'defaulttemplate-addentry']//div[position()=1]]" "xpath_element"
+    Then ".alert" "css_element" should appear after "Checkbox" "text"
+    And ".alert" "css_element" should appear before "Required Checkbox" "text"
+    And ".alert" "css_element" should appear after "Two-Option Checkbox" "text"
+    And ".alert" "css_element" should appear before "Required Two-Option Checkbox" "text"
+    And ".alert" "css_element" should appear after "Coordinates" "text"
+    And ".alert" "css_element" should appear before "Required Coordinates" "text"
+    And ".alert" "css_element" should appear after "Menu" "text"
+    And ".alert" "css_element" should appear before "Required Menu" "text"
+    And ".alert" "css_element" should appear after "Radio" "text"
+    And ".alert" "css_element" should appear before "Required Radio" "text"
+    And ".alert" "css_element" should appear after "Text input" "text"
+    And ".alert" "css_element" should appear before "Required Text input" "text"
+    And ".alert" "css_element" should appear after "Text area" "text"
+    And ".alert" "css_element" should appear before "Required Text area" "text"
+    And ".alert" "css_element" should appear after "URL" "text"
+    And ".alert" "css_element" should appear before "Required URL" "text"
+    And ".alert" "css_element" should appear after "Multimenu" "text"
+    And ".alert" "css_element" should appear before "Required Multimenu" "text"
+    And ".alert" "css_element" should appear after "Two-Option Multimenu" "text"
+    And ".alert" "css_element" should appear before "Required Two-Option Multimenu" "text"
     And I am on "Course 1" course homepage
     And I follow "Test database name"
     And I should see "No entries yet"
@@ -204,6 +205,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required Multimenu            | Option 1            |
        | Required Two-Option Multimenu | Option 1            |
 
+  @javascript
   Scenario: A student fills in Latitude but not Longitude will see an error
     Given I log in as "student1"
     And I am on "Course 1" course homepage
@@ -220,10 +222,10 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/                                       |
        | Required Multimenu            | 1                                                         |
        | Required Two-Option Multimenu | 1                                                         |
-    And I set the field with xpath "//div[@title='Not required Coordinates']//tr[td/label[normalize-space(.)='Latitude']]/td/input" to "20"
+    And I set the field "Latitude" to "20"
+    #And I set the field with xpath "//div[@title='Not required Coordinates']//tr[td/label[normalize-space(.)='Latitude']]/td/input" to "20"
     And I press "Save"
-    Then ".alert" "css_element" should exist in the "Required Coordinates" "table_row"
-    And ".alert" "css_element" should exist in the "Not required Coordinates" "table_row"
+    Then I should see "Both latitude and longitude are required."
 
   Scenario: A student filling in number and text fields with zero will not see an error.
     Given I log in as "student1"

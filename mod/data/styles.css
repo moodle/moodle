@@ -150,6 +150,14 @@
     display: none;
 }
 
+.defaulttemplate-single-body img.list_picture {
+    max-width: 100%;
+}
+
+.defaulttemplate-list-body img.list_picture {
+    max-width: 100%;
+}
+
 /* Preset preview styles */
 #page-mod-data-preset .nopreview {
     border: 1px solid var(--secondary);

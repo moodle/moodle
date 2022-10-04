@@ -682,89 +682,36 @@ function data_generate_default_template(&$data, $template, $recordid = 0, $form 
     }
 
     // These templates are empty by default (they have no content).
-    $defaulttemplates = [
+    $emptytemplates = [
         'csstemplate',
         'jstemplate',
         'listtemplateheader',
         'listtemplatefooter',
         'rsstitletemplate',
     ];
-    if (in_array($template, $defaulttemplates)) {
+    if (in_array($template, $emptytemplates)) {
         return '';
     }
 
-    // Get all the fields for that database.
-    $str = '';
-    if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id')) {
-
-        $table = new html_table();
-        $table->attributes['class'] = 'mod-data-default-template ##approvalstatusclass##';
-        $table->colclasses = array('template-field', 'template-token');
-        $table->data = array();
-        foreach ($fields as $field) {
-            if ($form) {   // Print forms instead of data
-                $fieldobj = data_get_field($field, $data);
-                $token = $fieldobj->display_add_field($recordid, null);
-            } else {           // Just print the tag
-                $token = '[['.$field->name.']]';
-            }
-            $table->data[] = array(
-                $field->name.': ',
-                $token
-            );
-        }
-
-        if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
-            $label = new html_table_cell(get_string('tags') . ':');
-            if ($form) {
-                $cell = data_generate_tag_form();
-            } else {
-                $cell = new html_table_cell('##tags##');
-            }
-            $table->data[] = new html_table_row(array($label, $cell));
-        }
-
-        if ($template == 'listtemplate') {
-            $cell = new html_table_cell('##edit##  ##more##  ##delete##  ##approve##  ##disapprove##  ##export##');
-            $cell->colspan = 2;
-            $cell->attributes['class'] = 'controls';
-            $table->data[] = new html_table_row(array($cell));
-        } else if ($template == 'singletemplate') {
-            $cell = new html_table_cell('##edit##  ##delete##  ##approve##  ##disapprove##  ##export##');
-            $cell->colspan = 2;
-            $cell->attributes['class'] = 'controls';
-            $table->data[] = new html_table_row(array($cell));
-        } else if ($template == 'asearchtemplate') {
-            $row = new html_table_row(array(get_string('authorfirstname', 'data').': ', '##firstname##'));
-            $row->attributes['class'] = 'searchcontrols';
-            $table->data[] = $row;
-            $row = new html_table_row(array(get_string('authorlastname', 'data').': ', '##lastname##'));
-            $row->attributes['class'] = 'searchcontrols';
-            $table->data[] = $row;
-        }
-
-        if ($template == 'listtemplate'){
-            $str .= '##delcheck##';
-            $str .= html_writer::empty_tag('br');
-        }
-
-        $str .= html_writer::start_tag('div', array('class' => 'defaulttemplate'));
-        $str .= html_writer::table($table);
-        $str .= html_writer::end_tag('div');
-        if ($template == 'listtemplate'){
-            $str .= html_writer::empty_tag('hr');
-        }
-
-        if ($update) {
-            $newdata = new stdClass();
-            $newdata->id = $data->id;
-            $newdata->{$template} = $str;
-            $DB->update_record('data', $newdata);
-            $data->{$template} = $str;
-        }
+    $manager = manager::create_from_instance($data);
+    if (empty($manager->get_fields())) {
+        // No template will be returned if there are no fields.
+        return '';
     }
 
-    return $str;
+    $templateclass = \mod_data\template::create_default_template($manager, $template, $form);
+    $templatecontent = $templateclass->get_template_content();
+
+    if ($update) {
+        // Update the database instance.
+        $newdata = new stdClass();
+        $newdata->id = $data->id;
+        $newdata->{$template} = $templatecontent;
+        $DB->update_record('data', $newdata);
+        $data->{$template} = $templatecontent;
+    }
+
+    return $templatecontent;
 }
 
 /**

@@ -103,6 +103,69 @@ class template {
     }
 
     /**
+     * Create a template class with the default template content.
+     *
+     * @param manager $manager the current instance manager.
+     * @param string $templatename the template name.
+     * @param bool $form whether the fields should be displayed as form instead of data.
+     * @return self The template with the default content (to be displayed when no template is defined).
+     */
+    public static function create_default_template(
+            manager $manager,
+            string $templatename,
+            bool $form = false
+    ): self {
+        $renderer = $manager->get_renderer();
+        $content = '';
+        switch ($templatename) {
+            case 'addtemplate':
+            case 'asearchtemplate':
+            case 'listtemplate':
+            case 'rsstemplate':
+            case 'singletemplate':
+                $template = new \mod_data\output\defaulttemplate($manager->get_fields(), $templatename, $form);
+                $content = $renderer->render_defaulttemplate($template);
+        }
+
+        // Some templates have extra options.
+        $options = self::get_default_display_options($templatename);
+
+        return new self($manager, $content, $options);
+    }
+
+    /**
+     * Get default options for templates.
+     *
+     * For instance, the list template supports the show more button.
+     *
+     * @param string $templatename the template name.
+     * @return array an array of extra diplay options.
+     */
+    public static function get_default_display_options(string $templatename): array {
+        $options = [];
+
+        if ($templatename === 'singletemplate') {
+            $options['comments'] = true;
+            $options['ratings'] = true;
+        }
+        if ($templatename === 'listtemplate') {
+            // The "Show more" button should be only displayed in the listtemplate.
+            $options['showmore'] = true;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Return the raw template content.
+     *
+     * @return string the template content before parsing
+     */
+    public function get_template_content(): string {
+        return $this->templatecontent;
+    }
+
+    /**
      * Add extra display options.
      *
      * The extra options are:

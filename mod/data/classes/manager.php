@@ -24,6 +24,8 @@ use mod_data\event\course_module_viewed;
 use mod_data\event\template_viewed;
 use mod_data\event\template_updated;
 use core_component;
+use mod_data_renderer;
+use moodle_page;
 use stdClass;
 
 /**
@@ -156,6 +158,18 @@ class manager {
     }
 
     /**
+     * Return the current module renderer.
+     *
+     * @param moodle_page|null $page the current page
+     * @return mod_data_renderer the module renderer
+     */
+    public function get_renderer(?moodle_page $page = null): mod_data_renderer {
+        global $PAGE;
+        $page = $page ?? $PAGE;
+        return $page->get_renderer(self::PLUGINNAME);
+    }
+
+    /**
      * Trigger module viewed event and set the module viewed for completion.
      *
      * @param stdClass $course course object
@@ -277,14 +291,8 @@ class manager {
         }
         $options['templatename'] = $templatename;
         // Some templates have extra options.
-        if ($templatename === 'singletemplate') {
-            $options['comments'] = true;
-            $options['ratings'] = true;
-        }
-        if ($templatename === 'listtemplate') {
-            // The "Show more" button should be only displayed in the listtemplate.
-            $options['showmore'] = true;
-        }
+        $options = array_merge($options, template::get_default_display_options($templatename));
+
         return new template($this, $templatecontent, $options);
     }
 

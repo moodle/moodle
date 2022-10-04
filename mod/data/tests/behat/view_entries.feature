@@ -97,7 +97,8 @@ Feature: Users can view and search database entries
     And I press "Save"
     And I should see "Student original entry"
     And I should see "Tag1" in the "div.tag_list" "css_element"
-    And I follow "Edit"
+    And I open the action menu in "#defaulttemplate-single" "css_element"
+    And I choose "Edit" in the open action menu
     And I should see "Tag1" in the ".form-autocomplete-selection" "css_element"
     And I follow "Cancel"
     And I select "List view" from the "jump" singleselect
