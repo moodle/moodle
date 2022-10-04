@@ -120,7 +120,18 @@ class api {
         $sql = "SELECT $uniqueidsql AS uniqueid, m.id, m.useridfrom, mcm.userid as useridto, m.subject, m.fullmessage,
                        m.fullmessagehtml, m.fullmessageformat, m.smallmessage, m.conversationid, m.timecreated, 0 as isread,
                        $ufields, mub.id as userfrom_blocked, $ufields2, mub2.id as userto_blocked
-                  FROM {messages} m
+                  FROM (
+                        SELECT m2.id AS id
+                          FROM {messages} m2
+                         WHERE m2.useridfrom = ?
+                         UNION
+                        SELECT m3.id AS id
+                          FROM {message_conversation_members} mcm3
+                    INNER JOIN {messages} m3 ON mcm3.conversationid = m3.conversationid
+                         WHERE mcm3.userid = ?
+                       ) der
+            INNER JOIN {messages} m
+                    ON der.id = m.id
             INNER JOIN {user} u
                     ON u.id = m.useridfrom
             INNER JOIN {message_conversations} mc
@@ -143,7 +154,7 @@ class api {
                    AND " . $DB->sql_like('smallmessage', '?', false) . "
               ORDER BY timecreated DESC";
 
-        $params = array($userid, $userid, $userid, self::MESSAGE_ACTION_DELETED, $userid, $userid,
+        $params = array($userid, $userid, $userid, $userid, $userid, self::MESSAGE_ACTION_DELETED, $userid, $userid,
             self::MESSAGE_CONVERSATION_TYPE_SELF, '%' . $search . '%');
 
         // Convert the messages into searchable contacts with their last message being the message that was searched.
