@@ -241,7 +241,7 @@ echo $OUTPUT->header();
 
 if (!$manager->has_fields()) {
     // It's a brand-new database. There are no fields.
-    $renderer = $PAGE->get_renderer('mod_data');
+    $renderer = $manager->get_renderer();
     echo $renderer->render_zero_state($manager);
     echo $OUTPUT->footer();
     // Don't check the rest of the options. There is no field, there is nothing else to work with.
@@ -387,7 +387,7 @@ if ($showactivity) {
         $hasrecords = !empty($records);
 
         if ($maxcount == 0) {
-            $renderer = $PAGE->get_renderer('mod_data');
+            $renderer = $manager->get_renderer();
             echo $renderer->render_empty_database($manager);
             echo $OUTPUT->footer();
             // There is no entry, so makes no sense to check different views, pagination, etc.
@@ -449,11 +449,6 @@ if ($showactivity) {
                 $baseurl = new moodle_url($baseurl, $baseurlparams);
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
-                if (empty($data->singletemplate)){
-                    echo $OUTPUT->notification(get_string('nosingletemplate','data'));
-                    data_generate_default_template($data, 'singletemplate', 0, false, false);
-                }
-
                 require_once($CFG->dirroot.'/rating/lib.php');
                 if ($data->assessed != RATING_AGGREGATE_NONE) {
                     $ratingoptions = new stdClass;
@@ -492,10 +487,6 @@ if ($showactivity) {
 
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
-                if (empty($data->listtemplate)){
-                    echo $OUTPUT->notification(get_string('nolisttemplate','data'));
-                    data_generate_default_template($data, 'listtemplate', 0, false, false);
-                }
                 echo $data->listtemplateheader;
                 $options = [
                     'search' => $search,

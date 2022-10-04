@@ -232,6 +232,15 @@ class template {
     }
 
     /**
+     * Return the raw template content.
+     *
+     * @return string the template content before parsing
+     */
+    public function get_template_content(): string {
+        return $this->templatecontent;
+    }
+
+    /**
      * Return the parsed entry using a template.
      *
      * This method apply a template replacing all necessary tags.
@@ -798,5 +807,72 @@ class template {
         }
 
         return $OUTPUT->render($actionmenu);
+    }
+
+    /**
+     * Parse the template as if it was for add entry.
+     *
+     * This method is similar to the parse_entry but it uses the display_add_field method
+     * instead of the display_browse_field.
+     *
+     * @param stdClass|null $processeddata the previous process data information.
+     * @param int|null $entryid the possible entry id
+     * @param stdClass|null $entrydata the entry data from a previous form or from a real entry
+     * @return string the add entry HTML content
+     */
+    public function parse_add_entry(
+        ?stdClass $processeddata = null,
+        ?int $entryid = null,
+        ?stdClass $entrydata = null
+    ): string {
+        $manager = $this->manager;
+        $renderer = $manager->get_renderer();
+        $templatecontent = $this->templatecontent;
+
+        if (!$processeddata) {
+            $processeddata = (object)[
+                'generalnotifications' => [],
+                'fieldnotifications' => [],
+            ];
+        }
+
+        $result = '';
+
+        foreach ($processeddata->generalnotifications as $notification) {
+            $result .= $renderer->notification($notification);
+        }
+
+        $possiblefields = $manager->get_fields();
+        $patterns = [];
+        $replacements = [];
+
+        // Then we generate strings to replace.
+        foreach ($possiblefields as $field) {
+            // To skip unnecessary calls to display_add_field().
+            if (strpos($templatecontent, "[[" . $field->field->name . "]]") !== false) {
+                // Replace the field tag.
+                $patterns[] = "[[" . $field->field->name . "]]";
+                $errors = '';
+                $fieldnotifications = $processeddata->fieldnotifications[$field->field->name] ?? [];
+                if (!empty($fieldnotifications)) {
+                    foreach ($fieldnotifications as $notification) {
+                        $errors .= $renderer->notification($notification);
+                    }
+                }
+                $replacements[] = $errors . $field->display_add_field($entryid, $entrydata);
+            }
+
+            // Replace the field id tag.
+            $patterns[] = "[[" . $field->field->name . "#id]]";
+            $replacements[] = 'field_' . $field->field->id;
+        }
+
+        if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
+            $patterns[] = "##tags##";
+            $replacements[] = data_generate_tag_form($entryid);
+        }
+
+        $result .= str_ireplace($patterns, $replacements, $templatecontent);
+        return $result;
     }
 }

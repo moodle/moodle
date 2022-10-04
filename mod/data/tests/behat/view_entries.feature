@@ -29,13 +29,6 @@ Feature: Users can view and search database entries
       | data1    | text | Test field name   | Test field description   |
       | data1    | text | Test field 2 name | Test field 2 description |
       | data1    | url  | Test field 3 name | Test field 3 description |
-    And the following "mod_data > templates" exist:
-      | database | name            |
-      | data1    | singletemplate  |
-      | data1    | listtemplate    |
-      | data1    | addtemplate     |
-      | data1    | asearchtemplate |
-      | data1    | rsstemplate     |
 
   @javascript
   Scenario: Students can view, list and search entries

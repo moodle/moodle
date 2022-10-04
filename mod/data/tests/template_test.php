@@ -794,4 +794,117 @@ class template_test extends \advanced_testcase {
         $rm = new rating_manager();
         return $rm->get_ratings($ratingoptions);
     }
+
+    /**
+     * Test parse add entry template parsing.
+     *
+     * @covers ::parse_add_entry
+     * @dataProvider parse_add_entry_provider
+     * @param string $templatecontent the template string
+     * @param string $expected expected output
+     * @param bool $newentry if it is a new entry or editing and existing one
+     */
+    public function test_parse_add_entry(
+        string $templatecontent,
+        string $expected,
+        bool $newentry = false
+    ) {
+        global $DB, $PAGE;
+        // Comments, tags, approval, user role.
+        $this->resetAfterTest();
+
+        $params = ['approval' => true];
+
+        $course = $this->getDataGenerator()->create_course();
+        $params['course'] = $course;
+        $activity = $this->getDataGenerator()->create_module('data', $params);
+        $author = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+
+        // Generate an entry.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $fieldrecord = (object)[
+            'name' => 'myfield',
+            'type' => 'text',
+        ];
+        $field = $generator->create_field($fieldrecord, $activity);
+
+        if ($newentry) {
+            $entryid = null;
+            $entry = null;
+        } else {
+            $entryid = $generator->create_entry(
+                $activity,
+                [$field->field->id => 'Example entry'],
+                0,
+                ['Cats', 'Dogs']
+            );
+            $entry = (object)[
+                'd' => $activity->id,
+                'rid' => $entryid,
+                "field_{$field->field->id}" => "New value",
+            ];
+        }
+
+        $manager = manager::create_from_instance($activity);
+
+        // Some cooked variables for the regular expression.
+        $replace = [
+            '{fieldid}' => $field->field->id,
+        ];
+
+        $processdata = (object)[
+            'generalnotifications' => ['GENERAL'],
+            'fieldnotifications' => [$field->field->name => ['FIELD']],
+        ];
+
+        $parser = new template($manager, $templatecontent);
+        $result = $parser->parse_add_entry($processdata, $entryid, $entry);
+
+        // We don't want line breaks for the validations.
+        $result = str_replace("\n", '', $result);
+        $regexp = str_replace(array_keys($replace), array_values($replace), $expected);
+        $this->assertMatchesRegularExpression($regexp, $result);
+    }
+
+    /**
+     * Data provider for test_parse_add_entry().
+     *
+     * @return array of scenarios
+     */
+    public function parse_add_entry_provider(): array {
+        return [
+            // Editing an entry.
+            'Teacher editing entry tags tag' => [
+                'templatecontent' => 'Some ##tags## tag',
+                'expected' => '|GENERAL.*Some .*select .*tags.*Cats.* tag|',
+                'newentry' => false,
+            ],
+            'Teacher editing entry field name tag' => [
+                'templatecontent' => 'Some [[myfield]] tag',
+                'expected' => '|GENERAL.*Some .*FIELD.*field_{fieldid}.*input.*New value.* tag|',
+                'newentry' => false,
+            ],
+            'Teacher editing entry field#id tag' => [
+                'templatecontent' => 'Some [[myfield#id]] tag',
+                'expected' => '|GENERAL.*Some field_{fieldid} tag|',
+                'newentry' => false,
+            ],
+            // New entry.
+            'Teacher new entry tags tag' => [
+                'templatecontent' => 'Some ##tags## tag',
+                'expected' => '|GENERAL.*Some .*select .*tags\[\].* tag|',
+                'newentry' => true,
+            ],
+            'Teacher new entry field name tag' => [
+                'templatecontent' => 'Some [[myfield]] tag',
+                'expected' => '|GENERAL.*Some .*FIELD.*field_{fieldid}.*input.*value="".* tag|',
+                'newentry' => true,
+            ],
+            'Teacher new entry field#id name tag' => [
+                'templatecontent' => 'Some [[myfield#id]] tag',
+                'expected' => '|GENERAL.*Some field_{fieldid} tag|',
+                'newentry' => true,
+            ],
+        ];
+    }
 }

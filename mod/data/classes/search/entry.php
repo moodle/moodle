@@ -24,6 +24,8 @@
 
 namespace mod_data\search;
 
+use mod_data\manager;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/data/lib.php');
@@ -280,11 +282,13 @@ class entry extends \core_search\base_mod {
                  WHERE dc.fieldid = df.id
                        AND dc.recordid = :recordid";
 
-        $contents = $DB->get_records_sql($sql, array('recordid' => $entry->id));
-        $filteredcontents = array();
+        $contents = $DB->get_records_sql($sql, ['recordid' => $entry->id]);
+        $filteredcontents = [];
 
-        $template = $DB->get_record_sql('SELECT addtemplate FROM {data} WHERE id = ?', array($entry->dataid));
-        $template = $template->addtemplate;
+        $data = $DB->get_record('data', ['id' => $entry->dataid]);
+        $manager = manager::create_from_instance($data);
+        $template = $manager->get_template('addtemplate');
+        $template = $template->get_template_content();
 
         // Filtering out the data_content records having invalid fieldtypes.
         foreach ($contents as $content) {

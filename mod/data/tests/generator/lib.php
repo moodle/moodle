@@ -120,6 +120,11 @@ class mod_data_generator extends testing_module_generator {
             $record['description'] = " This is testField - " . $this->databasefieldcount;
         }
 
+        if (isset($record['param1']) && !empty($record['param1'])) {
+            // Some fields have multiline entries.
+            $record['param1'] = str_replace('\n', "\n", $record['param1']);
+        }
+
         if (!isset($record['param1'])) {
             if ($record['type'] == 'checkbox') {
                 $record['param1'] = implode("\n", array('opt1', 'opt2', 'opt3', 'opt4'));
@@ -177,8 +182,6 @@ class mod_data_generator extends testing_module_generator {
 
         $field = data_get_field($record, $data);
         $field->insert_field();
-
-        data_generate_default_template($data, 'addtemplate', 0, false, true);
 
         return $field;
     }

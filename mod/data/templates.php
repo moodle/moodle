@@ -84,33 +84,27 @@ echo $actionbar->get_templates_action_bar();
 echo $OUTPUT->heading(get_string($mode, 'data'), 2, 'mb-4');
 
 if (($formdata = data_submitted()) && confirm_sesskey()) {
+    $notificationstr = get_string('templatesaved', 'data');
     if (!empty($formdata->defaultform)) {
-        // Reset the template to default, but don't save yet.
-        $instance->{$mode} = data_generate_default_template($instance, $mode, 0, false, false);
+        // Reset the template to default.
+        $formdata->{$mode} = '';
         if ($mode == 'listtemplate') {
-            $instance->listtemplateheader = '';
-            $instance->listtemplatefooter = '';
+            $formdata->listtemplateheader = '';
+            $formdata->listtemplatefooter = '';
         }
-    } else {
-        if ($manager->update_templates($formdata)) {
-            // Reload instance.
-            $instance = $manager->get_instance();
-            echo $OUTPUT->notification(get_string('templatesaved', 'data'), 'notifysuccess');
+        if ($mode == 'rsstemplate') {
+            $formdata->rsstitletemplate = '';
         }
+        $notificationstr = get_string('templatereset', 'data');
+    }
+    if ($manager->update_templates($formdata)) {
+        // Reload instance.
+        $instance = $manager->get_instance();
+        echo $OUTPUT->notification($notificationstr, 'notifysuccess');
     }
 }
 
-/// If everything is empty then generate some defaults
-if (empty($instance->addtemplate) && empty($instance->singletemplate) &&
-    empty($instance->listtemplate) && empty($instance->rsstemplate)) {
-    data_generate_default_template($instance, 'singletemplate');
-    data_generate_default_template($instance, 'listtemplate');
-    data_generate_default_template($instance, 'addtemplate');
-    data_generate_default_template($instance, 'asearchtemplate');
-    data_generate_default_template($instance, 'rsstemplate');
-}
-
-$renderer = $PAGE->get_renderer('mod_data');
+$renderer = $manager->get_renderer();
 $templateeditor = new \mod_data\output\template_editor($manager, $mode);
 echo $renderer->render($templateeditor);
 

@@ -50,8 +50,6 @@ Feature: Completion pass grade
     And I press "Save and display"
     And I add a "Short text" field to "Music history" database and I fill the form with:
       | Field name | Instrument types |
-    And I navigate to "Templates" in current page administration
-    And I press "Save template"
     And I log out
 
   Scenario: View automatic completion items as a teacher

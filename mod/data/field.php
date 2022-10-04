@@ -117,7 +117,7 @@ $data->instance   = $cm->instance;
 /************************************
  *        Data Processing           *
  ***********************************/
-$renderer = $PAGE->get_renderer('mod_data');
+$renderer = $manager->get_renderer();
 
 if ($formimportzip->is_cancelled()) {
     redirect(new moodle_url('/mod/data/field.php', ['d' => $data->id]));

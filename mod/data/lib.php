@@ -1731,8 +1731,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 
     // Determine if we are printing all fields for advanced search, or the template for advanced search
     // If a template is not defined, use the deafault template and display all fields.
-    if(empty($data->asearchtemplate)) {
-        data_generate_default_template($data, 'asearchtemplate');
+    $asearchtemplate = $data->asearchtemplate;
+    if (empty($asearchtemplate)) {
+        $asearchtemplate = data_generate_default_template($data, 'asearchtemplate', 0, false, false);
     }
 
     static $fields = array();
@@ -1788,7 +1789,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $options->para=false;
     $options->noclean=true;
     echo '<tr><td>';
-    echo preg_replace($patterns, $replacement, format_text($data->asearchtemplate, FORMAT_HTML, $options));
+    echo preg_replace($patterns, $replacement, format_text($asearchtemplate, FORMAT_HTML, $options));
     echo '</td></tr>';
 
     echo '<tr><td colspan="4"><br/>' .

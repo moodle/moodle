@@ -297,12 +297,10 @@ $string['noaccess'] = 'You do not have access to this page';
 $string['nodefinedfields'] = 'New preset has no defined fields!';
 $string['nofieldcontent'] = 'Field content not found';
 $string['nofieldindatabase'] = 'There are no fields defined for this database.';
-$string['nolisttemplate'] = 'List template is not yet defined';
 $string['nomatch'] = 'No matching entries found!';
 $string['nomaximum'] = 'No maximum';
 $string['nopreviewavailable'] = 'No preview available for {$a}';
 $string['norecords'] = 'No entries yet';
-$string['nosingletemplate'] = 'Single template is not yet defined';
 $string['notapproved'] = 'Entry is not approved yet.';
 $string['notinjectivemap'] = 'Not an injective map';
 $string['notopenyet'] = 'Sorry, this activity is not available until {$a}';
@@ -373,6 +371,8 @@ Note: If entries are required before viewing, the database auto-linking filter s
 $string['requiredfield'] = 'Required field';
 $string['resetsettings'] = 'Reset filters';
 $string['resettemplate'] = 'Reset template';
+$string['resettemplateconfirmtitle'] = 'Reset template?';
+$string['resettemplateconfirm'] = 'Resetting a template removes the existing preset and any customisations you have done to the template. You can\'t undo this action.';
 $string['resizingimages'] = 'Resizing image thumbnails...';
 $string['rows'] = 'rows';
 $string['rssglobaldisabled'] = 'Disabled. See site configuration variables.';
@@ -410,6 +410,7 @@ $string['tags'] = 'Tags';
 $string['tagsdeleted'] = 'Database tags have been deleted';
 $string['teachersandstudents'] = '{$a->teachers} and {$a->students}';
 $string['templates'] = 'Templates';
+$string['templatereset'] = 'Template reset';
 $string['templatesnavigation'] = 'Templates tertiary navigation';
 $string['templatesaved'] = 'Template saved';
 $string['text'] = 'Text';
@@ -449,3 +450,5 @@ $string['unsupportedexport'] = '({$a->fieldtype}) cannot be exported.';
 
 // Deprecated since Moodle 4.1.
 $string['buttons'] = 'Actions';
+$string['nolisttemplate'] = 'List template is not yet defined';
+$string['nosingletemplate'] = 'Single template is not yet defined';

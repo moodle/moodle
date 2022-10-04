@@ -66,8 +66,9 @@
     }
 }}
 <div>{{title}}</div>
-<form id="tempform" action="{{{url}}}" method="post">
+<form id="edittemplateform" action="{{{url}}}" method="post">
     <input name="sesskey" value="{{sesskey}}" type="hidden" />
+    <input name="defaultform" type="hidden" value=""/>
     <div class="d-flex flex-row align-items-center">
         {{#toolbar}}
             {{> mod_data/template_editor_tools }}
@@ -96,8 +97,8 @@
             <div>
                 <input
                     class="btn btn-secondary"
-                    type="submit"
-                    name="defaultform"
+                    type="button"
+                    name="resetbutton"
                     value="{{#str}} resettemplate, data {{/str}}"
                 />
                 <input
