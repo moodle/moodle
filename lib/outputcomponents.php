@@ -3657,6 +3657,7 @@ class custom_menu_item implements renderable, templatable {
         $syscontext = context_system::instance();
 
         $context = new stdClass();
+        $context->moremenuid = uniqid();
         $context->text = external_format_string($this->text, $syscontext->id);
         $context->url = $this->url ? $this->url->out() : null;
         // No need for the title if it's the same with text.
