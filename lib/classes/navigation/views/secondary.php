@@ -299,17 +299,15 @@ class secondary extends view {
      * @return navigation_node The node intact with an action to use.
      */
     protected function get_first_action_for_node(navigation_node $node): ?navigation_node {
-        // If the node does not have children OR has an action no further processing needed.
+        // If the node does not have children and has no action then no further processing is needed.
         $newnode = null;
-        if ($node->has_children()) {
-            if (!$node->has_action()) {
-                // We want to find the first child with an action.
-                // We want to check all children on this level before going further down.
-                // Note that new node gets changed here.
-                $newnode = $this->get_node_with_first_action($node, $node);
-            } else {
-                $newnode = $node;
-            }
+        if ($node->has_children() && !$node->has_action()) {
+            // We want to find the first child with an action.
+            // We want to check all children on this level before going further down.
+            // Note that new node gets changed here.
+            $newnode = $this->get_node_with_first_action($node, $node);
+        } else if ($node->has_action()) {
+            $newnode = $node;
         }
         return $newnode;
     }
@@ -426,9 +424,12 @@ class secondary extends view {
         $overflownode = $this->get_course_overflow_nodes($rootnode);
         if (!is_null($overflownode)) {
             $actionnode = $this->get_first_action_for_node($overflownode);
-            // All additional nodes will be available under the 'Course reuse' page.
-            $text = get_string('coursereuse');
-            $rootnode->add($text, $actionnode->action, navigation_node::TYPE_COURSE, null, 'coursereuse', new \pix_icon('t/edit', $text));
+            if ($actionnode) {
+                // All additional nodes will be available under the 'Course reuse' page.
+                $text = get_string('coursereuse');
+                $rootnode->add($text, $actionnode->action, navigation_node::TYPE_COURSE, null, 'coursereuse',
+                    new \pix_icon('t/edit', $text));
+            }
         }
 
         // Add the respective first node, provided there are other nodes included.
