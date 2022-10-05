@@ -244,7 +244,7 @@ class manager {
     public function get_field_records() {
         global $DB;
         if ($this->_fieldrecords === null) {
-            $this->_fieldrecords = $DB->get_records('data_fields', ['dataid' => $this->instance->id]);
+            $this->_fieldrecords = $DB->get_records('data_fields', ['dataid' => $this->instance->id], 'id');
         }
         return $this->_fieldrecords;
     }
