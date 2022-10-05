@@ -295,6 +295,10 @@ class entry extends \core_search\base_mod {
 
         foreach ($filteredcontents as $content) {
             $classname = $this->get_field_class_name($content->fieldtype);
+            if (!$classname) {
+                $content->addtemplateposition = -1;
+                continue;
+            }
             $content->priority = $classname::get_priority();
             $content->addtemplateposition = strpos($template, '[['.$content->fldname.']]');
         }
@@ -342,16 +346,22 @@ class entry extends \core_search\base_mod {
     }
 
     /**
-     * Returns the class name for that field type and includes it.
+     * Returns the class name for the given field type and includes it.
      *
      * @param string $fieldtype
-     * @return string
+     * @return string|null It will return the class name or null if the field type is not available.
      */
     protected function get_field_class_name($fieldtype) {
         global $CFG;
 
         $fieldtype = trim($fieldtype);
-        require_once($CFG->dirroot . '/mod/data/field/' . $fieldtype . '/field.class.php');
+
+        $fieldpath = $CFG->dirroot . '/mod/data/field/' . $fieldtype . '/field.class.php';
+        if (!file_exists($fieldpath)) {
+            return null;
+        }
+
+        require_once($fieldpath);
         return 'data_field_' . $fieldtype;
     }
 
