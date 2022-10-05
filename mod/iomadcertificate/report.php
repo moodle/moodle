@@ -105,7 +105,7 @@ if (!$users = iomadcertificate_get_issues($iomadcertificate->id, $DB->sql_fullna
 }
 
 // Get extra fields to show the user.
-$extrafields = get_extra_user_fields($context);
+$extrafields = \core_user\fields::for_identity($context);
 
 if ($download == "ods") {
     require_once("$CFG->libdir/odslib.class.php");
@@ -124,7 +124,7 @@ if ($download == "ods") {
     $myxls->write_string(0, 1, get_string("firstname"));
     $nextposition = 2;
     foreach ($extrafields as $field) {
-        $myxls->write_string(0, $nextposition, get_user_field_name($field));
+        $myxls->write_string(0, $nextposition, \core_user\fields::get_display_name($field));
         $nextposition++;
     }
     $myxls->write_string(0, $nextposition, get_string("group"));

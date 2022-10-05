@@ -459,8 +459,8 @@ function iomadcertificate_get_issues($iomadcertificateid, $sort="ci.timecreated 
     $allparams = $conditionsparams + array('iomadcertificateid' => $iomadcertificateid);
 
     // The picture fields also include the name fields for the user.
-    $picturefields = user_picture::fields('u', get_extra_user_fields($context));
-    $users = $DB->get_records_sql("SELECT ". $DB->sql_concat("'u.id'", $DB->sql_concat("'-'", 'ci.code')) . " AS indexcode, $picturefields, u.idnumber, ci.code, ci.timecreated
+     $picturefields = \core_user\fields::for_userpic()->get_sql('u');
+     $users = $DB->get_records_sql("SELECT ". $DB->sql_concat("'u.id'", $DB->sql_concat("'-'", 'ci.code')) . " AS indexcode {$picturefields->selects}, u.idnumber, ci.code, ci.timecreated
                                      FROM {user} u
                                INNER JOIN {iomadcertificate_issues} ci
                                        ON u.id = ci.userid
