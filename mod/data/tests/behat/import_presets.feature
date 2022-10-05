@@ -25,7 +25,8 @@ Feature: Users can import presets
   Scenario: Teacher can import from preset page on an empty database
     Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
-    And I click on "Import" "link"
+    And I click on "Actions" "button"
+    And I choose "Import preset" in the open action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
     Then I should not see "Field mappings"
@@ -37,7 +38,8 @@ Feature: Users can import presets
       | data1    | text | Test field name   | Test field description   |
     And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
-    And I click on "Import" "link"
+    And I click on "Actions" "button"
+    And I choose "Import preset" in the open action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
     Then I should see "Field mappings"
@@ -60,7 +62,8 @@ Feature: Users can import presets
       | data1    | Student entry 1 |
     And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
-    And I click on "Import" "link"
+    And I click on "Actions" "button"
+    And I choose "Import preset" in the open action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
     Then I should see "Field mappings"
@@ -70,7 +73,8 @@ Feature: Users can import presets
   Scenario: Teacher can import from field page on an empty database
     Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
-    And I click on "Import" "button"
+    And I click on "Actions" "button"
+    And I choose "Import preset" in the open action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
     Then I should not see "Field mappings"
@@ -82,7 +86,8 @@ Feature: Users can import presets
       | data1    | text | Test field name   | Test field description   |
     And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
-    And I click on "Import" "button"
+    And I click on "Actions" "button"
+    And I choose "Import preset" in the open action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
     Then I should see "Field mappings"
@@ -105,7 +110,8 @@ Feature: Users can import presets
       | data1    | Student entry 1 |
     And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
-    And I click on "Import" "button"
+    And I click on "Actions" "button"
+    And I choose "Import preset" in the open action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
     Then I should see "Field mappings"

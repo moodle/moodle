@@ -25,18 +25,20 @@ Feature: Users can preview presets
   @javascript @_file_upload
   Scenario: Preview a user preset as list view template in database
     Given I follow "Presets"
-    And I click on "Import" "button"
+    And I click on "Actions" "button"
+    And I choose "Import preset" in the open action menu
     And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
     And I follow "Templates"
-    And I click on "Save as preset" "button"
+    And I click on "Actions" "button"
+    And I choose "Publish preset on this site" in the open action menu
     And I set the field "Name" to "Saved preset by teacher1"
     And I set the field "Description" to "Behat test preset"
     And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
     When I follow "Presets"
     And I click on "Saved preset by teacher1" "link"
     # Check list template preview fields.
-    Then I should see "Behat test preset" in the "template-preview" "region"
+    Then I should see "Saved preset by teacher1"
     And I should see "List header" in the "template-preview" "region"
     And I should see "List footer" in the "template-preview" "region"
     And I should see "List template content" in the "template-preview" "region"
@@ -71,19 +73,21 @@ Feature: Users can preview presets
   @javascript @_file_upload
   Scenario: Preview a user preset as single view template in database
     Given I follow "Presets"
-    And I click on "Import" "button"
+    And I click on "Actions" "button"
+    And I choose "Import preset" in the open action menu
     And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
     And I follow "Templates"
-    And I click on "Save as preset" "button"
+    And I click on "Actions" "button"
+    And I choose "Publish preset on this site" in the open action menu
     And I set the field "Name" to "Saved preset by teacher1"
     And I set the field "Description" to "Behat test preset"
     And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
     When I follow "Presets"
     And I click on "Saved preset by teacher1" "link"
-    And I set the field "Templates tertiary navigation" to "Single template"
-    # Check single template preview fields.
-    Then I should see "Behat test preset" in the "template-preview" "region"
+    And I set the field "Templates tertiary navigation" to "Single view template"
+    # Check single view template preview fields.
+    Then I should see "Saved preset by teacher1"
     And I should see "Single template content" in the "template-preview" "region"
     And I should see "My text field" in the "template-preview" "region"
     And I should see "This is a short text" in the "template-preview" "region"
@@ -117,11 +121,10 @@ Feature: Users can preview presets
   Scenario: Preview a plugin preset in database
     Given I follow "Presets"
     When I click on "Journal" "link"
-    Then I should see "Use this preset for a journal, diary, reflections tool or research log." in the "template-preview" "region"
+    Then I should see "Journal"
     And I should see "This is a short text"
     And I should see "This is a text area"
-    And I select "Single template" from the "Templates tertiary navigation" singleselect
-    And I should see "Use this preset for a journal, diary, reflections tool or research log." in the "template-preview" "region"
+    And I select "Single view template" from the "Templates tertiary navigation" singleselect
     And I should see "This is a short text"
     And I should see "This is a text area"
     And I should see "This is a short text" in the "template-preview" "region"
@@ -130,7 +133,7 @@ Feature: Users can preview presets
   Scenario: Use back button to return to the presets page in database
     Given I follow "Presets"
     And I click on "Image gallery" "link"
-    And I should see "Use this preset to collect images." in the "template-preview" "region"
+    And I should see "Image gallery"
     When I click on "Back" "button"
     Then I should see "Choose a preset to use as a starting point."
 
@@ -138,23 +141,25 @@ Feature: Users can preview presets
   Scenario: Apply plugin preset from preview in database
     Given I follow "Presets"
     And I click on "Image gallery" "link"
-    When I click on "Use a preset" "button"
+    When I click on "Use this preset" "button"
     Then I should see "image"
-    And I should see "image"
     And I should see "title"
 
   @javascript @_file_upload
   Scenario: Apply user preset from preview in database
     Given I follow "Presets"
-    And I click on "Import" "button"
+    And I click on "Actions" "button"
+    And I choose "Import preset" in the open action menu
     And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
     And I follow "Templates"
-    And I click on "Save as preset" "button"
+    And I click on "Actions" "button"
+    And I choose "Publish preset on this site" in the open action menu
     And I set the field "Name" to "Saved preset by teacher1"
     And I set the field "Description" to "Behat test preset"
     And I click on "Save" "button" in the "Save all fields and templates as preset" "dialogue"
     When I follow "Presets"
     And I click on "Saved preset by teacher1" "link"
-    And I click on "Use a preset" "button"
-    Then I should see "My URL field"
+    And I click on "Use this preset" "button"
+    Then I should see "Field mappings"
+    And I should see "My URL field"

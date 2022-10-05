@@ -22,7 +22,7 @@ Feature: Users can use the Resources preset
     And I am on the "Student resources" "data activity" page logged in as teacher1
     And I follow "Presets"
     And I click on "fullname" "radio" in the "Resources" "table_row"
-    And I click on "Use a preset" "button"
+    And I click on "Use this preset" "button"
     And the following "mod_data > entries" exist:
       | database | user     | Title                | Description    | Type  | Author             | Web link                      | Cover      |
       | data1    | student1 | My favourite book    | Book content   | Type1 | The book author    | http://myfavouritebook.cat    | first.png  |
@@ -77,12 +77,12 @@ Feature: Users can use the Resources preset
     And I should see "First name"
     And I should see "Last name"
     And I set the field "Title" to "book"
-    And I press "Save settings"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
     Then I should see "My favourite book"
     And I should not see "My favourite podcast"
     But I set the field "Title" to "favourite"
     And I set the field "Order" to "Descending"
-    And I press "Save settings"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
     And "My favourite podcast" "text" should appear before "My favourite book" "text"
 
   @javascript
