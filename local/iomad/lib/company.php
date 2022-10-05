@@ -175,6 +175,9 @@ class company {
         if (!empty($this->companyrecord->hostname)) {
             // Parse the current wwwroot.
             $u = parse_url($CFG->wwwroot);
+            if (empty($u["path"])) {
+                 $u["path"] = "";
+            }
             $url = "$u[scheme]://".$this->companyrecord->hostname."$u[path]" . (isset($u["query"]) ? "?$u[query]" : "");
 
             // Return the parse URL.
