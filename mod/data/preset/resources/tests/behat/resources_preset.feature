@@ -23,8 +23,6 @@ Feature: Users can use the Resources preset
     And I follow "Presets"
     And I click on "fullname" "radio" in the "Resources" "table_row"
     And I click on "Use preset" "button"
-    And I click on "Continue" "button"
-    And I click on "Continue" "button"
     And the following "mod_data > entries" exist:
       | database | user     | Title                | Description    | Type  | Author             | Web link                      | Cover      |
       | data1    | student1 | My favourite book    | Book content   | Type1 | The book author    | http://myfavouritebook.cat    | first.png  |

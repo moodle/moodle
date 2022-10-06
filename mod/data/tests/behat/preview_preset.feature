@@ -28,7 +28,6 @@ Feature: Users can preview presets
     And I click on "Import" "button"
     And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Choose file" filemanager
     And I click on "Save" "button"
-    And I click on "Continue" "button"
     And I follow "Templates"
     And I click on "Save as preset" "button"
     And I set the field "Name" to "Saved preset by teacher1"
@@ -75,7 +74,6 @@ Feature: Users can preview presets
     And I click on "Import" "button"
     And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Choose file" filemanager
     And I click on "Save" "button"
-    And I click on "Continue" "button"
     And I follow "Templates"
     And I click on "Save as preset" "button"
     And I set the field "Name" to "Saved preset by teacher1"
@@ -141,8 +139,7 @@ Feature: Users can preview presets
     Given I follow "Presets"
     And I click on "Image gallery" "link"
     When I click on "Use preset" "button"
-    Then I should see "Field mappings"
-    And I should see "image"
+    Then I should see "image"
     And I should see "title"
 
   @javascript @_file_upload
@@ -151,7 +148,6 @@ Feature: Users can preview presets
     And I click on "Import" "button"
     And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Choose file" filemanager
     And I click on "Save" "button"
-    And I click on "Continue" "button"
     And I follow "Templates"
     And I click on "Save as preset" "button"
     And I set the field "Name" to "Saved preset by teacher1"
@@ -160,5 +156,4 @@ Feature: Users can preview presets
     When I follow "Presets"
     And I click on "Saved preset by teacher1" "link"
     And I click on "Use preset" "button"
-    Then I should see "Field mappings"
-    And I should see "My URL field"
+    Then I should see "My URL field"
