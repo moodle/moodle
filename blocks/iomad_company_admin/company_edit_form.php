@@ -308,6 +308,10 @@ if ($mform->is_cancelled()) {
         $data->shortname = trim($data->shortname);
         $data->code = trim($data->code);
         $data->city = trim($data->city);
+        $data->region = trim($data->region);
+        $data->custom1 = trim($data->custom1);
+        $data->custom2 = trim($data->custom2);
+        $data->custom3 = trim($data->custom3);
 
         $companyid = $DB->insert_record('company', $data);
         $company = new company($companyid);

@@ -95,7 +95,7 @@ class company_edit_form extends \company_moodleform {
 
         $mform->addElement('text', 'code',
                             get_string('companycode', 'block_iomad_company_admin'),
-                            'maxlength="25" size="25"');
+                            'maxlength="255" size="25"');
         $mform->setType('code', PARAM_NOTAGS);
         $mform->addHelpButton('code', 'companycode', 'block_iomad_company_admin');
 
@@ -116,6 +116,11 @@ class company_edit_form extends \company_moodleform {
                             'maxlength="50" size="50"');
         $mform->setType('city', PARAM_NOTAGS);
         $mform->addRule('city', $strrequired, 'required', null, 'client');
+
+        $mform->addElement('text', 'region',
+                            get_string('companyregion', 'block_iomad_company_admin'),
+                            'maxlength="50" size="50"');
+        $mform->setType('region', PARAM_NOTAGS);
 
         $mform->addElement('text', 'postcode',
                             get_string('postcode', 'block_iomad_company_admin'),
@@ -282,6 +287,20 @@ class company_edit_form extends \company_moodleform {
             $mform->addElement('hidden', 'autocourses', null);
             $mform->setType('autocourses', PARAM_INT);
         }
+
+        // Add custom fields.
+        $mform->addElement('text', 'custom1',
+                            get_string('custom1', 'block_iomad_company_admin'),
+                            'maxlength="255" size="50"');
+        $mform->setType('custom1', PARAM_NOTAGS);
+        $mform->addElement('text', 'custom2',
+                            get_string('custom2', 'block_iomad_company_admin'),
+                            'maxlength="255" size="50"');
+        $mform->setType('custom2', PARAM_NOTAGS);
+        $mform->addElement('text', 'custom3',
+                            get_string('custom3', 'block_iomad_company_admin'),
+                            'maxlength="255" size="50"');
+        $mform->setType('custom3', PARAM_NOTAGS);
 
         /* === User defaults === */
         $mform->addElement('header', 'userdefaults',

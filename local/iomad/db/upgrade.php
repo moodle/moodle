@@ -2241,5 +2241,53 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022032400, 'local', 'iomad');
     }
 
+    if ($oldversion < 2022100700) {
+
+        // Define field region to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('region', XMLDB_TYPE_CHAR, '50', null, null, null, null, 'city');
+
+        // Conditionally launch add field region.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field custom1 to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('custom1', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'companyterminated');
+
+        // Conditionally launch add field custom1.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field custom2 to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('custom2', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'custom1');
+
+        // Conditionally launch add field custom2.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field custom3 to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('custom3', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'custom2');
+
+        // Conditionally launch add field custom3.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Changing precision of field code on table company to (255).
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('code', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'shortname');
+
+        // Launch change of precision for field code.
+        $dbman->change_field_precision($table, $field);
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2022100700, 'local', 'iomad');
+    }
+
     return $result;
 }
