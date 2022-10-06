@@ -553,7 +553,7 @@ All rights reserved.</copyright>
     <location>emoji-data</location>
     <name>Emoji data</name>
     <description>Library to parse easily data and sprite sheets for emoji.</description>
-    <version>7.0.2</version>
+    <version>14.0.1</version>
     <license>MIT</license>
     <repository>https://github.com/iamcal/emoji-data/</repository>
     <copyrights>
