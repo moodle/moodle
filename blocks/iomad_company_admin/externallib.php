@@ -85,7 +85,6 @@ class block_iomad_company_admin_external extends external_api {
 
         // Validate parameters
         $params = self::validate_parameters(self::create_companies_parameters(), array('companies' => $companies));
-echo "<pre>";print_r($params);die;
 
         // Get/check context/capability
         $context = context_system::instance();
