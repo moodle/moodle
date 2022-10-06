@@ -113,6 +113,7 @@ $PAGE->set_context($systemcontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
+$PAGE->set_other_editing_capability('block/iomad_company_admin:editusers');
 
 // Get output renderer.
 $output = $PAGE->get_renderer('block_iomad_company_admin');

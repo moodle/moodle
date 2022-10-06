@@ -170,6 +170,10 @@ $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
 $PAGE->requires->css("/local/report_completion/styles.css");
 $PAGE->requires->jquery();
+$PAGE->set_other_editing_capability('local/report_users:redocertificates');
+$PAGE->set_other_editing_capability('local/report_users:deleteentriesfull');
+$PAGE->set_other_editing_capability('local/report_users:updateentries');
+
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form

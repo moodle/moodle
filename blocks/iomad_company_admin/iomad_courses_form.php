@@ -84,6 +84,9 @@ $PAGE->set_context($systemcontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
+$PAGE->set_other_editing_capability('local/report_users:redocertificates');
+$PAGE->set_other_editing_capability('block/iomad_company_admin:managecourses');
+$PAGE->set_other_editing_capability('block/iomad_company_admin:manageallcourses');
 
 // Set the page heading.
 $PAGE->set_heading($linktext);

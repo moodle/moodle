@@ -76,6 +76,9 @@ $PAGE->set_url($baseurl);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($linktext);
 $PAGE->requires->jquery();
+$PAGE->set_other_editing_capability('local/report_users:redocertificates');
+$PAGE->set_other_editing_capability('local/report_users:deleteentriesfull');
+$PAGE->set_other_editing_capability('local/report_users:updateentries');
 
 // Set the page heading.
 $PAGE->set_heading(get_string('userdetails', 'local_report_users').
