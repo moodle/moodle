@@ -19,6 +19,7 @@ namespace mod_data;
 use context_module;
 use moodle_url;
 use core_component;
+use stdClass;
 
 /**
  * Manager tests class for mod_data.
@@ -608,5 +609,138 @@ class manager_test extends \advanced_testcase {
         $this->setUser($student);
         $result = $manager->can_export_entries();
         $this->assertEquals(true, $result);
+    }
+
+    /*
+     * Test reset_all_templates.
+     *
+     * @covers ::reset_all_templates
+     */
+    public function test_reset_all_templates() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $instance = $this->getDataGenerator()->create_module(
+            'data',
+            ['course' => $course->id]
+        );
+        $manager = manager::create_from_instance($instance);
+
+        // Create some initial templates.
+        $initialtemplates = new stdClass();
+        foreach (manager::TEMPLATES_LIST as $templatename => $unused) {
+            $initialtemplates->$templatename = "Initial $templatename";
+        }
+        $manager->update_templates($initialtemplates);
+        $instance = $manager->get_instance();
+        $record = $DB->get_record('data', ['id' => $instance->id]);
+        foreach (manager::TEMPLATES_LIST as $templatename => $unused) {
+            $this->assertEquals($initialtemplates->$templatename, $instance->$templatename);
+            $this->assertEquals($initialtemplates->$templatename, $record->$templatename);
+        }
+
+        // Reset all templates.
+        $result = $manager->reset_all_templates();
+        $this->assertTrue($result);
+        $instance = $manager->get_instance();
+        $record = $DB->get_record('data', ['id' => $instance->id]);
+        foreach (manager::TEMPLATES_LIST as $templatename => $unused) {
+            $this->assertEquals('', $instance->$templatename);
+            $this->assertEquals('', $record->$templatename);
+        }
+    }
+
+    /**
+     * Test reset_template.
+     *
+     * @covers ::reset_template
+     * @dataProvider reset_template_provider
+     * @param string $templatetoreset the template to reset
+     * @param string[] $expected the expected templates to be reset
+     */
+    public function test_reset_template(string $templatetoreset, array $expected) {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $instance = $this->getDataGenerator()->create_module(
+            'data',
+            ['course' => $course->id]
+        );
+        $manager = manager::create_from_instance($instance);
+
+        // Create some initial templates.
+        $initialtemplates = new stdClass();
+        foreach (manager::TEMPLATES_LIST as $templatename => $unused) {
+            $initialtemplates->$templatename = "Initial $templatename";
+        }
+        $manager->update_templates($initialtemplates);
+        $instance = $manager->get_instance();
+        $record = $DB->get_record('data', ['id' => $instance->id]);
+        foreach (manager::TEMPLATES_LIST as $templatename => $unused) {
+            $this->assertEquals($initialtemplates->$templatename, $instance->$templatename);
+            $this->assertEquals($initialtemplates->$templatename, $record->$templatename);
+        }
+
+        // Reset template.
+        $result = $manager->reset_template($templatetoreset);
+        $this->assertTrue($result);
+        $instance = $manager->get_instance();
+        $record = $DB->get_record('data', ['id' => $instance->id]);
+        foreach (manager::TEMPLATES_LIST as $templatename => $unused) {
+            if (in_array($templatename, $expected)) {
+                $this->assertEquals('', $instance->$templatename);
+                $this->assertEquals('', $record->$templatename);
+            } else {
+                $this->assertEquals($initialtemplates->$templatename, $instance->$templatename);
+                $this->assertEquals($initialtemplates->$templatename, $record->$templatename);
+            }
+        }
+    }
+
+    /**
+     * Data provider for test_reset_templatet.
+     *
+     * @return array
+     */
+    public function reset_template_provider(): array {
+        return [
+            // User presets.
+            'listtemplate' => [
+                'templatename' => 'listtemplate',
+                'expected' => ['listtemplate', 'listtemplateheader', 'listtemplatefooter'],
+            ],
+            'singletemplate' => [
+                'templatename' => 'singletemplate',
+                'expected' => ['singletemplate'],
+            ],
+            'asearchtemplate' => [
+                'templatename' => 'asearchtemplate',
+                'expected' => ['asearchtemplate'],
+            ],
+            'addtemplate' => [
+                'templatename' => 'addtemplate',
+                'expected' => ['addtemplate'],
+            ],
+            'rsstemplate' => [
+                'templatename' => 'rsstemplate',
+                'expected' => ['rsstemplate', 'rsstitletemplate'],
+            ],
+            'csstemplate' => [
+                'templatename' => 'csstemplate',
+                'expected' => ['csstemplate'],
+            ],
+            'jstemplate' => [
+                'templatename' => 'jstemplate',
+                'expected' => ['jstemplate'],
+            ],
+        ];
     }
 }

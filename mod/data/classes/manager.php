@@ -372,6 +372,39 @@ class manager {
         return true;
     }
 
+    /**
+     * Reset all templates.
+     *
+     * @return bool if the reset is done or not
+     */
+    public function reset_all_templates(): bool {
+        $newtemplates = new stdClass();
+        foreach (self::TEMPLATES_LIST as $templatename => $templatefile) {
+            $newtemplates->{$templatename} = '';
+        }
+        return $this->update_templates($newtemplates);
+    }
+
+    /**
+     * Reset all templates related to a specific template.
+     *
+     * @param string $templatename the template name
+     * @return bool if the reset is done or not
+     */
+    public function reset_template(string $templatename): bool {
+        $newtemplates = new stdClass();
+        // Reset the template to default.
+        $newtemplates->{$templatename} = '';
+        if ($templatename == 'listtemplate') {
+            $newtemplates->listtemplateheader = '';
+            $newtemplates->listtemplatefooter = '';
+        }
+        if ($templatename == 'rsstemplate') {
+            $newtemplates->rsstitletemplate = '';
+        }
+        return $this->update_templates($newtemplates);
+    }
+
     /** Check if the user can view a specific preset.
      *
      * @param preset $preset the preset instance.

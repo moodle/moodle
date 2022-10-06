@@ -383,6 +383,9 @@ $string['requiredentriestoview_help'] = 'The number of entries a student is requ
 
 Note: If entries are required before viewing, the database auto-linking filter should be disabled. This is because the database auto-linking filter can\'t determine whether a user has submitted the required number of entries.';
 $string['requiredfield'] = 'Required field';
+$string['resetalltemplates'] = 'Reset all templates';
+$string['resetalltemplatesconfirmtitle'] = 'Reset all templates?';
+$string['resetalltemplatesconfirm'] = 'You\'re about to remove all templates for your current preset. If you want to restore the templates later, you need to choose the preset again in the \'Presets\' tab.';
 $string['resetsettings'] = 'Reset filters';
 $string['resettemplate'] = 'Reset template';
 $string['resettemplateconfirmtitle'] = 'Reset template?';
@@ -424,6 +427,7 @@ $string['tagsdeleted'] = 'Database tags have been deleted';
 $string['teachersandstudents'] = '{$a->teachers} and {$a->students}';
 $string['templates'] = 'Templates';
 $string['templatereset'] = 'Template reset';
+$string['templateresetall'] = 'All templates reset';
 $string['templatesnavigation'] = 'Templates tertiary navigation';
 $string['templatesaved'] = 'Template saved';
 $string['text'] = 'Text';

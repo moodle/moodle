@@ -25,14 +25,17 @@ import {get_string as getString} from 'core/str';
 import {prefetchStrings} from 'core/prefetch';
 import {relativeUrl} from 'core/url';
 import {saveCancel} from 'core/notification';
+import Templates from 'core/templates';
 
 prefetchStrings('admin', ['confirmation']);
 prefetchStrings('mod_data', [
     'resettemplateconfirmtitle',
     'resettemplateconfirm',
-    'resettemplate',
     'enabletemplateeditorcheck',
     'editorenable'
+]);
+prefetchStrings('core', [
+    'reset',
 ]);
 
 /**
@@ -41,7 +44,9 @@ prefetchStrings('mod_data', [
 const selectors = {
     toggleTemplateEditor: 'input[name="useeditor"]',
     resetTemplate: 'input[name="defaultform"]',
+    resetAllTemplates: 'input[name="resetall"]',
     resetButton: 'input[name="resetbutton"]',
+    resetAllCheck: 'input[name="resetallcheck"]',
     editForm: '#edittemplateform',
 };
 
@@ -60,6 +65,7 @@ const registerResetButton = () => {
     const editForm = document.querySelector(selectors.editForm);
     const resetButton = document.querySelector(selectors.resetButton);
     const resetTemplate = document.querySelector(selectors.resetTemplate);
+    const resetAllTemplates = document.querySelector(selectors.resetAllTemplates);
 
     if (!resetButton || !resetTemplate || !editForm) {
         return;
@@ -69,8 +75,8 @@ const registerResetButton = () => {
         event.preventDefault();
         saveCancel(
             getString('resettemplateconfirmtitle', 'mod_data'),
-            getString('resettemplateconfirm', 'mod_data'),
-            getString('resettemplate', 'mod_data'),
+            Templates.render('mod_data/template_editor_resetmodal', {resetallname: "resetallcheck"}),
+            getString('reset', 'core'),
             () => {
                 resetTemplate.value = "true";
                 editForm.submit();
@@ -78,6 +84,16 @@ const registerResetButton = () => {
             null,
             {triggerElement: event.target}
         );
+    });
+
+    // The reset all checkbox is inside a modal so we need to capture at document level.
+    if (!resetAllTemplates) {
+        return;
+    }
+    document.addEventListener('change', (event) => {
+        if (event.target.matches(selectors.resetAllCheck)) {
+            resetAllTemplates.value = (event.target.checked) ? "true" : "";
+        }
     });
 };
 
