@@ -581,10 +581,15 @@ class enrol_license_plugin extends enrol_plugin {
                 // Get the license details.
                 $license = (array) $DB->get_record_sql("SELECT lu.id, lu.licenseid, lu.userid, lu.isusing,
                                                         lu.timecompleted, lu.score, lu.result
-                                                        FROM {companylicense_users} lu, {companylicense_courses} lc
-                                                        WHERE lu.userid = :userid AND lc.courseid = :courseid
-                                                        AND lu.licenseid = lc.licenseid AND lu.timecompleted IS NULL",
+                                                        FROM {companylicense_users} lu
+                                                        JOIN {companylicense_courses} lc ON (lu.licensecourseid = lc.courseid AND lu.licenseid = lc.licenseid)
+                                                        WHERE lu.userid = :userid 
+                                                        AND lc.courseid = :courseid
+                                                        AND lu.timecompleted IS NULL",
                                                         array('userid' => $user->userid, 'courseid' => $user->courseid));
+
+                // Tell the system the license is finished with.
+                $license['timecompleted'] = $runtime;
 
                 // Get the grade item details.
                 if ($gradeitems = $DB->get_records_sql("SELECT gg.id, gg.finalgrade, gg.feedback, gi.itemtype
@@ -615,11 +620,6 @@ class enrol_license_plugin extends enrol_plugin {
                 // Delete any completion data.
                 if ($completion = $DB->get_record('course_completions', array('userid' => $user->userid,
                                                                               'course' => $user->courseid))){
-                    if (!empty($completion->timecompleted)) {
-                        $license['timecompleted'] = $completion->timecompleted;
-                    } else {
-                        $license['timecompleted'] = $runtime;
-                    }
                     // Delete the completion information.
                     mtrace("removing course completion for user $user->userid on $user->courseid");
                     $DB->delete_records('course_completions', array('id' => $completion->id));

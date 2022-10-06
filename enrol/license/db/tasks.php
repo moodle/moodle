@@ -15,13 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Definition of IMS Enterprise enrolment scheduled tasks.
+ *
  * @package   enrol_license
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
+ * @category  task
+ * @copyright 2022 Derick Turner
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component  = 'enrol_license';
-$plugin->version = 2022100601;
+$tasks = array(
+    array(
+        'classname' => 'enrol_license\task\cron_task',
+        'blocking' => 0,
+        'minute' => '10',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    )
+);

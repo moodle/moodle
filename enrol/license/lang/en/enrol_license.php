@@ -36,6 +36,7 @@ $string['groupkey_desc'] = 'Use group enrolment keys by default.';
 $string['groupkey_help'] = 'In addition to restricting access to the course to only those who know the key, use of a group enrolment key means users are automatically added to the group when they enrol in the course.
 
 To use a group enrolment key, an enrolment key must be specified in the course settings as well as the group enrolment key in the group settings.';
+$string['licensecrontask'] = 'Enrol license scheduled task';
 $string['licensenolongervalid'] = 'Your license for this course is no longer valid';
 $string['licensenotyetvalid'] = 'Your access to this course will be available on {$a}';
 $string['license:unenrolself'] = 'User can unenrol themselves';
