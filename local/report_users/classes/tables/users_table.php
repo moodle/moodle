@@ -76,7 +76,7 @@ class users_table extends table_sql {
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_lastlogin($row) {
+    public function col_currentlogin($row) {
         global $CFG;
 
         if (!empty($row->lastlogin)) {

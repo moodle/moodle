@@ -273,7 +273,7 @@ if ($parentslist = $company->get_parent_companies_recursive()) {
 }
 
 // Set up the initial SQL for the form.
-$selectsql = "DISTINCT u.*,u.timecreated as created, u.currentlogin as lastlogin, cu.companyid";
+$selectsql = "DISTINCT u.*,u.timecreated as created, cu.companyid";
 $fromsql = "{user} u JOIN {company_users} cu ON (u.id = cu.userid) JOIN {department} d ON (cu.departmentid = d.id)";
 $wheresql = $searchinfo->sqlsearch . " AND cu.companyid = :companyid $departmentsql $companysql";
 $sqlparams = array('companyid' => $companyid) + $searchinfo->searchparams;
@@ -314,7 +314,7 @@ $headers[] = get_string('created', 'block_iomad_company_admin');
 $headers[] = get_string('lastaccess');
 
 $columns[] = 'created';
-$columns[] = 'lastlogin';
+$columns[] = 'currentlogin';
 
 $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
 $countsql = "SELECT count(DISTINCT u.id) FROM $fromsql WHERE $wheresql";
