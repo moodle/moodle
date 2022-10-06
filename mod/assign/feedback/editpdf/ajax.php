@@ -52,6 +52,9 @@ if (!$assignment->can_view_submission($userid)) {
 }
 
 if ($action === 'pollconversions') {
+    // Poll conversions does not require session lock.
+    \core\session\manager::write_close();
+
     $draft = true;
     if (!has_capability('mod/assign:grade', $context)) {
         // A student always sees the readonly version.
