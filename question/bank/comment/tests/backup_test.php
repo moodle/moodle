@@ -152,9 +152,8 @@ class backup_test extends \advanced_testcase {
         $question2 = $this->qgen->create_question('shortanswer', null, $this->question2data);
 
         // Add comments to the questions.
-        $coursecontext = \context_course::instance($this->course->id);
         $args = new \stdClass;
-        $args->context = $coursecontext;
+        $args->context = \context_system::instance();
         $args->course = $this->course;
         $args->area = 'question';
         $args->itemid = $question1->id;
