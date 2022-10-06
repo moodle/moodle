@@ -280,6 +280,7 @@ class user_table extends table_sql {
 
         // Get the buttons.
         // Link for user delete
+        unset($params['userid']);
         $resetlink = new moodle_url('/local/report_completion/index.php', $params + array(
                 'userid' => $row->userid,
                 'delete' => $row->userid,
