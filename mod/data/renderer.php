@@ -1,35 +1,58 @@
 <?php
 
+use mod_data\local\importer\preset_existing_importer;
+
 defined('MOODLE_INTERNAL') || die();
 
 class mod_data_renderer extends plugin_renderer_base {
 
+    /**
+     * Rendering setting and mapping page to import a preset.
+     *
+     * @param stdClass $datamodule  Database module to import to.
+     * @param data_preset_importer $importer Importer instance to use for the importing.
+     * @return string
+     * @deprecated since Moodle 4.1 MDL-75140 - please do not use this class any more.
+     * @todo MDL-75189 Final deprecation in Moodle 4.5.
+     */
     public function import_setting_mappings($datamodule, data_preset_importer $importer) {
+        debugging('import_setting_mappings is deprecated. Please use importing_preset instead', DEBUG_DEVELOPER);
 
-        $strblank = get_string('blank', 'data');
+        $manager = \mod_data\manager::create_from_coursemodule($datamodule);
+        $fullname = $importer->get_directory();
+        return $this->importing_preset($datamodule, new preset_existing_importer($manager, $fullname));
+    }
+
+    /**
+     * Importing a preset on a database module.
+     *
+     * @param stdClass $datamodule  Database module to import to.
+     * @param \mod_data\local\importer\preset_importer $importer Importer instance to use for the importing.
+     *
+     * @return string
+     */
+    public function importing_preset(stdClass $datamodule, \mod_data\local\importer\preset_importer $importer): string {
+
         $strcontinue = get_string('continue');
         $strwarning = get_string('mappingwarning', 'data');
         $strfieldmappings = get_string('fieldmappings', 'data');
-        $strnew = get_string('new');
-
 
         $params = $importer->get_preset_settings();
-        $settings = $params->settings;
         $newfields = $params->importfields;
         $currentfields = $params->currentfields;
 
-        $html  = html_writer::start_tag('div', array('class'=>'presetmapping'));
-        $html .= html_writer::start_tag('form', array('method'=>'post', 'action'=>''));
+        $html  = html_writer::start_tag('div', ['class'=>'presetmapping']);
+        $html .= html_writer::start_tag('form', ['method'=>'post', 'action'=>'']);
         $html .= html_writer::start_tag('div');
-        $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'action', 'value'=>'finishimport'));
-        $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
-        $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'d', 'value'=>$datamodule->id));
+        $html .= html_writer::empty_tag('input', ['type'=>'hidden', 'name'=>'action', 'value'=>'finishimport']);
+        $html .= html_writer::empty_tag('input', ['type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()]);
+        $html .= html_writer::empty_tag('input', ['type'=>'hidden', 'name'=>'d', 'value'=>$datamodule->id]);
 
-        if ($importer instanceof data_preset_existing_importer) {
-            $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'fullname', 'value'=>$importer->get_userid().'/'.$importer->get_directory()));
-        } else {
-            $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'directory', 'value'=>$importer->get_directory()));
-        }
+        $inputselector = $importer->get_preset_selector();
+        $html .= html_writer::empty_tag(
+            'input',
+            ['type'=>'hidden', 'name'=> $inputselector['name'], 'value' => $inputselector['value']]
+        );
 
         if (!empty($newfields)) {
             $html .= $this->output->heading_with_help($strfieldmappings, 'fieldmappings', 'data', '', '', 3);
