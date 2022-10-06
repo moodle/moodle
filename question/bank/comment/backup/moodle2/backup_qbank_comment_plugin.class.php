@@ -46,10 +46,13 @@ class backup_qbank_comment_plugin extends \backup_qbank_plugin {
         $pluginwrapper->add_child($comments);
         $comments->add_child($comment);
 
+        // Trying to pass an param (contextid) with an int value seems to have special meaning, so just inline.
+        // It is an int, so minimal security risk.
         $comment->set_source_sql("SELECT c.*
                                         FROM {comments} c
-                                       WHERE c.commentarea = 'question'
+                                       WHERE c.contextid = " . context_system::instance()->id . "
                                          AND c.component = 'qbank_comment'
+                                         AND c.commentarea = 'question'
                                          AND c.itemid = ?", [backup::VAR_PARENTID]);
 
         $comment->annotate_ids('user', 'userid');
