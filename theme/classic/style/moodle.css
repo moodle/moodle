@@ -19655,7 +19655,7 @@ p.arrow_button {
 
 .path-grade-report-grader .gradeparent tr.heading {
   position: sticky;
-  top: 0vh;
+  top: 0;
   z-index: 1; }
 
 .path-grade-report-grader .gradeparent tr.lastrow {
