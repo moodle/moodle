@@ -243,8 +243,18 @@ class date extends base {
                 break;
             case self::DATE_UNIT_WEEK:
                 if ($operator === self::DATE_CURRENT) {
-                    $datestart = $datestart->modify('monday this week')->setTime(0, 0);
-                    $dateend = $dateend->modify('sunday this week')->setTime(23, 59, 59);
+                    // The first day of the week is determined by site calendar configuration/preferences.
+                    $startweekday = \core_calendar\type_factory::get_calendar_instance()->get_starting_weekday();
+                    $weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+                    // If calculated start of week is after today (today is Tues/start of week is Weds), move back a week.
+                    $datestartnow = $datestart->getTimestamp();
+                    $datestart = $datestart->modify($weekdays[$startweekday] . ' this week')->setTime(0, 0);
+                    if ($datestart->getTimestamp() > $datestartnow) {
+                        $datestart = $datestart->modify('-1 week');
+                    }
+
+                    $dateend = $datestart->modify('+6 day')->setTime(23, 59, 59);
                 } else if ($operator === self::DATE_LAST) {
                     $datestart = $datestart->modify("-{$dateunitvalue} week");
                 } else if ($operator === self::DATE_NEXT) {
