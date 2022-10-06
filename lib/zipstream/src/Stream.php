@@ -67,7 +67,7 @@ class Stream implements StreamInterface
     {
         try {
             $this->seek(0);
-        } catch (\RuntimeException $e) {}
+        } catch (RuntimeException $e) {}
         return (string) stream_get_contents($this->stream);
     }
 
@@ -81,7 +81,7 @@ class Stream implements StreamInterface
      *     PHP $whence values for `fseek()`.  SEEK_SET: Set position equal to
      *     offset bytes SEEK_CUR: Set position to current location plus offset
      *     SEEK_END: Set position to end-of-stream plus offset.
-     * @throws \RuntimeException on failure.
+     * @throws RuntimeException on failure.
      */
     public function seek($offset, $whence = SEEK_SET): void
     {
@@ -136,7 +136,7 @@ class Stream implements StreamInterface
      * Returns the current position of the file read/write pointer
      *
      * @return int Position of the file pointer
-     * @throws \RuntimeException on error.
+     * @throws RuntimeException on error.
      */
     public function tell(): int
     {
@@ -165,7 +165,7 @@ class Stream implements StreamInterface
      *
      * @see seek()
      * @link http://www.php.net/manual/en/function.fseek.php
-     * @throws \RuntimeException on failure.
+     * @throws RuntimeException on failure.
      */
     public function rewind(): void
     {
@@ -177,7 +177,7 @@ class Stream implements StreamInterface
      *
      * @param string $string The string that is to be written.
      * @return int Returns the number of bytes written to the stream.
-     * @throws \RuntimeException on failure.
+     * @throws RuntimeException on failure.
      */
     public function write($string): int
     {
@@ -197,7 +197,11 @@ class Stream implements StreamInterface
      */
     public function isWritable(): bool
     {
-        return preg_match('/[waxc+]/', $this->getMetadata('mode')) === 1;
+        $mode = $this->getMetadata('mode');
+        if (!is_string($mode)) {
+            throw new RuntimeException('Could not get stream mode from metadata!');
+        }
+        return preg_match('/[waxc+]/', $mode) === 1;
     }
 
     /**
@@ -229,7 +233,11 @@ class Stream implements StreamInterface
      */
     public function isReadable(): bool
     {
-        return preg_match('/[r+]/', $this->getMetadata('mode')) === 1;
+        $mode = $this->getMetadata('mode');
+        if (!is_string($mode)) {
+            throw new RuntimeException('Could not get stream mode from metadata!');
+        }
+        return preg_match('/[r+]/', $mode) === 1;
     }
 
     /**
