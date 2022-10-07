@@ -171,4 +171,33 @@ class gradereport_user_renderer extends plugin_renderer_base {
 
         return $this->render_from_template('gradereport_user/user_navigation', $navigationdata);
     }
+
+    /**
+     * Creates and renders 'view report as' selector element.
+     *
+     * @param int $userid The selected userid
+     * @param int $userview The current view user setting constant
+     * @param int $courseid The course ID.
+     * @return string The raw HTML to render.
+     */
+    public function view_mode_selector(int $userid, int $userview, int $courseid): string {
+
+        $viewasotheruser = new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'userid' => $userid,
+            'userview' => GRADE_REPORT_USER_VIEW_USER]);
+        $viewasmyself = new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'userid' => $userid,
+            'userview' => GRADE_REPORT_USER_VIEW_SELF]);
+
+        $selectoroptions = [
+            $viewasotheruser->out(false) => get_string('otheruser', 'core_grades'),
+            $viewasmyself->out(false) => get_string('myself', 'core_grades')
+        ];
+
+        $selectoractiveurl = $userview === GRADE_REPORT_USER_VIEW_USER ? $viewasotheruser : $viewasmyself;
+
+        $viewasselect = new \core\output\select_menu('viewas', $selectoroptions, $selectoractiveurl->out(false));
+        $viewasselect->set_label(get_string('viewas', 'core_grades'));
+
+        return $this->render_from_template('gradereport_user/view_mode_selector',
+            $viewasselect->export_for_template($this));
+    }
 }

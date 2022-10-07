@@ -136,6 +136,17 @@
     max-width: 767px;
 }
 
+.path-grade-report-user .view-user-selector label {
+    display: block;
+    font-size: 80%;
+    margin: 0;
+}
+
+.path-grade-report-user .view-user-selector .dropdown-toggle {
+    padding: 0;
+    font-weight: bold;
+}
+
 @media print {
     .path-grade-report-user .user-grade td.category {
         border-left: none;
