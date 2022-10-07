@@ -1632,6 +1632,7 @@ function stats_temp_table_create() {
     $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
     $table->add_index('courseid', XMLDB_INDEX_NOTUNIQUE, array('courseid'));
     $table->add_index('roleid', XMLDB_INDEX_NOTUNIQUE, array('roleid'));
+    $table->add_index('useridroleidcourseid', XMLDB_INDEX_NOTUNIQUE, array('userid', 'roleid', 'courseid'));
     $tables['temp_enroled'] = $table;
 
 
