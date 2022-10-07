@@ -14,6 +14,8 @@ class Namespaces
     // This one used in Reader\Xlsx\Properties
     const CORE_PROPERTIES2 = 'http://schemas.openxmlformats.org/package/2006/metadata/core-properties';
 
+    const THUMBNAIL = 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail';
+
     const THEME = 'http://schemas.openxmlformats.org/package/2006/relationships/theme';
 
     const COMPATIBILITY = 'http://schemas.openxmlformats.org/markup-compatibility/2006';
@@ -48,6 +50,8 @@ class Namespaces
 
     const WORKSHEET = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet';
 
+    const CHARTSHEET = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet';
+
     const SCHEMA_MICROSOFT = 'http://schemas.microsoft.com/office/2006/relationships';
 
     const EXTENSIBILITY = 'http://schemas.microsoft.com/office/2006/relationships/ui/extensibility';
@@ -71,6 +75,8 @@ class Namespaces
     const PURL_MAIN = 'http://purl.oclc.org/ooxml/spreadsheetml/main';
 
     const PURL_DRAWING = 'http://purl.oclc.org/ooxml/drawingml/main';
+
+    const PURL_CHART = 'http://purl.oclc.org/ooxml/drawingml/chart';
 
     const PURL_WORKSHEET = 'http://purl.oclc.org/ooxml/officeDocument/relationships/worksheet';
 }

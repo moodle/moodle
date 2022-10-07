@@ -78,9 +78,7 @@ class Style extends Supervisor
      * @see Style::applyFromArray()
      * @see Style::getHashCode()
      *
-     * @phpstan-var null|array{styleByHash: array<string, Style>, hashByObjId: array<int, string>}
-     *
-     * @var array<string, array>
+     * @var ?array<string, array>
      */
     private static $cachedStyles;
 
@@ -423,8 +421,10 @@ class Style extends Supervisor
                         // Handle bug in PHPStan, see https://github.com/phpstan/phpstan/issues/5805
                         // $newStyle should always be defined.
                         // This block might not be needed in the future
+                        // @codeCoverageIgnoreStart
                         $newStyle = clone $style;
                         $newStyle->applyFromArray($styleArray);
+                        // @codeCoverageIgnoreEnd
                     }
 
                     // we don't have such a cell Xf, need to add

@@ -3,10 +3,13 @@
 namespace PhpOffice\PhpSpreadsheet;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
+use PhpOffice\PhpSpreadsheet\Shared\File;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 use PhpOffice\PhpSpreadsheet\Style\Style;
 use PhpOffice\PhpSpreadsheet\Worksheet\Iterator;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
 
 class Spreadsheet
 {
@@ -313,7 +316,7 @@ class Spreadsheet
                 break;
             case 'target':
             case 'data':
-                if (is_array($this->ribbonXMLData) && isset($this->ribbonXMLData[$what])) {
+                if (is_array($this->ribbonXMLData)) {
                     $returnData = $this->ribbonXMLData[$what];
                 }
 
@@ -608,7 +611,7 @@ class Spreadsheet
     /**
      * Add sheet.
      *
-     * @param Worksheet $worksheet The worskeet to add
+     * @param Worksheet $worksheet The worksheet to add
      * @param null|int $sheetIndex Index where sheet should go (0,1,..., or null for last)
      *
      * @return Worksheet
@@ -719,6 +722,19 @@ class Spreadsheet
         }
 
         return null;
+    }
+
+    /**
+     * Get sheet by name, throwing exception if not found.
+     */
+    public function getSheetByNameOrThrow(string $worksheetName): Worksheet
+    {
+        $worksheet = $this->getSheetByName($worksheetName);
+        if ($worksheet === null) {
+            throw new Exception("Sheet $worksheetName does not exist.");
+        }
+
+        return $worksheet;
     }
 
     /**
@@ -867,6 +883,19 @@ class Spreadsheet
         foreach ($worksheet->getCoordinates(false) as $coordinate) {
             $cell = $worksheet->getCell($coordinate);
             $cell->setXfIndex($cell->getXfIndex() + $countCellXfs);
+        }
+
+        // update the column dimensions Xfs
+        foreach ($worksheet->getColumnDimensions() as $columnDimension) {
+            $columnDimension->setXfIndex($columnDimension->getXfIndex() + $countCellXfs);
+        }
+
+        // update the row dimensions Xfs
+        foreach ($worksheet->getRowDimensions() as $rowDimension) {
+            $xfIndex = $rowDimension->getXfIndex();
+            if ($xfIndex !== null) {
+                $rowDimension->setXfIndex($xfIndex + $countCellXfs);
+            }
         }
 
         return $this->addSheet($worksheet, $sheetIndex);
@@ -1107,28 +1136,24 @@ class Spreadsheet
      */
     public function copy()
     {
-        $copied = clone $this;
+        $filename = File::temporaryFilename();
+        $writer = new XlsxWriter($this);
+        $writer->setIncludeCharts(true);
+        $writer->save($filename);
 
-        $worksheetCount = count($this->workSheetCollection);
-        for ($i = 0; $i < $worksheetCount; ++$i) {
-            $this->workSheetCollection[$i] = $this->workSheetCollection[$i]->copy();
-            $this->workSheetCollection[$i]->rebindParent($this);
-        }
+        $reader = new XlsxReader();
+        $reader->setIncludeCharts(true);
+        $reloadedSpreadsheet = $reader->load($filename);
+        unlink($filename);
 
-        return $copied;
+        return $reloadedSpreadsheet;
     }
 
-    /**
-     * Implement PHP __clone to create a deep clone, not just a shallow copy.
-     */
     public function __clone()
     {
-        // @phpstan-ignore-next-line
-        foreach ($this as $key => $val) {
-            if (is_object($val) || (is_array($val))) {
-                $this->{$key} = unserialize(serialize($val));
-            }
-        }
+        throw new Exception(
+            'Do not use clone on spreadsheet. Use spreadsheet->copy() instead.'
+        );
     }
 
     /**
@@ -1549,7 +1574,7 @@ class Spreadsheet
      *       Workbook window is hidden and cannot be shown in the
      *       user interface.
      *
-     * @param string $visibility visibility status of the workbook
+     * @param null|string $visibility visibility status of the workbook
      */
     public function setVisibility($visibility): void
     {
@@ -1583,7 +1608,7 @@ class Spreadsheet
      */
     public function setTabRatio($tabRatio): void
     {
-        if ($tabRatio >= 0 || $tabRatio <= 1000) {
+        if ($tabRatio >= 0 && $tabRatio <= 1000) {
             $this->tabRatio = (int) $tabRatio;
         } else {
             throw new Exception('Tab ratio must be between 0 and 1000.');
@@ -1601,5 +1626,15 @@ class Spreadsheet
                 $filter->showHideRows();
             }
         }
+    }
+
+    /**
+     * Silliness to mollify Scrutinizer.
+     *
+     * @codeCoverageIgnore
+     */
+    public function getSharedComponent(): Style
+    {
+        return new Style();
     }
 }

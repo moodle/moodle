@@ -8,6 +8,7 @@ use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Row;
+use PhpOffice\PhpSpreadsheet\Worksheet\RowCellIterator;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Exception;
 use PhpOffice\PhpSpreadsheet\Writer\Ods;
@@ -119,14 +120,22 @@ class Content extends WriterPart
     {
         $spreadsheet = $this->getParentWriter()->getSpreadsheet(); /** @var Spreadsheet $spreadsheet */
         $sheetCount = $spreadsheet->getSheetCount();
-        for ($i = 0; $i < $sheetCount; ++$i) {
+        for ($sheetIndex = 0; $sheetIndex < $sheetCount; ++$sheetIndex) {
             $objWriter->startElement('table:table');
-            $objWriter->writeAttribute('table:name', $spreadsheet->getSheet($i)->getTitle());
+            $objWriter->writeAttribute('table:name', $spreadsheet->getSheet($sheetIndex)->getTitle());
+            $objWriter->writeAttribute('table:style-name', Style::TABLE_STYLE_PREFIX . (string) ($sheetIndex + 1));
             $objWriter->writeElement('office:forms');
-            $objWriter->startElement('table:table-column');
-            $objWriter->writeAttribute('table:number-columns-repeated', self::NUMBER_COLS_REPEATED_MAX);
-            $objWriter->endElement();
-            $this->writeRows($objWriter, $spreadsheet->getSheet($i));
+            foreach ($spreadsheet->getSheet($sheetIndex)->getColumnDimensions() as $columnDimension) {
+                $objWriter->startElement('table:table-column');
+                $objWriter->writeAttribute(
+                    'table:style-name',
+                    sprintf('%s_%d_%d', Style::COLUMN_STYLE_PREFIX, $sheetIndex, $columnDimension->getColumnNumeric())
+                );
+                $objWriter->writeAttribute('table:default-cell-style-name', 'ce0');
+//                $objWriter->writeAttribute('table:number-columns-repeated', self::NUMBER_COLS_REPEATED_MAX);
+                $objWriter->endElement();
+            }
+            $this->writeRows($objWriter, $spreadsheet->getSheet($sheetIndex), $sheetIndex);
             $objWriter->endElement();
         }
     }
@@ -134,47 +143,49 @@ class Content extends WriterPart
     /**
      * Write rows of the specified sheet.
      */
-    private function writeRows(XMLWriter $objWriter, Worksheet $sheet): void
+    private function writeRows(XMLWriter $objWriter, Worksheet $sheet, int $sheetIndex): void
     {
         $numberRowsRepeated = self::NUMBER_ROWS_REPEATED_MAX;
         $span_row = 0;
         $rows = $sheet->getRowIterator();
-        while ($rows->valid()) {
+        foreach ($rows as $row) {
+            $cellIterator = $row->getCellIterator();
             --$numberRowsRepeated;
-            $row = $rows->current();
-            if ($row->getCellIterator()->valid()) {
+            if ($cellIterator->valid()) {
+                $objWriter->startElement('table:table-row');
                 if ($span_row) {
-                    $objWriter->startElement('table:table-row');
                     if ($span_row > 1) {
                         $objWriter->writeAttribute('table:number-rows-repeated', $span_row);
                     }
                     $objWriter->startElement('table:table-cell');
-                    $objWriter->writeAttribute('table:number-columns-repeated', self::NUMBER_COLS_REPEATED_MAX);
-                    $objWriter->endElement();
+                    $objWriter->writeAttribute('table:number-columns-repeated', (string) self::NUMBER_COLS_REPEATED_MAX);
                     $objWriter->endElement();
                     $span_row = 0;
+                } else {
+                    if ($sheet->getRowDimension($row->getRowIndex())->getRowHeight() > 0) {
+                        $objWriter->writeAttribute(
+                            'table:style-name',
+                            sprintf('%s_%d_%d', Style::ROW_STYLE_PREFIX, $sheetIndex, $row->getRowIndex())
+                        );
+                    }
+                    $this->writeCells($objWriter, $cellIterator);
                 }
-                $objWriter->startElement('table:table-row');
-                $this->writeCells($objWriter, $row);
                 $objWriter->endElement();
             } else {
                 ++$span_row;
             }
-            $rows->next();
         }
     }
 
     /**
      * Write cells of the specified row.
      */
-    private function writeCells(XMLWriter $objWriter, Row $row): void
+    private function writeCells(XMLWriter $objWriter, RowCellIterator $cells): void
     {
         $numberColsRepeated = self::NUMBER_COLS_REPEATED_MAX;
         $prevColumn = -1;
-        $cells = $row->getCellIterator();
-        while ($cells->valid()) {
+        foreach ($cells as $cell) {
             /** @var \PhpOffice\PhpSpreadsheet\Cell\Cell $cell */
-            $cell = $cells->current();
             $column = Coordinate::columnIndexFromString($cell->getColumn()) - 1;
 
             $this->writeCellSpan($objWriter, $column, $prevColumn);
@@ -237,8 +248,8 @@ class Content extends WriterPart
             Comment::write($objWriter, $cell);
             $objWriter->endElement();
             $prevColumn = $column;
-            $cells->next();
         }
+
         $numberColsRepeated = $numberColsRepeated - $prevColumn - 1;
         if ($numberColsRepeated > 0) {
             if ($numberColsRepeated > 1) {
@@ -275,6 +286,28 @@ class Content extends WriterPart
     private function writeXfStyles(XMLWriter $writer, Spreadsheet $spreadsheet): void
     {
         $styleWriter = new Style($writer);
+
+        $sheetCount = $spreadsheet->getSheetCount();
+        for ($i = 0; $i < $sheetCount; ++$i) {
+            $worksheet = $spreadsheet->getSheet($i);
+            $styleWriter->writeTableStyle($worksheet, $i + 1);
+
+            $worksheet->calculateColumnWidths();
+            foreach ($worksheet->getColumnDimensions() as $columnDimension) {
+                if ($columnDimension->getWidth() !== -1.0) {
+                    $styleWriter->writeColumnStyles($columnDimension, $i);
+                }
+            }
+        }
+        for ($i = 0; $i < $sheetCount; ++$i) {
+            $worksheet = $spreadsheet->getSheet($i);
+            foreach ($worksheet->getRowDimensions() as $rowDimension) {
+                if ($rowDimension->getRowHeight() > 0.0) {
+                    $styleWriter->writeRowStyles($rowDimension, $i);
+                }
+            }
+        }
+
         foreach ($spreadsheet->getCellXfCollection() as $style) {
             $styleWriter->write($style);
         }
@@ -296,7 +329,7 @@ class Content extends WriterPart
         $columnSpan = Coordinate::columnIndexFromString($end[0]) - Coordinate::columnIndexFromString($start[0]) + 1;
         $rowSpan = ((int) $end[1]) - ((int) $start[1]) + 1;
 
-        $objWriter->writeAttribute('table:number-columns-spanned', $columnSpan);
-        $objWriter->writeAttribute('table:number-rows-spanned', $rowSpan);
+        $objWriter->writeAttribute('table:number-columns-spanned', (string) $columnSpan);
+        $objWriter->writeAttribute('table:number-rows-spanned', (string) $rowSpan);
     }
 }
