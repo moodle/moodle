@@ -29,5 +29,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Brezhoneg';
+$string['parentlanguage'] = 'lv';
+$string['thislanguage'] = 'Latviešu (Workplace)';
