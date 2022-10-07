@@ -37,4 +37,49 @@ class core_grades_renderer extends plugin_renderer_base {
         $data = $actionbar->export_for_template($this);
         return $this->render_from_template($actionbar->get_template(), $data);
     }
+
+    /**
+     * Renders the group selector trigger element.
+     *
+     * @param object $course The course object.
+     * @param string|null $groupactionbaseurl The base URL for the group action.
+     * @return string|null The raw HTML to render.
+     */
+    public function group_selector(object $course, ?string $groupactionbaseurl = null): ?string {
+        global $USER;
+
+        // Make sure that group mode is enabled.
+        if (!$groupmode = $course->groupmode) {
+            return null;
+        }
+
+        $label = $groupmode == VISIBLEGROUPS ? get_string('selectgroupsvisible') :
+            get_string('selectgroupsseparate');
+
+        $data = [
+            'label' => $label,
+            'courseid' => $course->id,
+            'groupactionbaseurl' => $groupactionbaseurl
+        ];
+
+        $context = context_course::instance($course->id);
+
+        if ($groupmode == VISIBLEGROUPS || has_capability('moodle/site:accessallgroups', $context)) {
+            $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
+        } else {
+            $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
+        }
+
+        $activegroup = groups_get_course_group($course, true, $allowedgroups);
+
+        if ($activegroup) {
+            $group = groups_get_group($activegroup);
+            $data['selectedgroup'] = $group->name;
+        } else if ($activegroup === 0) {
+            $data['selectedgroup'] = get_string('allparticipants');
+        }
+
+        $this->page->requires->js_call_amd('core_grades/searchwidget/group', 'init');
+        return $this->render_from_template('core_grades/group_selector', $data);
+    }
 }
