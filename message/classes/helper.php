@@ -308,14 +308,16 @@ class helper {
      *
      * @param object $user User object.
      * @param bool $iscontact
+     * @param bool $displaytextlabel Instructs whether to display a text label.
      * @return array
      */
-    public static function togglecontact_link_params($user, $iscontact = false) {
+    public static function togglecontact_link_params($user, $iscontact = false, bool $displaytextlabel = true) {
         global $USER;
         $params = array(
             'data-currentuserid' => $USER->id,
             'data-userid' => $user->id,
             'data-is-contact' => $iscontact,
+            'data-display-text-label' => $displaytextlabel,
             'id' => 'toggle-contact-button',
             'role' => 'button',
             'class' => 'ajax-contact-button',
