@@ -93,12 +93,18 @@ class update_question_version_status_test extends \advanced_testcase {
     public function test_submit_status_does_not_create_a_new_version() {
         global $DB;
         $this->resetAfterTest();
+
+        // Find out the start count in 'question_versions' table.
+        $versioncount = $DB->count_records('question_versions');
+
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
         $numq = $questiongenerator->create_question('essay', null,
             ['category' => $cat->id, 'name' => 'This is the first version']);
         $countcurrentrecords = $DB->count_records('question_versions');
-        $this->assertEquals(1, $countcurrentrecords);
+        // New version count should be equal to start + 1.
+        $this->assertEquals($versioncount + 1, $countcurrentrecords);
+
         $result = update_question_version_status::execute($numq->id, 'draft');
         $countafterupdate = $DB->count_records('question_versions');
         $this->assertEquals($countcurrentrecords, $countafterupdate);

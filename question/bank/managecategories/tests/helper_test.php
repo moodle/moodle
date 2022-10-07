@@ -65,7 +65,8 @@ class helper_test extends \advanced_testcase {
 
         $datagenerator = $this->getDataGenerator();
         $this->course = $datagenerator->create_course();
-        $this->quiz = $datagenerator->create_module('quiz', ['course' => $this->course->id]);
+        $this->quiz = $datagenerator->create_module('quiz',
+                ['course' => $this->course->id, 'name' => 'Quiz 1']);
         $this->qgenerator = $datagenerator->get_plugin_generator('core_question');
         $this->context = \context_module::instance($this->quiz->cmid);
 
@@ -232,14 +233,16 @@ class helper_test extends \advanced_testcase {
 
         // Validate that we have the array with the categories tree.
         $categorycontexts = helper::question_category_options($contexts->having_cap('moodle/question:add'));
-        foreach ($categorycontexts as $categorycontext) {
-            $this->assertCount(3, $categorycontext);
-        }
+        // The quiz name 'Quiz 1' is set in setUp function.
+        $categorycontext = $categorycontexts['Quiz: Quiz 1'];
+        $this->assertCount(3, $categorycontext);
 
         // Validate that we have the array with the categories tree and that top category is there.
-        $categorycontexts = helper::question_category_options($contexts->having_cap('moodle/question:add'), true);
-        foreach ($categorycontexts as $categorycontext) {
-            $this->assertCount(4, $categorycontext);
+        $newcategorycontexts = helper::question_category_options($contexts->having_cap('moodle/question:add'), true);
+        foreach ($newcategorycontexts as $key => $categorycontext) {
+            $oldcategorycontext = $categorycontexts[$key];
+            $count = count($oldcategorycontext);
+            $this->assertCount($count + 1, $categorycontext);
         }
     }
 }
