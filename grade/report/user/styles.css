@@ -127,6 +127,11 @@
     align-items: center;
 }
 
+.path-grade-report-user .user-selector .userinitials {
+    width: 40px;
+    height: 40px;
+}
+
 @media print {
     .path-grade-report-user .user-grade td.category {
         border-left: none;
