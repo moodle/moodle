@@ -211,6 +211,7 @@ $mform->get_data();
 // Display the tree selector thing.
 echo $output->display_tree_selector($company, $parentlevel, $linkurl, $params, $departmentid);
 echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
+echo html_writer::start_tag('div', array('class' => 'reportform', 'style' => 'display: inline-flex;'));
 
 if (empty($licenselist)) {
     echo html_writer::end_tag('div');
@@ -222,12 +223,14 @@ if (empty($licenselist)) {
 echo $licenseselectoutput;
 if (empty($licenseid)) {
     echo html_writer::end_tag('div');
+    echo html_writer::end_tag('div');
     echo $output->footer();
     die;
 }
 
 // Display the user filter form.
 $mform->display();
+echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 
 if (empty($CFG->loginhttps)) {
