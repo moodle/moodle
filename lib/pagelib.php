@@ -1937,6 +1937,7 @@ class moodle_page {
 
         if (!empty($this->_cm)) {
             $this->add_body_class('cmid-' . $this->_cm->id);
+            $this->add_body_class('cm-type-' . $this->_cm->modname);
         }
 
         if (!empty($CFG->allowcategorythemes)) {

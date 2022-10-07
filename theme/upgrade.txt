@@ -5,6 +5,7 @@ information provided here is intended especially for theme designer.
 * The function core_course_renderer::course_modchooser() has been finally deprecated and can not be used anymore.
   Please use core_course_renderer::course_activitychooser() instead.
 * $OUTPUT->favicon() now returns the URL of the configurable favicon if present.
+* The body tag include a class with module name specific for each activity E.g.: cm-type-page
 
 === 4.0 ===
 * A new theme config 'removedprimarynavitems' allows a theme to customise primary navigation by specifying the list of items to remove.
