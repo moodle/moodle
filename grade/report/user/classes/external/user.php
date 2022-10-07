@@ -305,7 +305,6 @@ class user extends external_api {
                                                 'class' => new external_value(PARAM_RAW, 'class'),
                                                 'colspan' => new external_value(PARAM_INT, 'col span'),
                                                 'content'  => new external_value(PARAM_RAW, 'cell content'),
-                                                'celltype'  => new external_value(PARAM_RAW, 'cell type'),
                                                 'id'  => new external_value(PARAM_ALPHANUMEXT, 'id')
                                             ], 'The item returned data', VALUE_OPTIONAL
                                         ),
@@ -341,6 +340,9 @@ class user extends external_api {
                                         ),
                                         'contributiontocoursetotal' => new external_single_structure(
                                             self::grades_table_column(), 'contributiontocoursetotal column', VALUE_OPTIONAL
+                                        ),
+                                        'parentcategories' => new external_multiple_structure(
+                                            new external_value(PARAM_INT, 'Parent grade category ID.')
                                         ),
                                     ], 'table'
                                 )

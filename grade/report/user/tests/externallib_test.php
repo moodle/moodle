@@ -111,8 +111,9 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Read returned grades.
         $studentreturnedgrades = [];
+
         $studentreturnedgrades[$studentgrades['tables'][0]['userid']] =
-            (int) $studentgrades['tables'][0]['tabledata'][1]['grade']['content'];
+            (int) $studentgrades['tables'][0]['tabledata'][2]['grade']['content'];
 
         $this->assertEquals($s1grade, $studentreturnedgrades[$student1->id]);
     }
@@ -139,7 +140,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertTrue(count($studentgrade['warnings']) == 0);
 
         $this->assertTrue(count($studentgrade['tables']) == 1);
-        $student1returnedgrade = (int) $studentgrade['tables'][0]['tabledata'][1]['grade']['content'];
+        $student1returnedgrade = (int) $studentgrade['tables'][0]['tabledata'][2]['grade']['content'];
         $this->assertEquals($s1grade, $student1returnedgrade);
 
     }

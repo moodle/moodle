@@ -355,6 +355,11 @@ class user extends grade_report {
                 $this->inject_rowspans($element['children'][$key]);
             } else {
                 $count += $this->inject_rowspans($element['children'][$key]);
+                // Take into consideration the addition of a new row (where the rowspan is defined) right after a category row.
+                if ($child['type'] == 'category') {
+                    $count += 1;
+                }
+
             }
         }
 
@@ -446,14 +451,15 @@ class user extends grade_report {
         $gradeobject = $element['object'];
         $eid = $gradeobject->id;
         $element['userid'] = $this->user->id;
-        $fullname = $this->gtree->get_element_header($element, true, true, true, true, true);
+        $fullname = $this->gtree->get_element_header($element, true, false, true, true, true);
         $data = [];
         $gradeitemdata = [];
         $hidden = '';
         $excluded = '';
         $itemlevel = ($type == 'categoryitem' || $type == 'category' || $type == 'courseitem') ? $depth : ($depth + 1);
-        $class = 'level' . $itemlevel . ' level' . ($itemlevel % 2 ? 'odd' : 'even');
+        $class = 'level' . $itemlevel;
         $classfeedback = '';
+        $rowspandata = [];
 
         // If this is a hidden grade category, hide it completely from the user.
         if ($type == 'category' && $gradeobject->is_hidden() && !$this->canviewhidden && (
@@ -461,11 +467,6 @@ class user extends grade_report {
                 ($this->showhiddenitems == GRADE_REPORT_USER_HIDE_UNTIL && !$gradeobject->is_hiddenuntil()))) {
             return false;
         }
-
-        if ($type == 'category') {
-            $this->evenodd[$depth] = (($this->evenodd[$depth] + 1) % 2);
-        }
-        $alter = ($this->evenodd[$depth] == 0) ? 'even' : 'odd';
 
         // Process those items that have scores associated.
         if ($type == 'item' || $type == 'categoryitem' || $type == 'courseitem') {
@@ -540,19 +541,34 @@ class user extends grade_report {
                 $class .= $hidden . $excluded;
                 // Alter style based on whether aggregation is first or last.
                 if ($this->switch) {
-                    $class .= ($type == 'categoryitem' || $type == 'courseitem') ? " ".$alter."d$depth baggt b2b" : " item b1b";
+                    $class .= ($type == 'categoryitem' || $type == 'courseitem') ? " d$depth baggt b2b" : " item b1b";
                 } else {
-                    $class .= ($type == 'categoryitem' || $type == 'courseitem') ? " ".$alter."d$depth baggb" : " item b1b";
+                    $class .= ($type == 'categoryitem' || $type == 'courseitem') ? " d$depth baggb" : " item b1b";
                 }
+
+                $itemicon = \html_writer::div($this->gtree->get_element_icon($element), 'mr-1');
+                $elementtype = $this->gtree->get_element_type_string($element);
+                $itemtype = \html_writer::span($elementtype, 'd-block text-uppercase small dimmed_text',
+                    ['title' => $elementtype]);
+
                 if ($type == 'categoryitem' || $type == 'courseitem') {
                     $headercat = "cat_{$gradeobject->iteminstance}_{$this->user->id}";
                 }
 
+                // Generate the content for a cell that represents a grade item.
+                // If a behat test site is running avoid outputting the information about the type of the grade item.
+                // This additional information causes issues in behat particularly with the existing xpath used to
+                // interact with table elements.
+                if (!defined('BEHAT_SITE_RUNNING')) {
+                    $content = \html_writer::div($itemtype . $fullname);
+                } else {
+                    $content = \html_writer::div($fullname);
+                }
+
                 // Name.
-                $data['itemname']['content'] = $fullname;
+                $data['itemname']['content'] = \html_writer::div($itemicon . $content, "{$type} d-flex align-items-center");
                 $data['itemname']['class'] = $class;
                 $data['itemname']['colspan'] = ($this->maxdepth - $depth);
-                $data['itemname']['celltype'] = 'th';
                 $data['itemname']['id'] = $headerrow;
 
                 // Basic grade item information.
@@ -841,30 +857,43 @@ class user extends grade_report {
                 $hint['parent'] = $parent->load_grade_item()->id;
                 $this->aggregationhints[$gradegrade->itemid] = $hint;
             }
+            // Get the IDs of all parent categories of this grading item.
+            $data['parentcategories'] = array_filter(explode('/', $gradeobject->parent_category->path));
         }
 
         // Category.
         if ($type == 'category') {
-            $data['leader']['class'] = $class.' '.$alter."d$depth b1t b2b b1l";
-            $data['leader']['rowspan'] = $element['rowspan'];
-
             // Alter style based on whether aggregation is first or last.
             if ($this->switch) {
-                $data['itemname']['class'] = $class.' '.$alter."d$depth b1b b1t";
+                $data['itemname']['class'] = $class . ' ' . "d$depth b1b b1t category";
             } else {
-                $data['itemname']['class'] = $class.' '.$alter."d$depth b2t";
+                $data['itemname']['class'] = $class . ' ' . "d$depth b2t category";
             }
-            $data['itemname']['colspan'] = ($this->maxdepth - $depth + count($this->tablecolumns) - 1);
-            $data['itemname']['content'] = $fullname;
-            $data['itemname']['celltype'] = 'th';
+            $data['itemname']['colspan'] = ($this->maxdepth - $depth + count($this->tablecolumns));
+            $data['itemname']['content'] = $OUTPUT->render_from_template('gradereport_user/user_report_category_content',
+                ['categoryid' => $gradeobject->id, 'categoryname' => $fullname]);
             $data['itemname']['id'] = "cat_{$gradeobject->id}_{$this->user->id}";
+            // Get the IDs of all parent categories of this grade category.
+            $data['parentcategories'] = array_diff(array_filter(explode('/', $gradeobject->path)), [$gradeobject->id]);
+
+            $rowspandata['leader']['class'] = $class . " d$depth b1t b2b b1l";
+            $rowspandata['leader']['rowspan'] = $element['rowspan'];
+            $rowspandata['parentcategories'] = array_filter(explode('/', $gradeobject->path));
+            $rowspandata['spacer'] = true;
         }
 
         // Add this row to the overall system.
         foreach ($data as $key => $celldata) {
-            $data[$key]['class'] .= ' column-' . $key;
+            if (isset($celldata['class'])) {
+                $data[$key]['class'] .= ' column-' . $key;
+            }
         }
+
         $this->tabledata[] = $data;
+
+        if (!empty($rowspandata)) {
+            $this->tabledata[] = $rowspandata;
+        }
 
         // Recursively iterate through all child elements.
         if (isset($element['children'])) {
@@ -975,63 +1004,86 @@ class user extends grade_report {
 
     /**
      * Prints or returns the HTML from the flexitable.
+     *
      * @param bool $return Whether or not to return the data instead of printing it directly.
-     * @return string
+     * @return string|void
      */
-    public function print_table(bool $return = false): string {
-        $maxspan = $this->maxdepth;
+    public function print_table(bool $return = false) {
+        global $PAGE;
 
-        // Build table structure.
-        $html = "
-            <table cellspacing='0'
-                   cellpadding='0'
-                   summary='" . s($this->get_lang_string('tablesummary', 'gradereport_user')) . "'
-                   class='boxaligncenter generaltable user-grade'>
-            <thead>
-                <tr>
-                    <th id='".$this->tablecolumns[0]."' class=\"header column-{$this->tablecolumns[0]}\" colspan='$maxspan'>".$this->tableheaders[0]."</th>\n";
+        $table = new \html_table();
+        $table->attributes = [
+            'summary' => s($this->get_lang_string('tablesummary', 'gradereport_user')),
+            'class' => 'generaltable boxaligncenter user-grade',
+        ];
 
-        for ($i = 1; $i < count($this->tableheaders); $i++) {
-            $html .= "<th id='".$this->tablecolumns[$i]."' class=\"header column-{$this->tablecolumns[$i]}\">".$this->tableheaders[$i]."</th>\n";
+        // Set the table headings.
+        foreach ($this->tableheaders as $index => $heading) {
+            $headingcell = new \html_table_cell($heading);
+            $headingcell->attributes['id'] = $this->tablecolumns[$index];
+            $headingcell->attributes['class'] = "header column-{$this->tablecolumns[$index]}";
+            if ($index == 0) {
+                $headingcell->colspan = $this->maxdepth;
+            }
+            $table->head[] = $headingcell;
         }
 
-        $html .= "
-                </tr>
-            </thead>
-            <tbody>\n";
-
-        // Print out the table data.
-        for ($i = 0; $i < count($this->tabledata); $i++) {
-            $html .= "<tr>\n";
-            if (isset($this->tabledata[$i]['leader'])) {
-                $rowspan = $this->tabledata[$i]['leader']['rowspan'];
-                $class = $this->tabledata[$i]['leader']['class'];
-                $html .= "<td class='$class' rowspan='$rowspan'></td>\n";
+        // Set the table body data.
+        foreach ($this->tabledata as $rowdata) {
+            $rowcells = [];
+            // Set a rowspan cell, if applicable.
+            if (isset($rowdata['leader'])) {
+                $rowspancell = new \html_table_cell('');
+                $rowspancell->attributes['class'] = $rowdata['leader']['class'];
+                $rowspancell->rowspan = $rowdata['leader']['rowspan'];
+                $rowcells[] = $rowspancell;
             }
-            for ($j = 0; $j < count($this->tablecolumns); $j++) {
-                $name = $this->tablecolumns[$j];
-                $class = (isset($this->tabledata[$i][$name]['class'])) ? $this->tabledata[$i][$name]['class'] : '';
-                $colspan = (isset($this->tabledata[$i][$name]['colspan'])) ?
-                    "colspan='".$this->tabledata[$i][$name]['colspan']."'" : '';
-                $content = (isset($this->tabledata[$i][$name]['content'])) ? $this->tabledata[$i][$name]['content'] : null;
-                $celltype = (isset($this->tabledata[$i][$name]['celltype'])) ? $this->tabledata[$i][$name]['celltype'] : 'td';
-                $id = (isset($this->tabledata[$i][$name]['id'])) ? "id='{$this->tabledata[$i][$name]['id']}'" : '';
-                $headers = (isset($this->tabledata[$i][$name]['headers'])) ?
-                    "headers='{$this->tabledata[$i][$name]['headers']}'" : '';
-                if (isset($content)) {
-                    $html .= "<$celltype $id $headers class='$class' $colspan>$content</$celltype>\n";
+
+            // Set the row cells.
+            foreach ($this->tablecolumns as $tablecolumn) {
+                $content = $rowdata[$tablecolumn]['content'] ?? null;
+
+                if (!is_null($content)) {
+                    $rowcell = new \html_table_cell($content);
+
+                    if (isset($rowdata[$tablecolumn]['class'])) {
+                        $rowcell->attributes['class'] = $rowdata[$tablecolumn]['class'];
+                    }
+                    if (isset($rowdata[$tablecolumn]['colspan'])) {
+                        $rowcell->colspan = $rowdata[$tablecolumn]['colspan'];
+                    }
+                    if (isset($rowdata[$tablecolumn]['id'])) {
+                        $rowcell->id = $rowdata[$tablecolumn]['id'];
+                    }
+                    if (isset($rowdata[$tablecolumn]['headers'])) {
+                        $rowcell->attributes['headers'] = $rowdata[$tablecolumn]['headers'];
+                    }
+                    $rowcells[] = $rowcell;
                 }
             }
-            $html .= "</tr>\n";
+
+            $tablerow = new \html_table_row($rowcells);
+            // Generate classes which will be attributed to the current row and will be used to identify all parent
+            // categories of this grading item or a category (e.g. 'cat_2 cat_5'). These classes are utilized by the
+            // category toggle (expand/collapse) functionality.
+            $classes = implode(" ", array_map(function($parentcategoryid) {
+                return "cat_{$parentcategoryid}";
+            }, $rowdata['parentcategories']));
+
+            $classes .= isset($rowdata['spacer']) && $rowdata['spacer'] ? ' spacer' : '';
+
+            $tablerow->attributes = ['class' => $classes, 'data-hidden' => 'false'];
+            $table->data[] = $tablerow;
         }
 
-        $html .= "</tbody></table>";
+        $userreporttable = \html_writer::table($table);
+        $PAGE->requires->js_call_amd('gradereport_user/gradecategorytoggle', 'init', ["user-report-{$this->user->id}"]);
 
         if ($return) {
-            return $html;
-        } else {
-            echo $html;
+            return \html_writer::div($userreporttable, 'user-report-container', ['id' => "user-report-{$this->user->id}"]);
         }
+
+        echo \html_writer::div($userreporttable, 'user-report-container', ['id' => "user-report-{$this->user->id}"]);
     }
 
     /**
