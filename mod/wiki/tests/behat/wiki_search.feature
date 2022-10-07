@@ -32,8 +32,6 @@ Feature: Users can search wikis
     And I set the following fields to these values:
       | HTML format | Collaborative teacher1 page [[new page]] |
     And I press "Save"
-    And I am on "Course 1" course homepage
-    And I log out
     And I am on the "Collaborative wiki name" "wiki activity" page logged in as student1
     And I follow "new page"
     And I press "Create page"
@@ -66,7 +64,6 @@ Feature: Users can search wikis
     And I set the following fields to these values:
       | HTML format | Individual teacher1 page |
     And I press "Save"
-    And I log out
     And I am on the "Individual wiki name" "wiki activity" page logged in as student1
     And I press "Create page"
     And I set the following fields to these values:
@@ -76,7 +73,6 @@ Feature: Users can search wikis
     And I press "Search wikis"
     Then I should see "Individual student1 page"
     And I should not see "Individual teacher1 page"
-    And I log out
     And I am on the "Individual wiki name" "wiki activity" page logged in as student2
     And I press "Create page"
     And I set the following fields to these values:
@@ -87,7 +83,6 @@ Feature: Users can search wikis
     And I should see "Individual student2 page"
     And I should not see "Individual student1 page"
     And I should not see "Individual teacher1 page"
-    And I log out
     And I am on the "Individual wiki name" "wiki activity" page logged in as teacher1
     And I set the field "searchstring" to "page"
     And I press "Search wikis"
@@ -136,7 +131,6 @@ Feature: Users can search wikis
     And I set the following fields to these values:
       | HTML format | Group2 teacher1 page [[new page2]] |
     And I press "Save"
-    And I log out
     And I am on the "Group wiki name" "wiki activity" page logged in as student1
     And I follow "new page1"
     And I press "Create page"
@@ -149,7 +143,6 @@ Feature: Users can search wikis
     And I should not see "Group2 teacher1 page"
     And I should see "Group1 student1 new page"
     And I should not see "All participants teacher1 page"
-    And I log out
     And I am on the "Group wiki name" "wiki activity" page logged in as student2
     And I follow "new page2"
     And I press "Create page"
