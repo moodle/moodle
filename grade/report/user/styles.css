@@ -132,6 +132,10 @@
     height: 40px;
 }
 
+.path-grade-report-user .user-navigation .container {
+    max-width: 767px;
+}
+
 @media print {
     .path-grade-report-user .user-grade td.category {
         border-left: none;

@@ -129,4 +129,46 @@ class gradereport_user_renderer extends plugin_renderer_base {
         $this->page->requires->js_call_amd('gradereport_user/user', 'init');
         return $this->render_from_template('gradereport_user/user_selector', $data);
     }
+
+    /**
+     * Creates and renders previous/next user navigation.
+     *
+     * @param graded_users_iterator $gui Objects that is used to iterate over a list of gradable users in the course.
+     * @param int $userid The ID of the current user.
+     * @param int $courseid The course ID.
+     * @return string The raw HTML to render.
+     */
+    public function user_navigation(graded_users_iterator $gui, int $userid, int $courseid): string {
+
+        $navigationdata = [];
+
+        while ($userdata = $gui->next_user()) {
+            $users[$userdata->user->id] = $userdata->user;
+        }
+        $gui->close();
+
+        $arraykeys = array_keys($users);
+        $keynumber = array_search($userid, $arraykeys);
+
+        // If the current user is not the first one in the list, find and render the previous user.
+        if ($keynumber !== 0) {
+            $previoususer = $users[$arraykeys[$keynumber - 1]];
+            $navigationdata['previoususer'] = [
+                'name' => fullname($previoususer),
+                'url' => (new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'userid' => $previoususer->id]))
+                    ->out(false)
+            ];
+        }
+        // If the current user is not the last one in the list, find and render the last user.
+        if ($keynumber < count($users) - 1) {
+            $nextuser = $users[$arraykeys[$keynumber + 1]];
+            $navigationdata['nextuser'] = [
+                'name' => fullname($nextuser),
+                'url' => (new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'userid' => $nextuser->id]))
+                    ->out(false)
+            ];
+        }
+
+        return $this->render_from_template('gradereport_user/user_navigation', $navigationdata);
+    }
 }
