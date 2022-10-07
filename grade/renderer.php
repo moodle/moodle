@@ -17,6 +17,8 @@
 defined('MOODLE_INTERNAL') || die;
 
 use \core_grades\output\action_bar;
+use core_message\helper;
+use core_message\api;
 
 /**
  * Renderer class for the grade pages.
@@ -81,5 +83,68 @@ class core_grades_renderer extends plugin_renderer_base {
 
         $this->page->requires->js_call_amd('core_grades/searchwidget/group', 'init');
         return $this->render_from_template('core_grades/group_selector', $data);
+    }
+
+    /**
+     * Creates and renders a custom user heading.
+     *
+     * @param stdClass $user The user object.
+     * @param int $courseid The course ID.
+     * @param bool $showbuttons Whether to display buttons (message, add to contacts) within the heading.
+     * @return string The raw HTML to render.
+     */
+    public function user_heading(stdClass $user, int $courseid, bool $showbuttons = true) {
+        global $USER;
+
+        $headingdata = [
+            'userprofileurl' => (new moodle_url('/user/view.php', ['id' => $user->id, 'course' => $courseid]))->out(false),
+            'name' => fullname($user),
+            'image' => $this->user_picture($user, ['size' => 50, 'link' => false])
+        ];
+
+        if ($showbuttons) {
+            // Generate the data for the 'message' button.
+            $messagelinkattributes = array_map(function($name, $value) {
+                return ['name' => $name, 'value' => $value];
+            }, array_keys(helper::messageuser_link_params($user->id)), helper::messageuser_link_params($user->id));
+            $messagelinkattributes[] = ['name' => 'class', 'value' => 'btn px-0'];
+
+            $headingdata['buttons'][] = [
+                'title' => get_string('message', 'message'),
+                'url' => (new moodle_url('/message/index.php', ['id' => $user->id]))->out(false),
+                'icon' => ['name' => 't/message', 'component' => 'core'],
+                'linkattributes' => $messagelinkattributes
+            ];
+            // Include js for messaging.
+            helper::messageuser_requirejs();
+
+            if ($USER->id != $user->id) {
+                // Generate the data for the 'contact' button.
+                $iscontact = api::is_contact($USER->id, $user->id);
+                $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
+                $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
+                $contacticon = $iscontact ? 't/removecontact' : 't/addcontact';
+
+                $togglelinkparams = helper::togglecontact_link_params($user, $iscontact, false);
+                $togglecontactlinkattributes = array_map(function($name, $value) {
+                    if ($name === 'class') {
+                        $value .= ' btn px-0';
+                    }
+                    return ['name' => $name, 'value' => $value];
+                }, array_keys($togglelinkparams), $togglelinkparams);
+
+                $headingdata['buttons'][] = [
+                    'title' => get_string($contacttitle, 'message'),
+                    'url' => (new moodle_url('/message/index.php', ['user1' => $USER->id, 'user2' => $user->id,
+                        $contacturlaction => $user->id, 'sesskey' => sesskey()]))->out(false),
+                    'icon' => ['name' => $contacticon, 'component' => 'core'],
+                    'linkattributes' => $togglecontactlinkattributes
+                ];
+                // Include js for contact toggle.
+                helper::togglecontact_requirejs();
+            }
+        }
+
+        return $this->render_from_template('core_grades/user_heading', $headingdata);
     }
 }
