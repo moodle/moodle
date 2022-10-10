@@ -338,47 +338,47 @@ class block_iomad_company_admin_external extends external_api {
                         break;
                     case 'name':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        $sqlparams[$criteria['key']] = "%" . $cleanedvalue . "%";
                         break;
                     case 'shortname':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        $sqlparams[$criteria['key']] = "%" . $cleanedvalue . "%";
                         break;
                     case 'city':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        $sqlparams[$criteria['key']] = "%" . $cleanedvalue . "%";
                         break;
                     case 'address':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        $sqlparams[$criteria['key']] = "%" . $cleanedvalue . "%";
                         break;
                     case 'postcode':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        $sqlparams[$criteria['key']] = "%" . $cleanedvalue . "%";
                         break;
                     case 'region':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        $sqlparams[$criteria['key']] = "%" . $cleanedvalue . "%";
                         break;
                     case 'code':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        $sqlparams[$criteria['key']] = "%" . $cleanedvalue . "%";
                         break;
                     case 'custom1':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        $sqlparams[$criteria['key']] = "%" . $cleanedvalue . "%";
                         break;
                     case 'custom2':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        $sqlparams[$criteria['key']] = "%" . $cleanedvalue . "%";
                         break;
                     case 'custom3':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        $sqlparams[$criteria['key']] = "%" . $cleanedvalue . "%";
                         break;
                     case 'country':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
-                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        $sqlparams[$criteria['key']] = "%" . $cleanedvalue . "%";
                         break;
                     default:
                         break;
