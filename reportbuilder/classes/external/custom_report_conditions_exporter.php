@@ -20,8 +20,8 @@ namespace core_reportbuilder\external;
 
 use renderer_base;
 use core\external\exporter;
+use core_reportbuilder\datasource;
 use core_reportbuilder\form\condition;
-use core_reportbuilder\local\report\base;
 use core_reportbuilder\local\models\filter;
 
 /**
@@ -40,7 +40,7 @@ class custom_report_conditions_exporter extends exporter {
      */
     protected static function define_related(): array {
         return [
-            'report' => base::class,
+            'report' => datasource::class,
         ];
     }
 
@@ -94,7 +94,7 @@ class custom_report_conditions_exporter extends exporter {
      * @return array
      */
     protected function get_other_values(renderer_base $output): array {
-        /** @var base $report */
+        /** @var datasource $report */
         $report = $this->related['report'];
         $reportid = $report->get_report_persistent()->get('id');
 

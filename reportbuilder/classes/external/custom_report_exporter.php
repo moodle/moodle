@@ -125,6 +125,9 @@ class custom_report_exporter extends persistent_exporter {
      * @return array
      */
     protected function get_other_values(renderer_base $output): array {
+        /** @var datasource $report */
+        $report = manager::get_report_from_persistent($this->persistent);
+
         $filterspresent = false;
         $filtersform = '';
 
@@ -140,17 +143,11 @@ class custom_report_exporter extends persistent_exporter {
             $table->set_filterset($filterset);
 
             // Generate filters form if report contains any filters.
-            $source = $this->persistent->get('source');
-            /** @var datasource $datasource */
-            $datasource = new $source($this->persistent);
-
-            $filterspresent = !empty($datasource->get_active_filters());
+            $filterspresent = !empty($report->get_active_filters());
             if ($filterspresent) {
                 $filtersform = $this->generate_filters_form()->render();
             }
         }
-
-        $report = manager::get_report_from_persistent($this->persistent);
 
         // If we are editing we need all this information for the template.
         $editordata = [];

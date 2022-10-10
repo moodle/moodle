@@ -30,6 +30,7 @@ Information provided here is intended especially for developers.
   - `core_reportbuilder_columns_*`
   - `core_reportbuilder_conditions_*`
   - `core_reportbuilder_filters_*`
+* The `custom_report_*` exporters now accept only classes that extend datasource as part of their related data properties
 * The following permission methods now accept an optional `$context` parameter (default system context):
   - `[require_]can_view_reports_list`
   - `[require_]can_create_report`
