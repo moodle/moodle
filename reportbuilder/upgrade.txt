@@ -11,6 +11,7 @@ Information provided here is intended especially for developers.
   some system reports
 * New external methods for retrieving custom report data:
   - `core_reportbuilder_list_reports`
+  - `core_reportbuilder_retrieve_report`
   - `core_reportbuilder_view_report`
 * 'set_default_per_page' and 'get_default_per_page' methods have been added to \local\report\base class
   to manage the default displayed rows per page.
