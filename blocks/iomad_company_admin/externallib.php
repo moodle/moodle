@@ -277,6 +277,7 @@ class block_iomad_company_admin_external extends external_api {
             $paramtype = PARAM_RAW;
             switch ($criteria['key']) {
                 case 'id':
+                case 'parentid':
                 case 'timezone':
                     $paramtype = PARAM_INT;
                     break;
@@ -284,7 +285,13 @@ class block_iomad_company_admin_external extends external_api {
                 case 'shortname':
                 case 'code':
                 case 'city':
+                case 'postcode':
+                case 'address':
+                case 'region':
                 case 'country':
+                case 'custom1':
+                case 'custom2':
+                case 'custom3':
                     $paramtype = PARAM_RAW;
                     break;
                 case 'lang':
@@ -316,6 +323,13 @@ class block_iomad_company_admin_external extends external_api {
                 // Create the SQL.
                 switch ($criteria['key']) {
                     case 'id':
+                        $sql .= $criteria['key'] . ' = :' . $criteria['key'];
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'parentid':
+                        $sql .= $criteria['key'] . ' = :' . $criteria['key'];
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
                     case 'timezone':
                     case 'lang':
                     case 'suspended':
@@ -323,8 +337,45 @@ class block_iomad_company_admin_external extends external_api {
                         $sqlparams[$criteria['key']] = $cleanedvalue;
                         break;
                     case 'name':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
                     case 'shortname':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
                     case 'city':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'address':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'postcode':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'region':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'code':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'custom1':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'custom2':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
+                    case 'custom3':
+                        $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
+                        $sqlparams[$criteria['key']] = $cleanedvalue;
+                        break;
                     case 'country':
                         $sql .= $DB->sql_like($criteria['key'], ':' . $criteria['key'], false);
                         $sqlparams[$criteria['key']] = $cleanedvalue;
