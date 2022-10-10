@@ -152,7 +152,8 @@ class api {
                        AND (
                             mc.completionstate = :completionstate
                             OR (cm.completionpassgrade = 1 AND mc.completionstate = :completionstatepass1)
-                            OR (cm.completionpassgrade = 0 AND (mc.completionstate = :completionstatepass2 OR mc.completionstate = :completionstatefail))
+                            OR (cm.completionpassgrade = 0 AND (mc.completionstate = :completionstatepass2
+                                                                OR mc.completionstate = :completionstatefail))
                             )";
 
         $params = [
