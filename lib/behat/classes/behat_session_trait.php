@@ -528,7 +528,7 @@ trait behat_session_trait {
      * @return boolean
      */
     protected static function running_javascript_in_session(Session $session): bool {
-        return get_class($session->getDriver()) !== 'Behat\Mink\Driver\GoutteDriver';
+        return get_class($session->getDriver()) !== 'Behat\Mink\Driver\BrowserKitDriver';
     }
 
     /**

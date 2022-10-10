@@ -310,7 +310,7 @@ EOF;
      * @BeforeScenario @~javascript
      * @param BeforeScenarioScope $scope scope passed by event fired before scenario.
      */
-    public function before_goutte_scenarios(BeforeScenarioScope $scope) {
+    public function before_browserkit_scenarios(BeforeScenarioScope $scope) {
         if ($this->running_javascript()) {
             // A bug in the BeforeScenario filtering prevents the @~javascript filter on this hook from working
             // properly.
