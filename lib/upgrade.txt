@@ -43,6 +43,8 @@ information provided here is intended especially for developers.
   return the class name.
 * The function get_module_metadata() has been finally deprecated and can not be used anymore.
 * New DML driver method `$DB->sql_order_by_null` for sorting nulls sort nulls first when ascending and last when descending.
+* Most Behat functionality for the Moodle App has been removed from core, refer to the documentation in order to upgrade your testing
+  setup: https://moodledev.io/general/app/development/testing/acceptance-testing#upgrading-tests-from-an-older-version
 
 === 4.0 ===
 
