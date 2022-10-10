@@ -1277,16 +1277,10 @@ class user extends grade_report {
      * @return string HTML to display
      */
     public function output_report_zerostate(): string {
-        global $OUTPUT, $COURSE, $USER;
+        global $OUTPUT;
 
-        $gpr = new \grade_plugin_return(['type' => 'report', 'plugin' => 'user', 'courseid' => $COURSE->id,
-            'userid' => $USER->id]);
         $context = [
-            'courseid' => $COURSE->id,
-            'imglink' => new \moodle_url('/pix/f/clip-353 1.png'),
-            'groupmodeenabled' => $COURSE->groupmode,
-            'groupactionbaseurl' => 'index.php',
-            'groupid' => $gpr->groupid
+            'imglink' => $OUTPUT->image_url('zero_state', 'gradereport_user'),
         ];
         return $OUTPUT->render_from_template('gradereport_user/zero_state', $context);
     }

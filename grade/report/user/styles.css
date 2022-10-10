@@ -147,6 +147,10 @@
     font-weight: bold;
 }
 
+.path-grade-report-user .zero-state img {
+    width: 185px;
+}
+
 @media print {
     .path-grade-report-user .user-grade td.category {
         border-left: none;
