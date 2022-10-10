@@ -155,6 +155,17 @@ class meeting_test extends \advanced_testcase {
         $meeting->update_cache();
         $meetinginfo = $meeting->get_meeting_info();
         $this->assertFalse($meetinginfo->statusrunning);
+
+        if ($type == instance::TYPE_ALL) {
+            $this->assertTrue($meetinginfo->features['showroom']);
+            $this->assertTrue($meetinginfo->features['showrecordings']);
+        } else if ($type == instance::TYPE_ROOM_ONLY) {
+            $this->assertTrue($meetinginfo->features['showroom']);
+            $this->assertFalse($meetinginfo->features['showrecordings']);
+        } else if ($type == instance::TYPE_RECORDING_ONLY) {
+            $this->assertFalse($meetinginfo->features['showroom']);
+            $this->assertTrue($meetinginfo->features['showrecordings']);
+        }
     }
 
     /**

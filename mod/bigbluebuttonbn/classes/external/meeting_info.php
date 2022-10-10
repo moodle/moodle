@@ -97,7 +97,13 @@ class meeting_info extends external_api {
                 bigbluebutton_proxy::get_server_not_available_url($instance),
                 bigbluebutton_proxy::get_server_not_available_message($instance));
         }
-        return (array) meeting::get_meeting_info_for_instance($instance, $updatecache);
+        $meetinginfo = (array) meeting::get_meeting_info_for_instance($instance, $updatecache);
+
+        // Make the structure WS friendly.
+        array_walk($meetinginfo['features'], function(&$value, $key){
+            $value = ['name' => $key, 'isenabled' => (bool) $value];
+        });
+        return $meetinginfo;
     }
 
     /**
@@ -134,6 +140,12 @@ class meeting_info extends external_api {
                     ])
                 ),
                 'joinurl' => new external_value(PARAM_URL, 'Join URL'),
+                'features' => new \external_multiple_structure(
+                    new external_single_structure([
+                        'name' => new external_value(PARAM_ALPHA, 'Feature name.'),
+                        'isenabled' => new external_value(PARAM_BOOL, 'Whether the feature is enabled.'),
+                    ]), 'List of features for the instance', VALUE_OPTIONAL
+                ),
             ]
         );
     }
