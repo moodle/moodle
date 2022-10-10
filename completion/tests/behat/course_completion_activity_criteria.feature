@@ -46,8 +46,7 @@ Feature: Course completion state should match completion criteria
     And I log out
 
   Scenario: Completion status show match completion criteria.
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as "student1"
     And the "Receive a grade" completion condition of "Test assignment name" is displayed as "todo"
     And the "Receive a passing grade" completion condition of "Test assignment name" is displayed as "todo"
     And I should see "Status: Not yet started" in the "Course completion status" "block"
@@ -66,8 +65,7 @@ Feature: Course completion state should match completion criteria
       | Grade out of 100 | 50.0 |
     And I press "Save changes"
     And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as "student1"
     And I should see "Status: Pending" in the "Course completion status" "block"
     And the "Receive a grade" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test assignment name" is displayed as "failed"
@@ -81,8 +79,7 @@ Feature: Course completion state should match completion criteria
       | Grade out of 100 | 75.0 |
     And I press "Save changes"
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as "student1"
     And I should see "Status: Complete" in the "Course completion status" "block"
     And the "Receive a grade" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test assignment name" is displayed as "done"
