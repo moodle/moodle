@@ -43,6 +43,13 @@ $search = optional_param('search', '', PARAM_CLEAN);// Search string.
 $name = optional_param('name', '', PARAM_CLEAN);
 $city = optional_param('city', '', PARAM_CLEAN);
 $country = optional_param('country', '', PARAM_CLEAN);
+$postcode = optional_param('postcode', '', PARAM_CLEAN);
+$region = optional_param('region', '', PARAM_CLEAN);
+$code = optional_param('code', '', PARAM_CLEAN);
+$custom1 = optional_param('ccustom1', '', PARAM_CLEAN);
+$custom2 = optional_param('ccustom2', '', PARAM_CLEAN);
+$custom3 = optional_param('ccustom3', '', PARAM_CLEAN);
+$showchild = optional_param('showchild', 1, PARAM_INT);
 $resetbutton = optional_param('resetbutton', '', PARAM_CLEAN);
 
 $params = [
@@ -58,8 +65,15 @@ $params = [
     'search' => $search,
     'name' => $name,
     'city' => $city,
+    'region' => $region,
+    'postcode' => $postcode,
+    'code' => $code,
     'country' => $country,
+    'showchild' => $showchild,
     'companyid' => $companyid,
+    'custom1' => $custom1,
+    'custom2' => $custom2,
+    'custom3' => $custom3,
 ];
 
 $context = context_system::instance();
@@ -88,6 +102,11 @@ $returnurl = $baseurl;
 $mform = new block_iomad_company_admin\forms\iomad_company_filter_form();
 $mform->set_data(array('companyid' => $companyid));
 $mform->set_data($params);
+$data = $mform->get_data();
+if (empty($data->showchild)) {
+    $showchild = 0;
+    $params['showchild'] = 0;
+}
 
 $strsuspend = get_string('suspendcompany', 'block_iomad_company_admin');
 $strsuspendcheck = get_string('suspendcompanycheck', 'block_iomad_company_admin');
@@ -216,33 +235,75 @@ foreach ($columns as $column) {
 $sqlsearch = "";
 if (empty($showsuspended)) {
     $sqlsearch .= " suspended = 0 ";
+} else {
+    $sqlsearch .= " 1 = 1 ";
 }
 
 // Deal with search strings.
-$searchparams = array();
+$searchparams = [];
 if (!empty($params['name'])) {
-    if (!empty($sqlsearch)) {
-        $sqlsearch .= " AND ";
-    }
-    $sqlsearch .= "name like :name ";
+    $sqlsearch .= " AND " . $DB->sql_like('name', ':name', false);
     $searchparams['name'] = '%'.$params['name'].'%';
 }
 if (!empty($params['city'])) {
-    if (!empty($sqlsearch)) {
-        $sqlsearch .= " AND ";
-    }
-    $sqlsearch .= "city like :city ";
+    $sqlsearch .=  " AND " . $DB->sql_like('city', ':city', false);
     $searchparams['city'] = '%'.$params['city'].'%';
 }
 if (!empty($params['country'])) {
-    if (!empty($sqlsearch)) {
-        $sqlsearch .= " AND ";
-    }
-    $sqlsearch .= "country like :country ";
+    $sqlsearch .=  " AND " . $DB->sql_like('country', ':country', false);
     $searchparams['country'] = '%'.$params['country'].'%';
+}
+if (!empty($params['region'])) {
+    $sqlsearch .=  " AND " . $DB->sql_like('region', ':region', false);
+    $searchparams['region'] = '%'.$params['region'].'%';
+}
+if (!empty($params['postcode'])) {
+    $sqlsearch .=  " AND " . $DB->sql_like('postcode', ':postcode', false);
+    $searchparams['postcode'] = '%'.$params['postcode'].'%';
+}
+if (!empty($params['address'])) {
+    $sqlsearch .=  " AND " . $DB->sql_like('address', ':address', false);
+    $searchparams['address'] = '%'.$params['address'].'%';
+}
+if (!empty($params['code'])) {
+    $sqlsearch .=  " AND " . $DB->sql_like('code', ':code', false);
+    $searchparams['code'] = '%'.$params['code'].'%';
+}
+if (!empty($params['custom1'])) {
+    $sqlsearch .=  " AND " . $DB->sql_like('custom1', ':custom1', false);
+    $searchparams['custom1'] = '%'.$params['custom1'].'%';
+}
+if (!empty($params['custom2'])) {
+    $sqlsearch .=  " AND " . $DB->sql_like('custom2', ':custom2', false);
+    $searchparams['custom2'] = '%'.$params['custom2'].'%';
+}
+if (!empty($params['custom3'])) {
+    $sqlsearch .=  " AND " . $DB->sql_like('custom3', ':custom3', false);
+    $searchparams['custom3'] = '%'.$params['custom3'].'%';
 }
 
 $companyrecords = $DB->get_fieldset_select('company', 'id', $sqlsearch, $searchparams);
+
+// Add in the parent companies if option is set.
+if (!empty($params['showchild']) && !empty($params['name'])) {
+    foreach ($companyrecords as $companyrecord) {
+        $sqlsearch1 = " parentid  = $companyrecord";
+        $companyrecords1 = $DB->get_fieldset_select('company', 'id', $sqlsearch1);
+        foreach($companyrecords1 as $companyrecord1){
+            array_push($companyrecords, $companyrecord1); 
+        }
+    }
+    foreach ($companyrecords as $companyrecord) {
+        $sqlsearch1 = " id  = $companyrecord AND parentid  != 0";
+        $companyrecords1 = $DB->get_fieldset_select('company', 'parentid', $sqlsearch1);
+        foreach($companyrecords1 as $companyrecord1){
+            array_push($companyrecords, $companyrecord1);
+        }
+    }
+}
+
+// Sort out the resulting list so we only have the distinct values.
+$companyrecords = array_unique($companyrecords);
 
 $companylist = "";
 if (!empty($companyrecords)) {
@@ -258,19 +319,20 @@ if (!empty($companyrecords)) {
 }
 if (!empty($companylist)) {
     $companies = iomad::get_companies_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $companylist);
-    // Check to make sure if the first company is a child.
-    foreach ($companies as $companycheck) {
-        if ($companycheck->parentid != 0) {
-            $parentcompany = $DB->get_records_sql("SELECT *, 0 as depth
-                                                   FROM {company}
-                                                   WHERE id = :parentid",
-                                                   array('parentid' => $companycheck->parentid));
-            $companies = $parentcompany + $companies;
-        }
-        break;
-    }
 
-    if (empty($params['name']) && empty($params['city']) && empty($params['countey'])) {
+    // Check to make sure if the first company is a child.
+    if (!empty($showchild)) {
+        foreach ($companies as $companycheck) {
+            if ($companycheck->parentid != 0) {
+                $parentcompany = $DB->get_records_sql("SELECT *, 0 as depth
+                                                       FROM {company}
+                                                       WHERE id = :parentid",
+                                                       array('parentid' => $companycheck->parentid));
+                $companies = $parentcompany + $companies;
+            }
+            break;
+        }
+
         $companies = block_iomad_company_admin\iomad_company_admin::order_companies_by_parent($companies);
     }
     $allmycompanies = iomad::get_companies_listing($sort, $dir, 0, 0, '', '', '', $companylist);
@@ -279,7 +341,6 @@ if (!empty($companylist)) {
     $companies = array();
     $companycount = 0;
 }
-//echo "<pre>"; var_dump($companies); die;
 
 $baseurl = new moodle_url('editcompanies.php', $params);
 

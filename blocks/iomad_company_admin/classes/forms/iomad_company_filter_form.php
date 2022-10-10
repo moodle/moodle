@@ -38,21 +38,43 @@ class iomad_company_filter_form extends \moodleform {
         $mform =& $this->_form;
         $filtergroup = array();
         $mform->addElement('header', '', format_string(get_string('companysearchfields', 'local_iomad')));
-        $mform->addElement('text', 'name', get_string('companynamefilter', 'local_iomad'), 'size="20"');
-        $mform->addElement('text', 'city', get_string('companycityfilter', 'local_iomad'), 'size="20"');
-        $mform->addElement('text', 'country', get_string('companycountryfilter', 'local_iomad'), 'size="20"');
-        $mform->setType('name', PARAM_CLEAN);
-        $mform->setType('city', PARAM_CLEAN);
-        $mform->setType('country', PARAM_CLEAN);
-
+        $mform->addElement('text', 'name', get_string('name'), 'size="20"');
+        $mform->addElement('text', 'city', get_string('companycity', 'block_iomad_company_admin'), 'size="20"');
+        $mform->addElement('text', 'country', get_string('selectacountry'), 'size="20"');
         $mform->addElement('checkbox', 'showsuspended', get_string('show_suspended_companies', 'local_iomad'));
         $mform->setType('showsuspended', PARAM_INT);
+
+        // Additional fields.
+        $mform->addElement('header', 'advanced', get_string('companyadvancedsearchfields', 'block_iomad_company_admin'));
+        $mform->addElement('text', 'code', get_string('companycode', 'block_iomad_company_admin'), 'size="20"');
+        $mform->addElement('text', 'address', get_string('address'), 'size="20"');
+        $mform->addElement('text', 'region', get_string('companyregion', 'block_iomad_company_admin'), 'size="20"');
+        $mform->addElement('text', 'postcode', get_string('postcode', 'block_iomad_company_admin'), 'size="20"');
+        $mform->addElement('text', 'custom1', get_string('custom1', 'block_iomad_company_admin'), 'size="20"');
+        $mform->addElement('text', 'custom2', get_string('custom2', 'block_iomad_company_admin'), 'size="20"');
+        $mform->addElement('text', 'custom3', get_string('custom3', 'block_iomad_company_admin'), 'size="20"');
+        $mform->setType('name', PARAM_CLEAN);
+        $mform->setType('code', PARAM_CLEAN);
+        $mform->setType('address', PARAM_CLEAN);
+        $mform->setType('city', PARAM_CLEAN);
+        $mform->setType('region', PARAM_CLEAN);
+        $mform->setType('postcode', PARAM_CLEAN);
+        $mform->setType('country', PARAM_CLEAN);
+        $mform->setType('custom1', PARAM_CLEAN);
+        $mform->setType('custom2', PARAM_CLEAN);
+        $mform->setType('custom3', PARAM_CLEAN);
+
+        $mform->addElement('checkbox', 'showchild', get_string('showhierarchy', 'block_iomad_company_admin'));
+        $mform->setType('showchild', PARAM_INT);
+        $mform->setDefault('showchild', 1);
+        $mform->setExpanded('advanced', false);
+        $mform->closeHeaderBefore('buttonar');
 
         // Action buttons.
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('companyfilter', 'local_iomad'));
         $buttonarray[] = $mform->createElement('submit', 'resetbutton', get_string('reset'), null, false);
-        $mform->addGroup($buttonarray, 'buttonbar', '', ' ', false);
+        $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
     }
 }
 
