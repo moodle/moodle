@@ -1,4 +1,5 @@
-@customfield @customfield_textarea @javascript @_file_upload
+# This feature has Atto-specific steps. See MDL-75913 for further details.
+@customfield @customfield_textarea @javascript @_file_upload @editor_atto
 Feature: Default value for the textarea custom field can contain images
   In order to see images on custom fields
   As a manager
