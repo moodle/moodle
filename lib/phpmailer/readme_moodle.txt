@@ -13,6 +13,5 @@ To upgrade this library:
    - composer.json
    - get_oauth_token.php
    - SECURITY.md
-   - src/OAuth.php
    - src/POP3.php
 5. Update lib/thirdpartylibs.xml.
