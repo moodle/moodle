@@ -9,8 +9,10 @@
         "mikey179/vfsstream": "1.6.*",
         "behat/mink": "^1.10.0",
         "friends-of-behat/mink-extension": "^2.7.2",
-        "behat/mink-goutte-driver": "^2.0",
+        "behat/mink-browserkit-driver": "^2.1.0",
         "symfony/process": "^4.4 || ^5.0 || ^6.0",
+        "symfony/http-client": "^4.4 || ^5.0 || ^6.0",
+        "symfony/mime": "^4.4 || ^5.0 || ^6.0",
         "behat/behat": "3.13.*",
         "oleg-andreyev/mink-phpwebdriver": "1.2.*"
     },
