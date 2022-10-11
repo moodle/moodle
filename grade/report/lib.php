@@ -717,7 +717,7 @@ abstract class grade_report {
         $sumarray = [];
         $sums = $DB->get_recordset_sql($sql, $params);
         foreach ($sums as $itemid => $csum) {
-            $sumarray[$itemid] = $csum->sum;
+            $sumarray[$itemid] = grade_floatval($csum->sum);
         }
         $sums->close();
         $info['sumarray'] = $sumarray;
