@@ -33,22 +33,18 @@ class summary extends system_report {
      * Initialise report, we need to set the main table, load our entities and set columns/filters
      */
     protected function initialise(): void {
-        global $COURSE;
+        global $PAGE;
+
+        // We need to ensure page context is always set, as required by output and string formatting.
+        $course = get_course($this->get_context()->instanceid);
+        $PAGE->set_context($this->get_context());
 
         // Our main entity, it contains all of the column definitions that we need.
-        $entitymain = new grade_items();
-        $context = $this->get_context();
-        $COURSE = get_course($context->instanceid);
-
+        $entitymain = new grade_items($course);
         $entitymainalias = $entitymain->get_table_alias('grade_items');
 
         $this->set_main_table('grade_items', $entitymainalias);
         $this->add_entity($entitymain);
-
-        // Any columns required by actions should be defined here to ensure they're always available.
-        $this->add_base_fields("{$entitymainalias}.id");
-
-        $courseid = $this->get_context()->instanceid;
 
         $param1 = database::generate_param_name();
         $param2 = database::generate_param_name();
@@ -66,7 +62,7 @@ class summary extends system_report {
         $wheresql .= " AND ($entitymainalias.gradetype = :$param2 OR $entitymainalias.gradetype = :$param3)";
 
         $this->add_base_condition_sql($wheresql,
-            [$param1 => $courseid, $param2 => GRADE_TYPE_VALUE, $param3 => GRADE_TYPE_SCALE]);
+            [$param1 => $course->id, $param2 => GRADE_TYPE_VALUE, $param3 => GRADE_TYPE_SCALE]);
 
         // Now we can call our helper methods to add the content we want to include in the report.
         $this->add_columns();
