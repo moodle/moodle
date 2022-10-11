@@ -38,6 +38,7 @@ define([], function() {
         CONVERSATION_UNSET_FAVOURITE: 'message-drawer-conversation-unset-favourite',
         CONVERSATION_UNSET_MUTED: 'message-drawer-conversation-unset-muted',
         PREFERENCES_UPDATED: 'message-drawer-preferences-updated',
+        READY: 'message-drawer-ready',
         ROUTE_CHANGED: 'message-drawer-route-change',
         SHOW: 'message-drawer-show',
         HIDE: 'message-drawer-hide',
