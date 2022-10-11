@@ -42,6 +42,7 @@ class block_iomad_company_admin_external extends external_api {
                             'name' => new external_value(PARAM_TEXT, 'Company long name'),
                             'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
                             'code' => new external_value(PARAM_TEXT, 'Company code', VALUE_DEFAULT, ''),
+                            'address' => new external_value(PARAM_TEXT, 'Company location address', VALUE_OPTIONAL),
                             'city' => new external_value(PARAM_TEXT, 'Company location city'),
                             'region' => new external_value(PARAM_TEXT, 'Company location region', VALUE_OPTIONAL),
                             'postcode' => new external_value(PARAM_TEXT, 'Company location postcode', VALUE_OPTIONAL),
@@ -169,6 +170,7 @@ class block_iomad_company_admin_external extends external_api {
                      'id' => new external_value(PARAM_INT, 'Companid ID'),
                      'name' => new external_value(PARAM_TEXT, 'Company long name'),
                      'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
+                     'address' => new external_value(PARAM_TEXT, 'Company location address', VALUE_OPTIONAL),
                      'city' => new external_value(PARAM_TEXT, 'Company location city'),
                      'region' => new external_value(PARAM_TEXT, 'Company location region'),
                      'postcode' => new external_value(PARAM_TEXT, 'Company location postcode'),
@@ -284,6 +286,7 @@ class block_iomad_company_admin_external extends external_api {
                 case 'name':
                 case 'shortname':
                 case 'code':
+                case 'address':
                 case 'city':
                 case 'postcode':
                 case 'address':
@@ -406,6 +409,7 @@ class block_iomad_company_admin_external extends external_api {
                          'name' => new external_value(PARAM_TEXT, 'Company long name'),
                          'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
                          'code' => new external_value(PARAM_TEXT, 'Compay code'),
+                         'address' => new external_value(PARAM_TEXT, 'Company location address', VALUE_OPTIONAL),
                          'city' => new external_value(PARAM_TEXT, 'Company location city'),
                          'region' => new external_value(PARAM_TEXT, 'Company location region'),
                          'country' => new external_value(PARAM_TEXT, 'Company location country'),
@@ -458,6 +462,7 @@ class block_iomad_company_admin_external extends external_api {
                             'name' => new external_value(PARAM_TEXT, 'Company long name', VALUE_OPTIONAL),
                             'shortname' => new external_value(PARAM_TEXT, 'Compay short name', VALUE_OPTIONAL),
                             'code' => new external_value(PARAM_TEXT, 'Compay code', VALUE_OPTIONAL),
+                            'address' => new external_value(PARAM_TEXT, 'Company location address', VALUE_OPTIONAL),
                             'city' => new external_value(PARAM_TEXT, 'Company location city', VALUE_OPTIONAL),
                             'region' => new external_value(PARAM_TEXT, 'Company location region', VALUE_OPTIONAL),
                             'country' => new external_value(PARAM_TEXT, 'Company location country', VALUE_OPTIONAL),
