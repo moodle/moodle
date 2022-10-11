@@ -249,6 +249,7 @@ Feature: We can use calculated grade totals
       | Aggregation                     | Natural |
       | Include outcomes in aggregation | 1       |
       | Exclude empty grades            | 0       |
+    And I change window size to "large"
     And I navigate to "View > Grader report" in the course gradebook
     And I give the grade "Excellent" to the user "Student 1" for the grade item "Test outcome item one"
     And I press "Save changes"
@@ -308,6 +309,7 @@ Feature: We can use calculated grade totals
     And I set the following settings for grade item "Test outcome item one":
      | Weight adjusted  | 1   |
      | aggregationcoef2 | 100 |
+    And I change window size to "large"
     And I navigate to "View > Grader report" in the course gradebook
     And I give the grade "Excellent" to the user "Student 1" for the grade item "Test outcome item one"
     And I press "Save changes"
