@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\table;
 
 use action_menu;
+use action_menu_filler;
 use core_table\local\filter\filterset;
 use html_writer;
 use moodle_exception;
@@ -223,9 +224,33 @@ class system_report_table extends base_report_table {
 
         $menu = new action_menu();
         $menu->set_menu_trigger($OUTPUT->pix_icon('a/setting', get_string('actions', 'core_reportbuilder')));
-        foreach ($this->report->get_actions() as $action) {
-            // Ensure the action link can be displayed for the current row.
-            $actionlink = $action->get_action_link($row);
+
+        $actions = array_filter($this->report->get_actions(), function($action) use ($row) {
+            // Only return dividers and action items who can be displayed for current users.
+            return $action instanceof action_menu_filler || $action->get_action_link($row);
+        });
+
+        $totalactions = count($actions);
+        $actionvalues = array_values($actions);
+        foreach ($actionvalues as $position => $action) {
+            if ($action instanceof action_menu_filler) {
+                $ispreviousdivider = array_key_exists($position - 1, $actionvalues) &&
+                    ($actionvalues[$position - 1] instanceof action_menu_filler);
+                $isnextdivider = array_key_exists($position + 1, $actionvalues) &&
+                    ($actionvalues[$position + 1] instanceof action_menu_filler);
+                $isfirstdivider = ($position === 0);
+                $islastdivider = ($position === $totalactions - 1);
+
+                // Avoid add divider at last/first position and having multiple fillers in a row.
+                if ($ispreviousdivider || $isnextdivider || $isfirstdivider || $islastdivider) {
+                    continue;
+                }
+                $actionlink = $action;
+            } else {
+                // Ensure the action link can be displayed for the current row.
+                $actionlink = $action->get_action_link($row);
+            }
+
             if ($actionlink) {
                 $menu->add($actionlink);
             }
