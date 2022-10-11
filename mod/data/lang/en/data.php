@@ -231,6 +231,11 @@ $string['invalidfieldid'] = 'Field ID is incorrect';
 $string['invalidfieldname'] = 'Please choose another name for this field';
 $string['invalidfieldtype'] = 'Field type is incorrect';
 $string['invalidid'] = 'Incorrect data ID';
+$string['missingfieldtype'] = 'Field type for {$a->name} not found';
+$string['missingfieldtypes'] = 'The following fields do not have their corresponding field types installed and will not be included in the forms when adding or editing entries.
+ Their labels may still show on the form, so please update the "Add entry template" accordingly:';
+$string['missingfieldtypeimport'] = 'The following fields were not imported because their corresponding field types are not installed:';
+$string['unknown'] = 'Unknown field';
 $string['invalidpreset'] = '{$a} is not a preset.';
 $string['invalidrecord'] = 'Incorrect record';
 $string['invalidurl'] = 'The URL you just entered is not valid';
