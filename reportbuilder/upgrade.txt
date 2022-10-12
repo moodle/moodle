@@ -11,6 +11,7 @@ Information provided here is intended especially for developers.
   some system reports
 * New external methods for retrieving custom report data:
   - `core_reportbuilder_list_reports`
+  - `core_reportbuilder_retrieve_report`
   - `core_reportbuilder_view_report`
 * For consistency, the following entity classes have moved namespace (usage of previous namespace will generate debugging):
   - `core_admin\{ => reportbuilder}\local\entities\task_log`
