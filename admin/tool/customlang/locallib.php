@@ -89,7 +89,9 @@ class tool_customlang_utils {
      * @param progress_bar $progressbar optionally, the given progress bar can be updated
      */
     public static function checkout($lang, progress_bar $progressbar = null) {
-        global $DB;
+        global $DB, $CFG;
+
+        require_once("{$CFG->libdir}/adminlib.php");
 
         // For behat executions we are going to load only a few components in the
         // language customisation structures. Using the whole "en" langpack is
