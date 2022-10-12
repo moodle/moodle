@@ -1031,6 +1031,29 @@ EOF;
     }
 
     /**
+     * Execute a function in a specific behat context.
+     *
+     * For example, to call the 'set_editor_value' function for all editors, you would call:
+     *
+     *     behat_base::execute_in_matching_contexts('editor', 'set_editor_value', ['Some value']);
+     *
+     * This would find all behat contexts whose class name starts with 'behat_editor_' and
+     * call the 'set_editor_value' function on that context.
+     *
+     * @param string $prefix
+     * @param string $method
+     * @param array $params
+     */
+    public static function execute_in_matching_contexts(string $prefix, string $method, array $params): void {
+        $contexts = behat_context_helper::get_prefixed_contexts("behat_{$prefix}_");
+        foreach ($contexts as $context) {
+            if (method_exists($context, $method) && is_callable([$context, $method])) {
+                call_user_func_array([$context, $method], $params);
+            }
+        }
+    }
+
+    /**
      * Get the actual user in the behat session (note $USER does not correspond to the behat session's user).
      * @return mixed
      * @throws coding_exception
