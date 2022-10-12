@@ -61,6 +61,23 @@ class behat_form_editor extends behat_form_textarea {
     }
 
     /**
+     * Returns the current value of the select element.
+     *
+     * @return string
+     */
+    public function get_value(): string {
+        if ($this->running_javascript()) {
+            // Give any listening editors a chance to persist the value to the textarea.
+            // Some editors only do this on form submission or similar events.
+            behat_base::execute_in_matching_contexts('editor', 'store_current_value', [
+                $this->field->getAttribute('id'),
+            ]);
+        }
+
+        return parent::get_value();
+    }
+
+    /**
      * Select all the text in the form field.
      *
      */
