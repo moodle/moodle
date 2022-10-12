@@ -50,6 +50,7 @@ $string['customlang:export'] = 'Export local translation';
 $string['customlang:view'] = 'View local translation';
 $string['export'] = 'Export custom strings';
 $string['exportfilter'] = 'Select component(s) to export';
+$string['exportzipfilename'] = 'customlang-export-{$a->lang}.zip';
 $string['editlangpack'] = 'Edit language pack';
 $string['filter'] = 'Filter strings';
 $string['filtercomponent'] = 'Show strings of these components';
