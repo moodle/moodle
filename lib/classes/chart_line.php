@@ -42,7 +42,7 @@ class chart_line extends chart_base {
      *
      * @return array
      */
-    public function jsonSerialize() {
+    public function jsonSerialize(): array {
         $data = parent::jsonSerialize();
         $data['smooth'] = $this->get_smooth();
         return $data;

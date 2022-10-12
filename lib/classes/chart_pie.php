@@ -42,7 +42,7 @@ class chart_pie extends chart_base {
      *
      * @return array
      */
-    public function jsonSerialize() {
+    public function jsonSerialize(): array {
         $data = parent::jsonSerialize();
         $data['doughnut'] = $this->get_doughnut();
         return $data;
