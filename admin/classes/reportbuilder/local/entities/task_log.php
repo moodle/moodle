@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_admin\local\entities;
+namespace core_admin\reportbuilder\local\entities;
 
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\duration;

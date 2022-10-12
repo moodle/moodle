@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_admin\local\systemreports;
+namespace core_admin\reportbuilder\local\systemreports;
 
 use context_system;
-use core_admin\local\entities\task_log;
+use core_admin\reportbuilder\local\entities\task_log;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\report\action;
 use lang_string;

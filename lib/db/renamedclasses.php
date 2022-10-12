@@ -83,4 +83,10 @@ $renamedclasses = [
     'core_question\\form\\tags' => 'qbank_tagquestion\\form\\tags_form',
     'context_to_string_translator' => 'core_question\\local\\bank\\context_to_string_translator',
     'question_edit_contexts' => 'core_question\\local\\bank\\question_edit_contexts',
+    // Since Moodle 4.1.
+    'core_admin\\local\\systemreports\\task_logs' => 'core_admin\\reportbuilder\\local\\systemreports\\task_logs',
+    'core_admin\\local\\entities\\task_log' => 'core_admin\\reportbuilder\\local\\entities\\task_log',
+    'core_course\\local\\entities\\course_category' => 'core_course\\reportbuilder\\local\\entities\\course_category',
+    'core_cohort\\local\\entities\\cohort' => 'core_cohort\\reportbuilder\\local\\entities\\cohort',
+    'core_cohort\\local\\entities\\cohort_member' => 'core_cohort\\reportbuilder\\local\\entities\\cohort_member',
 ];

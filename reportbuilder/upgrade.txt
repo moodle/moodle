@@ -12,6 +12,12 @@ Information provided here is intended especially for developers.
 * New external methods for retrieving custom report data:
   - `core_reportbuilder_list_reports`
   - `core_reportbuilder_view_report`
+* For consistency, the following entity classes have moved namespace (usage of previous namespace will generate debugging):
+  - `core_admin\{ => reportbuilder}\local\entities\task_log`
+  - `core_cohort\{ => reportbuilder}\local\entities\cohort`
+  - `core_cohort\{ => reportbuilder}\local\entities\cohort_member`
+  - `core_course\{ => reportbuilder}\local\entities\course_category`
+  - `report_configlog\{ => reportbuilder}\local\entities\config_change`
 * 'set_default_per_page' and 'get_default_per_page' methods have been added to \local\report\base class
   to manage the default displayed rows per page.
 * Added two new methods in the datasource class:

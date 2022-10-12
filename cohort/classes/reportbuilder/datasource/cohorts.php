@@ -18,8 +18,7 @@ declare(strict_types=1);
 
 namespace core_cohort\reportbuilder\datasource;
 
-use core_cohort\local\entities\cohort;
-use core_cohort\local\entities\cohort_member;
+use core_cohort\reportbuilder\local\entities\{cohort, cohort_member};
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\user;
 

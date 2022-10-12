@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace core_course\reportbuilder\datasource;
 
-use core_course\local\entities\course_category;
+use core_course\reportbuilder\local\entities\course_category;
 use core_course\reportbuilder\local\entities\access;
 use core_course\reportbuilder\local\entities\completion;
 use core_course\reportbuilder\local\entities\enrolment;
