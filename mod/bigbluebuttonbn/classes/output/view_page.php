@@ -16,6 +16,7 @@
 
 namespace mod_bigbluebuttonbn\output;
 
+use core\check\result;
 use core\output\notification;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\config;
@@ -24,6 +25,7 @@ use renderable;
 use renderer_base;
 use stdClass;
 use templatable;
+use tool_task\check\cronrunning;
 
 /**
  * View Page template renderable.
@@ -97,11 +99,22 @@ class view_page implements renderable, templatable {
             $templatedata->room = $roomdata;
         }
 
+        $templatedata->recordingwarnings = [];
+        $check = new cronrunning();
+        $result = $check->get_result();
+        if ($result->status != result::OK && $this->instance->is_moderator()) {
+            $templatedata->recordingwarnings[] = (new notification(
+                get_string('view_message_cron_disabled', 'mod_bigbluebuttonbn',
+                    $result->get_summary()),
+                notification::NOTIFY_ERROR,
+                false
+            ))->export_for_template($output);
+        }
         if ($this->instance->is_feature_enabled('showrecordings') && $this->instance->is_recorded()) {
             $recordings = new recordings_session($this->instance);
             $templatedata->recordings = $recordings->export_for_template($output);
         } else if ($this->instance->is_type_recordings_only()) {
-            $templatedata->recordingwarning = (new notification(
+            $templatedata->recordingwarnings[] = (new notification(
                 get_string('view_message_recordings_disabled', 'mod_bigbluebuttonbn'),
                 notification::NOTIFY_WARNING,
                 false
