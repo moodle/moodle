@@ -12,7 +12,7 @@
     <location>yui/src/beautify</location>
     <name>jsbeautify</name>
     <description>Beautify HTML code in Atto.</description>
-    <version>1.14.0</version>
+    <version>1.14.6</version>
     <license>MIT</license>
     <repository>https://github.com/beautify-web/js-beautify</repository>
     <copyrights>
