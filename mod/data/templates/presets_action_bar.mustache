@@ -18,18 +18,18 @@
 
     Context variables required for this template:
     * importpreseturl - The url to the import preset page.
-    * d - The database id.
+    * id - The database course module id (cmid).
 
     Example context (json):
     {
         "importpreseturl": "http://www.example.com",
-        "d" : 1
+        "id" : 1
     }
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="row float-right">
         <div class="navitem">
-            <a role="button" href="{{importpreseturl}}" class="btn btn-secondary" data-action="importpresets" data-dataid="{{d}}">{{#str}}import, core{{/str}}</a>
+            <a role="button" href="{{importpreseturl}}" class="btn btn-secondary" data-action="importpresets" data-dataid="{{id}}">{{#str}}import, core{{/str}}</a>
         </div>
     </div>
 {{#js}}

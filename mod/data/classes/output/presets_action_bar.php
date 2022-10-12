@@ -30,15 +30,15 @@ use renderable;
 class presets_action_bar implements templatable, renderable {
 
     /** @var int $id The database module id. */
-    private $id;
+    private $cmid;
 
     /**
      * The class constructor.
      *
-     * @param int $id The database module id
+     * @param int $cmid The database module id
      */
-    public function __construct(int $id) {
-        $this->id = $id;
+    public function __construct(int $cmid) {
+        $this->cmid = $cmid;
     }
 
     /**
@@ -48,9 +48,11 @@ class presets_action_bar implements templatable, renderable {
      * @return array
      */
     public function export_for_template(\renderer_base $output): array {
-        $importpresetlink = new moodle_url('/mod/data/preset.php', ['d' => $this->id, 'action' => 'import']);
+        $importpresetlink = new moodle_url('/mod/data/preset.php', [
+                'id' => $this->cmid, 'action' => 'import'
+        ]);
         return [
-            'd' => $this->id,
+            'id' => $this->cmid,
             'importpreseturl' => $importpresetlink->out(false),
         ];
     }

@@ -18,13 +18,13 @@
 
     Context variables required for this template:
     * formactionurl - The form action url.
-    * d - The database id.
+    * id - The database course module id (cmid).
     * presets - List of presets containing id, name, fullname, shortname and actions.
 
     Example context (json):
     {
         "formactionurl": "http://www.example.com",
-        "d": 1,
+        "id": 1,
         "presets": [
             {
                 "id": 1,
@@ -51,7 +51,7 @@
 {{#str}}presetshelp, mod_data{{/str}}
 
 <form method="post" action="{{formactionurl}}" class="mt-4">
-    <input type="hidden" name="d" value="{{d}}">
+    <input type="hidden" name="id" value="{{id}}">
     <input type="hidden" name="mode" value="usepreset">
     <input type="hidden" name="action" value="select">
 

@@ -40,9 +40,8 @@ class import_presets extends dynamic_form {
         global $CFG;
         $filepath = $this->save_temp_file('importfile');
         $context = $this->get_context_for_dynamic_submission();
-        $cm = get_coursemodule_from_id('data', $context->instanceid);
         $returnurl = new moodle_url('/mod/data/preset.php', [
-            'd' => $cm->instance,
+            'id' => $context->instanceid,
             'action' => 'importzip',
             'filepath' => str_replace($CFG->tempdir, '', $filepath)
         ]);
@@ -58,13 +57,10 @@ class import_presets extends dynamic_form {
      * @return context
      */
     protected function get_context_for_dynamic_submission(): context {
-        global $DB;
-        $d = $this->optional_param('d', null, PARAM_INT);
-        $data = $DB->get_record('data', ['id' => $d], '*', MUST_EXIST);
-        $course = $DB->get_record('course', ['id' => $data->course], '*', MUST_EXIST);
-        $cm = get_coursemodule_from_instance('data', $data->id, $course->id, null, MUST_EXIST);
-
-        return \context_module::instance($cm->id);
+        $cmid = $this->optional_param('cmid', null, PARAM_INT);
+        $cm = get_coursemodule_from_id('data', $cmid);
+        $context = \context_module::instance($cm->id);
+        return $context;
     }
 
     /**
@@ -74,7 +70,7 @@ class import_presets extends dynamic_form {
      */
     public function set_data_for_dynamic_submission(): void {
         $data = (object) [
-            'd' => $this->optional_param('d', 0, PARAM_INT),
+            'cmid' => $this->optional_param('cmid', 0, PARAM_INT),
         ];
         $this->set_data($data);
     }
@@ -97,8 +93,8 @@ class import_presets extends dynamic_form {
      * @return moodle_url
      */
     protected function get_page_url_for_dynamic_submission(): moodle_url {
-        $d = $this->optional_param('d', null, PARAM_INT);
-        return new moodle_url('/mod/data/preset.php', ['d' => $d]);
+        $cmid = $this->optional_param('cmid', null, PARAM_INT);
+        return new moodle_url('/mod/data/preset.php', ['id' => $cmid]);
     }
 
     /**
@@ -108,11 +104,11 @@ class import_presets extends dynamic_form {
      */
     protected function definition() {
         $mform = $this->_form;
-        $mform->addElement('html', \html_writer::div(get_string('importpreset_desc', 'data'), 'py-3'));
-        $mform->addElement('hidden', 'd');
-        $mform->setType('d', PARAM_INT);
+        $mform->addElement('html', \html_writer::div(get_string('importpreset_desc', 'mod_data'), 'py-3'));
+        $mform->addElement('hidden', 'cmid');
+        $mform->setType('cmid', PARAM_INT);
 
-        $mform->addElement('filepicker', 'importfile', get_string('choosepreset', 'data'), null,
+        $mform->addElement('filepicker', 'importfile', get_string('choosepreset', 'mod_data'), null,
             ['accepted_types' => '.zip']);
         $mform->addRule('importfile', null, 'required');
     }

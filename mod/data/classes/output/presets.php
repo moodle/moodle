@@ -131,7 +131,6 @@ class presets implements templatable, renderable {
      * @return stdClass the resulting action menu
      */
     private function get_preset_action_menu(renderer_base $output, $preset, ?int $userid): stdClass {
-        global $PAGE;
 
         $actions = new stdClass();
         $actionmenu = null;

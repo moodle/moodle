@@ -116,7 +116,6 @@ if ($action === 'export') {
 
 if ($action == 'importzip') {
     $filepath = optional_param('filepath', '', PARAM_PATH);
-    $manager = manager::create_from_coursemodule($cm);
     $importer = new preset_upload_importer($manager, $CFG->tempdir . $filepath);
     if ($importer->needs_mapping()) {
         echo $OUTPUT->header();
