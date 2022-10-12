@@ -2029,6 +2029,7 @@ class core_plugin_manager {
             ),
 
             'tiny' => [
+                'h5p',
             ],
 
             'tinymce' => array(
