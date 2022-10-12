@@ -115,9 +115,6 @@ class mod_helper {
         if (!isset($bigbluebuttonbn->lockedlayout)) {
             $bigbluebuttonbn->lockedlayout = 0;
         }
-        if (!isset($bigbluebuttonbn->lockonjoin)) {
-            $bigbluebuttonbn->lockonjoin = 0;
-        }
     }
 
     /**

@@ -788,7 +788,6 @@ class settings {
             $this->add_lock_setting_from_name('disablepublicchat', $lockingsetting);
             $this->add_lock_setting_from_name('disablenote', $lockingsetting);
             $this->add_lock_setting_from_name('hideuserlist', $lockingsetting);
-            $this->add_lock_setting_from_name('lockonjoin', $lockingsetting);
         }
         $this->admin->add($this->parent, $lockingsetting);
     }

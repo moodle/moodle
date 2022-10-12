@@ -435,7 +435,23 @@ function xmldb_bigbluebuttonbn_upgrade($oldversion = 0) {
         // Bigbluebuttonbn savepoint reached.
         upgrade_mod_savepoint(true, 2022050600, 'bigbluebuttonbn');
     }
+    if ($oldversion < 2022080400) {
 
+        // Define field lockonjoin to be dropped from bigbluebuttonbn.
+        $table = new xmldb_table('bigbluebuttonbn');
+        $field = new xmldb_field('lockonjoin');
+        // Conditionally launch drop field lockonjoin.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        $field = new xmldb_field('lockonjoinconfigurable');
+        // Conditionally launch drop field lockonjoinconfigurable.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        // Bigbluebuttonbn savepoint reached.
+        upgrade_mod_savepoint(true, 2022080400, 'bigbluebuttonbn');
+    }
     return true;
 }
 
