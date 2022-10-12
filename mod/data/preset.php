@@ -32,6 +32,8 @@ use mod_data\manager;
 use mod_data\preset;
 use mod_data\output\action_bar;
 use mod_data\output\preset_preview;
+use mod_data\local\importer\preset_upload_importer;
+use mod_data\local\importer\preset_existing_importer;
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/data/lib.php');
@@ -139,18 +141,24 @@ if ($action === 'preview') {
     exit(0);
 }
 
-echo $OUTPUT->header();
-
 if ($formdata = $formimportzip->get_data()) {
-    echo $OUTPUT->heading(get_string('importpreset', 'data'), 2, 'mb-4');
     $file = new stdClass;
     $file->name = $formimportzip->get_new_filename('importfile');
     $file->path = $formimportzip->save_temp_file('importfile');
-    $importer = new data_preset_upload_importer($course, $cm, $data, $file->path);
-    echo $renderer->import_setting_mappings($data, $importer);
-    echo $OUTPUT->footer();
-    exit(0);
+    $importer = new preset_upload_importer($manager, $file->path);
+    if ($importer->needs_mapping()) {
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('importpreset', 'data'), 2, 'mb-4');
+        echo $renderer->importing_preset($data, $importer);
+        echo $OUTPUT->footer();
+        exit(0);
+    }
+
+    $importer->import(false);
+    redirect(new moodle_url('/mod/data/field.php', ['id' => $cm->id]));
 }
+
+echo $OUTPUT->header();
 
 if ($action === 'finishimport') {
     $fullname = optional_param('fullname', '' , PARAM_PATH); // The directory the preset is in.
@@ -169,9 +177,9 @@ if ($action === 'finishimport') {
         if (!file_exists($presetdir) || !is_dir($presetdir)) {
             throw new \moodle_exception('cannotimport');
         }
-        $importer = new data_preset_upload_importer($course, $cm, $data, $presetdir);
+        $importer = new preset_upload_importer($manager, $presetdir);
     } else {
-        $importer = new data_preset_existing_importer($course, $cm, $data, $fullname);
+        $importer = new preset_existing_importer($manager, $fullname);
     }
     $importer->import($overwritesettings);
     $strimportsuccess = get_string('importsuccess', 'data');

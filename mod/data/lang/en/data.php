@@ -53,7 +53,6 @@ Fields have the format [[fieldname]]. All other tags have the format ##sometag##
 Only the tags that are in the "Available tags" list may be used for the current template.';
 $string['availabletodate'] = 'Available to';
 $string['availabletodatevalidation'] = 'The available to date cannot be before the available from date.';
-$string['blank'] = 'Blank';
 $string['bynameondate'] = 'by {$a->name} - {$a->date}';
 $string['calendarend'] = '{$a} closes';
 $string['calendarstart'] = '{$a} opens';
@@ -452,3 +451,4 @@ $string['unsupportedexport'] = '({$a->fieldtype}) cannot be exported.';
 $string['buttons'] = 'Actions';
 $string['nolisttemplate'] = 'List template is not yet defined';
 $string['nosingletemplate'] = 'Single template is not yet defined';
+$string['blank'] = 'Blank';

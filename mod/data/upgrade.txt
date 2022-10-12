@@ -17,6 +17,11 @@ information provided here is intended especially for developers.
 * data_user_can_add_entry() function returns false for any user if there is no field created on the database.
 * From now on, the data_generate_default_template method will always return a string with the template content or an empty
   string when there is no content available.
+* The following classes have been deprecated from lib.php because they have been moved to use manager class:
+  - data_preset_importer
+  - data_preset_existing_importer
+  - data_preset_upload_importer
+* import_setting_mappings() function has been deprecated. Use importing_preset() instead.
 
 === 3.7 ===
 * External functions get_entries, get_entry and search_entries now return an additional field "tags" containing the entry tags.

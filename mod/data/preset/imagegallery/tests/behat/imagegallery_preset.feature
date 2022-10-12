@@ -23,8 +23,6 @@ Feature: Users can use the Image gallery preset
     And I follow "Presets"
     And I click on "fullname" "radio" in the "Image gallery" "table_row"
     And I click on "Use preset" "button"
-    And I click on "Continue" "button"
-    And I click on "Continue" "button"
     And the following "mod_data > entries" exist:
       | database | user      | title           | description                                  | image             |
       | data1    | student1  | First image     | This is the description text for image 1     | first.png         |
