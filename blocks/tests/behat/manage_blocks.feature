@@ -15,25 +15,18 @@ Feature: Block appearances
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity | name             | description              | course | idnumber | section |
-      | survey   | Test survey name | Test survey description  | C1     | survey1  | 1       |
-      | book     | Test book name   | Test book description    | C1     | book1    | 1       |
+      | activity | name             | description              | course | idnumber | section | template |
+      | survey   | Test survey name |                          | C1     | survey1  | 1       | 4        |
+      | book     | Test book name   | Test book description    | C1     | book1    | 1       |          |
     And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I click on "Test survey name" "link" in the "region-main" "region"
-    And I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Survey type | ATTLS (20 item version) |
-    And I press "Save and return to course"
     And I am on "Course 1" course homepage with editing mode on
     And I click on "Test book name" "link" in the "region-main" "region"
     And I set the following fields to these values:
       | Chapter title | Book title |
       | Content       | Book content test test |
     And I press "Save changes"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
+    And I am on the "Course 1" course page logged in as teacher1
+    And I turn editing mode on
     And I add the "Comments" block
     And I configure the "Comments" block
     And I set the following fields to these values:
