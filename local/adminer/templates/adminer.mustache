@@ -1,0 +1,103 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_adminer/adminer
+
+    Modal to show the adminer iframe.
+
+    Context variables required for this template:
+    * adminerurl The src for the iframe to show the adminer page.
+    * adminerlaunchtitle The title of the button to show the modal.
+    * framebackgroundurl The url in the frame before loading the adminer url.
+    * title The title for the modal.
+
+    Example context (json):
+    {
+        "adminerurl": "https://example.org/local/adminer/lib/run_adminer.php",
+        "adminerlaunchtitle": "Launch Adminer",
+        "framebackgroundurl": "https://example.org/pix/y/loading.gif",
+        "title": "Moodle Adminer"
+    }
+}}
+
+<style type="text/css">
+    .modal-dialog {
+        max-width: 80%;
+        margin-top: 5px;
+        margin-bottom: 0;
+    }
+    .modal-content {
+        max-height: 99vh;
+    }
+    #adminer-frame {
+        background:url({{{framebackgroundurl}}}) center center no-repeat;
+    }
+
+    {{#legacycss}}
+        .modal-backdrop.show {
+            opacity: 0.8;
+        }
+        #local-adminer-modal.modal.fade.show {
+            opacity: 1;
+        }
+    {{/legacycss}}
+
+</style>
+{{#legacycss}}
+    <link rel="stylesheet" href="{{{legacycss}}}">
+{{/legacycss}}
+
+<!-- Button to Open the Modal -->
+<button id="adminerlauncher" type="button" class="btn btn-primary" data-toggle="modal" data-target="#local-adminer-modal">
+    {{adminerlaunchtitle}}
+</button>
+
+<!-- The Modal -->
+<div class="modal fade" id="local-adminer-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">{{title}}</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body embed-responsive embed-responsive-16by9">
+                <iframe id="adminer-frame"
+                    class="embed-responsive-item"
+                    src=""
+                    allowfullscreen >
+                </iframe>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{#js}}
+    require(['theme_boost/bootstrap/modal'], function(modal) {
+        $('#local-adminer-modal').modal('show');
+    });
+    $('#local-adminer-modal').on('shown.bs.modal', function(element) {
+        $('#adminer-frame').attr('src', '{{{adminerurl}}}');
+    });
+{{/js}}

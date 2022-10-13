@@ -1,0 +1,54 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template file/qtype/edit_form
+
+    Question type edit_<qtypename>_form.php file.
+
+    Context variables required for this template:
+    * component
+    * copyright
+
+    Example context (json):
+    {
+        "component": "local_test",
+        "copyright": "2021 David Mudrák <david@moodle.com>"
+    }
+}}
+{{< common/boilerplate_php }}
+{{$ description }}The editing form for {{ component_name }} question type is defined here.{{/ description }}
+{{$ package }}{{ component }}{{/ package }}
+{{$ copyright }}{{ copyright }}{{/ copyright }}
+{{/ common/boilerplate_php }}
+
+/**
+ * {{ component_name }} question editing form defition.
+ *
+ * You should override functions as necessary from the parent class located at
+ * /question/type/edit_question_form.php.
+ */
+class {{ component }}_edit_form extends question_edit_form {
+
+    /**
+     * Returns the question type name.
+     *
+     * @return string The question type name.
+     */
+    public function qtype() {
+        return '{{ component_name }}';
+    }
+}

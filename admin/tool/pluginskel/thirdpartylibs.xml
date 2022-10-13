@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>vendor/autoload.php</location>
+        <name>Composer Autoloader</name>
+        <version>1.x</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendor/composer/</location>
+        <name>Composer</name>
+        <version>1.x</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendor/symfony/</location>
+        <name>Symfony YAML component and dependencies</name>
+        <version>^5.2</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendor/monolog/monolog/</location>
+        <name>Monolog -- Logging for PHP</name>
+        <version>1.19.0</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendor/psr/log/</location>
+        <name>Common interface for logging libraries</name>
+        <version>1.0</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>

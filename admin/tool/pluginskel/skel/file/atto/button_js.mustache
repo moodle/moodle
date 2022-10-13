@@ -1,0 +1,62 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template file/atto/button_js
+
+    YUI yui/src/button/js/button.js file.
+
+    Context variables required for this template:
+    * component
+    * copyright
+
+    Example context (json):
+    {
+        "component": "local_test",
+        "copyright": "2021 David Mudrák <david@moodle.com>"
+    }
+}}
+{{< common/boilerplate_php }}
+{{$ description }}The Atto plugin {{ component_name }} is defined here.{{/ description }}
+{{$ package }}{{ component }}{{/ package }}
+{{$ copyright }}{{ copyright }}{{/ copyright }}
+{{/ common/boilerplate_php }}
+
+/**
+ * Atto {{ component_name }} plugin.
+ *
+ * @namespace M.{{ component }}.
+ * @class button.
+ * @extends M.editor_atto.EditorPlugin.
+ */
+Y.namespace('M.{{ component }}').Button = Y.Base.create('button', Y.M.editor_atto.EditorPlugin, [], {
+    initializer: function() {
+        this.addButton({
+            // Add properties here as necessary.
+        });
+    },
+{{# self.has_params_for_js }}
+    {
+        ATTRS: {
+            {{# atto_features.params_for_js }}
+            {{ .name }}: {
+                value: '{{ .default }}'
+            },
+            {{/ atto_features.params_for_js }}
+        }
+    }
+{{/ self.has_params_for_js }}
+});

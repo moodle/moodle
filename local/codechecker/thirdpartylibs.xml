@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>phpcs</location>
+        <name>PHP_CodeSniffer</name>
+        <version>3.7.1 (1359e176e)</version>
+        <license>BSD</license>
+        <licenseversion>3-Clause</licenseversion>
+    </library>
+    <library>
+        <location>PHPCompatibility</location>
+        <name>PHP Compatibility Coding Standard</name>
+        <version>9.3.5+ (9fb3244)</version>
+        <license>LGPL</license>
+        <licenseversion>3</licenseversion>
+    </library>
+    <library>
+        <location>MoodleCS</location>
+        <name>Moodle Coding Style</name>
+        <version>v3.2.4+ (522bb7b)</version>
+        <license>GPL</license>
+        <licenseversion>3</licenseversion>
+    </library>
+    <library>
+        <location>moodle</location>
+        <name>Alias to Moodle Coding Style (to avoid it being inspected)</name>
+    </library>
+</libraries>

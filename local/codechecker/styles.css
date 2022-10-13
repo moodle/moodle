@@ -1,0 +1,48 @@
+#page-admin-local-codechecker-index .local_codechecker_results h2 {
+    font-weight: bold;
+    font-style: normal;
+}
+#page-admin-local-codechecker-index .local_codechecker_results ul {
+    display: block;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+#page-admin-local-codechecker-index .local_codechecker_results li {
+    font-weight: normal;
+    font-style: normal;
+    display: block;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+#page-admin-local-codechecker-index .local_codechecker_results .fail.error {
+    color: #600;
+    margin-left: 2em;
+}
+#page-admin-local-codechecker-index .local_codechecker_results .fail.warning {
+    color: #960;
+    margin-left: 2em;
+}
+#page-admin-local-codechecker-index .local_codechecker_results .good {
+    color: #060;
+}
+#page-admin-local-codechecker-index .local_codechecker_results pre span {
+    color: #888;
+}
+#page-admin-local-codechecker-index .local_codechecker_results pre {
+    margin-top: 1em;
+    margin-bottom: 0;
+    color: #222;
+    background-color: #ddd;
+    padding: 0.5em;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+#page-admin-local-codechecker-index .local_codechecker_results h3 :link,
+#page-admin-local-codechecker-index .local_codechecker_results h3 :visited {
+    color: inherit;
+}
+#page-admin-local-codechecker-index tt {
+    display: inline; /* Override silly rule in Canvas theme. */
+}

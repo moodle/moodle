@@ -1,0 +1,217 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template file/classes_privacy_provider
+
+    Privacy API provider class.
+
+    Context variables required for this template:
+    * component
+    * copyright
+    * privacy
+
+    Example context (json):
+    {
+        "component": "local_test",
+        "copyright": "2021 David Mudrák <david@moodle.com>",
+        "privacy": {
+            "_implementedinterfaces": " \\core_privacy\\local\\metadata\\null_provider",
+            "haspersonaldata": false
+        }
+    }
+}}
+{{< common/boilerplate_php }}
+{{$ description }}Privacy API implementation for the {{ name }} plugin.{{/ description }}
+{{$ package }}{{ component }}{{/ package }}
+{{$ extratags }}
+ * @category    privacy
+{{/ extratags }}
+{{$ copyright }}{{ copyright }}{{/ copyright }}
+{{$ namespace }}
+namespace {{ component }}\privacy;
+{{/ namespace }}
+{{$ use }}
+{{# privacy.haspersonaldata }}
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\helper;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\writer;
+{{/ privacy.haspersonaldata }}
+{{/ use }}
+{{/ common/boilerplate_php }}
+class provider implements{{{ privacy._implementedinterfaces }}} {
+
+{{# privacy.uselegacypolyfill }}    use \core_privacy\local\legacy_polyfill;
+
+    // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore{{/ privacy.uselegacypolyfill }}
+
+{{^ privacy.haspersonaldata }}
+    /**
+     * Returns stringid of a text explaining that this plugin stores no personal data.
+     *
+     * @return string
+     */
+    public static function {{# privacy.uselegacypolyfill }}_{{/ privacy.uselegacypolyfill }}get_reason(){{^ privacy.uselegacypolyfill }} : string{{/ privacy.uselegacypolyfill }} {
+        return 'privacy:metadata';
+    }
+{{/ privacy.haspersonaldata }}
+{{# privacy.haspersonaldata }}
+    /**
+     * Describe all the places where the {{ name }} plugin stores some personal data.
+     *
+     * @param collection $collection Collection of items to add metadata to.
+     * @return collection Collection with our added items.
+     */
+    public static function {{# privacy.uselegacypolyfill }}_{{/ privacy.uselegacypolyfill }}get_metadata(collection $collection){{^ privacy.uselegacypolyfill }} : collection{{/ privacy.uselegacypolyfill }} {
+
+{{# privacy._metadbfields }}
+        $collection->add_database_table('{{ name }}', [
+{{# fields }}           '{{ name }}' => '{{ stringid }}',
+{{/ fields }}
+        ], '{{ stringid }}');
+
+{{/ privacy._metadbfields }}
+
+{{# privacy._metauserpreferences }}
+        $collection->add_user_preference('{{ name }}', '{{ stringid }}');
+{{/ privacy._metauserpreferences }}
+
+{{# privacy._metasubsystems }}
+{{^ hasfields }}
+        $collection->add_subsystem_link('core_{{ name }}', [], '{{ stringid }}');
+{{/ hasfields }}
+{{# hasfields }}
+        $collection->add_subsystem_link('core_{{ name }}', [
+{{# fields }}           '{{ name }}' => '{{ stringid }}',
+{{/ fields }}
+        ], '{{ stringid }}');
+{{/ hasfields }}
+{{/ privacy._metasubsystems }}
+
+{{# privacy._metaexternal }}
+{{^ hasfields }}
+        $collection->add_external_location_link('{{ name }}', [], '{{ stringid }}');
+{{/ hasfields }}
+{{# hasfields }}
+        $collection->add_external_location_link('{{ name }}', [
+{{# fields }}           '{{ name }}' => '{{ stringid }}',
+{{/ fields }}
+        ], '{{ stringid }}');
+{{/ hasfields }}
+{{/ privacy._metaexternal }}
+
+        return $collection;
+    }
+
+    /**
+     * Get the list of contexts that contain personal data for the specified user.
+     *
+     * @param int $userid ID of the user.
+     * @return contextlist List of contexts containing the user's personal data.
+     */
+    public static function {{# privacy.uselegacypolyfill }}_{{/ privacy.uselegacypolyfill }}get_contexts_for_userid({{^ privacy.uselegacypolyfill }}int {{/ privacy.uselegacypolyfill }}$userid){{^ privacy.uselegacypolyfill }} : contextlist{{/ privacy.uselegacypolyfill }} {
+
+        $contextlist = new contextlist();
+
+        // You will probably implement something using `$contextlist->add_from_sql()` here. See examples in other plugins.
+
+        return $contextlist;
+    }
+
+    /**
+     * Export personal data stored in the given contexts.
+     *
+     * @param approved_contextlist $contextlist List of contexts approved for export.
+     */
+    public static function {{# privacy.uselegacypolyfill }}_{{/ privacy.uselegacypolyfill }}export_user_data(approved_contextlist $contextlist) {
+        global $DB;
+
+        if (!count($contextlist)) {
+            return;
+        }
+
+        $user = $contextlist->get_user();
+
+        // You will probably implement something using writer's methods `export_data()`, `export_area_files()` etc.
+        // The following code is just a dummy example.
+
+        foreach ($contextlist->get_contexts() as $context) {
+            $data = helper::get_context_data($context, $user);
+            $data->implemented = transform::yesno(false);
+            $data->todo = 'Not implemented yet.';
+            writer::with_context($context)->export_data([], $data);
+        }
+    }
+
+    /**
+     * Delete personal data for all users in the context.
+     *
+     * @param context $context Context to delete personal data from.
+     */
+    public static function {{# privacy.uselegacypolyfill }}_{{/ privacy.uselegacypolyfill }}delete_data_for_all_users_in_context(\context $context) {
+        global $DB;
+
+        // You will probably use some variant of `$DB->delete_records()` here to remove user data from your tables.
+        // If you have plugin files, do not forget to clean the relevant files areas too.
+    }
+
+    /**
+     * Delete personal data for the user in a list of contexts.
+     *
+     * @param approved_contextlist $contextlist List of contexts to delete data from.
+     */
+    public static function {{# privacy.uselegacypolyfill }}_{{/ privacy.uselegacypolyfill }}delete_data_for_user(approved_contextlist $contextlist) {
+        global $DB;
+
+        if (!count($contextlist)) {
+            return;
+        }
+
+        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        $user = $contextlist->get_user();
+        $fs = get_file_storage();
+
+        // You will probably use some variant of `$DB->delete_records()` here to remove user data from your tables.
+        // If you have plugin files, do not forget to clean the relevant files areas too.
+    }
+{{# privacy._hasuserpreferences }}
+
+    /**
+     * Export all user preferences controlled by this plugin.
+     *
+     * @param int $userid ID of the user we are exporting data for
+     */
+    public static function {{# privacy.uselegacypolyfill }}_{{/ privacy.uselegacypolyfill }}export_user_preferences({{^ privacy.uselegacypolyfill }}int {{/ privacy.uselegacypolyfill }}$userid) {
+
+{{# privacy._metauserpreferences }}
+        ${{ shortname }} = get_user_preferences('{{ name }}', null, $userid);
+
+        if (${{ shortname }} !== null) {
+            writer::export_user_preference('{{ component }}', '{{ name }}', ${{ shortname }},
+                get_string('{{ stringid }}', '{{ component }}'));
+        }
+{{/ privacy._metauserpreferences }}
+    }
+{{/ privacy._hasuserpreferences }}
+{{/ privacy.haspersonaldata }}
+{{# privacy.uselegacypolyfill }}
+
+    // phpcs:enable
+{{/ privacy.uselegacypolyfill }}{{!
+}}}

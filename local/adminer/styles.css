@@ -1,0 +1,81 @@
+html > body #menu li a[href*="&select="] {
+    float: left;
+    width: 0;
+    height: 18px;
+    margin-left: -2px;
+    margin-right: 2px;
+    overflow: hidden;
+    padding-left: 18px;
+    text-decoration: none;
+}
+html > body .links a[href*="&select="],
+html > body #menu li a[href*="&select="],
+html > body #content form table thead > tr > td a[href*="&select="],
+html > body #content table a[id|="Rows"] {
+    background: url([[pix:e/table]]) no-repeat 0 0;
+    background-size: contain;
+    padding-left: 25px;
+}
+html > body #menu p.links a[href$="&sql="] {
+    background: url([[pix:e/source_code]]) no-repeat 0 0;
+    background-size: contain;
+    padding-left: 25px;
+}
+html > body #menu p.links a[href$="&import="] {
+    background: url([[pix:t/restore]]) no-repeat 0 0;
+    background-size: contain;
+    padding-left: 25px;
+}
+html > body #menu p.links a[href*="&dump="] {
+    background: url([[pix:t/backup]]) no-repeat 0 0;
+    background-size: contain;
+    padding-left: 25px;
+}
+html > body #menu p.links a[href*="&create="] {
+    background: url([[pix:t/add]]) no-repeat 0 0;
+    background-size: contain;
+    padding-left: 25px;
+}
+html > body #content table a[id|="Data_length"],
+html > body #content table a[id|="Index_length"],
+html > body #content table a[id|="Data_free"],
+html > body #content table a[id|="Auto_increment"],
+html > body #content table a[id|="Rows"] {
+    float: left;
+    width: 100%;
+    height: 100%;
+    padding: 2px 0 1px 22px;
+    margin-right: 5px;
+}
+html > body #content table a[id|="Index_length"],
+html > body #content p.links a[href*="&indexes="] {
+    background: url([[pix:t/edit]]) no-repeat 0 0;
+    background-size: contain;
+    padding-left: 25px;
+}
+html > body #content p a[href*="&edit="],
+html > body #content table a[id|="Data_free"] {
+    background: url([[pix:t/add]]) no-repeat 0 0;
+    background-size: contain;
+    padding-left: 25px;
+}
+html > body table a[href*="&create="],
+html > body #content p.links a[href*="&create="] {
+    background: url([[pix:t/edit]]) no-repeat 0 0;
+    background-size: contain;
+    padding-left: 25px;
+}
+html > body table a[href*="&create="] {
+    background: url([[pix:t/edit]]) no-repeat 0 0;
+    background-size: contain;
+    padding-left: 25px;
+}
+html > body #content p.links a[href*="&create="] {
+    background: url([[pix:t/add]]) no-repeat 0 0;
+    background-size: contain;
+    padding-left: 25px;
+}
+
+html > body #content fieldset > legend {
+    font-size: 1rem;
+}

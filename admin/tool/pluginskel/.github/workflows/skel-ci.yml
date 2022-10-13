@@ -1,0 +1,122 @@
+# The idea here is to generate a plugin from an example recipe and then run
+# some of the standard moodle-plugin-ci checks against the generated code.
+name: Generated skeletons CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+
+    services:
+      postgres:
+        image: postgres:9.6
+        env:
+          POSTGRES_USER: 'postgres'
+          POSTGRES_HOST_AUTH_METHOD: 'trust'
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '7.4'
+            moodle-branch: 'MOODLE_311_STABLE'
+            database: pgsql
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          path: plugin
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Initialise moodle-plugin-ci
+        run: |
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+          echo $(cd ci/bin; pwd) >> $GITHUB_PATH
+          echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
+          sudo locale-gen en_AU.UTF-8
+          echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+
+      - name: Install moodle-plugin-ci
+        run: |
+          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --no-init
+        env:
+          DB: ${{ matrix.database }}
+          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+
+      - name: Generate example skeletons
+        env:
+          FILES: auth block mod
+        run: for file in $FILES; do php moodle/admin/tool/pluginskel/cli/generate.php $(realpath moodle/admin/tool/pluginskel/tests/examples/${file}.yaml); done
+
+      - name: PHP Lint
+        if: ${{ always() }}
+        run: |
+          PLUGIN_DIR=moodle/auth/skeltest moodle-plugin-ci phplint
+          PLUGIN_DIR=moodle/blocks/skeltest moodle-plugin-ci phplint
+          PLUGIN_DIR=moodle/mod/skeltest moodle-plugin-ci phplint
+
+      - name: PHP Copy/Paste Detector
+        if: ${{ always() }}
+        run: |
+          PLUGIN_DIR=moodle/auth/skeltest moodle-plugin-ci phpcpd
+          PLUGIN_DIR=moodle/blocks/skeltest moodle-plugin-ci phpcpd
+          PLUGIN_DIR=moodle/mod/skeltest moodle-plugin-ci phpcpd
+
+      - name: PHP Mess Detector
+        if: ${{ always() }}
+        run: |
+          PLUGIN_DIR=moodle/auth/skeltest moodle-plugin-ci phpmd
+          PLUGIN_DIR=moodle/blocks/skeltest moodle-plugin-ci phpmd
+          PLUGIN_DIR=moodle/mod/skeltest moodle-plugin-ci phpmd
+
+      - name: Moodle Code Checker
+        if: ${{ always() }}
+        run: |
+          PLUGIN_DIR=moodle/auth/skeltest moodle-plugin-ci codechecker --max-warnings 0
+          PLUGIN_DIR=moodle/blocks/skeltest moodle-plugin-ci codechecker --max-warnings 0
+          PLUGIN_DIR=moodle/mod/skeltest moodle-plugin-ci codechecker --max-warnings 0
+
+      - name: Moodle PHPDoc Checker
+        if: ${{ always() }}
+        run: |
+          PLUGIN_DIR=moodle/auth/skeltest moodle-plugin-ci phpdoc
+          PLUGIN_DIR=moodle/blocks/skeltest moodle-plugin-ci phpdoc
+          PLUGIN_DIR=moodle/mod/skeltest moodle-plugin-ci phpdoc
+
+      - name: Validating
+        if: ${{ always() }}
+        run: |
+          PLUGIN_DIR=moodle/auth/skeltest moodle-plugin-ci validate
+          PLUGIN_DIR=moodle/blocks/skeltest moodle-plugin-ci validate
+          PLUGIN_DIR=moodle/mod/skeltest moodle-plugin-ci validate
+
+      - name: Check upgrade savepoints
+        if: ${{ always() }}
+        run: |
+          PLUGIN_DIR=moodle/auth/skeltest moodle-plugin-ci savepoints
+          PLUGIN_DIR=moodle/blocks/skeltest moodle-plugin-ci savepoints
+          PLUGIN_DIR=moodle/mod/skeltest moodle-plugin-ci savepoints
+
+      - name: Mustache Lint
+        if: ${{ always() }}
+        run: |
+          PLUGIN_DIR=moodle/auth/skeltest moodle-plugin-ci mustache
+          PLUGIN_DIR=moodle/blocks/skeltest moodle-plugin-ci mustache
+          PLUGIN_DIR=moodle/mod/skeltest moodle-plugin-ci mustache
+
+      - name: Grunt
+        if: ${{ always() }}
+        run: |
+          PLUGIN_DIR=moodle/auth/skeltest moodle-plugin-ci grunt --max-lint-warnings 0
+          PLUGIN_DIR=moodle/blocks/skeltest moodle-plugin-ci grunt --max-lint-warnings 0
+          PLUGIN_DIR=moodle/mod/skeltest moodle-plugin-ci mustache

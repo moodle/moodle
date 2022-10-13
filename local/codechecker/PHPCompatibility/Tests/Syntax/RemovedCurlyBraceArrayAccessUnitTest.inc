@@ -1,0 +1,136 @@
+<?php
+
+/*
+ * This is fine cross-version.
+ */
+echo $array[1]; // prints 2
+echo $string[0]; // prints "f"
+
+echo $array[$i];
+echo $array[$i + 1];
+echo $array[++$i];
+
+echo $array['a'][0];
+
+class Foo {
+    public function bar() {
+        echo $this->array_num[0],PHP_EOL;
+        echo self::$array_ass['a'],PHP_EOL;
+        echo static::CSTRING[1],PHP_EOL;
+    }
+}
+
+echo $obj->array_num[0],PHP_EOL;
+echo Foo::$array_ass['a'],PHP_EOL;
+echo Foo::CSTRING[1],PHP_EOL;
+
+
+/*
+ * Parse errors, not our concern.
+ */
+$array{} = 3; // Parse error: syntax error, unexpected '}'
+$array{ /*comment*/ } = 3; // Parse error: syntax error, unexpected '}'
+$array = {1, 2}; // Parse error: syntax error, unexpected '{'
+{$one, $two} = $array; // Parse error: syntax error, unexpected ','
+
+
+/*
+ * Some alternative uses of curlies which shouldn't generate false positives.
+ */
+echo ${$var};
+echo ${$var['key1']['key2']};
+echo $obj->{$var['key']};
+echo $obj->{$var['key']}();
+echo myClass::{$var['key']}();
+echo myClass::{$var['key1']['key2']['key3']}();
+class Foo {}
+if ($var['a']) {}
+
+
+/*
+ * PHP 7.4: deprecated curly brace array access syntax.
+ */
+echo $array{1};
+echo $string{0};
+
+echo $array{$i};
+echo $array{$i + 1};
+echo $array{++$i};
+
+echo $array{'a'}{0}; // Error x 2.
+
+// Combining both accesses types.
+echo $array[0]{0};
+echo $array{0}[0];
+echo myClass::{$var['key1']{'key2'}{'key3'}}(); // Error x 2.
+
+// Check code style independence.
+echo $array{ /*comment */ $i}[0];
+echo $array[$i] /* comment */ {0};
+
+echo $array /*comment*/ {'a'}[0];
+echo $array
+	['a']
+	{0};
+
+// Also applies to properties and constants.
+class Foo {
+    public function bar() {
+        echo $this->array_num{1}, PHP_EOL;
+        echo self::$array_ass{'b'}, PHP_EOL;
+    }
+}
+
+echo $obj->array_num{1}, PHP_EOL;
+echo Foo::$array_ass{'b'}, PHP_EOL;
+
+/*
+ * Additional tests based on tests found in the merged PHP Core PR.
+ */
+const D_1 = null ?? A[1]{'undefined'}['index'] ?? 1;
+const D_2 = null ?? A['undefined']{'index'} ?? 2;
+const D_3 = null ?? A[1]{0}{2} ?? 3; // Error x 2.
+const D_4 = A[1]{0} ?? 4;
+
+echo self::MY_CONST[0]{1};
+echo $this->MY_CONST[0]{1};
+
+isset($string{"foo"}{"bar"}); // Error x 2.
+$str{-strlen($str)} = strtoupper($str{0}); // Error x 2.
+$ret['requestId']   = (ord($data{2}) << 8) + ord($data{3}); // Error x 2.
+
+/*
+ * Array and string literal dereferencing using curly braces.
+ */
+echo array(1, 2, 3){0};
+echo [1, 2, 3]{0};
+echo [1, [20, 21, 22], 3]{1}{1}; // Error x 2.
+echo 'PHP'{0};
+echo "PHP"{0};
+const FOO_DEPRECATED = "BAR"{0};
+
+/*
+ * Class member access on instantiation/cloning using curly braces.
+ */
+(new foo){0};
+$a = (new Foo( array(1, array(4, 5), 3) )){1}{0}; // Error x 2.
+echo (clone $iterable){20};
+
+// Mixing access with square brackets and curly braces.
+$a = (new Foo( array(1, array(4, 5), 3) )){1}[0];
+$a = (clone $iterable)[1]{0};
+
+/*
+ * Function array dereferencing using curly braces.
+ */
+echo test(){0};
+echo $foo->bar(){1}{0}; // Error x 2.
+echo $foo->bar()->baz(){2};
+echo testClass::another_test(){0};
+
+// Mixing access with square brackets and curly braces.
+echo $foo->bar()->baz()[0]{2};
+echo $foo->bar()->baz(){0}[2];
+
+/* Live coding. Intentional parse error. This has to be the last test in the file. */
+$a = $b[0] + $c['something']{

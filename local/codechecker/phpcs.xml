@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="moodle" xsi:noNamespaceSchemaLocation="phpcs.xsd">
+  <rule ref="MoodleCS/moodle"/>
+</ruleset>

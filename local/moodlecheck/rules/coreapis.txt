@@ -1,0 +1,2365 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8"/>
+    <script type="text/javascript">
+    (window.NREUM || (NREUM = {})).loader_config = {
+        licenseKey: "05ab6e1949",
+        applicationID: "84455028"
+    };
+    window.NREUM || (NREUM = {}),
+    __nr_require = function(t, e, n) {
+        function r(n) {
+            if (!e[n]) {
+                var i = e[n] = {
+                    exports: {}
+                };
+                t[n][0].call(i.exports, function(e) {
+                    var i = t[n][1][e];
+                    return r(i || e)
+                }, i, i.exports)
+            }
+            return e[n].exports
+        }
+        if ("function" == typeof __nr_require)
+            return __nr_require;
+        for (var i = 0; i < n.length; i++)
+            r(n[i]);
+        return r
+    }({
+        1: [function(t, e, n) {
+            function r() {}
+            function i(t, e, n) {
+                return function() {
+                    return o(t, [u.now()].concat(f(arguments)), e ? null : this, n), e ? void 0 : this
+                }
+            }
+            var o = t("handle"),
+                a = t(8),
+                f = t(9),
+                c = t("ee").get("tracer"),
+                u = t("loader"),
+                s = NREUM;
+            "undefined" == typeof window.newrelic && (newrelic = s);
+            var d = ["setPageViewName", "setCustomAttribute", "setErrorHandler", "finished", "addToTrace", "inlineHit", "addRelease"],
+                p = "api-",
+                l = p + "ixn-";
+            a(d, function(t, e) {
+                s[e] = i(p + e, !0, "api")
+            }),
+            s.addPageAction = i(p + "addPageAction", !0),
+            s.setCurrentRouteName = i(p + "routeName", !0),
+            e.exports = newrelic,
+            s.interaction = function() {
+                return (new r).get()
+            };
+            var m = r.prototype = {
+                createTracer: function(t, e) {
+                    var n = {},
+                        r = this,
+                        i = "function" == typeof e;
+                    return o(l + "tracer", [u.now(), t, n], r), function() {
+                        if (c.emit((i ? "" : "no-") + "fn-start", [u.now(), r, i], n), i)
+                            try {
+                                return e.apply(this, arguments)
+                            } catch (t) {
+                                throw c.emit("fn-err", [arguments, this, t], n), t
+                            } finally {
+                                c.emit("fn-end", [u.now()], n)
+                            }
+                    }
+                }
+            };
+            a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","), function(t, e) {
+                m[e] = i(l + e)
+            }),
+            newrelic.noticeError = function(t, e) {
+                "string" == typeof t && (t = new Error(t)),
+                o("err", [t, u.now(), !1, e])
+            }
+        }, {}],
+        2: [function(t, e, n) {
+            function r(t) {
+                if (NREUM.init) {
+                    for (var e = NREUM.init, n = t.split("."), r = 0; r < n.length - 1; r++)
+                        if (e = e[n[r]], "object" != typeof e)
+                            return;
+                    return e = e[n[n.length - 1]]
+                }
+            }
+            e.exports = {
+                getConfiguration: r
+            }
+        }, {}],
+        3: [function(t, e, n) {
+            function r() {
+                return f.exists && performance.now ? Math.round(performance.now()) : (o = Math.max((new Date).getTime(), o)) - a
+            }
+            function i() {
+                return o
+            }
+            var o = (new Date).getTime(),
+                a = o,
+                f = t(10);
+            e.exports = r,
+            e.exports.offset = a,
+            e.exports.getLastTimestamp = i
+        }, {}],
+        4: [function(t, e, n) {
+            function r(t) {
+                return !(!t || !t.protocol || "file:" === t.protocol)
+            }
+            e.exports = r
+        }, {}],
+        5: [function(t, e, n) {
+            function r(t, e) {
+                var n = t.getEntries();
+                n.forEach(function(t) {
+                    "first-paint" === t.name ? d("timing", ["fp", Math.floor(t.startTime)]) : "first-contentful-paint" === t.name && d("timing", ["fcp", Math.floor(t.startTime)])
+                })
+            }
+            function i(t, e) {
+                var n = t.getEntries();
+                n.length > 0 && d("lcp", [n[n.length - 1]])
+            }
+            function o(t) {
+                t.getEntries().forEach(function(t) {
+                    t.hadRecentInput || d("cls", [t])
+                })
+            }
+            function a(t) {
+                if (t instanceof m && !g) {
+                    var e = Math.round(t.timeStamp),
+                        n = {
+                            type: t.type
+                        };
+                    e <= p.now() ? n.fid = p.now() - e : e > p.offset && e <= Date.now() ? (e -= p.offset, n.fid = p.now() - e) : e = p.now(),
+                    g = !0,
+                    d("timing", ["fi", e, n])
+                }
+            }
+            function f(t) {
+                "hidden" === t && d("pageHide", [p.now()])
+            }
+            if (!("init" in NREUM && "page_view_timing" in NREUM.init && "enabled" in NREUM.init.page_view_timing && NREUM.init.page_view_timing.enabled === !1)) {
+                var c,
+                    u,
+                    s,
+                    d = t("handle"),
+                    p = t("loader"),
+                    l = t(7),
+                    m = NREUM.o.EV;
+                if ("PerformanceObserver" in window && "function" == typeof window.PerformanceObserver) {
+                    c = new PerformanceObserver(r);
+                    try {
+                        c.observe({
+                            entryTypes: ["paint"]
+                        })
+                    } catch (v) {}
+                    u = new PerformanceObserver(i);
+                    try {
+                        u.observe({
+                            entryTypes: ["largest-contentful-paint"]
+                        })
+                    } catch (v) {}
+                    s = new PerformanceObserver(o);
+                    try {
+                        s.observe({
+                            type: "layout-shift",
+                            buffered: !0
+                        })
+                    } catch (v) {}
+                }
+                if ("addEventListener" in document) {
+                    var g = !1,
+                        h = ["click", "keydown", "mousedown", "pointerdown", "touchstart"];
+                    h.forEach(function(t) {
+                        document.addEventListener(t, a, !1)
+                    })
+                }
+                l(f)
+            }
+        }, {}],
+        6: [function(t, e, n) {
+            function r(t, e) {
+                if (!i)
+                    return !1;
+                if (t !== i)
+                    return !1;
+                if (!e)
+                    return !0;
+                if (!o)
+                    return !1;
+                for (var n = o.split("."), r = e.split("."), a = 0; a < r.length; a++)
+                    if (r[a] !== n[a])
+                        return !1;
+                return !0
+            }
+            var i = null,
+                o = null,
+                a = /Version\/(\S+)\s+Safari/;
+            if (navigator.userAgent) {
+                var f = navigator.userAgent,
+                    c = f.match(a);
+                c && f.indexOf("Chrome") === -1 && f.indexOf("Chromium") === -1 && (i = "Safari", o = c[1])
+            }
+            e.exports = {
+                agent: i,
+                version: o,
+                match: r
+            }
+        }, {}],
+        7: [function(t, e, n) {
+            function r(t) {
+                function e() {
+                    t(a && document[a] ? document[a] : document[i] ? "hidden" : "visible")
+                }
+                "addEventListener" in document && o && document.addEventListener(o, e, !1)
+            }
+            e.exports = r;
+            var i,
+                o,
+                a;
+            "undefined" != typeof document.hidden ? (i = "hidden", o = "visibilitychange", a = "visibilityState") : "undefined" != typeof document.msHidden ? (i = "msHidden", o = "msvisibilitychange") : "undefined" != typeof document.webkitHidden && (i = "webkitHidden", o = "webkitvisibilitychange", a = "webkitVisibilityState")
+        }, {}],
+        8: [function(t, e, n) {
+            function r(t, e) {
+                var n = [],
+                    r = "",
+                    o = 0;
+                for (r in t)
+                    i.call(t, r) && (n[o] = e(r, t[r]), o += 1);
+                return n
+            }
+            var i = Object.prototype.hasOwnProperty;
+            e.exports = r
+        }, {}],
+        9: [function(t, e, n) {
+            function r(t, e, n) {
+                e || (e = 0),
+                "undefined" == typeof n && (n = t ? t.length : 0);
+                for (var r = -1, i = n - e || 0, o = Array(i < 0 ? 0 : i); ++r < i;)
+                    o[r] = t[e + r];
+                return o
+            }
+            e.exports = r
+        }, {}],
+        10: [function(t, e, n) {
+            e.exports = {
+                exists: "undefined" != typeof window.performance && window.performance.timing && "undefined" != typeof window.performance.timing.navigationStart
+            }
+        }, {}],
+        ee: [function(t, e, n) {
+            function r() {}
+            function i(t) {
+                function e(t) {
+                    return t && t instanceof r ? t : t ? u(t, c, a) : a()
+                }
+                function n(n, r, i, o, a) {
+                    if (a !== !1 && (a = !0), !l.aborted || o) {
+                        t && a && t(n, r, i);
+                        for (var f = e(i), c = v(n), u = c.length, s = 0; s < u; s++)
+                            c[s].apply(f, r);
+                        var p = d[w[n]];
+                        return p && p.push([b, n, r, f]), f
+                    }
+                }
+                function o(t, e) {
+                    y[t] = v(t).concat(e)
+                }
+                function m(t, e) {
+                    var n = y[t];
+                    if (n)
+                        for (var r = 0; r < n.length; r++)
+                            n[r] === e && n.splice(r, 1)
+                }
+                function v(t) {
+                    return y[t] || []
+                }
+                function g(t) {
+                    return p[t] = p[t] || i(n)
+                }
+                function h(t, e) {
+                    l.aborted || s(t, function(t, n) {
+                        e = e || "feature",
+                        w[n] = e,
+                        e in d || (d[e] = [])
+                    })
+                }
+                var y = {},
+                    w = {},
+                    b = {
+                        on: o,
+                        addEventListener: o,
+                        removeEventListener: m,
+                        emit: n,
+                        get: g,
+                        listeners: v,
+                        context: e,
+                        buffer: h,
+                        abort: f,
+                        aborted: !1
+                    };
+                return b
+            }
+            function o(t) {
+                return u(t, c, a)
+            }
+            function a() {
+                return new r
+            }
+            function f() {
+                (d.api || d.feature) && (l.aborted = !0, d = l.backlog = {})
+            }
+            var c = "nr@context",
+                u = t("gos"),
+                s = t(8),
+                d = {},
+                p = {},
+                l = e.exports = i();
+            e.exports.getOrSetContext = o,
+            l.backlog = d
+        }, {}],
+        gos: [function(t, e, n) {
+            function r(t, e, n) {
+                if (i.call(t, e))
+                    return t[e];
+                var r = n();
+                if (Object.defineProperty && Object.keys)
+                    try {
+                        return Object.defineProperty(t, e, {
+                            value: r,
+                            writable: !0,
+                            enumerable: !1
+                        }), r
+                    } catch (o) {}
+                return t[e] = r, r
+            }
+            var i = Object.prototype.hasOwnProperty;
+            e.exports = r
+        }, {}],
+        handle: [function(t, e, n) {
+            function r(t, e, n, r) {
+                i.buffer([t], r),
+                i.emit(t, e, n)
+            }
+            var i = t("ee").get("handle");
+            e.exports = r,
+            r.ee = i
+        }, {}],
+        id: [function(t, e, n) {
+            function r(t) {
+                var e = typeof t;
+                return !t || "object" !== e && "function" !== e ? -1 : t === window ? 0 : a(t, o, function() {
+                    return i++
+                })
+            }
+            var i = 1,
+                o = "nr@id",
+                a = t("gos");
+            e.exports = r
+        }, {}],
+        loader: [function(t, e, n) {
+            function r() {
+                if (!R++) {
+                    var t = M.info = NREUM.info,
+                        e = v.getElementsByTagName("script")[0];
+                    if (setTimeout(u.abort, 3e4), !(t && t.licenseKey && t.applicationID && e))
+                        return u.abort();
+                    c(E, function(e, n) {
+                        t[e] || (t[e] = n)
+                    });
+                    var n = a();
+                    f("mark", ["onload", n + M.offset], null, "api"),
+                    f("timing", ["load", n]);
+                    var r = v.createElement("script");
+                    0 === t.agent.indexOf("http://") || 0 === t.agent.indexOf("https://") ? r.src = t.agent : r.src = l + "://" + t.agent,
+                    e.parentNode.insertBefore(r, e)
+                }
+            }
+            function i() {
+                "complete" === v.readyState && o()
+            }
+            function o() {
+                f("mark", ["domContent", a() + M.offset], null, "api")
+            }
+            var a = t(3),
+                f = t("handle"),
+                c = t(8),
+                u = t("ee"),
+                s = t(6),
+                d = t(4),
+                p = t(2),
+                l = p.getConfiguration("ssl") === !1 ? "http" : "https",
+                m = window,
+                v = m.document,
+                g = "addEventListener",
+                h = "attachEvent",
+                y = m.XMLHttpRequest,
+                w = y && y.prototype,
+                b = !d(m.location);
+            NREUM.o = {
+                ST: setTimeout,
+                SI: m.setImmediate,
+                CT: clearTimeout,
+                XHR: y,
+                REQ: m.Request,
+                EV: m.Event,
+                PR: m.Promise,
+                MO: m.MutationObserver
+            };
+            var x = "" + location,
+                E = {
+                    beacon: "bam.nr-data.net",
+                    errorBeacon: "bam.nr-data.net",
+                    agent: "js-agent.newrelic.com/nr-1210.min.js"
+                },
+                O = y && w && w[g] && !/CriOS/.test(navigator.userAgent),
+                M = e.exports = {
+                    offset: a.getLastTimestamp(),
+                    now: a,
+                    origin: x,
+                    features: {},
+                    xhrWrappable: O,
+                    userAgent: s,
+                    disabled: b
+                };
+            if (!b) {
+                t(1),
+                t(5),
+                v[g] ? (v[g]("DOMContentLoaded", o, !1), m[g]("load", r, !1)) : (v[h]("onreadystatechange", i), m[h]("onload", r)),
+                f("mark", ["firstbyte", a.getLastTimestamp()], null, "api");
+                var R = 0
+            }
+        }, {}],
+        "wrap-function": [function(t, e, n) {
+            function r(t, e) {
+                function n(e, n, r, c, u) {
+                    function nrWrapper() {
+                        var o,
+                            a,
+                            s,
+                            p;
+                        try {
+                            a = this,
+                            o = d(arguments),
+                            s = "function" == typeof r ? r(o, a) : r || {}
+                        } catch (l) {
+                            i([l, "", [o, a, c], s], t)
+                        }
+                        f(n + "start", [o, a, c], s, u);
+                        try {
+                            return p = e.apply(a, o)
+                        } catch (m) {
+                            throw f(n + "err", [o, a, m], s, u), m
+                        } finally {
+                            f(n + "end", [o, a, p], s, u)
+                        }
+                    }
+                    return a(e) ? e : (n || (n = ""), nrWrapper[p] = e, o(e, nrWrapper, t), nrWrapper)
+                }
+                function r(t, e, r, i, o) {
+                    r || (r = "");
+                    var f,
+                        c,
+                        u,
+                        s = "-" === r.charAt(0);
+                    for (u = 0; u < e.length; u++)
+                        c = e[u],
+                        f = t[c],
+                        a(f) || (t[c] = n(f, s ? c + r : r, i, c, o))
+                }
+                function f(n, r, o, a) {
+                    if (!m || e) {
+                        var f = m;
+                        m = !0;
+                        try {
+                            t.emit(n, r, o, e, a)
+                        } catch (c) {
+                            i([c, n, r, o], t)
+                        }
+                        m = f
+                    }
+                }
+                return t || (t = s), n.inPlace = r, n.flag = p, n
+            }
+            function i(t, e) {
+                e || (e = s);
+                try {
+                    e.emit("internal-error", t)
+                } catch (n) {}
+            }
+            function o(t, e, n) {
+                if (Object.defineProperty && Object.keys)
+                    try {
+                        var r = Object.keys(t);
+                        return r.forEach(function(n) {
+                            Object.defineProperty(e, n, {
+                                get: function() {
+                                    return t[n]
+                                },
+                                set: function(e) {
+                                    return t[n] = e, e
+                                }
+                            })
+                        }), e
+                    } catch (o) {
+                        i([o], n)
+                    }
+                for (var a in t)
+                    l.call(t, a) && (e[a] = t[a]);
+                return e
+            }
+            function a(t) {
+                return !(t && t instanceof Function && t.apply && !t[p])
+            }
+            function f(t, e) {
+                var n = e(t);
+                return n[p] = t, o(t, n, s), n
+            }
+            function c(t, e, n) {
+                var r = t[e];
+                t[e] = f(r, n)
+            }
+            function u() {
+                for (var t = arguments.length, e = new Array(t), n = 0; n < t; ++n)
+                    e[n] = arguments[n];
+                return e
+            }
+            var s = t("ee"),
+                d = t(9),
+                p = "nr@original",
+                l = Object.prototype.hasOwnProperty,
+                m = !1;
+            e.exports = r,
+            e.exports.wrapFunction = f,
+            e.exports.wrapInPlace = c,
+            e.exports.argsToArray = u
+        }, {}]
+    }, {}, ["loader"]);
+    </script>
+    <title>Core APIs - MoodleDocs</title>
+    <script>
+    document.documentElement.className = "client-js";
+    RLCONF = {
+        "wgBreakFrames": !1,
+        "wgSeparatorTransformTable": ["", ""],
+        "wgDigitTransformTable": ["", ""],
+        "wgDefaultDateFormat": "dmy",
+        "wgMonthNames": ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        "wgRequestId": "3b11543a5db622be53afbebf",
+        "wgCSPNonce": !1,
+        "wgCanonicalNamespace": "",
+        "wgCanonicalSpecialPageName": !1,
+        "wgNamespaceNumber": 0,
+        "wgPageName": "Core_APIs",
+        "wgTitle": "Core APIs",
+        "wgCurRevisionId": 61248,
+        "wgRevisionId": 61248,
+        "wgArticleId": 3684,
+        "wgIsArticle": !0,
+        "wgIsRedirect": !1,
+        "wgAction": "view",
+        "wgUserName": "Stronk7",
+        "wgUserGroups": ["bureaucrat", "sysop", "*", "user", "autoconfirmed", "automoderated"],
+        "wgCategories": [],
+        "wgPageContentLanguage": "en",
+        "wgPageContentModel": "wikitext",
+        "wgRelevantPageName": "Core_APIs",
+        "wgRelevantArticleId": 3684,
+        "wgUserId": 240,
+        "wgUserEditCount": 3900,
+        "wgUserRegistration": null,
+        "wgIsProbablyEditable": !0,
+        "wgRelevantPageIsProbablyEditable": !0,
+        "wgRestrictionEdit": [],
+        "wgRestrictionMove": [],
+        "wgVisualEditor": {
+            "pageLanguageCode": "en",
+            "pageLanguageDir": "ltr",
+            "pageVariantFallbacks": "en"
+        },
+        "wgMediaViewerOnClick": !0,
+        "wgMediaViewerEnabledByDefault": !0,
+        "wgEditSubmitButtonLabelPublish": !1
+    };
+    RLSTATE = {
+        "site.styles": "ready",
+        "noscript": "ready",
+        "user.styles": "ready",
+        "user": "ready",
+        "user.options": "loading",
+        "mediawiki.ui.button": "ready",
+        "skins.chameleon": "ready",
+        "zzz.ext.bootstrap.styles": "ready",
+        "mediawiki.toc.styles": "ready",
+        "ext.visualEditor.desktopArticleTarget.noscript": "ready"
+    };
+    RLPAGEMODULES = ["site", "mediawiki.page.startup", "mediawiki.page.ready", "mediawiki.toc", "mediawiki.page.watch.ajax", "ext.visualEditor.desktopArticleTarget.init", "ext.visualEditor.targetLoader", "ext.bootstrap.scripts"];
+    </script>
+    <script>
+    (RLQ = window.RLQ || []).push(function() {
+        mw.loader.implement("user.options@1hzgi", function($, jQuery, require, module) {
+            /*@nomin*/
+            mw.user.tokens.set({
+                "patrolToken": "158919af32307cc67bb4764a01e6abd16138dc1b+\\",
+                "watchToken": "eff64edeb7725f87936e846d879ea9d16138dc1b+\\",
+                "csrfToken": "0e08588e5267beddf4263a1611a64f886138dc1b+\\"
+            });
+            mw.user.options.set({
+                "visualeditor-hidebetawelcome": "1",
+                "enotifminoredits": "1",
+                "timecorrection": "Offset|0",
+                "rcfilters-limit": "50",
+                "rcfilters-rc-collapsed": 0,
+                "rcfilters-saved-queries": "{\"queries\":{},\"version\":\"2\"}",
+                "rememberpassword": "1",
+                "searchNs1": "1",
+                "searchNs2": "1",
+                "searchNs3": "1",
+                "searchNs4": "1",
+                "searchNs5": "1",
+                "searchNs6": "1",
+                "searchNs7": "1",
+                "searcheverything": "1",
+                "watchlisttoken": "8cff7a3ad1a099744da6c5a7a5778c56f84346cc"
+            });
+        });
+    });
+    </script>
+    <link rel="stylesheet" href="/dev/load.php?lang=en&amp;modules=ext.visualEditor.desktopArticleTarget.noscript%7Cmediawiki.toc.styles%7Cmediawiki.ui.button%7Cskins.chameleon%7Czzz.ext.bootstrap.styles&amp;only=styles&amp;skin=chameleon"/>
+    <script async="" src="/dev/load.php?lang=en&amp;modules=startup&amp;only=scripts&amp;raw=1&amp;skin=chameleon"></script>
+    <meta name="generator" content="MediaWiki 1.35.3"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <link rel="alternate" type="application/x-wiki" title="Edit" href="/dev/index.php?title=Core_APIs&amp;action=edit"/>
+    <link rel="edit" title="Edit" href="/dev/index.php?title=Core_APIs&amp;action=edit"/>
+    <link rel="shortcut icon" href="/favicon-dev.ico"/>
+    <link rel="search" type="application/opensearchdescription+xml" href="/dev/opensearch_desc.php" title="MoodleDocs (en)"/>
+    <link rel="EditURI" type="application/rsd+xml" href="https://docs.moodle.org/dev/api.php?action=rsd"/>
+    <link rel="license" href="https://docs.moodle.org/dev/License"/>
+    <link rel="alternate" type="application/atom+xml" title="MoodleDocs Atom feed" href="/dev/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+    <!--[if lt IE 9]><script src="/dev/resources/lib/html5shiv/html5shiv.js"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject mw-editable page-Core_APIs rootpage-Core_APIs layout-moodledocs skin-chameleon action-view">
+    <nav id="moodlesitestopnavbar" class="navbar fixed-top navbar-expand-md navbar-light bg-light">
+        <div class="container-fluid">
+            <div class="d-none d-lg-block">
+                <a class="sitelogo" href="https://moodle.org">
+                    <img alt="Moodle.org" width="96" height="25" src="/sitebar/moodle_sitebar_logo_grayhat.svg"/>
+                </a>
+            </div>
+            <ul class="navbar-nav homenav">
+                <li class="nav-item home">
+                    <a class="nav-link active" href="https://moodle.org">
+                        <span class="sr-only">Moodle.org Home</span>
+                        <i class="fa fa-home"></i>
+                    </a>
+                </li>
+            </ul>
+            <button class="navbar-toggler btn p-2 icon-nomargin text-white mr-1" type="button" data-toggle="collapse" data-target="#sitetopnavbar" aria-controls="sitetopnavbar" aria-expanded="false" aria-label="Toggle navigation"></button>
+            <div class="collapse navbar-collapse" id="sitetopnavbar">
+                <ul class="navbar-nav">
+                    <li class="nav-item documentation">
+                        <a class="nav-link" href="https://docs.moodle.org">
+                            <span>Documentation</span>
+                        </a>
+                    </li>
+                    <li class="nav-item download">
+                        <a class="nav-link" href="https://download.moodle.org">
+                            <span>Downloads</span>
+                        </a>
+                    </li>
+                    <li class="nav-item demo">
+                        <a class="nav-link" href="https://moodle.org/demo">
+                            <span>Demo</span>
+                        </a>
+                    </li>
+                    <li class="nav-item tracker">
+                        <a class="nav-link" href="https://tracker.moodle.org">
+                            <span>Tracker</span>
+                        </a>
+                    </li>
+                    <li class="nav-item development">
+                        <a class="nav-link" href="https://docs.moodle.org/dev/Main_Page">
+                            <span>Development</span>
+                        </a>
+                    </li>
+                    <li class="nav-item translation">
+                        <a class="nav-link" href="https://lang.moodle.org">
+                            <span>Translation</span>
+                        </a>
+                    </li>
+                    <li class="nav-item moodlenet">
+                        <a class="nav-link" href="https://moodle.net">
+                            <span>MoodleNet</span>
+                        </a>
+                    </li>
+                    <li class="nav-item search">
+                        <a class="nav-link" href="https://moodle.org/public/search/">
+                            <span class="sr-only">Search</span>
+                            <i class="fa fa-search"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="moodlesitestopnavbarpadding row">
+            <div class="col-4 col" id="frontpagelogo">
+                <a href="https://docs.moodle.org" class="navbar-brand">
+                    <h1 id="moodlesitename">
+                        <span>Documentation</span>
+                    </h1>
+                </a>
+            </div>
+            <div class="col" id="navbarhorizontaltop">
+
+                <nav class="p-navbar collapsible" role="navigation" id="mw-navigation">
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#gu9nodg84c">
+                        <span class="navbar-toggler-text">Menu</span>
+                    </button>
+                    <div class="collapse navbar-collapse gu9nodg84c" id="gu9nodg84c">
+                        <div class="navbar-nav">
+                            <div class="nav-item">
+                                <a class="nav-link fas fa-angle-left" href="/dev/Main_Page">Main Page</a>
+                            </div>
+                            <div class="nav-item">
+                                <a class="nav-link fas fa-book" href="https://docs.moodle.org/">3.11 user documentation</a>
+                            </div>
+                            <div class="nav-item">
+                                <a class="nav-link fas fa-history" href="/dev/Special:RecentChanges">Recent changes</a>
+                            </div>
+                        </div>
+                        <div class="navbar-nav right">
+
+                            <div id="p-search" class="p-search navbar-form" role="search">
+                                <form id="searchform" class="mw-search" action="/dev/index.php">
+                                    <input type="hidden" name="title" value=" Special:Search"/>
+                                    <div class="input-group">
+                                        <input name="search" placeholder="Search MoodleDocs" title="Search MoodleDocs [f]" accesskey="f" id="searchInput" class="form-control"/>
+                                        <div class="input-group-append">
+                                            <button value="Go" id="searchGoButton" name="go" type="submit" class="go-btn searchGoButton" aria-label="Go to page" title="Go to a page with this exact name if it exists"></button>
+                                            <button value="Search" id="mw-searchButton" name="fulltext" type="submit" class="search-btn mw-searchButton" aria-label="Go to page" title="Search the pages for this text"></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="navbar-tools navbar-nav">
+                                <div class="navbar-tool dropdown">
+                                    <a class="navbar-userloggedin" href="#" data-toggle="dropdown" data-boundary="viewport" title="You are logged in as Stronk7.">
+                                        <span class="badge badge-pill badge-info pt-mytalk" title="You have new messages." href="#"></span>
+                                    </a>
+                                    <div class="p-personal-tools dropdown-menu">
+                                        <div id="pt-userpage">
+                                            <a href="/dev/User:Eloy_Lafuente_(stronk7)" class="pt-userpage" dir="auto" title="Your user page [.]" accesskey=".">Eloy Lafuente (stronk7) (Stronk7)</a>
+                                        </div>
+                                        <div id="pt-mytalk">
+                                            <a href="/dev/User_talk:Eloy_Lafuente_(stronk7)" class="pt-mytalk" title="Your talk page (page does not exist) [n]" accesskey="n">Talk</a>
+                                        </div>
+                                        <div id="pt-preferences">
+                                            <a href="/dev/Special:Preferences" title="Your preferences" class="pt-preferences">Preferences</a>
+                                        </div>
+                                        <div id="pt-watchlist">
+                                            <a href="/dev/Special:Watchlist" title="A list of pages you are monitoring for changes [l]" accesskey="l" class="pt-watchlist">Watchlist</a>
+                                        </div>
+                                        <div id="pt-mycontris">
+                                            <a href="/dev/Special:Contributions/Stronk7" title="A list of your contributions [y]" accesskey="y" class="pt-mycontris">Contributions</a>
+                                        </div>
+                                        <div id="pt-logout">
+                                            <a href="/dev/index.php?title=Special:UserLogout&amp;returnto=Core+APIs" data-mw="interface" title="Log out" class="pt-logout">Log out</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+
+                <div class="mb-3 pagetools p-contentnavigation" id="p-contentnavigation">
+
+                    <div id="p-namespaces" class="p-namespaces">
+                        <div class="tab-group">
+                            <div id="ca-talk">
+                                <a href="/dev/Talk:Core_APIs" rel="discussion" title="Discussion about the content page [t]" accesskey="t" class="ca-talk">Discussion</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="p-views" class="p-views">
+                        <div class="tab-group">
+                            <div id="ca-ve-edit">
+                                <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit" title="Edit this page [v]" accesskey="v" class="ca-ve-edit">Edit</a>
+                            </div>
+                            <div id="ca-edit" class="collapsible">
+                                <a href="/dev/index.php?title=Core_APIs&amp;action=edit" title="Edit this page [e]" accesskey="e" class="collapsible ca-edit">Edit source</a>
+                            </div>
+                            <div id="ca-history">
+                                <a href="/dev/index.php?title=Core_APIs&amp;action=history" title="Past revisions of this page [h]" accesskey="h" class="ca-history">History</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="p-actions" class="p-actions">
+                        <div class="tab-group">
+                            <div id="ca-delete">
+                                <a href="/dev/index.php?title=Core_APIs&amp;action=delete" title="Delete this page [d]" accesskey="d" class="ca-delete">Delete</a>
+                            </div>
+                            <div id="ca-move">
+                                <a href="/dev/Special:MovePage/Core_APIs" title="Move this page [m]" accesskey="m" class="ca-move">Move</a>
+                            </div>
+                            <div id="ca-protect">
+                                <a href="/dev/index.php?title=Core_APIs&amp;action=protect" title="Protect this page [=]" accesskey="=" class="ca-protect">Protect</a>
+                            </div>
+                            <div id="ca-unwatch" class="mw-watchlink">
+                                <a href="/dev/index.php?title=Core_APIs&amp;action=unwatch" data-mw="interface" title="Remove this page from your watchlist [w]" accesskey="w" class="mw-watchlink ca-unwatch">Unwatch</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col"></div>
+        </div>
+        <div class="row">
+            <div class="col-auto mx-auto col">
+
+                <div class="usermessage mb-3">
+                    <a href="/dev/Special:Moderation" title="Special:Moderation">New changes await moderation.</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+
+                <div id="content" class="mw-body content">
+                    <a id="top" class="top"></a>
+                    <div id="mw-indicators" class="mw-indicators"></div>
+                    <div class="contentHeader">
+
+                        <h1 id="firstHeading" class="firstHeading">Core APIs</h1>
+
+                        <div id="siteSub" class="siteSub">From MoodleDocs</div>
+                        <div id="jump-to-nav" class="mw-jump jump-to-nav">
+                            Jump to:
+                            <a href="#mw-navigation">navigation</a>
+                            , 
+                            <a href="#p-search">search</a>
+                        </div>
+                    </div>
+                    <div id="bodyContent" class="bodyContent">
+
+                        <div class="row">
+                            <div class="col">
+                                <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+                                <html>
+                                <body>
+                                    <div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr">
+                                        <div class="mw-parser-output">
+                                            <p>Moodle has a number of core APIs that provide tools for Moodle scripts.
+                                            </p>
+                                            <p>
+                                                They are essential when writing 
+                                                <a href="/dev/Plugins" class="mw-redirect" title="Plugins">Moodle plugins</a>
+                                                .
+                                            </p>
+                                            <p>
+                                                <br>
+                                            </p>
+                                            <div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading">
+                                                <input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none">
+                                                <div class="toctitle" lang="en" dir="ltr">
+                                                    <h2 id="mw-toc-heading">Contents</h2>
+                                                    <span class="toctogglespan">
+                                                        <label class="toctogglelabel" for="toctogglecheckbox"></label>
+                                                    </span>
+                                                </div>
+                                                <ul>
+                                                    <li class="toclevel-1 tocsection-1">
+                                                        <a href="#Most-used_General_APIs">
+                                                            <span class="tocnumber">1</span>
+                                                            <span class="toctext">Most-used General APIs</span>
+                                                        </a>
+                                                        <ul>
+                                                            <li class="toclevel-2 tocsection-2">
+                                                                <a href="#Access_API_.28access.29">
+                                                                    <span class="tocnumber">1.1</span>
+                                                                    <span class="toctext">Access API (access)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-3">
+                                                                <a href="#Data_manipulation_API_.28dml.29">
+                                                                    <span class="tocnumber">1.2</span>
+                                                                    <span class="toctext">Data manipulation API (dml)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-4">
+                                                                <a href="#File_API_.28files.29">
+                                                                    <span class="tocnumber">1.3</span>
+                                                                    <span class="toctext">File API (files)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-5">
+                                                                <a href="#Form_API_.28form.29">
+                                                                    <span class="tocnumber">1.4</span>
+                                                                    <span class="toctext">Form API (form)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-6">
+                                                                <a href="#Logging_API_.28log.29">
+                                                                    <span class="tocnumber">1.5</span>
+                                                                    <span class="toctext">Logging API (log)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-7">
+                                                                <a href="#Navigation_API_.28navigation.29">
+                                                                    <span class="tocnumber">1.6</span>
+                                                                    <span class="toctext">Navigation API (navigation)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-8">
+                                                                <a href="#Page_API_.28page.29">
+                                                                    <span class="tocnumber">1.7</span>
+                                                                    <span class="toctext">Page API (page)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-9">
+                                                                <a href="#Output_API_.28output.29">
+                                                                    <span class="tocnumber">1.8</span>
+                                                                    <span class="toctext">Output API (output)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-10">
+                                                                <a href="#String_API_.28string.29">
+                                                                    <span class="tocnumber">1.9</span>
+                                                                    <span class="toctext">String API (string)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-11">
+                                                                <a href="#Upgrade_API_.28upgrade.29">
+                                                                    <span class="tocnumber">1.10</span>
+                                                                    <span class="toctext">Upgrade API (upgrade)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-12">
+                                                                <a href="#Moodlelib_API_.28core.29">
+                                                                    <span class="tocnumber">1.11</span>
+                                                                    <span class="toctext">Moodlelib API (core)</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                    <li class="toclevel-1 tocsection-13">
+                                                        <a href="#Other_General_APIs">
+                                                            <span class="tocnumber">2</span>
+                                                            <span class="toctext">Other General APIs</span>
+                                                        </a>
+                                                        <ul>
+                                                            <li class="toclevel-2 tocsection-14">
+                                                                <a href="#Admin_settings_API_.28admin.29">
+                                                                    <span class="tocnumber">2.1</span>
+                                                                    <span class="toctext">Admin settings API (admin)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-15">
+                                                                <a href="#Analytics_API_.28analytics.29">
+                                                                    <span class="tocnumber">2.2</span>
+                                                                    <span class="toctext">Analytics API (analytics)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-16">
+                                                                <a href="#Availability_API_.28availability.29">
+                                                                    <span class="tocnumber">2.3</span>
+                                                                    <span class="toctext">Availability API (availability)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-17">
+                                                                <a href="#Backup_API_.28backup.29">
+                                                                    <span class="tocnumber">2.4</span>
+                                                                    <span class="toctext">Backup API (backup)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-18">
+                                                                <a href="#Cache_API_.28cache.29">
+                                                                    <span class="tocnumber">2.5</span>
+                                                                    <span class="toctext">Cache API (cache)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-19">
+                                                                <a href="#Calendar_API_.28calendar.29">
+                                                                    <span class="tocnumber">2.6</span>
+                                                                    <span class="toctext">Calendar API (calendar)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-20">
+                                                                <a href="#Check_API_.28check.29">
+                                                                    <span class="tocnumber">2.7</span>
+                                                                    <span class="toctext">Check API (check)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-21">
+                                                                <a href="#Comment_API_.28comment.29">
+                                                                    <span class="tocnumber">2.8</span>
+                                                                    <span class="toctext">Comment API (comment)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-22">
+                                                                <a href="#Competency_API_.28competency.29">
+                                                                    <span class="tocnumber">2.9</span>
+                                                                    <span class="toctext">Competency API (competency)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-23">
+                                                                <a href="#Data_definition_API_.28ddl.29">
+                                                                    <span class="tocnumber">2.10</span>
+                                                                    <span class="toctext">Data definition API (ddl)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-24">
+                                                                <a href="#Editor_API">
+                                                                    <span class="tocnumber">2.11</span>
+                                                                    <span class="toctext">Editor API</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-25">
+                                                                <a href="#Enrolment_API_.28enrol.29">
+                                                                    <span class="tocnumber">2.12</span>
+                                                                    <span class="toctext">Enrolment API (enrol)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-26">
+                                                                <a href="#Events_API_.28event.29">
+                                                                    <span class="tocnumber">2.13</span>
+                                                                    <span class="toctext">Events API (event)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-27">
+                                                                <a href="#Experience_API_.28xAPI.29">
+                                                                    <span class="tocnumber">2.14</span>
+                                                                    <span class="toctext">Experience API (xAPI)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-28">
+                                                                <a href="#External_functions_API_.28external.29">
+                                                                    <span class="tocnumber">2.15</span>
+                                                                    <span class="toctext">External functions API (external)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-29">
+                                                                <a href="#Favourites_API">
+                                                                    <span class="tocnumber">2.16</span>
+                                                                    <span class="toctext">Favourites API</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-30">
+                                                                <a href="#H5P_API_.28h5p.29">
+                                                                    <span class="tocnumber">2.17</span>
+                                                                    <span class="toctext">H5P API (h5p)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-31">
+                                                                <a href="#Lock_API_.28lock.29">
+                                                                    <span class="tocnumber">2.18</span>
+                                                                    <span class="toctext">Lock API (lock)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-32">
+                                                                <a href="#Message_API_.28message.29">
+                                                                    <span class="tocnumber">2.19</span>
+                                                                    <span class="toctext">Message API (message)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-33">
+                                                                <a href="#Media_API_.28media.29">
+                                                                    <span class="tocnumber">2.20</span>
+                                                                    <span class="toctext">Media API (media)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-34">
+                                                                <a href="#My_profile_API">
+                                                                    <span class="tocnumber">2.21</span>
+                                                                    <span class="toctext">My profile API</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-35">
+                                                                <a href="#OAuth_2_API_.28oauth2.29">
+                                                                    <span class="tocnumber">2.22</span>
+                                                                    <span class="toctext">OAuth 2 API (oauth2)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-36">
+                                                                <a href="#Payment_API_.28payment.29">
+                                                                    <span class="tocnumber">2.23</span>
+                                                                    <span class="toctext">Payment API (payment)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-37">
+                                                                <a href="#Preference_API_.28preference.29">
+                                                                    <span class="tocnumber">2.24</span>
+                                                                    <span class="toctext">Preference API (preference)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-38">
+                                                                <a href="#Portfolio_API_.28portfolio.29">
+                                                                    <span class="tocnumber">2.25</span>
+                                                                    <span class="toctext">Portfolio API (portfolio)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-39">
+                                                                <a href="#Privacy_API_.28privacy.29">
+                                                                    <span class="tocnumber">2.26</span>
+                                                                    <span class="toctext">Privacy API (privacy)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-40">
+                                                                <a href="#Rating_API_.28rating.29">
+                                                                    <span class="tocnumber">2.27</span>
+                                                                    <span class="toctext">Rating API (rating)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-41">
+                                                                <a href="#RSS_API_.28rss.29">
+                                                                    <span class="tocnumber">2.28</span>
+                                                                    <span class="toctext">RSS API (rss)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-42">
+                                                                <a href="#Search_API_.28search.29">
+                                                                    <span class="tocnumber">2.29</span>
+                                                                    <span class="toctext">Search API (search)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-43">
+                                                                <a href="#Tag_API_.28tag.29">
+                                                                    <span class="tocnumber">2.30</span>
+                                                                    <span class="toctext">Tag API (tag)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-44">
+                                                                <a href="#Task_API_.28task.29">
+                                                                    <span class="tocnumber">2.31</span>
+                                                                    <span class="toctext">Task API (task)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-45">
+                                                                <a href="#Time_API_.28time.29">
+                                                                    <span class="tocnumber">2.32</span>
+                                                                    <span class="toctext">Time API (time)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-46">
+                                                                <a href="#Testing_API_.28test.29">
+                                                                    <span class="tocnumber">2.33</span>
+                                                                    <span class="toctext">Testing API (test)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-47">
+                                                                <a href="#User-related_APIs_.28user.29">
+                                                                    <span class="tocnumber">2.34</span>
+                                                                    <span class="toctext">User-related APIs (user)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-48">
+                                                                <a href="#Web_services_API_.28webservice.29">
+                                                                    <span class="tocnumber">2.35</span>
+                                                                    <span class="toctext">Web services API (webservice)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-49">
+                                                                <a href="#Badges_API_.28badges.29">
+                                                                    <span class="tocnumber">2.36</span>
+                                                                    <span class="toctext">Badges API (badges)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-50">
+                                                                <a href="#Custom_fields_API">
+                                                                    <span class="tocnumber">2.37</span>
+                                                                    <span class="toctext">Custom fields API</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                    <li class="toclevel-1 tocsection-51">
+                                                        <a href="#Activity_module_APIs">
+                                                            <span class="tocnumber">3</span>
+                                                            <span class="toctext">Activity module APIs</span>
+                                                        </a>
+                                                        <ul>
+                                                            <li class="toclevel-2 tocsection-52">
+                                                                <a href="#Activity_completion_API_.28completion.29">
+                                                                    <span class="tocnumber">3.1</span>
+                                                                    <span class="toctext">Activity completion API (completion)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-53">
+                                                                <a href="#Advanced_grading_API_.28grading.29">
+                                                                    <span class="tocnumber">3.2</span>
+                                                                    <span class="toctext">Advanced grading API (grading)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-54">
+                                                                <a href="#Conditional_activities_API_.28condition.29_-_deprecated_in_2.7">
+                                                                    <span class="tocnumber">3.3</span>
+                                                                    <span class="toctext">Conditional activities API (condition) - deprecated in 2.7</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-55">
+                                                                <a href="#Groups_API_.28group.29">
+                                                                    <span class="tocnumber">3.4</span>
+                                                                    <span class="toctext">Groups API (group)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-56">
+                                                                <a href="#Gradebook_API_.28grade.29">
+                                                                    <span class="tocnumber">3.5</span>
+                                                                    <span class="toctext">Gradebook API (grade)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-57">
+                                                                <a href="#Plagiarism_API_.28plagiarism.29">
+                                                                    <span class="tocnumber">3.6</span>
+                                                                    <span class="toctext">Plagiarism API (plagiarism)</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="toclevel-2 tocsection-58">
+                                                                <a href="#Question_API_.28question.29">
+                                                                    <span class="tocnumber">3.7</span>
+                                                                    <span class="toctext">Question API (question)</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                    <li class="toclevel-1 tocsection-59">
+                                                        <a href="#See_also">
+                                                            <span class="tocnumber">4</span>
+                                                            <span class="toctext">See also</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <h2>
+                                                <span class="mw-headline" id="Most-used_General_APIs">Most-used General APIs</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=1" class="mw-editsection-visualeditor" title="Edit section: Most-used General APIs">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=1" title="Edit section: Most-used General APIs">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h2>
+                                            <p>These APIs are critical and will be used by nearly every Moodle plugin.
+                                            </p>
+                                            <h3>
+                                                <span id="Access_API_(access)"></span>
+                                                <span class="mw-headline" id="Access_API_.28access.29">Access API (access)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=2" class="mw-editsection-visualeditor" title="Edit section: Access API (access)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=2" title="Edit section: Access API (access)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Access_API" title="Access API">Access API</a>
+                                                 gives you functions so you can determine what the current user is allowed to do, and it allows modules to extend Moodle with new capabilities.
+                                            </p>
+                                            <h3>
+                                                <span id="Data_manipulation_API_(dml)"></span>
+                                                <span class="mw-headline" id="Data_manipulation_API_.28dml.29">Data manipulation API (dml)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=3" class="mw-editsection-visualeditor" title="Edit section: Data manipulation API (dml)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=3" title="Edit section: Data manipulation API (dml)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Data_manipulation_API" title="Data manipulation API">Data manipulation API</a>
+                                                 allows you to read/write to databases in a consistent and safe way.
+                                            </p>
+                                            <h3>
+                                                <span id="File_API_(files)"></span>
+                                                <span class="mw-headline" id="File_API_.28files.29">File API (files)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=4" class="mw-editsection-visualeditor" title="Edit section: File API (files)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=4" title="Edit section: File API (files)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/File_API" title="File API">File API</a>
+                                                 controls the storage of files in connection to various plugins.
+                                            </p>
+                                            <h3>
+                                                <span id="Form_API_(form)"></span>
+                                                <span class="mw-headline" id="Form_API_.28form.29">Form API (form)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=5" class="mw-editsection-visualeditor" title="Edit section: Form API (form)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=5" title="Edit section: Form API (form)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Form_API" title="Form API">Form API</a>
+                                                 defines and handles user data via web forms.
+                                            </p>
+                                            <h3>
+                                                <span id="Logging_API_(log)"></span>
+                                                <span class="mw-headline" id="Logging_API_.28log.29">Logging API (log)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=6" class="mw-editsection-visualeditor" title="Edit section: Logging API (log)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=6" title="Edit section: Logging API (log)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Events_API" title="Events API">Events API</a>
+                                                 allows you to log events in Moodle, while 
+                                                <a href="/dev/Logging_2" title="Logging 2">Logging 2</a>
+                                                 describes how logs are stored and retrieved.
+                                            </p>
+                                            <h3>
+                                                <span id="Navigation_API_(navigation)"></span>
+                                                <span class="mw-headline" id="Navigation_API_.28navigation.29">Navigation API (navigation)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=7" class="mw-editsection-visualeditor" title="Edit section: Navigation API (navigation)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=7" title="Edit section: Navigation API (navigation)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Navigation_API" title="Navigation API">Navigation API</a>
+                                                 allows you to manipulate the navigation tree to add and remove items as you wish.
+                                            </p>
+                                            <h3>
+                                                <span id="Page_API_(page)"></span>
+                                                <span class="mw-headline" id="Page_API_.28page.29">Page API (page)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=8" class="mw-editsection-visualeditor" title="Edit section: Page API (page)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=8" title="Edit section: Page API (page)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Page_API" title="Page API">Page API</a>
+                                                 is used to set up the current page, add JavaScript, and configure how things will be displayed to the user.
+                                            </p>
+                                            <h3>
+                                                <span id="Output_API_(output)"></span>
+                                                <span class="mw-headline" id="Output_API_.28output.29">Output API (output)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=9" class="mw-editsection-visualeditor" title="Edit section: Output API (output)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=9" title="Edit section: Output API (output)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Output_API" title="Output API">Output API</a>
+                                                 is used to render the HTML for all parts of the page.
+                                            </p>
+                                            <h3>
+                                                <span id="String_API_(string)"></span>
+                                                <span class="mw-headline" id="String_API_.28string.29">String API (string)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=10" class="mw-editsection-visualeditor" title="Edit section: String API (string)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=10" title="Edit section: String API (string)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/String_API" title="String API">String API</a>
+                                                 is how you get language text strings to use in the user interface. It handles any language translations that might be available.
+                                            </p>
+                                            <h3>
+                                                <span id="Upgrade_API_(upgrade)"></span>
+                                                <span class="mw-headline" id="Upgrade_API_.28upgrade.29">Upgrade API (upgrade)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=11" class="mw-editsection-visualeditor" title="Edit section: Upgrade API (upgrade)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=11" title="Edit section: Upgrade API (upgrade)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Upgrade_API" title="Upgrade API">Upgrade API</a>
+                                                 is how your module installs and upgrades itself, by keeping track of its own version.
+                                            </p>
+                                            <h3>
+                                                <span id="Moodlelib_API_(core)"></span>
+                                                <span class="mw-headline" id="Moodlelib_API_.28core.29">Moodlelib API (core)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=12" class="mw-editsection-visualeditor" title="Edit section: Moodlelib API (core)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=12" title="Edit section: Moodlelib API (core)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/index.php?title=Moodlelib_API&amp;action=edit&amp;redlink=1" class="new" title="Moodlelib API (page does not exist)">Moodlelib API</a>
+                                                 is the central library file of miscellaneous general-purpose Moodle functions. Functions can over the handling of request parameters, configs, user preferences, time, login, mnet, plugins, strings and others. There are plenty of defined constants too.
+                                            </p>
+                                            <h2>
+                                                <span class="mw-headline" id="Other_General_APIs">Other General APIs</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=13" class="mw-editsection-visualeditor" title="Edit section: Other General APIs">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=13" title="Edit section: Other General APIs">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h2>
+                                            <h3>
+                                                <span id="Admin_settings_API_(admin)"></span>
+                                                <span class="mw-headline" id="Admin_settings_API_.28admin.29">Admin settings API (admin)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=14" class="mw-editsection-visualeditor" title="Edit section: Admin settings API (admin)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=14" title="Edit section: Admin settings API (admin)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Admin_settings" title="Admin settings">Admin settings</a>
+                                                 API deals with providing configuration options for each plugin and Moodle core.
+                                            </p>
+                                            <h3>
+                                                <span id="Analytics_API_(analytics)"></span>
+                                                <span class="mw-headline" id="Analytics_API_.28analytics.29">Analytics API (analytics)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=15" class="mw-editsection-visualeditor" title="Edit section: Analytics API (analytics)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=15" title="Edit section: Analytics API (analytics)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Analytics_API" title="Analytics API">Analytics API</a>
+                                                 allow you to create prediction models and generate insights.
+                                            </p>
+                                            <h3>
+                                                <span id="Availability_API_(availability)"></span>
+                                                <span class="mw-headline" id="Availability_API_.28availability.29">Availability API (availability)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=16" class="mw-editsection-visualeditor" title="Edit section: Availability API (availability)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=16" title="Edit section: Availability API (availability)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Availability_API" title="Availability API">Availability API</a>
+                                                 controls access to activities and sections.
+                                            </p>
+                                            <h3>
+                                                <span id="Backup_API_(backup)"></span>
+                                                <span class="mw-headline" id="Backup_API_.28backup.29">Backup API (backup)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=17" class="mw-editsection-visualeditor" title="Edit section: Backup API (backup)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=17" title="Edit section: Backup API (backup)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Backup_API" title="Backup API">Backup API</a>
+                                                 defines exactly how to convert course data into XML for backup purposes, and the 
+                                                <a href="/dev/Restore_API" title="Restore API">Restore API</a>
+                                                 describes how to convert it back the other way.
+                                            </p>
+                                            <h3>
+                                                <span id="Cache_API_(cache)"></span>
+                                                <span class="mw-headline" id="Cache_API_.28cache.29">Cache API (cache)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=18" class="mw-editsection-visualeditor" title="Edit section: Cache API (cache)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=18" title="Edit section: Cache API (cache)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/The_Moodle_Universal_Cache_(MUC)" title="The Moodle Universal Cache (MUC)">The Moodle Universal Cache (MUC)</a>
+                                                 is the structure for storing cache data within Moodle. 
+                                                <a href="/dev/Cache_API" title="Cache API">Cache_API</a>
+                                                 explains some of what is needed to use a cache in your code.
+                                            </p>
+                                            <h3>
+                                                <span id="Calendar_API_(calendar)"></span>
+                                                <span class="mw-headline" id="Calendar_API_.28calendar.29">Calendar API (calendar)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=19" class="mw-editsection-visualeditor" title="Edit section: Calendar API (calendar)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=19" title="Edit section: Calendar API (calendar)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Calendar_API" title="Calendar API">Calendar API</a>
+                                                 allows you to add and modify events in the calendar for user, groups, courses, or the whole site.
+                                            </p>
+                                            <h3>
+                                                <span id="Check_API_(check)"></span>
+                                                <span class="mw-headline" id="Check_API_.28check.29">Check API (check)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=20" class="mw-editsection-visualeditor" title="Edit section: Check API (check)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=20" title="Edit section: Check API (check)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Check_API" title="Check API">Check API</a>
+                                                 allows you to add security, performance or health checks to your site.
+                                            </p>
+                                            <h3>
+                                                <span id="Comment_API_(comment)"></span>
+                                                <span class="mw-headline" id="Comment_API_.28comment.29">Comment API (comment)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=21" class="mw-editsection-visualeditor" title="Edit section: Comment API (comment)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=21" title="Edit section: Comment API (comment)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Comment_API" title="Comment API">Comment API</a>
+                                                 allows you to save and retrieve user comments, so that you can easily add commenting to any of your code.
+                                            </p>
+                                            <h3>
+                                                <span id="Competency_API_(competency)"></span>
+                                                <span class="mw-headline" id="Competency_API_.28competency.29">Competency API (competency)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=22" class="mw-editsection-visualeditor" title="Edit section: Competency API (competency)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=22" title="Edit section: Competency API (competency)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Competency_API" title="Competency API">Competency API</a>
+                                                 allows you to list and add evidence of competencies to learning plans, learning plan templates, frameworks, courses and activities.
+                                            </p>
+                                            <h3>
+                                                <span id="Data_definition_API_(ddl)"></span>
+                                                <span class="mw-headline" id="Data_definition_API_.28ddl.29">Data definition API (ddl)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=23" class="mw-editsection-visualeditor" title="Edit section: Data definition API (ddl)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=23" title="Edit section: Data definition API (ddl)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Data_definition_API" title="Data definition API">Data definition API</a>
+                                                 is what you use to create, change and delete tables and fields in the database during upgrades.
+                                            </p>
+                                            <h3>
+                                                <span class="mw-headline" id="Editor_API">Editor API</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=24" class="mw-editsection-visualeditor" title="Edit section: Editor API">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=24" title="Edit section: Editor API">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Editor_API" title="Editor API">Editor API</a>
+                                                 is used to control HTML text editors.
+                                            </p>
+                                            <h3>
+                                                <span id="Enrolment_API_(enrol)"></span>
+                                                <span class="mw-headline" id="Enrolment_API_.28enrol.29">Enrolment API (enrol)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=25" class="mw-editsection-visualeditor" title="Edit section: Enrolment API (enrol)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=25" title="Edit section: Enrolment API (enrol)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Enrolment_API" title="Enrolment API">Enrolment API</a>
+                                                 deals with course participants.
+                                            </p>
+                                            <h3>
+                                                <span id="Events_API_(event)"></span>
+                                                <span class="mw-headline" id="Events_API_.28event.29">Events API (event)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=26" class="mw-editsection-visualeditor" title="Edit section: Events API (event)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=26" title="Edit section: Events API (event)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Events_API" title="Events API">Events API</a>
+                                                 allows to define "events" with payload data to be fired whenever you like, and it also allows you to define handlers to react to these events when they happen. This is the recommended form of inter-plugin communication. This also forms the basis for logging in Moodle.
+                                            </p>
+                                            <h3>
+                                                <span id="Experience_API_(xAPI)"></span>
+                                                <span class="mw-headline" id="Experience_API_.28xAPI.29">Experience API (xAPI)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=27" class="mw-editsection-visualeditor" title="Edit section: Experience API (xAPI)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=27" title="Edit section: Experience API (xAPI)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The Experience API (xAPI) is an e-learning standard that allows learning content and learning systems to speak to each other. The 
+                                                <a href="/dev/Experience_API_(xAPI)" title="Experience API (xAPI)">Experience API (xAPI)</a>
+
+                                                allows any plugin to generate and handle xAPI standard statements.
+                                            </p>
+                                            <h3>
+                                                <span id="External_functions_API_(external)"></span>
+                                                <span class="mw-headline" id="External_functions_API_.28external.29">External functions API (external)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=28" class="mw-editsection-visualeditor" title="Edit section: External functions API (external)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=28" title="Edit section: External functions API (external)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/External_functions_API" title="External functions API">External functions API</a>
+                                                 allows you to create fully parametrised methods that can be accessed by external programs (such as 
+                                                <a href="/dev/Web_services" title="Web services">Web services</a>
+                                                ).
+                                            </p>
+                                            <h3>
+                                                <span class="mw-headline" id="Favourites_API">Favourites API</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=29" class="mw-editsection-visualeditor" title="Edit section: Favourites API">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=29" title="Edit section: Favourites API">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Favourites_API" title="Favourites API">Favourites API</a>
+                                                 allows you to mark items as favourites for a user and manage these favourites. This is often referred to as 'Starred'.
+                                            </p>
+                                            <h3>
+                                                <span id="H5P_API_(h5p)"></span>
+                                                <span class="mw-headline" id="H5P_API_.28h5p.29">H5P API (h5p)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=30" class="mw-editsection-visualeditor" title="Edit section: H5P API (h5p)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=30" title="Edit section: H5P API (h5p)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/index.php?title=H5P_API&amp;action=edit&amp;redlink=1" class="new" title="H5P API (page does not exist)">H5P API</a>
+                                                 allows plugins to make some decisions/implementations related to the 
+                                                <a href="/dev/H5P" title="H5P">H5P integration</a>
+                                                .
+                                            </p>
+                                            <h3>
+                                                <span id="Lock_API_(lock)"></span>
+                                                <span class="mw-headline" id="Lock_API_.28lock.29">Lock API (lock)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=31" class="mw-editsection-visualeditor" title="Edit section: Lock API (lock)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=31" title="Edit section: Lock API (lock)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Lock_API" title="Lock API">Lock API</a>
+                                                 lets you synchronise processing between multiple requests, even for separate nodes in a cluster.
+                                            </p>
+                                            <h3>
+                                                <span id="Message_API_(message)"></span>
+                                                <span class="mw-headline" id="Message_API_.28message.29">Message API (message)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=32" class="mw-editsection-visualeditor" title="Edit section: Message API (message)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=32" title="Edit section: Message API (message)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Message_API" title="Message API">Message API</a>
+                                                 lets you post messages to users. They decide how they want to receive them.
+                                            </p>
+                                            <h3>
+                                                <span id="Media_API_(media)"></span>
+                                                <span class="mw-headline" id="Media_API_.28media.29">Media API (media)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=33" class="mw-editsection-visualeditor" title="Edit section: Media API (media)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=33" title="Edit section: Media API (media)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Media_players#Using_media_players" title="Media players">Media</a>
+                                                 API can be used to embed media items such as audio, video, and Flash.
+                                            </p>
+                                            <h3>
+                                                <span class="mw-headline" id="My_profile_API">My profile API</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=34" class="mw-editsection-visualeditor" title="Edit section: My profile API">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=34" title="Edit section: My profile API">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/My_profile_API" title="My profile API">My profile API</a>
+                                                 is used to add things to the profile page.
+                                            </p>
+                                            <h3>
+                                                <span id="OAuth_2_API_(oauth2)"></span>
+                                                <span class="mw-headline" id="OAuth_2_API_.28oauth2.29">OAuth 2 API (oauth2)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=35" class="mw-editsection-visualeditor" title="Edit section: OAuth 2 API (oauth2)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=35" title="Edit section: OAuth 2 API (oauth2)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/OAuth_2_API" title="OAuth 2 API">OAuth 2 API</a>
+                                                 is used to provide a common place to configure and manage external systems using OAuth 2.
+                                            </p>
+                                            <h3>
+                                                <span id="Payment_API_(payment)"></span>
+                                                <span class="mw-headline" id="Payment_API_.28payment.29">Payment API (payment)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=36" class="mw-editsection-visualeditor" title="Edit section: Payment API (payment)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=36" title="Edit section: Payment API (payment)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Payment_API" title="Payment API">Payment API</a>
+                                                 deals with payments.
+                                            </p>
+                                            <h3>
+                                                <span id="Preference_API_(preference)"></span>
+                                                <span class="mw-headline" id="Preference_API_.28preference.29">Preference API (preference)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=37" class="mw-editsection-visualeditor" title="Edit section: Preference API (preference)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=37" title="Edit section: Preference API (preference)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Preference_API" title="Preference API">Preference API</a>
+                                                 is a simple way to store and retrieve preferences for individual users.
+                                            </p>
+                                            <h3>
+                                                <span id="Portfolio_API_(portfolio)"></span>
+                                                <span class="mw-headline" id="Portfolio_API_.28portfolio.29">Portfolio API (portfolio)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=38" class="mw-editsection-visualeditor" title="Edit section: Portfolio API (portfolio)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=38" title="Edit section: Portfolio API (portfolio)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Portfolio_API" title="Portfolio API">Portfolio API</a>
+                                                 allows you to add portfolio interfaces on your pages and allows users to package up data to send to their portfolios.
+                                            </p>
+                                            <h3>
+                                                <span id="Privacy_API_(privacy)"></span>
+                                                <span class="mw-headline" id="Privacy_API_.28privacy.29">Privacy API (privacy)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=39" class="mw-editsection-visualeditor" title="Edit section: Privacy API (privacy)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=39" title="Edit section: Privacy API (privacy)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Privacy_API" title="Privacy API">Privacy API</a>
+                                                 allows you to describe the personal data that you store, and provides the means for that data to be discovered, exported, and deleted on a per-user basis.
+                                                This allows compliance with regulation such as the General Data Protection Regulation (GDPR) in Europe.
+                                            </p>
+                                            <h3>
+                                                <span id="Rating_API_(rating)"></span>
+                                                <span class="mw-headline" id="Rating_API_.28rating.29">Rating API (rating)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=40" class="mw-editsection-visualeditor" title="Edit section: Rating API (rating)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=40" title="Edit section: Rating API (rating)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Rating_API" title="Rating API">Rating API</a>
+                                                 lets you create AJAX rating interfaces so that users can rate items in your plugin. In an activity module, you may choose to aggregate ratings to form grades.
+                                            </p>
+                                            <h3>
+                                                <span id="RSS_API_(rss)"></span>
+                                                <span class="mw-headline" id="RSS_API_.28rss.29">RSS API (rss)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=41" class="mw-editsection-visualeditor" title="Edit section: RSS API (rss)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=41" title="Edit section: RSS API (rss)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/RSS_API" title="RSS API">RSS API</a>
+                                                 allows you to create secure RSS feeds of data in your module.
+                                            </p>
+                                            <h3>
+                                                <span id="Search_API_(search)"></span>
+                                                <span class="mw-headline" id="Search_API_.28search.29">Search API (search)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=42" class="mw-editsection-visualeditor" title="Edit section: Search API (search)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=42" title="Edit section: Search API (search)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Search_API" title="Search API">Search API</a>
+                                                 allows you to index contents in a search engine and query the search engine for results.
+                                            </p>
+                                            <h3>
+                                                <span id="Tag_API_(tag)"></span>
+                                                <span class="mw-headline" id="Tag_API_.28tag.29">Tag API (tag)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=43" class="mw-editsection-visualeditor" title="Edit section: Tag API (tag)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=43" title="Edit section: Tag API (tag)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Tag_API" title="Tag API">Tag API</a>
+                                                 allows you to store tags (and a tag cloud) to items in your module.
+                                            </p>
+                                            <h3>
+                                                <span id="Task_API_(task)"></span>
+                                                <span class="mw-headline" id="Task_API_.28task.29">Task API (task)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=44" class="mw-editsection-visualeditor" title="Edit section: Task API (task)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=44" title="Edit section: Task API (task)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Task_API" title="Task API">Task API</a>
+                                                 lets you run jobs in the background. Either once off, or on a regular schedule.
+                                            </p>
+                                            <h3>
+                                                <span id="Time_API_(time)"></span>
+                                                <span class="mw-headline" id="Time_API_.28time.29">Time API (time)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=45" class="mw-editsection-visualeditor" title="Edit section: Time API (time)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=45" title="Edit section: Time API (time)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Time_API" title="Time API">Time API</a>
+                                                 takes care of translating and displaying times between users in the site.
+                                            </p>
+                                            <h3>
+                                                <span id="Testing_API_(test)"></span>
+                                                <span class="mw-headline" id="Testing_API_.28test.29">Testing API (test)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=46" class="mw-editsection-visualeditor" title="Edit section: Testing API (test)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=46" title="Edit section: Testing API (test)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The testing API contains the Unit test API (
+                                                <a href="/dev/PHPUnit" title="PHPUnit">PHPUnit</a>
+                                                ) and Acceptance test API (
+                                                <a href="/dev/Acceptance_testing" title="Acceptance testing">Acceptance testing</a>
+                                                ). Ideally all new code should have unit tests written FIRST.
+                                            </p>
+                                            <h3>
+                                                <span id="User-related_APIs_(user)"></span>
+                                                <span class="mw-headline" id="User-related_APIs_.28user.29">User-related APIs (user)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=47" class="mw-editsection-visualeditor" title="Edit section: User-related APIs (user)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=47" title="Edit section: User-related APIs (user)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                This is a rather informal grouping of miscellaneous 
+                                                <a href="/dev/User-related_APIs" title="User-related APIs">User-related APIs</a>
+                                                 relating to sorting and searching lists of users.
+                                            </p>
+                                            <h3>
+                                                <span id="Web_services_API_(webservice)"></span>
+                                                <span class="mw-headline" id="Web_services_API_.28webservice.29">Web services API (webservice)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=48" class="mw-editsection-visualeditor" title="Edit section: Web services API (webservice)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=48" title="Edit section: Web services API (webservice)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Web_services_API" title="Web services API">Web services API</a>
+                                                 allows you to expose particular functions (usually external functions) as web services.
+                                            </p>
+                                            <h3>
+                                                <span id="Badges_API_(badges)"></span>
+                                                <span class="mw-headline" id="Badges_API_.28badges.29">Badges API (badges)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=49" class="mw-editsection-visualeditor" title="Edit section: Badges API (badges)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=49" title="Edit section: Badges API (badges)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a rel="nofollow" class="external text" href="https://docs.moodle.org/dev/OpenBadges_User_Documentation">Badges</a>
+                                                 user documentation (is a temp page until we compile a proper page with all the classes and APIs that allows you to manage particular badges and OpenBadges Backpack).
+                                            </p>
+                                            <h3>
+                                                <span class="mw-headline" id="Custom_fields_API">Custom fields API</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=50" class="mw-editsection-visualeditor" title="Edit section: Custom fields API">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=50" title="Edit section: Custom fields API">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Custom_fields_API" title="Custom fields API">Custom fields API</a>
+                                                 allows you to configure and add custom fields for different entities
+                                            </p>
+                                            <h2>
+                                                <span class="mw-headline" id="Activity_module_APIs">Activity module APIs</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=51" class="mw-editsection-visualeditor" title="Edit section: Activity module APIs">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=51" title="Edit section: Activity module APIs">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h2>
+                                            <p>Activity modules are the most important plugin in Moodle. There are several core APIs that service only Activity modules.
+                                            </p>
+                                            <h3>
+                                                <span id="Activity_completion_API_(completion)"></span>
+                                                <span class="mw-headline" id="Activity_completion_API_.28completion.29">Activity completion API (completion)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=52" class="mw-editsection-visualeditor" title="Edit section: Activity completion API (completion)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=52" title="Edit section: Activity completion API (completion)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Activity_completion_API" title="Activity completion API">Activity completion API</a>
+                                                 is to indicate to the system how activities are completed.
+                                            </p>
+                                            <h3>
+                                                <span id="Advanced_grading_API_(grading)"></span>
+                                                <span class="mw-headline" id="Advanced_grading_API_.28grading.29">Advanced grading API (grading)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=53" class="mw-editsection-visualeditor" title="Edit section: Advanced grading API (grading)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=53" title="Edit section: Advanced grading API (grading)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Advanced_grading_API" title="Advanced grading API">Advanced grading API</a>
+                                                 allows you to add more advanced grading interfaces (such as rubrics) that can produce simple grades for the gradebook.
+                                            </p>
+                                            <h3>
+                                                <span id="Conditional_activities_API_(condition)_-_deprecated_in_2.7"></span>
+                                                <span class="mw-headline" id="Conditional_activities_API_.28condition.29_-_deprecated_in_2.7">Conditional activities API (condition) - deprecated in 2.7</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=54" class="mw-editsection-visualeditor" title="Edit section: Conditional activities API (condition) - deprecated in 2.7">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=54" title="Edit section: Conditional activities API (condition) - deprecated in 2.7">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The deprecated 
+                                                <a href="/dev/Conditional_activities_API" title="Conditional activities API">Conditional activities API</a>
+                                                 used to provide conditional access to modules and sections in Moodle 2.6 and below. It has been replaced by the 
+                                                <a href="/dev/Availability_API" title="Availability API">Availability API</a>
+                                                .
+                                            </p>
+                                            <h3>
+                                                <span id="Groups_API_(group)"></span>
+                                                <span class="mw-headline" id="Groups_API_.28group.29">Groups API (group)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=55" class="mw-editsection-visualeditor" title="Edit section: Groups API (group)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=55" title="Edit section: Groups API (group)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Groups_API" title="Groups API">Groups API</a>
+                                                 allows you to check the current activity group mode and set the current group.
+                                            </p>
+                                            <h3>
+                                                <span id="Gradebook_API_(grade)"></span>
+                                                <span class="mw-headline" id="Gradebook_API_.28grade.29">Gradebook API (grade)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=56" class="mw-editsection-visualeditor" title="Edit section: Gradebook API (grade)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=56" title="Edit section: Gradebook API (grade)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Gradebook_API" title="Gradebook API">Gradebook API</a>
+                                                 allows you to read and write from the gradebook. It also allows you to provide an interface for detailed grading information.
+                                            </p>
+                                            <h3>
+                                                <span id="Plagiarism_API_(plagiarism)"></span>
+                                                <span class="mw-headline" id="Plagiarism_API_.28plagiarism.29">Plagiarism API (plagiarism)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=57" class="mw-editsection-visualeditor" title="Edit section: Plagiarism API (plagiarism)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=57" title="Edit section: Plagiarism API (plagiarism)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Plagiarism_API" title="Plagiarism API">Plagiarism API</a>
+                                                 allows your activity module to send files and data to external services to have them checked for plagiarism.
+                                            </p>
+                                            <h3>
+                                                <span id="Question_API_(question)"></span>
+                                                <span class="mw-headline" id="Question_API_.28question.29">Question API (question)</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=58" class="mw-editsection-visualeditor" title="Edit section: Question API (question)">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=58" title="Edit section: Question API (question)">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h3>
+                                            <p>
+                                                The 
+                                                <a href="/dev/Question_API" title="Question API">Question API</a>
+                                                 (which can be divided into the Question bank API and the Question engine API), can be used by activities that want to use questions from the question bank.
+                                            </p>
+                                            <h2>
+                                                <span class="mw-headline" id="See_also">See also</span>
+                                                <span class="mw-editsection">
+                                                    <span class="mw-editsection-bracket">[</span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;veaction=edit&amp;section=59" class="mw-editsection-visualeditor" title="Edit section: See also">edit</a>
+                                                    <span class="mw-editsection-divider"> | </span>
+                                                    <a href="/dev/index.php?title=Core_APIs&amp;action=edit&amp;section=59" title="Edit section: See also">edit source</a>
+                                                    <span class="mw-editsection-bracket">]</span>
+                                                </span>
+                                            </h2>
+                                            <ul>
+                                                <li>
+                                                    <a href="/dev/Plugins" class="mw-redirect" title="Plugins">Plugins</a>
+                                                     - plugin types also have their own APIs
+                                                </li>
+                                                <li>
+                                                    <a href="/dev/Callbacks" title="Callbacks">Callbacks</a>
+                                                     - list of all callbacks in Moodle
+                                                </li>
+                                                <li>
+                                                    <a href="/dev/Coding_style" title="Coding style">Coding style</a>
+                                                     - general information about writing PHP code for Moodle
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="printfooter">
+
+                                        Retrieved from "
+                                        <a dir="ltr" href="https://docs.moodle.org/dev/index.php?title=Core_APIs&amp;oldid=61248">https://docs.moodle.org/dev/index.php?title=Core_APIs&amp;oldid=61248</a>
+                                        "
+                                    </div>
+                                </body>
+                                </html>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="catlinks" class="catlinks catlinks-allhidden" data-mw="interface"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="mt-3 mb-4 col">
+
+                <nav class="p-navbar collapsible mb-2" role="navigation" id="mw-navigation-gu9nodgd7l">
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#gu9nodge8x"></button>
+                    <div class="collapse navbar-collapse gu9nodge8x" id="gu9nodge8x">
+                        <div class="navbar-nav">
+
+                            <div class="nav-item p-tb-dropdown dropup">
+                                <a href="#" class="nav-link dropdown-toggle p-tb-toggle" data-toggle="dropdown" data-boundary="viewport">Tools</a>
+                                <div class="dropdown-menu">
+                                    <div id="t-whatlinkshere" class="nav-item">
+                                        <a href="/dev/Special:WhatLinksHere/Core_APIs" title="A list of all wiki pages that link here [j]" accesskey="j" class="nav-link t-whatlinkshere">What links here</a>
+                                    </div>
+                                    <div id="t-recentchangeslinked" class="nav-item">
+                                        <a href="/dev/Special:RecentChangesLinked/Core_APIs" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k" class="nav-link t-recentchangeslinked">Related changes</a>
+                                    </div>
+                                    <div id="t-upload" class="nav-item">
+                                        <a href="/dev/Special:Upload" title="Upload files [u]" accesskey="u" class="nav-link t-upload">Upload file</a>
+                                    </div>
+                                    <div id="t-specialpages" class="nav-item">
+                                        <a href="/dev/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q" class="nav-link t-specialpages">Special pages</a>
+                                    </div>
+                                    <div id="t-print" class="nav-item">
+                                        <a href="javascript:print();" rel="alternate" title="Printable version of this page [p]" accesskey="p" class="nav-link t-print">Printable version</a>
+                                    </div>
+                                    <div id="t-permalink" class="nav-item">
+                                        <a href="/dev/index.php?title=Core_APIs&amp;oldid=61248" title="Permanent link to this revision of the page" class="nav-link t-permalink">Permanent link</a>
+                                    </div>
+                                    <div id="t-info" class="nav-item">
+                                        <a href="/dev/index.php?title=Core_APIs&amp;action=info" title="More information about this page" class="nav-link t-info">Page information</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="nav-item p-lang-dropdown dropup">
+                                <a href="#" class="nav-link dropdown-toggle p-lang-toggle" data-toggle="dropdown" data-boundary="viewport">In other languages</a>
+                                <div class="dropdown-menu">
+                                    <div class="interlanguage-link interwiki-ja nav-item">
+                                        <a href="http://docs.moodle.org/ja/%E3%82%B3%E3%82%A2API" title="コアAPI – 日本語" lang="ja" hreflang="ja" class="interlanguage-link-target nav-link">日本語</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+
+                <div id="footer-info" class="footer-info">
+
+                    <div> This page was last edited on 8 September 2021, at 11:02.</div>
+                    <div>
+                        Content is available under 
+                        <a class="external" rel="nofollow" href="https://docs.moodle.org/dev/License">GNU General Public License</a>
+                         unless otherwise noted.
+                    </div>
+                </div>
+
+                <div id="footer-places" class="footer-places">
+                    <div>
+                        <a href="/dev/MoodleDocs:Privacy_policy" title="MoodleDocs:Privacy policy">Privacy</a>
+                    </div>
+                    <div>
+                        <a href="/dev/MoodleDocs:About" title="MoodleDocs:About">About the Dev docs</a>
+                    </div>
+                    <div>
+                        <a href="/dev/MoodleDocs:General_disclaimer" title="MoodleDocs:General disclaimer">Disclaimers</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+
+                <div id="footer-icons" class="justify-content-end footer-icons">
+
+                    <div>
+                        <a href="https://www.mediawiki.org/">
+                            <img src="/dev/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/dev/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /dev/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31" loading="lazy"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    (RLQ = window.RLQ || []).push(function() {
+        mw.config.set({
+            "wgPageParseReport": {
+                "limitreport": {
+                    "cputime": "0.054",
+                    "walltime": "0.123",
+                    "ppvisitednodes": {
+                        "value": 239,
+                        "limit": 1000000
+                    },
+                    "postexpandincludesize": {
+                        "value": 0,
+                        "limit": 2097152
+                    },
+                    "templateargumentsize": {
+                        "value": 0,
+                        "limit": 2097152
+                    },
+                    "expansiondepth": {
+                        "value": 2,
+                        "limit": 40
+                    },
+                    "expensivefunctioncount": {
+                        "value": 0,
+                        "limit": 100
+                    },
+                    "unstrip-depth": {
+                        "value": 0,
+                        "limit": 20
+                    },
+                    "unstrip-size": {
+                        "value": 0,
+                        "limit": 5000000
+                    },
+                    "timingprofile": ["100.00%    0.000      1 -total"]
+                },
+                "cachereport": {
+                    "timestamp": "20210908154306",
+                    "ttl": 86400,
+                    "transientcontent": false
+                }
+            }
+        });
+        mw.config.set({
+            "wgBackendResponseTime": 110
+        });
+    });
+    </script>
+    <script type="text/javascript">
+    window.NREUM || (NREUM = {});
+    NREUM.info = {
+        "beacon": "bam-cell.nr-data.net",
+        "licenseKey": "05ab6e1949",
+        "applicationID": "84455028",
+        "transactionName": "YwBabBRSCEFYAkVaWlpKeVsSWglcFgBSR1xbCxdOD1YR",
+        "queueTime": 0,
+        "applicationTime": 125,
+        "atts": "T0dZGlxIG08=",
+        "errorBeacon": "bam-cell.nr-data.net",
+        "agent": ""
+    }
+    </script>
+</body>
+</html>

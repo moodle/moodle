@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>lib</location>
+        <name>Adminer</name>
+        <version>4.7.8</version>
+        <license>Apache License 2.0 or GPL 2</license>
+    </library>
+</libraries>

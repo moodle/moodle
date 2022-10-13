@@ -1,0 +1,211 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template file/theme/config
+
+    Theme config.php file.
+
+    Context variables required for this template:
+    * component
+    * copyright
+
+    Example context (json):
+    {
+        "component": "local_test",
+        "copyright": "2021 David Mudrák <david@moodle.com>"
+    }
+}}
+{{< common/boilerplate_php }}
+{{$ description }}The configuration for {{ component }} is defined here.{{/ description }}
+{{$ package }}{{ component }}{{/ package }}
+{{$ copyright }}{{{ copyright }}}{{/ copyright }}
+{{/ common/boilerplate_php }}
+
+$THEME->name = '{{ component_name }}';
+
+{{# self.has_doctype }}
+$THEME->doctype = '{{ theme_features.doctype }}';
+{{/ self.has_doctype }}
+
+{{# self.has_parents }}
+$THEME->parents = array(
+    {{# theme_features.parents }}
+    '{{ .base_theme }}',
+    {{/ theme_features.parents }}
+);
+{{/ self.has_parents }}
+
+{{# self.has_stylesheets }}
+$THEME->sheets = array(
+    {{# theme_features.stylesheets }}
+    '{{ .name }}',
+    {{/ theme_features.stylesheets }}
+);
+{{/ self.has_stylesheets }}
+
+{{# self.has_all_layouts }}
+// The theme needs to be added to all Moodle layouts.
+$THEME->layouts = array(
+
+    // Most backwards compatible layout without the blocks.
+    // This is the layout used by default.
+    'base' => array(
+        'file' => 'layout1',
+        'regions' => array(),
+    ),
+
+    // Standard layout with blocks, recommended for most pages with general information.
+    'standard' => array(
+        'file' => 'layout2',
+        'regions' => array(),
+    ),
+
+    // Main course page.
+    'course' => array(
+        'file' => 'layout3',
+        'regions' => array(),
+    ),
+
+    'coursecategory' => array(
+        'file' => 'layout4',
+        'regions' => array(),
+    ),
+
+    // Part of course, typical for modules. Default page layout if $cm specified in require_login().
+    'incourse' => array(
+        'file' => 'layout5',
+        'regions' => array(),
+    ),
+
+    // The site home page.
+    'frontpage' => array(
+        'file' => 'layout6',
+        'regions' => array(),
+    ),
+
+    // Server administration scripts.
+    'admin' => array(
+        'file' => 'layout7',
+        'regions' => array(),
+    ),
+
+    // My dashboard page.
+    'mydashboard' => array(
+        'file' => 'layout8',
+        'regions' => array(),
+    ),
+
+    // My public page.
+    'mypublic' => array(
+        'file' => 'layout9',
+        'regions' => array(),
+    ),
+
+    'login' => array(
+        'file' => 'layout10',
+        'regions' => array(),
+    ),
+
+    // Pages that appear in pop-up windows - no navigation, no blocks, no header.
+    'popup' => array(
+        'file' => 'layout11',
+        'regions' => array(),
+        'options' => array(
+            'nofooter' => true,
+            'noblocks' => true,
+            'nonavbar' => true,
+            'nocourseheaderfooter' => true
+        ),
+    ),
+
+    // No blocks and minimal footer - used for legacy frame layouts.
+    'frametop' => array(
+        'file' => 'layout12',
+        'regions' => array(),
+        'options' => array(
+            'nofooter' => true,
+            'nocoursefooter' => true
+        ),
+    ),
+
+    // Used during upgrade and install, and for the 'This site is undergoing maintenance message.
+    // This must not have any blocks, and it is a good idea if it does not have links to other pages.
+    'maintenance' => array(
+        'file' => 'layout13',
+        'regions' => array(),
+        'options' => array(
+            'noblocks' => true,
+            'nofooter' => true,
+            'nonavbar' => true,
+            'nocourseheaderfooter' => true
+        ),
+    ),
+
+    // Embedded pages, like iframe/object embedded in moodleform. Needs as much space as possible.
+    'embedded' => array(
+        'file' => 'layout14',
+        'regions' => array(),
+        'options' => array(
+            'nofooter' => true,
+            'nonavbar' => true,
+            'nocourseheaderfooter' => true
+        ),
+    ),
+
+    // Should display the content and basic headers only.
+    'print' => array(
+        'file' => 'layout15',
+        'regions' => array(),
+        'options' => array(
+            'nofooter' => true,
+            'nonavbar' => false,
+            'noblocks' => true,
+            'nocourseheaderfooter' => true
+        ),
+    ),
+
+    // The pagelayout used when a redirection is occuring.
+    'redirect' => array(
+        'file' => 'layout16',
+        'regions' => array(),
+        'options' => array(
+            'nofooter' => true,
+            'nonavbar' => true,
+            'nocourseheaderfooter' => true
+        ),
+    ),
+
+    // The page layout used for reports.
+    'report' => array(
+        'file' => 'layout17',
+        'regions' => array(),
+    ),
+
+    // The pagelayout used for safebrowser and securewindow.
+    'secure' => array(
+        'file' => 'layout18',
+        'regions' => array(),
+        'options' => array(
+            'nofooter' => true,
+            'nonavbar' => true,
+            'nocustommenu' => true,
+            'nologinlinks' => true,
+            'nocourseheaderfooter' => true
+        ),
+    ),
+);
+{{/ self.has_all_layouts }}
