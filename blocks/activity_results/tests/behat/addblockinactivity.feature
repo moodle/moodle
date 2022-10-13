@@ -1,4 +1,4 @@
-@block @block_activity_results @javascript @skip_interim
+@block @block_activity_results @javascript
 Feature: The activity results block displays student scores
   In order to be display student scores
   As a user
@@ -36,6 +36,7 @@ Feature: The activity results block displays student scores
     And I am on "Course 1" course homepage with editing mode on
     And I should see "Test page name"
     And I navigate to "View > Grader report" in the course gradebook
+    And I change window size to "large"
     And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment 1"
     And I give the grade "80.00" to the user "Student 2" for the grade item "Test assignment 1"
     And I give the grade "70.00" to the user "Student 3" for the grade item "Test assignment 1"
