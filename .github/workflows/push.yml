@@ -17,10 +17,10 @@ jobs:
 
     steps:
       - name: Checking out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configuring node & npm
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
 
@@ -85,7 +85,7 @@ jobs:
           postgresql password: test
 
       - name: Configuring git vars
-        uses: rlespinasse/github-slug-action@v3.x
+        uses: rlespinasse/github-slug-action@v4
 
       - name: Setting up PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
@@ -96,7 +96,7 @@ jobs:
           coverage: none
 
       - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setting up PHPUnit
         env:
