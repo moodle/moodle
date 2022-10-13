@@ -1,14 +1,15 @@
 Description of MatthiasMullie\Minify import into Moodle
 
-1) Download https://github.com/matthiasmullie/minify/archive/X.Y.ZZ.zip and unzip
+1) Go to from https://github.com/matthiasmullie/minify/releases
 
+Download lastest minify Source code (zip) and unzip
 mv minify-X.Y.ZZ/src /path/to/moodle/lib/minify/matthiasmullie-minify/
 mv minify-X.Y.ZZ/data /path/to/moodle/lib/minify/matthiasmullie-minify/
 
-2) Download https://github.com/matthiasmullie/path-converter/archive/A.B.C.zip and unzip
+2) Go to https://github.com/matthiasmullie/path-converter/releases/A.B.C.zip and unzip
 
+Download lastest path-converter Source code (zip) and unzip
 mv path-converter-A.B.C/src/ /path/to/moodle/lib/minify/matthiasmullie-pathconverter/
-
 
 3) Apply the following patches:
 
