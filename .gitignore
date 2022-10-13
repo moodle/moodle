@@ -52,3 +52,5 @@ moodle-plugin-ci.phar
 .stylelintignore
 /jsdoc
 .phpcs.xml
+/local/codechecker/
+/local/moodlecheck/
