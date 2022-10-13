@@ -21693,8 +21693,8 @@ div.editor_atto_toolbar button .icon {
   .tertiary-navigation > a.btn,
   .tertiary-navigation > div.urlselect {
     margin-bottom: 25px; }
-  .tertiary-navigation .navitem:not(:last-child) {
-    margin-right: 20px; }
+  .tertiary-navigation .row {
+    column-gap: 20px; }
   .tertiary-navigation .tertiary-navigation-selector .dropdown-toggle {
     padding: 0;
     font-size: 1.4rem;
