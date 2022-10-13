@@ -2,6 +2,9 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 4.1 ===
+
+* Final deprecation and removal of the class \admin_setting_managelicenses, please use \tool_licensemanager\manager instead.
+* Final deprecation and removal of the function license_manager::add(). Please use license_manager::save() instead.
 * Final deprecation of the following functions behat_field_manager::get_node_type() and behat_field_manager::get_field()
   please call behat_field_manager::get_field_node_type() and behat_field_manager::get_form_field().
 * Final deprecation and removal of the following class, please use \core\task\manager.
