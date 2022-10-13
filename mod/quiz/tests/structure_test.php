@@ -958,4 +958,39 @@ class structure_test extends \advanced_testcase {
         $this->assertFalse($versiondata[2]->selected);
         $this->assertFalse($versiondata[3]->selected);
     }
+
+    /**
+     * Test the current user have '...use' capability over the question(s) in a given slot.
+     *
+     * @covers ::has_use_capability
+     */
+    public function test_has_use_capability() {
+        $this->resetAfterTest();
+
+        // Create a quiz with question.
+        $quizobj = $this->create_test_quiz([]);
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category(['contextid' => $quizobj->get_context()->id]);
+        $q = $questiongenerator->create_question('essay', null,
+            ['category' => $cat->id, 'name' => 'This is essay question']);
+        quiz_add_quiz_question($q->id, $quizobj->get_quiz());
+
+        // Create the quiz object.
+        $structure = structure::create_for_quiz($quizobj);
+        $slots = $structure->get_slots();
+
+        // Get slot.
+        $slotid = array_pop($slots)->slot;
+
+        $course = $quizobj->get_course();
+        $generator = $this->getDataGenerator();
+        $teacher = $generator->create_and_enrol($course, 'editingteacher');
+        $student = $generator->create_and_enrol($course);
+
+        $this->setUser($teacher);
+        $this->assertTrue($structure->has_use_capability($slotid));
+
+        $this->setUser($student);
+        $this->assertFalse($structure->has_use_capability($slotid));
+    }
 }
