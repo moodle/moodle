@@ -1,5 +1,10 @@
 This files describes API changes in the quiz code.
 
+=== 4.1 ===
+
+* quiz_has_question_use is now deprecated. Use mod_quiz\structure::has_use_capability istead.
+
+
 === 4.0.3, 4.1 ===
 
 * If a quiz is sequential the external functions mod_quiz_external::get_attempt_data, mod_quiz_external::get_attempt_summary will not return any data

@@ -823,7 +823,7 @@ class edit_renderer extends \plugin_renderer_base {
                     $structure->get_question_in_slot($slot),
                     null, null, $qtype);
         }
-        if ($structure->can_be_edited()) {
+        if ($structure->can_be_edited() && $structure->has_use_capability($slot)) {
             $questionicons .= $this->question_remove_icon($structure, $slot, $pageurl);
         }
         $questionicons .= $this->marked_out_of_field($structure, $slot);
