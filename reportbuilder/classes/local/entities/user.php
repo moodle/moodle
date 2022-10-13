@@ -483,11 +483,9 @@ class user extends base {
         // User fields filters.
         $fields = $this->get_user_fields();
         foreach ($fields as $field => $name) {
-            // Filtering isn't supported for LONGTEXT fields on Oracle.
-            if ($this->get_user_field_type($field) === column::TYPE_LONGTEXT &&
-                    $DB->get_dbfamily() === 'oracle') {
-
-                continue;
+            $filterfieldsql = "{$tablealias}.{$field}";
+            if ($this->get_user_field_type($field) === column::TYPE_LONGTEXT) {
+                $filterfieldsql = $DB->sql_cast_to_char($filterfieldsql);
             }
 
             $optionscallback = [static::class, 'get_options_for_' . $field];
@@ -506,7 +504,7 @@ class user extends base {
                 $field,
                 $name,
                 $this->get_entity_name(),
-                $tablealias . '.' . $field
+                $filterfieldsql
             ))
                 ->add_joins($this->get_joins());
 
