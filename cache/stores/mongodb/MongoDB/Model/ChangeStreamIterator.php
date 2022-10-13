@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2019 MongoDB, Inc.
+ * Copyright 2019-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,6 +28,8 @@ use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\ResumeTokenException;
 use MongoDB\Exception\UnexpectedValueException;
+use ReturnTypeWillChange;
+
 use function count;
 use function is_array;
 use function is_integer;
@@ -138,6 +140,7 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
      * @see https://php.net/iteratoriterator.current
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         return $this->isValid ? parent::current() : null;
@@ -160,7 +163,7 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
     /**
      * Returns the server the cursor is running on.
      */
-    public function getServer() : Server
+    public function getServer(): Server
     {
         return $this->server;
     }
@@ -169,6 +172,7 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
      * @see https://php.net/iteratoriterator.key
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function key()
     {
         return $this->isValid ? parent::key() : null;
@@ -178,6 +182,7 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
      * @see https://php.net/iteratoriterator.rewind
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function next()
     {
         /* Determine if advancing the iterator will execute a getMore command
@@ -205,6 +210,7 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
      * @see https://php.net/iteratoriterator.rewind
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function rewind()
     {
         if ($this->isRewindNop) {
@@ -219,6 +225,7 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
      * @see https://php.net/iteratoriterator.valid
      * @return boolean
      */
+    #[ReturnTypeWillChange]
     public function valid()
     {
         return $this->isValid;
@@ -248,11 +255,13 @@ class ChangeStreamIterator extends IteratorIterator implements CommandSubscriber
 
         if (! isset($resumeToken)) {
             $this->isValid = false;
+
             throw ResumeTokenException::notFound();
         }
 
         if (! is_array($resumeToken) && ! is_object($resumeToken)) {
             $this->isValid = false;
+
             throw ResumeTokenException::invalidType($resumeToken);
         }
 

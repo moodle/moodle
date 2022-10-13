@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2017 MongoDB, Inc.
+ * Copyright 2017-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,8 @@ use MongoDB\Driver\Exception\RuntimeException;
 use MongoDB\Driver\Exception\ServerException;
 use MongoDB\Exception\ResumeTokenException;
 use MongoDB\Model\ChangeStreamIterator;
+use ReturnTypeWillChange;
+
 use function call_user_func;
 use function in_array;
 
@@ -32,7 +34,7 @@ use function in_array;
  *
  * @api
  * @see \MongoDB\Collection::watch()
- * @see http://docs.mongodb.org/manual/reference/command/changeStream/
+ * @see https://mongodb.com/docs/manual/reference/method/db.watch/#mongodb-method-db.watch
  */
 class ChangeStream implements Iterator
 {
@@ -40,7 +42,7 @@ class ChangeStream implements Iterator
      * @deprecated 1.4
      * @todo Remove this in 2.0 (see: PHPLIB-360)
      */
-    const CURSOR_NOT_FOUND = 43;
+    public const CURSOR_NOT_FOUND = 43;
 
     /** @var int */
     private static $cursorNotFound = 43;
@@ -54,11 +56,11 @@ class ChangeStream implements Iterator
         189, // PrimarySteppedDown
         262, // ExceededTimeLimit
         9001, // SocketException
-        10107, // NotMaster
+        10107, // NotPrimary
         11600, // InterruptedAtShutdown
         11602, // InterruptedDueToReplStateChange
-        13435, // NotMasterNoSlaveOk
-        13436, // NotMasterOrSecondary
+        13435, // NotPrimaryNoSecondaryOk
+        13436, // NotPrimaryOrSecondary
         63, // StaleShardVersion
         150, // StaleEpoch
         13388, // StaleConfig
@@ -98,9 +100,10 @@ class ChangeStream implements Iterator
     }
 
     /**
-     * @see http://php.net/iterator.current
+     * @see https://php.net/iterator.current
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         return $this->iterator->current();
@@ -129,9 +132,10 @@ class ChangeStream implements Iterator
     }
 
     /**
-     * @see http://php.net/iterator.key
+     * @see https://php.net/iterator.key
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function key()
     {
         if ($this->valid()) {
@@ -142,10 +146,11 @@ class ChangeStream implements Iterator
     }
 
     /**
-     * @see http://php.net/iterator.next
+     * @see https://php.net/iterator.next
      * @return void
      * @throws ResumeTokenException
      */
+    #[ReturnTypeWillChange]
     public function next()
     {
         try {
@@ -157,10 +162,11 @@ class ChangeStream implements Iterator
     }
 
     /**
-     * @see http://php.net/iterator.rewind
+     * @see https://php.net/iterator.rewind
      * @return void
      * @throws ResumeTokenException
      */
+    #[ReturnTypeWillChange]
     public function rewind()
     {
         try {
@@ -175,9 +181,10 @@ class ChangeStream implements Iterator
     }
 
     /**
-     * @see http://php.net/iterator.valid
+     * @see https://php.net/iterator.valid
      * @return boolean
      */
+    #[ReturnTypeWillChange]
     public function valid()
     {
         return $this->iterator->valid();

@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2016-2017 MongoDB, Inc.
+ * Copyright 2016-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,6 +33,7 @@ use MongoDB\Model\BSONArray;
 use MongoDB\Model\BSONDocument;
 use MongoDB\Operation\Find;
 use stdClass;
+
 use function array_intersect_key;
 use function fopen;
 use function get_resource_type;
@@ -195,7 +196,7 @@ class Bucket
     /**
      * Return internal properties for debugging purposes.
      *
-     * @see http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.debuginfo
+     * @see https://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.debuginfo
      * @return array
      */
     public function __debugInfo()
@@ -433,7 +434,7 @@ class Bucket
     /**
      * Return the read concern for this GridFS bucket.
      *
-     * @see http://php.net/manual/en/mongodb-driver-readconcern.isdefault.php
+     * @see https://php.net/manual/en/mongodb-driver-readconcern.isdefault.php
      * @return ReadConcern
      */
     public function getReadConcern()
@@ -464,7 +465,7 @@ class Bucket
     /**
      * Return the write concern for this GridFS bucket.
      *
-     * @see http://php.net/manual/en/mongodb-driver-writeconcern.isdefault.php
+     * @see https://php.net/manual/en/mongodb-driver-writeconcern.isdefault.php
      * @return WriteConcern
      */
     public function getWriteConcern()
@@ -629,6 +630,7 @@ class Bucket
 
         if (@stream_copy_to_stream($source, $destination) === false) {
             $destinationUri = $this->createPathForFile($this->getRawFileDocumentForStream($destination));
+
             throw StreamException::uploadFailed($filename, $source, $destinationUri);
         }
 
