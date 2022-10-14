@@ -476,13 +476,16 @@ class course_modinfo {
 
         // Retrieve modinfo from cache. If not present or cacherev mismatches, call rebuild and retrieve again.
         $coursemodinfo = $cachecoursemodinfo->get_versioned($course->id, $course->cacherev);
-        if ($coursemodinfo === false || ($course->cacherev != $coursemodinfo->cacherev)) {
+        // Note the version comparison using the data in the cache should not be necessary, but the
+        // partial rebuild logic sometimes sets the $coursemodinfo->cacherev to -1 which is an
+        // indicator that it needs rebuilding.
+        if ($coursemodinfo === false || ($course->cacherev > $coursemodinfo->cacherev)) {
             $lock = self::get_course_cache_lock($course->id);
             try {
                 // Only actually do the build if it's still needed after getting the lock (not if
                 // somebody else, who might have been holding the lock, built it already).
                 $coursemodinfo = $cachecoursemodinfo->get_versioned($course->id, $course->cacherev);
-                if ($coursemodinfo === false || ($course->cacherev != $coursemodinfo->cacherev)) {
+                if ($coursemodinfo === false || ($course->cacherev > $coursemodinfo->cacherev)) {
                     $coursemodinfo = self::inner_build_course_cache($course, $lock);
                 }
             } finally {
