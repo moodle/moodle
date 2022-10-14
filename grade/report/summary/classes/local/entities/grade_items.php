@@ -21,10 +21,10 @@ use grade_item;
 use grade_plugin_return;
 use grade_report_summary;
 use lang_string;
+use stdClass;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
-use core_grades\local\helpers\helpers;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -40,11 +40,23 @@ require_once($CFG->dirroot . '/grade/lib.php');
  */
 class grade_items extends base {
 
-    /** @var array Grade report. */
+    /** @var stdClass Course */
+    public $course;
+
+    /** @var grade_report_summary Grade report. */
     public $report;
 
     /** @var array Ungraded grade items counts with sql info. */
     public $ungradedcounts;
+
+    /**
+     * Entity constructor
+     *
+     * @param stdClass $course
+     */
+    public function __construct(stdClass $course) {
+        $this->course = $course;
+    }
 
     /**
      * Database tables that this entity uses and their default aliases
@@ -65,33 +77,22 @@ class grade_items extends base {
     }
 
     /**
-     * The default machine-readable name for this entity that will be used in the internal names of the columns/filters
-     *
-     * @return string
-     */
-    protected function get_default_entity_name(): string {
-        return 'grade_items';
-    }
-
-    /**
      * Initialise the entity
      *
      * @return base
      */
     public function initialise(): base {
-        global $COURSE;
-
-        $context = \context_course::instance($COURSE->id);
+        $context = \context_course::instance($this->course->id);
 
         $gpr = new grade_plugin_return(
             [
                 'type' => 'report',
                 'plugin' => 'summary',
-                'course' => $COURSE,
+                'course' => $this->course,
             ]
         );
 
-        $this->report = new grade_report_summary($COURSE->id, $gpr, $context);
+        $this->report = new grade_report_summary($this->course->id, $gpr, $context);
         $this->ungradedcounts = $this->report->ungraded_counts();
 
         $columns = $this->get_all_columns();
@@ -252,12 +253,9 @@ class grade_items extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
-        $filters = [];
-
-        $itemtypes = $this->report->item_types();
         $tablealias = $this->get_table_alias('grade_items');
 
-        // Activity type filter.
+        // Activity type filter (for performance only load options on demand).
         $filters[] = (new filter(
             select::class,
             'name',
@@ -266,7 +264,7 @@ class grade_items extends base {
             "coalesce({$tablealias}.itemmodule,{$tablealias}.itemtype)"
         ))
             ->add_joins($this->get_joins())
-            ->set_options($itemtypes);
+            ->set_options_callback([$this->report, 'item_types']);
 
         return $filters;
     }

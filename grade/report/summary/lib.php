@@ -48,12 +48,12 @@ class grade_report_summary extends grade_report {
      *
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object
-     * @param string $context
+     * @param context_course $context
      */
     public function __construct($courseid, $gpr, $context) {
         parent::__construct($courseid, $gpr, $context);
 
-        $this->canviewhidden = has_capability('moodle/grade:viewhidden', context_course::instance($this->course->id));
+        $this->canviewhidden = has_capability('moodle/grade:viewhidden', $context);
         $this->setup_groups();
     }
 
