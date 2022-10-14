@@ -156,7 +156,7 @@ class mod_data_renderer extends plugin_renderer_base {
         $data = $actionbar->export_for_template($this);
         $data['title'] = get_string('nofields', 'mod_data');
         $data['intro'] = get_string('createfields', 'mod_data');
-        $data['noitemsimgurl'] = $this->output->image_url('nofields', 'mod_data')->out();
+        $data['noitemsimgurl'] = $this->output->image_url('fields_zero_state', 'mod_data')->out();
         return $this->render_from_template('mod_data/fields_action_bar', $data);
     }
 
@@ -243,11 +243,12 @@ class mod_data_renderer extends plugin_renderer_base {
             // No actions for the user.
             $data['title'] = get_string('activitynotready');
             $data['intro'] = get_string('comebacklater');
+            $data['noitemsimgurl'] = $this->output->image_url('noentries_zero_state', 'mod_data')->out();
         } else {
             $data['title'] = get_string('startbuilding', 'mod_data');
             $data['intro'] = get_string('createactivity', 'mod_data');
+            $data['noitemsimgurl'] = $this->output->image_url('view_zero_state', 'mod_data')->out();
         }
-        $data['noitemsimgurl'] = $this->output->image_url('nofields', 'mod_data')->out();
 
         return $this->render_from_template('mod_data/zero_state', $data);
     }
@@ -262,7 +263,7 @@ class mod_data_renderer extends plugin_renderer_base {
     public function render_empty_database(\mod_data\manager $manager): string {
         $actionbar = new \mod_data\output\empty_database_action_bar($manager);
         $data = $actionbar->export_for_template($this);
-        $data['noitemsimgurl'] = $this->output->image_url('nofields', 'mod_data')->out();
+        $data['noitemsimgurl'] = $this->output->image_url('view_zero_state', 'mod_data')->out();
 
         return $this->render_from_template('mod_data/view_noentries', $data);
     }
@@ -276,7 +277,7 @@ class mod_data_renderer extends plugin_renderer_base {
      */
     public function render_fields_zero_state(\mod_data\manager $manager): string {
         $data = [
-            'noitemsimgurl' => $this->output->image_url('nofields', 'mod_data')->out(),
+            'noitemsimgurl' => $this->output->image_url('fields_zero_state', 'mod_data')->out(),
             'title' => get_string('nofields', 'mod_data'),
             'intro' => get_string('createfields', 'mod_data'),
             ];
@@ -301,7 +302,7 @@ class mod_data_renderer extends plugin_renderer_base {
         $data = $actionbar->export_for_template($this);
         $data['title'] = get_string('notemplates', 'mod_data');
         $data['intro'] = get_string('createtemplates', 'mod_data');
-        $data['noitemsimgurl'] = $this->output->image_url('nofields', 'mod_data')->out();
+        $data['noitemsimgurl'] = $this->output->image_url('templates_zero_state', 'mod_data')->out();
 
         return $this->render_from_template('mod_data/zero_state', $data);
     }
