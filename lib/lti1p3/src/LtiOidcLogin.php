@@ -13,7 +13,6 @@ class LtiOidcLogin
     public const ERROR_MSG_LAUNCH_URL = 'No launch URL configured';
     public const ERROR_MSG_ISSUER = 'Could not find issuer';
     public const ERROR_MSG_LOGIN_HINT = 'Could not find login hint';
-    public const ERROR_MSG_REGISTRATION = 'Could not find registration details';
 
     private $db;
     private $cache;
@@ -113,11 +112,14 @@ class LtiOidcLogin
         }
 
         // Fetch Registration Details.
-        $registration = $this->db->findRegistrationByIssuer($request['iss'], $request['client_id'] ?? null);
+        $clientId = $request['client_id'] ?? null;
+        $registration = $this->db->findRegistrationByIssuer($request['iss'], $clientId);
 
         // Check we got something.
         if (empty($registration)) {
-            throw new OidcException(static::ERROR_MSG_REGISTRATION, 1);
+            $errorMsg = LtiMessageLaunch::getMissingRegistrationErrorMsg($request['iss'], $clientId);
+
+            throw new OidcException($errorMsg, 1);
         }
 
         // Return Registration.
