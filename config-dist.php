@@ -601,7 +601,7 @@ $CFG->admin = 'admin';
 //
 //
 // Alternative task logging.
-// Since Moodle 3.7 the output of al scheduled and adhoc tasks is stored in the database and it is possible to use an
+// Since Moodle 3.7 the output of all scheduled and adhoc tasks is stored in the database and it is possible to use an
 // alternative task logging mechanism.
 // To set the alternative task logging mechanism in config.php you can use the following settings, providing the
 // alternative class name that will be auto-loaded.
