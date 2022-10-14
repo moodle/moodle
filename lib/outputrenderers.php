@@ -4195,6 +4195,14 @@ EOD;
     public function supportemail(array $customattribs = []): string {
         global $CFG;
 
+        // Do not provide a link to contact site support if it is unavailable to this user. This would be where the site has
+        // disabled support, or limited it to authenticated users and the current user is a guest or not logged in.
+        if (!isset($CFG->supportavailability) ||
+                $CFG->supportavailability == CONTACT_SUPPORT_DISABLED ||
+                ($CFG->supportavailability == CONTACT_SUPPORT_AUTHENTICATED && (!isloggedin() || isguestuser()))) {
+            return '';
+        }
+
         $label = get_string('contactsitesupport', 'admin');
         $icon = $this->pix_icon('t/email', '');
         $content = $icon . $label;
