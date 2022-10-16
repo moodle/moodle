@@ -24,26 +24,18 @@ Feature: Change grading options in an H5P activity
       | course          | C1                                         |
       | name            | Awesome H5P package                        |
       | packagefilepath | h5p/tests/fixtures/multiple-choice-2-6.h5p |
-    And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
-    And I click on "Wrong one" "text" in the ".h5p-question-content" "css_element"
-    And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
-    And I click on "Retry" "button" in the ".h5p-question-buttons" "css_element"
-    And I click on "Correct one" "text" in the ".h5p-question-content" "css_element"
-    And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
-    And I switch to the main frame
-    # H5P does not allow to Retry if the user checks the correct answer, we need to refresh the page.
-    And I reload the page
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
-    And I click on "Wrong one" "text" in the ".h5p-question-content" "css_element"
-    And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
-    And I switch to the main frame
+    And the following "mod_h5pactivity > attempts" exist:
+      | user     | h5pactivity         | attempt | interactiontype   | rawscore | maxscore | duration | completion | success |
+      | student1 | Awesome H5P package | 1       | choice            | 0        | 1        | 4        | 1          | 0       |
+      | student1 | Awesome H5P package | 2       | choice            | 1        | 1        | 4        | 1          | 1       |
+      | student1 | Awesome H5P package | 3       | choice            | 0        | 1        | 4        | 1          | 0       |
 
   @javascript
   Scenario: Default grading is max attempt grade
-    Given I am on the "Awesome H5P package" "h5pactivity activity" page logged in as teacher1
+    Given I am on the "Awesome H5P package" "h5pactivity activity editing" page logged in as teacher1
+    And I expand all fieldsets
+    And the field "Grading method" matches value "Highest grade"
+    And I click on "Save and return to course" "button"
     When I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
@@ -63,7 +55,7 @@ Feature: Change grading options in an H5P activity
       | Awesome H5P package | 0.00  | 0.00 %     |
 
   @javascript
-  Scenario: Change setting to first attempt
+  Scenario: Change setting to last attempt
     Given I am on the "Awesome H5P package" "h5pactivity activity editing" page logged in as teacher1
     When I set the following fields to these values:
       | Grading method | Last attempt |
