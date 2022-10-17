@@ -71,6 +71,10 @@ class course_module_competency extends persistent {
                 'default' => self::OUTCOME_EVIDENCE,
                 'type' => PARAM_INT,
             ),
+            'overridegrade' => array(
+                'default' => false,
+                'type' => PARAM_BOOL
+            ),
         );
     }
 

@@ -161,6 +161,12 @@ function tool_lp_coursemodule_standard_elements($formwrapper, $mform) {
                                          'tool_lp_course_competency_rule_form_element');
     // Reuse the same options.
     $mform->addElement('course_competency_rule', 'competency_rule', get_string('uponcoursemodulecompletion', 'tool_lp'), $options);
+
+    $overrideelementfile = "$CFG->dirroot/$CFG->admin/tool/lp/classes/course_competency_overridegrade_form_element.php";
+    MoodleQuickForm::registerElementType('course_competency_overridegrade', $overrideelementfile,
+                                         'tool_lp_course_competency_overridegrade_form_element');
+    $mform->addElement('course_competency_overridegrade', 'override_grade', get_string('overridegrade', 'tool_lp'), $options);
+    $mform->hideIf('override_grade', 'competency_rule', 'noteq', \core_competency\competency::OUTCOME_COMPLETE + 1);
 }
 
 /**
@@ -201,10 +207,13 @@ function tool_lp_coursemodule_edit_post_actions($data, $course) {
     }
 
     if (isset($data->competency_rule)) {
+        $overridegrade = isset($data->override_grade) ? $data->override_grade : false;
+
         // Now update the rules for each course_module_competency.
         $current = \core_competency\api::list_course_module_competencies_in_course_module($data->coursemodule);
         foreach ($current as $coursemodulecompetency) {
-            \core_competency\api::set_course_module_competency_ruleoutcome($coursemodulecompetency, $data->competency_rule);
+            \core_competency\api::set_course_module_competency_ruleoutcome($coursemodulecompetency, $data->competency_rule,
+                $overridegrade);
         }
     }
 

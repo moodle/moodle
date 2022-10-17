@@ -1843,10 +1843,10 @@ class backup_activity_competencies_structure_step extends backup_structure_step 
         $wrapper->add_child($competencies);
 
         $competency = new backup_nested_element('competency', null, array('idnumber', 'ruleoutcome',
-            'sortorder', 'frameworkidnumber'));
+            'sortorder', 'frameworkidnumber', 'overridegrade'));
         $competencies->add_child($competency);
 
-        $sql = 'SELECT c.idnumber, cmc.ruleoutcome, cmc.sortorder, f.idnumber AS frameworkidnumber
+        $sql = 'SELECT c.idnumber, cmc.ruleoutcome, cmc.overridegrade, cmc.sortorder, f.idnumber AS frameworkidnumber
                   FROM {' . \core_competency\course_module_competency::TABLE . '} cmc
                   JOIN {' . \core_competency\competency::TABLE . '} c ON c.id = cmc.competencyid
                   JOIN {' . \core_competency\competency_framework::TABLE . '} f ON f.id = c.competencyframeworkid

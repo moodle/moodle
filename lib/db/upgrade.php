@@ -2925,5 +2925,17 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022092200.01);
     }
 
+    if ($oldversion < 2022101400.01) {
+        $table = new xmldb_table('competency_modulecomp');
+        $field = new xmldb_field('overridegrade', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'ruleoutcome');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022101400.01);
+    }
+
     return true;
 }
