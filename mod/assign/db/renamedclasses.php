@@ -28,5 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $renamedclasses = [
     // Since Moodle 4.0.
     'assign_header' => 'mod_assign\output\assign_header',
-    'assign_submission_status' => 'mod_assign\output\assign_submission_status'
+    'assign_submission_status' => 'mod_assign\output\assign_submission_status',
+    // Since Moodle 4.0.5.
+    'mod_assign\local\views\secondary' => 'mod_assign\navigation\views\secondary',
 ];

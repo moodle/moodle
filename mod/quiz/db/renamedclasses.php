@@ -14,19 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_block\local\views;
-
 /**
- * Class secondary
+ * This file contains mappings for classes that have been renamed.
  *
- * @package core_block
- * @category navigation
+ * @package mod_quiz
+ * @copyright 2022 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class secondary extends \core\navigation\views\secondary {
-    /**
-     * Blocks don't require secondary navs as they can be accessed from multiple places and in different contexts.
-     */
-    public function initialise(): void {
 
-    }
-}
+defined('MOODLE_INTERNAL') || die();
+
+$renamedclasses = [
+    // Since Moodle 4.0.5.
+    'mod_quiz\local\views\secondary' => 'mod_quiz\navigation\views\secondary',
+];

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_label\local\views;
+namespace mod_label\navigation\views;
 
 use core\navigation\views\secondary as core_secondary;
 use settings_navigation;

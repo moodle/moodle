@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_assign\local\views;
+namespace mod_glossary\navigation\views;
 
 use core\navigation\views\secondary as core_secondary;
 
@@ -23,23 +23,25 @@ use core\navigation\views\secondary as core_secondary;
  *
  * Custom implementation for a plugin.
  *
- * @package     mod_assign
+ * @package     mod_glossary
  * @category    navigation
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class secondary extends core_secondary {
+    /**
+     * Define a custom secondary nav order/view
+     *
+     * @return array
+     */
     protected function get_default_module_mapping(): array {
-        $defaultmaping = parent::get_default_module_mapping();
-        $defaultmaping[self::TYPE_SETTING] = array_merge($defaultmaping[self::TYPE_SETTING], [
-            'modedit' => 1,
-            "mod_{$this->page->activityname}_useroverrides" => 2, // Overrides are module specific.
-            "mod_{$this->page->activityname}_groupoverrides" => 3,
-        ]);
-
-        $defaultmaping[self::TYPE_CUSTOM] = array_merge($defaultmaping[self::TYPE_CUSTOM], [
-            'advgrading' => 4,
-        ]);
-        return $defaultmaping;
+        return [
+            self::TYPE_SETTING => [
+                'modedit' => 1,
+            ],
+            self::TYPE_CUSTOM => [
+                'pendingapproval' => 2,
+            ],
+        ];
     }
 }
