@@ -20,6 +20,7 @@ namespace core_reportbuilder\local\aggregation;
 
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
+use core_reportbuilder\local\report\column;
 use core_user\reportbuilder\datasource\users;
 
 defined('MOODLE_INTERNAL') || die();
@@ -44,9 +45,8 @@ class groupconcatdistinct_test extends core_reportbuilder_testcase {
     public function setUp(): void {
         global $DB;
 
-        $dbfamily = $DB->get_dbfamily();
-        if (!in_array($dbfamily, ['mysql', 'postgres'])) {
-            $this->markTestSkipped("Distinct group concatenation not supported in {$dbfamily}");
+        if (!groupconcatdistinct::compatible(column::TYPE_TEXT)) {
+            $this->markTestSkipped('Distinct group concatenation not supported in ' . $DB->get_dbfamily());
         }
     }
 
