@@ -2937,5 +2937,60 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022101400.01);
     }
 
+    if ($oldversion < 2022101400.02) {
+        // Define table to store completion viewed.
+        $table = new xmldb_table('course_modules_viewed');
+
+        // Adding fields to table course_modules_viewed.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('coursemoduleid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'coursemoduleid');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'userid');
+
+        // Adding keys to table course_modules_viewed.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Adding indexes to table course_modules_viewed.
+        $table->add_index('coursemoduleid', XMLDB_INDEX_NOTUNIQUE, ['coursemoduleid']);
+        $table->add_index('userid-coursemoduleid', XMLDB_INDEX_UNIQUE, ['userid', 'coursemoduleid']);
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022101400.02);
+    }
+
+    if ($oldversion < 2022101400.03) {
+        // Add legacy data to the new table.
+        $transaction = $DB->start_delegated_transaction();
+        upgrade_set_timeout(3600);
+        $sql = "INSERT INTO {course_modules_viewed}
+                            (userid, coursemoduleid, timecreated)
+                     SELECT userid, coursemoduleid, timemodified
+                       FROM {course_modules_completion}
+                      WHERE viewed = 1";
+        $DB->execute($sql);
+        $transaction->allow_commit();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022101400.03);
+    }
+
+    if ($oldversion < 2022101400.04) {
+        // Define field viewed to be dropped from course_modules_completion.
+        $table = new xmldb_table('course_modules_completion');
+        $field = new xmldb_field('viewed');
+
+        // Conditionally launch drop field viewed.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022101400.04);
+    }
+
     return true;
 }
