@@ -142,6 +142,7 @@ class api {
             INNER JOIN {course} c ON cr.course = c.id
             INNER JOIN {context} con ON con.instanceid = c.id
             INNER JOIN {role_assignments} ra ON ra.contextid = con.id
+            INNER JOIN {course_modules} cm ON cm.id = cr.moduleinstance
             INNER JOIN {course_modules_completion} mc ON mc.coursemoduleid = cr.moduleinstance AND mc.userid = ra.userid
              LEFT JOIN {course_completion_crit_compl} cc ON cc.criteriaid = cr.id AND cc.userid = ra.userid
                  WHERE cr.criteriatype = :criteriatype
@@ -150,15 +151,17 @@ class api {
                        AND cc.id IS NULL
                        AND (
                             mc.completionstate = :completionstate
-                            OR mc.completionstate = :completionstatepass
-                            OR mc.completionstate = :completionstatefail
+                            OR (cm.completionpassgrade = 1 AND mc.completionstate = :completionstatepass1)
+                            OR (cm.completionpassgrade = 0 AND (mc.completionstate = :completionstatepass2
+                                                                OR mc.completionstate = :completionstatefail))
                             )";
 
         $params = [
             'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY,
             'contextlevel' => CONTEXT_COURSE,
             'completionstate' => COMPLETION_COMPLETE,
-            'completionstatepass' => COMPLETION_COMPLETE_PASS,
+            'completionstatepass1' => COMPLETION_COMPLETE_PASS,
+            'completionstatepass2' => COMPLETION_COMPLETE_PASS,
             'completionstatefail' => COMPLETION_COMPLETE_FAIL
         ];
 
