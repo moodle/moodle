@@ -28,7 +28,8 @@
         "helpbutton": "Help"
     }
 }}
-<legend class="d-flex align-items-center">
+<legend class="sr-only">{{{header}}}</legend>
+<div class="d-flex align-items-center mb-2">
     <div class="position-relative d-flex ftoggler align-items-center position-relative mr-1">
         {{#collapseable}}
             <a data-toggle="collapse"
@@ -53,5 +54,5 @@
         </h3>
     </div>
     {{{helpbutton}}}
-</legend>
+</div>
 <div id="{{id}}container" class="fcontainer {{#collapseable}}collapseable collapse {{/collapseable}} {{^collapsed}}show{{/collapsed}}">
