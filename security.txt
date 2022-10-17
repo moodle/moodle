@@ -2,5 +2,5 @@ Contact: https://moodle.org/security/report/
 Acknowledgments: https://moodle.org/security/
 Preferred-Languages: en
 Canonical: https://moodle.org/.well-known/security.txt
-Policy: https://docs.moodle.org/dev/Moodle_security_procedures
-Expires: 2022-12-05T01:00:00.000Z
+Policy: https://moodledev.io/general/development/process/security
+Expires: 2023-05-29T01:00:00.000Z
