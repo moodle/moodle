@@ -508,6 +508,10 @@ function upgrade_stale_php_files_present(): bool {
     global $CFG;
 
     $someexamplesofremovedfiles = [
+        // Removed in 4.1.
+        '/mod/forum/classes/task/refresh_forum_post_counts.php',
+        '/user/amd/build/participantsfilter.min.js',
+        '/user/amd/src/participantsfilter.js',
         // Removed in 4.0.
         '/admin/classes/task_log_table.php',
         '/admin/cli/mysql_engine.php',
