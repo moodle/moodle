@@ -2937,7 +2937,7 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022101400.01);
     }
 
-    if ($oldversion < 2022101400.02) {
+    if ($oldversion < 2022101400.03) {
         // Define table to store completion viewed.
         $table = new xmldb_table('course_modules_viewed');
 
@@ -2959,10 +2959,10 @@ privatefiles,moodle|/user/files.php';
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2022101400.02);
+        upgrade_main_savepoint(true, 2022101400.03);
     }
 
-    if ($oldversion < 2022101400.03) {
+    if ($oldversion < 2022101400.04) {
         // Add legacy data to the new table.
         $transaction = $DB->start_delegated_transaction();
         upgrade_set_timeout(3600);
@@ -2975,10 +2975,10 @@ privatefiles,moodle|/user/files.php';
         $transaction->allow_commit();
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2022101400.03);
+        upgrade_main_savepoint(true, 2022101400.04);
     }
 
-    if ($oldversion < 2022101400.04) {
+    if ($oldversion < 2022101400.05) {
         // Define field viewed to be dropped from course_modules_completion.
         $table = new xmldb_table('course_modules_completion');
         $field = new xmldb_field('viewed');
@@ -2989,7 +2989,7 @@ privatefiles,moodle|/user/files.php';
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2022101400.04);
+        upgrade_main_savepoint(true, 2022101400.05);
     }
 
     return true;
