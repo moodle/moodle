@@ -149,6 +149,16 @@ $definitions = array(
         'ttl' => 3600, // Just in case.
     ),
 
+    // Cache the deprecated capabilities list. See get_deprecated_capability_info in accesslib.
+    'deprecatedcapabilities' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => false, // We need to hash the key.
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
+        'ttl' => 3600, // Just in case.
+    ),
+
     // YUI Module cache.
     // This stores the YUI module metadata for Shifted YUI modules in Moodle.
     'yuimodules' => array(

@@ -56,6 +56,7 @@ $string['cachedef_courseeditorstate'] = 'Session course state cache keys to dete
 $string['cachedef_course_image'] = 'Course images';
 $string['cachedef_course_user_dates'] = 'The user dates for courses set to relative dates mode';
 $string['cachedef_completion'] = 'Activity completion status';
+$string['cachedef_deprecatedcapabilities'] = 'System deprecated capabilities list';
 $string['cachedef_databasemeta'] = 'Database meta information';
 $string['cachedef_eventinvalidation'] = 'Event invalidation';
 $string['cachedef_externalbadges'] = 'External badges for particular user';
