@@ -46,7 +46,7 @@
     <div class="col-md-3 col-form-label d-flex pb-0 pr-md-0">
         {{# label}}{{$ label }}
             {{^element.staticlabel}}
-                <label class="d-inline word-break {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
+                <label id="{{element.id}}_label" class="d-inline word-break {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
                     {{{label}}}
                 </label>
             {{/element.staticlabel}}
