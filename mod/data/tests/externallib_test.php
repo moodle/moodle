@@ -555,7 +555,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = mod_data_external::get_entries($this->database->id);
         $result = \external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
         $this->assertCount(0, $result['warnings']);
-        $this->assertCount(4, $result['entries']);  // I can see my entry not approved yet.
+        $this->assertCount(4, $result['entries']);  // I can see my entry is pending approval.
         $this->assertEquals(4, $result['totalcount']);
 
         // Now try with the user in the second group that must see only two entries (his group entry and the one without group).
@@ -727,7 +727,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = \external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
         $this->assertEquals($entry21, $result['entry']['id']);
 
-        // Now, try to get an entry not approved yet.
+        // Now, try to get a pending approval.
         $this->setUser($this->student1);
         $this->expectException('moodle_exception');
         $result = mod_data_external::get_entry($entry13);

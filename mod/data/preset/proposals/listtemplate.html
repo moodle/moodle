@@ -2,14 +2,17 @@
     <div class="card-header" role="tab" id="entry-##id##">
         <div>
             <div class="row align-middle">
-                <div class="col-4 col-sm-7 my-auto">
+                <div class="col-4 my-auto">
                     <a data-toggle="collapse" data-parent="#proposals-list" href="#collapseentry-##id##" aria-expanded="true" aria-controls="collapseentry-##id##" class="d-block">
                         <i class="fa fa-chevron-down"></i> [[Title]]
                     </a>
                  </div>
-                <div class="col-3 col-sm-2 push my-auto">[[Status]]</div>
-                <div class="col-4 col-sm-2 my-auto">##userpicture## ##user##</div>
-                <div class="ml-auto">##actionsmenu##</div>
+                <div class="col-3 push my-auto">[[Status]]</div>
+                <div class="col-2 my-auto">##userpicture## ##user##</div>
+                <div class="col-3 d-flex justify-content-end">
+                    <div class="my-auto ##approvalstatusclass##">##approvalstatus##</div>
+                    <div class="ml-auto my-auto">##actionsmenu##</div>
+                </div>
             </div>
         </div>
     </div>

@@ -250,7 +250,7 @@ if (!$manager->has_fields()) {
 
 // Detect entries not approved yet and show hint instead of not found error.
 if ($record and !data_can_view_record($data, $record, $currentgroup, $canmanageentries)) {
-    throw new \moodle_exception('notapproved', 'data');
+    throw new \moodle_exception('notapprovederror', 'data');
 }
 
 // Do we need to show a link to the RSS feed for the records?

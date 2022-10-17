@@ -527,7 +527,7 @@ class mod_data_external extends external_api {
 
         // Check correct record entry. Group check was done before.
         if (!data_can_view_record($database, $record, $record->groupid, $canmanageentries)) {
-            throw new moodle_exception('notapproved', 'data');
+            throw new moodle_exception('notapprovederror', 'data');
         }
 
         $related = array('context' => $context, 'database' => $database, 'user' => null);
