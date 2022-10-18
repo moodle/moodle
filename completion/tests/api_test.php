@@ -283,9 +283,10 @@ class api_test extends \advanced_testcase {
         $coursecompletionid = \core_completion\api::mark_course_completions_activity_criteria();
         $this->assertEquals(0, $coursecompletionid);
         $actual = $DB->get_records('course_completions');
+        $students = [$student1->id, $student2->id];
         $this->assertEquals(2, count($actual));
-        $this->assertEquals($student1->id, reset($actual)->userid);
-        $this->assertEquals($student2->id, end($actual)->userid);
+        $this->assertContains(reset($actual)->userid, $students);
+        $this->assertContains(end($actual)->userid, $students);
     }
 
     /**
@@ -378,9 +379,10 @@ class api_test extends \advanced_testcase {
                 $this->assertEquals($student1->id, reset($actual)->userid);
             } else {
                 // Both students completed a course.
+                $students = [$student1->id, $student2->id];
                 $this->assertEquals(2, count($actual));
-                $this->assertEquals($student1->id, reset($actual)->userid);
-                $this->assertEquals($student2->id, end($actual)->userid);
+                $this->assertContains(reset($actual)->userid, $students);
+                $this->assertContains(end($actual)->userid, $students);
             }
         }
     }
