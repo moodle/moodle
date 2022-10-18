@@ -38,6 +38,7 @@ $services = array(
             'block_iomad_company_admin_edit_licenses',
             'block_iomad_company_admin_enrol_users',
             'block_iomad_company_admin_get_companies',
+            'block_iomad_company_admin_get_company_courses',
             'block_iomad_company_admin_get_course_info',
             'block_iomad_company_admin_get_departments',
             'block_iomad_company_admin_get_department_users',
@@ -149,6 +150,13 @@ $functions = array(
         'classpath' => 'blocks/iomad_company_admin/externallib.php',
         'description' => 'Get all Iomad companies',
         'type' => 'read',
+    ),
+    'block_iomad_company_admin_get_company_courses' => array(
+        'classname' => 'block_iomad_company_admin_external',
+        'methodname' => 'get_company_courses',
+        'classpath' => 'blocks/iomad_company_admin/externallib.php',
+        'description' => 'Get Iomad company course allocations',
+        'type' => 'write',
     ),
     'block_iomad_company_admin_get_course_info' => array(
         'classname' => 'block_iomad_company_admin_external',

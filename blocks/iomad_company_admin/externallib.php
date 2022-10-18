@@ -736,6 +736,149 @@ class block_iomad_company_admin_external extends external_api {
                 );
     }
 
+    /**
+     * block_iomad_company_admin_get_company_courses
+     *
+     * Return description of method parameters
+     * @return external_function_parameters
+     */
+    public static function get_company_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'criteria' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'key' => new external_value(PARAM_ALPHA, 'the user column to search, expected keys (value format) are:
+                                "companyid" (int) matching company id,
+                                "shared" (boolean) whether to include global shared courses or not'),
+                            'value' => new external_value(PARAM_RAW, 'the value to search')
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * block_iomad_company_admin_get_company_courses
+     *
+     * Implement get_company_courses
+     * @param $companyid
+     * @return array of course records.
+     */
+    public static function get_company_courses($criteria = array()) {
+        global $CFG, $DB;
+
+        // Validate parameters
+        $params = self::validate_parameters(self::get_company_courses_parameters(), array('criteria' => $criteria));
+
+        // Get/check context/capability
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('block/iomad_company_admin:viewcourses', $context);
+
+        // Validate the criteria and retrieve the users.
+        $courses = array();
+        $warnings = array();
+        $sqlparams = array();
+        $usedkeys = array();
+        $sql = ' company != 0 ';
+
+        foreach ($params['criteria'] as $criteriaindex => $criteria) {
+
+            // Check that the criteria has never been used.
+            if (array_key_exists($criteria['key'], $usedkeys)) {
+                throw new moodle_exception('keyalreadyset', '', '', null, 'The key ' . $criteria['key'] . ' can only be sent once');
+            } else {
+                $usedkeys[$criteria['key']] = true;
+            }
+
+            $invalidcriteria = false;
+            // Clean the parameters.
+            $paramtype = PARAM_RAW;
+            switch ($criteria['key']) {
+                case 'companyid':
+                case 'shared':
+                    $paramtype = PARAM_INT;
+                    break;
+                default:
+                    // Send back a warning that this search key is not supported in this version.
+                    // This warning will make the function extendable without breaking clients.
+                    $warnings[] = array(
+                        'item' => $criteria['key'],
+                        'warningcode' => 'invalidfieldparameter',
+                        'message' =>
+                            'The search key \'' . $criteria['key'] . '\' is not supported, look at the web service documentation'
+                    );
+                    // Do not add this invalid criteria to the created SQL request.
+                    $invalidcriteria = true;
+                    unset($params['criteria'][$criteriaindex]);
+                    break;
+            }
+        }
+
+        if (!empty($params['companyid'])) {
+            $companies = $DB->get_records('company', ['id' => $params['companyid']], 'id', 'id,name'); 
+        } else {
+            $companies = $DB->get_records('company', ['suspended' => 0], 'id', 'id,name'); 
+        }
+        foreach ($companies as $companyid => $company) {
+            $comp = new $company->id;
+            $courses = $comp->get_menu_courses($params['shared'], false, false, false);
+            foreach ($courses as $courseid => $course) {
+                $customfields = $DB->get_records_sql("SELECT cfd.id, cff.name, cfd.data
+                                                      FROM {customfield_data} cfd
+                                                      JOIN {customfield_field} cff ON (cfd.fieldid = cff.id)
+                                                      WHERE cfd.instance = :courseid",
+                                                      ['courseid' => $courseid]);
+                $coureses[$courseid]->customfields = $customfields;
+            }
+            $companies[$companyid]->courses = $courses;
+        }
+
+        return array('companies' => $companies, 'warnings' => $warnings);
+    }
+
+     /**
+     * block_iomad_company_admin_get_company_courses
+     *
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_company_courses_returns() {
+        return new external_single_structure(
+                array('companies' => new external_multiple_structure(
+                        new external_single_structure(
+                            array(
+                                'id' => new external_value(PARAM_INT, 'Course ID'),
+                                'name' => new external_value(PARAM_TEXT, 'Course full name'),
+                                array('courses' => new external_multiple_structure(
+                                        new external_single_structure(
+                                            array(
+                                                'id' => new external_value(PARAM_INT, 'Course ID'),
+                                                'fullname' => new external_value(PARAM_TEXT, 'Course full name'),
+                                                   array('courses' => new external_multiple_structure(
+                                                            new external_single_structure(
+                                                                array(
+                                                                        'id' => new external_value(PARAM_INT, 'Custom field data ID'),
+                                                                        'name' => new external_value(PARAM_TEXT, 'Custom field name'),
+                                                                        'data' => new external_value(PARAM_TEXT, 'Custom field data value'),
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                               )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                       ),
+                      'warnings' => new external_warnings('always set to \'key\'', 'faulty key name')
+                    )
+                );
+    }
+
     // User handling
 
     /**
