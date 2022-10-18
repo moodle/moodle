@@ -198,6 +198,7 @@ class meeting {
             $this->instance->get_user_fullname(),
             $this->instance->get_current_user_password(),
             $this->instance->get_logout_url()->out(false),
+            $this->instance->get_current_user_role(),
             null,
             $this->instance->get_user_id(),
             $this->get_meeting_info()->createtime
@@ -354,6 +355,7 @@ class meeting {
     ];
     /**
      * Helper to prepare data used for create meeting.
+     * @todo moderatorPW and attendeePW will be removed from create after release of BBB v2.6.
      *
      * @return array
      */
