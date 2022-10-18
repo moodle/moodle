@@ -461,6 +461,47 @@ class instance_test extends advanced_testcase {
     }
 
     /**
+     * Ensure that the get_current_user_role function works as expected.
+     *
+     * @dataProvider get_current_user_role_provider
+     * @param bool $isadmin
+     * @param bool $ismoderator
+     * @param bool $expectedmodrole
+     * @covers ::get_current_user_role
+     */
+    public function test_get_current_user_role(bool $isadmin, bool $ismoderator, bool $expectedmodrole): void {
+        $stub = $this->getMockBuilder(instance::class)
+            ->setMethods([
+                'is_admin',
+                'is_moderator',
+            ])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $stub->method('is_admin')->willReturn($isadmin);
+        $stub->method('is_moderator')->willReturn($ismoderator);
+
+        if ($expectedmodrole) {
+            $this->assertEquals('MODERATOR', $stub->get_current_user_role());
+        } else {
+            $this->assertEquals('VIEWER', $stub->get_current_user_role());
+        }
+    }
+
+    /**
+     * Data provider for the get_current_user_role function.
+     *
+     * @return array
+     */
+    public function get_current_user_role_provider(): array {
+        return [
+            'Admin is a moderator' => [true, false, true],
+            'Moderator is a moderator' => [false, true, true],
+            'Others are a viewer' => [false, false, false],
+        ];
+    }
+
+    /**
      * Tests for the allow_recording_start_stop function.
      *
      * @dataProvider allow_recording_start_stop_provider

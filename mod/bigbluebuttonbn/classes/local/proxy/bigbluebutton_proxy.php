@@ -47,6 +47,7 @@ class bigbluebutton_proxy extends proxy_base {
      * @param string $username
      * @param string $pw
      * @param string $logouturl
+     * @param string $role
      * @param string|null $configtoken
      * @param string|null $userid
      * @param string|null $createtime
@@ -58,6 +59,7 @@ class bigbluebutton_proxy extends proxy_base {
         string $username,
         string $pw,
         string $logouturl,
+        string $role,
         string $configtoken = null,
         string $userid = null,
         string $createtime = null
@@ -67,6 +69,7 @@ class bigbluebutton_proxy extends proxy_base {
             'fullName' => $username,
             'password' => $pw,
             'logoutURL' => $logouturl,
+            'role' => $role
         ];
 
         if (!is_null($configtoken)) {
