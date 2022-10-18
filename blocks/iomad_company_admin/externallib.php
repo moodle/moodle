@@ -818,9 +818,9 @@ class block_iomad_company_admin_external extends external_api {
         }
 
         if (!empty($params['companyid'])) {
-            $companies = $DB->get_records('company', ['id' => $params['companyid']], 'id', 'id,name'); 
+            $companies = $DB->get_records('company', ['id' => $params['companyid']], 'id', 'id,name,address,city,region,postcode,country,custom1,custom2,custom3'); 
         } else {
-            $companies = $DB->get_records('company', ['suspended' => 0], 'id', 'id,name'); 
+            $companies = $DB->get_records('company', ['suspended' => 0], 'id', 'id,name,address,city,region,postcode,country,custom1,custom2,custom3'); 
         }
         foreach ($companies as $companyid => $company) {
             $comp = new $company->id;
@@ -850,8 +850,16 @@ class block_iomad_company_admin_external extends external_api {
                 array('companies' => new external_multiple_structure(
                         new external_single_structure(
                             array(
-                                'id' => new external_value(PARAM_INT, 'Course ID'),
-                                'name' => new external_value(PARAM_TEXT, 'Course full name'),
+                                'id' => new external_value(PARAM_INT, 'Company ID'),
+                                'name' => new external_value(PARAM_TEXT, 'Company name'),
+                                'address' => new external_value(PARAM_TEXT, 'Company address'),
+                                'city' => new external_value(PARAM_TEXT, 'Company city'),
+                                'region' => new external_value(PARAM_TEXT, 'Company region'),
+                                'postcode' => new external_value(PARAM_TEXT, 'Company postcode'),
+                                'country' => new external_value(PARAM_TEXT, 'Company country'),
+                                'custom1' => new external_value(PARAM_TEXT, 'Company custom1'),
+                                'custom2' => new external_value(PARAM_TEXT, 'Company custom2'),
+                                'custom3' => new external_value(PARAM_TEXT, 'Company custom3'),
                                 array('courses' => new external_multiple_structure(
                                         new external_single_structure(
                                             array(
