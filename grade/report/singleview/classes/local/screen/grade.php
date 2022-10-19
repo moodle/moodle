@@ -172,8 +172,8 @@ class grade extends tablelike implements selectable_items, filterable_items {
      */
     public function original_headers() {
         return [
-            '', // For filter icon.
             get_string('fullnameuser', 'core'),
+            '', // For filter icon.
             get_string('grade', 'grades'),
             get_string('range', 'grades'),
             get_string('feedback', 'grades'),
@@ -222,9 +222,9 @@ class grade extends tablelike implements selectable_items, filterable_items {
         $formatteddefinition = $this->format_definition($grade);
 
         $line = [
+            html_writer::link($url, $userpic . $fullname),
             $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', ''), null,
                     ['title' => $iconstring, 'aria-label' => $iconstring]),
-            html_writer::link($url, $userpic . $fullname),
             $formatteddefinition['finalgrade'],
             $this->item_range(),
             $formatteddefinition['feedback'],
@@ -232,8 +232,8 @@ class grade extends tablelike implements selectable_items, filterable_items {
             $formatteddefinition['exclude'],
         ];
         $lineclasses = [
-            'action',
             'user',
+            'action',
             'grade',
             'range',
         ];
@@ -241,7 +241,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
         $i = 0;
         foreach ($line as $key => $value) {
             $cell = new \html_table_cell($value);
-            if ($isheader = $i == 1) {
+            if ($isheader = $i == 0) {
                 $cell->header = $isheader;
                 $cell->scope = "row";
             }
