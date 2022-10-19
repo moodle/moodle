@@ -726,6 +726,19 @@ EOF;
     }
 
     /**
+     * Get the appropriate designated role for the current user.
+     *
+     * @return string
+     */
+    public function get_current_user_role(): string {
+        if ($this->is_admin() || $this->is_moderator()) {
+            return 'MODERATOR';
+        }
+
+        return 'VIEWER';
+    }
+
+    /**
      * Whether to show the recording button
      *
      * @return bool
