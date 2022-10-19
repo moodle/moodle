@@ -34,7 +34,7 @@ use stdClass;
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class finalgrade extends grade_attribute_format implements unique_value, be_disabled {
+class finalgrade extends grade_attribute_format implements unique_value, be_disabled, be_readonly {
 
     /**
      * Name of this input
@@ -98,6 +98,16 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
     }
 
     /**
+     * Return true if this is read-only.
+     *
+     * @return bool
+     */
+    public function is_readonly(): bool {
+        global $USER;
+        return empty($USER->editing);
+    }
+
+    /**
      * Create the element for this column.
      *
      * @return element
@@ -117,14 +127,16 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
                 $options,
                 $this->get_label(),
                 $this->get_value(),
-                $this->is_disabled()
+                $this->is_disabled(),
+                $this->is_readonly()
             );
         } else {
             return new text_attribute(
                 $this->get_name(),
                 $this->get_value(),
                 $this->get_label(),
-                $this->is_disabled()
+                $this->is_disabled(),
+                $this->is_readonly()
             );
         }
     }

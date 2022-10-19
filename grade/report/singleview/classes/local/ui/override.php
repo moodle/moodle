@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class override extends grade_attribute_format implements be_checked, be_disabled {
+class override extends grade_attribute_format implements be_checked, be_disabled, be_readonly {
 
     /**
      * The name for this input
@@ -67,6 +67,16 @@ class override extends grade_attribute_format implements be_checked, be_disabled
     }
 
     /**
+     * Return true if this is read-only.
+     *
+     * @return bool
+     */
+    public function is_readonly(): bool {
+        global $USER;
+        return empty($USER->editing);
+    }
+
+    /**
      * Get the label for this form element.
      *
      * @return string
@@ -91,7 +101,8 @@ class override extends grade_attribute_format implements be_checked, be_disabled
             $this->get_name(),
             $this->get_label(),
             $this->is_checked(),
-            $this->is_disabled()
+            $this->is_disabled(),
+            $this->is_readonly()
         );
     }
 

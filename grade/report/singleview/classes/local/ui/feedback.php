@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class feedback extends grade_attribute_format implements unique_value, be_disabled {
+class feedback extends grade_attribute_format implements unique_value, be_disabled, be_readonly {
 
     /**
      * Name of this input
@@ -89,6 +89,16 @@ class feedback extends grade_attribute_format implements unique_value, be_disabl
     }
 
     /**
+     * Return true if this is read-only.
+     *
+     * @return bool
+     */
+    public function is_readonly(): bool {
+        global $USER;
+        return empty($USER->editing);
+    }
+
+    /**
      * Create a text_attribute for this ui element.
      *
      * @return element
@@ -98,7 +108,8 @@ class feedback extends grade_attribute_format implements unique_value, be_disabl
             $this->get_name(),
             $this->get_value(),
             $this->get_label(),
-            $this->is_disabled()
+            $this->is_disabled(),
+            $this->is_readonly()
         );
     }
 
