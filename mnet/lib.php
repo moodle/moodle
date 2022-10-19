@@ -318,8 +318,6 @@ function mnet_get_keypair() {
     if (!is_null($keypair)) return $keypair;
     if ($result = get_config('mnet', 'openssl')) {
         list($keypair['certificate'], $keypair['keypair_PEM']) = explode('@@@@@@@@', $result);
-        $keypair['privatekey'] = openssl_pkey_get_private($keypair['keypair_PEM']);
-        $keypair['publickey']  = openssl_pkey_get_public($keypair['certificate']);
         return $keypair;
     } else {
         $keypair = mnet_generate_keypair();
