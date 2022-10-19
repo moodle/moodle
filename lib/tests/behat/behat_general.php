@@ -1776,7 +1776,17 @@ EOF;
      * @param   string $keys The key, or list of keys, to type
      */
     public function i_type(string $keys): void {
-        behat_base::type_keys($this->getSession(), str_split($keys));
+        // Certain keys, such as the newline character, must be converted to the appropriate character code.
+        // Without this, keys will behave differently depending on the browser.
+        $keylist = array_map(function($key): string {
+            switch ($key) {
+                case '\n':
+                    behat_keys::ENTER;
+                default:
+                    return $key;
+            }
+        }, str_split($keys));
+        behat_base::type_keys($this->getSession(), $keylist);
     }
 
     /**
