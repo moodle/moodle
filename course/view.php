@@ -6,6 +6,8 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/completionlib.php');
 
+    redirect_if_major_upgrade_required();
+
     $id          = optional_param('id', 0, PARAM_INT);
     $name        = optional_param('name', '', PARAM_TEXT);
     $edit        = optional_param('edit', -1, PARAM_BOOL);
