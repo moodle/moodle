@@ -1717,8 +1717,8 @@ EOF;
         // Without this, keys will behave differently depending on the browser.
         $keylist = array_map(function($key): string {
             switch ($key) {
-                case '\n':
-                    behat_keys::ENTER;
+                case "\n":
+                    return behat_keys::ENTER;
                 default:
                     return $key;
             }
