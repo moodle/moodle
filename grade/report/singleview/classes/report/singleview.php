@@ -19,6 +19,7 @@ namespace gradereport_singleview\report;
 use context_course;
 use grade_report;
 use moodle_url;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -113,5 +114,71 @@ class singleview extends grade_report {
     public function output(): string {
         global $OUTPUT;
         return $OUTPUT->container($this->screen->html(), 'reporttable');
+    }
+
+    protected function setup_groups() {
+        parent::setup_groups();
+        $this->group_selector = static::groups_course_menu($this->course, $this->pbarurl);
+    }
+
+    /**
+     * Ideally we should move this function to the base class and call it from the setup_groups in the base class,
+     * so all reports would automatically use it.
+     *
+     * @param stdClass $course
+     * @param moodle_url $urlroot
+     * @return string
+     */
+    protected static function groups_course_menu(stdClass $course, moodle_url $urlroot) {
+        global $USER, $OUTPUT;
+
+        $groupmode = $course->groupmode;
+        if (!$groupmode) {
+            return '';
+        }
+
+        $context = context_course::instance($course->id);
+        $aag = has_capability('moodle/site:accessallgroups', $context);
+
+        $usergroups = [];
+        if ($groupmode == VISIBLEGROUPS or $aag) {
+            $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
+            // Get user's own groups and put to the top.
+            $usergroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
+        } else {
+            $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
+        }
+
+        $activegroup = groups_get_course_group($course, true, $allowedgroups);
+
+        $groupsmenu = [];
+        if (!$allowedgroups or $groupmode == VISIBLEGROUPS or $aag) {
+            $groupsmenu[0] = get_string('allparticipants');
+        }
+
+        $groupsmenu += groups_sort_menu_options($allowedgroups, $usergroups);
+
+        if ($groupmode == VISIBLEGROUPS) {
+            $grouplabel = get_string('groupsvisible');
+        } else {
+            $grouplabel = get_string('groupsseparate');
+        }
+
+        if ($aag and $course->defaultgroupingid) {
+            if ($grouping = groups_get_grouping($course->defaultgroupingid)) {
+                $grouplabel = $grouplabel . ' (' . format_string($grouping->name) . ')';
+            }
+        }
+
+        if (count($groupsmenu) == 1) {
+            $groupname = reset($groupsmenu);
+            $output = $grouplabel.': '.$groupname;
+        } else {
+            $select = new \core\output\select_menu('group', $groupsmenu, $activegroup);
+            $select->set_label($grouplabel);
+            $output = $OUTPUT->render($select);
+        }
+
+        return $output;
     }
 }

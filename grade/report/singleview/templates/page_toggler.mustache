@@ -33,7 +33,7 @@
         <p class="my-auto mr-3 text-uppercase">{{#str}}viewby, gradereport_singleview{{/str}}</p>
     {{/displaylabel}}
     <div class="btn-group" role="group" aria-label="{{#str}}ariareporttype, gradereport_singleview{{/str}}">
-        <a href="{{userzerolink}}"
+        <a href="{{{userzerolink}}}"
            type="button"
            class="btn btn-outline-primary {{#userselectactive}}active{{/userselectactive}}"
            {{#userselectactive}}aria-pressed="true"{{/userselectactive}}
@@ -41,7 +41,7 @@
         >
             {{#str}}users{{/str}}
         </a>
-        <a href="{{gradezerolink}}"
+        <a href="{{{gradezerolink}}}"
            type="button"
            class="btn btn-outline-primary {{#gradeselectactive}}active{{/gradeselectactive}}"
            {{#gradeselectactive}}aria-pressed="true"{{/gradeselectactive}}
