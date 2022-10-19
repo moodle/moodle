@@ -34,10 +34,14 @@
     {{{preview}}}
     </div>
 </div>
-<form method="post" action="{{formactionurl}}" class="mt-4">
-    <input type="hidden" name="d" value="{{d}}">
-    <input type="hidden" name="mode" value="usepreset">
-    <input type="hidden" name="action" value="select">
-    <input type="hidden" name="fullname" value="{{userid}}/{{shortname}}">
-    <input type="submit" name="selectpreset" value="{{#str}}usepreset, mod_data{{/str}}" class="btn btn-secondary mt-2 float-right">
-</form>
+{{< core/sticky_footer }}
+    {{$ stickycontent }}
+    <form method="post" action="{{formactionurl}}">
+        <input type="hidden" name="d" value="{{d}}">
+        <input type="hidden" name="mode" value="usepreset">
+        <input type="hidden" name="action" value="select">
+        <input type="hidden" name="fullname" value="{{userid}}/{{shortname}}">
+        <input type="submit" name="selectpreset" value="{{#str}}usepreset, mod_data{{/str}}" class="btn btn-primary">
+    </form>
+    {{/ stickycontent }}
+{{/ core/sticky_footer }}

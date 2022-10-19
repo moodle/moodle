@@ -93,22 +93,9 @@
             {{/editors}}
         </div>
     </div>
+    {{#disableeditor}}
     <div class="container-fluid mt-4">
         <div class="row">
-            <div>
-                <input
-                    class="btn btn-secondary"
-                    type="button"
-                    name="resetbutton"
-                    value="{{#str}} resettemplate, data {{/str}}"
-                />
-                <input
-                    class="btn btn-primary"
-                    type="submit"
-                    value="{{#str}} savetemplate, data {{/str}}"
-                />
-            </div>
-            {{#disableeditor}}
             <div class="ml-auto">
                 <input
                     type="checkbox"
@@ -119,7 +106,24 @@
                 />
                 <label for="useeditor">{{#str}} editorenable, data {{/str}}</label>
             </div>
-            {{/disableeditor}}
         </div>
     </div>
+    {{/disableeditor}}
+    {{< core/sticky_footer }}
+        {{$ stickycontent }}
+        <div>
+            <input
+                class="btn btn-secondary"
+                type="button"
+                name="resetbutton"
+                value="{{#str}} reset {{/str}}"
+            />
+            <input
+                class="btn btn-primary"
+                type="submit"
+                value="{{#str}} save {{/str}}"
+            />
+        </div>
+        {{/ stickycontent }}
+    {{/ core/sticky_footer }}
 </form>

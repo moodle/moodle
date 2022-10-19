@@ -216,6 +216,15 @@ class template {
     }
 
     /**
+     * Return the current template name.
+     *
+     * @return string the template name
+     */
+    public function get_template_name(): string {
+        return $this->templatename;
+    }
+
+    /**
      * Generate the list of action icons.
      *
      * @return pix_icon[] icon name => pix_icon

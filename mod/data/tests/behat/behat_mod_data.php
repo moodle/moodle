@@ -62,7 +62,7 @@ class behat_mod_data extends behat_base {
         }
 
         $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $fielddata);
-        $this->execute('behat_forms::press_button', get_string('add'));
+        $this->execute('behat_forms::press_button', get_string('save'));
     }
 
     /**

@@ -406,25 +406,36 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         echo '<input type="hidden" name="d" value="'.$this->data->id.'" />'."\n";
         if (empty($this->field->id)) {
             echo '<input type="hidden" name="mode" value="add" />'."\n";
-            $savebutton = get_string('add');
         } else {
             echo '<input type="hidden" name="fid" value="'.$this->field->id.'" />'."\n";
             echo '<input type="hidden" name="mode" value="update" />'."\n";
-            $savebutton = get_string('savechanges');
         }
         echo '<input type="hidden" name="type" value="'.$this->type.'" />'."\n";
         echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />'."\n";
 
         echo $OUTPUT->heading($this->name(), 3);
 
-        require_once($CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html');
+        $modpath = $CFG->dirroot . '/mod/data/field/' . $this->type . '/mod.html';
+        if (file_exists($modpath)) {
+            require_once($modpath);
+        }
 
-        echo html_writer::start_div('mt-3');
-        echo html_writer::tag('input', null, array('type' => 'submit', 'value' => $savebutton,
-            'class' => 'btn btn-primary'));
-        echo html_writer::tag('input', null, array('type' => 'submit', 'name' => 'cancel',
-            'value' => get_string('cancel'), 'class' => 'btn btn-secondary ml-2'));
-        echo html_writer::end_div();
+        $actionbuttons = html_writer::start_div();
+        $actionbuttons .= html_writer::tag('input', null, [
+            'type' => 'submit',
+            'name' => 'cancel',
+            'value' => get_string('cancel'),
+            'class' => 'btn btn-secondary mr-2'
+        ]);
+        $actionbuttons .= html_writer::tag('input', null, [
+            'type' => 'submit',
+            'value' => get_string('save'),
+            'class' => 'btn btn-primary'
+        ]);
+        $actionbuttons .= html_writer::end_div();
+
+        $stickyfooter = new core\output\sticky_footer($actionbuttons);
+        echo $OUTPUT->render($stickyfooter);
 
         echo '</form>';
 

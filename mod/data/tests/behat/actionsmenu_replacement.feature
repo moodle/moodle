@@ -40,11 +40,11 @@ Feature: Users can add the ##actionsmenu## replacement to the database templates
       | Header         | <table>                                              |
       | Repeated entry | <tr><td>[[field1]]</td><td>##actionsmenu##</td><tr>  |
       | Footer         | </table>                                             |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     And I set the field "Templates tertiary navigation" to "Single template"
     And I set the following fields to these values:
       | Single template | <table><tr><td>[[field1]]</td><td>[[field2]]</td><td>##actionsmenu##</td><tr></table> |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
 
   @javascript
   Scenario: The ##actionsmenu## replacement displays the expected actions with default settings depending on the user permissions

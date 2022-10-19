@@ -58,14 +58,11 @@ class view_action_bar implements templatable, renderable {
      * @return array
      */
     public function export_for_template(\renderer_base $output): array {
-        global $PAGE, $DB;
+        global $PAGE;
 
         $data = [
             'urlselect' => $this->urlselect->export_for_template($output),
         ];
-
-        $addentrybutton = new add_entries_action($this->id);
-        $data['addentrybutton'] = $addentrybutton->export_for_template($output);
 
         if (has_capability('mod/data:manageentries', $PAGE->context)) {
             $importentrieslink = new moodle_url('/mod/data/import.php',
