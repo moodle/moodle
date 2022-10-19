@@ -12084,8 +12084,7 @@ input[disabled] {
       padding-top: 0.3333333333rem;
       padding-bottom: 0.3333333333rem;
       display: inline-flex;
-      overflow: hidden;
-      flex-grow: 1; }
+      overflow: hidden; }
     .breadcrumb:not(:empty) .breadcrumb-item a,
     .breadcrumb:not(:empty) .breadcrumb-item span {
       overflow: hidden;
