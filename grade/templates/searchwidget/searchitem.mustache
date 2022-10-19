@@ -27,22 +27,20 @@
         "fullname": "Cameron Greeve"
     }
 }}
-<div class="w-100 result-row" role="row" id="result-row-{{id}}">
-    {{#name}}
-        <a role="option" id="result-item-{{id}}x{{id}}" href="{{url}}" class="d-flex px-2 py-1">
-            <span class="w-50 pull-left result-cell text-truncate text-body mr-2">
-                {{name}}
-            </span>
-        </a>
-    {{/name}}
-    {{^name}}
-        <a role="option" id="user-{{id}}" href="{{url}}" class="d-flex px-2 py-1">
-            <span class="w-50 pull-left result-cell text-truncate text-body mr-2">
-                {{fullname}}
-            </span>
-            <span class="w-50 pull-left result-cell text-truncate text-muted">
-                <span id="email-user-{{id}}" role="gridcell">{{email}}</span>
-            </span>
-        </a>
-    {{/name}}
-</div>
+{{#name}}
+    <a role="option" href="{{url}}" class="dropdown-item d-flex px-2 py-1">
+        <span class="pull-left result-cell text-truncate mr-2">
+            {{name}}
+        </span>
+    </a>
+{{/name}}
+{{^name}}
+    <a role="option" href="{{url}}" class="dropdown-item d-flex px-2 py-1 align-items-center">
+        <span class="w-50 pull-left text-truncate mr-2">
+            {{fullname}}
+        </span>
+        <span class="w-50 pull-left text-truncate small email">
+            {{email}}
+        </span>
+    </a>
+{{/name}}

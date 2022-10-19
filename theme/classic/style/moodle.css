@@ -19747,18 +19747,28 @@ p.arrow_button {
 .path-grade-report-singleview .reporttable .dropdown-toggle::after {
   display: none; }
 
-.searchresultitemscontainer {
-  max-height: 150px;
-  overflow: auto; }
-  .searchresultitemscontainer a:hover {
-    background-color: #f8f9fa; }
-  .searchresultitemscontainer .focused-cell {
-    outline-style: dotted;
-    outline-color: green; }
-
-.unsearchablecontentcontainer {
-  border-top: 1px solid #dee2e6;
-  padding-top: 10px; }
+.search-widget .dropdown-menu {
+  padding: 0.8rem 1.2rem; }
+  .search-widget .dropdown-menu.wide {
+    width: 350px; }
+  .search-widget .dropdown-menu.narrow {
+    width: 250px; }
+  .search-widget .dropdown-menu .dropdown-item span.email {
+    color: #6a737b; }
+  .search-widget .dropdown-menu .dropdown-item:hover span,
+  .search-widget .dropdown-menu .dropdown-item:active span {
+    color: #fff; }
+  .search-widget .dropdown-menu .searchresultscontainer {
+    height: 178px;
+    font-size: 90%; }
+    .search-widget .dropdown-menu .searchresultscontainer .searchresultitemscontainer {
+      height: 178px;
+      max-height: 178px;
+      overflow: auto; }
+  .search-widget .dropdown-menu .unsearchablecontentcontainer {
+    border-top: 1px solid #dee2e6;
+    padding-top: 10px;
+    font-size: 90%; }
 
 .columns-autoflow-1to1to1 {
   column-count: 3; }
