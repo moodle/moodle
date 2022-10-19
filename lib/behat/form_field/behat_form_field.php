@@ -244,18 +244,21 @@ class behat_form_field implements behat_session_interface {
      * Checks if the provided text matches the field value.
      *
      * @param string $expectedvalue
+     * @param string|null $actualvalue The actual value. If not specified, this will be fetched from $this->get_value().
      * @return bool
      */
-    protected function text_matches($expectedvalue) {
+    protected function text_matches($expectedvalue, ?string $actualvalue = null): bool {
+        $actualvalue = $actualvalue ?? $this->get_value();
+
         // Non strict string comparison.
-        if (trim($expectedvalue) == trim($this->get_value())) {
+        if (trim($expectedvalue) == trim($actualvalue)) {
             return true;
         }
 
         // Do one more matching attempt for floats that are valid with current decsep in use
         // (let's continue non strict comparing them as strings, but once unformatted).
         $expectedfloat = unformat_float(trim($expectedvalue), true);
-        $actualfloat = unformat_float(trim($this->get_value()), true);
+        $actualfloat = unformat_float(trim($actualvalue), true);
         // If they aren't null or false, then we are good to be compared (basically is_numeric()).
         $goodfloats = !is_null($expectedfloat) && ($expectedfloat !== false) &&
             !is_null($actualfloat) && ($actualfloat !== false);
