@@ -21754,6 +21754,10 @@ div.editor_atto_toolbar button .icon {
     font-size: 1.4rem;
     font-weight: bold; }
 
+@media (max-width: 767.98px) {
+  .tertiary-navigation .mform {
+    padding-left: initial; } }
+
 @media print {
   .tertiary-navigation {
     display: none; } }
