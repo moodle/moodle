@@ -18,16 +18,11 @@
  * core_component related tests.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Class core_component_testcase.
+ *
+ * @covers \core_component
  */
 class component_test extends advanced_testcase {
 
@@ -842,5 +837,65 @@ class component_test extends advanced_testcase {
         $this->assertContains('mod_forum', $componentnames);
         $this->assertContains('tool_usertours', $componentnames);
         $this->assertContains('core_favourites', $componentnames);
+    }
+
+    /**
+     * Basic tests for APIs related functions in the core_component class.
+     */
+    public function test_apis_methods() {
+        $apis = core_component::get_core_apis();
+        $this->assertIsArray($apis);
+
+        $apinames = core_component::get_core_api_names();
+        $this->assertIsArray($apis);
+
+        // Both should return the very same APIs.
+        $this->assertEquals($apinames, array_keys($apis));
+
+        $this->assertFalse(core_component::is_core_api('lalala'));
+        $this->assertTrue(core_component::is_core_api('privacy'));
+    }
+
+    /**
+     * Test that the apis.json structure matches expectations
+     *
+     * While we include an apis.schema.json file in core, there isn't any PHP built-in allowing us
+     * to validate it (3rd part libraries needed). Plus the schema doesn't allow to validate things
+     * like uniqueness or sorting. We are going to do all that here.
+     */
+    public function test_apis_json_validation() {
+        $apis = $sortedapis = core_component::get_core_apis();
+        ksort($sortedapis); // We'll need this later.
+
+        // General structure validations.
+        $this->assertIsArray($apis);
+        $this->assertGreaterThan(25, count($apis));
+        $this->assertArrayHasKey('privacy', $apis); // Verify a few.
+        $this->assertArrayHasKey('external', $apis);
+        $this->assertArrayHasKey('search', $apis);
+        $this->assertEquals(array_keys($sortedapis), array_keys($apis)); // Verify json is sorted alphabetically.
+
+        // Iterate over all apis and perform more validations.
+        foreach ($apis as $apiname => $attributes) {
+            // Message, to be used later and easier finding the problem.
+            $message = "Validation problem found with API: ${apiname}";
+
+            $this->assertIsObject($attributes, $message);
+            $this->assertMatchesRegularExpression('/^[a-z][a-z0-9]+$/', $apiname, $message);
+            $this->assertEquals(['component', 'allowedlevel2', 'allowedspread'], array_keys((array)$attributes), $message);
+
+            // Verify attributes.
+            if ($apiname !== 'core') { // Exception for core api, it doesn't have component.
+                $this->assertMatchesRegularExpression('/^(core|[a-z][a-z0-9_]+)$/', $attributes->component, $message);
+            } else {
+                $this->assertNull($attributes->component, $message);
+            }
+
+            $this->assertIsBool($attributes->allowedlevel2, $message);
+            $this->assertIsBool($attributes->allowedspread, $message);
+
+            // Cannot spread if level2 is not allowed.
+            $this->assertLessThanOrEqual($attributes->allowedlevel2, $attributes->allowedspread, $message);
+        }
     }
 }
