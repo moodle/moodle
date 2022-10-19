@@ -97,6 +97,7 @@ $actionbar = new \core_grades\output\general_action_bar($context,
     new moodle_url('/grade/report/singleview/index.php', ['id' => $courseid]), 'report', 'singleview');
 
 if ($itemtype == 'user') {
+    $actionbar = new \gradereport_singleview\output\user_action_bar($context, $report);
     print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false,
         true, null, null, $report->screen->item, $actionbar);
 } else if ($itemtype == 'grade') {
