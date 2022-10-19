@@ -14,28 +14,42 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_course;
+namespace core_course\task;
+
+use context_user;
 
 /**
  * Contains tests for course related notifications.
  *
  * @package    core
  * @subpackage course
+ * @covers     \core_course\task\content_notification_task
  * @copyright  2021 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class notifications_test extends \advanced_testcase {
+class content_notification_task_test extends \advanced_testcase {
 
     /**
-     * Test coursecontentupdated class.
+     * Test execution of task
      */
-    public function test_coursecontentupdated_notifications() {
-        global $DB;
+    public function test_execute(): void {
+        global $DB, $CFG, $USER;
 
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $course = self::getDataGenerator()->create_course();
+        // Create course, with a course image.
+        $draft = get_file_storage()->create_file_from_pathname([
+            'component' => 'user',
+            'filearea' => 'draft',
+            'contextid' => context_user::instance($USER->id)->id,
+            'itemid' => file_get_unused_draft_itemid(),
+            'filename' => 'gd-logo.png',
+            'filepath' => '/',
+        ], "{$CFG->libdir}/tests/fixtures/gd-logo.png");
+
+        $course = $this->getDataGenerator()->create_course(['overviewfiles_filemanager' => $draft->get_itemid()]);
+
         // Enrol couple of students to receive a notification and one unactive enrolment.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -82,6 +96,11 @@ class notifications_test extends \advanced_testcase {
         foreach ($messages as $message) {
             $this->assertEquals('coursecontentupdated', $message->eventtype);
             $this->assertEquals($modurl, $message->contexturl);
+
+            $messagecustomdata = json_decode($message->customdata);
+            $this->assertEquals($course->id, $messagecustomdata->courseid);
+            $this->assertObjectHasAttribute('notificationiconurl', $messagecustomdata);
+            $this->assertObjectHasAttribute('notificationpictureurl', $messagecustomdata);
         }
 
         // Now, set the course to not visible.
