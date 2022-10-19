@@ -16,6 +16,14 @@
     }
 }
 
+@include media-breakpoint-down(sm) {
+    .tertiary-navigation {
+        .mform {
+            padding-left: initial;
+        }
+    }
+}
+
 @media print {
     .tertiary-navigation {
         display: none;
