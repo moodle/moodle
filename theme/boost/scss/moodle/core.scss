@@ -2711,7 +2711,6 @@ $picker-emojis-per-row: 7 !default;
             padding-bottom: $spacer / 3;
             display: inline-flex;
             overflow: hidden;
-            flex-grow: 1;
         }
         .breadcrumb-item a,
         .breadcrumb-item span {
