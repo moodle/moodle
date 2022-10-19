@@ -826,6 +826,19 @@ if (empty($CFG->sessiontimeout)) {
 if (empty($CFG->sessiontimeoutwarning)) {
     $CFG->sessiontimeoutwarning = 20 * 60;
 }
+
+// Allow plugins to callback just before the session is started.
+$pluginswithfunction = get_plugins_with_function('before_session_start', 'lib.php');
+foreach ($pluginswithfunction as $plugins) {
+    foreach ($plugins as $function) {
+        try {
+            $function();
+        } catch (Throwable $e) {
+            debugging("Exception calling '$function'", DEBUG_DEVELOPER, $e->getTrace());
+        }
+    }
+}
+
 \core\session\manager::start();
 
 if (!empty($CFG->proxylogunsafe) || !empty($CFG->proxyfixunsafe)) {

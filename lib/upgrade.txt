@@ -55,6 +55,7 @@ Declaration is as follow:
   return the class name.
 * The function get_module_metadata() has been finally deprecated and can not be used anymore.
 * New DML driver method `$DB->sql_order_by_null` for sorting nulls sort nulls first when ascending and last when descending.
+* Allow plugins to callback on all pages just prior to the session start.
 
 === 4.0 ===
 
