@@ -191,6 +191,7 @@ class mod_h5pactivity_generator extends testing_module_generator {
      * @param array $data the attempts data array
      */
     public function create_attempt(array $data): void {
+        global $DB;
 
         if (!isset($data['h5pactivityid'])) {
             throw new coding_exception('Must specify h5pactivityid when creating a H5P attempt.');
@@ -218,6 +219,12 @@ class mod_h5pactivity_generator extends testing_module_generator {
         }
 
         $this->insert_statement($data, $this->$method($data));
+
+        // If the activity has tracking enabled, try to recalculate grades.
+        $activity = $DB->get_record('h5pactivity', ['id' => $data['h5pactivityid']]);
+        if ($activity->enabletracking) {
+            h5pactivity_update_grades($activity, $data['userid']);
+        }
     }
 
     /**
