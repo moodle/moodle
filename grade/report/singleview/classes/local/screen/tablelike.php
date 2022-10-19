@@ -134,11 +134,11 @@ abstract class tablelike extends screen {
 
     /**
      * Get a element to generate the HTML for this table row
-     * @param array $line This is a list of lines in the table (modified)
      * @param grade_grade $grade The grade.
      * @return array
      */
-    public function format_definition(array $line, grade_grade $grade): array {
+    public function format_definition(grade_grade $grade): array {
+        $line = [];
         foreach ($this->definition() as $i => $field) {
             // Table tab index.
             $tab = ($i * $this->total) + $this->index;
@@ -151,11 +151,11 @@ abstract class tablelike extends screen {
 
             // Singleview users without proper permissions should be presented
             // disabled checkboxes for the Exclude grade attribute.
-            if ($field == 'exclude' && !has_capability('moodle/grade:manage', $this->context)){
+            if ($field == 'exclude' && !has_capability('moodle/grade:manage', $this->context)) {
                 $html->disabled = true;
             }
 
-            $line[] = $html;
+            $line[$field] = $html;
         }
         return $line;
     }

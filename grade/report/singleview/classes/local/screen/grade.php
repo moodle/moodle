@@ -174,8 +174,8 @@ class grade extends tablelike implements selectable_items, filterable_items {
         return [
             '', // For filter icon.
             get_string('fullnameuser', 'core'),
-            get_string('range', 'grades'),
             get_string('grade', 'grades'),
+            get_string('range', 'grades'),
             get_string('feedback', 'grades'),
             $this->make_toggle_links('override'),
             $this->make_toggle_links('exclude')
@@ -219,16 +219,23 @@ class grade extends tablelike implements selectable_items, filterable_items {
         $grade->label = $fullname;
         $userpic = $OUTPUT->user_picture($item, ['link' => false, 'visibletoscreenreaders' => false]);
 
+        $formatteddefinition = $this->format_definition($grade);
+
         $line = [
             $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', ''), null,
                     ['title' => $iconstring, 'aria-label' => $iconstring]),
             html_writer::link($url, $userpic . $fullname),
-            $this->item_range()
+            $formatteddefinition['finalgrade'],
+            $this->item_range(),
+            $formatteddefinition['feedback'],
+            $formatteddefinition['override'],
+            $formatteddefinition['exclude'],
         ];
         $lineclasses = [
-            "action",
-            "user",
-            "range"
+            'action',
+            'user',
+            'grade',
+            'range',
         ];
         $outputline = [];
         $i = 0;
@@ -245,7 +252,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
             $i++;
         }
 
-        return $this->format_definition($outputline, $grade);
+        return $outputline;
     }
 
     /**
