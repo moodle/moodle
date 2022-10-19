@@ -38,8 +38,8 @@
         }
     }
 }}
-<div class="user-selector d-flex">
-    <div role="button" class="userwidget btn dropdown-toggle d-flex text-left align-items-center p-0" data-courseid="{{courseid}}" data-groupid="{{groupid}}" data-searchtype="user" tabindex="0" aria-label="{{#str}} selectauser, core_grades {{/str}}">
+<div class="search-widget dropdown d-flex" data-searchtype="user">
+    <button aria-expanded="false" data-toggle="dropdown" class="btn dropdown-toggle d-flex text-left align-items-center p-0" data-courseid="{{courseid}}" data-groupid="{{groupid}}" aria-label="{{#str}} selectauser, core_grades {{/str}}">
         <div class="align-items-center d-flex">
             {{#selectedoption}}
                 <div class="selected-option-img d-block pr-2">
@@ -70,5 +70,7 @@
                 </div>
             {{/selectedoption}}
         </div>
+    </button>
+    <div class="dropdown-menu wide">
     </div>
 </div>
