@@ -216,6 +216,16 @@ class template {
     }
 
     /**
+     * Check if a tag is present in the template.
+     *
+     * @param bool $tagname the tag to check (without ##)
+     * @return bool if the tag is present
+     */
+    public function has_tag(string $tagname): bool {
+        return in_array($tagname, $this->tags);
+    }
+
+    /**
      * Return the current template name.
      *
      * @return string the template name
