@@ -3,20 +3,38 @@
 namespace PhpOffice\PhpSpreadsheet\Calculation\LookupRef;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 abstract class LookupBase
 {
-    protected static function validateIndexLookup($lookup_array, $index_number)
+    /**
+     * @param mixed $lookup_array
+     */
+    protected static function validateLookupArray($lookup_array): void
     {
-        // index_number must be a number greater than or equal to 1
-        if (!is_numeric($index_number) || $index_number < 1) {
-            throw new Exception(Functions::VALUE());
+        if (!is_array($lookup_array)) {
+            throw new Exception(ExcelError::REF());
+        }
+    }
+
+    protected static function validateIndexLookup(array $lookup_array, $index_number): int
+    {
+        // index_number must be a number greater than or equal to 1.
+        // Excel results are inconsistent when index is non-numeric.
+        // VLOOKUP(whatever, whatever, SQRT(-1)) yields NUM error, but
+        // VLOOKUP(whatever, whatever, cellref) yields REF error
+        //   when cellref is '=SQRT(-1)'. So just try our best here.
+        // Similar results if string (literal yields VALUE, cellRef REF).
+        if (!is_numeric($index_number)) {
+            throw new Exception(ExcelError::throwError($index_number));
+        }
+        if ($index_number < 1) {
+            throw new Exception(ExcelError::VALUE());
         }
 
         // index_number must be less than or equal to the number of columns in lookup_array
         if ((!is_array($lookup_array)) || (empty($lookup_array))) {
-            throw new Exception(Functions::REF());
+            throw new Exception(ExcelError::REF());
         }
 
         return (int) $index_number;
@@ -25,7 +43,7 @@ abstract class LookupBase
     protected static function checkMatch(
         bool $bothNumeric,
         bool $bothNotNumeric,
-        $notExactMatch,
+        bool $notExactMatch,
         int $rowKey,
         string $cellDataLower,
         string $lookupLower,

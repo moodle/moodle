@@ -2,6 +2,7 @@
 
 namespace PhpOffice\PhpSpreadsheet\Worksheet;
 
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Helper\Dimension as CssDimension;
 
 class ColumnDimension extends Dimension
@@ -53,10 +54,8 @@ class ColumnDimension extends Dimension
 
     /**
      * Set column index as string eg: 'A'.
-     *
-     * @return $this
      */
-    public function setColumnIndex(string $index)
+    public function setColumnIndex(string $index): self
     {
         $this->columnIndex = $index;
 
@@ -64,11 +63,30 @@ class ColumnDimension extends Dimension
     }
 
     /**
+     * Get column index as numeric.
+     */
+    public function getColumnNumeric(): int
+    {
+        return Coordinate::columnIndexFromString($this->columnIndex);
+    }
+
+    /**
+     * Set column index as numeric.
+     */
+    public function setColumnNumeric(int $index): self
+    {
+        $this->columnIndex = Coordinate::stringFromColumnIndex($index);
+
+        return $this;
+    }
+
+    /**
      * Get Width.
      *
-     * Each unit of column width is equal to the width of one character in the default font size.
-     * By default, this will be the return value; but this method also accepts a unit of measure argument and will
-     *     return the value converted to the specified UoM using an approximation method.
+     * Each unit of column width is equal to the width of one character in the default font size. A value of -1
+     *      tells Excel to display this column in its default width.
+     * By default, this will be the return value; but this method also accepts an optional unit of measure argument
+     *    and will convert the returned value to the specified UoM..
      */
     public function getWidth(?string $unitOfMeasure = null): float
     {
@@ -80,9 +98,11 @@ class ColumnDimension extends Dimension
     /**
      * Set Width.
      *
-     * Each unit of column width is equal to the width of one character in the default font size.
-     * By default, this will be the unit of measure for the passed value; but this method accepts a unit of measure
-     *    argument, and will convert the value from the specified UoM using an approximation method.
+     * Each unit of column width is equal to the width of one character in the default font size. A value of -1
+     *      tells Excel to display this column in its default width.
+     * By default, this will be the unit of measure for the passed value; but this method also accepts an
+     *    optional unit of measure argument, and will convert the value from the specified UoM using an
+     *    approximation method.
      *
      * @return $this
      */
