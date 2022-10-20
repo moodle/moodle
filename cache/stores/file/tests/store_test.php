@@ -33,6 +33,7 @@ require_once($CFG->dirroot.'/cache/stores/file/lib.php');
  * @package    cachestore_file
  * @copyright  2013 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \cachestore_file
  */
 class store_test extends \cachestore_tests {
     /**
@@ -98,5 +99,16 @@ class store_test extends \cachestore_tests {
                 ['key' => 'frog', 'value' => 'jump']
         ]);
         $this->assertEquals(21, $store->get_last_io_bytes());
+    }
+
+    public function test_lock() {
+        $store = new \cachestore_file('Test');
+
+        $this->assertTrue($store->acquire_lock('lock', '123'));
+        $this->assertTrue($store->check_lock_state('lock', '123'));
+        $this->assertFalse($store->check_lock_state('lock', '321'));
+        $this->assertNull($store->check_lock_state('notalock', '123'));
+        $this->assertFalse($store->release_lock('lock', '321'));
+        $this->assertTrue($store->release_lock('lock', '123'));
     }
 }

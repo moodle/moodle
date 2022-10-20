@@ -274,7 +274,9 @@ class modinfolib_test extends advanced_testcase {
         $prevcacherev = $cacherev;
 
         // Little trick to check that cache is not rebuilt druing the next step - substitute the value in MUC and later check that it is still there.
+        $cache->acquire_lock($course->id);
         $cache->set_versioned($course->id, $cacherev, (object)array_merge((array)$cachedvalue, array('secretfield' => 1)));
+        $cache->release_lock($course->id);
 
         // Clear static cache and call get_fast_modinfo() again (pretend we are in another request). Cache should not be rebuilt.
         course_modinfo::clear_instance_cache();

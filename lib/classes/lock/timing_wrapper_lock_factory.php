@@ -70,40 +70,67 @@ class timing_wrapper_lock_factory implements lock_factory {
      * @return \core\lock\lock|boolean - An instance of \core\lock\lock if the lock was obtained, or false.
      */
     public function get_lock($resource, $timeout, $maxlifetime = 86400) {
-        global $PERF;
-
         $before = microtime(true);
 
         $result = $this->factory->get_lock($resource, $timeout, $maxlifetime);
 
         $after = microtime(true);
-        $duration = $after - $before;
-        if (empty($PERF->locks)) {
-            $PERF->locks = [];
-        }
-        $lockdata = (object) [
-            'type' => $this->type,
-            'resource' => $resource,
-            'wait' => $duration,
-            'success' => (bool)$result
-        ];
+        self::record_lock_data($after, $before, $this->type, $resource, (bool)$result, $result);
         if ($result) {
-            $lockdata->lock = $result;
-            $lockdata->timestart = $after;
             $result->init_factory($this);
         }
-        $PERF->locks[] = $lockdata;
 
         return $result;
     }
 
     /**
-     * Release a lock that was previously obtained with @lock.
+     * Records statistics about a lock to the performance data.
+     *
+     * @param float $after The time after the lock was achieved.
+     * @param float $before The time before the lock was requested.
+     * @param string $type The type of lock.
+     * @param string $resource The resource being locked.
+     * @param bool $result Whether the lock was successful.
+     * @param lock|string $lock A value uniquely identifying the lock.
+     * @return void
+     */
+    public static function record_lock_data(float $after, float $before, string $type, string $resource, bool $result, $lock) {
+        global $PERF;
+        $duration = $after - $before;
+        if (empty($PERF->locks)) {
+            $PERF->locks = [];
+        }
+        $lockdata = (object) [
+            'type' => $type,
+            'resource' => $resource,
+            'wait' => $duration,
+            'success' => $result
+        ];
+        if ($result) {
+            $lockdata->lock = $lock;
+            $lockdata->timestart = $after;
+        }
+        $PERF->locks[] = $lockdata;
+    }
+
+    /**
+     * Release a lock that was previously obtained with {@see get_lock}.
      *
      * @param lock $lock - The lock to release.
      * @return boolean - True if the lock is no longer held (including if it was never held).
      */
     public function release_lock(lock $lock) {
+        self::record_lock_released_data($lock);
+        return $this->factory->release_lock($lock);
+    }
+
+    /**
+     * Find the lock in the performance info and update it with the time held.
+     *
+     * @param lock|string $lock A value uniquely identifying the lock.
+     * @return void
+     */
+    public static function record_lock_released_data($lock) {
         global $PERF;
 
         // Find this lock in the list of locks we got, looking backwards since it is probably
@@ -117,8 +144,6 @@ class timing_wrapper_lock_factory implements lock_factory {
                 break;
             }
         }
-
-        return $this->factory->release_lock($lock);
     }
 
     /**

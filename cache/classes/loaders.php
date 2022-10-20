@@ -1582,10 +1582,22 @@ class cache_application extends cache implements cache_loader_with_locking {
     protected $requirelockingwrite = false;
 
     /**
+     * Gets set to true if the cache writes (set|delete) must have a manual lock created first
+     * @var bool
+     */
+    protected $requirelockingbeforewrite = false;
+
+    /**
      * Gets set to a cache_store to use for locking if the caches primary store doesn't support locking natively.
      * @var cache_lock_interface
      */
     protected $cachelockinstance;
+
+    /**
+     * Store a list of locks acquired by this process.
+     * @var array
+     */
+    protected $locks;
 
     /**
      * Overrides the cache construct method.
@@ -1603,6 +1615,7 @@ class cache_application extends cache implements cache_loader_with_locking {
             $this->requirelocking = true;
             $this->requirelockingread = $definition->require_locking_read();
             $this->requirelockingwrite = $definition->require_locking_write();
+            $this->requirelockingbeforewrite = $definition->require_locking_before_write();
         }
 
         $this->handle_invalidation_events();
@@ -1648,13 +1661,24 @@ class cache_application extends cache implements cache_loader_with_locking {
      * @return bool Returns true if the lock could be acquired, false otherwise.
      */
     public function acquire_lock($key) {
+        global $CFG;
         $key = $this->parse_key($key);
+        $before = microtime(true);
         if ($this->nativelocking) {
-            return $this->get_store()->acquire_lock($key, $this->get_identifier());
+            $lock = $this->get_store()->acquire_lock($key, $this->get_identifier());
         } else {
             $this->ensure_cachelock_available();
-            return $this->cachelockinstance->lock($key, $this->get_identifier());
+            $lock = $this->cachelockinstance->lock($key, $this->get_identifier());
         }
+        $after = microtime(true);
+        if ($lock) {
+            $this->locks[$key] = $lock;
+            if (defined('MDL_PERF') || !empty($CFG->perfdebug)) {
+                \core\lock\timing_wrapper_lock_factory::record_lock_data($after, $before,
+                        $this->get_definition()->get_id(), $key, $lock, $this->get_identifier() . $key);
+            }
+        }
+        return $lock;
     }
 
     /**
@@ -1666,6 +1690,9 @@ class cache_application extends cache implements cache_loader_with_locking {
      */
     public function check_lock_state($key) {
         $key = $this->parse_key($key);
+        if (!empty($this->locks[$key])) {
+            return true; // Shortcut to save having to make a call to the cache store if the lock is held by this process.
+        }
         if ($this->nativelocking) {
             return $this->get_store()->check_lock_state($key, $this->get_identifier());
         } else {
@@ -1683,11 +1710,18 @@ class cache_application extends cache implements cache_loader_with_locking {
     public function release_lock($key) {
         $key = $this->parse_key($key);
         if ($this->nativelocking) {
-            return $this->get_store()->release_lock($key, $this->get_identifier());
+            $released = $this->get_store()->release_lock($key, $this->get_identifier());
         } else {
             $this->ensure_cachelock_available();
-            return $this->cachelockinstance->unlock($key, $this->get_identifier());
+            $released = $this->cachelockinstance->unlock($key, $this->get_identifier());
         }
+        if ($released && array_key_exists($key, $this->locks)) {
+            unset($this->locks[$key]);
+            if (defined('MDL_PERF') || !empty($CFG->perfdebug)) {
+                \core\lock\timing_wrapper_lock_factory::record_lock_released_data($this->get_identifier() . $key);
+            }
+        }
+        return $released;
     }
 
     /**
@@ -1719,6 +1753,10 @@ class cache_application extends cache implements cache_loader_with_locking {
      * @return bool True on success, false otherwise.
      */
     protected function set_implementation($key, int $version, $data, bool $setparents = true): bool {
+        if ($this->requirelockingbeforewrite && !$this->check_lock_state($key)) {
+            throw new coding_exception('Attempted to set cache key "' . $key . '" without a lock. '
+                . 'Locking before writes is required for ' . $this->get_definition()->get_id());
+        }
         if ($this->requirelockingwrite && !$this->acquire_lock($key)) {
             return false;
         }
@@ -1753,6 +1791,15 @@ class cache_application extends cache implements cache_loader_with_locking {
      *      ... if they care that is.
      */
     public function set_many(array $keyvaluearray) {
+        if ($this->requirelockingbeforewrite) {
+            foreach ($keyvaluearray as $id => $pair) {
+                if (!$this->check_lock_state($pair['key'])) {
+                    debugging('Attempted to set cache key "' . $pair['key'] . '" without a lock. '
+                            . 'Locking before writes is required for ' . $this->get_definition()->get_name(), DEBUG_DEVELOPER);
+                    unset($keyvaluearray[$id]);
+                }
+            }
+        }
         if ($this->requirelockingwrite) {
             $locks = array();
             foreach ($keyvaluearray as $id => $pair) {
@@ -1809,10 +1856,11 @@ class cache_application extends cache implements cache_loader_with_locking {
      * @throws coding_exception
      */
     public function get_many(array $keys, $strictness = IGNORE_MISSING) {
+        $locks = [];
         if ($this->requirelockingread) {
             foreach ($keys as $id => $key) {
-                $lock =$this->acquire_lock($key);
-                if (!$lock) {
+                $locks[$key] = $this->acquire_lock($key);
+                if (!$locks[$key]) {
                     if ($strictness === MUST_EXIST) {
                         throw new coding_exception('Could not acquire read locks for all of the items being requested.');
                     } else {
@@ -1823,7 +1871,13 @@ class cache_application extends cache implements cache_loader_with_locking {
 
             }
         }
-        return parent::get_many($keys, $strictness);
+        $result = parent::get_many($keys, $strictness);
+        if ($this->requirelockingread) {
+            foreach ($locks as $key => $lock) {
+                $this->release_lock($key);
+            }
+        }
+        return $result;
     }
 
     /**

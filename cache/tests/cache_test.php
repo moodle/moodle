@@ -2112,6 +2112,55 @@ class cache_test extends \advanced_testcase {
     }
 
     /**
+     * Test requiring a lock before attempting to set a key.
+     *
+     * @covers ::set_implementation
+     */
+    public function test_application_locking_before_write() {
+        $instance = cache_config_testing::instance(true);
+        $instance->phpunit_add_definition('phpunit/test_application_locking', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'test_application_locking',
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 1,
+            'requirelockingbeforewrite' => true
+        ));
+        $cache = cache::make('phpunit', 'test_application_locking');
+        $this->assertInstanceOf(cache_application::class, $cache);
+
+        $cache->acquire_lock('a');
+        $this->assertTrue($cache->set('a', 'A'));
+        $cache->release_lock('a');
+
+        $this->expectExceptionMessage('Attempted to set cache key "b" without a lock. '
+                . 'Locking before writes is required for phpunit/test_application_locking');
+        $this->assertFalse($cache->set('b', 'B'));
+    }
+
+
+    /**
+     * Test that invalid lock setting combinations are caught.
+     *
+     * @covers ::make
+     */
+    public function test_application_conflicting_locks() {
+        $instance = cache_config_testing::instance(true);
+        $instance->phpunit_add_definition('phpunit/test_application_locking', array(
+                'mode' => cache_store::MODE_APPLICATION,
+                'component' => 'phpunit',
+                'area' => 'test_application_locking',
+                'staticacceleration' => true,
+                'staticaccelerationsize' => 1,
+                'requirelockingwrite' => true,
+                'requirelockingbeforewrite' => true,
+        ));
+
+        $this->expectException('coding_exception');
+        cache::make('phpunit', 'test_application_locking');
+    }
+
+    /**
      * Test the static cache_helper method purge_stores_used_by_definition.
      */
     public function test_purge_stores_used_by_definition() {

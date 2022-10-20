@@ -200,6 +200,26 @@ class cache_disabled extends cache {
     public function purge() {
         return true;
     }
+
+    /**
+     * Pretend that we got a lock to avoid errors.
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function acquire_lock(string $key) : bool {
+        return true;
+    }
+
+    /**
+     * Pretend that we released a lock to avoid errors.
+     *
+     * @param string $key
+     * @return void
+     */
+    public function release_lock(string $key) : bool {
+        return true;
+    }
 }
 
 /**

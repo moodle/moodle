@@ -9,6 +9,9 @@ Declaration is as follow:
     $deprecatedcapabilities = [
         'fake/access:fakecapability' => ['replacement' => '', 'message' => 'This capability should not be used anymore.']
     ];
+* coursemodinfo cache uses the new `requirelockingbeforewrite` option, and rebuilding the cache now uses the cache lock API, rather
+  than using the core lock factory directly. This allows the locks to be stored locally if the cache is stored locally, and
+  avoids the risk of delays and timeouts when multiple nodes need to rebuild the cache locally, but are waiting for a central lock.
 
 === 4.1 ===
 
