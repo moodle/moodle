@@ -131,7 +131,7 @@ Feature: Users can use mod_data without editing the templates
       | Header         | New header!                  |
       | Repeated entry | This is the template content |
       | Footer         | New footer!                  |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     And I navigate to "Database" in current page administration
     And I should see "New header!"
     And I should see "This is the template content"
@@ -139,7 +139,7 @@ Feature: Users can use mod_data without editing the templates
     And I should not see "Student entry 1"
     And I should not see "Some content 1"
     When I navigate to "Templates" in current page administration
-    And I click on "Reset template" "button"
+    And I click on "Reset" "button" in the "sticky-footer" "region"
     And I click on "Reset template" "button" in the "Reset template?" "dialogue"
     And I should see "Template reset"
     And I navigate to "Database" in current page administration

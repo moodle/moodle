@@ -33,7 +33,7 @@ Feature: Users can edit the database templates
       | Header         | New header!                |
       | Repeated entry | [[field1]] and [[field2]]! |
       | Footer         | New footer!                |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     When I navigate to "Database" in current page administration
     Then I should see "New header!"
     And I should see "Student entry 1 and Some content 1!"
@@ -44,7 +44,7 @@ Feature: Users can edit the database templates
     Given I set the field "Templates tertiary navigation" to "Single template"
     And I set the following fields to these values:
       | Single template | [[field1]] and [[field2]] details! |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     When I navigate to "Database" in current page administration
     And I set the field "View mode tertiary navigation" to "Single view"
     Then I should see "Student entry 1 and Some content 1 details!"
@@ -54,7 +54,7 @@ Feature: Users can edit the database templates
     Given I set the field "Templates tertiary navigation" to "Add entry template"
     And I set the following fields to these values:
       | Add entry template | [[field1]] [[field2]] Form extra! |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     When I navigate to "Database" in current page administration
     And I click on "Add entry" "button"
     Then I should see "Form extra!"
@@ -64,7 +64,7 @@ Feature: Users can edit the database templates
     Given I set the field "Templates tertiary navigation" to "Advanced search template"
     And I set the following fields to these values:
       | Advanced search template | New advanced search template! |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     When I navigate to "Database" in current page administration
     And I click on "Advanced search" "checkbox"
     Then I should see "New advanced search template!"
@@ -74,7 +74,7 @@ Feature: Users can edit the database templates
     Given I click on "Enable editor" "checkbox"
     And I set the following fields to these values:
       | Repeated entry | <span class="d-none">Nope</span>Yep! |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     When I navigate to "Database" in current page administration
     Then I should not see "Nope"
     And I should see "Yep!"
@@ -84,11 +84,11 @@ Feature: Users can edit the database templates
     Given I click on "Enable editor" "checkbox"
     And I set the following fields to these values:
       | Repeated entry | <span class="hideme">Nope</span>Yep! |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     And I set the field "Templates tertiary navigation" to "CSS template"
     And I set the following fields to these values:
       | CSS template | .hideme {display: none;} |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     When I navigate to "Database" in current page administration
     Then I should not see "Nope"
     And I should see "Yep!"
@@ -98,11 +98,11 @@ Feature: Users can edit the database templates
     Given I click on "Enable editor" "checkbox"
     And I set the following fields to these values:
       | Repeated entry | <span id="hideme">Nope</span>Yep! |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     And I set the field "Templates tertiary navigation" to "Javascript template"
     And I set the following fields to these values:
       | Javascript template | window.onload = () => document.querySelector('#hideme').style.display = 'none'; |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     When I navigate to "Database" in current page administration
     Then I should not see "Nope"
     And I should see "Yep!"
@@ -113,7 +113,7 @@ Feature: Users can edit the database templates
       | Header         | New header!                  |
       | Repeated entry | This is the template content |
       | Footer         | New footer!                  |
-    And I click on "Save template" "button"
+    And I click on "Save" "button" in the "sticky-footer" "region"
     And I navigate to "Database" in current page administration
     And I should see "New header!"
     And I should see "This is the template content"
@@ -121,7 +121,7 @@ Feature: Users can edit the database templates
     And I should not see "Student entry 1"
     And I should not see "Some content 1"
     When I navigate to "Templates" in current page administration
-    And I click on "Reset template" "button"
+    And I click on "Reset" "button" in the "sticky-footer" "region"
     And I click on "Reset template" "button" in the "Reset template?" "dialogue"
     Then I should see "Template reset"
     And I navigate to "Database" in current page administration

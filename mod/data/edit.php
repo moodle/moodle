@@ -217,7 +217,9 @@ if (!$rid && ((!$data->maxentries) ||
     ]);
 }
 
-echo html_writer::div($actionbuttons, 'mdl-align mt-2');
+$stickyfooter = new core\output\sticky_footer($actionbuttons);
+echo $OUTPUT->render($stickyfooter);
+
 echo $OUTPUT->box_end();
 echo '</div></form>';
 

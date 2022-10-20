@@ -70,36 +70,22 @@ if ($action !== '') {
 }
 
 if ($id) {
-    $url->param('id', $id);
-    $PAGE->set_url($url);
-    if (! $cm = get_coursemodule_from_id('data', $id)) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-        throw new \moodle_exception('coursemisconf');
-    }
-    if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-
-} else {
+    list($course, $cm) = get_course_and_cm_from_cmid($id, manager::MODULE);
+    $manager = manager::create_from_coursemodule($cm);
+    $url->param('id', $cm->id);
+} else {   // We must have $d.
+    $instance = $DB->get_record('data', ['id' => $d], '*', MUST_EXIST);
+    $manager = manager::create_from_instance($instance);
+    $cm = $manager->get_coursemodule();
+    $course = get_course($cm->course);
     $url->param('d', $d);
-    $PAGE->set_url($url);
-    if (! $data = $DB->get_record('data', array('id'=>$d))) {
-        throw new \moodle_exception('invalidid', 'data');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
 }
 
-require_login($course, true, $cm);
-
-$manager = manager::create_from_coursemodule($cm);
+$PAGE->set_url($url);
+$data = $manager->get_instance();
 $context = $manager->get_context();
+
+require_login($course, true, $cm);
 require_capability('mod/data:managetemplates', $context);
 
 $formimportzip = new data_import_preset_zip_form();
@@ -463,8 +449,11 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
     echo '<input type="submit" class="btn btn-secondary ml-1" value="'.get_string('save', 'data').'" />';
     echo '</div>';
     echo '</form>';
-    echo '</div>';
 
+    // Add a sticky footer.
+    echo $renderer->render_fields_footer($manager);
+
+    echo '</div>';
 }
 
 /// Finish the page

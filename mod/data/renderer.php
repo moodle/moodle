@@ -1,6 +1,29 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Database activity renderer.
+ *
+ * @copyright 2010 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod_data
+ */
 
 use mod_data\local\importer\preset_existing_importer;
+use mod_data\manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,7 +56,6 @@ class mod_data_renderer extends plugin_renderer_base {
      */
     public function importing_preset(stdClass $datamodule, \mod_data\local\importer\preset_importer $importer): string {
 
-        $strcontinue = get_string('continue');
         $strwarning = get_string('mappingwarning', 'data');
         $strfieldmappings = get_string('fieldmappings', 'data');
 
@@ -99,7 +121,23 @@ class mod_data_renderer extends plugin_renderer_base {
         $attrs = array('type' => 'checkbox', 'name' => 'overwritesettings', 'id' => 'overwritesettings', 'class' => 'ml-1');
         $html .= html_writer::empty_tag('input', $attrs);
         $html .= html_writer::end_tag('div');
-        $html .= html_writer::empty_tag('input', array('type' => 'submit', 'class' => 'btn btn-primary', 'value' => $strcontinue));
+
+        $actionbuttons = html_writer::start_div();
+        $cancelurl = new moodle_url('/mod/data/preset.php', ['d' => $datamodule->id]);
+        $actionbuttons .= html_writer::tag('a', get_string('cancel') , [
+            'href' => $cancelurl->out(false),
+            'class' => 'btn btn-secondary mr-2',
+            'role' => 'button',
+        ]);
+        $actionbuttons .= html_writer::empty_tag('input', [
+            'type' => 'submit',
+            'class' => 'btn btn-primary',
+            'value' => get_string('continue'),
+        ]);
+        $actionbuttons .= html_writer::end_div();
+
+        $stickyfooter = new core\output\sticky_footer($actionbuttons);
+        $html .= $this->render($stickyfooter);
 
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('form');
@@ -117,6 +155,20 @@ class mod_data_renderer extends plugin_renderer_base {
     public function render_fields_action_bar(\mod_data\output\fields_action_bar $actionbar): string {
         $data = $actionbar->export_for_template($this);
         return $this->render_from_template('mod_data/fields_action_bar', $data);
+    }
+
+    /**
+     * Renders the fields page footer.
+     *
+     * @param manager $manager the instance manager
+     * @return string The HTML output
+     */
+    public function render_fields_footer(manager $manager): string {
+        $cm = $manager->get_coursemodule();
+        $pageurl = new moodle_url('/mod/data/templates.php', ['id' => $cm->id]);
+        return $this->render_from_template('mod_data/fields_footer', [
+            'pageurl' => $pageurl->out(false),
+        ]);
     }
 
     /**

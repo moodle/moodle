@@ -11727,6 +11727,9 @@ ul {
   bottom: 2rem;
   right: 2rem; }
 
+.hasstickyfooter .btn-footer-popover {
+  bottom: calc(2rem + 60px); }
+
 .popover.footer .popover-body {
   padding: 0; }
   .popover.footer .popover-body .footer-section a {
@@ -19923,6 +19926,11 @@ body.reset-style .btn:not(.btn-icon) {
 body.behat-site .fixed-top {
   position: absolute; }
 
+body.behat-site.hasstickyfooter .stickyfooter,
+body.behat-site .stickyfooter {
+  position: inherit;
+  z-index: inherit; }
+
 body.behat-site .dropdown-item {
   margin-top: 4px !important;
   /* stylelint-disable declaration-no-important */ }
@@ -20001,6 +20009,24 @@ html,
 body {
   height: 100%; }
 
+.stickyfooter {
+  position: fixed;
+  right: 0;
+  left: 0;
+  height: 61px;
+  bottom: -60px;
+  transition: bottom .5s;
+  z-index: 1000;
+  overflow: hidden; }
+
+.hasstickyfooter .stickyfooter {
+  bottom: 0; }
+
+/* Standard components fixes for sticky footer. */
+.stickyfooter ul.pagination {
+  margin-bottom: 0.25rem; }
+
+/* Breakpoints fixes. */
 @media (min-width: 576px) {
   #page-wrapper {
     height: 100%;
@@ -20624,6 +20650,10 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
   .drawer-right {
     top: 60px;
     height: calc(100vh - 60px); }
+  .hasstickyfooter .drawer-left,
+  .hasstickyfooter .drawer-right {
+    top: 60px;
+    height: calc(100vh - 60px - 60px); }
   #page.drawers {
     position: relative;
     overflow-y: auto;
@@ -20648,7 +20678,9 @@ span[data-flexitour="container"][x-placement="right"], span[data-flexitour="cont
         right: calc(315px + 2rem); }
     #page.drawers.show-drawer-left.show-drawer-right {
       margin-left: 285px;
-      margin-right: 315px; } }
+      margin-right: 315px; }
+    #page.drawers.hasstickyfooter {
+      height: calc(100vh - 60px - 60px); } }
 
 .drawercontrolbuttons {
   margin-top: 92px; }
