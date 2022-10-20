@@ -1120,7 +1120,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
     $namefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
 
     // Find the field we are sorting on.
-    if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
+    if ($sort <= 0 || !($sortfield = data_get_field_from_id($sort, $data))) {
 
         switch ($sort) {
             case DATA_LASTNAME:
@@ -1172,7 +1172,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
 
     } else {
 
-        $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
+        $sortcontent = $DB->sql_compare_text('s.' . $sortfield->get_sort_field());
         $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
 
         $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, r.groupid, r.dataid, ' . $namefields . ',
@@ -1183,7 +1183,8 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
                      AND r.dataid = :dataid
                      AND r.userid = u.id ';
         if (!$advanced) {
-            $where .= 'AND c.fieldid = :sort';
+            $where .= 'AND s.fieldid = :sort AND s.recordid = r.id';
+            $tables .= ',{data_content} s ';
         }
         $params['dataid'] = $data->id;
         $params['sort'] = $sort;

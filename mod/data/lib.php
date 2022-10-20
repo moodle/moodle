@@ -3879,7 +3879,8 @@ function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $so
 
     // Find the field we are sorting on
     if ($sort > 0 or data_get_field_from_id($sort, $data)) {
-        $selectdata .= ' AND c.fieldid = :sort';
+        $selectdata .= ' AND c.fieldid = :sort AND s.recordid = r.id';
+        $nestselectsql .= ',{data_content} s ';
     }
 
     // If there are no record IDs then return an sql statment that will return no rows.
