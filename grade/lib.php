@@ -1717,6 +1717,35 @@ class grade_structure {
     }
 
     /**
+     * Returns an action menu for the grade.
+     *
+     * @param grade_grade $grade A grade_grade object
+     * @return string
+     */
+    public function get_grade_action_menu(grade_grade $grade) {
+        global $OUTPUT;
+
+        $menuitems = [];
+
+        $url = $this->get_grade_analysis_url($grade);
+        if ($url) {
+            $title = get_string('gradeanalysis', 'core_grades');
+            $menuitems[] = new action_menu_link_secondary($url, null, $title);
+        }
+
+        if ($menuitems) {
+            $menu = new action_menu($menuitems);
+            $icon = $OUTPUT->pix_icon('i/dropdown', get_string('actions'));
+            $menu->set_menu_trigger($icon, 'btn btn-icon icon-size-2 bg-secondary d-flex align-items-center justify-content-center');
+            $menu->set_menu_left();
+
+            return $OUTPUT->render($menu);
+        } else {
+            return '';
+        }
+    }
+
+    /**
      * Returns the grade eid - the grade may not exist yet.
      *
      * @param grade_grade $grade_grade A grade_grade object

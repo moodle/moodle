@@ -35,10 +35,6 @@
     text-align: center;
 }
 
-.path-grade-report-singleview input[name^="finalgrade"] {
-    width: 50px;
-}
-
 .path-grade-report-singleview .reporttable tbody th,
 .path-grade-report-singleview .reporttable tbody td.range {
     white-space: nowrap;

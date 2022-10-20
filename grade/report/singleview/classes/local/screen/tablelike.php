@@ -145,7 +145,7 @@ abstract class tablelike extends screen {
             $html = new $classname($grade, $tab);
 
             if ($field == 'finalgrade' and !empty($this->structure)) {
-                $html .= $this->structure->get_grade_analysis_icon($grade);
+                $html .= $this->structure->get_grade_action_menu($grade);
             }
 
             // Singleview users without proper permissions should be presented
