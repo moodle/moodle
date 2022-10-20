@@ -748,13 +748,11 @@ class block_iomad_company_admin_external extends external_api {
                 'criteria' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'key' => new external_value(PARAM_ALPHA, 'the user column to search, expected keys (value format) are:
-                                "companyid" (int) matching company id,
-                                "shared" (boolean) whether to include global shared courses or not'),
-                            'value' => new external_value(PARAM_RAW, 'the value to search')
+                            'companyid' => new external_value(PARAM_INT, 'the company id', VALUE_DEFAULT, 0),
+                            'shared' => new  external_value(PARAM_INT, 'Show all of the shared courses availabe to the company', VALUE_DEFAULT, 0),
                         )
                     )
-                )
+               )
             )
         );
     }
@@ -772,68 +770,39 @@ class block_iomad_company_admin_external extends external_api {
         // Validate parameters
         $params = self::validate_parameters(self::get_company_courses_parameters(), array('criteria' => $criteria));
 
-        // Get/check context/capability
+            // Get/check context/capability
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('block/iomad_company_admin:viewcourses', $context);
 
         // Validate the criteria and retrieve the users.
+        $params = $params['criteria'][0]; 
         $courses = array();
         $warnings = array();
         $sqlparams = array();
-        $usedkeys = array();
         $sql = ' company != 0 ';
-
-        foreach ($params['criteria'] as $criteriaindex => $criteria) {
-
-            // Check that the criteria has never been used.
-            if (array_key_exists($criteria['key'], $usedkeys)) {
-                throw new moodle_exception('keyalreadyset', '', '', null, 'The key ' . $criteria['key'] . ' can only be sent once');
-            } else {
-                $usedkeys[$criteria['key']] = true;
-            }
-
-            $invalidcriteria = false;
-            // Clean the parameters.
-            $paramtype = PARAM_RAW;
-            switch ($criteria['key']) {
-                case 'companyid':
-                case 'shared':
-                    $paramtype = PARAM_INT;
-                    break;
-                default:
-                    // Send back a warning that this search key is not supported in this version.
-                    // This warning will make the function extendable without breaking clients.
-                    $warnings[] = array(
-                        'item' => $criteria['key'],
-                        'warningcode' => 'invalidfieldparameter',
-                        'message' =>
-                            'The search key \'' . $criteria['key'] . '\' is not supported, look at the web service documentation'
-                    );
-                    // Do not add this invalid criteria to the created SQL request.
-                    $invalidcriteria = true;
-                    unset($params['criteria'][$criteriaindex]);
-                    break;
-            }
-        }
 
         if (!empty($params['companyid'])) {
             $companies = $DB->get_records('company', ['id' => $params['companyid']], 'id', 'id,name,address,city,region,postcode,country,custom1,custom2,custom3'); 
         } else {
             $companies = $DB->get_records('company', ['suspended' => 0], 'id', 'id,name,address,city,region,postcode,country,custom1,custom2,custom3'); 
         }
+
         foreach ($companies as $companyid => $company) {
-            $comp = new $company->id;
+            $comp = new company($company->id);
+            $copanycourses = [];
             $courses = $comp->get_menu_courses($params['shared'], false, false, false);
             foreach ($courses as $courseid => $course) {
-                $customfields = $DB->get_records_sql("SELECT cfd.id, cff.name, cfd.data
+                $companycourses[$courseid] = (object) ['id' => $companyid, 'fullname' => $course];
+                $customfields = $DB->get_records_sql("SELECT cfd.id, cff.name, cfd.value
                                                       FROM {customfield_data} cfd
                                                       JOIN {customfield_field} cff ON (cfd.fieldid = cff.id)
-                                                      WHERE cfd.instance = :courseid",
+                                                      WHERE cfd.instanceid = :courseid",
                                                       ['courseid' => $courseid]);
-                $coureses[$courseid]->customfields = $customfields;
+                $companycourses[$courseid]->customfields = $customfields;
             }
-            $companies[$companyid]->courses = $courses;
+
+            $companies[$companyid]->courses = $companycourses;
         }
 
         return array('companies' => $companies, 'warnings' => $warnings);
