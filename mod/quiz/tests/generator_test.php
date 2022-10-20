@@ -33,6 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @category   phpunit
  * @copyright  2012 Matt Petro
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_quiz_generator
  */
 class mod_quiz_generator_testcase extends advanced_testcase {
     public function test_generator() {
@@ -42,7 +43,7 @@ class mod_quiz_generator_testcase extends advanced_testcase {
 
         $this->assertEquals(0, $DB->count_records('quiz'));
 
-        /** @var mod_quiz_generator $generator */
+        /** @var \mod_quiz_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $this->assertInstanceOf('mod_quiz_generator', $generator);
         $this->assertEquals('quiz', $generator->get_modulename());
@@ -63,5 +64,66 @@ class mod_quiz_generator_testcase extends advanced_testcase {
 
         $this->assertEqualsWithDelta($createtime,
                 $DB->get_field('quiz', 'timecreated', ['id' => $cm->instance]), 2);
+    }
+
+    public function test_generating_a_user_override() {
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $quiz = $generator->create_module('quiz', ['course' => $course->id]);
+        $generator->enrol_user($user->id, $course->id, 'student');
+
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quizgenerator->create_override([
+            'quiz' => $quiz->id,
+            'userid' => $user->id,
+            'timeclose' => strtotime('2022-10-20'),
+        ]);
+
+        // Check the corresponding calendar event now exists.
+        $events = calendar_get_events(strtotime('2022-01-01'),
+                strtotime('2022-12-31'), $user->id, false, $course->id);
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertEquals($user->id, $event->userid);
+        $this->assertEquals(0, $event->groupid);
+        $this->assertEquals(0, $event->courseid);
+        $this->assertEquals('quiz', $event->modulename);
+        $this->assertEquals($quiz->id, $event->instance);
+        $this->assertEquals('close', $event->eventtype);
+        $this->assertEquals(strtotime('2022-10-20'), $event->timestart);
+    }
+
+    public function test_generating_a_group_override() {
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $quiz = $generator->create_module('quiz', ['course' => $course->id]);
+        $group = $generator->create_group(['courseid' => $course->id]);
+
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quizgenerator->create_override([
+            'quiz' => $quiz->id,
+            'groupid' => $group->id,
+            'timeclose' => strtotime('2022-10-20'),
+        ]);
+
+        // Check the corresponding calendar event now exists.
+        $events = calendar_get_events(strtotime('2022-01-01'),
+                strtotime('2022-12-31'), false, $group->id, $course->id);
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertEquals(0, $event->userid);
+        $this->assertEquals($group->id, $event->groupid);
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertEquals('quiz', $event->modulename);
+        $this->assertEquals($quiz->id, $event->instance);
+        $this->assertEquals('close', $event->eventtype);
+        $this->assertEquals(strtotime('2022-10-20'), $event->timestart);
     }
 }
