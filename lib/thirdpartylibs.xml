@@ -343,7 +343,7 @@ All rights reserved.</copyright>
     <location>php-css-parser</location>
     <name>PHP-CSS-Parser</name>
     <description>A Parser for CSS Files written in PHP.</description>
-    <version>8.3.1</version>
+    <version>8.4.0</version>
     <license>MIT</license>
     <repository>https://github.com/sabberworm/PHP-CSS-Parser</repository>
     <copyrights>
