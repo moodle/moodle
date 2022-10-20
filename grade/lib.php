@@ -943,14 +943,8 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
         $output = $OUTPUT->heading_with_help($heading, $headerhelpidentifier, $headerhelpcomponent);
     } else {
         if (isset($user)) {
-            $output = $OUTPUT->context_header(
-                array(
-                    'heading' => html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id,
-                        'course' => $courseid)), fullname($user)),
-                    'user' => $user,
-                    'usercontext' => context_user::instance($user->id)
-                ), 2
-            );
+            $renderer = $PAGE->get_renderer('core_grades');
+            $output = $OUTPUT->heading($renderer->user_heading($user, $courseid));
         } else {
             $output = $OUTPUT->heading($heading);
         }
