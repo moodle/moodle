@@ -97,6 +97,21 @@ class async_helper  {
     }
 
     /**
+     * Return appropriate description for current async operation {@see async_helper::type}
+     *
+     * @return string
+     */
+    private function get_operation_description(): string {
+        $operations = [
+            'backup' => new lang_string('backup'),
+            'copy' => new lang_string('copycourse'),
+            'restore' => new lang_string('restore'),
+        ];
+
+        return (string) ($operations[$this->type] ?? $this->type);
+    }
+
+    /**
      * Callback for preg_replace_callback.
      * Replaces message placeholders with real values.
      *
@@ -105,7 +120,7 @@ class async_helper  {
      */
     private function lookup_message_variables($matches) {
         $options = array(
-                'operation' => $this->type,
+                'operation' => $this->get_operation_description(),
                 'backupid' => $this->backupid,
                 'user_username' => $this->user->username,
                 'user_email' => $this->user->email,
