@@ -87,7 +87,7 @@ const poll = () => {
  * @returns {Promise}
  */
 export const updateRoom = (updatecache = false) => {
-    const bbbRoomViewElement = document.getElementById('bbb-room-view');
+    const bbbRoomViewElement = document.getElementById('bigbluebuttonbn-room-view');
     const bbbId = bbbRoomViewElement.dataset.bbbId;
     const groupId = bbbRoomViewElement.dataset.groupId;
     return getMeetingInfo(bbbId, groupId, updatecache)
@@ -96,7 +96,7 @@ export const updateRoom = (updatecache = false) => {
             data.haspresentations = !!(data.presentations && data.presentations.length);
             return Templates.renderForPromise('mod_bigbluebuttonbn/room_view', data);
         })
-        .then(({html, js}) => Templates.replaceNodeContents(bbbRoomViewElement, html, js))
+        .then(({html, js}) => Templates.replaceNode(bbbRoomViewElement, html, js))
         .then(() => true)
         .catch((ex) => {
             displayException(ex);

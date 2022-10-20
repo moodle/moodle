@@ -443,18 +443,18 @@ $string['view_message_notavailableyet'] = 'This session is not yet available.';
 $string['view_recording_select_course'] = 'Select a course first in the drop down menu';
 
 
-$string['view_message_session_started_at'] = 'This session started at';
+$string['view_message_session_started_at'] = 'Session started at';
 $string['view_message_session_running_for'] = 'This session has been running for';
 $string['view_message_hour'] = 'hour';
 $string['view_message_hours'] = 'hours';
 $string['view_message_minute'] = 'minute';
 $string['view_message_minutes'] = 'minutes';
-$string['view_message_moderator'] = 'moderator';
-$string['view_message_moderators'] = 'moderators';
-$string['view_message_viewer'] = 'viewer';
-$string['view_message_viewers'] = 'viewers';
-$string['view_message_user'] = 'user';
-$string['view_message_users'] = 'users';
+$string['view_message_moderator'] = 'Moderator';
+$string['view_message_moderators'] = 'Moderators';
+$string['view_message_viewer'] = 'Viewer';
+$string['view_message_viewers'] = 'Viewers';
+$string['view_message_user'] = 'User';
+$string['view_message_users'] = 'Users';
 $string['view_message_has_joined'] = 'has joined';
 $string['view_message_have_joined'] = 'have joined';
 $string['view_message_session_no_users'] = 'There are no users in this session';

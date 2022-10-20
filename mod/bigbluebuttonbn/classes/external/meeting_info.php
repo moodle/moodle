@@ -117,6 +117,7 @@ class meeting_info extends external_api {
                 'cmid' => new external_value(PARAM_INT, 'CM id'),
                 'userlimit' => new external_value(PARAM_INT, 'User limit'),
                 'bigbluebuttonbnid' => new external_value(PARAM_RAW, 'bigbluebuttonbn instance id'),
+                'groupid' => new external_value(PARAM_INT, 'bigbluebuttonbn group id', VALUE_DEFAULT, 0),
                 'meetingid' => new external_value(PARAM_RAW, 'Meeting id'),
                 'openingtime' => new external_value(PARAM_INT, 'Opening time', VALUE_OPTIONAL),
                 'closingtime' => new external_value(PARAM_INT, 'Closing time', VALUE_OPTIONAL),
