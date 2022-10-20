@@ -907,6 +907,18 @@ class settings {
                 $item,
                 $experimentalfeaturessetting
             );
+            // UI for 'register meeting events' feature.
+            $item = new admin_setting_configcheckbox(
+                'bigbluebuttonbn_guestaccess_enabled',
+                get_string('config_guestaccess_enabled', 'bigbluebuttonbn'),
+                get_string('config_guestaccess_enabled_description', 'bigbluebuttonbn'),
+                0
+            );
+            $this->add_conditional_element(
+                'guestaccess_enabled',
+                $item,
+                $experimentalfeaturessetting
+            );
         }
         $this->admin->add($this->parent, $experimentalfeaturessetting);
     }

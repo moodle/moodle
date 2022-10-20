@@ -141,6 +141,9 @@ class meeting_info extends external_api {
                     ])
                 ),
                 'joinurl' => new external_value(PARAM_URL, 'Join URL'),
+                'guestaccessenabled' => new external_value(PARAM_BOOL, 'Guest access enabled', VALUE_OPTIONAL),
+                'guestjoinurl' => new external_value(PARAM_URL, 'Guest URL', VALUE_OPTIONAL),
+                'guestpassword' => new external_value(PARAM_RAW, 'Guest join password', VALUE_OPTIONAL),
                 'features' => new \external_multiple_structure(
                     new external_single_structure([
                         'name' => new external_value(PARAM_ALPHA, 'Feature name.'),

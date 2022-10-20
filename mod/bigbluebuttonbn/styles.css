@@ -34,3 +34,12 @@
 .bbb_index_form {
     display: inline-block;
 }
+
+.bigbluebuttonbn_icon_btn i.icon {
+    margin-right: auto;
+}
+/* Disable gray background for text input */
+input.form-control[readonly][name="guestpassword"],
+input.form-control[readonly][name="guestjoinurl"] {
+    background: initial;
+}

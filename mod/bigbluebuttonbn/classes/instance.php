@@ -536,7 +536,6 @@ EOF;
      */
     public function get_user(): stdClass {
         global $USER;
-
         return $USER;
     }
 
@@ -547,8 +546,7 @@ EOF;
      */
     public function get_user_id(): int {
         $user = $this->get_user();
-
-        return $user->id;
+        return $user->id ?? 0;
     }
 
     /**
@@ -558,7 +556,6 @@ EOF;
      */
     public function get_user_fullname(): string {
         $user = $this->get_user();
-
         return fullname($user);
     }
 
@@ -763,6 +760,16 @@ EOF;
         return (bool) $this->get_instance_var('record');
     }
 
+    /**
+     * Moderator approval required ?
+     *
+     * By default we leave it as false as "ALWAYS_ACCEPT" is the default value for
+     * the guestPolicy create parameter (https://docs.bigbluebutton.org/dev/api.html)
+     * @return bool
+     */
+    public function is_moderator_approval_required(): bool {
+        return $this->get_instance_var('mustapproveuser') ?? false;
+    }
     /**
      * Whether this instance can import recordings from another instance.
      *
@@ -1169,5 +1176,55 @@ EOF;
             }
         }
         return true;
+    }
+
+    /**
+     * Get current guest link url
+     *
+     * @return moodle_url
+     */
+    public function get_guest_access_url(): moodle_url {
+        $guestlinkuid = $this->get_instance_var('guestlinkuid');
+        if (empty($guestlinkuid)) {
+            $this->generate_guest_credentials();
+            $guestlinkuid = $this->get_instance_var('guestlinkuid');
+        }
+        return new moodle_url('/mod/bigbluebuttonbn/guest.php', ['uid' => $guestlinkuid]);
+    }
+
+    /**
+     * Is guest access allowed in this instance.
+     *
+     * @return bool
+     */
+    public function is_guest_allowed(): bool {
+        return !$this->is_type_recordings_only() &&
+                config::get('guestaccess_enabled') && $this->get_instance_var('guestallowed');
+    }
+
+    /**
+     * Get current meeting password
+     *
+     * @return string
+     */
+    public function get_guest_access_password() : string {
+        $guestpassword = $this->get_instance_var('guestpassword');
+        if (empty($guestpassword)) {
+            $this->generate_guest_credentials();
+            $guestpassword = $this->get_instance_var('guestpassword');
+        }
+        return $guestpassword;
+    }
+
+    /**
+     * Generate credentials for this instance and persist the value in the database
+     *
+     * @return void
+     */
+    private function generate_guest_credentials():void {
+        global $DB;
+        [$this->instancedata->guestlinkuid, $this->instancedata->guestpassword] =
+            \mod_bigbluebuttonbn\plugin::generate_guest_meeting_credentials();
+        $DB->update_record('bigbluebuttonbn', $this->instancedata);
     }
 }
