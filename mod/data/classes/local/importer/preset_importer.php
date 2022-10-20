@@ -19,6 +19,7 @@ namespace mod_data\local\importer;
 use mod_data\manager;
 use mod_data\preset;
 use stdClass;
+use html_writer;
 
 /**
  * Abstract class used for data preset importers
@@ -212,7 +213,7 @@ abstract class preset_importer {
      * @return bool Wether the importing has been successful.
      */
     public function import(bool $overwritesettings): bool {
-        global $DB;
+        global $DB, $OUTPUT;
 
         $params = $this->get_preset_settings();
         $settings = $params->settings;
@@ -252,7 +253,12 @@ abstract class preset_importer {
                     unset($fieldobject);
                 } else {
                     /* Make a new field */
-                    include_once("field/$newfield->type/field.class.php");
+                    $filepath = "field/$newfield->type/field.class.php";
+                    if (!file_exists($filepath)) {
+                        $missingfieldtypes[] = $newfield->name;
+                        continue;
+                    }
+                    include_once($filepath);
 
                     if (!isset($newfield->description)) {
                         $newfield->description = '';
@@ -262,6 +268,9 @@ abstract class preset_importer {
                     $fieldclass->insert_field();
                     unset($fieldclass);
                 }
+            }
+            if (!empty($missingfieldtypes)) {
+                echo $OUTPUT->notification(get_string('missingfieldtypeimport', 'data') . html_writer::alist($missingfieldtypes));
             }
         }
 

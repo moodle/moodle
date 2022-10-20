@@ -84,6 +84,9 @@ class template_editor_tools implements templatable, renderable {
         $taglist = [];
         $fields = $this->manager->get_fields();
         foreach ($fields as $field) {
+            if ($field->type === 'unknown') {
+                continue;
+            }
             $fieldname = $field->get_name();
             $taglist["[[$fieldname]]"] = $fieldname;
         }
@@ -105,6 +108,9 @@ class template_editor_tools implements templatable, renderable {
         // Field IDs.
         $fields = $this->manager->get_fields();
         foreach ($fields as $field) {
+            if ($field->type === 'unknown') {
+                continue;
+            }
             $fieldname = $field->get_name();
             $taglist["[[$fieldname#id]]"] = "$fieldname id";
         }
