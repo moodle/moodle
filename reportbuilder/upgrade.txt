@@ -3,6 +3,9 @@ Information provided here is intended especially for developers.
 
 === 4.2 ===
 * New methods `[add|get]_attributes` added to report base class, for including custom attributes in report container HTML
+* The following attributes can be added to custom reports in order to control card view display (via the `add_attributes` method):
+  - `data-force-card` to force cards view
+  - `data-force-table` to force table view
 
 === 4.1 ===
 * New method `add_action_divider()` in base system report class, to allow adding a divider to the action menu.
