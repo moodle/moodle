@@ -270,7 +270,11 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             return true; // too early yet
         }
         foreach ($this->fieldtypes as $key => $field) {
-            require_once($CFG->dirroot . '/mod/data/field/' . $field .'/field.class.php');
+            $filepath = $CFG->dirroot . '/mod/data/field/' . $field .'/field.class.php';
+            if (!file_exists($filepath)) {
+                continue;
+            }
+            require_once($filepath);
             $this->fields[$key] = unserialize(serialize($this->fields[$key]));
         }
     }
@@ -970,7 +974,11 @@ function data_get_tag_title_field($dataid) {
         if ($field->addtemplateposition === false) {
             continue;
         }
-        require_once($CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php');
+        $filepath = $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php';
+        if (!file_exists($filepath)) {
+            continue;
+        }
+        require_once($filepath);
         $classname = 'data_field_' . $field->type;
         $field->priority = $classname::get_priority();
         $filteredfields[] = $field;
@@ -1001,11 +1009,18 @@ function data_get_tag_title_field($dataid) {
  *
  * @param stdClass $field The field from the 'data_fields' table
  * @param stdClass $entry The entry from the 'data_records' table
- * @return string The title of the entry
+ * @return string|null It will return the title of the entry or null if the field type is not available.
  */
 function data_get_tag_title_for_entry($field, $entry) {
     global $CFG, $DB;
-    require_once($CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php');
+    if (!isset($field->type)) {
+        return null;
+    }
+    $filepath = $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php';
+    if (!file_exists($filepath)) {
+        return null;
+    }
+    require_once($filepath);
 
     $classname = 'data_field_' . $field->type;
     $sql = "SELECT dc.*
@@ -1335,7 +1350,7 @@ function data_build_search_array($data, $paging, $searcharray, $defaults = null,
             $searchfield = data_get_field_from_id($field->id, $data);
             // Get field data to build search sql with.  If paging is false, get from user.
             // If paging is true, get data from $searcharray which is obtained from the $SESSION (see line 116).
-            if (!$paging) {
+            if (!$paging && $searchfield->type != 'unknown') {
                 $val = $searchfield->parse_search_field($defaults);
             } else {
                 // Set value from session if there is a value @ the required index.

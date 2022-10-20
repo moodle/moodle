@@ -268,9 +268,15 @@ switch ($mode) {
                 // Print confirmation message.
                 $field = data_get_field_from_id($fid, $data);
 
-                echo $OUTPUT->confirm('<strong>'.$field->name().': '.$field->field->name.'</strong><br /><br />'. get_string('confirmdeletefield','data'),
-                             'field.php?d='.$data->id.'&mode=delete&fid='.$fid.'&confirm=1',
-                             'field.php?d='.$data->id);
+                if ($field->type === 'unknown') {
+                    $fieldtypename = get_string('unknown', 'data');
+                } else {
+                    $fieldtypename = $field->name();
+                }
+                echo $OUTPUT->confirm('<strong>'.$fieldtypename.': '.$field->field->name.'</strong><br /><br />'.
+                            get_string('confirmdeletefield', 'data'),
+                            'field.php?d='.$data->id.'&mode=delete&fid='.$fid.'&confirm=1',
+                            'field.php?d='.$data->id);
 
                 echo $OUTPUT->footer();
                 exit;
@@ -336,6 +342,9 @@ $plugins = core_component::get_plugin_list('datafield');
 $menufield = array();
 
 foreach ($plugins as $plugin=>$fulldir){
+    if (!is_dir($fulldir)) {
+        continue;
+    }
     $menufield[$plugin] = get_string('pluginname', 'datafield_'.$plugin);    //get from language files
 }
 asort($menufield);    //sort in alphabetical order
@@ -379,6 +388,7 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
         $table->wrap = array(false,false,false,false);
 
         if ($fff = $DB->get_records('data_fields', array('dataid'=>$data->id),'id')){
+            $missingfieldtypes = [];
             foreach ($fff as $ff) {
 
                 $field = data_get_field($ff, $data);
@@ -397,15 +407,30 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
                     'mode'      => 'delete',
                 ));
 
-                $table->data[] = array(
-                    html_writer::link($displayurl, $field->field->name),
-                    $field->image() . '&nbsp;' . $field->name(),
+                // It display a notification when the field type does not exist.
+                $deletelink = html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete')));
+                $editlink = html_writer::link($displayurl, $OUTPUT->pix_icon('t/edit', get_string('edit')));
+                if ($field->type === 'unknown') {
+                    $missingfieldtypes[] = $field->field->name;
+                    $fieldnamedata = $field->field->name;
+                    $fieltypedata = $field->field->type;
+                    $fieldlinkdata = $deletelink;
+                } else {
+                    $fieldnamedata = html_writer::link($displayurl, $field->field->name);
+                    $fieltypedata = $field->image() . '&nbsp;' . $field->name();
+                    $fieldlinkdata = $editlink . '&nbsp;' . $deletelink;
+                }
+
+                $table->data[] = [
+                    $fieldnamedata,
+                    $fieltypedata,
                     $field->field->required ? get_string('yes') : get_string('no'),
                     shorten_text($field->field->description, 30),
-                    html_writer::link($displayurl, $OUTPUT->pix_icon('t/edit', get_string('edit'))) .
-                        '&nbsp;' .
-                        html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete'))),
-                );
+                    $fieldlinkdata
+                ];
+            }
+            if (!empty($missingfieldtypes)) {
+                echo $OUTPUT->notification(get_string('missingfieldtypes', 'data') . html_writer::alist($missingfieldtypes));
             }
         }
         echo html_writer::table($table);
