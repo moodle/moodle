@@ -165,19 +165,8 @@ if (!empty($options)) {
     }
 }
 
-if (!is_null($graderleftnav)) {
-    echo $graderleftnav;
-}
-if (!is_null($graderrightnav)) {
-    echo $graderrightnav;
-}
-
 if ($report->screen->supports_paging()) {
     echo $report->screen->pager();
-}
-
-if ($report->screen->display_group_selector()) {
-    echo $report->group_selector;
 }
 
 echo $report->output();
