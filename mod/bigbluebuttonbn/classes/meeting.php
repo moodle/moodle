@@ -281,6 +281,9 @@ class meeting {
                 $meetinginfo->attendees[] = (array) $attendee;
             }
         }
+
+        $meetinginfo->features = $instance->get_enabled_features();
+
         return $meetinginfo;
     }
 
