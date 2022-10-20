@@ -327,7 +327,10 @@ class api {
      */
     protected static function create_or_update_issuer($data, bool $create): issuer {
         require_capability('moodle/site:config', context_system::instance());
-        $issuer = new issuer(0, $data);
+        $issuer = new issuer($data->id ?? 0, $data);
+        if (!empty($data->id)) {
+            $issuer->set_many((array)$data);
+        }
 
         // Will throw exceptions on validation failures.
         if ($create) {
