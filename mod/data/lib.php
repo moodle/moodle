@@ -2704,17 +2704,15 @@ abstract class data_preset_importer {
         }
 
         /* Get rid of all old unused data */
-        if (!empty($preservedfields)) {
-            foreach ($currentfields as $cid => $currentfield) {
-                if (!array_key_exists($cid, $preservedfields)) {
-                    /* Data not used anymore so wipe! */
-                    print "Deleting field $currentfield->name<br />";
+        foreach ($currentfields as $cid => $currentfield) {
+            if (!array_key_exists($cid, $preservedfields)) {
+                /* Data not used anymore so wipe! */
+                echo "Deleting field $currentfield->name<br />";
 
-                    $id = $currentfield->id;
-                    //Why delete existing data records and related comments/ratings??
-                    $DB->delete_records('data_content', array('fieldid'=>$id));
-                    $DB->delete_records('data_fields', array('id'=>$id));
-                }
+                $id = $currentfield->id;
+                // Why delete existing data records and related comments/ratings??
+                $DB->delete_records('data_content', ['fieldid' => $id]);
+                $DB->delete_records('data_fields', ['id' => $id]);
             }
         }
 
