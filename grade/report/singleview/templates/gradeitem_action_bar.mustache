@@ -28,13 +28,6 @@
             <div class="navitem">
                 {{{.}}}
             </div>
-            {{#js}}
-                document.querySelector('.tertiary-navigation [name="group"]').addEventListener('change', function(e) {
-                    var url = new URL("{{{pbarurl}}}");
-                    url.searchParams.set('group', e.target.value);
-                    window.location.href = url;
-                });
-            {{/js}}
         {{/groupselector}}
         {{#gradeitemselector}}
             <div class="navitem">
