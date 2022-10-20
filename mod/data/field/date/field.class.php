@@ -72,12 +72,20 @@ class data_field_date extends data_field_base {
         return $str;
     }
 
-    //Enable the following three functions once core API issues have been addressed.
-    function display_search_field($value=0) {
-        $selectors = html_writer::select_time('days', 'f_'.$this->field->id.'_d', $value['timestamp'])
-           . html_writer::select_time('months', 'f_'.$this->field->id.'_m', $value['timestamp'])
-           . html_writer::select_time('years', 'f_'.$this->field->id.'_y', $value['timestamp']);
-        $datecheck = html_writer::checkbox('f_'.$this->field->id.'_z', 1, $value['usedate']);
+    // Enable the following three functions once core API issues have been addressed.
+
+    /**
+     * Display the search field in advanced search page
+     * @param mixed $value
+     * @return string
+     * @throws coding_exception
+     */
+    public function display_search_field($value = null) {
+        $currenttime = time();
+        $selectors = html_writer::select_time('days', 'f_' . $this->field->id . '_d', $value['timestamp'] ?? $currenttime)
+            . html_writer::select_time('months', 'f_' . $this->field->id . '_m', $value['timestamp'] ?? $currenttime)
+            . html_writer::select_time('years', 'f_' . $this->field->id . '_y', $value['timestamp'] ?? $currenttime);
+        $datecheck = html_writer::checkbox('f_' . $this->field->id . '_z', 1, $value['usedate'] ?? 0);
         $str = '<div class="form-inline">' . $selectors . ' ' . $datecheck . ' ' . get_string('usedate', 'data') . '</div>';
 
         return $str;
