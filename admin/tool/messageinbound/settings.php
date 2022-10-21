@@ -67,6 +67,27 @@ if ($hassiteconfig) {
             new lang_string('messageinboundhostssl', 'tool_messageinbound'),
             new lang_string('messageinboundhostssl_desc', 'tool_messageinbound'), 'ssl', $options));
 
+    // Get all the issuers.
+    $issuers = \core\oauth2\api::get_all_issuers();
+    $oauth2services = [
+        '' => new lang_string('none', 'admin'),
+    ];
+    foreach ($issuers as $issuer) {
+        // Get the enabled issuer only.
+        if ($issuer->get('enabled')) {
+            $oauth2services[$issuer->get('id')] = s($issuer->get('name'));
+        }
+    }
+
+    if (count($oauth2services) > 1) {
+        $settings->add(new admin_setting_configselect('messageinbound_hostoauth',
+            new lang_string('issuer', 'auth_oauth2'),
+            get_string('messageinboundhostoauth_help', 'tool_messageinbound'),
+            '',
+            $oauth2services
+        ));
+    }
+
     $settings->add(new admin_setting_configtext('messageinbound_hostuser',
             new lang_string('messageinboundhostuser', 'tool_messageinbound'),
             new lang_string('messageinboundhostuser_desc', 'tool_messageinbound'), '', PARAM_NOTAGS));
