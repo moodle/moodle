@@ -170,8 +170,6 @@ class user extends tablelike implements selectable_items {
              $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked');
         }
 
-        $iconstring = get_string('filtergrades', 'gradereport_singleview', $item->get_name());
-
         // Create a fake gradetreeitem so we can call get_element_header().
         // The type logic below is from grade_category->_get_children_recursion().
         $gradetreeitem = [];
@@ -190,8 +188,7 @@ class user extends tablelike implements selectable_items {
 
         $line = [
             $this->format_icon($item) . $lockicon . $itemlabel,
-            $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', ''), null,
-                    ['title' => $iconstring, 'aria-label' => $iconstring]),
+            $this->get_item_action_menu($item),
             $this->category($item),
             $formatteddefinition['finalgrade'],
             new range($item),
@@ -234,6 +231,27 @@ class user extends tablelike implements selectable_items {
     private function format_icon($item): string {
         $element = ['type' => 'item', 'object' => $item];
         return $this->structure->get_element_icon($element);
+    }
+
+    /**
+     * Return the action menu HTML for the grade item.
+     *
+     * @param grade_item $item
+     * @return mixed
+     */
+    private function get_item_action_menu(grade_item $item) {
+        global $OUTPUT;
+
+        $menuitems = [];
+        $url = new moodle_url($this->format_link('grade', $item->id));
+        $title = get_string('showallgrades', 'core_grades');
+        $menuitems[] = new \action_menu_link_secondary($url, null, $title);
+        $menu = new \action_menu($menuitems);
+        $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
+        $menu->set_menu_trigger($icon);
+        $menu->set_menu_left();
+
+        return $OUTPUT->render($menu);
     }
 
     /**

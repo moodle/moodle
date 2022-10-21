@@ -40,7 +40,6 @@ $string['excludefor'] = 'Exclude for {$a}';
 $string['excludenone'] = 'Do not exclude any grades';
 $string['eventgradereportviewed'] = 'Grade single view report viewed.';
 $string['feedbackfor'] = 'Feedback for {$a}';
-$string['filtergrades'] = 'Show grades for {$a}.';
 $string['gradefor'] = 'Grade for {$a}';
 $string['gradeitem'] = 'Grade item: {$a}';
 $string['gradeuser'] = 'Grade user: {$a}';
@@ -74,3 +73,6 @@ $string['selectgradeinstructions'] = 'Select items to grade...';
 $string['selectgradeitemlink'] = 'Click to select a grade item';
 $string['whattoview'] = 'What would you like to view';
 $string['whattoviewselect'] = 'Select to view by users or grade items';
+
+// Deprecated since Moodle 4.1.
+$string['filtergrades'] = 'Show grades for {$a}.';

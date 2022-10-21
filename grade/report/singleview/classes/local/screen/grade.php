@@ -215,7 +215,6 @@ class grade extends tablelike implements selectable_items, filterable_items {
 
         $item->imagealt = $fullname;
         $url = new moodle_url("/user/view.php", ['id' => $item->id, 'course' => $this->courseid]);
-        $iconstring = get_string('filtergrades', 'gradereport_singleview', $fullname);
         $grade->label = $fullname;
         $userpic = $OUTPUT->user_picture($item, ['link' => false, 'visibletoscreenreaders' => false]);
 
@@ -223,8 +222,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
 
         $line = [
             html_writer::link($url, $userpic . $fullname),
-            $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', ''), null,
-                    ['title' => $iconstring, 'aria-label' => $iconstring]),
+            $this->get_user_action_menu($item),
             $formatteddefinition['finalgrade'],
             $this->item_range(),
             $formatteddefinition['feedback'],
@@ -381,5 +379,26 @@ class grade extends tablelike implements selectable_items, filterable_items {
             }
         }
         return parent::process($data);
+    }
+
+    /**
+     * Return the action menu HTML for the user item.
+     *
+     * @param \stdClass $user
+     * @return mixed
+     */
+    private function get_user_action_menu(\stdClass $user) {
+        global $OUTPUT;
+
+        $menuitems = [];
+        $url = new moodle_url($this->format_link('user', $user->id));
+        $title = get_string('showallgrades', 'core_grades');
+        $menuitems[] = new \action_menu_link_secondary($url, null, $title);
+        $menu = new \action_menu($menuitems);
+        $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
+        $menu->set_menu_trigger($icon);
+        $menu->set_menu_left();
+
+        return $OUTPUT->render($menu);
     }
 }
