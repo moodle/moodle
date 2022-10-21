@@ -215,6 +215,8 @@
     {{/error}}
     require(['core_form/submit'], function(Submit) {
         Submit.init("loginbtn");
-        Submit.init("loginguestbtn");
+        {{#canloginasguest}}
+            Submit.init("loginguestbtn");
+        {{/canloginasguest}}
     });
 {{/js}}
