@@ -790,7 +790,7 @@ class block_iomad_company_admin_external extends external_api {
 
         foreach ($companies as $companyid => $company) {
             $comp = new company($company->id);
-            $copanycourses = [];
+            $companycourses = [];
             $courses = $comp->get_menu_courses($params['shared'], false, false, false);
             foreach ($courses as $courseid => $course) {
                 $companycourses[$courseid] = (object) ['id' => $companyid, 'fullname' => $course];
@@ -801,7 +801,6 @@ class block_iomad_company_admin_external extends external_api {
                                                       ['courseid' => $courseid]);
                 $companycourses[$courseid]->customfields = $customfields;
             }
-
             $companies[$companyid]->courses = $companycourses;
         }
 
@@ -831,25 +830,23 @@ class block_iomad_company_admin_external extends external_api {
                                 'custom1' => new external_value(PARAM_TEXT, 'Company custom1'),
                                 'custom2' => new external_value(PARAM_TEXT, 'Company custom2'),
                                 'custom3' => new external_value(PARAM_TEXT, 'Company custom3'),
-                                array('courses' => new external_multiple_structure(
-                                        new external_single_structure(
-                                            array(
-                                                'id' => new external_value(PARAM_INT, 'Course ID'),
-                                                'fullname' => new external_value(PARAM_TEXT, 'Course full name'),
-                                                   array('courses' => new external_multiple_structure(
-                                                            new external_single_structure(
-                                                                array(
-                                                                        'id' => new external_value(PARAM_INT, 'Custom field data ID'),
-                                                                        'name' => new external_value(PARAM_TEXT, 'Custom field name'),
-                                                                        'data' => new external_value(PARAM_TEXT, 'Custom field data value'),
-                                                                )
-                                                            )
-                                                        )
+                                'courses' => new external_multiple_structure(
+                                    new external_single_structure(
+                                       array(
+                                            'id' => new external_value(PARAM_INT, 'Course ID'),
+                                            'fullname' => new external_value(PARAM_TEXT, 'Course full name'),
+                                            'customfields' => new external_multiple_structure(
+                                                new external_single_structure(
+                                                    array(
+                                                          'id' => new external_value(PARAM_INT, 'Custom field id'),
+                                                          'name' => new external_value(PARAM_TEXT, 'Custom field name'),
+                                                          'data' => new external_value(PARAM_TEXT, 'Custom field data value'),
+                                                          )
                                                     )
-                                               )
+                                                )
                                             )
                                         )
-                                    )
+                                   )
                                 )
                             )
                        ),
