@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 // General Strings.
 $string['all_grades'] = 'All grades';
 $string['assessmentname'] = 'Grade item';
@@ -62,3 +64,13 @@ $string['singleview:view'] = 'View report';
 $string['summarygrade'] = 'A table of users, with columns for range, grade, feedback, and whether to override or exclude a particular grade.';
 $string['summaryuser'] = 'A table of grade items, with columns for grade category, range, grade, feedback, and whether to override or exclude a particular grade.';
 $string['userselect'] = 'Select activity';
+
+$string['ariareporttype'] = 'Select a report type to view';
+$string['viewby'] = 'View by';
+$string['searchgrades'] = 'Search grade items';
+$string['selectagrade'] = 'Select a grade item';
+$string['selectuserinstructions'] = 'By selecting a user you can view the grades by activity';
+$string['selectgradeinstructions'] = 'Select items to grade...';
+$string['selectgradeitemlink'] = 'Click to select a grade item';
+$string['whattoview'] = 'What would you like to view';
+$string['whattoviewselect'] = 'Select to view by users or grade items';

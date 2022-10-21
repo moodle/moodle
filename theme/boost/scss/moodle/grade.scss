@@ -513,3 +513,22 @@
 .path-grade-report-singleview input[name^="finalgrade"] {
     width: 80px;
 }
+
+.searchresultitemscontainer {
+    max-height: 150px;
+    overflow: auto;
+
+    a:hover {
+        background-color: $gray-100;
+    }
+
+    .focused-cell {
+        outline-style: dotted;
+        outline-color: green;
+    }
+}
+
+.unsearchablecontentcontainer {
+    border-top: 1px solid #dee2e6;
+    padding-top: 10px;
+}

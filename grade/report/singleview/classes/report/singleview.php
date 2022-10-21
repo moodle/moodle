@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Base lib class for singleview functionality.
- *
- * @package   gradereport_singleview
- * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace gradereport_singleview\report;
+
+use context_course;
+use grade_report;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -33,23 +31,23 @@ require_once($CFG->dirroot . '/grade/report/lib.php');
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradereport_singleview extends grade_report {
+class singleview extends grade_report {
 
     /**
      * Return the list of valid screens, used to validate the input.
      *
      * @return array List of screens.
      */
-    public static function valid_screens() {
+    public static function valid_screens(): array {
         // This is a list of all the known classes representing a screen in this plugin.
-        return array('user', 'select', 'grade');
+        return ['user', 'select', 'grade', 'user_select', 'grade_select'];
     }
 
     /**
      * Process data from a form submission. Delegated to the current screen.
      *
      * @param array $data The data from the form
-     * @return array List of warnings
+     * @return array|object List of warnings
      */
     public function process_data($data) {
         if (has_capability('moodle/grade:edit', $this->context)) {
@@ -73,22 +71,29 @@ class gradereport_singleview extends grade_report {
      * @param object $gpr grade plugin return tracking object
      * @param context_course $context
      * @param string $itemtype Should be user, select or grade
-     * @param int $itemid The id of the user or grade item
-     * @param string $unused Used to be group id but that was removed and this is now unused.
+     * @param int|null $itemid The id of the user or grade item
+     * @param string|null $unused Used to be group id but that was removed and this is now unused.
      */
-    public function __construct($courseid, $gpr, $context, $itemtype, $itemid, $unused = null) {
+    public function __construct(
+        int $courseid,
+        object $gpr,
+        context_course $context,
+        string $itemtype,
+        ?int $itemid,
+        ?string $unused = null
+    ) {
         parent::__construct($courseid, $gpr, $context);
 
         $base = '/grade/report/singleview/index.php';
 
-        $idparams = array('id' => $courseid);
+        $idparams = ['id' => $courseid];
 
         $this->baseurl = new moodle_url($base, $idparams);
 
-        $this->pbarurl = new moodle_url($base, $idparams + array(
+        $this->pbarurl = new moodle_url($base, $idparams + [
                 'item' => $itemtype,
                 'itemid' => $itemid
-            ));
+            ]);
 
         //  The setup_group method is used to validate group mode and permissions and define the currentgroup value.
         $this->setup_groups();
@@ -105,9 +110,8 @@ class gradereport_singleview extends grade_report {
      * Build the html for the screen.
      * @return string HTML to display
      */
-    public function output() {
+    public function output(): string {
         global $OUTPUT;
         return $OUTPUT->container($this->screen->html(), 'reporttable');
     }
 }
-

@@ -49,7 +49,7 @@ Feature: View the user report as the student will see it
 
   Scenario: View the report as the teacher themselves
     When I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
+    And I click on "Student 1" in the "user" search widget
     And I select "Myself" from the "View report as" singleselect
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
@@ -65,7 +65,7 @@ Feature: View the user report as the student will see it
 
   Scenario: View the report as the student from both the teachers and students perspective
     When I navigate to "View > User report" in the course gradebook
-    And I select "Student 1" from the "Select all or one user" singleselect
+    And I click on "Student 1" in the "user" search widget
     And I select "User" from the "View report as" singleselect
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
@@ -107,7 +107,7 @@ Feature: View the user report as the student will see it
     And I set the field with xpath "//select[@name='report_user_showtotalsifcontainhidden']" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    When I select "Student 1" from the "Select all or one user" singleselect
+    When I click on "Student 1" in the "user" search widget
     And I select "User" from the "View report as" singleselect
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
@@ -145,7 +145,7 @@ Feature: View the user report as the student will see it
     And I set the field with xpath "//select[@name='report_user_showtotalsifcontainhidden']" to "Show totals including hidden items"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    When I select "Student 1" from the "Select all or one user" singleselect
+    When I click on "Student 1" in the "user" search widget
     And I select "User" from the "View report as" singleselect
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
@@ -191,7 +191,7 @@ Feature: View the user report as the student will see it
     And I set the field with xpath "//select[@name='report_user_showtotalsifcontainhidden']" to "Show totals excluding hidden items"
     And I press "Save changes"
     And I navigate to "View > User report" in the course gradebook
-    When I select "Student 1" from the "Select all or one user" singleselect
+    When I click on "Student 1" in the "user" search widget
     And I select "User" from the "View report as" singleselect
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |

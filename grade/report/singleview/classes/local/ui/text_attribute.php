@@ -24,7 +24,6 @@
 
 namespace gradereport_singleview\local\ui;
 
-use html_writer;
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -36,7 +35,10 @@ defined('MOODLE_INTERNAL') || die;
  */
 class text_attribute extends element {
 
-    /** @var bool $isdisabled Is this input disabled? */
+    /**
+     * Is this input disabled?
+     * @var bool $isdisabled
+     */
     private $isdisabled;
 
     /**
@@ -47,7 +49,7 @@ class text_attribute extends element {
      * @param string $label The label for this input field.
      * @param bool $isdisabled Is this input disabled.
      */
-    public function __construct($name, $value, $label, $isdisabled = false) {
+    public function __construct(string $name, string $value, string $label, bool $isdisabled = false) {
         $this->isdisabled = $isdisabled;
         parent::__construct($name, $value, $label);
     }
@@ -56,7 +58,7 @@ class text_attribute extends element {
      * Nasty function allowing custom textbox behaviour outside the class.
      * @return bool Is this a textbox.
      */
-    public function is_textbox() {
+    public function is_textbox(): bool {
         return true;
     }
 
@@ -64,7 +66,7 @@ class text_attribute extends element {
      * Render the html for this field.
      * @return string The HTML.
      */
-    public function html() {
+    public function html(): string {
         global $OUTPUT;
 
         $context = (object) [

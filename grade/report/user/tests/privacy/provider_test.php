@@ -26,9 +26,7 @@ namespace gradereport_user\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_privacy\local\metadata\collection;
 use core_privacy\local\request\writer;
-use gradereport_user\privacy\provider;
 
 /**
  * Unit tests for the gradereport_user implementation of the privacy API.

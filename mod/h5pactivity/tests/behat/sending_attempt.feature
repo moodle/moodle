@@ -85,7 +85,7 @@ Feature: Do a H5P attempt
     And "4" row "Score" column of "table" table should contain "1"
     And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "View > User report" in the course gradebook
-    And I set the field "Select all or one user" to "Student 1"
+    And I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Percentage  |
       | Awesome H5P package | 50.00 | 50.00 %     |

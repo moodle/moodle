@@ -47,7 +47,7 @@ class checkbox_attribute extends element {
      * @param bool $ischecked Is this thing on?
      * @param int $locked Is this element locked either 0 or a time.
      */
-    public function __construct($name, $label, $ischecked = false, $locked=0) {
+    public function __construct(string $name, string $label, bool $ischecked = false, int $locked=0) {
         $this->ischecked = $ischecked;
         $this->locked = $locked;
         parent::__construct($name, 1, $label);
@@ -57,7 +57,7 @@ class checkbox_attribute extends element {
      * Nasty function allowing checkbox logic to escape the class.
      * @return bool
      */
-    public function is_checkbox() {
+    public function is_checkbox(): bool {
         return true;
     }
 
@@ -66,24 +66,24 @@ class checkbox_attribute extends element {
      *
      * @return string
      */
-    public function html() {
+    public function html(): string {
 
-        $attributes = array(
+        $attributes = [
             'type' => 'checkbox',
             'name' => $this->name,
             'value' => 1,
             'id' => $this->name
-        );
+        ];
 
         // UCSB fixed user should not be able to override locked grade.
         if ( $this->locked) {
             $attributes['disabled'] = 'DISABLED';
         }
 
-        $hidden = array(
+        $hidden = [
             'type' => 'hidden',
             'name' => 'old' . $this->name
-        );
+        ];
 
         if ($this->ischecked) {
             $attributes['checked'] = 'CHECKED';
@@ -98,7 +98,7 @@ class checkbox_attribute extends element {
         return (
             html_writer::tag('label',
                              get_string($type . 'for', 'gradereport_singleview', $this->label),
-                             array('for' => $this->name, 'class' => 'accesshide')) .
+                             ['for' => $this->name, 'class' => 'accesshide']) .
             html_writer::empty_tag('input', $attributes) .
             html_writer::empty_tag('input', $hidden)
         );

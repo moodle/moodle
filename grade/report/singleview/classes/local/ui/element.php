@@ -35,13 +35,22 @@ defined('MOODLE_INTERNAL') || die;
  */
 abstract class element {
 
-    /** @var string $name The first bit of the name for this input. */
+    /**
+     * The first bit of the name for this input.
+     * @var string $name
+     */
     public $name;
 
-    /** @var string $value The value for this input. */
+    /**
+     * The value for this input.
+     * @var string $value
+     */
     public $value;
 
-    /** @var string $label The form label for this input. */
+    /**
+     * The form label for this input.
+     * @var string $label
+     */
     public $label;
 
     /**
@@ -51,7 +60,7 @@ abstract class element {
      * @param string $value The value for this input
      * @param string $label The label for this form field
      */
-    public function __construct($name, $value, $label) {
+    public function __construct(string $name, string $value, string $label) {
         $this->name = $name;
         $this->value = $value;
         $this->label = $label;
@@ -61,7 +70,7 @@ abstract class element {
      * Nasty function used for spreading checkbox logic all around
      * @return bool
      */
-    public function is_checkbox() {
+    public function is_checkbox(): bool {
         return false;
     }
 
@@ -69,7 +78,7 @@ abstract class element {
      * Nasty function used for spreading textbox logic all around
      * @return bool
      */
-    public function is_textbox() {
+    public function is_textbox(): bool {
         return false;
     }
 
@@ -77,7 +86,7 @@ abstract class element {
      * Nasty function used for spreading dropdown logic all around
      * @return bool
      */
-    public function is_dropdown() {
+    public function is_dropdown(): bool {
         return false;
     }
 
@@ -85,5 +94,5 @@ abstract class element {
      * Return the HTML
      * @return string
      */
-    abstract public function html();
+    abstract public function html(): string;
 }

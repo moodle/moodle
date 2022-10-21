@@ -37,10 +37,16 @@ use grade_grade;
  */
 class exclude extends grade_attribute_format implements be_checked, be_disabled {
 
-    /** @var string $name The name of the input */
+    /**
+     * The name of the input
+     * @var string $name
+     */
     public $name = 'exclude';
 
-    /** @var bool $disabled Is the checkbox disabled? */
+    /**
+     * Is the checkbox disabled?
+     * @var bool $disabled
+     */
     public $disabled = false;
 
     /**
@@ -48,7 +54,7 @@ class exclude extends grade_attribute_format implements be_checked, be_disabled 
      *
      * @return bool
      */
-    public function is_checked() {
+    public function is_checked(): bool {
         return $this->grade->is_excluded();
     }
 
@@ -57,7 +63,7 @@ class exclude extends grade_attribute_format implements be_checked, be_disabled 
      *
      * @return bool
      */
-    public function is_disabled() {
+    public function is_disabled(): bool {
         return $this->disabled;
     }
 
@@ -66,7 +72,7 @@ class exclude extends grade_attribute_format implements be_checked, be_disabled 
      *
      * @return element
      */
-    public function determine_format() {
+    public function determine_format(): element {
         return new checkbox_attribute(
             $this->get_name(),
             $this->get_label(),
@@ -80,7 +86,7 @@ class exclude extends grade_attribute_format implements be_checked, be_disabled 
      *
      * @return string
      */
-    public function get_label() {
+    public function get_label(): string {
         if (!isset($this->grade->label)) {
             $this->grade->label = '';
         }
@@ -106,16 +112,16 @@ class exclude extends grade_attribute_format implements be_checked, be_disabled 
                 $this->grade->userid, null, 'singleview', null, FORMAT_MOODLE
             );
 
-            $gradeparams = array(
+            $gradeparams = [
                 'userid' => $this->grade->userid,
                 'itemid' => $this->grade->itemid
-            );
+            ];
 
             $this->grade = grade_grade::fetch($gradeparams);
             $this->grade->grade_item = $gradeitem;
         }
 
-        $state = $value == 0 ? false : true;
+        $state = !($value == 0);
 
         $this->grade->set_excluded($state);
 
