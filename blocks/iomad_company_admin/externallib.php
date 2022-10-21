@@ -783,9 +783,9 @@ class block_iomad_company_admin_external extends external_api {
         $sql = ' company != 0 ';
 
         if (!empty($params['companyid'])) {
-            $companies = $DB->get_records('company', ['id' => $params['companyid']], 'id', 'id,name,address,city,region,postcode,country,custom1,custom2,custom3'); 
+            $companies = $DB->get_records('company', ['id' => $params['companyid']], 'id', 'id,name,shortname,code,address,city,region,postcode,country,custom1,custom2,custom3'); 
         } else {
-            $companies = $DB->get_records('company', ['suspended' => 0], 'id', 'id,name,address,city,region,postcode,country,custom1,custom2,custom3'); 
+            $companies = $DB->get_records('company', ['suspended' => 0], 'id', 'id,name,shortname,code,address,city,region,postcode,country,custom1,custom2,custom3'); 
         }
 
         foreach ($companies as $companyid => $company) {
@@ -821,6 +821,8 @@ class block_iomad_company_admin_external extends external_api {
                             array(
                                 'id' => new external_value(PARAM_INT, 'Company ID'),
                                 'name' => new external_value(PARAM_TEXT, 'Company name'),
+                                'shortname' => new external_value(PARAM_TEXT, 'Company shortname'),
+                                'code' => new external_value(PARAM_TEXT, 'Company code'),
                                 'address' => new external_value(PARAM_TEXT, 'Company address'),
                                 'city' => new external_value(PARAM_TEXT, 'Company city'),
                                 'region' => new external_value(PARAM_TEXT, 'Company region'),
