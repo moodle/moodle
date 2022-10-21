@@ -794,11 +794,28 @@ class block_iomad_company_admin_external extends external_api {
             $courses = $comp->get_menu_courses($params['shared'], false, false, false);
             foreach ($courses as $courseid => $course) {
                 $companycourses[$courseid] = (object) ['id' => $companyid, 'fullname' => $course];
-                $customfields = $DB->get_records_sql("SELECT cfd.id, cff.name, cfd.value
-                                                      FROM {customfield_data} cfd
-                                                      JOIN {customfield_field} cff ON (cfd.fieldid = cff.id)
-                                                      WHERE cfd.instanceid = :courseid",
-                                                      ['courseid' => $courseid]);
+                $customfieldsraw = $DB->get_records_sql("SELECT cfd.id, cff.name,cff.type,cff.configdata, cfd.value
+                                                         FROM {customfield_data} cfd
+                                                         JOIN {customfield_field} cff ON (cfd.fieldid = cff.id)
+                                                         WHERE cfd.instanceid = :courseid",
+                                                         ['courseid' => $courseid]);
+                $customfields = [];
+                foreach ($customfieldsraw as $rawfield) {
+                        $customfields[$rawfield->id] = (object) ['id' => $rawfield->id, 'name' => $rawfield->name];
+                    if ($rawfield->type == 'date') {
+                        $customfields[$rawfield->id]->value = date("Y-m-d H:i:s", $rawfield->value);
+                    } else if ($rawfield->type == 'select') {
+                        $configdata = json_decode($rawfield->configdata);
+                        $options = preg_split("/\s*\n\s*/", trim($configdata->options));
+                        if ($rawfield->value == '') {
+                            $customfields[$rawfield->id]->value = $configdata->default;
+                        } else {
+                            $customfields[$rawfield->id]->value = $options[$rawfield->value];
+                        }
+                    } else {
+                        $customfields[$rawfield->id]->value = $rawfield->value;
+                    }
+                }
                 $companycourses[$courseid]->customfields = $customfields;
             }
             $companies[$companyid]->courses = $companycourses;
@@ -840,7 +857,7 @@ class block_iomad_company_admin_external extends external_api {
                                                     array(
                                                           'id' => new external_value(PARAM_INT, 'Custom field id'),
                                                           'name' => new external_value(PARAM_TEXT, 'Custom field name'),
-                                                          'data' => new external_value(PARAM_TEXT, 'Custom field data value'),
+                                                          'value' => new external_value(PARAM_RAW, 'Custom field data value'),
                                                           )
                                                     )
                                                 )
