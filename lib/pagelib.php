@@ -1797,7 +1797,7 @@ class moodle_page {
                 break;
 
                 case 'category':
-                    if (!empty($CFG->allowcategorythemes) && !$hascustomdevicetheme) {
+                    if (!empty($CFG->allowcategorythemes) && !empty($this->_course) && !$hascustomdevicetheme) {
                         $categories = $this->categories;
                         foreach ($categories as $category) {
                             if (!empty($category->theme)) {
@@ -1940,7 +1940,7 @@ class moodle_page {
             $this->add_body_class('cm-type-' . $this->_cm->modname);
         }
 
-        if (!empty($CFG->allowcategorythemes)) {
+        if (!empty($CFG->allowcategorythemes) && !empty($this->_course)) {
             $this->ensure_category_loaded();
             foreach ($this->_categories as $catid => $notused) {
                 $this->add_body_class('category-' . $catid);
