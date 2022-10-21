@@ -61,6 +61,7 @@ $string['cachedef_databasemeta'] = 'Database meta information';
 $string['cachedef_eventinvalidation'] = 'Event invalidation';
 $string['cachedef_externalbadges'] = 'External badges for particular user';
 $string['cachedef_fontawesomeiconmapping'] = 'Mapping of icons for font awesome';
+$string['cachedef_file_imageinfo'] = 'File image info eg dimensions';
 $string['cachedef_suspended_userids'] = 'List of suspended users per course';
 $string['cachedef_groupdata'] = 'Course group information';
 $string['cachedef_h5p_content_type_translations'] = 'H5P content-type libraries translations';

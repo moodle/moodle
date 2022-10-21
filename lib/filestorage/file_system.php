@@ -365,9 +365,18 @@ abstract class file_system {
             return false;
         }
 
+        $hash = $file->get_contenthash();
+        $cache = cache::make('core', 'file_imageinfo');
+        $info = $cache->get($hash);
+        if ($info !== false) {
+            return $info;
+        }
+
         // Whilst get_imageinfo_from_path can use remote paths, it must download the entire file first.
         // It is more efficient to use a local file when possible.
-        return $this->get_imageinfo_from_path($this->get_local_path_from_storedfile($file, true));
+        $info = $this->get_imageinfo_from_path($this->get_local_path_from_storedfile($file, true));
+        $cache->set($hash, $info);
+        return $info;
     }
 
     /**
