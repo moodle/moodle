@@ -21,7 +21,7 @@ Feature: Within the User report, a teacher can search for users.
 
   Scenario: A teacher can search for and find a user to view
     Given I navigate to "View > User report" in the course gradebook
-    When I click on "Click to select a user" "link"
+    When I click on ".userwidget" "css_element"
     Then I confirm "Student 1" in "Select a user" search within the gradebook widget exists
     And I confirm "Student 2" in "Select a user" search within the gradebook widget exists
     And I confirm "Student 32" in "Select a user" search within the gradebook widget exists

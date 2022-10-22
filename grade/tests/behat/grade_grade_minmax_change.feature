@@ -52,7 +52,7 @@ Feature: We can change the maximum and minimum number of points for manual items
     Then the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |
       | Manual item 1 | 100.00 %          | 10.00  | 100.00 %                     |
-    And I select "Student 2" from the "Select all or one user" singleselect
+    And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |
       | Manual item 1 | 100.00 %          | 8.00   | 80.00 %                      |
@@ -68,7 +68,7 @@ Feature: We can change the maximum and minimum number of points for manual items
     And the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |
       | Manual item 1 | 100.00 %          | 20.00  | 100.00 %                     |
-    And I select "Student 2" from the "Select all or one user" singleselect
+    And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |
       | Manual item 1 | 100.00 %          | 16.00   | 80.00 %                     |

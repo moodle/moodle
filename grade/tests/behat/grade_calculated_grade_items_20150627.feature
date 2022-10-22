@@ -89,7 +89,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
       | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
       | Course total                        | -                 | 37.50  | 0–100 | 37.50 %    | -                            |
-    And I select "Student 2" from the "Select all or one user" singleselect
+    And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 65.00  | 0–100 | 65.00 %    | -                            |
@@ -106,7 +106,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
       | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
       | Course total                        | -                 | 37.50  | 0–100 | 37.50 %    | -                            |
-    And I select "Student 2" from the "Select all or one user" singleselect
+    And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 65.00  | 0–100 | 65.00 %    | -                            |
@@ -156,7 +156,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
       | grade item 1 | 50.00 %           | 75.00  | 0–100 | 75.00 %    | 37.50 %                      |
       | calc item    | 50.00 %           | 37.50  | 0–100 | 37.50 %    | 18.75 %                      |
       | Course total | -                 | 112.50 | 0–200 | 56.25 %    | -                            |
-    And I select "Student 2" from the "Select all or one user" singleselect
+    And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1 | 50.00 %           | 65.00  | 0–100 | 65.00 %    | 32.50 %                      |

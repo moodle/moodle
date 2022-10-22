@@ -109,7 +109,7 @@ Feature: We can use a minimum grade different than zero
       | Manual item 4 | 66.67 %           | -10.00 | -1.82 %                      |
       | Manual item 5 | 50.00 %           | 50.00  | 9.09 %                       |
       | Manual item 6 | 50.00 %           | 75.00  | 13.64 %                      |
-    And I set the field "Select all or one user" to "Student 2"
+    And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |
       | Manual item 1 | 18.18 %           | 0.00   | 0.00 %                       |
