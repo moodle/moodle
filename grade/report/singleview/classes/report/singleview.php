@@ -34,6 +34,9 @@ require_once($CFG->dirroot . '/grade/report/lib.php');
  */
 class singleview extends grade_report {
 
+    /** @var string|null $itemselector The raw HTML of the item selector based on the selected single view item type. */
+    public ?string $itemselector = null;
+
     /**
      * Return the list of valid screens, used to validate the input.
      *
@@ -99,6 +102,8 @@ class singleview extends grade_report {
         //  The setup_group method is used to validate group mode and permissions and define the currentgroup value.
         $this->setup_groups();
 
+        $this->setup_item_selector($itemtype, $itemid);
+
         $screenclass = "\\gradereport_singleview\\local\\screen\\${itemtype}";
 
         $this->screen = new $screenclass($courseid, $itemid, $this->currentgroup);
@@ -134,5 +139,23 @@ class singleview extends grade_report {
 
         $renderer = $PAGE->get_renderer('core_grades');
         return $renderer->group_selector($course, $urlroot->out());
+    }
+
+    /**
+     * Function used to set the the appropriate item selector (raw HTML) based on the selected single view item type.
+     *
+     * @param string $itemtype The single view item type.
+     * @param int|null $itemid The item ID.
+     */
+    protected function setup_item_selector(string $itemtype, ?int $itemid) {
+        global $PAGE;
+
+        $renderer = $PAGE->get_renderer('gradereport_singleview');
+
+        if ($itemtype === 'user' || $itemtype === 'user_select' ) {
+            $this->itemselector = $renderer->users_selector($this->course, $itemid, $this->currentgroup);
+        } else if ($itemtype === 'grade' || $itemtype === 'grade_select' ) {
+            $this->itemselector = $renderer->grade_items_selector($this->course, $itemid);
+        }
     }
 }

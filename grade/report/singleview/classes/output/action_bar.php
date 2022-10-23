@@ -20,27 +20,51 @@ namespace gradereport_singleview\output;
 
 use moodle_url;
 use renderer_base;
+use gradereport_singleview\report\singleview;
 
 /**
- * Class gradeitem_action_bar
+ * Renderable class for the action bar elements in the single view report page.
  *
  * @package   gradereport_singleview
  * @copyright 2022 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradeitem_action_bar extends \core_grades\output\action_bar {
+class action_bar extends \core_grades\output\action_bar {
 
-    protected \gradereport_singleview\report\singleview $report;
+    /** @var singleview $report The single view report class. */
+    protected singleview $report;
 
-    public function __construct(\context $context, \gradereport_singleview\report\singleview $report) {
+    /** @var string $itemtype The single view item type. */
+    protected string $itemtype;
+
+    /**
+     * The class constructor.
+     *
+     * @param \context $context The context object.
+     * @param singleview $report The single view report class.
+     * @param string $itemtype The single view item type.
+     */
+    public function __construct(\context $context, singleview $report, string $itemtype) {
         parent::__construct($context);
         $this->report = $report;
+        $this->itemtype = $itemtype;
     }
 
+    /**
+     * Returns the template for the action bar.
+     *
+     * @return string
+     */
     public function get_template(): string {
-        return 'gradereport_singleview/gradeitem_action_bar';
+        return 'gradereport_singleview/action_bar';
     }
 
+    /**
+     * Export the data for the mustache template.
+     *
+     * @param \renderer_base $output renderer to be used to render the action bar elements.
+     * @return array
+     */
     public function export_for_template(renderer_base $output) {
         $courseid = $this->context->instanceid;
         // Get the data used to output the general navigation selector.
@@ -52,24 +76,19 @@ class gradeitem_action_bar extends \core_grades\output\action_bar {
         );
         $data = $generalnavselector->export_for_template($output);
 
-        $data['gradeselectactive'] = true;
-        $data['gradezerolink'] = new moodle_url(
-            '/grade/report/singleview/index.php',
-            ['id' => $courseid, 'item' => 'grade_select']
-        );
-        $data['userzerolink'] = new moodle_url(
-            '/grade/report/singleview/index.php',
-            ['id' => $courseid, 'item' => 'user_select']
-        );
+        // The data required to output the page toggle element.
+        $data['pagetoggler'] = [
+            'displaylabel' => true,
+            'userselectactive' => $this->itemtype === 'user',
+            'gradeselectactive' => $this->itemtype === 'grade',
+            'gradezerolink' => new moodle_url('/grade/report/singleview/index.php',
+                ['id' => $courseid, 'item' => 'grade_select']),
+            'userzerolink' => new moodle_url('/grade/report/singleview/index.php',
+                ['id' => $courseid, 'item' => 'user_select'])
+        ];
 
         $data['groupselector'] = $this->report->group_selector;
-
-        // Grade item selector.
-        $screen = new \gradereport_singleview\local\screen\user($this->report->courseid, null, $this->report->currentgroup);
-        $options = $screen->options();
-        $gradeitemselector = new \core\output\select_menu('itemid', $options, $this->report->screen->item->id);
-        $gradeitemselector->set_label(get_string('assessmentname', 'gradereport_singleview'));
-        $data['gradeitemselector'] = $gradeitemselector->export_for_template($output);
+        $data['itemselector'] = $this->report->itemselector;
 
         $data['pbarurl'] = $this->report->pbarurl->out(false);
 

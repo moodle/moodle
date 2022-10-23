@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template gradereport_singleview/gradeitem_action_bar
+    @template gradereport_singleview/action_bar
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="row">
@@ -29,20 +29,15 @@
                 {{{.}}}
             </div>
         {{/groupselector}}
-        {{#gradeitemselector}}
+        {{#itemselector}}
             <div class="navitem">
-                {{>core/select_menu}}
+                {{{.}}}
             </div>
-            {{#js}}
-                document.querySelector('.tertiary-navigation [name="itemid"]').addEventListener('change', function(e) {
-                    var url = new URL("{{{pbarurl}}}");
-                    url.searchParams.set('itemid', e.target.value);
-                    window.location.href = url;
-                });
-            {{/js}}
-        {{/gradeitemselector}}
-        <div class="navitem ml-auto">
-            {{>gradereport_singleview/page_toggler}}
-        </div>
+        {{/itemselector}}
+        {{#pagetoggler}}
+            <div class="navitem ml-auto">
+                {{>gradereport_singleview/page_toggler}}
+            </div>
+        {{/pagetoggler}}
     </div>
 </div>
