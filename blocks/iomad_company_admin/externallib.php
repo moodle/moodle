@@ -793,7 +793,7 @@ class block_iomad_company_admin_external extends external_api {
             $companycourses = [];
             $courses = $comp->get_menu_courses($params['shared'], false, false, false);
             foreach ($courses as $courseid => $course) {
-                $companycourses[$courseid] = (object) ['id' => $companyid, 'fullname' => $course];
+                $companycourses[$courseid] = (object) ['id' => $courseid, 'fullname' => $course];
                 $customfieldsraw = $DB->get_records_sql("SELECT cfd.id, cff.name,cff.type,cff.configdata, cfd.value
                                                          FROM {customfield_data} cfd
                                                          JOIN {customfield_field} cff ON (cfd.fieldid = cff.id)
