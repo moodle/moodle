@@ -807,10 +807,10 @@ class block_iomad_company_admin_external extends external_api {
                     } else if ($rawfield->type == 'select') {
                         $configdata = json_decode($rawfield->configdata);
                         $options = preg_split("/\s*\n\s*/", trim($configdata->options));
-                        if ($rawfield->value == '') {
+                        if ($rawfield->value == 0) {
                             $customfields[$rawfield->id]->value = $configdata->default;
                         } else {
-                            $customfields[$rawfield->id]->value = $options[$rawfield->value];
+                            $customfields[$rawfield->id]->value = $options[$rawfield->value - 1];
                         }
                     } else {
                         $customfields[$rawfield->id]->value = $rawfield->value;
