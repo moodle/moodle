@@ -61,4 +61,29 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
         $this->page->requires->js_call_amd('gradereport_singleview/user', 'init');
         return $this->render_from_template('gradereport_singleview/user_selector', $data);
     }
+
+    /**
+     * Renders the grade items selector trigger element.
+     *
+     * @param object $course The course object.
+     * @param int|null $gradeitemid The grade item ID.
+     * @return string The raw HTML to render.
+     */
+    public function grade_items_selector(object $course, ?int $gradeitemid = null): string {
+
+        $data = [
+            'courseid' => $course->id,
+        ];
+
+        // If a particular grade item option is selected (not in zero state).
+        if ($gradeitemid) {
+            $gradeitemname = grade_item::fetch(['id' => $gradeitemid])->get_name(true);
+            $data['selectedoption'] = [
+                'text' => $gradeitemname,
+            ];
+        }
+
+        $this->page->requires->js_call_amd('gradereport_singleview/grade', 'init');
+        return $this->render_from_template('gradereport_singleview/grade_item_selector', $data);
+    }
 }
