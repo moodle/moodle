@@ -44,6 +44,10 @@ class CSS extends Minify
         'jpeg' => 'data:image/jpeg',
         'svg' => 'data:image/svg+xml',
         'woff' => 'data:application/x-font-woff',
+        'woff2' => 'data:application/x-font-woff2',
+        'avif' => 'data:image/avif',
+        'apng' => 'data:image/apng',
+        'webp' => 'data:image/webp',
         'tif' => 'image/tiff',
         'tiff' => 'image/tiff',
         'xbm' => 'image/x-xbitmap',
@@ -746,7 +750,7 @@ class CSS extends Minify
             // and since we've captured more code than required, we may have some leftover
             // calc() in here too - go recursive on the remaining but of code to go figure
             // that out and extract what is needed
-            $rest = str_replace($function.$expr, '', $match[0]);
+            $rest = $minifier->str_replace_first($function.$expr, '', $match[0]);
             $rest = preg_replace_callback($pattern, $callback, $rest);
 
             return $placeholder.$rest;
@@ -764,7 +768,8 @@ class CSS extends Minify
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;
         $this->registerPattern(
-            '/(?<=^|[;}])(--[^:;{}"\'\s]+)\s*:([^;{}]+)/m',
+
+            '/(?<=^|[;}{])\s*(--[^:;{}"\'\s]+)\s*:([^;{}]+)/m',
             function ($match) use ($minifier) {
                 $placeholder = '--custom-'. count($minifier->extracted) . ':0';
                 $minifier->extracted[$placeholder] = $match[1] .':'. trim($match[2]);
