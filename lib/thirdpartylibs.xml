@@ -246,7 +246,7 @@
     <location>markdown</location>
     <name>Markdown</name>
     <description>Functions to convert from the Markdown text format into clean XHTML.</description>
-    <version>1.9.0</version>
+    <version>2.0.0</version>
     <license>BSD</license>
     <repository>https://github.com/michelf/php-markdown</repository>
     <copyrights>
