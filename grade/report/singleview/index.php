@@ -57,7 +57,8 @@ $pageparams = [
     'perpage'   => $perpage,
 ];
 $PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $pageparams));
-$PAGE->set_pagelayout('incourse');
+$PAGE->set_pagelayout('report');
+$PAGE->set_other_editing_capability('moodle/grade:edit');
 
 if (!$course = $DB->get_record('course', $courseparams)) {
     throw new \moodle_exception('invalidcourseid');
@@ -103,8 +104,6 @@ $pageparams = [
     'page' => $page,
     'perpage' => $perpage,
 ];
-
-$PAGE->set_pagelayout('report');
 
 $actionbar = new \core_grades\output\general_action_bar($context,
     new moodle_url('/grade/report/singleview/index.php', ['id' => $courseid]), 'report', 'singleview');
