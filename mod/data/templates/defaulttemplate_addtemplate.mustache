@@ -36,13 +36,13 @@
 <div id="defaulttemplate-addentry">
     {{#fields}}
         <div class="form-group pt-3">
-            <span class="font-weight-bold"><label for="[[{{fieldname}}#id]]">{{fieldname}}</label><br/></span>
+            <div class="font-weight-bold">{{fieldname}}</div>
             {{{fieldcontent}}}
         </div>
     {{/fields}}
     {{#tags}}
         <div class="form-group pt-3">
-            <span class="font-weight-bold">{{#str}}tags{{/str}}<br/></span>
+            <div class="font-weight-bold">{{#str}}tags{{/str}}</div>
             {{{.}}}
         </div>
     {{/tags}}

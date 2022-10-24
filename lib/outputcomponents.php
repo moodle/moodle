@@ -167,9 +167,8 @@ class user_picture implements renderable {
     public $link = true;
 
     /**
-     * @var int Size in pixels. Special values are (true/1 = 100px) and
-     * (false/0 = 35px)
-     * for backward compatibility.
+     * @var int Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatibility.
+     * Recommended values (supporting user initials too): 16, 35, 64 and 100.
      */
     public $size = 35;
 

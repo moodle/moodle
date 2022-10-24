@@ -240,9 +240,9 @@ class template {
      * @return pix_icon[] icon name => pix_icon
      */
     protected function get_icons() {
-        $attrs = ['class' => 'iconsmall'];
+        $attrs = ['class' => 'iconsmall dataicon'];
         return [
-            'edit' => new pix_icon('t/edit', get_string('edit'), '', $attrs),
+            'edit' => new pix_icon('t/editinline', get_string('edit'), '', $attrs),
             'delete' => new pix_icon('t/delete', get_string('delete'), '', $attrs),
             'more' => new pix_icon('t/preview', get_string('more', 'data'), '', $attrs),
             'approve' => new pix_icon('t/approve', get_string('approve', 'data'), '', $attrs),
@@ -503,7 +503,7 @@ class template {
         if (!isset($user->picture)) {
             $user = core_user::get_user($entry->userid);
         }
-        return $OUTPUT->user_picture($user, ['courseid' => $cm->course]);
+        return $OUTPUT->user_picture($user, ['courseid' => $cm->course, 'size' => 64]);
     }
 
     /**
@@ -551,7 +551,11 @@ class template {
      * @return string the tag replacement
      */
     protected function get_tag_timeadded_replacement(stdClass $entry, bool $canmanageentry): string {
-        return userdate($entry->timecreated);
+        return html_writer::tag(
+            'span',
+            userdate($entry->timecreated, get_string('strftimedatemonthabbr', 'langconfig')),
+            ['title' => userdate($entry->timecreated)]
+        );
     }
 
     /**
@@ -562,7 +566,11 @@ class template {
      * @return string the tag replacement
      */
     protected function get_tag_timemodified_replacement(stdClass $entry, bool $canmanageentry): string {
-        return userdate($entry->timemodified);
+        return html_writer::tag(
+            'span',
+            userdate($entry->timemodified, get_string('strftimedatemonthabbr', 'langconfig')),
+            ['title' => userdate($entry->timecreated)]
+        );
     }
 
     /**

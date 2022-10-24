@@ -56,6 +56,8 @@ Feature: Users can use the Journal preset
     Given I am on the "Student reflections" "data activity" page logged in as student1
     And "Reflection created by student" "text" should appear before "Reflection created by teacher" "text"
     When I click on "Advanced search" "checkbox"
+    And I should see "First name"
+    And I should see "Last name"
     And I set the field "Title" to "student"
     And I press "Save settings"
     Then I should see "Reflection created by student"

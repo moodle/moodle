@@ -162,6 +162,17 @@
     max-width: 100%;
 }
 
+/* Date information displayed in templates/presets */
+.data-timeinfo {
+    color: var(–gray);
+}
+
+/* Legacy icons */
+.dataicon,
+.portfolio-add-icon {
+    color: var(--dark);
+}
+
 /* Preset preview styles */
 #page-mod-data-preset .nopreview {
     border: 1px solid var(--secondary);

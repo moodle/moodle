@@ -70,6 +70,8 @@ Feature: Users can use the Image gallery preset
     Given I am on the "Mountain landscapes" "data activity" page logged in as student1
     And "First image" "text" should appear before "Second image" "text"
     When I click on "Advanced search" "checkbox"
+    And I should see "First name"
+    And I should see "Last name"
     And I set the field "title" to "First image"
     And I press "Save settings"
     Then I should see "First image"

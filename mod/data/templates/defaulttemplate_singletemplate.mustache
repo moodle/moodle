@@ -34,24 +34,27 @@
     }
 }}
 <div id="defaulttemplate-single" class="my-5">
-    <div class="d-flex mt-n6">
-        <div class="ml-auto my-auto ##approvalstatusclass##">##approvalstatus##</div>
-        <div>##actionsmenu##</div>
-    </div>
     <div class="defaulttemplate-single-body my-5">
-        <div class="mt-4">
-            <span class="font-weight-bold">{{#str}}addedby, mod_data{{/str}}</span>
-            <p class="mt-2">##userpicture## ##user##</p>
+        <div class="row my-6">
+            <div class="col-auto">##userpicture##</div>
+            <div class="col">
+                <div class="row h-100">
+                    <div class="col-3 align-self-center">
+                        ##user##<br/><span class="data-timeinfo">##timeadded##</span>
+                    </div>
+                    <div class="col-4 col-md-6 text-right align-self-center data-timeinfo">
+                        <span class="font-weight-bold ">{{#str}}datemodified, mod_data{{/str}}</span>##timemodified##
+                    </div>
+                    <div class="col-4 col-md-3 ml-auto align-self-center d-flex flex-row-reverse">
+                        <div>##actionsmenu##</div>
+                        <div class="ml-auto my-auto ##approvalstatusclass##">##approvalstatus##</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="mt-4">
-            <span class="font-weight-bold">{{#str}}dateadded, mod_data{{/str}}</span>
-            <p class="mt-2">##timeadded##</p>
-        </div>
-        <div class="mt-4">
-            <span class="font-weight-bold">{{#str}}datemodified, mod_data{{/str}}</span>
-            <p class="mt-2">##timemodified##</p>
-        </div>
+        <hr/>
 
+        <div class="my-6">
         {{#fields}}
             <div class="mt-4">
                 <span class="font-weight-bold">{{fieldname}}</span>
@@ -64,5 +67,6 @@
                 <p class="mt-2">{{.}}</p>
             </div>
         {{/tags}}
+        </div>
     </div>
 </div>

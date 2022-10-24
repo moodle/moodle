@@ -32,11 +32,9 @@ Feature: Users can use the Proposals preset
   Scenario: Proposals. Users view entries
     When I am on the "Student projects" "data activity" page logged in as student1
     Then I should see "Project created by student"
-    And I should see "Pending"
     And "Summary 1" "text" should exist
     And "Actions" "icon" should exist in the "#proposals-list" "css_element"
     And I should see "Project created by teacher"
-    And I should see "Rejected"
     And "Summary 2" "text" should exist
     And I click on "Project created by student" "link"
     And I click on "Project created by teacher" "link"
@@ -72,6 +70,8 @@ Feature: Users can use the Proposals preset
     Given I am on the "Student projects" "data activity" page logged in as student1
     And "Project created by student" "text" should appear before "Project created by teacher" "text"
     When I click on "Advanced search" "checkbox"
+    And I should see "First name"
+    And I should see "Last name"
     And I set the field "Title" to "student"
     And I press "Save settings"
     Then I should see "Project created by student"
