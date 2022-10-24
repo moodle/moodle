@@ -21,9 +21,9 @@ Feature: Given we land on the index page, select what type of report we wish to 
   Scenario: I switch between the two report types within singleview
     Given I navigate to "View > Single view" in the course gradebook
     And I click on "Grade items" "link" in the ".singleindex" "css_element"
-    When I click on "Click to select a grade item" "link"
+    When I click on ".gradewidget" "css_element"
     Then I wait until "Select a grade item" "dialogue" exists
     And I click on "Close" "button" in the "Select a grade item" "dialogue"
     And I click on "Users" "link" in the ".page-toggler" "css_element"
-    And I click on "Click to select a user" "link"
+    And I click on ".userwidget" "css_element"
     And I wait until "Select a user" "dialogue" exists

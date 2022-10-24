@@ -61,6 +61,7 @@ Feature: We can use Single view
     Given I navigate to "View > Single view" in the course gradebook
     And I click on "User" "link" in the ".singleindex" "css_element"
     And I click on "Student" in the "user" search widget
+    And I turn editing mode on
     And I set the field "Override for Test assignment one" to "1"
     When I set the following fields to these values:
         | Grade for Test assignment one | 10.00 |
@@ -76,7 +77,8 @@ Feature: We can use Single view
     Then I should see "Grades were set for 1 items"
     And the field "Grade for Test grade item" matches value "45.00"
     And the field "Grade for Course total" matches value "55.00"
-    And I click on "Show grades for Test assignment three" "link"
+    And I open the action menu in "Test assignment three" "table_row"
+    And I choose "Show all grades" in the open action menu
     And I click on "Override for Ann, Jill, Grainne, Beauchamp" "checkbox"
     And I set the following fields to these values:
         | Grade for Ann, Jill, Grainne, Beauchamp | 12.05 |
@@ -86,7 +88,7 @@ Feature: We can use Single view
     Then I should see "Grades were set for 2 items"
     And the field "Grade for Ann, Jill, Grainne, Beauchamp" matches value "12.05"
     And the field "Exclude for Jane, Nina, Niamh, Cholmondely" matches value "1"
-    And I select "new grade item 1" from the "Select grade item..." singleselect
+    And I click on "new grade item 1" in the "grade" search widget
     And I set the field "Grade for Ann, Jill, Grainne, Beauchamp" to "Very good"
     And I press "Save"
     Then I should see "Grades were set for 1 items"
@@ -99,6 +101,7 @@ Feature: We can use Single view
     Given I navigate to "View > Single view" in the course gradebook
     And I click on "User" "link" in the ".singleindex" "css_element"
     And I click on "Student" in the "user" search widget
+    And I turn editing mode on
     And the "Exclude for Test assignment one" "checkbox" should be disabled
     And the "Override for Test assignment one" "checkbox" should be enabled
 
@@ -143,7 +146,8 @@ Feature: We can use Single view
     Then I should see "Nee,Chumlee"
     And I follow "Gronya,Beecham"
     Then I should see "Gronya,Beecham"
-    And I click on "Show grades for Test assignment four" "link"
+    And I open the action menu in "Test assignment four" "table_row"
+    And I choose "Show all grades" in the open action menu
     Then I should see "Test assignment four"
     And I follow "Test assignment three"
     Then I should see "Test assignment three"
