@@ -1273,16 +1273,28 @@ abstract class base {
     public function get_output_classname(string $outputname): string {
         // The core output class.
         $baseclass = "core_courseformat\\output\\local\\$outputname";
-        // Check if there is a specific format class.
-        $component = 'format_'. $this->get_format();
-        $outputclass = "$component\\output\\courseformat\\$outputname";
-        if (class_exists($outputclass)) {
-            // Check that the outputclass is a subclass of the base class.
-            if (!is_subclass_of($outputclass, $baseclass)) {
-                throw new coding_exception("The \"$outputclass\" must extend \"$baseclass\"");
+
+        // Look in this format and any parent formats before we get to the base one.
+        $classes = array_merge([get_class($this)], class_parents($this));
+        foreach ($classes as $component) {
+            if ($component === self::class) {
+                break;
             }
-            return $outputclass;
+
+            // Because course formats are in the root namespace, there is no need to process the
+            // class name - it is already a Frankenstyle component name beginning 'format_'.
+
+            // Check if there is a specific class in this format.
+            $outputclass = "$component\\output\\courseformat\\$outputname";
+            if (class_exists($outputclass)) {
+                // Check that the outputclass is a subclass of the base class.
+                if (!is_subclass_of($outputclass, $baseclass)) {
+                    throw new coding_exception("The \"$outputclass\" must extend \"$baseclass\"");
+                }
+                return $outputclass;
+            }
         }
+
         return $baseclass;
     }
 
