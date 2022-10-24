@@ -177,8 +177,8 @@ class grade extends tablelike implements selectable_items, filterable_items {
             get_string('grade', 'grades'),
             get_string('range', 'grades'),
             get_string('feedback', 'grades'),
-            $this->make_toggle_links('override'),
-            $this->make_toggle_links('exclude')
+            get_string('override', 'gradereport_singleview'),
+            get_string('exclude', 'gradereport_singleview'),
         ];
     }
 

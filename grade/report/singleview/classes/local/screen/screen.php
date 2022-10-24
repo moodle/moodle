@@ -187,52 +187,6 @@ abstract class screen {
     }
 
     /**
-     * Make the HTML element that toggles all the checkboxes on or off.
-     *
-     * @param string $key A unique key for this control - inserted in the classes.
-     * @return string
-     */
-    public function make_toggle(string $key): string {
-        $attrs = ['href' => '#'];
-
-        // Do proper lang strings for title attributes exist for the given key?
-        $strmanager = \get_string_manager();
-        $titleall = get_string('all');
-        $titlenone = get_string('none');
-        if ($strmanager->string_exists(strtolower($key) . 'all', 'gradereport_singleview')) {
-            $titleall = get_string(strtolower($key) . 'all', 'gradereport_singleview');
-        }
-        if ($strmanager->string_exists(strtolower($key) . 'none', 'gradereport_singleview')) {
-            $titlenone = get_string(strtolower($key) . 'none', 'gradereport_singleview');
-        }
-
-        $all = html_writer::tag('a', get_string('all'), $attrs + [
-            'class' => 'include all ' . $key,
-            'title' => $titleall
-        ]);
-
-        $none = html_writer::tag('a', get_string('none'), $attrs + [
-            'class' => 'include none ' . $key,
-            'title' => $titlenone
-        ]);
-
-        return html_writer::tag('span', "$all / $none", [
-            'class' => 'inclusion_links'
-        ]);
-    }
-
-    /**
-     * Make a toggle link with some text before it.
-     *
-     * @param string $key A unique key for this control - inserted in the classes.
-     * @return string
-     */
-    public function make_toggle_links(string $key): string {
-        return get_string($key, 'gradereport_singleview') . ' ' .
-            $this->make_toggle($key);
-    }
-
-    /**
      * Get the default heading for the screen.
      *
      * @return string
