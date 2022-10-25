@@ -22,7 +22,7 @@ Feature: Users can use the Proposals preset
     And I am on the "Student projects" "data activity" page logged in as teacher1
     And I follow "Presets"
     And I click on "fullname" "radio" in the "Proposals" "table_row"
-    And I click on "Use preset" "button"
+    And I click on "Use a preset" "button"
     And the following "mod_data > entries" exist:
       | database | user      | Title                           | Summary    | Content                  | Status    |
       | data1    | student1  | Project created by student      | Summary 1  | Content for entry 1      | Pending   |

@@ -22,7 +22,7 @@ Feature: Users can use the Journal preset
     And I am on the "Student reflections" "data activity" page logged in as teacher1
     And I follow "Presets"
     And I click on "fullname" "radio" in the "Journal" "table_row"
-    And I click on "Use preset" "button"
+    And I click on "Use a preset" "button"
     And the following "mod_data > entries" exist:
       | database | user      | Title                           | Content                                  |
       | data1    | student1  | Reflection created by student   | This is the content for the entry 1      |

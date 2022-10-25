@@ -26,6 +26,6 @@ Feature: Zero state page (no fields created)
     And I click on "Create a new field" "button"
     And I should see "Manage fields"
     And I am on the "Test database name" "data activity" page
-    And "Use preset" "button" should exist
-    And I click on "Use preset" "button"
+    And "Use a preset" "button" should exist
+    And I click on "Use a preset" "button"
     And I should see "Presets"
