@@ -17,8 +17,15 @@
     .filters-dropdown {
         width: 27rem;
         padding: 0;
+        z-index: $zindex-modal;
+        overflow: hidden;
         @include media-breakpoint-down(sm) {
             width: 100%;
+        }
+        .reportbuilder-filters-sidebar {
+            max-height: calc(100vh - #{$navbar-height} - 1rem);
+            overflow-y: auto;
+            @include thin-scrolls($white);
         }
     }
     .reportbuilder-filters-wrapper,
@@ -61,26 +68,6 @@
                 }
             }
         }
-    }
-}
-
-/**
-* Styled scrollbar with left padding for webkit browsers.
-*/
-@mixin reportbuilder-scrollbar() {
-    $inner-scrollbar-thumb: $secondary;
-    $inner-scrollbar-track: lighten($secondary, 40%);
-    &::-webkit-scrollbar {
-        -webkit-appearance: none;
-        appearance: none;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: $inner-scrollbar-thumb;
-        border-left: 5px solid $white;
-    }
-    &::-webkit-scrollbar-track {
-        background-color: $inner-scrollbar-track;
-        border-left: 5px solid $white;
     }
 }
 
@@ -134,13 +121,13 @@ $rb-right-sidebar-width: 350px;
 }
 .reportbuilder-sidebar-menu-cards {
     overflow-y: auto;
-    @include reportbuilder-scrollbar;
+    @include thin-scrolls($gray-100);
 }
 
 /* Settings sidebar */
 .reportbuilder-sidebar-settings {
     overflow-y: auto;
-    @include reportbuilder-scrollbar;
+    @include thin-scrolls($gray-100);
     @include media-breakpoint-up(lg) {
         width: $rb-right-sidebar-width;
         flex-shrink: 0;
@@ -246,7 +233,7 @@ $rb-right-sidebar-width: 350px;
         .reportbuilder-report[data-editing] .reportbuilder-report-container {
             max-height: calc(100vh - #{$sidebar-margin-top});
             overflow-y: auto;
-            @include reportbuilder-scrollbar;
+            @include thin-scrolls($gray-100);
             margin-left: calc(#{$rb-left-sidebar-width} + 1rem);
             margin-right: calc(#{$rb-right-sidebar-width} + 1rem);
         }
@@ -254,6 +241,10 @@ $rb-right-sidebar-width: 350px;
             margin-left: calc(#{$rb-left-sidebar-width} + 1rem);
         }
     }
+}
+// Fix popper.js behaviour in fullpage report (using 'popup' page layout).
+#page-admin-reportbuilder-edit #page {
+    overflow-y: auto;
 }
 
 /* Toggle cards. */
