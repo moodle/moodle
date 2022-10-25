@@ -22,12 +22,10 @@
  * @since     4.1
  */
 
-import Notification from 'core/notification';
+import {saveCancelPromise} from 'core/notification';
 import Prefetch from 'core/prefetch';
 import Templates from 'core/templates';
 import {get_string as getString} from 'core/str';
-import * as Modal from 'core/modal_factory';
-import * as ModalEvents from 'core/modal_events';
 
 const SELECTOR = {
     attemptSubmitButton: '.path-mod-quiz .btn-finishattempt button',
@@ -45,28 +43,24 @@ const TEMPLATES = {
 const registerEventListeners = (unAnsweredQuestions) => {
     const submitAction = document.querySelector(SELECTOR.attemptSubmitButton);
     if (submitAction) {
-        submitAction.addEventListener('click', e => {
+        submitAction.addEventListener('click', async(e) => {
             e.preventDefault();
-            Modal.create({
-                type: Modal.types.SAVE_CANCEL,
-                title: getString('submission_confirmation', 'quiz'),
-                body: Templates.render(TEMPLATES.submissionConfirmation, {
-                    hasunanswered: unAnsweredQuestions > 0,
-                    totalunanswered: unAnsweredQuestions
-                }),
-                buttons: {
-                    save: getString('submitallandfinish', 'quiz')
-                },
-            }).then(modal => {
-                modal.show();
-                return modal;
-            }).then(modal => {
-                modal.getRoot().on(ModalEvents.save, () => {
-                    const attemptForm = submitAction.closest(SELECTOR.attemptSubmitForm);
-                    attemptForm.submit();
-                });
-                return modal;
-            }).catch(Notification.exception);
+            try {
+                await saveCancelPromise(
+                    getString('submission_confirmation', 'quiz'),
+                    Templates.render(TEMPLATES.submissionConfirmation, {
+                        hasunanswered: unAnsweredQuestions > 0,
+                        totalunanswered: unAnsweredQuestions
+                    }),
+                    getString('submitallandfinish', 'quiz')
+                );
+
+                // Save pressed.
+                submitAction.closest(SELECTOR.attemptSubmitForm).submit();
+            } catch {
+                // Cancel pressed.
+                return;
+            }
         });
     }
 };
