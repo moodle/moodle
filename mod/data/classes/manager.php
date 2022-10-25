@@ -301,6 +301,19 @@ class manager {
         return new template($this, $templatecontent, $options);
     }
 
+    /** Check if the user can manage templates on the current context.
+     *
+     * @param int $userid the user id to check ($USER->id if null).
+     * @return bool if the user can manage templates on current context.
+     */
+    public function can_manage_templates(?int $userid = null): bool {
+        global $USER;
+        if (!$userid) {
+            $userid = $USER->id;
+        }
+        return has_capability('mod/data:managetemplates', $this->context, $userid);
+    }
+
     /**
      * Update the database templates.
      *

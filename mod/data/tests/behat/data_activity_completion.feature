@@ -1,4 +1,4 @@
-@mod @mod_data @core_completion
+@mod @mod_data @core_completion @javascript
 Feature: View activity completion in the database activity
   In order to have visibility of database completion requirements
   As a student
@@ -77,7 +77,6 @@ Feature: View activity completion in the database activity
     And I am on the "Music history" "data activity" page logged in as teacher1
     And I select "Single view" from the "jump" singleselect
     And I set the field "rating" to "3"
-    And I press "Rate"
     And I log out
 
     When I am on the "Music history" "data activity" page logged in as student1

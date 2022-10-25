@@ -12,9 +12,6 @@ Declaration is as follow:
 * coursemodinfo cache uses the new `requirelockingbeforewrite` option, and rebuilding the cache now uses the cache lock API, rather
   than using the core lock factory directly. This allows the locks to be stored locally if the cache is stored locally, and
   avoids the risk of delays and timeouts when multiple nodes need to rebuild the cache locally, but are waiting for a central lock.
-
-=== 4.1 ===
-
 * Final deprecation and removal of the class \admin_setting_managelicenses, please use \tool_licensemanager\manager instead.
 * Final deprecation and removal of the function license_manager::add(). Please use license_manager::save() instead.
 * Final deprecation of the following functions behat_field_manager::get_node_type() and behat_field_manager::get_field()
@@ -60,6 +57,7 @@ Declaration is as follow:
 * The function get_module_metadata() has been finally deprecated and can not be used anymore.
 * New DML driver method `$DB->sql_order_by_null` for sorting nulls sort nulls first when ascending and last when descending.
 * Allow plugins to callback on all pages just prior to the session start.
+* New function set_additional_classes() has been implemented to add additional classes to action_menu.
 
 === 4.0 ===
 

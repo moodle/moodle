@@ -9860,7 +9860,6 @@ a.text-dark:hover, a.text-dark:focus {
  */
 /* core.less */
 #region-main {
-  overflow-x: auto;
   overflow-y: visible;
   background-color: #fff; }
 

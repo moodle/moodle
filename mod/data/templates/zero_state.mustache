@@ -19,7 +19,7 @@
     Context variables required for this template:
     * noitemsimgurl - The image url.
     * importpresetbutton stdClass - Import preset single button to be rendered
-    * createfieldbutton stdClass - Create a new field single button to be rendered
+    * createfieldbutton stdClass - Create a field action menu to be rendered
     * usepresetbutton stdClass - Use a preset single button to be rendered
 
     Example context (json):
@@ -77,15 +77,17 @@
             style="height: 70px; width: 70px;"
     >
     <h5 class="h5 mt-3 mb-0">{{{ title }}}</h5>
-    <p class="mt-3 mb-0">{{{ intro }}}</p>
+    {{#intro}}
+        <p class="mt-3 mb-0">{{{ intro }}}</p>
+    {{/intro}}
 
-    <div class="mt-5 mb-0" id="action_bar">
+    <div class="mt-5 mb-0 whitebutton" id="action_bar">
+        {{#createfieldbutton}}
+            {{>core/action_menu}}
+        {{/createfieldbutton}}
         {{#importpresetbutton}}
             {{>core/single_button}}
         {{/importpresetbutton}}
-        {{#createfieldbutton}}
-            {{>core/single_button}}
-        {{/createfieldbutton}}
         {{#usepresetbutton}}
             {{>core/single_button}}
         {{/usepresetbutton}}

@@ -188,3 +188,11 @@
 .template-preview-content .data-field-html button {
     pointer-events: none;
 }
+
+#page-mod-data-view .whitebutton .btn-secondary,
+#page-mod-data-field- .whitebutton .btn-secondary,
+#page-mod-data-templates .whitebutton .btn-secondary {
+    background: white;
+    border-color: var(--primary);
+    color: var(--primary);
+}

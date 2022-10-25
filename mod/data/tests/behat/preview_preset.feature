@@ -140,6 +140,7 @@ Feature: Users can preview presets
     And I click on "Image gallery" "link"
     When I click on "Use a preset" "button"
     Then I should see "image"
+    And I should see "image"
     And I should see "title"
 
   @javascript @_file_upload

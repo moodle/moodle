@@ -52,6 +52,7 @@ Feature: Completion pass grade
       | Field name | Instrument types |
     And I log out
 
+  @javascript
   Scenario: View automatic completion items as a teacher
     Given I am on the "Music history" "data activity" page logged in as teacher1
 #   We add an entry to let the user change to a different view.
