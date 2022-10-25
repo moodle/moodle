@@ -22,6 +22,8 @@ information provided here is intended especially for developers.
   - data_preset_existing_importer
   - data_preset_upload_importer
 * import_setting_mappings() function has been deprecated. Use importing_preset() instead.
+* $fieldselect single_select type parameter has been deprecated for fields_action_bar class constructor, and a new action_menu
+  type parameter has been added.
 
 === 3.7 ===
 * External functions get_entries, get_entry and search_entries now return an additional field "tags" containing the entry tags.

@@ -242,7 +242,7 @@ echo $OUTPUT->header();
 if (!$manager->has_fields()) {
     // It's a brand-new database. There are no fields.
     $renderer = $manager->get_renderer();
-    echo $renderer->render_zero_state($manager);
+    echo $renderer->render_database_zero_state($manager);
     echo $OUTPUT->footer();
     // Don't check the rest of the options. There is no field, there is nothing else to work with.
     exit;

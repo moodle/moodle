@@ -18,7 +18,6 @@ $thin-scroll-bg-hover: $gray-700 !default;
 $font-size-xs: ($font-size-base * .75) !default;
 
 #region-main {
-    overflow-x: auto;
     overflow-y: visible;
     background-color: $body-bg;
 }

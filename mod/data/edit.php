@@ -74,7 +74,7 @@ if (isguestuser()) {
 }
 
 /// Can't use this if there are no fields
-if (has_capability('mod/data:managetemplates', $context)) {
+if ($manager->can_manage_templates()) {
     if (!$manager->has_fields()) {
         redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry.
     }

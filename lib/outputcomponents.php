@@ -4570,6 +4570,19 @@ class action_menu implements renderable, templatable {
     }
 
     /**
+     * Add classes to the action menu for an easier styling.
+     *
+     * @param string $class The class to add to attributes.
+     */
+    public function set_additional_classes(string $class = '') {
+        if (!empty($this->attributes['class'])) {
+            $this->attributes['class'] .= " ".$class;
+        } else {
+            $this->attributes['class'] = $class;
+        }
+    }
+
+    /**
      * Export for template.
      *
      * @param renderer_base $output The renderer.

@@ -48,12 +48,19 @@ class fields_action_bar implements templatable, renderable {
      *
      * @param int $id The database module id
      * @param \url_select $urlselect The URL selector object
-     * @param \single_select|null $fieldselect The field selector object or null
+     * @param null $unused This parameter has been deprecated since 4.0 and should not be used anymore.
      * @param \single_button|null $saveaspresetbutton The save as preset single button object or null
      * @param \single_button|null $exportpresetbutton The export preset single button object or null
+     * @param \action_menu|null $fieldselect The field selector object or null
      */
-    public function __construct(int $id, \url_select $urlselect, ?\single_select $fieldselect = null,
-            ?\single_button $saveaspresetbutton = null, ?\single_button $exportpresetbutton = null) {
+    public function __construct(int $id, \url_select $urlselect, $unused = null,
+            ?\single_button $saveaspresetbutton = null, ?\single_button $exportpresetbutton = null,
+            ?\action_menu $fieldselect = null) {
+
+        if ($unused !== null) {
+            debugging('Deprecated argument passed to fields_action_bar constructor', DEBUG_DEVELOPER);
+        }
+
         $this->id = $id;
         $this->urlselect = $urlselect;
         $this->fieldselect = $fieldselect;

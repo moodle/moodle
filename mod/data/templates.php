@@ -56,11 +56,6 @@ $PAGE->set_url($url);
 require_login($course, false, $cm);
 require_capability('mod/data:managetemplates', $context);
 
-// Check if it is an empty database.
-if (count($manager->get_field_records()) == 0) {
-    redirect($CFG->wwwroot.'/mod/data/field.php?d='.$instance->id);
-}
-
 $manager->set_template_viewed();
 
 if ($useeditor !== null) {
@@ -77,6 +72,15 @@ $PAGE->activityheader->disable();
 $PAGE->add_body_class('limitedwidth');
 
 echo $OUTPUT->header();
+
+$renderer = $manager->get_renderer();
+// Check if it is an empty database with no fields.
+if (!$manager->has_fields()) {
+    echo $renderer->render_templates_zero_state($manager);
+    echo $OUTPUT->footer();
+    // Don't check the rest of the options. There is no field, there is nothing else to work with.
+    exit;
+}
 
 $actionbar = new \mod_data\output\action_bar($instance->id, $url);
 echo $actionbar->get_templates_action_bar();
@@ -104,7 +108,6 @@ if (($formdata = data_submitted()) && confirm_sesskey()) {
     }
 }
 
-$renderer = $manager->get_renderer();
 $templateeditor = new \mod_data\output\template_editor($manager, $mode);
 echo $renderer->render($templateeditor);
 

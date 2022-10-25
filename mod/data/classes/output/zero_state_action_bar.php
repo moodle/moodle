@@ -52,7 +52,7 @@ class zero_state_action_bar implements templatable, renderable {
         global $PAGE;
 
         $data = [];
-        if (has_capability('mod/data:managetemplates', $PAGE->context)) {
+        if ($this->manager->can_manage_templates()) {
             $instance = $this->manager->get_instance();
             $params = ['d' => $instance->id, 'backto' => $PAGE->url->out(false)];
 
@@ -61,9 +61,8 @@ class zero_state_action_bar implements templatable, renderable {
                 get_string('usepreset', 'mod_data'), 'get', true);
             $data['usepresetbutton'] = $usepresetbutton->export_for_template($output);
 
-            $createfieldlink = new moodle_url('/mod/data/field.php', $params);
-            $createfieldbutton = new \single_button($createfieldlink,
-                get_string('newfield', 'mod_data'), 'get', false);
+            $actionbar = new \mod_data\output\action_bar($instance->id, $PAGE->url);
+            $createfieldbutton = $actionbar->get_create_fields();
             $data['createfieldbutton'] = $createfieldbutton->export_for_template($output);
 
             $params['action'] = 'import';

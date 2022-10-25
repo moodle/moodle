@@ -33,13 +33,13 @@ const selectors = {
 export const init = () => {
     const radioButton = document.querySelectorAll(selectors.presetRadioButton);
 
-    // Initialize the "Use preset" button properly.
+    // Initialize the "Use a preset" button properly.
     disableUsePresetButton();
 
     radioButton.forEach((elem) => {
         elem.addEventListener('change', function(event) {
             event.preventDefault();
-            // Enable the "Use preset" button when any of the radio buttons in the presets list is checked.
+            // Enable the "Use a preset" button when any of the radio buttons in the presets list is checked.
             disableUsePresetButton();
         });
     });
@@ -47,7 +47,7 @@ export const init = () => {
 };
 
 /**
- * Decide whether to disable or not the "Use preset" button.
+ * Decide whether to disable or not the "Use a preset" button.
  * When there is no preset selected, the button should be displayed disabled; otherwise, it will appear enabled as a primary button.
  *
  * @method

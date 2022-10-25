@@ -87,11 +87,6 @@
                     {{>core/url_select}}
                 </div>
             {{/urlselect}}
-            {{#fieldselect}}
-                <div class='navitem fieldadd'>
-                    {{>core/single_select}}
-                </div>
-            {{/fieldselect}}
         </div>
         <div class="ml-sm-auto d-flex">
             {{#saveaspreset}}
@@ -104,6 +99,9 @@
                     {{>core/single_button}}
                 </div>
             {{/exportpreset}}
+            {{#fieldselect}}
+                {{>core/action_menu}}
+            {{/fieldselect}}
         </div>
     </div>
 </div>
