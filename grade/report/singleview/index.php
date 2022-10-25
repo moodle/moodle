@@ -41,6 +41,8 @@ $itemtype = optional_param('item', $defaulttype, PARAM_TEXT);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 100, PARAM_INT);
 
+$edit = optional_param('edit', -1, PARAM_BOOL); // Sticky editing mode.
+
 if (empty($itemid) && ($itemtype !== 'user_select' && $itemtype !== 'grade_select')) {
     $itemid = $userid;
     $itemtype = $defaulttype;
@@ -83,6 +85,18 @@ $gpr = new grade_plugin_return([
     'courseid' => $courseid
 ]);
 
+// Build editing on/off button for themes that need it.
+$button = '';
+if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
+    if ($edit != - 1) {
+        $USER->editing = $edit;
+    }
+
+    // Page params for the turn editing on button.
+    $options = $gpr->get_options();
+    $button = $OUTPUT->edit_button(new moodle_url($PAGE->url, $options), 'get');
+}
+
 // Last selected report session tracking.
 if (!isset($USER->grade_last_report)) {
     $USER->grade_last_report = [];
@@ -103,10 +117,10 @@ if ($itemtype == 'user' || $itemtype == 'user_select') {
 }
 
 if ($itemtype == 'user') {
-    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false,
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, $button,
         true, null, null, $report->screen->item, $actionbar);
 } else {
-    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false,
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, $button,
         true, null, null, null, $actionbar);
 }
 
