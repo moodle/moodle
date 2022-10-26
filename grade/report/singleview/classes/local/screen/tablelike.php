@@ -24,6 +24,7 @@
 
 namespace gradereport_singleview\local\screen;
 
+use gradereport_singleview\local\ui\be_readonly;
 use html_table;
 use html_writer;
 use stdClass;
@@ -39,7 +40,7 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class tablelike extends screen {
+abstract class tablelike extends screen implements be_readonly {
 
     /**
      * A list of table headers
@@ -201,8 +202,7 @@ abstract class tablelike extends screen {
         $data->instance = $this;
 
         $buttonattr = ['class' => 'singleview_buttons submit'];
-        $buttonhtml = implode(' ', $this->buttons());
-
+        $buttonhtml = implode(' ', $this->buttons($this->is_readonly()));
         $buttons = html_writer::tag('div', $buttonhtml, $buttonattr);
 
         $sessionvalidation = html_writer::empty_tag('input',
@@ -230,20 +230,27 @@ abstract class tablelike extends screen {
     }
 
     /**
+     * Return true if this is read-only.
+     *
+     * @return bool
+     */
+    public function is_readonly(): bool {
+        global $USER;
+        return empty($USER->editing);
+    }
+
+    /**
      * Get the buttons for saving changes.
+     * @param bool $disabled If button is disabled
      *
      * @return array
      */
-    public function buttons(): array {
+    public function buttons(bool $disabled = false): array {
         global $OUTPUT;
-        return [
-            $OUTPUT->render_from_template(
-                'gradereport_singleview/button',
-                [
-                    'type' => 'submit',
-                    'value' => get_string('save', 'gradereport_singleview'),
-                ]
-            )
-        ];
+        $params = ['type' => 'submit', 'value' => get_string('save', 'gradereport_singleview')];
+        if ($disabled) {
+            $params['disabled'] = 'disabled';
+        }
+        return [$OUTPUT->render_from_template('gradereport_singleview/button', $params)];
     }
 }
