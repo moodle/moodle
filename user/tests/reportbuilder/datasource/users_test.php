@@ -44,24 +44,22 @@ class users_test extends core_reportbuilder_testcase {
     public function test_datasource_default(): void {
         $this->resetAfterTest();
 
-        $user = $this->getDataGenerator()->create_user(['email' => 'test@example.com']);
+        $user2 = $this->getDataGenerator()->create_user(['firstname' => 'Charles']);
+        $user3 = $this->getDataGenerator()->create_user(['firstname' => 'Brian']);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
-        $this->assertCount(2, $content);
+        $this->assertCount(3, $content);
 
-        // Consistent order by email, just in case.
-        core_collator::asort_array_of_arrays_by_key($content, 'c2_email');
-        $content = array_values($content);
-
-        // Default columns are fullname, username, email.
-        [$adminrow, $userrow] = array_map('array_values', $content);
+        // Default columns are fullname, username, email. Results are sorted by the fullname.
+        [$adminrow, $userrow1, $userrow2] = array_map('array_values', $content);
 
         $this->assertEquals(['Admin User', 'admin', 'admin@example.com'], $adminrow);
-        $this->assertEquals([fullname($user), $user->username, $user->email], $userrow);
+        $this->assertEquals([fullname($user3), $user3->username, $user3->email], $userrow1);
+        $this->assertEquals([fullname($user2), $user2->username, $user2->email], $userrow2);
     }
 
     /**

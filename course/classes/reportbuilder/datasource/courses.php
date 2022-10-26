@@ -111,4 +111,17 @@ class courses extends datasource {
     public function get_default_conditions(): array {
         return ['course_category:name'];
     }
+
+    /**
+     * Return the default sorting that will be added to the report once it is created
+     *
+     * @return array|int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'course_category:name' => SORT_ASC,
+            'course:shortname' => SORT_ASC,
+            'course:fullname' => SORT_ASC,
+        ];
+    }
 }

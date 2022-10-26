@@ -83,9 +83,27 @@ abstract class datasource extends base {
      */
     public function add_default_columns(): void {
         $reportid = $this->get_report_persistent()->get('id');
+
+        // Retrieve default column sorting, and track index of both sorted/non-sorted columns.
         $columnidentifiers = $this->get_default_columns();
+        $defaultcolumnsorting = array_intersect_key($this->get_default_column_sorting(),
+            array_fill_keys($columnidentifiers, 1));
+        $columnnonsortingindex = count($defaultcolumnsorting) + 1;
+
         foreach ($columnidentifiers as $uniqueidentifier) {
-            report::add_report_column($reportid, $uniqueidentifier);
+            $column = report::add_report_column($reportid, $uniqueidentifier);
+
+            // After adding the column, toggle sorting according to defaults provided by the datasource.
+            $sortorder = array_search($uniqueidentifier, array_keys($defaultcolumnsorting));
+            if ($sortorder !== false) {
+                $column->set_many([
+                    'sortenabled' => true,
+                    'sortdirection' => $defaultcolumnsorting[$uniqueidentifier],
+                    'sortorder' => $sortorder + 1,
+                ])->update();
+            } else if (!empty($defaultcolumnsorting)) {
+                $column->set('sortorder', $columnnonsortingindex++)->update();
+            }
         }
     }
 
@@ -95,6 +113,15 @@ abstract class datasource extends base {
      * @return string[]
      */
     abstract public function get_default_columns(): array;
+
+    /**
+     * Return the default sorting that will be added to the report once it is created
+     *
+     * @return int[] array [column identifier => SORT_ASC/SORT_DESC]
+     */
+    public function get_default_column_sorting(): array {
+        return [];
+    }
 
     /**
      * Return all configured report columns
