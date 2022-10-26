@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use gradereport_singleview\report\singleview;
+
 /**
  * Custom renderer for the single view report.
  *
@@ -86,4 +88,67 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
         $this->page->requires->js_call_amd('gradereport_singleview/grade', 'init');
         return $this->render_from_template('gradereport_singleview/grade_item_selector', $data);
     }
+
+    /**
+     * Creates and renders previous/next user/grade item navigation.
+     *
+     * @param object $gpr grade plugin return tracking object
+     * @param int $courseid The course ID.
+     * @param \context_course $context Context of the report.
+     * @param singleview $report The single view report class.
+     * @param int|null $groupid Group ID
+     * @param string $itemtype User or Grade item type
+     * @param int $itemid Either User ID or Grade item ID
+     * @return string The raw HTML to render.
+     * @throws moodle_exception
+     */
+    public function report_navigation(object $gpr, int $courseid, \context_course $context, singleview $report,
+                                      ?int $groupid, string $itemtype, int $itemid): string {
+
+        $navigation = '';
+        $options = $report->screen->options();
+
+        $optionkeys = array_keys($options);
+        $optionitemid = array_shift($optionkeys);
+
+        $relreport = new gradereport_singleview\report\singleview(
+            $courseid, $gpr, $context,
+            $report->screen->item_type(), $optionitemid
+        );
+        $reloptions = $relreport->screen->options();
+        $reloptionssorting = array_keys($relreport->screen->options());
+
+        $i = array_search($itemid, $reloptionssorting);
+        $navparams = ['item' => $itemtype, 'id' => $courseid, 'group' => $groupid];
+
+        if ($i > 0) {
+            $navparams['itemid'] = $reloptionssorting[$i - 1];
+            $link = (new moodle_url('/grade/report/singleview/index.php', $navparams))
+                ->out(false);
+            $navigationdata['previoususer'] = [
+                'name' => $reloptions[$navparams['itemid']],
+                'url' => $link
+            ];
+        }
+        if ($i < count($reloptionssorting) - 1) {
+            $navparams['itemid'] = $reloptionssorting[$i + 1];
+            $link = (new moodle_url('/grade/report/singleview/index.php', $navparams))
+                ->out(false);
+            $navigationdata['nextuser'] = [
+                'name' => $reloptions[$navparams['itemid']],
+                'url' => $link
+            ];
+        }
+
+        if ($report->screen->supports_paging()) {
+            $navigationdata['perpageselect'] = $report->screen->perpage_select();
+            $navigationdata['pager'] = $report->screen->pager();
+        }
+
+        if (isset($navigationdata)) {
+            $navigation = $this->render_from_template('gradereport_singleview/report_navigation', $navigationdata);
+        }
+        return $navigation;
+    }
+
 }

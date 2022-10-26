@@ -42,6 +42,11 @@
     color: #2ca14f;
 }
 
+.path-grade-report-singleview .report-navigation .container {
+    max-width: 1060px;
+    margin-left: 0;
+}
+
 .path-grade-report-singleview .reporttable tbody th,
 .path-grade-report-singleview .reporttable tbody td.range {
     white-space: nowrap;

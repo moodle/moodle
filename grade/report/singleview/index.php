@@ -148,54 +148,28 @@ if ($data = data_submitted()) {
 // Make sure we have proper final grades.
 grade_regrade_final_grades_if_required($course);
 
-$graderrightnav = $graderleftnav = null;
-
-$options = $report->screen->options();
-
-if (!empty($options)) {
-
-    $optionkeys = array_keys($options);
-    $optionitemid = array_shift($optionkeys);
-
-    $relreport = new gradereport_singleview\report\singleview(
-        $courseid, $gpr, $context,
-        $report->screen->item_type(), $optionitemid
-    );
-    $reloptions = $relreport->screen->options();
-    $reloptionssorting = array_keys($relreport->screen->options());
-
-    $i = array_search($itemid, $reloptionssorting);
-    $navparams = ['item' => $itemtype, 'id' => $courseid, 'group' => $groupid];
-    if ($i > 0) {
-        $navparams['itemid'] = $reloptionssorting[$i - 1];
-        $link = new moodle_url('/grade/report/singleview/index.php', $navparams);
-        $navprev = html_writer::link($link, $OUTPUT->larrow() . ' ' . $reloptions[$reloptionssorting[$i - 1]]);
-        $graderleftnav = html_writer::tag('div', $navprev, ['class' => 'itemnav previtem']);
-    }
-    if ($i < count($reloptionssorting) - 1) {
-        $navparams['itemid'] = $reloptionssorting[$i + 1];
-        $link = new moodle_url('/grade/report/singleview/index.php', $navparams);
-        $navnext = html_writer::link($link, $reloptions[$reloptionssorting[$i + 1]] . ' ' . $OUTPUT->rarrow());
-        $graderrightnav = html_writer::tag('div', $navnext, ['class' => 'itemnav nextitem']);
-    }
-}
-
-if ($report->screen->supports_paging()) {
-    echo $report->screen->pager();
-}
-
 echo $report->output();
 
-if ($report->screen->supports_paging()) {
-    echo $report->screen->perpage_select();
-    echo $report->screen->pager();
-}
+if (($itemtype !== 'select') && ($itemtype !== 'grade_select') &&($itemtype !== 'user_select')) {
+    $item = (isset($userid)) ? $userid : $itemid;
 
-if (!is_null($graderleftnav)) {
-    echo $graderleftnav;
-}
-if (!is_null($graderrightnav)) {
-    echo $graderrightnav;
+    $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+    $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+    $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $context);
+
+    $currentgroup = $gpr->groupid;
+
+    // To make some other functions work better later.
+    if (!$currentgroup) {
+        $currentgroup = null;
+    }
+    $gui = new graded_users_iterator($course, null, $currentgroup);
+    $gui->require_active_enrolment($showonlyactiveenrol);
+    $gui->init();
+
+    $userreportrenderer = $PAGE->get_renderer('gradereport_singleview');
+    // Add previous/next user navigation.
+    echo $userreportrenderer->report_navigation($gpr, $courseid, $context, $report, $groupid, $itemtype, $itemid);
 }
 
 $event = \gradereport_singleview\event\grade_report_viewed::create(
