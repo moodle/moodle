@@ -58,6 +58,8 @@ Declaration is as follow:
 * New DML driver method `$DB->sql_order_by_null` for sorting nulls sort nulls first when ascending and last when descending.
 * Allow plugins to callback on all pages just prior to the session start.
 * New function set_additional_classes() has been implemented to add additional classes to action_menu.
+* Most Behat functionality for the Moodle App has been removed from core, refer to the documentation in order to upgrade your testing
+  setup: https://moodledev.io/general/app/development/testing/acceptance-testing#upgrading-tests-from-an-older-version
 
 === 4.0 ===
 

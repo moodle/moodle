@@ -746,44 +746,25 @@ class behat_config_util {
     protected function get_mobile_version_tags($verbose = true) : string {
         global $CFG;
 
-        if (!empty($CFG->behat_ionic_dirroot)) {
-            // Get app version from package.json.
-            $jsonpath = $CFG->behat_ionic_dirroot . '/package.json';
-            $json = @file_get_contents($jsonpath);
-            if (!$json) {
-                throw new coding_exception('Unable to load app version from ' . $jsonpath);
-            }
-            $package = json_decode($json);
-            if ($package === null || empty($package->version)) {
-                throw new coding_exception('Invalid app package data in ' . $jsonpath);
-            }
-            $installedversion = $package->version;
-        } else if (!empty($CFG->behat_ionic_wwwroot)) {
-            // Get app version from env.json inside wwwroot.
-            $jsonurl = $CFG->behat_ionic_wwwroot . '/assets/env.json';
-            $json = @file_get_contents($jsonurl);
-            if (!$json) {
-                // Fall back to ionic 3 config file.
-                $jsonurl = $CFG->behat_ionic_wwwroot . '/config.json';
-                $json = @file_get_contents($jsonurl);
-                if (!$json) {
-                    throw new coding_exception('Unable to load app version from ' . $jsonurl);
-                }
-                $config = json_decode($json);
-                if ($config === null || empty($config->versionname)) {
-                    throw new coding_exception('Invalid app config data in ' . $jsonurl);
-                }
-                $installedversion = str_replace('-dev', '', $config->versionname);
-            } else {
-                $env = json_decode($json);
-                if (empty($env->build->version ?? null)) {
-                    throw new coding_exception('Invalid app config data in ' . $jsonurl);
-                }
-                $installedversion = $env->build->version;
-            }
-        } else {
+        if (empty($CFG->behat_ionic_wwwroot)) {
             return '';
         }
+
+        // Get app version from env.json inside wwwroot.
+        $jsonurl = $CFG->behat_ionic_wwwroot . '/assets/env.json';
+        $json = @file_get_contents($jsonurl);
+
+        if (!$json) {
+            throw new coding_exception('Unable to load app version from ' . $jsonurl);
+        }
+
+        $env = json_decode($json);
+
+        if (empty($env->build->version ?? null)) {
+            throw new coding_exception('Invalid app config data in ' . $jsonurl);
+        }
+
+        $installedversion = $env->build->version;
 
         // Read all feature files to check which mobile tags are used. (Note: This could be cached
         // but ideally, it is the sort of thing that really ought to be refreshed by doing a new
@@ -1455,8 +1436,7 @@ class behat_config_util {
 
         // Mobile app tests are not theme-specific, so run only for the default theme (and if
         // configured).
-        if ((empty($CFG->behat_ionic_dirroot) && empty($CFG->behat_ionic_wwwroot)) ||
-                $theme !== $this->get_default_theme()) {
+        if (empty($CFG->behat_ionic_wwwroot) || $theme !== $this->get_default_theme()) {
             $themeblacklisttags[] = '@app';
         }
 
