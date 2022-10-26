@@ -19978,7 +19978,8 @@ body {
   bottom: -50px;
   transition: bottom .5s;
   z-index: 1000;
-  overflow: hidden; }
+  overflow: hidden;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15); }
 
 .hasstickyfooter .stickyfooter {
   bottom: 0; }

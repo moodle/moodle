@@ -16,6 +16,7 @@ body {
     transition: bottom .5s;
     z-index: $zindex-dropdown;
     overflow: hidden;
+    box-shadow: 0 0 1rem rgba($black, .15);
 }
 
 .hasstickyfooter .stickyfooter {
