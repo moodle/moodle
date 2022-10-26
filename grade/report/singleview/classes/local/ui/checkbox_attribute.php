@@ -110,7 +110,8 @@ class checkbox_attribute extends element {
                 html_writer::empty_tag('input', $hidden)
             );
         } else if ($this->ischecked) {
-            return $OUTPUT->pix_icon('i/checked', get_string('selected', 'core_form'));
+            return $OUTPUT->pix_icon('i/checked', get_string('selected', 'core_form'),
+                'moodle', ['class' => 'overrideexcludecheck']);
         } else {
             return '';
         }

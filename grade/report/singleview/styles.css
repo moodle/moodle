@@ -24,7 +24,7 @@
 }
 
 .path-grade-report-singleview div.reporttable form div {
-    text-align: center;
+    text-align: left;
 }
 
 .path-grade-report-singleview .singleview_buttons {
@@ -32,7 +32,14 @@
 }
 
 .path-grade-report-singleview div.reporttable h2 {
-    text-align: center;
+    text-align: left;
+}
+
+
+.overrideexcludecheck {
+    width: 14.75px;
+    height: 12px;
+    color: #2ca14f;
 }
 
 .path-grade-report-singleview .reporttable tbody th,

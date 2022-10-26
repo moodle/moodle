@@ -142,7 +142,7 @@ class singleview extends grade_report {
     }
 
     /**
-     * Function used to set the the appropriate item selector (raw HTML) based on the selected single view item type.
+     * Function used to set the appropriate item selector (raw HTML) based on the selected single view item type.
      *
      * @param string $itemtype The single view item type.
      * @param int|null $itemid The item ID.
