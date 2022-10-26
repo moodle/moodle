@@ -3781,11 +3781,6 @@
           <ON_CHECK message="tokenizerrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
-      <PHP_EXTENSION name="xmlrpc" level="optional">
-        <FEEDBACK>
-          <ON_CHECK message="xmlrpcrecommended" />
-        </FEEDBACK>
-      </PHP_EXTENSION>
       <PHP_EXTENSION name="soap" level="optional">
         <FEEDBACK>
           <ON_CHECK message="soaprecommended" />
