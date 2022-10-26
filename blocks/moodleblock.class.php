@@ -132,12 +132,8 @@ class block_base {
     function name() {
         // Returns the block name, as present in the class name,
         // the database, the block directory, etc etc.
-        static $myname;
-        if ($myname === NULL) {
-            $myname = strtolower(get_class($this));
-            $myname = substr($myname, strpos($myname, '_') + 1);
-        }
-        return $myname;
+        $myname = strtolower(get_class($this));
+        return substr($myname, strpos($myname, '_') + 1);
     }
 
     /**
