@@ -28,6 +28,7 @@ use html_table;
 use html_writer;
 use stdClass;
 use grade_grade;
+use gradereport_singleview\local\ui\bulk_insert;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -208,11 +209,24 @@ abstract class tablelike extends screen {
             ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
 
         $html = html_writer::tag('form',
-            html_writer::table($table) . $buttons . $sessionvalidation,
+            html_writer::table($table)  . $this->bulk_insert() . $buttons . $sessionvalidation,
             ['method' => 'POST']
         );
 
         return $html;
+    }
+
+    /**
+     * Get the HTML for the bulk insert form
+     *
+     * @return string
+     */
+    public function bulk_insert() {
+        return html_writer::tag(
+            'div',
+            (new bulk_insert($this->item))->html(),
+            ['class' => 'singleview_bulk', 'hidden' => true]
+        );
     }
 
     /**
