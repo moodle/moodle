@@ -527,7 +527,6 @@ function upgrade_stale_php_files_present(): bool {
         '/mod/forum/pix/icon.gif',
         '/tag/templates/tagname.mustache',
         // Removed in 3.0.
-        '/mod/lti/grade.php',
         '/tag/coursetagslib.php',
         // Removed in 2.9.
         '/lib/timezone.txt',
