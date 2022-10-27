@@ -167,7 +167,7 @@
     <location>simplepie</location>
     <name>SimplePie</name>
     <description>Simple Pie helps with blogs.</description>
-    <version>1.5.6</version>
+    <version>1.6.0</version>
     <license>BSD</license>
     <repository>https://github.com/simplepie/simplepie</repository>
   </library>

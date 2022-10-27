@@ -178,3 +178,5 @@ class SimplePie_Cache_Memcache implements SimplePie_Cache_Base
 		return $this->cache->delete($this->name, 0);
 	}
 }
+
+class_alias('SimplePie_Cache_Memcache', 'SimplePie\Cache\Memcache', false);

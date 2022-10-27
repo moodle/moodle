@@ -79,7 +79,7 @@ class SimplePie_Category
 
 	/**
 	 * Category type
-	 * 
+	 *
 	 * category for <category>
 	 * subject for <dc:subject>
 	 *
@@ -161,3 +161,4 @@ class SimplePie_Category
 	}
 }
 
+class_alias('SimplePie_Category', 'SimplePie\Category', false);
