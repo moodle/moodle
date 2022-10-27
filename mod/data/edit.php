@@ -121,6 +121,7 @@ if ($rid) {
     $PAGE->navbar->add(get_string('editentry', 'data'));
 }
 
+$PAGE->add_body_class('mediumwidth');
 $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);

@@ -112,6 +112,7 @@ if ($mform->is_cancelled()) {
 }
 
 // Build header to match the rest of the UI.
+$PAGE->add_body_class('mediumwidth');
 $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);

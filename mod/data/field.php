@@ -93,6 +93,7 @@ $formimportzip->set_data(array('d' => $data->id));
 
 $actionbar = new \mod_data\output\action_bar($data->id, $PAGE->url);
 
+$PAGE->add_body_class('mediumwidth');
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
 $PAGE->activityheader->disable();

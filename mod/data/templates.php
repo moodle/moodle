@@ -69,7 +69,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 $PAGE->force_settings_menu(true);
 $PAGE->activityheader->disable();
-$PAGE->add_body_class('limitedwidth');
+$PAGE->add_body_class('mediumwidth');
 
 echo $OUTPUT->header();
 

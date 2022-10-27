@@ -225,6 +225,7 @@ if ($mode == 'asearch') {
     $PAGE->navbar->add(get_string('search'));
 }
 
+$PAGE->add_body_class('mediumwidth');
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
