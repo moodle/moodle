@@ -32,7 +32,6 @@ admin_externalpage_setup('mnetenrol');
 $service = mnetservice_enrol::get_instance();
 
 echo $OUTPUT->header();
-echo $OUTPUT->render(mnet_get_deprecation_notice());
 echo $OUTPUT->heading_with_help(get_string('clientname', 'mnetservice_enrol'), 'clientname', 'mnetservice_enrol');
 
 if (!$service->is_available()) {

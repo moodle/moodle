@@ -2782,31 +2782,5 @@ function check_xmlrpc_usage(environment_results $result): ?environment_results {
         }
     }
 
-    if (isset($CFG->mnet_dispatcher_mode) && $CFG->mnet_dispatcher_mode == 'strict') {
-        // Checking Mnet hosts.
-        $mnethosts = mnet_get_hosts();
-        if ($mnethosts) {
-            $actualhost = 0;
-            foreach ($mnethosts as $mnethost) {
-                if ($mnethost->id != $CFG->mnet_all_hosts_id) {
-                    $actualhost++;
-                }
-            }
-            if ($actualhost > 0) {
-                $result->setInfo('xmlrpc_mnet_usage');
-                $result->setFeedbackStr('xmlrpcmnetenabled');
-                return $result;
-            }
-        }
-
-        // Checking Mahara.
-        $portfolios = \core\plugininfo\portfolio::get_enabled_plugins();
-        if (array_key_exists('mahara', $portfolios)) {
-            $result->setInfo('xmlrpc_mahara_usage');
-            $result->setFeedbackStr('xmlrpcmaharaenabled');
-            return $result;
-        }
-    }
-
     return null;
 }

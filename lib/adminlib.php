@@ -7140,11 +7140,6 @@ class admin_setting_manageauths extends admin_setting {
         }
 
         $return = $OUTPUT->heading(get_string('actauthhdr', 'auth'), 3, 'main');
-        if (in_array('mnet', $authsenabled)) {
-            $notify = new \core\output\notification(get_string('xmlrpcmnetauthenticationenabled', 'admin'),
-                \core\output\notification::NOTIFY_WARNING);
-            $return .= $OUTPUT->render($notify);
-        }
         $return .= $OUTPUT->box_start('generalbox authsui');
 
         $table = new html_table();
