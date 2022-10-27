@@ -140,8 +140,8 @@ abstract class WriterAbstract implements WriterInterface
         $this->globalFunctionsHelper->header('Content-Type: ' . static::$headerContentType);
         $this->globalFunctionsHelper->header(
             'Content-Disposition: attachment; ' .
-            'filename="' . rawurldecode($this->outputFilePath) . '"; ' .
-            'filename*=UTF-8\'\'' . rawurldecode($this->outputFilePath)
+            'filename="' . rawurlencode($this->outputFilePath) . '"; ' .
+            'filename*=UTF-8\'\'' . rawurlencode($this->outputFilePath)
         );
 
         /*
