@@ -26,8 +26,8 @@ Feature: Users can preview presets
   Scenario: Preview a user preset as list view template in database
     Given I follow "Presets"
     And I click on "Import" "button"
-    And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Choose file" filemanager
-    And I click on "Save" "button"
+    And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Preset file" filemanager
+    When I click on "Import preset and apply" "button"
     And I follow "Templates"
     And I click on "Save as preset" "button"
     And I set the field "Name" to "Saved preset by teacher1"
@@ -72,8 +72,8 @@ Feature: Users can preview presets
   Scenario: Preview a user preset as single view template in database
     Given I follow "Presets"
     And I click on "Import" "button"
-    And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Choose file" filemanager
-    And I click on "Save" "button"
+    And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Preset file" filemanager
+    When I click on "Import preset and apply" "button"
     And I follow "Templates"
     And I click on "Save as preset" "button"
     And I set the field "Name" to "Saved preset by teacher1"
@@ -147,8 +147,8 @@ Feature: Users can preview presets
   Scenario: Apply user preset from preview in database
     Given I follow "Presets"
     And I click on "Import" "button"
-    And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Choose file" filemanager
-    And I click on "Save" "button"
+    And I upload "mod/data/tests/fixtures/behat_preset.zip" file to "Preset file" filemanager
+    When I click on "Import preset and apply" "button"
     And I follow "Templates"
     And I click on "Save as preset" "button"
     And I set the field "Name" to "Saved preset by teacher1"

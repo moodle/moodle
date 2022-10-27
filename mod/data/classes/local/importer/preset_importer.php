@@ -354,4 +354,48 @@ abstract class preset_importer {
     public function get_preset_selector(): array {
         return ['name' => 'directory', 'value' => $this->get_directory()];
     }
+
+    /**
+     * Helper function to finish up the import routine.
+     *
+     * Called from fields and presets pages.
+     *
+     * @param bool $overwritesettings Whether to overwrite activity settings or not.
+     * @param stdClass $instance database instance object
+     * @return void
+     */
+    public function finish_import_process(bool $overwritesettings, stdClass $instance): void {
+        global $DB;
+        $this->import($overwritesettings);
+        $strimportsuccess = get_string('importsuccess', 'data');
+        $straddentries = get_string('addentries', 'data');
+        $strtodatabase = get_string('todatabase', 'data');
+        if (!$DB->get_records('data_records', ['dataid' => $instance->id])) {
+            \core\notification::success("$strimportsuccess <a href='edit.php?d=$instance->id'>$straddentries</a> $strtodatabase");
+        } else {
+            \core\notification::success($strimportsuccess);
+        }
+    }
+
+    /**
+     * Get the right importer instance from the provided parameters (POST or GET)
+     *
+     * @param manager $manager the current database manager
+     * @return preset_importer the relevant preset_importer instance
+     * @throws \moodle_exception when the file provided as parameter (POST or GET) does not exist
+     */
+    public static function create_from_parameters(manager $manager): preset_importer {
+        global $CFG;
+        $fullname = optional_param('fullname', '', PARAM_PATH);    // Directory the preset is in.
+        if (!$fullname) {
+            $presetdir = $CFG->tempdir . '/forms/' . required_param('directory', PARAM_FILE);
+            if (!file_exists($presetdir) || !is_dir($presetdir)) {
+                throw new \moodle_exception('cannotimport');
+            }
+            $importer = new preset_upload_importer($manager, $presetdir);
+        } else {
+            $importer = new preset_existing_importer($manager, $fullname);
+        }
+        return $importer;
+    }
 }

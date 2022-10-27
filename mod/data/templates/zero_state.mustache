@@ -25,6 +25,7 @@
     Example context (json):
     {
         "noitemsimgurl": "https://moodlesite/theme/image.php/boost/mod_data/1535727318/nofields",
+        "title": "Title",
         "importpresetbutton": {
             "id" : "id1",
             "method" : "get",
@@ -92,4 +93,9 @@
             {{>core/single_button}}
         {{/usepresetbutton}}
     </div>
+{{#js}}
+    require(['mod_data/importpresets'], function(importPresetsModal) {
+        importPresetsModal.init();
+    });
+{{/js}}
 </div>

@@ -32,6 +32,9 @@ class action_bar {
     /** @var int $id The database module id. */
     private $id;
 
+    /** @var int $cmid The database course module id. */
+    private $cmid;
+
     /** @var moodle_url $currenturl The URL of the current page. */
     private $currenturl;
 
@@ -43,6 +46,8 @@ class action_bar {
      */
     public function __construct(int $id, moodle_url $pageurl) {
         $this->id = $id;
+        [$course, $cm] = get_course_and_cm_from_instance($this->id, 'data');
+        $this->cmid = $cm->id;
         $this->currenturl = $pageurl;
     }
 
@@ -61,9 +66,12 @@ class action_bar {
     ): string {
         global $PAGE, $DB;
 
-        $createfieldlink = new moodle_url('/mod/data/field.php', ['d' => $this->id]);
+        $createfieldlink = new moodle_url('/mod/data/field.php', ['id' => $this->cmid]);
+        $presetslink = new moodle_url('/mod/data/preset.php', ['id' => $this->cmid]);
+
         $menu = [
             $createfieldlink->out(false) => get_string('managefields', 'mod_data'),
+            $presetslink->out(false) => get_string('usestandard', 'mod_data'),
         ];
 
         $selected = $createfieldlink->out(false);
@@ -229,8 +237,10 @@ class action_bar {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('mod_data');
-        $presetsactionbar = new presets_action_bar($this->id);
-
+        if (!has_capability('mod/data:managetemplates', \context_module::instance($this->cmid))) {
+            return '';
+        }
+        $presetsactionbar = new presets_action_bar($this->cmid);
         return $renderer->render_presets_action_bar($presetsactionbar);
     }
 

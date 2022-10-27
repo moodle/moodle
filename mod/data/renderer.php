@@ -63,17 +63,17 @@ class mod_data_renderer extends plugin_renderer_base {
         $newfields = $params->importfields;
         $currentfields = $params->currentfields;
 
-        $html  = html_writer::start_tag('div', ['class'=>'presetmapping']);
-        $html .= html_writer::start_tag('form', ['method'=>'post', 'action'=>'']);
+        $html = html_writer::start_tag('div', ['class' => 'presetmapping']);
+        $html .= html_writer::start_tag('form', ['method' => 'post', 'action' => '']);
         $html .= html_writer::start_tag('div');
-        $html .= html_writer::empty_tag('input', ['type'=>'hidden', 'name'=>'action', 'value'=>'finishimport']);
-        $html .= html_writer::empty_tag('input', ['type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()]);
-        $html .= html_writer::empty_tag('input', ['type'=>'hidden', 'name'=>'d', 'value'=>$datamodule->id]);
+        $html .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'action', 'value' => 'finishimport']);
+        $html .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+        $html .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'd', 'value' => $datamodule->id]);
 
         $inputselector = $importer->get_preset_selector();
         $html .= html_writer::empty_tag(
-            'input',
-            ['type'=>'hidden', 'name'=> $inputselector['name'], 'value' => $inputselector['value']]
+                'input',
+                ['type' => 'hidden', 'name' => $inputselector['name'], 'value' => $inputselector['value']]
         );
 
         if (!empty($newfields)) {

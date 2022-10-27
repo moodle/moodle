@@ -26,8 +26,8 @@ Feature: Users can import presets
     Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
     And I click on "Import" "link"
-    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Choose file" filemanager
-    When I click on "Save" "button"
+    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
+    When I click on "Import preset and apply" "button"
     Then I should not see "Field mappings"
     And I should see "Image" in the "image" "table_row"
 
@@ -38,8 +38,8 @@ Feature: Users can import presets
     And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
     And I click on "Import" "link"
-    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Choose file" filemanager
-    When I click on "Save" "button"
+    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
+    When I click on "Import preset and apply" "button"
     Then I should see "Field mappings"
     And I should see "image"
     And I should see "Create a new field" in the "image" "table_row"
@@ -61,8 +61,8 @@ Feature: Users can import presets
     And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
     And I click on "Import" "link"
-    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Choose file" filemanager
-    When I click on "Save" "button"
+    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
+    When I click on "Import preset and apply" "button"
     Then I should see "Field mappings"
     And I should see "image"
     And I should see "Create a new field" in the "image" "table_row"
@@ -71,8 +71,8 @@ Feature: Users can import presets
     Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
     And I click on "Import" "button"
-    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Choose file" filemanager
-    When I click on "Save" "button"
+    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
+    When I click on "Import preset and apply" "button"
     Then I should not see "Field mappings"
     And I should see "Image" in the "image" "table_row"
 
@@ -83,8 +83,8 @@ Feature: Users can import presets
     And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
     And I click on "Import" "button"
-    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Choose file" filemanager
-    When I click on "Save" "button"
+    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
+    When I click on "Import preset and apply" "button"
     Then I should see "Field mappings"
     And I should see "image"
     And I should see "Create a new field" in the "image" "table_row"
@@ -106,8 +106,8 @@ Feature: Users can import presets
     And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
     And I click on "Import" "button"
-    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Choose file" filemanager
-    When I click on "Save" "button"
+    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
+    When I click on "Import preset and apply" "button"
     Then I should see "Field mappings"
     And I should see "image"
     And I should see "Create a new field" in the "image" "table_row"
@@ -115,7 +115,7 @@ Feature: Users can import presets
   Scenario: Teacher can import from zero state page on an empty database
     Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I click on "Import a preset" "button"
-    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Choose file" filemanager
-    When I click on "Save" "button"
+    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
+    When I click on "Import preset and apply" "button"
     Then I should not see "Field mappings"
     And I should see "Image" in the "image" "table_row"

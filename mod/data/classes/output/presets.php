@@ -18,6 +18,7 @@ namespace mod_data\output;
 
 use action_menu;
 use action_menu_link_secondary;
+use mod_data\manager;
 use mod_data\preset;
 use moodle_url;
 use templatable;
@@ -34,8 +35,8 @@ use stdClass;
  */
 class presets implements templatable, renderable {
 
-    /** @var int $id The database module id. */
-    private $id;
+    /** @var manager $manager The database module manager. */
+    private $manager;
 
     /** @var array $presets The array containing the existing presets. */
     private $presets;
@@ -49,13 +50,13 @@ class presets implements templatable, renderable {
     /**
      * The class constructor.
      *
-     * @param int $id The database module id
+     * @param manager $manager The database manager
      * @param array $presets The array containing the existing presets
-     * @param moodle_url $formactionurl The the action url for the form
+     * @param moodle_url $formactionurl The action url for the form
      * @param bool $manage Whether the manage preset options should be displayed
      */
-    public function __construct(int $id, array $presets, moodle_url $formactionurl, bool $manage = false) {
-        $this->id = $id;
+    public function __construct(manager $manager, array $presets, moodle_url $formactionurl, bool $manage = false) {
+        $this->manager = $manager;
         $this->presets = $presets;
         $this->formactionurl = $formactionurl;
         $this->manage = $manage;
@@ -68,10 +69,9 @@ class presets implements templatable, renderable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-
         $presets = $this->get_presets($output);
         return [
-            'd' => $this->id,
+            'id' => $this->manager->get_coursemodule()->id,
             'formactionurl' => $this->formactionurl->out(),
             'showmanage' => $this->manage,
             'presets' => $presets,
@@ -101,13 +101,14 @@ class presets implements templatable, renderable {
             $actions = $this->get_preset_action_menu($output, $preset, $userid);
 
             $fullname = "{$userid}/{$preset->shortname}";
+            $id = $this->manager->get_instance()->id;
             $previewurl = new moodle_url(
-                '/mod/data/preset.php',
-                ['d' => $this->id, 'fullname' => $fullname, 'action' => 'preview']
+                    '/mod/data/preset.php',
+                    ['d' => $id, 'fullname' => $fullname, 'action' => 'preview']
             );
 
             $presets[] = [
-                'id' => $this->id,
+                'id' => $id,
                 'name' => $preset->name,
                 'url' => $previewurl->out(),
                 'shortname' => $preset->shortname,
@@ -130,10 +131,10 @@ class presets implements templatable, renderable {
      * @return stdClass the resulting action menu
      */
     private function get_preset_action_menu(renderer_base $output, $preset, ?int $userid): stdClass {
-        global $PAGE;
 
         $actions = new stdClass();
         $actionmenu = null;
+        $id = $this->manager->get_instance()->id;
         // Only presets saved by users can be edited or removed (so the datapreset plugins shouldn't display these buttons).
         if ($this->manage && !$preset->isplugin) {
             $actionmenu = new action_menu();
@@ -146,13 +147,13 @@ class presets implements templatable, renderable {
             // Edit.
             if ($canmanage) {
                 $params = [
-                    'd' => $this->id,
+                    'd' => $id,
                     'action' => 'edit',
                 ];
                 $editactionurl = new moodle_url('/mod/data/preset.php', $params);
                 $attributes = [
                     'data-action' => 'editpreset',
-                    'data-dataid' => $this->id,
+                    'data-dataid' => $id,
                     "data-presetname" => $preset->name,
                     "data-presetdescription" => $preset->description,
                 ];
@@ -167,7 +168,7 @@ class presets implements templatable, renderable {
 
             // Export.
             $params = [
-                'd' => $this->id,
+                'd' => $id,
                 'presetname' => $preset->name,
                 'action' => 'export',
             ];
@@ -181,13 +182,13 @@ class presets implements templatable, renderable {
             // Delete.
             if ($canmanage) {
                 $params = [
-                    'd' => $this->id,
+                    'd' => $id,
                     'action' => 'delete',
                 ];
                 $deleteactionurl = new moodle_url('/mod/data/preset.php', $params);
                 $attributes = [
                     'data-action' => 'deletepreset',
-                    'data-dataid' => $this->id,
+                    'data-dataid' => $id,
                     "data-presetname" => $preset->name,
                 ];
                 $actionmenu->add(new action_menu_link_secondary(

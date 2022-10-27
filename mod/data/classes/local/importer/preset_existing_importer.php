@@ -51,7 +51,7 @@ class preset_existing_importer extends preset_importer {
             throw new \coding_exception('Invalid preset provided');
         }
 
-        $this->userid = $userid;
+        $this->userid = intval($userid);
         $this->fullname = $fullname;
         $cm = $manager->get_coursemodule();
         $course = $cm->get_course();
@@ -62,9 +62,9 @@ class preset_existing_importer extends preset_importer {
     /**
      * Returns user ID
      *
-     * @return int|string userid or empty string
+     * @return int userid
      */
-    public function get_userid() {
+    public function get_userid(): int {
         return $this->userid;
     }
 
