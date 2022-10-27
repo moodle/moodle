@@ -19,4 +19,6 @@ interface IServiceRequest
     public function setAccept(string $accept): self;
 
     public function setContentType(string $contentType): self;
+
+    public function getErrorPrefix(): string;
 }

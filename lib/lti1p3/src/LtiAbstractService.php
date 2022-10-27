@@ -41,7 +41,7 @@ abstract class LtiAbstractService
         return $this->serviceConnector->makeServiceRequest(
             $this->registration,
             $this->getScope(),
-            $request
+            $request,
         );
     }
 

@@ -15,15 +15,14 @@ class LtiServiceConnector implements ILtiServiceConnector
 {
     public const NEXT_PAGE_REGEX = '/<([^>]*)>; ?rel="next"/i';
 
-    public const METHOD_GET = 'GET';
-    public const METHOD_POST = 'POST';
-
     private $cache;
     private $client;
     private $debuggingMode = false;
 
-    public function __construct(ICache $cache, IHttpClient $client)
-    {
+    public function __construct(
+        ICache $cache,
+        IHttpClient $client
+    ) {
         $this->cache = $cache;
         $this->client = $client;
     }
@@ -65,21 +64,15 @@ class LtiServiceConnector implements ILtiServiceConnector
             'scope' => implode(' ', $scopes),
         ];
 
-        $url = $registration->getAuthTokenUrl();
-
         // Get Access
-        $tokenRequest = new ServiceRequest('POST', $url);
-        $tokenRequest->setBody(http_build_query($authRequest, '', '&'));
-        $tokenRequest->setContentType('application/x-www-form-urlencoded');
-        $tokenRequest->setAccept('application/json');
-        $response = $this->client->request(
-            $tokenRequest->getMethod(),
-            $tokenRequest->getUrl(),
-            [
-                'headers' => $tokenRequest->getPayload()['headers'],
-                'body' => $tokenRequest->getPayload()['body']
-            ]
+        $request = new ServiceRequest(
+            ServiceRequest::METHOD_POST,
+            $registration->getAuthTokenUrl(),
+            ServiceRequest::TYPE_AUTH
         );
+        $request->setPayload(['form_params' => $authRequest]);
+        $response = $this->makeRequest($request);
+
         $tokenData = $this->getResponseBody($response);
 
         // Cache access token
@@ -88,14 +81,33 @@ class LtiServiceConnector implements ILtiServiceConnector
         return $tokenData['access_token'];
     }
 
-
     public function makeRequest(IServiceRequest $request)
     {
-        return $this->client->request(
+        $response = $this->client->request(
             $request->getMethod(),
             $request->getUrl(),
             $request->getPayload()
         );
+
+        if ($this->debuggingMode) {
+            $this->logRequest(
+                $request,
+                $this->getResponseHeaders($response),
+                $this->getResponseBody($response)
+            );
+        }
+
+        return $response;
+    }
+
+    public function getResponseHeaders(IHttpResponse $response): ?array
+    {
+        $responseHeaders = $response->getHeaders();
+        array_walk($responseHeaders, function (&$value) {
+            $value = $value[0];
+        });
+
+        return $responseHeaders;
     }
 
     public function getResponseBody(IHttpResponse $response): ?array
@@ -112,10 +124,12 @@ class LtiServiceConnector implements ILtiServiceConnector
         bool $shouldRetry = true
     ): array {
         $request->setAccessToken($this->getAccessToken($registration, $scopes));
+
         try {
             $response = $this->makeRequest($request);
         } catch (IHttpException $e) {
             $status = $e->getResponse()->getStatusCode();
+
             // If the error was due to invalid authentication and the request
             // should be retried, clear the access token and retry it.
             if ($status === 401 && $shouldRetry) {
@@ -124,26 +138,13 @@ class LtiServiceConnector implements ILtiServiceConnector
 
                 return $this->makeServiceRequest($registration, $scopes, $request, false);
             }
+
             throw $e;
         }
 
-        $responseHeaders = $response->getHeaders();
-        $responseBody = $this->getResponseBody($response);
-
-        if ($this->debuggingMode) {
-            error_log('Syncing grade for this lti_user_id: '.
-                json_decode($request->getPayload()['body'])->userId.' '.print_r([
-                    'request_method' => $request->getMethod(),
-                    'request_url' => $request->getUrl(),
-                    'request_body' => $request->getPayload()['body'],
-                    'response_headers' => $responseHeaders,
-                    'response_body' => json_encode($responseBody),
-                ], true));
-        }
-
         return [
-            'headers' => $responseHeaders,
-            'body' => $responseBody,
+            'headers' => $this->getResponseHeaders($response),
+            'body' => $this->getResponseBody($response),
             'status' => $response->getStatusCode(),
         ];
     }
@@ -154,7 +155,7 @@ class LtiServiceConnector implements ILtiServiceConnector
         IServiceRequest $request,
         string $key = null
     ): array {
-        if ($request->getMethod() !== static::METHOD_GET) {
+        if ($request->getMethod() !== ServiceRequest::METHOD_GET) {
             throw new \Exception('An invalid method was specified by an LTI service requesting all items.');
         }
 
@@ -176,6 +177,31 @@ class LtiServiceConnector implements ILtiServiceConnector
         return $results;
     }
 
+    private function logRequest(
+        IServiceRequest $request,
+        array $responseHeaders,
+        ?array $responseBody
+    ): void {
+        $contextArray = [
+            'request_method' => $request->getMethod(),
+            'request_url' => $request->getUrl(),
+            'response_headers' => $responseHeaders,
+            'response_body' => json_encode($responseBody),
+        ];
+
+        $requestBody = $request->getPayload()['body'] ?? null;
+
+        if (!empty($requestBody)) {
+            $contextArray['request_body'] = $requestBody;
+        }
+
+        error_log(implode(' ', array_filter([
+            $request->getErrorPrefix(),
+            json_decode($requestBody)->userId ?? null,
+            print_r($contextArray, true),
+        ])));
+    }
+
     private function getAccessTokenCacheKey(ILtiRegistration $registration, array $scopes)
     {
         sort($scopes);
@@ -187,7 +213,7 @@ class LtiServiceConnector implements ILtiServiceConnector
     private function getNextUrl(array $headers)
     {
         $subject = $headers['Link'] ?? '';
-        preg_match(LtiServiceConnector::NEXT_PAGE_REGEX, $subject, $matches);
+        preg_match(static::NEXT_PAGE_REGEX, $subject, $matches);
 
         return $matches[1] ?? null;
     }

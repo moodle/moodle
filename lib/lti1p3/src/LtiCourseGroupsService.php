@@ -14,8 +14,9 @@ class LtiCourseGroupsService extends LtiAbstractService
     public function getGroups(): array
     {
         $request = new ServiceRequest(
-            LtiServiceConnector::METHOD_GET,
-            $this->getServiceData()['context_groups_url']
+            ServiceRequest::METHOD_GET,
+            $this->getServiceData()['context_groups_url'],
+            ServiceRequest::TYPE_GET_GROUPS
         );
         $request->setAccept(static::CONTENTTYPE_CONTEXTGROUPCONTAINER);
 
@@ -30,8 +31,9 @@ class LtiCourseGroupsService extends LtiAbstractService
         }
 
         $request = new ServiceRequest(
-            LtiServiceConnector::METHOD_GET,
-            $this->getServiceData()['context_group_sets_url']
+            ServiceRequest::METHOD_GET,
+            $this->getServiceData()['context_group_sets_url'],
+            ServiceRequest::TYPE_GET_SETS
         );
         $request->setAccept(static::CONTENTTYPE_CONTEXTGROUPCONTAINER);
 
