@@ -281,7 +281,7 @@ class qtype_multianswer extends question_type {
         parent::initialise_question_instance($question, $questiondata);
 
         $bits = preg_split('/\{#(\d+)\}/', $question->questiontext,
-                null, PREG_SPLIT_DELIM_CAPTURE);
+                -1, PREG_SPLIT_DELIM_CAPTURE);
         $question->textfragments[0] = array_shift($bits);
         $i = 1;
         while (!empty($bits)) {
