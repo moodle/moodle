@@ -172,6 +172,91 @@ class forum_gradeitem_test extends \advanced_testcase {
     }
 
     /**
+     * Test the logic in the should_grade_only_active_users() method.
+     *
+     * @covers ::should_grade_only_active_users
+     * @dataProvider should_grade_only_active_users_provider
+     * @param bool $showonlyactiveenrolconfig Whether the 'grade_report_showonlyactiveenrol' is enabled or not.
+     * @param bool $showonlyactiveenrolpreference Whether the 'grade_report_showonlyactiveenrol' preference is enabled or not.
+     * @param bool $viewsuspendeduserscapability Whether the 'moodle/course:viewsuspendedusers' capability is allowed or not.
+     * @param bool $expected The expected result.
+     */
+    public function test_should_grade_only_active_users(bool $showonlyactiveenrolconfig, bool $showonlyactiveenrolpreference,
+            bool $viewsuspendeduserscapability, bool $expected): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $forum = $this->get_forum_instance([
+            'grade_forum' => 100,
+        ]);
+        $course = $forum->get_course_record();
+        $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'editingteacher');
+        $editingteacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
+
+        // Set the 'grade_report_showonlyactiveenrol' config setting.
+        set_config('grade_report_showonlyactiveenrol', $showonlyactiveenrolconfig);
+
+        $this->setUser($user);
+        // Set the 'grade_report_showonlyactiveenrol' user preference.
+        set_user_preference('grade_report_showonlyactiveenrol', $showonlyactiveenrolpreference);
+
+        // Set the 'moodle/course:viewsuspendedusers' user capability.
+        assign_capability('moodle/course:viewsuspendedusers', $viewsuspendeduserscapability ?
+            CAP_ALLOW : CAP_PROHIBIT, $editingteacherroleid, \context_course::instance($course->id));
+
+        $this->assertEquals($expected, $gradeitem->should_grade_only_active_users());
+    }
+
+    /**
+     * Data provider for test_should_grade_only_active_users.
+     *
+     * @return array
+     */
+    public function should_grade_only_active_users_provider(): array {
+        return [
+            'Enabled showonlyactiveenrol setting; enabled showonlyactiveenrol preference; view suspended users capability' =>
+                [
+                    'showonlyactiveenrolconfig' => true,
+                    'showonlyactiveenrolpreference' => true,
+                    'viewsuspendeduserscapability' => true,
+                    'expected' => true,
+                ],
+            'Disabled showonlyactiveenrol setting; enabled showonlyactiveenrol preference; view suspended users capability' =>
+                [
+                    'showonlyactiveenrolconfig' => false,
+                    'showonlyactiveenrolpreference' => true,
+                    'viewsuspendeduserscapability' => true,
+                    'expected' => true,
+                ],
+            'Disabled showonlyactiveenrol setting; disabled showonlyactiveenrol preference; view suspended users capability' =>
+                [
+                    'showonlyactiveenrolconfig' => false,
+                    'showonlyactiveenrolpreference' => false,
+                    'viewsuspendeduserscapability' => true,
+                    'expected' => false,
+                ],
+            'Disabled showonlyactiveenrol setting; disabled showonlyactiveenrol preference; no view suspended users capability' =>
+                [
+                    'showonlyactiveenrolconfig' => false,
+                    'showonlyactiveenrolpreference' => false,
+                    'viewsuspendeduserscapability' => false,
+                    'expected' => true,
+                ],
+            'Enabled showonlyactiveenrol setting; enabled showonlyactiveenrol preference; no view suspended users capability' =>
+                [
+                    'showonlyactiveenrolconfig' => true,
+                    'showonlyactiveenrolpreference' => true,
+                    'viewsuspendeduserscapability' => false,
+                    'expected' => true,
+                ],
+        ];
+    }
+
+    /**
      * Get a forum instance.
      *
      * @param array $config
