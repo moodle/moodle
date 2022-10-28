@@ -95,7 +95,7 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
     // Automatically generated Moodle v4.0.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2022082200) {
+    if ($oldversion < 2022041901) {
         // Conversion records need to be removed in order for conversions to restart.
         $DB->delete_records('file_conversion');
 
@@ -103,7 +103,7 @@ function xmldb_assignfeedback_editpdf_upgrade($oldversion) {
         $task = new \assignfeedback_editpdf\task\bump_submission_for_stale_conversions();
         \core\task\manager::queue_adhoc_task($task);
 
-        upgrade_plugin_savepoint(true, 2022082200, 'assignfeedback', 'editpdf');
+        upgrade_plugin_savepoint(true, 2022041901, 'assignfeedback', 'editpdf');
     }
 
     return true;
