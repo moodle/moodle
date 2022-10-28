@@ -388,13 +388,13 @@ class accessibility {
                 // Confirm if error is reported separately.
                 if ($DB->record_exists_select(manager::DB_ERRORS,
                     'resultid = ? AND ' . $DB->sql_compare_text('htmlcode', 255) . ' = ' . $DB->sql_compare_text('?', 255),
-                    [$resultid, html_entity_decode($tmp->html)])) {
+                    [$resultid, html_entity_decode($tmp->html, ENT_COMPAT)])) {
                     continue;
                 }
                 $error = new stdClass();
                 $error->resultid = $resultid;
                 $error->linenumber = $tmp->line;
-                $error->htmlcode = html_entity_decode($tmp->html);
+                $error->htmlcode = html_entity_decode($tmp->html, ENT_COMPAT);
                 $errors[] = $error;
             }
 

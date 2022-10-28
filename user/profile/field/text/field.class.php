@@ -49,7 +49,7 @@ class profile_field_text extends profile_field_base {
 
             // Create the link.
             $data = '<a href="'.str_replace('$$', urlencode($data),
-                     $this->field->param4).'" '.$target.'>'.htmlspecialchars($data).'</a>';
+                     $this->field->param4).'" '.$target.'>'.htmlspecialchars($data, ENT_COMPAT).'</a>';
         }
 
         return $data;

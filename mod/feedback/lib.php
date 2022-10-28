@@ -2785,7 +2785,7 @@ function feedback_send_email_html($info, $course, $cm) {
 function feedback_encode_target_url($url) {
     if (strpos($url, '?')) {
         list($part1, $part2) = explode('?', $url, 2); //maximal 2 parts
-        return $part1 . '?' . htmlentities($part2);
+        return $part1 . '?' . htmlentities($part2, ENT_COMPAT);
     } else {
         return $url;
     }

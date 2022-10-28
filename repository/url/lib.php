@@ -128,7 +128,7 @@ EOD;
         if (empty($baseurl)) {
             $url = $relativeurl;
         } else {
-            $url = htmlspecialchars_decode(url_to_absolute($baseurl, $relativeurl));
+            $url = htmlspecialchars_decode(url_to_absolute($baseurl, $relativeurl), ENT_COMPAT);
         }
         if (in_array($url, $this->processedfiles)) {
             // Avoid endless recursion for the same URL with same parameters.
@@ -210,7 +210,7 @@ EOD;
         if (empty($list['list'])) {
             $list['list'] = array();
         }
-        $src = url_to_absolute($baseurl, htmlspecialchars_decode($url));
+        $src = url_to_absolute($baseurl, htmlspecialchars_decode($url, ENT_COMPAT));
         foreach ($list['list'] as $image) {
             if ($image['source'] == $src) {
                 return;

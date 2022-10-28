@@ -154,19 +154,19 @@ class forum_post implements \renderable, \templatable {
     protected function export_for_template_text(\mod_forum_renderer $renderer) {
         $data = $this->export_for_template_shared($renderer);
         return $data + array(
-            'id'                            => html_entity_decode($this->post->id),
-            'coursename'                    => html_entity_decode($this->get_coursename()),
-            'courselink'                    => html_entity_decode($this->get_courselink()),
-            'forumname'                     => html_entity_decode($this->get_forumname()),
-            'showdiscussionname'            => html_entity_decode($this->get_showdiscussionname()),
-            'discussionname'                => html_entity_decode($this->get_discussionname()),
-            'subject'                       => html_entity_decode($this->get_subject()),
-            'authorfullname'                => html_entity_decode($this->get_author_fullname()),
-            'postdate'                      => html_entity_decode($this->get_postdate()),
+            'id'                            => html_entity_decode($this->post->id, ENT_COMPAT),
+            'coursename'                    => html_entity_decode($this->get_coursename(), ENT_COMPAT),
+            'courselink'                    => html_entity_decode($this->get_courselink(), ENT_COMPAT),
+            'forumname'                     => html_entity_decode($this->get_forumname(), ENT_COMPAT),
+            'showdiscussionname'            => html_entity_decode($this->get_showdiscussionname(), ENT_COMPAT),
+            'discussionname'                => html_entity_decode($this->get_discussionname(), ENT_COMPAT),
+            'subject'                       => html_entity_decode($this->get_subject(), ENT_COMPAT),
+            'authorfullname'                => html_entity_decode($this->get_author_fullname(), ENT_COMPAT),
+            'postdate'                      => html_entity_decode($this->get_postdate(), ENT_COMPAT),
 
             // Format some components according to the renderer.
-            'message'                       => html_entity_decode($renderer->format_message_text($this->cm, $this->post)),
-            'attachments'                   => html_entity_decode($renderer->format_message_attachments($this->cm, $this->post)),
+            'message'                       => html_entity_decode($renderer->format_message_text($this->cm, $this->post), ENT_COMPAT),
+            'attachments'                   => html_entity_decode($renderer->format_message_attachments($this->cm, $this->post), ENT_COMPAT),
 
             'canreply'                      => $this->canreply,
             'permalink'                     => $this->get_permalink(),

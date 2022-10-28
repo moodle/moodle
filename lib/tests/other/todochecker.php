@@ -82,9 +82,9 @@ if (empty($found)) {
                 }
 
                 $line = str_replace($issueid, '<a href="' . $issueurl . '" title="' . s($issuesummary) .
-                        '">' . $issuename . '</a>', htmlspecialchars($line));
+                        '">' . $issuename . '</a>', htmlspecialchars($line, ENT_COMPAT));
             } else {
-                $line = htmlspecialchars($line);
+                $line = htmlspecialchars($line, ENT_COMPAT);
                 $error = 'No associated tracker issue.';
             }
 

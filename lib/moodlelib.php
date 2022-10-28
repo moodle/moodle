@@ -8413,7 +8413,7 @@ function count_words($string) {
     // Now remove HTML tags.
     $string = strip_tags($string);
     // Decode HTML entities.
-    $string = html_entity_decode($string);
+    $string = html_entity_decode($string, ENT_COMPAT);
 
     // Now, the word count is the number of blocks of characters separated
     // by any sort of space. That seems to be the definition used by all other systems.
@@ -8435,7 +8435,7 @@ function count_words($string) {
  */
 function count_letters($string) {
     $string = strip_tags($string); // Tags are out now.
-    $string = html_entity_decode($string);
+    $string = html_entity_decode($string, ENT_COMPAT);
     $string = preg_replace('/[[:space:]]*/', '', $string); // Whitespace are out now.
 
     return core_text::strlen($string);

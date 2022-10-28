@@ -89,7 +89,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
      */
     private function allowed_tags_message($badtag) {
         $a = new stdClass();
-        $a->tag = htmlspecialchars($badtag);
+        $a->tag = htmlspecialchars($badtag, ENT_COMPAT);
         $a->allowed = $this->get_list_of_printable_allowed_tags($this->allowedhtmltags);
         if ($a->allowed) {
             return get_string('tagsnotallowed', 'qtype_gapselect', $a);
@@ -107,7 +107,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
     private function get_list_of_printable_allowed_tags($allowedhtmltags) {
         $allowedtaglist = array();
         foreach ($allowedhtmltags as $htmltag) {
-            $allowedtaglist[] = htmlspecialchars('<' . $htmltag . '>');
+            $allowedtaglist[] = htmlspecialchars('<' . $htmltag . '>', ENT_COMPAT);
         }
         return implode(', ', $allowedtaglist);
     }

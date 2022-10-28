@@ -157,8 +157,8 @@ $r = '<form action="' . $redirecturi . "\" name=\"ltiAuthForm\" id=\"ltiAuthForm
      "method=\"post\" enctype=\"application/x-www-form-urlencoded\">\n";
 if (!empty($params)) {
     foreach ($params as $key => $value) {
-        $key = htmlspecialchars($key);
-        $value = htmlspecialchars($value);
+        $key = htmlspecialchars($key, ENT_COMPAT);
+        $value = htmlspecialchars($value, ENT_COMPAT);
         $r .= "  <input type=\"hidden\" name=\"{$key}\" value=\"{$value}\"/>\n";
     }
 }
