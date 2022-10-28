@@ -164,7 +164,6 @@ Feature: A Teacher can comment in a question
     And I click "0" on the row on the comments column
     And I should see "Version 2"
     Then I should see "edited question"
-    And I click on "question_version_dropdown" "select"
     And I should see "Version 1"
-    And I click on "Version 1" "option"
+    And I set the field "question_version_dropdown" to "Version 1"
     And I should see "Answer the first question"
