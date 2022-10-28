@@ -81,8 +81,8 @@ Feature: Regrading quiz attempts using the Grades report
     And I follow "Edit question SA"
     And I set the field "id_fraction_1" to "50%"
     And I press "id_submitbutton"
-    And I click on "v1" "option"
-    And I click on "v2" "option"
+    And I set the field "version" in the "TF" "list_item" to "v1"
+    And I set the field "version" in the "SA" "list_item" to "v2 (latest)"
     And I follow "Attempts: 2"
     And I press "Dry run a full regrade"
 
@@ -128,8 +128,7 @@ Feature: Regrading quiz attempts using the Grades report
     And I set the field "Correct answer" to "False"
     And I press "id_submitbutton"
     And I navigate to "Questions" in current page administration
-    And I click on "version" "select" in the "TF" "list_item"
-    And I click on "v2 (latest)" "option"
+    And I set the field "version" in the "TF" "list_item" to "v2 (latest)"
     And I navigate to "Results" in current page administration
     And I press "Dry run a full regrade"
     And I should see "Regrade completed"
@@ -167,14 +166,13 @@ Feature: Regrading quiz attempts using the Grades report
     And I should see "v2"
     And I should see "v3 (latest)"
     # Set version that is going to be attempted to an older one.
-    And I click on "v1" "option"
+    And I set the field "version" in the "TF" "list_item" to "v1"
     And user "student3" has attempted "Quiz for testing regrading" with responses:
       | slot | response |
       |   1  | True     |
       |   2  | toad     |
     And I navigate to "Questions" in current page administration
-    And I click on "version" "select" in the "TF" "list_item"
-    And I click on "Always latest" "option"
+    And I set the field "version" in the "TF" "list_item" to "Always latest"
     And I navigate to "Results" in current page administration
     And I press "Regrade all"
     And I should see "Finished regrading (1/1)"
