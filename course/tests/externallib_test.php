@@ -3630,6 +3630,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
 
         $user1picture = new user_picture($user1);
         $user1picture->size = 1;
@@ -3638,6 +3639,10 @@ class externallib_test extends externallib_advanced_testcase {
         $user2picture = new user_picture($user2);
         $user2picture->size = 1;
         $user2->profileimage = $user2picture->get_url($PAGE)->out(false);
+
+        $user3picture = new user_picture($user3);
+        $user3picture->size = 1;
+        $user3->profileimage = $user3picture->get_url($PAGE)->out(false);
 
         // Set the first created user to the test user.
         self::setUser($user1);
@@ -3653,6 +3658,8 @@ class externallib_test extends externallib_advanced_testcase {
         // Following lines enrol and assign default role id to the users.
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
         $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        // Enrol a suspended user in the course.
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id, null, 'manual', 0, 0, ENROL_USER_SUSPENDED);
 
         // Create what we expect to be returned when querying the course module.
         $expectedusers = array(
@@ -3674,10 +3681,41 @@ class externallib_test extends externallib_advanced_testcase {
             'lastname' => $user2->lastname,
             'profileimage' => $user2->profileimage,
         ];
+        $expectedusers['users'][2] = [
+            'id' => $user3->id,
+            'fullname' => fullname($user3),
+            'firstname' => $user3->firstname,
+            'lastname' => $user3->lastname,
+            'profileimage' => $user3->profileimage,
+        ];
 
         // Test getting the users in a given context.
         $users = core_course_external::get_enrolled_users_by_cmid($forum1->cmid);
         $users = external_api::clean_returnvalue(core_course_external::get_enrolled_users_by_cmid_returns(), $users);
+
+        $this->assertEquals(3, count($users['users']));
+        $this->assertEquals($expectedusers, $users);
+
+        // Test getting only the active users in a given context.
+        $users = core_course_external::get_enrolled_users_by_cmid($forum1->cmid, 0, true);
+        $users = external_api::clean_returnvalue(core_course_external::get_enrolled_users_by_cmid_returns(), $users);
+
+        $expectedusers['users'] = [
+            [
+                'id' => $user1->id,
+                'fullname' => fullname($user1),
+                'firstname' => $user1->firstname,
+                'lastname' => $user1->lastname,
+                'profileimage' => $user1->profileimage,
+            ],
+            [
+                'id' => $user2->id,
+                'fullname' => fullname($user2),
+                'firstname' => $user2->firstname,
+                'lastname' => $user2->lastname,
+                'profileimage' => $user2->profileimage,
+            ]
+        ];
 
         $this->assertEquals(2, count($users['users']));
         $this->assertEquals($expectedusers, $users);
