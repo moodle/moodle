@@ -731,7 +731,7 @@ class xmldb_table extends xmldb_object {
         $o = '';
         $o.= '    <TABLE NAME="' . $this->name . '"';
         if ($this->comment) {
-            $o.= ' COMMENT="' . htmlspecialchars($this->comment) . '"';
+            $o.= ' COMMENT="' . htmlspecialchars($this->comment, ENT_COMPAT) . '"';
         }
         $o.= '>' . "\n";
         // Now the fields

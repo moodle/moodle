@@ -180,7 +180,7 @@ class renderer extends \tool_brickfield\output\renderer {
             ];
         $data->errordata = !empty($data->errordata) ? $data->errordata : [];
         foreach ($data->errordata as $err) {
-            $err->htmlcode = htmlentities($err->htmlcode);
+            $err->htmlcode = htmlentities($err->htmlcode, ENT_COMPAT);
             $row = [$data->tarlabels[$err->component], $err->shortname, $err->errline, $err->htmlcode];
             $table->data[] = $row;
         }

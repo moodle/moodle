@@ -1709,7 +1709,7 @@ EOD;
      */
     private function translate_uri($uri) {
         // remove all html entities...
-        $native_path = html_entity_decode($uri);
+        $native_path = html_entity_decode($uri, ENT_COMPAT);
         $parts = explode('/', $native_path);
         for ($i = 0; $i < count($parts); $i++) {
             // check if part is allready utf8
