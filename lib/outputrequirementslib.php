@@ -710,15 +710,28 @@ class page_requirements_manager {
     }
 
     /**
-     * Returns the actual url through which a script is served.
+     * Returns the actual url through which a JavaScript file is served.
      *
-     * @param moodle_url|string $url full moodle url, or shortened path to script
+     * @param moodle_url|string $url full moodle url, or shortened path to script.
+     * @throws coding_exception if the given $url isn't a shortened url starting with / or a moodle_url instance.
      * @return moodle_url
      */
     protected function js_fix_url($url) {
         global $CFG;
 
         if ($url instanceof moodle_url) {
+            // If the URL is external to Moodle, it won't be handled by Moodle (!).
+            if ($url->is_local_url()) {
+                $localurl = $url->out_as_local_url();
+                // Check if the URL points to a Moodle PHP resource.
+                if (strpos($localurl, '.php') !== false) {
+                    // It's a Moodle PHP resource e.g. a resource already served by the proper Moodle Handler.
+                    return $url;
+                }
+                // It's a local resource: we need to further examine it.
+                return $this->js_fix_url($url->out_as_local_url(false));
+            }
+            // The URL is not a Moodle resource.
             return $url;
         } else if (strpos($url, '/') === 0) {
             // Fix the admin links if needed.
@@ -736,7 +749,7 @@ class page_requirements_manager {
             if (substr($url, -3) === '.js') {
                 $jsrev = $this->get_jsrev();
                 if (empty($CFG->slasharguments)) {
-                    return new moodle_url('/lib/javascript.php', array('rev'=>$jsrev, 'jsfile'=>$url));
+                    return new moodle_url('/lib/javascript.php', ['rev' => $jsrev, 'jsfile' => $url]);
                 } else {
                     $returnurl = new moodle_url('/lib/javascript.php');
                     $returnurl->set_slashargument('/'.$jsrev.$url);
