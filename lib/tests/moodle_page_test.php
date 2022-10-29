@@ -40,7 +40,7 @@ require_once($CFG->libdir . '/blocklib.php');
  * @category  test
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \moodle_page
+ * @covers    \moodle_page
  */
 class moodle_page_test extends \advanced_testcase {
 
