@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @package    core
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
- * @coversDefaultClass \core\oauth2\api
+ * @covers     \core\oauth2\api
  */
 class core_oauth2_testcase extends advanced_testcase {
 
