@@ -464,6 +464,7 @@ class block_iomad_company_admin_external extends external_api {
                             'code' => new external_value(PARAM_TEXT, 'Compay code', VALUE_OPTIONAL),
                             'address' => new external_value(PARAM_TEXT, 'Company location address', VALUE_OPTIONAL),
                             'city' => new external_value(PARAM_TEXT, 'Company location city', VALUE_OPTIONAL),
+                            'postcode' => new external_value(PARAM_TEXT, 'Company location postcode'),
                             'region' => new external_value(PARAM_TEXT, 'Company location region', VALUE_OPTIONAL),
                             'country' => new external_value(PARAM_TEXT, 'Company location country', VALUE_OPTIONAL),
                             'maildisplay' => new external_value(PARAM_INT, 'User default email display', VALUE_OPTIONAL),
