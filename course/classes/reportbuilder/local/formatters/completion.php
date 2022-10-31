@@ -63,11 +63,11 @@ class completion {
     /**
      * Return number of days for methods daystakingcourse and daysuntilcompletion
      *
-     * @param int $value
+     * @param int|null $value
      * @param stdClass $row
      * @return int|null
      */
-    public static function get_days(int $value, stdClass $row): ?int {
+    public static function get_days(?int $value, stdClass $row): ?int {
         // Do not show anything if there is no userid.
         if (!$row->userid) {
             return null;

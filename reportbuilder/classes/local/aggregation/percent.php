@@ -73,6 +73,9 @@ class percent extends base {
      * @return string
      */
     public static function format_value($value, array $values, array $callbacks, int $columntype): string {
+        if (reset($values) === null) {
+            return '';
+        }
         return format::percent((float) reset($values));
     }
 }
