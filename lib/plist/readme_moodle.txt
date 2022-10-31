@@ -1,7 +1,7 @@
 CFPropertyList library
 ---------------
 
-Downloaded last release from: https://github.com/TECLIB/CFPropertyList/releases/
+Downloaded last release from: https://github.com/TECLIB/CFPropertyList/tags
 
 Import procedure:
 
@@ -18,4 +18,3 @@ Removed:
 Added:
  * readme_moodle.txt
 
-Downloaded version: 2.0.2

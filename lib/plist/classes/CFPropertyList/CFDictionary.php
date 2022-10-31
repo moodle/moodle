@@ -181,7 +181,7 @@ class CFDictionary extends CFType implements Iterator
     * @uses $iteratorPosition set to 0
     * @uses $iteratorKeys store keys of {@link $value}
     */
-    public function rewind()
+    public function rewind(): void
     {
         $this->iteratorPosition = 0;
         $this->iteratorKeys = array_keys($this->value);
@@ -189,10 +189,11 @@ class CFDictionary extends CFType implements Iterator
    /**
     * Get Iterator's current {@link CFType} identified by {@link $iteratorPosition}
     * @link http://php.net/manual/en/iterator.current.php
-    * @return CFType current Item
+    * @return mixed current Item
     * @uses $iteratorPosition identify current key
     * @uses $iteratorKeys identify current value
     */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->value[$this->iteratorKeys[$this->iteratorPosition]];
@@ -200,10 +201,11 @@ class CFDictionary extends CFType implements Iterator
    /**
     * Get Iterator's current key identified by {@link $iteratorPosition}
     * @link http://php.net/manual/en/iterator.key.php
-    * @return string key of the current Item
+    * @return mixed key of the current Item
     * @uses $iteratorPosition identify current key
     * @uses $iteratorKeys identify current value
     */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->iteratorKeys[$this->iteratorPosition];
@@ -214,18 +216,18 @@ class CFDictionary extends CFType implements Iterator
     * @return void
     * @uses $iteratorPosition increment by 1
     */
-    public function next()
+    public function next(): void
     {
         $this->iteratorPosition++;
     }
    /**
     * Test if {@link $iteratorPosition} addresses a valid element of {@link $value}
     * @link http://php.net/manual/en/iterator.valid.php
-    * @return boolean true if current position is valid, false else
+    * @return bool true if current position is valid, false else
     * @uses $iteratorPosition test if within {@link $iteratorKeys}
     * @uses $iteratorPosition test if within {@link $value}
     */
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->iteratorKeys[$this->iteratorPosition]) && isset($this->value[$this->iteratorKeys[$this->iteratorPosition]]);
     }
