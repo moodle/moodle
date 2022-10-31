@@ -122,7 +122,7 @@ class singleview extends grade_report {
      */
     public function output(): string {
         global $OUTPUT;
-        return $OUTPUT->container($this->screen->html(), 'reporttable');
+        return $OUTPUT->container($this->screen->html());
     }
 
     protected function setup_groups() {
