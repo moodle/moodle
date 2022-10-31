@@ -102,6 +102,10 @@ class singleview extends grade_report {
         //  The setup_group method is used to validate group mode and permissions and define the currentgroup value.
         $this->setup_groups();
 
+        if (($itemtype !== 'grade') && ($itemtype !== 'user')) {
+            $itemid = null;
+        }
+
         $this->setup_item_selector($itemtype, $itemid);
 
         $screenclass = "\\gradereport_singleview\\local\\screen\\${itemtype}";
@@ -138,6 +142,11 @@ class singleview extends grade_report {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('core_grades');
+        $params = $urlroot->params();
+        if ($params['item'] == 'user') {
+            $params['item'] = 'user_select';
+            $urlroot->params($params);
+        }
         return $renderer->group_selector($course, $urlroot->out());
     }
 
