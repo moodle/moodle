@@ -4224,6 +4224,29 @@ class accesslib_test extends advanced_testcase {
     }
 
     /**
+     * Checks install performance in update_capabilities.
+     *
+     * @covers ::update_capabilities()
+     */
+    public function test_update_capabilities_install_performance(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Get rid of all the capabilities for forum.
+        $testmodule = 'forum';
+        $DB->delete_records_select('capabilities', 'name LIKE ?', ['mod/' . $testmodule . ':%']);
+
+        $beforeq = $DB->perf_get_queries();
+        update_capabilities('mod_' . $testmodule);
+        $afterq = $DB->perf_get_queries();
+
+        // In my testing there are currently 237 queries; there were 373 before a performance
+        // fix. This test confirms performance doesn't degrade to near the previous level.
+        $this->assertLessThan(300, $afterq - $beforeq);
+    }
+
+    /**
      * Tests reset_role_capabilities function.
      *
      * @covers ::reset_role_capabilities

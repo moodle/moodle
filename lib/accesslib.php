@@ -2315,6 +2315,7 @@ function update_capabilities($component = 'moodle') {
     }
     // Add new capabilities to the stored definition.
     $existingcaps = $DB->get_records_menu('capabilities', array(), 'id', 'id, name');
+    $capabilityobjects = [];
     foreach ($newcaps as $capname => $capdef) {
         $capability = new stdClass();
         $capability->name         = $capname;
@@ -2322,12 +2323,14 @@ function update_capabilities($component = 'moodle') {
         $capability->contextlevel = $capdef['contextlevel'];
         $capability->component    = $component;
         $capability->riskbitmask  = $capdef['riskbitmask'];
+        $capabilityobjects[] = $capability;
+    }
+    $DB->insert_records('capabilities', $capabilityobjects);
 
-        $DB->insert_record('capabilities', $capability, false);
+    // Flush the cache, as we have changed DB.
+    cache::make('core', 'capabilities')->delete('core_capabilities');
 
-        // Flush the cached, as we have changed DB.
-        cache::make('core', 'capabilities')->delete('core_capabilities');
-
+    foreach ($newcaps as $capname => $capdef) {
         if (isset($capdef['clonepermissionsfrom']) && in_array($capdef['clonepermissionsfrom'], $existingcaps)){
             if ($rolecapabilities = $DB->get_records('role_capabilities', array('capability'=>$capdef['clonepermissionsfrom']))){
                 foreach ($rolecapabilities as $rolecapability){
