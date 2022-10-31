@@ -140,7 +140,7 @@ class blog extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$postalias}.attachment, {$postalias}.id")
-            ->add_callback(static function(bool $attachment, stdClass $post): string {
+            ->add_callback(static function(?bool $attachment, stdClass $post): string {
                 global $CFG, $PAGE;
                 require_once("{$CFG->dirroot}/blog/locallib.php");
 
@@ -172,14 +172,14 @@ class blog extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$postalias}.publishstate")
             ->set_is_sortable(true)
-            ->add_callback(static function(string $publishstate): string {
+            ->add_callback(static function(?string $publishstate): string {
                 $states = [
                     'draft' => new lang_string('publishtonoone', 'core_blog'),
                     'site' => new lang_string('publishtosite', 'core_blog'),
                     'public' => new lang_string('publishtoworld', 'core_blog'),
                 ];
 
-                return (string) ($states[$publishstate] ?? $publishstate);
+                return (string) ($states[$publishstate] ?? $publishstate ?? '');
             });
 
         // Time created.
