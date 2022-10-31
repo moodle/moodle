@@ -63,7 +63,7 @@ class addsection implements named_templatable, renderable {
     public function export_for_template(\renderer_base $output): stdClass {
 
         // If no editor must be displayed, just return an empty structure.
-        if (!$this->format->show_editor()) {
+        if (!$this->format->show_editor(['moodle/course:update'])) {
             return new stdClass();
         }
 

@@ -2,6 +2,11 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 4.0.5 ===
+* The page edition is now detected using the course_format\base:show_editor method as the rest of the
+  core_courseformat outputs. It defaults to checking the capability 'moodle/course:manageactivities'. If different
+  capabilities are needed to check, an array of capabilities can be passed as an optional parameter to the function.
+
 === 4.0.3 ===
 * New \core_courseformat\stateupdates methods add_section_remove() and add_cm_remove() have been added to replace
   the incorrect methods add_section_delete() and add_cm_delete().

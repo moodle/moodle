@@ -90,10 +90,7 @@ class title extends inplace_editable implements named_templatable, renderable {
         $this->displayoptions = $this->load_display_options($displayoptions);
 
         if ($editable === null) {
-            $editable = $format->show_editor() && has_capability(
-                'moodle/course:manageactivities',
-                $mod->context
-            );
+            $editable = $format->show_editor();
         }
         $this->editable = $editable;
 
