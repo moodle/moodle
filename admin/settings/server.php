@@ -61,6 +61,16 @@ if ($hassiteconfig) {
     $temp->add($setting);
     $temp->add(new admin_setting_configtext('supportpage', new lang_string('supportpage', 'admin'),
         new lang_string('configsupportpage', 'admin'), '', PARAM_URL));
+    $temp->add(new admin_setting_configselect('supportavailability', new lang_string('supportavailability', 'admin'),
+        new lang_string('configsupportavailability', 'admin'), CONTACT_SUPPORT_AUTHENTICATED,
+        [
+            CONTACT_SUPPORT_ANYONE => new lang_string('availabletoanyone', 'admin'),
+            CONTACT_SUPPORT_AUTHENTICATED => new lang_string('availabletoauthenticated', 'admin'),
+            CONTACT_SUPPORT_DISABLED => new lang_string('disabled', 'admin'),
+        ]
+    ));
+
+
     $ADMIN->add('server', $temp);
 
     // Session handling.

@@ -92,6 +92,7 @@ class externallib_test extends externallib_advanced_testcase {
             'tool_mobile_setuplink' => get_config('tool_mobile', 'setuplink'),
             'tool_mobile_qrcodetype' => get_config('tool_mobile', 'qrcodetype'),
             'supportpage' => $CFG->supportpage,
+            'supportavailability' => $CFG->supportavailability,
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);
@@ -111,6 +112,7 @@ class externallib_test extends externallib_advanced_testcase {
         set_config('disabledfeatures', 'myoverview', 'tool_mobile');
         set_config('minimumversion', '3.8.0', 'tool_mobile');
         set_config('supportemail', 'test@test.com');
+        set_config('supportavailability', CONTACT_SUPPORT_ANYONE);
 
         // Enable couple of issuers.
         $issuer = \core\oauth2\api::create_standard_issuer('google');
@@ -132,6 +134,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expected['agedigitalconsentverification'] = true;
         $expected['supportname'] = $CFG->supportname;
         $expected['supportemail'] = $CFG->supportemail;
+        $expected['supportavailability'] = $CFG->supportavailability;
         $expected['autolang'] = '1';
         $expected['lang'] = ''; // Expect empty because it was set to an invalid lang.
         $expected['tool_mobile_disabledfeatures'] = 'myoverview';
@@ -226,6 +229,7 @@ class externallib_test extends externallib_advanced_testcase {
                 'value' => get_config('core_admin', 'coursecolor' . $number)
             ];
         }
+        $expected[] = ['name' => 'supportavailability', 'value' => $CFG->supportavailability];
         $expected[] = ['name' => 'supportname', 'value' => $CFG->supportname];
         $expected[] = ['name' => 'supportemail', 'value' => $CFG->supportemail];
         $expected[] = ['name' => 'supportpage', 'value' => $CFG->supportpage];
