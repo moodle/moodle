@@ -8,7 +8,9 @@ information provided here is intended especially for developers.
   groups_get_members_join which could also accept an array of groups, or the constant USERSWITHOUTGROUP.
   This has now been made consistent. These enrol methods now accept all the group-related options that
   groups_get_members_join can handle.
-
+* assign_capability() now has an optional $performancehints parameter which can be used in
+  situations where it is being called in a loop in response to a database query, to reduce the
+  amount of checks it has to do.
 
 === 4.1 ===
 

@@ -166,6 +166,11 @@ if (!defined('CONTEXT_CACHE_MAX_SIZE')) {
     define('CONTEXT_CACHE_MAX_SIZE', 2500);
 }
 
+/** Performance hint for assign_capability: the contextid is known to exist */
+define('ACCESSLIB_HINT_CONTEXT_EXISTS', 'contextexists');
+/** Performance hint for assign_capability: there is no existing entry in role_capabilities */
+define('ACCESSLIB_HINT_NO_EXISTING', 'notexists');
+
 /**
  * Although this looks like a global variable, it isn't really.
  *
@@ -1368,14 +1373,21 @@ function delete_role($roleid) {
 /**
  * Function to write context specific overrides, or default capabilities.
  *
+ * The $performancehints array can currently contain two values intended to make this faster when
+ * this function is being called in a loop, if you have already checked certain details:
+ * 'contextexists' - if we already know the contextid exists in context table
+ * ASSIGN_HINT_NO_EXISTING - if we already know there is no entry in role_capabilities matching
+ *   contextid, roleid, and capability
+ *
  * @param string $capability string name
  * @param int $permission CAP_ constants
  * @param int $roleid role id
  * @param int|context $contextid context id
  * @param bool $overwrite
+ * @param string[] $performancehints Performance hints - leave blank unless needed
  * @return bool always true or exception
  */
-function assign_capability($capability, $permission, $roleid, $contextid, $overwrite = false) {
+function assign_capability($capability, $permission, $roleid, $contextid, $overwrite = false, array $performancehints = []) {
     global $USER, $DB;
 
     if ($contextid instanceof context) {
@@ -1394,7 +1406,12 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         return true;
     }
 
-    $existing = $DB->get_record('role_capabilities', array('contextid'=>$context->id, 'roleid'=>$roleid, 'capability'=>$capability));
+    if (in_array(ACCESSLIB_HINT_NO_EXISTING, $performancehints)) {
+        $existing = false;
+    } else {
+        $existing = $DB->get_record('role_capabilities',
+                ['contextid' => $context->id, 'roleid' => $roleid, 'capability' => $capability]);
+    }
 
     if ($existing and !$overwrite) {   // We want to keep whatever is there already
         return true;
@@ -1412,7 +1429,8 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         $cap->id = $existing->id;
         $DB->update_record('role_capabilities', $cap);
     } else {
-        if ($DB->record_exists('context', array('id'=>$context->id))) {
+        if (in_array(ACCESSLIB_HINT_CONTEXT_EXISTS, $performancehints) ||
+                $DB->record_exists('context', ['id' => $context->id])) {
             $DB->insert_record('role_capabilities', $cap);
         }
     }
@@ -2332,11 +2350,28 @@ function update_capabilities($component = 'moodle') {
 
     foreach ($newcaps as $capname => $capdef) {
         if (isset($capdef['clonepermissionsfrom']) && in_array($capdef['clonepermissionsfrom'], $existingcaps)){
-            if ($rolecapabilities = $DB->get_records('role_capabilities', array('capability'=>$capdef['clonepermissionsfrom']))){
-                foreach ($rolecapabilities as $rolecapability){
+            if ($rolecapabilities = $DB->get_records_sql('
+                    SELECT rc.*,
+                           CASE WHEN EXISTS(SELECT 1
+                                    FROM {role_capabilities} rc2
+                                   WHERE rc2.capability = ?
+                                         AND rc2.contextid = rc.contextid
+                                         AND rc2.roleid = rc.roleid) THEN 1 ELSE 0 END AS entryexists,
+                            ' . context_helper::get_preload_record_columns_sql('x') .'
+                      FROM {role_capabilities} rc
+                      JOIN {context} x ON x.id = rc.contextid
+                     WHERE rc.capability = ?',
+                    [$capname, $capdef['clonepermissionsfrom']])) {
+                foreach ($rolecapabilities as $rolecapability) {
+                    // Preload the context and add performance hints based on the SQL query above.
+                    context_helper::preload_from_record($rolecapability);
+                    $performancehints = [ACCESSLIB_HINT_CONTEXT_EXISTS];
+                    if (!$rolecapability->entryexists) {
+                        $performancehints[] = ACCESSLIB_HINT_NO_EXISTING;
+                    }
                     //assign_capability will update rather than insert if capability exists
                     if (!assign_capability($capname, $rolecapability->permission,
-                                            $rolecapability->roleid, $rolecapability->contextid, true)){
+                            $rolecapability->roleid, $rolecapability->contextid, true, $performancehints)) {
                          echo $OUTPUT->notification('Could not clone capabilities for '.$capname);
                     }
                 }
