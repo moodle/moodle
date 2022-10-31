@@ -73,6 +73,9 @@ class sum extends base {
      * @return mixed
      */
     public static function format_value($value, array $values, array $callbacks) {
+        if (reset($values) === null) {
+            return '';
+        }
         return (int) reset($values);
     }
 }
