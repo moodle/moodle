@@ -36,6 +36,7 @@ import {dispatchEvent} from 'core/event_dispatcher';
 import {eventTypes} from './events';
 import {get_string as getString} from 'core/str';
 import {prefetchStrings} from 'core/prefetch';
+import {notifyFilterContentUpdated} from 'core/event';
 
 /**
  * The minimum spacing for tour step to display.
@@ -784,6 +785,8 @@ const Tour = class {
         let currentStepNode = $('<span data-flexitour="container"></span>')
             .html(stepConfig.template)
             .hide();
+        // Trigger the Moodle filters.
+        notifyFilterContentUpdated(currentStepNode);
 
         // The scroll animation occurs on the body or html.
         let animationTarget = $('body, html')
