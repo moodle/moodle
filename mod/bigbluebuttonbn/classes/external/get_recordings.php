@@ -113,7 +113,7 @@ class get_recordings extends external_api {
                 if ($groupid) {
                     $instance->set_group_id($groupid);
                 }
-                $recordings = $instance->get_recordings([], $instance->get_instance_var('recordings_deleted'));
+                $recordings = $instance->get_recordings([], $instance->get_instance_var('recordings_deleted') ?? false);
                 $tabledata = recording_data::get_recording_table($recordings, $tools, $instance);
 
                 $returnval['tabledata'] = $tabledata;

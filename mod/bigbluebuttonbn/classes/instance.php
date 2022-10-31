@@ -406,7 +406,7 @@ EOF;
      * Helper to get an instance var.
      *
      * @param string $name
-     * @return string
+     * @return mixed|null
      */
     public function get_instance_var(string $name) {
         $instance = $this->get_instance_data();
@@ -1118,7 +1118,7 @@ EOF;
      * @param bool $viewdeleted view deleted recordings ?
      * @return recording[]
      */
-    public function get_recordings(array $excludedid = [], $viewdeleted = false): array {
+    public function get_recordings(array $excludedid = [], bool $viewdeleted = false): array {
         // Fetch the list of recordings depending on the status of the instance.
         // show room is enabled for TYPE_ALL and TYPE_ROOM_ONLY.
         if ($this->is_feature_enabled('showroom')) {
