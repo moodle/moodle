@@ -154,6 +154,16 @@ if (defined('BEHAT_SITE_RUNNING')) {
     }
 }
 
+// Set default warn runtime.
+if (!isset($CFG->taskruntimewarn)) {
+    $CFG->taskruntimewarn = 12 * 60 * 60;
+}
+
+// Set default error runtime.
+if (!isset($CFG->taskruntimeerror)) {
+    $CFG->taskruntimeerror = 24 * 60 * 60;
+}
+
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
 if (!isset($CFG->dataroot)) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
