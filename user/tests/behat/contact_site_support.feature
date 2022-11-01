@@ -82,10 +82,10 @@ Feature: Contact site support method and availability can be customised
     When I log in as "user1"
     And I am on site homepage
     And I click on "Contact site support" "link" in the "page-footer" "region"
-    And I switch to the browser tab opened by the app
+    And I switch to a second window
     Then I should see "User One" in the "page-header" "region"
     And I should not see "Contact site support" in the "page-header" "region"
-    And I close the browser tab opened by the app
+    And I close all opened windows
 
   Scenario: Visiting the contact site support page directly will redirect to the custom support page if set
     Given the following config values are set as admin:
