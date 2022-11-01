@@ -42,7 +42,7 @@ class user_select extends screen {
             'userid' => $USER->id]);
         $context = [
             'courseid' => $gpr->courseid,
-            'imglink' => new \moodle_url('/pix/f/clip-353 1.png'),
+            'imglink' => $OUTPUT->image_url('zero_state_user', 'gradereport_singleview'),
             'userzerolink' => $userlink->out(false),
             'userselectactive' => true,
             'gradezerolink' => $gradelink->out(false),

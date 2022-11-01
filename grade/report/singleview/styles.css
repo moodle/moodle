@@ -50,6 +50,10 @@
     margin-left: 0;
 }
 
+.path-grade-report-singleview .zero-state img {
+    width: 185px;
+}
+
 .path-grade-report-singleview .reporttable thead th,
 .path-grade-report-singleview .reporttable thead td {
     white-space: nowrap;
