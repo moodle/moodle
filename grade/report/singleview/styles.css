@@ -38,8 +38,7 @@
     text-align: left;
 }
 
-
-.overrideexcludecheck {
+.path-grade-report-singleview .overrideexcludecheck {
     width: 14.75px;
     height: 12px;
     color: #2ca14f;
@@ -126,6 +125,16 @@
 .path-grade-report-singleview div.reporttable form .singleview_bulk input {
     margin-left: 10px;
     margin-right: 10px;
+}
+
+.path-grade-report-singleview input[type=text] {
+    height: 44px;
+}
+
+.path-grade-report-singleview input[type=checkbox] {
+    width: 22px;
+    height: 21px;
+    margin: 11.5px auto 11.5px auto;
 }
 
 .path-grade-report-singleview .singleview_bulk > fieldset {
