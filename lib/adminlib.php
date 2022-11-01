@@ -8852,6 +8852,10 @@ function admin_get_root($reload=false, $requirefulltree=true) {
 function admin_apply_default_settings($node=null, $unconditional=true, $admindefaultsettings=array(), $settingsoutput=array()) {
     $counter = 0;
 
+    // This function relies heavily on config cache, so we need to enable in-memory caches if it
+    // is used during install when normal caching is disabled.
+    $token = new \core_cache\allow_temporary_caches();
+
     if (is_null($node)) {
         core_plugin_manager::reset_caches();
         $node = admin_get_root(true, true);

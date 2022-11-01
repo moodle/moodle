@@ -2268,6 +2268,9 @@ function reset_role_capabilities($roleid) {
 function update_capabilities($component = 'moodle') {
     global $DB, $OUTPUT;
 
+    // Allow temporary caches to be used during install, dramatically boosting performance.
+    $token = new \core_cache\allow_temporary_caches();
+
     $storedcaps = array();
 
     $filecaps = load_capability_def($component);
