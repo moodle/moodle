@@ -175,7 +175,7 @@
     <location>tcpdf</location>
     <name>TCPDF</name>
     <description>Class to generate PDF files</description>
-    <version>6.4.1</version>
+    <version>6.5.0</version>
     <license>LGPL</license>
     <licenseversion>3.0-only</licenseversion>
     <repository>https://github.com/tecnickcom/TCPDF</repository>
