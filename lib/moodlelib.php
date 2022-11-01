@@ -3414,6 +3414,11 @@ function update_user_login_times() {
         return true;
     }
 
+    if (defined('USER_KEY_LOGIN') && USER_KEY_LOGIN === true) {
+        // Do not update user login time when using user key login.
+        return true;
+    }
+
     $now = time();
 
     $user = new stdClass();

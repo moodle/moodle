@@ -1592,6 +1592,11 @@ function user_accesstime_log($courseid=0) {
         return;
     }
 
+    if (defined('USER_KEY_LOGIN') && USER_KEY_LOGIN === true) {
+        // Do not update user login time when using user key login.
+        return;
+    }
+
     if (empty($courseid)) {
         $courseid = SITEID;
     }
