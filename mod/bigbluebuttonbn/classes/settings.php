@@ -84,8 +84,9 @@ class settings {
      * Add all settings.
      */
     public function add_all_settings(): void {
+        // Renders settings for welcome messages.
+        $this->add_defaultmessages_settings();
         // Evaluates if recordings are enabled for the Moodle site.
-
         // Renders settings for record feature.
         $this->add_record_settings();
         // Renders settings for import recordings.
@@ -187,13 +188,29 @@ class settings {
                 $item,
                 $settingsgeneral
             );
-            $settingsgeneral->add($item);
+        }
+        return $settingsgeneral;
+    }
+
+    /**
+     * Helper function renders default messages settings if the feature is enabled.
+     */
+    protected function add_defaultmessages_settings(): void {
+        // Configuration for 'default messages' feature.
+        $defaultmessagessetting = new admin_settingpage(
+            "{$this->sectionnameprefix}_default_messages",
+            get_string('config_default_messages', 'bigbluebuttonbn'),
+            'moodle/site:config',
+            !((boolean) setting_validator::section_default_messages_shown()) && ($this->moduleenabled)
+        );
+
+        if ($this->admin->fulltree) {
             $item = new admin_setting_heading(
                 'bigbluebuttonbn_config_default_messages',
-                get_string('config_default_messages', 'bigbluebuttonbn'),
+                '',
                 get_string('config_default_messages_description', 'bigbluebuttonbn')
             );
-            $settingsgeneral->add($item);
+            $defaultmessagessetting->add($item);
             $item = new admin_setting_configtextarea(
                 'bigbluebuttonbn_welcome_default',
                 get_string('config_welcome_default', 'bigbluebuttonbn'),
@@ -204,9 +221,8 @@ class settings {
             $this->add_conditional_element(
                 'welcome_default',
                 $item,
-                $settingsgeneral
+                $defaultmessagessetting
             );
-            $settingsgeneral->add($item);
             $item = new admin_setting_configcheckbox(
                 'bigbluebuttonbn_welcome_editable',
                 get_string('config_welcome_editable', 'bigbluebuttonbn'),
@@ -216,10 +232,11 @@ class settings {
             $this->add_conditional_element(
                 'welcome_editable',
                 $item,
-                $settingsgeneral
+                $defaultmessagessetting
             );
         }
-        return $settingsgeneral;
+        $this->admin->add($this->parent, $defaultmessagessetting);
+
     }
 
     /**
