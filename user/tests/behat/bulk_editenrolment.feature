@@ -68,6 +68,6 @@ Feature: Bulk enrolments
     And I set the field "id_cohort" to "Cohort [cohortid1]"
     And I press "Add to cohort"
     And I navigate to "Users > Accounts > Cohorts" in site administration
-    And I click on "Assign" "link"
+    And I press "Assign" action in the "cohortid1" report row
     Then the "removeselect" select box should contain "Student 2 (student2@example.com)"
     And the "removeselect" select box should not contain "Student 1 (student1@example.com)"

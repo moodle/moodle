@@ -280,7 +280,7 @@ Feature: Set up contextual data for tests
       | student1 | CHC    |
     When I log in as "admin"
     And I navigate to "Users > Accounts > Cohorts" in site administration
-    Then the following should exist in the "cohorts" table:
+    Then the following should exist in the "reportbuilder-table" table:
       | Name            | Cohort size |
       | System cohort A | 1           |
       | System cohort B | 2           |
@@ -289,7 +289,7 @@ Feature: Set up contextual data for tests
     And I follow "Cat 1"
     And I navigate to "Cohorts" in current page administration
     And I should not see "System cohort"
-    And the following should exist in the "cohorts" table:
+    And the following should exist in the "reportbuilder-table" table:
       | Name               | Cohort size |
       | Cohort in category | 1           |
       | Empty cohort       | 0           |
