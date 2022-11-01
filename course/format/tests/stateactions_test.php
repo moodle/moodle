@@ -22,7 +22,7 @@ use stdClass;
 /**
  * Tests for the stateactions class.
  *
- * @package    core_course
+ * @package    core_courseformat
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
