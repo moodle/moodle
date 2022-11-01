@@ -76,7 +76,7 @@ const registerListenerEvents = () => {
 
         // The HTML for the 'All users' option which will be rendered in the non-searchable content are of the widget.
         const allUsersOptionName = await getString('allusersnum', 'gradereport_user', data.users.length);
-        const allUsersOption = await Templates.render('core_grades/searchwidget/searchitem', {
+        const allUsersOption = await Templates.render('gradereport_user/all_users_item', {
             id: 0,
             name: allUsersOptionName,
             url: Url.relativeUrl('/grade/report/user/index.php', {id: courseID, userid: 0}, false),

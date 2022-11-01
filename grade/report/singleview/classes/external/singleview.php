@@ -85,7 +85,7 @@ class singleview extends core_course_external {
 
         $gradeitems = array_map(function ($gradeitem) use ($PAGE, $USER, $params) {
             $item = new \stdClass();
-            $item->gid = $gradeitem->id;
+            $item->id = $gradeitem->id;
             $url = new moodle_url('/grade/report/singleview/index.php', [
                     'id' => $params['courseid'],
                     'itemid' => $gradeitem->id,
@@ -94,6 +94,7 @@ class singleview extends core_course_external {
             );
             $item->name = $gradeitem->get_name(true);
             $item->url = $url->out(false);
+            $item->active = false; // @TODO MDL-76246
 
             return $item;
         }, $gradeableitems);
@@ -114,13 +115,14 @@ class singleview extends core_course_external {
         return new external_single_structure([
             'gradeitems' => new external_multiple_structure(
                 new external_single_structure([
-                    'gid'    => new external_value(PARAM_INT, 'ID of the grade item', VALUE_OPTIONAL),
+                    'id'    => new external_value(PARAM_INT, 'ID of the grade item', VALUE_OPTIONAL),
                     'url' => new external_value(
                         PARAM_URL,
                         'The link to the grade report',
                         VALUE_OPTIONAL
                     ),
                     'name' => new external_value(PARAM_TEXT, 'The full name of the grade item', VALUE_OPTIONAL),
+                    'active' => new external_value(PARAM_BOOL, 'Are we currently on this item?', VALUE_REQUIRED)
                 ])
             ),
             'warnings' => new external_warnings(),

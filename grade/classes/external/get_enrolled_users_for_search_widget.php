@@ -105,6 +105,7 @@ class get_enrolled_users_for_search_widget extends external_api {
             $userpicture->size = 1;
             $user->profileimage = $userpicture->get_url($PAGE)->out(false);
             $user->email = $guiuser->email;
+            $user->active = false; // @TODO MDL-76246
 
             $users[] = $user;
         }
@@ -151,6 +152,7 @@ class get_enrolled_users_for_search_widget extends external_api {
                 core_user::get_property_type('email'),
                 'An email address - allow email as root@localhost',
                 VALUE_OPTIONAL),
+            'active' => new external_value(PARAM_BOOL, 'Are we currently on this item?', VALUE_REQUIRED)
         ];
         return new external_single_structure($userfields);
     }

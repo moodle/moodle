@@ -22,7 +22,6 @@
  */
 import {debounce} from 'core/utils';
 import * as Templates from 'core/templates';
-import {comboBox} from 'core/aria';
 import * as Selectors from 'core_grades/searchwidget/selectors';
 import Notification from 'core/notification';
 
@@ -69,6 +68,8 @@ export const init = async(widgetContentContainer, bodyPromise, data, searchFunc,
 export const registerListenerEvents = (widgetContentContainer, data, searchFunc) => {
     const searchResultsContainer = widgetContentContainer.querySelector(Selectors.regions.searchResults);
     const searchInput = widgetContentContainer.querySelector(Selectors.actions.search);
+    // We want to focus on the first known user interable element within the dropdown.
+    searchInput.focus();
     const clearSearchButton = widgetContentContainer.querySelector(Selectors.actions.clearSearch);
 
     // The search input is triggered.
@@ -108,9 +109,6 @@ export const registerListenerEvents = (widgetContentContainer, data, searchFunc)
             )
         );
     });
-
-    // Trigger event handling for the results in line with aria guidelines.
-    comboBox(searchInput);
 };
 
 /**
