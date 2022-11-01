@@ -19,13 +19,13 @@ namespace core_courseformat;
 use stdClass;
 
 /**
- * Tests for the stateactions class.
+ * Tests for the stateupdates class.
  *
- * @package    core_course
+ * @package    core_courseformat
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_course\stateactions
+ * @coversDefaultClass \core_courseformat\stateupdates
  */
 class stateupdates_test extends \advanced_testcase {
 
@@ -128,9 +128,9 @@ class stateupdates_test extends \advanced_testcase {
      * Add track about a section state update.
      *
      * @dataProvider add_section_provider
-     * @covers ::add_course_put
-     * @covers ::add_course_create
-     * @covers ::add_course_delete
+     * @covers ::add_section_create
+     * @covers ::add_section_remove
+     * @covers ::add_section_put
      *
      * @param string $action the action name
      * @param string $role the user role name
@@ -242,10 +242,10 @@ class stateupdates_test extends \advanced_testcase {
 
 
     /**
-     * Add track about a section state update.
+     * Add track about a course module state update.
      *
      * @dataProvider add_cm_provider
-     * @covers ::add_cm_update
+     * @covers ::add_cm_put
      * @covers ::add_cm_create
      * @covers ::add_cm_remove
      *
@@ -339,7 +339,7 @@ class stateupdates_test extends \advanced_testcase {
     }
 
     /**
-     * Data provider for test_add_section.
+     * Data provider for test_add_cm.
      *
      * @return array testing scenarios
      */

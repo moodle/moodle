@@ -72,14 +72,14 @@ class update_course extends external_api {
 
     /**
      * This webservice will execute any action from the course editor. The default actions
-     * are located in core_course\stateactions but the format plugin can extend that class
+     * are located in core_courseformat\stateactions but the format plugin can extend that class
      * in format_XXX\course.
      *
-     * The specific action methods will register in a core_course\stateupdates all the affected
+     * The specific action methods will register in a core_courseformat\stateupdates all the affected
      * sections, cms and course attribute. This object (in JSON) will be send back to the
      * frontend editor to refresh the updated state elements.
      *
-     * By default, core_course\stateupdates will register only create, delete and update events
+     * By default, core_courseformat\stateupdates will register only create, delete and update events
      * on cms, sections and the general course data. However, if some plugin needs adhoc messages for
      * its own mutation module, it extend this class in format_XXX\course.
      *

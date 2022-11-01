@@ -31,7 +31,7 @@ use JsonSerializable;
  * Each format plugin could extend this class to provide new updates to the frontend
  * mutation module.
  * Extended classes should be locate in "format_XXX\course" namespace and
- * extends core_course\stateupdates.
+ * extends core_courseformat\stateupdates.
  *
  * @package    core_course
  * @copyright  2021 Ferran Recio <ferran@moodle.com>
