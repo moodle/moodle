@@ -17,6 +17,7 @@
 namespace mod_data\output;
 
 use mod_data\manager;
+use mod_data\preset;
 use moodle_url;
 use url_select;
 
@@ -55,57 +56,28 @@ class action_bar {
      * Generate the output for the action bar in the field page.
      *
      * @param bool $hasfieldselect Whether the field selector element should be rendered.
-     * @param bool $hassaveaspreset Whether the save as preset button element should be rendered.
-     * @param bool $hasexportpreset Whether the export as preset button element should be rendered.
+     * @param null $unused1 This parameter has been deprecated since 4.1 and should not be used anymore.
+     * @param null $unused2 This parameter has been deprecated since 4.1 and should not be used anymore.
      * @return string The HTML code for the action bar.
      */
     public function get_fields_action_bar(
         bool $hasfieldselect = false,
-        bool $hassaveaspreset = false,
-        bool $hasexportpreset = false
+        ?bool $unused1 = null,
+        ?bool $unused2 = null
     ): string {
-        global $PAGE, $DB;
+        global $PAGE;
 
-        $createfieldlink = new moodle_url('/mod/data/field.php', ['id' => $this->cmid]);
-        $presetslink = new moodle_url('/mod/data/preset.php', ['id' => $this->cmid]);
-
-        $menu = [
-            $createfieldlink->out(false) => get_string('managefields', 'mod_data'),
-            $presetslink->out(false) => get_string('usestandard', 'mod_data'),
-        ];
-
-        $selected = $createfieldlink->out(false);
-
-        $urlselect = new url_select($menu, $selected, null, 'fieldactionselect');
-        $urlselect->set_label(get_string('fieldsnavigation', 'mod_data'), ['class' => 'sr-only']);
+        if ($unused1 !== null || $unused2 !== null) {
+            debugging('Deprecated argument passed to get_fields_action_bar method', DEBUG_DEVELOPER);
+        }
 
         $fieldselect = null;
         if ($hasfieldselect) {
             $fieldselect = $this->get_create_fields();
         }
 
-        $saveaspresetbutton = null;
-        $exportpresetbutton = null;
-        $hasfields = $DB->record_exists('data_fields', ['dataid' => $this->id]);
-
-        if ($hasfields) {
-            if ($hassaveaspreset) {
-                $saveaspresetlink = new moodle_url('/mod/data/preset.php',
-                    ['d' => $this->id, 'action' => 'export']);
-                $saveaspresetbutton = new \single_button($saveaspresetlink,
-                    get_string('saveaspreset', 'mod_data'), 'post', false);
-            }
-
-            if ($hasexportpreset) {
-                $exportpresetlink = new moodle_url('/mod/data/preset.php',
-                    ['d' => $this->id, 'action' => 'export']);
-                $exportpresetbutton = new \single_button($exportpresetlink,
-                    get_string('exportpreset', 'mod_data'), 'get', false);
-            }
-        }
         $renderer = $PAGE->get_renderer('mod_data');
-        $fieldsactionbar = new fields_action_bar($this->id, $urlselect, null, $saveaspresetbutton,
-            $exportpresetbutton, $fieldselect);
+        $fieldsactionbar = new fields_action_bar($this->id, null, null, null, null, $fieldselect);
 
         return $renderer->render_fields_action_bar($fieldsactionbar);
     }
@@ -130,7 +102,7 @@ class action_bar {
         foreach ($menufield as $fieldtype => $fieldname) {
             $fieldselectparams['newtype'] = $fieldtype;
             $fieldselect->add(new \action_menu_link(
-                new \moodle_url('/mod/data/field.php', $fieldselectparams),
+                new moodle_url('/mod/data/field.php', $fieldselectparams),
                 new \pix_icon('field/' . $fieldtype, $fieldname, 'data'),
                 $fieldname,
                 false
@@ -145,9 +117,10 @@ class action_bar {
      * Generate the output for the action selector in the view page.
      *
      * @param bool $hasentries Whether entries exist.
+     * @param string $mode The current view mode (list, view...).
      * @return string The HTML code for the action selector.
      */
-    public function get_view_action_bar(bool $hasentries): string {
+    public function get_view_action_bar(bool $hasentries, string $mode): string {
         global $PAGE;
 
         $viewlistlink = new moodle_url('/mod/data/view.php', ['d' => $this->id]);
@@ -167,7 +140,7 @@ class action_bar {
         $urlselect = new url_select($menu, $activeurl->out(false), null, 'viewactionselect');
         $urlselect->set_label(get_string('viewnavigation', 'mod_data'), ['class' => 'sr-only']);
         $renderer = $PAGE->get_renderer('mod_data');
-        $viewactionbar = new view_action_bar($this->id, $urlselect, $hasentries);
+        $viewactionbar = new view_action_bar($this->id, $urlselect, $hasentries, $mode);
 
         return $renderer->render_view_action_bar($viewactionbar);
     }
@@ -178,7 +151,7 @@ class action_bar {
      * @return string The HTML code for the action selector.
      */
     public function get_templates_action_bar(): string {
-        global $PAGE, $DB;
+        global $PAGE;
 
         $listtemplatelink = new moodle_url('/mod/data/templates.php', ['d' => $this->id,
             'mode' => 'listtemplate']);
@@ -192,38 +165,21 @@ class action_bar {
         $jstemplatelink = new moodle_url('/mod/data/templates.php', ['d' => $this->id, 'mode' => 'jstemplate']);
 
         $menu = [
-            $listtemplatelink->out(false) => get_string('listtemplate', 'mod_data'),
-            $singletemplatelink->out(false) => get_string('singletemplate', 'mod_data'),
-            $advancedsearchtemplatelink->out(false) => get_string('asearchtemplate', 'mod_data'),
             $addtemplatelink->out(false) => get_string('addtemplate', 'mod_data'),
-            $rsstemplatelink->out(false) => get_string('rsstemplate', 'mod_data'),
+            $singletemplatelink->out(false) => get_string('singletemplate', 'mod_data'),
+            $listtemplatelink->out(false) => get_string('listtemplate', 'mod_data'),
+            $advancedsearchtemplatelink->out(false) => get_string('asearchtemplate', 'mod_data'),
             $csstemplatelink->out(false) => get_string('csstemplate', 'mod_data'),
             $jstemplatelink->out(false) => get_string('jstemplate', 'mod_data'),
+            $rsstemplatelink->out(false) => get_string('rsstemplate', 'mod_data'),
         ];
 
-        $urlselect = new url_select($menu, $this->currenturl->out(false), null, 'templatesactionselect');
-        $urlselect->set_label(get_string('templatesnavigation', 'mod_data'), ['class' => 'sr-only']);
-
-        $hasfields = $DB->record_exists('data_fields', ['dataid' => $this->id]);
-
-        $saveaspresetbutton = null;
-        $exportpresetbutton = null;
-
-        if ($hasfields) {
-            $saveaspresetlink = new moodle_url('/mod/data/preset.php',
-                ['d' => $this->id, 'action' => 'export']);
-            $saveaspresetbutton = new \single_button($saveaspresetlink,
-                get_string('saveaspreset', 'mod_data'), 'post', false);
-
-            $exportpresetlink = new moodle_url('/mod/data/preset.php',
-                ['d' => $this->id, 'action' => 'export', 'sesskey' => sesskey()]);
-            $exportpresetbutton = new \single_button($exportpresetlink,
-                get_string('exportpreset', 'mod_data'), 'get', false);
-        }
+        $selectmenu = new \core\output\select_menu('presetsactions', $menu, $this->currenturl->out(false));
+        $selectmenu->set_label(get_string('templatesnavigation', 'mod_data'), ['class' => 'sr-only']);
 
         $renderer = $PAGE->get_renderer('mod_data');
-        $templatesactionbar = new templates_action_bar($this->id, $urlselect, $saveaspresetbutton,
-            $exportpresetbutton);
+        $presetsactions = $this->get_presets_actions_select(false);
+        $templatesactionbar = new templates_action_bar($this->id, $selectmenu, null, null, $presetsactions);
 
         return $renderer->render_templates_action_bar($templatesactionbar);
     }
@@ -237,10 +193,8 @@ class action_bar {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('mod_data');
-        if (!has_capability('mod/data:managetemplates', \context_module::instance($this->cmid))) {
-            return '';
-        }
-        $presetsactionbar = new presets_action_bar($this->cmid);
+        $presetsactionbar = new presets_action_bar($this->cmid, $this->get_presets_actions_select(true));
+
         return $renderer->render_presets_action_bar($presetsactionbar);
     }
 
@@ -277,12 +231,67 @@ class action_bar {
         $urlselect->set_label(get_string('templatesnavigation', manager::PLUGINNAME), ['class' => 'sr-only']);
 
         $data = [
-            'title' => get_string('preview', manager::PLUGINNAME),
+            'title' => get_string('preview', manager::PLUGINNAME, preset::get_name_from_plugin($fullname)),
             'hasback' => true,
             'backtitle' => get_string('back'),
             'backurl' => new moodle_url('/mod/data/preset.php', ['id' => $cm->id]),
             'extraurlselect' => $urlselect->export_for_template($renderer),
         ];
         return $renderer->render_from_template('mod_data/action_bar', $data);
+    }
+
+    /**
+     * Helper method to get the selector for the presets action.
+     *
+     * @param bool $hasimport Whether the Import buttons must be included or not.
+     * @return \action_menu|null The selector object used to display the presets actions. Null when the import button is not
+     * displayed and the database hasn't any fields.
+     */
+    protected function get_presets_actions_select(bool $hasimport = false): ?\action_menu {
+        global $DB;
+
+        $hasfields = $DB->record_exists('data_fields', ['dataid' => $this->id]);
+
+        // Early return if the database has no fields and the import action won't be displayed.
+        if (!$hasfields && !$hasimport) {
+            return null;
+        }
+
+        $actionsselect = new \action_menu();
+        $actionsselect->set_menu_trigger(get_string('actions'), 'btn btn-secondary');
+
+        if ($hasimport) {
+            // Import.
+            $actionsselectparams = ['id' => $this->cmid, 'action' => 'import'];
+            $actionsselect->add(new \action_menu_link(
+                new moodle_url('/mod/data/preset.php', $actionsselectparams),
+                null,
+                get_string('importpreset', 'mod_data'),
+                false,
+                ['data-action' => 'importpresets', 'data-dataid' => $this->cmid]
+            ));
+        }
+
+        // If the database has no fields, export and save as preset options shouldn't be displayed.
+        if ($hasfields) {
+            // Export.
+            $actionsselectparams = ['id' => $this->cmid, 'action' => 'export'];
+            $actionsselect->add(new \action_menu_link(
+                new moodle_url('/mod/data/preset.php', $actionsselectparams),
+                null,
+                get_string('exportpreset', 'mod_data'),
+                false
+            ));
+            // Save as preset.
+            $actionsselect->add(new \action_menu_link(
+                new moodle_url('/mod/data/preset.php', $actionsselectparams),
+                null,
+                get_string('saveaspreset', 'mod_data'),
+                false,
+                ['data-action' => 'saveaspreset', 'data-dataid' => $this->id]
+            ));
+        }
+
+        return $actionsselect;
     }
 }

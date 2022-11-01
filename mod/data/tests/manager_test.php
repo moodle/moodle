@@ -544,4 +544,69 @@ class manager_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test for can_export_entries().
+     *
+     * @covers ::can_export_entries
+     */
+    public function test_can_export_entries() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create course with activity and enrol users.
+        $course = $this->getDataGenerator()->create_course();
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $cm = get_coursemodule_from_id(manager::MODULE, $activity->cmid, 0, false, MUST_EXIST);
+        $manager = manager::create_from_coursemodule($cm);
+
+        // Add a field.
+        /** @var \mod_data_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $fieldrecord = (object)[
+            'name' => 'myfield',
+            'type' => 'text',
+        ];
+        $field = $generator->create_field($fieldrecord, $activity);
+
+        // Teacher with default capabilities can export entries.
+        $this->setUser($teacher);
+        $result = $manager->can_export_entries();
+        $this->assertEquals(true, $result);
+
+        // Teacher without exportallentries can still export entries.
+        unassign_capability('mod/data:exportallentries', $teacherrole->id);
+        $result = $manager->can_export_entries();
+        $this->assertEquals(true, $result);
+
+        // Teacher without exportallentries and exportentry can't export entries (unless they have created some entries).
+        unassign_capability('mod/data:exportentry', $teacherrole->id);
+        $result = $manager->can_export_entries();
+        $this->assertEquals(false, $result);
+
+        $generator->create_entry(
+            $activity,
+            [$field->field->id => 'Example entry'],
+        );
+        $result = $manager->can_export_entries();
+        $this->assertEquals(true, $result);
+
+        // Student without entries can't export.
+        $this->setUser($student);
+        $result = $manager->can_export_entries();
+        $this->assertEquals(false, $result);
+
+        // However, student who has created any entry, can export.
+        $generator->create_entry(
+            $activity,
+            [$field->field->id => 'Another example entry'],
+        );
+        $this->setUser($student);
+        $result = $manager->can_export_entries();
+        $this->assertEquals(true, $result);
+    }
 }

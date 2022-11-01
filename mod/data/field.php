@@ -321,20 +321,23 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
         // Don't check the rest of the options. There is no field, there is nothing else to work with.
         exit;
     }
-    $fieldactionbar = $actionbar->get_fields_action_bar(true, true, true);
+    $fieldactionbar = $actionbar->get_fields_action_bar(true);
     data_print_header($course, $cm, $data, 'fields', $fieldactionbar);
-    echo $OUTPUT->heading(get_string('managefields', 'data'), 2, 'mb-4');
 
+    echo $OUTPUT->box_start('mb-4');
+    echo get_string('fieldshelp', 'data');
+    echo $OUTPUT->box_end();
     $table = new html_table();
     $table->head = [
         get_string('fieldname', 'data'),
         get_string('type', 'data'),
         get_string('required', 'data'),
         get_string('fielddescription', 'data'),
-        get_string('action', 'data'),
+        '',
     ];
     $table->align = ['left', 'left', 'left', 'left'];
     $table->wrap = [false,false,false,false];
+    $table->responsive = false;
 
     $fieldrecords = $manager->get_field_records();
     $missingfieldtypes = [];
@@ -356,26 +359,40 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
             'mode'      => 'delete',
         ));
 
+        $actionmenu = new action_menu();
+        $icon = $OUTPUT->pix_icon('i/menu', get_string('actions'));
+        $actionmenu->set_menu_trigger($icon, 'btn btn-icon d-flex align-items-center justify-content-center');
+        $actionmenu->set_action_label(get_string('actions'));
+        $actionmenu->attributes['class'] .= ' fields-actions';
+
         // It display a notification when the field type does not exist.
-        $deletelink = html_writer::link($deleteurl, $OUTPUT->pix_icon('t/delete', get_string('delete')));
-        $editlink = html_writer::link($displayurl, $OUTPUT->pix_icon('t/edit', get_string('edit')));
         if ($field->type === 'unknown') {
             $missingfieldtypes[] = $field->field->name;
-            $fieldnamedata = $field->field->name;
             $fieltypedata = $field->field->type;
-            $fieldlinkdata = $deletelink;
         } else {
-            $fieldnamedata = html_writer::link($displayurl, $field->field->name);
             $fieltypedata = $field->image() . '&nbsp;' . $field->name();
-            $fieldlinkdata = $editlink . '&nbsp;' . $deletelink;
+            // Edit icon, only displayed when the field type is known.
+            $actionmenu->add(new action_menu_link_secondary(
+                $displayurl,
+                null,
+                get_string('edit'),
+            ));
         }
 
+        // Delete.
+        $actionmenu->add(new action_menu_link_secondary(
+            $deleteurl,
+            null,
+            get_string('delete'),
+        ));
+        $actionmenutemplate = $actionmenu->export_for_template($OUTPUT);
+
         $table->data[] = [
-            $fieldnamedata,
+            $field->field->name,
             $fieltypedata,
             $field->field->required ? get_string('yes') : get_string('no'),
             shorten_text($field->field->description, 30),
-            $fieldlinkdata
+            $OUTPUT->render_from_template('core/action_menu', $actionmenutemplate)
         ];
 
         if (!empty($missingfieldtypes)) {

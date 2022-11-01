@@ -606,12 +606,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     function image() {
         global $OUTPUT;
 
-        $params = array('d'=>$this->data->id, 'fid'=>$this->field->id, 'mode'=>'display', 'sesskey'=>sesskey());
-        $link = new moodle_url('/mod/data/field.php', $params);
-        $str = '<a href="'.$link->out().'">';
-        $str .= $OUTPUT->pix_icon('field/' . $this->type, $this->type, 'data');
-        $str .= '</a>';
-        return $str;
+        return $OUTPUT->pix_icon('field/' . $this->type, $this->type, 'data');
     }
 
     /**
@@ -1669,8 +1664,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = context_module::instance($cm->id);
-    echo '<div class="datapreferences mb-3">';
+    echo '<div class="datapreferences my-5">';
     echo '<form id="options" action="view.php" method="get">';
+    echo '<div class="d-flex">';
     echo '<div>';
     echo '<input type="hidden" name="d" value="'.$data->id.'" />';
     if ($mode =='asearch') {
@@ -1750,7 +1746,12 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" ' . $checked . ' ' .
          'onchange="showHideAdvSearch(this.checked);" class="mx-1" />' .
          '<label for="advancedcheckbox">' . get_string('advancedsearch', 'data') . '</label>';
+    echo '</div>';
+    echo '<div id="advsearch-save-sec" class="ml-auto '. $regsearchclass . '">';
     echo '&nbsp;<input type="submit" class="btn btn-secondary" value="' . get_string('savesettings', 'data') . '" />';
+    echo '</div>';
+    echo '</div>';
+    echo '<div>';
 
     echo '<br />';
     echo '<div class="' . $advancedsearchclass . '" id="data_adv_form">';
@@ -1833,9 +1834,9 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
          '</td></tr>';
     echo '</table>';
     echo '</div>';
-    echo '</div>';
     echo '</form>';
     echo '</div>';
+    echo '<hr/>';
 }
 
 /**
@@ -3525,11 +3526,11 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
             $defaultemplate = 'singletemplate';
         }
 
+        $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d' => $data->id)));
         $datanode->add(get_string('fields', 'data'),
             new moodle_url('/mod/data/field.php', array('d' => $data->id)));
         $datanode->add(get_string('templates', 'data'),
             new moodle_url('/mod/data/templates.php', array('d' => $data->id)));
-        $datanode->add(get_string('presets', 'data'), new moodle_url('/mod/data/preset.php', array('d' => $data->id)));
     }
 
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {

@@ -55,3 +55,13 @@ Feature: Zero state page (no fields created)
     Then I click on "Import preset and apply" "button" in the ".modal-dialog" "css_element"
     And I should see "Manage fields"
     Then I should see "The preset has been successfully applied."
+
+  @javascript
+  Scenario: Teacher can use a preset from zero state page on an empty database
+    Given I am on the "Test database name" "data activity" page logged in as "teacher1"
+    And I click on "Use a preset" "button"
+    And I click on "fullname" "radio" in the "Image gallery" "table_row"
+    And the "Use this preset" "button" should be enabled
+    Then I click on "Use this preset" "button"
+    And I should not see "Field mappings"
+    And I should see "Image" in the "image" "table_row"

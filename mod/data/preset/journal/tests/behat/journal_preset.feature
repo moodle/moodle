@@ -22,7 +22,7 @@ Feature: Users can use the Journal preset
     And I am on the "Student reflections" "data activity" page logged in as teacher1
     And I follow "Presets"
     And I click on "fullname" "radio" in the "Journal" "table_row"
-    And I click on "Use a preset" "button"
+    And I click on "Use this preset" "button"
     And the following "mod_data > entries" exist:
       | database | user      | Title                           | Content                                  |
       | data1    | student1  | Reflection created by student   | This is the content for the entry 1      |
@@ -59,12 +59,12 @@ Feature: Users can use the Journal preset
     And I should see "First name"
     And I should see "Last name"
     And I set the field "Title" to "student"
-    And I press "Save settings"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
     Then I should see "Reflection created by student"
     And I should not see "Reflection created by teacher"
     But I set the field "Title" to "Reflection"
     And I set the field "Order" to "Descending"
-    And I press "Save settings"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
     And "Reflection created by teacher" "text" should appear before "Reflection created by student" "text"
 
   @javascript

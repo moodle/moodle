@@ -314,6 +314,25 @@ class manager {
         return has_capability('mod/data:managetemplates', $this->context, $userid);
     }
 
+    /** Check if the user can export entries on the current context.
+     *
+     * @param int $userid the user id to check ($USER->id if null).
+     * @return bool if the user can export entries on current context.
+     */
+    public function can_export_entries(?int $userid = null): bool {
+        global $USER, $DB;
+
+        if (!$userid) {
+            $userid = $USER->id;
+        }
+
+        // Exportallentries and exportentry are basically the same capability.
+        return has_capability('mod/data:exportallentries', $this->context) ||
+                has_capability('mod/data:exportentry', $this->context) ||
+                (has_capability('mod/data:exportownentry', $this->context) &&
+                $DB->record_exists('data_records', ['userid' => $userid, 'dataid' => $this->instance->id]));
+    }
+
     /**
      * Update the database templates.
      *

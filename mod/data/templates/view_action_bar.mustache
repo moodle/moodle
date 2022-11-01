@@ -18,8 +18,7 @@
 
     Context variables required for this template:
     * urlselect - The data object containing the required properties to render core/url_select.
-    * importentriesbutton - The data object containing the required properties to render core/single_button.
-    * exportentriesbutton - The data object containing the required properties to render core/single_button.
+    * actionsselect - The presets actions selector.
 
     Example context (json):
     {
@@ -34,59 +33,77 @@
             "showbutton": null,
             "options": [
                 {
-                    "name": "Some name",
+                    "name": "List view",
                     "value": "/mod/data/someurl.php",
                     "selected": false
+                },
+                {
+                    "name": "Single view",
+                    "value": "/mod/data/someurl.php",
+                    "selected": true
                 }
             ],
             "disabled": false,
             "title": null
         },
-        "importentriesbutton": {
-            "id": "single_button_test_1",
-            "method" : "post",
-            "formid": "single_button_form_1",
-            "url" : "http://example.com/post",
-            "primary" : false,
-            "tooltip" : null,
-            "label" : "Label",
-            "attributes": []
-        },
-        "exportentriesbutton": {
-            "id": "single_button_test_2",
-            "method" : "post",
-            "formid": "single_button_form_2",
-            "url" : "http://example.com/post",
-            "primary" : false,
-            "tooltip" : null,
-            "label" : "Label",
-            "attributes": []
+        "actionsselect": {
+            "classes": "moodle-actionmenu",
+            "instance": "1",
+            "triggerrole": "button",
+            "primary": {
+                "attributes": [
+                    {"name": "id", "value": "action-menu-1"},
+                    {"name": "role", "value": "menu"}
+                ],
+                "items": [
+                    {
+                        "attributes": [
+                            {"name": "role", "value": "menuitem"}
+                        ],
+                        "rawhtml": "Actions"
+                    }
+                ]
+            },
+            "secondary": {
+                "attributes": [
+                    {"name": "id", "value": "action-menu-1-menu"},
+                    {"name": "role", "value": "menuitem"}
+                ],
+                "items": [
+                    {
+                        "rawhtml": "Import entries"
+                    },
+                    {
+                        "rawhtml": "Export entries"
+                    }
+                ]
+            }
         }
     }
 }}
-<div class="container-fluid tertiary-navigation">
-    <div class="row">
-        {{#urlselect}}
-            <div class="navitem">
-                {{>core/url_select}}
-            </div>
-        {{/urlselect}}
-        {{#addentrybutton}}
-            <div class="navitem">
-                {{>core/single_button}}
-            </div>
-        {{/addentrybutton}}
-        <div class="ml-sm-auto d-flex">
-            {{#importentriesbutton}}
-                <div class="navitem">
+<div class="container-fluid tertiary-navigation d-flex">
+    <div class="row ml-auto">
+        <div class="col">
+            {{#addentrybutton}}
+                <div class="navitem mb-0">
                     {{>core/single_button}}
                 </div>
-            {{/importentriesbutton}}
-            {{#exportentriesbutton}}
-                <div class="navitem">
-                    {{>core/single_button}}
+            {{/addentrybutton}}
+        </div>
+        <div class="col">
+            {{#urlselect}}
+                <div class="navitem mb-0">
+                    {{>core/url_select}}
                 </div>
-            {{/exportentriesbutton}}
+            {{/urlselect}}
+        </div>
+        <div class="col">
+            {{#actionsselect}}
+                <div class='navitem mb-0 entriesactions'>
+                    {{>core/action_menu}}
+                </div>
+            {{/actionsselect}}
         </div>
     </div>
 </div>
+<hr/>

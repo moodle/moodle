@@ -24,6 +24,15 @@ information provided here is intended especially for developers.
 * import_setting_mappings() function has been deprecated. Use importing_preset() instead.
 * $fieldselect single_select type parameter has been deprecated for fields_action_bar class constructor, and a new action_menu
   type parameter has been added.
+* The $urlselect, $saveaspresetbutton and $exportpresetbutton parameters in the constructor of the fields_action_bar class
+have been deprecated too and are not used anymore.
+* The $saveaspresetbutton and $exportpresetbutton parameters in the constructor of the templates_action_bar class
+have been deprecated and are not used anymore. Besides, a new parameter, $actionsselect, has been added to the
+constructor of this class.
+* A new parameter, $actionsselect, has been added to the presets_action_bar constructor.
+* A new parameter, $mode, has been added to the view_action_bar constructor.
+* The $hassaveaspreset and $haveexportpreset parameters in the get_fields_action_bar() action_bar class have been deprecated and
+are not used anymore.
 
 === 3.7 ===
 * External functions get_entries, get_entry and search_entries now return an additional field "tags" containing the entry tags.

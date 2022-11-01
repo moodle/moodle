@@ -150,7 +150,8 @@
 }
 
 .preset_action_menu .dropdown-toggle::after,
-.entry-actionsmenu .dropdown-toggle::after {
+.entry-actionsmenu .dropdown-toggle::after,
+.fields-actions .dropdown-toggle::after {
     display: none;
 }
 
@@ -189,6 +190,13 @@
     pointer-events: none;
 }
 
+/* Actions menu */
+.presetsactions .dropdown-toggle,
+.presetsactions .dropdown-toggle:hover,
+.presetsactions .show > .btn-secondary.dropdown-toggle,
+.entriesactions .dropdown-toggle,
+.entriesactions .dropdown-toggle:hover,
+.entriesactions .show > .btn-secondary.dropdown-toggle,
 #page-mod-data-view .whitebutton .btn-secondary,
 #page-mod-data-field- .whitebutton .btn-secondary,
 #page-mod-data-templates .whitebutton .btn-secondary {

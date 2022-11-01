@@ -396,7 +396,7 @@ if ($showactivity) {
         }
 
         $actionbar = new \mod_data\output\action_bar($data->id, $pageurl);
-        echo $actionbar->get_view_action_bar($hasrecords);
+        echo $actionbar->get_view_action_bar($hasrecords, $mode);
 
         if ($groupmode) {
             $returnurl = new moodle_url('/mod/data/view.php', ['d' => $data->id, 'mode' => $mode, 'search' => s($search),
@@ -414,9 +414,13 @@ if ($showactivity) {
                 $a = new stdClass();
                 $a->max = $maxcount;
                 $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";
-                echo $OUTPUT->notification(get_string('foundnorecords','data', $a));
+                echo $OUTPUT->box_start();
+                echo get_string('foundnorecords', 'data', $a);
+                echo $OUTPUT->box_end();
             } else {
-                echo $OUTPUT->notification(get_string('norecords','data'));
+                echo $OUTPUT->box_start();
+                echo get_string('norecords', 'data');
+                echo $OUTPUT->box_end();
             }
 
         } else {
@@ -429,7 +433,9 @@ if ($showactivity) {
                 $a->num = $totalcount;
                 $a->max = $maxcount;
                 $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";
-                echo $OUTPUT->notification(get_string('foundrecords', 'data', $a), 'notifysuccess');
+                echo $OUTPUT->box_start();
+                echo get_string('foundrecords', 'data', $a);
+                echo $OUTPUT->box_end();
             }
 
             if ($mode == 'single') { // Single template
@@ -443,6 +449,7 @@ if ($showactivity) {
                 }
                 $baseurl = new moodle_url($baseurl, $baseurlparams);
 
+                echo $OUTPUT->box_start('', 'data-singleview-content');
                 require_once($CFG->dirroot.'/rating/lib.php');
                 if ($data->assessed != RATING_AGGREGATE_NONE) {
                     $ratingoptions = new stdClass;
@@ -468,6 +475,7 @@ if ($showactivity) {
                 ];
                 $parser = $manager->get_template('singletemplate', $options);
                 echo $parser->parse_entries($records);
+                echo $OUTPUT->box_end();
             } else {
                 // List template.
                 $baseurl = '/mod/data/view.php';
@@ -477,6 +485,7 @@ if ($showactivity) {
                 }
                 $baseurl = new moodle_url($baseurl, $baseurlparams);
 
+                echo $OUTPUT->box_start('', 'data-listview-content');
                 echo $data->listtemplateheader;
                 $options = [
                     'search' => $search,
@@ -487,6 +496,7 @@ if ($showactivity) {
                 echo $parser->parse_entries($records);
 
                 echo $data->listtemplatefooter;
+                echo $OUTPUT->box_end();
             }
 
             $stickyfooter = new mod_data\output\view_footer(
@@ -506,27 +516,6 @@ if ($showactivity) {
     $search = trim($search);
     if (empty($records)) {
         $records = array();
-    }
-
-    // Check to see if we can export records to a portfolio. This is for exporting all records, not just the ones in the search.
-    if ($mode == '' && !empty($CFG->enableportfolios) && !empty($records)) {
-        $canexport = false;
-        // Exportallentries and exportentry are basically the same capability.
-        if (has_capability('mod/data:exportallentries', $context) || has_capability('mod/data:exportentry', $context)) {
-            $canexport = true;
-        } else if (has_capability('mod/data:exportownentry', $context) &&
-                $DB->record_exists('data_records', array('userid' => $USER->id))) {
-            $canexport = true;
-        }
-        if ($canexport) {
-            require_once($CFG->libdir . '/portfoliolib.php');
-            $button = new portfolio_add_button();
-            $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id), 'mod_data');
-            if (data_portfolio_caller::has_files($data)) {
-                $button->set_formats(array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_LEAP2A)); // No plain html for us.
-            }
-            echo $button->to_html(PORTFOLIO_ADD_FULL_FORM);
-        }
     }
 }
 

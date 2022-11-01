@@ -64,13 +64,13 @@ Feature: Users can view and search database entries
     And I select "List view" from the "jump" singleselect
     And I click on "Advanced search" "checkbox"
     And I set the field "Test field name" to "Student entry 1"
-    And I press "Save settings"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
     And I should see "Student entry 1"
     And I should not see "Student entry 2"
     And I should not see "Student entry 3"
     And I set the field "Test field name" to "Student entry"
     And I set the field "Order" to "Descending"
-    And I press "Save settings"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
     And "Student entry 3" "text" should appear before "Student entry 2" "text"
     And "Student entry 2" "text" should appear before "Student entry 1" "text"
 
@@ -99,7 +99,7 @@ Feature: Users can view and search database entries
     And I click on "Advanced search" "checkbox"
     And I set the field with xpath "//div[@class='datatagcontrol']//input[@type='text']" to "Tag1"
     And I click on "[data-value='Tag1']" "css_element"
-    When I press "Save settings"
+    When I click on "Save settings" "button" in the "data_adv_form" "region"
     Then I should see "Student original entry tagged"
     And I should see "Student original entry tagged 2"
     And I should not see "Student original entry untagged"
@@ -122,13 +122,28 @@ Feature: Users can view and search database entries
     When I am on the "Test database name" "data activity" page logged in as teacher1
     And I click on "Advanced search" "checkbox"
     And I set the field "First name" to "Bob"
-    And I press "Save settings"
-    Then I should see "Student entry 1"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
+    Then I should see "Found 1 out of 2 records."
+    And I should see "Student entry 1"
     And I should not see "Student entry 2"
     And I set the field "First name" to ""
     And I set the field "Last name" to "2"
-    And I press "Save settings"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
+    And I should see "Found 1 out of 2 records."
     And I should not see "Student entry 1"
+    And I should see "Student entry 2"
+    # Search: no records found.
+    But I set the field "Last name" to ""
+    And I set the field "Test field name" to "Student entry 0"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
+    And I should see "No records found."
+    And I should not see "Student entry 1"
+    And I should not see "Student entry 2"
+    # Search all the entries.
+    And I set the field "Test field name" to "Student entry"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
+    And I should not see "Found 2 out of 2 records."
+    And I should see "Student entry 1"
     And I should see "Student entry 2"
 
   @javascript
@@ -139,6 +154,7 @@ Feature: Users can view and search database entries
       | data1    | teacher1 | Teacher entry 2 | Some teacher content 2 | http://moodle.com |
     And I am on the "Test database name" "data activity" page logged in as teacher1
     And I navigate to "Templates" in current page administration
+    And I set the field "Templates tertiary navigation" to "List view template"
     And I set the following fields to these values:
       | Repeated entry | ##delcheck##[[Test field name]]! |
     And I click on "Save" "button" in the "sticky-footer" "region"

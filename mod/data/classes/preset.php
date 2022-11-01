@@ -576,7 +576,10 @@ class preset {
      * @return string The plugin preset name to display.
      */
     public static function get_name_from_plugin(string $pluginname): string {
-        if (get_string_manager()->string_exists('modulename', 'datapreset_'.$pluginname)) {
+        if ($pos = strpos($pluginname, '/')) {
+             $pluginname = substr($pluginname, $pos + 1);
+        }
+        if (!strpos(trim($pluginname), ' ') && get_string_manager()->string_exists('modulename', 'datapreset_'.$pluginname)) {
             return get_string('modulename', 'datapreset_'.$pluginname);
         } else {
             return $pluginname;

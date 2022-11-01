@@ -100,7 +100,7 @@ class presets implements templatable, renderable {
             }
             $actions = $this->get_preset_action_menu($output, $preset, $userid);
 
-            $fullname = "{$userid}/{$preset->shortname}";
+            $fullname = $preset->get_fullname();
             $id = $this->manager->get_instance()->id;
             $previewurl = new moodle_url(
                     '/mod/data/preset.php',

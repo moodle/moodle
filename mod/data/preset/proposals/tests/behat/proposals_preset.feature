@@ -22,7 +22,7 @@ Feature: Users can use the Proposals preset
     And I am on the "Student projects" "data activity" page logged in as teacher1
     And I follow "Presets"
     And I click on "fullname" "radio" in the "Proposals" "table_row"
-    And I click on "Use a preset" "button"
+    And I click on "Use this preset" "button"
     And the following "mod_data > entries" exist:
       | database | user      | Title                           | Summary    | Content                  | Status    |
       | data1    | student1  | Project created by student      | Summary 1  | Content for entry 1      | Pending   |
@@ -73,12 +73,12 @@ Feature: Users can use the Proposals preset
     And I should see "First name"
     And I should see "Last name"
     And I set the field "Title" to "student"
-    And I press "Save settings"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
     Then I should see "Project created by student"
     And I should not see "Project created by teacher"
     But I set the field "Title" to "Project"
     And I set the field "Order" to "Descending"
-    And I press "Save settings"
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
     And "Project created by teacher" "text" should appear before "Project created by student" "text"
 
   @javascript

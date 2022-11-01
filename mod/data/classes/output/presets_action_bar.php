@@ -16,7 +16,6 @@
 
 namespace mod_data\output;
 
-use moodle_url;
 use templatable;
 use renderable;
 
@@ -32,13 +31,18 @@ class presets_action_bar implements templatable, renderable {
     /** @var int $id The database module id. */
     private $cmid;
 
+    /** @var \action_menu $actionsselect The presets actions selector object. */
+    private $actionsselect;
+
     /**
      * The class constructor.
      *
      * @param int $cmid The database module id
+     * @param \action_menu|null $actionsselect The presets actions selector object.
      */
-    public function __construct(int $cmid) {
+    public function __construct(int $cmid, ?\action_menu $actionsselect) {
         $this->cmid = $cmid;
+        $this->actionsselect = $actionsselect;
     }
 
     /**
@@ -48,12 +52,14 @@ class presets_action_bar implements templatable, renderable {
      * @return array
      */
     public function export_for_template(\renderer_base $output): array {
-        $importpresetlink = new moodle_url('/mod/data/preset.php', [
-                'id' => $this->cmid, 'action' => 'import'
-        ]);
-        return [
+        $data = [
             'id' => $this->cmid,
-            'importpreseturl' => $importpresetlink->out(false),
         ];
+
+        if ($this->actionsselect) {
+            $data['actionsselect'] = $this->actionsselect->export_for_template($output);
+        }
+
+        return $data;
     }
 }

@@ -30,7 +30,7 @@ require_once('lib.php');
 
 $id    = optional_param('id', 0, PARAM_INT);  // course module id
 $d     = optional_param('d', 0, PARAM_INT);   // database id
-$mode  = optional_param('mode', 'listtemplate', PARAM_ALPHA);
+$mode  = optional_param('mode', 'addtemplate', PARAM_ALPHA);
 $useeditor = optional_param('useeditor', null, PARAM_BOOL);
 
 $url = new moodle_url('/mod/data/templates.php');
@@ -84,8 +84,6 @@ if (!$manager->has_fields()) {
 
 $actionbar = new \mod_data\output\action_bar($instance->id, $url);
 echo $actionbar->get_templates_action_bar();
-
-echo $OUTPUT->heading(get_string($mode, 'data'), 2, 'mb-4');
 
 if (($formdata = data_submitted()) && confirm_sesskey()) {
     $notificationstr = get_string('templatesaved', 'data');
