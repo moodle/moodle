@@ -607,10 +607,17 @@ class cache implements cache_loader {
         // 6. Set it to the store if we got it from the loader/datasource. Only set to this direct
         // store; parent method will have set it to all stores if needed.
         if ($setaftervalidation) {
+            $lock = null;
+            if (!empty($this->requirelockingbeforewrite)) {
+                $lock = $this->acquire_lock($key);
+            }
             if ($requiredversion === self::VERSION_NONE) {
                 $this->set_implementation($key, self::VERSION_NONE, $result, false);
             } else {
                 $this->set_implementation($key, $actualversion, $result, false);
+            }
+            if ($lock) {
+                $this->release_lock($key);
             }
         }
         // 7. Make sure we don't pass back anything that could be a reference.
@@ -719,8 +726,15 @@ class cache implements cache_loader {
                 }
                 foreach ($resultmissing as $key => $value) {
                     $result[$keysparsed[$key]] = $value;
+                    $lock = null;
+                    if (!empty($this->requirelockingbeforewrite)) {
+                        $lock = $this->acquire_lock($key);
+                    }
                     if ($value !== false) {
                         $this->set($key, $value);
+                    }
+                    if ($lock) {
+                        $this->release_lock($key);
                     }
                 }
                 unset($resultmissing);
@@ -1662,6 +1676,9 @@ class cache_application extends cache implements cache_loader_with_locking {
      */
     public function acquire_lock($key) {
         global $CFG;
+        if ($this->get_loader() !== false) {
+            $this->get_loader()->acquire_lock($key);
+        }
         $key = $this->parse_key($key);
         $before = microtime(true);
         if ($this->nativelocking) {
@@ -1708,6 +1725,7 @@ class cache_application extends cache implements cache_loader_with_locking {
      * @return bool True if the operation succeeded, false otherwise.
      */
     public function release_lock($key) {
+        $loaderkey = $key;
         $key = $this->parse_key($key);
         if ($this->nativelocking) {
             $released = $this->get_store()->release_lock($key, $this->get_identifier());
@@ -1720,6 +1738,9 @@ class cache_application extends cache implements cache_loader_with_locking {
             if (defined('MDL_PERF') || !empty($CFG->perfdebug)) {
                 \core\lock\timing_wrapper_lock_factory::record_lock_released_data($this->get_identifier() . $key);
             }
+        }
+        if ($this->get_loader() !== false) {
+            $this->get_loader()->release_lock($loaderkey);
         }
         return $released;
     }
@@ -1792,11 +1813,11 @@ class cache_application extends cache implements cache_loader_with_locking {
      */
     public function set_many(array $keyvaluearray) {
         if ($this->requirelockingbeforewrite) {
-            foreach ($keyvaluearray as $id => $pair) {
-                if (!$this->check_lock_state($pair['key'])) {
-                    debugging('Attempted to set cache key "' . $pair['key'] . '" without a lock. '
+            foreach ($keyvaluearray as $key => $value) {
+                if (!$this->check_lock_state($key)) {
+                    debugging('Attempted to set cache key "' . $key . '" without a lock. '
                             . 'Locking before writes is required for ' . $this->get_definition()->get_name(), DEBUG_DEVELOPER);
-                    unset($keyvaluearray[$id]);
+                    unset($keyvaluearray[$key]);
                 }
             }
         }
