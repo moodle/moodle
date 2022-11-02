@@ -1876,7 +1876,7 @@ function set_access_log_user() {
                 apache_note('MOODLEUSER', $logname);
             }
 
-            if ($logmethod == 'header') {
+            if ($logmethod == 'header' && !headers_sent()) {
                 header("X-MOODLEUSER: $logname");
             }
         }
