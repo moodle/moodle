@@ -1,4 +1,4 @@
-@core @core_question @javascript @report @report_questioninstance
+@core @core_question @report @report_questioninstance
 Feature: A Teacher can generate question instance reports
     In order to see question instance reports
     As a Teacher
@@ -32,7 +32,6 @@ Feature: A Teacher can generate question instance reports
       | contextlevel    | reference      | name          |
       | Activity module | Test quiz Q001 | Quiz category |
 
-  @javascript
   Scenario: Generate general and specific report
     Given I am on the "C1" "Course" page logged in as "admin"
     And I navigate to "Reports > Question instances" in site administration
@@ -41,7 +40,6 @@ Feature: A Teacher can generate question instance reports
     And "Course: Course 1" row "Visible" column of "generaltable" table should contain "2"
     And "Course: Course 1" row "Hidden" column of "generaltable" table should contain "0"
 
-  @javascript
   Scenario: Generate report displaying hidden questions
     Given I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "admin"
     And I choose "Delete" action for "TF" in the question bank
