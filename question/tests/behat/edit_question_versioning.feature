@@ -24,14 +24,12 @@ Feature: Questions in the question bank have versions
       | questioncategory | qtype     | name           | questiontext              | answer 1 |
       | Test questions   | truefalse | First question | Answer the first question | True     |
     And quiz "Quiz 1" contains the following questions:
-      | question          | page |
-      | First question    | 1    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+      | question       | page |
+      | First question | 1    |
 
   @javascript
   Scenario: Question version is displayed
-    When I navigate to "Question bank" in current page administration
+    Given I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
     And I should see "First question"
     And I click on "Edit" "link" in the "First question" "table_row"
     And I follow "Edit question"
@@ -39,7 +37,7 @@ Feature: Questions in the question bank have versions
 
   @javascript
   Scenario: Question version change when question is altered
-    When I navigate to "Question bank" in current page administration
+    Given I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
     And I should see "First question"
     And I click on "Edit" "link" in the "First question" "table_row"
     And I follow "Edit question"
