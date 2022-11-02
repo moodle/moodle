@@ -220,10 +220,10 @@ class report {
             throw new invalid_parameter_exception('Invalid column');
         }
 
-        return $column
-            ->set('sortenabled', $enabled)
-            ->set('sortdirection', $direction)
-            ->update();
+        return $column->set_many([
+            'sortenabled' => $enabled,
+            'sortdirection' => $direction,
+        ])->update();
     }
 
     /**
