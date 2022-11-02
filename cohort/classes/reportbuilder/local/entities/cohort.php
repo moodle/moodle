@@ -236,6 +236,8 @@ class cohort extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
+        global $DB;
+
         $tablealias = $this->get_table_alias('cohort');
 
         // Context filter.
@@ -302,7 +304,7 @@ class cohort extends base {
             'description',
             new lang_string('description'),
             $this->get_entity_name(),
-            "{$tablealias}.description"
+            $DB->sql_cast_to_char("{$tablealias}.description")
         ))
             ->add_joins($this->get_joins());
 
