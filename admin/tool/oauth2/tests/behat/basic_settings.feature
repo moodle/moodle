@@ -135,7 +135,6 @@ Feature: Basic OAuth2 functionality
     And I set the following fields to these values:
       | Name                       | Testing service modified                 |
     And I press "Save changes"
-    And I should see "Could not discover service endpoints"
     And I should see "Testing service modified"
     And I click on "Delete" "link" in the "Testing service modified" "table_row"
     And I should see "Are you sure you want to delete the identity issuer \"Testing service modified\"?"
@@ -240,13 +239,12 @@ Feature: Basic OAuth2 functionality
     And I press "Save changes"
     And "Do not allow login" "icon" should exist in the "Valid custom" "table_row"
     And "Allow services" "icon" should exist in the "Valid custom" "table_row"
-    And "Service discovery successful" "icon" should exist in the "Valid custom" "table_row"
+    And I should see "-" in the "Valid custom" "table_row"
     And I click on "Edit" "link" in the "Valid custom service" "table_row"
     And I set the following fields to these values:
       | Name                       | Invalid custom service                    |
       | Service base URL           | https://dc.imsglobal.org/                 |
     And I press "Save changes"
-    Then I should see "Could not discover end points for identity issuer: Invalid custom service"
     And I should see "-" in the "Invalid custom service" "table_row"
     And I click on "Delete" "link" in the "Invalid custom service" "table_row"
     And I should see "Are you sure you want to delete the identity issuer \"Invalid custom service\"?"
@@ -282,13 +280,12 @@ Feature: Basic OAuth2 functionality
     And I press "Save changes"
     And "Do not allow login" "icon" should exist in the "Valid custom" "table_row"
     And "Allow services" "icon" should exist in the "Valid custom" "table_row"
-    And "Service discovery successful" "icon" should exist in the "Valid custom" "table_row"
+    And I should see "-" in the "Valid custom" "table_row"
     And I click on "Edit" "link" in the "Valid custom service" "table_row"
     And I set the following fields to these values:
       | Name                       | Invalid custom service                    |
       | Service base URL           | https://dc.imsglobal.org/                 |
     And I press "Save changes"
-    Then I should see "Could not discover end points for identity issuer: Invalid custom service"
     And I should see "-" in the "Invalid custom service" "table_row"
     And I click on "Edit" "link" in the "Invalid custom service" "table_row"
     And I set the following fields to these values:
@@ -352,9 +349,12 @@ Feature: Basic OAuth2 functionality
     And I should see "Custom display name" in the "Empty custom service" "table_row"
     And "Not configured" "icon" should exist in the "Empty custom service" "table_row"
     And "Do not allow services" "icon" should exist in the "Empty custom service" "table_row"
-    And I click on "Edit" "link" in the "Empty custom service" "table_row"
+    And I click on "Configure endpoints" "link" in the "Empty custom service" "table_row"
+    And I press "Create new endpoint for issuer \"Empty custom service\""
     And I set the following fields to these values:
-      | Service base URL           | https://accounts.google.com               |
+      | Name | userinfo_endpoint |
+      | URL  | https://example.com/userinfo |
     And I press "Save changes"
+    And I navigate to "Server > OAuth 2 services" in site administration
     And "Allow login" "icon" should exist in the "Empty custom service" "table_row"
     And "Do not allow services" "icon" should exist in the "Empty custom service" "table_row"
