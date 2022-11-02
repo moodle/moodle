@@ -44,7 +44,7 @@ Feature: A Teacher can generate question instance reports
   @javascript
   Scenario: Generate report displaying hidden questions
     Given I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "admin"
-    And I choose "Delete" in the open action menu
+    And I choose "Delete" action for "TF" in the question bank
     And I press "Delete"
     And I navigate to "Reports > Question instances" in site administration
     When I press "Get the report"

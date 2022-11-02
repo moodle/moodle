@@ -18,21 +18,19 @@ Feature: Use the qbank plugin manager page for tagquestion
 
   Scenario: Enable/disable tagquestion column from the base view
     Given I log in as "admin"
-    When I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
+    And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I should see "Tag question"
     And I click on "Disable" "link" in the "Tag question" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
-    Then I should not see "Manage tags"
-    And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
+    And the "Manage tags" action should not exist for the "First question" question in the question bank
+    When I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Tag question" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
-    And I should see "Manage tags"
+    Then the "Manage tags" action should exist for the "First question" question in the question bank
 
   Scenario: Enable/disable tagquestion section from question edit form
     Given I log in as "admin"
-    When I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
+    And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I should see "Tag question"
     And I click on "Disable" "link" in the "Tag question" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page

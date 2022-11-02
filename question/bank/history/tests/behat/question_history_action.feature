@@ -23,13 +23,11 @@ Feature: Use the qbank plugin manager page for question history
     And I should see "Question history"
     And I click on "Disable" "link" in the "Question history" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
-    Then I should not see "History" in the "region-main" "region"
+    Then the "History" action should not exist for the "First question" question in the question bank
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Question history" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
-    And I should see "History" in the "region-main" "region"
+    Then the "History" action should exist for the "First question" question in the question bank
 
   Scenario: History page shows only the specified features and questions
     Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
@@ -42,8 +40,6 @@ Feature: Use the qbank plugin manager page for question history
     And I should see "Version"
     And I should see "Created by"
     And I should see "First question"
-    And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
-    But I should not see "History"
+    And the "History" action should not exist for the "First question" question in the question bank
     And I click on "#qbank-history-close" "css_element"
-    And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
-    And I should see "History" in the "region-main" "region"
+    And the "History" action should exist for the "First question" question in the question bank
