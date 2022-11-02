@@ -23,15 +23,11 @@ Feature: Use the qbank plugin manager page for deletequestion
     And I should see "Delete question"
     And I click on "Disable" "link" in the "Delete question" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
-    Then I should not see "Delete" in the "region-main" "region"
+    Then the "Delete" action should not exist for the "First question" question in the question bank
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Delete question" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-
-    # TODO This is a worthless test - the word "Delete" can appear anywhere in the page to make this test pass.
-    And I click on ".dropdown-toggle" "css_element" in the "First question" "table_row"
-    And I should see "Delete" in the "region-main" "region"
+    And the "Delete" action should exist for the "First question" question in the question bank
 
   @javascript
   Scenario: Enable/disable delete questions bulk action from the base view
