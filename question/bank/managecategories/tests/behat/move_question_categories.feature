@@ -15,14 +15,11 @@ Feature: A teacher can move question categories in the question bank
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
-      | activity   | name      | course | idnumber |
-      | quiz       | Test quiz | C1     | quiz1    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+      | activity | name      | course | idnumber |
+      | quiz     | Test quiz | C1     | quiz1    |
 
   Scenario: A question category can be moved to another context
-    When I follow "Test quiz"
-    And I navigate to "Question bank" in current page administration
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
     And I select "Categories" from the "Question bank tertiary navigation" singleselect
     And I follow "Add category"
     And I set the following fields to these values:
@@ -33,8 +30,7 @@ Feature: A teacher can move question categories in the question bank
     Then I should see "Test category" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' questioncategories ') and contains(concat(' ', normalize-space(@class), ' '), ' contextlevel50 ')]" "xpath_element"
 
   Scenario: A question category can be moved to top level
-    When I follow "Test quiz"
-    And I navigate to "Question bank" in current page administration
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
     And I select "Categories" from the "Question bank tertiary navigation" singleselect
     And I follow "Add category"
     And I set the following fields to these values:

@@ -21,15 +21,13 @@ Feature: Use the qbank plugin manager page for statistics
     When I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I should see "Question statistics"
     And I click on "Disable" "link" in the "Question statistics" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     Then I should not see "Facility index"
     And I should not see "Discriminative efficiency"
     And I should not see "Needs checking?"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Question statistics" "table_row"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page
     And I should see "Facility index"
     And I should see "Discriminative efficiency"
     And I should see "Needs checking?"
