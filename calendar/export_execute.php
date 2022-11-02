@@ -1,7 +1,30 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Calendar export
+ *
+ * @package    core_calendar
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+define('NO_MOODLE_COOKIES', true);
 
 require_once('../config.php');
-//require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
 require_once($CFG->libdir.'/bennu/bennu.inc.php');
 
@@ -16,22 +39,27 @@ if (empty($CFG->enablecalendarexport)) {
     die('no export');
 }
 
-//Fetch user information
-$checkuserid = !empty($userid) && $user = $DB->get_record('user', array('id' => $userid), 'id,password');
-//allowing for fallback check of old url - MDL-27542
-$checkusername = !empty($username) && $user = $DB->get_record('user', array('username' => $username), 'id,password');
+// Fetch basic user information to correctly log the user.
+$fields = 'id,username,password,firstname,lastname';
+
+$checkuserid = !empty($userid) && $user = $DB->get_record('user', array('id' => $userid), $fields);
+// Allowing for fallback check of old url - MDL-27542.
+$checkusername = !empty($username) && $user = $DB->get_record('user', array('username' => $username), $fields);
 if ((!$checkuserid && !$checkusername) || !$user) {
     //No such user
     die('Invalid authentication');
 }
 
-//Check authentication token
+// Check authentication token.
 $authuserid = !empty($userid) && $authtoken == calendar_get_export_token($user);
-//allowing for fallback check of old url - MDL-27542
+// Allowing for fallback check of old url - MDL-27542.
 $authusername = !empty($username) && $authtoken == sha1($username . $user->password . $CFG->calendar_exportsalt);
 if (!$authuserid && !$authusername) {
     die('Invalid authentication');
 }
+
+// Setup up the user including web access logging.
+\core\session\manager::set_user($user);
 
 $PAGE->set_context(context_system::instance());
 
