@@ -148,6 +148,10 @@ class core_shutdown_manager {
     public static function shutdown_handler() {
         global $DB;
 
+        // Always ensure we know who the user is in access logs even if they
+        // were logged in a weird way midway through the request.
+        set_access_log_user();
+
         // Custom stuff first.
         foreach (self::$callbacks as $data) {
             list($callback, $params) = $data;
