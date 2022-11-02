@@ -488,7 +488,7 @@ class client extends \oauth2_client {
     /**
      * Fetch the user info from the user info endpoint.
      *
-     * @return array|false Moodle user fields for the logged in user (or false if request failed)
+     * @return stdClass|false Moodle user fields for the logged in user (or false if request failed)
      * @throws moodle_exception if the response is empty after decoding it.
      */
     public function get_raw_userinfo() {
@@ -528,6 +528,10 @@ class client extends \oauth2_client {
      */
     public function get_userinfo() {
         $userinfo = $this->get_raw_userinfo();
+        if ($userinfo === false) {
+            return false;
+        }
+
         return $this->map_userinfo_to_fields($userinfo);
     }
 
