@@ -225,6 +225,22 @@ trait behat_session_trait {
     }
 
     /**
+     * Get a description of the selector and locator to use in an exception message.
+     *
+     * @param string $selector The type of locator
+     * @param mixed $locator The locator text
+     * @return string
+     */
+    protected function get_selector_description(string $selector, $locator): string {
+        if ($selector === 'NodeElement') {
+            $description = $locator->getText();
+            return "'{$description}' {$selector}";
+        }
+
+        return "'{$locator}' {$selector}";
+    }
+
+    /**
      * Send key presses straight to the currently active element.
      *
      * The `$keys` array contains a list of key values to send to the session as defined in the WebDriver and JsonWire
