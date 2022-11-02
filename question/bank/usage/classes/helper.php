@@ -134,4 +134,22 @@ class helper {
         return $sql;
     }
 
+
+    /**
+     * Get the question last used sql.
+     *
+     * @return string
+     */
+    public static function get_question_last_used_sql(): string {
+        $sql = "SELECT MAX(qa.timemodified) as lastused
+                  FROM {quiz} qz
+                  JOIN {quiz_attempts} qa ON qa.quiz = qz.id
+                  JOIN {question_usages} qu ON qu.id = qa.uniqueid
+                  JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id
+                  JOIN {question} q ON q.id = qatt.questionid
+                 WHERE qa.preview = 0
+                   AND q.id = ?";
+        return $sql;
+    }
+
 }
