@@ -86,7 +86,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | MI 5         | 20.00 %           | 100.00 | 0–100 | 100.00 %   | 20.00 %                         |
       | CAT1 total   | 40.00 %           | 150.00 | 0–200 | 75.00 %    | -                               |
       | Course total | -                 | 350.00 | 0–500 | 70.00 %    | -                               |
-    And I select "Student 2" from the "Select all or one user" singleselect
+    And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 33.33 %           | 20.00  | 0–100 | 20.00 %    | 6.67 %                      |
@@ -116,7 +116,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | MI 5         | 25.00 %           | 100.00 | 0–100 | 100.00 %   | 25.00 %                      |
       | CAT1 total   | 37.50 %           | 150.00 | 0–150 | 100.00 %   | -                            |
       | Course total | -                 | 350.00 | 0–400 | 87.50 %    | -                            |
-    And I select "Student 2" from the "Select all or one user" singleselect
+    And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 25.00 %           | 20.00  | 5–50  | 33.33 %    | 10.00 %                      |
@@ -136,7 +136,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 5         | 40.00 %           | 150.00 | 0–200 | 75.00 %   | 30.00 %                      |
       | Course total | -                 | 400.00 | 0–500 | 80.00 %    | -                            |
-    And I select "Student 2" from the "Select all or one user" singleselect
+    And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 5         | 66.67 %           | 30.00 | 0–200  | 15.00 %    | 10.00 %                      |
@@ -155,7 +155,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | MI 5         | 33.33 %           | 150.00 | 0–200 | 75.00 %    | 25.00 %                      |
       | CAT1 total   | 33.33 %           | 150.00 | 0–200 | 75.00 %    | -                            |
       | Course total | -                 | 400.00 | 0–600 | 66.67 %    | -                            |
-    And I select "Student 2" from the "Select all or one user" singleselect
+    And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | MI 1         | 25.00 %           | 20.00  | 0–100 | 20.00 %    | 5.00 %                       |

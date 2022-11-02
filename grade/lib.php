@@ -1495,6 +1495,48 @@ class grade_structure {
     }
 
     /**
+     * Returns the string that describes the type of the element.
+     *
+     * @param array $element An array representing an element in the grade_tree
+     * @return string The string that describes the type of the grade element
+     */
+    public function get_element_type_string(array $element): string {
+        // If the element is a grade category.
+        if ($element['type'] == 'category') {
+            return get_string('category', 'grades');
+        }
+        // If the element is a grade item.
+        if (in_array($element['type'], ['item', 'courseitem', 'categoryitem'])) {
+            // If calculated grade item.
+            if ($element['object']->is_calculated()) {
+                return get_string('calculatedgrade', 'grades');
+            }
+            // If aggregated type grade item.
+            if ($element['object']->is_aggregate_item()) {
+                return get_string('aggregation', 'core_grades');
+            }
+            // If external grade item (module, plugin, etc.).
+            if ($element['object']->is_external_item()) {
+                // If outcome grade item.
+                if ($element['object']->is_outcome_item()) {
+                    return get_string('outcome', 'grades');
+                }
+                return get_string('modulename', $element['object']->itemmodule);
+            }
+            // If manual grade item.
+            if ($element['object']->itemtype == 'manual') {
+                // If outcome grade item.
+                if ($element['object']->is_outcome_item()) {
+                    return get_string('outcome', 'grades');
+                }
+                return get_string('manualitem', 'grades');
+            }
+        }
+
+        return '';
+    }
+
+    /**
      * Returns name of element optionally with icon and link
      *
      * @param array &$element An array representing an element in the grade_tree

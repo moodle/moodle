@@ -72,7 +72,7 @@ Feature: View gradebook when single item scales are used
       | Test assignment one    | Ace!  | Ace!–Ace! | 100.00 %                     |
       | EN Sub category 1 total| 1.00  | 0–1       | -                            |
       | Course total           | 1.00  | 0–1       | -                            |
-    And I select "Student 2" from the "Select all or one user" singleselect
+    And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item             | Grade | Range     | Contribution to course total |
       | Test assignment one    | -     | Ace!–Ace! | -                            |

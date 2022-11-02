@@ -133,9 +133,9 @@ class reportuserlib_test extends \advanced_testcase {
         $forum1->set_parent($gradecategory->id);
 
         $report = $this->create_report($course, $student, $coursecontext);
-        // Lead column + course + (category + category grade item) + (2 x activity) = 6
-        $this->assertEquals(6, $report->inject_rowspans($report->gtree->top_element));
-        $this->assertEquals(6, $report->gtree->top_element['rowspan']);
+        // Lead column + course + (category + lead column + category grade item) + (2 x activity) = 7.
+        $this->assertEquals(7, $report->inject_rowspans($report->gtree->top_element));
+        $this->assertEquals(7, $report->gtree->top_element['rowspan']);
         // Lead column -> the category -> the forum activity = 3
         $this->assertEquals(3, $report->maxdepth);
 
@@ -165,9 +165,9 @@ class reportuserlib_test extends \advanced_testcase {
             accesslib_clear_all_caches_for_unit_testing();
 
             $report = $this->create_report($course, $user, $coursecontext);
-            // Lead column + course + (category + category grade item) + (2 x activity) = 6
-            $this->assertEquals(6, $report->inject_rowspans($report->gtree->top_element), $message);
-            $this->assertEquals(6, $report->gtree->top_element['rowspan'], $message);
+            // Lead column + course + (category + lead column + category grade item) + (2 x activity) = 7.
+            $this->assertEquals(7, $report->inject_rowspans($report->gtree->top_element), $message);
+            $this->assertEquals(7, $report->gtree->top_element['rowspan'], $message);
             // Lead column -> the category -> the forum activity = 3
             $this->assertEquals(3, $report->maxdepth, $message);
         }
