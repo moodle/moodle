@@ -354,7 +354,7 @@ class tool_provider extends ToolProvider {
             $userlog->serviceurl = $serviceurl;
             $userlog->sourceid = $sourceid;
             $userlog->consumerkey = $this->consumer->getKey();
-            $userlog->consumersecret = $tool->secret;
+            $userlog->consumersecret = $this->consumer->secret;
             $userlog->lastgrade = 0;
             $userlog->lastaccess = time();
             $userlog->timecreated = time();
