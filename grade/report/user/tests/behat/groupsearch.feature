@@ -28,50 +28,38 @@ Feature: Group searching functionality within the user report.
 
   Scenario: A teacher can see the 'group' search widget only when group mode is enabled in the course
     Given I navigate to "View > User report" in the course gradebook
-    And ".groupwidget" "css_element" should exist
+    And ".search-widget[data-searchtype='group']" "css_element" should exist
     And I am on "Course 1" course homepage
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | id_groupmode | No groups |
     And I press "Save and display"
     When I navigate to "View > User report" in the course gradebook
-    Then ".groupwidget" "css_element" should not exist
+    Then ".search-widget[data-searchtype='group']" "css_element" should not exist
 
   Scenario: A teacher can search for and find a group to find a user in
     Given I navigate to "View > User report" in the course gradebook
-    And I click on ".groupwidget" "css_element"
-    And I wait until "Select a group" "dialogue" exists
-    And I should see "Tutor group" in the "Select a group" "dialogue"
-    And I should see "Marker group" in the "Select a group" "dialogue"
+    And I click on ".search-widget[data-searchtype='group']" "css_element"
+    And I confirm "Tutor group" in "group" search within the gradebook widget exists
+    And I confirm "Marker group" in "group" search within the gradebook widget exists
     When I set the field "searchinput" to "tutor"
     And I wait "1" seconds
-    Then I should see "Tutor group" in the "Select a group" "dialogue"
-    And I should not see "Marker group" in the "Select a group" "dialogue"
+    Then I confirm "Tutor group" in "group" search within the gradebook widget exists
+    And I confirm "Marker group" in "group" search within the gradebook widget does not exist
 
   Scenario: A teacher can only see the group members in the 'user' search widget after selecting a group option
     Given I navigate to "View > User report" in the course gradebook
     # Confirm that all users are initially displayed in the 'user' search widget.
-    And I click on ".userwidget" "css_element"
-    And I wait until "Select a user" "dialogue" exists
-    And I should see "Student 1" in the "Select a user" "dialogue"
-    And I should see "Student 2" in the "Select a user" "dialogue"
-    And I click on "Close" "button" in the "Select a user" "dialogue"
+    And I confirm "Student 1" in "user" search within the gradebook widget exists
+    And I confirm "Student 2" in "user" search within the gradebook widget exists
     # Select a particular group from the 'group' search widget.
     When I click on "Default group" in the "group" search widget
     # Confirm that only users which are members of the selected group are displayed in the 'user' search widget.
-    And I click on ".userwidget" "css_element"
-    And I wait until "Select a user" "dialogue" exists
-    Then I should see "Student 1" in the "Select a user" "dialogue"
-    And I should not see "Student 2" in the "Select a user" "dialogue"
-    And I click on "Close" "button" in the "Select a user" "dialogue"
+    And I confirm "Student 1" in "user" search within the gradebook widget exists
+    And I confirm "Student 2" in "user" search within the gradebook widget does not exist
     And I click on "Tutor group" in the "group" search widget
-    And I click on ".userwidget" "css_element"
-    And I wait until "Select a user" "dialogue" exists
-    And I should not see "Student 1" in the "Select a user" "dialogue"
-    And I should not see "Student 2" in the "Select a user" "dialogue"
-    And I click on "Close" "button" in the "Select a user" "dialogue"
+    And I confirm "Student 1" in "user" search within the gradebook widget does not exist
+    And I confirm "Student 2" in "user" search within the gradebook widget does not exist
     And I click on "All participants" in the "group" search widget
-    And I click on ".userwidget" "css_element"
-    And I wait until "Select a user" "dialogue" exists
-    And I should see "Student 1" in the "Select a user" "dialogue"
-    And I should see "Student 2" in the "Select a user" "dialogue"
+    And I confirm "Student 1" in "user" search within the gradebook widget exists
+    And I confirm "Student 2" in "user" search within the gradebook widget exists

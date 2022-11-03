@@ -23,12 +23,12 @@ Feature: Within the singleview report, a teacher can search for users.
     Given I navigate to "View > Single view" in the course gradebook
     When I click on "Users" "link" in the ".page-toggler" "css_element"
     And I wait until the page is ready
-    And I click on ".userwidget" "css_element"
-    Then I confirm "Student 1" in "Select a user" search within the gradebook widget exists
-    And I confirm "Student 2" in "Select a user" search within the gradebook widget exists
-    And I confirm "Student 32" in "Select a user" search within the gradebook widget exists
+    And I click on ".search-widget[data-searchtype='user']" "css_element"
+    Then I confirm "Student 1" in "user" search within the gradebook widget exists
+    And I confirm "Student 2" in "user" search within the gradebook widget exists
+    And I confirm "Student 32" in "user" search within the gradebook widget exists
     And I set the field "searchinput" to "2"
     And I wait "1" seconds
-    And I confirm "Student 2" in "Select a user" search within the gradebook widget exists
-    And I confirm "Student 32" in "Select a user" search within the gradebook widget exists
-    And I confirm "Student 1" in "Select a user" search within the gradebook widget does not exist
+    And I confirm "Student 2" in "user" search within the gradebook widget exists
+    And I confirm "Student 32" in "user" search within the gradebook widget exists
+    And I confirm "Student 1" in "user" search within the gradebook widget does not exist
