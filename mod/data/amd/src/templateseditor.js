@@ -48,7 +48,7 @@ const selectors = {
 /**
  * Register event listeners for the module.
  *
- * @param {int} instanceId The database ID
+ * @param {Number} instanceId The database ID
  * @param {string} mode The template mode
  */
 const registerEventListeners = (instanceId, mode) => {

@@ -30,20 +30,24 @@ const selectors = {
 };
 
 /**
- * Initialize module
+ * Initialize module.
  */
 export const init = () => {
-    const saveAsPresetButton = document.querySelector(selectors.saveAsPresetButton);
 
-    saveAsPresetButton.addEventListener('click', event => {
+    document.addEventListener('click', (event) => {
+        const saveAsPresetButton = event.target.closest(selectors.saveAsPresetButton);
+
+        if (!saveAsPresetButton) {
+            return;
+        }
+
         event.preventDefault();
-
         const modalForm = new ModalForm({
             modalConfig: {
                 title: getString('savedataaspreset', 'mod_data'),
             },
             formClass: 'mod_data\\form\\save_as_preset',
-            args: {d: saveAsPresetButton.getAttribute('data-dataid')},
+            args: {d: saveAsPresetButton.dataset.dataid},
             saveButtonText: getString('save'),
             returnFocus: saveAsPresetButton,
         });
