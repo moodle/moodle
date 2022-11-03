@@ -59,7 +59,7 @@ class mod_data_renderer extends plugin_renderer_base {
         $strwarning = get_string('mappingwarning', 'data');
         $strfieldmappings = get_string('fieldmappings', 'data');
 
-        $params = $importer->get_preset_settings();
+        $params = $importer->settings;
         $newfields = $params->importfields;
         $currentfields = $params->currentfields;
 
@@ -94,10 +94,18 @@ class mod_data_renderer extends plugin_renderer_base {
                         continue;
                     }
                     if ($currentfield->name == $newfield->name) {
-                        $row[1] .= html_writer::tag('option', get_string('mapexistingfield', 'data', $currentfield->name), array('value'=>$cid, 'selected'=>'selected'));
-                        $selected=true;
+                        $row[1] .= html_writer::tag(
+                            'option',
+                            get_string('mapexistingfield', 'data', $currentfield->name),
+                            ['value' => $cid, 'selected' => 'selected']
+                        );
+                        $selected = true;
                     } else {
-                        $row[1] .= html_writer::tag('option', get_string('mapexistingfield', 'data', $currentfield->name), array('value'=>$cid));
+                        $row[1] .= html_writer::tag(
+                            'option',
+                            get_string('mapexistingfield', 'data', $currentfield->name),
+                            ['value' => $cid]
+                        );
                     }
                 }
 
