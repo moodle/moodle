@@ -1649,6 +1649,7 @@ $string['phone'] = 'Phone';
 $string['phone1'] = 'Phone';
 $string['phone2'] = 'Mobile phone';
 $string['phpinfo'] = 'PHP info';
+$string['picture'] = 'Picture';
 $string['pictureof'] = 'Picture of {$a}';
 $string['pictureofuser'] = 'User picture';
 $string['placeholdertypeorselect'] = 'Type or select...';

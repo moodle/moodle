@@ -69,6 +69,10 @@ class participants_test extends core_reportbuilder_testcase {
         $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student',
             'manual', $timestart, $timeend, ENROL_USER_ACTIVE);
 
+        // Add them to a group.
+        $group = self::getDataGenerator()->create_group(['courseid' => $course->id]);
+        self::getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $user1->id]);
+
         // Mark course as completed for the user.
         $ccompletion = new completion_completion(array('course' => $course->id, 'userid' => $user1->id));
         $ccompletion->mark_enrolled($timestart);
@@ -97,6 +101,8 @@ class participants_test extends core_reportbuilder_testcase {
             'uniqueidentifier' => 'enrolment:method'])
             ->set('sortenabled', true)
             ->update();
+        $generator->create_column(['reportid' => $report->get('id'),
+            'uniqueidentifier' => 'group:name']);
         $generator->create_column(['reportid' => $report->get('id'),
             'uniqueidentifier' => 'completion:completed']);
         $generator->create_column(['reportid' => $report->get('id'),
@@ -139,6 +145,7 @@ class participants_test extends core_reportbuilder_testcase {
             'Music', // Course category name.
             fullname($user1), // User fullname.
             'Manual enrolments', // Enrolment method.
+            $group->name, // Group name.
             'Yes', // Course completed.
             userdate($timelastaccess), // Time last access.
             '100.0%', // Progress percentage.

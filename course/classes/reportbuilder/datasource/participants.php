@@ -22,6 +22,7 @@ use core_course\reportbuilder\local\entities\course_category;
 use core_course\reportbuilder\local\entities\access;
 use core_course\reportbuilder\local\entities\completion;
 use core_course\reportbuilder\local\entities\enrolment;
+use core_group\reportbuilder\local\entities\group;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\course;
 use core_reportbuilder\local\entities\user;
@@ -71,6 +72,26 @@ class participants extends datasource {
         $userentity->add_joins($enrolmententity->get_joins());
         $userentity->add_join("LEFT JOIN {user} {$user} ON {$userenrolment}.userid = {$user}.id AND {$user}.deleted = 0");
         $this->add_entity($userentity);
+
+        // Join group entity.
+        $groupentity = (new group())
+            ->set_table_alias('context', $courseentity->get_table_alias('context'));
+        $groups = $groupentity->get_table_alias('groups');
+
+        // Sub-select for all course group members.
+        $groupsinnerselect = "
+            SELECT grs.*, grms.userid
+              FROM {groups} grs
+              JOIN {groups_members} grms ON grms.groupid = grs.id";
+
+        $this->add_entity($groupentity
+            ->add_join($courseentity->get_context_join())
+            ->add_joins($userentity->get_joins())
+            ->add_join("
+                LEFT JOIN ({$groupsinnerselect}) {$groups}
+                       ON {$groups}.courseid = {$course}.id
+                      AND {$groups}.userid = {$user}.id")
+        );
 
         // Join completion entity.
         $completionentity = new completion();
