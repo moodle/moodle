@@ -147,7 +147,7 @@
     overflow: auto;
 }
 
-.path-grade-report-singleview .user-selector .userinitials {
+.path-grade-report-singleview .search-widget[data-searchtype="user"] .userinitials {
     width: 40px;
     height: 40px;
 }
