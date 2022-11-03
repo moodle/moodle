@@ -262,7 +262,7 @@ class action_bar {
 
         if ($hasimport) {
             // Import.
-            $actionsselectparams = ['id' => $this->cmid, 'action' => 'import'];
+            $actionsselectparams = ['id' => $this->cmid];
             $actionsselect->add(new \action_menu_link(
                 new moodle_url('/mod/data/preset.php', $actionsselectparams),
                 null,
