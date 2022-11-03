@@ -344,6 +344,9 @@ class tool_provider extends ToolProvider {
             if ($userlog->serviceurl != $serviceurl) {
                 $userlog->serviceurl = $serviceurl;
             }
+            if (empty($userlog->consumersecret)) {
+                $userlog->consumersecret = $this->consumer->secret;
+            }
             $userlog->lastaccess = time();
             $DB->update_record('enrol_lti_users', $userlog);
         } else {
