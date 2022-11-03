@@ -162,7 +162,6 @@ if ($action === 'finishimport') {
     $importer->finish_import_process($overwritesettings, $data);
 
     echo $OUTPUT->continue_button(new moodle_url('/mod/data/preset.php', ['d' => $data->id]));
-    echo html_writer::end_div();
     echo $OUTPUT->footer();
     exit(0);
 }
