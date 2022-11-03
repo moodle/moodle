@@ -21,7 +21,7 @@ Feature: Within the singleview report, a teacher can search for users.
 
   Scenario: A teacher can search for and find a user to view
     Given I navigate to "View > Single view" in the course gradebook
-    When I click on "User" "link" in the ".singleindex" "css_element"
+    When I click on "Users" "link" in the ".page-toggler" "css_element"
     And I wait until the page is ready
     And I click on ".userwidget" "css_element"
     Then I confirm "Student 1" in "Select a user" search within the gradebook widget exists

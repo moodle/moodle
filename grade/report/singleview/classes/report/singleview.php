@@ -189,7 +189,7 @@ class singleview extends grade_report {
 
         foreach ($options as $type => $option) {
             $action = new \action_menu_link_secondary(new \moodle_url('#'), null, $option,
-                ['data-role' => $type]);
+                ['data-action' => $type, 'data-role' => 'bulkaction']);
             $menu->add($action);
         }
         $menu->attributes['class'] .= ' float-left my-auto';

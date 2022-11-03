@@ -16,6 +16,59 @@
 }}
 {{!
     @template gradereport_singleview/action_bar
+
+    Context variables required for this template:
+    * generalnavselector - The data object containing the required properties to render the general navigation selector.
+    * groupselector - (optional) HTML that outputs the group selector
+    * itemselector - (optional) HTML that outputs the user or grade item selector
+    * pagetoggler - (optional) HTML that outputs the user/grade item view toggler
+    * bulkactions - (optional) HTML that outputs the bulk actione menu
+
+        Example context (json):
+    {
+        "generalnavselector": {
+            "name": "Gradebook tertiary navigation selector",
+            "value": "opt2",
+            "baseid": "select-menu56789",
+            "selectedoption": "Gradebook setup",
+            "options": [
+                {
+                    "selected": false,
+                     "isgroup": {
+                         "name": "View",
+                         "id": "select-menu-group1",
+                         "options": [
+                             {
+                                 "name": "Grader report",
+                                 "value": "opt1",
+                                 "id": "select-menu-option1",
+                                 "selected": false
+                             }
+                         ]
+                     }
+                },
+                {
+                    "selected": false,
+                    "isgroup": {
+                        "name": "Setup",
+                        "id": "select-menu-group2",
+                        "options": [
+                            {
+                                "name": "Gradebook setup",
+                                "value": "opt2",
+                                "id": "select-menu-option2",
+                                "selected": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "groupselector": "<div class='group-selector'></div>",
+        "itemselector": "<div class='user-selector'></div>",
+        "pagetoggler": "<div class='page-toggler'></div>",
+        "bulkactions": "<div class='action-menu'></div>"
+    }
 }}
 <div class="container-fluid tertiary-navigation full-width-bottom-border">
     <div class="row">

@@ -134,7 +134,14 @@
 .path-grade-report-singleview input[type=checkbox] {
     width: 22px;
     height: 21px;
-    margin: 11.5px auto 11.5px auto;
+    margin: 11.5px 11.5px 11.5px auto;
+}
+
+#bulkinsertmodal {
+    width: 181px;
+    height: 39px;
+    top: 309px;
+    border-radius: 4px;
 }
 
 .path-grade-report-singleview .singleview_bulk > fieldset {

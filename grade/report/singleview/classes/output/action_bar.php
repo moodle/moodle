@@ -83,10 +83,10 @@ class action_bar extends \core_grades\output\action_bar {
             'displaylabel' => true,
             'userselectactive' => $this->itemtype === 'user',
             'gradeselectactive' => $this->itemtype === 'grade',
-            'gradezerolink' => new moodle_url('/grade/report/singleview/index.php',
-                ['id' => $courseid, 'item' => 'grade_select']),
-            'userzerolink' => new moodle_url('/grade/report/singleview/index.php',
-                ['id' => $courseid, 'item' => 'user_select'])
+            'gradezerolink' => (new moodle_url('/grade/report/singleview/index.php',
+                ['id' => $courseid, 'item' => 'grade_select']))->out(false),
+            'userzerolink' => (new moodle_url('/grade/report/singleview/index.php',
+                ['id' => $courseid, 'item' => 'user_select']))->out(false)
         ];
 
         $data['groupselector'] = $this->report->group_selector;

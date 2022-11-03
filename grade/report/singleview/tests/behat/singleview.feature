@@ -59,7 +59,7 @@ Feature: We can use Single view
 
   Scenario: I can update grades, add feedback and exclude grades.
     Given I navigate to "View > Single view" in the course gradebook
-    And I click on "User" "link" in the ".singleindex" "css_element"
+    And I click on "Users" "link"
     And I click on "Student" in the "user" search widget
     And I turn editing mode on
     And I set the field "Override for Test assignment one" to "1"
@@ -99,7 +99,7 @@ Feature: We can use Single view
     And I log in as "teacher2"
     And I am on "Course 1" course homepage
     Given I navigate to "View > Single view" in the course gradebook
-    And I click on "User" "link" in the ".singleindex" "css_element"
+    And I click on "Users" "link"
     And I click on "Student" in the "user" search widget
     And I turn editing mode on
     And the "Exclude for Test assignment one" "checkbox" should be disabled
@@ -118,9 +118,9 @@ Feature: We can use Single view
     When I turn editing mode on
     And I click on "Actions" "link"
     And I click on "Bulk insert" "link"
-    And I click on "I understand that my unsaved data might be lost" "checkbox"
+    And I click on "I understand that my unsaved changes will be lost." "checkbox"
     And I click on "All grades" "radio"
-    And I set the field "Insert value modal" to "1.0"
+    And I set the field "Insert value" to "1.0"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     Then I should see "Grades were set for 6 items"
 
@@ -133,12 +133,12 @@ Feature: We can use Single view
     When I turn editing mode on
     And I click on "Actions" "link"
     And I click on "Bulk insert" "link"
-    And I click on "I understand that my unsaved data might be lost" "checkbox"
+    And I click on "I understand that my unsaved changes will be lost." "checkbox"
     And I click on "All grades" "radio"
-    And I set the field "Insert value modal" to "1#25"
+    And I set the field "Insert value" to "1#25"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     Then I should see "Grades were set for 6 items"
-    # Custome scale, cast to int
+    # Custom scale, cast to int
     And the field "Grade for new grade item 1" matches value "Disappointing"
     # Value grade, float with custom decsep.
     And the field "Grade for Test assignment one" matches value "1#25"

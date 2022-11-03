@@ -30,7 +30,6 @@ $string['assessmentname'] = 'Grade item';
 $string['blanks'] = 'Empty grades';
 $string['bulkappliesto'] = 'For';
 $string['bulkinsertvalue'] = 'Insert value';
-$string['bulkinsertvaluemodal'] = 'Insert value modal';
 $string['bulklegend'] = 'Bulk insert';
 $string['bulkchoice'] = 'For which grades do you want to insert?';
 $string['bulkperform'] = 'Perform bulk insert';
@@ -72,9 +71,8 @@ $string['selectuser'] = 'Select user...';
 $string['singleview:view'] = 'View report';
 $string['summarygrade'] = 'A table of users, with columns for range, grade, feedback, and whether to override or exclude a particular grade.';
 $string['summaryuser'] = 'A table of grade items, with columns for grade category, range, grade, feedback, and whether to override or exclude a particular grade.';
-$string['unsavedataalert'] = 'If you have unsave changes in grades table, you might lose some data when chosing "All grades" and click Save.';
-$string['unsavedataconfirm'] = 'I understand that my unsaved data might be lost';
-$string['users'] = 'Users';
+$string['unsavedataalert'] = 'You have unsaved changes in the grades table, you will lose these changes if you proceed with the bulk insert.';
+$string['unsavedataconfirm'] = 'I understand that my unsaved changes will be lost.';
 $string['userselect'] = 'Select activity';
 
 $string['ariareporttype'] = 'Select a report type to view';
@@ -84,6 +82,7 @@ $string['selectagrade'] = 'Select a grade item';
 $string['selectuserinstructions'] = 'By selecting a user you can view the grades by activity';
 $string['selectgradeinstructions'] = 'Select items to grade...';
 $string['selectgradeitemlink'] = 'Click to select a grade item';
+$string['unsaveddatawarning'] = 'Unsaved data warning';
 $string['whattoview'] = 'What would you like to view';
 $string['whattoviewselect'] = 'Select to view by users or grade items';
 

@@ -134,7 +134,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     Given I log in as "teacher1"
     And I am on "Completion course" course homepage
     And I navigate to "View > Single view" in the course gradebook
-    And I click on "User" "link" in the ".singleindex" "css_element"
+    And I click on "Users" "link" in the ".page-toggler" "css_element"
     And I turn editing mode on
     And I click on "Student First" in the "user" search widget
     And I set the field "Override for Test assignment name" to "1"

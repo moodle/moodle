@@ -26,6 +26,9 @@ import CustomEvents from "core/custom_interaction_events";
 import ModalFactory from 'core/modal_factory';
 import Templates from 'core/templates';
 import ModalEvents from 'core/modal_events';
+import * as Str from 'core/str';
+import Notification from 'core/notification';
+import selectors from 'gradereport_singleview/selectors';
 
 /**
  * Initialize module.
@@ -52,102 +55,119 @@ const registerListenerEvents = () => {
     // Register events.
     events.forEach((event) => {
         document.addEventListener(event, async(e) => {
-            const trigger = e.target.closest('[data-role]');
+            const trigger = e.target.closest(selectors.actions.bulkaction);
+
             if (trigger) {
-                if ((trigger.dataset.role === 'overrideallgrades') || (trigger.dataset.role === 'overridenonegrades')) {
-                    const overrideAll = document.querySelectorAll('input[type=checkbox][name^=override]');
+                if ((trigger.dataset.action === 'overrideallgrades') || (trigger.dataset.action === 'overridenonegrades')) {
+                    const override = document.querySelectorAll(selectors.elements.override);
 
-                    if (trigger.dataset.role === 'overridenonegrades') {
-                        const confirm = new M.core.confirm({
-                            title: M.util.get_string('removeoverride', 'gradereport_singleview'),
-                            question: M.util.get_string('overridenoneconfirm', 'gradereport_singleview'),
-                            noLabel: M.util.get_string('cancel', 'moodle'),
-                            yesLabel: M.util.get_string('removeoverridesave', 'gradereport_singleview')
-                        });
+                    if (trigger.dataset.action === 'overridenonegrades') {
+                        // Alert for removing all grade overrides on page.
+                        Str.get_strings([
+                            {key: 'removeoverride', component: 'gradereport_singleview'},
+                            {key: 'overridenoneconfirm', component: 'gradereport_singleview'},
+                            {key: 'removeoverridesave', component: 'gradereport_singleview'},
+                            {key: 'cancel', component: 'moodle'},
+                        ]).done((strings) => {
+                            Notification.confirm(
+                                strings[0],
+                                strings[1],
+                                strings[2],
+                                strings[3],
+                                () => {
+                                    // Uncheck each override checkbox - this will make grade and feedback input fields disabled.
+                                    override.forEach((el) => {
+                                        if (el.checked) {
+                                            el.click();
+                                        }
+                                    });
+                                });
+                        }).fail(Notification.exception);
 
-                        confirm.on('complete-yes', function () {
-                            confirm.hide();
-                            confirm.destroy();
-
-                            overrideAll.forEach(function (el) {
-                                if (el.checked) {
-                                    el.click();
-                                }
-                            });
-                        }, self);
-                        confirm.show();
                     } else {
-                        overrideAll.forEach(function (el) {
+                        // Check each override checkbox - this will make grade and feedback input fields enabled.
+                        override.forEach((el) => {
                             if (!el.checked) {
                                 el.click();
                             }
                         });
                     }
-                } else if ((trigger.dataset.role === 'excludeallgrades') || (trigger.dataset.role === 'excludenonegrades')) {
-                    const excludeAll = document.querySelectorAll('input[type=checkbox][name^=exclude]');
-                    const checked = (trigger.dataset.role === 'excludeallgrades');
-                    excludeAll.forEach(function (el) {
+                } else if ((trigger.dataset.action === 'excludeallgrades') || (trigger.dataset.action === 'excludenonegrades')) {
+                    const exclude = document.querySelectorAll(selectors.elements.exclude);
+                    const checked = (trigger.dataset.action === 'excludeallgrades');
+                    // Uncheck or check each exclude checkbox.
+                    exclude.forEach((el) => {
                         el.checked = checked;
                     });
-                } else if (trigger.dataset.role === 'bulklegend') {
-                    ModalFactory.create({
-                        type: ModalFactory.types.SAVE_CANCEL,
-                        body: Templates.render('gradereport_singleview/bulkinsert', {
-                            id: 'bulkinsertmodal',
-                            name: 'bulkinsertmodal'
-                        }),
-                        title: 'Bulk insert',
-                    })
-                        .then(function (modal) {
-                            modal.setSaveButtonText('Save');
-                            modal.getFooter().find('[data-action="save"]').attr('disabled', true);
+                } else if (trigger.dataset.action === 'bulklegend') {
+                    // Modal for bulk insert grades.
+                    Str.get_strings([
+                        {key: 'bulklegend', component: 'gradereport_singleview'},
+                        {key: 'save', component: 'moodle'},
+                    ]).done((strings) => {
+                        ModalFactory.create({
+                            type: ModalFactory.types.SAVE_CANCEL,
+                            body: Templates.render('gradereport_singleview/bulkinsert', {
+                                id: 'bulkinsertmodal',
+                                name: 'bulkinsertmodal'
+                            }),
+                            title: strings[0],
+                        }).then((modal) => {
+                            modal.setSaveButtonText(strings[1]);
+                            modal.getFooter().find(selectors.elements.modalsave).attr('disabled', true);
 
-                            modal.getRoot().on(ModalEvents.hidden, function () {
+                            modal.getRoot().on(ModalEvents.hidden, () => {
                                 modal.getRoot().remove();
                             });
 
-                            modal.getRoot().on('change', 'input[type="checkbox"]',
+                            // We need to acknowledge that we understand risks of loosing data.
+                            // Only when acknowledge checkbox is checked we allow selecting insert options.
+                            modal.getRoot().on('change', selectors.elements.warningcheckbox,
                                 (e) => {
                                     e.preventDefault();
                                     if (e.target.checked) {
-                                        modal.getRoot().find('.formdata').removeClass('dimmed_text');
-                                        modal.getRoot().find('input[type="radio"]').removeAttr('disabled');
-                                        modal.getRoot().find('input[type="text"]').removeAttr('disabled');
+                                        modal.getRoot().find(selectors.elements.modalformdata).removeClass('dimmed_text');
+                                        modal.getRoot().find(selectors.elements.modalradio).removeAttr('disabled');
+                                        modal.getRoot().find(selectors.elements.modalinput).removeAttr('disabled');
 
-                                        const formRadioData = modal.getRoot().find('input[type="radio"]:checked').val();
+                                        const formRadioData = modal.getRoot().find(selectors.elements.modalradiochecked).val();
+                                        // We allow saving grades only when all needed data present on form.
                                         if (formRadioData) {
-                                            modal.getFooter().find('[data-action="save"]').removeAttr('disabled');
+                                            modal.getFooter().find(selectors.elements.modalsave).removeAttr('disabled');
                                         }
                                     } else {
-                                        modal.getRoot().find('.formdata').addClass('dimmed_text');
-                                        modal.getRoot().find('input[type="radio"]').attr('disabled', true);
-                                        modal.getRoot().find('input[type="text"]').attr('disabled', true);
-                                        modal.getFooter().find('[data-action="save"]').attr('disabled', true);
+                                        modal.getRoot().find(selectors.elements.modalformdata).addClass('dimmed_text');
+                                        modal.getRoot().find(selectors.elements.modalradio).attr('disabled', true);
+                                        modal.getRoot().find(selectors.elements.modalinput).attr('disabled', true);
+                                        modal.getFooter().find(selectors.elements.modalsave).attr('disabled', true);
                                     }
                                 });
 
-                            modal.getRoot().on('change', 'input[type="radio"]',
+                            // We allow saving grades only when all needed data present on form.
+                            modal.getRoot().on('change', selectors.elements.modalradio,
                                 (e) => {
                                     e.preventDefault();
-                                    modal.getFooter().find('[data-action="save"]').removeAttr('disabled');
+                                    modal.getFooter().find(selectors.elements.modalsave).removeAttr('disabled');
                                 });
 
-                            modal.getRoot().on(ModalEvents.save, function () {
-                                document.querySelector('input[type="checkbox"][name^=bulk]').checked = true;
-
-                                const formRadioData = modal.getRoot().find('input[type="radio"]:checked').val();
-                                const $select = document.querySelector('select[name^=bulk]');
+                            modal.getRoot().on(ModalEvents.save, () => {
+                                // When save button is clicked in modal form we insert data from modal
+                                // into preexisted hidden bulk insert form and Save button for table form.
+                                document.querySelector(selectors.elements.enablebulkinsert).checked = true;
+                                const formRadioData = modal.getRoot().find(selectors.elements.modalradiochecked).val();
+                                const $select = document.querySelector(selectors.elements.formradio);
                                 $select.value = formRadioData;
 
-                                const formData = modal.getRoot().find('.form-control').val();
-                                document.querySelector('input[type="text"][name^=bulk]').value = formData;
-                                document.querySelector('input[type="submit"]').click();
+                                const formData = modal.getRoot().find(selectors.elements.modalgrade).val();
+                                document.querySelector(selectors.elements.formgrade).value = formData;
+                                document.querySelector(selectors.elements.formsave).click();
                             });
 
                             modal.show();
 
                             return modal;
-                        });
+                        }).fail(Notification.exception);
+                    }).fail(Notification.exception);
                 }
             }
         });
