@@ -255,7 +255,8 @@ class meeting {
             !$instance->has_user_limit_been_reached($participantcount)
             || !$instance->does_current_user_count_towards_user_limit()
             );
-        $canjoin = $canjoin && ($instance->is_currently_open() || $instance->user_can_force_join());
+        // User should only join during scheduled session start and end time, if defined.
+        $canjoin = $canjoin && ($instance->is_currently_open());
         // Double check that the user has the capabilities to join.
         $canjoin = $canjoin && $instance->can_join();
         $meetinginfo->canjoin = $canjoin;
