@@ -74,11 +74,8 @@
 </div>
 <hr/>
 {{#js}}
-    require(['mod_data/saveaspreset'], function(saveAsPreset) {
+    require(['mod_data/saveaspreset', 'mod_data/importpresets'], (saveAsPreset, importPresets) => {
         saveAsPreset.init();
-    });
-
-    require(['mod_data/importpresets'], function(importPresetsModal) {
         importPresetsModal.init();
     });
 {{/js}}

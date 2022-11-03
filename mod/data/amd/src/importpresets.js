@@ -33,11 +33,14 @@ const selectors = {
  * Initialize module
  */
 export const init = () => {
-    const importPresetButton = document.querySelector(selectors.importPresetButton);
+    document.addEventListener('click', (event) => {
+        const importPresetButton = event.target.closest(selectors.importPresetButton);
 
-    importPresetButton.addEventListener('click', event => {
+        if (!importPresetButton) {
+            return;
+        }
+
         event.preventDefault();
-
         const modalForm = new ModalForm({
             modalConfig: {
                 title: getString('importpreset', 'mod_data'),
