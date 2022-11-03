@@ -69,9 +69,16 @@ export const init = async(widgetContentContainer, bodyPromise, data, searchFunc,
 export const registerListenerEvents = (widgetContentContainer, data, searchFunc) => {
     const searchResultsContainer = widgetContentContainer.querySelector(Selectors.regions.searchResults);
     const searchInput = widgetContentContainer.querySelector(Selectors.actions.search);
+    const clearSearchButton = widgetContentContainer.querySelector(Selectors.actions.clearSearch);
 
     // The search input is triggered.
     searchInput.addEventListener('input', debounce(async() => {
+        // If search query is present display the 'clear search' button, otherwise hide it.
+        if (searchInput.value.length > 0) {
+            clearSearchButton.classList.remove('d-none');
+        } else {
+            clearSearchButton.classList.add('d-none');
+        }
         // Display the search results.
         await renderSearchResults(
             searchResultsContainer,
@@ -82,6 +89,26 @@ export const registerListenerEvents = (widgetContentContainer, data, searchFunc)
             )
         );
     }, 300));
+
+    // Clear search is triggered.
+    clearSearchButton.addEventListener('click', async(e) => {
+        e.stopPropagation();
+        // Clear the entered search query in the search bar.
+        searchInput.value = "";
+        searchInput.focus();
+        clearSearchButton.classList.add('d-none');
+
+        // Display all results.
+        await renderSearchResults(
+            searchResultsContainer,
+            debounceCallee(
+                searchInput.value,
+                data,
+                searchFunc()
+            )
+        );
+    });
+
     // Trigger event handling for the results in line with aria guidelines.
     comboBox(searchInput);
 };
