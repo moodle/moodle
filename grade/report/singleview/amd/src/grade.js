@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A small modal to search users within the gradebook.
+ * A small modal to search grade items within the gradebook.
  *
  * @module    gradereport_singleview
  * @copyright 2022 Mathew May <mathew.solutions>
@@ -23,10 +23,10 @@
 
 import Pending from 'core/pending';
 import * as Templates from 'core/templates';
-import CustomEvents from "core/custom_interaction_events";
 import * as Repository from 'core_grades/searchwidget/repository';
 import * as WidgetBase from 'core_grades/searchwidget/basewidget';
-import {get_string as getString} from 'core/str';
+import $ from 'jquery';
+import * as Selectors from 'core_grades/searchwidget/selectors';
 
 /**
  * Our entry point into starting to build the search widget.
@@ -46,50 +46,46 @@ export const init = () => {
  * @method registerListenerEvents
  */
 const registerListenerEvents = () => {
-    const events = [
-        'click',
-        CustomEvents.events.activate,
-        CustomEvents.events.keyboardActivate
-    ];
-    CustomEvents.define(document, events);
-
     let {bodyPromiseResolver, bodyPromise} = WidgetBase.promisesAndResolvers();
+    const dropdownMenuContainer = document.querySelector(Selectors.elements.getSearchWidgetDropdownSelector('grade'));
 
-    // Register events.
-    events.forEach((event) => {
-        document.addEventListener(event, async(e) => {
-            const trigger = e.target.closest('.gradewidget');
-            if (trigger) {
-                const courseID = trigger.dataset.courseid;
-                e.preventDefault();
+    // Handle the 'shown.bs.dropdown' event (Fired when the dropdown menu is fully displayed).
+    $(Selectors.elements.getSearchWidgetSelector('grade')).on('show.bs.dropdown', async(e) => {
+        const courseID = e.relatedTarget.dataset.courseid;
+        // Display a loading icon in the dropdown menu container until the body promise is resolved.
+        await WidgetBase.showLoader(dropdownMenuContainer);
 
-                // If an error occurs while fetching the data, display the error within the modal.
-                const data = await Repository.gradeitemFetch(courseID).catch(async(e) => {
-                    const errorTemplateData = {
-                        'errormessage': e.message
-                    };
-                    bodyPromiseResolver(
-                        await Templates.render('core_grades/searchwidget/error', errorTemplateData)
-                    );
-                });
-                // Early return if there is no module data.
-                if (data === [] || data === undefined) {
-                    return;
-                }
-                WidgetBase.init(
-                    bodyPromise,
-                    data.gradeitems,
-                    searchGradeitems(),
-                    getString('selectagrade', 'gradereport_singleview')
-                );
-            }
+        // If an error occurs while fetching the data, display the error within the modal.
+        const data = await Repository.gradeitemFetch(courseID).catch(async(e) => {
+            const errorTemplateData = {
+                'errormessage': e.message
+            };
+            bodyPromiseResolver(
+                await Templates.render('core_grades/searchwidget/error', errorTemplateData)
+            );
         });
+
+        // Early return if there is no module data.
+        if (data === []) {
+            return;
+        }
+
+        await WidgetBase.init(
+            dropdownMenuContainer,
+            bodyPromise,
+            data.gradeitems,
+            searchGradeitems()
+        );
+
+        // Resolvers for passed functions in the modal creation.
+        bodyPromiseResolver(Templates.render('gradereport_singleview/gradesearch_body', []));
     });
-    // Resolvers for passed functions in the modal creation.
-    bodyPromiseResolver(Templates.render(
-        'gradereport_singleview/gradesearch_body',
-        []
-    ));
+
+    // Handle the 'hide.bs.dropdown' event (Fired when the dropdown menu is being closed).
+    $(Selectors.elements.getSearchWidgetSelector('grade')).on('hide.bs.dropdown', () => {
+        // Reset the state once the grade item menu dropdown is closed.
+        dropdownMenuContainer.innerHTML = '';
+    });
 };
 
 /**

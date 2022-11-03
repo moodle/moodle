@@ -29,8 +29,8 @@
         }
     }
 }}
-<div class="grade-selector d-flex">
-    <div role="button" class="gradewidget btn dropdown-toggle d-flex text-left align-items-center p-0" data-courseid="{{courseid}}" data-searchtype="grade" tabindex="0" aria-label="{{#str}} selectagrade, gradereport_singleview {{/str}}">
+<div class="search-widget dropdown d-flex" data-searchtype="grade">
+    <button aria-expanded="false" data-toggle="dropdown" class="btn dropdown-toggle d-flex text-left align-items-center p-0" data-courseid="{{courseid}}" aria-label="{{#str}} selectagrade, gradereport_singleview {{/str}}">
         <div class="align-items-center d-flex">
             {{#selectedoption}}
                 <div class="d-block pr-3">
@@ -48,5 +48,7 @@
                 </div>
             {{/selectedoption}}
         </div>
+    </button>
+    <div class="dropdown-menu wide">
     </div>
 </div>
