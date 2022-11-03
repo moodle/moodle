@@ -28,9 +28,7 @@ Feature: Test importing questions from GIFT format.
     Then I should see "colours"
 
     # Now export again.
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
-    And I select "Export" from the "Question bank tertiary navigation" singleselect
+    And I am on the "Course 1" "core_question > course question export" page
     And I set the field "id_format_gift" to "1"
     And I press "Export questions to file"
     And following "click here" should download between "1500" and "1800" bytes

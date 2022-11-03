@@ -1,27 +1,27 @@
 @mod @mod_data
 Feature: Users can view and manage data presets
-  In order to use presets
-  As a user
-  I need to view, manage and use presets
+    In order to use presets
+    As a user
+    I need to view, manage and use presets
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
       | activity | name                | intro | course | idnumber |
       | data     | Mountain landscapes | n     | C1     | data1    |
     And the following "mod_data > presets" exist:
-      | database | name                      | description                          | user      |
-      | data1    | Saved preset 1            | The preset1 has description          | admin     |
-      | data1    | Saved preset 2            |                                      | admin     |
-      | data1    | Saved preset by teacher1  | This preset has also a description   | teacher1  |
+      | database | name                     | description                        | user     |
+      | data1    | Saved preset 1           | The preset1 has description        | admin    |
+      | data1    | Saved preset 2           |                                    | admin    |
+      | data1    | Saved preset by teacher1 | This preset has also a description | teacher1 |
 
   @javascript
   Scenario: Admins can delete saved presets
@@ -71,11 +71,11 @@ Feature: Users can view and manage data presets
   @javascript
   Scenario: Only users with the viewalluserpresets capability can see presets created by other users
     Given the following "permission override" exists:
-      | role         | editingteacher                       |
-      | capability   | mod/data:viewalluserpresets          |
-      | permission   | Prohibit                             |
-      | contextlevel | System                               |
-      | reference    |                                      |
+      | role         | editingteacher              |
+      | capability   | mod/data:viewalluserpresets |
+      | permission   | Prohibit                    |
+      | contextlevel | System                      |
+      | reference    |                             |
     When I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Presets"
     Then I should see "Image gallery"
@@ -86,8 +86,8 @@ Feature: Users can view and manage data presets
   @javascript
   Scenario: Teachers can save presets
     Given the following "mod_data > fields" exist:
-      | database | type | name              | description              |
-      | data1    | text | Test field name   | Test field description   |
+      | database | type | name            | description            |
+      | data1    | text | Test field name | Test field description |
     And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     And I follow "Templates"
     When I click on "Actions" "button"
@@ -176,10 +176,10 @@ Feature: Users can view and manage data presets
   @javascript
   Scenario: Teachers can edit presets and overwrite them if they are the authors
     Given the following "mod_data > preset" exists:
-      | database    | data1                                 |
-      | name        | Another preset created by teacher1    |
-      | description | This description will be overwritten  |
-      | user        | teacher1                              |
+      | database    | data1                                |
+      | name        | Another preset created by teacher1   |
+      | description | This description will be overwritten |
+      | user        | teacher1                             |
     And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     When I follow "Presets"
     And I open the action menu in "Saved preset by teacher1" "table_row"
@@ -243,11 +243,11 @@ Feature: Users can view and manage data presets
   @javascript
   Scenario: Teachers can delete their own presets
     Given the following "mod_data > fields" exist:
-      | database | type | name              | description              |
-      | data1    | text | Test field name   | Test field description   |
+      | database | type | name            | description            |
+      | data1    | text | Test field name | Test field description |
     And the following "mod_data > presets" exist:
-      | database | name                      | description                          | user      |
-      | data1    | Saved preset by teacher1  | My funny description goes here.      | teacher1  |
+      | database | name                     | description                     | user     |
+      | data1    | Saved preset by teacher1 | My funny description goes here. | teacher1 |
     And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
     When I follow "Presets"
     And I should see "Image gallery"

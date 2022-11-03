@@ -19,9 +19,7 @@ Feature: Use the qbank base view to test the status change using
 
   @javascript
   Scenario: Question status dropdown should change the status of the question
-    Given I log in as "admin"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
     And I set the field "Select a category" to "Test questions"
     And I should see "Test questions"
     And the field "question_status_dropdown" in the "First question" "table_row" matches value "Ready"
