@@ -1209,7 +1209,8 @@ EOF;
         $containernode = $this->find($containerselectortype, $containerelement);
 
         // Specific exception giving info about where can't we find the element.
-        $locatorexceptionmsg = "{$element} in the {$containerelement} {$containerselectortype}";
+        $containerdescription = $this->get_selector_description($containerselectortype, $containerelement);
+        $locatorexceptionmsg = "{$element} not found in the {$containerdescription}}";
         $exception = new ElementNotFoundException($this->getSession(), $selectortype, null, $locatorexceptionmsg);
 
         // Looks for the requested node inside the container node.
@@ -1243,8 +1244,10 @@ EOF;
         }
 
         // The element was found and should not have been. Throw an exception.
+        $elementdescription = $this->get_selector_description($selectortype, $element);
+        $containerdescription = $this->get_selector_description($containerselectortype, $containerelement);
         throw new ExpectationException(
-            "The '{$element}' '{$selectortype}' exists in the '{$containerelement}' '{$containerselectortype}'",
+            "The {$elementdescription} exists in the {$containerdescription}",
             $this->getSession()
         );
     }

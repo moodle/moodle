@@ -21,14 +21,12 @@ Feature: In an essay question, let the question author choose the min/max number
       | questioncategory | qtype | name          | template | minwordlimit | maxwordlimit |
       | Test questions   | essay | essay-min-max | editor   | 0            | 0            |
 
-  @javascript
   Scenario: Minimum/Maximum word limit are enabled but not set.
     When I am on the "essay-min-max" "core_question > edit" page logged in as teacher
     And I set the field "minwordenabled" to "1"
     And I click on "Save changes" "button"
     Then I should see "Minimum word limit is enabled but is not set"
 
-  @javascript
   Scenario: Minimum/Maximum word limit cannot be set to a negative number.
     When I am on the "essay-min-max" "core_question > edit" page logged in as teacher
     And I set the field "minwordenabled" to "1"
@@ -36,7 +34,6 @@ Feature: In an essay question, let the question author choose the min/max number
     And I click on "Save changes" "button"
     Then I should see "Minimum word limit cannot be a negative number"
 
-  @javascript
   Scenario: Maximum word limit cannot be greater than minimum word limit.
     When I am on the "essay-min-max" "core_question > edit" page logged in as teacher
     And I set the field "minwordenabled" to "1"

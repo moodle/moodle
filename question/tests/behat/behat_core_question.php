@@ -174,13 +174,44 @@ class behat_core_question extends behat_question_base {
      * @param string $questionname the question name.
      */
     public function i_action_the_question($action, $questionname) {
-        // Open the menu.
-        $this->execute("behat_general::i_click_on_in_the",
-                [get_string('edit'), 'link', $questionname, 'table_row']);
+        $this->execute('behat_action_menu::i_choose_in_the_named_menu_in_container', [
+            $action,
+            get_string('edit', 'core'),
+            $questionname,
+            'table_row',
+        ]);
+    }
 
-        // Click the action from the menu.
-        $this->execute("behat_general::i_click_on_in_the",
-                [$action, 'link', $questionname, 'table_row']);
+    /**
+     * Checks that action does exist for a question.
+     *
+     * @Then the :action action should exist for the :questionname question in the question bank
+     * @param string $action the label for the action you want to activate.
+     * @param string $questionname the question name.
+     */
+    public function action_exists($action, $questionname) {
+        $this->execute('behat_action_menu::item_should_exist_in_the', [
+            $action,
+            get_string('edit', 'core'),
+            $questionname,
+            'table_row',
+        ]);
+    }
+
+    /**
+     * Checks that action does not exist for a question.
+     *
+     * @Then the :action action should not exist for the :questionname question in the question bank
+     * @param string $action the label for the action you want to activate.
+     * @param string $questionname the question name.
+     */
+    public function action_not_exists($action, $questionname) {
+        $this->execute('behat_action_menu::item_should_not_exist_in_the', [
+            $action,
+            get_string('edit', 'core'),
+            $questionname,
+            'table_row',
+        ]);
     }
 
     /**

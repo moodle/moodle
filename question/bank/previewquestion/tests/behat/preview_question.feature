@@ -1,4 +1,4 @@
-@qbank @qbank_previewquestion @javascript
+@qbank @qbank_previewquestion
 Feature: A teacher can preview questions in the question bank
   In order to ensure the questions are properly created
   As a teacher
@@ -23,9 +23,7 @@ Feature: A teacher can preview questions in the question bank
     And the following "questions" exist:
       | questioncategory | qtype     | name                          |
       | Test questions   | numerical | Test question to be previewed |
-    And I log in as "teacher1"
-    And I am on the "Test quiz" "quiz activity" page
-    And I navigate to "Question bank" in current page administration
+    And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
     When I choose "Preview" action for "Test question to be previewed" in the question bank
 
   Scenario: Question preview shows the question and other information

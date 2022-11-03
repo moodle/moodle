@@ -15,7 +15,6 @@ Feature: An activity module instance with questions in its context can be delete
       | user | course | role |
       | teacher1 | C1 | editingteacher |
 
-  @javascript
   Scenario: Synchronously deleting a quiz with existing questions in its context
     Given the following config values are set as admin:
       | coursebinenable | 0 | tool_recyclebin |

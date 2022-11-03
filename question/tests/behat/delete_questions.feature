@@ -26,10 +26,9 @@ Feature: A teacher can delete questions in the question bank
   Scenario: A question not used anywhere can really be deleted
     When I choose "Delete" action for "Test question to be deleted" in the question bank
     And I press "Delete"
-    And I click on "Also show old questions" "checkbox"
+    And I set the field "Also show old questions" to "1"
     Then I should not see "Test question to be deleted"
 
-  @javascript
   Scenario: Deleting a question can be cancelled
     When I choose "Delete" action for "Test question to be deleted" in the question bank
     And I press "Cancel"
@@ -54,7 +53,7 @@ Feature: A teacher can delete questions in the question bank
     And I choose "Delete" action for "Test used question to be deleted" in the question bank
     And I press "Delete"
     Then I should not see "Test used question to be deleted"
-    And I click on "Also show old questions" "checkbox"
+    And I set the field "Also show old questions" to "1"
     And I should see "Test used question to be deleted"
     And I am on the "Test quiz" "quiz activity" page
     And I click on "Preview quiz" "button"
@@ -68,5 +67,5 @@ Feature: A teacher can delete questions in the question bank
     And I reload the page
     When I choose "Delete" action for "Broken question" in the question bank
     And I press "Delete"
-    And I click on "Also show old questions" "checkbox"
+    And I set the field "Also show old questions" to "1"
     Then I should not see "Broken question"
