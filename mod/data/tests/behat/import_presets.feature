@@ -70,30 +70,6 @@ Feature: Users can import presets
     And I should see "image"
     And I should see "Create a new field" in the "image" "table_row"
 
-  Scenario: Teacher can import from field page on an empty database
-    Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
-    And I follow "Presets"
-    And I click on "Actions" "button"
-    And I choose "Import preset" in the open action menu
-    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
-    When I click on "Import preset and apply" "button"
-    Then I should not see "Field mappings"
-    And I should see "Image" in the "image" "table_row"
-
-  Scenario: Teacher can import from field page on a database with fields
-    Given the following "mod_data > fields" exist:
-      | database | type | name              | description              |
-      | data1    | text | Test field name   | Test field description   |
-    And I am on the "Mountain landscapes" "data activity" page logged in as teacher1
-    And I follow "Presets"
-    And I click on "Actions" "button"
-    And I choose "Import preset" in the open action menu
-    And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
-    When I click on "Import preset and apply" "button"
-    Then I should see "Field mappings"
-    And I should see "image"
-    And I should see "Create a new field" in the "image" "table_row"
-
   Scenario: Teacher can import from field page on a database with entries
     And the following "mod_data > fields" exist:
       | database | type | name   | description              |
