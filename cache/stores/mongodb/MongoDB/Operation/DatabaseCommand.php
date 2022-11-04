@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2015-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ use MongoDB\Driver\ReadPreference;
 use MongoDB\Driver\Server;
 use MongoDB\Driver\Session;
 use MongoDB\Exception\InvalidArgumentException;
+
 use function is_array;
 use function is_object;
 
@@ -55,8 +56,6 @@ class DatabaseCommand implements Executable
      *    command document, respectively.
      *
      *  * session (MongoDB\Driver\Session): Client session.
-     *
-     *    Sessions are not supported for server versions < 3.6.
      *
      *  * typeMap (array): Type map for BSON deserialization. This will be
      *    applied to the returned Cursor (it is not sent to the server).
@@ -110,7 +109,7 @@ class DatabaseCommand implements Executable
     /**
      * Create options for executing the command.
      *
-     * @see http://php.net/manual/en/mongodb-driver-server.executecommand.php
+     * @see https://php.net/manual/en/mongodb-driver-server.executecommand.php
      * @return array
      */
     private function createOptions()

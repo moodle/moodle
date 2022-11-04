@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2016-2017 MongoDB, Inc.
+ * Copyright 2016-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ use MongoDB\BSON\UTCDateTime;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Exception\InvalidArgumentException;
 use stdClass;
+
 use function array_intersect_key;
 use function hash_final;
 use function hash_init;
@@ -152,7 +153,7 @@ class WritableStream
     /**
      * Return internal properties for debugging purposes.
      *
-     * @see http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.debuginfo
+     * @see https://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.debuginfo
      * @return array
      */
     public function __debugInfo()
@@ -261,6 +262,9 @@ class WritableStream
         $this->isClosed = true;
     }
 
+    /**
+     * @return mixed
+     */
     private function fileCollectionInsert()
     {
         $this->file['length'] = $this->length;

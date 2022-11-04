@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2015-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
+
 use function current;
 
 /**
@@ -28,8 +29,8 @@ use function current;
  *
  * @api
  * @see \MongoDB\Collection::findOne()
- * @see http://docs.mongodb.org/manual/tutorial/query-documents/
- * @see http://docs.mongodb.org/manual/reference/operator/query-modifier/
+ * @see https://mongodb.com/docs/manual/tutorial/query-documents/
+ * @see https://mongodb.com/docs/manual/reference/operator/query-modifier/
  */
 class FindOne implements Executable, Explainable
 {
@@ -43,11 +44,9 @@ class FindOne implements Executable, Explainable
      *
      *  * collation (document): Collation specification.
      *
-     *    This is not supported for server versions < 3.4 and will result in an
-     *    exception at execution time if used.
+     *  * comment (mixed): BSON value to attach as a comment to this command.
      *
-     *  * comment (string): Attaches a comment to the query. If "$comment" also
-     *    exists in the modifiers document, this option will take precedence.
+     *    Only string values are supported for server versions < 4.4.
      *
      *  * hint (string|document): The index to use. Specify either the index
      *    name as a string or the index key pattern as a document. If specified,
@@ -74,17 +73,12 @@ class FindOne implements Executable, Explainable
      *
      *  * readConcern (MongoDB\Driver\ReadConcern): Read concern.
      *
-     *    This is not supported for server versions < 3.2 and will result in an
-     *    exception at execution time if used.
-     *
      *  * readPreference (MongoDB\Driver\ReadPreference): Read preference.
      *
      *  * returnKey (boolean): If true, returns only the index keys in the
      *    resulting documents.
      *
      *  * session (MongoDB\Driver\Session): Client session.
-     *
-     *    Sessions are not supported for server versions < 3.6.
      *
      *  * showRecordId (boolean): Determines whether to return the record
      *    identifier for each document. If true, adds a field $recordId to the
@@ -95,6 +89,11 @@ class FindOne implements Executable, Explainable
      *  * sort (document): The order in which to return matching documents. If
      *    "$orderby" also exists in the modifiers document, this option will
      *    take precedence.
+     *
+     *  * let (document): Map of parameter names and values. Values must be
+     *    constant or closed expressions that do not reference document fields.
+     *    Parameters can then be accessed as variables in an aggregate
+     *    expression context (e.g. "$$var").
      *
      *  * typeMap (array): Type map for BSON deserialization.
      *
@@ -131,6 +130,13 @@ class FindOne implements Executable, Explainable
         return $document === false ? null : $document;
     }
 
+    /**
+     * Returns the command document for this operation.
+     *
+     * @see Explainable::getCommandDocument()
+     * @param Server $server
+     * @return array
+     */
     public function getCommandDocument(Server $server)
     {
         return $this->find->getCommandDocument($server);

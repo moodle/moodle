@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2015-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,13 +26,14 @@ use MongoDB\Driver\Server;
 use MongoDB\Driver\Session;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
+
 use function is_array;
 use function is_bool;
 use function is_integer;
 use function is_object;
 use function is_string;
-use function MongoDB\server_supports_feature;
 use function trigger_error;
+
 use const E_USER_DEPRECATED;
 
 /**
@@ -40,23 +41,14 @@ use const E_USER_DEPRECATED;
  *
  * @api
  * @see \MongoDB\Collection::find()
- * @see http://docs.mongodb.org/manual/tutorial/query-documents/
- * @see http://docs.mongodb.org/manual/reference/operator/query-modifier/
+ * @see https://mongodb.com/docs/manual/tutorial/query-documents/
+ * @see https://mongodb.com/docs/manual/reference/operator/query-modifier/
  */
 class Find implements Executable, Explainable
 {
-    const NON_TAILABLE = 1;
-    const TAILABLE = 2;
-    const TAILABLE_AWAIT = 3;
-
-    /** @var integer */
-    private static $wireVersionForCollation = 5;
-
-    /** @var integer */
-    private static $wireVersionForReadConcern = 4;
-
-    /** @var integer */
-    private static $wireVersionForAllowDiskUseServerSideError = 4;
+    public const NON_TAILABLE = 1;
+    public const TAILABLE = 2;
+    public const TAILABLE_AWAIT = 3;
 
     /** @var string */
     private $databaseName;
@@ -77,7 +69,7 @@ class Find implements Executable, Explainable
      *
      *  * allowDiskUse (boolean): Enables writing to temporary files. When set
      *    to true, queries can write data to the _tmp sub-directory in the
-     *    dbPath directory. The default is false.
+     *    dbPath directory.
      *
      *  * allowPartialResults (boolean): Get partial results from a mongos if
      *    some shards are inaccessible (instead of throwing an error).
@@ -86,11 +78,9 @@ class Find implements Executable, Explainable
      *
      *  * collation (document): Collation specification.
      *
-     *    This is not supported for server versions < 3.4 and will result in an
-     *    exception at execution time if used.
+     *  * comment (mixed): BSON value to attach as a comment to this command.
      *
-     *  * comment (string): Attaches a comment to the query. If "$comment" also
-     *    exists in the modifiers document, this option will take precedence.
+     *    Only string values are supported for server versions < 4.4.
      *
      *  * cursorType (enum): Indicates the type of cursor to use. Must be either
      *    NON_TAILABLE, TAILABLE, or TAILABLE_AWAIT. The default is
@@ -134,17 +124,12 @@ class Find implements Executable, Explainable
      *
      *  * readConcern (MongoDB\Driver\ReadConcern): Read concern.
      *
-     *    This is not supported for server versions < 3.2 and will result in an
-     *    exception at execution time if used.
-     *
      *  * readPreference (MongoDB\Driver\ReadPreference): Read preference.
      *
      *  * returnKey (boolean): If true, returns only the index keys in the
      *    resulting documents.
      *
      *  * session (MongoDB\Driver\Session): Client session.
-     *
-     *    Sessions are not supported for server versions < 3.6.
      *
      *  * showRecordId (boolean): Determines whether to return the record
      *    identifier for each document. If true, adds a field $recordId to the
@@ -160,6 +145,11 @@ class Find implements Executable, Explainable
      *  * sort (document): The order in which to return matching documents. If
      *    "$orderby" also exists in the modifiers document, this option will
      *    take precedence.
+     *
+     *  * let (document): Map of parameter names and values. Values must be
+     *    constant or closed expressions that do not reference document fields.
+     *    Parameters can then be accessed as variables in an aggregate
+     *    expression context (e.g. "$$var").
      *
      *  * typeMap (array): Type map for BSON deserialization. This will be
      *    applied to the returned Cursor (it is not sent to the server).
@@ -192,18 +182,16 @@ class Find implements Executable, Explainable
             throw InvalidArgumentException::invalidType('"collation" option', $options['collation'], 'array or object');
         }
 
-        if (isset($options['comment']) && ! is_string($options['comment'])) {
-            throw InvalidArgumentException::invalidType('"comment" option', $options['comment'], 'comment');
-        }
-
         if (isset($options['cursorType'])) {
             if (! is_integer($options['cursorType'])) {
                 throw InvalidArgumentException::invalidType('"cursorType" option', $options['cursorType'], 'integer');
             }
 
-            if ($options['cursorType'] !== self::NON_TAILABLE &&
+            if (
+                $options['cursorType'] !== self::NON_TAILABLE &&
                 $options['cursorType'] !== self::TAILABLE &&
-                $options['cursorType'] !== self::TAILABLE_AWAIT) {
+                $options['cursorType'] !== self::TAILABLE_AWAIT
+            ) {
                 throw new InvalidArgumentException('Invalid value for "cursorType" option: ' . $options['cursorType']);
             }
         }
@@ -288,6 +276,10 @@ class Find implements Executable, Explainable
             throw InvalidArgumentException::invalidType('"typeMap" option', $options['typeMap'], 'array');
         }
 
+        if (isset($options['let']) && ! is_array($options['let']) && ! is_object($options['let'])) {
+            throw InvalidArgumentException::invalidType('"let" option', $options['let'], 'array or object');
+        }
+
         if (isset($options['readConcern']) && $options['readConcern']->isDefault()) {
             unset($options['readConcern']);
         }
@@ -312,23 +304,11 @@ class Find implements Executable, Explainable
      * @see Executable::execute()
      * @param Server $server
      * @return Cursor
-     * @throws UnsupportedException if collation or read concern is used and unsupported
+     * @throws UnsupportedException if read concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
     public function execute(Server $server)
     {
-        if (isset($this->options['collation']) && ! server_supports_feature($server, self::$wireVersionForCollation)) {
-            throw UnsupportedException::collationNotSupported();
-        }
-
-        if (isset($this->options['readConcern']) && ! server_supports_feature($server, self::$wireVersionForReadConcern)) {
-            throw UnsupportedException::readConcernNotSupported();
-        }
-
-        if (isset($this->options['allowDiskUse']) && ! server_supports_feature($server, self::$wireVersionForAllowDiskUseServerSideError)) {
-            throw UnsupportedException::allowDiskUseNotSupported();
-        }
-
         $inTransaction = isset($this->options['session']) && $this->options['session']->isInTransaction();
         if ($inTransaction && isset($this->options['readConcern'])) {
             throw UnsupportedException::readConcernNotSupportedInTransaction();
@@ -343,6 +323,13 @@ class Find implements Executable, Explainable
         return $cursor;
     }
 
+    /**
+     * Returns the command document for this operation.
+     *
+     * @see Explainable::getCommandDocument()
+     * @param Server $server
+     * @return array
+     */
     public function getCommandDocument(Server $server)
     {
         return $this->createCommandDocument();
@@ -351,7 +338,7 @@ class Find implements Executable, Explainable
     /**
      * Construct a command document for Find
      */
-    private function createCommandDocument()
+    private function createCommandDocument(): array
     {
         $cmd = ['find' => $this->collectionName, 'filter' => (object) $this->filter];
 
@@ -383,6 +370,7 @@ class Find implements Executable, Explainable
                 $options[$modifier[0]] = $options['modifiers'][$modifier[1]];
             }
         }
+
         unset($options['modifiers']);
 
         return $cmd + $options;
@@ -391,7 +379,7 @@ class Find implements Executable, Explainable
     /**
      * Create options for executing the command.
      *
-     * @see http://php.net/manual/en/mongodb-driver-server.executequery.php
+     * @see https://php.net/manual/en/mongodb-driver-server.executequery.php
      * @return array
      */
     private function createExecuteOptions()
@@ -425,6 +413,7 @@ class Find implements Executable, Explainable
             if ($this->options['cursorType'] === self::TAILABLE) {
                 $options['tailable'] = true;
             }
+
             if ($this->options['cursorType'] === self::TAILABLE_AWAIT) {
                 $options['tailable'] = true;
                 $options['awaitData'] = true;
@@ -437,7 +426,7 @@ class Find implements Executable, Explainable
             }
         }
 
-        foreach (['collation', 'max', 'min'] as $option) {
+        foreach (['collation', 'let', 'max', 'min'] as $option) {
             if (isset($this->options[$option])) {
                 $options[$option] = (object) $this->options[$option];
             }

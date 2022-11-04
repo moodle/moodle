@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,7 +29,7 @@ use MongoDB\Model\CallbackIterator;
  *
  * @api
  * @see \MongoDB\Database::listCollectionNames()
- * @see http://docs.mongodb.org/manual/reference/command/listCollections/
+ * @see https://mongodb.com/docs/manual/reference/command/listCollections/
  */
 class ListCollectionNames implements Executable
 {
@@ -41,14 +41,21 @@ class ListCollectionNames implements Executable
      *
      * Supported options:
      *
+     *  * authorizedCollections (boolean): Determines which collections are
+     *    returned based on the user privileges.
+     *
+     *    For servers < 4.0, this option is ignored.
+     *
+     *  * comment (mixed): BSON value to attach as a comment to this command.
+     *
+     *    This is not supported for servers versions < 4.4.
+     *
      *  * filter (document): Query by which to filter collections.
      *
      *  * maxTimeMS (integer): The maximum amount of time to allow the query to
      *    run.
      *
      *  * session (MongoDB\Driver\Session): Client session.
-     *
-     *    Sessions are not supported for server versions < 3.6.
      *
      * @param string $databaseName Database name
      * @param array  $options      Command options
@@ -67,7 +74,7 @@ class ListCollectionNames implements Executable
      * @return Iterator
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
-    public function execute(Server $server) : Iterator
+    public function execute(Server $server): Iterator
     {
         return new CallbackIterator(
             $this->listCollections->execute($server),

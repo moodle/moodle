@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2015-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,23 +25,20 @@ use MongoDB\Driver\WriteConcern;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
 use MongoDB\InsertOneResult;
+
 use function is_array;
 use function is_bool;
 use function is_object;
-use function MongoDB\server_supports_feature;
 
 /**
  * Operation for inserting a single document with the insert command.
  *
  * @api
  * @see \MongoDB\Collection::insertOne()
- * @see http://docs.mongodb.org/manual/reference/command/insert/
+ * @see https://mongodb.com/docs/manual/reference/command/insert/
  */
 class InsertOne implements Executable
 {
-    /** @var integer */
-    private static $wireVersionForDocumentLevelValidation = 4;
-
     /** @var string */
     private $databaseName;
 
@@ -62,12 +59,11 @@ class InsertOne implements Executable
      *  * bypassDocumentValidation (boolean): If true, allows the write to
      *    circumvent document level validation.
      *
-     *    For servers < 3.2, this option is ignored as document level validation
-     *    is not available.
+     *  * comment (mixed): BSON value to attach as a comment to this command.
+     *
+     *    This is not supported for servers versions < 4.4.
      *
      *  * session (MongoDB\Driver\Session): Client session.
-     *
-     *    Sessions are not supported for server versions < 3.6.
      *
      *  * writeConcern (MongoDB\Driver\WriteConcern): Write concern.
      *
@@ -95,6 +91,10 @@ class InsertOne implements Executable
             throw InvalidArgumentException::invalidType('"writeConcern" option', $options['writeConcern'], WriteConcern::class);
         }
 
+        if (isset($options['bypassDocumentValidation']) && ! $options['bypassDocumentValidation']) {
+            unset($options['bypassDocumentValidation']);
+        }
+
         if (isset($options['writeConcern']) && $options['writeConcern']->isDefault()) {
             unset($options['writeConcern']);
         }
@@ -111,38 +111,50 @@ class InsertOne implements Executable
      * @see Executable::execute()
      * @param Server $server
      * @return InsertOneResult
+     * @throws UnsupportedException if write concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
     public function execute(Server $server)
     {
-        $options = [];
-
         $inTransaction = isset($this->options['session']) && $this->options['session']->isInTransaction();
         if (isset($this->options['writeConcern']) && $inTransaction) {
             throw UnsupportedException::writeConcernNotSupportedInTransaction();
         }
 
-        if (! empty($this->options['bypassDocumentValidation']) &&
-            server_supports_feature($server, self::$wireVersionForDocumentLevelValidation)
-        ) {
-            $options['bypassDocumentValidation'] = $this->options['bypassDocumentValidation'];
-        }
-
-        $bulk = new Bulk($options);
+        $bulk = new Bulk($this->createBulkWriteOptions());
         $insertedId = $bulk->insert($this->document);
 
-        $writeResult = $server->executeBulkWrite($this->databaseName . '.' . $this->collectionName, $bulk, $this->createOptions());
+        $writeResult = $server->executeBulkWrite($this->databaseName . '.' . $this->collectionName, $bulk, $this->createExecuteOptions());
 
         return new InsertOneResult($writeResult, $insertedId);
     }
 
     /**
-     * Create options for executing the bulk write.
+     * Create options for constructing the bulk write.
      *
-     * @see http://php.net/manual/en/mongodb-driver-server.executebulkwrite.php
+     * @see https://php.net/manual/en/mongodb-driver-bulkwrite.construct.php
      * @return array
      */
-    private function createOptions()
+    private function createBulkWriteOptions()
+    {
+        $options = [];
+
+        foreach (['bypassDocumentValidation', 'comment'] as $option) {
+            if (isset($this->options[$option])) {
+                $options[$option] = $this->options[$option];
+            }
+        }
+
+        return $options;
+    }
+
+    /**
+     * Create options for executing the bulk write.
+     *
+     * @see https://php.net/manual/en/mongodb-driver-server.executebulkwrite.php
+     * @return array
+     */
+    private function createExecuteOptions()
     {
         $options = [];
 

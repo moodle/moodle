@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2015-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ namespace MongoDB\Operation;
 
 use EmptyIterator;
 use MongoDB\Driver\Command;
+use MongoDB\Driver\Exception\CommandException;
 use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Driver\Server;
 use MongoDB\Driver\Session;
@@ -26,6 +27,7 @@ use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Model\CachingIterator;
 use MongoDB\Model\IndexInfoIterator;
 use MongoDB\Model\IndexInfoIteratorIterator;
+
 use function is_integer;
 
 /**
@@ -33,7 +35,7 @@ use function is_integer;
  *
  * @api
  * @see \MongoDB\Collection::listIndexes()
- * @see http://docs.mongodb.org/manual/reference/command/listIndexes/
+ * @see https://mongodb.com/docs/manual/reference/command/listIndexes/
  */
 class ListIndexes implements Executable
 {
@@ -57,12 +59,14 @@ class ListIndexes implements Executable
      *
      * Supported options:
      *
+     *  * comment (mixed): BSON value to attach as a comment to this command.
+     *
+     *    This is not supported for servers versions < 4.4.
+     *
      *  * maxTimeMS (integer): The maximum amount of time to allow the query to
      *    run.
      *
      *  * session (MongoDB\Driver\Session): Client session.
-     *
-     *    Sessions are not supported for server versions < 3.6.
      *
      * @param string $databaseName   Database name
      * @param string $collectionName Collection name
@@ -103,7 +107,7 @@ class ListIndexes implements Executable
      * Note: read preference is intentionally omitted, as the spec requires that
      * the command be executed on the primary.
      *
-     * @see http://php.net/manual/en/mongodb-driver-server.executecommand.php
+     * @see https://php.net/manual/en/mongodb-driver-server.executecommand.php
      * @return array
      */
     private function createOptions()
@@ -129,13 +133,15 @@ class ListIndexes implements Executable
     {
         $cmd = ['listIndexes' => $this->collectionName];
 
-        if (isset($this->options['maxTimeMS'])) {
-            $cmd['maxTimeMS'] = $this->options['maxTimeMS'];
+        foreach (['comment', 'maxTimeMS'] as $option) {
+            if (isset($this->options[$option])) {
+                $cmd[$option] = $this->options[$option];
+            }
         }
 
         try {
             $cursor = $server->executeReadCommand($this->databaseName, new Command($cmd), $this->createOptions());
-        } catch (DriverRuntimeException $e) {
+        } catch (CommandException $e) {
             /* The server may return an error if the collection does not exist.
              * Check for possible error codes (see: SERVER-20463) and return an
              * empty iterator instead of throwing.

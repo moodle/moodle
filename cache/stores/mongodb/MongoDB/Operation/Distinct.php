@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2015-2017 MongoDB, Inc.
+ * Copyright 2015-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,28 +26,22 @@ use MongoDB\Driver\Session;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnexpectedValueException;
 use MongoDB\Exception\UnsupportedException;
+
 use function current;
 use function is_array;
 use function is_integer;
 use function is_object;
 use function MongoDB\create_field_path_type_map;
-use function MongoDB\server_supports_feature;
 
 /**
  * Operation for the distinct command.
  *
  * @api
  * @see \MongoDB\Collection::distinct()
- * @see http://docs.mongodb.org/manual/reference/command/distinct/
+ * @see https://mongodb.com/docs/manual/reference/command/distinct/
  */
 class Distinct implements Executable, Explainable
 {
-    /** @var integer */
-    private static $wireVersionForCollation = 5;
-
-    /** @var integer */
-    private static $wireVersionForReadConcern = 4;
-
     /** @var string */
     private $databaseName;
 
@@ -70,22 +64,18 @@ class Distinct implements Executable, Explainable
      *
      *  * collation (document): Collation specification.
      *
-     *    This is not supported for server versions < 3.4 and will result in an
-     *    exception at execution time if used.
+     *  * comment (mixed): BSON value to attach as a comment to this command.
+     *
+     *    This is not supported for servers versions < 4.4.
      *
      *  * maxTimeMS (integer): The maximum amount of time to allow the query to
      *    run.
      *
      *  * readConcern (MongoDB\Driver\ReadConcern): Read concern.
      *
-     *    This is not supported for server versions < 3.2 and will result in an
-     *    exception at execution time if used.
-     *
      *  * readPreference (MongoDB\Driver\ReadPreference): Read preference.
      *
      *  * session (MongoDB\Driver\Session): Client session.
-     *
-     *    Sessions are not supported for server versions < 3.6.
      *
      *  * typeMap (array): Type map for BSON deserialization.
      *
@@ -144,19 +134,11 @@ class Distinct implements Executable, Explainable
      * @param Server $server
      * @return mixed[]
      * @throws UnexpectedValueException if the command response was malformed
-     * @throws UnsupportedException if collation or read concern is used and unsupported
+     * @throws UnsupportedException if read concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
     public function execute(Server $server)
     {
-        if (isset($this->options['collation']) && ! server_supports_feature($server, self::$wireVersionForCollation)) {
-            throw UnsupportedException::collationNotSupported();
-        }
-
-        if (isset($this->options['readConcern']) && ! server_supports_feature($server, self::$wireVersionForReadConcern)) {
-            throw UnsupportedException::readConcernNotSupported();
-        }
-
         $inTransaction = isset($this->options['session']) && $this->options['session']->isInTransaction();
         if ($inTransaction && isset($this->options['readConcern'])) {
             throw UnsupportedException::readConcernNotSupportedInTransaction();
@@ -177,6 +159,13 @@ class Distinct implements Executable, Explainable
         return $result->values;
     }
 
+    /**
+     * Returns the command document for this operation.
+     *
+     * @see Explainable::getCommandDocument()
+     * @param Server $server
+     * @return array
+     */
     public function getCommandDocument(Server $server)
     {
         return $this->createCommandDocument();
@@ -202,8 +191,10 @@ class Distinct implements Executable, Explainable
             $cmd['collation'] = (object) $this->options['collation'];
         }
 
-        if (isset($this->options['maxTimeMS'])) {
-            $cmd['maxTimeMS'] = $this->options['maxTimeMS'];
+        foreach (['comment', 'maxTimeMS'] as $option) {
+            if (isset($this->options[$option])) {
+                $cmd[$option] = $this->options[$option];
+            }
         }
 
         return $cmd;
@@ -212,7 +203,7 @@ class Distinct implements Executable, Explainable
     /**
      * Create options for executing the command.
      *
-     * @see http://php.net/manual/en/mongodb-driver-server.executereadcommand.php
+     * @see https://php.net/manual/en/mongodb-driver-server.executereadcommand.php
      * @return array
      */
     private function createOptions()

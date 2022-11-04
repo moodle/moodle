@@ -9,4 +9,4 @@ Import procedure:
 - Update thirdpartylibs.xml with the latest version.
 - Check the minim php driver version in https://docs.mongodb.com/drivers/php#compatibility and change the value in the "are_requirements_met" method if necessary.
 
-This version (1.8.0) requires PHP mongodb extension >= 1.8.0
+This version (1.13.1) requires PHP mongodb extension >= 1.14.0

@@ -1,12 +1,12 @@
 <?php
 /*
- * Copyright 2018 MongoDB, Inc.
+ * Copyright 2018-present MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,8 @@ namespace MongoDB\Model;
 use Iterator;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnexpectedValueException;
+use ReturnTypeWillChange;
+
 use function is_array;
 use function MongoDB\BSON\toPHP;
 use function sprintf;
@@ -61,7 +63,7 @@ class BSONIterator implements Iterator
      *  * typeMap (array): Type map for BSON deserialization.
      *
      * @internal
-     * @see http://php.net/manual/en/function.mongodb.bson-tophp.php
+     * @see https://php.net/manual/en/function.mongodb.bson-tophp.php
      * @param string $data    Concatenated, valid, BSON-encoded documents
      * @param array  $options Iterator options
      * @throws InvalidArgumentException for parameter/option parsing errors
@@ -82,27 +84,30 @@ class BSONIterator implements Iterator
     }
 
     /**
-     * @see http://php.net/iterator.current
+     * @see https://php.net/iterator.current
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         return $this->current;
     }
 
     /**
-     * @see http://php.net/iterator.key
+     * @see https://php.net/iterator.key
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function key()
     {
         return $this->key;
     }
 
     /**
-     * @see http://php.net/iterator.next
+     * @see https://php.net/iterator.next
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function next()
     {
         $this->key++;
@@ -111,9 +116,10 @@ class BSONIterator implements Iterator
     }
 
     /**
-     * @see http://php.net/iterator.rewind
+     * @see https://php.net/iterator.rewind
      * @return void
      */
+    #[ReturnTypeWillChange]
     public function rewind()
     {
         $this->key = 0;
@@ -123,9 +129,10 @@ class BSONIterator implements Iterator
     }
 
     /**
-     * @see http://php.net/iterator.valid
+     * @see https://php.net/iterator.valid
      * @return boolean
      */
+    #[ReturnTypeWillChange]
     public function valid()
     {
         return $this->current !== null;
@@ -137,13 +144,13 @@ class BSONIterator implements Iterator
             return;
         }
 
-        if (($this->bufferLength - $this->position) < self::$bsonSize) {
+        if ($this->bufferLength - $this->position < self::$bsonSize) {
             throw new UnexpectedValueException(sprintf('Expected at least %d bytes; %d remaining', self::$bsonSize, $this->bufferLength - $this->position));
         }
 
-        list(,$documentLength) = unpack('V', substr($this->buffer, $this->position, self::$bsonSize));
+        [, $documentLength] = unpack('V', substr($this->buffer, $this->position, self::$bsonSize));
 
-        if (($this->bufferLength - $this->position) < $documentLength) {
+        if ($this->bufferLength - $this->position < $documentLength) {
             throw new UnexpectedValueException(sprintf('Expected %d bytes; %d remaining', $documentLength, $this->bufferLength - $this->position));
         }
 
