@@ -139,8 +139,7 @@ Feature: A Teacher can comment in a question
     When I navigate to "Question bank" in current page administration
     And I set the field "Select a category" to "Test questions"
     And I should see "First question"
-    And I click on "Edit" "link" in the "First question" "table_row"
-    And I follow "Edit question"
+    And I choose "Edit question" action for "First question" in the question bank
     And I set the field "id_name" to "Renamed question v2"
     And I set the field "id_questiontext" to "edited question"
     And I press "id_submitbutton"
