@@ -41,7 +41,7 @@
     "xpath": "0.0.32"
   },
   "engines": {
-    "node": ">=16.14.0 <17"
+    "node": ">=18.12.0 <19"
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.17.0"
