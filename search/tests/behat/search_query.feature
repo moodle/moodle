@@ -78,7 +78,8 @@ Feature: Use global search interface
   @javascript
   Scenario: Check that groups option in search form appears when intended
     # Switch to mocked Solr search because simpledb doesn't support groups.
-    Given the following config values are set as admin:
+    Given solr is installed
+    And the following config values are set as admin:
       | searchengine | solr |
     And the following "groups" exist:
       | name    | course | idnumber |
