@@ -406,7 +406,7 @@ function install_print_footer($config, $reload=false) {
         $next = '<input type="submit" id="nextbutton" class="btn btn-primary ml-1 flex-grow-0 mr-auto" name="next" value="'.s(get_string('next')).' &raquo;" />';
     }
 
-    echo '</fieldset><div id="nav_buttons" class="mb-3 w-100 flex-row-reverse">'.$first.$next.'</div>';
+    echo '</fieldset><div id="nav_buttons" class="mb-3 w-100 d-flex">'.$first.$next.'</div>';
 
     $homelink  = '<div class="sitelink">'.
        '<a title="Moodle '. $CFG->target_release .'" href="http://docs.moodle.org/en/Administrator_documentation" onclick="this.target=\'_blank\'">'.
