@@ -27,6 +27,7 @@
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode;
+use Moodle\BehatExtension\Exception\SkippedException;
 
 /**
  * Behat search-related step definitions.
@@ -145,5 +146,16 @@ class behat_search extends behat_base {
      */
     public function i_update_the_global_search_index() {
         \core_search\manager::instance()->index(false);
+    }
+
+    /**
+     * This step looks to see if Solr is installed or skip the rest of the scenario otherwise
+     *
+     * @Given /^solr is installed/
+     */
+    public function solr_is_installed() {
+        if (!function_exists('solr_get_version')) {
+            throw new SkippedException('Skipping this scenario because Solr is not installed.');
+        }
     }
 }
