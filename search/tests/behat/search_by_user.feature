@@ -5,7 +5,8 @@ Feature: Select users when searching for user-created content
   I need to be able to add users to the select list in the search form
 
   Background:
-    Given the following config values are set as admin:
+    Given solr is installed
+    And the following config values are set as admin:
       | enableglobalsearch | 1    |
       | searchengine       | solr |
     And the following "courses" exist:
