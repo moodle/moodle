@@ -447,21 +447,30 @@ EOF;
      */
     protected static function count_callback_events(string $id, string $callbacktype = 'recording_ready'): int {
         global $DB;
-        $sql = 'SELECT count(DISTINCT id) FROM {bigbluebuttonbn_logs} WHERE log = ? AND meta LIKE ? AND meta LIKE ?';
-        // Callback type added on version 2.4, validate recording_ready first or assume it on records with no callback.
-        if ($callbacktype == 'recording_ready') {
-            $sql .= ' AND (meta LIKE ? OR meta NOT LIKE ? )';
-            $count =
-                $DB->count_records_sql($sql, [
-                    self::EVENT_CALLBACK, '%recordid%',
-                    "%$id%",
-                    $callbacktype, 'callback'
-                ]);
-            return $count;
+        // Look for a log record that is of "Callback" type and is related to the given event.
+        $conditions = [
+                "log = :logtype",
+                $DB->sql_like('meta', ':cbtypelike')
+        ];
+
+        $params = [
+                'logtype' => self::EVENT_CALLBACK,
+                'cbtypelike' => "%meeting_events%" // All callbacks are meeting events, even recording events.
+        ];
+
+        $basesql = 'SELECT COUNT(DISTINCT id) FROM {bigbluebuttonbn_logs}';
+        switch ($callbacktype) {
+            case 'recording_ready':
+                $conditions[] = $DB->sql_like('meta', ':isrecordid');
+                $params['isrecordid'] = '%recordid%'; // The recordid field in the meta field (json encoded).
+                break;
+            case 'meeting_events':
+                $conditions[] = $DB->sql_like('meta', ':idlike');
+                $params['idlike'] = "%$id%"; // The unique id of the meeting is the meta field (json encoded).
+                break;
         }
-        $count = $DB->count_records_sql($sql,
-            [self::EVENT_CALLBACK, "%$id%", "%$callbacktype%"]);
-        return $count;
+        $wheresql = join(' AND ', $conditions);
+        return $DB->count_records_sql($basesql . ' WHERE ' . $wheresql, $params);
     }
 
     /**
