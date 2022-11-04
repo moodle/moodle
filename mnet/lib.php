@@ -56,65 +56,78 @@ function mnet_get_public_key($uri, $application=null) {
         $application = $DB->get_record('mnet_application', array('name'=>'moodle'));
     }
 
-    $rq = xmlrpc_encode_request('system/keyswap', array($CFG->wwwroot, $mnet->public_key, $application->name), array(
-        'encoding' => 'utf-8',
-        'escaping' => 'markup',
-    ));
-    $ch = curl_init($uri . $application->xmlrpc_server_url);
+    $params = [
+        new \PhpXmlRpc\Value($CFG->wwwroot),
+        new \PhpXmlRpc\Value($mnet->public_key),
+        new \PhpXmlRpc\Value($application->name),
+    ];
+    $request = new \PhpXmlRpc\Request('system/keyswap', $params);
+    $request->request_charset_encoding = 'utf-8';
 
-    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'Moodle');
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $rq);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: text/xml charset=UTF-8"));
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    // Let's create a client to handle the request and the response easily.
+    $client = new \PhpXmlRpc\Client($uri . $application->xmlrpc_server_url);
+    $client->setUseCurl(\PhpXmlRpc\Client::USE_CURL_ALWAYS);
+    $client->setUserAgent('Moodle');
+    $client->return_type = 'xmlrpcvals'; // This (keyswap) is not encrypted, so we can expect proper xmlrpc in this case.
+    $client->request_charset_encoding = 'utf-8';
 
-    // check for proxy
-    if (!empty($CFG->proxyhost) and !is_proxybypass($uri)) {
-        // SOCKS supported in PHP5 only
-        if (!empty($CFG->proxytype) and ($CFG->proxytype == 'SOCKS5')) {
+    // TODO: Link this to DEBUG DEVELOPER or with MNET debugging...
+    // $client->setdebug(1); // See a good number of complete requests and responses.
+
+    $client->setSSLVerifyHost(0);
+    $client->setSSLVerifyPeer(false);
+
+    // TODO: It's curious that this service (keyswap) that needs
+    // a custom client, different from mnet_xmlrpc_client, because
+    // this is not encrypted / signed, does support proxies and the
+    // general one does not. Worth analysing if the support below
+    // should be added to it.
+
+    // Some curl options need to be set apart, accumulate them here.
+    $extracurloptions = [];
+
+    // Check for proxy.
+    if (!empty($CFG->proxyhost) && !is_proxybypass($uri)) {
+        // SOCKS supported in PHP5 only.
+        if (!empty($CFG->proxytype) && ($CFG->proxytype == 'SOCKS5')) {
             if (defined('CURLPROXY_SOCKS5')) {
-                curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+                $extracurloptions[CURLOPT_PROXYTYPE] = CURLPROXY_SOCKS5;
             } else {
-                curl_close($ch);
                 throw new \moodle_exception( 'socksnotsupported', 'mnet');
             }
         }
 
-        curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, false);
+        $extracurloptions[CURLOPT_HTTPPROXYTUNNEL] = false;
 
-        if (empty($CFG->proxyport)) {
-            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost);
-        } else {
-            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost.':'.$CFG->proxyport);
-        }
-
-        if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
-            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $CFG->proxyuser.':'.$CFG->proxypassword);
-            if (defined('CURLOPT_PROXYAUTH')) {
-                // any proxy authentication if PHP 5.1
-                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC | CURLAUTH_NTLM);
-            }
-        }
+        // Configure proxy host, port, user, pass and auth.
+        $client->setProxy(
+            $CFG->proxyhost,
+            empty($CFG->proxyport) ? 0 : $CFG->proxyport,
+            empty($CFG->proxyuser) ? '' : $CFG->proxyuser,
+            empty($CFG->proxypassword) ? '' : $CFG->proxypassword,
+            defined('CURLOPT_PROXYAUTH') ? CURLAUTH_BASIC | CURLAUTH_NTLM : 1);
     }
 
-    $res = xmlrpc_decode(curl_exec($ch));
+    // Finally, add the extra curl options we may have accumulated.
+    $client->setCurlOptions($extracurloptions);
 
-    // check for curl errors
-    $curlerrno = curl_errno($ch);
-    if ($curlerrno!=0) {
-        debugging("Request for $uri failed with curl error $curlerrno");
+    $response = $client->send($request, 60);
+
+    // Check curl / xmlrpc errors.
+    if ($response->faultCode()) {
+        debugging("Request for $uri failed with error {$response->faultCode()}: {$response->faultString()}");
+        return false;
     }
 
-    // check HTTP error code
-    $info =  curl_getinfo($ch);
-    if (!empty($info['http_code']) and ($info['http_code'] != 200)) {
-        debugging("Request for $uri failed with HTTP code ".$info['http_code']);
+    // Check HTTP error code.
+    $status = $response->httpResponse()['status_code'];
+    if (!empty($status) && ($status != 200)) {
+        debugging("Request for $uri failed with HTTP code " . $status);
+        return false;
     }
 
-    curl_close($ch);
+    // Get the peer actual public key from the response.
+    $res = $response->value()->scalarval();
 
     if (!is_array($res)) { // ! error
         $public_certificate = $res;
@@ -529,7 +542,7 @@ function mnet_sso_apply_indirection ($jumpurl, $url) {
             // if our wwwroot has a path component, need to strip that path from beginning of the
             // 'localpart' to make it relative to moodle's wwwroot
             $wwwrootpath = parse_url($CFG->wwwroot, PHP_URL_PATH);
-            if (!empty($wwwrootpath) and strpos($path, $wwwrootpath) === 0) {
+            if (!empty($wwwrootpath) && strpos($path, $wwwrootpath) === 0) {
                 $path = substr($path, strlen($wwwrootpath));
             }
             $localpart .= $path;

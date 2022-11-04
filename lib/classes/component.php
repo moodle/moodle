@@ -108,6 +108,7 @@ class core_component {
         'ZipStream' => 'lib/zipstream/src/',
         'MyCLabs\\Enum' => 'lib/php-enum/src',
         'Psr\\Http\\Message' => 'lib/http-message/src',
+        'PhpXmlRpc' => 'lib/phpxmlrpc',
     );
 
     /**
