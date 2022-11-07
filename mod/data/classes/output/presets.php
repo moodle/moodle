@@ -102,6 +102,7 @@ class presets implements templatable, renderable {
 
             $fullname = $preset->get_fullname();
             $id = $this->manager->get_instance()->id;
+            $cmid = $this->manager->get_coursemodule()->id;
             $previewurl = new moodle_url(
                     '/mod/data/preset.php',
                     ['d' => $id, 'fullname' => $fullname, 'action' => 'preview']
@@ -109,6 +110,7 @@ class presets implements templatable, renderable {
 
             $presets[] = [
                 'id' => $id,
+                'cmid' => $cmid,
                 'name' => $preset->name,
                 'url' => $previewurl->out(),
                 'shortname' => $preset->shortname,

@@ -55,17 +55,21 @@ export const init = () => {
  */
 const disableUsePresetButton = () => {
     let selectPresetButton = document.querySelector(selectors.selectPresetButton);
-    const selectedRadioButton = document.querySelectorAll(selectors.selectedPresetRadioButton);
+    const selectedRadioButton = document.querySelector(selectors.selectedPresetRadioButton);
 
-    if (selectedRadioButton.length > 0) {
+    if (selectedRadioButton) {
         // There is one preset selected, so the button should be enabled.
         selectPresetButton.removeAttribute('disabled');
         selectPresetButton.classList.remove('btn-secondary');
         selectPresetButton.classList.add('btn-primary');
+        selectPresetButton.setAttribute('data-presetname', selectedRadioButton.getAttribute('value'));
+        selectPresetButton.setAttribute('data-cmid', selectedRadioButton.getAttribute('data-cmid'));
     } else {
         // There is no any preset selected, so the button should be disabled.
         selectPresetButton.setAttribute('disabled', true);
         selectPresetButton.classList.remove('btn-primary');
         selectPresetButton.classList.add('btn-secondary');
+        selectPresetButton.removeAttribute('data-presetname');
+        selectPresetButton.removeAttribute('data-cmid');
     }
 };

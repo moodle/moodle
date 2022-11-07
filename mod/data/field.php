@@ -255,7 +255,7 @@ switch ($mode) {
 
     case 'usepreset':
         $importer = preset_importer::create_from_parameters($manager);
-        if (!$importer->needs_mapping()) {
+        if (!$importer->needs_mapping() || $action == 'notmapping') {
             $backurl = new moodle_url('/mod/data/field.php', ['id' => $cm->id]);
             if ($importer->import(false)) {
                 notification::success(get_string('importsuccess', 'mod_data'));

@@ -20,6 +20,7 @@ Feature: Users can use predefined presets
     And the following "mod_data > fields" exist:
       | database | type | name              | description              |
       | data1    | text | Test field name   | Test field description   |
+
   Scenario: Using a preset on a non empty database could create new fields
     Given the following "mod_data > fields" exist:
       | database | type | name    |
@@ -32,10 +33,13 @@ Feature: Users can use predefined presets
     And I follow "Presets"
     And I click on "fullname" "radio" in the "Image gallery" "table_row"
     And I click on "Use this preset" "button"
+    And I should see "Apply preset Image gallery"
+    And I click on "Map fields" "button"
+    And I should see "Field mappings"
     And I click on "Continue" "button"
     And I should see "The preset has been successfully applied"
     And I click on "Continue" "button"
-    And I follow "Fields"
+    When I follow "Fields"
     Then I should see "title"
     And I should see "description" in the "description" "table_row"
     And I should see "image" in the "image" "table_row"
@@ -53,6 +57,10 @@ Feature: Users can use predefined presets
     And I click on "fullname" "radio" in the "Image gallery" "table_row"
     And I click on "Use this preset" "button"
     # Let's map a field that is not mapped by default
+    And I should see "Apply preset Image gallery"
+    And I should see "Fields to be created: image, title, description"
+    And I should see "Existing fields to be deleted: Test field name, oldtitle"
+    When I click on "Map fields" "button"
     And I should see "Create a new field" in the "oldtitle" "table_row"
     And I set the field "id_title" to "Map to oldtitle"
     And I click on "Continue" "button"
@@ -73,7 +81,9 @@ Feature: Users can use predefined presets
     And I follow "Presets"
     And I click on "fullname" "radio" in the "Image gallery" "table_row"
     And the "Use this preset" "button" should be enabled
-    Then I click on "Use this preset" "button"
+    When I click on "Use this preset" "button"
+    And I should see "Apply preset Image gallery"
+    And I click on "Map fields" "button"
     Then I should see "Field mappings"
     And I should see "title"
     And I should see "Create a new field" in the "title" "table_row"
@@ -91,15 +101,15 @@ Feature: Users can use predefined presets
     And I follow "Presets"
     And I click on "fullname" "radio" in the "Image gallery" "table_row"
     When I click on "Use this preset" "button"
-    And I should see "Field mappings"
+    And I should see "Apply preset"
+    And I click on "Map fields" "button"
     And I set the field "id_title" to "Map to Test field name"
     And I click on "Continue" "button"
     And I should see "The preset has been successfully applied"
-    And I click on "Continue" "button"
     And I follow "Presets"
     And I click on "fullname" "radio" in the "Image gallery" "table_row"
     And I click on "Use this preset" "button"
-    Then I should not see "Field mappings"
+    Then I should not see "Apply preset Image gallery"
     And I should see "The preset has been successfully applied"
 
   Scenario: Using a preset from preset preview page on a non empty database could create new fields
@@ -114,9 +124,9 @@ Feature: Users can use predefined presets
     And I follow "Presets"
     And I click on "Image gallery" "link"
     And I click on "Use this preset" "button"
-    And I click on "Continue" "button"
+    And I should see "Apply preset Image gallery"
+    When I click on "Apply preset" "button"
     And I should see "The preset has been successfully applied"
-    And I click on "Continue" "button"
     And I follow "Fields"
     Then I should see "title"
     And I should see "description" in the "description" "table_row"
@@ -135,6 +145,10 @@ Feature: Users can use predefined presets
     And I click on "Image gallery" "link"
     And I click on "Use this preset" "button"
     # Let's map a field that is not mapped by default
+    And I should see "Apply preset Image gallery"
+    And I should see "Fields to be created: image, title, description"
+    And I should see "Existing fields to be deleted: Test field name, oldtitle"
+    When I click on "Map fields" "button"
     And I should see "Create a new field" in the "oldtitle" "table_row"
     And I set the field "id_title" to "Map to oldtitle"
     And I click on "Continue" "button"
@@ -155,7 +169,9 @@ Feature: Users can use predefined presets
     And I follow "Presets"
     And I click on "Image gallery" "link"
     And the "Use this preset" "button" should be enabled
-    Then I click on "Use this preset" "button"
+    When I click on "Use this preset" "button"
+    And I should see "Apply preset Image gallery"
+    And I click on "Map fields" "button"
     Then I should see "Field mappings"
     And I should see "title"
     And I should see "Create a new field" in the "title" "table_row"
@@ -174,6 +190,8 @@ Feature: Users can use predefined presets
     And I follow "Presets"
     And I click on "Image gallery" "link"
     When I click on "Use this preset" "button"
+    And I should see "Apply preset Image gallery"
+    And I click on "Map fields" "button"
     And I should see "Field mappings"
     And I set the field "id_title" to "Map to Test field name"
     And I click on "Continue" "button"
@@ -184,3 +202,46 @@ Feature: Users can use predefined presets
     And I click on "Use this preset" "button"
     Then I should not see "Field mappings"
     And I should see "The preset has been successfully applied"
+
+  Scenario: Apply preset dialogue should show helpful information to the user
+    Given the following "activities" exist:
+      | activity | name           | intro           | course | idnumber |
+      | data     | Sea landscapes | introduction... | C1     | data2    |
+    And the following "mod_data > fields" exist:
+      | database | type | name            |
+      | data2    | text | title        |
+    And I am on the "Sea landscapes" "data activity" page logged in as teacher1
+    And I follow "Presets"
+    And I click on "Image gallery" "link"
+    When I click on "Use this preset" "button"
+    And I should see "Apply preset Image gallery"
+    # Fields to be created only.
+    Then I should see "Fields to be created: image, description"
+    And I should not see "If fields to be deleted are of the same type as fields to be created"
+    And I should not see "If fields to be deleted are of the same type as new fields in the preset"
+    And I click on "Cancel" "button" in the "Apply preset Image gallery?" "dialogue"
+    And I follow "Presets"
+    And the following "mod_data > fields" exist:
+      | database | type   | name          |
+      | data2    | number | number        |
+    And I click on "Image gallery" "link"
+    And I click on "Use this preset" "button"
+    And I should see "Apply preset Image gallery"
+    # Fields to be created and fields to be deleted.
+    And I should see "Fields to be created: image, description"
+    And I should see "Existing fields to be deleted: number"
+    And I should see "If fields to be deleted are of the same type as fields to be created"
+    And I should not see "If fields to be deleted are of the same type as new fields in the preset"
+    And I click on "Cancel" "button" in the "Apply preset Image gallery?" "dialogue"
+    And I follow "Presets"
+    And the following "mod_data > fields" exist:
+      | database     | type      | name          |
+      | data2        | textarea  | description   |
+      | data2        | picture   | image         |
+    And I click on "Image gallery" "link"
+    And I click on "Use this preset" "button"
+    And I should see "Apply preset Image gallery"
+    # Fields to be deleted only.
+    And I should see "Existing fields to be deleted: number"
+    And I should not see "If fields to be deleted are of the same type as fields to be created"
+    And I should see "If fields to be deleted are of the same type as new fields in the preset"

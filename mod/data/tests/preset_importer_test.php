@@ -17,6 +17,7 @@
 namespace mod_data;
 
 use mod_data\local\importer\preset_existing_importer;
+use mod_data\local\importer\preset_importer;
 
 /**
  * Preset importer tests class for mod_data.
@@ -278,6 +279,181 @@ class preset_importer_test extends \advanced_testcase {
             $this->assertEquals(count($pluginimporter->fieldstoremove), $fieldstoremove);
             $this->assertEquals(count($pluginimporter->fieldstocreate), $fieldstocreate);
             $this->assertEquals(count($pluginimporter->fieldstoupdate), $fieldstoupdate);
+        }
+    }
+
+    /**
+     * Test for get_mapping_information method.
+     *
+     * @dataProvider set_affected_provider
+     * @covers ::get_mapping_information
+     *
+     * @param array $currentfields Fields of the current activity.
+     * @param array $newfields Fields to be imported.
+     * @param string $pluginname The plugin preset to be imported.
+     * @param int $fieldstocreate Expected number of fields on $fieldstocreate.
+     * @param int $fieldstoremove Expected number of fields on $fieldstoremove.
+     * @param int $fieldstoupdate Expected number of fields on $fieldstoupdate.
+     */
+    public function test_get_mapping_information(
+        array $currentfields,
+        array $newfields,
+        string $pluginname,
+        int $fieldstocreate,
+        int $fieldstoremove,
+        int $fieldstoupdate
+    ) {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+
+        // Create a course and a database activity.
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        // Add current fields to the activity.
+        foreach ($currentfields as $field) {
+            $plugingenerator->create_field($field, $activity);
+        }
+        $manager = manager::create_from_instance($activity);
+
+        $presetactivity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        // Add current fields to the activity.
+        foreach ($newfields as $field) {
+            $plugingenerator->create_field($field, $presetactivity);
+        }
+
+        $record = (object) [
+            'name' => 'Testing preset name',
+            'description' => 'Testing preset description',
+        ];
+        $saved = $plugingenerator->create_preset($presetactivity, $record);
+        $savedimporter = new preset_existing_importer($manager, $USER->id . '/Testing preset name');
+        $information = $savedimporter->get_mapping_information();
+        $this->assertEquals($savedimporter->needs_mapping(), $information['needsmapping']);
+        $this->assertEquals(count($savedimporter->fieldstoremove), $fieldstoremove);
+        $this->assertEquals(count($savedimporter->fieldstocreate), $fieldstocreate);
+        $this->assertEquals(count($savedimporter->fieldstoupdate), $fieldstoupdate);
+
+        // Create presets and importers.
+        if ($pluginname) {
+            $plugin = preset::create_from_plugin(null, $pluginname);
+            $pluginimporter = new preset_existing_importer($manager, '/' . $pluginname);
+            $information = $pluginimporter->get_mapping_information();
+            $this->assertEquals($pluginimporter->needs_mapping(), $information['needsmapping']);
+            $this->assertEquals(count($pluginimporter->fieldstoremove), $fieldstoremove);
+            $this->assertEquals(count($pluginimporter->fieldstocreate), $fieldstocreate);
+            $this->assertEquals(count($pluginimporter->fieldstoupdate), $fieldstoupdate);
+        }
+    }
+
+    /**
+     * Data provider for get_field_names().
+     *
+     * @return array[]
+     */
+    public function get_field_names_provider(): array {
+        return [
+            'Empty list' => [
+                'fields' => [],
+                'expected' => '',
+            ],
+            'List with one field' => [
+                'fields' => ['fieldname' => 'text'],
+                'expected' => 'fieldname',
+            ],
+            'List of fields with same type' => [
+                'fields' => ['textfield' => 'text', 'other' => 'text'],
+                'expected' => 'textfield, other',
+            ],
+            'List of fields with different type' => [
+                'fields' => ['textfield' => 'text', 'number' => 'number'],
+                'expected' => 'textfield, number',
+            ],
+        ];
+    }
+
+    /**
+     * Test for get_field_names method.
+     *
+     * @dataProvider get_field_names_provider
+     * @covers ::get_field_names
+     *
+     * @param array $fields List of fields to get the names from.
+     * @param string $expected The list of field names expected.
+     */
+    public function test_get_field_names(array $fields, string $expected) {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+
+        // Create a course and a database activity.
+        $course = $this->getDataGenerator()->create_course();
+        $presetactivity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        foreach ($fields as $fieldname => $fieldtype) {
+            $newfield = new \stdClass();
+            $newfield->name = $fieldname;
+            $newfield->type = $fieldtype;
+
+            $createdfield = $plugingenerator->create_field($newfield, $presetactivity);
+        }
+        $manager = manager::create_from_instance($presetactivity);
+
+        $record = (object) [
+            'name' => 'Testing preset name',
+            'description' => 'Testing preset description',
+        ];
+        $saved = $plugingenerator->create_preset($presetactivity, $record);
+        $savedimporter = new preset_existing_importer($manager, $USER->id . '/Testing preset name');
+        $this->assertEquals($expected, $savedimporter->get_field_names($manager->get_field_records()));
+    }
+
+    /**
+     * Test for create_from_plugin_or_directory creation static method.
+     *
+     * @covers ::create_from_plugin_or_directory
+     *
+     */
+    public function test_create_from_plugin_or_directory() {
+
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+
+        // Create a course and a database activity.
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+        $manager = manager::create_from_instance($activity);
+
+        $presetactivity = $this->getDataGenerator()->create_module(manager::MODULE, ['course' => $course]);
+
+        $record = (object) [
+            'name' => 'Testing preset name',
+            'description' => 'Testing preset description',
+        ];
+        $saved = $plugingenerator->create_preset($presetactivity, $record);
+
+        // A plugin preset returns an instance of preset_existing_importer.
+        $preset = preset_importer::create_from_plugin_or_directory($manager, '/imagegallery');
+        $this->assertInstanceOf('\mod_data\local\importer\preset_existing_importer', $preset);
+
+        // A saved preset returns an instance of preset_existing_importer.
+        $preset = preset_importer::create_from_plugin_or_directory($manager, $USER->id . '/Testing preset name');
+        $this->assertInstanceOf('\mod_data\local\importer\preset_existing_importer', $preset);
+
+        // An empty preset name throws an exception.
+        $this->expectException('moodle_exception');
+        try {
+            preset_importer::create_from_plugin_or_directory($manager, '');
+        } finally {
+            // A non-existing preset name throws an exception.
+            $this->expectException('moodle_exception');
+            preset_importer::create_from_plugin_or_directory($manager, $USER->id . '/Non-existing');
         }
     }
 }

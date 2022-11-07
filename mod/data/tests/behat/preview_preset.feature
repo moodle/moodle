@@ -161,5 +161,5 @@ Feature: Users can preview presets
     When I follow "Presets"
     And I click on "Saved preset by teacher1" "link"
     And I click on "Use this preset" "button"
-    Then I should see "Field mappings"
+    Then I should see "The preset has been successfully applied"
     And I should see "My URL field"
