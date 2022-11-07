@@ -449,13 +449,13 @@ EOF;
         global $DB;
         // Look for a log record that is of "Callback" type and is related to the given event.
         $conditions = [
-                "log = :logtype",
-                $DB->sql_like('meta', ':cbtypelike')
+            "log = :logtype",
+            $DB->sql_like('meta', ':cbtypelike')
         ];
 
         $params = [
-                'logtype' => self::EVENT_CALLBACK,
-                'cbtypelike' => "%meeting_events%" // All callbacks are meeting events, even recording events.
+            'logtype' => self::EVENT_CALLBACK,
+            'cbtypelike' => "%meeting_events%" // All callbacks are meeting events, even recording events.
         ];
 
         $basesql = 'SELECT COUNT(DISTINCT id) FROM {bigbluebuttonbn_logs}';
