@@ -17,6 +17,7 @@
 namespace mod_bigbluebuttonbn\local;
 
 use mod_bigbluebuttonbn\instance;
+use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 use mod_bigbluebuttonbn\recording;
 
 /**
@@ -110,6 +111,7 @@ class config {
             'hideuserlist_editable' => true,
             'welcome_default' => '',
             'default_dpa_accepted' => false,
+            'poll_interval' => bigbluebutton_proxy::DEFAULT_POLL_INTERVAL,
         ];
     }
 
@@ -215,6 +217,7 @@ class config {
             'hideuserlist_default' => self::get('hideuserlist_default'),
             'welcome_default' => self::get('welcome_default'),
             'welcome_editable' => self::get('welcome_editable'),
+            'poll_interval' => self::get('poll_interval'),
         ];
     }
 

@@ -20,6 +20,7 @@ use core\check\result;
 use core\output\notification;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\config;
+use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 use mod_bigbluebuttonbn\meeting;
 use renderable;
 use renderer_base;
@@ -55,8 +56,10 @@ class view_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output): stdClass {
+        $pollinterval = bigbluebutton_proxy::get_poll_interval();
         $templatedata = (object) [
             'instanceid' => $this->instance->get_instance_id(),
+            'pollinterval' => $pollinterval * 1000, // Javascript poll interval is in miliseconds.
             'groupselector' => $output->render_groups_selector($this->instance),
             'meetingname' => $this->instance->get_meeting_name(),
             'description' => $this->instance->get_meeting_description(true),

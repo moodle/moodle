@@ -41,6 +41,16 @@ use stdClass;
 class bigbluebutton_proxy extends proxy_base {
 
     /**
+     * Minimum poll interval for remote bigbluebutton server in seconds.
+     */
+    const MIN_POLL_INTERVAL = 2;
+
+    /**
+     * Default poll interval for remote bigbluebutton server in seconds.
+     */
+    const DEFAULT_POLL_INTERVAL = 5;
+
+    /**
      * Builds and returns a url for joining a bigbluebutton meeting.
      *
      * @param string $meetingid
@@ -489,5 +499,21 @@ class bigbluebutton_proxy extends proxy_base {
         $hends = explode('.', $h);
         $hendslength = count($hends);
         return ($hends[$hendslength - 1] == 'com' && $hends[$hendslength - 2] == 'blindsidenetworks');
+    }
+
+    /**
+     * Get the poll interval as it is set in the configuration
+     *
+     * If configuration value is under the threshold of {@see self::MIN_POLL_INTERVAL},
+     * then return the {@see self::MIN_POLL_INTERVAL} value.
+     *
+     * @return int the poll interval in seconds
+     */
+    public static function get_poll_interval(): int {
+        $pollinterval = intval(config::get('poll_interval'));
+        if ($pollinterval < self::MIN_POLL_INTERVAL) {
+            $pollinterval = self::MIN_POLL_INTERVAL;
+        }
+        return $pollinterval;
     }
 }

@@ -216,6 +216,10 @@ $string['config_participant_description'] = 'These settings define the default r
 $string['config_participant_moderator_default'] = 'Moderator';
 $string['config_participant_moderator_default_description'] = 'This rule is used by default when a new room is added.';
 
+$string['config_poll_interval'] = 'Poll interval to refresh the room\'s status';
+$string['config_poll_interval_description'] = 'Poll interval to refresh the room\'s status. Please make sure that this value is
+ no too low as it might have an impact on the remote server. It cannot be less than two seconds.';
+
 $string['config_userlimit'] = 'User limit';
 $string['config_userlimit_description'] = 'These settings enable or disable options in the UI and also define default values for these options.';
 $string['config_userlimit_default'] = 'User limit enabled by default';
