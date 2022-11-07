@@ -68,6 +68,8 @@ foreach ($functions as $function) {
     $functiondescs[$function->name] = external_api::external_function_info($function);
 }
 
+// TODO: MDL-76078 - Incorrect inter-communication, core cannot have plugin dependencies like this.
+
 // get activated protocol
 $activatedprotocol = array();
 $activatedprotocol['rest'] = webservice_protocol_is_enabled('rest');

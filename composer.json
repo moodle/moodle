@@ -48,7 +48,6 @@
         "ext-sqlsrv": "Needed when Moodle uses MS SQL Server database.",
         "ext-oci8": "Needed when Moodle uses Oracle database.",
         "ext-tokenizer": "Enabling Tokenizer PHP extension is recommended, it improves Moodle Networking functionality.",
-        "ext-xmlrpc": "Enabling XMLRPC PHP extension is useful for web services and Moodle networking.",
         "ext-soap": "Enabling SOAP PHP extension is useful for web services and some plugins.",
         "ext-sodium": "Enabling Sodium PHP extension is recommended, it is used by Moodle encryption API.",
         "ext-exif": "Enabling Exif PHP extension is recommended, it is used by Moodle to parse image meta data."

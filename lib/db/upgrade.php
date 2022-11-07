@@ -3005,5 +3005,31 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022102800.01);
     }
 
+    if ($oldversion < 2022110600.00) {
+        // If webservice_xmlrpc isn't any longer installed, remove its configuration,
+        // capabilities and presence in other settings.
+        if (!file_exists($CFG->dirroot . '/webservice/xmlrpc/version.php')) {
+            // No DB structures to delete in this plugin.
+
+            // Remove capabilities.
+            capabilities_cleanup('webservice_xmlrpc');
+
+            // Remove own configuration.
+            unset_all_config_for_plugin('webservice_xmlrpc');
+
+            // Remove it from the enabled protocols if it was there.
+            $protos = get_config('core', 'webserviceprotocols');
+            $protoarr = explode(',', $protos);
+            $protoarr = array_filter($protoarr, function($ele) {
+                return trim($ele) !== 'xmlrpc';
+            });
+            $protos = implode(',', $protoarr);
+            set_config('webserviceprotocols', $protos);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022110600.00);
+    }
+
     return true;
 }
