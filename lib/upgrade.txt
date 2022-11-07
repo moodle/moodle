@@ -60,6 +60,8 @@ Declaration is as follow:
 * New function set_additional_classes() has been implemented to add additional classes to action_menu.
 * Most Behat functionality for the Moodle App has been removed from core, refer to the documentation in order to upgrade your testing
   setup: https://moodledev.io/general/app/development/testing/acceptance-testing#upgrading-tests-from-an-older-version
+* New DML driver methods `$DB->sql_regex_get_word_beginning_boundary_marker` and `$DB->sql_regex_get_word_end_boundary_marker`
+  for managing word boundary markers in a database driver supporting regex syntax when searching.
 
 === 4.0 ===
 
