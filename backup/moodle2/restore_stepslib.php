@@ -5293,6 +5293,7 @@ class restore_move_module_questions_categories extends restore_execution_step {
                                                        AND parentitemid = ?", array($this->get_restoreid(), $contextid));
                 $top = question_get_top_category($newcontext->newitemid, true);
                 $oldtopid = 0;
+                $categoryids = [];
                 foreach ($modulecats as $modulecat) {
                     // Before 3.5, question categories could be created at top level.
                     // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
@@ -5308,12 +5309,37 @@ class restore_move_module_questions_categories extends restore_execution_step {
                             $cat->parent = $top->id;
                         }
                         $DB->update_record('question_categories', $cat);
+                        $categoryids[] = (int)$cat->id;
                     }
 
                     // And set new contextid (and maybe update newitemid) also in question_category mapping (will be
                     // used by {@link restore_create_question_files} later.
                     restore_dbops::set_backup_ids_record($this->get_restoreid(), 'question_category', $modulecat->itemid,
                             $modulecat->newitemid, $newcontext->newitemid);
+                }
+
+                // Update the context id of any tags applied to any questions in these categories.
+                if ($categoryids) {
+                    [$categorysql, $categoryidparams] = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
+                    $sqlupdate = "UPDATE {tag_instance}
+                                     SET contextid = :newcontext
+                                   WHERE component = :component
+                                         AND itemtype = :itemtype
+                                         AND itemid IN (SELECT DISTINCT bi.newitemid as questionid
+                                                          FROM {backup_ids_temp} bi
+                                                          JOIN {question} q ON q.id = bi.newitemid
+                                                          JOIN {question_versions} qv ON qv.questionid = q.id
+                                                          JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                                                         WHERE bi.backupid = :backupid AND bi.itemname = 'question_created'
+                                                               AND qbe.questioncategoryid {$categorysql}) ";
+                    $params = [
+                        'newcontext' => $newcontext->newitemid,
+                        'component' => 'core_question',
+                        'itemtype' => 'question',
+                        'backupid' => $this->get_restoreid(),
+                    ];
+                    $params += $categoryidparams;
+                    $DB->execute($sqlupdate, $params);
                 }
 
                 // Now set the parent id for the question categories that were in the top category in the course context
