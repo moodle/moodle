@@ -47,5 +47,15 @@ function xmldb_atto_equation_upgrade($oldversion) {
     // Automatically generated Moodle v4.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2022041901) {
+        $oldmatrix = '\left| \begin{matrix} a_1 & a_2 \\ a_3 & a_4 \end{matrix} \right|';
+        $fixedmatrix = '\left| \begin{matrix} a_1 & a_2 \\\\ a_3 & a_4 \end{matrix} \right|';
+        $config = get_config('atto_equation', 'librarygroup4');
+        $newdefault = str_replace($oldmatrix, $fixedmatrix, $config);
+        set_config('librarygroup4', $newdefault, 'atto_equation');
+        // Atto equation savepoint reached.
+        upgrade_plugin_savepoint(true, 2022041901, 'atto', 'equation');
+    }
+
     return true;
 }
