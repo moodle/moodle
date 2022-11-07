@@ -4,6 +4,15 @@ Description of Spout library import
 * Only include the src/Spout directory.
 * Update lib/thirdpartylibs.xml with the latest version.
 
+2022/10/27
+----------
+Changes:
+Box/Spout has been archived and is no longer maintained,
+MDL-73624 needs to fix with a couple of minor changes to
+Writer/WriterAbstract.php. The changes replace rawurldecode() with
+rawurlencode() in lines 143 and 144.
+by Meirza <meirza.arson@moodle.com>
+
 2021/09/01
 ----------
 Update to v3.3.0 (MDL-71707)
