@@ -215,7 +215,8 @@ class get_join_url_test extends \externallib_advanced_testcase {
         $course = $generator->create_course();
         $record = $generator->create_module('bigbluebuttonbn', ['course' => $course->id, 'userlimit' => 2]);
 
-        $user = $generator->create_and_enrol($course, 'student');
+        $user1 = $generator->create_and_enrol($course, 'student');
+        $user2 = $generator->create_and_enrol($course, 'student');
         $instance = instance::get_from_instanceid($record->id);
 
         $bbbgenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
@@ -225,7 +226,7 @@ class get_join_url_test extends \externallib_advanced_testcase {
             'groupid' => $instance->get_group_id(),
             'participants' => 2
         ]);
-        $this->setUser($user);
+        $this->setUser($user1);
         $joinurl = $this->get_join_url($instance->get_cm_id());
         $this->assertNotNull($joinurl['warnings']);
         $this->assertEquals('userlimitreached', $joinurl['warnings'][0]['warningcode']);

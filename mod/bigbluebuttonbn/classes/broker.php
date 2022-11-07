@@ -84,7 +84,7 @@ class broker {
      * @param instance $instance
      * @param array $params
      */
-    public static function recording_ready(instance $instance, array $params): void {
+    public static function process_recording_ready(instance $instance, array $params): void {
         // Decodes the received JWT string.
         try {
             $decodedparameters = JWT::decode(
@@ -126,5 +126,68 @@ class broker {
             $error = 'Caught exception: ' . $e->getMessage();
             header('HTTP/1.0 503 Service Unavailable. ' . $error);
         }
+    }
+
+    /**
+     * Process meeting events for instance with provided HTTP headers.
+     *
+     * @param instance $instance
+     * @return void
+     */
+    public static function process_meeting_events(instance $instance) {
+        try {
+            // Get the HTTP headers.
+            $authorization = self::get_authorization_token();
+
+            // Pull the Bearer from the headers.
+            if (empty($authorization)) {
+                $msg = 'Authorization failed';
+                header('HTTP/1.0 400 Bad Request. ' . $msg);
+                return;
+            }
+            // Verify the authenticity of the request.
+            $token = \Firebase\JWT\JWT::decode(
+                $authorization[1],
+                new Key(config::get('shared_secret'), 'HS512')
+            );
+
+            // Get JSON string from the body.
+            $jsonstr = file_get_contents('php://input');
+
+            // Convert JSON string to a JSON object.
+            $jsonobj = json_decode($jsonstr);
+            $headermsg = meeting::meeting_events($instance, $jsonobj);
+            header($headermsg);
+        } catch (Exception $e) {
+            $msg = 'Caught exception: ' . $e->getMessage();
+            header('HTTP/1.0 400 Bad Request. ' . $msg);
+        }
+    }
+
+
+    /**
+     * Get authorisation token
+     *
+     * We could use getallheaders but this is only compatible with apache types of servers
+     * some explanations and examples here: https://www.php.net/manual/en/function.getallheaders.php#127190
+     *
+     * @return array|null an array composed of the Authorization token provided in the header.
+     */
+    private static function get_authorization_token(): ?array {
+        $autorization = null;
+        if (isset($_SERVER['Authorization'])) {
+            $autorization = trim($_SERVER["Authorization"]);
+        } else if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $autorization = trim($_SERVER["HTTP_AUTHORIZATION"]);
+        } else if (function_exists('apache_request_headers')) {
+            $requestheaders = apache_request_headers();
+            $requestheaders = array_combine(array_map('ucwords',
+                    array_keys($requestheaders)), array_values($requestheaders));
+
+            if (isset($requestheaders['Authorization'])) {
+                $autorization = trim($requestheaders['Authorization']);
+            }
+        }
+        return empty($autorization) ? null : explode(" ", $autorization);
     }
 }

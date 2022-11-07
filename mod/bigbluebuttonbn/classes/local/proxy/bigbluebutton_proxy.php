@@ -242,10 +242,12 @@ class bigbluebutton_proxy extends proxy_base {
 
         $bbbcompletion = new custom_completion($cm, $userid);
         if ($bbbcompletion->get_overall_completion_state()) {
-            mtrace("Completion succeeded for user $userid");
+            mtrace("Completion for userid $userid and bigbluebuttonid {$bigbluebuttonbn->id} updated.");
             $completion->update_state($cm, COMPLETION_COMPLETE, $userid, true);
         } else {
-            mtrace("Completion did not succeed for user $userid");
+            // Still update state to current value (prevent unwanted caching).
+            $completion->update_state($cm, COMPLETION_UNKNOWN, $userid);
+            mtrace("Activity not completed for userid $userid and bigbluebuttonid {$bigbluebuttonbn->id}.");
         }
     }
 

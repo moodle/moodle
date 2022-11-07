@@ -454,61 +454,31 @@ class meeting {
      *  - Body: <A JSON Object>
      *
      * @param instance $instance
-     * @return void
+     * @param object $data
+     * @return string
      */
-    public static function meeting_events(instance $instance) {
+    public static function meeting_events(instance $instance, object $data):  string {
         $bigbluebuttonbn = $instance->get_instance_data();
-        // Decodes the received JWT string.
-        try {
-            // Get the HTTP headers (getallheaders is a PHP function that may only work with Apache).
-            $headers = getallheaders();
-
-            // Pull the Bearer from the headers.
-            if (!array_key_exists('Authorization', $headers)) {
-                $msg = 'Authorization failed';
-                header('HTTP/1.0 400 Bad Request. ' . $msg);
-                return;
-            }
-            $authorization = explode(" ", $headers['Authorization']);
-
-            // Verify the authenticity of the request.
-            $token = \Firebase\JWT\JWT::decode(
-                $authorization[1],
-                new Key(config::get('shared_secret'), 'HS512')
-            );
-
-            // Get JSON string from the body.
-            $jsonstr = file_get_contents('php://input');
-
-            // Convert JSON string to a JSON object.
-            $jsonobj = json_decode($jsonstr);
-        } catch (Exception $e) {
-            $msg = 'Caught exception: ' . $e->getMessage();
-            header('HTTP/1.0 400 Bad Request. ' . $msg);
-            return;
-        }
-
         // Validate that the bigbluebuttonbn activity corresponds to the meeting_id received.
-        $meetingidelements = explode('[', $jsonobj->{'meeting_id'});
+        $meetingidelements = explode('[', $data->{'meeting_id'});
         $meetingidelements = explode('-', $meetingidelements[0]);
         if (!isset($bigbluebuttonbn) || $bigbluebuttonbn->meetingid != $meetingidelements[0]) {
-            $msg = 'The activity may have been deleted';
-            header('HTTP/1.0 410 Gone. ' . $msg);
-            return;
+            return 'HTTP/1.0 410 Gone. The activity may have been deleted';
         }
 
         // We make sure events are processed only once.
-        $overrides = ['meetingid' => $jsonobj->{'meeting_id'}];
-        $meta['recordid'] = $jsonobj->{'internal_meeting_id'};
+        $overrides = ['meetingid' => $data->{'meeting_id'}];
+        $meta['internalmeetingid'] = $data->{'internal_meeting_id'};
         $meta['callback'] = 'meeting_events';
+        $meta['meetingid'] = $data->{'meeting_id'};
 
         $eventcount = logger::log_event_callback($instance, $overrides, $meta);
         if ($eventcount === 1) {
             // Process the events.
-            self::process_meeting_events($instance, $jsonobj);
-            header('HTTP/1.0 200 Accepted. Enqueued.');
+            self::process_meeting_events($instance, $data);
+            return 'HTTP/1.0 200 Accepted. Enqueued.';
         } else {
-            header('HTTP/1.0 202 Accepted. Already processed.');
+            return 'HTTP/1.0 202 Accepted. Already processed.';
         }
     }
 
