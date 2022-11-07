@@ -22,6 +22,7 @@ use lang_string;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\{course, user};
 use core_blog\reportbuilder\local\entities\blog;
+use core_comment\reportbuilder\local\entities\comment;
 use core_tag\reportbuilder\local\entities\tag;
 
 /**
@@ -73,6 +74,12 @@ class blogs extends datasource {
         $this->add_entity($courseentity
             ->add_join("LEFT JOIN {course} {$coursealias} ON {$coursealias}.id = {$postalias}.courseid"));
 
+        // Join the comment entity (ensure differing alias from that used by course entity).
+        $commententity = (new comment())
+            ->set_table_alias('comments', 'bcmt');
+        $this->add_entity($commententity
+            ->add_join("LEFT JOIN {comments} bcmt ON bcmt.component = 'blog' AND bcmt.itemid = {$postalias}.id"));
+
         // Add report elements from each of the entities we added to the report.
         $this->add_all_from_entity($blogentity->get_entity_name());
 
@@ -83,6 +90,11 @@ class blogs extends datasource {
 
         $this->add_all_from_entity($userentity->get_entity_name());
         $this->add_all_from_entity($courseentity->get_entity_name());
+
+        // Add specific comment entity elements.
+        $this->add_columns_from_entity($commententity->get_entity_name(), ['content', 'timecreated']);
+        $this->add_filter($commententity->get_filter('timecreated'));
+        $this->add_condition($commententity->get_filter('timecreated'));
     }
 
     /**
