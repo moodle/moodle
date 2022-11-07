@@ -29,13 +29,11 @@ Feature: View activity completion information in the LTI activity
     Given I am on the "Music history" "lti activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
-    And I log out
     And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "90.00" to the user "Vinnie Student1" for the grade item "Music history"
     And I press "Save changes"
-    And I log out
     When I am on the "Music history" "lti activity" page logged in as student1
     Then the "Receive a grade" completion condition of "Music history" is displayed as "done"
     And the "View" completion condition of "Music history" is displayed as "done"
@@ -44,11 +42,9 @@ Feature: View activity completion information in the LTI activity
     Given I am on the "Music history" "lti activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
-    And I press "Save and return to course"
+    And I press "Save and display"
     # Teacher view.
-    Given I am on the "Music history" "lti activity" page
     And the manual completion button for "Music history" should be disabled
-    And I log out
     # Student view.
     When I am on the "Music history" "lti activity" page logged in as student1
     Then the manual completion button of "Music history" is displayed as "Mark as done"
