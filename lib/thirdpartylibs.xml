@@ -155,7 +155,7 @@
     <location>phpmailer</location>
     <name>PHPMailer</name>
     <description>Class for sending email using either sendmail, PHP mail(), or SMTP. Methods are based upon the standard AspEmail(tm) classes.</description>
-    <version>6.5.3</version>
+    <version>6.6.5</version>
     <license>LGPL</license>
     <licenseversion>2.1</licenseversion>
     <repository>https://github.com/PHPMailer/PHPMailer</repository>
