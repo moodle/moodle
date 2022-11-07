@@ -30,16 +30,16 @@ ns.LibrarySelector = function (libraries, defaultLibrary, defaultParams) {
 
   //Add tutorial and example link:
   this.$tutorialUrl = ns.$(
-    '<a class="h5p-tutorial-url" target="_blank">' + 
-      '<span class="h5p-tutorial-url-label">' + 
-        ns.t('core', 'tutorial') + 
+    '<a class="h5p-tutorial-url" target="_blank">' +
+      '<span class="h5p-tutorial-url-label">' +
+        ns.t('core', 'tutorial') +
       '</span>' +
     '</a>'
   ).hide();
   this.$exampleUrl = ns.$(
-    '<a class="h5p-example-url" target="_blank">' + 
-      '<span class="h5p-example-url-label">' + 
-        ns.t('core', 'example') + 
+    '<a class="h5p-example-url" target="_blank">' +
+      '<span class="h5p-example-url-label">' +
+        ns.t('core', 'example') +
       '</span>' +
     '</a>'
   ).hide();
@@ -141,7 +141,13 @@ ns.LibrarySelector.prototype.appendTo = function ($element) {
   var self = this;
   this.$parent = $element;
 
-  this.$selector.appendTo($element);
+  /*
+    Start Moodle change
+    This line is commented out to prevent display of the hub selector in Moodle.
+    For more information see MDL-67814.
+  */
+  //this.$selector.appendTo($element);
+  /* End Moodle change */
   this.$tutorialUrl.appendTo($element);
   this.$exampleUrl.appendTo($element);
 
