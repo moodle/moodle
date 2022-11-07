@@ -1,8 +1,5 @@
 <?php
 
-namespace Moodle;
-
-use stdClass;
 /**
  * Class
  */

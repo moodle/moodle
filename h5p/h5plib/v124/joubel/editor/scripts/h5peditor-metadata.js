@@ -136,6 +136,54 @@ H5PEditor.MetadataForm = (function (EventDispatcher, $, metadataSemantics) {
     };
 
     /**
+     * Toggle visibility of accessibility title field
+     */
+    const toggleA11yTitle = function () {
+      const a11yTitleField = H5PEditor.findField('a11yTitle', self);
+      const wrapper = a11yTitleField.$item[0];
+      self.isA11yExpanded = !self.isA11yExpanded;
+      if (self.isA11yExpanded) {
+        wrapper.classList.remove('hidden');
+      }
+      wrapper.classList[self.isA11yExpanded ? 'remove' : 'add']('hide');
+      self.a11yTitleText.innerHTML = self.isA11yExpanded
+        ? t('a11yTitleHideLabel') : t('a11yTitleShowLabel');
+      wrapper.setAttribute('aria-hidden', !self.isA11yExpanded);
+    }
+
+    /**
+     * Setup functionality of accessibility title field and button
+     */
+    const setupA11yTitleField = function () {
+      const titleField = H5PEditor.findField('title', self);
+      const a11yTitleField = H5PEditor.findField('a11yTitle', self);
+      const label = titleField.$item[0].querySelector('label.h5peditor-label-wrapper');
+      const toggleA11yTitleButton = document.createElement('button');
+      const a11yTitleText = document.createElement('span');
+      a11yTitleText.classList.add('h5p-a11y-title-text');
+      a11yTitleText.innerHTML = t('a11yTitleShowLabel');
+      self.a11yTitleText = a11yTitleText;
+
+      toggleA11yTitleButton.classList.add('a11y-title-toggle');
+      toggleA11yTitleButton.appendChild(a11yTitleText);
+
+      a11yTitleField.$item[0].classList.add('hide');
+      a11yTitleField.$item[0].setAttribute('aria-hidden', true);
+      a11yTitleField.$item[0].addEventListener('transitionend', function () {
+        // Hide when transition is done
+        if (!self.isA11yExpanded) {
+          a11yTitleField.$item[0].classList.add('hidden');
+        }
+      });
+
+      toggleA11yTitleButton.addEventListener('click', toggleA11yTitle);
+      self.togglea11yTitleButton = toggleA11yTitleButton;
+      self.isA11yExpanded = false;
+
+      label.appendChild(toggleA11yTitleButton);
+    }
+
+    /**
      * @private
      */
     const setupSourceField = function () {
@@ -231,6 +279,7 @@ H5PEditor.MetadataForm = (function (EventDispatcher, $, metadataSemantics) {
       semantics.push(getExtraTitleFieldSemantics());
     }
     semantics.push(findField('title'));
+    semantics.push(findField('a11yTitle'));
     semantics.push(findField('license'));
     semantics.push(findField('licenseVersion'));
     semantics.push(findField('yearFrom'));
@@ -251,6 +300,7 @@ H5PEditor.MetadataForm = (function (EventDispatcher, $, metadataSemantics) {
     setupTitleField();
     setupLicenseField();
     setupSourceField();
+    setupA11yTitleField();
 
     // Append the metadata author list widget (Not the same type of widgets as the rest of editor fields)
     const metadataAuthorWidget = H5PEditor.metadataAuthorWidget(findField('authors').field.fields, params, $fieldsWrapper, self);
