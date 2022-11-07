@@ -2484,6 +2484,30 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns the word-beginning boundary marker if this database driver supports regex syntax when searching.
+     * @return string The word-beginning boundary marker. Otherwise, an empty string.
+     */
+    public function sql_regex_get_word_beginning_boundary_marker() {
+        if ($this->sql_regex_supported()) {
+            return '[[:<:]]';
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns the word-end boundary marker if this database driver supports regex syntax when searching.
+     * @return string The word-end boundary marker. Otherwise, an empty string.
+     */
+    public function sql_regex_get_word_end_boundary_marker() {
+        if ($this->sql_regex_supported()) {
+            return '[[:>:]]';
+        }
+
+        return '';
+    }
+
+    /**
      * Returns the SQL that allows to find intersection of two or more queries
      *
      * @since Moodle 2.8

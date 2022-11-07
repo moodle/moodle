@@ -6,6 +6,8 @@ information provided here is intended especially for developers.
   changed. It was (for example) mod_mymodule\local\views\secondary but is now
   mod_mymodule\navigation\views\secondary. The old location will continue to work, but will be deprecated in 4.1.
 * When exporting table content, HTML tags/entities will be removed when the selected dataformat does not support HTML
+* New DML driver methods `$DB->sql_regex_get_word_beginning_boundary_marker` and `$DB->sql_regex_get_word_end_boundary_marker`
+  for managing word boundary markers in a database driver supporting regex syntax when searching.
 
 === 4.0.2 ===
 * The core renderer `edit_button` method now accepts an optional `$method` argument (get/post) for the button
