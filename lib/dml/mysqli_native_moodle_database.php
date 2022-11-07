@@ -244,9 +244,9 @@ class mysqli_native_moodle_database extends moodle_database {
     /**
      * Set 'dbcollation' option
      *
-     * @return string $dbcollation
+     * @return string|null $dbcollation
      */
-    private function detect_collation(): string {
+    private function detect_collation(): ?string {
         if ($this->external) {
             return null;
         }
@@ -1874,6 +1874,38 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         return $collation . ($positivematch ? 'REGEXP' : 'NOT REGEXP');
+    }
+
+    /**
+     * Returns the word-beginning boundary marker based on MySQL version.
+     * @return string The word-beginning boundary marker.
+     */
+    public function sql_regex_get_word_beginning_boundary_marker() {
+        $ismysql = ($this->get_dbtype() == 'mysqli' || $this->get_dbtype() == 'auroramysql');
+        $ismysqlge8d0d4 = ($ismysql && version_compare($this->get_server_info()['version'], '8.0.4', '>='));
+        if ($ismysqlge8d0d4) {
+            return '\\b';
+        }
+        // Prior to MySQL 8.0.4, MySQL used the Henry Spencer regular expression library to support regular expression operations,
+        // rather than International Components for Unicode (ICU).
+        // MariaDB still supports the "old marker" (MDEV-5357).
+        return '[[:<:]]';
+    }
+
+    /**
+     * Returns the word-end boundary marker based on MySQL version.
+     * @return string The word-end boundary marker.
+     */
+    public function sql_regex_get_word_end_boundary_marker() {
+        $ismysql = ($this->get_dbtype() == 'mysqli' || $this->get_dbtype() == 'auroramysql');
+        $ismysqlge8d0d4 = ($ismysql && version_compare($this->get_server_info()['version'], '8.0.4', '>='));
+        if ($ismysqlge8d0d4) {
+            return '\\b';
+        }
+        // Prior to MySQL 8.0.4, MySQL used the Henry Spencer regular expression library to support regular expression operations,
+        // rather than International Components for Unicode (ICU).
+        // MariaDB still supports the "old marker" (MDEV-5357).
+        return '[[:>:]]';
     }
 
     /**
