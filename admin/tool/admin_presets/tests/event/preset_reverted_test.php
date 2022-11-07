@@ -23,7 +23,7 @@ namespace tool_admin_presets\event;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_admin_presets\event\preset_reverted
+ * @covers     \tool_admin_presets\event\preset_reverted
  */
 class preset_reverted_test extends \advanced_testcase {
 
