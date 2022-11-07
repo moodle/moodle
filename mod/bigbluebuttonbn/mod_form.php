@@ -212,7 +212,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $mform->setType('completionattendance', PARAM_INT);
         $mform->addGroup($attendance['group'], 'completionattendancegroup', $attendance['grouplabel'], [' '], false);
         $mform->addHelpButton('completionattendancegroup', 'completionattendancegroup', 'bigbluebuttonbn');
-        $mform->disabledIf('completionattendancegroup', 'completionview', 'notchecked');
+        $mform->disabledIf('completionattendancegroup', 'completion', 'neq', COMPLETION_AGGREGATION_ANY);
         $mform->disabledIf('completionattendance', 'completionattendanceenabled', 'notchecked');
 
         // Elements for completion by Engagement.
@@ -236,7 +236,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             ]
         ]);
         $mform->addHelpButton('completionengagementgroup', 'completionengagementgroup', 'bigbluebuttonbn');
-        $mform->disabledIf('completionengagementgroup', 'completionview', 'notchecked');
+        $mform->disabledIf('completionengagementgroup', 'completion', 'neq', COMPLETION_AGGREGATION_ANY);
 
         return ['completionattendancegroup', 'completionengagementgroup'];
     }

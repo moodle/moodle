@@ -14,11 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_bigbluebuttonbn;
+namespace mod_bigbluebuttonbn\completion;
 
 use completion_info;
 use context_module;
-use mod_bigbluebuttonbn\completion\custom_completion;
+use mod_bigbluebuttonbn\instance;
+use mod_bigbluebuttonbn\local\config;
+use mod_bigbluebuttonbn\logger;
+use mod_bigbluebuttonbn\meeting;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
 
 /**
@@ -38,11 +41,12 @@ class completion_test extends \advanced_testcase {
      */
     public function setUp(): void {
         parent::setUp();
+        $this->initialise_mock_server();
         set_config('enablecompletion', true); // Enable completion for all tests.
     }
 
     /**
-     * Completion with no rules
+     * Completion with no rules: the completion is completed as soons as we view the course.
      */
     public function test_get_completion_state_no_rules() {
         $this->resetAfterTest();
@@ -103,7 +107,15 @@ class completion_test extends \advanced_testcase {
     public function test_get_completion_state_complete() {
         $this->resetAfterTest();
 
-        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
+        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance(
+            $this->get_course(),
+            [
+                'completion' => '2',
+                'completionengagementtalks' => 2,
+                'completionengagementchats' => 2,
+                'completionattendance' => 15
+            ]
+        );
         $instance = instance::get_from_instanceid($bbactivity->id);
 
         $user = $this->getDataGenerator()->create_user();
@@ -114,18 +126,24 @@ class completion_test extends \advanced_testcase {
         $meta = [
             'origin' => 0,
             'data' => [
-                'duration' => 120,
+                'duration' => 300, // 300 seconds, i.e 5 mins.
                 'engagement' => [
                     'chats' => 2,
                     'talks' => 2,
                 ],
             ],
         ];
-        logger::log_meeting_joined_event($instance, 0);
-        logger::log_event_summary($instance, $overrides, $meta);
-        logger::log_event_summary($instance, $overrides, $meta);
 
-        // Now 2 x 120 mins of duration.
+        // We setup a couple of logs as per engagement and duration.
+        logger::log_event_summary($instance, $overrides, $meta);
+        logger::log_event_summary($instance, $overrides, $meta);
+        $completion = new custom_completion($bbactivitycm, $user->id);
+        $result = $completion->get_overall_completion_state();
+        $this->assertEquals(COMPLETION_INCOMPLETE, $result);
+
+        // Now we have 15 mins.
+        logger::log_event_summary($instance, $overrides, $meta);
+        // Now that the meeting was joined, it should be complete.
         $completion = new custom_completion($bbactivitycm, $user->id);
         $result = $completion->get_overall_completion_state();
         $this->assertEquals(COMPLETION_COMPLETE, $result);
@@ -141,21 +159,15 @@ class completion_test extends \advanced_testcase {
         // Two activities, both with automatic completion. One has the 'completionsubmit' rule, one doesn't.
         // Inspired from the same test in forum.
         list($bbactivitycontext, $cm1, $bbactivity) = $this->create_instance($this->get_course(),
-            ['completion' => '2', 'completionattendance' => '1']);
+            ['completion' => '2']);
+        $cm1->override_customdata('customcompletionrules', [
+            'completionattendance' => '1'
+        ]);
         list($bbactivitycontext, $cm2, $bbactivity) = $this->create_instance($this->get_course(),
-            ['completion' => '2', 'completionattendance' => '0']);
-
-        // Data for the stdClass input type.
-        // This type of input would occur when checking the default completion rules for an activity type, where we don't have
-        // any access to cm_info, rather the input is a stdClass containing completion and customdata attributes, just like cm_info.
-        $moddefaults = (object) [
-            'customdata' => [
-                'customcompletionrules' => [
-                    'completionsubmit' => '1',
-                ],
-            ],
-            'completion' => 2,
-        ];
+            ['completion' => '2']);
+        $cm2->override_customdata('customcompletionrules', [
+            'completionattendance' => '0'
+        ]);
 
         $completioncm1 = new custom_completion($cm1, $user->id);
         // TODO: check the return value here as there might be an issue with the function compared to the forum for example.
@@ -194,6 +206,12 @@ class completion_test extends \advanced_testcase {
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
 
+        // Check completion before viewing.
+        $completion = new completion_info($this->get_course());
+        $completiondata = $completion->get_data($bbactivitycm);
+        $this->assertEquals(0, $completiondata->viewed);
+        $this->assertEquals(COMPLETION_NOT_VIEWED, $completiondata->completionstate);
+
         bigbluebuttonbn_view($bbactivity, $this->get_course(), $bbactivitycm, context_module::instance($bbactivitycm->id));
 
         $events = $sink->get_events();
@@ -213,7 +231,89 @@ class completion_test extends \advanced_testcase {
         $completion = new completion_info($this->get_course());
         $completiondata = $completion->get_data($bbactivitycm);
         $this->assertEquals(1, $completiondata->viewed);
-        // A view means COMPLETE.
         $this->assertEquals(COMPLETION_COMPLETE, $completiondata->completionstate);
     }
+
+    /**
+     * Completion with no rules and join meeting
+     *
+     * @param array $customcompletionrules
+     * @param array $events
+     * @param int $expectedstate
+     * @dataProvider custom_completion_data_provider
+     */
+    public function test_get_completion_with_events(array $customcompletionrules, array $events, int $expectedstate) {
+        $this->resetAfterTest();
+        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance(
+            $this->get_course(),
+            [
+                'completion' => '2',
+            ]
+        );
+        $bbactivitycm->override_customdata('customcompletionrules', $customcompletionrules);
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Now create a couple of events.
+        $instance = instance::get_from_instanceid($bbactivity->id);
+        set_config('bigbluebuttonbn_meetingevents_enabled', true);
+        $meeting = $plugingenerator->create_meeting([
+            'instanceid' => $instance->get_instance_id(),
+            'groupid' => $instance->get_group_id(),
+            'participants' => json_encode([$user->id])
+        ]);
+        foreach ($events as $edesc) {
+            $plugingenerator->add_meeting_event($user, $instance, $edesc->name, $edesc->data ?? '');
+        }
+        $result = $plugingenerator->send_all_events($instance);
+        $this->assertNotEmpty($result->data);
+        $data = json_decode(json_encode($result->data));
+        meeting::meeting_events($instance, $data);
+        $completion = new custom_completion($bbactivitycm, $user->id);
+        $result = $completion->get_overall_completion_state();
+        $this->assertEquals($expectedstate, $result);
+    }
+
+    /**
+     * Data generator
+     *
+     * @return array[]
+     */
+    public function custom_completion_data_provider() {
+        return [
+            'simple' => [
+                'customcompletionrules' => [
+                    'completionengagementtalks' => 1,
+                    'completionengagementchats' => 1,
+                ],
+                'events' => [
+                    (object) ['name' => 'talks'],
+                    (object) ['name' => 'chats']
+                ],
+                'expectedstate' => COMPLETION_COMPLETE
+            ],
+            'not right events' => [
+                'customcompletionrules' => [
+                    'completionengagementchats' => 1,
+                ],
+                'events' => [
+                    (object) ['name' => 'talks']
+                ],
+                'expectedstate' => COMPLETION_INCOMPLETE
+            ],
+            'attendance' => [
+                'customcompletionrules' => [
+                    'completionattendance' => 1,
+                ],
+                'events' => [
+                    (object) ['name' => 'talks'],
+                    (object) ['name' => 'attendance', 'data' => '70']
+                ],
+                'expectedstate' => COMPLETION_COMPLETE
+            ]
+        ];
+    }
 }
+
