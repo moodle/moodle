@@ -42,7 +42,7 @@ class state_test extends \advanced_testcase {
      * Test the behaviour of state::export_for_template().
      *
      * @dataProvider state_provider
-     * @coversDefaultClass \core_courseformat\output\local\state
+     * @covers \core_courseformat\output\local\state
      *
      * @param string $format The course format of the course where the method will be executed.
      */

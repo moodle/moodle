@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for core\content\zipwriter.
- *
- * @package     core
- * @category    test
- * @copyright   2020 Simey Lameze <simey@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
-
 declare(strict_types=1);
 
 namespace core\content\export;
@@ -35,7 +26,11 @@ use ZipArchive;
 /**
  * Unit tests for core\content\zipwriter.
  *
- * @coversDefaultClass \core\content\export\zipwriter
+ * @package     core
+ * @category    test
+ * @copyright   2020 Simey Lameze <simey@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @covers      \core\content\export\zipwriter
  */
 class zipwriter_test extends advanced_testcase {
 
