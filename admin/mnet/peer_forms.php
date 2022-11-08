@@ -59,9 +59,8 @@ class mnet_simple_host_form extends moodleform {
             $wwwroot = 'http://'.$wwwroot;
         }
         if ($host = $DB->get_record('mnet_host', array('wwwroot' => $wwwroot))) {
-            global $CFG;
-            return array('wwwroot' => get_string('hostexists', 'mnet',
-                new moodle_url('/admin/mnet/peers.php', array('hostid' => $host->id))));
+            $str = get_string('hostexists', 'mnet', (new moodle_url('/admin/mnet/peers.php', ['hostid' => $host->id]))->out());
+            return array('wwwroot' => $str);
         }
         return array();
     }
