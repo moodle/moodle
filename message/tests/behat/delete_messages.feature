@@ -262,8 +262,10 @@ Feature: Delete messages from conversations
     And I click on "//button[@data-action='confirm-delete-selected-messages']" "xpath_element"
     And I go back in "view-conversation" message drawer
     Then I should not see "Student 2" in the "//*[@data-region='message-drawer']//div[@data-region='view-overview-favourites']" "xpath_element"
-    And I send "Hi!" message to "Student 2" user
-    And I go back in "view-conversation" message drawer
-    And I go back in "view-search" message drawer
+    And the following "private messages" exist:
+      | user     | contact  | message       |
+      | student1 | student2 | Hi!           |
+    And I open messaging
     And I open the "Starred" conversations list
-    And I should see "Student 2" in the "//*[@data-region='message-drawer']//div[@data-region='view-overview-favourites']" "xpath_element"
+    And I select "Student 2" conversation in the "favourites" conversations list
+    And I should see "Hi!" in the "Student 2" "core_message > Message conversation"
