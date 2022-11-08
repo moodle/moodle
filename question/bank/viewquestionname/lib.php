@@ -37,8 +37,11 @@ function qbank_viewquestionname_inplace_editable ($itemtype, $itemid, $newvalue)
         require_once($CFG->libdir . '/questionlib.php');
         // Get the question data and to confirm any invalud itemid is not passed.
         $record = $DB->get_record('question', ['id' => $itemid], '*', MUST_EXIST);
+
         // Load question data from question engine.
         $question = question_bank::load_question($record->id);
+        question_require_capability_on($question, 'edit');
+
         // Context validation.
         \external_api::validate_context(context::instance_by_id($question->contextid));
 
