@@ -5920,7 +5920,7 @@ function email_should_be_diverted($email) {
 
     $patterns = array_map('trim', preg_split("/[\s,]+/", $CFG->divertallemailsexcept, -1, PREG_SPLIT_NO_EMPTY));
     foreach ($patterns as $pattern) {
-        if (preg_match("/$pattern/", $email)) {
+        if (preg_match("/{$pattern}/i", $email)) {
             return false;
         }
     }

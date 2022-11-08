@@ -3426,6 +3426,7 @@ EOF;
                     'foo@example.com',
                     'test@real.com',
                     'fred.jones@example.com',
+                    'Fred.Jones@Example.com',
                 ),
                 true,
             ),
@@ -3435,6 +3436,7 @@ EOF;
                 array(
                     'dev1@dev.com',
                     'fred@example.com',
+                    'Fred@Example.com',
                     'fred+verp@example.com',
                 ),
                 false,
