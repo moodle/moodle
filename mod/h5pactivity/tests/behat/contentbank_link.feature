@@ -22,6 +22,7 @@ Feature: Content bank link in the activity settings form
     And I add a "H5P" to section "1"
     Then I should see "Use the content bank (opens in new window) to manage your H5P files"
     And I click on "content bank (opens in new window)" "link" in the "General" "fieldset"
+    And I switch to a second window
     And I should see "C1" in the "page-navbar" "region"
     And I close all opened windows
 
