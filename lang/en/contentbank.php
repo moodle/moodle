@@ -42,6 +42,7 @@ $string['contentupdated'] = 'Content updated.';
 $string['contextnotallowed'] = 'You are not allowed to access the content bank in this context.';
 $string['copycontent'] = 'Copy content';
 $string['copyof'] = 'Copy of {$a}';
+$string['displayunlisted'] = 'Show unlisted content';
 $string['emptynamenotallowed'] = 'Empty name is not allowed';
 $string['eventcontentcreated'] = 'Content created';
 $string['eventcontentdeleted'] = 'Content deleted';
