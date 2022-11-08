@@ -1,4 +1,4 @@
-@mod @mod_h5pactivity @core_h5p @_file_upload @_switch_iframe
+@mod @mod_h5pactivity @core_h5p @_file_upload @_switch_iframe @javascript
 Feature: Users can see the H5P recent activity from the recent activity block
   In order to quickly see the updates from H5P activity in my course
   As a user
@@ -31,6 +31,7 @@ Feature: Users can see the H5P recent activity from the recent activity block
     And I add the "Recent activity" block
     And I log out
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
+    # The H5P content needs some time to be displayed (so better to wait for 1 second to avoid random errors).
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I click on "Wrong one" "text" in the ".h5p-question-content" "css_element"
@@ -38,6 +39,7 @@ Feature: Users can see the H5P recent activity from the recent activity block
     And I switch to the main frame
     And I log out
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student2
+    # The H5P content needs some time to be displayed (so better to wait for 1 second to avoid random errors).
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I click on "Correct one" "text" in the ".h5p-question-content" "css_element"
@@ -45,7 +47,6 @@ Feature: Users can see the H5P recent activity from the recent activity block
     And I switch to the main frame
     And I log out
 
-  @javascript
   Scenario: Student see only his own activity
     Given I am on the "Course 1" course page logged in as student1
     And I should see "H5P submitted:" in the "Recent activity" "block"
@@ -58,7 +59,6 @@ Feature: Users can see the H5P recent activity from the recent activity block
     And I should not see "Grade:"
     And I should not see "Student 2 - "
 
-  @javascript
   Scenario: Teacher see each student activity
     Given I am on the "Course 1" course page logged in as teacher1
     And I should see "H5P submitted:" in the "Recent activity" "block"
