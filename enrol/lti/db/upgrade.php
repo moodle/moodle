@@ -471,5 +471,26 @@ function xmldb_enrol_lti_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022041901, 'enrol', 'lti');
     }
 
+    if ($oldversion < 2022041902) {
+        // Update lti user information for LTI 2.0 users having the wrong consumer secret recorded.
+        // This applies to any LTI 2.0 user who has launched the tool (i.e. has lastaccess) and fixes a non-functional grade sync
+        // for LTI 2.0 consumers.
+        $sql = "SELECT lu.id, lc.secret
+                  FROM {enrol_lti_users} lu
+                  JOIN {enrol_lti_lti2_consumer} lc
+                    ON (lu.consumerkey = lc.consumerkey256)
+                 WHERE lc.ltiversion = :ltiversion
+                   AND lu.consumersecret != lc.secret
+                   AND lu.lastaccess IS NOT NULL";
+        $affectedltiusersrs = $DB->get_recordset_sql($sql, ['ltiversion' => 'LTI-2p0']);
+        foreach ($affectedltiusersrs as $ltiuser) {
+            $DB->set_field('enrol_lti_users', 'consumersecret', $ltiuser->secret, ['id' => $ltiuser->id]);
+        }
+        $affectedltiusersrs->close();
+
+        // Lti savepoint reached.
+        upgrade_plugin_savepoint(true, 2022041902, 'enrol', 'lti');
+    }
+
     return true;
 }
