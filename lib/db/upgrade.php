@@ -4547,5 +4547,16 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022041904.03);
     }
 
+    if ($oldversion < 2022041904.14) {
+        $table = new xmldb_table('h5p');
+        $indexpathnamehash = new xmldb_index('pathnamehash_idx', XMLDB_INDEX_NOTUNIQUE, ['pathnamehash']);
+
+        if (!$dbman->index_exists($table, $indexpathnamehash)) {
+            $dbman->add_index($table, $indexpathnamehash);
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022041904.14);
+    }
+
     return true;
 }

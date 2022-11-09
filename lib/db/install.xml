@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20220323" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20221020" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -4303,6 +4303,9 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="mainlibraryid" TYPE="foreign" FIELDS="mainlibraryid" REFTABLE="h5p_libraries" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="pathnamehash_idx" UNIQUE="false" FIELDS="pathnamehash"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="h5p_contents_libraries" COMMENT="Store which library is used in which content.">
       <FIELDS>
