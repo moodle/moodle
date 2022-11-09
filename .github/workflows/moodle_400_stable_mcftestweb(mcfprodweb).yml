@@ -56,5 +56,5 @@ jobs:
         with:
           app-name: 'mcftestweb'
           slot-name: 'mcfprodweb'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6BCD985D37E24ADA8A3DDA17E9AB7B26 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EEB9166F1DBC4239A95DEDD3102172E6 }}
           package: .
