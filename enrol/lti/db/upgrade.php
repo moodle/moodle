@@ -483,5 +483,26 @@ function xmldb_enrol_lti_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022103100, 'enrol', 'lti');
     }
 
+    if ($oldversion < 2022110300) {
+        // Update lti user information for any users missing a consumer secret.
+        // This applies to any user who has launched the tool (i.e. has lastaccess) but who doesn't have a secret recorded.
+        // This fixes a bug where enrol_lti_users records are created first during a member sync, and are missing the secret,
+        // even despite having launched the tool subsequently.
+        $sql = "SELECT lu.id, lc.secret
+                  FROM {enrol_lti_users} lu
+                  JOIN {enrol_lti_lti2_consumer} lc
+                    ON (lu.consumerkey = lc.consumerkey256)
+                 WHERE lu.consumersecret IS NULL
+                   AND lu.lastaccess IS NOT NULL";
+        $affectedltiusersrs = $DB->get_recordset_sql($sql);
+        foreach ($affectedltiusersrs as $ltiuser) {
+            $DB->set_field('enrol_lti_users', 'consumersecret', $ltiuser->secret, ['id' => $ltiuser->id]);
+        }
+        $affectedltiusersrs->close();
+
+        // Lti savepoint reached.
+        upgrade_plugin_savepoint(true, 2022110300, 'enrol', 'lti');
+    }
+
     return true;
 }
