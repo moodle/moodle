@@ -935,15 +935,3 @@ function mnet_strip_user($user, $fields) {
     }
     return $user;
 }
-
-/**
- * Return the deprecation notice of the Mnet.
- *
- * @return \core\output\notification
- */
-function mnet_get_deprecation_notice(): \core\output\notification {
-    $notice = new \core\output\notification(get_string('xmlrpcmnetenabled', 'admin'),
-        \core\output\notification::NOTIFY_WARNING);
-
-    return $notice;
-}
