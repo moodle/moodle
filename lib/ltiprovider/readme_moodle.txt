@@ -16,6 +16,8 @@ These changes can be reverted once the following pull requests have been integra
 This local changes can be reverted once it's checked that they are present upstream (note the
 LTI-Tool-Provider-Library-PHP repo has been archived so it doesn't accept pull requests anymore):
 * MDL-67034 php74 compliance fixes
+* MDL-71920: Migrated from curl_exec and friends to use our Moodle curl wrapper,
+so we can better handle site security settings
 
 It is recommended by upstream to install depdencies via composer - but the composer installation is bundled
 with an autoloader so it's better to do it manually.
