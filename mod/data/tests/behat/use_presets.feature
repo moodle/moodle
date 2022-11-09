@@ -35,7 +35,7 @@ Feature: Users can use predefined presets
     And I click on "Use this preset" "button"
     And I should see "Apply preset Image gallery"
     And I click on "Map fields" "button"
-    And I should see "Field mappings"
+    And I should see "Fields mappings"
     And I click on "Continue" "button"
     And I should see "The preset has been successfully applied"
     And I click on "Continue" "button"
@@ -84,7 +84,7 @@ Feature: Users can use predefined presets
     When I click on "Use this preset" "button"
     And I should see "Apply preset Image gallery"
     And I click on "Map fields" "button"
-    Then I should see "Field mappings"
+    Then I should see "Fields mappings"
     And I should see "title"
     And I should see "Create a new field" in the "title" "table_row"
     # We map existing field to keep the entry data
@@ -172,7 +172,7 @@ Feature: Users can use predefined presets
     When I click on "Use this preset" "button"
     And I should see "Apply preset Image gallery"
     And I click on "Map fields" "button"
-    Then I should see "Field mappings"
+    Then I should see "Fields mappings"
     And I should see "title"
     And I should see "Create a new field" in the "title" "table_row"
     # We map existing field to keep the entry data
@@ -192,7 +192,7 @@ Feature: Users can use predefined presets
     When I click on "Use this preset" "button"
     And I should see "Apply preset Image gallery"
     And I click on "Map fields" "button"
-    And I should see "Field mappings"
+    And I should see "Fields mappings"
     And I set the field "id_title" to "Map to Test field name"
     And I click on "Continue" "button"
     And I should see "The preset has been successfully applied"
@@ -200,7 +200,7 @@ Feature: Users can use predefined presets
     And I follow "Presets"
     And I click on "Image gallery" "link"
     And I click on "Use this preset" "button"
-    Then I should not see "Field mappings"
+    Then I should not see "Fields mappings"
     And I should see "The preset has been successfully applied"
 
   Scenario: Apply preset dialogue should show helpful information to the user

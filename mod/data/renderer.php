@@ -57,7 +57,6 @@ class mod_data_renderer extends plugin_renderer_base {
     public function importing_preset(stdClass $datamodule, \mod_data\local\importer\preset_importer $importer): string {
 
         $strwarning = get_string('mappingwarning', 'data');
-        $strfieldmappings = get_string('fieldmappings', 'data');
 
         $params = $importer->settings;
         $newfields = $params->importfields;
@@ -77,8 +76,6 @@ class mod_data_renderer extends plugin_renderer_base {
         );
 
         if (!empty($newfields)) {
-            $html .= $this->output->heading_with_help($strfieldmappings, 'fieldmappings', 'data', '', '', 3);
-
             $table = new html_table();
             $table->data = array();
 
@@ -125,9 +122,9 @@ class mod_data_renderer extends plugin_renderer_base {
         }
 
         $html .= html_writer::start_tag('div', array('class'=>'overwritesettings'));
-        $html .= html_writer::tag('label', get_string('overwritesettings', 'data'), array('for' => 'overwritesettings'));
-        $attrs = array('type' => 'checkbox', 'name' => 'overwritesettings', 'id' => 'overwritesettings', 'class' => 'ml-1');
+        $attrs = ['type' => 'checkbox', 'name' => 'overwritesettings', 'id' => 'overwritesettings', 'class' => 'mr-2'];
         $html .= html_writer::empty_tag('input', $attrs);
+        $html .= html_writer::tag('label', get_string('overwritesettings', 'data'), ['for' => 'overwritesettings']);
         $html .= html_writer::end_tag('div');
 
         $actionbuttons = html_writer::start_div();

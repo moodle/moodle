@@ -63,5 +63,5 @@ Feature: Zero state page (no fields created)
     And I click on "fullname" "radio" in the "Image gallery" "table_row"
     And the "Use this preset" "button" should be enabled
     Then I click on "Use this preset" "button"
-    And I should not see "Field mappings"
+    And I should not see "Fields mappings"
     And I should see "Image" in the "image" "table_row"

@@ -66,6 +66,7 @@ class fields_action_bar implements templatable, renderable {
 
         $data = [
             'd' => $this->id,
+            'tertiarytitle' => get_string('managefields', 'mod_data'),
         ];
 
         if ($this->fieldselect) {

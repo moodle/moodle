@@ -83,6 +83,21 @@ class action_bar {
     }
 
     /**
+     * Generate the output for the action bar in the field mappings page.
+     *
+     * @return string The HTML code for the action bar.
+     */
+    public function get_fields_mapping_action_bar(): string {
+        global $PAGE;
+
+        $renderer = $PAGE->get_renderer('mod_data');
+        $fieldsactionbar = new fields_mappings_action_bar($this->id);
+
+        $data = $fieldsactionbar->export_for_template($renderer);
+        return $renderer->render_from_template('mod_data/fields_action_bar', $data);
+    }
+
+    /**
      * Generate the output for the create a new field action menu.
      *
      * @return \action_menu Action menu to create a new field

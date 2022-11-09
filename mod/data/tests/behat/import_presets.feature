@@ -24,7 +24,7 @@ Feature: Users can import presets
     And I choose the "Import preset" item in the "Action" action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
-    Then I should not see "Field mappings"
+    Then I should not see "Fields mappings"
     And I should see "Image" in the "image" "table_row"
 
   Scenario: Teacher can import from preset page on a database with fields
@@ -36,7 +36,7 @@ Feature: Users can import presets
     And I choose the "Import preset" item in the "Action" action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
-    Then I should see "Field mappings"
+    Then I should see "Fields mappings"
     And I should see "image"
     And I should see "Create a new field" in the "image" "table_row"
 
@@ -59,7 +59,7 @@ Feature: Users can import presets
     And I choose the "Import preset" item in the "Action" action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
-    Then I should see "Field mappings"
+    Then I should see "Fields mappings"
     And I should see "image"
     And I should see "Create a new field" in the "image" "table_row"
 
@@ -82,7 +82,7 @@ Feature: Users can import presets
     And I choose the "Import preset" item in the "Action" action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
-    Then I should see "Field mappings"
+    Then I should see "Fields mappings"
     And I should see "title"
     And I should see "Create a new field" in the "title" "table_row"
     # We map existing field to keep the entry data
@@ -96,7 +96,7 @@ Feature: Users can import presets
     And I click on "Import a preset" "button"
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
-    Then I should not see "Field mappings"
+    Then I should not see "Fields mappings"
     And I should see "Image" in the "image" "table_row"
 
   Scenario: Importing a preset could create new fields
@@ -156,7 +156,7 @@ Feature: Users can import presets
     And I choose the "Import preset" item in the "Action" action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     When I click on "Import preset and apply" "button"
-    And I should see "Field mappings"
+    And I should see "Fields mappings"
     And I click on "Continue" "button"
     And I should see "The preset has been successfully applied"
     And I click on "Continue" "button"
@@ -165,5 +165,5 @@ Feature: Users can import presets
     And I choose the "Import preset" item in the "Action" action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     And I click on "Import preset and apply" "button"
-    Then I should not see "Field mappings"
+    Then I should not see "Fields mappings"
     And I should see "The preset has been successfully applied"

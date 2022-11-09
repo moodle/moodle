@@ -265,9 +265,8 @@ switch ($mode) {
             redirect($backurl);
         }
         $PAGE->navbar->add(get_string('usestandard', 'data'));
-        $fieldactionbar = $actionbar->get_fields_action_bar();
+        $fieldactionbar = $actionbar->get_fields_mapping_action_bar();
         data_print_header($course, $cm, $data, false, $fieldactionbar);
-        echo $OUTPUT->heading(get_string('usestandard', 'data'), 2, 'mb-4');
         $importer = new preset_existing_importer($manager, $fullname);
         echo $renderer->importing_preset($data, $importer);
         echo $OUTPUT->footer();

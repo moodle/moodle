@@ -119,7 +119,7 @@ if ($action == 'importzip') {
     $importer = new preset_upload_importer($manager, $CFG->tempdir . $filepath);
     if ($importer->needs_mapping()) {
         echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('importpreset', 'data'), 2, 'mb-4');
+        echo $OUTPUT->heading(get_string('fieldmappings', 'data'), 2, 'mb-4');
         echo $renderer->importing_preset($data, $importer);
         echo $OUTPUT->footer();
         exit(0);

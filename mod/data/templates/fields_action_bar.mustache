@@ -22,7 +22,7 @@
 
     Example context (json):
     {
-        "d": 1,
+        "tertiarytitle": "Manage fields",
         "fieldselect": {
             "id": "single_select_test",
             "name": "fieldselector",
@@ -43,15 +43,34 @@
             ],
             "disabled": false,
             "title": null
-        }
+        },
+        "hasback" : true,
+        "backurl": "https://moodlesite.com/mod/data/preset.php",
+        "backtitle": "Back"
     }
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="col">
-            <h2>{{#str}}managefields, mod_data{{/str}}</h2>
+        <div class="d-flex">
+            {{#hasback}}
+                <div class="navitem mb-0 backbutton border-right">
+                    <a href="{{backurl}}" role="button" title="{{backtitle}}" class="d-flex align-items-center">{{!
+                    }}{{#pix}} i/previous, moodle {{/pix}}{{!
+                    }}</a>
+                </div>
+            {{/hasback}}
+            {{#urlselect}}
+                <div class="navitem mb-0">
+                    {{>core/url_select}}
+                </div>
+            {{/urlselect}}
+            {{#tertiarytitle}}
+                <div class="navitem mb-0 title d-flex align-items-center">
+                    <h2>{{tertiarytitle}}</h2>
+                </div>
+            {{/tertiarytitle}}
         </div>
-        <div class="col-auto">
+        <div class="ml-sm-auto d-flex">
             {{#fieldselect}}
                 <div class='navitem mb-0 fieldadd'>
                     {{>core/action_menu}}
