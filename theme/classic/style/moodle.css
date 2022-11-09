@@ -21683,6 +21683,10 @@ div.editor_atto_toolbar button .icon {
   .tertiary-navigation .row {
     column-gap: 20px; }
 
+@media (max-width: 767.98px) {
+  .tertiary-navigation .mform {
+    padding-left: initial; } }
+
 @media print {
   .tertiary-navigation {
     display: none; } }
