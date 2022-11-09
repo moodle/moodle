@@ -109,7 +109,8 @@ class block_iomad_company_admin_external extends external_api {
             if ($DB->get_record('company', array('shortname' => $company['shortname']))) {
                 throw new invalid_parameter_exception('Company shortname is already being used');
             }
-            if ($DB->get_record('company', array('code' => $company['code']))) {
+            if (!empty($company->code) &&
+                $DB->get_record('company', array('code' => $company['code']))) {
                 throw new invalid_parameter_exception('Company code is already being used');
             }
 
@@ -170,7 +171,7 @@ class block_iomad_company_admin_external extends external_api {
                      'id' => new external_value(PARAM_INT, 'Companid ID'),
                      'name' => new external_value(PARAM_TEXT, 'Company long name'),
                      'shortname' => new external_value(PARAM_TEXT, 'Compay short name'),
-                     'address' => new external_value(PARAM_TEXT, 'Company location address', VALUE_OPTIONAL),
+                     'address' => new external_value(PARAM_TEXT, 'Company location address'),
                      'city' => new external_value(PARAM_TEXT, 'Company location city'),
                      'region' => new external_value(PARAM_TEXT, 'Company location region'),
                      'postcode' => new external_value(PARAM_TEXT, 'Company location postcode'),
@@ -185,18 +186,18 @@ class block_iomad_company_admin_external extends external_api {
                      'timezone' => new external_value(PARAM_TEXT, 'User default timezone'),
                      'lang' => new external_value(PARAM_TEXT, 'User default language'),
                      'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0'),
-                     'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
-                     'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
-                     'customcss' => new external_value(PARAM_TEXT, 'Company custom css', VALUE_DEFAULT, ''),
-                     'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_DEFAULT, null),
-                     'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),
-                     'companyterminated' => new external_value(PARAM_INT, 'Company contract is terminated when <> 0', VALUE_DEFAULT, 0),
-                     'theme' => new external_value(PARAM_TEXT, 'Company theme', VALUE_DEFAULT, ''),
-                     'hostname' => new external_value(PARAM_TEXT, 'Company hostname', VALUE_DEFAULT, ''),
-                     'maxusers' => new external_value(PARAM_INT, 'Company maximum number of users', VALUE_DEFAULT, 0),
-                     'maincolor' => new external_value(PARAM_TEXT, 'Company main color', VALUE_DEFAULT, ''),
-                     'headingcolor' => new external_value(PARAM_TEXT, 'Company heading color', VALUE_DEFAULT, ''),
-                     'linkcolor' => new external_value(PARAM_TEXT, 'Company ink color', VALUE_DEFAULT, ''),
+                     'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0'),
+                     'parentid' => new external_value(PARAM_INT, 'ID of parent company'),
+                     'customcss' => new external_value(PARAM_TEXT, 'Company custom css'),
+                     'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp'),
+                     'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company'),
+                     'companyterminated' => new external_value(PARAM_INT, 'Company contract is terminated when <> 0'),
+                     'theme' => new external_value(PARAM_TEXT, 'Company theme'),
+                     'hostname' => new external_value(PARAM_TEXT, 'Company hostname'),
+                     'maxusers' => new external_value(PARAM_INT, 'Company maximum number of users'),
+                     'maincolor' => new external_value(PARAM_TEXT, 'Company main color'),
+                     'headingcolor' => new external_value(PARAM_TEXT, 'Company heading color'),
+                     'linkcolor' => new external_value(PARAM_TEXT, 'Company ink color'),
                      'custom1' => new external_value(PARAM_TEXT, 'Company custom 1'),
                      'custom2' => new external_value(PARAM_TEXT, 'Company custom 2'),
                      'custom3' => new external_value(PARAM_TEXT, 'Company custom 3'),
@@ -464,7 +465,7 @@ class block_iomad_company_admin_external extends external_api {
                             'code' => new external_value(PARAM_CLEAN, 'Compay code', VALUE_OPTIONAL),
                             'address' => new external_value(PARAM_TEXT, 'Company location address', VALUE_OPTIONAL),
                             'city' => new external_value(PARAM_TEXT, 'Company location city', VALUE_OPTIONAL),
-                            'postcode' => new external_value(PARAM_TEXT, 'Company location postcode'),
+                            'postcode' => new external_value(PARAM_TEXT, 'Company location postcode', VALUE_OPTIONAL),
                             'region' => new external_value(PARAM_TEXT, 'Company location region', VALUE_OPTIONAL),
                             'country' => new external_value(PARAM_TEXT, 'Company location country', VALUE_OPTIONAL),
                             'maildisplay' => new external_value(PARAM_INT, 'User default email display', VALUE_OPTIONAL),
@@ -476,19 +477,19 @@ class block_iomad_company_admin_external extends external_api {
                             'screenreader' => new external_value(PARAM_INT, 'User default screen reader', VALUE_OPTIONAL),
                             'timezone' => new external_value(PARAM_TEXT, 'User default timezone', VALUE_OPTIONAL),
                             'lang' => new external_value(PARAM_TEXT, 'User default language', VALUE_OPTIONAL),
-                            'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0', VALUE_DEFAULT, 0),
-                            'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_DEFAULT, 0),
-                            'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_DEFAULT, 0),
-                            'customcss' => new external_value(PARAM_TEXT, 'Company custom css', VALUE_DEFAULT, ''),
-                            'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_DEFAULT, null),
-                            'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_DEFAULT, 0),
-                            'companyterminated' => new external_value(PARAM_INT, 'Company contract is terminated when <> 0', VALUE_DEFAULT, 0),
-                            'theme' => new external_value(PARAM_TEXT, 'Company theme', VALUE_DEFAULT, ''),
-                            'hostname' => new external_value(PARAM_TEXT, 'Company hostname', VALUE_DEFAULT, ''),
-                            'maxusers' => new external_value(PARAM_INT, 'Company maximum number of users', VALUE_DEFAULT, 0),
-                            'maincolor' => new external_value(PARAM_TEXT, 'Company main color', VALUE_DEFAULT, ''),
-                            'headingcolor' => new external_value(PARAM_TEXT, 'Company heading color', VALUE_DEFAULT, ''),
-                            'linkcolor' => new external_value(PARAM_TEXT, 'Company ink color', VALUE_DEFAULT, ''),
+                            'suspended' => new external_value(PARAM_INT, 'Company is suspended when <> 0', VALUE_OPTIONAL),
+                            'ecommerce' => new external_value(PARAM_INT, 'Ecommerce is disabled when = 0', VALUE_OPTIONAL),
+                            'parentid' => new external_value(PARAM_INT, 'ID of parent company', VALUE_OPTIONAL),
+                            'customcss' => new external_value(PARAM_TEXT, 'Company custom css', VALUE_OPTIONAL),
+                            'validto' => new external_value(PARAM_INT, 'Contract termination date in unix timestamp', VALUE_OPTIONAL),
+                            'suspendafter' => new external_value(PARAM_INT, 'Number of seconds after termination date to suspend the company', VALUE_OPTIONAL),
+                            'companyterminated' => new external_value(PARAM_INT, 'Company contract is terminated when <> 0', VALUE_OPTIONAL),
+                            'theme' => new external_value(PARAM_TEXT, 'Company theme', VALUE_OPTIONAL),
+                            'hostname' => new external_value(PARAM_TEXT, 'Company hostname', VALUE_OPTIONAL),
+                            'maxusers' => new external_value(PARAM_INT, 'Company maximum number of users', VALUE_OPTIONAL),
+                            'maincolor' => new external_value(PARAM_TEXT, 'Company main color', VALUE_OPTIONAL),
+                            'headingcolor' => new external_value(PARAM_TEXT, 'Company heading color', VALUE_OPTIONAL),
+                            'linkcolor' => new external_value(PARAM_TEXT, 'Company ink color', VALUE_OPTIONAL),
                             'custom1' => new external_value(PARAM_TEXT, 'Company custom 1', VALUE_OPTIONAL),
                             'custom2' => new external_value(PARAM_TEXT, 'Company custom 2', VALUE_OPTIONAL),
                             'custom3' => new external_value(PARAM_TEXT, 'Company custom 3', VALUE_OPTIONAL),
@@ -553,7 +554,8 @@ class block_iomad_company_admin_external extends external_api {
                 }
             }
 
-            if ($duplicate = $DB->get_record('company', array('code' => $oldcompany->code))) {
+            if (!empty($company->code) &&
+                $duplicate = $DB->get_record('company', array('code' => $oldcompany->code))) {
                 if ($duplicate->id != $oldcompany->id) {
                     throw new invalid_parameter_exception('Duplicate company code');
                 }
