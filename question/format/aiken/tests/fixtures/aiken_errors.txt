@@ -19,3 +19,8 @@ A second good question
 A)Incorrect (No space)
 B)Correct (No space)
 ANSWER: B
+
+A third good question with HTML chars such as > < &
+A) Correct (< > &)
+B) Incorrect (< > &)
+ANSWER: A
