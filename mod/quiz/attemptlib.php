@@ -2712,6 +2712,22 @@ class quiz_attempt {
         }
         return false;
     }
+
+    /**
+     * Get the total number of unanswered questions in the attempt.
+     *
+     * @return int
+     */
+    public function get_number_of_unanswered_questions(): int {
+        $totalunanswered = 0;
+        foreach ($this->get_slots() as $slot) {
+            $questionstate = $this->get_question_state($slot);
+            if ($questionstate == question_state::$todo || $questionstate == question_state::$invalid) {
+                $totalunanswered++;
+            }
+        }
+        return $totalunanswered;
+    }
 }
 
 

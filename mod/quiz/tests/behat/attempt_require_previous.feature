@@ -91,7 +91,7 @@ Feature: Attempt a quiz where some questions require that the previous question 
     And I press "Attempt quiz"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
-    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+    And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
 
     Then the state of "First question" question is shown as "Not answered"
     And the state of "Second question" question is shown as "Not answered"
