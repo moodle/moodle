@@ -151,11 +151,13 @@ export default class extends BaseComponent {
      * Drop event handler.
      *
      * @param {Object} dropdata the accepted drop data
+     * @param {Event} event the drop event
      */
-    drop(dropdata) {
+    drop(dropdata, event) {
         // Call the move mutation.
         if (dropdata.type == 'cm') {
-            this.reactive.dispatch('cmMove', [dropdata.id], this.id);
+            const mutation = (event.altKey) ? 'cmDuplicate' : 'cmMove';
+            this.reactive.dispatch(mutation, [dropdata.id], this.id);
         }
         if (dropdata.type == 'section') {
             this.reactive.dispatch('sectionMove', [dropdata.id], this.id);

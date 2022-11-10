@@ -180,8 +180,9 @@ export default class {
      * @param {StateManager} stateManager the current state manager
      * @param {array} cmIds the list of course modules ids
      * @param {number|undefined} targetSectionId the optional target sectionId
+     * @param {number|undefined} targetCmId the target course module id
      */
-    async cmDuplicate(stateManager, cmIds, targetSectionId) {
+    async cmDuplicate(stateManager, cmIds, targetSectionId, targetCmId) {
         const course = stateManager.get('course');
         // Lock all target sections.
         const sectionIds = new Set();
@@ -195,7 +196,7 @@ export default class {
         }
         this.sectionLock(stateManager, Array.from(sectionIds), true);
 
-        const updates = await this._callEditWebservice('cm_duplicate', course.id, cmIds, targetSectionId);
+        const updates = await this._callEditWebservice('cm_duplicate', course.id, cmIds, targetSectionId, targetCmId);
         stateManager.processUpdates(updates);
 
         this.sectionLock(stateManager, Array.from(sectionIds), false);

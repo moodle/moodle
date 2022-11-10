@@ -428,8 +428,8 @@ class stateactions {
      * @param stateupdates $updates the affected course elements track
      * @param stdClass $course the course object
      * @param int[] $ids course modules ids to duplicate
-     * @param int $targetsectionid optional target section id destination
-     * @param int $targetcmid not used
+     * @param int|null $targetsectionid optional target section id destination
+     * @param int|null $targetcmid optional target before cm id destination
      */
     public function cm_duplicate(
         stateupdates $updates,
@@ -461,12 +461,19 @@ class stateactions {
             $targetsection = $modinfo->get_section_info_by_id($targetsectionid, MUST_EXIST);
         }
 
+        $beforecm = null;
+        if (!empty($targetcmid)) {
+            $this->validate_cms($course, [$targetcmid], __FUNCTION__);
+            $beforecm = $modinfo->get_cm($targetcmid);
+            $targetsection = $modinfo->get_section_info_by_id($beforecm->section, MUST_EXIST);
+        }
+
         // Duplicate course modules.
         $affectedcmids = [];
         foreach ($cms as $cm) {
             if ($newcm = duplicate_module($course, $cm)) {
                 if ($targetsection) {
-                    moveto_module($newcm, $targetsection);
+                    moveto_module($newcm, $targetsection, $beforecm);
                 } else {
                     $affectedcmids[] = $newcm->id;
                 }
