@@ -11988,6 +11988,11 @@ input[disabled] {
     background-color: #a2cff8;
     border-right: 1px solid #fff; }
 
+.initialbargroups ul {
+  -webkit-margin-start: 0;
+  /* stylelint-disable-line */
+  margin-right: -1px; }
+
 .icon {
   font-size: 16px;
   width: 16px;
