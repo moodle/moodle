@@ -26,6 +26,7 @@ must be replaced with H5PCore).
 Removed:
  * composer.json
  * .gitignore
+ * ckeditor/skins/bootstrapck/sample
 
 Added:
  * readme_moodle.txt
