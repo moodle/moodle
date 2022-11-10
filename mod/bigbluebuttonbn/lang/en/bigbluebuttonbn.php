@@ -110,8 +110,8 @@ $string['completionengagementpollvotes'] = 'Poll votes';
 $string['completionengagementpollvotes_desc'] = 'Vote in polls {$a} time(s).';
 $string['completionengagementpollvotes_event_desc'] = 'Has answered {$a} poll vote(s)';
 $string['completionengagementemojis'] = 'Emojis';
-$string['completionengagementemojis_desc'] = 'Change {$a} times his/her emoji(s).';
-$string['completionengagementemojis_event_desc'] = 'Changed {$a} time his/her emoji(s)';
+$string['completionengagementemojis_desc'] = 'Change their emoji {$a} time(s).';
+$string['completionengagementemojis_event_desc'] = 'Changed their emoji {$a} time(s)';
 
 $string['completionengagement_desc'] = 'Engage in activities during the meeting.';
 $string['completionengagementgroup'] = 'Require participation';
