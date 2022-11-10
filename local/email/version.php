@@ -22,6 +22,6 @@
  */
 
 $plugin->release  = '4.0.4 (Build: 20220912)'; // Human-friendly version name
-$plugin->version  = 2022053000;   // The (date) version of this plugin.
+$plugin->version  = 2022111000;   // The (date) version of this plugin.
 $plugin->requires = 2019052000;   // Requires this Moodle version.
 $plugin->component  = 'local_email';

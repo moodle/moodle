@@ -132,6 +132,8 @@ class local_email {
                             'user_programcompleted',
                             'user_promoted',
                             'user_removed_from_event',
+                            'user_removed_from_event_teacher',
+                            'user_removed_from_event_waitlist',
                             'user_reset',
                             'user_signed_up_for_event',
                             'user_suspended',

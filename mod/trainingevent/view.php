@@ -221,11 +221,16 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     } else {
                         $course = $DB->get_record('course', array('id' => $event->course));
                         $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
-                        EmailTemplate::send('user_signed_up_for_event', array('course' => $course,
-                                                                              'user' => $USER,
-                                                                              'classroom' => $location,
-                                                                              'company' => $usercompany,
-                                                                              'event' => $event));
+
+                        // Send an email as long as it hasn't already started.
+                        if ($event->startdatetime > time()) {
+                            EmailTemplate::send('user_signed_up_for_event', array('course' => $course,
+                                                                                  'user' => $USER,
+                                                                                  'classroom' => $location,
+                                                                                  'company' => $usercompany,
+                                                                                  'event' => $event));
+                        }
+
                         // Fire an event for this.
                         $moodleevent = \mod_trainingevent\event\user_attending::create(array('context' => context_module::instance($id),
                                                                                              'userid' => $USER->id,
@@ -274,12 +279,16 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                 $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
                             } 
                             foreach ($userteachers as $userteacher) {
-                                EmailTemplate::send('user_signed_up_for_event_teacher', array('course' => $course,
-                                                                                              'approveuser' => $USER,
-                                                                                              'user' => $userteacher,
-                                                                                              'classroom' => $location,
-                                                                                              'company' => $usercompany,
-                                                                                              'event' => $event));
+
+                                // Send an email as long as it hasn't already started.
+                                if ($event->startdatetime > time()) {
+                                    EmailTemplate::send('user_signed_up_for_event_teacher', array('course' => $course,
+                                                                                                  'approveuser' => $USER,
+                                                                                                  'user' => $userteacher,
+                                                                                                  'classroom' => $location,
+                                                                                                  'company' => $usercompany,
+                                                                                                  'event' => $event));
+                                }
                             }
                         }
                     }
@@ -292,11 +301,21 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     } else {
                         $course = $DB->get_record('course', array('id' => $event->course));
                         $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
-                        EmailTemplate::send('user_removed_from_event', array('course' => $course,
-                                                                                 'user' => $USER,
-                                                                                 'classroom' => $location,
-                                                                                 'company' => $usercompany,
-                                                                                 'event' => $event));
+
+                        // Send an email as long as it hasn't already started.
+                        if ($event->startdatetime > time()) {
+                            if ($waitingoption) {
+                                $emailtemplatename = "user_removed_from_event_waitlist";
+                            } else {
+                                $emailtemplatename = "user_removed_from_event";
+                            }
+                            EmailTemplate::send($emailtemplatename, array('course' => $course,
+                                                                          'user' => $USER,
+                                                                          'classroom' => $location,
+                                                                          'company' => $usercompany,
+                                                                          'event' => $event));
+                        }
+
                         // Fire an event for this.
                         $moodleeventother = ['waitlisted' => $waitingoption];
                         $moodleevent = \mod_trainingevent\event\user_removed::create(['context' => context_module::instance($id),
@@ -325,12 +344,16 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                 $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
                             } 
                             foreach ($userteachers as $userteacher) {
-                                EmailTemplate::send('user_removed_from_event_teacher', array('course' => $course,
-                                                                                             'approveuser' => $USER,
-                                                                                             'user' => $userteacher,
-                                                                                             'classroom' => $location,
-                                                                                             'company' => $usercompany,
-                                                                                             'event' => $event));
+
+                                // Send an email as long as it hasn't already started.
+                                if ($event->startdatetime > time()) {
+                                    EmailTemplate::send('user_removed_from_event_teacher', array('course' => $course,
+                                                                                                 'approveuser' => $USER,
+                                                                                                 'user' => $userteacher,
+                                                                                                 'classroom' => $location,
+                                                                                                 'company' => $usercompany,
+                                                                                                 'event' => $event));
+                                }
                             }
                         }
                     }
@@ -365,20 +388,24 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         if (empty($mymanagers)) {
                             $mymanagers = $company->get_my_managers($USER->id, 1);
                         }
-                        foreach ($mymanagers as $mymanager) {
-                            if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
-                                EmailTemplate::send('course_classroom_approval', array('course' => $course,
-                                                                                       'user' => $manageruser,
-                                                                                       'approveuser' => $USER,
-                                                                                       'event' => $event,
-                                                                                       'classroom' => $location));
+
+                        // Send an email as long as it hasn't already started.
+                        if ($event->startdatetime > time()) {
+                            foreach ($mymanagers as $mymanager) {
+                                if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
+                                    EmailTemplate::send('course_classroom_approval', array('course' => $course,
+                                                                                           'user' => $manageruser,
+                                                                                           'approveuser' => $USER,
+                                                                                           'event' => $event,
+                                                                                           'classroom' => $location));
+                                }
                             }
+                            EmailTemplate::send('course_classroom_approval_request', array('course' => $course,
+                                                                                   'user' => $USER,
+                                                                                   'event' => $event,
+                                                                                   'company' => $usercompany,
+                                                                                   'classroom' => $location));
                         }
-                        EmailTemplate::send('course_classroom_approval_request', array('course' => $course,
-                                                                               'user' => $USER,
-                                                                               'event' => $event,
-                                                                               'company' => $usercompany,
-                                                                               'classroom' => $location));
 
                         // Fire an event for this.
                         $moodleevent = \mod_trainingevent\event\attendance_requested::create(array('context' => context_module::instance($id),
@@ -399,21 +426,25 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     } else {
                         $mymanagers = $company->get_my_managers($USER->id, 1);
                     }
-                    foreach ($mymanagers as $mymanager) {
-                        if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
-                            EmailTemplate::send('course_classroom_approval', array('course' => $course,
-                                                                                   'user' => $manageruser,
-                                                                                   'approveuser' => $USER,
-                                                                                   'classroom' => $location,
-                                                                                   'company' => $usercompany,
-                                                                                   'event' => $event));
+
+                    // Send an email as long as it hasn't already started.
+                    if ($event->startdatetime > time()) {
+                        foreach ($mymanagers as $mymanager) {
+                            if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
+                                EmailTemplate::send('course_classroom_approval', array('course' => $course,
+                                                                                       'user' => $manageruser,
+                                                                                       'approveuser' => $USER,
+                                                                                       'classroom' => $location,
+                                                                                       'company' => $usercompany,
+                                                                                       'event' => $event));
+                            }
                         }
+                        EmailTemplate::send('course_classroom_approval_request', array('course' => $course,
+                                                                               'user' => $USER,
+                                                                               'classroom' => $location,
+                                                                               'company' => $usercompany,
+                                                                               'event' => $event));
                     }
-                    EmailTemplate::send('course_classroom_approval_request', array('course' => $course,
-                                                                           'user' => $USER,
-                                                                           'classroom' => $location,
-                                                                           'company' => $usercompany,
-                                                                           'event' => $event));
 
                     // Fire an event for this.
                     $moodleevent = \mod_trainingevent\event\attendance_requested::create(array('context' => context_module::instance($id),
@@ -468,11 +499,15 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                             'waitlisted' => 0));
                             $messagestring = get_string('usermovedsuccessfully', 'trainingevent');
                             $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $chosenevent->startdatetime);
-                            EmailTemplate::send('user_signed_up_for_event', array('course' => $course,
-                                                                                  'user' => $user,
-                                                                                  'company' => $usercompany,
-                                                                                  'classroom' => $location,
-                                                                                  'event' => $chosenevent));
+
+                            // Send an email as long as it hasn't already started.
+                            if ($event->startdatetime > time()) {
+                                EmailTemplate::send('user_signed_up_for_event', array('course' => $course,
+                                                                                      'user' => $user,
+                                                                                      'company' => $usercompany,
+                                                                                      'classroom' => $location,
+                                                                                      'event' => $chosenevent));
+                            }
 
                             // Add to the users calendar.
                             $calendarevent = new stdClass();
@@ -508,19 +543,23 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
                             // Do we need to notify teachers?
                             if (!empty($event->emailteachers)) {
-                                // Are we using groups?
-                                $usergroups = groups_get_user_groups($course->id, $userid);
-                                $userteachers = [];
-                                foreach ($usergroups as $usergroup => $junk) {
-                                    $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
-                                } 
-                                foreach ($userteachers as $userteacher) {
-                                    EmailTemplate::send('user_signed_up_for_event_teacher', array('course' => $course,
-                                                                                                  'approveuser' => $user,
-                                                                                                  'user' => $userteacher,
-                                                                                                  'classroom' => $location,
-                                                                                                  'company' => $usercompany,
-                                                                                                  'event' => $event));
+                                // Send an email as long as it hasn't already started.
+                                if ($event->startdatetime > time()) {
+
+                                    // Are we using groups?
+                                    $usergroups = groups_get_user_groups($course->id, $userid);
+                                    $userteachers = [];
+                                    foreach ($usergroups as $usergroup => $junk) {
+                                        $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
+                                    } 
+                                    foreach ($userteachers as $userteacher) {
+                                        EmailTemplate::send('user_signed_up_for_event_teacher', array('course' => $course,
+                                                                                                      'approveuser' => $user,
+                                                                                                      'user' => $userteacher,
+                                                                                                      'classroom' => $location,
+                                                                                                      'company' => $usercompany,
+                                                                                                      'event' => $event));
+                                    }
                                 }
                             }
                         }
@@ -531,11 +570,21 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                     'activityid' => $event->id));
                         }
                         $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
-                        EmailTemplate::send('user_removed_from_event', array('course' => $course,
-                                                                             'user' => $user,
-                                                                             'company' => $usercompany,
-                                                                             'classroom' => $location,
-                                                                             'event' => $event));
+
+                        // Send an email as long as it hasn't already started.
+                        if ($event->startdatetime > time()) {
+                            if ($waitingoption) {
+                                $emailtemplatename = "user_removed_from_event_waitlist";
+                            } else {
+                                $emailtemplatename = "user_removed_from_event";
+                            }
+                            EmailTemplate::send($emailtemplatename, array('course' => $course,
+                                                                          'user' => $user,
+                                                                          'company' => $usercompany,
+                                                                          'classroom' => $location,
+                                                                          'event' => $event));
+                        }
+
                         // Remove from the users calendar.
                         if ($calendareventrec = $DB->get_record('event', ['userid' => $user->id,
                                                                          'courseid' => 0,
@@ -555,19 +604,23 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
  
                         // Do we need to notify teachers?
                         if (!empty($event->emailteachers)) {
-                            // Are we using groups?
-                            $usergroups = groups_get_user_groups($course->id, $userid);
-                            $userteachers = [];
-                            foreach ($usergroups as $usergroup => $junk) {
-                                $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
-                            } 
-                            foreach ($userteachers as $userteacher) {
-                                EmailTemplate::send('user_removed_from_event_teacher', array('course' => $course,
-                                                                                             'approveuser' => $user,
-                                                                                             'user' => $userteacher,
-                                                                                             'classroom' => $location,
-                                                                                             'company' => $usercompany,
-                                                                                             'event' => $event));
+                            // Send an email as long as it hasn't already started.
+                            if ($event->startdatetime > time()) {
+
+                                // Are we using groups?
+                                $usergroups = groups_get_user_groups($course->id, $userid);
+                                $userteachers = [];
+                                foreach ($usergroups as $usergroup => $junk) {
+                                    $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
+                                } 
+                                foreach ($userteachers as $userteacher) {
+                                    EmailTemplate::send('user_removed_from_event_teacher', array('course' => $course,
+                                                                                                 'approveuser' => $user,
+                                                                                                 'user' => $userteacher,
+                                                                                                 'classroom' => $location,
+                                                                                                 'company' => $usercompany,
+                                                                                                 'event' => $event));
+                                }
                             }
                         }
                     } else if (($chosenevent->approvaltype == 3 || $chosenevent->approvaltype == 2)
@@ -590,16 +643,20 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                 $course = $DB->get_record('course', array('id' => $event->course));
                                 $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $chosenevent->startdatetime);
                                 $user = $DB->get_record('user', array('id' => $userid));
-                                // Get the list of managers we need to send an email to.
-                                $mymanagers = $company->get_my_managers($user->id, 1);
-                                foreach ($mymanagers as $mymanager) {
-                                    if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
-                                        EmailTemplate::send('course_classroom_approval', array('course' => $course,
-                                                                                               'user' => $manageruser,
-                                                                                               'approveuser' => $user,
-                                                                                               'event' => $chosenevent,
-                                                                                               'company' => $usercompany,
-                                                                                               'classroom' => $location));
+
+                                // Send an email as long as it hasn't already started.
+                                if ($event->startdatetime > time()) {
+                                    // Get the list of managers we need to send an email to.
+                                    $mymanagers = $company->get_my_managers($user->id, 1);
+                                    foreach ($mymanagers as $mymanager) {
+                                        if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
+                                            EmailTemplate::send('course_classroom_approval', array('course' => $course,
+                                                                                                   'user' => $manageruser,
+                                                                                                   'approveuser' => $user,
+                                                                                                   'event' => $chosenevent,
+                                                                                                   'company' => $usercompany,
+                                                                                                   'classroom' => $location));
+                                        }
                                     }
                                 }
                                 // Fire an event for this.
@@ -617,16 +674,20 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $course = $DB->get_record('course', array('id' => $event->course));
                             $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
                             $user = $DB->get_record('user', array('id' => $userid));
-                            // Get the list of managers we need to send an email to.
-                            $mymanagers = $company->get_my_managers($USER->id, 1);
-                            foreach ($mymanagers as $mymanager) {
-                                if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
-                                    EmailTemplate::send('course_classroom_approval', array('course' => $course,
-                                                                                           'user' => $manageruser,
-                                                                                           'approveuser' => $user,
-                                                                                           'classroom' => $location,
-                                                                                           'company' => $usercompany,
-                                                                                           'event' => $chosenevent));
+
+                            // Send an email as long as it hasn't already started.
+                            if ($event->startdatetime > time()) {
+                                // Get the list of managers we need to send an email to.
+                                $mymanagers = $company->get_my_managers($USER->id, 1);
+                                foreach ($mymanagers as $mymanager) {
+                                    if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
+                                        EmailTemplate::send('course_classroom_approval', array('course' => $course,
+                                                                                               'user' => $manageruser,
+                                                                                               'approveuser' => $user,
+                                                                                               'classroom' => $location,
+                                                                                               'company' => $usercompany,
+                                                                                               'event' => $chosenevent));
+                                    }
                                 }
                             }
 
@@ -645,11 +706,20 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                     'activityid' => $event->id));
                         }
                         $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
-                        EmailTemplate::send('user_removed_from_event', array('course' => $course,
-                                                                             'user' => $user,
-                                                                             'classroom' => $location,
-                                                                             'company' => $usercompany,
-                                                                             'event' => $event));
+
+                        // Send an email as long as it hasn't already started.
+                        if ($event->startdatetime > time()) {
+                            if ($waitingoption) {
+                                $emailtemplatename = "user_removed_from_event_waitlist";
+                            } else {
+                                $emailtemplatename = "user_removed_from_event";
+                            }
+                            EmailTemplate::send($emailtemplatename, array('course' => $course,
+                                                                          'user' => $user,
+                                                                          'classroom' => $location,
+                                                                          'company' => $usercompany,
+                                                                          'event' => $event));
+                        }
 
                         // Fire an event for this.
                         $moodleevent = \mod_trainingevent\event\attendance_changed::create(array('context' => context_module::instance($id),
@@ -661,19 +731,24 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
                         // Do we need to notify teachers?
                         if (!empty($event->emailteachers)) {
-                            // Are we using groups?
-                            $usergroups = groups_get_user_groups($course->id, $userid);
-                            $userteachers = [];
-                            foreach ($usergroups as $usergroup => $junk) {
-                                $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
-                            } 
-                            foreach ($userteachers as $userteacher) {
-                                EmailTemplate::send('user_removed_from_event_teacher', array('course' => $course,
-                                                                                             'approveuser' => $user,
-                                                                                             'user' => $userteacher,
-                                                                                             'classroom' => $location,
-                                                                                             'company' => $usercompany,
-                                                                                             'event' => $event));
+
+                            // Send an email as long as it hasn't already started.
+                            if ($event->startdatetime > time()) {
+
+                                // Are we using groups?
+                                $usergroups = groups_get_user_groups($course->id, $userid);
+                                $userteachers = [];
+                                foreach ($usergroups as $usergroup => $junk) {
+                                    $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
+                                } 
+                                foreach ($userteachers as $userteacher) {
+                                    EmailTemplate::send('user_removed_from_event_teacher', array('course' => $course,
+                                                                                                 'approveuser' => $user,
+                                                                                                 'user' => $userteacher,
+                                                                                                 'classroom' => $location,
+                                                                                                 'company' => $usercompany,
+                                                                                                 'event' => $event));
+                                }
                             }
                         }
                     }
@@ -691,11 +766,21 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                 $user = $DB->get_record('user', array('id' => $userid));
                 $course = $DB->get_record('course', array('id' => $event->course));
                 $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
-                EmailTemplate::send('user_removed_from_event', array('course' => $course,
-                                                                     'user' => $user,
-                                                                     'classroom' => $location,
-                                                                     'company' => $usercompany,
-                                                                     'event' => $event));
+
+                // Send an email as long as it hasn't already started.
+                if ($event->startdatetime > time()) {
+                    if ($waitingoption) {
+                        $emailtemplatename = "user_removed_from_event_waitlist";
+                    } else {
+                        $emailtemplatename = "user_removed_from_event";
+                    }
+                    EmailTemplate::send($emailtemplatename, array('course' => $course,
+                                                                  'user' => $user,
+                                                                  'classroom' => $location,
+                                                                  'company' => $usercompany,
+                                                                  'event' => $event));
+                }
+
                 // Fire an event for this.
                 $moodleeventother = ['waitlisted' => $waitingoption];
                 $moodleevent = \mod_trainingevent\event\user_removed::create(['context' => context_module::instance($id),
@@ -717,19 +802,24 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
                 // Do we need to notify teachers?
                 if (!empty($event->emailteachers)) {
-                    // Are we using groups?
-                    $usergroups = groups_get_user_groups($course->id, $userid);
-                    $userteachers = [];
-                    foreach ($usergroups as $usergroup => $junk) {
-                        $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
-                    } 
-                    foreach ($userteachers as $userteacher) {
-                        EmailTemplate::send('user_removed_from_event_teacher', array('course' => $course,
-                                                                                     'approveuser' => $user,
-                                                                                     'user' => $userteacher,
-                                                                                     'classroom' => $location,
-                                                                                     'company' => $usercompany,
-                                                                                     'event' => $event));
+
+                    // Send an email as long as it hasn't already started.
+                    if ($event->startdatetime > time()) {
+
+                        // Are we using groups?
+                        $usergroups = groups_get_user_groups($course->id, $userid);
+                        $userteachers = [];
+                        foreach ($usergroups as $usergroup => $junk) {
+                            $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
+                        } 
+                        foreach ($userteachers as $userteacher) {
+                            EmailTemplate::send('user_removed_from_event_teacher', array('course' => $course,
+                                                                                         'approveuser' => $user,
+                                                                                         'user' => $userteacher,
+                                                                                         'classroom' => $location,
+                                                                                         'company' => $usercompany,
+                                                                                         'event' => $event));
+                        }
                     }
                 }
             }
@@ -762,11 +852,15 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
                         $messagestring = get_string('useraddedsuccessfully', 'trainingevent');
                         $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
-                        EmailTemplate::send('user_signed_up_for_event', array('course' => $course,
-                                                                              'user' => $user,
-                                                                              'company' => $usercompany,
-                                                                              'classroom' => $location,
-                                                                              'event' => $event));
+
+                        // Send an email as long as it hasn't already started.
+                        if ($event->startdatetime > time()) {
+                            EmailTemplate::send('user_signed_up_for_event', array('course' => $course,
+                                                                                  'user' => $user,
+                                                                                  'company' => $usercompany,
+                                                                                  'classroom' => $location,
+                                                                                  'event' => $event));
+                        }
 
                         // Fire an event for this.
                         $moodleevent = \mod_trainingevent\event\user_added::create(array('context' => context_module::instance($id),
@@ -811,19 +905,24 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
                     // Do we need to notify teachers?
                     if (!empty($event->emailteachers)) {
-                        // Are we using groups?
-                        $usergroups = groups_get_user_groups($course->id, $userid);
-                        $userteachers = [];
-                        foreach ($usergroups as $usergroup => $junk) {
-                            $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
-                        } 
-                        foreach ($userteachers as $userteacher) {
-                            EmailTemplate::send('user_signed_up_for_event_teacher', array('course' => $course,
-                                                                                          'approveuser' => $user,
-                                                                                          'user' => $userteacher,
-                                                                                          'classroom' => $location,
-                                                                                          'company' => $usercompany,
-                                                                                          'event' => $event));
+
+                        // Send an email as long as it hasn't already started.
+                        if ($event->startdatetime > time()) {
+
+                            // Are we using groups?
+                            $usergroups = groups_get_user_groups($course->id, $userid);
+                            $userteachers = [];
+                            foreach ($usergroups as $usergroup => $junk) {
+                                $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
+                            } 
+                            foreach ($userteachers as $userteacher) {
+                                EmailTemplate::send('user_signed_up_for_event_teacher', array('course' => $course,
+                                                                                              'approveuser' => $user,
+                                                                                              'user' => $userteacher,
+                                                                                              'classroom' => $location,
+                                                                                              'company' => $usercompany,
+                                                                                              'event' => $event));
+                            }
                         }
                     }
                 } else if (($event->approvaltype == 3 || $event->approvaltype == 2)&& $myapprovallevel == "department") {
@@ -841,18 +940,23 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $course = $DB->get_record('course', array('id' => $event->course));
                             $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
                             $user = $DB->get_record('user', array('id' => $userid));
-                            // Get the list of managers we need to send an email to.
-                            $mymanagers = $company->get_my_managers($user->id, 1);
-                            foreach ($mymanagers as $mymanager) {
-                                if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
-                                    EmailTemplate::send('course_classroom_approval', array('course' => $course,
-                                                                                           'user' => $manageruser,
-                                                                                           'approveuser' => $user,
-                                                                                           'event' => $event,
-                                                                                           'company' => $usercompany,
-                                                                                           'classroom' => $location));
+
+                            // Send an email as long as it hasn't already started.
+                            if ($event->startdatetime > time()) {
+                                // Get the list of managers we need to send an email to.
+                                $mymanagers = $company->get_my_managers($user->id, 1);
+                                foreach ($mymanagers as $mymanager) {
+                                    if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
+                                        EmailTemplate::send('course_classroom_approval', array('course' => $course,
+                                                                                               'user' => $manageruser,
+                                                                                               'approveuser' => $user,
+                                                                                               'event' => $event,
+                                                                                               'company' => $usercompany,
+                                                                                               'classroom' => $location));
+                                    }
                                 }
                             }
+
                             // Fire an event for this.
                             $moodleevent = \block_iomad_approve_access\event\manager_approved::create(array('context' => context_module::instance($id),
                                                                                                             'userid' => $USER->id,
@@ -868,18 +972,24 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         $course = $DB->get_record('course', array('id' => $event->course));
                         $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
                         $user = $DB->get_record('user', array('id' => $userid));
-                        // Get the list of managers we need to send an email to.
-                        $mymanagers = $company->get_my_managers($USER->id, 1);
-                        foreach ($mymanagers as $mymanager) {
-                            if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
-                                EmailTemplate::send('course_classroom_approval', array('course' => $course,
-                                                                                       'user' => $manageruser,
-                                                                                       'approveuser' => $user,
-                                                                                       'classroom' => $location,
-                                                                                       'company' => $usercompany,
-                                                                                       'event' => $event));
+
+                        // Send an email as long as it hasn't already started.
+                        if ($event->startdatetime > time()) {
+
+                            // Get the list of managers we need to send an email to.
+                            $mymanagers = $company->get_my_managers($USER->id, 1);
+                            foreach ($mymanagers as $mymanager) {
+                                if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
+                                    EmailTemplate::send('course_classroom_approval', array('course' => $course,
+                                                                                           'user' => $manageruser,
+                                                                                           'approveuser' => $user,
+                                                                                           'classroom' => $location,
+                                                                                           'company' => $usercompany,
+                                                                                           'event' => $event));
+                                }
                             }
                         }
+
                         // Fire an event for this.
                         $moodleevent = \block_iomad_approve_access\event\manager_approved::create(array('context' => context_module::instance($id),
                                                                                                         'userid' => $USER->id,
@@ -1309,5 +1419,3 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         }
     }
 }
-
-

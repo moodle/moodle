@@ -404,11 +404,16 @@ function trainingevent_user_removed($event) {
         $location = $DB->get_record('classroom', ['id' => $trainingevent->classroomid]);
         $usercompany = company::by_userid($user->id);
         $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $trainingevent->startdatetime);
-        EmailTemplate::send('user_signed_up_for_event', array('course' => $course,
-                                                              'user' => $user,
-                                                              'classroom' => $location,
-                                                              'company' => $usercompany,
-                                                              'event' => $trainingevent));
+
+        // Send an email as long as it hasn't already started.
+        if ($trainingevent->startdatetime > time()) {
+            EmailTemplate::send('user_signed_up_for_event', array('course' => $course,
+                                                                  'user' => $user,
+                                                                  'classroom' => $location,
+                                                                  'company' => $usercompany,
+                                                                  'event' => $trainingevent));
+        }
+
         // Fire an event for this.
         $moodleevent = \mod_trainingevent\event\user_attending::create(array('context' => context_module::instance($event->contextinstanceid),
                                                                              'userid' => $user->id,
@@ -457,12 +462,16 @@ function trainingevent_user_removed($event) {
                 $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
             } 
             foreach ($userteachers as $userteacher) {
-                EmailTemplate::send('user_signed_up_for_event_teacher', array('course' => $course,
-                                                                              'approveuser' => $user,
-                                                                              'user' => $userteacher,
-                                                                              'classroom' => $location,
-                                                                              'company' => $usercompany,
-                                                                              'event' => $trainingevent));
+
+                // Send an email as long as it hasn't already started.
+                if ($trainingevent->startdatetime > time()) {
+                    EmailTemplate::send('user_signed_up_for_event_teacher', array('course' => $course,
+                                                                                  'approveuser' => $user,
+                                                                                  'user' => $userteacher,
+                                                                                  'classroom' => $location,
+                                                                                  'company' => $usercompany,
+                                                                                  'event' => $trainingevent));
+                }
             }
         }
     }

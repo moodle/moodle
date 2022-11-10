@@ -138,6 +138,7 @@ $string['user_signed_up_for_event_reminder_name'] = 'User training event reminde
 $string['user_signed_up_for_event_teacher_name'] = 'User training event sign up - teacher';
 $string['user_removed_from_event_name'] = 'User training event cancelled';
 $string['user_removed_from_event_teacher_name'] = 'User training event cancelled - teacher';
+$string['user_removed_from_event_waitlist_name'] = 'User training event removed from waitlist';
 $string['license_allocated_name'] = 'User license allocated';
 $string['licensepoolexpiring_name'] = 'License expiry date warning';
 $string['licensepoolexpiring_name_help'] = 'This email is sent out to company managers when a license is about to expire.';
@@ -190,6 +191,7 @@ $string['user_signed_up_for_event_reminder_name_help'] = 'Template sent out to r
 $string['user_signed_up_for_event_teacher_name_help'] = 'Template sent out to a teachers when a user has signed up for a training event which doesn\'t require manager approval.';
 $string['user_removed_from_event_name_help'] = 'Template sent out to a user for confirmation when they have been removed from a training event.';
 $string['user_removed_from_event_teacher_name_help'] = 'Template sent out to teacher when a user has been removed from a training event.';
+$string['user_removed_from_event_waitlist_name_help'] = 'Template sent out to a user for confirmation when they have been removed from a training event waiting list.';
 $string['license_allocated_name_help'] = 'Template sent out to a user when they have been allocated a license on a course.';
 $string['license_reminder_name_help'] = 'Template sent out to a user when a manager sends them a reminder that they have not yet access a course they were given a license for.';
 $string['license_removed_name_help'] = 'Template sent out to a user when a course license has been taken off of them.';
@@ -350,6 +352,15 @@ $string['user_removed_from_event_teacher_subject'] = 'User cancellation notice {
 $string['user_removed_from_event_teacher_body'] = '<p>Dear {User_FirstName},</p>
 
 <p>{Approveuser_FirstName} {Approveuser_LastName} is no longer attending the face to face training on {Course_FullName} at the following event -</p>
+
+<p>Time : {Classroom_Time}</br>
+Location : {Classroom_Name}</br>
+Address : {Classroom_Address}</br>
+          {Classroom_City} {Classroom_Postcode}';
+$string['user_removed_from_event_waitlist_subject'] = 'Waitinglist Removal Notice {Course_FullName}';
+$string['user_removed_from_event_waitlist_body'] = '<p>Dear {User_FirstName},</p>
+
+<p>you have been removed from the waitinglist for the face to face training on {Course_FullName} at the following event -</p>
 
 <p>Time : {Classroom_Time}</br>
 Location : {Classroom_Name}</br>
