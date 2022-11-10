@@ -99,9 +99,7 @@
 }
 
 .path-grade-report-singleview .reporttable .generaltable th,
-.path-grade-report-singleview .reporttable .generaltable td,
-.path-grade-report-singleview .reporttable .generaltable th div,
-.path-grade-report-singleview .reporttable .generaltable td div {
+.path-grade-report-singleview .reporttable .generaltable td {
     text-align: left;
     vertical-align: middle;
     border: none;
@@ -125,16 +123,6 @@
 .path-grade-report-singleview div.reporttable form .singleview_bulk input {
     margin-left: 10px;
     margin-right: 10px;
-}
-
-.path-grade-report-singleview input[type=text] {
-    height: 44px;
-}
-
-.path-grade-report-singleview input[type=checkbox] {
-    width: 22px;
-    height: 21px;
-    margin: 11.5px 11.5px 11.5px auto;
 }
 
 #bulkinsertmodal {
