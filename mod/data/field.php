@@ -333,7 +333,7 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
         get_string('type', 'data'),
         get_string('required', 'data'),
         get_string('fielddescription', 'data'),
-        '',
+        '&nbsp;',
     ];
     $table->align = ['left', 'left', 'left', 'left'];
     $table->wrap = [false,false,false,false];
