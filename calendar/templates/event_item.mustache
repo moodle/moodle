@@ -63,13 +63,13 @@
             <div class="commands float-sm-right">
                 {{#canedit}}
                     {{#candelete}}
-                        <a href="{{deleteurl}}" data-action="delete">
-                            {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}
+                        <a href="{{deleteurl}}" data-action="delete" aria-label="{{#str}}delete{{/str}}" title="{{#str}}delete{{/str}}">
+                            {{#pix}}t/delete, core{{/pix}}
                         </a>
                     {{/candelete}}
                     {{^isactionevent}}
-                        <a href="{{editurl}}" data-action="edit">
-                            {{#pix}}t/edit, core, {{#str}}edit{{/str}}{{/pix}}
+                        <a href="{{editurl}}" data-action="edit" aria-label="{{#str}}edit{{/str}}" title="{{#str}}edit{{/str}}">
+                            {{#pix}}t/edit, core{{/pix}}
                         </a>
                     {{/isactionevent}}
                 {{/canedit}}
