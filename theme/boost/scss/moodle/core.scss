@@ -2934,3 +2934,39 @@ body.dragging {
     width: 9px;
     border: 0;
 }
+
+.initialbargroups ul {
+    -webkit-margin-start: 0; /* stylelint-disable-line */
+    margin-right: -1px;
+}
+
+.page-item {
+    &:first-child {
+        .page-link {
+            .initialbargroups & {
+                @include border-left-radius(0);
+                @include border-right-radius(0);
+            }
+            .initialbargroups .pagination-lg:first-child & {
+                @include border-left-radius($pagination-border-radius-lg);
+            }
+            .initialbargroups .pagination-sm:first-child & {
+                @include border-left-radius($pagination-border-radius-sm);
+            }
+        }
+    }
+    &:last-child {
+        .page-link {
+            .initialbargroups & {
+                @include border-left-radius(0);
+                @include border-right-radius(0);
+            }
+            .initialbargroups .pagination-lg:last-child & {
+                @include border-right-radius($pagination-border-radius-lg);
+            }
+            .initialbargroups .pagination-sm:last-child & {
+                @include border-right-radius($pagination-border-radius-sm);
+            }
+        }
+    }
+}
