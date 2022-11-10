@@ -1125,7 +1125,7 @@ class modinfolib_test extends advanced_testcase {
 
         // Assert exception text.
         $this->expectException(\moodle_exception::class);
-        $this->expectExceptionMessage('Invalid course module id: ' . $forum1->cmid);
+        $this->expectExceptionMessage('Invalid course module ID: ' . $forum1->cmid);
         delete_course($course, false);
     }
 
