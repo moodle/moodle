@@ -30,7 +30,7 @@ class bulk_delete_action extends \core_question\local\bank\bulk_action_base {
         return get_string('delete');
     }
 
-    public function get_bulk_action_key(): string {
+    public function get_key(): string {
         return 'deleteselected';
     }
 

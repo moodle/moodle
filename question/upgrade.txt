@@ -1,5 +1,10 @@
 This files describes API changes for code that uses the question API.
 
+=== 4.0.5 ===
+
+1) Question bank plugins can now define more than one bulk action. Therefore, plugin_features_base::get_bulk_actions has been
+   changed to return an array, rather than a single bulk action class. Please update the plugin_features class in your plugin if necessary.
+
 === 4.0 ===
 
 Moodle 4.0 included the results of a major project to re-work the question bank.

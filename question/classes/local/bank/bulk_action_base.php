@@ -44,7 +44,9 @@ abstract class bulk_action_base {
      *
      * @return string
      */
-    abstract public function get_bulk_action_key(): string;
+    public function get_bulk_action_key(): string {
+        return '';
+    }
 
     /**
      * URL of the bulk action redirect page.
@@ -67,5 +69,23 @@ abstract class bulk_action_base {
      */
     public function get_bulk_action_capabilities(): ?array {
         return null;
+    }
+
+
+    /**
+     * A unique key for the bulk action, this will be used in the api to identify the action data.
+     * Every bulk must have a unique key to perform the action as a part of the form post in the base view.
+     * When questions are selected, it will post according to the key its selected from the dropdown.
+     *
+     * Note: This method is the first towards moving from get_bulk_action_key() to get_key().
+     *
+     * @return string
+     */
+    public function get_key(): string {
+        if (!empty($this->get_bulk_action_key())) {
+            return $this->get_bulk_action_key();
+        }
+        throw new \coding_exception('Bulk actions must implement the get_key() or get_bulk_action_key() method. ' .
+            'In Moodle 4.1, get_bulk_action_key() is being deprecated and replaced by get_key().');
     }
 }
