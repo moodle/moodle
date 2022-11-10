@@ -109,8 +109,7 @@ class block_iomad_company_admin_external extends external_api {
             if ($DB->get_record('company', array('shortname' => $company['shortname']))) {
                 throw new invalid_parameter_exception('Company shortname is already being used');
             }
-            if (!empty($company->code) &&
-                $DB->get_record('company', array('code' => $company['code']))) {
+            if ($DB->get_record('company', array('code' => $company['code']))) {
                 throw new invalid_parameter_exception('Company code is already being used');
             }
 
@@ -554,7 +553,7 @@ class block_iomad_company_admin_external extends external_api {
                 }
             }
 
-            if (!empty($company->code) &&
+            if (!empty($oldcompany->code) &&
                 $duplicate = $DB->get_record('company', array('code' => $oldcompany->code))) {
                 if ($duplicate->id != $oldcompany->id) {
                     throw new invalid_parameter_exception('Duplicate company code');
