@@ -160,6 +160,16 @@ foreach ($langfiles as $lng => $files) {
 
     cli_heading(get_string('clifiles', 'tool_customlang', $lng));
 
+    // If we intend to check in any changes, we must first check them out.
+    if ($checkin) {
+        cli_writeln(get_string('checkout', 'tool_customlang'));
+
+        $progressbar = new progress_bar();
+        $progressbar->create();
+
+        tool_customlang_utils::checkout($lng, $progressbar);
+    }
+
     foreach ($files as $file) {
         // Generate a valid stored_file from this file.
         $record = (object)[
