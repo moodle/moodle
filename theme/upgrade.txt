@@ -5,6 +5,7 @@ information provided here is intended especially for theme designer.
 * A new theme config 'removedprimarynavitems' allows a theme to customise primary navigation by specifying the list of items to remove.
 * A new theme config 'usescourseindex' allows a theme to specify whether it implements and uses course index.
 * A new theme setting 'unaddableblocks' allows admins to define the blocks that won't be displayed in the "Add a block" list.
+* The body tag include a class with module name specific for each activity E.g.: cm-type-page
 
 === 3.11 ===
 * The classname 'viewmode-cobmined' in course/management.php has been changed to 'viewmode-combined'
