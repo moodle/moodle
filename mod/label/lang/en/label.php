@@ -23,38 +23,38 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['configdndmedia'] = 'Offer to create a Text and media resource when media files are dragged and dropped onto a course.';
-$string['configdndresizeheight'] = 'When a Text and media resource is created from a dragged and dropped media file, resize it if it is higher than this many pixels. If set to zero, the media file will not be resized.';
-$string['configdndresizewidth'] = 'When a Text and media resource is created from a dragged and dropped media file, resize it if it is wider than this many pixels. If set to zero, the media file will not be resized.';
+$string['configdndmedia'] = 'Offer to create a Text and media area when media files are dragged and dropped onto a course.';
+$string['configdndresizeheight'] = 'When a Text and media area is created from a dragged and dropped media file, resize it if it is higher than this many pixels. If set to zero, the media file will not be resized.';
+$string['configdndresizewidth'] = 'When a Text and media area is created from a dragged and dropped media file, resize it if it is wider than this many pixels. If set to zero, the media file will not be resized.';
 $string['dndmedia'] = 'Media drag and drop';
 $string['dndresizeheight'] = 'Resize drag and drop height';
 $string['dndresizewidth'] = 'Resize drag and drop width';
 $string['dnduploadlabel'] = 'Add media to course page';
-$string['dnduploadlabeltext'] = 'Add a Text and media resource to the course page';
-$string['indicator:cognitivedepth'] = 'Text and media cognitive';
-$string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Text and media resource.';
-$string['indicator:cognitivedepthdef'] = 'Text and media cognitive';
-$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Text and media resources during this analysis interval (Levels = No view, View)';
+$string['dnduploadlabeltext'] = 'Add a Text and media area to the course page';
+$string['indicator:cognitivedepth'] = 'Text and media area cognitive';
+$string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a Text and media area resource.';
+$string['indicator:cognitivedepthdef'] = 'Text and media area cognitive';
+$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the Text and media area resources during this analysis interval (Levels = No view, View)';
 $string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
-$string['indicator:socialbreadth'] = 'Text and media social';
-$string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Text and media resource.';
-$string['indicator:socialbreadthdef'] = 'Text and media social';
-$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Text and media resources during this analysis interval (Levels = No participation, Participant alone)';
+$string['indicator:socialbreadth'] = 'Text and media area social';
+$string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in a Text and media area resource.';
+$string['indicator:socialbreadthdef'] = 'Text and media area social';
+$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Text and media area resources during this analysis interval (Levels = No participation, Participant alone)';
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
-$string['label:addinstance'] = 'Add a new Text and media resource';
-$string['label:view'] = 'View Text and media resource';
+$string['label:addinstance'] = 'Add a new Text and media area';
+$string['label:view'] = 'View Text and media area';
 $string['labeltext'] = 'Text';
-$string['modulename'] = 'Text and media';
-$string['modulename_help'] = 'Text and media enables you to display text and multimedia on the course page.
+$string['modulename'] = 'Text and media area';
+$string['modulename_help'] = 'The Text and media area enables you to display text and multimedia on the course page.
 
-You can use Text and media to:
+You can use a Text and media area to:
 
 * Split up a long list of course activities with a subheading or an image
 * Display an embedded video directly on the course page
 * Add a short description to a course section';
 $string['modulename_link'] = 'mod/label/view';
-$string['modulenameplural'] = 'Text and media';
-$string['privacy:metadata'] = 'The Text and media resource plugin does not store any personal data.';
-$string['pluginadministration'] = 'Text and media administration';
-$string['pluginname'] = 'Text and media';
-$string['search:activity'] = 'Text and media';
+$string['modulenameplural'] = 'Text and media areas';
+$string['privacy:metadata'] = 'The Text and media area plugin does not store any personal data.';
+$string['pluginadministration'] = 'Text and media area administration';
+$string['pluginname'] = 'Text and media area';
+$string['search:activity'] = 'Text and media area';

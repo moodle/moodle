@@ -27,4 +27,4 @@
 $string['pluginname'] = 'Image';
 $string['fieldtypelabel'] = 'Image';
 $string['privacy:metadata'] = 'The Image field component doesn\'t store any personal data; it uses tables defined in mod_data.';
-$string['sample'] = 'Image description sample';
+$string['sample'] = 'Image description placeholder';

@@ -25,4 +25,4 @@
 $string['modulename'] = 'Journal';
 $string['modulename_help'] = 'Use this preset for a journal, diary, reflections tool or research log.';
 $string['pluginname'] = 'Journal';
-$string['privacy:metadata'] = 'The Reflections plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The Journal plugin doesn\'t store any personal data.';

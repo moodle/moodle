@@ -66,7 +66,7 @@ $string['removeoverridesave'] = 'Remove overrides';
 $string['savegrades'] = 'Saving grades';
 $string['save'] = 'Save';
 $string['savegradessuccess'] = 'Grades were set for {$a} items';
-$string['singleview:view'] = 'View report';
+$string['singleview:view'] = 'View single view';
 $string['summarygrade'] = 'A table of users, with columns for range, grade, feedback, and whether to override or exclude a particular grade.';
 $string['summaryuser'] = 'A table of grade items, with columns for grade category, range, grade, feedback, and whether to override or exclude a particular grade.';
 $string['unsavedataalert'] = 'You have unsaved changes in the grades table, you will lose these changes if you proceed with the bulk insert.';
@@ -80,7 +80,7 @@ $string['viewsinglegradeitem'] = 'View a single grade item';
 $string['viewsingleuserorgradeitem'] = 'View all the grades of a single user or grade item.';
 $string['searchgrades'] = 'Search grade items';
 $string['selectagrade'] = 'Select a grade item';
-$string['selectgradeitemlink'] = 'Click to select a grade item';
+$string['selectgradeitemlink'] = 'Select a grade item';
 $string['singleviewdescription'] = 'In single view you can override or exclude selected grades and bulk insert grades.';
 $string['unsaveddatawarning'] = 'Unsaved data warning';
 
