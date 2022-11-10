@@ -1,0 +1,167 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tiny_h5p/modal
+
+    Modal to manage an H5P activity within the Tiny Edigtor.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+
+    Example context (json):
+    {
+        "elementid": "exampleId"
+    }
+}}
+
+{{< core/modal }}
+
+    {{$title}}
+        {{#str}} modaltitle, tiny_h5p {{/str}}
+    {{/title}}
+
+    {{$body}}
+        <form class="mform">
+
+{{# noh5pcontent }}
+            <div role="alert" class="alert alert-warning mb-1">
+                {{#str}} noh5pcontent, tiny_h5p{{/str}}
+            </div>
+{{/ noh5pcontent }}
+
+{{# invalidUrl }}
+            <div role="alert" class="alert alert-warning mb-1">
+                {{#str}} invalidh5purl, tiny_h5p{{/str}}
+            </div>
+{{/ invalidUrl }}
+
+{{#canUploadAndEmbed}}
+            <div class="mt-2 mb-4">{{#str}} instructions, tiny_h5p{{/str}}</div>
+{{/canUploadAndEmbed}}
+
+            <div class="mb-4">
+                <label for="{{elementid}}-{{uniqid}}-filepath">
+                    {{#canUploadAndEmbed}}
+                        {{#str}} h5pfileorurl, tiny_h5p{{/str}}
+                    {{/canUploadAndEmbed}}
+                    {{^canUploadAndEmbed}}
+                        {{#canUpload}}
+                            {{#str}} h5pfile, tiny_h5p{{/str}}
+                        {{/canUpload}}
+                        {{#canEmbed}}
+                            {{#str}} h5purl, tiny_h5p{{/str}}
+                        {{/canEmbed}}
+                    {{/canUploadAndEmbed}}
+                </label>
+
+                <div class="input-group input-append w-100">
+                    <input name="url" class="form-control" type="url" value="{{fileURL}}"{{!
+                        }} id="{{elementid}}-{{uniqid}}-filepath"{{!
+                        }} size="32"{{!
+                    }} />
+                    {{#canUpload}}
+                        <span class="input-group-append">
+                            <button class="btn btn-secondary" type="button" data-target="filepicker">
+                            {{#str}} browserepositories, tiny_h5p{{/str}}</button>
+                        </span>
+                    {{/canUpload}}
+                </div>
+
+                {{#canUpload}}
+                    <fieldset class="mt-2 collapsible" id="{{elementid}}-{{uniqid}}-options">
+                        <legend class="d-flex align-items-center px-1">
+                            <div class="position-relative d-flex ftoggler align-items-center position-relative mr-1">
+                                <a role="button" data-toggle="collapse"{{!
+                                    }} href="#h5poptions"{{!
+                                    }} aria-expanded="{{#showOptions}}true{{/showOptions}}{{^showOptions}}false{{/showOptions}}"{{!
+                                    }} aria-controls="h5poptions"{{!
+                                    }} class="btn btn-icon mr-1 icons-collapse-expand stretched-link fheader {{^showOptions}}collapsed{{/showOptions}}"{{!
+                                }}>
+                                    <span class="expanded-icon icon-no-margin p-2"
+                                        title="{{#str}} collapse, moodle {{/str}}">
+                                        <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"></i>
+                                    </span>
+                                    <span class="collapsed-icon icon-no-margin p-2"
+                                        title="{{#str}} expand, moodle {{/str}}">
+                                        <span class="dir-rtl-hide">
+                                            <i class="icon fa fa-chevron-right fa-fw " aria-hidden="true"></i>
+                                        </span>
+                                        <span class="dir-ltr-hide">
+                                            <i class="icon fa fa-chevron-left fa-fw " aria-hidden="true"></i>
+                                        </span>
+                                    </span>
+                                    <span class="sr-only">{{#str}} h5poptions, tiny_h5p{{/str}}</span>
+                                </a>
+                                <h3 class="d-flex align-self-stretch align-items-center mb-0" aria-hidden="true">
+                                    {{#str}} h5poptions, tiny_h5p{{/str}}
+                                </h3>
+                            </div>
+                        </legend>
+                        <div id="h5poptions" class="fcontainer collapseable collapse px-1 {{#showOptions}}show{{/showOptions}}">
+                            <div class="form-check">
+                                <input type="checkbox" {{!
+                                    }} name="download"{{!
+                                    }} {{# download }}checked{{/ download }}{{!
+                                    }} class="form-check-input"{{!
+                                    }} aria-label="{{#str}} downloadbutton, tiny_h5p{{/str}}"{{!
+                                    }} id="{{elementid}}-{{uniqid}}_h5p-option-allow-download"{{!
+                                    }} />
+                                <label class="form-check-label" for="{{elementid}}-{{uniqid}}_h5p-option-allow-download">
+                                {{#str}} downloadbutton, tiny_h5p{{/str}}
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox"{{!
+                                    }} name="embed"{{!
+                                    }} {{# embed }}checked{{/ embed }}{{!
+                                    }} class="form-check-input"{{!
+                                    }} aria-label="{{#str}} embedbutton, tiny_h5p{{/str}}"{{!
+                                    }} id="{{elementid}}-{{uniqid}}_h5p-option-embed-button"{{!
+                                    }} />
+                                <label class="form-check-label" for="{{elementid}}-{{uniqid}}_h5p-option-embed-button">
+                                {{#str}} embedbutton, tiny_h5p{{/str}}
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input type="checkbox"{{!
+                                    }} name="copyright"{{!
+                                    }} {{# copyright }}checked{{/ copyright }}{{!
+                                    }} class="form-check-input"{{!
+                                    }} aria-label="{{#str}} copyrightbutton, tiny_h5p{{/str}}"{{!
+                                    }} id="{{elementid}}-{{uniqid}}_h5p-option-copyright-button" {{!
+                                }}/>
+                                <label class="form-check-label" for="{{elementid}}-{{uniqid}}_h5p-option-copyright-button">
+                                {{#str}} copyrightbutton, tiny_h5p{{/str}}
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                {{/canUpload}}
+            </div>
+        </form>
+    {{/body}}
+
+    {{$footer}}
+        <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancel, moodle {{/str}}</button>
+        <button type="button" class="btn btn-primary" data-action="save">{{#str}} insert, tiny_h5p{{/str}}</button>
+    {{/footer}}
+{{/ core/modal }}

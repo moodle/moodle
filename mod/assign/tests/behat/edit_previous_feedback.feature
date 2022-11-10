@@ -52,7 +52,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I click on "View a different attempt" "link"
     And I click on "Attempt 1" "radio" in the "View a different attempt" "dialogue"
-    And I click on "View" "button"
+    And I click on "View" "button" in the "View a different attempt" "dialogue"
     And I set the following fields to these values:
       | Grade | 50 |
       | Feedback comments | I'm the teacher second feedback |

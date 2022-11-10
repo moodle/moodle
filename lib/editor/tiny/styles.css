@@ -1,0 +1,23 @@
+.jsenabled .tox-tinymce-aux {
+    z-index: 1000;
+}
+
+.jsenabled .tox-shadowhost.tox-fullscreen,
+.jsenabled .tox.tox-tinymce.tox-fullscreen {
+    z-index: 1050;
+}
+
+/**
+ * These styles are required to ensure that icons loaded from Moodle are displayed correctly in TinyMCE.
+ * The first selector targets the menu.
+ * The second selector targets the context menu.
+ */
+.tox .tox-tbtn svg[data-buttonsource="moodle"] image,
+.tox-collection__item-icon svg[data-buttonsource="moodle"] image {
+    width: inherit;
+    height: inherit;
+}
+
+.tox.tox-tinymce .tox-toolbar__group {
+    padding-right: 0;
+}

@@ -79,4 +79,4 @@ Feature: In an assignment, students can add and edit text online
     And I am on the "Test assignment name" Activity page
     When I press "Add submission"
     # Confirm draft was restored.
-    Then I should see "text submission" in the "#id_onlinetext_editoreditable" "css_element"
+    Then the field "Online text" matches value "text submission"
