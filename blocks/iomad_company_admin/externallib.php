@@ -104,13 +104,14 @@ class block_iomad_company_admin_external extends external_api {
 
             // does this company already exist
             if ($DB->get_record('company', array('name' => $company['name']))) {
-                throw new invalid_parameter_exception('Company name is already being used');
+                throw new invalid_parameter_exception('Company name ' . $company['name'] . ' is already being used');
             }
             if ($DB->get_record('company', array('shortname' => $company['shortname']))) {
-                throw new invalid_parameter_exception('Company shortname is already being used');
+                throw new invalid_parameter_exception('Company shortname ' . $company['shortname'] . ' is already being used');
             }
-            if ($DB->get_record('company', array('code' => $company['code']))) {
-                throw new invalid_parameter_exception('Company code is already being used');
+            if (!empty($company['code']) &&
+                $DB->get_record('company', array('code' => $company['code']))) {
+                throw new invalid_parameter_exception('Company code ' . $company['code'] . ' is already being used');
             }
 
             // Create the company record
