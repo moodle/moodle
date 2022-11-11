@@ -49,7 +49,7 @@ Feature: Backup user data
     And I click on "False" "radio" in the "Second question" "question"
     And I press "Finish attempt"
     And I press "Submit all and finish"
-    And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+    And I click on "Submit" "button" in the "Submit all your answers and finish?" "dialogue"
     And I should see "5.00 out of 10.00"
     And I log out
     And I log in as "teacher1"
