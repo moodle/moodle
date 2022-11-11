@@ -188,7 +188,7 @@ class backup_restore_test extends restore_date_testcase {
     protected function assert_bbb_activities_same(stdClass $bbboriginal, stdClass $bbbdest) {
         $this->assertNotFalse($bbbdest);
         $filterfunction = function($key) {
-            return !in_array($key, ['course', 'cmid', 'id', 'course']);
+            return !in_array($key, ['course', 'cmid', 'id', 'guestlinkuid', 'guestpassword']);
         };
         $this->assertEquals(
             array_filter((array) $bbboriginal, $filterfunction, ARRAY_FILTER_USE_KEY),
