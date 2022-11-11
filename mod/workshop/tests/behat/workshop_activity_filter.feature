@@ -5,8 +5,8 @@ Feature: View work shop activity submissions report.
     Given the following "users" exist:
       | username | firstname | lastname | email                |
       | student1 | Vinnie    | Money    | student1@example.com |
-      | student2 | Anna      | Velvet   | student2@example.com |
-      | student3 | Anna      | Moe      | student3@example.com |
+      | student2 | Beth      | Velvet   | student2@example.com |
+      | student3 | Beth      | Moe      | student3@example.com |
       | teacher1 | Darrell   | Teacher1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname |
@@ -27,9 +27,9 @@ Feature: View work shop activity submissions report.
     Then ".firstinitial" "css_element" should exist
     And ".lastinitial" "css_element" should exist
     And "grading-report" "table" should exist
-    And I should see "Anna Moe" in the "grading-report" "table"
+    And I should see "Beth Moe" in the "grading-report" "table"
     And I should see "Vinnie Money" in the "grading-report" "table"
-    And I should see "Anna Velvet" in the "grading-report" "table"
+    And I should see "Beth Velvet" in the "grading-report" "table"
 
     Examples:
       | phase                    |
@@ -47,17 +47,17 @@ Feature: View work shop activity submissions report.
   Scenario: Filter submissions report by first name as a teacher.
     Given I am on the "Music history" "workshop activity" page logged in as teacher1
     And I change phase in workshop "Music history" to "Submission phase"
-    When I click on "A" "link" in the ".firstinitial" "css_element"
-    Then I should see "Anna Moe" in the "grading-report" "table"
-    And I should see "Anna Velvet" in the "grading-report" "table"
+    When I click on "B" "link" in the ".firstinitial" "css_element"
+    Then I should see "Beth Moe" in the "grading-report" "table"
+    And I should see "Beth Velvet" in the "grading-report" "table"
     And I should not see "Vinnie Money" in the "grading-report" "table"
 
   Scenario: Filter submissions report by surname name as a teacher.
     Given I am on the "Music history" "workshop activity" page logged in as teacher1
     And I change phase in workshop "Music history" to "Submission phase"
     When I click on "V" "link" in the ".lastinitial" "css_element"
-    Then I should see "Anna Velvet" in the "grading-report" "table"
-    And I should not see "Anna Moe" in the "grading-report" "table"
+    Then I should see "Beth Velvet" in the "grading-report" "table"
+    And I should not see "Beth Moe" in the "grading-report" "table"
     And I should not see "Vinnie Money" in the "grading-report" "table"
 
   Scenario: Filter submissions report by first name and surname as a teacher.
@@ -66,8 +66,8 @@ Feature: View work shop activity submissions report.
     When I click on "V" "link" in the ".firstinitial" "css_element"
     And I click on "M" "link" in the ".lastinitial" "css_element"
     Then I should see "Vinnie Money" in the "grading-report" "table"
-    And I should not see "Anna Moe" in the "grading-report" "table"
-    And I should not see "Anna Velvet" in the "grading-report" "table"
+    And I should not see "Beth Moe" in the "grading-report" "table"
+    And I should not see "Beth Velvet" in the "grading-report" "table"
 
   Scenario: Filter submissions report and see nothing.
     Given I am on the "Music history" "workshop activity" page logged in as teacher1
@@ -82,5 +82,5 @@ Feature: View work shop activity submissions report.
     And I click on "M" "link" in the ".lastinitial" "css_element"
     And I click on "All" "link" in the ".firstinitial" "css_element"
     Then I should see "Vinnie Money" in the "grading-report" "table"
-    And I should see "Anna Moe" in the "grading-report" "table"
-    And I should not see "Anna Velvet" in the "grading-report" "table"
+    And I should see "Beth Moe" in the "grading-report" "table"
+    And I should not see "Beth Velvet" in the "grading-report" "table"
