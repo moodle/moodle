@@ -172,13 +172,13 @@ class grade extends tablelike implements selectable_items, filterable_items {
      */
     public function original_headers() {
         return [
-            '', // For filter icon.
             get_string('fullnameuser', 'core'),
-            get_string('range', 'grades'),
+            '', // For filter icon.
             get_string('grade', 'grades'),
+            get_string('range', 'grades'),
             get_string('feedback', 'grades'),
-            $this->make_toggle_links('override'),
-            $this->make_toggle_links('exclude')
+            get_string('override', 'gradereport_singleview'),
+            get_string('exclude', 'gradereport_singleview'),
         ];
     }
 
@@ -215,26 +215,31 @@ class grade extends tablelike implements selectable_items, filterable_items {
 
         $item->imagealt = $fullname;
         $url = new moodle_url("/user/view.php", ['id' => $item->id, 'course' => $this->courseid]);
-        $iconstring = get_string('filtergrades', 'gradereport_singleview', $fullname);
         $grade->label = $fullname;
         $userpic = $OUTPUT->user_picture($item, ['link' => false, 'visibletoscreenreaders' => false]);
 
+        $formatteddefinition = $this->format_definition($grade);
+
         $line = [
-            $OUTPUT->action_icon($this->format_link('user', $item->id), new pix_icon('t/editstring', ''), null,
-                    ['title' => $iconstring, 'aria-label' => $iconstring]),
             html_writer::link($url, $userpic . $fullname),
-            $this->item_range()
+            $this->get_user_action_menu($item),
+            $formatteddefinition['finalgrade'],
+            $this->item_range(),
+            $formatteddefinition['feedback'],
+            $formatteddefinition['override'],
+            $formatteddefinition['exclude'],
         ];
         $lineclasses = [
-            "action",
-            "user",
-            "range"
+            'user',
+            'action',
+            'grade',
+            'range',
         ];
         $outputline = [];
         $i = 0;
         foreach ($line as $key => $value) {
             $cell = new \html_table_cell($value);
-            if ($isheader = $i == 1) {
+            if ($isheader = $i == 0) {
                 $cell->header = $isheader;
                 $cell->scope = "row";
             }
@@ -245,7 +250,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
             $i++;
         }
 
-        return $this->format_definition($outputline, $grade);
+        return $outputline;
     }
 
     /**
@@ -374,5 +379,26 @@ class grade extends tablelike implements selectable_items, filterable_items {
             }
         }
         return parent::process($data);
+    }
+
+    /**
+     * Return the action menu HTML for the user item.
+     *
+     * @param \stdClass $user
+     * @return mixed
+     */
+    private function get_user_action_menu(\stdClass $user) {
+        global $OUTPUT;
+
+        $menuitems = [];
+        $url = new moodle_url($this->format_link('user', $user->id));
+        $title = get_string('showallgrades', 'core_grades');
+        $menuitems[] = new \action_menu_link_secondary($url, null, $title);
+        $menu = new \action_menu($menuitems);
+        $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
+        $menu->set_menu_trigger($icon);
+        $menu->set_menu_left();
+
+        return $OUTPUT->render($menu);
     }
 }

@@ -41,6 +41,8 @@ $itemtype = optional_param('item', $defaulttype, PARAM_TEXT);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 100, PARAM_INT);
 
+$edit = optional_param('edit', -1, PARAM_BOOL); // Sticky editing mode.
+
 if (empty($itemid) && ($itemtype !== 'user_select' && $itemtype !== 'grade_select')) {
     $itemid = $userid;
     $itemtype = $defaulttype;
@@ -57,7 +59,8 @@ $pageparams = [
     'perpage'   => $perpage,
 ];
 $PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $pageparams));
-$PAGE->set_pagelayout('incourse');
+$PAGE->set_pagelayout('report');
+$PAGE->set_other_editing_capability('moodle/grade:edit');
 
 if (!$course = $DB->get_record('course', $courseparams)) {
     throw new \moodle_exception('invalidcourseid');
@@ -82,6 +85,18 @@ $gpr = new grade_plugin_return([
     'courseid' => $courseid
 ]);
 
+// Build editing on/off button for themes that need it.
+$button = '';
+if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
+    if ($edit != - 1) {
+        $USER->editing = $edit;
+    }
+
+    // Page params for the turn editing on button.
+    $options = $gpr->get_options();
+    $button = $OUTPUT->edit_button(new moodle_url($PAGE->url, $options), 'get');
+}
+
 // Last selected report session tracking.
 if (!isset($USER->grade_last_report)) {
     $USER->grade_last_report = [];
@@ -92,29 +107,21 @@ $report = new gradereport_singleview\report\singleview($courseid, $gpr, $context
 
 $reportname = $report->screen->heading();
 
-$pluginname = get_string('pluginname', 'gradereport_singleview');
-
-$pageparams = [
-    'id' => $courseid,
-    'itemid' => $itemid,
-    'item' => $itemtype,
-    'userid' => $userid,
-    'group' => $groupid,
-    'page' => $page,
-    'perpage' => $perpage,
-];
-
-$PAGE->set_pagelayout('report');
-
-$actionbar = new \core_grades\output\general_action_bar($context,
-    new moodle_url('/grade/report/singleview/index.php', ['id' => $courseid]), 'report', 'singleview');
+if ($itemtype == 'user' || $itemtype == 'user_select') {
+    $actionbar = new \gradereport_singleview\output\action_bar($context, $report, 'user');
+} else if ($itemtype == 'grade' || $itemtype == 'grade_select') {
+    $actionbar = new \gradereport_singleview\output\action_bar($context, $report, 'grade');
+} else {
+    $actionbar = new \core_grades\output\general_action_bar($context, new moodle_url('/grade/report/singleview/index.php',
+        ['id' => $courseid]), 'report', 'singleview');
+}
 
 if ($itemtype == 'user') {
-    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false,
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, $button,
         true, null, null, $report->screen->item, $actionbar);
 } else {
-    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false,
-        true, null, null, null, $actionbar);
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, $button,
+        true, null, null, null, $actionbar, false);
 }
 
 if ($data = data_submitted()) {
@@ -141,65 +148,28 @@ if ($data = data_submitted()) {
 // Make sure we have proper final grades.
 grade_regrade_final_grades_if_required($course);
 
-$graderrightnav = $graderleftnav = null;
-
-$options = $report->screen->options();
-
-if (!empty($options)) {
-
-    $optionkeys = array_keys($options);
-    $optionitemid = array_shift($optionkeys);
-
-    $relreport = new gradereport_singleview\report\singleview(
-        $courseid, $gpr, $context,
-        $report->screen->item_type(), $optionitemid
-    );
-    $reloptions = $relreport->screen->options();
-    $reloptionssorting = array_keys($relreport->screen->options());
-
-    $i = array_search($itemid, $reloptionssorting);
-    $navparams = ['item' => $itemtype, 'id' => $courseid, 'group' => $groupid];
-    if ($i > 0) {
-        $navparams['itemid'] = $reloptionssorting[$i - 1];
-        $link = new moodle_url('/grade/report/singleview/index.php', $navparams);
-        $navprev = html_writer::link($link, $OUTPUT->larrow() . ' ' . $reloptions[$reloptionssorting[$i - 1]]);
-        $graderleftnav = html_writer::tag('div', $navprev, ['class' => 'itemnav previtem']);
-    }
-    if ($i < count($reloptionssorting) - 1) {
-        $navparams['itemid'] = $reloptionssorting[$i + 1];
-        $link = new moodle_url('/grade/report/singleview/index.php', $navparams);
-        $navnext = html_writer::link($link, $reloptions[$reloptionssorting[$i + 1]] . ' ' . $OUTPUT->rarrow());
-        $graderrightnav = html_writer::tag('div', $navnext, ['class' => 'itemnav nextitem']);
-    }
-}
-
-if (!is_null($graderleftnav)) {
-    echo $graderleftnav;
-}
-if (!is_null($graderrightnav)) {
-    echo $graderrightnav;
-}
-
-if ($report->screen->supports_paging()) {
-    echo $report->screen->pager();
-}
-
-if ($report->screen->display_group_selector()) {
-    echo $report->group_selector;
-}
-
 echo $report->output();
 
-if ($report->screen->supports_paging()) {
-    echo $report->screen->perpage_select();
-    echo $report->screen->pager();
-}
+if (($itemtype !== 'select') && ($itemtype !== 'grade_select') &&($itemtype !== 'user_select')) {
+    $item = (isset($userid)) ? $userid : $itemid;
 
-if (!is_null($graderleftnav)) {
-    echo $graderleftnav;
-}
-if (!is_null($graderrightnav)) {
-    echo $graderrightnav;
+    $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+    $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+    $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $context);
+
+    $currentgroup = $gpr->groupid;
+
+    // To make some other functions work better later.
+    if (!$currentgroup) {
+        $currentgroup = null;
+    }
+    $gui = new graded_users_iterator($course, null, $currentgroup);
+    $gui->require_active_enrolment($showonlyactiveenrol);
+    $gui->init();
+
+    $userreportrenderer = $PAGE->get_renderer('gradereport_singleview');
+    // Add previous/next user navigation.
+    echo $userreportrenderer->report_navigation($gpr, $courseid, $context, $report, $groupid, $itemtype, $itemid);
 }
 
 $event = \gradereport_singleview\event\grade_report_viewed::create(

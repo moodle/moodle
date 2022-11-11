@@ -774,6 +774,7 @@ $string['rangedecimals'] = 'Range decimal places';
 $string['rangedecimals_help'] = 'The number of decimal places to display for the range.';
 $string['showactivityicons'] = 'Show activity icons';
 $string['showactivityicons_help'] = 'If enabled, activity icons are shown next to activity names.';
+$string['showallgrades'] = 'Show all grades';
 $string['showallhidden'] = 'Show hidden';
 $string['showallstudents'] = 'Show all Students';
 $string['showaverages'] = 'Show column averages';

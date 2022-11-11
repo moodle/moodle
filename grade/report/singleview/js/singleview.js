@@ -96,41 +96,7 @@ M.gradereport_singleview.init = function(Y) {
         return;
     }, 'down:37,38,39,40+ctrl', 'table input, table select, table a');
 
-    // Make toggle links
-    Y.all('.include').each(function(link) {
-        var type = link.getAttribute('class').split(" ")[2];
-
-        var toggle = function(checked) {
-            return function(input) {
-                input.getDOMNode().checked = checked;
-                Y.Event.simulate(input.getDOMNode(), 'change');
-            };
-        };
-
-        link.on('click', function(e) {
-            e.preventDefault();
-            var selectall = link.hasClass('all');
-            var self = this;
-            if ((type === 'override') && !selectall) {
-                Y.use('moodle-core-notification-confirm', function() {
-                    var confirm = new M.core.confirm({
-                        title:      M.util.get_string('confirm', 'moodle'),
-                        question:   M.util.get_string('overridenoneconfirm', 'gradereport_singleview'),
-                    });
-                    confirm.on('complete-yes', function() {
-                        confirm.hide();
-                        confirm.destroy();
-                        Y.all('input[name^=' + type + ']').each(toggle(link.hasClass('all')));
-                    }, self);
-                    confirm.show();
-                });
-            } else {
-                Y.all('input[name^=' + type + ']').each(toggle(link.hasClass('all')));
-            }
-        });
-    });
-
-    // Override Toggle
+    // Override Toggle.
     Y.all('input[name^=override_]').each(function(input) {
         input.on('change', function() {
             var checked = input.getDOMNode().checked;

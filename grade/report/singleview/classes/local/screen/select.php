@@ -82,7 +82,7 @@ class select extends screen {
             $gradelink = new \moodle_url('/grade/report/singleview/index.php', ['id' => $COURSE->id, 'item' => 'grade_select']);
             $context = [
                 'courseid' => $COURSE->id,
-                'imglink' => new \moodle_url('/pix/f/clip-353 1.png'),
+                'imglink' => $OUTPUT->image_url('zero_state', 'gradereport_singleview'),
                 'userzerolink' => $userlink->out(false),
                 'userselectactive' => false,
                 'gradezerolink' => $gradelink->out(false),

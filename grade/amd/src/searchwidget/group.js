@@ -29,6 +29,13 @@ import * as WidgetBase from 'core_grades/searchwidget/basewidget';
 import {get_string as getString} from 'core/str';
 
 /**
+ * Whether the event listener has already been registered for this module.
+ *
+ * @type {boolean}
+ */
+let registered = false;
+
+/**
  * Our entry point into starting to build the group search widget.
  *
  * It'll eventually, based upon the listeners, open the search widget and allow filtering.
@@ -36,9 +43,13 @@ import {get_string as getString} from 'core/str';
  * @method init
  */
 export const init = () => {
+    if (registered) {
+        return;
+    }
     const pendingPromise = new Pending();
     registerListenerEvents();
     pendingPromise.resolve();
+    registered = true;
 };
 
 /**

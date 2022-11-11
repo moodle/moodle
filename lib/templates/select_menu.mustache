@@ -127,7 +127,7 @@
     var label = document.getElementById('{{baseid}}-label');
     if (label) {
         label.addEventListener('click', function() {
-            label.parentElement.querySelector('.dropdown-toggle').focus();
+            this.parentElement.querySelector('.dropdown-toggle').focus();
         });
     }
 {{/js}}

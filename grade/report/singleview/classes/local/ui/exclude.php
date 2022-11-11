@@ -35,7 +35,7 @@ use grade_grade;
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class exclude extends grade_attribute_format implements be_checked, be_disabled {
+class exclude extends grade_attribute_format implements be_checked, be_disabled, be_readonly {
 
     /**
      * The name of the input
@@ -68,6 +68,16 @@ class exclude extends grade_attribute_format implements be_checked, be_disabled 
     }
 
     /**
+     * Return true if this is read-only.
+     *
+     * @return bool
+     */
+    public function is_readonly(): bool {
+        global $USER;
+        return empty($USER->editing);
+    }
+
+    /**
      * Generate the element used to render the UI
      *
      * @return element
@@ -77,7 +87,8 @@ class exclude extends grade_attribute_format implements be_checked, be_disabled 
             $this->get_name(),
             $this->get_label(),
             $this->is_checked(),
-            $this->is_disabled()
+            $this->is_disabled(),
+            $this->is_readonly()
         );
     }
 

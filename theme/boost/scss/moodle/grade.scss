@@ -515,8 +515,19 @@
 /**
  * Single view.
  */
-.path-grade-report-singleview input[name^="finalgrade"] {
-    width: 80px;
+.path-grade-report-singleview .reporttable {
+    input[name^="finalgrade"] {
+        width: 80px;
+        display: inline-block;
+    }
+    .action-menu {
+        display: inline-block;
+        margin-left: 0.5rem;
+        float: right;
+    }
+    .dropdown-toggle::after {
+        display: none;
+    }
 }
 
 .searchresultitemscontainer {

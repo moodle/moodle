@@ -19199,7 +19199,8 @@ img.userpicture {
     padding: 0.75rem;
     vertical-align: top;
     border-top: 1px solid #dee2e6; }
-  .generaltable thead th {
+  .generaltable thead th,
+  .generaltable thead td {
     vertical-align: bottom;
     border-bottom: 2px solid #dee2e6; }
   .generaltable tbody + tbody {
@@ -19734,8 +19735,17 @@ p.arrow_button {
 /**
  * Single view.
  */
-.path-grade-report-singleview input[name^="finalgrade"] {
-  width: 80px; }
+.path-grade-report-singleview .reporttable input[name^="finalgrade"] {
+  width: 80px;
+  display: inline-block; }
+
+.path-grade-report-singleview .reporttable .action-menu {
+  display: inline-block;
+  margin-left: 0.5rem;
+  float: right; }
+
+.path-grade-report-singleview .reporttable .dropdown-toggle::after {
+  display: none; }
 
 .searchresultitemscontainer {
   max-height: 150px;

@@ -943,14 +943,8 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
         $output = $OUTPUT->heading_with_help($heading, $headerhelpidentifier, $headerhelpcomponent);
     } else {
         if (isset($user)) {
-            $output = $OUTPUT->context_header(
-                array(
-                    'heading' => html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id,
-                        'course' => $courseid)), fullname($user)),
-                    'user' => $user,
-                    'usercontext' => context_user::instance($user->id)
-                ), 2
-            );
+            $renderer = $PAGE->get_renderer('core_grades');
+            $output = $OUTPUT->heading($renderer->user_heading($user, $courseid));
         } else {
             $output = $OUTPUT->heading($heading);
         }
@@ -1714,6 +1708,36 @@ class grade_structure {
         $title = get_string('gradeanalysis', 'core_grades');
         return $OUTPUT->action_icon($url, new pix_icon('t/preview', ''), null,
                 ['title' => $title, 'aria-label' => $title]);
+    }
+
+    /**
+     * Returns an action menu for the grade.
+     *
+     * @param grade_grade $grade A grade_grade object
+     * @return string
+     */
+    public function get_grade_action_menu(grade_grade $grade) : string {
+        global $OUTPUT;
+
+        $menuitems = [];
+
+        $url = $this->get_grade_analysis_url($grade);
+        if ($url) {
+            $title = get_string('gradeanalysis', 'core_grades');
+            $menuitems[] = new action_menu_link_secondary($url, null, $title);
+        }
+
+        if ($menuitems) {
+            $menu = new action_menu($menuitems);
+            $icon = $OUTPUT->pix_icon('i/dropdown', get_string('actions'));
+            $extraclasses = 'btn btn-icon icon-size-2 bg-secondary d-flex align-items-center justify-content-center';
+            $menu->set_menu_trigger($icon, $extraclasses);
+            $menu->set_menu_left();
+
+            return $OUTPUT->render($menu);
+        } else {
+            return '';
+        }
     }
 
     /**

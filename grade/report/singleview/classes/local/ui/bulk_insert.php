@@ -97,7 +97,6 @@ class bulk_insert extends element {
                 ['value' => 'blanks', 'name' => get_string('blanks', 'gradereport_singleview'), 'selected' => true],
             ],
             'valuename' => $this->insertname,
-            'valuelabel' => get_string('bulkinsertvalue', 'gradereport_singleview'),
             'valuefield' => $text->html()
         ];
 

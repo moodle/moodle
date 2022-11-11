@@ -32,10 +32,7 @@ class grade_select extends screen {
      * @return string
      */
     public function html(): string {
-        global $OUTPUT, $COURSE, $PAGE, $USER;
-
-        $PAGE->requires->js_call_amd('gradereport_singleview/grade', 'init');
-        $PAGE->requires->js_call_amd('core_grades/searchwidget/group', 'init');
+        global $OUTPUT, $COURSE, $USER;
 
         $userlink = new \moodle_url('/grade/report/singleview/index.php', ['id' => $COURSE->id, 'item' => 'user_select']);
         $gradelink = new \moodle_url('/grade/report/singleview/index.php', ['id' => $COURSE->id, 'item' => 'grade_select']);
@@ -43,7 +40,7 @@ class grade_select extends screen {
             'userid' => $USER->id]);
         $context = [
             'courseid' => $gpr->courseid,
-            'imglink' => new \moodle_url('/pix/f/clip-353 1.png'),
+            'imglink' => $OUTPUT->image_url('zero_state_grade', 'gradereport_singleview'),
             'userzerolink' => $userlink->out(false),
             'userselectactive' => false,
             'gradezerolink' => $gradelink->out(false),
