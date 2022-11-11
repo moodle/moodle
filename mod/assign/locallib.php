@@ -189,6 +189,9 @@ class assign {
     /** @var array Array of error messages encountered during the execution of assignment related operations. */
     private $errors = array();
 
+    /** @var mixed This var can vary between false for no overrides to a stdClass of the overrides for a group */
+    private $overridedata;
+
     /**
      * Constructor for the base assign class.
      *
@@ -5869,9 +5872,9 @@ class assign {
                 $this->count_submissions_with_status($draft, $activitygroup),
                 $this->is_any_submission_plugin_enabled(),
                 $this->count_submissions_with_status($submitted, $activitygroup),
-                $instance->cutoffdate,
+                $this->get_cutoffdate($activitygroup),
                 $this->get_duedate($activitygroup),
-                $instance->timelimit,
+                $this->get_timelimit($activitygroup),
                 $this->get_course_module()->id,
                 $this->count_submissions_need_grading($activitygroup),
                 $instance->teamsubmission,
@@ -5891,9 +5894,9 @@ class assign {
                 $this->count_submissions_with_status($draft, $activitygroup),
                 $this->is_any_submission_plugin_enabled(),
                 $this->count_submissions_with_status($submitted, $activitygroup),
-                $instance->cutoffdate,
+                $this->get_cutoffdate($activitygroup),
                 $this->get_duedate($activitygroup),
-                $instance->timelimit,
+                $this->get_timelimit($activitygroup),
                 $this->get_course_module()->id,
                 $this->count_submissions_need_grading($activitygroup),
                 $instance->teamsubmission,
@@ -5910,25 +5913,80 @@ class assign {
     }
 
     /**
+     * Helper function to allow up to fetch the group overrides via one query as opposed to many calls.
+     *
+     * @param int $activitygroup The group we want to check the overrides of
+     * @return mixed Can return either a fetched DB object, local object or false
+     */
+    private function get_override_data(int $activitygroup) {
+        global $DB;
+
+        $instanceid = $this->get_instance()->id;
+        $cachekey = "$instanceid-$activitygroup";
+        if (isset($this->overridedata[$cachekey])) {
+            return $this->overridedata[$cachekey];
+        }
+
+        $params = ['groupid' => $activitygroup, 'assignid' => $activitygroup];
+        $this->overridedata[$cachekey] = $DB->get_record('assign_overrides', $params);
+       return $this->overridedata[$cachekey];
+    }
+
+    /**
      * Return group override duedate.
      *
      * @param int $activitygroup Activity active group
      * @return int $duedate
      */
-    private function  get_duedate($activitygroup = null) {
-        global $DB;
-
+    private function get_duedate($activitygroup = null) {
         if ($activitygroup === null) {
             $activitygroup = groups_get_activity_group($this->get_course_module());
         }
-        if ($this->can_view_grades()) {
-            $params = array('groupid' => $activitygroup, 'assignid' => $this->get_instance()->id);
-            $groupoverride = $DB->get_record('assign_overrides', $params);
+        if ($this->can_view_grades() && !empty($activitygroup)) {
+            $groupoverride = $this->get_override_data($activitygroup);
             if (!empty($groupoverride->duedate)) {
                 return $groupoverride->duedate;
             }
         }
         return $this->get_instance()->duedate;
+    }
+
+    /**
+     * Return group override timelimit.
+     *
+     * @param null|int $activitygroup Activity active group
+     * @return int $timelimit
+     */
+    private function get_timelimit(?int $activitygroup = null): int {
+        if ($activitygroup === null) {
+            $activitygroup = groups_get_activity_group($this->get_course_module());
+        }
+        if ($this->can_view_grades() && !empty($activitygroup)) {
+            $groupoverride = $this->get_override_data($activitygroup);
+            if (!empty($groupoverride->timelimit)) {
+                return $groupoverride->timelimit;
+            }
+        }
+        return $this->get_instance()->timelimit;
+    }
+
+    /**
+     * Return group override cutoffdate.
+     *
+     * @param null|int $activitygroup Activity active group
+     * @return int $cutoffdate
+     */
+    private function get_cutoffdate(?int $activitygroup = null): int {
+        if ($activitygroup === null) {
+            $activitygroup = groups_get_activity_group($this->get_course_module());
+        }
+        if ($this->can_view_grades() && !empty($activitygroup)) {
+            $groupoverride = $this->get_override_data($activitygroup);
+            if (!empty($groupoverride->cutoffdate)) {
+                return $groupoverride->cutoffdate;
+            }
+        }
+        return $this->get_instance()->cutoffdate;
     }
 
     /**
