@@ -53,6 +53,8 @@ $PAGE->set_secondary_active_tab('coursereuse');
 require_login($course, null, $cm);
 require_capability('moodle/restore:restorecourse', $context);
 
+$PAGE->secondarynav->set_overflow_selected_node('restore');
+
 if (is_null($course)) {
     $coursefullname = $SITE->fullname;
     $courseshortname = $SITE->shortname;

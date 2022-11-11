@@ -48,6 +48,7 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->set_secondary_active_tab('coursereuse');
 $PAGE->requires->js_call_amd('core_backup/async_backup', 'asyncCopyAllStatus');
+$PAGE->secondarynav->set_overflow_selected_node('copy');
 
 // Build the page output.
 echo $OUTPUT->header();
