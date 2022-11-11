@@ -2341,6 +2341,10 @@ $footer-link-color: $bg-inverse-link-color !default;
     }
 }
 
+.footer-support-link {
+    padding-bottom: 5px;
+}
+
 @include media-breakpoint-up(sm) {
     .jsenabled #page-footer .footer-content-popover {
         display: none;
