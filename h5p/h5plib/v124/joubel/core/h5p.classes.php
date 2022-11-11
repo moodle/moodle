@@ -24,13 +24,18 @@ interface H5PFrameworkInterface {
   /**
    * Fetches a file from a remote server using HTTP GET
    *
-   * @param string $url Where you want to get or send data.
-   * @param array $data Data to post to the URL.
-   * @param bool $blocking Set to 'FALSE' to instantly time out (fire and forget).
-   * @param string $stream Path to where the file should be saved.
-   * @return string The content (response body). NULL if something went wrong
+   * @param  string  $url  Where you want to get or send data.
+   * @param  array  $data  Data to post to the URL.
+   * @param  bool  $blocking  Set to 'FALSE' to instantly time out (fire and forget).
+   * @param  string  $stream  Path to where the file should be saved.
+   * @param  bool  $fullData  Return additional response data such as headers and potentially other data
+   * @param  array  $headers  Headers to send
+   * @param  array  $files Files to send
+   * @param  string  $method
+   *
+   * @return string|array The content (response body), or an array with data. NULL if something went wrong
    */
-  public function fetchExternalData($url, $data = NULL, $blocking = TRUE, $stream = NULL);
+  public function fetchExternalData($url, $data = NULL, $blocking = TRUE, $stream = NULL, $fullData = FALSE, $headers = array(), $files = array(), $method = 'POST');
 
   /**
    * Set the tutorial URL for a library. All versions of the library is set
@@ -628,6 +633,44 @@ interface H5PFrameworkInterface {
    * @return boolean
    */
   public function libraryHasUpgrade($library);
+
+  /**
+   * Replace content hub metadata cache
+   *
+   * @param JsonSerializable $metadata Metadata as received from content hub
+   * @param string $lang Language in ISO 639-1
+   *
+   * @return mixed
+   */
+  public function replaceContentHubMetadataCache($metadata, $lang);
+
+  /**
+   * Get content hub metadata cache from db
+   *
+   * @param  string  $lang Language code in ISO 639-1
+   *
+   * @return JsonSerializable Json string
+   */
+  public function getContentHubMetadataCache($lang = 'en');
+
+  /**
+   * Get time of last content hub metadata check
+   *
+   * @param  string  $lang Language code iin ISO 639-1 format
+   *
+   * @return string|null Time in RFC7231 format
+   */
+  public function getContentHubMetadataChecked($lang = 'en');
+
+  /**
+   * Set time of last content hub metadata check
+   *
+   * @param  int|null  $time Time in RFC7231 format
+   * @param  string  $lang Language code iin ISO 639-1 format
+   *
+   * @return bool True if successful
+   */
+  public function setContentHubMetadataChecked($time, $lang = 'en');
 }
 
 /**
@@ -1628,7 +1671,7 @@ class H5PStorage {
     }
 
     // Go through the libraries again to save dependencies.
-    $library_ids = [];
+    $library_ids = array();
     foreach ($this->h5pC->librariesJsonData as &$library) {
       if (!$library['saveDependencies']) {
         continue;
@@ -1986,9 +2029,28 @@ abstract class H5PDisplayOptionBehaviour {
   const CONTROLLED_BY_PERMISSIONS = 4;
 }
 
+abstract class H5PContentHubSyncStatus {
+  const NOT_SYNCED = 0;
+  const SYNCED = 1;
+  const WAITING = 2;
+  const FAILED = 3;
+}
+
+abstract class H5PContentStatus {
+  const STATUS_UNPUBLISHED = 0;
+  const STATUS_DOWNLOADED = 1;
+  const STATUS_WAITING = 2;
+  const STATUS_FAILED_DOWNLOAD = 3;
+  const STATUS_FAILED_VALIDATION = 4;
+  const STATUS_SUSPENDED = 5;
+}
+
 abstract class H5PHubEndpoints {
   const CONTENT_TYPES = 'api.h5p.org/v1/content-types/';
   const SITES = 'api.h5p.org/v1/sites';
+  const METADATA = 'hub-api.h5p.org/v1/metadata';
+  const CONTENT = 'hub-api.h5p.org/v1/contents';
+  const REGISTER = 'hub-api.h5p.org/v1/accounts';
 
   public static function createURL($endpoint) {
     $protocol = (extension_loaded('openssl') ? 'https' : 'http');
@@ -2460,11 +2522,11 @@ class H5PCore {
   /**
    * Get the path to the dependency.
    *
-   * @param stdClass $dependency
+   * @param array $dependency
    * @return string
    */
-  protected function getDependencyPath(array $dependency): string {
-    return H5PCore::libraryToString($dependency, TRUE);
+  protected function getDependencyPath(array $dependency) {
+    return 'libraries/' . H5PCore::libraryToString($dependency, TRUE);
   }
 
   private static function getDependenciesHash(&$dependencies) {
@@ -2832,10 +2894,11 @@ class H5PCore {
    * implementation is responsible for invoking this, eg using cron
    *
    * @param bool $fetchingDisabled
+   * @param bool $onlyRegister Only register site with H5P.org
    *
    * @return bool|object Returns endpoint data if found, otherwise FALSE
    */
-  public function fetchLibrariesMetadata($fetchingDisabled = FALSE) {
+  public function fetchLibrariesMetadata($fetchingDisabled = FALSE, $onlyRegister = false) {
     // Gather data
     $uuid = $this->h5pF->getOption('site_uuid', '');
     $platform = $this->h5pF->getPlatformInfo();
@@ -2873,10 +2936,15 @@ class H5PCore {
       $this->h5pF->setInfoMessage(
         $this->h5pF->t('Your site was successfully registered with the H5P Hub.')
       );
+      $uuid = $json->uuid;
       // TODO: Uncomment when key is once again available in H5P Settings
 //      $this->h5pF->setInfoMessage(
 //        $this->h5pF->t('You have been provided a unique key that identifies you with the Hub when receiving new updates. The key is available for viewing in the "H5P Settings" page.')
 //      );
+    }
+
+    if ($onlyRegister) {
+      return $uuid;
     }
 
     if ($this->h5pF->getOption('send_usage_statistics', TRUE)) {
@@ -3305,6 +3373,72 @@ class H5PCore {
   }
 
   /**
+   * Update content hub metadata cache
+   */
+  public function updateContentHubMetadataCache($lang = 'en') {
+    $url          = H5PHubEndpoints::createURL(H5PHubEndpoints::METADATA);
+    $lastModified = $this->h5pF->getContentHubMetadataChecked($lang);
+
+    $headers = array();
+    if (!empty($lastModified)) {
+      $headers['If-Modified-Since'] = $lastModified;
+    }
+    $data = $this->h5pF->fetchExternalData("{$url}?lang={$lang}", NULL, TRUE, NULL, TRUE, $headers, NULL, 'GET');
+    $lastChecked = new DateTime('now', new DateTimeZone('GMT'));
+
+    if ($data['status'] !== 200 && $data['status'] !== 304) {
+      // If this was not a success, set the error message and return
+      $this->h5pF->setErrorMessage(
+        $this->h5pF->t('No metadata was received from the H5P Hub. Please try again later.')
+      );
+      return null;
+    }
+
+    // Update timestamp
+    $this->h5pF->setContentHubMetadataChecked($lastChecked->getTimestamp(), $lang);
+
+    // Not modified
+    if ($data['status'] === 304) {
+      return null;
+    }
+    $this->h5pF->replaceContentHubMetadataCache($data['data'], $lang);
+    // TODO: If 200 should we have checked if it decodes? Or 'success'? Not sure if necessary though
+    return $data['data'];
+  }
+
+  /**
+   * Get updated content hub metadata cache
+   *
+   * @param  string  $lang Language as ISO 639-1 code
+   *
+   * @return JsonSerializable|string
+   */
+  public function getUpdatedContentHubMetadataCache($lang = 'en') {
+    $lastUpdate = $this->h5pF->getContentHubMetadataChecked($lang);
+    if (!$lastUpdate) {
+      return $this->updateContentHubMetadataCache($lang);
+    }
+
+    $lastUpdate = new DateTime($lastUpdate);
+    $expirationTime = $lastUpdate->getTimestamp() + (60 * 60 * 24); // Check once per day
+    if (time() > $expirationTime) {
+      $update = $this->updateContentHubMetadataCache($lang);
+      if (!empty($update)) {
+        return $update;
+      }
+    }
+
+    $storedCache = $this->h5pF->getContentHubMetadataCache($lang);
+    if (!$storedCache) {
+      // We don't have the value stored for some reason, reset last update and re-fetch
+      $this->h5pF->setContentHubMetadataChecked(null, $lang);
+      return $this->updateContentHubMetadataCache($lang);
+    }
+
+    return $storedCache;
+  }
+
+  /**
    * Check if the current server setup is valid and set error messages
    *
    * @return object Setup object with errors and disable hub properties
@@ -3512,7 +3646,472 @@ class H5PCore {
       'offlineDialogRetryMessage' => $this->h5pF->t('Retrying in :num....'),
       'offlineDialogRetryButtonLabel' => $this->h5pF->t('Retry now'),
       'offlineSuccessfulSubmit' => $this->h5pF->t('Successfully submitted results.'),
+      'mainTitle' => $this->h5pF->t('Sharing <strong>:title</strong>'),
+      'editInfoTitle' => $this->h5pF->t('Edit info for <strong>:title</strong>'),
+      'cancel' => $this->h5pF->t('Cancel'),
+      'back' => $this->h5pF->t('Back'),
+      'next' => $this->h5pF->t('Next'),
+      'reviewInfo' => $this->h5pF->t('Review info'),
+      'share' => $this->h5pF->t('Share'),
+      'saveChanges' => $this->h5pF->t('Save changes'),
+      'registerOnHub' => $this->h5pF->t('Register on the H5P Hub'),
+      'updateRegistrationOnHub' => $this->h5pF->t('Save account settings'),
+      'requiredInfo' => $this->h5pF->t('Required Info'),
+      'optionalInfo' => $this->h5pF->t('Optional Info'),
+      'reviewAndShare' => $this->h5pF->t('Review & Share'),
+      'reviewAndSave' => $this->h5pF->t('Review & Save'),
+      'shared' => $this->h5pF->t('Shared'),
+      'currentStep' => $this->h5pF->t('Step :step of :total'),
+      'sharingNote' => $this->h5pF->t('All content details can be edited after sharing'),
+      'licenseDescription' => $this->h5pF->t('Select a license for your content'),
+      'licenseVersion' => $this->h5pF->t('License Version'),
+      'licenseVersionDescription' => $this->h5pF->t('Select a license version'),
+      'disciplineLabel' => $this->h5pF->t('Disciplines'),
+      'disciplineDescription' => $this->h5pF->t('You can select multiple disciplines'),
+      'disciplineLimitReachedMessage' => $this->h5pF->t('You can select up to :numDisciplines disciplines'),
+      'discipline' => array(
+        'searchPlaceholder' => $this->h5pF->t('Type to search for disciplines'),
+        'in' => $this->h5pF->t('in'),
+        'dropdownButton' => $this->h5pF->t('Dropdown button'),
+      ),
+      'removeChip' => $this->h5pF->t('Remove :chip from the list'),
+      'keywordsPlaceholder' => $this->h5pF->t('Add keywords'),
+      'keywords' => $this->h5pF->t('Keywords'),
+      'keywordsDescription' => $this->h5pF->t('You can add multiple keywords separated by commas. Press "Enter" or "Add" to confirm keywords'),
+      'altText' => $this->h5pF->t('Alt text'),
+      'reviewMessage' => $this->h5pF->t('Please review the info below before you share'),
+      'subContentWarning' => $this->h5pF->t('Sub-content (images, questions etc.) will be shared under :license unless otherwise specified in the authoring tool'),
+      'disciplines' => $this->h5pF->t('Disciplines'),
+      'shortDescription' => $this->h5pF->t('Short description'),
+      'longDescription' => $this->h5pF->t('Long description'),
+      'icon' => $this->h5pF->t('Icon'),
+      'screenshots' => $this->h5pF->t('Screenshots'),
+      'helpChoosingLicense' => $this->h5pF->t('Help me choose a license'),
+      'shareFailed' => $this->h5pF->t('Share failed.'),
+      'editingFailed' => $this->h5pF->t('Editing failed.'),
+      'shareTryAgain' => $this->h5pF->t('Something went wrong, please try to share again.'),
+      'pleaseWait' => $this->h5pF->t('Please wait...'),
+      'language' => $this->h5pF->t('Language'),
+      'level' => $this->h5pF->t('Level'),
+      'shortDescriptionPlaceholder' => $this->h5pF->t('Short description of your content'),
+      'longDescriptionPlaceholder' => $this->h5pF->t('Long description of your content'),
+      'description' => $this->h5pF->t('Description'),
+      'iconDescription' => $this->h5pF->t('640x480px. If not selected content will use category icon'),
+      'screenshotsDescription' => $this->h5pF->t('Add up to five screenshots of your content'),
+      'submitted' => $this->h5pF->t('Submitted!'),
+      'isNowSubmitted' => $this->h5pF->t('Is now submitted to H5P Hub'),
+      'changeHasBeenSubmitted' => $this->h5pF->t('A change has been submited for'),
+      'contentAvailable' => $this->h5pF->t('Your content will normally be available in the Hub within one business day.'),
+      'contentUpdateSoon' => $this->h5pF->t('Your content will update soon'),
+      'contentLicenseTitle' => $this->h5pF->t('Content License Info'),
+      'licenseDialogDescription' => $this->h5pF->t('Click on a specific license to get info about proper usage'),
+      'publisherFieldTitle' => $this->h5pF->t('Publisher'),
+      'publisherFieldDescription' => $this->h5pF->t('This will display as the "Publisher name" on shared content'),
+      'emailAddress' => $this->h5pF->t('Email Address'),
+      'publisherDescription' => $this->h5pF->t('Publisher description'),
+      'publisherDescriptionText' => $this->h5pF->t('This will be displayed under "Publisher info" on shared content'),
+      'contactPerson' => $this->h5pF->t('Contact Person'),
+      'phone' => $this->h5pF->t('Phone'),
+      'address' => $this->h5pF->t('Address'),
+      'city' => $this->h5pF->t('City'),
+      'zip' => $this->h5pF->t('Zip'),
+      'country' => $this->h5pF->t('Country'),
+      'logoUploadText' => $this->h5pF->t('Organization logo or avatar'),
+      'acceptTerms' => $this->h5pF->t('I accept the <a href=":url" target="_blank">terms of use</a>'),
+      'successfullyRegistred' => $this->h5pF->t('You have successfully registered an account on the H5P Hub'),
+      'successfullyRegistredDescription' => $this->h5pF->t('You account details can be changed'),
+      'successfullyUpdated' => $this->h5pF->t('Your H5P Hub account settings have successfully been changed'),
+      'accountDetailsLinkText' => $this->h5pF->t('here'),
+      'registrationTitle' => $this->h5pF->t('H5P Hub Registration'),
+      'registrationFailed' => $this->h5pF->t('An error occurred'),
+      'registrationFailedDescription' => $this->h5pF->t('We were not able to create an account at this point. Something went wrong. Try again later.'),
+      'maxLength' => $this->h5pF->t(':length is the maximum number of characters'),
+      'keywordExists' => $this->h5pF->t('Keyword already exists!'),
+      'licenseDetails' => $this->h5pF->t('License details'),
+      'remove' => $this->h5pF->t('Remove'),
+      'removeImage' => $this->h5pF->t('Remove image'),
+      'cancelPublishConfirmationDialogTitle' => $this->h5pF->t('Cancel sharing'),
+      'cancelPublishConfirmationDialogDescription' => $this->h5pF->t('Are you sure you want to cancel the sharing process?'),
+      'cancelPublishConfirmationDialogCancelButtonText' => $this->h5pF->t('No'),
+      'cancelPublishConfirmationDialogConfirmButtonText' => $this->h5pF->t('Yes'),
+      'add' => $this->h5pF->t('Add'),
+      'age' => $this->h5pF->t('Typical age'),
+      'ageDescription' => $this->h5pF->t('The target audience of this content. Possible input formats separated by commas: "1,34-45,-50,59-".'),
+      'invalidAge' => $this->h5pF->t('Invalid input format for Typical age. Possible input formats separated by commas: "1, 34-45, -50, -59-".'),
+      'contactPersonDescription' => $this->h5pF->t('H5P will reach out to the contact person in case there are any issues with the content shared by the publisher. The contact person\'s name or other information will not be published or shared with third parties'),
+      'emailAddressDescription' => $this->h5pF->t('The email address will be used by H5P to reach out to the publisher in case of any issues with the content or in case the publisher needs to recover their account. It will not be published or shared with any third parties'),
+      'copyrightWarning' => $this->h5pF->t('Copyrighted material cannot be shared in the H5P Content Hub. If the content is licensed with a OER friendly license like Creative Commons, please choose the appropriate license. If not this content cannot be shared.'),
+      'keywordsExits' => $this->h5pF->t('Keywords already exists!'),
+      'someKeywordsExits' => $this->h5pF->t('Some of these keywords already exist'),
+
     );
+  }
+
+  /**
+   * Publish content on the H5P Hub.
+   *
+   * @param bigint $id
+   * @return stdClass
+   */
+  public function hubRetrieveContent($id) {
+    $headers = array(
+      'Authorization' => $this->hubGetAuthorizationHeader(),
+      'Accept' => 'application/json',
+    );
+
+    $response = $this->h5pF->fetchExternalData(
+      H5PHubEndpoints::createURL(H5PHubEndpoints::CONTENT . "/{$id}"),
+      NULL, TRUE, NULL, TRUE, $headers
+    );
+
+    if (empty($response['data'])) {
+      throw new Exception($this->h5pF->t('Unable to authorize with the H5P Hub. Please check your Hub registration and connection.'));
+    }
+
+    if (isset($response['status']) && $response['status'] !== 200) {
+      if ($response['status'] === 404) {
+        $this->h5pF->setErrorMessage($this->h5pF->t('Content is not shared on the H5P OER Hub.'));
+        return NULL;
+      }
+      throw new Exception($this->h5pF->t('Connecting to the content hub failed, please try again later.'));
+    }
+
+    $hub_content = json_decode($response['data'])->data;
+    $hub_content->id = "$hub_content->id";
+    return $hub_content;
+  }
+
+  /**
+   * Publish content on the H5P Hub.
+   *
+   * @param array $data Data from content publishing process
+   * @param array $files Files to upload with the content publish
+   * @param bigint $content_hub_id For updating existing content
+   * @return stdClass
+   */
+  public function hubPublishContent($data, $files, $content_hub_id = NULL) {
+    $headers = array(
+      'Authorization' => $this->hubGetAuthorizationHeader(),
+      'Accept' => 'application/json',
+    );
+
+    $data['published'] = '1';
+    $endpoint = H5PHubEndpoints::CONTENT;
+    if ($content_hub_id !== NULL) {
+      $endpoint .= "/{$content_hub_id}";
+      $data['_method'] = 'PUT';
+    }
+
+    $response = $this->h5pF->fetchExternalData(
+      H5PHubEndpoints::createURL($endpoint),
+      $data, TRUE, NULL, TRUE, $headers, $files
+    );
+
+    if (empty($response['data']) || $response['status'] === 403) {
+      throw new Exception($this->h5pF->t('Unable to authorize with the H5P Hub. Please check your Hub registration and connection.'));
+    }
+
+    if (isset($response['status']) && $response['status'] !== 200) {
+      throw new Exception($this->h5pF->t('Connecting to the content hub failed, please try again later.'));
+    }
+
+    $result = json_decode($response['data']);
+    if (isset($result->success) && $result->success === TRUE) {
+      return $result;
+    }
+    elseif (!empty($result->errors)) {
+      // Relay any error messages
+      $e = new Exception($this->h5pF->t('Validation failed.'));
+      $e->errors = $result->errors;
+      throw $e;
+    }
+  }
+
+  /**
+   * Creates the authorization header needed to access the private parts of
+   * the H5P Hub.
+   *
+   * @return string
+   */
+  public function hubGetAuthorizationHeader() {
+    $site_uuid = $this->h5pF->getOption('site_uuid', '');
+    $hub_secret = $this->h5pF->getOption('hub_secret', '');
+    if (empty($site_uuid)) {
+      $this->h5pF->setErrorMessage($this->h5pF->t('Missing Site UUID. Please check your Hub registration.'));
+    }
+    elseif (empty($hub_secret)) {
+      $this->h5pF->setErrorMessage($this->h5pF->t('Missing Hub Secret. Please check your Hub registration.'));
+    }
+    return 'Basic ' . base64_encode("$site_uuid:$hub_secret");
+  }
+
+  /**
+   * Unpublish content from content hub
+   *
+   * @param  integer  $hubId  Content hub id
+   *
+   * @return bool True if successful
+   */
+  public function hubUnpublishContent($hubId) {
+    $headers = array(
+      'Authorization' => $this->hubGetAuthorizationHeader(),
+      'Accept' => 'application/json',
+    );
+
+    $url = H5PHubEndpoints::createURL(H5PHubEndpoints::CONTENT);
+    $response = $this->h5pF->fetchExternalData("{$url}/{$hubId}", array(
+      'published' => '0',
+    ), true, null, true, $headers, array(), 'PUT');
+
+    // Remove shared status if successful
+    if (!empty($response) && $response['status'] === 200) {
+      $msg = $this->h5pF->t('Content successfully unpublished');
+      $this->h5pF->setInfoMessage($msg);
+
+      return true;
+    }
+    $msg = $this->h5pF->t('Content unpublish failed');
+    $this->h5pF->setErrorMessage($msg);
+
+    return false;
+  }
+
+  /**
+   * Sync content with content hub
+   *
+   * @param integer $hubId Content hub id
+   * @param string $exportPath Export path where .h5p for content can be found
+   *
+   * @return bool
+   */
+  public function hubSyncContent($hubId, $exportPath) {
+    $headers = array(
+      'Authorization' => $this->hubGetAuthorizationHeader(),
+      'Accept' => 'application/json',
+    );
+
+    $url = H5PHubEndpoints::createURL(H5PHubEndpoints::CONTENT);
+    $response = $this->h5pF->fetchExternalData("{$url}/{$hubId}", array(
+      'download_url' => $exportPath,
+      'resync' => '1',
+    ), true, null, true, $headers, array(), 'PUT');
+
+    if (!empty($response) && $response['status'] === 200) {
+      $msg = $this->h5pF->t('Content sync queued');
+      $this->h5pF->setInfoMessage($msg);
+      return true;
+    }
+
+    $msg = $this->h5pF->t('Content sync failed');
+    $this->h5pF->setErrorMessage($msg);
+    return false;
+  }
+
+  /**
+   * Fetch account info for our site from the content hub
+   *
+   * @return array|bool|string False if account is not setup, otherwise data
+   */
+  public function hubAccountInfo() {
+    $siteUuid = $this->h5pF->getOption('site_uuid', null);
+    $secret   = $this->h5pF->getOption('hub_secret', null);
+    if (empty($siteUuid) && !empty($secret)) {
+      $this->h5pF->setErrorMessage($this->h5pF->t('H5P Hub secret is set without a site uuid. This may be fixed by restoring the site uuid or removing the hub secret and registering a new account with the content hub.'));
+      throw new Exception('Hub secret not set');
+    }
+
+    if (empty($siteUuid) || empty($secret)) {
+      return false;
+    }
+
+    $headers = array(
+      'Authorization' => $this->hubGetAuthorizationHeader(),
+      'Accept' => 'application/json',
+    );
+
+    $url = H5PHubEndpoints::createURL(H5PHubEndpoints::REGISTER);
+    $accountInfo = $this->h5pF->fetchExternalData("{$url}/{$siteUuid}",
+      null, true, null, true, $headers, array(), 'GET');
+
+    if ($accountInfo['status'] === 401) {
+      // Unauthenticated, invalid hub secret and site uuid combination
+      $this->h5pF->setErrorMessage($this->h5pF->t('Hub account authentication info is invalid. This may be fixed by an admin by restoring the hub secret or register a new account with the content hub.'));
+      return false;
+    }
+
+    if ($accountInfo['status'] !== 200) {
+      return false;
+    }
+
+    return json_decode($accountInfo['data'])->data;
+  }
+
+  /**
+   * Register account
+   *
+   * @param array $formData Form data. Should include: name, email, description,
+   *    contact_person, phone, address, city, zip, country, remove_logo
+   * @param object $logo Input image
+   *
+   * @return array
+   */
+  public function hubRegisterAccount($formData, $logo) {
+
+    $uuid = $this->h5pF->getOption('site_uuid', '');
+    if (empty($uuid)) {
+      // Attempt to fetch a new site uuid
+      $uuid = $this->fetchLibrariesMetadata(false, true);
+      if (!$uuid) {
+        return [
+          'message'     => $this->h5pF->t('Site is missing a unique site uuid and was unable to set a new one. The H5P Content Hub is disabled until this problem can be resolved. Please make sure the H5P Hub is enabled in the H5P settings and try again later.'),
+          'status_code' => 403,
+          'error_code'  => 'MISSING_SITE_UUID',
+          'success'     => FALSE,
+        ];
+      }
+    }
+
+    $formData['site_uuid'] = $uuid;
+
+    $headers  = [];
+    $endpoint = H5PHubEndpoints::REGISTER;
+    // Update if already registered
+    $hasRegistered = $this->h5pF->getOption('hub_secret');
+    if ($hasRegistered) {
+      $endpoint            .= "/{$uuid}";
+      $formData['_method'] = 'PUT';
+      $headers             = [
+        'Authorization' => $this->hubGetAuthorizationHeader(),
+      ];
+    }
+
+    $url          = H5PHubEndpoints::createURL($endpoint);
+    $registration = $this->h5pF->fetchExternalData(
+      $url,
+      $formData,
+      NULL,
+      NULL,
+      TRUE,
+      $headers,
+      isset($logo) ? ['logo' => $logo] : []
+    );
+
+    try {
+      $results = json_decode($registration['data']);
+    } catch (Exception $e) {
+      return [
+        'message'     => 'Could not parse json response.',
+        'status_code' => 424,
+        'error_code'  => 'COULD_NOT_PARSE_RESPONSE',
+        'success'     => FALSE,
+      ];
+    }
+
+    if (isset($results->errors->site_uuid)) {
+      return [
+        'message'     => 'Site UUID is not unique. This must be fixed by an admin by restoring the hub secret or remove the site uuid and register as a new account with the content hub.',
+        'status_code' => 403,
+        'error_code'  => 'SITE_UUID_NOT_UNIQUE',
+        'success'     => FALSE,
+      ];
+    }
+
+    if (isset($results->errors->logo)) {
+      return [
+        'message' => $results->errors->logo[0],
+        'status_code' => 400,
+        'success' => FALSE,
+      ];
+    }
+
+    if (
+      !isset($results->success)
+      || $results->success === FALSE
+      || !$hasRegistered && !isset($results->account->secret)
+      || $registration['status'] !== 200
+    ) {
+      return [
+        'message'     => 'Registration failed.',
+        'status_code' => 422,
+        'error_code'  => 'REGISTRATION_FAILED',
+        'success'     => FALSE,
+      ];
+    }
+
+    if (!$hasRegistered) {
+      $this->h5pF->setOption('hub_secret', $results->account->secret);
+    }
+
+    return [
+      'message'     => $this->h5pF->t('Account successfully registered.'),
+      'status_code' => 200,
+      'success'     => TRUE,
+    ];
+  }
+
+  /**
+   * Get status of content from content hub
+   *
+   * @param string $hubContentId
+   * @param int $syncStatus
+   *
+   * @return false|int Returns a new H5PContentStatus if successful, else false
+   */
+  public function getHubContentStatus($hubContentId, $syncStatus) {
+    $headers = array(
+      'Authorization' => $this->hubGetAuthorizationHeader(),
+      'Accept' => 'application/json',
+    );
+
+    $url     = H5PHubEndpoints::createURL(H5PHubEndpoints::CONTENT);
+    $response = $this->h5pF->fetchExternalData("{$url}/{$hubContentId}/status",
+      null, true, null, true, $headers);
+
+    if (isset($response['status']) && $response['status'] === 403) {
+      $msg = $this->h5pF->t('The request for content status was unauthorized. This could be because the content belongs to a different account, or your account is not setup properly.');
+      $this->h5pF->setErrorMessage($msg);
+      return false;
+    }
+    if (empty($response) || $response['status'] !== 200) {
+      $msg = $this->h5pF->t('Could not get content hub sync status for content.');
+      $this->h5pF->setErrorMessage($msg);
+      return false;
+    }
+
+    $data = json_decode($response['data']);
+
+    if (isset($data->messages)) {
+      // TODO: Is this the right place/way to display them?
+
+      if (!empty($data->messages->info)) {
+        foreach ($data->messages->info as $info) {
+          $this->h5pF->setInfoMessage($info);
+        }
+      }
+      if (!empty($data->messages->error)) {
+        foreach ($data->messages->error as $error) {
+          $this->h5pF->setErrorMessage($error->message, $error->code);
+        }
+      }
+    }
+
+    $contentStatus = intval($data->status);
+    // Content status updated
+    if ($contentStatus !== H5PContentStatus::STATUS_WAITING) {
+      $newState = H5PContentHubSyncStatus::SYNCED;
+      if ($contentStatus !== H5PContentStatus::STATUS_DOWNLOADED) {
+        $newState = H5PContentHubSyncStatus::FAILED;
+      }
+      else if (intval($syncStatus) !== $contentStatus) {
+        // Content status successfully transitioned to synced/downloaded
+        $successMsg = $this->h5pF->t('Content was successfully shared on the content hub.');
+        $this->h5pF->setInfoMessage($successMsg);
+      }
+
+      return $newState;
+    }
+
+    return false;
   }
 }
 
@@ -4043,20 +4642,6 @@ class H5PContentValidator {
         }
       }
     }
-    if (!(isset($semantics->optional) && $semantics->optional)) {
-      if ($group === NULL) {
-        // Error no value. Errors aren't printed...
-        return;
-      }
-      foreach ($semantics->fields as $field) {
-        if (!(isset($field->optional) && $field->optional)) {
-          // Check if field is in group.
-          if (! property_exists($group, $field->name)) {
-            //$this->h5pF->setErrorMessage($this->h5pF->t('No value given for mandatory field ' . $field->name));
-          }
-        }
-      }
-    }
   }
 
   /**
@@ -4545,6 +5130,12 @@ class H5PContentValidator {
         'type' => 'text',
         'label' => $this->h5pF->t('Title'),
         'placeholder' => 'La Gioconda'
+      ),
+      (object) array(
+        'name' => 'a11yTitle',
+        'type' => 'text',
+        'label' => $this->h5pF->t('Assistive Technologies label'),
+        'optional' => TRUE,
       ),
       (object) array(
         'name' => 'license',
