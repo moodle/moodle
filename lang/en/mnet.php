@@ -82,7 +82,7 @@ $string['hideremote'] = 'Hide remote users';
 $string['host'] = 'host';
 $string['hostcoursenotfound'] = 'Host or course not found';
 $string['hostdeleted'] = 'Host deleted';
-$string['hostexists'] = 'A record already exists for a host with that hostname (it may be deleted). <a href="{$a}">click here</a> to edit that record.';
+$string['hostexists'] = 'A record already exists for a host with that hostname (it may be deleted). <a href="{$a}">Click here</a> to edit that record.';
 $string['hostlist'] = 'List of networked hosts';
 $string['hostname'] = 'Hostname';
 $string['hostnamehelp'] = 'The fully-qualified domain name of the remote host, e.g. www.example.com';
