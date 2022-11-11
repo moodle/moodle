@@ -15,27 +15,27 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_bigbluebuttonbn/end_session_button
+    @template mod_bigbluebuttonbn/guest_links
 
-    This template renders the End session button.
+    This template renders the mobile page.
 
     Example context (json):
     {
-        "statusrunning": true,
-        "bigbluebuttonbnid": 12345,
-        "groupid": 98765
+        "guestaccessenabled": 1,
+        "guestjoinurl": "http://moodle.org/",
+        "guestpassword": "password"
     }
 }}
-
-{{#statusrunning}}
-    <a {{!
-        }} href="#"{{!
-        }} id="end_button_input"{{!
-        }} data-action="end"{{!
-        }} data-bbb-id="{{bigbluebuttonbnid}}"{{!
-        }} data-group-id="{{groupid}}"{{!
-        }} class="btn btn-outline-dark bbb-btn-action m-1"{{!
-    }}>
-        {{#str}}view_conference_action_end, mod_bigbluebuttonbn{{/str}}
-    </a>
-{{/statusrunning}}
+{{#guestaccessenabled}}
+    <button class="btn btn-link m-1" type="button" data-action="show-guest-access">
+        {{#pix}}t/add, core{{/pix}}{{#str}}guestaccess_add, mod_bigbluebuttonbn{{/str}}
+    </button>
+{{/guestaccessenabled}}
+{{#js}}
+    require(['mod_bigbluebuttonbn/guest_access_modal'], function(GuestLinkAccess) {
+     GuestLinkAccess.init({
+        id: "{{ bigbluebuttonbnid }}",
+        groupid: "{{ groupid }}"
+    });
+    });
+{{/js}}

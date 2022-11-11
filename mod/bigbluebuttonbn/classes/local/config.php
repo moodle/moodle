@@ -218,6 +218,7 @@ class config {
             'welcome_default' => self::get('welcome_default'),
             'welcome_editable' => self::get('welcome_editable'),
             'poll_interval' => self::get('poll_interval'),
+            'guestaccess_enabled' => self::get('guestaccess_enabled'),
         ];
     }
 

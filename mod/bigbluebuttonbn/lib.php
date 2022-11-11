@@ -99,6 +99,8 @@ function bigbluebuttonbn_add_instance($bigbluebuttonbn) {
     $bigbluebuttonbn->presentation = files::save_media_file($bigbluebuttonbn);
     // Encode meetingid.
     $bigbluebuttonbn->meetingid = meeting::get_unique_meetingid_seed();
+    [$bigbluebuttonbn->guestlinkuid, $bigbluebuttonbn->guestpassword] =
+        \mod_bigbluebuttonbn\plugin::generate_guest_meeting_credentials();
     // Insert a record.
     $bigbluebuttonbn->id = $DB->insert_record('bigbluebuttonbn', $bigbluebuttonbn);
     // Log insert action.
@@ -125,6 +127,10 @@ function bigbluebuttonbn_update_instance($bigbluebuttonbn) {
     $bigbluebuttonbn->id = $bigbluebuttonbn->instance;
     $bigbluebuttonbn->presentation = files::save_media_file($bigbluebuttonbn);
 
+    if (empty($bigbluebuttonbn->guestjoinurl) || empty($bigbluebuttonbn->guestpassword)) {
+        [$bigbluebuttonbn->guestlinkuid, $bigbluebuttonbn->guestpassword] =
+            \mod_bigbluebuttonbn\plugin::generate_guest_meeting_credentials();
+    }
     // Update a record.
     $DB->update_record('bigbluebuttonbn', $bigbluebuttonbn);
 

@@ -542,4 +542,64 @@ class instance_test extends advanced_testcase {
         ];
     }
 
+
+    /**
+     * Test get user id (guest or current user)
+     * @covers \mod_bigbluebuttonbn\instance::get_user_id
+     */
+    public function test_get_user_id(): void {
+        $this->resetAfterTest();
+        $this->setUser(null);
+        ['record' => $record ] = $this->get_test_instance();
+        $instance = instance::get_from_instanceid($record->id);
+        $this->assertEquals(0, $instance->get_user_id());
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $this->assertEquals($user->id, $instance->get_user_id());
+    }
+
+    /**
+     * Test guest access URL
+     *
+     * @covers ::get_guest_access_url
+     */
+    public function test_get_guest_access_url() {
+        global $CFG;
+        $this->resetAfterTest();
+        ['record' => $record ] = $this->get_test_instance(['guestallowed' => true]);
+        $CFG->bigbluebuttonbn['guestaccess_enabled'] = 1;
+        $instance = instance::get_from_instanceid($record->id);
+        $this->assertNotEmpty($instance->get_guest_access_url());
+    }
+
+    /**
+     * Test guest allowed flag
+     *
+     * @covers ::is_guest_allowed
+     */
+    public function test_is_guest_allowed() {
+        global $CFG;
+        $this->resetAfterTest();
+        ['record' => $record ] = $this->get_test_instance(['guestallowed' => true]);
+        $CFG->bigbluebuttonbn['guestaccess_enabled'] = 1;
+        $instance = instance::get_from_instanceid($record->id);
+        $this->assertTrue($instance->is_guest_allowed());
+        $CFG->bigbluebuttonbn['guestaccess_enabled'] = 0;
+        $this->assertFalse($instance->is_guest_allowed());
+    }
+
+    /**
+     * Test guest access password
+     *
+     * @covers ::get_guest_access_password
+     */
+    public function get_guest_access_password() {
+        global $CFG;
+        $this->resetAfterTest();
+        ['record' => $record ] = $this->get_test_instance(['guestallowed' => true]);
+        $CFG->bigbluebuttonbn['guestaccess_enabled'] = 1;
+        $instance = instance::get_from_instanceid($record->id);
+        $this->assertNotEmpty($instance->get_guest_access_password());
+    }
+
 }
