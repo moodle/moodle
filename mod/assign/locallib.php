@@ -5803,9 +5803,9 @@ class assign {
             return $this->overridedata[$cachekey];
         }
 
-        $params = ['groupid' => $activitygroup, 'assignid' => $activitygroup];
+        $params = ['groupid' => $activitygroup, 'assignid' => $instanceid];
         $this->overridedata[$cachekey] = $DB->get_record('assign_overrides', $params);
-       return $this->overridedata[$cachekey];
+        return $this->overridedata[$cachekey];
     }
 
     /**
