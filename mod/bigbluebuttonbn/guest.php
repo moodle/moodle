@@ -44,12 +44,7 @@ $instance = \mod_bigbluebuttonbn\instance::get_from_instanceid($bbid);
 if (!$instance->is_guest_allowed()) {
     throw new moodle_exception('guestaccess_feature_disabled', 'mod_bigbluebuttonbn');
 }
-// Same if we are logged in, then we should not really have guest access. This will be confusing.
-if (isloggedin() && !isguestuser()) {
-    // We then redirect to the right page.
-    \core\notification::warning(get_string('guestaccess_should_not_be_loggedin', 'mod_bigbluebuttonbn'));
-    redirect(new moodle_url('/mod/bigbluebuttonbn/view.php', ['id' => $instance->get_cm_id()]));
-}
+
 // Get the guest matching guest access link.
 $PAGE->set_url('/mod/bigbluebuttonbn/guest.php', ['uid' => $uid]);
 $title = $instance->get_course()->shortname . ': ' . format_string($instance->get_meeting_name());

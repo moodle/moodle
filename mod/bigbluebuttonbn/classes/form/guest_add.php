@@ -90,8 +90,6 @@ class guest_add extends dynamic_form {
                 $email = trim($email);
                 if (!validate_email($email)) {
                     $emailserrors[] .= get_string('guestaccess_emails_invalidemail', 'mod_bigbluebuttonbn', $email);
-                } else if (!empty(\core_user::get_user_by_email($email))) {
-                    $emailserrors[] .= get_string('guestaccess_emails_existinguser', 'mod_bigbluebuttonbn', $email);
                 }
             }
         }

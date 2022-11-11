@@ -309,8 +309,6 @@ $string['guestaccess_add'] = 'Add guests';
 $string['guestaccess_add_no_id'] = 'No bigbluebutton instance ID provided.';
 $string['guestaccess_emails'] = 'Add guests emails';
 $string['guestaccess_emails_help'] = 'Emails of users you want to invite, separated by commas';
-$string['guestaccess_emails_existinguser'] = 'The email {$a} belongs to a user who is already registered in this site and cannot
-join as a guest!';
 $string['guestaccess_emails_invalidemail'] = 'The email {$a} is invalid, please correct it.';
 $string['guestaccess_username'] = 'Guest username';
 $string['guestaccess_meeting_link'] = 'Meeting link';
@@ -320,8 +318,6 @@ $string['guestaccess_meeting_not_started'] = 'Sorry, the meeting has not started
 $string['guestaccess_meeting_invalid_password'] = 'Incorrect password.';
 $string['guestaccess_activitynotfound'] = 'The BigblueButton activity is not found for this access as guest. Contact your
 support.';
-$string['guestaccess_should_not_be_loggedin'] = 'The guest access page is only available for users who are not registered into
-this site. You have been automatically redirected.';
 $string['guestaccess_feature_disabled'] = 'Guest access: feature is disabled.';
 $string['guestaccess_title']  = 'Add guests to this meeting';
 $string['guestaccess_copy_link'] = 'Copy link';

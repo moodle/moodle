@@ -33,12 +33,20 @@ class guest_login extends \moodleform {
      * Form definition
      */
     protected function definition() {
+        global $USER;
+
         $mform = $this->_form;
         $mform->addElement('text', 'username',
             get_string('guestaccess_username', 'mod_bigbluebuttonbn'));
         $mform->setType('username', PARAM_NOTAGS);
         $mform->addRule('username',
             get_string('required'), 'required', null, 'client');
+
+        if (isloggedin() && !isguestuser()) {
+            $mform->setConstant('username', fullname($USER));
+            $mform->freeze('username');
+        }
+
         $mform->addElement('password', 'password',
             get_string('guestaccess_password', 'mod_bigbluebuttonbn'));
         $mform->setType('password', PARAM_RAW);
