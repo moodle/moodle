@@ -67,8 +67,8 @@ class cohorts_test extends core_reportbuilder_testcase {
 
         $contentrow = array_values(reset($content));
         $this->assertEquals([
-            'System', // Context.
             'Legends', // Name.
+            'System', // Context.
             'C101', // ID number.
             '<div class="text_to_html">Cohort for the legends</div>', // Description.
             'Lionel Richards', // User.

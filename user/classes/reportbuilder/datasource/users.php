@@ -123,17 +123,13 @@ class users extends datasource {
     }
 
     /**
-     * Set default columns and the sortorder
+     * Return the default sorting that will be added to the report once it is created
+     *
+     * @return array|int[]
      */
-    public function add_default_columns(): void {
-        parent::add_default_columns();
-
-        $persistent = $this->get_report_persistent();
-        $report = manager::get_report_from_persistent($persistent);
-        foreach ($report->get_active_columns() as $column) {
-            if ($column->get_unique_identifier() === 'user:fullname') {
-                report::toggle_report_column_sorting($persistent->get('id'), $column->get_persistent()->get('id'), true);
-            }
-        }
+    public function get_default_column_sorting(): array {
+        return [
+            'user:fullname' => SORT_ASC,
+        ];
     }
 }
