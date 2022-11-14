@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->release  = '4.0.4 (Build: 20220912)'; // Human-friendly version name
+$plugin->release  = '4.0.5 (Build: 20221114)'; // Human-friendly version name
 $plugin->version  = 2019040500;   // The (date) version of this plugin.
 $plugin->requires = 2019052000;   // Requires this Moodle version. (3.3)
 $plugin->component = 'local_iomad_learningpath';
