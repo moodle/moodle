@@ -220,6 +220,10 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
     private $glossary;
     private $entry;
     protected $entryid;
+
+    /** @var array Array that contains all aliases for the given glossary entry. */
+    private $aliases = [];
+
     /*
      * @return array
      */
@@ -260,7 +264,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
                 $context = context_module::instance($maincm->id);
             }
         }
-        $this->aliases = $DB->get_record('glossary_alias', array('entryid'=>$this->entryid));
+        $this->aliases = $DB->get_records('glossary_alias', ['entryid' => $this->entryid]);
         $fs = get_file_storage();
         $this->multifiles = array_merge(
             $fs->get_area_files($context->id, 'mod_glossary', 'attachment', $this->entry->id, "timemodified", false),
@@ -418,12 +422,11 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         $output .= '</td></tr>' . "\n";
 
         if (!empty($aliases)) {
-            $aliases = explode(',', $aliases->alias);
             $output .= '<tr valign="top"><td class="entrylowersection">';
             $key = (count($aliases) == 1) ? 'alias' : 'aliases';
             $output .= get_string($key, 'glossary') . ': ';
             foreach ($aliases as $alias) {
-                $output .= s($alias) . ',';
+                $output .= s($alias->alias) . ',';
             }
             $output = substr($output, 0, -1);
             $output .= '</td></tr>' . "\n";
