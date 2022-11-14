@@ -17,7 +17,7 @@
     <location>behat/axe</location>
     <name>axe-core</name>
     <description>Accessibility testing engine for websites and other HTML-based user interfaces.</description>
-    <version>4.3.5</version>
+    <version>4.5.1</version>
     <license>MPL</license>
     <licenseversion>2.0</licenseversion>
     <repository>https://github.com/dequelabs/axe-core</repository>

@@ -11739,6 +11739,9 @@ ul {
     .popover.footer .popover-body .footer-section a:focus {
       text-decoration: none; }
 
+.footer-support-link {
+  padding-bottom: 5px; }
+
 @media (min-width: 576px) {
   .jsenabled #page-footer .footer-content-popover {
     display: none; }
