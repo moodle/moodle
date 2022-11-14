@@ -6,6 +6,7 @@ Description of TCPDF library import 6.3.5
 * remove all fonts that were not already present
 * visit http://127.0.0.1/lib/tests/other/pdflibtestpage.php and view the pdf
 * modify getTCPDFProducer lib/tcpdf/include/tcpdf_static.php to remove the version number
+* modify `TCPDF::Output` method for multi-byte character filename support (see https://github.com/tecnickcom/TCPDF/pull/562)
 
 Important
 ---------
