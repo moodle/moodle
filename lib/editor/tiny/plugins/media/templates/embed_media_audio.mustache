@@ -31,7 +31,7 @@
     }}{{#autoplay}} autoplay="true"{{/autoplay}}{{!
     }}{{#title}} title="{{.}}"{{/title}}{{!
 }}>
-    {{#sources}}<source src="{{source}}"/>{{/sources}}
+    {{#sources}}<source src="{{.}}"/>{{/sources}}
     {{#tracks}}
     <track src="{{track}}" kind="{{kind}}" srclang="{{srclang}}" label="{{label}}"{{!
         }}{{#defaultTrack}} default="true"{{/defaultTrack}}{{!
