@@ -34,6 +34,7 @@ require_once(__DIR__.'/../lib.php');
  * define('TEST_CACHESTORE_REDIS_TESTSERVERS', '127.0.0.1');
  *
  * @package   cachestore_redis
+ * @covers    \cachestore_redis
  * @copyright Copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -70,13 +71,28 @@ class store_test extends \cachestore_tests {
      * Creates the required cachestore for the tests to run against Redis.
      *
      * @param array $extraconfig Extra configuration options for Redis instance, if any
+     * @param bool $ttl True to use a cache definition with TTL enabled
      * @return cachestore_redis
      */
-    protected function create_cachestore_redis(array $extraconfig = []): cachestore_redis {
-        /** @var cache_definition $definition */
-        $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_redis', 'phpunit_test');
+    protected function create_cachestore_redis(array $extraconfig = [], bool $ttl = false): cachestore_redis {
+        if ($ttl) {
+            /** @var cache_definition $definition */
+            $definition = cache_definition::load('core/wibble', [
+                'mode' => 1,
+                'simplekeys' => true,
+                'simpledata' => true,
+                'ttl' => 10,
+                'component' => 'core',
+                'area' => 'wibble',
+                'selectedsharingoption' => 2,
+                'userinputsharingkey' => '',
+                'sharingoptions' => 15,
+            ]);
+        } else {
+            /** @var cache_definition $definition */
+            $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_redis', 'phpunit_test');
+        }
         $configuration = array_merge(cachestore_redis::unit_test_configuration(), $extraconfig);
-
         $store = new cachestore_redis('Test', $configuration);
         $store->initialise($definition);
 
@@ -165,4 +181,43 @@ class store_test extends \cachestore_tests {
         ]);
         $this->assertEquals(111, $store->get_last_io_bytes());
     }
+
+    /**
+     * Data provider for whether cache uses TTL or not.
+     *
+     * @return array Array with true and false options
+     */
+    public static function ttl_or_not(): array {
+        return [
+            [false],
+            [true]
+        ];
+    }
+
+    /**
+     * Tests the delete_many function.
+     *
+     * The behaviour is different with TTL enabled so we need to test with that kind of definition
+     * as well as a 'normal' one.
+     *
+     * @param bool $ttl True to test using a TTL definition
+     * @dataProvider ttl_or_not
+     */
+    public function test_delete_many(bool $ttl): void {
+        $store = $this->create_cachestore_redis([], $ttl);
+
+        // Check it works to delete selected items.
+        $store->set('foo', 'frog');
+        $store->set('bar', 'amphibian');
+        $store->set('hmm', 'undead');
+        $this->store->delete_many(['foo', 'bar']);
+        $this->assertFalse($store->get('foo'));
+        $this->assertFalse($store->get('bar'));
+        $this->assertEquals('undead', $store->get('hmm'));
+
+        // If called with no keys it should do nothing.
+        $store->delete_many([]);
+        $this->assertEquals('undead', $store->get('hmm'));
+    }
+
 }
