@@ -66,7 +66,6 @@ class zero_state_action_bar implements templatable, renderable {
             $createfieldbutton = $actionbar->get_create_fields();
             $data['createfieldbutton'] = $createfieldbutton->export_for_template($output);
 
-            $params['action'] = 'import';
             $importpresetlink = new moodle_url('/mod/data/preset.php', $params);
             $importpresetbutton = new \single_button($importpresetlink,
                 get_string('importapreset', 'mod_data'), 'get', false, [
