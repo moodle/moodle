@@ -31,15 +31,58 @@ use moodle_url;
 class general_action_bar_test extends advanced_testcase {
 
     /**
+     * Search array $options for an element which is an array containing 'name' => $name.
+     *
+     * @param array $options the array of options.
+     * @param string $name the name to find.
+     * @return array|null the particular option if found, else null.
+     */
+    protected function find_option_by_name(array $options, string $name): ?array {
+        foreach ($options as $option) {
+            if ($option['name'] == $name) {
+                return $option;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Test the exported data for the general action bar for different user roles and settings.
      *
      * @dataProvider test_export_for_template_provider
      * @param string $userrole The user role to test
      * @param bool $enableoutcomes Whether to enable outcomes
      * @param array $expectedoptions The expected options returned in the general action selector
+     * @covers \core_grades\output\general_action_bar::export_for_template
      */
-    public function test_export_for_template_admin(string $userrole, bool $enableoutcomes, array $expectedoptions) {
+    public function test_export_for_template(string $userrole, bool $enableoutcomes, array $expectedoptions) {
         global $PAGE;
+        // There may be additional plugins installed in the codebase where this
+        // test is being run, therefore, we need to know which links can be
+        // present in a standard Moodle install, and only check them.
+        $allcorenavlinks = [
+                'View' => [
+                        'Grader report',
+                        'Grade history',
+                        'Grade summary',
+                        'Outcomes report',
+                        'Overview report',
+                        'Single view',
+                        'User report',
+                ],
+                'Setup' => [
+                        'Gradebook setup',
+                        'Course grade settings',
+                        'Preferences: Grader report',
+                ],
+                'More' => [
+                        'Scales',
+                        'Outcomes',
+                        'Grade letters',
+                        'Import',
+                        'Export',
+                ]
+        ];
 
         $this->resetAfterTest();
         // Reset the cache.
@@ -70,18 +113,29 @@ class general_action_bar_test extends advanced_testcase {
         $this->assertArrayHasKey('generalnavselector', $generalactionbardata);
 
         $generalnavselector = $generalactionbardata['generalnavselector'];
-        // Assert the correct number of available option groups in the general navigation selector.
-        foreach ($generalnavselector->options as $option) {
-            if ($option['isgroup']) {
-                $groupname = $option['name'];
-                $groupoptions = $option['options'];
-                // Assert that the group name exists.
-                $this->assertArrayHasKey($groupname, $expectedoptions);
-                // Assert that the actual number of group options matches the number of expected options.
-                $this->assertEquals(count($expectedoptions[$groupname]), count($groupoptions));
 
-                foreach ($groupoptions as $option) {
-                    $this->assertTrue(in_array($option['name'], $expectedoptions[$groupname]));
+        // Assert that the right links are present in each group.
+        foreach ($allcorenavlinks as $groupname => $corelinks) {
+            $actualgroup = $this->find_option_by_name($generalnavselector->options, $groupname);
+
+            if (!isset($expectedoptions[$groupname])) {
+                // This group should not be present.
+                $this->assertNull($actualgroup, "Nav link group '$groupname' should not be present, but is.");
+                continue;
+            }
+
+            $this->assertNotNull($actualgroup, "Nav link group '$groupname' should be present, but is not.");
+            $this->assertTrue($actualgroup['isgroup'], "the thing claiming to be nav link group '$groupname' is not a group.");
+
+            foreach ($corelinks as $corelinkname) {
+                $actuallink = $this->find_option_by_name($actualgroup['options'], $corelinkname);
+
+                if (!in_array($corelinkname, $expectedoptions[$groupname])) {
+                    $this->assertNull($actuallink,
+                            "Nav link '$corelinkname' should not be present in group '$groupname', but is.");
+                } else {
+                    $this->assertNotNull($actuallink,
+                            "Nav link '$corelinkname' should be present in group '$groupname', but is not.");
                 }
             }
         }
