@@ -44,34 +44,51 @@ class comments_test extends core_reportbuilder_testcase {
      */
     public function test_datasource_default(): void {
         $this->resetAfterTest();
-        $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course->id);
 
         /** @var core_comment_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_comment');
-        $generator->create_comment([
+
+        // Our first user will create a single comment.
+        $userone = $this->getDataGenerator()->create_and_enrol($course, 'student', ['firstname' => 'Zoe']);
+        $this->setUser($userone);
+        $useronecomment = $generator->create_comment([
             'context' => $coursecontext,
             'component' => 'block_comments',
             'area' => 'page_comments',
-            'content' => 'Cool',
-        ]);
+        ])->add('Cool');
+
+        // Our second user will create a couple of comments.
+        $usertwo = $this->getDataGenerator()->create_and_enrol($course, 'student', ['firstname' => 'Amy']);
+        $this->setUser($usertwo);
+        $usertwocommentfirst = $generator->create_comment([
+            'context' => $coursecontext,
+            'component' => 'block_comments',
+            'area' => 'page_comments',
+        ])->add('Super');
+
+        $this->waitForSecond(); // For consistent ordering we need distinct time for second user comments.
+        $usertwocommentsecond = $generator->create_comment([
+            'context' => $coursecontext,
+            'component' => 'block_comments',
+            'area' => 'page_comments',
+        ])->add('Awesome');
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Blogs', 'source' => comments::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
-        $this->assertCount(1, $content);
 
-        // Default columns are context, content, user, time created.
-        [$contextname, $content, $userfullname, $timecreated] = array_values($content[0]);
-
-        $this->assertEquals($coursecontext->get_context_name(), $contextname);
-        $this->assertEquals(format_text('Cool'), $content);
-        $this->assertEquals(fullname(get_admin()), $userfullname);
-        $this->assertNotEmpty($timecreated);
+        // Default columns are user, context, content, time created. Sorted by user and time created.
+        $contextname = $coursecontext->get_context_name();
+        $this->assertEquals([
+            [fullname($usertwo), $contextname, format_text('Super'), userdate($usertwocommentfirst->timecreated)],
+            [fullname($usertwo), $contextname, format_text('Awesome'), userdate($usertwocommentsecond->timecreated)],
+            [fullname($userone), $contextname, format_text('Cool'), userdate($useronecomment->timecreated)],
+        ], array_map('array_values', $content));
     }
 
     /**

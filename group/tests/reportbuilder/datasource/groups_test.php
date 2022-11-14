@@ -44,24 +44,28 @@ class groups_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
-        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $userone = $this->getDataGenerator()->create_and_enrol($course, 'student', ['firstname' => 'Zoe']);
+        $usertwo = $this->getDataGenerator()->create_and_enrol($course, 'student', ['firstname' => 'Amy']);
 
-        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
-        $this->getDataGenerator()->create_group_member(['userid' => $user->id, 'groupid' => $group->id]);
+        $groupone = $this->getDataGenerator()->create_group(['courseid' => $course->id, 'name' => 'Zebras']);
+        $grouptwo = $this->getDataGenerator()->create_group(['courseid' => $course->id, 'name' => 'Aardvarks']);
+
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupone->id, 'userid' => $userone->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $groupone->id, 'userid' => $usertwo->id]);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Groups', 'source' => groups::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
-        $this->assertCount(1, $content);
 
-        $contentrow = array_values(reset($content));
+        // Default columns are course, group, user. Sorted by each.
+        $courseurl = course_get_url($course);
         $this->assertEquals([
-            "<a href=\"https://www.example.com/moodle/course/view.php?id={$course->id}\">{$course->fullname}</a>", // Course.
-            $group->name, // Group.
-            fullname($user), // User.
-        ], $contentrow);
+            ["<a href=\"{$courseurl}\">{$course->fullname}</a>", $grouptwo->name, ''],
+            ["<a href=\"{$courseurl}\">{$course->fullname}</a>", $groupone->name, fullname($usertwo)],
+            ["<a href=\"{$courseurl}\">{$course->fullname}</a>", $groupone->name, fullname($userone)],
+        ], array_map('array_values', $content));
     }
 
     /**

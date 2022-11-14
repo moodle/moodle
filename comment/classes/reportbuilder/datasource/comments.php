@@ -75,10 +75,22 @@ class comments extends datasource {
      */
     public function get_default_columns(): array {
         return [
+            'user:fullname',
             'context:name',
             'comment:content',
-            'user:fullname',
             'comment:timecreated',
+        ];
+    }
+
+    /**
+     * Return the column sorting that will be added to the report upon creation
+     *
+     * @return int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'user:fullname' => SORT_ASC,
+            'comment:timecreated' => SORT_ASC,
         ];
     }
 
