@@ -1123,6 +1123,10 @@ tr.flagged-tag a {
     padding-top: 20px;
 }
 
+.activity.label.modtype_label .mod-indent {
+    float: none;
+}
+
 @include media-breakpoint-up(sm) {
     $mod-indent-size: 30px;
     /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
