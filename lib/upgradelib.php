@@ -1948,6 +1948,7 @@ function upgrade_noncore($verbose) {
         purge_all_caches();
 
         $plugintypes = core_component::get_plugin_types();
+        upgrade_started();
         foreach ($plugintypes as $type=>$location) {
             upgrade_plugins($type, 'print_upgrade_part_start', 'print_upgrade_part_end', $verbose);
         }
