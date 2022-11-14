@@ -33,8 +33,8 @@
         "selectedgroup": "Group 1"
     }
 }}
-<div class="group-selector d-flex">
-    <div role="button" class="groupwidget btn dropdown-toggle d-flex text-left align-items-center p-0" data-courseid="{{courseid}}" data-action-base-url="{{groupactionbaseurl}}" data-searchtype="group" tabindex="0">
+<div class="search-widget d-flex dropdown" data-searchtype="group">
+    <button aria-expanded="false" data-toggle="dropdown" class="btn dropdown-toggle d-flex text-left align-items-center p-0" data-courseid="{{courseid}}" data-action-base-url="{{groupactionbaseurl}}">
         <div class="align-items-center d-flex">
             <div class="d-block pr-3">
                 <span class="d-block small">
@@ -45,5 +45,7 @@
                 </span>
             </div>
         </div>
+    </button>
+    <div class="dropdown-menu narrow">
     </div>
 </div>

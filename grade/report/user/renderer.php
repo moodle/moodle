@@ -127,7 +127,7 @@ class gradereport_user_renderer extends plugin_renderer_base {
         }
 
         $this->page->requires->js_call_amd('gradereport_user/user', 'init');
-        return $this->render_from_template('gradereport_user/user_selector', $data);
+        return $this->render_from_template('core_grades/user_selector', $data);
     }
 
     /**

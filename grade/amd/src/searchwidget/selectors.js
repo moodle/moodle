@@ -14,16 +14,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Helpers to perform ARIA compliance changes to the DOM.
+ * Selectors for the search widget.
  *
- * @module     core/aria
- * @copyright  2020 Andrew Nicols <andrew@nicols.co.uk>
+ * @module     core_grades/searchwidget/selectors
+ * @copyright  2022 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-export {
-    hide,
-    unhide,
-    hideSiblings,
-    unhideSiblings,
-} from './local/aria/aria-hidden';
+export default {
+    regions: {
+        searchResults: '[data-region="search-results-container-widget"]',
+        unsearchableContent: '[data-region="unsearchable-content-container-widget"]',
+    },
+    actions: {
+        search: '[data-action="search"]',
+        clearSearch: '[data-action="clearsearch"]',
+    },
+    elements: {
+        getSearchWidgetSelector: searchtype => `.search-widget[data-searchtype="${searchtype}"]`,
+        getSearchWidgetDropdownSelector: searchtype => `.search-widget[data-searchtype="${searchtype}"] .dropdown-menu`,
+    },
+};

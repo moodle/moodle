@@ -530,21 +530,48 @@
     }
 }
 
-.searchresultitemscontainer {
-    max-height: 150px;
-    overflow: auto;
+.search-widget {
+    .dropdown-menu {
+        padding: 0.8rem 1.2rem;
 
-    a:hover {
-        background-color: $gray-100;
+        &.wide {
+            width: 350px;
+        }
+
+        &.narrow {
+            width: 250px;
+        }
+
+        .dropdown-item {
+            span {
+                &.email {
+                    color: $text-muted;
+                }
+            }
+        }
+
+        .dropdown-item:hover,
+        .dropdown-item:active {
+            span {
+                color: #fff;
+            }
+        }
+
+        .searchresultscontainer {
+            height: 178px;
+            font-size: 90%;
+
+            .searchresultitemscontainer {
+                height: 178px;
+                max-height: 178px;
+                overflow: auto;
+            }
+        }
+
+        .unsearchablecontentcontainer {
+            border-top: 1px solid #dee2e6;
+            padding-top: 10px;
+            font-size: 90%;
+        }
     }
-
-    .focused-cell {
-        outline-style: dotted;
-        outline-color: green;
-    }
-}
-
-.unsearchablecontentcontainer {
-    border-top: 1px solid #dee2e6;
-    padding-top: 10px;
 }

@@ -22,10 +22,10 @@ Feature: Given we have opted to search for a grade item, Lets find and search th
   Scenario: A teacher can search for and find a grade item to view
     Given I navigate to "View > Single view" in the course gradebook
     And I click on "Grade items" "link" in the ".page-toggler" "css_element"
-    When I click on ".gradewidget" "css_element"
-    Then I confirm "Test assignment one" in "Select a grade item" search within the gradebook widget exists
-    And I confirm "Test assignment two" in "Select a grade item" search within the gradebook widget exists
+    When I click on ".search-widget[data-searchtype='grade']" "css_element"
+    Then I confirm "Test assignment one" in "grade" search within the gradebook widget exists
+    And I confirm "Test assignment two" in "grade" search within the gradebook widget exists
     And I set the field "searchinput" to "two"
     And I wait "1" seconds
-    And I confirm "Test assignment two" in "Select a grade item" search within the gradebook widget exists
-    And I confirm "Test assignment one" in "Select a grade item" search within the gradebook widget does not exist
+    And I confirm "Test assignment two" in "grade" search within the gradebook widget exists
+    And I confirm "Test assignment one" in "grade" search within the gradebook widget does not exist

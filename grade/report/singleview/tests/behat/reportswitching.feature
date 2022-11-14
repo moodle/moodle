@@ -21,9 +21,10 @@ Feature: Given we land on the index page, select what type of report we wish to 
   Scenario: I switch between the two report types within singleview
     Given I navigate to "View > Single view" in the course gradebook
     And I click on "Grade items" "link" in the ".page-toggler" "css_element"
-    When I click on ".gradewidget" "css_element"
-    Then I wait until "Select a grade item" "dialogue" exists
-    And I click on "Close" "button" in the "Select a grade item" "dialogue"
-    And I click on "Users" "link" in the ".page-toggler" "css_element"
-    And I click on ".userwidget" "css_element"
-    And I wait until "Select a user" "dialogue" exists
+    And ".search-widget[data-searchtype='user']" "css_element" should not exist
+    And ".search-widget[data-searchtype='grade']" "css_element" should exist
+    And I confirm "assign" in "grade" search within the gradebook widget exists
+    When I click on "Users" "link" in the ".page-toggler" "css_element"
+    Then ".search-widget[data-searchtype='grade']" "css_element" should not exist
+    And ".search-widget[data-searchtype='user']" "css_element" should exist
+    And I confirm "student1" in "user" search within the gradebook widget exists

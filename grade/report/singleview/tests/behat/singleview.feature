@@ -59,7 +59,7 @@ Feature: We can use Single view
 
   Scenario: I can update grades, add feedback and exclude grades.
     Given I navigate to "View > Single view" in the course gradebook
-    And I click on "Users" "link"
+    And I click on "Users" "link" in the ".page-toggler" "css_element"
     And I click on "Student" in the "user" search widget
     And I turn editing mode on
     And I set the field "Override for Test assignment one" to "1"
@@ -99,7 +99,7 @@ Feature: We can use Single view
     And I log in as "teacher2"
     And I am on "Course 1" course homepage
     Given I navigate to "View > Single view" in the course gradebook
-    And I click on "Users" "link"
+    And I click on "Users" "link" in the ".page-toggler" "css_element"
     And I click on "Student" in the "user" search widget
     And I turn editing mode on
     And the "Exclude for Test assignment one" "checkbox" should be disabled

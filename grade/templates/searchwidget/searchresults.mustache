@@ -34,13 +34,13 @@
         ]
     }
 }}
-<div class="searchresultitemscontainer-wrapper">
-    <div class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2" role="listbox" data-region="search-result-items-container">
+<div class="searchresultitemscontainer-wrapper dropdown">
+    <ul class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group" role="menu" data-region="search-result-items-container" tabindex="0">
         {{#searchresults}}
             {{>core_grades/searchwidget/searchitem}}
         {{/searchresults}}
         {{^searchresults}}
             <p>{{#str}} resultsfound, core, 0 {{/str}}</p>
         {{/searchresults}}
-    </div>
+    </ul>
 </div>

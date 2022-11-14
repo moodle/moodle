@@ -24,25 +24,26 @@
         "id": "1",
         "name": "Quiz 1",
         "url": "http://foo.bar/gradereport/?userid=25",
-        "fullname": "Cameron Greeve"
+        "fullname": "Cameron Greeve",
+        "active": true
     }
 }}
-<div class="w-100 result-row" role="row" id="result-row-{{id}}">
+<li class="w-100 result-row" role="none" id="result-row-{{id}}">
     {{#name}}
-        <a role="option" id="result-item-{{id}}x{{id}}" href="{{url}}" class="d-flex px-2 py-1">
-            <span class="w-50 pull-left result-cell text-truncate text-body mr-2">
+        <a role="menuitem" id="item-{{id}}" href="{{url}}" class="dropdown-item d-flex px-2 py-1" tabindex="-1"">
+            <span class="pull-left result-cell text-truncate mr-2">
                 {{name}}
             </span>
         </a>
     {{/name}}
     {{^name}}
-        <a role="option" id="user-{{id}}" href="{{url}}" class="d-flex px-2 py-1">
-            <span class="w-50 pull-left result-cell text-truncate text-body mr-2">
+        <a role="menuitem" id="user-{{id}}" href="{{url}}" class="dropdown-item d-flex px-2 py-1 align-items-center" tabindex="-1">
+            <span class="w-50 pull-left text-truncate mr-2">
                 {{fullname}}
             </span>
-            <span class="w-50 pull-left result-cell text-truncate text-muted">
-                <span id="email-user-{{id}}" role="gridcell">{{email}}</span>
+            <span class="w-50 pull-left text-truncate small email">
+                {{email}}
             </span>
         </a>
     {{/name}}
-</div>
+</li>

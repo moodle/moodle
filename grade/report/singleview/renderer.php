@@ -61,7 +61,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
         }
 
         $this->page->requires->js_call_amd('gradereport_singleview/user', 'init');
-        return $this->render_from_template('gradereport_singleview/user_selector', $data);
+        return $this->render_from_template('core_grades/user_selector', $data);
     }
 
     /**
