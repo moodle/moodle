@@ -684,7 +684,8 @@ class webservice {
             }
         }
 
-        if (empty($servicecaps)) {
+        // Bail out early if there's nothing to process.
+        if (empty($users) || empty($servicecaps)) {
             return [];
         }
 
