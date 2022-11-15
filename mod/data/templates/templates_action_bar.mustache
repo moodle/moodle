@@ -98,7 +98,8 @@
 </div>
 <hr/>
 {{#js}}
-    require(['mod_data/saveaspreset'], function(saveAsPreset) {
+    require(['mod_data/saveaspreset', 'mod_data/resetalltemplates'], function(saveAsPreset, resetAll) {
         saveAsPreset.init();
+        resetAll.init();
     });
 {{/js}}

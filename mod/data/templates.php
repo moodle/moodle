@@ -31,6 +31,7 @@ require_once('lib.php');
 $id    = optional_param('id', 0, PARAM_INT);  // course module id
 $d     = optional_param('d', 0, PARAM_INT);   // database id
 $mode  = optional_param('mode', 'addtemplate', PARAM_ALPHA);
+$action  = optional_param('action', '', PARAM_ALPHA);
 $useeditor = optional_param('useeditor', null, PARAM_BOOL);
 
 $url = new moodle_url('/mod/data/templates.php');
@@ -85,25 +86,29 @@ if (!$manager->has_fields()) {
 $actionbar = new \mod_data\output\action_bar($instance->id, $url);
 echo $actionbar->get_templates_action_bar();
 
+if ($action == 'resetalltemplates') {
+    $manager->reset_all_templates();
+    $notificationstr = get_string('templateresetall', 'mod_data');
+}
+
 if (($formdata = data_submitted()) && confirm_sesskey()) {
-    $notificationstr = get_string('templatesaved', 'data');
     if (!empty($formdata->defaultform)) {
         // Reset the template to default.
-        $formdata->{$mode} = '';
-        if ($mode == 'listtemplate') {
-            $formdata->listtemplateheader = '';
-            $formdata->listtemplatefooter = '';
+        if (!empty($formdata->resetall)) {
+            $manager->reset_all_templates();
+            $notificationstr = get_string('templateresetall', 'mod_data');
+        } else {
+            $manager->reset_template($mode);
+            $notificationstr = get_string('templatereset', 'data');
         }
-        if ($mode == 'rsstemplate') {
-            $formdata->rsstitletemplate = '';
-        }
-        $notificationstr = get_string('templatereset', 'data');
+    } else {
+        $manager->update_templates($formdata);
+        $notificationstr = get_string('templatesaved', 'data');
     }
-    if ($manager->update_templates($formdata)) {
-        // Reload instance.
-        $instance = $manager->get_instance();
-        echo $OUTPUT->notification($notificationstr, 'notifysuccess');
-    }
+}
+
+if (!empty($notificationstr)) {
+    echo $OUTPUT->notification($notificationstr, 'notifysuccess');
 }
 
 $templateeditor = new \mod_data\output\template_editor($manager, $mode);

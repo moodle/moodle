@@ -178,7 +178,20 @@ class action_bar {
         $selectmenu->set_label(get_string('templatesnavigation', 'mod_data'), ['class' => 'sr-only']);
 
         $renderer = $PAGE->get_renderer('mod_data');
+
         $presetsactions = $this->get_presets_actions_select(false);
+
+        // Reset all templates action.
+        $resetallurl = new moodle_url($this->currenturl);
+        $resetallurl->param('action', 'resetalltemplates');
+        $presetsactions->add(new \action_menu_link(
+            $resetallurl,
+            null,
+            get_string('resetalltemplates', 'mod_data'),
+            false,
+            ['data-action' => 'resetalltemplates', 'data-dataid' => $this->id]
+        ));
+
         $templatesactionbar = new templates_action_bar($this->id, $selectmenu, null, null, $presetsactions);
 
         return $renderer->render_templates_action_bar($templatesactionbar);
