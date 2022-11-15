@@ -864,8 +864,10 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output(
-                new \question_pattern_expectation('~<div class="group1 draghome choice1"><span lang="fr">la</span></div>~'),
-                new \question_pattern_expectation('~<div class="group1 draghome choice2"><span lang="fr">ma</span></div>~')
+            new \question_pattern_expectation(
+                '~<div class="group1 draghome user-select-none choice1"><span lang="fr">la</span></div>~'),
+            new \question_pattern_expectation(
+                '~<div class="group1 draghome user-select-none choice2"><span lang="fr">ma</span></div>~')
         );
     }
 }
