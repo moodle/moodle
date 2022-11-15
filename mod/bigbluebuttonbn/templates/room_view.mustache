@@ -94,9 +94,9 @@
         <div id="bigbluebuttonbn-room-view-action-buttons"
              class="d-flex flex-column-reverse flex-md-row">
             {{#ismoderator}}
-                {{> mod_bigbluebuttonbn/guest_links}}
-            {{/ismoderator}}
-            {{#ismoderator}}
+                {{#guestaccessenabled}}
+                    {{> mod_bigbluebuttonbn/guest_links}}
+                {{/guestaccessenabled}}
                 {{> mod_bigbluebuttonbn/end_session_button}}
             {{/ismoderator}}
 
