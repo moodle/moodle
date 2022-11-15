@@ -51,6 +51,7 @@ class get extends external_api {
         return new external_function_parameters([
             'reportid' => new external_value(PARAM_INT, 'Report ID'),
             'editmode' => new external_value(PARAM_BOOL, 'Whether editing mode is enabled', VALUE_DEFAULT, 0),
+            'pagesize' => new external_value(PARAM_INT, 'Page size', VALUE_DEFAULT, 0),
         ]);
     }
 
@@ -59,20 +60,26 @@ class get extends external_api {
      *
      * @param int $reportid
      * @param bool $editmode
+     * @param int $pagesize
      * @return array
      */
-    public static function execute(int $reportid, bool $editmode): array {
+    public static function execute(int $reportid, bool $editmode, int $pagesize = 0): array {
         global $PAGE, $OUTPUT;
 
         [
             'reportid' => $reportid,
             'editmode' => $editmode,
+            'pagesize' => $pagesize,
         ] = self::validate_parameters(self::execute_parameters(), [
             'reportid' => $reportid,
             'editmode' => $editmode,
+            'pagesize' => $pagesize,
         ]);
 
         $report = manager::get_report_from_id($reportid);
+        if ($pagesize > 0) {
+            $report->set_default_per_page($pagesize);
+        }
         self::validate_context($report->get_context());
 
         if ($editmode) {

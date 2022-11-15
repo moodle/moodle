@@ -6,6 +6,9 @@ Information provided here is intended especially for developers.
 * The following attributes can be added to custom reports in order to control card view display (via the `add_attributes` method):
   - `data-force-card` to force cards view
   - `data-force-table` to force table view
+* New optional parameter `pagesize` in external method `core_reportbuilder_reports_get` to set the displayed rows per page.
+* Javascript reports repository module method `getReport` updated to accept new pagesize parameter.
+
 
 === 4.1 ===
 * New method `add_action_divider()` in base system report class, to allow adding a divider to the action menu.
