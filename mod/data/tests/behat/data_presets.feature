@@ -313,10 +313,10 @@ Feature: Users can view and manage data presets
     And I choose "Import preset" in the open action menu
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     Then I click on "Import preset and apply" "button" in the ".modal-dialog" "css_element"
-    Then I should see "The preset has been successfully applied."
+    Then I should see "Preset applied"
     # I am on the field page.
     And I should see "Manage fields"
-    Then I should see "The preset has been successfully applied."
+    Then I should see "Preset applied"
 
     Examples:
       | user     |

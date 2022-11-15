@@ -16,6 +16,7 @@
 
 namespace mod_data\local\importer;
 
+use core\notification;
 use mod_data\manager;
 use mod_data\preset;
 use stdClass;
@@ -428,16 +429,14 @@ abstract class preset_importer {
      * @return void
      */
     public function finish_import_process(bool $overwritesettings, stdClass $instance): void {
-        global $DB;
-        $this->import($overwritesettings);
-        $strimportsuccess = get_string('importsuccess', 'data');
-        $straddentries = get_string('addentries', 'data');
-        $strtodatabase = get_string('todatabase', 'data');
-        if (!$DB->get_records('data_records', ['dataid' => $instance->id])) {
-            \core\notification::success("$strimportsuccess <a href='edit.php?d=$instance->id'>$straddentries</a> $strtodatabase");
+        $result = $this->import($overwritesettings);
+        if ($result) {
+            notification::success(get_string('importsuccess', 'mod_data'));
         } else {
-            \core\notification::success($strimportsuccess);
+            notification::error(get_string('cannotapplypreset', 'mod_data'));
         }
+        $backurl = new \moodle_url('/mod/data/field.php', ['d' => $instance->id]);
+        redirect($backurl);
     }
 
     /**

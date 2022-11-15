@@ -151,8 +151,6 @@ if ($action === 'preview') {
     exit(0);
 }
 
-echo $OUTPUT->header();
-
 if ($action === 'finishimport') {
     if (!confirm_sesskey()) {
         throw new moodle_exception('invalidsesskey');
@@ -160,11 +158,9 @@ if ($action === 'finishimport') {
     $overwritesettings = optional_param('overwritesettings', false, PARAM_BOOL);
     $importer = preset_importer::create_from_parameters($manager);
     $importer->finish_import_process($overwritesettings, $data);
-
-    echo $OUTPUT->continue_button(new moodle_url('/mod/data/preset.php', ['d' => $data->id]));
-    echo $OUTPUT->footer();
-    exit(0);
 }
+
+echo $OUTPUT->header();
 
 $actionbar = new \mod_data\output\action_bar($data->id, $url);
 echo $actionbar->get_presets_action_bar();

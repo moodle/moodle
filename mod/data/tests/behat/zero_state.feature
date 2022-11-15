@@ -54,7 +54,7 @@ Feature: Zero state page (no fields created)
     And I upload "mod/data/tests/fixtures/image_gallery_preset.zip" file to "Preset file" filemanager
     Then I click on "Import preset and apply" "button" in the ".modal-dialog" "css_element"
     And I should see "Manage fields"
-    Then I should see "The preset has been successfully applied."
+    Then I should see "Preset applied"
 
   @javascript
   Scenario: Teacher can use a preset from zero state page on an empty database

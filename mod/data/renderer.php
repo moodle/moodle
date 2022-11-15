@@ -128,7 +128,7 @@ class mod_data_renderer extends plugin_renderer_base {
         $html .= html_writer::end_tag('div');
 
         $actionbuttons = html_writer::start_div();
-        $cancelurl = new moodle_url('/mod/data/preset.php', ['d' => $datamodule->id]);
+        $cancelurl = new moodle_url('/mod/data/field.php', ['d' => $datamodule->id]);
         $actionbuttons .= html_writer::tag('a', get_string('cancel') , [
             'href' => $cancelurl->out(false),
             'class' => 'btn btn-secondary mr-2',
