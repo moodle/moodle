@@ -28,6 +28,7 @@
         "presets": [
             {
                 "id": 1,
+                "cmid": 1,
                 "name": "Image gallery",
                 "shortname": "imagegallery",
                 "fullname": "Image gallery",
@@ -38,6 +39,7 @@
             },
             {
                 "id": 2,
+                "cmid": 2,
                 "name": "Preset saved manually",
                 "shortname": "Preset saved manually",
                 "fullname": "Preset saved manually (admin)",
@@ -68,7 +70,7 @@
             {{#presets}}
             <tr>
                 <td class="p-4 border-right">
-                    <input type="radio" name="fullname" value="{{userid}}/{{shortname}}" />
+                    <input type="radio" name="fullname" value="{{userid}}/{{shortname}}" data-cmid="{{cmid}}" />
                 </td>
                 <td class="p-4">
                     <a href="{{{url}}}">{{fullname}}</a>
@@ -104,8 +106,10 @@
         selectPreset.init();
     });
 
-
     require(['mod_data/editpreset'], function(editPreset) {
         editPreset.init();
+    });
+    require(['mod_data/importmappingdialogue'], function(importPreset) {
+        importPreset.init();
     });
 {{/js}}

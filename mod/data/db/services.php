@@ -122,4 +122,11 @@ $functions = array(
         'ajax'          => true,
         'capabilities'  => 'mod/data:manageuserpresets',
     ),
+    'mod_data_get_mapping_information' => array(
+        'classname'     => 'mod_data\external\get_mapping_information',
+        'description'   => 'Get importing information',
+        'type'          => 'read',
+        'ajax'          => true,
+        'capabilities'  => 'mod/data:managetemplates',
+    ),
 );

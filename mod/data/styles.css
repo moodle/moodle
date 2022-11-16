@@ -198,6 +198,7 @@
 .entriesactions .dropdown-toggle:hover,
 .entriesactions .show > .btn-secondary.dropdown-toggle,
 #page-mod-data-view .whitebutton .btn-secondary,
+#page-mod-data-preset .whitebutton .btn-secondary,
 #page-mod-data-field- .whitebutton .btn-secondary,
 #page-mod-data-templates .whitebutton .btn-secondary {
     background: white;

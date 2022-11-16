@@ -16,6 +16,7 @@
 
 namespace mod_data\local\importer;
 
+use core\notification;
 use mod_data\manager;
 use mod_data\preset;
 use stdClass;
@@ -36,6 +37,18 @@ abstract class preset_importer {
     /** @var string directory where to find the preset. */
     protected $directory;
 
+    /** @var array fields to remove. */
+    public $fieldstoremove;
+
+    /** @var array fields to update. */
+    public $fieldstoupdate;
+
+    /** @var array fields to create. */
+    public $fieldstocreate;
+
+    /** @var array settings to be imported. */
+    public $settings;
+
     /**
      * Constructor
      *
@@ -45,6 +58,9 @@ abstract class preset_importer {
     public function __construct(manager $manager, string $directory) {
         $this->manager = $manager;
         $this->directory = $directory;
+
+        // Read the preset and saved result.
+        $this->settings = $this->get_preset_settings();
     }
 
     /**
@@ -176,22 +192,33 @@ abstract class preset_importer {
         }
 
         // Now work out fields to user friendly array.
-        $fieldsarray = $parsedxml['preset']['#']['field'];
-        foreach ($fieldsarray as $field) {
-            if (!is_array($field)) {
-                continue;
-            }
-            $fieldstoimport = new StdClass();
-            foreach ($field['#'] as $param => $value) {
-                if (!is_array($value)) {
+        if (
+            array_key_exists('preset', $parsedxml) &&
+            array_key_exists('#', $parsedxml['preset']) &&
+            array_key_exists('field', $parsedxml['preset']['#'])) {
+            $fieldsarray = $parsedxml['preset']['#']['field'];
+            foreach ($fieldsarray as $field) {
+                if (!is_array($field)) {
                     continue;
                 }
-                $fieldstoimport->$param = $value[0]['#'];
+                $fieldstoimport = new StdClass();
+                foreach ($field['#'] as $param => $value) {
+                    if (!is_array($value)) {
+                        continue;
+                    }
+                    $fieldstoimport->$param = $value[0]['#'];
+                }
+                $fieldstoimport->dataid = $module->id;
+                $fieldstoimport->type = clean_param($fieldstoimport->type, PARAM_ALPHA);
+                $result->importfields[] = $fieldstoimport;
             }
-            $fieldstoimport->dataid = $module->id;
-            $fieldstoimport->type = clean_param($fieldstoimport->type, PARAM_ALPHA);
-            $result->importfields[] = $fieldstoimport;
         }
+
+        // Calculate default mapping.
+        if (is_null($this->fieldstoremove) && is_null($this->fieldstocreate) && is_null($this->fieldstoupdate)) {
+            $this->set_affected_fields($result->importfields, $result->currentfields);
+        }
+
         // Now add the HTML templates to the settings array so we can update d.
         foreach (manager::TEMPLATES_LIST as $templatename => $templatefile) {
             $result->settings->$templatename = $this->get_file_contents(
@@ -215,63 +242,44 @@ abstract class preset_importer {
     public function import(bool $overwritesettings): bool {
         global $DB, $OUTPUT;
 
-        $params = $this->get_preset_settings();
-        $settings = $params->settings;
-        $newfields = $params->importfields;
-        $currentfields = $params->currentfields;
-        $preservedfields = [];
+        $settings = $this->settings->settings;
+        $currentfields = $this->settings->currentfields;
+        $missingfieldtypes = [];
         $module = $this->manager->get_instance();
 
-        // Maps fields and makes new ones.
-        if (!empty($newfields)) {
-            // We require an injective mapping, and need to know what to protect.
-            foreach ($newfields as $newid => $newfield) {
-                $cid = optional_param("field_$newid", -1, PARAM_INT);
-                if ($cid == -1) {
-                    continue;
-                }
-                if (array_key_exists($cid, $preservedfields)) {
-                    throw new \moodle_exception('notinjectivemap', 'data');
-                } else {
-                    $preservedfields[$cid] = true;
-                }
-            }
-
-            foreach ($newfields as $newid => $newfield) {
-                $cid = optional_param("field_$newid", -1, PARAM_INT);
-
-                /* A mapping. Just need to change field params. Data kept. */
-                if ($cid != -1 && isset($currentfields[$cid])) {
-                    $fieldobject = data_get_field_from_id($currentfields[$cid]->id, $module);
-                    foreach ($newfield as $param => $value) {
-                        if ($param != "id") {
-                            $fieldobject->field->$param = $value;
-                        }
+        foreach ($this->fieldstoupdate as $currentid => $updatable) {
+            if ($currentid != -1 && isset($currentfields[$currentid])) {
+                $fieldobject = data_get_field_from_id($currentfields[$currentid]->id, $module);
+                foreach ($updatable as $param => $value) {
+                    if ($param != "id") {
+                        $fieldobject->field->$param = $value;
                     }
-                    unset($fieldobject->field->similarfield);
-                    $fieldobject->update_field();
-                    unset($fieldobject);
-                } else {
-                    /* Make a new field */
-                    $filepath = "field/$newfield->type/field.class.php";
-                    if (!file_exists($filepath)) {
-                        $missingfieldtypes[] = $newfield->name;
-                        continue;
-                    }
-                    include_once($filepath);
-
-                    if (!isset($newfield->description)) {
-                        $newfield->description = '';
-                    }
-                    $classname = 'data_field_'.$newfield->type;
-                    $fieldclass = new $classname($newfield, $module);
-                    $fieldclass->insert_field();
-                    unset($fieldclass);
                 }
+                unset($fieldobject->field->similarfield);
+                $fieldobject->update_field();
+                unset($fieldobject);
             }
-            if (!empty($missingfieldtypes)) {
-                echo $OUTPUT->notification(get_string('missingfieldtypeimport', 'data') . html_writer::alist($missingfieldtypes));
+        }
+
+        foreach ($this->fieldstocreate as $newfield) {
+            /* Make a new field */
+            $filepath = "field/$newfield->type/field.class.php";
+            if (!file_exists($filepath)) {
+                $missingfieldtypes[] = $newfield->name;
+                continue;
             }
+            include_once($filepath);
+
+            if (!isset($newfield->description)) {
+                $newfield->description = '';
+            }
+            $classname = 'data_field_' . $newfield->type;
+            $fieldclass = new $classname($newfield, $module);
+            $fieldclass->insert_field();
+            unset($fieldclass);
+        }
+        if (!empty($missingfieldtypes)) {
+            echo $OUTPUT->notification(get_string('missingfieldtypeimport', 'data') . html_writer::alist($missingfieldtypes));
         }
 
         // Get rid of all old unused data.
@@ -329,6 +337,59 @@ abstract class preset_importer {
     }
 
     /**
+     * Returns information about the fields needs to be removed, updated or created.
+     *
+     * @param array $newfields Array of new fields to be applied.
+     * @param array $currentfields Array of current fields on database activity.
+     * @return void
+     */
+    public function set_affected_fields(array $newfields = [], array $currentfields = []): void {
+        $fieldstoremove = [];
+        $fieldstocreate = [];
+        $preservedfields = [];
+
+        // Maps fields and makes new ones.
+        if (!empty($newfields)) {
+            // We require an injective mapping, and need to know what to protect.
+            foreach ($newfields as $newid => $newfield) {
+                $preservedfieldid = optional_param("field_$newid", -1, PARAM_INT);
+
+                if (array_key_exists($preservedfieldid, $preservedfields)) {
+                    throw new \moodle_exception('notinjectivemap', 'data');
+                }
+
+                if ($preservedfieldid == -1) {
+                    // Let's check if there is any field with same type and name that we could map to.
+                    foreach ($currentfields as $currentid => $currentfield) {
+                        if (($currentfield->type == $newfield->type) &&
+                            ($currentfield->name == $newfield->name) && !array_key_exists($currentid, $preservedfields)) {
+                            // We found a possible default map.
+                            $preservedfieldid = $currentid;
+                            $preservedfields[$currentid] = $newfield;
+                        }
+                    }
+                }
+                if ($preservedfieldid == -1) {
+                    // We need to create a new field.
+                    $fieldstocreate[] = $newfield;
+                } else {
+                    $preservedfields[$preservedfieldid] = $newfield;
+                }
+            }
+        }
+
+        foreach ($currentfields as $currentid => $currentfield) {
+            if (!array_key_exists($currentid, $preservedfields)) {
+                $fieldstoremove[] = $currentfield;
+            }
+        }
+
+        $this->fieldstocreate = $fieldstocreate;
+        $this->fieldstoremove = $fieldstoremove;
+        $this->fieldstoupdate = $preservedfields;
+    }
+
+    /**
      * Any clean up routines should go here
      *
      * @return bool Wether the preset has been successfully cleaned up.
@@ -343,7 +404,10 @@ abstract class preset_importer {
      * @return bool True if the current database needs to map the fields imported.
      */
     public function needs_mapping(): bool {
-        return $this->manager->has_fields();
+        if (!$this->manager->has_fields()) {
+            return false;
+        }
+        return (!empty($this->fieldstocreate) || !empty($this->fieldstoremove));
     }
 
     /**
@@ -365,16 +429,14 @@ abstract class preset_importer {
      * @return void
      */
     public function finish_import_process(bool $overwritesettings, stdClass $instance): void {
-        global $DB;
-        $this->import($overwritesettings);
-        $strimportsuccess = get_string('importsuccess', 'data');
-        $straddentries = get_string('addentries', 'data');
-        $strtodatabase = get_string('todatabase', 'data');
-        if (!$DB->get_records('data_records', ['dataid' => $instance->id])) {
-            \core\notification::success("$strimportsuccess <a href='edit.php?d=$instance->id'>$straddentries</a> $strtodatabase");
+        $result = $this->import($overwritesettings);
+        if ($result) {
+            notification::success(get_string('importsuccess', 'mod_data'));
         } else {
-            \core\notification::success($strimportsuccess);
+            notification::error(get_string('cannotapplypreset', 'mod_data'));
         }
+        $backurl = new \moodle_url('/mod/data/field.php', ['d' => $instance->id]);
+        redirect($backurl);
     }
 
     /**
@@ -385,17 +447,64 @@ abstract class preset_importer {
      * @throws \moodle_exception when the file provided as parameter (POST or GET) does not exist
      */
     public static function create_from_parameters(manager $manager): preset_importer {
-        global $CFG;
+
         $fullname = optional_param('fullname', '', PARAM_PATH);    // Directory the preset is in.
         if (!$fullname) {
-            $presetdir = $CFG->tempdir . '/forms/' . required_param('directory', PARAM_FILE);
-            if (!file_exists($presetdir) || !is_dir($presetdir)) {
-                throw new \moodle_exception('cannotimport');
-            }
-            $importer = new preset_upload_importer($manager, $presetdir);
-        } else {
-            $importer = new preset_existing_importer($manager, $fullname);
+            $fullname = required_param('directory', PARAM_FILE);
         }
-        return $importer;
+
+        return self::create_from_plugin_or_directory($manager, $fullname);
+    }
+
+    /**
+     * Get the right importer instance from the provided parameters (POST or GET)
+     *
+     * @param manager $manager the current database manager
+     * @param string $pluginordirectory The plugin name or directory to create the importer from.
+     * @return preset_importer the relevant preset_importer instance
+     */
+    public static function create_from_plugin_or_directory(manager $manager, string $pluginordirectory): preset_importer {
+        global $CFG;
+
+        if (!$pluginordirectory) {
+            throw new \moodle_exception('emptypresetname', 'mod_data');
+        }
+        try {
+            $presetdir = $CFG->tempdir . '/forms/' . $pluginordirectory;
+            if (file_exists($presetdir) && is_dir($presetdir)) {
+                return new preset_upload_importer($manager, $presetdir);
+            } else {
+                return new preset_existing_importer($manager, $pluginordirectory);
+            }
+        } catch (\moodle_exception $e) {
+            throw new \moodle_exception('errorpresetnotfound', 'mod_data', '', $pluginordirectory);
+        }
+    }
+
+    /**
+     * Get the information needed to decide the modal
+     *
+     * @return array An array with all the information to decide the mapping
+     */
+    public function get_mapping_information(): array {
+        return [
+            'needsmapping' => $this->needs_mapping(),
+            'presetname' => preset::get_name_from_plugin($this->get_directory()),
+            'fieldstocreate' => $this->get_field_names($this->fieldstocreate),
+            'fieldstoremove' => $this->get_field_names($this->fieldstoremove),
+        ];
+    }
+
+    /**
+     * Returns a list of the fields
+     *
+     * @param array $fields Array of fields to get name from.
+     * @return string   A string listing the names of the fields.
+     */
+    public function get_field_names(array $fields): string {
+        $fieldnames = array_map(function($field) {
+            return $field->name;
+        }, $fields);
+        return implode(', ', $fieldnames);
     }
 }

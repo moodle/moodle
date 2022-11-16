@@ -108,13 +108,9 @@ $data->instance   = $cm->instance;
 $renderer = $manager->get_renderer();
 
 if ($action == 'finishimport' && confirm_sesskey()) {
-    data_print_header($course, $cm, $data, false);
     $overwritesettings = optional_param('overwritesettings', false, PARAM_BOOL);
     $importer = preset_importer::create_from_parameters($manager);
     $importer->finish_import_process($overwritesettings, $data);
-    echo $OUTPUT->continue_button(new moodle_url('/mod/data/field.php', ['d' => $data->id]));
-    echo $OUTPUT->footer();
-    exit;
 }
 
 switch ($mode) {
@@ -255,19 +251,18 @@ switch ($mode) {
 
     case 'usepreset':
         $importer = preset_importer::create_from_parameters($manager);
-        if (!$importer->needs_mapping()) {
+        if (!$importer->needs_mapping() || $action == 'notmapping') {
             $backurl = new moodle_url('/mod/data/field.php', ['id' => $cm->id]);
             if ($importer->import(false)) {
                 notification::success(get_string('importsuccess', 'mod_data'));
             } else {
-                notification::error(get_string('presetapplied', 'mod_data'));
+                notification::error(get_string('cannotapplypreset', 'mod_data'));
             }
             redirect($backurl);
         }
         $PAGE->navbar->add(get_string('usestandard', 'data'));
-        $fieldactionbar = $actionbar->get_fields_action_bar();
+        $fieldactionbar = $actionbar->get_fields_mapping_action_bar();
         data_print_header($course, $cm, $data, false, $fieldactionbar);
-        echo $OUTPUT->heading(get_string('usestandard', 'data'), 2, 'mb-4');
         $importer = new preset_existing_importer($manager, $fullname);
         echo $renderer->importing_preset($data, $importer);
         echo $OUTPUT->footer();
