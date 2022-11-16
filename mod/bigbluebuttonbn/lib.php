@@ -170,7 +170,7 @@ function bigbluebuttonbn_delete_instance($id) {
     } catch (moodle_exception $e) {
         // Do not log any issue when testing.
         if (!(defined('PHPUNIT_TEST') && PHPUNIT_TEST) && !defined('BEHAT_SITE_RUNNING')) {
-            debugging($e->getMessage(), DEBUG_NORMAL, $e->getTrace());
+            debugging($e->getMessage(), DEBUG_DEVELOPER, $e->getTrace());
         }
     }
 
