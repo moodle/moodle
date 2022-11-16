@@ -43,23 +43,23 @@
 
 ## Update procedure for included TinyMCE translations
 
-1. Visit https://www.tiny.cloud/get-tiny/language-packages/ and download a translation which has been fully translated, for example the German translation.
-2. If you did not download the German translation, update the final line of `tools/getOriginals.mjs` to the language code for the relevant translation.
+1. Visit https://www.tiny.cloud/get-tiny/language-packages/ and download the "TinyMCE 6 All languages" zip file.
+2. Check the list of languages and confirm that the German translation is still at 100%. If not, then make a note of a language which is.
 3. Unzip the translation into a new directory:
 
- ```
+ ```bash
  langdir=`mktemp -d`
  cd "${langdir}"
- unzip path/to/de.zip
+ unzip path/to/langs.zip
  ```
 
 4. Run the translation tool:
 
- ```
- node "${MOODLEDIR}/tools/getOriginals.mjs"
+ ```bash
+ node "${MOODLEDIR}/tools/createLangStrings.mjs"
  ```
 
- This will generate two files
+ This will generate a language file for each available Language, as well as a `tinystrings.json`, and a `strings.php` which will be used in the subsequent steps.
 
 5. Copy the `tinystrings.json` file into the Moodle directory
 
@@ -75,8 +75,11 @@
  ```
 
 7. Commit changes
+8. If required, the remaining language strings can be fed into AMOS.
 
 ---
+
+**Note:** A set of language files are also generated for all supported translations and may be submitted to AMOS if desired.
 
 **Note:** You will need to manually check for any Moodle-updated language strings as part of this change (for example any from the en_fixes).
 
