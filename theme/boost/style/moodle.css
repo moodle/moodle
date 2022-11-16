@@ -10777,6 +10777,9 @@ tr.flagged-tag a {
   float: left;
   padding-top: 20px; }
 
+.activity.label.modtype_label .mod-indent {
+  float: none; }
+
 @media (min-width: 576px) {
   /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
   .mod-indent-1 {

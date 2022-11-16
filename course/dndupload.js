@@ -565,7 +565,7 @@ M.course_dndupload = {
         resel.progressouter.appendChild(resel.progress);
         resel.div.appendChild(resel.progressouter);
 
-        modsel.insertBefore(resel.li, modsel.get('children').pop()); // Leave the 'preview element' at the bottom
+        modsel.insertBefore(resel.li, modsel.get('children')); // Leave the 'preview element' at the bottom
 
         return resel;
     },
