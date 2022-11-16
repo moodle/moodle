@@ -496,6 +496,9 @@ class manager {
 
             // Disable the Template plugin for now.
             'template',
+
+            // Disable the preview plugin as it does not support Moodle filters.
+            'preview',
         ];
     }
 
