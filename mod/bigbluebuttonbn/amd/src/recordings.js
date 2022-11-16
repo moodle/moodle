@@ -99,6 +99,9 @@ const getTableNode = tableSelector => document.querySelector(tableSelector);
 
 const fetchRecordingData = tableSelector => {
     const tableNode = getTableNode(tableSelector);
+    if (tableNode === null) {
+        return Promise.resolve(false);
+    }
 
     if (tableNode.dataset.importMode) {
         return repository.fetchRecordingsToImport(
@@ -225,7 +228,7 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
                     modal.show();
 
                     return modal;
-                }).catch(Notification.exception)
+                }).catch(displayException)
             ).then((proceed) =>
                 proceed ? repository.updateRecording(payload) : () => null
             );
@@ -292,9 +295,8 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
 
             requestAction(clickedLink)
                 .then(refreshTableData)
-                .catch(displayException)
                 .then(iconPromise.resolve)
-                .catch();
+                .catch(displayException);
         }
     };
 
@@ -405,7 +407,10 @@ const setupDatatable = (tableId, searchFormId, response) => {
  * @param {String} searchFormId The Id of the relate.
  */
 export const init = (tableId, searchFormId) => {
+    const pendingPromise = new Pending('mod_bigbluebuttonbn/recordings:init');
+
     fetchRecordingData(tableId)
         .then(response => setupDatatable(tableId, searchFormId, response))
+        .then(() => pendingPromise.resolve())
         .catch(displayException);
 };

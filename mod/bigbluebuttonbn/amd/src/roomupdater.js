@@ -21,6 +21,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import Pending from 'core/pending';
 import Templates from "core/templates";
 import {exception as displayException} from 'core/notification';
 import {getMeetingInfo} from './repository';
@@ -88,11 +89,15 @@ const poll = () => {
  */
 export const updateRoom = (updatecache = false) => {
     const bbbRoomViewElement = document.getElementById('bigbluebuttonbn-room-view');
-    if (!bbbRoomViewElement) {
+    if (bbbRoomViewElement === null) {
         return Promise.resolve(false);
     }
+
     const bbbId = bbbRoomViewElement.dataset.bbbId;
     const groupId = bbbRoomViewElement.dataset.groupId;
+
+    const pendingPromise = new Pending('mod_bigbluebuttonbn/roomupdater:updateRoom');
+
     return getMeetingInfo(bbbId, groupId, updatecache)
         .then(data => {
             // Just make sure we have the right information for the template.
@@ -100,9 +105,6 @@ export const updateRoom = (updatecache = false) => {
             return Templates.renderForPromise('mod_bigbluebuttonbn/room_view', data);
         })
         .then(({html, js}) => Templates.replaceNode(bbbRoomViewElement, html, js))
-        .then(() => true)
-        .catch((ex) => {
-            displayException(ex);
-            return false;
-        });
+        .then(() => pendingPromise.resolve())
+        .catch(displayException);
 };
