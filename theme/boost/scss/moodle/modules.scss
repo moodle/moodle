@@ -1395,6 +1395,8 @@ $popout-header-height: 4rem;
 
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement {
     width: 100%;
+    overflow: auto;
+    height: calc(100% - 4rem);
 }
 
 .path-mod-assign [data-region="grade-panel"] .mform .fitem .felement {
