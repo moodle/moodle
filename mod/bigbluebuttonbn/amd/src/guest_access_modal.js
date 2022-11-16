@@ -41,6 +41,9 @@ const selectors = {
  */
 export const init = (guestInfo) => {
     const showGuestAccessButton = document.querySelector(selectors.showGuestAccessButton);
+    if (showGuestAccessButton === null) {
+        return;
+    }
 
     const modalForm = new ModalForm({
         modalConfig: {

@@ -26,11 +26,9 @@
         "guestpassword": "password"
     }
 }}
-{{#guestaccessenabled}}
-    <button class="btn btn-link m-1" type="button" data-action="show-guest-access">
-        {{#pix}}t/add, core{{/pix}}{{#str}}guestaccess_add, mod_bigbluebuttonbn{{/str}}
-    </button>
-{{/guestaccessenabled}}
+<button class="btn btn-link m-1" type="button" data-action="show-guest-access">
+    {{#pix}}t/add, core{{/pix}}{{#str}}guestaccess_add, mod_bigbluebuttonbn{{/str}}
+</button>
 {{#js}}
     require(['mod_bigbluebuttonbn/guest_access_modal'], function(GuestLinkAccess) {
      GuestLinkAccess.init({
