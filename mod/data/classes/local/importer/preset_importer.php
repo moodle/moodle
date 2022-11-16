@@ -283,17 +283,12 @@ abstract class preset_importer {
         }
 
         // Get rid of all old unused data.
-        if (!empty($preservedfields)) {
-            foreach ($currentfields as $cid => $currentfield) {
-                if (!array_key_exists($cid, $preservedfields)) {
-                    // Data not used anymore so wipe!
-                    print "Deleting field $currentfield->name<br />";
-
-                    $id = $currentfield->id;
-                    // Why delete existing data records and related comments/ratings??
-                    $DB->delete_records('data_content', ['fieldid' => $id]);
-                    $DB->delete_records('data_fields', ['id' => $id]);
-                }
+        foreach ($currentfields as $cid => $currentfield) {
+            if (!array_key_exists($cid, $this->fieldstoupdate)) {
+                $id = $currentfield->id;
+                // Why delete existing data records and related comments/ratings??
+                $DB->delete_records('data_content', ['fieldid' => $id]);
+                $DB->delete_records('data_fields', ['id' => $id]);
             }
         }
 
