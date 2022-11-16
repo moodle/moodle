@@ -23,14 +23,9 @@ class Date
     public static function iso8601Encode($timet, $utc = 0)
     {
         if (!$utc) {
-            $t = strftime("%Y%m%dT%H:%M:%S", $timet);
+            $t = date('Ymd\TH:i:s', $timet);
         } else {
-            if (function_exists('gmstrftime')) {
-                // gmstrftime doesn't exist in some versions of PHP
-                $t = gmstrftime("%Y%m%dT%H:%M:%S", $timet);
-            } else {
-                $t = strftime("%Y%m%dT%H:%M:%S", $timet - date('Z'));
-            }
+            $t = gmdate('Ymd\TH:i:s', $timet);
         }
 
         return $t;
