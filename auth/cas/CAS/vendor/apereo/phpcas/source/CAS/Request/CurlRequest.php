@@ -160,6 +160,11 @@ implements CAS_Request_RequestInterface
             curl_setopt($ch, CURLOPT_POSTFIELDS, $this->postBody);
         }
 
+        /*********************************************************
+         * Set User Agent
+         *********************************************************/
+        curl_setopt($ch, CURLOPT_USERAGENT, 'phpCAS/' . phpCAS::getVersion());
+
         return $ch;
     }
 
