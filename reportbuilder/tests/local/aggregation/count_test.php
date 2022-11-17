@@ -54,14 +54,12 @@ class count_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
 
         // First column, sorted.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname'])
-            ->set('sortenabled', true)
-            ->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname', 'sortenabled' => 1]);
 
         // This is the column we'll aggregate.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:lastname'])
-            ->set('aggregation', count::get_class_name())
-            ->update();
+        $generator->create_column([
+            'reportid' => $report->get('id'), 'uniqueidentifier' => 'user:lastname', 'aggregation' => count::get_class_name()]
+        );
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([

@@ -10,7 +10,7 @@ Information provided here is intended especially for developers.
   - `data-force-table` to force table view
 * New optional parameter `pagesize` in external method `core_reportbuilder_reports_get` to set the displayed rows per page.
 * Javascript reports repository module method `getReport` updated to accept new pagesize parameter.
-
+* The `create_[column|filter|condition]` test generator methods now allow for setting all persistent properties
 
 === 4.1 ===
 
