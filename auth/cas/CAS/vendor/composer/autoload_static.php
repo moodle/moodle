@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit6a071fded0009b95f2f6be5f548a3fa0
+class ComposerStaticInit8c729390e3f26f25c6e8fe4b9504a4d9
 {
     public static $prefixLengthsPsr4 = array (
         'P' => 
@@ -66,6 +66,10 @@ class ComposerStaticInit6a071fded0009b95f2f6be5f548a3fa0
         'CAS_Request_Exception' => __DIR__ . '/..' . '/apereo/phpcas/source/CAS/Request/Exception.php',
         'CAS_Request_MultiRequestInterface' => __DIR__ . '/..' . '/apereo/phpcas/source/CAS/Request/MultiRequestInterface.php',
         'CAS_Request_RequestInterface' => __DIR__ . '/..' . '/apereo/phpcas/source/CAS/Request/RequestInterface.php',
+        'CAS_ServiceBaseUrl_AllowedListDiscovery' => __DIR__ . '/..' . '/apereo/phpcas/source/CAS/ServiceBaseUrl/AllowedListDiscovery.php',
+        'CAS_ServiceBaseUrl_Base' => __DIR__ . '/..' . '/apereo/phpcas/source/CAS/ServiceBaseUrl/Base.php',
+        'CAS_ServiceBaseUrl_Interface' => __DIR__ . '/..' . '/apereo/phpcas/source/CAS/ServiceBaseUrl/Interface.php',
+        'CAS_ServiceBaseUrl_Static' => __DIR__ . '/..' . '/apereo/phpcas/source/CAS/ServiceBaseUrl/Static.php',
         'CAS_Session_PhpSession' => __DIR__ . '/..' . '/apereo/phpcas/source/CAS/Session/PhpSession.php',
         'CAS_TypeMismatchException' => __DIR__ . '/..' . '/apereo/phpcas/source/CAS/TypeMismatchException.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
@@ -75,9 +79,9 @@ class ComposerStaticInit6a071fded0009b95f2f6be5f548a3fa0
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit6a071fded0009b95f2f6be5f548a3fa0::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit6a071fded0009b95f2f6be5f548a3fa0::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit6a071fded0009b95f2f6be5f548a3fa0::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit8c729390e3f26f25c6e8fe4b9504a4d9::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit8c729390e3f26f25c6e8fe4b9504a4d9::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit8c729390e3f26f25c6e8fe4b9504a4d9::$classMap;
 
         }, null, ClassLoader::class);
     }
