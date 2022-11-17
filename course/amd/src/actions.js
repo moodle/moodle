@@ -582,11 +582,11 @@ define(
             if (action === 'hide' || action === 'show') {
                 if (action === 'hide') {
                     sectionElement.addClass('hidden');
-                    setSectionBadge(sectionElement[0], 'hiddenfromstudents', true);
+                    setSectionBadge(sectionElement[0], 'hiddenfromstudents', true, false);
                     replaceActionItem(actionItem, 'i/show',
                         'showfromothers', 'format_' + courseformat, 'show');
                 } else {
-                    setSectionBadge(sectionElement[0], 'hiddenfromstudents', false);
+                    setSectionBadge(sectionElement[0], 'hiddenfromstudents', false, false);
                     sectionElement.removeClass('hidden');
                     replaceActionItem(actionItem, 'i/hide',
                         'hidefromothers', 'format_' + courseformat, 'hide');
@@ -616,13 +616,13 @@ define(
                 replaceActionItem(actionItem, 'i/marked',
                     'highlightoff', 'core', 'removemarker');
                 courseeditor.dispatch('legacySectionAction', action, sectionid);
-                setSectionBadge(sectionElement[0], 'iscurrent', true);
+                setSectionBadge(sectionElement[0], 'iscurrent', true, true);
             } else if (action === 'removemarker') {
                 sectionElement.removeClass('current');
                 replaceActionItem(actionItem, 'i/marker',
                     'highlight', 'core', 'setmarker');
                 courseeditor.dispatch('legacySectionAction', action, sectionid);
-                setSectionBadge(sectionElement[0], 'iscurrent', false);
+                setSectionBadge(sectionElement[0], 'iscurrent', false, true);
             }
         };
 
@@ -733,8 +733,9 @@ define(
          * @param {JQuery} sectionElement section element we perform action on
          * @param {String} badgetype the type of badge this is for
          * @param {bool} add true to add, false to remove
+         * @param {boolean} removeOther in case of adding a badge, whether to remove all other.
          */
-        var setSectionBadge = function(sectionElement, badgetype, add) {
+        var setSectionBadge = function(sectionElement, badgetype, add, removeOther) {
             const sectionbadges = sectionElement.querySelector(SELECTOR.SECTIONBADGES);
             if (!sectionbadges) {
                 return;
@@ -744,9 +745,11 @@ define(
                 return;
             }
             if (add) {
-                document.querySelectorAll('[data-type="' + badgetype + '"]').forEach((b) => {
-                    b.classList.add('d-none');
-                });
+                if (removeOther) {
+                    document.querySelectorAll('[data-type="' + badgetype + '"]').forEach((b) => {
+                        b.classList.add('d-none');
+                    });
+                }
                 badge.classList.remove('d-none');
             } else {
                 badge.classList.add('d-none');
