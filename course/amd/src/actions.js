@@ -60,7 +60,7 @@ define(
         // Meanwhile, we filter the migrated actions.
         const componentActions = [
             'moveSection', 'moveCm', 'addSection', 'deleteSection', 'sectionHide', 'sectionShow',
-            'cmHide', 'cmShow', 'cmStealth',
+            'cmHide', 'cmShow', 'cmStealth', 'sectionHighlight', 'sectionUnhighlight',
         ];
 
         // The course reactive instance.
