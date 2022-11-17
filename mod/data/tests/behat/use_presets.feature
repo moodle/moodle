@@ -238,3 +238,17 @@ Feature: Users can use predefined presets
     And I should see "Existing fields to be deleted: number"
     And I should not see "If fields to be deleted are of the same type as fields to be created"
     And I should see "If fields to be deleted are of the same type as new fields in the preset"
+
+  Scenario: Teacher can use a preset on a non-empty database and previous fields will be removed
+    Given I am on the "Mountain landscapes" "data activity" page logged in as teacher1
+    And I follow "Fields"
+    And I should see "Test field name"
+    And I follow "Presets"
+    And I click on "fullname" "radio" in the "Image gallery" "table_row"
+    And I click on "Use this preset" "button"
+    And I should see "Existing fields to be deleted: Test field name"
+    When I click on "Apply preset" "button"
+    Then I should see "Preset applied."
+    And I should see "image"
+    And I should see "title"
+    And I should not see "Test field name"
