@@ -76,9 +76,9 @@ function xmldb_enrol_lti_upgrade($oldversion) {
         $sql = "SELECT lu.id, lc.secret
                   FROM {enrol_lti_users} lu
                   JOIN {enrol_lti_lti2_consumer} lc
-                    ON (lu.consumerkey = lc.consumerkey256)
+                    ON (" . $DB->sql_compare_text('lu.consumerkey', 255) . " = lc.consumerkey256)
                  WHERE lc.ltiversion = :ltiversion
-                   AND lu.consumersecret != lc.secret
+                   AND " . $DB->sql_compare_text('lu.consumersecret') . " != lc.secret
                    AND lu.lastaccess IS NOT NULL";
         $affectedltiusersrs = $DB->get_recordset_sql($sql, ['ltiversion' => 'LTI-2p0']);
         foreach ($affectedltiusersrs as $ltiuser) {
@@ -98,7 +98,7 @@ function xmldb_enrol_lti_upgrade($oldversion) {
         $sql = "SELECT lu.id, lc.secret
                   FROM {enrol_lti_users} lu
                   JOIN {enrol_lti_lti2_consumer} lc
-                    ON (lu.consumerkey = lc.consumerkey256)
+                    ON (" . $DB->sql_compare_text('lu.consumerkey', 255) . " = lc.consumerkey256)
                  WHERE lu.consumersecret IS NULL
                    AND lu.lastaccess IS NOT NULL";
         $affectedltiusersrs = $DB->get_recordset_sql($sql);
