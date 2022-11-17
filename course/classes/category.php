@@ -2640,10 +2640,11 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             $thislist = array();
             foreach ($rs as $record) {
                 context_helper::preload_from_record($record);
-                $context = context_coursecat::instance($record->id);
                 $canview = self::can_view_category($record);
+                $context = context_coursecat::instance($record->id);
+                $filtercontext = \context_helper::get_navigation_filter_context($context);
                 $baselist[$record->id] = array(
-                    'name' => $canview ? format_string($record->name, true, array('context' => $context)) : false,
+                    'name' => $canview ? format_string($record->name, true, array('context' => $filtercontext)) : false,
                     'path' => $record->path
                 );
                 if (!$canview || (!empty($requiredcapability) && !has_all_capabilities($requiredcapability, $context))) {
