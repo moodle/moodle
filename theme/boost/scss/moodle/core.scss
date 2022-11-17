@@ -2131,6 +2131,9 @@ dd:after {
                 width: 330px;
                 vertical-align: text-bottom;
                 margin-bottom: 0;
+                &[role="combobox"] {
+                    width: auto;
+                }
             }
         }
 
