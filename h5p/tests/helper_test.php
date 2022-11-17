@@ -305,7 +305,9 @@ class helper_test extends \advanced_testcase {
         $this->assertTrue(empty($messages->info));
 
         // Add an some messages manually and check they are still there.
+        $messages->error = [];
         $messages->error['error1'] = 'Testing ERROR message';
+        $messages->info = [];
         $messages->info['info1'] = 'Testing INFO message';
         $messages->info['info2'] = 'Testing INFO message';
         helper::get_messages($messages, $factory);
