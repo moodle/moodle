@@ -997,7 +997,7 @@ class data_connector extends DataConnector {
         $consumer->consumerName = $record->consumername;
         $consumer->consumerVersion = $record->consumerversion;
         $consumer->consumerGuid = $record->consumerguid;
-        $consumer->profile = json_decode($record->profile);
+        $consumer->profile = json_decode($record->profile ?? '');
         $consumer->toolProxy = $record->toolproxy;
         $settings = unserialize($record->settings);
         if (!is_array($settings)) {

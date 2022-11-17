@@ -131,7 +131,7 @@ return (() => {
 EOF;
 
         for ($i = 0; $i < self::get_extended_timeout() * 10; $i++) {
-            $results = json_decode($this->evaluate_script($getresults));
+            $results = json_decode($this->evaluate_script($getresults) ?? '');
             if ($results) {
                 break;
             }

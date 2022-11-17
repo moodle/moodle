@@ -270,7 +270,7 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
      *      corresponding value.
      */
     protected function substitute_values_for_eval($expression) {
-        return str_replace($this->search, $this->safevalue, $expression);
+        return str_replace($this->search ?? '', $this->safevalue ?? '', $expression ?? '');
     }
 
     /**
@@ -282,7 +282,7 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
      *      corresponding value.
      */
     protected function substitute_values_pretty($text) {
-        return str_replace($this->search, $this->prettyvalue, $text);
+        return str_replace($this->search ?? '', $this->prettyvalue ?? '', $text ?? '');
     }
 
     /**
@@ -296,7 +296,7 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
         $text = preg_replace_callback('~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)}~',
                 function ($matches) use ($vs, $format, $length) {
                     return $vs->format_float($vs->calculate($matches[1]), $length, $format);
-                }, $text);
+                }, $text ?? '');
         return $this->substitute_values_pretty($text);
     }
 }

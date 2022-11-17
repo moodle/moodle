@@ -100,7 +100,7 @@ abstract class file_info {
      */
     protected function build_search_files_sql($extensions, $prefix = null) {
         global $DB;
-        if (strlen($prefix)) {
+        if (strlen($prefix ?? '')) {
             $prefix = $prefix.'.';
         } else {
             $prefix = '';

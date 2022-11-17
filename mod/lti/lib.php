@@ -318,7 +318,7 @@ function mod_lti_get_all_content_items(\core_course\local\entity\content_item $d
         $type->name     = 'lti_type_' . $ltitype->id;
         // Clean the name. We don't want tags here.
         $type->title    = clean_param($ltitype->name, PARAM_NOTAGS);
-        $trimmeddescription = trim($ltitype->description);
+        $trimmeddescription = trim($ltitype->description ?? '');
         $type->help = '';
         if ($trimmeddescription != '') {
             // Clean the description. We don't want tags here.
