@@ -992,7 +992,7 @@ if ($mformpost->is_cancelled()) {
         forum_check_blocking_threshold($thresholdwarning);
 
         foreach ($groupstopostto as $group) {
-            if (!$capabilitymanager->can_create_discussions($USER, $groupid)) {
+            if (!$capabilitymanager->can_create_discussions($USER, $group)) {
                 print_error('cannotcreatediscussion', 'forum');
             }
 
