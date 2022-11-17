@@ -893,7 +893,7 @@ class behat_config_util {
                 && (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST)) {
             echo "Bucket weightings:\n";
             foreach ($weights as $k => $weight) {
-                echo $k + 1 . ": " . str_repeat('*', 70 * $nbuckets * $weight / $totalweight) . PHP_EOL;
+                echo $k + 1 . ": " . str_repeat('*', (int)(70 * $nbuckets * $weight / $totalweight)) . PHP_EOL;
             }
         }
 
