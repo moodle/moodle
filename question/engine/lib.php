@@ -917,8 +917,8 @@ abstract class question_utils {
                     'converted to roman numerals.', $number);
         }
 
-        return self::$thousands[$number / 1000 % 10] . self::$hundreds[$number / 100 % 10] .
-                self::$tens[$number / 10 % 10] . self::$units[$number % 10];
+        return self::$thousands[floor($number / 1000) % 10] . self::$hundreds[floor($number / 100) % 10] .
+                self::$tens[floor($number / 10) % 10] . self::$units[$number % 10];
     }
 
     /**
