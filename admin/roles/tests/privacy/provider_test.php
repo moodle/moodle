@@ -187,7 +187,7 @@ class provider_test extends provider_testcase {
             $writer = writer::with_context($context);
             $this->assertTrue($writer->has_any_data());
             if ($context->contextlevel == CONTEXT_MODULE) {
-                if ($data = $writer->get_data($subcontextstudent)) {
+                if ($data = (array)$writer->get_data($subcontextstudent)) {
                     $this->assertEquals($user->id, reset($data)->userid);
                 }
                 if ($data = (array)$writer->get_data($subcontextrc)) {
