@@ -111,8 +111,8 @@ $string['completionengagementpollvotes'] = 'Poll votes';
 $string['completionengagementpollvotes_desc'] = 'Vote in polls {$a} time(s).';
 $string['completionengagementpollvotes_event_desc'] = 'Has answered {$a} poll vote(s)';
 $string['completionengagementemojis'] = 'Emojis';
-$string['completionengagementemojis_desc'] = 'Change {$a} times his/her emoji(s).';
-$string['completionengagementemojis_event_desc'] = 'Changed {$a} time his/her emoji(s)';
+$string['completionengagementemojis_desc'] = 'Change their emoji {$a} time(s).';
+$string['completionengagementemojis_event_desc'] = 'Changed their emoji {$a} time(s)';
 
 $string['completionengagement_desc'] = 'Engage in activities during the meeting.';
 $string['completionengagementgroup'] = 'Require participation';
@@ -221,9 +221,8 @@ $string['config_participant_description'] = 'These settings define the default r
 $string['config_participant_moderator_default'] = 'Moderator';
 $string['config_participant_moderator_default_description'] = 'This rule is used by default when a new room is added.';
 
-$string['config_poll_interval'] = 'Poll interval to refresh the room\'s status';
-$string['config_poll_interval_description'] = 'Poll interval to refresh the room\'s status. Please make sure that this value is
- no too low as it might have an impact on the remote server. It cannot be less than two seconds.';
+$string['config_poll_interval'] = 'Poll interval (in seconds) to refresh the room\'s status';
+$string['config_poll_interval_description'] = 'The poll interval must be at least 2 seconds. If necessary, you can lower the load on the remote server by increasing the interval.';
 
 $string['config_userlimit'] = 'User limit';
 $string['config_userlimit_description'] = 'These settings enable or disable options in the UI and also define default values for these options.';
@@ -302,7 +301,7 @@ $string['general_error_unable_connect'] = 'Unable to connect. Please check the u
 Details : {$a}';
 $string['general_error_no_answer'] = 'Empty response. Please check the url of the BigBlueButton server AND check to see if the BigBlueButton server is running.';
 $string['general_error_not_allowed_to_create_instances'] = 'User is not allowed to create any type of instance.';
-$string['general_error_not_found'] = 'Cannot find the BigBlueButton activity ({$a}).';
+$string['general_error_not_found'] = 'Cannot find the BigBlueButton activity with ID {$a}.';
 $string['general_error_cannot_create_meeting'] = 'Cannot create session.';
 $string['general_error_cannot_get_recordings'] = 'Cannot get recordings.';
 $string['guestaccess_add'] = 'Add guests';
@@ -518,8 +517,7 @@ $string['view_message_conference_in_progress'] = 'The session is in progress.';
 $string['view_message_conference_has_ended'] = 'The session has ended.';
 $string['view_message_tab_close'] = 'This tab/window must be closed manually';
 $string['view_message_recordings_disabled'] = 'Recordings are disabled on the server. BigBlueButton activities of type \'Recordings only\' cannot be used.';
-$string['view_message_cron_disabled'] = 'The scheduled task to fetch pending recordings has not been run for a while.
- Please contact the site administrator with the following information: {$a}.';
+$string['view_message_cron_disabled'] = 'The list of recordings may not be up to date. Please contact the site administrator with the following information: {$a}';
 $string['view_message_importrecordings_disabled'] = 'Import recording links is disabled on the server.';
 
 $string['view_groups_selection_warning'] = 'There is a room for each group and you have access to more than one. Be sure to select the correct one.';

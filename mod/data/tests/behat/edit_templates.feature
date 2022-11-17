@@ -86,23 +86,23 @@ Feature: Users can edit the database templates
     And I set the following fields to these values:
       | Repeated entry | <span class="hideme">Nope</span>Yep! |
     And I click on "Save" "button" in the "sticky-footer" "region"
-    And I set the field "Templates tertiary navigation" to "CSS template"
+    And I set the field "Templates tertiary navigation" to "Custom CSS"
     And I set the following fields to these values:
-      | CSS template | .hideme {display: none;} |
+      | Custom CSS | .hideme {display: none;} |
     And I click on "Save" "button" in the "sticky-footer" "region"
     When I navigate to "Database" in current page administration
     Then I should not see "Nope"
     And I should see "Yep!"
 
   @javascript
-  Scenario: Edit Javascript template
+  Scenario: Edit Custom JavaScript
     Given I click on "Enable code editor" "checkbox"
     And I set the following fields to these values:
       | Repeated entry | <span id="hideme">Nope</span>Yep! |
     And I click on "Save" "button" in the "sticky-footer" "region"
-    And I set the field "Templates tertiary navigation" to "Javascript template"
+    And I set the field "Templates tertiary navigation" to "Custom JavaScript"
     And I set the following fields to these values:
-      | Javascript template | window.onload = () => document.querySelector('#hideme').style.display = 'none'; |
+      | Custom JavaScript | window.onload = () => document.querySelector('#hideme').style.display = 'none'; |
     And I click on "Save" "button" in the "sticky-footer" "region"
     When I navigate to "Database" in current page administration
     Then I should not see "Nope"

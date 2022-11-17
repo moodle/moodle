@@ -69,7 +69,7 @@ Feature: Preview a quiz as a teacher
       | TF1      | 1    |         |
       | TF2      | 1    | 3.0     |
     When I am on the "Quiz 2" "mod_quiz > View" page logged in as "admin"
-    And I should see "This quiz is not currently available"
+    And I should see "This quiz is currently not available."
     And I press "Preview quiz"
     Then I should see "if this were a real attempt, you would be blocked" in the ".alert-warning" "css_element"
 
