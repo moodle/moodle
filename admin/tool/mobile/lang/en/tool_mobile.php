@@ -125,7 +125,7 @@ $string['qrcodetypeurl'] = 'QR code with site URL';
 $string['qrcodetypelogin'] = 'QR code with automatic login';
 $string['qrkeyttl'] = 'QR authentication key duration';
 $string['qrkeyttl_desc'] = 'The length of time for which a QR code for automatic login is valid.';
-$string['readingthisemailgettheapp'] = 'Reading this in an email? <a href="{$a}">Download the mobile app and receive notifications on your mobile device</a>.';
+$string['readingthisemailgettheapp'] = 'Are you reading this in an email? <a href="{$a}">Download the mobile app and receive notifications on your mobile device</a>.';
 $string['remoteaddons'] = 'Remote add-ons';
 $string['scanqrcode'] = 'Scan QR code';
 $string['selfsignedoruntrustedcertificatewarning'] = 'It seems that the HTTPS certificate is self-signed or not trusted. The mobile app will only work with trusted sites. Please use any online SSL checker to diagnose the problem. If it indicates that your certificate is OK, you can ignore this warning.';

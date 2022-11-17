@@ -135,7 +135,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I am on "Completion course" course homepage
     And I navigate to "View > Grader report" in the course gradebook
     And I follow "Single view"
-    And I select "Student First" from the "Select user..." singleselect
+    And I select "Student First" from the "View all the grades of a single user" singleselect
     And I set the field "Override for Test assignment name" to "1"
     When I set the following fields to these values:
       | Grade for Test assignment name | 10.00 |

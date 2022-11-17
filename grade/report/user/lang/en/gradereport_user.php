@@ -24,7 +24,7 @@
 
 $string['eventgradereportviewed'] = 'Grade user report viewed';
 $string['pluginname'] = 'User report';
-$string['user:view'] = 'View your own grade report';
+$string['user:view'] = 'View user report';
 $string['myself'] = 'Myself';
 $string['otheruser'] = 'User';
 $string['privacy:metadata:preference:gradereport_user_view_user'] = 'Whether to view report as current user or another user in the gradebook reports';

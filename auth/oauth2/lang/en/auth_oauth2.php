@@ -86,7 +86,7 @@ Please log in as before, using the link on the login page.
 {$a->admin}';
 $string['emailpasswordchangeinfosubject'] = '{$a}: Change password information';
 $string['info'] = 'External account';
-$string['issuer'] = 'OAuth 2 Service';
+$string['issuer'] = 'OAuth 2 service';
 $string['issuernologin'] = 'This issuer can not be used to login';
 $string['linkedlogins'] = 'Linked logins';
 $string['linkedloginshelp'] = 'Help with linked logins';
@@ -95,7 +95,7 @@ $string['loginerror_nouserinfo'] = 'No user information was returned. The OAuth 
 $string['loginerror_invaliddomain'] = 'The email address is not allowed at this site.';
 $string['loginerror_authenticationfailed'] = 'The authentication process failed.';
 $string['loginerror_cannotcreateaccounts'] = 'An account with your email address could not be found.';
-$string['noissuersavailable'] = 'None of the configured OAuth2 services allow you to link login accounts';
+$string['noissuersavailable'] = 'None of the configured OAuth 2 services allow you to link login accounts.';
 $string['notloggedindebug'] = 'The login attempt failed. Reason: {$a}';
 $string['notwhileloggedinas'] = 'Linked logins cannot be managed while logged in as another user.';
 $string['oauth2:managelinkedlogins'] = 'Manage own linked login accounts';
