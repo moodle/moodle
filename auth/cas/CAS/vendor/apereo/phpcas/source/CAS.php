@@ -57,7 +57,7 @@ if (!isset($_SERVER['REQUEST_URI']) && isset($_SERVER['SCRIPT_NAME']) && isset($
 /**
  * phpCAS version. accessible for the user by phpCAS::getVersion().
  */
-define('PHPCAS_VERSION', '1.5.0');
+define('PHPCAS_VERSION', '1.6.0');
 
 /**
  * @addtogroup public
@@ -327,6 +327,14 @@ class phpCAS
      * @param string                   $server_hostname the hostname of the CAS server
      * @param int                      $server_port     the port the CAS server is running on
      * @param string                   $server_uri      the URI the CAS server is responding on
+     * @param string|string[]|CAS_ServiceBaseUrl_Interface
+     *                                 $service_base_url the base URL (protocol, host and the
+     *                                                  optional port) of the CAS client; pass
+     *                                                  in an array to use auto discovery with
+     *                                                  an allowlist; pass in
+     *                                                  CAS_ServiceBaseUrl_Interface for custom
+     *                                                  behavior. Added in 1.6.0. Similar to
+     *                                                  serverName config in other CAS clients.
      * @param bool                     $changeSessionID Allow phpCAS to change the session_id
      *                                                  (Single Sign Out/handleLogoutRequests
      *                                                  is based on that change)
@@ -338,7 +346,8 @@ class phpCAS
      * and phpCAS::setDebug()).
      */
     public static function client($server_version, $server_hostname,
-        $server_port, $server_uri, $changeSessionID = true, \SessionHandlerInterface $sessionHandler = null
+        $server_port, $server_uri, $service_base_url,
+        $changeSessionID = true, \SessionHandlerInterface $sessionHandler = null
     ) {
         phpCAS :: traceBegin();
         if (is_object(self::$_PHPCAS_CLIENT)) {
@@ -357,7 +366,7 @@ class phpCAS
         // initialize the object $_PHPCAS_CLIENT
         try {
             self::$_PHPCAS_CLIENT = new CAS_Client(
-                $server_version, false, $server_hostname, $server_port, $server_uri,
+                $server_version, false, $server_hostname, $server_port, $server_uri, $service_base_url,
                 $changeSessionID, $sessionHandler
             );
         } catch (Exception $e) {
@@ -373,6 +382,14 @@ class phpCAS
      * @param string                   $server_hostname the hostname of the CAS server
      * @param string                   $server_port     the port the CAS server is running on
      * @param string                   $server_uri      the URI the CAS server is responding on
+     * @param string|string[]|CAS_ServiceBaseUrl_Interface
+     *                                 $service_base_url the base URL (protocol, host and the
+     *                                                  optional port) of the CAS client; pass
+     *                                                  in an array to use auto discovery with
+     *                                                  an allowlist; pass in
+     *                                                  CAS_ServiceBaseUrl_Interface for custom
+     *                                                  behavior. Added in 1.6.0. Similar to
+     *                                                  serverName config in other CAS clients.
      * @param bool                     $changeSessionID Allow phpCAS to change the session_id
      *                                                  (Single Sign Out/handleLogoutRequests
      *                                                  is based on that change)
@@ -384,7 +401,8 @@ class phpCAS
      * and phpCAS::setDebug()).
      */
     public static function proxy($server_version, $server_hostname,
-        $server_port, $server_uri, $changeSessionID = true, \SessionHandlerInterface $sessionHandler = null
+        $server_port, $server_uri, $service_base_url,
+        $changeSessionID = true, \SessionHandlerInterface $sessionHandler = null
     ) {
         phpCAS :: traceBegin();
         if (is_object(self::$_PHPCAS_CLIENT)) {
@@ -403,7 +421,7 @@ class phpCAS
         // initialize the object $_PHPCAS_CLIENT
         try {
             self::$_PHPCAS_CLIENT = new CAS_Client(
-                $server_version, true, $server_hostname, $server_port, $server_uri,
+                $server_version, true, $server_hostname, $server_port, $server_uri, $service_base_url,
                 $changeSessionID, $sessionHandler
             );
         } catch (Exception $e) {

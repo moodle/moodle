@@ -918,6 +918,14 @@ class CAS_Client
      * @param bool                     $changeSessionID Allow phpCAS to change the session_id
      *                                                  (Single Sign Out/handleLogoutRequests
      *                                                  is based on that change)
+     * @param string|string[]|CAS_ServiceBaseUrl_Interface
+     *                                 $service_base_url the base URL (protocol, host and the
+     *                                                  optional port) of the CAS client; pass
+     *                                                  in an array to use auto discovery with
+     *                                                  an allowlist; pass in
+     *                                                  CAS_ServiceBaseUrl_Interface for custom
+     *                                                  behavior. Added in 1.6.0. Similar to
+     *                                                  serverName config in other CAS clients.
      * @param \SessionHandlerInterface $sessionHandler  the session handler
      *
      * @return self a newly created CAS_Client object
@@ -928,6 +936,7 @@ class CAS_Client
         $server_hostname,
         $server_port,
         $server_uri,
+        $service_base_url,
         $changeSessionID = true,
         \SessionHandlerInterface $sessionHandler = null
     ) {
@@ -944,6 +953,8 @@ class CAS_Client
             throw new CAS_TypeMismatchException($server_uri, '$server_uri', 'string');
         if (gettype($changeSessionID) != 'boolean')
             throw new CAS_TypeMismatchException($changeSessionID, '$changeSessionID', 'boolean');
+
+        $this->_setServiceBaseUrl($service_base_url);
 
         if (empty($sessionHandler)) {
             $sessionHandler = new CAS_Session_PhpSession;
@@ -1049,7 +1060,7 @@ class CAS_Client
 
         if ( $this->_isCallbackMode() ) {
             //callback mode: check that phpCAS is secured
-            if ( !$this->_isHttps() ) {
+            if ( !$this->getServiceBaseUrl()->isHttps() ) {
                 phpCAS::error(
                     'CAS proxies must be secured to use phpCAS; PGT\'s will not be received from the CAS server'
                 );
@@ -2578,8 +2589,7 @@ class CAS_Client
         // the URL is built when needed only
         if ( empty($this->_callback_url) ) {
             // remove the ticket if present in the URL
-            $final_uri = 'https://';
-            $final_uri .= $this->_getClientUrl();
+            $final_uri = $this->getServiceBaseUrl()->get();
             $request_uri = $_SERVER['REQUEST_URI'];
             $request_uri = preg_replace('/\?.*$/', '', $request_uri);
             $final_uri .= $request_uri;
@@ -3947,10 +3957,7 @@ class CAS_Client
         // the URL is built when needed only
         if ( empty($this->_url) ) {
             // remove the ticket if present in the URL
-            $final_uri = ($this->_isHttps()) ? 'https' : 'http';
-            $final_uri .= '://';
-
-            $final_uri .= $this->_getClientUrl();
+            $final_uri = $this->getServiceBaseUrl()->get();
             $request_uri = explode('?', $_SERVER['REQUEST_URI'], 2);
             $final_uri .= $request_uri[0];
 
@@ -3987,65 +3994,61 @@ class CAS_Client
         return $this->_server['base_url'] = $url;
     }
 
+    /**
+     * The ServiceBaseUrl object that provides base URL during service URL
+     * discovery process.
+     *
+     * @var CAS_ServiceBaseUrl_Interface
+     *
+     * @hideinitializer
+     */
+    private $_serviceBaseUrl = null;
 
     /**
-     * Try to figure out the phpCAS client URL with possible Proxys / Ports etc.
+     * Answer the CAS_ServiceBaseUrl_Interface object for this client.
      *
-     * @return string Server URL with domain:port
+     * @return CAS_ServiceBaseUrl_Interface
      */
-    private function _getClientUrl()
+    public function getServiceBaseUrl()
     {
-        if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
-            // explode the host list separated by comma and use the first host
-            $hosts = explode(',', $_SERVER['HTTP_X_FORWARDED_HOST']);
-            // see rfc7239#5.3 and rfc7230#2.7.1: port is in HTTP_X_FORWARDED_HOST if non default
-            return $hosts[0];
-        } else if (!empty($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
-            $server_url = $_SERVER['HTTP_X_FORWARDED_SERVER'];
-        } else {
-            if (empty($_SERVER['SERVER_NAME'])) {
-                $server_url = $_SERVER['HTTP_HOST'];
-            } else {
-                $server_url = $_SERVER['SERVER_NAME'];
-            }
+        if (empty($this->_serviceBaseUrl)) {
+            phpCAS::error("ServiceBaseUrl object is not initialized");
         }
-        if (!strpos($server_url, ':')) {
-            if (empty($_SERVER['HTTP_X_FORWARDED_PORT'])) {
-                $server_port = $_SERVER['SERVER_PORT'];
-            } else {
-                $ports = explode(',', $_SERVER['HTTP_X_FORWARDED_PORT']);
-                $server_port = $ports[0];
-            }
-
-            if ( ($this->_isHttps() && $server_port!=443)
-                || (!$this->_isHttps() && $server_port!=80)
-            ) {
-                $server_url .= ':';
-                $server_url .= $server_port;
-            }
-        }
-        return $server_url;
+        return $this->_serviceBaseUrl;
     }
 
     /**
-     * This method checks to see if the request is secured via HTTPS
+     * This method sets the service base URL used during service URL discovery process.
      *
-     * @return bool true if https, false otherwise
+     * This is required since phpCAS 1.6.0 to protect the integrity of the authentication.
+     *
+     * @since phpCAS 1.6.0
+     *
+     * @param $name can be any of the following:
+     *   - A base URL string. The service URL discovery will always use this (protocol,
+     *     hostname and optional port number) without using any external host names.
+     *   - An array of base URL strings. The service URL discovery will check against
+     *     this list before using the auto discovered base URL. If there is no match,
+     *     the first base URL in the array will be used as the default. This option is
+     *     helpful if your PHP website is accessible through multiple domains without a
+     *     canonical name, or through both HTTP and HTTPS.
+     *   - A class that implements CAS_ServiceBaseUrl_Interface. If you need to customize
+     *     the base URL discovery behavior, you can pass in a class that implements the
+     *     interface.
+     *
+     * @return void
      */
-    private function _isHttps()
+    private function _setServiceBaseUrl($name)
     {
-        if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
-            return ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTOCOL'])) {
-            return ($_SERVER['HTTP_X_FORWARDED_PROTOCOL'] === 'https');
-        } elseif ( isset($_SERVER['HTTPS'])
-            && !empty($_SERVER['HTTPS'])
-            && strcasecmp($_SERVER['HTTPS'], 'off') !== 0
-        ) {
-            return true;
+        if (is_array($name)) {
+            $this->_serviceBaseUrl = new CAS_ServiceBaseUrl_AllowedListDiscovery($name);
+        } else if (is_string($name)) {
+            $this->_serviceBaseUrl = new CAS_ServiceBaseUrl_Static($name);
+        } else if ($name instanceof CAS_ServiceBaseUrl_Interface) {
+            $this->_serviceBaseUrl = $name;
+        } else {
+            throw new CAS_TypeMismatchException($name, '$name', 'array, string, or CAS_ServiceBaseUrl_Interface object');
         }
-        return false;
-
     }
 
     /**

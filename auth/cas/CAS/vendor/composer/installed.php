@@ -20,9 +20,9 @@
             'dev_requirement' => false,
         ),
         'apereo/phpcas' => array(
-            'pretty_version' => '1.5.0',
-            'version' => '1.5.0.0',
-            'reference' => 'd6f5797fb568726f34c8e48741776d81e4a2646b',
+            'pretty_version' => '1.6.0',
+            'version' => '1.6.0.0',
+            'reference' => 'f817c72a961484afef95ac64a9257c8e31f063b9',
             'type' => 'library',
             'install_path' => __DIR__ . '/../apereo/phpcas',
             'aliases' => array(),
