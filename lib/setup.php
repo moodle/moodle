@@ -201,7 +201,7 @@ $CFG->libdir = $CFG->dirroot .'/lib';
 
 // Allow overriding of tempdir but be backwards compatible
 if (!isset($CFG->tempdir)) {
-    $CFG->tempdir = "$CFG->dataroot/temp";
+    $CFG->tempdir = $CFG->dataroot . DIRECTORY_SEPARATOR . "temp";
 }
 
 // Allow overriding of backuptempdir but be backwards compatible
