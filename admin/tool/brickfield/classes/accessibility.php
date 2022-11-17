@@ -48,12 +48,7 @@ class accessibility {
     public static function is_accessibility_enabled(): bool {
         global $CFG;
 
-        if (isset($CFG->enableaccessibilitytools)) {
-            return $CFG->enableaccessibilitytools;
-        }
-
-        // Enabled by default.
-        return true;
+        return !empty($CFG->enableaccessibilitytools);
     }
 
     /**
