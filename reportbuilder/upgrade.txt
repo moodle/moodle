@@ -1,6 +1,10 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.0.6 ===
+
+* The `create_[column|filter|condition]` test generator methods now allow for setting all persistent properties
+
 === 4.0.4 ===
 
 * New method `get_sample_values()` added to base filter class, to be overridden in all filter types to support stress testing

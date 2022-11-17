@@ -54,14 +54,14 @@ class groupconcat_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
 
         // First column, sorted.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname'])
-            ->set('sortenabled', true)
-            ->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname', 'sortenabled' => 1]);
 
         // This is the column we'll aggregate.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:lastname'])
-            ->set('aggregation', groupconcat::get_class_name())
-            ->update();
+        $generator->create_column([
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'user:lastname',
+            'aggregation' => groupconcat::get_class_name(),
+        ]);
 
         // Assert lastname column was aggregated, and sorted predictably.
         $content = $this->get_custom_report_content($report->get('id'));
@@ -93,14 +93,14 @@ class groupconcat_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
 
         // First column, sorted.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname'])
-            ->set('sortenabled', true)
-            ->update();
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname', 'sortenabled' => 1]);
 
         // This is the column we'll aggregate.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:confirmed'])
-            ->set('aggregation', groupconcat::get_class_name())
-            ->update();
+        $generator->create_column([
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'user:confirmed',
+            'aggregation' => groupconcat::get_class_name(),
+        ]);
 
         // Assert confirmed column was aggregated, and sorted predictably with callback applied.
         $content = $this->get_custom_report_content($report->get('id'));
