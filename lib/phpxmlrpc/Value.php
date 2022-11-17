@@ -262,7 +262,7 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
     }
 
     /**
-     * @param string typ
+     * @param string $typ
      * @param Value[]|mixed $val
      * @param string $charsetEncoding
      * @return string
@@ -304,12 +304,12 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
                     case static::$xmlrpcDateTime:
                         if (is_string($val)) {
                             $rs .= "<${typ}>${val}</${typ}>";
-                        } elseif (is_a($val, 'DateTime')) {
+                        } elseif (is_a($val, 'DateTime') || is_a($val, 'DateTimeInterface')) {
                             $rs .= "<${typ}>" . $val->format('Ymd\TH:i:s') . "</${typ}>";
                         } elseif (is_int($val)) {
-                            $rs .= "<${typ}>" . strftime("%Y%m%dT%H:%M:%S", $val) . "</${typ}>";
+                            $rs .= "<${typ}>" . date('Ymd\TH:i:s', $val) . "</${typ}>";
                         } else {
-                            // not really a good idea here: but what shall we output anyway? left for backward compat...
+                            // not really a good idea here: but what should we output anyway? left for backward compat...
                             $rs .= "<${typ}>${val}</${typ}>";
                         }
                         break;

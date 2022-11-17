@@ -618,7 +618,7 @@ All rights reserved.</copyright>
     <location>phpxmlrpc</location>
     <name>phpxmlrpc</name>
     <description>A php library for building xml-rpc clients and servers</description>
-    <version>4.8.0</version>
+    <version>4.8.1</version>
     <license>BSD</license>
     <licenseversion>3-Clause</licenseversion>
     <repository>https://github.com/gggeek/phpxmlrpc</repository>

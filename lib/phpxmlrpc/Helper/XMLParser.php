@@ -315,7 +315,7 @@ class XMLParser
                         $this->_xh['ac'] = ''; // reset the accumulator
                         break;
                     }
-                // we do not support the <NIL/> extension, so
+                // if here, we do not support the <NIL/> extension, so
                 // drop through intentionally
                 default:
                     // INVALID ELEMENT: RAISE ISF so that it is later recognized!!!

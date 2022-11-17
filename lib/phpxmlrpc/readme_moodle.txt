@@ -16,7 +16,7 @@ To update:
 - Edit this file and update the release and commit details below.
 - Edit lib/thirdpartylibs.xml and update the information details too.
 
-Current version imported: 4.8.0 (39e37ed)
+Current version imported: 4.8.1 (c74cc31)
 
 Local changes:
  * readme_moodle.txt - this file ;-)
