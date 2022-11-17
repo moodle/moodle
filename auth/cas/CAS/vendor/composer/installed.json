@@ -2,29 +2,31 @@
     "packages": [
         {
             "name": "apereo/phpcas",
-            "version": "1.4.0",
-            "version_normalized": "1.4.0.0",
+            "version": "1.6.0",
+            "version_normalized": "1.6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/apereo/phpCAS.git",
-                "reference": "ea27d122c4c7114006b33d15668c90f1904d53df"
+                "reference": "f817c72a961484afef95ac64a9257c8e31f063b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/apereo/phpCAS/zipball/ea27d122c4c7114006b33d15668c90f1904d53df",
-                "reference": "ea27d122c4c7114006b33d15668c90f1904d53df",
+                "url": "https://api.github.com/repos/apereo/phpCAS/zipball/f817c72a961484afef95ac64a9257c8e31f063b9",
+                "reference": "f817c72a961484afef95ac64a9257c8e31f063b9",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
-                "php": ">=7.0.0",
-                "psr/log": "^1.0.0"
+                "ext-dom": "*",
+                "php": ">=7.1.0",
+                "psr/log": "^1.0 || ^2.0 || ^3.0"
             },
             "require-dev": {
-                "monolog/monolog": "^1.0.0",
-                "phpunit/phpunit": ">=4.8.35 <8"
+                "monolog/monolog": "^1.0.0 || ^2.0.0",
+                "phpstan/phpstan": "^1.5",
+                "phpunit/phpunit": ">=7.5"
             },
-            "time": "2021-05-30T19:53:34+00:00",
+            "time": "2022-10-31T20:39:27+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -65,7 +67,7 @@
             ],
             "support": {
                 "issues": "https://github.com/apereo/phpCAS/issues",
-                "source": "https://github.com/apereo/phpCAS/tree/1.4.0"
+                "source": "https://github.com/apereo/phpCAS/tree/1.6.0"
             },
             "install-path": "../apereo/phpcas"
         },

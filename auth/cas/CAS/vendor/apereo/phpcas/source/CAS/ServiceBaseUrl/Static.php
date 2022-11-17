@@ -17,29 +17,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- *
  * PHP Version 7
  *
- * @file     CAS/Session/PhpSession.php
+ * @file     CAS/ServiceBaseUrl/Static.php
  * @category Authentication
  * @package  PhpCAS
- * @author   Adam Franco <afranco@middlebury.edu>
+ * @author   Henry Pan <git@phy25.com>
  * @license  http://www.apache.org/licenses/LICENSE-2.0  Apache License 2.0
  * @link     https://wiki.jasig.org/display/CASC/phpCAS
  */
 
+
 /**
- * Empty class used as a default implementation for phpCAS.
+ * Class that gets the server name of the PHP server by statically set
+ * hostname and port. This is used to generate service URL and PGT
+ * callback URL.
  *
- * Implements the standard PHP session handler without no alterations.
- *
- * @class    CAS_Session_PhpSession
+ * @class    CAS_ServiceBaseUrl_Static
  * @category Authentication
  * @package  PhpCAS
- * @author   Adam Franco <afranco@middlebury.edu>
+ * @author   Henry Pan <git@phy25.com>
  * @license  http://www.apache.org/licenses/LICENSE-2.0  Apache License 2.0
  * @link     https://wiki.jasig.org/display/CASC/phpCAS
  */
-class CAS_Session_PhpSession extends SessionHandler implements SessionHandlerInterface
+
+class CAS_ServiceBaseUrl_Static
+extends CAS_ServiceBaseUrl_Base
 {
+    private $_name = null;
+
+    public function __construct($name) {
+        if (is_string($name)) {
+            $this->_name = $this->removeStandardPort($name);
+        } else {
+            throw new CAS_TypeMismatchException($name, '$name', 'string');
+        }
+    }
+
+    /**
+     * Get the server name through static config.
+     *
+     * @return string the server hostname and port of the server configured
+     */
+    public function get()
+    {
+        phpCAS::traceBegin();
+        phpCAS::trace("Returning static server name: " . $this->_name);
+        phpCAS::traceEnd(true);
+        return $this->_name;
+    }
 }
