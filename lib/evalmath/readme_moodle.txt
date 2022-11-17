@@ -13,6 +13,7 @@ Our changes:
 * added round, ceil and floor functions.
 * EvalMath::EvalMath() changed to EvalMath::__construct() and there is a new EvalMath::EvalMath
   function to maintain backwards compatibility
+* Ensure a string is passed to preg_match in EvalMath::nfx.
 
 To see all changes diff against version 1.1, available from:
 http://www.phpclasses.org/browse/package/2695.html

@@ -163,7 +163,7 @@ class api {
             unset($library->major_version);
             $library->minorVersion = (int) $library->minorversion;
             unset($library->minorversion);
-            $library->metadataSettings = json_decode($library->metadatasettings);
+            $library->metadataSettings = json_decode($library->metadatasettings ?? '');
 
             // If we already add this library means that it is an old version,as the previous query was sorted by version.
             if (isset($added[$library->name])) {

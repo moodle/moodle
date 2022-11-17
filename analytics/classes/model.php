@@ -1828,7 +1828,7 @@ class model {
      */
     public function get_name() {
 
-        if (trim($this->model->name) === '') {
+        if (trim($this->model->name ?? '') === '') {
             return $this->get_target()->get_name();
 
         } else {

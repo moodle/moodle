@@ -111,7 +111,7 @@ class purpose_exporter extends persistent_exporter {
         $values['formattedlawfulbases'] = $formattedbases;
 
         $formattedsensitivereasons = [];
-        $sensitivereasons = explode(',', $this->persistent->get('sensitivedatareasons'));
+        $sensitivereasons = explode(',', $this->persistent->get('sensitivedatareasons') ?? '');
         if (!empty($sensitivereasons)) {
             foreach ($sensitivereasons as $reason) {
                 if (empty(trim($reason))) {

@@ -653,7 +653,7 @@ class qtype_numerical_answer_processor {
     public function apply_units($response, $separateunit = null) {
         // Strip spaces (which may be thousands separators) and change other forms
         // of writing e to e.
-        $response = str_replace(' ', '', $response);
+        $response = str_replace(' ', '', $response ?? '');
         $response = preg_replace('~(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)~', 'e$1', $response);
 
         // If a . is present or there are multiple , (i.e. 2,456,789 ) assume ,

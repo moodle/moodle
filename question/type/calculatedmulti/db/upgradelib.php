@@ -294,7 +294,7 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
      *      corresponding value.
      */
     protected function substitute_values_for_eval($expression) {
-        return str_replace($this->search, $this->safevalue, $expression);
+        return str_replace($this->search ?? '', $this->safevalue ?? '', $expression ?? '');
     }
 
     /**
@@ -306,7 +306,7 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
      *      corresponding value.
      */
     protected function substitute_values_pretty($text) {
-        return str_replace($this->search, $this->prettyvalue, $text);
+        return str_replace($this->search ?? '', $this->prettyvalue ?? '', $text ?? '');
     }
 
     /**
@@ -320,7 +320,7 @@ class qtype_calculatedmulti_qe2_attempt_updater extends question_qtype_attempt_u
         $text = preg_replace_callback(qtype_calculated::FORMULAS_IN_TEXT_REGEX,
                 function ($matches) use ($vs, $format, $length) {
                     return $vs->format_float($vs->calculate($matches[1]), $length, $format);
-                }, $text);
+                }, $text ?? '');
         return $this->substitute_values_pretty($text);
     }
 }

@@ -410,7 +410,7 @@ class user extends tablelike implements selectable_items {
 
                 $isscale = ($gradeitem->gradetype == GRADE_TYPE_SCALE);
 
-                $empties = (trim($value) === '' or ($isscale and $value == -1));
+                $empties = (trim($value ?? '') === '' or ($isscale and $value == -1));
 
                 if ($filter == 'all' or $empties) {
                     $data->$varname = ($isscale and empty($insertvalue)) ?

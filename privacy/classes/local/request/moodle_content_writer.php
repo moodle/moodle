@@ -179,7 +179,7 @@ class moodle_content_writer implements content_writer {
         $returnstring = $path . DIRECTORY_SEPARATOR . $this->get_files_target_url($component, $filearea, $itemid) . '/';
         $returnstring = clean_param($returnstring, PARAM_PATH);
 
-        return str_replace('@@PLUGINFILE@@/', $returnstring, $text);
+        return str_replace('@@PLUGINFILE@@/', $returnstring, $text ?? '');
     }
 
     /**

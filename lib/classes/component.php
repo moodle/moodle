@@ -973,7 +973,7 @@ $cache = '.var_export($cache, true).';
             return (bool)preg_match('/^[a-z][a-z0-9]*$/', $pluginname);
 
         } else {
-            return (bool)preg_match('/^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$/', $pluginname);
+            return (bool)preg_match('/^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$/', $pluginname ?? '');
         }
     }
 

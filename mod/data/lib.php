@@ -840,19 +840,19 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
     $newdata = new stdClass();
     $newdata->id = $data->id;
     $newdata->singletemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->singletemplate);
+            $prestring.$newfieldname.$poststring, $data->singletemplate ?? '');
 
     $newdata->listtemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->listtemplate);
+            $prestring.$newfieldname.$poststring, $data->listtemplate ?? '');
 
     $newdata->addtemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->addtemplate);
+            $prestring.$newfieldname.$poststring, $data->addtemplate ?? '');
 
     $newdata->addtemplate = str_ireplace('[['.$searchfieldname.'#id]]',
-            $prestring.$newfieldname.$idpart.$poststring, $data->addtemplate);
+            $prestring.$newfieldname.$idpart.$poststring, $data->addtemplate ?? '');
 
     $newdata->rsstemplate = str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->rsstemplate);
+            $prestring.$newfieldname.$poststring, $data->rsstemplate ?? '');
 
     return $DB->update_record('data', $newdata);
 }
