@@ -31,13 +31,13 @@
 }}
 
 {{#headerdisplaymultipage}}
-    <h3 class="sectionid-{{id}}-title sectionname">
+    <h3 id="sectionid-{{id}}-title" class="sectionname">
         {{{title}}}
     </h3>
 {{/headerdisplaymultipage}}
 {{^headerdisplaymultipage}}
     {{#sitehome}}
-        <h2 class="sectionid-{{id}}-title sectionname">
+        <h2 id="sectionid-{{id}}-title" class="sectionname">
             {{{title}}}
         </h2>
     {{/sitehome}}
@@ -60,8 +60,8 @@
                 <span class="dir-ltr-hide">{{#pix}} t/collapsedchevron_rtl, core {{/pix}}</span>
             </span>
             </a>
-            <h3 class="sectionid-{{id}}-title sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
-                id="coursecontentsection{{num}}" data-for="section_title" data-id="{{id}}" data-number="{{num}}">
+            <h3 class="sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
+                id="sectionid-{{id}}-title" data-for="section_title" data-id="{{id}}" data-number="{{num}}">
                 {{{title}}}
             </h3>
         </div>
