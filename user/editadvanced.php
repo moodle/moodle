@@ -311,6 +311,9 @@ if ($userform->is_cancelled()) {
         } else {
             redirect($returnurl, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
         }
+    } else if ($returnto === 'profile') {
+        \core\session\manager::gc(); // Remove stale sessions.
+        redirect($returnurl, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
     } else {
         \core\session\manager::gc(); // Remove stale sessions.
         redirect("$CFG->wwwroot/$CFG->admin/user.php", get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
