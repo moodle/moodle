@@ -185,6 +185,11 @@ class lang {
             }
         }
 
+        // TinyMCE uses a secret string only present in some languages to set a language direction.
+        // Rather than applying to only some languages, we just apply to all from our own langconfig.
+        // Note: Do not rely on right_to_left() as the current language is unset.
+        $strings['_dir'] = $stringmanager->get_string('thisdirection', 'langconfig', null, $this->lang);
+
         return $strings;
     }
 
