@@ -88,6 +88,9 @@ const poll = () => {
  */
 export const updateRoom = (updatecache = false) => {
     const bbbRoomViewElement = document.getElementById('bigbluebuttonbn-room-view');
+    if (!bbbRoomViewElement) {
+        return Promise.resolve(false);
+    }
     const bbbId = bbbRoomViewElement.dataset.bbbId;
     const groupId = bbbRoomViewElement.dataset.groupId;
     return getMeetingInfo(bbbId, groupId, updatecache)
