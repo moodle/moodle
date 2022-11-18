@@ -29,7 +29,7 @@
     <location>bennu</location>
     <name>Bennu</name>
     <description>Bennu is an object-oriented library written in PHP that implements the iCalendar standard (RFC 2445).</description>
-    <version>0.1-custom</version>
+    <version>0.2-custom</version>
     <license>LGPL</license>
     <licenseversion>2.1+</licenseversion>
     <repository>https://sourceforge.net/projects/bennu/</repository>
