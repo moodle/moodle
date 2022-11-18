@@ -64,7 +64,7 @@ class course_expiry_warning_task extends \core\task\scheduled_task {
                        WHERE co.visible = 1
                        AND ic.validlength > 0
                        AND ic.warnexpire > 0
-                       AND (lit.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) < " . $runtime . "
+                       AND (lit.timecompleted + ic.validlength * 86400 - ic.warnexpire * 86400) > " . $runtime . "
                        AND u.deleted = 0
                        AND u.suspended = 0
                        AND lit.expiredstop = 0
