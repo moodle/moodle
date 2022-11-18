@@ -28,6 +28,7 @@
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\ExpectationException;
@@ -1217,20 +1218,12 @@ EOF;
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $element The locator of the specified selector
      * @param string $selectortype The selector type
-     * @param string $containerelement The container selector type
-     * @param string $containerselectortype The container locator
+     * @param NodeElement|string $containerelement The locator of the container selector
+     * @param string $containerselectortype The container selector type
      */
     public function should_exist_in_the($element, $selectortype, $containerelement, $containerselectortype) {
-        // Get the container node.
-        $containernode = $this->find($containerselectortype, $containerelement);
-
-        // Specific exception giving info about where can't we find the element.
-        $containerdescription = $this->get_selector_description($containerselectortype, $containerelement);
-        $locatorexceptionmsg = "{$element} not found in the {$containerdescription}}";
-        $exception = new ElementNotFoundException($this->getSession(), $selectortype, null, $locatorexceptionmsg);
-
-        // Looks for the requested node inside the container node.
-        $this->find($selectortype, $element, $exception, $containernode);
+        // Will throw an ElementNotFoundException if it does not exist.
+        $this->get_node_in_container($selectortype, $element, $containerselectortype, $containerelement);
     }
 
     /**
@@ -1242,8 +1235,8 @@ EOF;
      * @throws ExpectationException
      * @param string $element The locator of the specified selector
      * @param string $selectortype The selector type
-     * @param string $containerelement The container selector type
-     * @param string $containerselectortype The container locator
+     * @param NodeElement|string $containerelement The locator of the container selector
+     * @param string $containerselectortype The container selector type
      */
     public function should_not_exist_in_the($element, $selectortype, $containerelement, $containerselectortype) {
         // Get the container node.
