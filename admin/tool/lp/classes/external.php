@@ -278,7 +278,7 @@ class external extends external_api {
         ));
 
         $competency = api::read_competency($params['competencyid']);
-        $framework = api::read_framework($competency->get_competencyframeworkid());
+        $framework = api::read_framework($competency->get('competencyframeworkid'));
         self::validate_context($framework->get_context());
         $renderable = new output\competency_summary($competency, $framework, $params['includerelated'], $params['includecourses']);
         $renderer = $PAGE->get_renderer('tool_lp');
