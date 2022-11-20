@@ -963,7 +963,7 @@ class theme_config {
                 $files['plugin_'.$plugin] = $sheetfile;
             }
 
-            $subplugintypes = core_component::get_subplugins("editor_{$plugin}");
+            $subplugintypes = core_component::get_subplugins("editor_{$plugin}") ?? [];
             // Fetch sheets for any editor subplugins.
             foreach ($subplugintypes as $plugintype => $subplugins) {
                 foreach ($subplugins as $subplugin) {
