@@ -124,8 +124,6 @@ abstract class system_report extends base {
     /**
      * Add list of fields that have to be always included in SQL query for actions and row classes
      *
-     * Base fields are only available in system reports because they are not compatible with aggregation
-     *
      * @param string $sql SQL clause for the list of fields that only uses main table or base joins
      */
     final protected function add_base_fields(string $sql): void {

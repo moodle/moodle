@@ -1,0 +1,7 @@
+issueNumber: MDL-76392
+notes:
+  core_reportbuilder:
+    - message: >-
+        System reports now support native entity column aggregation via each
+        columns `set_aggregation()` method
+      type: improved

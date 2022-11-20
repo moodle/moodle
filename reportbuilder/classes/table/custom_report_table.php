@@ -97,8 +97,9 @@ class custom_report_table extends base_report_table {
             return !empty($column->get_aggregation());
         });
 
-        // Also take account of the report setting to show unique rows (only if no columns are being aggregated).
         $hasaggregatedcolumns = !empty($aggregatedcolumns);
+
+        // Also take account of the report setting to show unique rows (only if no columns are being aggregated).
         $showuniquerows = !$hasaggregatedcolumns && $this->persistent->get('uniquerows');
 
         $columnheaders = $columnsattributes = [];
@@ -106,9 +107,8 @@ class custom_report_table extends base_report_table {
             $columnheading = $column->get_persistent()->get_formatted_heading($this->report->get_context());
             $columnheaders[$column->get_column_alias()] = $columnheading !== '' ? $columnheading : $column->get_title();
 
-            // We need to determine for each column whether we should group by it's fields, to support aggregation.
-            $columnaggregation = $column->get_aggregation();
-            if ($showuniquerows || ($hasaggregatedcolumns && empty($columnaggregation))) {
+            // We need to determine for each column whether we should group by its fields, to support aggregation.
+            if ($showuniquerows || ($hasaggregatedcolumns && empty($column->get_aggregation()))) {
                 $groupby = array_merge($groupby, $column->get_groupby_sql());
             }
 
