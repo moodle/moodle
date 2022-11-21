@@ -18040,22 +18040,20 @@
     var _proto = MenuItem.prototype;
 
     _proto.createEl = function createEl(type, props, attrs) {
-      var el = _ClickableComponent.prototype.createEl.call(this, type, props, attrs);
-      var parentSpan = _ClickableComponent.prototype.createEl.call(this, 'li', assign({
+      // The control is textual, not just an icon
+      this.nonIconControl = true;
+      var el = _ClickableComponent.prototype.createEl.call(this, 'li', assign({
         className: 'vjs-menu-item',
         tabIndex: -1
       }, props), attrs);
 
-      parentSpan.appendChild(_ClickableComponent.prototype.createEl.call(this, 'span', {
-        className: 'vjs-icon-placeholder'
-      }, {
-        'aria-hidden': true
-      }));
-      parentSpan.appendChild(_ClickableComponent.prototype.createEl.call(this, 'span', {
-        className: 'vjs-control-text',
-        textContent: this.localize(this.options_.label)
-      }));
-
+      var iconplaceholder = el.querySelector('.vjs-icon-placeholder');
+      if (typeof iconplaceholder === 'object' && iconplaceholder !== null) {
+        el.replaceChild(_ClickableComponent.prototype.createEl.call(this, 'span', {
+          className: 'vjs-menu-item-text',
+          textContent: this.localize(this.options_.label)
+        }), iconplaceholder);
+      }
       return el;
     }
     /**
@@ -19120,23 +19118,19 @@
     var _proto = SubsCapsMenuItem.prototype;
 
     _proto.createEl = function createEl(type, props, attrs) {
-      var el = _TextTrackMenuItem.prototype.createEl.call(this, type, props, attrs);
+      var el = _TextTrackMenuItem.prototype.createEl.call(this, 'li', assign({
+        className: 'vjs-menu-item',
+        tabIndex: -1
+      }, props), attrs);
 
-      var parentSpan = el.querySelector('.vjs-menu-item-text');
-
-      if (this.options_.track.kind === 'captions') {
-        parentSpan.appendChild(createEl('span', {
-          className: 'vjs-icon-placeholder'
-        }, {
-          'aria-hidden': true
-        }));
-        parentSpan.appendChild(createEl('span', {
-          className: 'vjs-control-text',
-          // space added as the text will visually flow with the
-          // label
-          textContent: " " + this.localize('Captions')
-        }));
+      const menuitem = el.querySelector('.vjs-menu-item-text');
+      if (this.options_.track.kind === 'captions' && menuitem) {
+        const icon = document.createElement("span");
+        icon.className = 'vjs-icon-placeholder';
+        menuitem.appendChild(icon);
+        el.appendChild(menuitem);
       }
+      return el;
     };
 
     return SubsCapsMenuItem;
@@ -19285,20 +19279,17 @@
     var _proto = AudioTrackMenuItem.prototype;
 
     _proto.createEl = function createEl(type, props, attrs) {
-      var el = _MenuItem.prototype.createEl.call(this, type, props, attrs);
+      var el = _MenuItem.prototype.createEl.call(this, 'li', assign({
+        className: 'vjs-menu-item',
+        tabIndex: -1
+      }, props), attrs);
 
-      var parentSpan = el.querySelector('.vjs-menu-item-text');
-
-      if (this.options_.track.kind === 'main-desc') {
-        parentSpan.appendChild(_MenuItem.prototype.createEl.call(this, 'span', {
-          className: 'vjs-icon-placeholder'
-        }, {
-          'aria-hidden': true
-        }));
-        parentSpan.appendChild(_MenuItem.prototype.createEl.call(this, 'span', {
-          className: 'vjs-control-text',
-          textContent: this.localize('Descriptions')
-        }));
+      const menuitem = el.querySelector('.vjs-menu-item-text');
+      if (this.options_.track.kind === 'main' && menuitem) {
+        const icon = document.createElement("span");
+        icon.className = 'vjs-icon-placeholder';
+        menuitem.appendChild(icon);
+        el.appendChild(menuitem);
       }
 
       return el;
