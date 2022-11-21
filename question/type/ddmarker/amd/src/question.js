@@ -57,9 +57,11 @@ define([
         if (readOnly) {
             this.getRoot().addClass('qtype_ddmarker-readonly');
         }
-        thisQ.cloneDrags();
-        thisQ.repositionDrags();
-        thisQ.drawDropzones();
+        thisQ.allImagesLoaded = false;
+        thisQ.getNotYetLoadedImages().one('load', function() {
+            thisQ.waitForAllImagesToBeLoaded();
+        });
+        thisQ.waitForAllImagesToBeLoaded();
     }
 
     /**
@@ -735,6 +737,63 @@ define([
      */
     DragDropMarkersQuestion.prototype.isInfiniteDrag = function(drag) {
         return drag.hasClass('infinite');
+    };
+
+    /**
+     * Waits until all images are loaded before calling setupQuestion().
+     *
+     * This function is called from the onLoad of each image, and also polls with
+     * a time-out, because image on-loads are allegedly unreliable.
+     */
+    DragDropMarkersQuestion.prototype.waitForAllImagesToBeLoaded = function() {
+
+        // This method may get called multiple times (via image on-loads or timeouts.
+        // If we are already done, don't do it again.
+        if (this.allImagesLoaded) {
+            return;
+        }
+
+        // Clear any current timeout, if set.
+        if (this.imageLoadingTimeoutId !== null) {
+            clearTimeout(this.imageLoadingTimeoutId);
+        }
+
+        // If we have not yet loaded all images, set a timeout to
+        // call ourselves again, since apparently images on-load
+        // events are flakey.
+        if (this.getNotYetLoadedImages().length > 0) {
+            this.imageLoadingTimeoutId = setTimeout(function() {
+                this.waitForAllImagesToBeLoaded();
+            }, 100);
+            return;
+        }
+
+        // We now have all images. Carry on, but only after giving the layout a chance to settle down.
+        this.allImagesLoaded = true;
+        this.cloneDrags();
+        this.repositionDrags();
+        this.drawDropzones();
+    };
+
+    /**
+     * Get any of the images in the drag-drop area that are not yet fully loaded.
+     *
+     * @returns {jQuery} those images.
+     */
+    DragDropMarkersQuestion.prototype.getNotYetLoadedImages = function() {
+        return this.getRoot().find('.ddmarker img.dropbackground').not(function(i, imgNode) {
+            return this.imageIsLoaded(imgNode);
+        });
+    };
+
+    /**
+     * Check if an image has loaded without errors.
+     *
+     * @param {HTMLImageElement} imgElement an image.
+     * @returns {boolean} true if this image has loaded without errors.
+     */
+    DragDropMarkersQuestion.prototype.imageIsLoaded = function(imgElement) {
+        return imgElement.complete && imgElement.naturalHeight !== 0;
     };
 
     /**
