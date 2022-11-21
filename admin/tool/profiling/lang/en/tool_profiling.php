@@ -41,6 +41,7 @@ $string['importok'] = 'File "{$a}" imported successfully.';
 $string['importprefix'] = 'Import prefix';
 $string['importproblem'] = 'Some problem happened importing the file "{$a}".';
 $string['lastrunof'] = 'Summary of last run of {$a}';
+$string['lastrun'] = 'Summary of last run';
 $string['markreferencerun'] = 'Mark as reference run/comment';
 $string['memory'] = 'Memory used';
 $string['pluginname'] = 'Profiling runs';
