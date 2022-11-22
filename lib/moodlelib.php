@@ -2377,7 +2377,7 @@ function date_format_string($date, $format, $tz = 99) {
 
     date_default_timezone_set(core_date::get_user_timezone($tz));
 
-    if (strftime('%p', 0) === strftime('%p', HOURSECS * 18)) {
+    if (date('A', 0) === date('A', HOURSECS * 18)) {
         $datearray = getdate($date);
         $format = str_replace([
             '%P',
@@ -2388,7 +2388,7 @@ function date_format_string($date, $format, $tz = 99) {
         ], $format);
     }
 
-    $datestring = strftime($format, $date);
+    $datestring = core_date::strftime($format, $date);
     core_date::set_default_server_timezone();
 
     if ($localewincharset) {

@@ -52,7 +52,7 @@ class rollback extends base {
             );
 
             $context->applications[] = [
-                'timeapplied' => strftime($format, $application->time),
+                'timeapplied' => \core_date::strftime($format, (int)$application->time),
                 'user' => fullname($user),
                 'action' => $rollbacklink->out(false),
             ];
