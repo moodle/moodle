@@ -95,7 +95,7 @@ $string['cannotfavourite'] = 'Sorry, but you do not have the permission to star 
 $string['cannottrack'] = 'Could not stop tracking that forum';
 $string['cannotunsubscribe'] = 'Could not unsubscribe you from that forum';
 $string['cannotupdatepost'] = 'You can not update this post';
-$string['cannotviewpostyet'] = 'You cannot read other students questions in this discussion yet because you haven\'t posted';
+$string['cannotviewpostyet'] = 'You can\'t read other students\' posts in this discussion yet because you haven\'t posted.';
 $string['cannotviewusersposts'] = 'There are no posts made by this user that you are able to view.';
 $string['cleanreadtime'] = 'Mark old posts as read hour';
 $string['clicktolockdiscussion'] = 'Click to lock this discussion';
@@ -337,7 +337,7 @@ $string['forumtype_help'] = 'There are 5 forum types:
 
 * A single simple discussion - A single discussion topic which everyone can reply to (cannot be used with separate groups)
 * Each person posts one discussion - Each student can post exactly one new discussion topic, which everyone can then reply to
-* Q and A forum - Students must first post their perspectives before viewing other students\' posts
+* Q and A forum - A student must first post their reply to a question posted by the teacher, before viewing other students\' posts
 * Standard forum displayed in a blog-like format - An open forum where anyone can start a new discussion at any time, and in which discussion topics are displayed on one page with "Discuss this topic" links
 * Standard forum for general use - An open forum where anyone can start a new discussion at any time';
 $string['forum:viewallratings'] = 'View all raw ratings given by individuals';
@@ -608,7 +608,7 @@ $string['prunediscussion'] = 'Split discussion';
 $string['prunedpost'] = 'A new discussion has been created from that post';
 $string['pruneheading'] = 'Split the discussion and move this post to a new discussion';
 $string['qandaforum'] = 'Q and A forum';
-$string['qandanotify'] = 'This is a question and answer forum. In order to see other responses to these questions, you must first post your answer';
+$string['qandanotify'] = 'This is a question and answer forum. To see other replies, you must first post your reply.';
 $string['re'] = 'Re:';
 $string['readtherest'] = 'Read the rest of this topic';
 $string['removeallforumtags'] = 'Remove all forum tags';
