@@ -82,6 +82,19 @@ $CFG->dboptions = array(
                                 // has additional configuration according to its environment,
                                 // which the administrator can specify to alter and
                                 // override any connection options.
+    // 'ssl' => '',             // A connection mode string from the list below.
+                                // Not supported by all drivers.
+                                //   prefer       Use SSL if available - postgres default  Postgres only
+                                //   disable      Force non secure connection              Postgres only
+                                //   require      Force SSL                                Postgres and MySQL
+                                //   verify-full  Force SSL and verify root CA             Postgres and MySQL
+                                // All mode names are adopted from Postgres
+                                // and other databases align where possible:
+                                //   Postgres: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE
+                                //   MySql:    https://www.php.net/manual/en/mysqli.real-connect.php
+                                // It is worth noting that for MySQL require and verify-full are the same - in both cases
+                                // verification will take place if you specify hostname as a name,
+                                // and it will be omitted if you put an IP address.
     // 'fetchbuffersize' => 100000, // On PostgreSQL, this option sets a limit
                                 // on the number of rows that are fetched into
                                 // memory when doing a large recordset query

@@ -48,10 +48,11 @@ class mysqli_native_moodle_database_test extends \advanced_testcase {
      * SSL connection helper.
      *
      * @param bool|null $compress
+     * @param string|null $ssl
      * @return mysqli
      * @throws moodle_exception
      */
-    public function new_connection(?bool $compress = false): mysqli {
+    public function new_connection(?bool $compress = false, ?string $ssl = null): mysqli {
         global $DB;
 
         // Open new connection.
@@ -61,6 +62,7 @@ class mysqli_native_moodle_database_test extends \advanced_testcase {
         }
 
         $cfg->dboptions['clientcompress'] = $compress;
+        $cfg->dboptions['ssl'] = $ssl;
 
         // Get a separate disposable db connection handle with guaranteed 'readonly' config.
         $db2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
@@ -105,5 +107,35 @@ class mysqli_native_moodle_database_test extends \advanced_testcase {
         $sentc = $stats['Bytes_sent'];
 
         $this->assertLessThan($sent, $sentc);
+    }
+
+    /**
+     * Test SSL connection.
+     *
+     * Well as much as we can, mysqli does not reliably report connect errors.
+     * @return void
+     */
+    public function test_ssl_connection(): void {
+        try {
+            $mysqli = $this->new_connection(false, 'require');
+            // Either connect ...
+            $this->assertNotNull($mysqli);
+        } catch (moodle_exception $e) {
+            // ... or fail.
+            // Unfortunately we cannot be sure with the error string.
+            $this->markTestIncomplete('SSL not supported?');
+        }
+
+        try {
+            $mysqli = $this->new_connection(false, 'verify-full');
+            // Either connect ...
+            $this->assertNotNull($mysqli);
+        } catch (moodle_exception $e) {
+            // ... or fail with invalid cert.
+            // Same as above, but we cannot really expect properly signed cert, so ignore.
+        }
+
+        $this->expectException(moodle_exception::class);
+        $this->new_connection(false, 'invalid-mode');
     }
 }
