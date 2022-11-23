@@ -159,5 +159,5 @@ Feature: availability_grade
 
     # Student sees information about no access to group, with group name in correct language.
     When I am on the "C1" "Course" page logged in as "student1"
-    Then I should see "Not available unless: You achieve a required score in A-One"
+    Then I should see "Not available unless: You achieve higher than a certain score in A-One"
     And I should not see "A-Un"
