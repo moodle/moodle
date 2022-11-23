@@ -116,24 +116,26 @@ class xmldb_field extends xmldb_object {
      */
     public function set_attributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
         $this->type = $type;
-    /// Try to split the precision into length and decimals and apply
-    /// each one as needed
-        $precisionarr = explode(',', $precision);
-        if (isset($precisionarr[0])) {
-            $this->length = trim($precisionarr[0]);
+
+        // LOBs (BINARY OR TEXT) don't support any precision (neither length or decimals).
+        if ($type == XMLDB_TYPE_BINARY || $this->type == XMLDB_TYPE_TEXT) {
+            $this->length = null;
+            $this->decimals = null;
+
+        } else if (!is_null($precision)) {
+            // Try to split the not null precision into length and decimals and apply each one as needed.
+            $precisionarr = explode(',', $precision);
+            if (isset($precisionarr[0])) {
+                $this->length = trim($precisionarr[0]);
+            }
+            if (isset($precisionarr[1])) {
+                $this->decimals = trim($precisionarr[1]);
+            }
         }
-        if (isset($precisionarr[1])) {
-            $this->decimals = trim($precisionarr[1]);
-        }
-        $this->precision = $type;
+
         $this->notnull = !empty($notnull) ? true : false;
         $this->sequence = !empty($sequence) ? true : false;
         $this->setDefault($default);
-
-        if ($this->type == XMLDB_TYPE_BINARY || $this->type == XMLDB_TYPE_TEXT) {
-            $this->length = null;
-            $this->decimals = null;
-        }
 
         $this->previous = $previous;
     }
