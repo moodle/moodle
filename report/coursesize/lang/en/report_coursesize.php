@@ -23,6 +23,7 @@
  */
 
 $string['backupsize'] = 'Backup size';
+$string['cachedef_topuserdata'] = 'Cached info about the users with the largest total amount of data';
 $string['catsystemuse'] = 'System and category use outside users and courses is {$a}.';
 $string['catsystembackupuse'] = 'System and category backup use is {$a}.';
 $string['coursesize'] = 'Course size';
