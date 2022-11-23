@@ -896,7 +896,15 @@ function course_module_bulk_update_calendar_events($modulename, $courseid = 0) {
         }
     }
 
+    $courses = [];
     foreach ($instances as $instance) {
+        if (!isset($courses[$instance->course])) {
+            $courses[$instance->course] = $DB->record_exists('course', ['id' => $instance->course]);
+        }
+        if (empty($courses[$instance->course])) {
+            // Skip if the course doesn't exist.
+            continue;
+        }
         if ($cm = get_coursemodule_from_instance($modulename, $instance->id, $instance->course)) {
             course_module_calendar_event_update_process($instance, $cm);
         }
