@@ -6391,18 +6391,19 @@ function can_send_from_real_email_address($from, $user, $unused = null) {
  * @return string
  */
 function generate_email_signoff() {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $signoff = "\n";
     if (!empty($CFG->supportname)) {
         $signoff .= $CFG->supportname."\n";
     }
-    if (!empty($CFG->supportemail)) {
-        $signoff .= $CFG->supportemail."\n";
+
+    $supportemail = $OUTPUT->supportemail(['class' => 'font-weight-bold']);
+
+    if ($supportemail) {
+        $signoff .= "\n" . $supportemail . "\n";
     }
-    if (!empty($CFG->supportpage)) {
-        $signoff .= $CFG->supportpage."\n";
-    }
+
     return $signoff;
 }
 
