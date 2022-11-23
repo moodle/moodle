@@ -4187,6 +4187,7 @@ final class courselib_test extends advanced_testcase {
      * Test the higher level checks for updating calendar events for a module.
      */
     public function test_course_module_bulk_update_calendar_events(): void {
+        global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -4205,6 +4206,13 @@ final class courselib_test extends advanced_testcase {
         $this->assertFalse(course_module_bulk_update_calendar_events('assign', $course2->id));
         // No book instances for the site.
         $this->assertFalse(course_module_bulk_update_calendar_events('book'));
+        // Update all assign instances.
+        $this->assertTrue(course_module_bulk_update_calendar_events('assign'));
+        // Update the assign instances for this course.
+        $this->assertTrue(course_module_bulk_update_calendar_events('assign', $course->id));
+
+        // Success even the course has been deleted.
+        $DB->delete_records('course', array('id' => $course->id));
         // Update all assign instances.
         $this->assertTrue(course_module_bulk_update_calendar_events('assign'));
         // Update the assign instances for this course.
