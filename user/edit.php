@@ -260,13 +260,11 @@ if ($userform->is_cancelled()) {
         $tempuser = $DB->get_record('user', array('id' => $user->id), '*', MUST_EXIST);
         $tempuser->email = $emailchanged;
 
-        $supportuser = core_user::get_support_user();
-
         $a = new stdClass();
         $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $emailchangedkey . '&id=' . $user->id;
         $a->site = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
         $a->fullname = fullname($tempuser, true);
-        $a->supportemail = $supportuser->email;
+        $a->supportemail = $OUTPUT->supportemail();
 
         $emailupdatemessage = get_string('emailupdatemessage', 'auth', $a);
         $emailupdatetitle = get_string('emailupdatetitle', 'auth', $a);
