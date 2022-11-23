@@ -712,7 +712,7 @@ abstract class base implements \IteratorAggregate {
      *
      * @throws \coding_exception
      */
-    protected final function validate_before_trigger() {
+    protected function validate_before_trigger() {
         global $DB, $CFG;
 
         if (empty($this->data['crud'])) {

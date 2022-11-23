@@ -843,6 +843,7 @@ $string['eventrecentactivityviewed'] = 'Recent activity viewed';
 $string['eventsearchindexed'] = 'Search data indexed';
 $string['eventsearchresultsviewed'] = 'Search results viewed';
 $string['eventunknownlogged'] = 'Unknown event';
+$string['eventurlblocked'] = 'The URL was blocked';
 $string['eventusercreated'] = 'User created';
 $string['eventuserdeleted'] = 'User deleted';
 $string['eventuserfeedbackgiven'] = 'Feedback link clicked';

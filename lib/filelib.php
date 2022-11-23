@@ -3779,6 +3779,7 @@ class curl {
 
         $urlisblocked = $this->check_securityhelper_blocklist($url);
         if (!is_null($urlisblocked)) {
+            $this->trigger_url_blocked_event($url, $urlisblocked);
             return $urlisblocked;
         }
 
@@ -3879,6 +3880,7 @@ class curl {
                 if (!is_null($urlisblocked)) {
                     $this->reset_request_state_vars();
                     curl_close($curl);
+                    $this->trigger_url_blocked_event($redirecturl, $urlisblocked, true);
                     return $urlisblocked;
                 }
 
@@ -3941,6 +3943,23 @@ class curl {
     }
 
     /**
+     * Trigger url_blocked event
+     *
+     * @param string $url      The URL to request
+     * @param string $reason   Reason for blocking
+     * @param bool   $redirect true if it was a redirect
+     */
+    private function trigger_url_blocked_event($url, $reason, $redirect = false): void {
+        $params = [
+            'url' => $url,
+            'reason' => $reason,
+            'redirect' => $redirect,
+        ];
+        $event = core\event\url_blocked::create(['other' => $params]);
+        $event->trigger();
+    }
+
+     /**
      * HTTP HEAD method
      *
      * @see request()
